@@ -19,9 +19,9 @@ const typedef = gql`
     "Class identifier"
     subject: String!
     courseNumber: String!
-    classNumber: String!
-    semester: Semester!
-    year: Int!
+    classNumber: String
+    semester: Semester
+    year: Int
 
     metrics: [Metric!]!
   }

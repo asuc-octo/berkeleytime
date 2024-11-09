@@ -110,7 +110,7 @@ export const createRating = async (
       true
     );
   }
-  return await getAggregatedRatings(
+  return await getClassAggregatedRatings(
     subject,
     courseNumber,
     semester,
@@ -201,20 +201,20 @@ export const getUserRatings = async (context: any) => {
   return formatUserRatings(userRatings[0]);
 };
 
-export const getAggregatedRatings = async (
+export const getClassAggregatedRatings = async (
   subject: string,
   courseNumber: string,
   semester: Semester,
   year: number,
   classNumber: string
 ) => {
-  const aggregated = await ratingAggregator(
+  const aggregated = await ratingAggregator({
     subject,
     courseNumber,
     classNumber,
     semester,
     year
-  );
+  });
   if (!aggregated || !aggregated[0])
     return {
       subject,
@@ -222,6 +222,27 @@ export const getAggregatedRatings = async (
       semester,
       year,
       classNumber,
+      metrics: [],
+    };
+
+  return formatAggregatedRatings(aggregated[0]);
+};
+
+export const getCourseAggregatedRatings = async (
+  subject: string,
+  courseNumber: string,
+) => {
+  const aggregated = await ratingAggregator({
+    subject,
+    courseNumber
+  });
+  if (!aggregated || !aggregated[0])
+    return {
+      subject,
+      courseNumber,
+      semester: null,
+      year: null,
+      classNumber: null,
       metrics: [],
     };
 

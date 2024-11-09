@@ -1,7 +1,7 @@
 import {
   createRating,
   deleteRating,
-  getAggregatedRatings,
+  getClassAggregatedRatings,
   getUserClassRatings,
   getUserRatings,
 } from "./controller";
@@ -14,7 +14,7 @@ const resolvers: RatingModule.Resolvers = {
       { subject, courseNumber, semester, year, classNumber },
       __
     ) => {
-      const aggregatedRatings = await getAggregatedRatings(
+      const aggregatedRatings = await getClassAggregatedRatings(
         subject,
         courseNumber,
         semester,

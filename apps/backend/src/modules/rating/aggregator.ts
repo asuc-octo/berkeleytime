@@ -1,22 +1,13 @@
 import { RatingModel, AggregatedMetricsModel } from "@repo/common";
 import { Semester } from "../../generated-types/graphql";
+import { FilterQuery } from "mongoose";
 
 export const ratingAggregator = async (
-  subject: string,
-  courseNumber: string,
-  classNumber: string,
-  semester: Semester,
-  year: number
+  filter: FilterQuery<any>
 ) => {
   return await AggregatedMetricsModel.aggregate([
     {
-      $match: {
-        subject,
-        courseNumber,
-        semester,
-        year,
-        classNumber,
-      },
+      $match: filter,
     },
     {
       $group: {
