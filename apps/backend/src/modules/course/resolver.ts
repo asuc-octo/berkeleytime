@@ -81,7 +81,7 @@ const resolvers: CourseModule.Resolvers = {
     ) => {
       const aggregatedRatings = await getCourseAggregatedRatings(
         parent.subject,
-        parent.number,
+        parent.number
       );
 
       return aggregatedRatings;

@@ -1,10 +1,11 @@
 import { AggregatedMetricsModel, RatingModel } from "@repo/common";
+
+import { MetricName, Semester } from "../../generated-types/graphql";
 import {
+  ratingAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
-  ratingAggregator,
 } from "./aggregator";
-import { MetricName, Semester } from "../../generated-types/graphql";
 import {
   formatAggregatedRatings,
   formatUserClassRatings,
@@ -16,10 +17,7 @@ const numberScaleMetrics = [
   "Difficulty",
   "Workload",
 ] as MetricName[];
-const booleanScaleMetrics = [
-  "Attendance", 
-  "Recording"
-] as MetricName[];
+const booleanScaleMetrics = ["Attendance", "Recording"] as MetricName[];
 
 export const createRating = async (
   context: any,
@@ -213,7 +211,7 @@ export const getClassAggregatedRatings = async (
     courseNumber,
     classNumber,
     semester,
-    year
+    year,
   });
   if (!aggregated || !aggregated[0])
     return {
@@ -230,11 +228,11 @@ export const getClassAggregatedRatings = async (
 
 export const getCourseAggregatedRatings = async (
   subject: string,
-  courseNumber: string,
+  courseNumber: string
 ) => {
   const aggregated = await ratingAggregator({
     subject,
-    courseNumber
+    courseNumber,
   });
   if (!aggregated || !aggregated[0])
     return {
