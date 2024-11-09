@@ -17,7 +17,11 @@ const numberScaleMetrics = [
   "Difficulty",
   "Workload",
 ] as MetricName[];
-const booleanScaleMetrics = ["Attendance", "Recording"] as MetricName[];
+
+const booleanScaleMetrics = [
+  "Attendance",
+  "Recording",
+] as MetricName[];
 
 export const createRating = async (
   context: any,
@@ -263,7 +267,10 @@ const checkRatingExists = async (
   });
 };
 
-const checkValueConstraint = (metricName: MetricName, value: number) => {
+const checkValueConstraint = (
+  metricName: MetricName,
+  value: number
+) => {
   if (numberScaleMetrics.includes(metricName)) {
     if (value < 1 || value > 5 || !Number.isInteger(value)) {
       throw new Error(
