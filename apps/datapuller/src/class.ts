@@ -6,7 +6,7 @@ import setup from "./shared";
 import mapClassToNewClass, { CombinedClass } from "./shared/classParser";
 import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
 
-async function updateClasses(config: Config) {
+export async function updateClasses(config: Config) {
   const log = config.log;
   const classesAPI = new ClassesAPI();
 

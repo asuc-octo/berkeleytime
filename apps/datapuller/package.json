@@ -5,7 +5,8 @@
     "build": "tsc --noEmit",
     "section": "tsx src/section.ts",
     "class": "tsx src/class.ts",
-    "course": "tsx src/course.ts"
+    "course": "tsx src/course.ts",
+    "runDatapuller": "tsx src/runDatapuller.ts"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",

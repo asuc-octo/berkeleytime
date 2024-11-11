@@ -7,7 +7,7 @@
       "dependsOn": ["generate", "^build"],
       "outputs": ["dist/**"]
     },
-    "course": {
+    "runDatapuller": {
       "cache": true
     },
     "generate": {

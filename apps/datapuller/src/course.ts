@@ -6,7 +6,7 @@ import setup from "./shared";
 import mapCourseToNewCourse, { CombinedCourse } from "./shared/courseParser";
 import { fetchPaginatedData } from "./shared/utils";
 
-async function updateCourses(config: Config) {
+export async function updateCourses(config: Config) {
   const log = config.log;
   const coursesAPI = new CoursesAPI();
 

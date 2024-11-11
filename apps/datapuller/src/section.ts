@@ -6,7 +6,7 @@ import setup from "./shared";
 import mapSectionToNewSection from "./shared/sectionParser";
 import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
 
-async function updateSections(config: Config) {
+export async function updateSections(config: Config) {
   const log = config.log;
   const classesAPI = new ClassesAPI();
 
