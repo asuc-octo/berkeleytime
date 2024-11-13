@@ -7,23 +7,24 @@ import { NavArrowDown } from "iconoir-react";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import _ from "lodash";
 import styles from "./Ratings.module.scss";
-import { READ_COURSE } from "@/lib/api";
 import { Semester } from "@/lib/api/terms";
 import { 
+  READ_COURSE,
   GET_USER_RATINGS, 
   GET_AGGREGATED_RATINGS, 
-  CREATE_RATING } from "@/lib/api/ratings";
+  CREATE_RATING
+} from "@/lib/api";
 import { 
+  MetricName,
   getMetricTooltip, 
   getMetricStatus, 
   getStatusColor, 
-  MetricName 
-} from "./metricsUtil";
+} from "./helper/metricsUtil";
 
 // TODO: Remove placeholder data before prod
 import { 
   placeholderRatingsData 
-} from "./devPlaceholderData";
+} from "./helper/devPlaceholderData";
 const PLACEHOLDER = true;
 
 interface RatingDetailProps {
@@ -193,7 +194,13 @@ export function RatingsContainer() {
       if (!userRatingsData?.userRatings?.classes) return null;
   
       return userRatingsData.userRatings.classes.find(
-        classRating => 
+        (classRating: {
+          subject: string;
+          courseNumber: string;
+          semester: Semester;
+          year: number;
+          classNumber: string;
+        }) => 
           classRating.subject === currentClass.subject &&
           classRating.courseNumber === currentClass.courseNumber &&
           classRating.semester === currentClass.semester &&
@@ -278,7 +285,7 @@ export function RatingsContainer() {
             statusColor: getStatusColor(metric.weightedAverage),
             reviewCount: metric.count,
           };
-        });
+        }) as RatingDetailProps[];
     }, [aggregatedRatings]);
 
     if (courseLoading) {
@@ -310,7 +317,7 @@ export function RatingsContainer() {
           </div>
   
           <div className={styles.ratingsContainer}>
-            {ratingsData.map((ratingData) => (
+            {ratingsData?.map((ratingData) => (
               <RatingDetail key={ratingData.title} {...ratingData} />
             ))}
           </div>
@@ -323,13 +330,22 @@ export function RatingsContainer() {
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
           initialRatings={userRatingsData?.userRatings?.classes?.find(
-            c => 
+            (c: { 
+              subject: string; 
+              courseNumber: string; 
+              semester: Semester; 
+              year: number; 
+              classNumber: string 
+            }) => 
               c.subject === currentClass.subject &&
               c.courseNumber === currentClass.courseNumber &&
               c.semester === currentClass.semester &&
               c.year === currentClass.year &&
               c.classNumber === currentClass.number
-          )?.metrics?.reduce((acc, metric) => ({
+          )?.metrics?.reduce((
+            acc: { [key: string]: number }, 
+            metric: { metricName: string; value: number }
+          ) => ({
             ...acc,
             [metric.metricName.toLowerCase()]: metric.value
           }), {

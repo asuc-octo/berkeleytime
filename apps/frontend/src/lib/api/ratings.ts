@@ -1,13 +1,5 @@
 import { gql } from "@apollo/client";
 
-export enum MetricName {
-  Usefulness = "Usefulness",
-  Difficulty = "Difficulty",
-  Workload = "Workload",
-  Attendance = "Attendance",
-  Recording = "Recording"
-}
-
 export const GET_AGGREGATED_RATINGS = gql`
 query GetAggregatedRatings(
   $subject: String!
