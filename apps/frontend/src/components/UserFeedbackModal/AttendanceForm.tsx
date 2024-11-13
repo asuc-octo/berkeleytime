@@ -106,7 +106,7 @@ export function AttendanceForm() {
                 }
               }}
             />
-            Yes, lectures were recorded to bCourses.
+            Yes, lectures were recorded.
           </label>
           <label>
             <input
@@ -122,7 +122,7 @@ export function AttendanceForm() {
                 }
               }}
             />
-            No, lectures were not recorded to bCourses.
+            No, lectures were not recorded.
           </label>
         </div>
       </div>
