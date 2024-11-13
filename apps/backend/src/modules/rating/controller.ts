@@ -27,6 +27,7 @@ const numberScaleMetrics = [
 const booleanScaleMetrics = [
   "Attendance",
   "Recording",
+  "Recommended",
 ] as MetricName[];
 
 const ratingThreshold = 100;

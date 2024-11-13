@@ -10,6 +10,7 @@ const typedef = gql`
     "Boolean metrics"
     Attendance
     Recording
+    Recommended
   }
 
   """

@@ -23,6 +23,7 @@
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "dotenv-cli": "^7.4.2",
     "eslint": "^8.56.0",
+    "fuse.js": "^7.0.0",
     "patch-package": "^8.0.0",
     "prettier": "^3.3.3",
     "turbo": "^2.2.3"
