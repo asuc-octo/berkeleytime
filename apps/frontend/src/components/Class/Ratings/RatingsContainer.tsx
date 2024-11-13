@@ -19,6 +19,11 @@ import {
   getStatusColor, 
   MetricName 
 } from "./metricsUtil";
+import { 
+  placeholderRatingsData 
+} from "./devPlaceholderData";
+
+const PLACEHOLDER = true;
 
 interface RatingDetailProps {
   title: string;
@@ -244,59 +249,15 @@ export function RatingsContainer() {
         console.error('Error submitting ratings:', error);
       }
     };
-  
-    const defaultRatingsData = [
-      {
-        title: "Usefulness",
-        tooltip:
-          "This refers to how beneficial a course is in helping students achieve their academic, professional, or personal goals.",
-        stats: [
-          { rating: 5, percentage: 56 },
-          { rating: 4, percentage: 16 },
-          { rating: 3, percentage: 11 },
-          { rating: 2, percentage: 6 },
-          { rating: 1, percentage: 11 },
-        ],
-        status: "Very Useful",
-        statusColor: "statusGreen",
-        reviewCount: 218,
-      },
-      {
-        title: "Difficulty",
-        tooltip:
-          "This indicates the level of challenge students experience in understanding and completing course material.",
-        stats: [
-          { rating: 5, percentage: 30 },
-          { rating: 4, percentage: 40 },
-          { rating: 3, percentage: 20 },
-          { rating: 2, percentage: 5 },
-          { rating: 1, percentage: 5 },
-        ],
-        status: "Moderately Difficult",
-        statusColor: "statusOrange",
-        reviewCount: 218,
-      },
-      {
-        title: "Workload",
-        tooltip:
-          "This represents the time and effort required to complete course assignments, readings, and other activities.",
-        stats: [
-          { rating: 5, percentage: 25 },
-          { rating: 4, percentage: 35 },
-          { rating: 3, percentage: 25 },
-          { rating: 2, percentage: 10 },
-          { rating: 1, percentage: 5 },
-        ],
-        status: "Moderately Workload",
-        statusColor: "statusOrange",
-        reviewCount: 218,
-      },
-    ];
 
     // Transform aggregated ratings into display format
+    // TODO: Remove placeholder data before prod
     const ratingsData = React.useMemo(() => {
+        if (PLACEHOLDER) {
+          return placeholderRatingsData;
+        }
         if (!aggregatedRatings?.aggregatedRatings?.metrics) {
-          return defaultRatingsData;
+          return null;
         }
 
         return aggregatedRatings.aggregatedRatings.metrics.map(metric => {
