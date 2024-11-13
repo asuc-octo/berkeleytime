@@ -1,6 +1,12 @@
-import { AggregatedMetricsModel, RatingModel } from "@repo/common";
-
-import { MetricName, Semester } from "../../generated-types/graphql";
+import {
+  AggregatedMetricsModel,
+  RatingModel,
+  UserModel,
+} from "@repo/common";
+import {
+  MetricName,
+  Semester,
+} from "../../generated-types/graphql";
 import {
   ratingAggregator,
   userClassRatingsAggregator,
@@ -23,6 +29,8 @@ const booleanScaleMetrics = [
   "Recording",
 ] as MetricName[];
 
+const ratingThreshold = 100;
+
 export const createRating = async (
   context: any,
   subject: string,
@@ -44,6 +52,8 @@ export const createRating = async (
   );
 
   let skipEdit = false;
+  // Case 1: User has an existing rating for this course, but for a different semester/year/classNumber.
+  // We delete the old rating -> send to Case 3.
   if (
     existingRating &&
     (existingRating.semester != semester ||
@@ -61,6 +71,8 @@ export const createRating = async (
     );
     skipEdit = true;
   }
+  // Case 2: User is updating an existing rating for the same class section
+  // We update the existing rating.
   if (existingRating && !skipEdit) {
     const oldValue = existingRating.value;
     if (oldValue != value) {
@@ -90,7 +102,13 @@ export const createRating = async (
         true
       );
     }
+  // Case 3: Either:
+  //   - User has no existing rating (existingRating is null)
+  //   - OR user had a rating for different section that was just deleted (skipEdit is true)
   } else {
+    if (!checkUserClassRatingsCount(context)) {
+      throw new Error("User has reached the rating threshold");
+    }
     await RatingModel.create({
       createdBy: context.user._id,
       subject: subject,
@@ -111,6 +129,11 @@ export const createRating = async (
       value,
       true
     );
+    const user = await UserModel.findOne({ googleId: context.user.googleId });
+    if (user) {
+      user.classRatingsCount = (user.classRatingsCount || 0) + 1;
+      await user.save();
+    }
   }
   return await getClassAggregatedRatings(
     subject,
@@ -156,6 +179,13 @@ export const deleteRating = async (
     deletedRating.value,
     false
   );
+
+  const user = await UserModel.findOne({ googleId: context.user.googleId });
+  if (user) {
+    const newCount = Math.max(0, (user.classRatingsCount || 0) - 1);
+    user.classRatingsCount = newCount;
+    await user.save();
+  }
 
   return true;
 };
@@ -331,4 +361,9 @@ const handleCategoryCountChange = async (
   } else {
     throw new Error("Aggregated Rating does not exist, cannot decrement");
   }
+};
+
+const checkUserClassRatingsCount = async (context: any) => {
+  const user = await UserModel.findOne({ googleId: context.user.googleId });
+  return (user?.classRatingsCount || 0) < ratingThreshold;
 };
