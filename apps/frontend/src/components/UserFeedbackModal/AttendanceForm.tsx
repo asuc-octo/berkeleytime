@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from "./UserFeedbackModal.module.scss";
 
 export function AttendanceForm() {
   const [lectureAttendance, setLectureAttendance] = useState<number | null>(null);
-  const [discussionAttendance, setDiscussionAttendance] = useState<number | null>(null);
   const [lecturesRecorded, setLecturesRecorded] = useState<number | null>(null);
 
   return (
@@ -51,46 +50,7 @@ export function AttendanceForm() {
 
       {/* Question 2 */}
       <div className={styles.formGroup}>
-        <p>2. (If applicable) Was discussion attendance required?</p>
-        <div className={styles.radioOptions}>
-          <label>
-            <input
-              type="radio"
-              name="discussionAttendance"
-              value="1"
-              checked={discussionAttendance === 1}
-              onClick={() => {
-                if (discussionAttendance === 1) {
-                  setDiscussionAttendance(null);
-                } else {
-                  setDiscussionAttendance(1);
-                }
-              }}
-            />
-            Yes, discussion attendance was required.
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="discussionAttendance"
-              value="0"
-              checked={discussionAttendance === 0}
-              onClick={() => {
-                if (discussionAttendance === 0) {
-                  setDiscussionAttendance(null);
-                } else {
-                  setDiscussionAttendance(0);
-                }
-              }}
-            />
-            No, discussion attendance was not required.
-          </label>
-        </div>
-      </div>
-
-      {/* Question 3 */}
-      <div className={styles.formGroup}>
-        <p>3. Were lectures recorded?</p>
+        <p>2. Were lectures recorded?</p>
         <div className={styles.radioOptions}>
           <label>
             <input

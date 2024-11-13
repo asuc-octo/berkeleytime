@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import * as Select from "@radix-ui/react-select";
 import { Button } from "@repo/theme";
 import { useState } from "react";
 import { AttendanceForm } from "./AttendanceForm";
@@ -65,6 +66,7 @@ export function UserFeedbackModal({
       const selectedTermInfo = availableTerms.find(t => t.value === selectedTerm);
       if (!selectedTermInfo) throw new Error('Invalid term selected');
 
+      // TODO: type safety issue for ratings?
       await onSubmit(ratings, {
         semester: selectedTermInfo.semester,
         year: selectedTermInfo.year
@@ -90,20 +92,28 @@ export function UserFeedbackModal({
               <Dialog.Description className={styles.modalSubtitle}>
                 {currentClass.subject} {currentClass.courseNumber} {currentClass.number}
               </Dialog.Description>
-              <select 
-                className={styles.termDropdown}
-                value={selectedTerm}
-                onChange={(e) => setSelectedTerm(e.target.value)}
+              <Select.Root 
+                value={selectedTerm} 
+                onValueChange={(value) => setSelectedTerm(value)}
               >
-                {availableTerms.map((term) => (
-                  <option 
-                    key={`${term.semester}-${term.year}`}
-                    value={term.value}
-                  >
-                    {term.label}
-                  </option>
-                ))}
-              </select>
+                <Select.Trigger className={styles.termDropdown}>
+                  <Select.Value />
+                </Select.Trigger>
+                <Select.Portal>
+                  <Select.Content>
+                    <Select.Viewport>
+                      {availableTerms.map((term) => (
+                        <Select.Item 
+                          key={`${term.semester}-${term.year}`}
+                          value={term.value}
+                        >
+                          <Select.ItemText>{term.label}</Select.ItemText>
+                        </Select.Item>
+                      ))}
+                    </Select.Viewport>
+                  </Select.Content>
+                </Select.Portal>
+              </Select.Root>
             </div>
           </div>
 
