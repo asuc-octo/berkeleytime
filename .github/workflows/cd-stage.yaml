@@ -28,11 +28,16 @@ jobs:
           username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
+            set -e  # Exit immediately if a command fails
             cd ./infra
+
+            # Check if the Helm release exists
             if helm status bt-stage-app ; then
+              # Restart deployments if the Helm release exists
               kubectl rollout restart deployment bt-stage-app-backend
               kubectl rollout restart deployment bt-stage-app-frontend
             else
+              # Install the Helm release if it doesn't exist
               helm install bt-stage-app ./app --namespace=bt \
                 --set env=stage \
                 --set frontend.image.tag=latest \
@@ -41,3 +46,7 @@ jobs:
                 --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
                 --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
             fi
+
+            # Check container status
+            kubectl rollout status --timeout=180s deployment bt-stage-app-backend
+            kubectl rollout status --timeout=180s deployment bt-stage-app-frontend

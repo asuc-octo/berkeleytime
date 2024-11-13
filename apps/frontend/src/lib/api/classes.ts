@@ -217,8 +217,8 @@ export const READ_CLASS = gql`
     $year: Int!
     $semester: Semester!
     $subject: String!
-    $courseNumber: String!
-    $number: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
   ) {
     class(
       year: $year
@@ -349,41 +349,39 @@ export const READ_CLASS = gql`
   }
 `;
 
-export interface GetClassesResponse {
-  catalog: ICourse[];
+export interface GetCatalogResponse {
+  catalog: IClass[];
 }
 
-export const GET_CLASSES = gql`
-  query GetClasses($year: Int!, $semester: Semester!) {
+export const GET_CATALOG = gql`
+  query GetCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
-      subject
       number
       title
-      gradeDistribution {
-        average
+      unitsMax
+      unitsMin
+      finalExam
+      gradingBasis
+      primarySection {
+        component
+        online
+        open
+        enrollCount
+        enrollMax
+        waitlistCount
+        waitlistMax
+        meetings {
+          days
+        }
       }
-      academicCareer
-      classes {
+      course {
         subject
-        courseNumber
         number
         title
-        unitsMax
-        unitsMin
-        finalExam
-        gradingBasis
-        primarySection {
-          component
-          online
-          open
-          enrollCount
-          enrollMax
-          waitlistCount
-          waitlistMax
-          meetings {
-            days
-          }
+        gradeDistribution {
+          average
         }
+        academicCareer
       }
     }
   }

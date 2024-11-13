@@ -3,7 +3,7 @@ import { gql } from "graphql-tag";
 const typedef = gql`
   type SelectedClass {
     class: Class!
-    selectedSections: [Int!]
+    selectedSections: [SectionIdentifier!]
   }
 
   type Event {
@@ -20,7 +20,7 @@ const typedef = gql`
     name: String!
     createdBy: String!
     year: Int!
-    semester: String!
+    semester: Semester!
     term: Term!
     public: Boolean!
     classes: [SelectedClass!]!
@@ -43,9 +43,9 @@ const typedef = gql`
 
   input SelectedClassInput {
     subject: String!
-    courseNumber: String!
-    number: String!
-    sections: [Int!]!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+    sections: [SectionIdentifier!]!
   }
 
   input UpdateScheduleInput {
@@ -58,7 +58,7 @@ const typedef = gql`
   input CreateScheduleInput {
     name: String!
     year: Int!
-    semester: String!
+    semester: Semester!
     events: [EventInput!]
     classes: [SelectedClassInput!]
     public: Boolean

@@ -84,7 +84,11 @@ export default function List({ onSelect }: ListProps) {
                   key={key}
                   ref={virtualizer.measureElement}
                   onClick={() =>
-                    onSelect(_class.subject, _class.courseNumber, _class.number)
+                    onSelect(
+                      _class.course.subject,
+                      _class.course.number,
+                      _class.number
+                    )
                   }
                 />
               );
