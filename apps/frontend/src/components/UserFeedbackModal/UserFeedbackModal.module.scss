@@ -184,7 +184,10 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px var(--blue-200);
+  }
+
+  &:focus-visible {
+    outline: none;
   }
 }
 

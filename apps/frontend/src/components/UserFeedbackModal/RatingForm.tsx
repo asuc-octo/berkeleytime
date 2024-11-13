@@ -4,14 +4,14 @@ import styles from "./UserFeedbackModal.module.scss";
 
 interface RatingsFormProps {
   ratings: {
-    usefulness: number;
-    difficulty: number;
-    workload: number;
+    usefulness: number | undefined;
+    difficulty: number | undefined;
+    workload: number | undefined;
   };
   setRatings: React.Dispatch<React.SetStateAction<{
-    usefulness: number;
-    difficulty: number;
-    workload: number;
+    usefulness: number | undefined;
+    difficulty: number | undefined;
+    workload: number | undefined;
   }>>;
 }
 
@@ -19,7 +19,7 @@ export function RatingsForm({ ratings, setRatings }: RatingsFormProps) {
   const handleRatingClick = (type: keyof typeof ratings, value: number) => {
     setRatings((prev) => ({
       ...prev,
-      [type]: value
+      [type]: prev[type] === value ? undefined : value
     }));
   };
 
