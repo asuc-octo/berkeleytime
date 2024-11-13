@@ -114,7 +114,7 @@
 .ratingContent {
   margin-top: 16px;
   margin-left: 25%;
-  animation: slideDown 300ms ease forwards;
+  animation: slideDown 200ms ease forwards;
 }
 
 .statRow {
@@ -123,7 +123,7 @@
   gap: 12px;
   margin-bottom: 8px;
   opacity: 0;
-  animation: fadeIn 500ms ease forwards;
+  animation: fadeIn 250ms ease forwards;
   animation-delay: var(--delay);
 
   &:last-child {
@@ -136,8 +136,8 @@
     font-weight: 500;
     text-align: center;
     opacity: 0;
-    animation: fadeIn 300ms ease forwards;
-    animation-delay: calc(var(--delay) + 100ms);
+    animation: fadeIn 200ms ease forwards;
+    animation-delay: calc(var(--delay) + 50ms);
   }
 
   .barContainer {
@@ -151,8 +151,10 @@
       height: 100%;
       background-color: var(--blue-500);
       border-radius: 4px;
-      transition: width 1000ms cubic-bezier(0.4, 0, 0.2, 1);
       width: 0;
+      transform-origin: left;
+      transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: width;
     }
   }
 
@@ -162,9 +164,8 @@
     font-size: 14px;
     text-align: right;
     opacity: 0;
-    animation: fadeIn 300ms ease forwards;
-    animation-delay: calc(var(--delay) + 200ms);
-    transition: all 1000ms cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 200ms ease forwards;
+    animation-delay: calc(var(--delay) + 100ms);
   }
 }
 
@@ -200,85 +201,5 @@
   }
   to {
     transform: scaleX(1);
-  }
-}
-
-.ratingContent {
-  margin-top: 16px;
-  margin-left: 25%;
-  animation: slideDown 300ms ease forwards;
-}
-
-.statRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-  opacity: 0;
-  animation: fadeIn 500ms ease forwards;
-  animation-delay: var(--delay);
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  .rating {
-    width: 24px;
-    color: var(--heading-color);
-    font-weight: 500;
-    text-align: center;
-    opacity: 0;
-    animation: fadeIn 300ms ease forwards;
-    animation-delay: calc(var(--delay) + 100ms);
-  }
-
-  .barContainer {
-    flex-grow: 1;
-    height: 8px;
-    background-color: var(--background-color);
-    border-radius: 4px;
-    overflow: hidden;
-
-    .bar {
-      height: 100%;
-      background-color: var(--blue-500);
-      border-radius: 4px;
-      width: 0;
-      transform-origin: left;
-      transition: width 600ms cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: width;
-    }
-  }
-
-  .percentage {
-    width: 48px;
-    color: var(--paragraph-color);
-    font-size: 14px;
-    text-align: right;
-    opacity: 0;
-    animation: fadeIn 300ms ease forwards;
-    animation-delay: calc(var(--delay) + 200ms);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }

@@ -19,10 +19,11 @@ import {
   getStatusColor, 
   MetricName 
 } from "./metricsUtil";
+
+// TODO: Remove placeholder data before prod
 import { 
   placeholderRatingsData 
 } from "./devPlaceholderData";
-
 const PLACEHOLDER = true;
 
 interface RatingDetailProps {
