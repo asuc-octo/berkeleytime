@@ -36,9 +36,6 @@ export const booleanScaleMetrics = [
   "Recommended",
 ] as MetricName[];
 
-// TODO: for functions that mutate multiple schemas, mutation should revert if all does not succeed to avoid out-of-sync issues.
-// Mongo transaction is built for this application.
-
 export const createRating = async (
   context: any,
   subject: string,
@@ -56,21 +53,23 @@ export const createRating = async (
   try {
     await session.withTransaction(async () => {
       const existingRating = await checkRatingExists(
-        context,
-        subject,
-        courseNumber,
-        metricName
+        context, subject, courseNumber, metricName
       );
 
-      let skipEdit = false;
-      // Case 1: User has an existing rating for this course, but for a different semester/year/classNumber.
-      // We delete the old rating -> send to Case 3.
-      if (
-        existingRating &&
-        (existingRating.semester != semester ||
-          existingRating.year != year ||
-          existingRating.classNumber != classNumber)
-      ) {
+      if (!existingRating) {
+        if (!checkUserClassRatingsCount(context)) {
+          throw new Error("User has reached the rating threshold");
+        }
+        await createNewRating(context, {
+          subject, courseNumber, semester, year,
+          classNumber, metricName, value
+        }, session);
+        return;
+      }
+
+      if (existingRating.semester !== semester ||
+          existingRating.year !== year ||
+          existingRating.classNumber !== classNumber) {
         await deleteRating(
           context,
           existingRating.subject,
@@ -81,88 +80,20 @@ export const createRating = async (
           existingRating.metricName as MetricName,
           session
         );
-        skipEdit = true;
-      }
-      // Case 2: User is updating an existing rating for the same class section
-      // We update the existing rating.
-      if (existingRating && !skipEdit) {
-        const oldValue = existingRating.value;
-        if (oldValue != value) {
-          existingRating.value = value;
-          await existingRating.save({ session });
-
-          // decrement count of old category
-          await handleCategoryCountChange(
-            subject,
-            courseNumber,
-            semester,
-            year,
-            classNumber,
-            metricName,
-            oldValue,
-            false,
-            session
-          );
-          // incremdent count of new category
-          await handleCategoryCountChange(
-            subject,
-            courseNumber,
-            semester,
-            year,
-            classNumber,
-            metricName,
-            value,
-            true,
-            session
-          );
-        }
-      // Case 3: Either:
-      //   - User has no existing rating (existingRating is null)
-      //   - OR user had a rating for different section that was just deleted (skipEdit is true)
+        await createNewRating(context, {
+          subject, courseNumber, semester, year,
+          classNumber, metricName, value
+        }, session);
       } else {
-        if (!checkUserClassRatingsCount(context)) {
-          throw new Error("User has reached the rating threshold");
-        }
-        await RatingModel.create([{
-          createdBy: context.user._id,
-          subject,
-          courseNumber,
-          semester,
-          year,
-          classNumber,
-          metricName,
-          value,
-        }], { session });
-
-        await handleCategoryCountChange(
-          subject,
-          courseNumber,
-          semester,
-          year,
-          classNumber,
-          metricName,
-          value,
-          true,
-          session
-        );
-
-        const user = await UserModel.findOne({ googleId: context.user.googleId });
-        if (user) {
-          user.classRatingsCount = (user.classRatingsCount || 0) + 1;
-          await user.save({ session });
-        }
+        await handleExistingRating(existingRating, value, session);
       }
     });
   } finally {
     await session.endSession();
   }
 
-  return await getClassAggregatedRatings(
-    subject,
-    courseNumber,
-    semester,
-    year,
-    classNumber
+  return getClassAggregatedRatings(
+    subject, courseNumber, semester, year, classNumber
   );
 };
 
@@ -174,7 +105,7 @@ export const deleteRating = async (
   year: number,
   classNumber: string,
   metricName: MetricName,
-  existingSession?: any
+  existingSession?: any // for nested transactions only, can basically ignore
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
@@ -256,7 +187,6 @@ export const getUserClassRatings = async (
 };
 
 export const getUserRatings = async (context: any) => {
-  // possibly store this in user model?
   if (!context.user._id) throw new Error("Unauthorized");
 
   const userRatings = await userRatingsAggregator(context);
@@ -319,6 +249,67 @@ export const getCourseAggregatedRatings = async (
 
 // Helper functions
 
+const createNewRating = async (
+  context: any,
+  ratingData: any,
+  session: any
+) => {
+  const { subject, courseNumber, semester, year, classNumber, metricName, value } = ratingData;
+  
+  await Promise.all([
+    RatingModel.create([{
+      createdBy: context.user._id,
+      ...ratingData
+    }], { session }),
+    handleCategoryCountChange(
+      subject, courseNumber, semester, year,
+      classNumber, metricName, value, true, session
+    ),
+    UserModel.findOneAndUpdate(
+      { googleId: context.user.googleId },
+      { $inc: { classRatingsCount: 1 } },
+      { session }
+    )
+  ]);
+};
+
+const handleExistingRating = async (
+  existingRating: any,
+  newValue: number,
+  session: any
+) => {
+  const oldValue = existingRating.value;
+  if (oldValue === newValue) return;
+  
+  existingRating.value = newValue;
+  await existingRating.save({ session });
+
+  await Promise.all([
+    handleCategoryCountChange(
+      existingRating.subject,
+      existingRating.courseNumber,
+      existingRating.semester,
+      existingRating.year,
+      existingRating.classNumber,
+      existingRating.metricName,
+      oldValue,
+      false,
+      session
+    ),
+    handleCategoryCountChange(
+      existingRating.subject,
+      existingRating.courseNumber,
+      existingRating.semester,
+      existingRating.year,
+      existingRating.classNumber,
+      existingRating.metricName,
+      newValue,
+      true,
+      session
+    )
+  ]);
+};
+
 const handleCategoryCountChange = async (
   subject: string,
   courseNumber: string,
@@ -344,18 +335,18 @@ const handleCategoryCountChange = async (
     metric.categoryCount += delta;
     await metric.save({ session });
   } else if (isIncrement) {
-    let range: number[] = [];
+    let valueRange: number[] = [];
     switch (true) {
       case numberScaleMetrics.includes(metricName):
-        range = [1, 2, 3, 4, 5];
+        valueRange = [1, 2, 3, 4, 5];
         break;
       case booleanScaleMetrics.includes(metricName):
-        range = [0, 1];
+        valueRange = [0, 1];
         break;
       default:
         throw new Error("Invalid metric name");
     }
-    for (const v of range) {
+    for (const v of valueRange) {
       await AggregatedMetricsModel.create([{
         subject,
         courseNumber,
