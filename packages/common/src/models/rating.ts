@@ -97,7 +97,7 @@ aggregatedMetricsSchema.index({
   year: 1,
   metricName: 1,
   categoryCount: 1,
-  categoryValue: 1
+  categoryValue: 1,
 });
 
 export const AggregatedMetricsModel = mongoose.model(
