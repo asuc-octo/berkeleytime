@@ -2,7 +2,7 @@ import { FilterQuery } from "mongoose";
 
 import { AggregatedMetricsModel, RatingModel } from "@repo/common";
 
-import { Semester } from "../../generated-types/graphql";
+import { Semester } from "../../../generated-types/graphql";
 
 export const ratingAggregator = async (filter: FilterQuery<any>) => {
   return await AggregatedMetricsModel.aggregate([
