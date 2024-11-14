@@ -88,6 +88,18 @@ const aggregatedMetricsSchema = new Schema({
   },
 });
 
+// Compound index for optimizing aggregation queries
+aggregatedMetricsSchema.index({
+  subject: 1,
+  courseNumber: 1,
+  classNumber: 1,
+  semester: 1,
+  year: 1,
+  metricName: 1,
+  categoryCount: 1,
+  categoryValue: 1
+});
+
 export const AggregatedMetricsModel = mongoose.model(
   "aggregatedMetrics",
   aggregatedMetricsSchema

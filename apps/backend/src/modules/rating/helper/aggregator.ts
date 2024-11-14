@@ -10,6 +10,18 @@ export const ratingAggregator = async (filter: FilterQuery<any>) => {
       $match: filter,
     },
     {
+      $project: {
+        subject: 1,
+        courseNumber: 1,
+        classNumber: 1,
+        semester: 1,
+        year: 1,
+        metricName: 1,
+        categoryValue: 1,
+        categoryCount: 1
+      }
+    },
+    {
       $group: {
         _id: {
           subject: "$subject",
@@ -64,7 +76,14 @@ export const ratingAggregator = async (filter: FilterQuery<any>) => {
         metrics: 1,
       },
     },
-  ]);
+  ]).hint({ 
+    subject: 1, 
+    courseNumber: 1, 
+    classNumber: 1, 
+    semester: 1, 
+    year: 1, 
+    metricName: 1 
+  });
 };
 
 export const userRatingsAggregator = async (context: any) => {
