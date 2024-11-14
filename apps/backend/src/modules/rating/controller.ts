@@ -1,28 +1,23 @@
-import {
-  AggregatedMetricsModel,
-  RatingModel,
-  UserModel,
-} from "@repo/common";
-import {
-  MetricName,
-  Semester,
-} from "../../generated-types/graphql";
-import {
-  ratingAggregator,
-  userClassRatingsAggregator,
-  userRatingsAggregator,
-} from "./helper/aggregator";
-import { 
-  checkRatingExists,
-  checkUserClassRatingsCount,
-  checkValueConstraint,
-} from "./helper/checkConstraints";
+import { connection } from "mongoose";
+
+import { AggregatedMetricsModel, RatingModel, UserModel } from "@repo/common";
+
+import { MetricName, Semester } from "../../generated-types/graphql";
 import {
   formatAggregatedRatings,
   formatUserClassRatings,
   formatUserRatings,
 } from "./formatter";
-import { connection } from 'mongoose';
+import {
+  ratingAggregator,
+  userClassRatingsAggregator,
+  userRatingsAggregator,
+} from "./helper/aggregator";
+import {
+  checkRatingExists,
+  checkUserClassRatingsCount,
+  checkValueConstraint,
+} from "./helper/checkConstraints";
 
 export const numberScaleMetrics = [
   "Usefulness",
@@ -53,33 +48,60 @@ export const createRating = async (
   try {
     await session.withTransaction(async () => {
       const existingRating = await checkRatingExists(
-        context, subject, courseNumber, metricName
+        context,
+        subject,
+        courseNumber,
+        metricName
       );
 
       if (!existingRating) {
         if (!checkUserClassRatingsCount(context)) {
           throw new Error("User has reached the rating threshold");
         }
-        await createNewRating(context, {
-          subject, courseNumber, semester, year,
-          classNumber, metricName, value
-        }, session);
+        await createNewRating(
+          context,
+          {
+            subject,
+            courseNumber,
+            semester,
+            year,
+            classNumber,
+            metricName,
+            value,
+          },
+          session
+        );
         return;
       }
 
-      if (existingRating.semester !== semester ||
-          existingRating.year !== year ||
-          existingRating.classNumber !== classNumber) {
+      if (
+        existingRating.semester !== semester ||
+        existingRating.year !== year ||
+        existingRating.classNumber !== classNumber
+      ) {
         await deleteRating(
-          context, existingRating.subject,
-          existingRating.courseNumber, existingRating.semester as Semester,
-          existingRating.year, existingRating.classNumber,
-          existingRating.metricName as MetricName, session
+          context,
+          existingRating.subject,
+          existingRating.courseNumber,
+          existingRating.semester as Semester,
+          existingRating.year,
+          existingRating.classNumber,
+          existingRating.metricName as MetricName,
+          session
         );
-        await createNewRating(context, {
-          subject, courseNumber, semester, year,
-          classNumber, metricName, value
-        }, session);
+        await createNewRating(
+          context,
+          {
+            subject,
+            courseNumber,
+            semester,
+            year,
+            classNumber,
+            metricName,
+            value,
+          },
+          session
+        );
       } else {
         await handleExistingRating(existingRating, value, session);
       }
@@ -89,7 +111,11 @@ export const createRating = async (
   }
 
   return getClassAggregatedRatings(
-    subject, courseNumber, semester, year, classNumber
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber
   );
 };
 
@@ -105,12 +131,18 @@ export const deleteRating = async (
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  const session = existingSession || await connection.startSession();
+  const session = existingSession || (await connection.startSession());
   try {
     await session.withTransaction(async () => {
       const deletedRating = await RatingModel.findOneAndDelete(
-        { createdBy: context.user._id, subject, courseNumber,
-          semester, year, classNumber, metricName
+        {
+          createdBy: context.user._id,
+          subject,
+          courseNumber,
+          semester,
+          year,
+          classNumber,
+          metricName,
         },
         { session }
       );
@@ -120,9 +152,15 @@ export const deleteRating = async (
       }
 
       await handleCategoryCountChange(
-        subject, courseNumber, semester, year,
-        classNumber, metricName, deletedRating.value,
-        false, session
+        subject,
+        courseNumber,
+        semester,
+        year,
+        classNumber,
+        metricName,
+        deletedRating.value,
+        false,
+        session
       );
 
       const user = await UserModel.findOne({ googleId: context.user.googleId });
@@ -151,12 +189,21 @@ export const getUserClassRatings = async (
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
   const userRatings = await userClassRatingsAggregator(
-    context, subject, courseNumber, semester, year, classNumber
+    context,
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber
   );
   if (!userRatings.length)
     return {
-      subject, courseNumber, semester, year,
-      classNumber, metrics: []
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metrics: [],
     };
   return formatUserClassRatings(userRatings[0]);
 };
@@ -190,8 +237,12 @@ export const getClassAggregatedRatings = async (
   });
   if (!aggregated || !aggregated[0])
     return {
-      subject, courseNumber, semester, year,
-      classNumber, metrics: []
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metrics: [],
     };
 
   return formatAggregatedRatings(aggregated[0]);
@@ -220,29 +271,43 @@ export const getCourseAggregatedRatings = async (
 
 // Helper functions
 
-const createNewRating = async (
-  context: any,
-  ratingData: any,
-  session: any
-) => {
-  const { 
-    subject, courseNumber, semester, year,
-    classNumber, metricName, value 
+const createNewRating = async (context: any, ratingData: any, session: any) => {
+  const {
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
+    metricName,
+    value,
   } = ratingData;
-  
+
   await Promise.all([
-    RatingModel.create([{
-      createdBy: context.user._id, ...ratingData
-    }], { session }),
+    RatingModel.create(
+      [
+        {
+          createdBy: context.user._id,
+          ...ratingData,
+        },
+      ],
+      { session }
+    ),
     handleCategoryCountChange(
-      subject, courseNumber, semester, year,
-      classNumber, metricName, value, true, session
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metricName,
+      value,
+      true,
+      session
     ),
     UserModel.findOneAndUpdate(
       { googleId: context.user.googleId },
       { $inc: { classRatingsCount: 1 } },
       { session }
-    )
+    ),
   ]);
 };
 
@@ -253,23 +318,33 @@ const handleExistingRating = async (
 ) => {
   const oldValue = existingRating.value;
   if (oldValue === newValue) return;
-  
+
   existingRating.value = newValue;
   await existingRating.save({ session });
 
   await Promise.all([
     handleCategoryCountChange(
-      existingRating.subject, existingRating.courseNumber,
-      existingRating.semester, existingRating.year,
-      existingRating.classNumber, existingRating.metricName,
-      oldValue, false, session
+      existingRating.subject,
+      existingRating.courseNumber,
+      existingRating.semester,
+      existingRating.year,
+      existingRating.classNumber,
+      existingRating.metricName,
+      oldValue,
+      false,
+      session
     ),
     handleCategoryCountChange(
-      existingRating.subject, existingRating.courseNumber,
-      existingRating.semester, existingRating.year,
-      existingRating.classNumber, existingRating.metricName,
-      newValue, true, session
-    )
+      existingRating.subject,
+      existingRating.courseNumber,
+      existingRating.semester,
+      existingRating.year,
+      existingRating.classNumber,
+      existingRating.metricName,
+      newValue,
+      true,
+      session
+    ),
   ]);
 };
 
@@ -310,16 +385,21 @@ const handleCategoryCountChange = async (
         throw new Error("Invalid metric name");
     }
     for (const v of valueRange) {
-      await AggregatedMetricsModel.create([{
-        subject,
-        courseNumber,
-        semester,
-        year,
-        classNumber,
-        metricName,
-        categoryValue: v,
-        categoryCount: v == categoryValue ? 1 : 0,
-      }], { session });
+      await AggregatedMetricsModel.create(
+        [
+          {
+            subject,
+            courseNumber,
+            semester,
+            year,
+            classNumber,
+            metricName,
+            categoryValue: v,
+            categoryCount: v == categoryValue ? 1 : 0,
+          },
+        ],
+        { session }
+      );
     }
   } else {
     throw new Error("Aggregated Rating does not exist, cannot decrement");
