@@ -52,10 +52,10 @@ export function getMetricStatus(
 
 export function getStatusColor(weightedAverage: number): string {
   if (weightedAverage >= 4) {
-    return "statusGreen";
+    return "statusRed";
   } else if (weightedAverage >= 2) {
     return "statusOrange";
   } else {
-    return "statusRed";
+    return "statusGreen";
   }
 }
