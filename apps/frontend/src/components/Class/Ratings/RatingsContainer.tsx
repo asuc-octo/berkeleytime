@@ -160,7 +160,6 @@ export function RatingsContainer() {
       semester: currentClass.semester,
       year: currentClass.year,
       classNumber: currentClass.number,
-      isAllTime: selectedTerm === "all",
     },
   });
 

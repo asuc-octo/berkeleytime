@@ -7,7 +7,6 @@ export const GET_AGGREGATED_RATINGS = gql`
     $semester: Semester!
     $year: Int!
     $classNumber: String!
-    $isAllTime: Boolean!
   ) {
     aggregatedRatings(
       subject: $subject
@@ -15,7 +14,6 @@ export const GET_AGGREGATED_RATINGS = gql`
       semester: $semester
       year: $year
       classNumber: $classNumber
-      isAllTime: $isAllTime
     ) {
       metrics {
         metricName
