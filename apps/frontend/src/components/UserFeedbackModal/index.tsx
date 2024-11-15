@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Select from "@radix-ui/react-select";
+import ReactSelect from "react-select";
 
 import { Button } from "@repo/theme";
 
@@ -10,8 +11,6 @@ import { Semester } from "@/lib/api/terms";
 import { AttendanceForm } from "./AttendanceForm";
 import { RatingsForm } from "./RatingForm";
 import styles from "./UserFeedbackModal.module.scss";
-
-import ReactSelect from "react-select";
 
 interface Term {
   value: string;
@@ -109,21 +108,24 @@ export function UserFeedbackModal({
           <form onSubmit={handleSubmit}>
             <div className={styles.modalContent}>
               <div className={styles.combinedForm}>
-
-              <div className={styles.ratingSection}>
-                <div className={styles.formGroup}>
-                  <p>1. What semester did you take this course?</p>
-                  <ReactSelect
-                  id="term-selection"
-                  options={availableTerms.map(term => ({
-                    value: term.value,
-                    label: term.label
-                  }))}
-                  value={availableTerms.find(term => term.value === selectedTerm)}
-                  onChange={(selectedOption:any) => setSelectedTerm(selectedOption?.value || defaultTerm)}
-                  classNamePrefix="termDropdown" // Prefix for custom styles
-                />
-                  {/* <Select.Root 
+                <div className={styles.ratingSection}>
+                  <div className={styles.formGroup}>
+                    <p>1. What semester did you take this course?</p>
+                    <ReactSelect
+                      id="term-selection"
+                      options={availableTerms.map((term) => ({
+                        value: term.value,
+                        label: term.label,
+                      }))}
+                      value={availableTerms.find(
+                        (term) => term.value === selectedTerm
+                      )}
+                      onChange={(selectedOption: any) =>
+                        setSelectedTerm(selectedOption?.value || defaultTerm)
+                      }
+                      classNamePrefix="termDropdown" // Prefix for custom styles
+                    />
+                    {/* <Select.Root 
                 value={selectedTerm} 
                 onValueChange={(value) => setSelectedTerm(value)}
               >
@@ -145,12 +147,12 @@ export function UserFeedbackModal({
                   </Select.Content>
                 </Select.Portal>
               </Select.Root> */}
+                  </div>
                 </div>
-              </div>
 
                 {/* Pass `ratings` and `setRatings` to `RatingsForm` */}
                 <RatingsForm ratings={ratings} setRatings={setRatings} />
-                <AttendanceForm/>
+                <AttendanceForm />
               </div>
             </div>
 

@@ -4,11 +4,11 @@ import { useMutation, useQuery } from "@apollo/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { NavArrowDown } from "iconoir-react";
 import _ from "lodash";
+import ReactSelect from "react-select";
 
 import { Button, Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
-import ReactSelect from "react-select";
 import useClass from "@/hooks/useClass";
 import {
   CREATE_RATING,
@@ -279,7 +279,9 @@ export function RatingsContainer() {
 
     return aggregatedRatings.aggregatedRatings.metrics.map((metric: any) => {
       const allCategories = [5, 4, 3, 2, 1].map((rating) => {
-        const category = metric.categories.find((cat: any) => cat.value === rating);
+        const category = metric.categories.find(
+          (cat: any) => cat.value === rating
+        );
         return {
           rating,
           percentage: category ? (category.count / metric.count) * 100 : 0,
@@ -300,24 +302,32 @@ export function RatingsContainer() {
   if (courseLoading) {
     return <div>Loading course data...</div>;
   }
-  
-    return (
-      <div className={styles.root}>
-        <Container size="sm">
-        <div className={styles.header}>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <Button onClick={() => setModalOpen(true)}>Add a review</Button>
 
-              {/* Replace select dropdown with ReactSelect */}
-              <ReactSelect
-                options={[{ value: "all", label: "All Terms" }, ...availableTerms]}
-                value={availableTerms.find(term => term.value === selectedTerm) || { value: "all", label: "All Terms" }}
-                onChange={(option) => setSelectedTerm(option?.value || "all")}
-                classNamePrefix="termDropdown" // Prefix for custom styles
-                placeholder="Select term"
-              />
-            </div>
+  return (
+    <div className={styles.root}>
+      <Container size="sm">
+        <div className={styles.header}>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <Button onClick={() => setModalOpen(true)}>Add a review</Button>
+
+            {/* Replace select dropdown with ReactSelect */}
+            <ReactSelect
+              options={[
+                { value: "all", label: "All Terms" },
+                ...availableTerms,
+              ]}
+              value={
+                availableTerms.find((term) => term.value === selectedTerm) || {
+                  value: "all",
+                  label: "All Terms",
+                }
+              }
+              onChange={(option) => setSelectedTerm(option?.value || "all")}
+              classNamePrefix="termDropdown" // Prefix for custom styles
+              placeholder="Select term"
+            />
           </div>
+        </div>
 
         <div className={styles.ratingsContainer}>
           {ratingsData?.map((ratingData) => (

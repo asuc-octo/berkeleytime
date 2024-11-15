@@ -54,7 +54,6 @@ export function RatingsForm({ ratings, setRatings }: RatingsFormProps) {
 
   return (
     <div className={styles.ratingSection}>
-
       {renderRatingScale(
         "usefulness",
         "2. How would you rate the usefulness of this course?",

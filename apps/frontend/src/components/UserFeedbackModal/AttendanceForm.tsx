@@ -54,7 +54,6 @@ export function AttendanceForm() {
 
   return (
     <div className={styles.attendanceSection}>
-
       {/* Question 5 */}
       <div className={styles.formGroup}>
         <p>5. Is lecture attendance required?</p>

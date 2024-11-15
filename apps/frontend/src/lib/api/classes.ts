@@ -220,7 +220,6 @@ export interface IClass {
   term: ITerm;
   gradeDistribution: GradeDistribution;
   aggregatedRatings: IAggregatedRatings;
-  
 
   // Attributes
   session: string;
@@ -231,7 +230,6 @@ export interface IClass {
   unitsMax: number;
   unitsMin: number;
 }
-
 
 export interface ReadClassResponse {
   class: IClass;
