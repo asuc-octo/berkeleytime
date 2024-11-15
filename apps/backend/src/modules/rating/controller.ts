@@ -31,6 +31,10 @@ export const booleanScaleMetrics = [
   "Recommended",
 ] as MetricName[];
 
+const getSemestersByInstructor = async (instructorId: string) => {
+  return [];  // TODO: Implement this function
+};
+
 export const createRating = async (
   context: any,
   subject: string,
