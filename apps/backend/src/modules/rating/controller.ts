@@ -58,7 +58,7 @@ export const getRatingByInstructor = async (
     courseNumber
   );
   return semesters;
-}
+};
 
 export const createRating = async (
   context: any,
