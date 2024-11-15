@@ -7,6 +7,7 @@ import {
   formatAggregatedRatings,
   formatUserClassRatings,
   formatUserRatings,
+  instructorSemestersAggregator,
 } from "./formatter";
 import {
   ratingAggregator,
@@ -31,8 +32,14 @@ export const booleanScaleMetrics = [
   "Recommended",
 ] as MetricName[];
 
-const getSemestersByInstructor = async (instructorId: string) => {
-  return [];  // TODO: Implement this function
+const getSemestersByInstructor = async (
+  professorName: string,
+  subject: string, 
+  courseNumber: string,
+): Promise<string[]> => {
+  const semesterInstances = await instructorSemestersAggregator(professorName, subject, courseNumber);
+  const result = semesterInstances.map((i: any) => i._id);
+  return result;
 };
 
 export const createRating = async (
