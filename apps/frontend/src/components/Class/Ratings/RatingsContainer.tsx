@@ -27,7 +27,9 @@ import {
   getStatusColor,
 } from "./helper/metricsUtil";
 
-const PLACEHOLDER = true;
+
+// remove before prod
+const PLACEHOLDER = false;
 
 interface RatingDetailProps {
   title: string;
