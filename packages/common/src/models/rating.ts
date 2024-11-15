@@ -96,7 +96,6 @@ aggregatedMetricsSchema.index({
   semester: 1,
   year: 1,
   metricName: 1,
-  categoryCount: 1,
   categoryValue: 1,
 });
 
