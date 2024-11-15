@@ -34,10 +34,14 @@ export const booleanScaleMetrics = [
 
 const getSemestersByInstructor = async (
   professorName: string,
-  subject: string, 
-  courseNumber: string,
+  subject: string,
+  courseNumber: string
 ): Promise<string[]> => {
-  const semesterInstances = await instructorSemestersAggregator(professorName, subject, courseNumber);
+  const semesterInstances = await instructorSemestersAggregator(
+    professorName,
+    subject,
+    courseNumber
+  );
   const result = semesterInstances.map((i: any) => i._id);
   return result;
 };

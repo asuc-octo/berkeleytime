@@ -1,6 +1,10 @@
 import { FilterQuery } from "mongoose";
 
-import { AggregatedMetricsModel, RatingModel, SectionModel } from "@repo/common";
+import {
+  AggregatedMetricsModel,
+  RatingModel,
+  SectionModel,
+} from "@repo/common";
 
 import { Semester } from "../../../generated-types/graphql";
 
@@ -171,8 +175,8 @@ export const userClassRatingsAggregator = async (
 
 export const instructorSemestersAggregator = async (
   professorName: string,
-  subject: string, 
-  courseNumber: string,
+  subject: string,
+  courseNumber: string
 ) => {
   const displayName = subject + " " + courseNumber;
   return await SectionModel.aggregate([
@@ -180,30 +184,30 @@ export const instructorSemestersAggregator = async (
       $match: {
         "class.course.displayName": displayName,
         "component.code": "LEC",
-        "meetings": {
+        meetings: {
           $elemMatch: {
-            "assignedInstructors": {
+            assignedInstructors: {
               $elemMatch: {
                 "instructor.names": {
                   $elemMatch: {
-                    "formattedName": professorName
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                    formattedName: professorName,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
     {
       $group: {
-        _id: "$class.session.term.name"
-      }
+        _id: "$class.session.term.name",
+      },
     },
     {
       $match: {
-        "_id": { $ne: null }
-      }
-    }
-  ])
+        _id: { $ne: null },
+      },
+    },
+  ]);
 };
