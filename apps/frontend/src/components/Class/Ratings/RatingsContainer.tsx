@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { NavArrowDown } from "iconoir-react";
 import _ from "lodash";
+import ReactSelect from "react-select";
 
 import { Button, Container } from "@repo/theme";
 
@@ -27,9 +28,9 @@ import {
   getStatusColor,
 } from "./helper/metricsUtil";
 
-<<<<<<< HEAD
-
 // remove before prod
+=======
+>>>>>>> 6c66a8e860b1b74353ce237ae58ea4e50621a15b
 const PLACEHOLDER = false;
 
 interface RatingDetailProps {
@@ -279,9 +280,11 @@ export function RatingsContainer() {
       return null;
     }
 
-    return aggregatedRatings.aggregatedRatings.metrics.map((metric) => {
+    return aggregatedRatings.aggregatedRatings.metrics.map((metric: any) => {
       const allCategories = [5, 4, 3, 2, 1].map((rating) => {
-        const category = metric.categories.find((cat) => cat.value === rating);
+        const category = metric.categories.find(
+          (cat: any) => cat.value === rating
+        );
         return {
           rating,
           percentage: category ? (category.count / metric.count) * 100 : 0,
@@ -309,21 +312,23 @@ export function RatingsContainer() {
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             <Button onClick={() => setModalOpen(true)}>Add a review</Button>
-            <select
-              className={styles.termSelect}
-              value={selectedTerm}
-              onChange={(e) => setSelectedTerm(e.target.value)}
-            >
-              <option value="all">All Terms</option>
-              {availableTerms.map((term) => (
-                <option
-                  key={`${term.semester}-${term.year}`}
-                  value={term.value}
-                >
-                  {term.label}
-                </option>
-              ))}
-            </select>
+
+            {/* Replace select dropdown with ReactSelect */}
+            <ReactSelect
+              options={[
+                { value: "all", label: "All Terms" },
+                ...availableTerms,
+              ]}
+              value={
+                availableTerms.find((term) => term.value === selectedTerm) || {
+                  value: "all",
+                  label: "All Terms",
+                }
+              }
+              onChange={(option) => setSelectedTerm(option?.value || "all")}
+              classNamePrefix="termDropdown" // Prefix for custom styles
+              placeholder="Select term"
+            />
           </div>
         </div>
 
