@@ -7,7 +7,7 @@ import {
   formatAggregatedRatings,
   formatUserClassRatings,
   formatUserRatings,
-  instructorSemestersAggregator,
+  semestersByInstructorAggregator,
 } from "./formatter";
 import {
   ratingAggregator,
@@ -37,7 +37,7 @@ const getSemestersByInstructor = async (
   subject: string,
   courseNumber: string
 ): Promise<string[]> => {
-  const semesterInstances = await instructorSemestersAggregator(
+  const semesterInstances = await semestersByInstructorAggregator(
     professorName,
     subject,
     courseNumber

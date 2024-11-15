@@ -173,7 +173,7 @@ export const userClassRatingsAggregator = async (
   ]);
 };
 
-export const instructorSemestersAggregator = async (
+export const semestersByInstructorAggregator = async (
   professorName: string,
   subject: string,
   courseNumber: string
