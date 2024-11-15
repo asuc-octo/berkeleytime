@@ -8,6 +8,7 @@ import _ from "lodash";
 import { Button, Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
+import ReactSelect from "react-select";
 import useClass from "@/hooks/useClass";
 import {
   CREATE_RATING,
@@ -27,7 +28,7 @@ import {
   getStatusColor,
 } from "./helper/metricsUtil";
 
-const PLACEHOLDER = true;
+const PLACEHOLDER = false;
 
 interface RatingDetailProps {
   title: string;
@@ -299,30 +300,24 @@ export function RatingsContainer() {
   if (courseLoading) {
     return <div>Loading course data...</div>;
   }
-
-  return (
-    <div className={styles.root}>
-      <Container size="sm">
+  
+    return (
+      <div className={styles.root}>
+        <Container size="sm">
         <div className={styles.header}>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            <Button onClick={() => setModalOpen(true)}>Add a review</Button>
-            <select
-              className={styles.termSelect}
-              value={selectedTerm}
-              onChange={(e) => setSelectedTerm(e.target.value)}
-            >
-              <option value="all">All Terms</option>
-              {availableTerms.map((term) => (
-                <option
-                  key={`${term.semester}-${term.year}`}
-                  value={term.value}
-                >
-                  {term.label}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <Button onClick={() => setModalOpen(true)}>Add a review</Button>
+
+              {/* Replace select dropdown with ReactSelect */}
+              <ReactSelect
+                options={[{ value: "all", label: "All Terms" }, ...availableTerms]}
+                value={availableTerms.find(term => term.value === selectedTerm) || { value: "all", label: "All Terms" }}
+                onChange={(option) => setSelectedTerm(option?.value || "all")}
+                classNamePrefix="termDropdown" // Prefix for custom styles
+                placeholder="Select term"
+              />
+            </div>
           </div>
-        </div>
 
         <div className={styles.ratingsContainer}>
           {ratingsData?.map((ratingData) => (

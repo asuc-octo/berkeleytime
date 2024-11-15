@@ -322,8 +322,13 @@ export default function Class({
                 <MenuItem>Grades</MenuItem>
               </Tabs.Trigger>
               <Tabs.Trigger value="ratings" asChild>
-                <MenuItem>Ratings</MenuItem>
-              </Tabs.Trigger>
+      <MenuItem>
+        Ratings
+        {_class.aggregatedRatings?.metrics[0]?.count > 0 && (
+          <span className={styles.badge}>{_class.aggregatedRatings.metrics[0].count}</span>
+        )}
+      </MenuItem>
+    </Tabs.Trigger>
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
@@ -348,10 +353,15 @@ export default function Class({
                 )}
               </NavLink>
               <NavLink to={{ pathname: "ratings" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Ratings</MenuItem>
-                )}
-              </NavLink>
+              {({ isActive }) => (
+                <MenuItem active={isActive}>
+                  Ratings
+                  {_class.aggregatedRatings?.metrics[0]?.count > 0 && (
+                    <span className={styles.badge}>{_class.aggregatedRatings.metrics[0].count}</span>
+                  )}
+                </MenuItem>
+              )}
+            </NavLink>
             </div>
           )}
         </Container>

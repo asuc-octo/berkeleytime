@@ -11,6 +11,8 @@ import { AttendanceForm } from "./AttendanceForm";
 import { RatingsForm } from "./RatingForm";
 import styles from "./UserFeedbackModal.module.scss";
 
+import ReactSelect from "react-select";
+
 interface Term {
   value: string;
   label: string;
@@ -99,11 +101,30 @@ export function UserFeedbackModal({
             <Dialog.Title className={styles.modalTitle}>{title}</Dialog.Title>
             <div className={styles.subtitleRow}>
               <Dialog.Description className={styles.modalSubtitle}>
-                {currentClass.subject} {currentClass.courseNumber}{" "}
-                {currentClass.number}
+                {currentClass.subject} {currentClass.courseNumber}
               </Dialog.Description>
-              <Select.Root
-                value={selectedTerm}
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className={styles.modalContent}>
+              <div className={styles.combinedForm}>
+
+              <div className={styles.ratingSection}>
+                <div className={styles.formGroup}>
+                  <p>1. What semester did you take this course?</p>
+                  <ReactSelect
+                  id="term-selection"
+                  options={availableTerms.map(term => ({
+                    value: term.value,
+                    label: term.label
+                  }))}
+                  value={availableTerms.find(term => term.value === selectedTerm)}
+                  onChange={(selectedOption) => setSelectedTerm(selectedOption?.value || defaultTerm)}
+                  classNamePrefix="termDropdown" // Prefix for custom styles
+                />
+                  {/* <Select.Root 
+                value={selectedTerm} 
                 onValueChange={(value) => setSelectedTerm(value)}
               >
                 <Select.Trigger className={styles.termDropdown}>
@@ -123,13 +144,10 @@ export function UserFeedbackModal({
                     </Select.Viewport>
                   </Select.Content>
                 </Select.Portal>
-              </Select.Root>
-            </div>
-          </div>
+              </Select.Root> */}
+                </div>
+              </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className={styles.modalContent}>
-              <div className={styles.combinedForm}>
                 {/* Pass `ratings` and `setRatings` to `RatingsForm` */}
                 <RatingsForm ratings={ratings} setRatings={setRatings} />
                 <AttendanceForm currentClass={currentClass} />
