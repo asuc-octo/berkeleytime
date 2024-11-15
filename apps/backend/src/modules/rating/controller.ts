@@ -7,12 +7,12 @@ import {
   formatAggregatedRatings,
   formatUserClassRatings,
   formatUserRatings,
-  semestersByInstructorAggregator,
 } from "./formatter";
 import {
   ratingAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
+  semestersByInstructorAggregator,
 } from "./helper/aggregator";
 import {
   checkRatingExists,
