@@ -10,9 +10,9 @@ import {
 } from "./formatter";
 import {
   ratingAggregator,
+  semestersByInstructorAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
-  semestersByInstructorAggregator,
 } from "./helper/aggregator";
 import {
   checkRatingExists,
@@ -45,6 +45,20 @@ const getSemestersByInstructor = async (
   const result = semesterInstances.map((i: any) => i._id);
   return result;
 };
+
+// not fully implemented
+export const getRatingByInstructor = async (
+  professorName: string,
+  subject: string,
+  courseNumber: string
+) => {
+  const semesters = await getSemestersByInstructor(
+    professorName,
+    subject,
+    courseNumber
+  );
+  return semesters;
+}
 
 export const createRating = async (
   context: any,
