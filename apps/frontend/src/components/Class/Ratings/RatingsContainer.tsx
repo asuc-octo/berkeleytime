@@ -29,8 +29,7 @@ import {
 } from "./helper/metricsUtil";
 
 // remove before prod
-=======
->>>>>>> 6c66a8e860b1b74353ce237ae58ea4e50621a15b
+
 const PLACEHOLDER = false;
 
 interface RatingDetailProps {
