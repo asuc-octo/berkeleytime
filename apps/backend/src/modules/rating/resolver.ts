@@ -84,3 +84,12 @@ const resolvers: RatingModule.Resolvers = {
 };
 
 export default resolvers;
+
+//create another query for rating ts
+professorSemesters: async (_, { profName }) => {
+  const semesters = await getProfessorSemesters(profName); // gets semesters for professor
+  return {
+    professor: profName,
+    semesters,
+  };
+}

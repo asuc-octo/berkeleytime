@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import {
   AggregatedMetricsModel,
   RatingModel,
@@ -7,11 +8,16 @@ import {
   MetricName,
   Semester,
 } from "../../generated-types/graphql";
+=======
+import { AggregatedMetricsModel, RatingModel } from "@repo/common";
+>>>>>>> Stashed changes
 import {
-  ratingAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
+  ratingAggregator,
 } from "./aggregator";
+import { MetricName, Semester } from "../../generated-types/graphql";
+import { SectionModel } from "@repo/common";
 import {
   formatAggregatedRatings,
   formatUserClassRatings,
@@ -23,6 +29,7 @@ const numberScaleMetrics = [
   "Difficulty",
   "Workload",
 ] as MetricName[];
+<<<<<<< Updated upstream
 
 const booleanScaleMetrics = [
   "Attendance",
@@ -30,6 +37,12 @@ const booleanScaleMetrics = [
 ] as MetricName[];
 
 const ratingThreshold = 100;
+=======
+const booleanScaleMetrics = [
+  "Attendance", 
+  "Recording"
+] as MetricName[];
+>>>>>>> Stashed changes
 
 export const createRating = async (
   context: any,
@@ -135,7 +148,7 @@ export const createRating = async (
       await user.save();
     }
   }
-  return await getClassAggregatedRatings(
+  return await getAggregatedRatings(
     subject,
     courseNumber,
     semester,
@@ -233,20 +246,20 @@ export const getUserRatings = async (context: any) => {
   return formatUserRatings(userRatings[0]);
 };
 
-export const getClassAggregatedRatings = async (
+export const getAggregatedRatings = async (
   subject: string,
   courseNumber: string,
   semester: Semester,
   year: number,
   classNumber: string
 ) => {
-  const aggregated = await ratingAggregator({
+  const aggregated = await ratingAggregator(
     subject,
     courseNumber,
     classNumber,
     semester,
-    year,
-  });
+    year
+  );
   if (!aggregated || !aggregated[0])
     return {
       subject,
@@ -254,27 +267,6 @@ export const getClassAggregatedRatings = async (
       semester,
       year,
       classNumber,
-      metrics: [],
-    };
-
-  return formatAggregatedRatings(aggregated[0]);
-};
-
-export const getCourseAggregatedRatings = async (
-  subject: string,
-  courseNumber: string
-) => {
-  const aggregated = await ratingAggregator({
-    subject,
-    courseNumber,
-  });
-  if (!aggregated || !aggregated[0])
-    return {
-      subject,
-      courseNumber,
-      semester: null,
-      year: null,
-      classNumber: null,
       metrics: [],
     };
 
@@ -367,3 +359,48 @@ const checkUserClassRatingsCount = async (context: any) => {
   const user = await UserModel.findOne({ googleId: context.user.googleId });
   return (user?.classRatingsCount || 0) < ratingThreshold;
 };
+// const getSemesterByProf (String: profName) {
+//   //get professor
+//   const sections = await SectionModel.find({
+//   //create combination of professor and year
+//   //get professor name in a list ex: (Yokota - 2019,2020,2021,2022,2023,2024 , Denero - )
+//   //prof found in sections
+// }
+// }
+
+const getSemesterByProf = async (profName: String) => {
+  try {
+    const sections = await SectionModel.aggregate([
+      {
+        $match: {
+          "meetings.assignedInstructors.instructor.names.familyName": profName,
+          "meetings.assignedInstructors.instructor.names.givenName": profName
+        },
+      },
+      { $unwind: "$meetings" },
+      { $unwind: "$meetings.assignedInstructors" },
+      {
+        $match: {
+          "meetings.assignedInstructors.instructor.names.formattedName": profName,
+        },
+      },
+      {
+        $group: {
+          _id: { year: { $year: "$startDate" }, semester: "$type" },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.semester": 1 } },
+    ]);
+    const semesters = sections.map((section) => ({
+      year: section._id.year,
+      semester: section._id.semester,
+    }));
+
+    return { professor: profName, semesters };
+  } catch (error) {
+    console.error("Error in getSemesterByProf:", error);
+    throw new Error("Failed to retrieve semesters for the professor");
+  }
+};
+
+

@@ -84,6 +84,11 @@ const typedef = gql`
       year: Int!
       classNumber: String!
     ): UserClass! @auth
+
+    recieveInstructures {
+      professor: String!
+      semesters: [SemesterAvailable!]!
+    }
   }
 
   """
