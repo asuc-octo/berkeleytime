@@ -37,9 +37,9 @@ interface UserFeedbackModalProps {
     termInfo: { semester: Semester; year: number }
   ) => Promise<void>;
   initialRatings?: {
-    usefulness: number;
-    difficulty: number;
-    workload: number;
+    usefulness: number | undefined;
+    difficulty: number | undefined;
+    workload: number | undefined;
   };
 }
 
@@ -120,7 +120,7 @@ export function UserFeedbackModal({
                     label: term.label
                   }))}
                   value={availableTerms.find(term => term.value === selectedTerm)}
-                  onChange={(selectedOption) => setSelectedTerm(selectedOption?.value || defaultTerm)}
+                  onChange={(selectedOption:any) => setSelectedTerm(selectedOption?.value || defaultTerm)}
                   classNamePrefix="termDropdown" // Prefix for custom styles
                 />
                   {/* <Select.Root 
@@ -150,7 +150,7 @@ export function UserFeedbackModal({
 
                 {/* Pass `ratings` and `setRatings` to `RatingsForm` */}
                 <RatingsForm ratings={ratings} setRatings={setRatings} />
-                <AttendanceForm currentClass={currentClass} />
+                <AttendanceForm/>
               </div>
             </div>
 

@@ -277,9 +277,9 @@ export function RatingsContainer() {
       return null;
     }
 
-    return aggregatedRatings.aggregatedRatings.metrics.map((metric) => {
+    return aggregatedRatings.aggregatedRatings.metrics.map((metric: any) => {
       const allCategories = [5, 4, 3, 2, 1].map((rating) => {
-        const category = metric.categories.find((cat) => cat.value === rating);
+        const category = metric.categories.find((cat: any) => cat.value === rating);
         return {
           rating,
           percentage: category ? (category.count / metric.count) * 100 : 0,
