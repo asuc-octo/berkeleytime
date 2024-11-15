@@ -26,6 +26,7 @@
     "fuse.js": "^7.0.0",
     "patch-package": "^8.0.0",
     "prettier": "^3.3.3",
+    "react-select": "^5.8.3",
     "turbo": "^2.2.3"
   },
   "name": "berkeleytime"

@@ -27,6 +27,7 @@ import {
   getStatusColor,
 } from "./helper/metricsUtil";
 
+<<<<<<< HEAD
 
 // remove before prod
 const PLACEHOLDER = false;

@@ -54,11 +54,9 @@ export function AttendanceForm() {
 
   return (
     <div className={styles.attendanceSection}>
-      <h2 className={styles.sectionTitle}>Attendance & Recording</h2>
-
-      {/* Question 1 */}
+      {/* Question 5 */}
       <div className={styles.formGroup}>
-        <p>1. Is lecture attendance required?</p>
+        <p>5. Is lecture attendance required?</p>
         <BooleanOptions
           name="lectureAttendance"
           value={attendance}
@@ -68,9 +66,9 @@ export function AttendanceForm() {
         />
       </div>
 
-      {/* Question 2 */}
+      {/* Question 6 */}
       <div className={styles.formGroup}>
-        <p>2. Were lectures recorded?</p>
+        <p>6. Were lectures recorded?</p>
         <BooleanOptions
           name="lecturesRecorded"
           value={recording}

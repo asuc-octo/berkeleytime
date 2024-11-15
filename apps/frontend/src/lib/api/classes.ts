@@ -183,6 +183,28 @@ export interface IMeeting {
   instructors: IInstructor[];
 }
 
+export interface IMetric {
+  categories: {
+    count: number;
+    value: number;
+  }[];
+  count: number;
+  metricName: string;
+  weightedAverage: number;
+}
+
+export interface IAggregatedRatings {
+  metrics: Array<{
+    count: number;
+    categories?: Array<{
+      count: number;
+      value: number;
+    }>;
+    metricName?: string;
+    weightedAverage?: number;
+  }>;
+}
+
 export interface IClass {
   // Identifiers
   year: number;
@@ -197,6 +219,7 @@ export interface IClass {
   sections: ISection[];
   term: ITerm;
   gradeDistribution: GradeDistribution;
+  aggregatedRatings: IAggregatedRatings;
 
   // Attributes
   session: string;

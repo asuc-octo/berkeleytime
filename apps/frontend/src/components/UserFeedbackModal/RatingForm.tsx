@@ -54,25 +54,23 @@ export function RatingsForm({ ratings, setRatings }: RatingsFormProps) {
 
   return (
     <div className={styles.ratingSection}>
-      <h2 className={styles.sectionTitle}>Course Ratings</h2>
-
       {renderRatingScale(
         "usefulness",
-        "1. How would you rate the usefulness of this course?",
+        "2. How would you rate the usefulness of this course?",
         "Not useful",
         "Very useful"
       )}
 
       {renderRatingScale(
         "difficulty",
-        "2. How would you rate the difficulty of this course?",
+        "3. How would you rate the difficulty of this course?",
         "Very easy",
         "Very difficult"
       )}
 
       {renderRatingScale(
         "workload",
-        "3. How would you rate the workload of this course?",
+        "4. How would you rate the workload of this course?",
         "Very light",
         "Very heavy"
       )}
