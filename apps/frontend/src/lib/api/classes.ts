@@ -273,6 +273,14 @@ export const READ_CLASS = gql`
         classes {
           year
           semester
+          primarySection {
+            meetings {
+              instructors {
+                familyName
+                givenName
+              }
+            }
+          }
         }
         gradeDistribution {
           average

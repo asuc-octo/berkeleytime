@@ -1,49 +1,81 @@
+import { useState } from 'react';
 import styles from "./UserFeedbackModal.module.scss";
 
+interface BooleanInputProps {
+  name: string;
+  value: number | null;
+  onChange: (value: number | null) => void;
+  yesLabel?: string;
+  noLabel?: string;
+}
+
+export function BooleanOptions({
+  name,
+  value,
+  onChange,
+  yesLabel = "Yes",
+  noLabel = "No",
+}: BooleanInputProps) {
+  const handleClick = (selectedValue: number) =>
+    onChange(value === selectedValue ? null : selectedValue);
+
+  return (
+    <div className={styles.radioOptions}>
+      {[{ label: yesLabel, value: 1 }, { label: noLabel, value: 0 }].map(
+        ({ label, value: optionValue }) => (
+          <label key={optionValue}>
+            <input
+              type="radio"
+              name={name}
+              value={optionValue}
+              checked={value === optionValue}
+              onChange={() => {}} // Required to avoid React warning
+              onClick={(e) => {
+                if ((e.target as HTMLInputElement).checked) {
+                  handleClick(optionValue);
+                } else {
+                  onChange(null);
+                }
+              }}
+            />
+            {label}
+          </label>
+        )
+      )}
+    </div>
+  );
+}
+
 export function AttendanceForm() {
+  const [attendance, setAttendance] = useState<number | null>(null);
+  const [recording, setRecording] = useState<number | null>(null);
+
   return (
     <div className={styles.attendanceSection}>
       <h2 className={styles.sectionTitle}>Attendance & Recording</h2>
+
+      {/* Question 1 */}
       <div className={styles.formGroup}>
         <p>1. Is lecture attendance required?</p>
-        <div className={styles.radioOptions}>
-          <label>
-            <input type="radio" name="lectureAttendance" value="yes" />
-            Yes, lecture attendance was required.
-          </label>
-          <label>
-            <input type="radio" name="lectureAttendance" value="no" />
-            No, lecture attendance was not required.
-          </label>
-        </div>
+        <BooleanOptions
+          name="lectureAttendance"
+          value={attendance}
+          onChange={setAttendance}
+          yesLabel="Yes, lecture attendance was required."
+          noLabel="No, lecture attendance was not required."
+        />
       </div>
 
+      {/* Question 2 */}
       <div className={styles.formGroup}>
-        <p>2. (If applicable) Was discussion attendance required?</p>
-        <div className={styles.radioOptions}>
-          <label>
-            <input type="radio" name="discussionAttendance" value="yes" />
-            Yes, discussion attendance was required.
-          </label>
-          <label>
-            <input type="radio" name="discussionAttendance" value="no" />
-            No, discussion attendance was not required.
-          </label>
-        </div>
-      </div>
-
-      <div className={styles.formGroup}>
-        <p>3. Were lectures recorded?</p>
-        <div className={styles.radioOptions}>
-          <label>
-            <input type="radio" name="lecturesRecorded" value="yes" />
-            Yes, lectures were recorded to bCourses.
-          </label>
-          <label>
-            <input type="radio" name="lecturesRecorded" value="no" />
-            No, lectures were not recorded to bCourses.
-          </label>
-        </div>
+        <p>2. Were lectures recorded?</p>
+        <BooleanOptions
+          name="lecturesRecorded"
+          value={recording}
+          onChange={setRecording}
+          yesLabel="Yes, lectures were recorded."
+          noLabel="No, lectures were not recorded."
+        />
       </div>
     </div>
   );

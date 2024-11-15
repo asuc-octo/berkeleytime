@@ -2,7 +2,7 @@
   background-color: rgb(0 0 0 / 60%);
   position: fixed;
   inset: 0;
-  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: overlayShow 100ms cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 50;
 }
 
@@ -18,7 +18,7 @@
   max-width: 600px;
   max-height: 85vh;
   padding: 24px;
-  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: contentShow 120ms cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 51;
 }
 
@@ -184,7 +184,10 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px var(--blue-200);
+  }
+
+  &:focus-visible {
+    outline: none;
   }
 }
 

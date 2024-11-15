@@ -1,27 +1,85 @@
 import * as Dialog from "@radix-ui/react-dialog";
-
+import * as Select from "@radix-ui/react-select";
 import { Button } from "@repo/theme";
-
-import { IClass } from "@/lib/api";
-
+import { useState } from "react";
 import { AttendanceForm } from "./AttendanceForm";
 import { RatingsForm } from "./RatingForm";
 import styles from "./UserFeedbackModal.module.scss";
+import { Semester } from "@/lib/api/terms";
+
+interface Term {
+  value: string;
+  label: string;
+  semester: Semester;
+  year: number;
+}
 
 interface UserFeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  subtitle?: string;
-  currentClass: IClass;
+  currentClass: {
+    subject: string;
+    courseNumber: string;
+    number: string;
+    semester: string;
+    year: number;
+  };
+  availableTerms: Term[];
+  onSubmit: (ratings: any, termInfo: { semester: Semester; year: number }) => Promise<void>;
+  initialRatings?: {
+    usefulness: number;
+    difficulty: number;
+    workload: number;
+  };
 }
 
-export default function UserFeedbackModal({
+export function UserFeedbackModal({
   isOpen,
   onClose,
   title,
   currentClass,
+  availableTerms = [],
+  onSubmit,
+  initialRatings = {
+    usefulness: 0,
+    difficulty: 0,
+    workload: 0
+  }
 }: UserFeedbackModalProps) {
+  const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
+  const [selectedTerm, setSelectedTerm] = useState(
+    availableTerms.length > 0 ? availableTerms[0].value : defaultTerm
+  );
+
+  // Lifted `ratings` state to ensure it can be accessed in `handleSubmit`
+  const [ratings, setRatings] = useState(initialRatings);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Log ratings before submission to verify the latest state
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Submitting ratings:", ratings); // Verify latest state before submission
+    setIsSubmitting(true);
+
+    try {
+      const selectedTermInfo = availableTerms.find(t => t.value === selectedTerm);
+      if (!selectedTermInfo) throw new Error('Invalid term selected');
+
+      // TODO: type safety issue for ratings?
+      await onSubmit(ratings, {
+        semester: selectedTermInfo.semester,
+        year: selectedTermInfo.year
+      });
+
+      onClose(); // Close the modal after successful submission
+    } catch (error) {
+      console.error("Error submitting ratings:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
@@ -32,36 +90,58 @@ export default function UserFeedbackModal({
             <Dialog.Title className={styles.modalTitle}>{title}</Dialog.Title>
             <div className={styles.subtitleRow}>
               <Dialog.Description className={styles.modalSubtitle}>
-                {currentClass.subject} {currentClass.courseNumber}{" "}
-                {currentClass.number}
+                {currentClass.subject} {currentClass.courseNumber} {currentClass.number}
               </Dialog.Description>
-              <select className={styles.termDropdown}>
-                <option>Fall 2024</option>
-                <option>
-                  {currentClass.semester} {currentClass.year}{" "}
-                </option>
-                <option>testing</option>
-                {/* figure out to get all da terms */}
-                {/* change ratings based on terms */}
-              </select>
+              <Select.Root 
+                value={selectedTerm} 
+                onValueChange={(value) => setSelectedTerm(value)}
+              >
+                <Select.Trigger className={styles.termDropdown}>
+                  <Select.Value />
+                </Select.Trigger>
+                <Select.Portal>
+                  <Select.Content>
+                    <Select.Viewport>
+                      {availableTerms.map((term) => (
+                        <Select.Item 
+                          key={`${term.semester}-${term.year}`}
+                          value={term.value}
+                        >
+                          <Select.ItemText>{term.label}</Select.ItemText>
+                        </Select.Item>
+                      ))}
+                    </Select.Viewport>
+                  </Select.Content>
+                </Select.Portal>
+              </Select.Root>
             </div>
           </div>
 
-          <div className={styles.modalContent}>
-            <div className={styles.combinedForm}>
-              <RatingsForm />
-              <AttendanceForm />
+          <form onSubmit={handleSubmit}>
+            <div className={styles.modalContent}>
+              <div className={styles.combinedForm}>
+                {/* Pass `ratings` and `setRatings` to `RatingsForm` */}
+                <RatingsForm 
+                  ratings={ratings} 
+                  setRatings={setRatings} 
+                />
+                <AttendanceForm currentClass={currentClass} />
+              </div>
             </div>
-          </div>
 
-          <div className={styles.modalFooter}>
-            <Dialog.Close asChild>
-              <Button variant="outline">Cancel</Button>
-            </Dialog.Close>
-            <Button type="submit">Submit</Button>
-          </div>
+            <div className={styles.modalFooter}>
+              <Dialog.Close asChild>
+                <Button variant="outline" type="button">Cancel</Button>
+              </Dialog.Close>
+              <Button type="submit">
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </Button>
+            </div>
+          </form>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
 }
+
+export default UserFeedbackModal;

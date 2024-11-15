@@ -2,17 +2,24 @@ import { useState } from "react";
 
 import styles from "./UserFeedbackModal.module.scss";
 
-export function RatingsForm() {
-  const [ratings, setRatings] = useState({
-    usefulness: 0,
-    difficulty: 0,
-    workload: 0,
-  });
+interface RatingsFormProps {
+  ratings: {
+    usefulness: number | undefined;
+    difficulty: number | undefined;
+    workload: number | undefined;
+  };
+  setRatings: React.Dispatch<React.SetStateAction<{
+    usefulness: number | undefined;
+    difficulty: number | undefined;
+    workload: number | undefined;
+  }>>;
+}
 
+export function RatingsForm({ ratings, setRatings }: RatingsFormProps) {
   const handleRatingClick = (type: keyof typeof ratings, value: number) => {
     setRatings((prev) => ({
       ...prev,
-      [type]: prev[type] === value ? 0 : value,
+      [type]: prev[type] === value ? undefined : value
     }));
   };
 
