@@ -38,6 +38,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
 }
 
 .modalSubtitle {
@@ -107,9 +109,8 @@
 
 .modalFooter {
   position: sticky;
-  
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 25px;
+  padding-top: 20px;
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
@@ -133,9 +134,9 @@
   }
 
   h3, p {
-    color: var(--heading-color);
+    color: var(--paragraph-color);
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 400;
     margin-bottom: 12px;
   }
 }
@@ -227,11 +228,11 @@
   }
 }
 
-.attendanceSection {
-  margin-top: 32px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border-color);
-}
+// .attendanceSection {
+//   margin-top: 32px;
+//   padding-top: 32px;
+//   border-top: 1px solid var(--border-color);
+// }
 
 @keyframes overlayShow {
   from {
@@ -277,5 +278,60 @@
   &:focus {
     outline: none;
     color: var(--heading-color);
+  }
+}
+
+
+/* Dropdown styling */
+.termDropdown__control {
+  padding: 6px 12px; /* Smaller padding */
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--heading-color);
+  background-color: pink;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  min-width: 120px;
+  max-width: 150px;
+
+  &:hover {
+    border-color: var(--blue-400);
+  }
+
+  &:focus-within {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 2px var(--blue-200);
+  }
+}
+
+/* Selected value */
+.termDropdown__single-value {
+  color: var(--heading-color);
+}
+
+/* Dropdown menu styling */
+.termDropdown__menu {
+  z-index: 100;
+  background-color: var(--foreground-color);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Dropdown option styling */
+.termDropdown__option {
+  padding: 8px 12px;
+  color: var(--paragraph-color);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--background-hover-color);
+  }
+
+  &--is-selected {
+    background-color: var(--blue-500);
+    color: white;
   }
 }

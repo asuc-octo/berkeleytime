@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Container } from "@repo/theme";
 import { useQuery, useMutation } from "@apollo/client";
 import UserFeedbackModal from "@/components/UserFeedbackModal";
+import ReactSelect from "react-select";
 import useClass from "@/hooks/useClass";
 import { NavArrowDown } from "iconoir-react";
 import * as Tooltip from "@radix-ui/react-tooltip";
@@ -25,7 +26,7 @@ import {
 import { 
   placeholderRatingsData 
 } from "./helper/devPlaceholderData";
-const PLACEHOLDER = true;
+const PLACEHOLDER = false;
 
 interface RatingDetailProps {
   title: string;
@@ -295,24 +296,18 @@ export function RatingsContainer() {
     return (
       <div className={styles.root}>
         <Container size="sm">
-          <div className={styles.header}>
+        <div className={styles.header}>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <Button onClick={() => setModalOpen(true)}>Add a review</Button>
-              <select
-                className={styles.termSelect}
-                value={selectedTerm}
-                onChange={(e) => setSelectedTerm(e.target.value)}
-              >
-                <option value="all">All Terms</option>
-                {availableTerms.map((term) => (
-                  <option 
-                    key={`${term.semester}-${term.year}`} 
-                    value={term.value}
-                  >
-                    {term.label}
-                  </option>
-                ))}
-              </select>
+
+              {/* Replace select dropdown with ReactSelect */}
+              <ReactSelect
+                options={[{ value: "all", label: "All Terms" }, ...availableTerms]}
+                value={availableTerms.find(term => term.value === selectedTerm) || { value: "all", label: "All Terms" }}
+                onChange={(option) => setSelectedTerm(option?.value || "all")}
+                classNamePrefix="termDropdown" // Prefix for custom styles
+                placeholder="Select term"
+              />
             </div>
           </div>
   
