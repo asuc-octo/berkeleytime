@@ -1,3 +1,3 @@
-import RatingsContainer from './RatingsContainer';
+import RatingsContainer from "./RatingsContainer";
 
 export default RatingsContainer;

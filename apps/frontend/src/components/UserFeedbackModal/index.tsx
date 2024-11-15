@@ -1,11 +1,15 @@
+import { useState } from "react";
+
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Select from "@radix-ui/react-select";
+
 import { Button } from "@repo/theme";
-import { useState } from "react";
+
+import { Semester } from "@/lib/api/terms";
+
 import { AttendanceForm } from "./AttendanceForm";
 import { RatingsForm } from "./RatingForm";
 import styles from "./UserFeedbackModal.module.scss";
-import { Semester } from "@/lib/api/terms";
 
 interface Term {
   value: string;
@@ -26,7 +30,10 @@ interface UserFeedbackModalProps {
     year: number;
   };
   availableTerms: Term[];
-  onSubmit: (ratings: any, termInfo: { semester: Semester; year: number }) => Promise<void>;
+  onSubmit: (
+    ratings: any,
+    termInfo: { semester: Semester; year: number }
+  ) => Promise<void>;
   initialRatings?: {
     usefulness: number;
     difficulty: number;
@@ -44,8 +51,8 @@ export function UserFeedbackModal({
   initialRatings = {
     usefulness: 0,
     difficulty: 0,
-    workload: 0
-  }
+    workload: 0,
+  },
 }: UserFeedbackModalProps) {
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
   const [selectedTerm, setSelectedTerm] = useState(
@@ -63,13 +70,15 @@ export function UserFeedbackModal({
     setIsSubmitting(true);
 
     try {
-      const selectedTermInfo = availableTerms.find(t => t.value === selectedTerm);
-      if (!selectedTermInfo) throw new Error('Invalid term selected');
+      const selectedTermInfo = availableTerms.find(
+        (t) => t.value === selectedTerm
+      );
+      if (!selectedTermInfo) throw new Error("Invalid term selected");
 
       // TODO: type safety issue for ratings?
       await onSubmit(ratings, {
         semester: selectedTermInfo.semester,
-        year: selectedTermInfo.year
+        year: selectedTermInfo.year,
       });
 
       onClose(); // Close the modal after successful submission
@@ -90,10 +99,11 @@ export function UserFeedbackModal({
             <Dialog.Title className={styles.modalTitle}>{title}</Dialog.Title>
             <div className={styles.subtitleRow}>
               <Dialog.Description className={styles.modalSubtitle}>
-                {currentClass.subject} {currentClass.courseNumber} {currentClass.number}
+                {currentClass.subject} {currentClass.courseNumber}{" "}
+                {currentClass.number}
               </Dialog.Description>
-              <Select.Root 
-                value={selectedTerm} 
+              <Select.Root
+                value={selectedTerm}
                 onValueChange={(value) => setSelectedTerm(value)}
               >
                 <Select.Trigger className={styles.termDropdown}>
@@ -103,7 +113,7 @@ export function UserFeedbackModal({
                   <Select.Content>
                     <Select.Viewport>
                       {availableTerms.map((term) => (
-                        <Select.Item 
+                        <Select.Item
                           key={`${term.semester}-${term.year}`}
                           value={term.value}
                         >
@@ -121,17 +131,16 @@ export function UserFeedbackModal({
             <div className={styles.modalContent}>
               <div className={styles.combinedForm}>
                 {/* Pass `ratings` and `setRatings` to `RatingsForm` */}
-                <RatingsForm 
-                  ratings={ratings} 
-                  setRatings={setRatings} 
-                />
+                <RatingsForm ratings={ratings} setRatings={setRatings} />
                 <AttendanceForm currentClass={currentClass} />
               </div>
             </div>
 
             <div className={styles.modalFooter}>
               <Dialog.Close asChild>
-                <Button variant="outline" type="button">Cancel</Button>
+                <Button variant="outline" type="button">
+                  Cancel
+                </Button>
               </Dialog.Close>
               <Button type="submit">
                 {isSubmitting ? "Submitting..." : "Submit"}

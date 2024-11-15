@@ -1,76 +1,76 @@
 import { gql } from "@apollo/client";
 
 export const GET_AGGREGATED_RATINGS = gql`
-query GetAggregatedRatings(
-  $subject: String!
-  $courseNumber: String!
-  $semester: Semester!
-  $year: Int!
-  $classNumber: String!
-  $isAllTime: Boolean!
-) {
-  aggregatedRatings(
-    subject: $subject
-    courseNumber: $courseNumber
-    semester: $semester
-    year: $year
-    classNumber: $classNumber
-    isAllTime: $isAllTime
+  query GetAggregatedRatings(
+    $subject: String!
+    $courseNumber: String!
+    $semester: Semester!
+    $year: Int!
+    $classNumber: String!
+    $isAllTime: Boolean!
   ) {
-    metrics {
-      metricName
-      count
-      weightedAverage
-      categories {
-        value
+    aggregatedRatings(
+      subject: $subject
+      courseNumber: $courseNumber
+      semester: $semester
+      year: $year
+      classNumber: $classNumber
+      isAllTime: $isAllTime
+    ) {
+      metrics {
+        metricName
         count
+        weightedAverage
+        categories {
+          value
+          count
+        }
       }
     }
   }
-}
 `;
 
 export const CREATE_RATING = gql`
-mutation CreateRating(
-  $subject: String!
-  $courseNumber: String!
-  $semester: Semester!
-  $year: Int!
-  $classNumber: String!
-  $metricName: MetricName!
-  $value: Int!
-) {
-  createRating(
-    subject: $subject
-    courseNumber: $courseNumber
-    semester: $semester
-    year: $year
-    classNumber: $classNumber
-    metricName: $metricName
-    value: $value
+  mutation CreateRating(
+    $subject: String!
+    $courseNumber: String!
+    $semester: Semester!
+    $year: Int!
+    $classNumber: String!
+    $metricName: MetricName!
+    $value: Int!
   ) {
-    metrics {
-      metricName
-      weightedAverage
-    }
-  }
-}
-`;
-
-export const GET_USER_RATINGS = gql`
-query GetUserRatings {
-  userRatings {
-    classes {
-      subject
-      courseNumber
-      semester
-      year
-      classNumber
+    createRating(
+      subject: $subject
+      courseNumber: $courseNumber
+      semester: $semester
+      year: $year
+      classNumber: $classNumber
+      metricName: $metricName
+      value: $value
+    ) {
       metrics {
         metricName
-        value
+        weightedAverage
       }
     }
   }
-}
+`;
+
+export const GET_USER_RATINGS = gql`
+  query GetUserRatings {
+    userRatings {
+      classes {
+        subject
+        courseNumber
+        semester
+        year
+        classNumber
+        metrics {
+          metricName
+          value
+        }
+      }
+    }
+  }
 `;

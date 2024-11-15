@@ -1,30 +1,32 @@
 import React, { useState } from "react";
+
+import { useMutation, useQuery } from "@apollo/client";
+import * as Tooltip from "@radix-ui/react-tooltip";
+import { NavArrowDown } from "iconoir-react";
+import _ from "lodash";
+
 import { Button, Container } from "@repo/theme";
-import { useQuery, useMutation } from "@apollo/client";
+
 import UserFeedbackModal from "@/components/UserFeedbackModal";
 import useClass from "@/hooks/useClass";
-import { NavArrowDown } from "iconoir-react";
-import * as Tooltip from "@radix-ui/react-tooltip";
-import _ from "lodash";
-import styles from "./Ratings.module.scss";
-import { Semester } from "@/lib/api/terms";
-import { 
+import {
+  CREATE_RATING,
+  GET_AGGREGATED_RATINGS,
+  GET_USER_RATINGS,
   READ_COURSE,
-  GET_USER_RATINGS, 
-  GET_AGGREGATED_RATINGS, 
-  CREATE_RATING
 } from "@/lib/api";
-import { 
+import { Semester } from "@/lib/api/terms";
+
+import styles from "./Ratings.module.scss";
+// TODO: Remove placeholder data before prod
+import { placeholderRatingsData } from "./helper/devPlaceholderData";
+import {
   MetricName,
-  getMetricTooltip, 
-  getMetricStatus, 
-  getStatusColor, 
+  getMetricStatus,
+  getMetricTooltip,
+  getStatusColor,
 } from "./helper/metricsUtil";
 
-// TODO: Remove placeholder data before prod
-import { 
-  placeholderRatingsData 
-} from "./helper/devPlaceholderData";
 const PLACEHOLDER = true;
 
 interface RatingDetailProps {
@@ -132,231 +134,242 @@ function RatingDetail({
 }
 
 export function RatingsContainer() {
-    const [isModalOpen, setModalOpen] = useState(false);
-    const { class: currentClass } = useClass();
-    const [selectedTerm, setSelectedTerm] = useState("all");
-  
-    // Course data for terms
-    const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
-      variables: {
-        subject: currentClass.subject,
-        number: currentClass.courseNumber,
-      },
-    });
-  
-    // Get user's existing ratings
-    const { data: userRatingsData } = useQuery(GET_USER_RATINGS);
-  
-    // Get aggregated ratings for display
-    const { data: aggregatedRatings } = useQuery(GET_AGGREGATED_RATINGS, {
-      variables: {
-        subject: currentClass.subject,
-        courseNumber: currentClass.courseNumber,
-        semester: currentClass.semester,
-        year: currentClass.year,
-        classNumber: currentClass.number,
-        isAllTime: selectedTerm === "all"
-      }
-    });
-  
-    // Create rating mutation
-    const [createRating] = useMutation(CREATE_RATING, {
-      refetchQueries: [
-        'GetUserRatings',
-        'GetAggregatedRatings'
-      ]
-    });
-  
-    const availableTerms = React.useMemo(() => {
-      if (!courseData?.course?.classes) return [];
-  
-      return _.chain(courseData.course.classes)
-        .map(classInfo => ({
-          value: `${classInfo.semester} ${classInfo.year}`,
-          label: `${classInfo.semester} ${classInfo.year}`,
-          semester: classInfo.semester as Semester,
-          year: classInfo.year
-        }))
-        .uniqBy(term => `${term.semester}-${term.year}`)
-        .orderBy(['year', term => {
-          const semesterOrder = {
-            [Semester.Spring]: 0,
-            [Semester.Summer]: 1,
-            [Semester.Fall]: 2,
-            [Semester.Winter]: 3
-          };
-          return semesterOrder[term.semester as Semester];
-        }], ['desc', 'asc'])
-        .value();
-    }, [courseData]);
-  
-    const userRatings = React.useMemo(() => {
-      if (!userRatingsData?.userRatings?.classes) return null;
-  
-      return userRatingsData.userRatings.classes.find(
-        (classRating: {
-          subject: string;
-          courseNumber: string;
-          semester: Semester;
-          year: number;
-          classNumber: string;
-        }) => 
-          classRating.subject === currentClass.subject &&
-          classRating.courseNumber === currentClass.courseNumber &&
-          classRating.semester === currentClass.semester &&
-          classRating.year === currentClass.year &&
-          classRating.classNumber === currentClass.number
-      );
-    }, [userRatingsData, currentClass]);
-  
-    const handleSubmitRatings = async (ratings: {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const { class: currentClass } = useClass();
+  const [selectedTerm, setSelectedTerm] = useState("all");
+
+  // Course data for terms
+  const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
+    variables: {
+      subject: currentClass.subject,
+      number: currentClass.courseNumber,
+    },
+  });
+
+  // Get user's existing ratings
+  const { data: userRatingsData } = useQuery(GET_USER_RATINGS);
+
+  // Get aggregated ratings for display
+  const { data: aggregatedRatings } = useQuery(GET_AGGREGATED_RATINGS, {
+    variables: {
+      subject: currentClass.subject,
+      courseNumber: currentClass.courseNumber,
+      semester: currentClass.semester,
+      year: currentClass.year,
+      classNumber: currentClass.number,
+      isAllTime: selectedTerm === "all",
+    },
+  });
+
+  // Create rating mutation
+  const [createRating] = useMutation(CREATE_RATING, {
+    refetchQueries: ["GetUserRatings", "GetAggregatedRatings"],
+  });
+
+  const availableTerms = React.useMemo(() => {
+    if (!courseData?.course?.classes) return [];
+
+    return _.chain(courseData.course.classes)
+      .map((classInfo) => ({
+        value: `${classInfo.semester} ${classInfo.year}`,
+        label: `${classInfo.semester} ${classInfo.year}`,
+        semester: classInfo.semester as Semester,
+        year: classInfo.year,
+      }))
+      .uniqBy((term) => `${term.semester}-${term.year}`)
+      .orderBy(
+        [
+          "year",
+          (term) => {
+            const semesterOrder = {
+              [Semester.Spring]: 0,
+              [Semester.Summer]: 1,
+              [Semester.Fall]: 2,
+              [Semester.Winter]: 3,
+            };
+            return semesterOrder[term.semester as Semester];
+          },
+        ],
+        ["desc", "asc"]
+      )
+      .value();
+  }, [courseData]);
+
+  const userRatings = React.useMemo(() => {
+    if (!userRatingsData?.userRatings?.classes) return null;
+
+    return userRatingsData.userRatings.classes.find(
+      (classRating: {
+        subject: string;
+        courseNumber: string;
+        semester: Semester;
+        year: number;
+        classNumber: string;
+      }) =>
+        classRating.subject === currentClass.subject &&
+        classRating.courseNumber === currentClass.courseNumber &&
+        classRating.semester === currentClass.semester &&
+        classRating.year === currentClass.year &&
+        classRating.classNumber === currentClass.number
+    );
+  }, [userRatingsData, currentClass]);
+
+  const handleSubmitRatings = async (
+    ratings: {
       usefulness: number;
       difficulty: number;
       workload: number;
-    }, termInfo: { semester: Semester; year: number }) => {
-        console.log("Submitting ratings:", ratings, "for term:", termInfo);
-      try {
-        await Promise.all([
-          createRating({
-            variables: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                semester: termInfo.semester,
-                year: termInfo.year,
-                classNumber: currentClass.number,
-                metricName: MetricName.Usefulness,
-                value: ratings.usefulness,
-            },
-          }),
-          createRating({
-            variables: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                semester: termInfo.semester,
-                year: termInfo.year,
-                classNumber: currentClass.number,
-                metricName: MetricName.Difficulty,
-                value: ratings.difficulty,
-            },
-          }),
-          createRating({
-            variables: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                semester: termInfo.semester,
-                year: termInfo.year,
-                classNumber: currentClass.number,
-                metricName: MetricName.Workload,
-                value: ratings.workload,
-            },
-          }),
-        ]);
-        
-        setModalOpen(false);
-      } catch (error) {
-        console.error('Error submitting ratings:', error);
-      }
-    };
+    },
+    termInfo: { semester: Semester; year: number }
+  ) => {
+    console.log("Submitting ratings:", ratings, "for term:", termInfo);
+    try {
+      await Promise.all([
+        createRating({
+          variables: {
+            subject: currentClass.subject,
+            courseNumber: currentClass.courseNumber,
+            semester: termInfo.semester,
+            year: termInfo.year,
+            classNumber: currentClass.number,
+            metricName: MetricName.Usefulness,
+            value: ratings.usefulness,
+          },
+        }),
+        createRating({
+          variables: {
+            subject: currentClass.subject,
+            courseNumber: currentClass.courseNumber,
+            semester: termInfo.semester,
+            year: termInfo.year,
+            classNumber: currentClass.number,
+            metricName: MetricName.Difficulty,
+            value: ratings.difficulty,
+          },
+        }),
+        createRating({
+          variables: {
+            subject: currentClass.subject,
+            courseNumber: currentClass.courseNumber,
+            semester: termInfo.semester,
+            year: termInfo.year,
+            classNumber: currentClass.number,
+            metricName: MetricName.Workload,
+            value: ratings.workload,
+          },
+        }),
+      ]);
 
-    // Transform aggregated ratings into display format
-    // TODO: Remove placeholder data before prod
-    const ratingsData = React.useMemo(() => {
-        if (PLACEHOLDER) {
-          return placeholderRatingsData;
-        }
-        if (!aggregatedRatings?.aggregatedRatings?.metrics) {
-          return null;
-        }
-
-        return aggregatedRatings.aggregatedRatings.metrics.map(metric => {
-          const allCategories = [5, 4, 3, 2, 1].map(rating => {
-            const category = metric.categories.find(cat => cat.value === rating);
-            return {
-              rating,
-              percentage: category ? (category.count / metric.count * 100) : 0,
-            };
-          });
-
-          return {
-            title: metric.metricName,
-            tooltip: getMetricTooltip(metric.metricName),
-            stats: allCategories,
-            status: getMetricStatus(metric.metricName, metric.weightedAverage),
-            statusColor: getStatusColor(metric.weightedAverage),
-            reviewCount: metric.count,
-          };
-        }) as RatingDetailProps[];
-    }, [aggregatedRatings]);
-
-    if (courseLoading) {
-        return <div>Loading course data...</div>;
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error submitting ratings:", error);
     }
-  
-    return (
-      <div className={styles.root}>
-        <Container size="sm">
-          <div className={styles.header}>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <Button onClick={() => setModalOpen(true)}>Add a review</Button>
-              <select
-                className={styles.termSelect}
-                value={selectedTerm}
-                onChange={(e) => setSelectedTerm(e.target.value)}
-              >
-                <option value="all">All Terms</option>
-                {availableTerms.map((term) => (
-                  <option 
-                    key={`${term.semester}-${term.year}`} 
-                    value={term.value}
-                  >
-                    {term.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+  };
+
+  // Transform aggregated ratings into display format
+  // TODO: Remove placeholder data before prod
+  const ratingsData = React.useMemo(() => {
+    if (PLACEHOLDER) {
+      return placeholderRatingsData;
+    }
+    if (!aggregatedRatings?.aggregatedRatings?.metrics) {
+      return null;
+    }
+
+    return aggregatedRatings.aggregatedRatings.metrics.map((metric) => {
+      const allCategories = [5, 4, 3, 2, 1].map((rating) => {
+        const category = metric.categories.find((cat) => cat.value === rating);
+        return {
+          rating,
+          percentage: category ? (category.count / metric.count) * 100 : 0,
+        };
+      });
+
+      return {
+        title: metric.metricName,
+        tooltip: getMetricTooltip(metric.metricName),
+        stats: allCategories,
+        status: getMetricStatus(metric.metricName, metric.weightedAverage),
+        statusColor: getStatusColor(metric.weightedAverage),
+        reviewCount: metric.count,
+      };
+    }) as RatingDetailProps[];
+  }, [aggregatedRatings]);
+
+  if (courseLoading) {
+    return <div>Loading course data...</div>;
+  }
+
+  return (
+    <div className={styles.root}>
+      <Container size="sm">
+        <div className={styles.header}>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <Button onClick={() => setModalOpen(true)}>Add a review</Button>
+            <select
+              className={styles.termSelect}
+              value={selectedTerm}
+              onChange={(e) => setSelectedTerm(e.target.value)}
+            >
+              <option value="all">All Terms</option>
+              {availableTerms.map((term) => (
+                <option
+                  key={`${term.semester}-${term.year}`}
+                  value={term.value}
+                >
+                  {term.label}
+                </option>
+              ))}
+            </select>
           </div>
-  
-          <div className={styles.ratingsContainer}>
-            {ratingsData?.map((ratingData) => (
-              <RatingDetail key={ratingData.title} {...ratingData} />
-            ))}
-          </div>
-  
-          <UserFeedbackModal
+        </div>
+
+        <div className={styles.ratingsContainer}>
+          {ratingsData?.map((ratingData) => (
+            <RatingDetail key={ratingData.title} {...ratingData} />
+          ))}
+        </div>
+
+        <UserFeedbackModal
           isOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
           title="Rate Course"
           currentClass={currentClass}
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
-          initialRatings={userRatingsData?.userRatings?.classes?.find(
-            (c: { 
-              subject: string; 
-              courseNumber: string; 
-              semester: Semester; 
-              year: number; 
-              classNumber: string 
-            }) => 
-              c.subject === currentClass.subject &&
-              c.courseNumber === currentClass.courseNumber &&
-              c.semester === currentClass.semester &&
-              c.year === currentClass.year &&
-              c.classNumber === currentClass.number
-          )?.metrics?.reduce((
-            acc: { [key: string]: number }, 
-            metric: { metricName: string; value: number }
-          ) => ({
-            ...acc,
-            [metric.metricName.toLowerCase()]: metric.value
-          }), {
-            usefulness: 0,
-            difficulty: 0,
-            workload: 0
-          })}
+          initialRatings={userRatingsData?.userRatings?.classes
+            ?.find(
+              (c: {
+                subject: string;
+                courseNumber: string;
+                semester: Semester;
+                year: number;
+                classNumber: string;
+              }) =>
+                c.subject === currentClass.subject &&
+                c.courseNumber === currentClass.courseNumber &&
+                c.semester === currentClass.semester &&
+                c.year === currentClass.year &&
+                c.classNumber === currentClass.number
+            )
+            ?.metrics?.reduce(
+              (
+                acc: { [key: string]: number },
+                metric: { metricName: string; value: number }
+              ) => ({
+                ...acc,
+                [metric.metricName.toLowerCase()]: metric.value,
+              }),
+              {
+                usefulness: 0,
+                difficulty: 0,
+                workload: 0,
+              }
+            )}
         />
-        </Container>
-      </div>
-    );
-  }
-  
-  export default RatingsContainer;
+      </Container>
+    </div>
+  );
+}
+
+export default RatingsContainer;

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState } from "react";
+
 import styles from "./UserFeedbackModal.module.scss";
 
 interface BooleanInputProps {
@@ -21,27 +22,28 @@ export function BooleanOptions({
 
   return (
     <div className={styles.radioOptions}>
-      {[{ label: yesLabel, value: 1 }, { label: noLabel, value: 0 }].map(
-        ({ label, value: optionValue }) => (
-          <label key={optionValue}>
-            <input
-              type="radio"
-              name={name}
-              value={optionValue}
-              checked={value === optionValue}
-              onChange={() => {}} // Required to avoid React warning
-              onClick={(e) => {
-                if ((e.target as HTMLInputElement).checked) {
-                  handleClick(optionValue);
-                } else {
-                  onChange(null);
-                }
-              }}
-            />
-            {label}
-          </label>
-        )
-      )}
+      {[
+        { label: yesLabel, value: 1 },
+        { label: noLabel, value: 0 },
+      ].map(({ label, value: optionValue }) => (
+        <label key={optionValue}>
+          <input
+            type="radio"
+            name={name}
+            value={optionValue}
+            checked={value === optionValue}
+            onChange={() => {}} // Required to avoid React warning
+            onClick={(e) => {
+              if ((e.target as HTMLInputElement).checked) {
+                handleClick(optionValue);
+              } else {
+                onChange(null);
+              }
+            }}
+          />
+          {label}
+        </label>
+      ))}
     </div>
   );
 }
