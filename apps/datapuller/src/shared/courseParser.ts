@@ -17,15 +17,19 @@ export default function mapCourseToNewCourse(
   const subject = original.subjectArea?.code?.replaceAll(" ", "");
   const essentialFields = { courseId, number, subject };
 
-  const missingField = Object.entries(essentialFields).find(([_, value]) => !value);
+  const missingField = Object.entries(essentialFields).find(
+    ([_, value]) => !value
+  );
   if (missingField) {
-    throw new Error(`Course ${subject} ${number} is missing essential field: ${missingField[0]}`);
+    throw new Error(
+      `Course ${subject} ${number} is missing essential field: ${missingField[0]}`
+    );
   }
 
   const newCourse: ICourseItem = {
-    courseId,
-    subject,
-    number,
+    courseId: courseId!,
+    subject: subject!,
+    number: number!,
     title: original.title,
     description: original.description,
     academicCareer: original.academicCareer?.code,

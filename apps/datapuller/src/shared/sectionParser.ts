@@ -10,7 +10,10 @@ export default function mapSectionToNewSection(
   const classNumber = original.class?.number;
   const sectionId = original.id?.toString();
   const number = original.number;
-  const subject = original.class?.course?.subjectArea?.code?.replaceAll(" ", "");
+  const subject = original.class?.course?.subjectArea?.code?.replaceAll(
+    " ",
+    ""
+  );
   const courseNumber = original.class?.course?.catalogNumber?.formatted;
   const year = parseInt(
     original.class?.session?.term?.name?.split(" ")[0] || "0",
@@ -18,30 +21,37 @@ export default function mapSectionToNewSection(
   );
   const semester = original.class?.session?.term?.name?.split(" ")[1] || "";
 
-  if (
-    !courseId ||
-    !classNumber ||
-    !sectionId ||
-    !number ||
-    !subject ||
-    !courseNumber ||
-    !year ||
-    !semester
-  ) {
-    throw new Error("Missing essential section fields");
-  }
-
-  const newSection: ISectionItem = {
+  const essentialFields = {
     courseId,
     classNumber,
-    sessionId: original.class?.session?.id,
-    termId: original.class?.session?.term?.id,
     sectionId,
     number,
     subject,
     courseNumber,
     year,
     semester,
+  };
+
+  const missingField = Object.entries(essentialFields).find(
+    ([_, value]) => !value
+  );
+  if (missingField) {
+    throw new Error(
+      `Section ${subject} ${courseNumber} ${number} is missing essential field: ${missingField[0]}`
+    );
+  }
+
+  const newSection: ISectionItem = {
+    courseId: courseId!,
+    classNumber: classNumber!,
+    sessionId: original.class?.session?.id,
+    termId: original.class?.session?.term?.id,
+    sectionId: sectionId!,
+    number: number!,
+    subject: subject!,
+    courseNumber: courseNumber!,
+    year: year!,
+    semester: semester!,
     component: original.component?.code,
     status: original.status?.code,
     instructionMode: original.instructionMode?.code,

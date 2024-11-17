@@ -27,10 +27,7 @@ export default function mapClassToNewClass(
   const sessionId = original.session?.id;
   const number = original.number;
   const courseNumber = original.course?.catalogNumber?.formatted;
-  const year = parseInt(
-    original.session?.term?.name?.split(" ")[0] || "0",
-    10
-  );
+  const year = parseInt(original.session?.term?.name?.split(" ")[0] || "0", 10);
   const semester = original.session?.term?.name?.split(" ")[1] || "";
   const subject = original.course?.subjectArea?.code?.replaceAll(" ", "");
   const essentialFields = {
@@ -41,24 +38,26 @@ export default function mapClassToNewClass(
     courseNumber,
     year,
     semester,
-    subject
+    subject,
   };
 
-  const missingField = Object.entries(essentialFields).find(([_, value]) => !value);
+  const missingField = Object.entries(essentialFields).find(
+    ([_, value]) => !value
+  );
 
   if (missingField) {
     throw new Error(`Missing essential class field: ${missingField[0]}`);
   }
 
   const newClass: IClassItem = {
-    courseId,
-    courseNumber,
-    year,
-    semester,
-    subject,
-    termId,
-    sessionId,
-    number,
+    courseId: courseId!,
+    courseNumber: courseNumber!,
+    year: year!,
+    semester: semester!,
+    subject: subject!,
+    termId: termId!,
+    sessionId: sessionId!,
+    number: number!,
     offeringNumber: original.offeringNumber,
     title: original.classTitle,
     description: original.classDescription,
