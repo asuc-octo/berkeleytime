@@ -26,13 +26,36 @@ export default function mapClassToNewClass(
   const termId = original.session?.term?.id;
   const sessionId = original.session?.id;
   const number = original.number;
+  const courseNumber = original.course?.catalogNumber?.formatted;
+  const year = parseInt(
+    original.session?.term?.name?.split(" ")[0] || "0",
+    10
+  );
+  const semester = original.session?.term?.name?.split(" ")[1] || "";
+  const subject = original.course?.subjectArea?.code?.replaceAll(" ", "");
+  const essentialFields = {
+    courseId,
+    termId,
+    sessionId,
+    number,
+    courseNumber,
+    year,
+    semester,
+    subject
+  };
 
-  if (!courseId || !termId || !sessionId || !number) {
-    throw new Error("Missing essential class fields");
+  const missingField = Object.entries(essentialFields).find(([_, value]) => !value);
+
+  if (missingField) {
+    throw new Error(`Missing essential class field: ${missingField[0]}`);
   }
 
   const newClass: IClassItem = {
     courseId,
+    courseNumber,
+    year,
+    semester,
+    subject,
     termId,
     sessionId,
     number,

@@ -14,10 +14,12 @@ export default function mapCourseToNewCourse(
     (i) => i.type === "cs-course-id"
   )?.id;
   const number = original.catalogNumber?.formatted;
-  const subject = original.subjectArea?.code;
+  const subject = original.subjectArea?.code?.replaceAll(" ", "");
+  const essentialFields = { courseId, number, subject };
 
-  if (!courseId || !number || !subject) {
-    throw new Error(`Course ${subject} ${number} is missing essential fields`);
+  const missingField = Object.entries(essentialFields).find(([_, value]) => !value);
+  if (missingField) {
+    throw new Error(`Course ${subject} ${number} is missing essential field: ${missingField[0]}`);
   }
 
   const newCourse: ICourseItem = {

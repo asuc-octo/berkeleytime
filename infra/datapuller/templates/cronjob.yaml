@@ -1,0 +1,49 @@
+# templates/datapuller-cronjob.yaml
+
+{{- if not (eq .Values.env "dev") }}
+# Do not run CronJob in dev environment
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "bt-datapuller.datapullerName" . }}
+  labels:
+    {{- include "bt-datapuller.datapullerLabels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.datapuller.schedule }}"
+  suspend: {{ .Values.datapuller.suspend }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: datapuller
+              image: "{{ .Values.datapuller.image.registry }}/{{ .Values.datapuller.image.repository }}:{{ .Values.datapuller.image.tag }}"
+              imagePullPolicy: Always
+              command: {{ .Values.datapuller.command | toJson }}
+              env:
+                - name: NODE_ENV
+                  value: {{ .Values.nodeEnv }}
+                - name: MONGODB_URI
+                  value: {{ .Values.mongoUri }}
+                - name: REDIS_URI
+                  value: {{ .Values.redisUri }}
+                - name: SIS_CLASS_APP_ID
+                  value: "_"
+                - name: SIS_CLASS_APP_KEY
+                  value: "_"
+                - name: SIS_COURSE_APP_ID
+                  value: "_"
+                - name: SIS_COURSE_APP_KEY
+                  value: "_"
+                - name: SIS_TERM_APP_ID
+                  value: "_"
+                - name: SIS_TERM_APP_KEY
+                  value: "_"
+                - name: GOOGLE_CLIENT_ID
+                  value: "_"
+                - name: GOOGLE_CLIENT_SECRET
+                  value: "_"
+                - name: SESSION_SECRET
+                  value: "_"
+          # restartPolicy: OnFailure
+{{- end }}

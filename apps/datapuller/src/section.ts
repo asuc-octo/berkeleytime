@@ -33,7 +33,7 @@ export async function updateSections(config: Config) {
 
   log.info("Example Section:", sections[0]);
 
-  await NewSectionModel.deleteMany({});
+  await NewSectionModel.deleteMany({"session.term.id": { $in: activeTerms }});
 
   // Insert sections in batches of 5000
   const insertBatchSize = 5000;

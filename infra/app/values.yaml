@@ -36,3 +36,10 @@ updater:
   schedule: "0 0 * * *"
   suspend: false
   command: ["npm", "run", "update:catalog", "--workspace=backend"]
+
+
+# TODO: create three different datapuller jobs and create seperate folder
+# datapuller:
+#   schedule: "0 0 * * *"
+#   suspend: false
+#   command: ["npm", "run", "update:courses", "--workspace=datapuller"]

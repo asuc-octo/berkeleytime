@@ -10,13 +10,13 @@ export default function mapSectionToNewSection(
   const classNumber = original.class?.number;
   const sectionId = original.id?.toString();
   const number = original.number;
-  const subject = original.class?.course?.subjectArea?.code;
+  const subject = original.class?.course?.subjectArea?.code?.replaceAll(" ", "");
   const courseNumber = original.class?.course?.catalogNumber?.formatted;
   const year = parseInt(
-    original.class?.session?.term?.name?.split(" ")[1] || "0",
+    original.class?.session?.term?.name?.split(" ")[0] || "0",
     10
   );
-  const semester = original.class?.session?.term?.name?.split(" ")[0] || "";
+  const semester = original.class?.session?.term?.name?.split(" ")[1] || "";
 
   if (
     !courseId ||

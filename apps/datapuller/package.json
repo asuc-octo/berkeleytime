@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "build": "tsc --noEmit",
-    "section": "tsx src/section.ts",
-    "class": "tsx src/class.ts",
-    "course": "tsx src/course.ts",
+    "update:courses": "tsx src/course.ts",
+    "update:sections": "tsx src/section.ts",
+    "update:classes": "tsx src/class.ts",
     "runDatapuller": "tsx src/runDatapuller.ts"
   },
   "devDependencies": {

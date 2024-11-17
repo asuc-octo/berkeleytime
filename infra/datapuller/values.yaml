@@ -1,0 +1,12 @@
+schedule: "0 0 * * *"
+suspend: false
+command: ["npm", "run", "update:courses", "--workspace=datapuller"]
+image:
+  registry: docker.io
+  repository: octoberkeleytime/bt-datapuller
+  tag: latest
+
+# These values might be overridden by the main app chart
+nodeEnv: production
+mongoUri: mongodb://localhost:27017/bt
+redisUri: redis://localhost:6379
