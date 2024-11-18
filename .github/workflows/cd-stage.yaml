@@ -32,7 +32,9 @@ jobs:
           kubectl rollout restart deployment bt-stage-app-frontend
         else
           # Install the Helm release if it doesn't exist
-          helm install bt-stage-app ./app --namespace=bt \
+          helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app \
+            --version=0.1.0-stage \
+            --namespace=bt \
             --set env=stage \
             --set frontend.image.tag=latest \
             --set backend.image.tag=latest \
