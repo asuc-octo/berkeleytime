@@ -296,6 +296,7 @@ export const READ_CLASS = gql`
         classes {
           year
           semester
+          number
           primarySection {
             meetings {
               instructors {

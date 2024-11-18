@@ -1,31 +1,24 @@
 
+import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
 import styles from "./UserFeedbackModal.module.scss";
 
 interface RatingsFormProps {
-  ratings: {
-    usefulness: number | undefined;
-    difficulty: number | undefined;
-    workload: number | undefined;
-  };
-  setRatings: React.Dispatch<
-    React.SetStateAction<{
-      usefulness: number | undefined;
-      difficulty: number | undefined;
-      workload: number | undefined;
-    }>
+  metricData: MetricData,
+  setMetricData: React.Dispatch<
+    React.SetStateAction<MetricData>
   >;
 }
 
-export function RatingsForm({ ratings, setRatings }: RatingsFormProps) {
-  const handleRatingClick = (type: keyof typeof ratings, value: number) => {
-    setRatings((prev) => ({
+export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
+  const handleRatingClick = (type: MetricName, value: number) => {
+    setMetricData((prev) => ({
       ...prev,
       [type]: prev[type] === value ? undefined : value,
     }));
   };
 
   const renderRatingScale = (
-    type: keyof typeof ratings,
+    type: MetricName,
     question: string,
     leftLabel: string,
     rightLabel: string
@@ -38,7 +31,7 @@ export function RatingsForm({ ratings, setRatings }: RatingsFormProps) {
           {[1, 2, 3, 4, 5].map((value) => (
             <button
               key={value}
-              className={`${styles.ratingButton} ${ratings[type] === value ? styles.selected : ""}`}
+              className={`${styles.ratingButton} ${metricData[type] === value ? styles.selected : ""}`}
               onClick={() => handleRatingClick(type, value)}
               type="button"
             >
@@ -54,21 +47,21 @@ export function RatingsForm({ ratings, setRatings }: RatingsFormProps) {
   return (
     <div className={styles.ratingSection}>
       {renderRatingScale(
-        "usefulness",
+        MetricName.Usefulness,
         "2. How would you rate the usefulness of this course?",
         "Not useful",
         "Very useful"
       )}
 
       {renderRatingScale(
-        "difficulty",
+        MetricName.Difficulty,
         "3. How would you rate the difficulty of this course?",
         "Very easy",
         "Very difficult"
       )}
 
       {renderRatingScale(
-        "workload",
+        MetricName.Workload,
         "4. How would you rate the workload of this course?",
         "Very light",
         "Very heavy"

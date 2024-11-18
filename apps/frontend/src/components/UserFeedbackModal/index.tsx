@@ -11,6 +11,7 @@ import { AttendanceForm } from "./AttendanceForm";
 import { RatingsForm } from "./RatingForm";
 import ConfirmationPopup from "./ConfirmationForm"; // Import the ConfirmationPopup component
 import styles from "./UserFeedbackModal.module.scss";
+import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
 
 interface Term {
   value: string;
@@ -32,14 +33,10 @@ interface UserFeedbackModalProps {
   };
   availableTerms: Term[];
   onSubmit: (
-      ratings: any,
+      metricData: MetricData,
       termInfo: { semester: Semester; year: number }
   ) => Promise<void>;
-  initialRatings?: {
-    usefulness: number | undefined;
-    difficulty: number | undefined;
-    workload: number | undefined;
-  };
+  initialMetricData: MetricData
 }
 
 export function UserFeedbackModal({
@@ -49,10 +46,12 @@ export function UserFeedbackModal({
                                     currentClass,
                                     availableTerms = [],
                                     onSubmit,
-                                    initialRatings = {
-                                      usefulness: 0,
-                                      difficulty: 0,
-                                      workload: 0,
+                                    initialMetricData = {
+                                      [MetricName.Usefulness]: undefined,
+                                      [MetricName.Difficulty]: undefined,
+                                      [MetricName.Workload]: undefined,
+                                      [MetricName.Attendance]: undefined,
+                                      [MetricName.Recording]: undefined
                                     },
                                   }: UserFeedbackModalProps) {
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
@@ -60,7 +59,7 @@ export function UserFeedbackModal({
       availableTerms.length > 0 ? availableTerms[0].value : defaultTerm
   );
 
-  const [ratings, setRatings] = useState(initialRatings);
+  const [metricData, setMetricData] = useState(initialMetricData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,7 +72,7 @@ export function UserFeedbackModal({
       );
       if (!selectedTermInfo) throw new Error("Invalid term selected");
 
-      await onSubmit(ratings, {
+      await onSubmit(metricData, {
         semester: selectedTermInfo.semester,
         year: selectedTermInfo.year,
       });
@@ -128,8 +127,8 @@ export function UserFeedbackModal({
                       </div>
                     </div>
 
-                    <RatingsForm ratings={ratings} setRatings={setRatings} />
-                    <AttendanceForm />
+                    <RatingsForm metricData={metricData} setMetricData={setMetricData} />
+                    <AttendanceForm metricData={metricData} setMetricData={setMetricData}/>
                   </div>
                 </div>
 

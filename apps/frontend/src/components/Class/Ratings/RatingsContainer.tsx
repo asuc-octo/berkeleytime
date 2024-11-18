@@ -22,17 +22,18 @@ import styles from "./Ratings.module.scss";
 // TODO: Remove placeholder data before prod
 import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
+  MetricData,
   MetricName,
   getMetricStatus,
   getMetricTooltip,
   getStatusColor,
+  isMetricRating,
 } from "./helper/metricsUtil";
 
-const PLACEHOLDER = true;
+const PLACEHOLDER = false;
 
 interface RatingDetailProps {
-  title: string;
-  tooltip: string;
+  metric: MetricName,
   stats: {
     rating: number;
     percentage: number;
@@ -43,8 +44,7 @@ interface RatingDetailProps {
 }
 
 function RatingDetail({
-  title,
-  tooltip,
+  metric,
   stats,
   status,
   statusColor,
@@ -75,7 +75,7 @@ function RatingDetail({
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className={styles.titleSection}>
-          <h3 className={styles.title}>{title}</h3>
+          <h3 className={styles.title}>{metric}</h3>
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <span className={styles.info}>ⓘ</span>
@@ -89,8 +89,8 @@ function RatingDetail({
               >
                 <Tooltip.Arrow className={styles.arrow} />
                 <div>
-                  <h4 className={styles.tooltipTitle}>{title}</h4>
-                  <p className={styles.tooltipDescription}>{tooltip}</p>
+                  <h4 className={styles.tooltipTitle}>{metric}</h4>
+                  <p className={styles.tooltipDescription}>{getMetricTooltip(metric)}</p>
                 </div>
               </Tooltip.Content>
             </Tooltip.Portal>
@@ -216,50 +216,26 @@ export function RatingsContainer() {
   }, [userRatingsData, currentClass]);
 
   const handleSubmitRatings = async (
-    ratings: {
-      usefulness: number;
-      difficulty: number;
-      workload: number;
-    },
+    metricValues: MetricData,
     termInfo: { semester: Semester; year: number }
   ) => {
-    console.log("Submitting ratings:", ratings, "for term:", termInfo);
+    console.log("Submitting ratings:", metricValues, "for term:", termInfo);
     try {
-      await Promise.all([
-        createRating({
-          variables: {
-            subject: currentClass.subject,
-            courseNumber: currentClass.courseNumber,
-            semester: termInfo.semester,
-            year: termInfo.year,
-            classNumber: currentClass.number,
-            metricName: MetricName.Usefulness,
-            value: ratings.usefulness,
-          },
-        }),
-        createRating({
-          variables: {
-            subject: currentClass.subject,
-            courseNumber: currentClass.courseNumber,
-            semester: termInfo.semester,
-            year: termInfo.year,
-            classNumber: currentClass.number,
-            metricName: MetricName.Difficulty,
-            value: ratings.difficulty,
-          },
-        }),
-        createRating({
-          variables: {
-            subject: currentClass.subject,
-            courseNumber: currentClass.courseNumber,
-            semester: termInfo.semester,
-            year: termInfo.year,
-            classNumber: currentClass.number,
-            metricName: MetricName.Workload,
-            value: ratings.workload,
-          },
-        }),
-      ]);
+      await Promise.all((Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
+        (metric) => {
+          return createRating({
+            variables: {
+              subject: currentClass.subject,
+              courseNumber: currentClass.courseNumber,
+              semester: termInfo.semester,
+              year: termInfo.year,
+              classNumber: currentClass.number,
+              metricName: metric,
+              value: metricValues[MetricName[metric]],
+            },
+          });
+        }
+      ));
 
       setModalOpen(false);
     } catch (error) {
@@ -270,9 +246,9 @@ export function RatingsContainer() {
   // Transform aggregated ratings into display format
   // TODO: Remove placeholder data before prod
   const ratingsData = React.useMemo(() => {
-    if (PLACEHOLDER) {
-      return placeholderRatingsData;
-    }
+    // if (PLACEHOLDER) {
+    //   return placeholderRatingsData;
+    // }
     if (!aggregatedRatings?.aggregatedRatings?.metrics) {
       return null;
     }
@@ -289,8 +265,7 @@ export function RatingsContainer() {
       });
 
       return {
-        title: metric.metricName,
-        tooltip: getMetricTooltip(metric.metricName),
+        metric: metric.metricName,
         stats: allCategories,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
         statusColor: getStatusColor(metric.weightedAverage),
@@ -330,8 +305,8 @@ export function RatingsContainer() {
         </div>
 
         <div className={styles.ratingsContainer}>
-          {ratingsData?.map((ratingData) => (
-            <RatingDetail key={ratingData.title} {...ratingData} />
+          {ratingsData?.filter((value: RatingDetailProps) => isMetricRating(value.metric)).map((ratingData: RatingDetailProps) => (
+            <RatingDetail key={ratingData.metric} {...ratingData} />
           ))}
         </div>
 
@@ -342,7 +317,7 @@ export function RatingsContainer() {
           currentClass={currentClass}
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
-          initialRatings={userRatingsData?.userRatings?.classes
+          initialMetricData={userRatingsData?.userRatings?.classes
             ?.find(
               (c: {
                 subject: string;
@@ -359,17 +334,12 @@ export function RatingsContainer() {
             )
             ?.metrics?.reduce(
               (
-                acc: { [key: string]: number },
+                acc: MetricData,
                 metric: { metricName: string; value: number }
               ) => ({
                 ...acc,
-                [metric.metricName.toLowerCase()]: metric.value,
-              }),
-              {
-                usefulness: 0,
-                difficulty: 0,
-                workload: 0,
-              }
+                [metric.metricName]: metric.value,
+              }), {}
             )}
         />
       </Container>

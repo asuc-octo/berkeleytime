@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import styles from "./UserFeedbackModal.module.scss";
+import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
 
 interface BooleanInputProps {
   name: string;
@@ -48,9 +49,20 @@ export function BooleanOptions({
   );
 }
 
-export function AttendanceForm() {
-  const [attendance, setAttendance] = useState<number | null>(null);
-  const [recording, setRecording] = useState<number | null>(null);
+interface AttendanceFormProps {
+  metricData: MetricData,
+  setMetricData: React.Dispatch<
+    React.SetStateAction<MetricData>
+  >;
+}
+
+export function AttendanceForm({ metricData, setMetricData } : AttendanceFormProps) {
+  const handleAttendanceClickClick = (type: MetricName, value: number | null) => {
+    setMetricData((prev) => ({
+      ...prev,
+      [type]: prev[type] === value ? undefined : value,
+    }));
+  };
 
   return (
     <div className={styles.attendanceSection}>
@@ -59,8 +71,8 @@ export function AttendanceForm() {
         <p>5. Is lecture attendance required?</p>
         <BooleanOptions
           name="lectureAttendance"
-          value={attendance}
-          onChange={setAttendance}
+          value={ metricData["Attendance"] ?? null }
+          onChange={(v) => handleAttendanceClickClick(MetricName.Attendance, v)}
           yesLabel="Yes, lecture attendance was required."
           noLabel="No, lecture attendance was not required."
         />
@@ -71,8 +83,8 @@ export function AttendanceForm() {
         <p>6. Were lectures recorded?</p>
         <BooleanOptions
           name="lecturesRecorded"
-          value={recording}
-          onChange={setRecording}
+          value={ metricData["Recording"] ?? null }
+          onChange={(v) => handleAttendanceClickClick(MetricName.Recording, v)}
           yesLabel="Yes, lectures were recorded."
           noLabel="No, lectures were not recorded."
         />
