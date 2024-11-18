@@ -10,62 +10,89 @@ import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
 
 interface AttendanceRequirementsProps {
-  attendanceRequired: boolean | null;
-  lecturesRecorded: boolean | null;
+    attendanceRequired: boolean | null;
+    lecturesRecorded: boolean | null;
+    submissionAmount?: number; // Optional prop with default value
 }
 
 export default function AttendanceRequirements({
-  attendanceRequired,
-  lecturesRecorded,
-}: AttendanceRequirementsProps) {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const { class: currentClass } = useClass();
+                                                   attendanceRequired,
+                                                   lecturesRecorded,
+                                                   submissionAmount = 0, // Default value set to 0
+                                               }: AttendanceRequirementsProps) {
+    const [isModalOpen, setModalOpen] = useState(false);
+    const { class: currentClass } = useClass();
 
-  return (
-    <div className={styles.attendanceRequirements}>
-      <p className={styles.label}>Attendance Requirements</p>
+    if (submissionAmount < 5) {
+        return (
+            <div className={styles.attendanceRequirements}>
+                <p className={styles.label}>Attendance Requirements</p>
+                <p className={styles.description}>No attendance information currently exists for this course.</p>
+                <a
+                    href="#"
+                    className={styles.suggestEdit}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setModalOpen(true);
+                    }}
+                >
+                    Took this course? Add what you know about attendance
+                </a>
+                <UserFeedbackModal
+                    isOpen={isModalOpen}
+                    onClose={() => setModalOpen(false)}
+                    title="Suggest an edit"
+                    subtitle={`${currentClass.subject} ${currentClass.courseNumber} • ${currentClass.semester} ${currentClass.year}`}
+                    currentClass={currentClass}
+                />
+            </div>
+        );
+    }
 
-      <div>
-        {attendanceRequired ? (
-          <UserCircle className={styles.icon} />
-        ) : (
-          <img className={styles.icon} src={MyIcon2} />
-        )}
-        <span className={styles.description}>
+    return (
+        <div className={styles.attendanceRequirements}>
+            <p className={styles.label}>Attendance Requirements</p>
+            <div>
+                {attendanceRequired ? (
+                    <UserCircle className={styles.icon} />
+                ) : (
+                    <img className={styles.icon} src={MyIcon2} />
+                )}
+                <span className={styles.description}>
           {attendanceRequired
-            ? "Attendance Required"
-            : "Attendance Not Required"}
+              ? "Attendance Required"
+              : "Attendance Not Required"}
         </span>
-      </div>
+            </div>
 
-      <div className={styles.description}>
-        {lecturesRecorded ? (
-          <Camera className={styles.icon} />
-        ) : (
-          <img className={styles.icon} src={MyIcon1} />
-        )}
-        <span>
+            <div className={styles.description}>
+                {lecturesRecorded ? (
+                    <Camera className={styles.icon} />
+                ) : (
+                    <img className={styles.icon} src={MyIcon1} />
+                )}
+                <span>
           {lecturesRecorded ? "Lectures Recorded" : "Lectures Not Recorded"}
         </span>
-      </div>
-      <a
-        href="#"
-        className={styles.suggestEdit}
-        onClick={(e) => {
-          e.preventDefault();
-          setModalOpen(true);
-        }}
-      >
-        Look inaccurate? Suggest an edit
-      </a>
+            </div>
+            <a
+                href="#"
+                className={styles.suggestEdit}
+                onClick={(e) => {
+                    e.preventDefault();
+                    setModalOpen(true);
+                }}
+            >
+                Look inaccurate? Suggest an edit
+            </a>
 
-      <UserFeedbackModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Suggest an edit"
-        subtitle={`${currentClass.subject} ${currentClass.courseNumber} • ${currentClass.semester} ${currentClass.year}`}
-        currentClass={currentClass}
-      />
-    </div>
-  );
+            <UserFeedbackModal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                title="Suggest an edit"
+                subtitle={`${currentClass.subject} ${currentClass.courseNumber} • ${currentClass.semester} ${currentClass.year}`}
+                currentClass={currentClass}
+            />
+        </div>
+    );
 }
