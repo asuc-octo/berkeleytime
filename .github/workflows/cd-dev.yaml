@@ -52,7 +52,7 @@ jobs:
         helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
 
         # Install new chart
-        helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }} \
+        helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} oci://registry-1.docker.io/octoberkeleytime \
           --version=0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }} \
           --namespace=bt \
           --set env=dev \
