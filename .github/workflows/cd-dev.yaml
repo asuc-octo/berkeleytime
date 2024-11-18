@@ -48,11 +48,13 @@ jobs:
         set -e  # Exit immediately if a command fails
         cd ./infra
 
+        helm registry login registry-1.docker.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
         # Uninstall the old helm chart if it exists
         helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
 
         # Install new chart
-        helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} oci://registry-1.docker.io/octoberkeleytime \
+        helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} oci://registry-1.docker.io/octoberkeleytime/bt-app \
           --version=0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }} \
           --namespace=bt \
           --set env=dev \
