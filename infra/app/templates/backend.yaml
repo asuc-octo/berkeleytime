@@ -29,7 +29,7 @@ spec:
             httpGet:
               path: /healthz
               port: {{ .Values.backend.port }}
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             periodSeconds: 3
 
 ---
