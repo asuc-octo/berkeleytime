@@ -55,5 +55,6 @@ jobs:
       - name: Build and Push Helm Chart
         run: |
           cd ./infra
+          helm dependency update ${{ matrix.chart }}
           helm package ${{ matrix.chart }} --version ${{ inputs.chart_ver }}
           helm push bt-${{ matrix.chart }}-${{ inputs.chart_ver }}.tgz oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}
