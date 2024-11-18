@@ -34,6 +34,7 @@ jobs:
         set -e  # Exit immediately if a command fails
         cd ./infra
 
+        # Upgrade helm chart, or install if not exists
         helm upgrade bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app \
           --install \
           --version="1.0.0" \
