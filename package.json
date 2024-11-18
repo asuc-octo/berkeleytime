@@ -7,7 +7,8 @@
     "test": "turbo run test",
     "start": "turbo run start --no-cache",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "generate": "graphql-codegen --config codegen.ts"
   },
   "engines": {
     "node": ">=21.0.0",
