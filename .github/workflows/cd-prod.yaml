@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: SSH and Helm Install
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: root

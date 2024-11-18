@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-push-image:
-    name: Build and Push Backend/Frontend Images
+    name: Build and Push Image
     runs-on: ubuntu-latest
     strategy:
       matrix:
