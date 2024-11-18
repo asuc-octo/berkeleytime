@@ -19,12 +19,16 @@ import {
 import { Semester } from "@/lib/api/terms";
 
 import styles from "./Ratings.module.scss";
+// TODO: Remove placeholder data before prod
+import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
   MetricName,
   getMetricStatus,
   getMetricTooltip,
   getStatusColor,
 } from "./helper/metricsUtil";
+
+const PLACEHOLDER = true;
 
 interface RatingDetailProps {
   title: string;
@@ -154,6 +158,7 @@ export function RatingsContainer() {
       semester: currentClass.semester,
       year: currentClass.year,
       classNumber: currentClass.number,
+      isAllTime: selectedTerm === "all",
     },
   });
 
@@ -263,7 +268,11 @@ export function RatingsContainer() {
   };
 
   // Transform aggregated ratings into display format
+  // TODO: Remove placeholder data before prod
   const ratingsData = React.useMemo(() => {
+    if (PLACEHOLDER) {
+      return placeholderRatingsData;
+    }
     if (!aggregatedRatings?.aggregatedRatings?.metrics) {
       return null;
     }

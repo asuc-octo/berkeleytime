@@ -1,0 +1,56 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+}
+
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  z-index: 1000;
+}
+
+
+.modalHeader {
+
+}
+
+.modalTitle {
+  color: var(--Slate-950, #020617);
+  text-align: center;
+  font-feature-settings: 'liga' off;
+  font-family: "Inter Variable";
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 580;
+  line-height: 36px; /* 128.571% */
+  letter-spacing: -0.28px;}
+
+.modalSubtitle {
+  color: var(--Slate-500, #64748B);
+  text-align: center;
+  font-feature-settings: 'liga' off;
+
+  /* Web UI (Desktop)/Body/Body Large */
+  font-family: "Inter Variable";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.15px;}
+
+.modalFooter {
+  position: sticky;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
