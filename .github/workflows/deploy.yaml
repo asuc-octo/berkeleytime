@@ -1,0 +1,28 @@
+name: SSH and Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Github action environment to deploy within"
+        required: true
+        type: string
+      script:
+        description: "Script to run on remote server"
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: SSH and Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: SSH and Helm Install
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: ${{ inputs.script }}

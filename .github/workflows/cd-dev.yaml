@@ -30,44 +30,38 @@ jobs:
           echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
 
   build-push:
-    name: Build and Push Images
+    name: Build and Push Images and Charts
     needs: [compute-sha]
     uses: ./.github/workflows/cd.yaml
     with:
-      tag: ${{ needs.compute-sha.outputs.sha_short }}
+      image_tag: ${{ needs.compute-sha.outputs.sha_short }}
+      chart_ver: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
     secrets: inherit
 
   deploy:
-    name: Deploy with SSH
+    name: SSH and Deploy
     needs: [compute-sha, build-push]
-    runs-on: ubuntu-latest
-    environment: development
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: development
+      script: |
+        set -e  # Exit immediately if a command fails
+        cd ./infra
 
-    steps:
-      - name: SSH and Helm Install
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: root
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            set -e  # Exit immediately if a command fails
-            cd ./infra
+        # Uninstall the old helm chart if it exists
+        helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
 
-            # Uninstall the old helm chart if it exists
-            helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
+        # Install new chart
+        helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} ./app --namespace=bt \
+          --set env=dev \
+          --set ttl=${{ inputs.ttl }} \
+          --set-string frontend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
+          --set-string backend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
+          --set host=${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com \
+          --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+          --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
+          --set nodeEnv=development
 
-            # Install new chart
-            helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} ./app --namespace=bt \
-              --set env=dev \
-              --set ttl=${{ inputs.ttl }} \
-              --set-string frontend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
-              --set-string backend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
-              --set host=${{ needs.compute-sha.outputs.sha_short }}.stanfurdtime.com \
-              --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-              --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
-              --set nodeEnv=development
-
-            # Check container status
-            kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-backend
-            kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-frontend
+        # Check container status
+        kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-backend
+        kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-frontend
