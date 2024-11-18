@@ -3,6 +3,7 @@ import {
   SelectedCourseInput,
   CustomEventInput,
   Colleges,
+  MajorReqInput,
 } from "../../generated-types/graphql";
 import {
   getGradtrakByUser,
@@ -12,7 +13,9 @@ import {
   editPlanTerm,
   setClasses,
   createGradtrak,
-  changeCollege
+  changeCollege,
+  editMajorRequirements,
+  deleteGradtrak
 } from "./controller";
 import { GradtrakModule } from "./generated-types/module-types";
 
@@ -60,6 +63,20 @@ const resolvers: GradtrakModule.Resolvers = {
     ) {
       return changeCollege(args.college, context);
     },
+    editMajorRequirements(
+      _parent,
+      args: { major_reqs: MajorReqInput[] },
+      context
+    ) {
+      return editMajorRequirements(args.major_reqs, context);
+    },
+    deleteGradtrak(
+      _parent,
+      _args,
+      context
+    ) {
+      return deleteGradtrak(context);
+    }
   },
 };
 

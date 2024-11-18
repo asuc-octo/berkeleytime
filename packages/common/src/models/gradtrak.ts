@@ -109,6 +109,28 @@ export const planTermSchema = new Schema(
   }
 );
 
+export const majorReqSchema = new Schema({
+  name: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  major: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  num_courses_required: {
+    type: Number,
+    required: true,
+  },
+  satisfying_course_ids: {
+    type: [String],
+    trim: true,
+    required: false,
+  },
+});
+
 export const gradtrakSchema = new Schema(
   {
     user_email: {
@@ -132,6 +154,10 @@ export const gradtrakSchema = new Schema(
     college_reqs: {
       type: [String!],
       required: true,
+    },
+    major_reqs: {
+      type: [majorReqSchema],
+      required: true,
     }
   },
   { timestamps: true }
@@ -143,6 +169,9 @@ export const CustomEventModel = mongoose.model<GradtrakCustomEventType>('customE
 
 export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> & Document;
 export const SelectedCourseModel = mongoose.model<SelectedCourseType>('course', selectedCourseSchema);
+
+export type MajorReqType = Document & InferSchemaType<typeof majorReqSchema>;
+export const MajorReqModel = mongoose.model<MajorReqType>('majorReq', majorReqSchema);
 
 export interface PlanTermType extends Document {
   name?: string;
@@ -160,8 +189,9 @@ export interface GradtrakType extends Document {
   user_email: string;
   planTerms: PlanTermType[];
   miscellaneous: PlanTermType;
-  uni_reqs: string[],
-  college_reqs: string[]
+  uni_reqs: string[];
+  college_reqs: string[];
+  major_reqs: MajorReqType[];
   createdAt: Date;
   updatedAt: Date;
 }

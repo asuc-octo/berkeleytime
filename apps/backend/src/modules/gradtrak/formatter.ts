@@ -3,7 +3,8 @@ import {
   PlanTermType,
   SelectedCourseType,
   GradtrakType,
-} from "../../gradtrak";
+  MajorReqType,
+} from "@repo/common";
 
 import { GradtrakModule } from "./generated-types/module-types";
 
@@ -16,6 +17,7 @@ export function formatGradtrak(
     miscellaneous: formatPlanTerm(gradtrak.miscellaneous),
     uni_reqs: gradtrak.uni_reqs,
     college_reqs: gradtrak.college_reqs,
+    major_reqs: gradtrak.major_reqs.map(formatMajorReq),
     created: gradtrak.createdAt.toISOString(),
     revised: gradtrak.updatedAt.toISOString(),
   };
@@ -36,7 +38,18 @@ export function formatPlanTerm(
   };
 }
 
-function formatTerm(planTerm: string, year: number): GradtrakModule.Term {
+export function formatMajorReq(
+  majorReq: MajorReqType
+): GradtrakModule.Major_Req {
+  return {
+    name: majorReq.name,
+    major: majorReq.major,
+    num_courses_required: majorReq.num_courses_required,
+    satisfying_course_ids: majorReq.satisfying_course_ids
+  }
+}
+
+function formatTerm(planTerm: string, year: number): GradtrakModule.GqlTerm {
   return {
     planTerm: planTerm,
     year: year,

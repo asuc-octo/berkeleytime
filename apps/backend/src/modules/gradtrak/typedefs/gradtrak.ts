@@ -1,7 +1,8 @@
+// TODO: Write major prereq
 import { gql } from "graphql-tag";
 
 const typeDef = gql`
-  type Term {
+  type GqlTerm {
     year: Int!
     planTerm: String!
   }
@@ -76,12 +77,20 @@ const typeDef = gql`
     HAAS_SBS
   }
 
+  type Major_Req {
+    name: String!
+    major: String!
+    num_courses_required: Int!
+    satisfying_course_ids: [String!]
+  }
+
   type Gradtrak {
     user_email: String!
     planTerms: [PlanTerm!]
     miscellaneous: PlanTerm!
     uni_reqs: [String!]
     college_reqs: [String!]
+    major_reqs: [Major_Req!]
     created: String!
     revised: String!
   }
@@ -90,7 +99,7 @@ const typeDef = gql`
     _id: ID
     name: String
     user_email: String!
-    term: Term
+    term: GqlTerm
     courses: [SelectedCourse!]
     custom_events: [CustomEvent!]
   }
@@ -126,7 +135,14 @@ const typeDef = gql`
     college_reqs: [String!]
   }
 
-  input TermInput {
+  input MajorReqInput {
+    name: String!
+    major: String!
+    num_courses_required: Int!
+    satisfying_course_ids: [String!]!
+  }
+
+  input GqlTermInput {
     year: Int!
     planTerm: String!
   }
@@ -152,7 +168,7 @@ const typeDef = gql`
 
   input PlanTermInput {
     name: String
-    term: TermInput
+    term: GqlTermInput
     courses: [SelectedCourseInput!]
     custom_events: [CustomEventInput!]
   }
@@ -201,6 +217,16 @@ const typeDef = gql`
     planTerm.
     """
     setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!, custom_events: [CustomEventInput!]!): PlanTerm @auth
+
+    """
+    Edits the list of major requirements
+    """
+    editMajorRequirements(major_reqs: [MajorReqInput!]!): Gradtrak @auth
+
+    """
+    Deletes gradtrak, for testing purposes
+    """
+    deleteGradtrak: String @auth
   }
 `;
 

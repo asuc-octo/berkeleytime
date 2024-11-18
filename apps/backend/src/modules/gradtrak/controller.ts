@@ -1,6 +1,6 @@
 import { omitBy } from "lodash";
 
-import { PlanTermModel, GradtrakModel, SelectedCourseModel, CustomEventModel } from "@repo/common";
+import { PlanTermModel, GradtrakModel, SelectedCourseModel, CustomEventModel, MajorReqModel } from "@repo/common";
 
 import {
   CustomEventInput,
@@ -8,7 +8,8 @@ import {
   Gradtrak,
   PlanTermInput,
   SelectedCourseInput,
-  Colleges
+  Colleges,
+  MajorReqInput
 } from "../../generated-types/graphql";
 import { formatPlanTerm, formatGradtrak } from "./formatter";
 
@@ -204,7 +205,8 @@ export async function createGradtrak(
     planTerms: [],
     miscellaneous: miscellaneous,
     college_reqs: [],
-    uni_reqs: Uni_Reqs
+    uni_reqs: Uni_Reqs,
+    major_reqs: [],
   });
   return formatGradtrak(newGradtrak);
 }
@@ -229,4 +231,29 @@ export async function changeCollege(
   }
   await gt.save();
   return formatGradtrak(gt);
+}
+
+export async function editMajorRequirements(
+  major_reqs: MajorReqInput[],
+  context: any
+): Promise<Gradtrak> {
+  if (!context.user._id) throw new Error("Unauthorized");
+  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  if (!gt) {
+    throw new Error("No Gradtrak found for this user");
+  }
+  gt.major_reqs = major_reqs.map(majorReqInput => new MajorReqModel(majorReqInput));
+  await gt.save();
+  return formatGradtrak(gt);
+}
+
+export async function deleteGradtrak(
+  context: any
+): Promise<string> {
+  if (!context.user._id) throw new Error("Unauthorized");
+  await GradtrakModel.deleteOne({ user_email: context.user._id })
+  .catch(err => {
+    return err;
+  });
+  return context.user._id;
 }
