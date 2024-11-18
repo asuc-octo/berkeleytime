@@ -20,7 +20,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.backend.port }}
-          env:
+          envFrom:
             - configMapRef:
                 name: {{ include "bt-app.backendName" . }}-env
             - secretRef:
