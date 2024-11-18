@@ -30,17 +30,8 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: production
-      script: |
-        set -e  # Exit immediately if a command fails
-        cd ./infra
-
-        # Upgrade helm chart, or install if not exists
-        helm upgrade bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app \
-          --install \
-          --version="1.0.0" \
-          --namespace=bt \
-          --set host=stanfurdtime.com
-
-        # Check container status
-        kubectl rollout status --timeout=180s deployment bt-prod-app-backend
-        kubectl rollout status --timeout=180s deployment bt-prod-app-frontend
+      name: bt-prod-app
+      version: "1.0.0"
+      values: |
+        host: stanfurdtime.com
+    secrets: inherit

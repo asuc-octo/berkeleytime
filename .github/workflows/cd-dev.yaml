@@ -44,26 +44,18 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       environment: development
-      script: |
-        set -e  # Exit immediately if a command fails
-        cd ./infra
-
-        # Uninstall the old helm chart if it exists
-        helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
-
-        # Install new chart
-        helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} oci://registry-1.docker.io/octoberkeleytime/bt-app \
-          --version=0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }} \
-          --namespace=bt \
-          --set env=dev \
-          --set ttl=${{ inputs.ttl }} \
-          --set-string frontend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
-          --set-string backend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
-          --set host=${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com \
-          --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-          --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
-
-        # Check container status
-        kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-backend
-        kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-frontend
+      name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
+      version: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
+      values: |
+        env: dev
+        ttl: ${{ inputs.ttl }}
+        frontend:
+          image:
+            tag: ${{ needs.compute-sha.outputs.sha_short }}
+        backend:
+          image:
+            tag: ${{ needs.compute-sha.outputs.sha_short }}
+        host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
+        mongoUri: mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt
+        redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
     secrets: inherit

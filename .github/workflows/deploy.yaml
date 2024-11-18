@@ -7,8 +7,16 @@ on:
         description: "Github action environment to deploy within"
         required: true
         type: string
-      script:
-        description: "Script to run on remote server"
+      name:
+        description: "Helm chart installation name"
+        required: true
+        type: string
+      version:
+        description: "Helm chart version"
+        required: true
+        type: string
+      values:
+        description: "Helm chart override values (yaml)"
         required: true
         type: string
 
@@ -28,4 +36,13 @@ jobs:
           script: |
             set -e  # Exit immediately if a command fails
 
-            ${{ inputs.script }}
+            # Upgrade helm chart, or install if not exists
+            helm upgrade ${{ inputs.name }} oci://registry-1.docker.io/octoberkeleytime/bt-app \
+              --install \
+              --version=${{ inputs.version }} \
+              --namespace=bt \
+              --values <(echo "${{ inputs.values }}")
+
+            # Check container status
+            kubectl rollout status --timeout=180s deployment ${{ inputs.name }}-backend
+            kubectl rollout status --timeout=180s deployment ${{ inputs.name }}-frontend
