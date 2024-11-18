@@ -21,44 +21,51 @@ spec:
           ports:
             - containerPort: {{ .Values.backend.port }}
           env:
-            - name: PORT
-              value: {{ .Values.backend.port | quote }}
-            - name: URL
-              value: "http://localhost:5001"
-            - name: BACKEND_PATH
-              value: {{ .Values.backend.path }}
-            - name: GRAPHQL_PATH
-              value: "/graphql"
-            - name: NODE_ENV
-              value: {{ .Values.nodeEnv }}
-            - name: MONGODB_URI
-              value: {{ .Values.mongoUri }}
-            - name: REDIS_URI
-              value: {{ .Values.redisUri }}
-            - name: SIS_CLASS_APP_ID
-              value: "_"
-            - name: SIS_CLASS_APP_KEY
-              value: "_"
-            - name: SIS_COURSE_APP_ID
-              value: "_"
-            - name: SIS_COURSE_APP_KEY
-              value: "_"
-            - name: SIS_TERM_APP_ID
-              value: "_"
-            - name: SIS_TERM_APP_KEY
-              value: "_"
-            - name: GOOGLE_CLIENT_ID
-              value: "_"
-            - name: GOOGLE_CLIENT_SECRET
-              value: "_"
-            - name: SESSION_SECRET
-              value: "_"
+            - configMapRef:
+                name: {{ include "bt-app.backendName" . }}-env
+            - secretRef:
+                name: {{ include "bt-app.backendName" . }}-secret
           readinessProbe:
             httpGet:
               path: /healthz
               port: {{ .Values.backend.port }}
             initialDelaySeconds: 15
             periodSeconds: 3
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bt-app.backendName" . }}-env
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+data:
+  PORT: {{ .Values.backend.port }}
+  URL: "http://localhost:5001"
+  BACKEND_PATH: {{ .Values.backend.path }}
+  GRAPHQL_PATH: "/graphql"
+  NODE_ENV: {{ .Values.nodeEnv }}
+  MONGODB_URI: {{ .Values.mongoUri }}
+  REDIS_URI: {{ .Values.redisUri }}
+
+---
+
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: {{ include "bt-app.backendName" .}}-secret
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+spec:
+  encryptedData:
+    GOOGLE_CLIENT_ID: AgBc+KeZ7MUew8GcJAiqmvxY/VOT33r2sAXyCFcBcaNABh/SgGiQgNYRxTP5RCqYvOsvz+IV3hjCbZscXr2RV5FXhrB/tR+cZMZzrQTIMF0rYlIDKz0c7F0bDyjegerTBDTpvzdEDgOx0gZPk8gVkfnDcxgJY33rUf5CwZH4/vu0n6Sl5OcQ4brCHY0Jgef9vi0bYrh7+QFgBuHhPnVaJGzN1w5DaJTwDGT7kUf0OXKOmEKVwBD5HpLcqdV0d1TpJ80To7WaOBbig18cJyd2f6EgvcFFF63L5vZjnsTvWdWSRPA18bLd+uc+naQfqt1MCnv8HQ2cFCMtLuAO+IBdgZ/d62ZK8zwY1QGgtMxbhklXBbMpuU7ytCtVQYxczbR2o+gcbLuO0r0QKNHHRmCQ2AWyYKK3YaccFCFP+l6Gzc6/yT0cYe3ZqlL7r4AxBjPOReCimI7DSqRO6RVCC0lk4iG3lG3S9TpVn8H7g9OfHtkLCtKIgjHN2EIOg6S4ww26BVw5p4kTp1qP3haabwmEyQrYaTDRpwO5sXyHsEq6B1oxv19O+2bwo/LgtplrywZozU9vFHSMbtTxl6MpnZ6DVAaf5dmY7okfVrh/6fdc5JA0O/MnOdH1fICSD1hI0NZfbGXQj2b6sQcqYAceQlrlo+dR9k4UN8JIUQ5I7XgZgwcnCiWILMGz4HDs9sjeumBEkRRVru/5EZRFshSp7UiEgCZTBWxk6TFv7niv/D0+r6eyPYLr49pMEjFim+udRLlRr5tIoeC8f8CiB1lXHWocfyMdJh+4RVDiIpg=
+    GOOGLE_CLIENT_SECRET: AgAShsW/K34uuyWevz959VHWL/Ru/i4WLKvxrJCAagP6sotdckQSaBAnYHNycAXpet7NSic0yJsGjR0UJOBSBCgo7pvYIlvE61kwiUaTHvWbvPjR06PLDia2NvQf9D6WkGhrwdthbQnYDJ+PPvYY33ruCDvfRW8egW655h4wyoMV/Lp/+3Fc+w6fBmsZeCcEvMui3WwPCPW4AXc6I6z+OjYiLjx39XOdUNKAM94zwq8EpF9OREac6hrW20bYZ6W1u76V21c588PnjaEp3/pbqglB0Q31FDDYxFR9ROJfRKWlAoG2RoLQF8mfN8n1+6LzTJjO1GdbXonXtsEOj3o0e+C6xVQyAAtqaAXU9G2W7jXw4kjNEUB9uL8RhF+7E3mE2cRLh3vQE7an+r18GOM2tjSvrlDuJaoIw3LO3gUM6FtnnQO6LtbbNi5bN8Tyngh15XzZDJPX+Jd5z6FKXYELnQucKBDACi2vud51zn32hrdznmy6FM4rXGCF6HxHwvu5UQSPdQfWnVR4SOFyNt6tSWoYY5Jzwtrv36vojCKc9Z6j4bvdWdJR0uVZ3cDrB0Z3npjon+DILp6tuuOdJY3xZ8Fp/c/nQRRs+XuYd+A0eP65EGDJvokpgyTNhsE0yKgbKZo71XA/yeUmam2Fg04UJKCF9NagHNlYVrBv5qMdNMMTGF5Nf0TKGQ66q4ZLbULw1c4p2Ru5lWKqeZc1vqWgkZCv4wFoNSuvx2Y=
+    SESSION_SECRET: AgBy9b6ofgPxvpWgTLLPtMTugkoUxawX0q/+AIgblM+TWVth6/f6L0/Js30zVeT1+NoopjaSpPLlS07Erk8J9z1PFRcYZLMpgYM1sSIMjD75zqQX3lXmh1CZ9VLzJKrw01D9jMD1Hj8hY7EbLpmrkf/N1/vStpgUUKJn59rPZ3F7f8DviXRQ06djuXnNqeNZRJAvsXwrgDYrxZK+BdNYvG4RZ/3UYpiWQJkWVovguZdYa1r5BI4b1jzCAEast+uq0AYbYW+Dx9iTaGCP4rjoW1okNGJ4bihGs3/9bU0SkPEGlSnzEXuGqgN9mI5rIGKM0/GKI/0V04zqKq8Rf/RpIsIjGM6mRm9XnTj55ZasG6ORgtZe0yMsRd8oFsVTdxOL/1i6pLxauisPgmsomfZO18w2YxeTclFFF1dSUQ4+OY0YcVvtj5ozdGXps4kp/SlnxuKRxXQcynzYz6Z75EM0SaJXKcSf8tznwJtK1jpEYKmkv5QPG4AQZfDsZJdZfTl1wR1gwp/BJrni8sI+sOc1dqRpJ4ldWT8Z/1nWvfQH6lJm1atmEP78jMZ3PRWGel1y9KuKxFBusGK38qkznvJtGg2vi/GxYkbTHHyuDNSn+eU461c5P1WQEiKV5zkKm83/aM69i8F4ZVI3yXbblJGhaJeaeWsYptQSVIZVbFaec3WDfpAjZLle9M/mGezL1lwdF5w9AXu0eSGrgdEa
+  template:
+    metadata:
+      name: {{ include "bt-app.backendName" .}}-secret
+    type: Opaque
 
 ---
 
