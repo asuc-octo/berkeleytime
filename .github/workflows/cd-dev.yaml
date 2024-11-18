@@ -65,3 +65,4 @@ jobs:
         # Check container status
         kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-backend
         kubectl rollout status --timeout=180s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-frontend
+      secrets: inherit
