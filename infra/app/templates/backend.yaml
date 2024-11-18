@@ -41,7 +41,7 @@ metadata:
   labels:
     {{- include "bt-app.backendLabels" . | nindent 4 }}
 data:
-  PORT: {{ .Values.backend.port }}
+  PORT: {{ .Values.backend.port | quote }}
   URL: "http://localhost:5001"
   BACKEND_PATH: {{ .Values.backend.path }}
   GRAPHQL_PATH: "/graphql"
