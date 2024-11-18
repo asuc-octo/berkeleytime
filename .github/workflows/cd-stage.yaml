@@ -26,22 +26,16 @@ jobs:
         cd ./infra
 
         # Check if the Helm release exists
-        if helm status bt-stage-app ; then
-          # Restart deployments if the Helm release exists
-          kubectl rollout restart deployment bt-stage-app-backend
-          kubectl rollout restart deployment bt-stage-app-frontend
-        else
-          # Install the Helm release if it doesn't exist
-          helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app \
-            --version=0.1.0-stage \
-            --namespace=bt \
-            --set env=stage \
-            --set frontend.image.tag=latest \
-            --set backend.image.tag=latest \
-            --set host=staging.stanfurdtime.com \
-            --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-            --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
-        fi
+        helm upgrade bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app \
+          --install \
+          --version=0.1.0-stage \
+          --namespace=bt \
+          --set env=stage \
+          --set frontend.image.tag=latest \
+          --set backend.image.tag=latest \
+          --set host=staging.stanfurdtime.com \
+          --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+          --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
 
         # Check container status
         kubectl rollout status --timeout=180s deployment bt-stage-app-backend
