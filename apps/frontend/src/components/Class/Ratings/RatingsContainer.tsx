@@ -33,7 +33,7 @@ import {
 const PLACEHOLDER = false;
 
 interface RatingDetailProps {
-  metric: MetricName,
+  metric: MetricName;
   stats: {
     rating: number;
     percentage: number;
@@ -90,7 +90,9 @@ function RatingDetail({
                 <Tooltip.Arrow className={styles.arrow} />
                 <div>
                   <h4 className={styles.tooltipTitle}>{metric}</h4>
-                  <p className={styles.tooltipDescription}>{getMetricTooltip(metric)}</p>
+                  <p className={styles.tooltipDescription}>
+                    {getMetricTooltip(metric)}
+                  </p>
                 </div>
               </Tooltip.Content>
             </Tooltip.Portal>
@@ -221,21 +223,23 @@ export function RatingsContainer() {
   ) => {
     console.log("Submitting ratings:", metricValues, "for term:", termInfo);
     try {
-      await Promise.all((Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
-        (metric) => {
-          return createRating({
-            variables: {
-              subject: currentClass.subject,
-              courseNumber: currentClass.courseNumber,
-              semester: termInfo.semester,
-              year: termInfo.year,
-              classNumber: currentClass.number,
-              metricName: metric,
-              value: metricValues[MetricName[metric]],
-            },
-          });
-        }
-      ));
+      await Promise.all(
+        (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
+          (metric) => {
+            return createRating({
+              variables: {
+                subject: currentClass.subject,
+                courseNumber: currentClass.courseNumber,
+                semester: termInfo.semester,
+                year: termInfo.year,
+                classNumber: currentClass.number,
+                metricName: metric,
+                value: metricValues[MetricName[metric]],
+              },
+            });
+          }
+        )
+      );
 
       setModalOpen(false);
     } catch (error) {
@@ -305,9 +309,11 @@ export function RatingsContainer() {
         </div>
 
         <div className={styles.ratingsContainer}>
-          {ratingsData?.filter((value: RatingDetailProps) => isMetricRating(value.metric)).map((ratingData: RatingDetailProps) => (
-            <RatingDetail key={ratingData.metric} {...ratingData} />
-          ))}
+          {ratingsData
+            ?.filter((value: RatingDetailProps) => isMetricRating(value.metric))
+            .map((ratingData: RatingDetailProps) => (
+              <RatingDetail key={ratingData.metric} {...ratingData} />
+            ))}
         </div>
 
         <UserFeedbackModal
@@ -339,7 +345,8 @@ export function RatingsContainer() {
               ) => ({
                 ...acc,
                 [metric.metricName]: metric.value,
-              }), {}
+              }),
+              {}
             )}
         />
       </Container>

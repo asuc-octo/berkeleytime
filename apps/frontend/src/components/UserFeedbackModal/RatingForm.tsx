@@ -1,12 +1,9 @@
-
 import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
 import styles from "./UserFeedbackModal.module.scss";
 
 interface RatingsFormProps {
-  metricData: MetricData,
-  setMetricData: React.Dispatch<
-    React.SetStateAction<MetricData>
-  >;
+  metricData: MetricData;
+  setMetricData: React.Dispatch<React.SetStateAction<MetricData>>;
 }
 
 export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {

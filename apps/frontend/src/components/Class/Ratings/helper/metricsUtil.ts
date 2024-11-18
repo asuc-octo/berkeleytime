@@ -6,7 +6,7 @@ export enum MetricName {
   Recording = "Recording",
 }
 
-export type MetricData = Record<MetricName, number | undefined>
+export type MetricData = Record<MetricName, number | undefined>;
 
 const METRIC_MAPPINGS = {
   [MetricName.Usefulness]: {
@@ -14,14 +14,14 @@ const METRIC_MAPPINGS = {
       "This refers to how beneficial the course is for academic, professional, or personal growth.",
     getStatus: (avg: number) =>
       avg >= 4 ? "Very Useful" : avg >= 2 ? "Moderately Useful" : "Not Useful",
-    isRating: true
+    isRating: true,
   },
   [MetricName.Difficulty]: {
     tooltip:
       "This indicates the level of challenge students face in understanding course material.",
     getStatus: (avg: number) =>
       avg >= 4 ? "Very Difficult" : avg >= 2 ? "Moderately Difficult" : "Easy",
-    isRating: true
+    isRating: true,
   },
   [MetricName.Workload]: {
     tooltip:
@@ -32,17 +32,17 @@ const METRIC_MAPPINGS = {
         : avg >= 2
           ? "Moderate Workload"
           : "Light Workload",
-    isRating: true  
+    isRating: true,
   },
   [MetricName.Attendance]: {
     tooltip: "Indicates if attendance is required for the course.",
     getStatus: (avg: number) => (avg > 0 ? "Required" : "Not Required"),
-    isRating: false
+    isRating: false,
   },
   [MetricName.Recording]: {
     tooltip: "Indicates if the lectures are recorded for the course.",
     getStatus: (avg: number) => (avg > 0 ? "Recorded" : "Not Recorded"),
-    isRating: false
+    isRating: false,
   },
 };
 

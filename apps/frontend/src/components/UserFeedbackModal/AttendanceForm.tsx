@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import styles from "./UserFeedbackModal.module.scss";
 import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
+import styles from "./UserFeedbackModal.module.scss";
 
 interface BooleanInputProps {
   name: string;
@@ -50,14 +50,18 @@ export function BooleanOptions({
 }
 
 interface AttendanceFormProps {
-  metricData: MetricData,
-  setMetricData: React.Dispatch<
-    React.SetStateAction<MetricData>
-  >;
+  metricData: MetricData;
+  setMetricData: React.Dispatch<React.SetStateAction<MetricData>>;
 }
 
-export function AttendanceForm({ metricData, setMetricData } : AttendanceFormProps) {
-  const handleAttendanceClickClick = (type: MetricName, value: number | null) => {
+export function AttendanceForm({
+  metricData,
+  setMetricData,
+}: AttendanceFormProps) {
+  const handleAttendanceClickClick = (
+    type: MetricName,
+    value: number | null
+  ) => {
     setMetricData((prev) => ({
       ...prev,
       [type]: prev[type] === value ? undefined : value,
@@ -71,7 +75,7 @@ export function AttendanceForm({ metricData, setMetricData } : AttendanceFormPro
         <p>5. Is lecture attendance required?</p>
         <BooleanOptions
           name="lectureAttendance"
-          value={ metricData["Attendance"] ?? null }
+          value={metricData["Attendance"] ?? null}
           onChange={(v) => handleAttendanceClickClick(MetricName.Attendance, v)}
           yesLabel="Yes, lecture attendance was required."
           noLabel="No, lecture attendance was not required."
@@ -83,7 +87,7 @@ export function AttendanceForm({ metricData, setMetricData } : AttendanceFormPro
         <p>6. Were lectures recorded?</p>
         <BooleanOptions
           name="lecturesRecorded"
-          value={ metricData["Recording"] ?? null }
+          value={metricData["Recording"] ?? null}
           onChange={(v) => handleAttendanceClickClick(MetricName.Recording, v)}
           yesLabel="Yes, lectures were recorded."
           noLabel="No, lectures were not recorded."
