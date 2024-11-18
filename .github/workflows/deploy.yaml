@@ -25,4 +25,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: ${{ inputs.script }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            ${{ inputs.script }}
