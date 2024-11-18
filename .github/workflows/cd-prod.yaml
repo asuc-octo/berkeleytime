@@ -36,7 +36,7 @@ jobs:
 
         helm upgrade bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app \
           --install \
-          --version=1.0.0 \
+          --version="1.0.0" \
           --namespace=bt \
           --set host=stanfurdtime.com
 
