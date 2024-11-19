@@ -1,10 +1,8 @@
 // import { useState } from "react";
-
 import { Camera, UserCircle } from "iconoir-react";
 
 // import UserFeedbackModal from "@/components/UserFeedbackModal";
 // import useClass from "@/hooks/useClass";
-
 import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
