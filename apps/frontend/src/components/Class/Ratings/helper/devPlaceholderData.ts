@@ -15,7 +15,7 @@ export const placeholderRatingsData = [
     reviewCount: 218,
   },
   {
-    metric:  MetricName["Difficulty"],
+    metric: MetricName["Difficulty"],
     stats: [
       { rating: 5, percentage: 30 },
       { rating: 4, percentage: 40 },
@@ -28,7 +28,7 @@ export const placeholderRatingsData = [
     reviewCount: 218,
   },
   {
-    metric:  MetricName["Workload"],
+    metric: MetricName["Workload"],
     stats: [
       { rating: 5, percentage: 25 },
       { rating: 4, percentage: 35 },
