@@ -38,13 +38,13 @@ export default function AttendanceRequirements({
                 >
                     Took this course? Add what you know about attendance
                 </a>
-                <UserFeedbackModal
+                {/* <UserFeedbackModal
                     isOpen={isModalOpen}
                     onClose={() => setModalOpen(false)}
                     title="Suggest an edit"
                     subtitle={`${currentClass.subject} ${currentClass.courseNumber} • ${currentClass.semester} ${currentClass.year}`}
                     currentClass={currentClass}
-                />
+                /> */}
             </div>
         );
     }
@@ -86,13 +86,13 @@ export default function AttendanceRequirements({
                 Look inaccurate? Suggest an edit
             </a>
 
-            <UserFeedbackModal
+            {/* <UserFeedbackModal
                 isOpen={isModalOpen}
                 onClose={() => setModalOpen(false)}
                 title="Suggest an edit"
                 subtitle={`${currentClass.subject} ${currentClass.courseNumber} • ${currentClass.semester} ${currentClass.year}`}
                 currentClass={currentClass}
-            />
+            /> */}
         </div>
     );
 }
