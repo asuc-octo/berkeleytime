@@ -1,9 +1,9 @@
-import { useState } from "react";
+// import { useState } from "react";
 
 import { Camera, UserCircle } from "iconoir-react";
 
-import UserFeedbackModal from "@/components/UserFeedbackModal";
-import useClass from "@/hooks/useClass";
+// import UserFeedbackModal from "@/components/UserFeedbackModal";
+// import useClass from "@/hooks/useClass";
 
 import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
@@ -20,8 +20,8 @@ export default function AttendanceRequirements({
   lecturesRecorded,
   submissionAmount = 0, // Default value set to 0
 }: AttendanceRequirementsProps) {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const { class: currentClass } = useClass();
+  // const [isModalOpen, setModalOpen] = useState(false);
+  // const { class: currentClass } = useClass();
 
   if (submissionAmount < 5) {
     return (
@@ -35,7 +35,7 @@ export default function AttendanceRequirements({
           className={styles.suggestEdit}
           onClick={(e) => {
             e.preventDefault();
-            setModalOpen(true);
+            // setModalOpen(true);
           }}
         >
           Took this course? Add what you know about attendance
@@ -82,7 +82,7 @@ export default function AttendanceRequirements({
         className={styles.suggestEdit}
         onClick={(e) => {
           e.preventDefault();
-          setModalOpen(true);
+          // setModalOpen(true);
         }}
       >
         Look inaccurate? Suggest an edit
