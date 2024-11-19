@@ -1,8 +1,8 @@
+import { MetricName } from "./metricsUtil";
+
 export const placeholderRatingsData = [
   {
-    title: "Usefulness",
-    tooltip:
-      "This refers to how beneficial a course is in helping students achieve their academic, professional, or personal goals.",
+    metric: MetricName["Usefulness"],
     stats: [
       { rating: 5, percentage: 56 },
       { rating: 4, percentage: 16 },
@@ -15,9 +15,7 @@ export const placeholderRatingsData = [
     reviewCount: 218,
   },
   {
-    title: "Difficulty",
-    tooltip:
-      "This indicates the level of challenge students experience in understanding and completing course material.",
+    metric:  MetricName["Difficulty"],
     stats: [
       { rating: 5, percentage: 30 },
       { rating: 4, percentage: 40 },
@@ -30,9 +28,7 @@ export const placeholderRatingsData = [
     reviewCount: 218,
   },
   {
-    title: "Workload",
-    tooltip:
-      "This represents the time and effort required to complete course assignments, readings, and other activities.",
+    metric:  MetricName["Workload"],
     stats: [
       { rating: 5, percentage: 25 },
       { rating: 4, percentage: 35 },

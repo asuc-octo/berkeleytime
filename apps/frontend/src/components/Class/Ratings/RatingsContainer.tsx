@@ -198,24 +198,24 @@ export function RatingsContainer() {
       .value();
   }, [courseData]);
 
-  const userRatings = React.useMemo(() => {
-    if (!userRatingsData?.userRatings?.classes) return null;
+  // const userRatings = React.useMemo(() => {
+  //   if (!userRatingsData?.userRatings?.classes) return null;
 
-    return userRatingsData.userRatings.classes.find(
-      (classRating: {
-        subject: string;
-        courseNumber: string;
-        semester: Semester;
-        year: number;
-        classNumber: string;
-      }) =>
-        classRating.subject === currentClass.subject &&
-        classRating.courseNumber === currentClass.courseNumber &&
-        classRating.semester === currentClass.semester &&
-        classRating.year === currentClass.year &&
-        classRating.classNumber === currentClass.number
-    );
-  }, [userRatingsData, currentClass]);
+  //   return userRatingsData.userRatings.classes.find(
+  //     (classRating: {
+  //       subject: string;
+  //       courseNumber: string;
+  //       semester: Semester;
+  //       year: number;
+  //       classNumber: string;
+  //     }) =>
+  //       classRating.subject === currentClass.subject &&
+  //       classRating.courseNumber === currentClass.courseNumber &&
+  //       classRating.semester === currentClass.semester &&
+  //       classRating.year === currentClass.year &&
+  //       classRating.classNumber === currentClass.number
+  //   );
+  // }, [userRatingsData, currentClass]);
 
   const handleSubmitRatings = async (
     metricValues: MetricData,
@@ -250,9 +250,9 @@ export function RatingsContainer() {
   // Transform aggregated ratings into display format
   // TODO: Remove placeholder data before prod
   const ratingsData = React.useMemo(() => {
-    // if (PLACEHOLDER) {
-    //   return placeholderRatingsData;
-    // }
+    if (PLACEHOLDER) {
+      return placeholderRatingsData;
+    }
     if (!aggregatedRatings?.aggregatedRatings?.metrics) {
       return null;
     }

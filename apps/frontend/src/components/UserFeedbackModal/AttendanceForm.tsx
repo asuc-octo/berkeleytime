@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
 import styles from "./UserFeedbackModal.module.scss";
 
