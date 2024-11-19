@@ -1,3 +1,24 @@
+:root {
+  --background-color: #ffffff;
+  --foreground-color: #f1f5f9;
+  --text-color: #020617;
+  --subtitle-color: #64748b;
+  --button-background: #3b82f6;
+  --button-hover: #2563eb;
+  --footer-color: #E5E5E5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #1e293b;
+    --foreground-color: #334155;
+    --text-color: #e2e8f0;
+    --subtitle-color: #94a3b8;
+    --footer-color: #707070;
+    --button-background: #3b82f6;
+    --button-hover: #2563eb;
+  }
+}
 .overlay {
   background-color: rgb(0 0 0 / 60%);
   position: fixed;
@@ -16,7 +37,7 @@
   transform: translate(-50%, -50%);
   width: 90vw;
   max-width: 484px;
-  max-height: 464px;
+  max-height: 350px;
   padding: 24px;
   animation: contentShow 120ms cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 51;
@@ -40,7 +61,7 @@
 }
 
 .modalTitle {
-  color: var(--Slate-950, #020617);
+  color: var(--text-color);
   text-align: center;
   font-family: "Inter Variable";
   font-size: 24px;
@@ -51,7 +72,7 @@
 }
 
 .modalSubtitle {
-  color: var(--Slate-500, #64748B);
+  color: var(--subtitle-color);
   text-align: center;
   font-family: "Inter Variable";
   font-size: 15px;
@@ -63,8 +84,19 @@
 }
 
 .modalFooter {
+  display: flex;
+  width: 784px;
+  height: 97px;
+  padding: 32px 40px;
+  align-items: center;
+  gap: 84px;
+  justify-content: flex-end;
+  border-top: 1px solid var(--footer-color);
+  border-radius: 0px 0px 8px 8px;
+  width: 484px;
   margin-top: 16px;
 }
+
 
 .doneButton {
   display: inline-flex;
@@ -72,7 +104,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 6px;
-  background: #3B82F6;
+  background: var(--button-background);
   color: white;
   font-family: "Inter", sans-serif;
   font-size: 14px;
@@ -82,28 +114,8 @@
   border: none;
   cursor: pointer;
   transition: background-color 150ms ease;
-
-  &:hover {
-    background: #2563EB;
-  }
 }
 
-@keyframes overlayShow {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes contentShow {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
+.doneButton:hover {
+  background: var(--button-hover);
 }
