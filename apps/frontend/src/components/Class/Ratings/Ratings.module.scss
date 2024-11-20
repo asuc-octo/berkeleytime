@@ -6,13 +6,17 @@
 .ratingsContainer {
   background-color: var(--foreground-color);
   border-radius: 8px;
+  padding-left: 60px;
+  padding-right: 60px;
   box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
   border: 1px solid var(--border-color);
 }
 
 .ratingSection {
-  padding: 16px 24px;
+  padding-top: 24px;
+  padding-bottom: 24px;
   border-bottom: 1px solid var(--border-color);
+  
 
   &:last-child {
     border-bottom: none;
@@ -36,9 +40,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 161px;
 
   .title {
-    color: var(--heading-color);
+    color: var(--paragraph-color);
     font-size: 16px;
     font-weight: 500;
   }
@@ -70,7 +75,7 @@
 }
 
 .tooltipDescription {
-  color: var(--paragraph-color);
+  color: white;
   font-size: 13px;
   line-height: 1.4;
 }
@@ -81,12 +86,14 @@
 
 .statusSection {
   display: flex;
+  padding: 24px 0px;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  align-self: stretch;
 }
 
 .reviewCount {
-  color: var(--label-color);
+  color: var(--paragraph-color);
   font-size: 14px;
 }
 
@@ -100,21 +107,44 @@
 }
 
 .statusGreen {
-  color: var(--green-600);
+  color: #10B981;
+  display: flex;
+  padding: 4px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  background: var(--Green-100, #DCFCE7);
 }
 
 .statusOrange {
-  color: var(--orange-500);
+  color: #FB923C;
+  display: flex;
+  padding: 4px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  background: var(--Green-100, #FFEDD5);
 }
 
 .statusRed {
-  color: var(--red-500);
+  color: #EF4444;
+  display: flex;
+  padding: 4px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  background: var(--Green-100, #FEE2E2);
 }
 
 .ratingContent {
   margin-top: 16px;
-  margin-left: 25%;
+  margin-left: 161px;;
   animation: slideDown 200ms ease forwards;
+  color: var(--paragraph-color);
+  padding-bottom: 40px;
 }
 
 .statRow {
@@ -132,10 +162,11 @@
 
   .rating {
     width: 24px;
-    color: var(--heading-color);
+    color: var(--paragraph-color);
     font-weight: 500;
     text-align: center;
     opacity: 0;
+    gap:10px;
     animation: fadeIn 200ms ease forwards;
     animation-delay: calc(var(--delay) + 50ms);
   }
@@ -143,13 +174,13 @@
   .barContainer {
     flex-grow: 1;
     height: 8px;
-    background-color: var(--background-color);
+    background-color: var(--Slate-200, #E2E8F0);
     border-radius: 4px;
     overflow: hidden;
 
     .bar {
       height: 100%;
-      background-color: var(--blue-500);
+      background-color: #475569;
       border-radius: 4px;
       width: 0;
       transform-origin: left;
@@ -257,4 +288,41 @@
     background-color: var(--blue-500);
     color: white;
   }
+}
+
+/* Empty Ratings */
+.emptyRatings {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--Slate-400, #94A3B8);
+    /* Web UI (Desktop)/Title/Title Medium */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: -0.1px;
+  background-color: var(--background-color);
+  border-radius: 0;
+  box-shadow: 0;
+  border: 1px solid var(--background-color)
+
+  p + p {
+    margin-top: 8px;
+  }
+
+  button {
+    margin-top: 32px;
+    background-color: var(--foreground-color); 
+    font-weight: 400;
+  }
+}
+
+.titleAndStatusSection {
+  display: flex;
+  align-items: center;
+}
+
+.statusSection {
+  text-align: left;
+  margin: 0; /* Remove unnecessary margin */
 }

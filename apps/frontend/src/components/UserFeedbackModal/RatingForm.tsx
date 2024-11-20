@@ -4,7 +4,24 @@ import styles from "./UserFeedbackModal.module.scss";
 interface RatingsFormProps {
   metricData: MetricData;
   setMetricData: React.Dispatch<React.SetStateAction<MetricData>>;
+
+  ratings: {
+    usefulness: number | undefined;
+    difficulty: number | undefined;
+    workload: number | undefined;
+  };
+  setRatings: React.Dispatch<
+    React.SetStateAction<{
+      usefulness: number | undefined;
+      difficulty: number | undefined;
+      workload: number | undefined;
+    }>
+  >;
 }
+
+const RequiredAsterisk = () => (
+  <span style={{ color: "red" }}>*</span>
+);
 
 export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
   const handleRatingClick = (type: MetricName, value: number) => {
@@ -21,7 +38,7 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
     rightLabel: string
   ) => (
     <div className={styles.formGroup}>
-      <h3>{question}</h3>
+      <h3>{question} <RequiredAsterisk /></h3>
       <div className={styles.ratingScale}>
         <span>{leftLabel}</span>
         <div className={styles.ratingButtons}>

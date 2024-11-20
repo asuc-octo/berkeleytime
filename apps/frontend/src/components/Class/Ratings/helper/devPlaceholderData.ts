@@ -36,8 +36,8 @@ export const placeholderRatingsData = [
       { rating: 2, percentage: 10 },
       { rating: 1, percentage: 5 },
     ],
-    status: "Moderately Workload",
-    statusColor: "statusOrange",
+    status: "Very Heavy",
+    statusColor: "statusRed",
     reviewCount: 218,
   },
 ];

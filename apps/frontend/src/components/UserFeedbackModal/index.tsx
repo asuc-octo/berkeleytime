@@ -1,18 +1,17 @@
-import { useState } from "react";
-
+import { useState, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import ReactSelect from "react-select";
-
 import { Button } from "@repo/theme";
-
 import { Semester } from "@/lib/api/terms";
-
 import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
 import { AttendanceForm } from "./AttendanceForm";
 import ConfirmationPopup from "./ConfirmationForm";
 import { RatingsForm } from "./RatingForm";
-// Import the ConfirmationPopup component
 import styles from "./UserFeedbackModal.module.scss";
+
+const RequiredAsterisk = () => (
+  <span style={{ color: "red" }}>*</span>
+);
 
 interface Term {
   value: string;
@@ -52,19 +51,29 @@ export function UserFeedbackModal({
     [MetricName.Difficulty]: undefined,
     [MetricName.Workload]: undefined,
     [MetricName.Attendance]: undefined,
-    [MetricName.Recording]: undefined,
-  },
+    [MetricName.Recording]: undefined
+  }, 
 }: UserFeedbackModalProps) {
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
   const [selectedTerm, setSelectedTerm] = useState(
     availableTerms.length > 0 ? availableTerms[0].value : defaultTerm
   );
-
   const [metricData, setMetricData] = useState(initialMetricData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const isFormValid = useMemo(() => {
+    const isTermValid = selectedTerm && selectedTerm.length > 0;
+    const areRatingsValid =
+      typeof metricData[MetricName.Usefulness] === "number" &&
+      typeof metricData[MetricName.Difficulty] === "number" &&
+      typeof metricData[MetricName.Workload] === "number";
+    return isTermValid && areRatingsValid;
+  }, [selectedTerm, metricData]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFormValid) return;
+    console.log("Submitting ratings:", metricData);
     setIsSubmitting(true);
 
     try {
@@ -78,9 +87,8 @@ export function UserFeedbackModal({
         year: selectedTermInfo.year,
       });
 
-      // Close the original modal and open the confirmation popup
-      onClose(); // Close the original modal
-      setIsConfirmationPopupOpen(true); // Open the confirmation popup
+      onClose();
+      setIsConfirmationPopupOpen(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
     } finally {
@@ -104,27 +112,29 @@ export function UserFeedbackModal({
                 </Dialog.Description>
               </div>
             </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className={styles.modalContent}>
-                <div className={styles.combinedForm}>
-                  <div className={styles.ratingSection}>
-                    <div className={styles.formGroup}>
-                      <p>1. What semester did you take this course?</p>
-                      <ReactSelect
-                        id="term-selection"
-                        options={availableTerms.map((term) => ({
-                          value: term.value,
-                          label: term.label,
-                        }))}
-                        value={availableTerms.find(
-                          (term) => term.value === selectedTerm
-                        )}
-                        onChange={(selectedOption: any) =>
-                          setSelectedTerm(selectedOption?.value || defaultTerm)
-                        }
-                        classNamePrefix="termDropdown"
-                      />
+          <form onSubmit={handleSubmit}>
+            <div className={styles.modalContent}>
+              <div className={styles.combinedForm}>
+                <div className={styles.ratingSection}>
+                  <div className={styles.formGroup}>
+                    <p>1. What semester did you take this course? <RequiredAsterisk /></p>
+                    <div style={{ 
+                      maxWidth: "200px"
+                    }}>
+                    <ReactSelect
+                      id="term-selection"
+                      options={availableTerms.map((term) => ({
+                        value: term.value,
+                        label: term.label,
+                      }))}
+                      value={availableTerms.find(
+                        (term) => term.value === selectedTerm
+                      )}
+                      onChange={(selectedOption: any) =>
+                        setSelectedTerm(selectedOption?.value || defaultTerm)
+                      }
+                      classNamePrefix="termDropdown"
+                    />
                     </div>
                   </div>
 
@@ -138,24 +148,63 @@ export function UserFeedbackModal({
                   />
                 </div>
               </div>
-
-              <div className={styles.modalFooter}>
-                <Dialog.Close asChild>
-                  <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
-                </Dialog.Close>
-                <Button type="submit">
-                  {isSubmitting ? "Submitting..." : "Submit"}
-                </Button>
               </div>
-            </form>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
 
-      {/* Render the ConfirmationPopup */}
-      <ConfirmationPopup
+            <div className={styles.modalFooter}>
+              <Dialog.Close asChild>
+              <Button 
+                  style={{
+                    border: "none",
+                    color: "var(--paragraph-color)",
+                    transition: "color 0.2s ease",
+                    background: "none"
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.color = "var(--heading-color)"
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.color = "var(--paragraph-color)"
+                  }}
+                  type="button"
+                  >
+                  Cancel
+                </Button>
+              </Dialog.Close>
+          <Button 
+          style={{
+            background: isFormValid ? "#3B82F6" : "#60A5FA",
+            color: "white",
+            transition: "background-color 0.2s ease",
+            cursor: isFormValid ? "pointer" : "default"
+          }}
+          onMouseOver={(e) => {
+            if (isFormValid) {
+              e.currentTarget.style.backgroundColor = "#2563EB"
+            }
+          }}
+          onMouseOut={(e) => {
+            if (isFormValid) {
+              e.currentTarget.style.backgroundColor = "#3B82F6"
+            }
+          }}
+          type="submit" 
+          //disabled={!isFormValid || isSubmitting}
+          onClick={(e) => {
+            e.preventDefault();
+            console.log('Button clicked', { isFormValid, isSubmitting });
+            if (isFormValid) {
+              handleSubmit(e);
+            }
+          }}
+        >
+          {isSubmitting ? "Submitting..." : "Submit Rating"}
+        </Button>
+            </div>
+          </form>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+    <ConfirmationPopup
         isOpen={isConfirmationPopupOpen}
         onClose={() => setIsConfirmationPopupOpen(false)}
       />

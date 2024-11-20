@@ -358,14 +358,25 @@ export default function Class({
                 {({ isActive }) => (
                   <MenuItem active={isActive}>
                     Ratings
-                    {_class.aggregatedRatings?.metrics[0]?.count > 0 && (
+                    {_class.aggregatedRatings?.metrics[0]?.count > 0 ? (
                       <span className={styles.badge}>
                         {_class.aggregatedRatings.metrics[0].count}
                       </span>
+                    ) : (
+                      <span 
+                        style={{ 
+                          width: '6px', 
+                          height: '6px', 
+                          backgroundColor: '#3B82F6', 
+                          borderRadius: '50%',
+                          display: 'inline-block',
+                          marginLeft: '6px'
+                        }} 
+                      />
                     )}
                   </MenuItem>
                 )}
-              </NavLink>
+                </NavLink>
             </div>
           )}
         </Container>
