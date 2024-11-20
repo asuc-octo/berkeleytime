@@ -43,6 +43,10 @@ data:
   NODE_ENV: {{ .Values.nodeEnv }}
   MONGODB_URI: {{ .Values.mongoUri }}
   REDIS_URI: {{ .Values.redisUri }}
+  GOOGLE_CLIENT_ID: "_"
+  GOOGLE_CLIENT_SECRET: "_"
+  SESSION_SECRET: "_"
+
 
 ---
 
