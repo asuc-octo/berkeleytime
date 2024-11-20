@@ -56,8 +56,15 @@ jobs:
               --namespace=bt \
               --sort-by='.metadata.creationTimestamp' \
               -o custom-columns=":metadata.name,:metadata.creationTimestamp" | grep '^bt-dev-app')
-            deployment_count=$(echo "$deployments" | wc -l)
-
+            
+            if [ -z "$deployments" ]; then
+              echo "No bt-dev-app deployments found."
+              deployment_count=0
+            else
+              deployment_count=$(echo "$deployments" | wc -l)
+              echo "Deployment count: $deployment_count"
+            fi
+            
             # Check if deployment count > 16 (2 per deployment)
             if [ "$deployment_count" -gt 16 ]; then
               echo "Too many deployments. Deleting the oldest deployment."
