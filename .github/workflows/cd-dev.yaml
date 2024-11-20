@@ -51,19 +51,19 @@ jobs:
           script: |
             set -e  # Exit immediately if a command fails
 
+            echo "hi1"
             # Get bt-dev-app- deployments sorted by creation timestamp
             deployments=$(kubectl get deployments \
               --namespace=bt \
               --sort-by='.metadata.creationTimestamp' \
               -o custom-columns=":metadata.name,:metadata.creationTimestamp" | grep '^bt-dev-app')
-            
-            if [ -z "$deployments" ]; then
-              echo "No bt-dev-app deployments found."
-              deployment_count=0
-            else
+
+            echo "hi"
+            deployment_count=0
+            if [ -n "$deployments" ]; then
               deployment_count=$(echo "$deployments" | wc -l)
-              echo "Deployment count: $deployment_count"
             fi
+            echo "Deployment count: $deployment_count"
             
             # Check if deployment count > 16 (2 per deployment)
             if [ "$deployment_count" -gt 16 ]; then
