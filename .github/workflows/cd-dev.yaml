@@ -40,7 +40,6 @@ jobs:
 
   limit-deploy:
     name: SSH and Limit Deployments
-    needs: [build-push]
     runs-on: ubuntu-latest
     steps:
       - name: SSH and Check Deployments
