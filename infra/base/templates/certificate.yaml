@@ -11,3 +11,4 @@ spec:
   dnsNames:
     - stanfurdtime.com
     - "*.stanfurdtime.com"
+    - "*.dev.stanfurdtime.com"
