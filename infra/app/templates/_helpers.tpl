@@ -12,6 +12,13 @@ Labels applied to all resources.
 helm.sh/chart: {{ include "bt-app.chart" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+
+{{/*
+forces a rolling update when the value is changed. necessary since
+we do not change the chart or image version when deploying.
+*/}}
+timestamp: {{ now | quote }}
+
 env: {{ .Values.env }}
 {{- end -}}
 
@@ -27,6 +34,11 @@ app.kubernetes.io/name: frontend
 
 {{- define "bt-app.updaterLabels" -}}
 app.kubernetes.io/name: updater
+{{ include "bt-app.labels" . }}
+{{- end -}}
+
+{{- define "bt-app.cleanupLabels" -}}
+app.kubernetes.io/name: cleanup
 {{ include "bt-app.labels" . }}
 {{- end -}}
 

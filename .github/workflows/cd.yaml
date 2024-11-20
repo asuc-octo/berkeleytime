@@ -58,6 +58,5 @@ jobs:
         run: |
           cd ./infra
           helm registry login registry-1.docker.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          helm dependency update ${{ matrix.chart }}
-          helm package ${{ matrix.chart }} --version ${{ inputs.chart_ver }}
+          helm package ${{ matrix.chart }} --version ${{ inputs.chart_ver }} --dependency-update
           helm push bt-${{ matrix.chart }}-${{ inputs.chart_ver }}.tgz oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}
