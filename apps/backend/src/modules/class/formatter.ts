@@ -48,6 +48,7 @@ export const formatClass = (_class: ClassType) => {
     gradingBasis: _class.gradingBasis?.description as ClassGradingBasis,
     finalExam: _class.finalExam?.code as ClassFinalExam,
     title: _class.classTitle,
+    decal: null,
     unitsMax: _class.allowedUnits?.maximum as number,
     unitsMin: _class.allowedUnits?.minimum as number,
   } as IntermediateClass;

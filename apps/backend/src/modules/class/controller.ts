@@ -1,4 +1,4 @@
-import { ClassModel, SectionModel } from "@repo/common";
+import { ClassModel, DecalModel, SectionModel } from "@repo/common";
 
 import { formatClass, formatSection } from "./formatter";
 
@@ -74,4 +74,12 @@ export const getSection = async (
   if (!section) return null;
 
   return formatSection(section);
+};
+
+export const isDecal = async (ccn: number) => {
+  const decal = await DecalModel.findOne({
+    "sections.ccn": ccn,
+  }).lean();
+
+  return !!decal;
 };

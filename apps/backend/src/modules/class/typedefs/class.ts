@@ -1,5 +1,6 @@
 import { gql } from "graphql-tag";
 
+
 export default gql`
   type Query {
     class(
@@ -42,6 +43,7 @@ export default gql`
     title: String
     unitsMax: Float!
     unitsMin: Float!
+    decal: Boolean!
   }
 
   enum ClassFinalExam {

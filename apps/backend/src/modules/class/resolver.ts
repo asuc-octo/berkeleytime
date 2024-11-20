@@ -3,14 +3,11 @@ import { CourseModule } from "../course/generated-types/module-types";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
-import {
-  getClass,
-  getPrimarySection,
-  getSecondarySections,
-  getSection,
-} from "./controller";
+import { getClass, getPrimarySection, getSecondarySections, getSection, isDecal } from "./controller";
 import { IntermediateClass, IntermediateSection } from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
+
+
 
 const resolvers: ClassModule.Resolvers = {
   Query: {
@@ -98,6 +95,20 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return gradeDistribution;
+    },
+
+    decal: async (parent: IntermediateClass | ClassModule.Class) => {
+      const primarySection = await getPrimarySection(
+        parent.year,
+        parent.semester,
+        parent.subject,
+        parent.courseNumber,
+        parent.number
+      );
+
+      if (!primarySection) return false;
+
+      return isDecal(primarySection.ccn);
     },
   },
 

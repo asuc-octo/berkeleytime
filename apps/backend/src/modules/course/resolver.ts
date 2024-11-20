@@ -7,7 +7,6 @@ import {
 } from "./controller";
 import { IntermediateCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
-
 const resolvers: CourseModule.Resolvers = {
   Query: {
     course: async (_, { subject, number }, _context, _info) => {
