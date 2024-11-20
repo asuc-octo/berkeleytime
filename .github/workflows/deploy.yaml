@@ -47,7 +47,7 @@ jobs:
               --values <(echo "${{ inputs.values }}")
 
             # Restart deployment if helm chart existed
-            if [ $status -eq true ]; then
+            if [ $status = true ]; then
               kubectl rollout restart deployment ${{ inputs.name }}-backend
               kubectl rollout restart deployment ${{ inputs.name }}-frontend
             fi
