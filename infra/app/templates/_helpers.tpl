@@ -17,7 +17,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 forces a rolling update when the value is changed. necessary since
 we do not change the chart or image version when deploying.
 */}}
-timestamp: {{ now | quote }}
+timestamp: {{ date "2006-01-02 15:04:05Z" (now) | quote }}
 
 env: {{ .Values.env }}
 {{- end -}}
