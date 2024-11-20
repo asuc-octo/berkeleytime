@@ -205,7 +205,13 @@ export const deleteRating = async (
     }
   }
 
-  return true;
+  return getClassAggregatedRatings(
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber
+  );
 };
 
 export const getUserClassRatings = async (

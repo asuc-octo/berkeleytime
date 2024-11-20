@@ -78,7 +78,7 @@ const resolvers: RatingModule.Resolvers = {
         classNumber,
         metricName
       );
-      return deletedRating as unknown as boolean;
+      return deletedRating as unknown as RatingModule.AggregatedRatings;
     },
   },
 };

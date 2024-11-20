@@ -111,7 +111,7 @@ const typedef = gql`
       year: Int!
       classNumber: String!
       metricName: MetricName!
-    ): Boolean! @auth
+    ): AggregatedRatings! @auth
   }
 `;
 
