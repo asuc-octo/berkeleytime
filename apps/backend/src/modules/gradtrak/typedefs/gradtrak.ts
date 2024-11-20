@@ -82,6 +82,7 @@ const typeDef = gql`
     major: String!
     num_courses_required: Int!
     satisfying_course_ids: [String!]
+    is_minor: Boolean!
   }
 
   type Gradtrak {
@@ -140,6 +141,7 @@ const typeDef = gql`
     major: String!
     num_courses_required: Int!
     satisfying_course_ids: [String!]!
+    is_minor: Boolean! 
   }
 
   input GqlTermInput {

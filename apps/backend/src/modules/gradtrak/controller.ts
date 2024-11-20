@@ -12,6 +12,7 @@ import {
   MajorReqInput
 } from "../../generated-types/graphql";
 import { formatPlanTerm, formatGradtrak } from "./formatter";
+import { getSystemErrorMap } from "util";
 
 // General University Requirements
 const Uni_Reqs = [
@@ -242,6 +243,7 @@ export async function editMajorRequirements(
   if (!gt) {
     throw new Error("No Gradtrak found for this user");
   }
+  console.log(new MajorReqModel(major_reqs[0]));
   gt.major_reqs = major_reqs.map(majorReqInput => new MajorReqModel(majorReqInput));
   await gt.save();
   return formatGradtrak(gt);

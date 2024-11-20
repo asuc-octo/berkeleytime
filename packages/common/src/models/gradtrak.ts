@@ -129,6 +129,10 @@ export const majorReqSchema = new Schema({
     trim: true,
     required: false,
   },
+  is_minor: {
+    type: Boolean,
+    required: false
+  }
 });
 
 export const gradtrakSchema = new Schema(

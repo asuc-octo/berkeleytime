@@ -45,7 +45,8 @@ export function formatMajorReq(
     name: majorReq.name,
     major: majorReq.major,
     num_courses_required: majorReq.num_courses_required,
-    satisfying_course_ids: majorReq.satisfying_course_ids
+    satisfying_course_ids: majorReq.satisfying_course_ids,
+    is_minor: majorReq.is_minor
   }
 }
 
