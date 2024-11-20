@@ -75,9 +75,10 @@ jobs:
             set -e  # Exit immediately if a command fails
 
             # Get bt-dev-app- deployments sorted by creation timestamp
-            deployments=$(helm list -d \
+            deployments=$(helm list \
               --namespace=bt \
-              -o json | jq -r '.[] | [.name, .updated] | @tsv' | grep '^bt-dev-app') || true
+              --date \
+              --short | grep '^bt-dev-app') || true
             deployment_count=$(echo "$deployments" | wc -l)
 
             # Check if deployment count > 8
@@ -85,7 +86,7 @@ jobs:
               echo "Too many deployments. Deleting the oldest deployment."
 
               # Get oldest deployment from first line of deployments
-              oldest_deployment=$(echo "$deployments" | head -n 1 | grep -o '^bt-dev-app-[a-f0-9]\{7\}')
+              oldest_deployment=$(echo "$deployments" | head -n 1)
 
               # Uninstall deployment
               helm uninstall "${oldest_deployment}"
