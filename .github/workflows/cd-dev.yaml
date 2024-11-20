@@ -37,40 +37,6 @@ jobs:
       image_tag: ${{ needs.compute-sha.outputs.sha_short }}
       chart_ver: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
     secrets: inherit
-
-  limit-deploy:
-    name: SSH and Limit Deployments
-    runs-on: ubuntu-latest
-    steps:
-      - name: SSH and Check Deployments
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            set -e  # Exit immediately if a command fails
-
-            # Get bt-dev-app- deployments sorted by creation timestamp
-            deployments=$(kubectl get deployments \
-              --namespace=bt \
-              --sort-by='.metadata.creationTimestamp' \
-              -o custom-columns=":metadata.name,:metadata.creationTimestamp" | grep '^bt-dev-app') || true
-            deployment_count=$(echo "$deployments" | wc -l)
-            
-            # Check if deployment count > 16 (2 per deployment)
-            if [ "$deployment_count" -gt 16 ]; then
-              echo "Too many deployments. Deleting the oldest deployment."
-
-              # Get oldest deployment from first line of deployments
-              oldest_deployment=$(echo "$deployments" | head -n 1 | grep -o '^bt-dev-app-[a-f0-9]\{7\}')
-
-              # Delete deployment
-              kubectl delete deployment "${oldest_deployment}-frontend" --namespace=bt
-              kubectl delete deployment "${oldest_deployment}-backend" --namespace=bt
-            else
-              echo "Deployment count is <= 16."
-            fi
             
   deploy:
     name: SSH and Deploy
@@ -93,3 +59,36 @@ jobs:
         mongoUri: mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
     secrets: inherit
+
+  limit-deploy:
+    name: SSH and Limit Deployments
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Check Deployments
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            # Get bt-dev-app- deployments sorted by creation timestamp
+            deployments=$(helm list -d \
+              --namespace=bt \
+              -o json | jq -r '.[] | [.name, .updated] | @tsv' | grep '^bt-dev-app') || true
+            deployment_count=$(echo "$deployments" | wc -l)
+
+            # Check if deployment count > 8
+            if [ "$deployment_count" -gt 8 ]; then
+              echo "Too many deployments. Deleting the oldest deployment."
+
+              # Get oldest deployment from first line of deployments
+              oldest_deployment=$(echo "$deployments" | head -n 1 | grep -o '^bt-dev-app-[a-f0-9]\{7\}')
+
+              # Uninstall deployment
+              helm uninstall "${oldest_deployment}"
+            else
+              echo "Deployment count is <= 8."
+            fi
