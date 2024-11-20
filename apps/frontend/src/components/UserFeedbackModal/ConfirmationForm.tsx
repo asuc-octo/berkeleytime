@@ -28,7 +28,10 @@ export default function ConfirmationPopup({
                                 Thank you for your input!
                             </Dialog.Title>
                             <Dialog.Description className={styles.modalSubtitle}>
-                                Our moderators will take a look at your suggestions and verify the information.
+                                Your contribution will help students make better
+                            </Dialog.Description>
+                            <Dialog.Description className={styles.modalSubtitle}>
+                               informed decisions when selecting their courses.
                             </Dialog.Description>
                         </div>
 

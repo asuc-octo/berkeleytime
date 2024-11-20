@@ -29,15 +29,15 @@
 
 .modal {
   background-color: var(--foreground-color);
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 4px 32px rgb(0 0 0 / 25%);
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;
-  max-width: 484px;
-  max-height: 350px;
+  max-width: 784px;
+  max-height: 464px;
   padding: 24px;
   animation: contentShow 120ms cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 51;
@@ -52,7 +52,7 @@
 }
 
 .modalIcon {
-  margin-top: 16px;
+  margin-top: 60px;
   margin-bottom: 16px;
 }
 
@@ -63,24 +63,25 @@
 .modalTitle {
   color: var(--text-color);
   text-align: center;
-  font-family: "Inter Variable";
-  font-size: 24px;
+  font-family: Inter;
+  font-size: 28px;
   font-weight: 600;
   line-height: 32px;
   letter-spacing: -0.2px;
-  margin-bottom: 8px;
+  margin-bottom: 25px;
 }
 
 .modalSubtitle {
   color: var(--subtitle-color);
   text-align: center;
-  font-family: "Inter Variable";
-  font-size: 15px;
-  font-weight: 450;
-  line-height: 22px;
-  letter-spacing: -0.1px;
-  max-width: 300px;
-  margin: 0 auto;
+  font-feature-settings: 'liga' off;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.15px;
+  align-self: stretch;
 }
 
 .modalFooter {
@@ -93,8 +94,8 @@
   justify-content: flex-end;
   border-top: 1px solid var(--footer-color);
   border-radius: 0px 0px 8px 8px;
-  width: 484px;
-  margin-top: 16px;
+  width: 784px;
+  margin-top: 60px;
 }
 
 
@@ -106,7 +107,6 @@
   border-radius: 6px;
   background: var(--button-background);
   color: white;
-  font-family: "Inter", sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;

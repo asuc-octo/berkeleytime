@@ -36,7 +36,7 @@ export default function AttendanceRequirements({
             // setModalOpen(true);
           }}
         >
-          Took this course? Add what you know about attendance
+          Took this course? Add what you know about attendance →
         </a>
         {/* <UserFeedbackModal
                     isOpen={isModalOpen}
@@ -83,8 +83,7 @@ export default function AttendanceRequirements({
           // setModalOpen(true);
         }}
       >
-        Look inaccurate? Suggest an edit
-      </a>
+          Look inaccurate? Suggest an edit →      </a>
 
       {/* <UserFeedbackModal
                 isOpen={isModalOpen}
