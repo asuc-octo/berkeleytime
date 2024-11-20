@@ -69,5 +69,4 @@ spec:
       name: {{ include "bt-app.updaterName" . }}-secret
       labels:
         {{- include "bt-app.updaterLabels" . | nindent 4 }}
-      name: updater-secrets
 {{ end }}
