@@ -72,6 +72,8 @@ spec:
     SESSION_SECRET: AgBf3JL5xg/O0G07S9xCy8QzKR4TqN9Q4AA7Sbh2ioMF9Y4xBEh7cVJmQDdHvaGWTeed0YjFSWJL1OUlAW+dOyY8soAznY2RM20TL4QT5oYIR62kQUKWb0KNANsnUGju+MngvHBLpDv5cjD9CayQZA8U0s30jbASwAG6LDGdJgWs2xyDkE/+SBcD0zUoia5UpzgH2NFHsXf0Z4kBYT+L6amsyqASaeTJRTWpALs0NZQmAyAstzVflIlUNBw3bfwGKx3GOve8+5MEodJEKcf0bdtEPgPtOxCN3d937M11zzcF/whFHbZAHD2uMPqZbgfAaRG6mHKSViGyOlTNMihTok1cV2MT0XFUvT9BlSDJyMrBU538F15A6x9HihaDvN0ThN5xTxn0IGGEn2EJwlkT4z/RjtS11cUaS4vPYtlL/tgLFRHqWIixc9UvtF4JSElbVi9Kx9oIq20U48mSSLcdklnwmwFw5sO/stB3BAQISHqNBUK0kWObKhb3fcwUCaS8sR9oDbThFJ1fTqsM5K07eoBx1G2B209PUsQOLIxcNmdX/ZASjVxn+cGIVmOvEJo8mnDlWO75s8BnhXoqeygMuCzr/dppVbEZABCvBFiE1rD1zooyigBtgnMKwQhYxk5r9glUPmD+wsgS7L5xsfHd0B65S4JyIFEjvlYR0omv5nW7Ubgor4D1ztBfhXs1LbXwp7RWwpUmCRvw1tGd
   template:
     metadata:
+      annotations:
+        sealedsecrets.bitnami.com/namespace-wide: "true"
       name: {{ include "bt-app.backendName" .}}-secret
       labels:
         {{- include "bt-app.backendLabels" . | nindent 4 }}
