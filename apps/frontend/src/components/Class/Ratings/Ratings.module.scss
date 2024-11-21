@@ -16,7 +16,7 @@
   padding-top: 5px;
   padding-bottom: 5px;
   // TODO: Get real div color consistent with implementation
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--border-color);
   
   &:last-child {
     border-bottom: none;
@@ -39,7 +39,7 @@
   .title {
     color: var(--paragraph-color);
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 400;
   }
 
   .info {
@@ -55,23 +55,27 @@
 .tooltipContent {
   background-color: rgb(0 0 0);
   border-radius: 4px;
-  padding: 12px;
-  padding-top: 0.1px;
-  max-width: 260px;
+  max-width: 256px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 .tooltipTitle {
   color: white;
   font-size: 14px;
   font-weight: 500;
-  margin-bottom: 4px;
+  padding-bottom: 10px;
+  padding-top: 8px;
+  border-bottom: 1px solid #404040;
+  
 }
 
 .tooltipDescription {
   color: white;
   font-size: 13px;
   line-height: 1.4;
+  padding-bottom: 10px;
 }
 
 .arrow {
@@ -325,3 +329,15 @@
   text-align: left;
   margin: 0; /* Remove unnecessary margin */
 }
+
+@media (prefers-color-scheme: dark) {
+  .statRow{
+    .barContainer {
+      background-color: #475569;
+      
+      .bar {
+        background-color: var(--Slate-200, #E2E8F0);
+      }
+    }
+  }
+ }

@@ -361,8 +361,7 @@ export function RatingsContainer() {
               <Button
                 style={{
                   color: "#3B82F6",
-                  backgroundColor: "white",
-                  height: "38px",
+                  backgroundColor: "var(--foreground-color)"
                 }}
                 onClick={() => setModalOpen(true)}
               >
@@ -375,28 +374,62 @@ export function RatingsContainer() {
                 <div
                   style={{
                     marginLeft: "auto",
-                    maxWidth: "200px",
+                    maxWidth: "300px",
                   }}
                 >
-                  <ReactSelect
-                    options={[
-                      { value: "all", label: "All Terms" },
-                      ...availableTerms,
-                    ]}
-                    value={
-                      availableTerms.find(
-                        (term) => term.value === selectedTerm
-                      ) || {
-                        value: "all",
-                        label: "All Terms",
-                      }
+                <ReactSelect
+                options={[
+                  { value: "all", label: "All Terms" },
+                  ...availableTerms,
+                ]}
+                value={
+                  availableTerms.find(
+                    (term) => term.value === selectedTerm
+                  ) || {
+                    value: "all", 
+                    label: "Overall Ratings",
+                  }
+                }
+                onChange={(option) => setSelectedTerm(option?.value || "all")}
+                placeholder="Select term"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    backgroundColor: "var(--foreground-color)",
+                    maxHeight: "35px",
+                    color: "var(--paragraph-color)",
+                    fontSize: '14px',
+                    fontWeight: '400',
+                    borderRadius: '4px',
+                    border: "1px solid var(--border-color)",
+                    minWidth: '231px'
+
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    backgroundColor: "var(--foreground-color)",
+                    color: "var(--paragraph-color)",
+                    fontWeight: '400'
+                  }),
+                  option: (base) => ({
+                    ...base,
+                    backgroundColor: "var(--foreground-color)",
+                    color: "var(--paragraph-color)",
+                    border: "none",
+                    '&:hover': {
+                      backgroundColor: "#3B82F6"
                     }
-                    onChange={(option) =>
-                      setSelectedTerm(option?.value || "all")
-                    }
-                    classNamePrefix="termDropdown"
-                    placeholder="Select term"
-                  />
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    color: "var(--paragraph-color)"
+                  }),
+                  dropdownIndicator: (base) => ({
+                    ...base,
+                    color: "var(--paragraph-color)"
+                  })
+                }}
+                />
                 </div>
               ))}
           </div>
@@ -406,12 +439,12 @@ export function RatingsContainer() {
           className={styles.ratingsContainer}
           style={{
             backgroundColor:
-              !hasRatings && !PLACEHOLDER ? "transparent" : "white",
+              !hasRatings && !PLACEHOLDER ? "transparent" : "var(--foreground-color)",
             boxShadow:
               !hasRatings && !PLACEHOLDER
                 ? "none"
                 : "0 1px 2px rgb(0 0 0 / 5%)",
-            border: !hasRatings && !PLACEHOLDER ? "none" : "1px solid #E5E5E5",
+            border: !hasRatings && !PLACEHOLDER ? "none" : "#E5E5E5",
           }}
         >
           {!hasRatings && !PLACEHOLDER ? (
