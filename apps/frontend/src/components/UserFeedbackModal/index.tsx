@@ -1,17 +1,19 @@
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
+
 import * as Dialog from "@radix-ui/react-dialog";
 import ReactSelect from "react-select";
+
 import { Button } from "@repo/theme";
+
 import { Semester } from "@/lib/api/terms";
+
 import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
 import { AttendanceForm } from "./AttendanceForm";
 import ConfirmationPopup from "./ConfirmationForm";
 import { RatingsForm } from "./RatingForm";
 import styles from "./UserFeedbackModal.module.scss";
 
-const RequiredAsterisk = () => (
-  <span style={{ color: "red" }}>*</span>
-);
+const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 
 interface Term {
   value: string;
@@ -51,8 +53,8 @@ export function UserFeedbackModal({
     [MetricName.Difficulty]: undefined,
     [MetricName.Workload]: undefined,
     [MetricName.Attendance]: undefined,
-    [MetricName.Recording]: undefined
-  }, 
+    [MetricName.Recording]: undefined,
+  },
 }: UserFeedbackModalProps) {
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
   const [selectedTerm, setSelectedTerm] = useState(
@@ -112,99 +114,109 @@ export function UserFeedbackModal({
                 </Dialog.Description>
               </div>
             </div>
-          <form onSubmit={handleSubmit}>
-            <div className={styles.modalContent}>
-              <div className={styles.combinedForm}>
-                <div className={styles.ratingSection}>
-                  <div className={styles.formGroup}>
-                    <p>1. What semester did you take this course? <RequiredAsterisk /></p>
-                    <div style={{ 
-                      maxWidth: "200px"
-                    }}>
-                    <ReactSelect
-                      id="term-selection"
-                      options={availableTerms.map((term) => ({
-                        value: term.value,
-                        label: term.label,
-                      }))}
-                      value={availableTerms.find(
-                        (term) => term.value === selectedTerm
-                      )}
-                      onChange={(selectedOption: any) =>
-                        setSelectedTerm(selectedOption?.value || defaultTerm)
-                      }
-                      classNamePrefix="termDropdown"
-                    />
+            <form onSubmit={handleSubmit}>
+              <div className={styles.modalContent}>
+                <div className={styles.combinedForm}>
+                  <div className={styles.ratingSection}>
+                    <div className={styles.formGroup}>
+                      <p>
+                        1. What semester did you take this course?{" "}
+                        <RequiredAsterisk />
+                      </p>
+                      <div
+                        style={{
+                          maxWidth: "200px",
+                        }}
+                      >
+                        <ReactSelect
+                          id="term-selection"
+                          options={availableTerms.map((term) => ({
+                            value: term.value,
+                            label: term.label,
+                          }))}
+                          value={availableTerms.find(
+                            (term) => term.value === selectedTerm
+                          )}
+                          onChange={(selectedOption: any) =>
+                            setSelectedTerm(
+                              selectedOption?.value || defaultTerm
+                            )
+                          }
+                          classNamePrefix="termDropdown"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <RatingsForm
-                    metricData={metricData}
-                    setMetricData={setMetricData}
-                  />
-                  <AttendanceForm
-                    metricData={metricData}
-                    setMetricData={setMetricData}
-                  />
+                    <RatingsForm
+                      metricData={metricData}
+                      setMetricData={setMetricData}
+                    />
+                    <AttendanceForm
+                      metricData={metricData}
+                      setMetricData={setMetricData}
+                    />
+                  </div>
                 </div>
               </div>
-              </div>
 
-            <div className={styles.modalFooter}>
-              <Dialog.Close asChild>
-              <Button 
+              <div className={styles.modalFooter}>
+                <Dialog.Close asChild>
+                  <Button
+                    style={{
+                      border: "none",
+                      color: "var(--paragraph-color)",
+                      transition: "color 0.2s ease",
+                      background: "none",
+                    }}
+                    onMouseOver={(e: any) => {
+                      e.currentTarget.style.color = "var(--heading-color)";
+                    }}
+                    onMouseOut={(e: any) => {
+                      e.currentTarget.style.color = "var(--paragraph-color)";
+                    }}
+                    type="button"
+                  >
+                    Cancel
+                  </Button>
+                </Dialog.Close>
+                <Button
                   style={{
-                    border: "none",
-                    color: "var(--paragraph-color)",
-                    transition: "color 0.2s ease",
-                    background: "none"
+                    background: isFormValid ? "#3B82F6" : "#60A5FA",
+                    color: "white",
+                    transition: "background-color 0.2s ease",
+                    cursor: isFormValid ? "pointer" : "default",
                   }}
                   onMouseOver={(e: any) => {
-                    e.currentTarget.style.color = "var(--heading-color)"
+                    if (isFormValid) {
+                      e.currentTarget.style.backgroundColor = "#2563EB";
+                    }
                   }}
                   onMouseOut={(e: any) => {
-                    e.currentTarget.style.color = "var(--paragraph-color)"
+                    if (isFormValid) {
+                      e.currentTarget.style.backgroundColor = "#3B82F6";
+                    }
                   }}
-                  type="button"
-                  >
-                  Cancel
+                  type="submit"
+                  //disabled={!isFormValid || isSubmitting}
+                  onClick={(e: any) => {
+                    e.preventDefault();
+                    console.log("Button clicked", {
+                      isFormValid,
+                      isSubmitting,
+                    });
+                    if (isFormValid) {
+                      handleSubmit(e);
+                    }
+                  }}
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Rating"}
                 </Button>
-              </Dialog.Close>
-          <Button 
-          style={{
-            background: isFormValid ? "#3B82F6" : "#60A5FA",
-            color: "white",
-            transition: "background-color 0.2s ease",
-            cursor: isFormValid ? "pointer" : "default"
-          }}
-          onMouseOver={(e: any) => {
-            if (isFormValid) {
-              e.currentTarget.style.backgroundColor = "#2563EB"
-            }
-          }}
-          onMouseOut={(e: any) => {
-            if (isFormValid) {
-              e.currentTarget.style.backgroundColor = "#3B82F6"
-            }
-          }}
-          type="submit" 
-          //disabled={!isFormValid || isSubmitting}
-          onClick={(e: any) => {
-            e.preventDefault();
-            console.log('Button clicked', { isFormValid, isSubmitting });
-            if (isFormValid) {
-              handleSubmit(e);
-            }
-          }}
-        >
-          {isSubmitting ? "Submitting..." : "Submit Rating"}
-        </Button>
-            </div>
-          </form>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
-    <ConfirmationPopup
+              </div>
+            </form>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+      <ConfirmationPopup
         isOpen={isConfirmationPopupOpen}
         onClose={() => setIsConfirmationPopupOpen(false)}
       />

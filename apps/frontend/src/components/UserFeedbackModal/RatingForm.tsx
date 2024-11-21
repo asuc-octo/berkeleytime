@@ -6,9 +6,7 @@ interface RatingsFormProps {
   setMetricData: React.Dispatch<React.SetStateAction<MetricData>>;
 }
 
-const RequiredAsterisk = () => (
-  <span style={{ color: "red" }}>*</span>
-);
+const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 
 export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
   const handleRatingClick = (type: MetricName, value: number) => {
@@ -25,7 +23,9 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
     rightLabel: string
   ) => (
     <div className={styles.formGroup}>
-      <h3>{question} <RequiredAsterisk /></h3>
+      <h3>
+        {question} <RequiredAsterisk />
+      </h3>
       <div className={styles.ratingScale}>
         <span>{leftLabel}</span>
         <div className={styles.ratingButtons}>
