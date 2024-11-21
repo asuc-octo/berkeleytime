@@ -159,10 +159,10 @@ export function UserFeedbackModal({
                     transition: "color 0.2s ease",
                     background: "none"
                   }}
-                  onMouseOver={(e) => {
+                  onMouseOver={(e: any) => {
                     e.currentTarget.style.color = "var(--heading-color)"
                   }}
-                  onMouseOut={(e) => {
+                  onMouseOut={(e: any) => {
                     e.currentTarget.style.color = "var(--paragraph-color)"
                   }}
                   type="button"
@@ -177,19 +177,19 @@ export function UserFeedbackModal({
             transition: "background-color 0.2s ease",
             cursor: isFormValid ? "pointer" : "default"
           }}
-          onMouseOver={(e) => {
+          onMouseOver={(e: any) => {
             if (isFormValid) {
               e.currentTarget.style.backgroundColor = "#2563EB"
             }
           }}
-          onMouseOut={(e) => {
+          onMouseOut={(e: any) => {
             if (isFormValid) {
               e.currentTarget.style.backgroundColor = "#3B82F6"
             }
           }}
           type="submit" 
           //disabled={!isFormValid || isSubmitting}
-          onClick={(e) => {
+          onClick={(e: any) => {
             e.preventDefault();
             console.log('Button clicked', { isFormValid, isSubmitting });
             if (isFormValid) {

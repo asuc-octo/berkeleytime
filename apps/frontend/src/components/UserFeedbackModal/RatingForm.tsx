@@ -4,19 +4,6 @@ import styles from "./UserFeedbackModal.module.scss";
 interface RatingsFormProps {
   metricData: MetricData;
   setMetricData: React.Dispatch<React.SetStateAction<MetricData>>;
-
-  ratings: {
-    usefulness: number | undefined;
-    difficulty: number | undefined;
-    workload: number | undefined;
-  };
-  setRatings: React.Dispatch<
-    React.SetStateAction<{
-      usefulness: number | undefined;
-      difficulty: number | undefined;
-      workload: number | undefined;
-    }>
-  >;
 }
 
 const RequiredAsterisk = () => (
