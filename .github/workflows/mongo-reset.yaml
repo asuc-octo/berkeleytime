@@ -1,0 +1,57 @@
+name: Reset Dev MongoDB
+
+on:
+  # Schedule to run daily at 12 AM
+  schedule:
+    - cron: '0 0 * * *'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  reset-mongo:
+    name: Reset Dev MongoDB State
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH and Reset MongoDB
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            # MongoDB pods
+            stage_pod=$(kubectl get pods -n bt | grep 'bt-stage-mongo' | grep -o '^[^ ]*')
+            dev_pod=$(kubectl get pods -n bt | grep 'bt-dev-mongo' | grep -o '^[^ ]*')
+
+            # Copy helm release config from Staging to Dev
+            # helm get values --namespace=bt \
+            #   bt-stage-mongo > stage-mongo-values.yaml
+            # helm upgrade --namespace=bt \
+            #   --values bt-dev-mongo-values.yaml \
+            #   bt-dev-mongo bt-mongo-0.1.0
+            # rm ./stage-helm-values.yaml
+
+            # Dump staging data from stage
+            echo "Dumping staging MongoDB state..."
+            kubectl exec --namespace=bt \
+              $(echo $stage_pod) -- mongodump --archive=/tmp/stage_backup.gz --gzip
+            kubectl cp --namespace=bt \
+              $(echo $stage_pod):/tmp/stage_backup.gz ./stage_backup.gz
+            kubectl exec --namespace=bt \
+              $(echo $stage_pod) -- rm /tmp/stage_backup.gz
+
+            # Restore staging data to dev
+            echo "Restoring dump into dev MongoDB..."
+            kubectl cp --namespace=bt \
+              ./stage_backup.gz $(echo $dev_pod):/tmp/stage_backup.gz
+            kubectl exec --namespace=bt \
+              $(echo $dev_pod) -- mongorestore --archive=/tmp/stage_backup.gz --gzip --drop
+            kubectl exec --namespace=bt \
+              $(echo $dev_pod) -- rm /tmp/stage_backup.gz
+
+            # Clean up archive files
+            rm ./stage_backup.gz
+            echo "MongoDB reset completed successfully!"
