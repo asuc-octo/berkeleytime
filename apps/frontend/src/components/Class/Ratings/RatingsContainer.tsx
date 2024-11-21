@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { useMutation, useQuery } from "@apollo/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { NavArrowDown } from "iconoir-react";
+import { NavArrowDown, EditPencil, Trash } from "iconoir-react";
 import _ from "lodash";
 import ReactSelect from "react-select";
 
@@ -32,6 +32,49 @@ import {
 
 const PLACEHOLDER = true;
 
+interface UserRating {
+  metrics: [{
+    metricName: MetricName,
+    value: number
+  }]
+}
+
+function UserRating({
+  userRatings
+} : { userRatings: UserRating }) {
+
+  // function IndividualRating() {
+  //   return (
+
+  //   )
+  // }
+
+
+  return (
+    <div className={styles.ratingSection}>
+      <div className={styles.ratingHeader}>
+        <div>
+          <div>Your Rating Summary</div>
+          <div>[Date]</div>
+        </div>
+        <div>
+          <EditPencil></EditPencil><Trash></Trash>
+        </div>
+      </div>
+      <div className={styles.ratingContent}>
+          { userRatings.metrics.filter((metric) => { return isMetricRating(MetricName[metric.metricName]) }).map((metric) => (
+            <div
+              key={metric.metricName}
+              className={styles.statRow}
+            >
+              <span className={styles.rating}>{getMetricStatus(MetricName[metric.metricName], metric.value)}</span>
+            </div>
+          ))}
+        </div>
+    </div>
+  )
+}
+
 interface RatingDetailProps {
   metric: MetricName;
   stats: {
@@ -48,7 +91,6 @@ function RatingDetail({
   stats,
   status,
   statusColor,
-  reviewCount,
 }: RatingDetailProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [shouldAnimate, setShouldAnimate] = useState(false);
@@ -206,41 +248,27 @@ export function RatingsContainer() {
       .value();
   }, [courseData]);
 
-  // const userRatings = React.useMemo(() => {
-  //   if (!userRatingsData?.userRatings?.classes) return null;
-  // const userRatings = React.useMemo(() => {
-  //   if (!userRatingsData?.userRatings?.classes) return null;
+  const userRatings = React.useMemo(() => {
+    console.log(userRatingsData)
+    if (!userRatingsData?.userRatings?.classes) return null;
 
-  //   return userRatingsData.userRatings.classes.find(
-  //     (classRating: {
-  //       subject: string;
-  //       courseNumber: string;
-  //       semester: Semester;
-  //       year: number;
-  //       classNumber: string;
-  //     }) =>
-  //       classRating.subject === currentClass.subject &&
-  //       classRating.courseNumber === currentClass.courseNumber &&
-  //       classRating.semester === currentClass.semester &&
-  //       classRating.year === currentClass.year &&
-  //       classRating.classNumber === currentClass.number
-  //   );
-  // }, [userRatingsData, currentClass]);
-  //   return userRatingsData.userRatings.classes.find(
-  //     (classRating: {
-  //       subject: string;
-  //       courseNumber: string;
-  //       semester: Semester;
-  //       year: number;
-  //       classNumber: string;
-  //     }) =>
-  //       classRating.subject === currentClass.subject &&
-  //       classRating.courseNumber === currentClass.courseNumber &&
-  //       classRating.semester === currentClass.semester &&
-  //       classRating.year === currentClass.year &&
-  //       classRating.classNumber === currentClass.number
-  //   );
-  // }, [userRatingsData, currentClass]);
+    return userRatingsData.userRatings.classes.find(
+      (classRating: {
+        subject: string;
+        courseNumber: string;
+        semester: Semester;
+        year: number;
+        classNumber: string;
+      }) =>
+        classRating.subject === currentClass.subject &&
+        classRating.courseNumber === currentClass.courseNumber &&
+        classRating.semester === currentClass.semester &&
+        classRating.year === currentClass.year &&
+        classRating.classNumber === currentClass.number
+    ) as UserRating;
+  }, [userRatingsData, currentClass]);
+
+  console.log(userRatings)
 
   const handleSubmitRatings = async (
     metricValues: MetricData,
@@ -313,6 +341,10 @@ export function RatingsContainer() {
   return (
     <div className={styles.root}>
       <Container size="sm">
+        { (userRatings) ? <div className={styles.ratingsContainer}>
+          <UserRating userRatings={userRatings}/>
+        </div> : <div></div>
+        }
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           {(hasRatings || PLACEHOLDER) && (
