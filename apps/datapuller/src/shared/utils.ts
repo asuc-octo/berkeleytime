@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+import path from "path";
 import { Logger } from "tslog";
 
 import { Term, TermsAPI } from "@repo/sis-api/terms";
@@ -24,7 +26,6 @@ export async function fetchActiveTerms(
           headers,
         }
       );
-
       const data = await response.json();
       activeTermIds.push(...data.response.terms.map((term: Term) => term.id));
     } catch (error) {
@@ -45,14 +46,16 @@ export async function fetchPaginatedData<T, R>(
   method: string,
   headers: Record<string, string>,
   responseProcessor: (data: any) => R[],
-  itemProcessor: (item: R) => T
+  itemProcessor: (item: R) => T,
+  dataType: string // Add this parameter to specify the type of data being processed
 ): Promise<T[]> {
   const results: T[] = [];
   const queryBatchSize = 50;
   let page = 1;
+  let totalErrorCount = 0;
 
   const fetchBatch = async (termId?: string) => {
-    logger.info(`Querying ${queryBatchSize} pages from page ${page}...`);
+    //logger.info(`Querying ${queryBatchSize} pages from page ${page}...`);
     const promises = [];
 
     for (let i = 0; i < queryBatchSize; i++) {
@@ -78,7 +81,7 @@ export async function fetchPaginatedData<T, R>(
     const batchResults = await Promise.all(promises);
     const flattenedResults = batchResults.flat();
 
-    logger.info(`Processed ${flattenedResults.length} items in this batch.`);
+    //logger.info(`Processed ${flattenedResults.length} items in this batch.`);
 
     return flattenedResults;
   };
@@ -87,17 +90,22 @@ export async function fetchPaginatedData<T, R>(
     const batchData = await fetchBatch(termId);
     if (batchData.length === 0) return false;
 
+    let batchErrorCount = 0;
     const transformedData = batchData.reduce((acc, item, index) => {
       try {
         const processedItem = itemProcessor(item);
         acc.push(processedItem);
       } catch (error) {
+        batchErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);
         logger.error("Problematic item:", JSON.stringify(item, null, 2));
       }
       return acc;
     }, [] as T[]);
-    logger.info(`Processed ${transformedData.length} items in this batch.`);
+
+    totalErrorCount += batchErrorCount;
+    //logger.info(`Processed ${transformedData.length} items in this batch.`);
+    //logger.info(`Errors in this batch: ${batchErrorCount}`);
 
     results.push(...transformedData);
     page += queryBatchSize;
@@ -117,6 +125,22 @@ export async function fetchPaginatedData<T, R>(
     while (hasMoreData) {
       hasMoreData = await processBatch();
     }
+  }
+
+  logger.info(`Total errors encountered for ${dataType}: ${totalErrorCount}`);
+
+  // Log totalErrorCount to a file
+  const logDir = path.join(__dirname, "logs");
+  const logFile = path.join(logDir, "error_counts.log");
+  const timestamp = new Date().toISOString();
+  const logMessage = `${timestamp} - ${dataType} - ${method} - Total errors: ${totalErrorCount}\n`;
+
+  try {
+    await fs.mkdir(logDir, { recursive: true });
+    await fs.appendFile(logFile, logMessage);
+    logger.info(`Error count for ${dataType} logged to ${logFile}`);
+  } catch (error) {
+    logger.error(`Failed to log error count for ${dataType} to file: ${error}`);
   }
 
   return results;

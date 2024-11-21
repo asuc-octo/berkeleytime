@@ -28,7 +28,8 @@ export async function updateSections(config: Config) {
       app_key: config.sis.CLASS_APP_KEY,
     },
     (data) => data.apiResponse.response.classSections || [],
-    mapSectionToNewSection
+    mapSectionToNewSection,
+    "classSections"
   );
 
   log.info("Example Section:", sections[0]);

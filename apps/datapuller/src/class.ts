@@ -16,8 +16,6 @@ export async function updateClasses(config: Config) {
     app_key: config.sis.TERM_APP_KEY,
   });
 
-  log.info(activeTerms);
-
   const classes = await fetchPaginatedData<IClassItem, CombinedClass>(
     log,
     classesAPI.v1,
@@ -28,8 +26,10 @@ export async function updateClasses(config: Config) {
       app_key: config.sis.CLASS_APP_KEY,
     },
     (data) => data.apiResponse.response.classes || [],
-    mapClassToNewClass
+    mapClassToNewClass,
+    "classes"
   );
+  log.info(activeTerms);
 
   log.info("Example Class:", classes[0]);
 

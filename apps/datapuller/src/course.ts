@@ -20,7 +20,8 @@ export async function updateCourses(config: Config) {
       app_key: config.sis.COURSE_APP_KEY,
     },
     (data) => data.apiResponse.response.courses || [],
-    mapCourseToNewCourse
+    mapCourseToNewCourse,
+    "courses"
   );
 
   log.info("Example Course:", courses[0]);
