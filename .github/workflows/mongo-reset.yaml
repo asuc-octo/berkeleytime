@@ -4,7 +4,6 @@ on:
   # Schedule to run daily at 12 AM
   schedule:
     - cron: '0 0 * * *'
-  push:
   # Allow manual trigger
   workflow_dispatch:
 
