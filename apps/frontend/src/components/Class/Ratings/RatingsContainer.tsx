@@ -316,7 +316,16 @@ export function RatingsContainer() {
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           {(hasRatings || PLACEHOLDER) && (
-     <Button style={{color:"#3B82F6", backgroundColor: "white"}} onClick={() => setModalOpen(true)}>Add a rating</Button>
+            <Button 
+              style={{
+                color: "#3B82F6", 
+                backgroundColor: "white",
+                height: "38px"
+              }} 
+              onClick={() => setModalOpen(true)}
+            >
+              Add a rating
+            </Button>
    )}
             {/* Replace select dropdown with ReactSelect */}
             {hasRatings || PLACEHOLDER && (
@@ -346,9 +355,10 @@ export function RatingsContainer() {
         </div>
 
         <div className={styles.ratingsContainer}
-        style={{ backgroundColor: (!hasRatings && !PLACEHOLDER) ? 'transparent' : 'white',
+        style={{ 
+          backgroundColor: (!hasRatings && !PLACEHOLDER) ? 'transparent' : 'white',
           boxShadow: (!hasRatings && !PLACEHOLDER) ? 'none' : '0 1px 2px rgb(0 0 0 / 5%)',
-          border: (!hasRatings && !PLACEHOLDER) ? 'none' : '#E5E5E5',
+          border: (!hasRatings && !PLACEHOLDER) ? 'none' : '1px solid #E5E5E5',
         }}
         >
         {!hasRatings && !PLACEHOLDER ? (
