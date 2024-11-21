@@ -23,7 +23,3 @@ version: 0.1.0
 # It is recommended to use it with quotes.
 appVersion: "2.0.0-alpha"
 
-dependencies:
-  - name: bt-datapuller
-    version: 0.1.0
-    repository: file://../datapuller
