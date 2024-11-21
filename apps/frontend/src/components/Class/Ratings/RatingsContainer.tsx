@@ -145,7 +145,7 @@ function RatingDetail({
                   sideOffset={8}
                   collisionPadding={8}
                 >
-                  <Tooltip.Arrow className={styles.arrow} />
+                  {/* <Tooltip.Arrow className={styles.arrow} /> */}
                   <div>
                     <h4 className={styles.tooltipTitle}>{metric}</h4>
                     <p className={styles.tooltipDescription}>
