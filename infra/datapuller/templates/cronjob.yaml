@@ -1,32 +1,34 @@
-# templates/datapuller-cronjob.yaml
-
-{{- if not (eq .Values.env "dev") }}
+{{- define "bt-datapuller.cronjob" -}}
+{{- $root := index . 0 -}}
+{{- $jobName := index . 1 -}}
+{{- $jobConfig := index . 2 -}}
+{{- if not (eq $root.Values.env "dev") }}
 # Do not run CronJob in dev environment
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "bt-datapuller.datapullerName" . }}
+  name: {{ include "bt-datapuller.datapullerName" $root }}-{{ $jobName }}
   labels:
-    {{- include "bt-datapuller.datapullerLabels" . | nindent 4 }}
+    {{- include "bt-datapuller.datapullerLabels" $root | nindent 4 }}
 spec:
-  schedule: "{{ .Values.datapuller.schedule }}"
-  suspend: {{ .Values.datapuller.suspend }}
+  schedule: "{{ $jobConfig.schedule }}"
+  suspend: {{ $jobConfig.suspend }}
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-            - name: datapuller
-              image: "{{ .Values.datapuller.image.registry }}/{{ .Values.datapuller.image.repository }}:{{ .Values.datapuller.image.tag }}"
+            - name: datapuller-{{ $jobName }}
+              image: "{{ $jobConfig.image.registry }}/{{ $jobConfig.image.repository }}:{{ $jobConfig.image.tag }}"
               imagePullPolicy: Always
-              command: {{ .Values.datapuller.command | toJson }}
+              command: {{ $jobConfig.command | toJson }}
               env:
                 - name: NODE_ENV
-                  value: {{ .Values.nodeEnv }}
+                  value: {{ $root.Values.nodeEnv }}
                 - name: MONGODB_URI
-                  value: {{ .Values.mongoUri }}
+                  value: {{ $root.Values.mongoUri }}
                 - name: REDIS_URI
-                  value: {{ .Values.redisUri }}
+                  value: {{ $root.Values.redisUri }}
                 - name: SIS_CLASS_APP_ID
                   value: "_"
                 - name: SIS_CLASS_APP_KEY
@@ -45,5 +47,5 @@ spec:
                   value: "_"
                 - name: SESSION_SECRET
                   value: "_"
-          # restartPolicy: OnFailure
-{{- end }}
+          restartPolicy: OnFailure
+{{- end }}{{- end -}}

@@ -38,8 +38,28 @@ updater:
   command: ["npm", "run", "update:catalog", "--workspace=backend"]
 
 
-# TODO: create three different datapuller jobs and create seperate folder
-# datapuller:
-#   schedule: "0 0 * * *"
-#   suspend: false
-#   command: ["npm", "run", "update:courses", "--workspace=datapuller"]
+datapuller:
+  courses:
+    schedule: "0 0 * * *"
+    suspend: false
+    command: ["npm", "run", "update:courses", "--workspace=datapuller"]
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: latest
+  sections:
+    schedule: "0 1 * * *"
+    suspend: false
+    command: ["npm", "run", "update:sections", "--workspace=datapuller"]
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: latest
+  classes:
+    schedule: "0 2 * * *"
+    suspend: false
+    command: ["npm", "run", "update:classes", "--workspace=datapuller"]
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: latest
