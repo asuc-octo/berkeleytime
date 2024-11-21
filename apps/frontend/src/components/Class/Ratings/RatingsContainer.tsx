@@ -409,13 +409,15 @@ export function RatingsContainer() {
                     ...base,
                     backgroundColor: "var(--foreground-color)",
                     color: "var(--paragraph-color)",
-                    fontWeight: '400'
+                    fontWeight: '400',
+                    fontSize: '14px'
                   }),
                   option: (base) => ({
                     ...base,
                     backgroundColor: "var(--foreground-color)",
                     color: "var(--paragraph-color)",
                     border: "none",
+                    fontSize: '14px',
                     '&:hover': {
                       backgroundColor: "#3B82F6"
                     }
