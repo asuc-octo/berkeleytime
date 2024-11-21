@@ -359,7 +359,9 @@ export function RatingsContainer() {
           </div>
         ) : (
           ratingsData?.map((ratingData) => (
-            <RatingDetail key={ratingData.title} {...ratingData} />
+            <div className={styles.ratingSection} key={ratingData.metric}>
+              <RatingDetail {...ratingData} />
+            </div>
           ))
         )}
       </div>
