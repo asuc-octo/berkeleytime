@@ -1,10 +1,5 @@
-export enum MetricName {
-  Usefulness = "Usefulness",
-  Difficulty = "Difficulty",
-  Workload = "Workload",
-  Attendance = "Attendance",
-  Recording = "Recording",
-}
+
+import { MetricName } from "@/shared/metrics";
 
 export type MetricData = Record<MetricName, number | undefined>;
 

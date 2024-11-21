@@ -23,12 +23,13 @@ import styles from "./Ratings.module.scss";
 import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
   MetricData,
-  MetricName,
   getMetricStatus,
   getMetricTooltip,
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
+
+import { MetricName } from "@/shared/metrics";
 
 const PLACEHOLDER = true;
 

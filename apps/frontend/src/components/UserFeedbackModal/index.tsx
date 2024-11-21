@@ -7,7 +7,8 @@ import { Button } from "@repo/theme";
 
 import { Semester } from "@/lib/api/terms";
 
-import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
+import { MetricData } from "../Class/Ratings/helper/metricsUtil";
+import { MetricName } from "@/shared/metrics";
 import { AttendanceForm } from "./AttendanceForm";
 import ConfirmationPopup from "./ConfirmationForm";
 import { RatingsForm } from "./RatingForm";
