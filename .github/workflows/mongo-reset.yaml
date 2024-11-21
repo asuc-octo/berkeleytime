@@ -1,11 +1,9 @@
 name: Reset Dev MongoDB
 
 on:
-  # Schedule to run daily at 12 AM
-  schedule:
-    - cron: '0 0 * * *'
-  # Allow manual trigger
   workflow_dispatch:
+  schedule: # Schedule to run daily at 12 AM
+    - cron: '0 0 * * *'
 
 jobs:
   reset-mongo:
