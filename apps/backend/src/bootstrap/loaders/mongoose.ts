@@ -10,5 +10,9 @@ process.on("SIGINT", async () => {
 
 // Your Mongoose setup goes here
 export default async (): Promise<mongoose.Mongoose> => {
-  return mongoose.connect(config.mongoDB.uri);
+  return mongoose.connect(config.mongoDB.uri, {
+    retryWrites: true,
+    w: "majority",
+    readPreference: "primary"
+  });
 };
