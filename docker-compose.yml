@@ -21,7 +21,9 @@ services:
       target: backend-dev
     depends_on:
       - redis
-      - mongodb
+      - mongo1
+      - mongo2
+      - mongo3
     networks:
       - bt
     restart: always
@@ -39,20 +41,47 @@ services:
       - ./apps/frontend/src:/frontend/apps/frontend/src
       - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/frontend/public:/frontend/apps/frontend/public
-  mongodb:
-    image: mongo:5
-    command: ["--replSet", "rs0", "--bind_ip_all"]
-    networks:
-      - bt
+  mongo1:
+    image: mongo:7
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
       - 27017:27017
-    restart: always
-    volumes:
-      - ./db:/data/db
     healthcheck:
-      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo --quiet) -eq 1
-      interval: 10s
-      start_period: 30s
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo1:27017',priority:1},{_id:1,host:'mongo2:27018',priority:0.5},{_id:2,host:'mongo3:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
+    volumes:
+      - ./data/mongo1/db:/data/db
+      - ./data/mongo1/configdb:/data/configdb
+    networks:
+      - bt
+  mongo2:
+    image: mongo:7
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
+    ports:
+      - 27018:27018
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data/mongo2/db:/data/db
+      - ./data/mongo2/configdb:/data/configdb
+    networks:
+      - bt
+  mongo3:
+    image: mongo:7
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
+    ports:
+      - 27019:27019
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data/mongo3/db:/data/db
+      - ./data/mongo3/configdb:/data/configdb
+    networks:
+      - bt
   nginx:
     depends_on:
       - backend
