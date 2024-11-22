@@ -41,6 +41,7 @@ services:
       - ./apps/frontend/public:/frontend/apps/frontend/public
   mongodb:
     image: mongo:5
+    command: ["--replSet", "rs0", "--bind_ip_all"]
     networks:
       - bt
     ports:
@@ -48,6 +49,10 @@ services:
     restart: always
     volumes:
       - ./db:/data/db
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
   nginx:
     depends_on:
       - backend
