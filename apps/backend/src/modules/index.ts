@@ -5,6 +5,7 @@ import Class from "./class";
 import Common from "./common";
 import Course from "./course";
 import Enrollment from "./enrollment";
+import Gradtrak from "./gradtrak";
 import GradeDistribution from "./grade-distribution";
 import Schedule from "./schedule";
 import Term from "./term";
@@ -20,6 +21,7 @@ const modules = [
   Course,
   Class,
   Enrollment,
+  Gradtrak
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));
