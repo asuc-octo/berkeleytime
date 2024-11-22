@@ -20,45 +20,64 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.backend.port }}
-          env:
-            - name: PORT
-              value: {{ .Values.backend.port | quote }}
-            - name: URL
-              value: "http://localhost:5001"
-            - name: BACKEND_PATH
-              value: {{ .Values.backend.path }}
-            - name: GRAPHQL_PATH
-              value: "/graphql"
-            - name: NODE_ENV
-              value: {{ .Values.nodeEnv }}
-            - name: MONGODB_URI
-              value: {{ .Values.mongoUri }}
-            - name: REDIS_URI
-              value: {{ .Values.redisUri }}
-            - name: SIS_CLASS_APP_ID
-              value: "_"
-            - name: SIS_CLASS_APP_KEY
-              value: "_"
-            - name: SIS_COURSE_APP_ID
-              value: "_"
-            - name: SIS_COURSE_APP_KEY
-              value: "_"
-            - name: SIS_TERM_APP_ID
-              value: "_"
-            - name: SIS_TERM_APP_KEY
-              value: "_"
-            - name: GOOGLE_CLIENT_ID
-              value: "_"
-            - name: GOOGLE_CLIENT_SECRET
-              value: "_"
-            - name: SESSION_SECRET
-              value: "_"
+          envFrom:
+            - configMapRef:
+                name: {{ include "bt-app.backendName" . }}-env
+            - secretRef:
+                name: {{ include "bt-app.backendName" . }}-secret
           readinessProbe:
             httpGet:
               path: /healthz
               port: {{ .Values.backend.port }}
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             periodSeconds: 3
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bt-app.backendName" . }}-env
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+data:
+  PORT: {{ .Values.backend.port | quote }}
+  URL: "http://localhost:5001"
+  BACKEND_PATH: {{ .Values.backend.path }}
+  GRAPHQL_PATH: "/graphql"
+  NODE_ENV: {{ .Values.nodeEnv }}
+  MONGODB_URI: {{ .Values.mongoUri }}
+  REDIS_URI: {{ .Values.redisUri }}
+  SIS_CLASS_APP_ID: "_" # TODO: remove from backend
+  SIS_CLASS_APP_KEY: "_"
+  SIS_COURSE_APP_ID: "_"
+  SIS_COURSE_APP_KEY: "_"
+  SIS_TERM_APP_ID: "_"
+  SIS_TERM_APP_KEY: "_"
+
+---
+
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    sealedsecrets.bitnami.com/namespace-wide: "true"
+  name: {{ include "bt-app.backendName" .}}-secret
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+spec:
+  encryptedData:
+    GOOGLE_CLIENT_ID: AgBVTJStwpZ1JlSEAqB8/cvZ9UCqi+iQHj0fsEKd3PY6l4ftvukvfvienLgUwWYqIDJPkcIm5tmkYXQilx2UtWS8RS7Io9mKN0Z8gcs34fedw2b6EqsvF6cvsgCrALUwfajCGBMigEy637Ymo4UC9bULKDhxH08LGPjgCEvnOgTwEvQy1PdRUQ7tkIEOQ0hDgKUhhx1dMQkCmnNwDWiPPIkC2VpW7mmPWhoros+ZadQaJIbkPMHGCaTPB6VjEZMQm8R06MyJlJ48ZcQ6f5pZAf5E6PZ3S7U4dXWMSEmEzzCy9hubNSovpuKzbW1I0/A4RCnhiNH8yZKaTFGf7LpK2YvTDMnNktN+eFBaNvHrdimmz/32cSjN3VnPeEwsU8S8Zh1ssuJsffYHHwwDQjv7qYyp98MbGY5KOW7X5+YQ/HJdnJmoLcPNFJhzF1Lu4lFRPpBrtLhlF6YyqlY1TpUEwl1Cu4QRl3OB6nnQaTlTb/SmKd7W45pmW9j8PTprTtGOMMAObcsCljmbnjntoWsAYUVkmthba5w9vkQyMITQsHAXKekNW9bSJUSNu/4ERHuPw6kCydbg4iikVq/YRsGCtf/capWECEb2ZCXcNqhvNJWlg/1HflQpF3WjHabgB412b5qIhSZ2ySGBDDV/O/S2qzydiywgpB+nGdj7822uSihd9WHtdou5RG6R+ARUYWvvnyWEafp6DLHL12WMtZtXDCmpmbg1j8iHsWshdSkkmQPkZo/iyD5/kel1su4NM25GSm9skozVv2wqRBuxIGaFr8ODcsnEP3P2iqA=
+    GOOGLE_CLIENT_SECRET: AgBkRfkLsHUfNkrjUKsmhWeOhWUEUlLT6GwUr9qlI5Wl/8vo/AVLaQhHLVcgVyh/V9y2dDXeZQ6+G/Ui5CxJi55nmp/K0dgHf05NDl7PWYHTh6cjBraA46thkH6cE5ZYmBXi1oMC2AkyPZ9t/7soZApgrwfBPhDBVB8D+uhq+EvjZZTzqRmlW6ap9o65MEVmJyCySeVMEUYwipqo6VqgKXvqBF1vSkZocRCkBxxx9qBOwQabGZK9Lydi5MGMnb7kizZemlq4dyrrdVpuuAx0glDF0AVypWY1Zu9jkPhEXNkreRIUaVmuONlG2H8nr8qc/n4PJluQSTWHAcVKz/ty2t19G66gGL3luUQlZjcicfg0e3gNylgaQUyYkuKIPxoift+87iumxUKXb01s5lc04ZWvOzRGO9fKrIivXBnzm6SL45GFX6sCI8oOxfAR/IrR8BrsnuefgZYQMHbdzVPSlr8wxMj+FsflQziFWPjs/Lee0zanwN77/l9NY7FYedU4/t8jzZvAiL9sC9Hfp8dMB9Oj0z2u1ZZrCkT092fOB2aVRItDbgLmGsBAzZ9z2JCRrlSHrKMMqxObbnunWFOyh8/LNZfJqJhlsMZge8L5ufkJW0RnIoPAjGAtKAK3iO5bTbLSktJ3+4C3BBVtQCkKZe1Adq5oOK7Nk/OmkRUO6sHw2JUJSGO21B77KUi6zRKog6FvEMzK3o2CU1dSheAAyT47OX+8W9RTtH8=
+    SESSION_SECRET: AgBf3JL5xg/O0G07S9xCy8QzKR4TqN9Q4AA7Sbh2ioMF9Y4xBEh7cVJmQDdHvaGWTeed0YjFSWJL1OUlAW+dOyY8soAznY2RM20TL4QT5oYIR62kQUKWb0KNANsnUGju+MngvHBLpDv5cjD9CayQZA8U0s30jbASwAG6LDGdJgWs2xyDkE/+SBcD0zUoia5UpzgH2NFHsXf0Z4kBYT+L6amsyqASaeTJRTWpALs0NZQmAyAstzVflIlUNBw3bfwGKx3GOve8+5MEodJEKcf0bdtEPgPtOxCN3d937M11zzcF/whFHbZAHD2uMPqZbgfAaRG6mHKSViGyOlTNMihTok1cV2MT0XFUvT9BlSDJyMrBU538F15A6x9HihaDvN0ThN5xTxn0IGGEn2EJwlkT4z/RjtS11cUaS4vPYtlL/tgLFRHqWIixc9UvtF4JSElbVi9Kx9oIq20U48mSSLcdklnwmwFw5sO/stB3BAQISHqNBUK0kWObKhb3fcwUCaS8sR9oDbThFJ1fTqsM5K07eoBx1G2B209PUsQOLIxcNmdX/ZASjVxn+cGIVmOvEJo8mnDlWO75s8BnhXoqeygMuCzr/dppVbEZABCvBFiE1rD1zooyigBtgnMKwQhYxk5r9glUPmD+wsgS7L5xsfHd0B65S4JyIFEjvlYR0omv5nW7Ubgor4D1ztBfhXs1LbXwp7RWwpUmCRvw1tGd
+  template:
+    metadata:
+      annotations:
+        sealedsecrets.bitnami.com/namespace-wide: "true"
+      name: {{ include "bt-app.backendName" .}}-secret
+      labels:
+        {{- include "bt-app.backendLabels" . | nindent 4 }}
+    type: Opaque
 
 ---
 

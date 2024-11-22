@@ -2,16 +2,16 @@ import { ScheduleType } from "@repo/common";
 
 import { ScheduleModule } from "./generated-types/module-types";
 
-interface Relationships {
+export interface ScheduleRelationships {
   classes: ScheduleModule.SelectedClassInput[];
   term: null;
 }
 
 export type IntermediateSchedule = Omit<
   ScheduleModule.Schedule,
-  keyof Relationships
+  keyof ScheduleRelationships
 > &
-  Relationships;
+  ScheduleRelationships;
 
 export const formatSchedule = async (schedule: ScheduleType) => {
   return {
