@@ -6,8 +6,8 @@ import { useSearchParams } from "react-router-dom";
 
 import {
   Component,
-  GET_CLASSES,
-  GetClassesResponse,
+  GET_CATALOG,
+  GetCatalogResponse,
   IClass,
   Semester,
 } from "@/lib/api";
@@ -52,36 +52,14 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetClassesResponse>(GET_CLASSES, {
+  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
     variables: {
       semester: currentSemester,
       year: currentYear,
     },
   });
 
-  const classes = useMemo(
-    () =>
-      data?.catalog.reduce((acc, course) => {
-        // Map each class to minimal representation for filtering
-        const classes = course.classes.map(
-          (_class) =>
-            ({
-              ..._class,
-              course: {
-                subject: course.subject,
-                number: course.number,
-                title: course.title,
-                gradeDistribution: course.gradeDistribution,
-                academicCareer: course.academicCareer,
-              },
-            }) as IClass
-        );
-
-        // Combine all classes into a single array
-        return [...acc, ...classes];
-      }, [] as IClass[]) ?? [],
-    [data?.catalog]
-  );
+  const classes = useMemo(() => data?.catalog ?? [], [data]);
 
   const query = useMemo(
     () => (persistent ? (searchParams.get("query") ?? "") : localQuery),

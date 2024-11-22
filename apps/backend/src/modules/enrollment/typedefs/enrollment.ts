@@ -6,8 +6,8 @@ export default gql`
       year: Int!
       semester: Semester!
       subject: String!
-      courseNumber: String!
-      number: String!
+      courseNumber: CourseNumber!
+      number: SectionNumber!
     ): Section!
   }
 `;

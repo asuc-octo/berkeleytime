@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { ICourse } from ".";
+import { GradeDistribution, ICourse } from ".";
 import { ITerm, Semester } from "./terms";
 
 export enum InstructionMethod {
@@ -194,6 +194,7 @@ export interface IClass {
   primarySection: ISection;
   sections: ISection[];
   term: ITerm;
+  gradeDistribution: GradeDistribution;
 
   // Attributes
   session: string;
@@ -214,8 +215,8 @@ export const READ_CLASS = gql`
     $year: Int!
     $semester: Semester!
     $subject: String!
-    $courseNumber: String!
-    $number: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
   ) {
     class(
       year: $year
@@ -235,11 +236,22 @@ export const READ_CLASS = gql`
       unitsMin
       gradingBasis
       finalExam
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
+        }
+      }
       course {
         title
         description
         gradeDistribution {
           average
+          distribution {
+            letter
+            count
+          }
         }
         academicCareer
         requirements
@@ -304,6 +316,44 @@ export const READ_CLASS = gql`
         waitlistMax
         startDate
         endDate
+      }
+    }
+  }
+`;
+
+export interface GetCatalogResponse {
+  catalog: IClass[];
+}
+
+export const GET_CATALOG = gql`
+  query GetCatalog($year: Int!, $semester: Semester!) {
+    catalog(year: $year, semester: $semester) {
+      number
+      title
+      unitsMax
+      unitsMin
+      finalExam
+      gradingBasis
+      primarySection {
+        component
+        online
+        open
+        enrollCount
+        enrollMax
+        waitlistCount
+        waitlistMax
+        meetings {
+          days
+        }
+      }
+      course {
+        subject
+        number
+        title
+        gradeDistribution {
+          average
+        }
+        academicCareer
       }
     }
   }

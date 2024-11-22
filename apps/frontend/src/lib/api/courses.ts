@@ -42,7 +42,7 @@ export interface ReadCourseResponse {
 }
 
 export const READ_COURSE = gql`
-  query GetCourse($subject: String!, $number: String!) {
+  query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       subject
       number
@@ -94,46 +94,6 @@ export const GET_COURSES = gql`
       gradingBasis
       typicallyOffered
       primaryInstructionMethod
-    }
-  }
-`;
-
-export interface GetClassesResponse {
-  catalog: ICourse[];
-}
-
-export const GET_CLASSES = gql`
-  query GetClasses($year: Int!, $semester: Semester!) {
-    catalog(year: $year, semester: $semester) {
-      subject
-      number
-      title
-      gradeDistribution {
-        average
-      }
-      academicCareer
-      classes {
-        subject
-        courseNumber
-        number
-        title
-        unitsMax
-        unitsMin
-        finalExam
-        gradingBasis
-        primarySection {
-          component
-          online
-          open
-          enrollCount
-          enrollMax
-          waitlistCount
-          waitlistMax
-          meetings {
-            days
-          }
-        }
-      }
     }
   }
 `;

@@ -9,12 +9,11 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import Catalog from "@/app/Catalog";
-import Enrollment from "@/app/Enrollment";
-import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import PinsProvider from "@/components/PinsProvider";
+
+// TODO: Experiment with server-side rendering for static pages and hydration for dynamic pages
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -31,6 +30,9 @@ const Course = {
   Classes: lazy(() => import("@/components/Course/Classes")),
 };
 
+const Catalog = lazy(() => import("@/app/Catalog"));
+const Enrollment = lazy(() => import("@/app/Enrollment"));
+const Grades = lazy(() => import("@/app/Grades"));
 const About = lazy(() => import("@/app/About"));
 const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));

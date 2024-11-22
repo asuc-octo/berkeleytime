@@ -2,13 +2,13 @@ import { UserType } from "@repo/common";
 
 import { UserModule } from "./generated-types/module-types";
 
-export type IntermediateUser = Omit<
-  UserModule.User,
-  "bookmarkedClasses" | "bookmarkedCourses"
-> & {
+export interface UserRelationships {
   bookmarkedCourses: UserModule.BookmarkedCourseInput[];
   bookmarkedClasses: UserModule.BookmarkedClassInput[];
-};
+}
+
+export type IntermediateUser = Omit<UserModule.User, keyof UserRelationships> &
+  UserRelationships;
 
 export const formatUser = (user: UserType) => {
   return {

@@ -2,29 +2,31 @@ import { gql } from "graphql-tag";
 
 
 export default gql`
+  scalar ClassNumber
+
   type Query {
     class(
       year: Int!
       semester: Semester!
       subject: String!
-      courseNumber: String!
-      number: String!
+      courseNumber: CourseNumber!
+      number: ClassNumber!
     ): Class
     section(
       year: Int!
       semester: Semester!
       subject: String!
-      courseNumber: String!
-      classNumber: String!
-      number: String!
+      courseNumber: CourseNumber!
+      classNumber: ClassNumber!
+      number: SectionNumber!
     ): Section
   }
 
   type Class {
     "Identifiers"
     subject: String!
-    courseNumber: String!
-    number: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
     year: Int!
     semester: Semester!
     session: String!
@@ -86,15 +88,18 @@ export default gql`
     IOP
   }
 
+  scalar SectionNumber
+  scalar SectionIdentifier
+
   type Section {
     "Identifiers"
     subject: String!
-    courseNumber: String!
-    classNumber: String!
-    number: String!
+    courseNumber: CourseNumber!
+    classNumber: ClassNumber!
+    number: SectionNumber!
     year: Int!
     semester: Semester!
-    ccn: Int!
+    ccn: SectionIdentifier!
 
     "Relationships"
     class: Class!

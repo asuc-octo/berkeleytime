@@ -30,6 +30,11 @@ app.kubernetes.io/name: updater
 {{ include "bt-app.labels" . }}
 {{- end -}}
 
+{{- define "bt-app.cleanupLabels" -}}
+app.kubernetes.io/name: cleanup
+{{ include "bt-app.labels" . }}
+{{- end -}}
+
 {{- define "bt-app.backendName" -}}
 {{ .Release.Name }}-backend
 {{- end -}}

@@ -11,16 +11,16 @@
       "cache": false
     },
     "generate": {
-      "outputs": ["generated-types/**"]
+      "outputs": ["*/generated-types/**"]
     },
     "lint": {},
     "start": {
-      "dependsOn": ["generate"]
+      "dependsOn": ["generate", "^build"]
     },
     "dev": {
+      "dependsOn": ["generate", "^build"],
       "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"]
+      "persistent": true
     }
   }
 }

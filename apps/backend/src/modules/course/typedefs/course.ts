@@ -1,15 +1,17 @@
 import { gql } from "graphql-tag";
 
 export default gql`
+  scalar CourseNumber
+
   type Query {
-    course(subject: String!, number: String!): Course
+    course(subject: String!, number: CourseNumber!): Course
     courses: [Course!]!
   }
 
   type Course {
     "Identifiers"
     subject: String!
-    number: String!
+    number: CourseNumber!
 
     "Relationships"
     classes: [Class!]!

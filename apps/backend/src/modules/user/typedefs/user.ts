@@ -14,15 +14,15 @@ const typedef = gql`
 
   input BookmarkedCourseInput {
     subject: String!
-    number: String!
+    number: CourseNumber!
   }
 
   input BookmarkedClassInput {
     year: Int!
     semester: Semester!
     subject: String!
-    courseNumber: String!
-    number: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
   }
 
   input UpdateUserInput {
