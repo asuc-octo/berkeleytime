@@ -63,8 +63,6 @@ services:
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
     ports:
       - 27018:27018
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./data/mongo2/db:/data/db
       - ./data/mongo2/configdb:/data/configdb
@@ -75,8 +73,6 @@ services:
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
     ports:
       - 27019:27019
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./data/mongo3/db:/data/db
       - ./data/mongo3/configdb:/data/configdb
