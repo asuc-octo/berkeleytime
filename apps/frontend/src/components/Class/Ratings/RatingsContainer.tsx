@@ -30,7 +30,7 @@ import {
   isMetricRating,
 } from "./helper/metricsUtil";
 
-const PLACEHOLDER = true;
+const PLACEHOLDER = false;
 
 interface UserRating {
   metrics: [
@@ -461,7 +461,7 @@ export function RatingsContainer() {
               </Button>
             </div>
           ) : (
-            ratingsData?.map((ratingData) => (
+            ratingsData?.filter((ratingData) => isMetricRating(ratingData.metric)).map((ratingData) => (
               <div className={styles.ratingSection} key={ratingData.metric}>
                 <RatingDetail {...ratingData} />
               </div>
