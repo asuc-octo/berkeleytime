@@ -246,10 +246,6 @@ export const READ_CLASS = gql`
       course {
         title
         description
-        classes {
-          year
-          semester
-        }
         gradeDistribution {
           average
           distribution {

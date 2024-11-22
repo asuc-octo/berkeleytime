@@ -1,11 +1,8 @@
-import { ElementType, ReactNode, forwardRef } from "react";
+import { forwardRef } from "react";
 
 import classNames from "classnames";
 
-import {
-  PolymorphicComponentPropsWithRef,
-  PolymorphicRef,
-} from "../../lib/polymorphism";
+import type * as Polymorphic from "../../lib/polymorphism";
 import styles from "./Button.module.scss";
 
 interface Props {
@@ -13,22 +10,22 @@ interface Props {
   disabled?: boolean;
 }
 
-export type ButtonProps<C extends ElementType> =
-  PolymorphicComponentPropsWithRef<C, Props>;
+type PolymorphicButton = Polymorphic.ForwardRefComponent<"button", Props>;
 
-const PolymorphicComponent = forwardRef(
-  <C extends ElementType = "button">(
+export const Button = forwardRef(
+  (
     {
       children,
       className,
       disabled,
       variant = "outline",
+      as: Component = "button",
       ...props
-    }: ButtonProps<C>,
-    ref: PolymorphicRef<C>
+    },
+    ref
   ) => {
     return (
-      <button
+      <Component
         {...props}
         ref={ref}
         data-variant={variant}
@@ -37,15 +34,9 @@ const PolymorphicComponent = forwardRef(
         className={classNames(styles.root, className)}
       >
         {children}
-      </button>
+      </Component>
     );
   }
-);
+) as PolymorphicButton;
 
-PolymorphicComponent.displayName = "Button";
-
-export const Button = PolymorphicComponent as <
-  T extends ElementType = "button",
->(
-  props: ButtonProps<T>
-) => ReactNode | null;
+Button.displayName = "Button";

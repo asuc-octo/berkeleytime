@@ -1,4 +1,4 @@
-import { ReactNode, Suspense, useMemo } from "react";
+import { ReactNode, Suspense, lazy, useMemo } from "react";
 
 import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
@@ -33,10 +33,11 @@ import usePins from "@/hooks/usePins";
 import { ICourse } from "@/lib/api";
 
 import styles from "./Class.module.scss";
-import Classes from "./Classes";
-import Enrollment from "./Enrollment";
-import Grades from "./Grades";
-import Overview from "./Overview";
+
+const Classes = lazy(() => import("./Classes"));
+const Enrollment = lazy(() => import("./Enrollment"));
+const Grades = lazy(() => import("./Grades"));
+const Overview = lazy(() => import("./Overview"));
 
 interface BodyProps {
   children: ReactNode;
@@ -44,9 +45,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
-  return dialog ? (
-    children
-  ) : (
+  return (
     <Suspense
       fallback={
         <Boundary>
@@ -54,7 +53,7 @@ function Body({ children, dialog }: BodyProps) {
         </Boundary>
       }
     >
-      <Outlet />
+      {dialog ? children : <Outlet />}
     </Suspense>
   );
 }
@@ -102,7 +101,7 @@ export default function Course({
 
   const location = useLocation();
 
-  const { data: user } = useReadUser();
+  const { data: user, loading: userLoading } = useReadUser();
 
   const [updateUser] = useUpdateUser();
 
@@ -237,16 +236,19 @@ export default function Course({
         <Container size="sm">
           <div className={styles.row}>
             <div className={styles.group}>
+              {/* TODO: Reusable bookmark button */}
               <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
                     [styles.active]: bookmarked,
                   })}
                   onClick={() => bookmark()}
+                  disabled={userLoading}
                 >
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
+              {/* TODO: Reusable pin button */}
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
