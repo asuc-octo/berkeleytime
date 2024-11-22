@@ -176,7 +176,7 @@
 
   .barContainer {
     flex-grow: 1;
-    height: 8px;
+    height: 9px;
     background-color: var(--Slate-200, #E2E8F0);
     border-radius: 4px;
     overflow: hidden;
@@ -333,11 +333,32 @@
 @media (prefers-color-scheme: dark) {
   .statRow{
     .barContainer {
-      background-color: #475569;
+      background-color: var(--Zinc-600, #52525B);;
       
       .bar {
-        background-color: var(--Slate-200, #E2E8F0);
+        background-color: var(--Zinc-400, #A1A1AA);
       }
     }
   }
+  .statusGreen {
+    color: #49FBC0;
+    background: #003E1B;
+  }
+  
+  .statusOrange {
+    color: #FF993E;
+    background: #472400;
+  }
+  
+  .statusRed {
+    color: #FB4848;
+    background: #3D0000;
+  }
+  .titleSection {
+  
+    .title {
+      color: white;
+    }
+  }
+
  }
