@@ -8,7 +8,7 @@ services:
   #     context: .
   #     target: datapuller-dev
   #   depends_on:
-  #     - mongodb
+  #     - mongodb-1
   #   networks:
   #     - bt
   #   restart: always
@@ -21,7 +21,7 @@ services:
       target: backend-dev
     depends_on:
       - redis
-      - mongodb
+      - mongodb-1
     networks:
       - bt
     restart: always
@@ -39,15 +39,56 @@ services:
       - ./apps/frontend/src:/frontend/apps/frontend/src
       - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/frontend/public:/frontend/apps/frontend/public
-  mongodb:
+  mongodb-1:
     image: mongo:5
+    command: ["--replSet", "rs0", "--bind_ip_all"]
     networks:
       - bt
     ports:
       - 27017:27017
     restart: always
     volumes:
-      - ./db:/data/db
+      - ./db/mongo1:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  mongodb-2:
+    image: mongo:5
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    networks:
+      - bt
+    ports:
+      - 27018:27017
+    restart: always
+    volumes:
+      - ./db/mongo2:/data/db
+  mongodb-3:
+    image: mongo:5
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    networks:
+      - bt
+    ports:
+      - 27019:27017
+    restart: always
+    volumes:
+      - ./db/mongo3:/data/db
+  mongo-init:
+    image: mongo:5
+    depends_on:
+      - mongodb-1
+      - mongodb-2
+      - mongodb-3
+    networks:
+      - bt
+    restart: "no"
+    command: >
+      mongosh --host mongodb-1:27017 --eval '
+      rs.initiate({
+        _id: "rs0",
+        members: [
+          {_id: 0, host: "mongodb-1:27017"},
+          {_id: 1, host: "mongodb-2:27017"},
+          {_id: 2, host: "mongodb-3:27017"}
+        ]
+      });'
   nginx:
     depends_on:
       - backend
