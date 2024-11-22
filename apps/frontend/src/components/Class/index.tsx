@@ -1,4 +1,4 @@
-import { ReactNode, Suspense, useMemo, useState } from "react";
+import { ReactNode, Suspense, lazy, useCallback, useMemo } from "react";
 
 import { DialogClose } from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -33,17 +33,19 @@ import CourseDrawer from "@/components/CourseDrawer";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
+import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
 import { IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
-import Enrollment from "./Enrollment";
-import Grades from "./Grades";
-import Overview from "./Overview";
-import Ratings from "./Ratings";
-import Sections from "./Sections";
+
+const Enrollment = lazy(() => import("./Enrollment"));
+const Grades = lazy(() => import("./Grades"));
+const Overview = lazy(() => import("./Overview"));
+const Sections = lazy(() => import("./Sections"));
+const Ratings = lazy(() => import("./Ratings"));
 
 interface BodyProps {
   children: ReactNode;
@@ -51,9 +53,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
-  return dialog ? (
-    children
-  ) : (
+  return (
     <Suspense
       fallback={
         <Boundary>
@@ -61,7 +61,7 @@ function Body({ children, dialog }: BodyProps) {
         </Boundary>
       }
     >
-      <Outlet />
+      {dialog ? children : <Outlet />}
     </Suspense>
   );
 }
@@ -113,6 +113,7 @@ interface DialogClassProps {
   onClose?: never;
 }
 
+// TODO: Determine whether a controlled input is even necessary
 type ClassProps = (CatalogClassProps | DialogClassProps) &
   (ControlledProps | UncontrolledProps);
 
@@ -129,11 +130,16 @@ export default function Class({
   dialog,
 }: ClassProps) {
   const { pins, addPin, removePin } = usePins();
-
   const location = useLocation();
 
-  // TODO: Bookmarks
-  const [bookmarked, setBookmarked] = useState(false);
+  const { data: user, loading: userLoading } = useReadUser();
+
+  const [updateUser] = useUpdateUser();
+
+  const { data: course, loading: courseLoading } = useReadCourse(
+    providedClass?.subject || (subject as string),
+    providedClass?.courseNumber || (courseNumber as string)
+  );
 
   const { data, loading } = useReadClass(
     year as number,
@@ -148,6 +154,19 @@ export default function Class({
   );
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+
+  const bookmarked = useMemo(
+    () =>
+      user?.bookmarkedClasses.some(
+        (bookmarkedClass) =>
+          bookmarkedClass.subject === _class?.subject &&
+          bookmarkedClass.courseNumber === _class?.courseNumber &&
+          bookmarkedClass.number === _class?.number &&
+          bookmarkedClass.year === _class?.year &&
+          bookmarkedClass.semester === _class?.semester
+      ),
+    [user, _class]
+  );
 
   const pin = useMemo(() => {
     if (!_class) return;
@@ -171,11 +190,48 @@ export default function Class({
 
   const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
-  if (loading) {
+  const bookmark = useCallback(async () => {
+    if (!user || !_class) return;
+
+    const bookmarkedClasses = bookmarked
+      ? user.bookmarkedClasses.filter(
+          (bookmarkedClass) =>
+            bookmarkedClass.subject === _class?.subject &&
+            bookmarkedClass.courseNumber === _class?.courseNumber &&
+            bookmarkedClass.number === _class?.number &&
+            bookmarkedClass.year === _class?.year &&
+            bookmarkedClass.semester === _class?.semester
+        )
+      : user.bookmarkedClasses.concat(_class);
+
+    await updateUser(
+      {
+        bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
+          subject: bookmarkedClass.subject,
+          number: bookmarkedClass.number,
+          courseNumber: bookmarkedClass.courseNumber,
+          year: bookmarkedClass.year,
+          semester: bookmarkedClass.semester,
+        })),
+      },
+      {
+        optimisticResponse: {
+          updateUser: {
+            ...user,
+            bookmarkedClasses,
+          },
+        },
+      }
+    );
+  }, [bookmarked]);
+
+  // TODO: Loading state
+  if (loading || courseLoading) {
     return <></>;
   }
 
-  if (!_class || !pin) {
+  // TODO: Error state
+  if (!course || !_class || !pin) {
     return <></>;
   }
 
@@ -192,16 +248,19 @@ export default function Class({
                   </IconButton>
                 </Tooltip>
               )}
+              {/* TODO: Reusable bookmark button */}
               <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
                     [styles.active]: bookmarked,
                   })}
-                  onClick={() => setBookmarked(!bookmarked)}
+                  onClick={() => bookmark()}
+                  disabled={userLoading}
                 >
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
+              {/* TODO: Reusable pin button */}
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
@@ -363,20 +422,20 @@ export default function Class({
                         {_class.aggregatedRatings.metrics[0].count}
                       </span>
                     ) : (
-                      <span 
-                        style={{ 
-                          width: '6px', 
-                          height: '6px', 
-                          backgroundColor: '#3B82F6', 
-                          borderRadius: '50%',
-                          display: 'inline-block',
-                          marginLeft: '6px'
-                        }} 
+                      <span
+                        style={{
+                          width: "6px",
+                          height: "6px",
+                          backgroundColor: "#3B82F6",
+                          borderRadius: "50%",
+                          display: "inline-block",
+                          marginLeft: "6px",
+                        }}
                       />
                     )}
                   </MenuItem>
                 )}
-                </NavLink>
+              </NavLink>
             </div>
           )}
         </Container>
@@ -385,6 +444,7 @@ export default function Class({
         <ClassContext.Provider
           value={{
             class: _class,
+            course,
           }}
         >
           <Body dialog={dialog}>

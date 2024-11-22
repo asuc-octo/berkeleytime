@@ -293,19 +293,6 @@ export const READ_CLASS = gql`
             weightedAverage
           }
         }
-        classes {
-          year
-          semester
-          number
-          primarySection {
-            meetings {
-              instructors {
-                familyName
-                givenName
-              }
-            }
-          }
-        }
         gradeDistribution {
           average
           distribution {

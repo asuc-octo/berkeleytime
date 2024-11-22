@@ -9,7 +9,7 @@ import {
 import { formatDate } from "../class/formatter";
 import { CourseModule } from "./generated-types/module-types";
 
-interface Relationships {
+export interface CourseRelationships {
   classes: null;
   crossListing: string[];
   requiredCourses: string[];
@@ -18,9 +18,9 @@ interface Relationships {
 
 export type IntermediateCourse = Omit<
   CourseModule.Course,
-  keyof Relationships
+  keyof CourseRelationships
 > &
-  Relationships;
+  CourseRelationships;
 
 export function formatCourse(course: CourseType) {
   return {
