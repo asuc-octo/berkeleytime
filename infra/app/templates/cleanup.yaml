@@ -4,6 +4,8 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "bt-app.cleanupName" . }}
+  labels:
+    {{- include "bt-app.cleanupLabels" . | nindent 4 }}
 spec:
   template:
     spec:
