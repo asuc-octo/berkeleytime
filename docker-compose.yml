@@ -22,8 +22,8 @@ services:
     depends_on:
       - redis
       - mongo1
-      - mongo2
-      - mongo3
+      # - mongo2
+      # - mongo3
     networks:
       - bt
     restart: always
@@ -47,7 +47,8 @@ services:
     ports:
       - 27017:27017
     healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo1:27017',priority:1},{_id:1,host:'mongo2:27018',priority:0.5},{_id:2,host:'mongo3:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
+      # test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo1:27017',priority:1},{_id:1,host:'mongo2:27018',priority:0.5},{_id:2,host:'mongo3:27019',priority:0.5}]}) }" | mongosh --port 27017 --quiet
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo1:27017',priority:1}]}) }" | mongosh --port 27017 --quiet
       interval: 5s
       timeout: 30s
       start_period: 0s
@@ -58,26 +59,26 @@ services:
       - ./data/mongo1/configdb:/data/configdb
     networks:
       - bt
-  mongo2:
-    image: mongo:7
-    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
-    ports:
-      - 27018:27018
-    volumes:
-      - ./data/mongo2/db:/data/db
-      - ./data/mongo2/configdb:/data/configdb
-    networks:
-      - bt
-  mongo3:
-    image: mongo:7
-    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
-    ports:
-      - 27019:27019
-    volumes:
-      - ./data/mongo3/db:/data/db
-      - ./data/mongo3/configdb:/data/configdb
-    networks:
-      - bt
+  # mongo2:
+  #   image: mongo:7
+  #   command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27018"]
+  #   ports:
+  #     - 27018:27018
+  #   volumes:
+  #     - ./data/mongo2/db:/data/db
+  #     - ./data/mongo2/configdb:/data/configdb
+  #   networks:
+  #     - bt
+  # mongo3:
+  #   image: mongo:7
+  #   command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27019"]
+  #   ports:
+  #     - 27019:27019
+  #   volumes:
+  #     - ./data/mongo3/db:/data/db
+  #     - ./data/mongo3/configdb:/data/configdb
+  #   networks:
+  #     - bt
   nginx:
     depends_on:
       - backend
