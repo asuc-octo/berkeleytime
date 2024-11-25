@@ -1,4 +1,4 @@
-{{- define "bt-datapuller.cronjob" -}}
+{{- define "bt-app.cronjob" -}}
 {{- $root := index . 0 -}}
 {{- $jobName := index . 1 -}}
 {{- $jobConfig := index . 2 -}}
@@ -7,9 +7,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "bt-datapuller.datapullerName" $root }}-{{ $jobName }}
+  name: {{ include "bt-app.datapullerName" $root }}-{{ $jobName }}
   labels:
-    {{- include "bt-datapuller.datapullerLabels" $root | nindent 4 }}
+    {{- include "bt-app.datapullerLabels" $root | nindent 4 }}
 spec:
   schedule: "{{ $jobConfig.schedule }}"
   suspend: {{ $jobConfig.suspend }}

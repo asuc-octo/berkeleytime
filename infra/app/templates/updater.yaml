@@ -1,5 +1,5 @@
-{{- include "bt-datapuller.cronjob" (list . "courses" .Values.datapuller.courses) }}
+{{- include "bt-app.cronjob" (list . "courses" .Values.datapuller.courses) }}
 ---
-{{- include "bt-datapuller.cronjob" (list . "sections" .Values.datapuller.sections) }}
+{{- include "bt-app.cronjob" (list . "sections" .Values.datapuller.sections) }}
 ---
-{{- include "bt-datapuller.cronjob" (list . "classes" .Values.datapuller.classes) }}
+{{- include "bt-app.cronjob" (list . "classes" .Values.datapuller.classes) }}
