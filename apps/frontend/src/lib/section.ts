@@ -11,7 +11,7 @@ export const getExternalLink = (
   return `https://classes.berkeley.edu/content/${year}-${semester.toLowerCase()}-${subject.toLowerCase()}-${courseNumber}-${sectionNumber}-${kind.toLowerCase()}-${sectionNumber}`;
 };
 
-const colors = [
+export const colors = [
   "var(--red-500)",
   "var(--orange-500)",
   "var(--yellow-500)",

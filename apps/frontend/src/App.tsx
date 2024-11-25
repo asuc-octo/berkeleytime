@@ -32,7 +32,7 @@ const Course = {
 
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
-const Grades = lazy(() => import("@/app/Grades"));
+const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
@@ -92,7 +92,7 @@ const router = createBrowserRouter([
     element: <Layout footer={false} />,
     children: [
       {
-        element: <Grades />,
+        element: <GradeDistributions />,
         path: "grades",
       },
       {
