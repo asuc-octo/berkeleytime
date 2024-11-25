@@ -22,6 +22,30 @@ export default gql`
     ): Section
   }
 
+  type DecalSection {
+    title: String
+    size: Int
+    location: String
+    time: String
+    starts: String
+    status: String
+    ccn: Int
+  }
+
+  type DecalInfo {
+    id: Int
+    semester: String
+    title: String
+    description: String
+    category: String
+    website: String
+    application: String
+    enroll: String
+    contact: String
+    units: String
+    sections: [DecalSection]
+  }
+
   type Class {
     "Identifiers"
     subject: String!
@@ -46,6 +70,7 @@ export default gql`
     unitsMax: Float!
     unitsMin: Float!
     decal: Boolean!
+    decalInfo: DecalInfo
   }
 
   enum ClassFinalExam {

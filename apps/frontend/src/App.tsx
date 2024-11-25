@@ -172,7 +172,7 @@ const router = createBrowserRouter([
 ]);
 
 const client = new ApolloClient({
-  uri: "/api/graphql",
+  uri: "http://localhost:5001/api/graphql",
   cache: new InMemoryCache(),
 });
 

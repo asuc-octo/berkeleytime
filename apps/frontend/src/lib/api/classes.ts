@@ -181,6 +181,30 @@ export interface IMeeting {
   instructors: IInstructor[];
 }
 
+export interface IClassDecalSection {
+  title: string;
+  size: number;
+  location: string;
+  time: string;
+  starts: string;
+  status: string;
+  ccn: number;
+}
+
+export interface IClassDecalInfo {
+  id: number;
+  semester: string;
+  title: string;
+  description: string;
+  category: string;
+  website: string;
+  application: string;
+  enroll: string;
+  contact: string;
+  units: string;
+  sections: IClassDecalSection[];
+}
+
 export interface IClass {
   // Identifiers
   year: number;
@@ -204,6 +228,8 @@ export interface IClass {
   title: string | null;
   unitsMax: number;
   unitsMin: number;
+  decal: boolean;
+  decalInfo: IClassDecalInfo | null;
 }
 
 export interface ReadClassResponse {
@@ -334,6 +360,7 @@ export const GET_CATALOG = gql`
       unitsMin
       finalExam
       gradingBasis
+      decal
       primarySection {
         component
         online

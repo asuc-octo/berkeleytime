@@ -1,13 +1,20 @@
 import { MouseEventHandler, forwardRef } from "react";
 
+
+
 import { ArrowRight } from "iconoir-react";
+
+
 
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
+
+
 import styles from "./Class.module.scss";
+
 
 interface ClassProps {
   index: number;
@@ -28,6 +35,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
       primarySection: { enrollCount, enrollMax, waitlistCount, waitlistMax },
       unitsMax,
       unitsMin,
+      decal,
       index,
       onClick,
     },
@@ -43,6 +51,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
         <div className={styles.text}>
           <p className={styles.heading}>
             {subject} {courseNumber} #{number}
+            {decal && <span className={styles.decalTag}>Decal</span>}
           </p>
           <p className={styles.description}>{title ?? courseTitle}</p>
           <div className={styles.row}>
