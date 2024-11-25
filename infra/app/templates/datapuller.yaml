@@ -1,4 +1,4 @@
-{{- define "bt-app.cronjob" -}}
+{{- define "bt-app.datapuller" -}}
 {{- $root := index . 0 -}}
 {{- $jobName := index . 1 -}}
 {{- $jobConfig := index . 2 -}}
@@ -49,3 +49,11 @@ spec:
                   value: "_"
           restartPolicy: OnFailure
 {{- end }}{{- end -}}
+
+---
+{{- include "bt-app.datapuller" (list . "courses" .Values.datapuller.courses) }}
+---
+{{- include "bt-app.datapuller" (list . "sections" .Values.datapuller.sections) }}
+---
+{{- include "bt-app.datapuller" (list . "classes" .Values.datapuller.classes) }}
+
