@@ -1,6 +1,7 @@
 import mongoose, { InferSchemaType, Schema } from "mongoose";
 
 import { schemaOptions } from "../lib/common";
+
 const decalSection = {
   title: String,
   faciliators: String,

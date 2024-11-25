@@ -5,7 +5,14 @@ import { CourseModule } from "../course/generated-types/module-types";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
-import { getClass, getDecalInfo, getPrimarySection, getSecondarySections, getSection, isDecal } from "./controller";
+import {
+  getClass,
+  getDecalInfo,
+  getPrimarySection,
+  getSecondarySections,
+  getSection,
+  isDecal,
+} from "./controller";
 import { IntermediateClass, IntermediateSection } from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
 

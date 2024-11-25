@@ -1,10 +1,7 @@
 import { gql } from "@apollo/client";
 
-
-
 import { AcademicCareer, IClass, InstructionMethod } from ".";
 import { Semester } from "./terms";
-
 
 export interface Grade {
   letter: string;

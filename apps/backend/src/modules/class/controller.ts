@@ -1,7 +1,5 @@
 import { ClassModel, DecalModel, SectionModel } from "@repo/common";
 
-
-
 import { formatClass, formatDecalInfo, formatSection } from "./formatter";
 
 export const getClass = async (

@@ -1,20 +1,13 @@
 import { MouseEventHandler, forwardRef } from "react";
 
-
-
 import { ArrowRight } from "iconoir-react";
-
-
 
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
-
-
 import styles from "./Class.module.scss";
-
 
 interface ClassProps {
   index: number;

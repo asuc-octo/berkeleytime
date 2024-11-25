@@ -9,6 +9,7 @@ import {
 } from "./controller";
 import { IntermediateCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
+
 const resolvers: CourseModule.Resolvers = {
   CourseNumber: new GraphQLScalarType({
     name: "CourseNumber",
