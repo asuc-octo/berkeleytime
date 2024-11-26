@@ -29,7 +29,13 @@ export async function fetchActiveTerms(
       const data = await response.json();
       activeTermIds.push(...data.response.terms.map((term: Term) => term.id));
     } catch (error: any) {
-      logger.error(`Unexpected error querying API. Error: "${error}"`);
+      logger.error(
+        `Unexpected error querying API for ${term} terms. Error: "${error}"`
+      );
+      logger.error(`Error details: ${JSON.stringify(error, null, 2)}`);
+      if (error.cause) {
+        logger.error(`Error cause: ${error.cause}`);
+      }
     }
   }
   const uniqueActiveTermIds = Array.from(new Set(activeTermIds));
@@ -128,7 +134,6 @@ export async function fetchPaginatedData<T, R>(
       return acc;
     }, [] as T[]);
 
-    // Optionally, log batch errors to the error file
     if (batchErrorCount > 0) {
       const batchErrorMessage = `${new Date().toISOString()} - Batch error count: ${batchErrorCount}\n`;
       await fs.appendFile(errorLogFile, batchErrorMessage);
