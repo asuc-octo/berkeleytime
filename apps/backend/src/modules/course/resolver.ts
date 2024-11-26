@@ -1,3 +1,5 @@
+import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
+
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import {
   getAssociatedCourses,
@@ -9,6 +11,20 @@ import { IntermediateCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
 const resolvers: CourseModule.Resolvers = {
+  CourseNumber: new GraphQLScalarType({
+    name: "CourseNumber",
+    parseValue: (value) => value,
+    serialize: (value) => value,
+    description: "Unique course number, such as 61A or C54",
+    parseLiteral(ast) {
+      if (ast.kind === Kind.STRING) return ast.value;
+
+      throw new GraphQLError("Provided value is not a course number", {
+        extensions: { code: "BAD_USER_INPUT" },
+      });
+    },
+  }),
+
   Query: {
     course: async (_, { subject, number }, _context, _info) => {
       const course = await getCourse(subject, number);

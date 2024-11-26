@@ -1,6 +1,6 @@
 name: Deploy to Staging
 
-concurrency: stage
+concurrency: staging
 
 on:
   push:
@@ -8,36 +8,30 @@ on:
 
 jobs:
   build-push:
-    name: Build and Push Images
+    name: Build and Push Images and Charts
     uses: ./.github/workflows/cd.yaml
     with:
-      tag: latest
+      image_tag: latest
+      chart_ver: 0.1.0-stage
     secrets: inherit
 
   deploy:
-    name: Deploy with SSH
+    name: SSH and Deploy
     needs: [build-push]
-    runs-on: ubuntu-latest
-    environment: staging
-
-    steps:
-      - name: SSH and Helm Install
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: root
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd ./infra
-            if helm status bt-stage-app ; then
-              kubectl rollout restart deployment bt-stage-app-backend
-              kubectl rollout restart deployment bt-stage-app-frontend
-            else
-              helm install bt-stage-app ./app --namespace=bt \
-                --set env=stage \
-                --set frontend.image.tag=latest \
-                --set backend.image.tag=latest \
-                --set host=staging.stanfurdtime.com \
-                --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-                --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
-            fi
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: staging
+      name: bt-stage-app
+      version: 0.1.0-stage
+      values: |
+        env: stage
+        frontend:
+          image:
+            tag: latest
+        backend:
+          image:
+            tag: latest
+        host: staging.stanfurdtime.com
+        mongoUri: mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt
+        redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
+    secrets: inherit

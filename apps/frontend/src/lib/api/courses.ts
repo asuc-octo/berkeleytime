@@ -42,7 +42,7 @@ export interface ReadCourseResponse {
 }
 
 export const READ_COURSE = gql`
-  query GetCourse($subject: String!, $number: String!) {
+  query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       subject
       number

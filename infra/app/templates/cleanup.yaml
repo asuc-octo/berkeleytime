@@ -4,6 +4,8 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "bt-app.cleanupName" . }}
+  labels:
+    {{- include "bt-app.cleanupLabels" . | nindent 4 }}
 spec:
   template:
     spec:
@@ -11,6 +13,12 @@ spec:
       containers:
         - name: cleanup
           image: alpine/helm
-          command: ['sh', '-c', 'sleep $(( {{ .Values.ttl }} * 60 * 60 )); helm uninstall {{ .Release.Name }}']
+          command:
+            - sh
+            - -c
+            - |
+              echo "Cleaning up {{ .Release.Name }} in {{ .Values.ttl }} hours"
+              sleep {{ .Values.ttl }}h
+              helm uninstall {{ .Release.Name }}
       restartPolicy: Never
 {{ end }}
