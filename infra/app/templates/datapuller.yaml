@@ -2,7 +2,7 @@
 {{- $root := index . 0 -}}
 {{- $jobName := index . 1 -}}
 {{- $jobConfig := index . 2 -}}
-{{- if not (eq $root.Values.env "dev") }}
+# {{- if not (eq $root.Values.env "dev") }}
 # Do not run CronJob in dev environment
 apiVersion: batch/v1
 kind: CronJob
