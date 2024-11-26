@@ -77,3 +77,5 @@ spec:
 {{- include "bt-app.datapuller" (list . "sections" .Values.datapuller.sections) }}
 ---
 {{- include "bt-app.datapuller" (list . "classes" .Values.datapuller.classes) }}
+---
+{{- include "bt-app.datapuller" (list . "cleanup" .Values.datapuller.cleanup) }}

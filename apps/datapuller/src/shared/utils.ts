@@ -47,15 +47,27 @@ export async function fetchPaginatedData<T, R>(
   headers: Record<string, string>,
   responseProcessor: (data: any) => R[],
   itemProcessor: (item: R) => T,
-  dataType: string // Add this parameter to specify the type of data being processed
+  dataType: string
 ): Promise<T[]> {
   const results: T[] = [];
   const queryBatchSize = 50;
   let page = 1;
   let totalErrorCount = 0;
 
+  // Get the current date to include in the log file name
+  const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+
+  // Set up the error log file path based on dataType and date
+  const logDir = path.join(__dirname, "logs");
+  const errorLogFile = path.join(
+    logDir,
+    `error_${dataType}_${currentDate}.log`
+  );
+
+  // Ensure the log directory exists
+  await fs.mkdir(logDir, { recursive: true });
+
   const fetchBatch = async (termId?: string) => {
-    //logger.info(`Querying ${queryBatchSize} pages from page ${page}...`);
     const promises = [];
 
     for (let i = 0; i < queryBatchSize; i++) {
@@ -81,8 +93,6 @@ export async function fetchPaginatedData<T, R>(
     const batchResults = await Promise.all(promises);
     const flattenedResults = batchResults.flat();
 
-    //logger.info(`Processed ${flattenedResults.length} items in this batch.`);
-
     return flattenedResults;
   };
 
@@ -91,21 +101,38 @@ export async function fetchPaginatedData<T, R>(
     if (batchData.length === 0) return false;
 
     let batchErrorCount = 0;
+
     const transformedData = batchData.reduce((acc, item, index) => {
       try {
         const processedItem = itemProcessor(item);
         acc.push(processedItem);
       } catch (error) {
         batchErrorCount++;
+        totalErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);
         logger.error("Problematic item:", JSON.stringify(item, null, 2));
+
+        // Log detailed error to the error file
+        const timestamp = new Date().toISOString();
+        const errorMessage = `${timestamp} - Error processing item at index ${index}: ${error.message}\n`;
+        const itemData = `Item data: ${JSON.stringify(item, null, 2)}\n\n`;
+
+        fs.appendFile(errorLogFile, errorMessage + itemData).catch(
+          (fsError) => {
+            logger.error(
+              `Failed to write to error log file: ${fsError.message}`
+            );
+          }
+        );
       }
       return acc;
     }, [] as T[]);
 
-    totalErrorCount += batchErrorCount;
-    //logger.info(`Processed ${transformedData.length} items in this batch.`);
-    //logger.info(`Errors in this batch: ${batchErrorCount}`);
+    // Optionally, log batch errors to the error file
+    if (batchErrorCount > 0) {
+      const batchErrorMessage = `${new Date().toISOString()} - Batch error count: ${batchErrorCount}\n`;
+      await fs.appendFile(errorLogFile, batchErrorMessage);
+    }
 
     results.push(...transformedData);
     page += queryBatchSize;
@@ -129,16 +156,11 @@ export async function fetchPaginatedData<T, R>(
 
   logger.info(`Total errors encountered for ${dataType}: ${totalErrorCount}`);
 
-  // Log totalErrorCount to a file
-  const logDir = path.join(__dirname, "logs");
-  const logFile = path.join(logDir, "error_counts.log");
-  const timestamp = new Date().toISOString();
-  const logMessage = `${timestamp} - ${dataType} - ${method} - Total errors: ${totalErrorCount}\n`;
-
+  // Log totalErrorCount to the error file
+  const totalErrorMessage = `${new Date().toISOString()} - Total errors encountered: ${totalErrorCount}\n\n`;
   try {
-    await fs.mkdir(logDir, { recursive: true });
-    await fs.appendFile(logFile, logMessage);
-    logger.info(`Error count for ${dataType} logged to ${logFile}`);
+    await fs.appendFile(errorLogFile, totalErrorMessage);
+    logger.info(`Error count for ${dataType} logged to ${errorLogFile}`);
   } catch (error) {
     logger.error(`Failed to log error count for ${dataType} to file: ${error}`);
   }
@@ -152,7 +174,6 @@ export function getRequiredField<T>(
   defaultValue: T
 ): T {
   if (value === undefined || value === null) {
-    // TODO: Maybe add back?
     console.warn(`Missing required field: ${fieldName}`);
     return defaultValue;
   }

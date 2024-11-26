@@ -63,3 +63,11 @@ datapuller:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
       tag: latest
+  cleanup:
+    schedule: "0 3 * * *"
+    suspend: false
+    command: ["npm", "run", "cleanup:logs", "--workspace=datapuller"]
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: latest
