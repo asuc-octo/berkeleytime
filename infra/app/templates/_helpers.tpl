@@ -30,6 +30,11 @@ app.kubernetes.io/name: updater
 {{ include "bt-app.labels" . }}
 {{- end -}}
 
+{{- define "bt-app.datapullerLabels" -}}
+app.kubernetes.io/name: datapuller
+{{ include "bt-app.labels" . }}
+{{- end -}}
+
 {{- define "bt-app.cleanupLabels" -}}
 app.kubernetes.io/name: cleanup
 {{ include "bt-app.labels" . }}
@@ -49,4 +54,8 @@ app.kubernetes.io/name: cleanup
 
 {{- define "bt-app.cleanupName" -}}
 {{ .Release.Name }}-cleanup
+{{- end -}}
+
+{{- define "bt-app.datapullerName" -}}
+{{ .Release.Name }}-datapuller
 {{- end -}}

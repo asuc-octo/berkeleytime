@@ -1,63 +1,58 @@
-{{ if not (eq .Values.env "dev") }}
-# do not run CronJob in dev environment
+{{- define "bt-app.datapuller" -}}
+{{- $root := index . 0 -}}
+{{- $jobName := index . 1 -}}
+{{- $jobConfig := index . 2 -}}
+# {{- if not (eq $root.Values.env "dev") }}
+# Do not run CronJob in dev environment
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "bt-app.updaterName" . }}
+  name: {{ include "bt-app.datapullerName" $root }}-{{ $jobName }}
   labels:
-    {{- include "bt-app.updaterLabels" . | nindent 4 }}
+    {{- include "bt-app.datapullerLabels" $root | nindent 4 }}
 spec:
-  schedule: {{ .Values.updater.schedule }}
-  suspend: {{ .Values.updater.suspend }}
+  schedule: "{{ $jobConfig.schedule }}"
+  suspend: {{ $jobConfig.suspend }}
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-            - name: backend-cron-job
-              image: {{ printf "%s/%s:%s" .Values.backend.image.registry .Values.backend.image.repository .Values.backend.image.tag }}
+            - name: datapuller-{{ $jobName }}
+              image: "{{ $jobConfig.image.registry }}/{{ $jobConfig.image.repository }}:{{ $jobConfig.image.tag }}"
               imagePullPolicy: Always
-              command: {{ .Values.updater.command | toJson }}
-              ports:
-                - containerPort: {{ .Values.backend.port }}
+              command: {{ $jobConfig.command | toJson }}
               envFrom:
                 - configMapRef:
-                    name: {{ include "bt-app.updaterName" . }}-env
+                    name: {{ include "bt-app.datapullerName" $root }}-env
                 - secretRef:
-                    name: {{ include "bt-app.updaterName" . }}-secret
+                    name: {{ include "bt-app.datapullerName" $root }}-secret
           restartPolicy: OnFailure
+{{- end }}{{- end -}}
 
 ---
 
+# ConfigMap for environment variables
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "bt-app.updaterName" . }}-env
+  name: {{ include "bt-app.datapullerName" . }}-env
   labels:
-    {{- include "bt-app.updaterLabels" . | nindent 4 }}
+    {{- include "bt-app.datapullerLabels" . | nindent 4 }}
 data:
-  PORT: {{ .Values.backend.port | quote }}
-  URL: "http://localhost:5001"
-  BACKEND_PATH: {{ .Values.backend.path }}
-  GRAPHQL_PATH: "/graphql"
-  NODE_ENV: {{ .Values.nodeEnv }}
   MONGODB_URI: {{ .Values.mongoUri }}
-  REDIS_URI: {{ .Values.redisUri }}
-  GOOGLE_CLIENT_ID: "_"
-  GOOGLE_CLIENT_SECRET: "_"
-  SESSION_SECRET: "_"
-
 
 ---
 
+# SealedSecret for sensitive data
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
   annotations:
     sealedsecrets.bitnami.com/namespace-wide: "true"
-  name: {{ include "bt-app.updaterName" . }}-secret
+  name: {{ include "bt-app.datapullerName" . }}-secret
   labels:
-    {{- include "bt-app.updaterLabels" . | nindent 4 }}
+    {{- include "bt-app.datapullerLabels" . | nindent 4 }}
 spec:
   encryptedData:
     SIS_CLASS_APP_ID: AgCsoV0IeDsbQ1CrUN3ngGSSXx0HlW9qOh0074EpHU3YE9if2D8JWlBpGmpAjDaDG3L749PY22d55QtJAgeHihny85IRt/VElWYqjViv12pvKBOQfLhDOzawaYdA0UQpAA6HA3DNS8nhim1O4bdsfgmQS7Y00KpOnMlRsx6yayvaglDCTCMAgjMR5pZJpE8WhTM2PJMPBHBfx9RBJMYuyrHynftF/jF6l6waPKvgz0Np9hrZA3FucWLYs3+KtKrX5XRGHBw6S9rfGv6FBcIIzz8L4+yzI1O0K46UidST1A9ZLsoXBZ8qxW4bRMBM+dDCFLb1sFyUN5Cn5WTcTyeTvGSdp+bfZQidMYstwR3/3pw9GH6IyrRRI9BTGzdDNE8zs2vDBc4lYg4wnv7Fwz3hQCQKqjJqnIeJKUUh+8eL6F7G09jE4dFNNBZx0qoDfbcb2cDKVTGsstrITqZ+ECzrb+E2l0v9dwFUVjYwbtddes2TACLl3m6mxpdkvYSdtUXY5RWzipjWZitdUT8GrPq8UNd6JdxZe8osd9KrEWQA/i73a9tZEYGkiEAoSfXszt4sGGnrWRrcAcbWs9Ng7aPmGh/LytDZz2hlu1+Mm+tkGkkSWheJPdMWDRLF6JvqzOkrlmevVNTnZa2FnDaKPjECoEzpEp8QYhToP35SRfAWM20j2BmsFdinT5OR1wrgKNPNPMpFkrigW93Qlg==
@@ -70,7 +65,17 @@ spec:
     metadata:
       annotations:
         sealedsecrets.bitnami.com/namespace-wide: "true"
-      name: {{ include "bt-app.updaterName" . }}-secret
+      name: {{ include "bt-app.datapullerName" . }}-secret
       labels:
-        {{- include "bt-app.updaterLabels" . | nindent 4 }}
-{{ end }}
+        {{- include "bt-app.datapullerLabels" . | nindent 4 }}
+
+---
+
+# Include the datapuller CronJob definitions
+{{- include "bt-app.datapuller" (list . "courses" .Values.datapuller.courses) }}
+---
+{{- include "bt-app.datapuller" (list . "sections" .Values.datapuller.sections) }}
+---
+{{- include "bt-app.datapuller" (list . "classes" .Values.datapuller.classes) }}
+---
+{{- include "bt-app.datapuller" (list . "cleanup" .Values.datapuller.cleanup) }}

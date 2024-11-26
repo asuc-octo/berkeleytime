@@ -1,43 +1,60 @@
-import { TermModel } from "@repo/common";
-import { ClassesAPI } from "@repo/sis-api/classes";
+import { ICourseItem, NewCourseModel } from "@repo/common";
 import { CoursesAPI } from "@repo/sis-api/courses";
-import { TermsAPI } from "@repo/sis-api/terms";
 
+import { Config } from "./config";
 import setup from "./shared";
+import mapCourseToNewCourse, { CombinedCourse } from "./shared/courseParser";
+import { fetchPaginatedData } from "./shared/utils";
 
-async function main() {
-  const { log } = setup();
-
-  // Terms API example
-  const termsAPI = new TermsAPI();
-
-  await termsAPI.v2.getByTermsUsingGet(
-    {
-      "temporal-position": "Current",
-    },
-    {
-      headers: {
-        app_id: "123",
-        app_key: "abc",
-      },
-    }
-  );
-
-  // Courses API example
+export async function updateCourses(config: Config) {
+  const log = config.log;
   const coursesAPI = new CoursesAPI();
 
-  await coursesAPI.v4.findCourseCollectionUsingGet({
-    "last-updated-since": "2021-01-01",
-  });
+  const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
+    log,
+    coursesAPI.v4,
+    null,
+    "findCourseCollectionUsingGet",
+    {
+      app_id: config.sis.COURSE_APP_ID,
+      app_key: config.sis.COURSE_APP_KEY,
+    },
+    (data) => data.apiResponse.response.courses || [],
+    mapCourseToNewCourse,
+    "courses"
+  );
 
-  // Classes API example
-  const classesAPI = new ClassesAPI();
+  log.info("Example Course:", courses[0]);
 
-  await classesAPI.v1.getClassesUsingGet({
-    "term-id": "123",
-  });
+  await NewCourseModel.deleteMany({});
 
-  log.info(TermModel);
+  // Insert courses in batches of 5000
+  const insertBatchSize = 5000;
+
+  for (let i = 0; i < courses.length; i += insertBatchSize) {
+    const batch = courses.slice(i, i + insertBatchSize);
+
+    console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
+
+    await NewCourseModel.insertMany(batch, { ordered: false });
+  }
+
+  console.log(`Completed updating database with new course data.`);
+
+  log.info(`Updated ${courses.length} courses for active terms`);
 }
 
-main();
+const initialize = async () => {
+  const { config } = await setup();
+  try {
+    config.log.info("\n=== UPDATE COURSES ===");
+    await updateCourses(config);
+  } catch (error) {
+    config.log.error(error);
+    process.exit(1);
+  }
+
+  process.exit(0);
+};
+
+initialize();

@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { Logger } from "tslog";
 
 // Safely get the environment variable in the process
 const env = (name: string): string => {
@@ -12,6 +13,7 @@ const env = (name: string): string => {
 };
 
 export interface Config {
+  log: Logger<unknown>;
   isDev: boolean;
   mongoDB: {
     uri: string;
@@ -21,13 +23,21 @@ export interface Config {
     CLASS_APP_KEY: string;
     COURSE_APP_ID: string;
     COURSE_APP_KEY: string;
+    TERM_APP_ID: string;
+    TERM_APP_KEY: string;
   };
 }
 
 export function loadConfig(): Config {
   dotenv.config();
 
+  const log = new Logger({
+    type: "pretty",
+    prettyLogTimeZone: "local",
+  });
+
   return {
+    log,
     isDev: env("NODE_ENV") === "development",
     mongoDB: {
       uri: env("MONGODB_URI"),
@@ -37,6 +47,8 @@ export function loadConfig(): Config {
       CLASS_APP_KEY: env("SIS_CLASS_APP_KEY"),
       COURSE_APP_ID: env("SIS_COURSE_APP_ID"),
       COURSE_APP_KEY: env("SIS_COURSE_APP_KEY"),
+      TERM_APP_ID: env("SIS_TERM_APP_ID"),
+      TERM_APP_KEY: env("SIS_TERM_APP_KEY"),
     },
   };
 }
