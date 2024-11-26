@@ -12,10 +12,9 @@ import {
   MajorReqInput
 } from "../../generated-types/graphql";
 import { formatPlanTerm, formatGradtrak } from "./formatter";
-import { getSystemErrorMap } from "util";
 
 // General University Requirements
-const Uni_Reqs = [
+const UniReqs = [
   "AC",
   "AH",
   "AI",
@@ -25,7 +24,7 @@ const Uni_Reqs = [
   "RCB"
 ];
 // Different College Requirements
-const LnS_Reqs = [
+const LnSReqs = [
     "LnS_AL",
     "LnS_BS",
     "LnS_HS",
@@ -34,10 +33,10 @@ const LnS_Reqs = [
     "LnS_PS",
     "LnS_SBS"
 ];
-const CoE_Reqs = [
+const CoEReqs = [
   "CoE_HSS"
 ];
-const Haas_Reqs = [
+const HaasReqs = [
   "HAAS_AL",
   "HAAS_BS",
   "HAAS_HS",
@@ -53,7 +52,7 @@ export async function getGradtrakByUser(
 ): Promise<Gradtrak | null> {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
   if (!gt) {
     throw new Error("No Gradtrak found for this user");
   }
@@ -74,7 +73,7 @@ export async function removePlanTerm(planTermID: string, context: any): Promise<
   if (!context.user._id) throw new Error("Unauthorized");
 
   // check if planTerm belongs to gradtrak
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
   if (!gt) {
     throw new Error("No Gradtrak found for this user");
   }
@@ -88,27 +87,27 @@ export async function removePlanTerm(planTermID: string, context: any): Promise<
   return planTermID;
 }
 
-function removeNullEventVals(custom_event: CustomEventInput) {
-  for (const key in custom_event) {
-    if (custom_event[key as keyof CustomEventInput] === null) {
-      delete custom_event[key as keyof CustomEventInput];
+function removeNullEventVals(customEvent: CustomEventInput) {
+  for (const key in customEvent) {
+    if (customEvent[key as keyof CustomEventInput] === null) {
+      delete customEvent[key as keyof CustomEventInput];
     }
   }
 }
 
 // create a new planTerm
 export async function createPlanTerm(
-  main_planTerm: PlanTermInput,
+  mainPlanTerm: PlanTermInput,
   context: any
 ): Promise<PlanTerm> {
   if (!context.user._id) throw new Error("Unauthorized");
-  if (main_planTerm.custom_events) {
-    main_planTerm.custom_events.forEach(removeNullEventVals);
+  if (mainPlanTerm.customEvents) {
+    mainPlanTerm.customEvents.forEach(removeNullEventVals);
   }
-  const non_null_planTerm = omitBy(main_planTerm, (value) => value == null);
-  non_null_planTerm.user_email = context.user._id;
+  const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
+  nonNullPlanTerm.userEmail = context.user._id;
   const newPlanTerm = new PlanTermModel({
-    ...non_null_planTerm
+    ...nonNullPlanTerm
   });
 
   // add to gradtrak
@@ -125,21 +124,21 @@ export async function createPlanTerm(
 // update an existing planTerm
 export async function editPlanTerm(
   planTermID: string,
-  main_planTerm: PlanTermInput,
+  mainPlanTerm: PlanTermInput,
   context: any
 ): Promise<PlanTerm> {
   if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
   if (!gt) {
     throw new Error("No Gradtrak found for this user");
   }
-  if (main_planTerm.custom_events) {
-    main_planTerm.custom_events.forEach(removeNullEventVals);
+  if (mainPlanTerm.customEvents) {
+    mainPlanTerm.customEvents.forEach(removeNullEventVals);
   }
-  const non_null_planTerm = omitBy(main_planTerm, (value) => value == null);
-  non_null_planTerm.user_email = context.user._id;
+  const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
+  nonNullPlanTerm.userEmail = context.user._id;
   const updatedPlanTerm = new PlanTermModel({
-    ...non_null_planTerm
+    ...nonNullPlanTerm
   });
   const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
   if (planTermIndex === -1) {
@@ -160,11 +159,11 @@ export async function editPlanTerm(
 export async function setClasses(
   planTermID: string,
   courses: SelectedCourseInput[],
-  custom_events: CustomEventInput[],
+  customEvents: CustomEventInput[],
   context: any
 ): Promise<PlanTerm> {
   if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
   if (!gt) {
     throw new Error("No Gradtrak found for this user");
   }
@@ -173,14 +172,14 @@ export async function setClasses(
     // update miscellaneous
     if (gt.miscellaneous._id == planTermID) {
       gt.miscellaneous.courses = courses.map(courseInput => new SelectedCourseModel(courseInput));
-      gt.miscellaneous.custom_events = custom_events.map(customEventInput => new CustomEventModel(customEventInput));
+      gt.miscellaneous.customEvents = customEvents.map(customEventInput => new CustomEventModel(customEventInput));
       await gt.save();
       return formatPlanTerm(gt.miscellaneous);
     }
     throw new Error("PlanTerm does not exist in user's gradtrak");
   }
   gt.planTerms[planTermIndex].courses = courses.map(courseInput => new SelectedCourseModel(courseInput));
-  gt.planTerms[planTermIndex].custom_events = custom_events.map(customEventInput => new CustomEventModel(customEventInput));
+  gt.planTerms[planTermIndex].customEvents = customEvents.map(customEventInput => new CustomEventModel(customEventInput));
   await gt.save();
   return formatPlanTerm(gt.planTerms[planTermIndex]);
 }
@@ -191,23 +190,23 @@ export async function createGradtrak(
 ): Promise<Gradtrak> {
   if (!context.user._id) throw new Error("Unauthorized");
   // if existing gradtrak, overwrite
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
   if (gt) {
     throw new Error("User already has existing gradtrak");
   }
   const miscellaneous = new PlanTermModel({
     name: "Miscellaneous",
     courses: [],
-    custom_events: [],
-    user_email: context.user._id
+    customEvents: [],
+    userEmail: context.user._id
   });
   const newGradtrak = await GradtrakModel.create({
-    user_email: context.user._id,
+    userEmail: context.user._id,
     planTerms: [],
     miscellaneous: miscellaneous,
-    college_reqs: [],
-    uni_reqs: Uni_Reqs,
-    major_reqs: [],
+    collegeReqs: [],
+    uniReqs: UniReqs,
+    majorReqs: [],
   });
   return formatGradtrak(newGradtrak);
 }
@@ -217,25 +216,25 @@ export async function changeCollege(
   context: any
 ): Promise<Gradtrak> {
   if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
   if (!gt) {
     throw new Error("No Gradtrak found for this user");
   }
   if (college as String == "LnS") {
-    gt.college_reqs = LnS_Reqs;
+    gt.collegeReqs = LnSReqs;
   } else if (college as String == "CoE") {
-    gt.college_reqs = CoE_Reqs;
+    gt.collegeReqs = CoEReqs;
   } else if (college as String == "HAAS") {
-    gt.college_reqs = Haas_Reqs;
+    gt.collegeReqs = HaasReqs;
   } else {
-    gt.college_reqs = [];
+    gt.collegeReqs = [];
   }
   await gt.save();
   return formatGradtrak(gt);
 }
 
 export async function editMajorRequirements(
-  major_reqs: MajorReqInput[],
+  majorReqs: MajorReqInput[],
   context: any
 ): Promise<Gradtrak> {
   if (!context.user._id) throw new Error("Unauthorized");
@@ -243,8 +242,8 @@ export async function editMajorRequirements(
   if (!gt) {
     throw new Error("No Gradtrak found for this user");
   }
-  console.log(new MajorReqModel(major_reqs[0]));
-  gt.major_reqs = major_reqs.map(majorReqInput => new MajorReqModel(majorReqInput));
+  console.log(new MajorReqModel(majorReqs[0]));
+  gt.majorReqs = majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
   await gt.save();
   return formatGradtrak(gt);
 }

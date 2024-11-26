@@ -48,10 +48,10 @@ const resolvers: GradtrakModule.Resolvers = {
     },
     setSelectedClasses(
       _parent,
-      args: { id: string; courses: SelectedCourseInput[], custom_events: CustomEventInput[] },
+      args: { id: string; courses: SelectedCourseInput[], customEvents: CustomEventInput[] },
       context
     ) {
-      return setClasses(args.id, args.courses, args.custom_events, context);
+      return setClasses(args.id, args.courses, args.customEvents, context);
     },
     createNewGradtrak(_parent, _args, context) {
       return createGradtrak(context);
@@ -65,10 +65,10 @@ const resolvers: GradtrakModule.Resolvers = {
     },
     editMajorRequirements(
       _parent,
-      args: { major_reqs: MajorReqInput[] },
+      args: { majorReqs: MajorReqInput[] },
       context
     ) {
-      return editMajorRequirements(args.major_reqs, context);
+      return editMajorRequirements(args.majorReqs, context);
     },
     deleteGradtrak(
       _parent,

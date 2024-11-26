@@ -2,11 +2,6 @@
 import { gql } from "graphql-tag";
 
 const typeDef = gql`
-  type GqlTerm {
-    year: Int!
-    planTerm: String!
-  }
-
   enum Colleges {
     "College of Letters and Sciences"
     LnS
@@ -21,7 +16,7 @@ const typeDef = gql`
     OTHER
   }
 
-  enum Uni_Reqs {
+  enum UniReqs {
     AC
     AH
     AI
@@ -30,7 +25,7 @@ const typeDef = gql`
     RCA
     RCB
   }
-  enum College_Reqs {
+  enum CollegeReqs {
     "Arts and Literature"
     LnS_AL
 
@@ -77,21 +72,21 @@ const typeDef = gql`
     HAAS_SBS
   }
 
-  type Major_Req {
+  type MajorReq {
     name: String!
     major: String!
-    num_courses_required: Int!
-    satisfying_course_ids: [String!]
-    is_minor: Boolean!
+    numCoursesRequired: Int!
+    satisfyingCourseIds: [String!]
+    isMinor: Boolean!
   }
 
   type Gradtrak {
-    user_email: String!
+    userEmail: String!
     planTerms: [PlanTerm!]
     miscellaneous: PlanTerm!
-    uni_reqs: [String!]
-    college_reqs: [String!]
-    major_reqs: [Major_Req!]
+    uniReqs: [String!]
+    collegeReqs: [String!]
+    majorReqs: [MajorReq!]
     created: String!
     revised: String!
   }
@@ -99,80 +94,59 @@ const typeDef = gql`
   type PlanTerm {
     _id: ID
     name: String
-    user_email: String!
-    term: GqlTerm
+    userEmail: String!
+    year: Int!
+    term: String!
     courses: [SelectedCourse!]
-    custom_events: [CustomEvent!]
+    customEvents: [CustomEvent!]
   }
 
   type SelectedCourse {
     """
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
-    class_ID: String!
-    """
-    Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule.
-    """
-    primary_section_ID: String
-    """
-    Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule.
-    """
-    secondary_section_IDs: [String!]
+    classID: String!
     """
     Requirements satisfied by class
     """
-    uni_reqs: [String!]
-    college_reqs: [String!]
+    uniReqs: [String!]
+    collegeReqs: [String!]
   }
 
   type CustomEvent {
-    start_time: String!
-    end_time: String!
     title: String
-    location: String
     description: String
-    days_of_week: String
-    uni_reqs: [String!]
-    college_reqs: [String!]
+    uniReqs: [String!]
+    collegeReqs: [String!]
   }
 
   input MajorReqInput {
     name: String!
     major: String!
-    num_courses_required: Int!
-    satisfying_course_ids: [String!]!
-    is_minor: Boolean! 
-  }
-
-  input GqlTermInput {
-    year: Int!
-    planTerm: String!
+    numCoursesRequired: Int!
+    satisfyingCourseIds: [String!]!
+    isMinor: Boolean! 
   }
 
   input CustomEventInput {
-    start_time: String!
-    end_time: String!
     title: String
-    location: String
     description: String
-    days_of_week: String
-    uni_reqs: [Uni_Reqs!]
-    college_reqs: [College_Reqs!]
+    uniReqs: [UniReqs!]
+    collegeReqs: [CollegeReqs!]
   }
 
   input SelectedCourseInput {
-    class_ID: String!
-    primary_section_ID: String
-    secondary_section_IDs: [String!]
-    uni_reqs: [Uni_Reqs!]
-    college_reqs: [College_Reqs!]
+    classID: String!
+    uniReqs: [UniReqs!]
+    collegeReqs: [CollegeReqs!]
   }
 
   input PlanTermInput {
     name: String
-    term: GqlTermInput
+    year: Int!
+    term: String!
     courses: [SelectedCourseInput!]
-    custom_events: [CustomEventInput!]
+    customEvents: [CustomEventInput!]
   }
 
   type Query {
@@ -218,12 +192,12 @@ const typeDef = gql`
     For the planTerm specified by the term, modifies the courses field, and returns the updated 
     planTerm.
     """
-    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!, custom_events: [CustomEventInput!]!): PlanTerm @auth
+    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!, customEvents: [CustomEventInput!]!): PlanTerm @auth
 
     """
     Edits the list of major requirements
     """
-    editMajorRequirements(major_reqs: [MajorReqInput!]!): Gradtrak @auth
+    editMajorRequirements(majorReqs: [MajorReqInput!]!): Gradtrak @auth
 
     """
     Deletes gradtrak, for testing purposes

@@ -12,12 +12,12 @@ export function formatGradtrak(
   gradtrak: GradtrakType
 ): GradtrakModule.Gradtrak {
   return {
-    user_email: gradtrak.user_email,
+    userEmail: gradtrak.userEmail,
     planTerms: gradtrak.planTerms.map(formatPlanTerm),
     miscellaneous: formatPlanTerm(gradtrak.miscellaneous),
-    uni_reqs: gradtrak.uni_reqs,
-    college_reqs: gradtrak.college_reqs,
-    major_reqs: gradtrak.major_reqs.map(formatMajorReq),
+    uniReqs: gradtrak.uniReqs,
+    collegeReqs: gradtrak.collegeReqs,
+    majorReqs: gradtrak.majorReqs.map(formatMajorReq),
     created: gradtrak.createdAt.toISOString(),
     revised: gradtrak.updatedAt.toISOString(),
   };
@@ -29,46 +29,36 @@ export function formatPlanTerm(
   return {
     _id: planTerm._id as string,
     name: planTerm.name,
-    user_email: planTerm.user_email,
+    userEmail: planTerm.userEmail,
     courses: planTerm.courses.map(formatCourse),
-    term: planTerm.term ? formatTerm(planTerm.term.planTerm, planTerm.term.year) : undefined,
-    custom_events: planTerm.custom_events
-      ? planTerm.custom_events.map(formatCustomEvents)
+    year: planTerm.year,
+    term: planTerm.term,
+    customEvents: planTerm.customEvents
+      ? planTerm.customEvents.map(formatCustomEvents)
       : undefined,
   };
 }
 
 export function formatMajorReq(
   majorReq: MajorReqType
-): GradtrakModule.Major_Req {
+): GradtrakModule.MajorReq {
   return {
     name: majorReq.name,
     major: majorReq.major,
-    num_courses_required: majorReq.num_courses_required,
-    satisfying_course_ids: majorReq.satisfying_course_ids,
-    is_minor: majorReq.is_minor
+    numCoursesRequired: majorReq.numCoursesRequired,
+    satisfyingCourseIds: majorReq.satisfyingCourseIds,
+    isMinor: majorReq.isMinor ? majorReq.isMinor : false
   }
-}
-
-function formatTerm(planTerm: string, year: number): GradtrakModule.GqlTerm {
-  return {
-    planTerm: planTerm,
-    year: year,
-  };
 }
 
 function formatCustomEvents(
   customEvent: GradtrakCustomEventType
 ): GradtrakModule.CustomEvent {
   return {
-    start_time: customEvent.start_time,
-    end_time: customEvent.end_time,
     title: customEvent.title,
-    location: customEvent.location,
     description: customEvent.description,
-    days_of_week: customEvent.days_of_week,
-    college_reqs: customEvent.college_reqs,
-    uni_reqs: customEvent.uni_reqs
+    collegeReqs: customEvent.collegeReqs,
+    uniReqs: customEvent.uniReqs
   };
 }
 
@@ -76,10 +66,8 @@ function formatCourse(
   course: SelectedCourseType
 ): GradtrakModule.SelectedCourse {
   return {
-    class_ID: course.class_ID,
-    primary_section_ID: course.primary_section_ID,
-    secondary_section_IDs: course.secondary_section_IDs,
-    college_reqs: course.college_reqs,
-    uni_reqs: course.uni_reqs
+    classID: course.classID,
+    collegeReqs: course.collegeReqs,
+    uniReqs: course.uniReqs
   };
 }
