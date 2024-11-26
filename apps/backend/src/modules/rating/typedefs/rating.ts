@@ -54,6 +54,7 @@ const typedef = gql`
     classNumber: String!
 
     metrics: [UserMetric!]!
+    lastUpdated: String
   }
   type UserMetric {
     metricName: MetricName!

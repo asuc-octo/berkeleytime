@@ -70,3 +70,41 @@ export function getStatusColor(weightedAverage: number): string {
     return "statusGreen";
   }
 }
+
+export function formatDate(date: Date): string {
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const day = date.getDate();
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+
+  // Function to get ordinal suffix
+  function getOrdinalSuffix(day: number): string {
+    if (day > 3 && day < 21) return "th"; // covers 11th, 12th, 13th
+    switch (day % 10) {
+      case 1: return "st";
+      case 2: return "nd";
+      case 3: return "rd";
+      default: return "th";
+    }
+  }
+
+  const dayWithSuffix = day + getOrdinalSuffix(day);
+
+  return `${month} ${dayWithSuffix}, ${year}`;
+}
+
+export interface UserRating {
+  lastUpdated: string,
+  semester: string,
+  year: number,
+  metrics: [
+    {
+      metricName: MetricName;
+      value: number;
+    },
+  ];
+}

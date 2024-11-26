@@ -25,6 +25,8 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
         metricName: userMetric.metricName as MetricName,
         value: userMetric.value,
       })),
+      
+      lastUpdated: userClass.lastUpdated?.toString()
     })),
   };
 };
@@ -65,5 +67,6 @@ export const formatUserClassRatings = (
       metricName: metric.metricName as MetricName,
       value: metric.value
     })),
+    lastUpdated: ratings.lastUpdated
   };
 };

@@ -362,3 +362,57 @@
   }
 
  }
+
+.userRatingSection {
+  background-color: var(--foreground-color);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  border: 1px solid var(--border-color);
+}
+
+.userRatingTitleContainer {
+  display: inline-block;
+  padding: 10px 30px;
+  width: 40%;
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--heading-color);
+    font-weight: 600;
+  }
+  h5 {
+    color: var(--paragraph-color);
+    font-size: 14px;
+    font-weight: 300;
+    margin: 0;
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+}
+
+.userRatingDataContainer {
+  display: inline-block;
+  width: 60%;
+}
+
+.userRatingSection {
+  display: flex;
+  align-items: center;
+  border: none;
+  box-shadow: none;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+.userRatingActionIcon {
+  display: inline-block;
+  padding: 6px;
+  padding-bottom: 4px;
+  margin: 0 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+}

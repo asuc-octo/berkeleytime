@@ -91,6 +91,7 @@ export const userRatingsAggregator = async (context: any) => {
             // updatedAt: "$updatedAt" - not sure how to do the typedef
           },
         },
+        updatedAt: { $max: "$updatedAt" },
       },
     },
     {
@@ -106,6 +107,7 @@ export const userRatingsAggregator = async (context: any) => {
             year: "$_id.year",
             classNumber: "$_id.classNumber",
             metrics: "$metrics",
+            lastUpdated: { $max: "$updatedAt" },
           },
         },
         totalCount: { $sum: 1 },
@@ -157,6 +159,7 @@ export const userClassRatingsAggregator = async (
             value: "$value",
           },
         },
+        updatedAt: { $max: "$updatedAt" },
       },
     },
     {
@@ -168,6 +171,7 @@ export const userClassRatingsAggregator = async (
         year: "$_id.year",
         classNumber: "$_id.classNumber",
         metrics: 1,
+        lastUpdated: "$updatedAt",
       },
     },
   ]);

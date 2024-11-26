@@ -12,6 +12,7 @@ import UserFeedbackModal from "@/components/UserFeedbackModal";
 import useClass from "@/hooks/useClass";
 import {
   CREATE_RATING,
+  DELETE_RATING,
   GET_AGGREGATED_RATINGS,
   GET_USER_RATINGS,
   READ_COURSE,
@@ -28,50 +29,43 @@ import {
   getMetricTooltip,
   getStatusColor,
   isMetricRating,
+  formatDate,
+  UserRating,
 } from "./helper/metricsUtil";
+import UserRatingSummary from "./UserRatingSummary";
 
 const PLACEHOLDER = false;
 
-interface UserRating {
-  metrics: [
-    {
-      metricName: MetricName;
-      value: number;
-    },
-  ];
-}
-
-function UserRating({ userRatings }: { userRatings: UserRating }) {
-  // function IndividualRating() {
-  //   return (
-
-  //   )
-  // }
-
+function MyRatingSummary(
+  { userRatings, setModalOpen, deleteUserRating }: 
+  { userRatings: UserRating, 
+    setModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    deleteUserRating: Function
+}) {
   return (
-    <div className={styles.ratingSection}>
-      <div className={styles.ratingHeader}>
+    <div className={styles.userRatingSection}>
+      <div className={styles.userRatingTitleContainer}>
         <div>
-          <div>Your Rating Summary</div>
-          <div>[Date]</div>
+          <h3>Your Rating Summary</h3>
+          <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
         </div>
         <div>
-          <EditPencil></EditPencil>
-          <Trash></Trash>
+          <span 
+            className={styles.userRatingActionIcon}
+            onClick={ () => {setModalOpen(true)} }
+          >
+            <EditPencil ></EditPencil>
+          </span>
+          <span 
+            className={styles.userRatingActionIcon}
+            onClick={ () => {deleteUserRating(userRatings)} }
+          >
+            <Trash ></Trash>
+          </span>
         </div>
       </div>
-      <div className={styles.ratingContent}>
-        {userRatings.metrics
-          .filter((metric) => {
-            return isMetricRating(MetricName[metric.metricName]);
-          })
-          .map((metric) => (
-            <div key={metric.metricName} className={styles.statRow}>
-              <span className={styles.rating}>
-                {getMetricStatus(MetricName[metric.metricName], metric.value)}
-              </span>
-            </div>
-          ))}
+      <div className={styles.userRatingDataContainer}>
+        <UserRatingSummary userRatings={userRatings}/>
       </div>
     </div>
   );
@@ -227,6 +221,25 @@ export function RatingsContainer() {
     refetchQueries: ["GetUserRatings", "GetAggregatedRatings"],
   });
 
+  const [deleteRating] = useMutation(DELETE_RATING, {
+    refetchQueries: ["GetUserRatings", "GetAggregatedRatings"],
+  })
+
+  function deleteUserRating(userRating: UserRating) {
+    userRating.metrics.forEach((metric) => {
+      deleteRating({
+        variables: {
+          subject: currentClass.subject,
+          courseNumber: currentClass.courseNumber,
+          semester: userRating.semester,
+          year: userRating.year,
+          classNumber: currentClass.number,
+          metricName: metric.metricName,
+        },
+      })
+    })
+  }
+
   const availableTerms = React.useMemo(() => {
     if (!courseData?.course?.classes) return [];
 
@@ -257,7 +270,6 @@ export function RatingsContainer() {
   }, [courseData]);
 
   const userRatings = React.useMemo(() => {
-    console.log(userRatingsData);
     if (!userRatingsData?.userRatings?.classes) return null;
 
     return userRatingsData.userRatings.classes.find(
@@ -275,8 +287,6 @@ export function RatingsContainer() {
         classRating.classNumber === currentClass.number
     ) as UserRating;
   }, [userRatingsData, currentClass]);
-
-  console.log(userRatings);
 
   const handleSubmitRatings = async (
     metricValues: MetricData,
@@ -339,7 +349,7 @@ export function RatingsContainer() {
     }) as RatingDetailProps[];
   }, [aggregatedRatings]);
 
-  const hasRatings = aggregatedRatings?.aggregatedRatings?.metrics?.length > 0;
+  const hasRatings = aggregatedRatings?.aggregatedRatings?.metrics?.reduce((acc: number, metric: any) => { return acc + metric.count }, 0) > 0;
 
   if (courseLoading) {
     return <div>Loading course data...</div>;
@@ -349,9 +359,7 @@ export function RatingsContainer() {
     <div className={styles.root}>
       <Container size="sm">
         {userRatings ? (
-          <div className={styles.ratingsContainer}>
-            <UserRating userRatings={userRatings} />
-          </div>
+          <MyRatingSummary userRatings={userRatings} setModalOpen={setModalOpen} deleteUserRating={deleteUserRating} />
         ) : (
           <div></div>
         )}
@@ -369,72 +377,68 @@ export function RatingsContainer() {
               </Button>
             )}
             {/* Replace select dropdown with ReactSelect */}
-            {hasRatings ||
-              (PLACEHOLDER && (
-                <div
-                  style={{
-                    marginLeft: "auto",
-                    maxWidth: "300px",
-                  }}
-                >
-                  <ReactSelect
-                    options={[
-                      { value: "all", label: "All Terms" },
-                      ...availableTerms,
-                    ]}
-                    value={
-                      availableTerms.find(
-                        (term) => term.value === selectedTerm
-                      ) || {
-                        value: "all",
-                        label: "Overall Ratings",
-                      }
-                    }
-                    onChange={(option) =>
-                      setSelectedTerm(option?.value || "all")
-                    }
-                    placeholder="Select term"
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        backgroundColor: "var(--foreground-color)",
-                        maxHeight: "35px",
-                        color: "var(--paragraph-color)",
-                        fontSize: "14px",
-                        fontWeight: "400",
-                        borderRadius: "4px",
-                        border: "1px solid var(--border-color)",
-                        minWidth: "231px",
-                      }),
-                      menu: (base) => ({
-                        ...base,
-                        backgroundColor: "var(--foreground-color)",
-                        color: "var(--paragraph-color)",
-                        fontWeight: "400",
-                        fontSize: "14px",
-                      }),
-                      option: (base) => ({
-                        ...base,
-                        backgroundColor: "var(--foreground-color)",
-                        color: "var(--paragraph-color)",
-                        border: "none",
-                        fontSize: "14px",
-                        "&:hover": {
-                          backgroundColor: "#3B82F6",
-                        },
-                      }),
-                      singleValue: (base) => ({
-                        ...base,
-                        color: "var(--paragraph-color)",
-                      }),
-                      dropdownIndicator: (base) => ({
-                        ...base,
-                        color: "var(--paragraph-color)",
-                      }),
-                    }}
-                  />
-                </div>
-              ))}
+            <div
+              style={{
+                marginLeft: "auto",
+                maxWidth: "300px",
+              }}
+            >{hasRatings && <ReactSelect
+                options={[
+                  { value: "all", label: "All Terms" },
+                  ...availableTerms,
+                ]}
+                value={
+                  availableTerms.find(
+                    (term) => term.value === selectedTerm
+                  ) || {
+                    value: "all",
+                    label: "Overall Ratings",
+                  }
+                }
+                onChange={(option) =>
+                  setSelectedTerm(option?.value || "all")
+                }
+                placeholder="Select term"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    backgroundColor: "var(--foreground-color)",
+                    maxHeight: "35px",
+                    color: "var(--paragraph-color)",
+                    fontSize: "14px",
+                    fontWeight: "400",
+                    borderRadius: "4px",
+                    border: "1px solid var(--border-color)",
+                    minWidth: "231px",
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    backgroundColor: "var(--foreground-color)",
+                    color: "var(--paragraph-color)",
+                    fontWeight: "400",
+                    fontSize: "14px",
+                  }),
+                  option: (base) => ({
+                    ...base,
+                    backgroundColor: "var(--foreground-color)",
+                    color: "var(--paragraph-color)",
+                    border: "none",
+                    fontSize: "14px",
+                    "&:hover": {
+                      backgroundColor: "#3B82F6",
+                    },
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    color: "var(--paragraph-color)",
+                  }),
+                  dropdownIndicator: (base) => ({
+                    ...base,
+                    color: "var(--paragraph-color)",
+                  }),
+                }}
+              />}
+            </div>
           </div>
         </div>
 

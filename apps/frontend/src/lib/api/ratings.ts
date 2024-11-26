@@ -55,6 +55,31 @@ export const CREATE_RATING = gql`
   }
 `;
 
+export const DELETE_RATING = gql`
+  mutation DeleteRating(
+    $subject: String!
+    $courseNumber: String!
+    $semester: Semester!
+    $year: Int!
+    $classNumber: String!
+    $metricName: MetricName!
+  ) {
+    deleteRating(
+      subject: $subject
+      courseNumber: $courseNumber
+      semester: $semester
+      year: $year
+      classNumber: $classNumber
+      metricName: $metricName
+    ) {
+      metrics {
+        metricName
+        weightedAverage
+      }
+    }
+  }
+`;
+
 export const GET_USER_RATINGS = gql`
   query GetUserRatings {
     userRatings {
@@ -68,7 +93,10 @@ export const GET_USER_RATINGS = gql`
           metricName
           value
         }
+        lastUpdated
       }
     }
   }
 `;
+
+
