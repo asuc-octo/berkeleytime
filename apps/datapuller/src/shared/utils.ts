@@ -28,7 +28,7 @@ export async function fetchActiveTerms(
       );
       const data = await response.json();
       activeTermIds.push(...data.response.terms.map((term: Term) => term.id));
-    } catch (error) {
+    } catch (error: any) {
       logger.error(`Unexpected error querying API. Error: "${error}"`);
     }
   }
@@ -106,7 +106,7 @@ export async function fetchPaginatedData<T, R>(
       try {
         const processedItem = itemProcessor(item);
         acc.push(processedItem);
-      } catch (error) {
+      } catch (error: any) {
         batchErrorCount++;
         totalErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);

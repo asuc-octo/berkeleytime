@@ -34,7 +34,7 @@ async function cleanupLogs() {
     }
 
     logger.info("Log cleanup completed successfully.");
-  } catch (error: any   ) {
+  } catch (error: any) {
     logger.error(`Log cleanup failed: ${error.message}`);
     process.exit(1);
   }
