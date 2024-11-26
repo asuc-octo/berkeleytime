@@ -25,8 +25,8 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
         metricName: userMetric.metricName as MetricName,
         value: userMetric.value,
       })),
-      
-      lastUpdated: userClass.lastUpdated?.toString()
+
+      lastUpdated: userClass.lastUpdated?.toString(),
     })),
   };
 };
@@ -54,9 +54,7 @@ export const formatAggregatedRatings = (
   };
 };
 
-export const formatUserClassRatings = (
-  ratings: UserClass
-): UserClass => {
+export const formatUserClassRatings = (ratings: UserClass): UserClass => {
   return {
     subject: ratings.subject,
     courseNumber: ratings.courseNumber,
@@ -65,8 +63,8 @@ export const formatUserClassRatings = (
     classNumber: ratings.classNumber,
     metrics: ratings.metrics.map((metric: UserMetric) => ({
       metricName: metric.metricName as MetricName,
-      value: metric.value
+      value: metric.value,
     })),
-    lastUpdated: ratings.lastUpdated
+    lastUpdated: ratings.lastUpdated,
   };
 };

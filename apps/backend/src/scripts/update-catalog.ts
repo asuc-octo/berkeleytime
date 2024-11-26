@@ -273,7 +273,7 @@ const updateTerms = async () => {
   // Remove all terms
   await TermModel.deleteMany({});
 
-  await TermModel.insertMany(terms)
+  await TermModel.insertMany(terms);
 
   console.log(`Completed updating database with new term data.`);
 };
@@ -297,7 +297,7 @@ const initialize = async () => {
       ({ id }, index) =>
         index === currentTerms.findIndex((term) => term.id === id)
     );
-    console.log(filteredTerms)
+    console.log(filteredTerms);
 
     console.log("\n=== UPDATE CLASSES ===");
     await updateClasses(filteredTerms);

@@ -20,27 +20,30 @@ import {
 import { Semester } from "@/lib/api/terms";
 
 import styles from "./Ratings.module.scss";
+import UserRatingSummary from "./UserRatingSummary";
 // TODO: Remove placeholder data before prod
 import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
   MetricData,
   MetricName,
+  UserRating,
+  formatDate,
   getMetricStatus,
   getMetricTooltip,
   getStatusColor,
   isMetricRating,
-  formatDate,
-  UserRating,
 } from "./helper/metricsUtil";
-import UserRatingSummary from "./UserRatingSummary";
 
 const PLACEHOLDER = false;
 
-function MyRatingSummary(
-  { userRatings, setModalOpen, deleteUserRating }: 
-  { userRatings: UserRating, 
-    setModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    deleteUserRating: Function
+function MyRatingSummary({
+  userRatings,
+  setModalOpen,
+  deleteUserRating,
+}: {
+  userRatings: UserRating;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  deleteUserRating: Function;
 }) {
   return (
     <div className={styles.userRatingSection}>
@@ -50,22 +53,26 @@ function MyRatingSummary(
           <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
         </div>
         <div>
-          <span 
+          <span
             className={styles.userRatingActionIcon}
-            onClick={ () => {setModalOpen(true)} }
+            onClick={() => {
+              setModalOpen(true);
+            }}
           >
-            <EditPencil ></EditPencil>
+            <EditPencil></EditPencil>
           </span>
-          <span 
+          <span
             className={styles.userRatingActionIcon}
-            onClick={ () => {deleteUserRating(userRatings)} }
+            onClick={() => {
+              deleteUserRating(userRatings);
+            }}
           >
-            <Trash ></Trash>
+            <Trash></Trash>
           </span>
         </div>
       </div>
       <div className={styles.userRatingDataContainer}>
-        <UserRatingSummary userRatings={userRatings}/>
+        <UserRatingSummary userRatings={userRatings} />
       </div>
     </div>
   );
@@ -223,7 +230,7 @@ export function RatingsContainer() {
 
   const [deleteRating] = useMutation(DELETE_RATING, {
     refetchQueries: ["GetUserRatings", "GetAggregatedRatings"],
-  })
+  });
 
   function deleteUserRating(userRating: UserRating) {
     userRating.metrics.forEach((metric) => {
@@ -236,8 +243,8 @@ export function RatingsContainer() {
           classNumber: currentClass.number,
           metricName: metric.metricName,
         },
-      })
-    })
+      });
+    });
   }
 
   const availableTerms = React.useMemo(() => {
@@ -349,7 +356,13 @@ export function RatingsContainer() {
     }) as RatingDetailProps[];
   }, [aggregatedRatings]);
 
-  const hasRatings = aggregatedRatings?.aggregatedRatings?.metrics?.reduce((acc: number, metric: any) => { return acc + metric.count }, 0) > 0;
+  const hasRatings =
+    aggregatedRatings?.aggregatedRatings?.metrics?.reduce(
+      (acc: number, metric: any) => {
+        return acc + metric.count;
+      },
+      0
+    ) > 0;
 
   if (courseLoading) {
     return <div>Loading course data...</div>;
@@ -359,7 +372,11 @@ export function RatingsContainer() {
     <div className={styles.root}>
       <Container size="sm">
         {userRatings ? (
-          <MyRatingSummary userRatings={userRatings} setModalOpen={setModalOpen} deleteUserRating={deleteUserRating} />
+          <MyRatingSummary
+            userRatings={userRatings}
+            setModalOpen={setModalOpen}
+            deleteUserRating={deleteUserRating}
+          />
         ) : (
           <div></div>
         )}
@@ -382,62 +399,63 @@ export function RatingsContainer() {
                 marginLeft: "auto",
                 maxWidth: "300px",
               }}
-            >{hasRatings && <ReactSelect
-                options={[
-                  { value: "all", label: "All Terms" },
-                  ...availableTerms,
-                ]}
-                value={
-                  availableTerms.find(
-                    (term) => term.value === selectedTerm
-                  ) || {
-                    value: "all",
-                    label: "Overall Ratings",
+            >
+              {hasRatings && (
+                <ReactSelect
+                  options={[
+                    { value: "all", label: "All Terms" },
+                    ...availableTerms,
+                  ]}
+                  value={
+                    availableTerms.find(
+                      (term) => term.value === selectedTerm
+                    ) || {
+                      value: "all",
+                      label: "Overall Ratings",
+                    }
                   }
-                }
-                onChange={(option) =>
-                  setSelectedTerm(option?.value || "all")
-                }
-                placeholder="Select term"
-                styles={{
-                  control: (base) => ({
-                    ...base,
-                    backgroundColor: "var(--foreground-color)",
-                    maxHeight: "35px",
-                    color: "var(--paragraph-color)",
-                    fontSize: "14px",
-                    fontWeight: "400",
-                    borderRadius: "4px",
-                    border: "1px solid var(--border-color)",
-                    minWidth: "231px",
-                  }),
-                  menu: (base) => ({
-                    ...base,
-                    backgroundColor: "var(--foreground-color)",
-                    color: "var(--paragraph-color)",
-                    fontWeight: "400",
-                    fontSize: "14px",
-                  }),
-                  option: (base) => ({
-                    ...base,
-                    backgroundColor: "var(--foreground-color)",
-                    color: "var(--paragraph-color)",
-                    border: "none",
-                    fontSize: "14px",
-                    "&:hover": {
-                      backgroundColor: "#3B82F6",
-                    },
-                  }),
-                  singleValue: (base) => ({
-                    ...base,
-                    color: "var(--paragraph-color)",
-                  }),
-                  dropdownIndicator: (base) => ({
-                    ...base,
-                    color: "var(--paragraph-color)",
-                  }),
-                }}
-              />}
+                  onChange={(option) => setSelectedTerm(option?.value || "all")}
+                  placeholder="Select term"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: "var(--foreground-color)",
+                      maxHeight: "35px",
+                      color: "var(--paragraph-color)",
+                      fontSize: "14px",
+                      fontWeight: "400",
+                      borderRadius: "4px",
+                      border: "1px solid var(--border-color)",
+                      minWidth: "231px",
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      backgroundColor: "var(--foreground-color)",
+                      color: "var(--paragraph-color)",
+                      fontWeight: "400",
+                      fontSize: "14px",
+                    }),
+                    option: (base) => ({
+                      ...base,
+                      backgroundColor: "var(--foreground-color)",
+                      color: "var(--paragraph-color)",
+                      border: "none",
+                      fontSize: "14px",
+                      "&:hover": {
+                        backgroundColor: "#3B82F6",
+                      },
+                    }),
+                    singleValue: (base) => ({
+                      ...base,
+                      color: "var(--paragraph-color)",
+                    }),
+                    dropdownIndicator: (base) => ({
+                      ...base,
+                      color: "var(--paragraph-color)",
+                    }),
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
