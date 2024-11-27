@@ -8,8 +8,7 @@ import {
   Plan,
   PlanTermInput,
   SelectedCourseInput,
-  Colleges,
-  MajorReqInput
+  PlanInput,
 } from "../../generated-types/graphql";
 import { formatPlanTerm, formatPlan } from "./formatter";
 
@@ -211,8 +210,8 @@ export async function createPlan(
   return formatPlan(newPlan);
 }
 
-export async function changeCollege(
-  college: Colleges,
+export async function editPlan(
+  plan: PlanInput,
   context: any
 ): Promise<Plan> {
   if (!context.user._id) throw new Error("Unauthorized");
@@ -220,30 +219,19 @@ export async function changeCollege(
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  if (college as String == "LnS") {
+  // set college
+  if (plan.college as String == "LnS") {
     gt.collegeReqs = LnSReqs;
-  } else if (college as String == "CoE") {
+  } else if (plan.college as String == "CoE") {
     gt.collegeReqs = CoEReqs;
-  } else if (college as String == "HAAS") {
+  } else if (plan.college as String == "HAAS") {
     gt.collegeReqs = HaasReqs;
   } else {
     gt.collegeReqs = [];
   }
-  await gt.save();
-  return formatPlan(gt);
-}
+  // set major reqs
+  gt.majorReqs = plan.majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
 
-export async function editMajorRequirements(
-  majorReqs: MajorReqInput[],
-  context: any
-): Promise<Plan> {
-  if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await PlanModel.findOne({ user_email: context.user._id });
-  if (!gt) {
-    throw new Error("No Plan found for this user");
-  }
-  console.log(new MajorReqModel(majorReqs[0]));
-  gt.majorReqs = majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
   await gt.save();
   return formatPlan(gt);
 }

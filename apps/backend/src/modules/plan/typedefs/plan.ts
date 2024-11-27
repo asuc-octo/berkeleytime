@@ -141,6 +141,11 @@ const typeDef = gql`
     collegeReqs: [CollegeReqs!]
   }
 
+  input PlanInput {
+    college: Colleges!
+    majorReqs: [MajorReqInput!]!
+  }
+
   input PlanTermInput {
     name: String
     year: Int!
@@ -170,7 +175,7 @@ const typeDef = gql`
     """
     Takes in a new college, switches the user's college requirements
     """
-    changePlanCollege(college: Colleges!): Plan @auth
+    editPlan(plan: PlanInput!): Plan @auth
 
     """
     Takes in PlanTerm fields, creates a new PlanTerm record in the database, and returns the PlanTerm.
@@ -193,11 +198,6 @@ const typeDef = gql`
     planTerm.
     """
     setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!, customEvents: [CustomEventInput!]!): PlanTerm @auth
-
-    """
-    Edits the list of major requirements
-    """
-    editMajorRequirements(majorReqs: [MajorReqInput!]!): Plan @auth
 
     """
     Deletes plan, for testing purposes

@@ -2,8 +2,7 @@ import {
   PlanTermInput,
   SelectedCourseInput,
   CustomEventInput,
-  Colleges,
-  MajorReqInput,
+  PlanInput
 } from "../../generated-types/graphql";
 import {
   getPlanByUser,
@@ -13,8 +12,7 @@ import {
   editPlanTerm,
   setClasses,
   createPlan,
-  changeCollege,
-  editMajorRequirements,
+  editPlan,
   deletePlan
 } from "./controller";
 import { PlanModule } from "./generated-types/module-types";
@@ -56,19 +54,12 @@ const resolvers: PlanModule.Resolvers = {
     createNewPlan(_parent, _args, context) {
       return createPlan(context);
     }, 
-    changePlanCollege(
+    editPlan(
       _parent,
-      args: { college: Colleges },
+      args: { plan: PlanInput },
       context
     ) {
-      return changeCollege(args.college, context);
-    },
-    editMajorRequirements(
-      _parent,
-      args: { majorReqs: MajorReqInput[] },
-      context
-    ) {
-      return editMajorRequirements(args.majorReqs, context);
+      return editPlan(args.plan, context);
     },
     deletePlan(
       _parent,
