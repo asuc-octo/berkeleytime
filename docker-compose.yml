@@ -2,6 +2,7 @@
 networks:
   bt:
     name: bt
+    external: true
 services:
   # datapuller:
   #   build:

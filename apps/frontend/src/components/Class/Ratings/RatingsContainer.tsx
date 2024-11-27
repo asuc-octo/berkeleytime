@@ -10,6 +10,8 @@ import { Button, Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
 import useClass from "@/hooks/useClass";
+import { useReadUser } from "@/hooks/api";
+import { signIn } from "@/lib/api";
 import {
   CREATE_RATING,
   DELETE_RATING,
@@ -199,6 +201,7 @@ export function RatingsContainer() {
   const [isModalOpen, setModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
+  const { data: user } = useReadUser();
 
   // Course data for terms
   const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
@@ -388,7 +391,7 @@ export function RatingsContainer() {
                   color: "#3B82F6",
                   backgroundColor: "var(--foreground-color)",
                 }}
-                onClick={() => setModalOpen(true)}
+                onClick={() => user ? setModalOpen(true) : signIn()}
               >
                 Add a rating
               </Button>
@@ -480,7 +483,7 @@ export function RatingsContainer() {
               <p>Be the first to share your experience!</p>
               <Button
                 style={{ color: "#3B82F6" }}
-                onClick={() => setModalOpen(true)}
+                onClick={() => user ? setModalOpen(true) : signIn()}
               >
                 Add a rating
               </Button>
