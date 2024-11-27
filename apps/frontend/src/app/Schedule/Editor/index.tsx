@@ -108,7 +108,7 @@ export default function Editor() {
         }
       );
     },
-    [setCurrentSection]
+    [setCurrentSection, schedule, updateSchedule]
   );
 
   const handleSectionMouseOver = useCallback(
@@ -161,7 +161,7 @@ export default function Editor() {
 
       setCurrentSection(section);
     },
-    [setCurrentSection, tab]
+    [schedule, tab]
   );
 
   const handleSortEnd = useCallback(
@@ -196,7 +196,7 @@ export default function Editor() {
         }
       );
     },
-    [schedule]
+    [schedule, updateSchedule]
   );
 
   const handleClassSelect = useCallback(
@@ -319,7 +319,7 @@ export default function Editor() {
         }
       );
     },
-    [apolloClient, setExpanded, schedule]
+    [apolloClient, setExpanded, schedule, updateSchedule]
   );
 
   const handleExpandedChange = (index: number, expanded: boolean) => {

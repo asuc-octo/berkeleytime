@@ -185,7 +185,7 @@ export default function Class({
         number,
       },
     } as ClassPin;
-  }, [year, semester, subject, courseNumber, number]);
+  }, [_class]);
 
   const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
@@ -222,7 +222,7 @@ export default function Class({
         },
       }
     );
-  }, [bookmarked]);
+  }, [_class, bookmarked, updateUser, user]);
 
   // TODO: Loading state
   if (loading || courseLoading) {

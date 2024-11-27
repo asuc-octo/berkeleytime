@@ -79,17 +79,6 @@
       flex-shrink: 0;
     }
 
-    .toolBar {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-
-      .iconButton {
-        height: 24px;
-        width: 24px;
-      }
-    }
-
     .text {
       flex-grow: 1;
       font-size: 14px;
@@ -112,12 +101,6 @@
         margin-top: 12px;
         align-items: center;
         line-height: 1;
-
-        .units {
-          font-size: 14px;
-          user-select: none;
-          color: var(--paragraph-color);
-        }
       }
     }
   }

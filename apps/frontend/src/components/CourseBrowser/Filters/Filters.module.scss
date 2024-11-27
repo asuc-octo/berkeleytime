@@ -62,7 +62,8 @@
         color: var(--heading-color);
       }
 
-      &:hover .checkbox:not([data-state="checked"]), &:hover .radio:not([data-state="checked"]) {
+      &:hover .checkbox:not([data-state="checked"]),
+      &:hover .radio:not([data-state="checked"]) {
         border-color: var(--heading-color);
       }
 

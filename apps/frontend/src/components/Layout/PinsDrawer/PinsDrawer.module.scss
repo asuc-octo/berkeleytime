@@ -15,6 +15,10 @@
   &[data-state="closed"] {
     animation: fadeOut 250ms ease-out;
   }
+
+  .body {
+    padding: 12px;
+  }
 }
 
 body[data-theme="dark"] .overlay {
