@@ -1,17 +1,17 @@
 import { omitBy } from "lodash";
 
-import { PlanTermModel, GradtrakModel, SelectedCourseModel, CustomEventModel, MajorReqModel } from "@repo/common";
+import { PlanTermModel, PlanModel, SelectedCourseModel, CustomEventModel, MajorReqModel } from "@repo/common";
 
 import {
   CustomEventInput,
   PlanTerm,
-  Gradtrak,
+  Plan,
   PlanTermInput,
   SelectedCourseInput,
   Colleges,
   MajorReqInput
 } from "../../generated-types/graphql";
-import { formatPlanTerm, formatGradtrak } from "./formatter";
+import { formatPlanTerm, formatPlan } from "./formatter";
 
 // General University Requirements
 const UniReqs = [
@@ -46,17 +46,17 @@ const HaasReqs = [
   "HAAS_SBS"
 ];
 
-// get gradtrak for a user
-export async function getGradtrakByUser(
+// get plan for a user
+export async function getPlanByUser(
   context: any
-): Promise<Gradtrak | null> {
+): Promise<Plan | null> {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
+  const gt = await PlanModel.findOne({ userEmail: context.user._id });
   if (!gt) {
-    throw new Error("No Gradtrak found for this user");
+    throw new Error("No Plan found for this user");
   }
-  return formatGradtrak(gt);
+  return formatPlan(gt);
 }
 
 // get the planTerm for a user and a specific term
@@ -72,14 +72,14 @@ export async function getPlanTermByID(id: string): Promise<PlanTerm> {
 export async function removePlanTerm(planTermID: string, context: any): Promise<string> {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  // check if planTerm belongs to gradtrak
-  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
+  // check if planTerm belongs to plan
+  const gt = await PlanModel.findOne({ userEmail: context.user._id });
   if (!gt) {
-    throw new Error("No Gradtrak found for this user");
+    throw new Error("No Plan found for this user");
   }
   const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
   if (planTermIndex === -1) {
-    throw new Error("PlanTerm does not exist in user's gradtrak");
+    throw new Error("PlanTerm does not exist in user's plan");
   }
   gt.planTerms.splice(planTermIndex, 1);
   await gt.save();
@@ -110,10 +110,10 @@ export async function createPlanTerm(
     ...nonNullPlanTerm
   });
 
-  // add to gradtrak
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  // add to plan
+  const gt = await PlanModel.findOne({ user_email: context.user._id });
   if (!gt) {
-    throw new Error("No Gradtrak found for this user");
+    throw new Error("No Plan found for this user");
   }
   gt.planTerms.push(newPlanTerm);
   await gt.save();
@@ -128,9 +128,9 @@ export async function editPlanTerm(
   context: any
 ): Promise<PlanTerm> {
   if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
+  const gt = await PlanModel.findOne({ userEmail: context.user._id });
   if (!gt) {
-    throw new Error("No Gradtrak found for this user");
+    throw new Error("No Plan found for this user");
   }
   if (mainPlanTerm.customEvents) {
     mainPlanTerm.customEvents.forEach(removeNullEventVals);
@@ -148,7 +148,7 @@ export async function editPlanTerm(
       await gt.save();
       return formatPlanTerm(updatedPlanTerm);
     }
-    throw new Error("PlanTerm does not exist in user's gradtrak");
+    throw new Error("PlanTerm does not exist in user's plan");
   }
   gt.planTerms[planTermIndex] = updatedPlanTerm; 
   await gt.save();
@@ -163,9 +163,9 @@ export async function setClasses(
   context: any
 ): Promise<PlanTerm> {
   if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
+  const gt = await PlanModel.findOne({ userEmail: context.user._id });
   if (!gt) {
-    throw new Error("No Gradtrak found for this user");
+    throw new Error("No Plan found for this user");
   }
   const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
   if (planTermIndex === -1) {
@@ -176,7 +176,7 @@ export async function setClasses(
       await gt.save();
       return formatPlanTerm(gt.miscellaneous);
     }
-    throw new Error("PlanTerm does not exist in user's gradtrak");
+    throw new Error("PlanTerm does not exist in user's plan");
   }
   gt.planTerms[planTermIndex].courses = courses.map(courseInput => new SelectedCourseModel(courseInput));
   gt.planTerms[planTermIndex].customEvents = customEvents.map(customEventInput => new CustomEventModel(customEventInput));
@@ -184,15 +184,15 @@ export async function setClasses(
   return formatPlanTerm(gt.planTerms[planTermIndex]);
 }
 
-// create a new gradtrak
-export async function createGradtrak(
+// create a new plan
+export async function createPlan(
   context: any
-): Promise<Gradtrak> {
+): Promise<Plan> {
   if (!context.user._id) throw new Error("Unauthorized");
-  // if existing gradtrak, overwrite
-  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
+  // if existing plan, overwrite
+  const gt = await PlanModel.findOne({ userEmail: context.user._id });
   if (gt) {
-    throw new Error("User already has existing gradtrak");
+    throw new Error("User already has existing plan");
   }
   const miscellaneous = new PlanTermModel({
     name: "Miscellaneous",
@@ -200,7 +200,7 @@ export async function createGradtrak(
     customEvents: [],
     userEmail: context.user._id
   });
-  const newGradtrak = await GradtrakModel.create({
+  const newPlan = await PlanModel.create({
     userEmail: context.user._id,
     planTerms: [],
     miscellaneous: miscellaneous,
@@ -208,17 +208,17 @@ export async function createGradtrak(
     uniReqs: UniReqs,
     majorReqs: [],
   });
-  return formatGradtrak(newGradtrak);
+  return formatPlan(newPlan);
 }
 
 export async function changeCollege(
   college: Colleges,
   context: any
-): Promise<Gradtrak> {
+): Promise<Plan> {
   if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await GradtrakModel.findOne({ userEmail: context.user._id });
+  const gt = await PlanModel.findOne({ userEmail: context.user._id });
   if (!gt) {
-    throw new Error("No Gradtrak found for this user");
+    throw new Error("No Plan found for this user");
   }
   if (college as String == "LnS") {
     gt.collegeReqs = LnSReqs;
@@ -230,29 +230,29 @@ export async function changeCollege(
     gt.collegeReqs = [];
   }
   await gt.save();
-  return formatGradtrak(gt);
+  return formatPlan(gt);
 }
 
 export async function editMajorRequirements(
   majorReqs: MajorReqInput[],
   context: any
-): Promise<Gradtrak> {
+): Promise<Plan> {
   if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await GradtrakModel.findOne({ user_email: context.user._id });
+  const gt = await PlanModel.findOne({ user_email: context.user._id });
   if (!gt) {
-    throw new Error("No Gradtrak found for this user");
+    throw new Error("No Plan found for this user");
   }
   console.log(new MajorReqModel(majorReqs[0]));
   gt.majorReqs = majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
   await gt.save();
-  return formatGradtrak(gt);
+  return formatPlan(gt);
 }
 
-export async function deleteGradtrak(
+export async function deletePlan(
   context: any
 ): Promise<string> {
   if (!context.user._id) throw new Error("Unauthorized");
-  await GradtrakModel.deleteOne({ user_email: context.user._id })
+  await PlanModel.deleteOne({ user_email: context.user._id })
   .catch(err => {
     return err;
   });

@@ -6,23 +6,23 @@ import {
   MajorReqInput,
 } from "../../generated-types/graphql";
 import {
-  getGradtrakByUser,
+  getPlanByUser,
   getPlanTermByID,
   removePlanTerm,
   createPlanTerm,
   editPlanTerm,
   setClasses,
-  createGradtrak,
+  createPlan,
   changeCollege,
   editMajorRequirements,
-  deleteGradtrak
+  deletePlan
 } from "./controller";
-import { GradtrakModule } from "./generated-types/module-types";
+import { PlanModule } from "./generated-types/module-types";
 
-const resolvers: GradtrakModule.Resolvers = {
+const resolvers: PlanModule.Resolvers = {
   Query: {
-    gradtrakByUser(_parent, _args, context) {
-      return getGradtrakByUser(context);
+    planByUser(_parent, _args, context) {
+      return getPlanByUser(context);
     },
     planTermByID(_parent, args: { id: string }) {
       return getPlanTermByID(args.id);
@@ -53,10 +53,10 @@ const resolvers: GradtrakModule.Resolvers = {
     ) {
       return setClasses(args.id, args.courses, args.customEvents, context);
     },
-    createNewGradtrak(_parent, _args, context) {
-      return createGradtrak(context);
+    createNewPlan(_parent, _args, context) {
+      return createPlan(context);
     }, 
-    changeGradtrakCollege(
+    changePlanCollege(
       _parent,
       args: { college: Colleges },
       context
@@ -70,12 +70,12 @@ const resolvers: GradtrakModule.Resolvers = {
     ) {
       return editMajorRequirements(args.majorReqs, context);
     },
-    deleteGradtrak(
+    deletePlan(
       _parent,
       _args,
       context
     ) {
-      return deleteGradtrak(context);
+      return deletePlan(context);
     }
   },
 };

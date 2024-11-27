@@ -80,7 +80,7 @@ const typeDef = gql`
     isMinor: Boolean!
   }
 
-  type Gradtrak {
+  type Plan {
     userEmail: String!
     planTerms: [PlanTerm!]
     miscellaneous: PlanTerm!
@@ -151,9 +151,9 @@ const typeDef = gql`
 
   type Query {
     """
-    Takes in user's email and returns their entire gradtrak
+    Takes in user's email and returns their entire plan
     """
-    gradtrakByUser: Gradtrak @auth
+    planByUser: Plan @auth
     
     """
     Takes in an ID and returns the planTerm for that term.
@@ -163,14 +163,14 @@ const typeDef = gql`
 
   type Mutation {
     """
-    Takes in user's email, creates a new Gradtrak record in the database, and returns the Gradtrak
+    Takes in user's email, creates a new Plan record in the database, and returns the Plan
     """
-    createNewGradtrak: Gradtrak @auth
+    createNewPlan: Plan @auth
 
     """
     Takes in a new college, switches the user's college requirements
     """
-    changeGradtrakCollege(college: Colleges!): Gradtrak @auth
+    changePlanCollege(college: Colleges!): Plan @auth
 
     """
     Takes in PlanTerm fields, creates a new PlanTerm record in the database, and returns the PlanTerm.
@@ -197,12 +197,12 @@ const typeDef = gql`
     """
     Edits the list of major requirements
     """
-    editMajorRequirements(majorReqs: [MajorReqInput!]!): Gradtrak @auth
+    editMajorRequirements(majorReqs: [MajorReqInput!]!): Plan @auth
 
     """
-    Deletes gradtrak, for testing purposes
+    Deletes plan, for testing purposes
     """
-    deleteGradtrak: String @auth
+    deletePlan: String @auth
   }
 `;
 

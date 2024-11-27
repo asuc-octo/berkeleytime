@@ -1,31 +1,31 @@
 import {
-  GradtrakCustomEventType,
+  PlanCustomEventType,
   PlanTermType,
   SelectedCourseType,
-  GradtrakType,
+  PlanType,
   MajorReqType,
 } from "@repo/common";
 
-import { GradtrakModule } from "./generated-types/module-types";
+import { PlanModule } from "./generated-types/module-types";
 
-export function formatGradtrak(
-  gradtrak: GradtrakType
-): GradtrakModule.Gradtrak {
+export function formatPlan(
+  plan: PlanType
+): PlanModule.Plan {
   return {
-    userEmail: gradtrak.userEmail,
-    planTerms: gradtrak.planTerms.map(formatPlanTerm),
-    miscellaneous: formatPlanTerm(gradtrak.miscellaneous),
-    uniReqs: gradtrak.uniReqs,
-    collegeReqs: gradtrak.collegeReqs,
-    majorReqs: gradtrak.majorReqs.map(formatMajorReq),
-    created: gradtrak.createdAt.toISOString(),
-    revised: gradtrak.updatedAt.toISOString(),
+    userEmail: plan.userEmail,
+    planTerms: plan.planTerms.map(formatPlanTerm),
+    miscellaneous: formatPlanTerm(plan.miscellaneous),
+    uniReqs: plan.uniReqs,
+    collegeReqs: plan.collegeReqs,
+    majorReqs: plan.majorReqs.map(formatMajorReq),
+    created: plan.createdAt.toISOString(),
+    revised: plan.updatedAt.toISOString(),
   };
 }
 
 export function formatPlanTerm(
   planTerm: PlanTermType
-): GradtrakModule.PlanTerm {
+): PlanModule.PlanTerm {
   return {
     _id: planTerm._id as string,
     name: planTerm.name,
@@ -41,7 +41,7 @@ export function formatPlanTerm(
 
 export function formatMajorReq(
   majorReq: MajorReqType
-): GradtrakModule.MajorReq {
+): PlanModule.MajorReq {
   return {
     name: majorReq.name,
     major: majorReq.major,
@@ -52,8 +52,8 @@ export function formatMajorReq(
 }
 
 function formatCustomEvents(
-  customEvent: GradtrakCustomEventType
-): GradtrakModule.CustomEvent {
+  customEvent: PlanCustomEventType
+): PlanModule.CustomEvent {
   return {
     title: customEvent.title,
     description: customEvent.description,
@@ -64,7 +64,7 @@ function formatCustomEvents(
 
 function formatCourse(
   course: SelectedCourseType
-): GradtrakModule.SelectedCourse {
+): PlanModule.SelectedCourse {
   return {
     classID: course.classID,
     collegeReqs: course.collegeReqs,
