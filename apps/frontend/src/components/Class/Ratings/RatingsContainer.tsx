@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useMutation, useQuery } from "@apollo/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
@@ -35,6 +35,8 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
+
+import { useSearchParams } from "react-router-dom";
 
 const PLACEHOLDER = false;
 
@@ -202,6 +204,14 @@ export function RatingsContainer() {
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
   const { data: user } = useReadUser();
+  const [searchParams] = useSearchParams();
+
+  // Open modal automatically if we just returned from sign-in
+  useEffect(() => {
+    if (user && searchParams.get("from") === "signin") {
+      setModalOpen(true);
+    }
+  }, [user, searchParams]);
 
   // Course data for terms
   const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
@@ -391,7 +401,11 @@ export function RatingsContainer() {
                   color: "#3B82F6",
                   backgroundColor: "var(--foreground-color)",
                 }}
-                onClick={() => user ? setModalOpen(true) : signIn()}
+                onClick={() =>
+                  user
+                    ? setModalOpen(true)
+                    : signIn(window.location.pathname + "?from=signin")
+                }
               >
                 Add a rating
               </Button>
@@ -483,7 +497,11 @@ export function RatingsContainer() {
               <p>Be the first to share your experience!</p>
               <Button
                 style={{ color: "#3B82F6" }}
-                onClick={() => user ? setModalOpen(true) : signIn()}
+                onClick={() =>
+                  user
+                    ? setModalOpen(true)
+                    : signIn(window.location.pathname + "?from=signin")
+                }
               >
                 Add a rating
               </Button>

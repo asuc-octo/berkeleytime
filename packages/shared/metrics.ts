@@ -8,6 +8,7 @@ export enum MetricName {
 }
 
 // typedef for backend have to be updated manually
+// to modify MetricName enum, modify and compose backend typedef 
 
 export const METRIC_MAPPINGS = {
   [MetricName.Usefulness]: {
