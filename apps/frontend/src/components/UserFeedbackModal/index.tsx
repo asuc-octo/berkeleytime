@@ -7,7 +7,8 @@ import { Button } from "@repo/theme";
 
 import { Semester } from "@/lib/api/terms";
 
-import { MetricData, MetricName } from "../Class/Ratings/helper/metricsUtil";
+import { MetricName } from "@repo/shared";
+import { MetricData } from "../Class/Ratings/helper/metricsUtil";
 import { AttendanceForm } from "./AttendanceForm";
 import ConfirmationPopup from "./ConfirmationForm";
 import { RatingsForm } from "./RatingForm";
@@ -48,13 +49,9 @@ export function UserFeedbackModal({
   currentClass,
   availableTerms = [],
   onSubmit,
-  initialMetricData = {
-    [MetricName.Usefulness]: undefined,
-    [MetricName.Difficulty]: undefined,
-    [MetricName.Workload]: undefined,
-    [MetricName.Attendance]: undefined,
-    [MetricName.Recording]: undefined,
-  },
+  initialMetricData = Object.fromEntries(
+    Object.values(MetricName).map((metric) => [metric, undefined])
+  ) as MetricData,
 }: UserFeedbackModalProps) {
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
   const [selectedTerm, setSelectedTerm] = useState(

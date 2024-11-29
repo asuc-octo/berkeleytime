@@ -1,4 +1,4 @@
-import { MetricName } from "./metricsUtil";
+import { MetricName } from "@repo/shared";
 
 export const placeholderRatingsData = [
   {

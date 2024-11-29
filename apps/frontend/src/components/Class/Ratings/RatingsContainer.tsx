@@ -6,6 +6,7 @@ import { EditPencil, NavArrowDown, Trash } from "iconoir-react";
 import _ from "lodash";
 import ReactSelect from "react-select";
 
+import { MetricName } from "@repo/shared";
 import { Button, Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
@@ -27,7 +28,6 @@ import UserRatingSummary from "./UserRatingSummary";
 import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
   MetricData,
-  MetricName,
   UserRating,
   formatDate,
   getMetricStatus,

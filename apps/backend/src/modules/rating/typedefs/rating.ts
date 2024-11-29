@@ -2,12 +2,9 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   enum MetricName {
-    "Numerical metrics"
     Usefulness
     Difficulty
     Workload
-
-    "Boolean metrics"
     Attendance
     Recording
     Recommended

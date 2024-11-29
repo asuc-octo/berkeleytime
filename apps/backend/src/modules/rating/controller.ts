@@ -2,6 +2,7 @@ import { connection } from "mongoose";
 
 import { AggregatedMetricsModel, RatingModel, UserModel } from "@repo/common";
 
+import { METRIC_MAPPINGS } from "@repo/shared";
 import { MetricName, Semester } from "../../generated-types/graphql";
 import {
   formatAggregatedRatings,
@@ -20,17 +21,13 @@ import {
   checkValueConstraint,
 } from "./helper/checkConstraints";
 
-export const numberScaleMetrics = [
-  "Usefulness",
-  "Difficulty",
-  "Workload",
-] as MetricName[];
+export const numberScaleMetrics = Object.entries(METRIC_MAPPINGS)
+  .filter(([_, config]) => config.isRating)
+  .map(([metric]) => metric) as MetricName[];
 
-export const booleanScaleMetrics = [
-  "Attendance",
-  "Recording",
-  "Recommended",
-] as MetricName[];
+export const booleanScaleMetrics = Object.entries(METRIC_MAPPINGS)
+  .filter(([_, config]) => !config.isRating)
+  .map(([metric]) => metric) as MetricName[];
 
 const getSemestersByInstructor = async (
   professorName: string,
