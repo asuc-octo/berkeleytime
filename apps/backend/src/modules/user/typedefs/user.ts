@@ -6,6 +6,8 @@ const typedef = gql`
     student: Boolean!
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!
+    majors: [String!]!
+    minors: [String!]!
   }
 
   type Query {
@@ -28,6 +30,8 @@ const typedef = gql`
   input UpdateUserInput {
     bookmarkedClasses: [BookmarkedClassInput!]
     bookmarkedCourses: [BookmarkedCourseInput!]
+    majors: [String!]
+    minors: [String!]
   }
 
   type Mutation {

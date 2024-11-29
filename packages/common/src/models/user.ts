@@ -66,6 +66,16 @@ export const userSchema = new Schema(
         },
       ],
     },
+    majors: {
+      type: [String],
+      trim: true,
+      required: false,
+    },
+    minors: {
+      type: [String],
+      trim: true,
+      required: false,
+    },
     refresh_token: {
       type: String,
       trim: true,
