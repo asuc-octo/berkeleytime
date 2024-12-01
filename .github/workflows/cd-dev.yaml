@@ -51,10 +51,10 @@ jobs:
         ttl: ${{ inputs.ttl }}
         frontend:
           image:
-            tag: ${{ needs.compute-sha.outputs.sha_short }}
+            tag: "${{ needs.compute-sha.outputs.sha_short }}"
         backend:
           image:
-            tag: ${{ needs.compute-sha.outputs.sha_short }}
+            tag: "${{ needs.compute-sha.outputs.sha_short }}"
         host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
         mongoUri: mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
