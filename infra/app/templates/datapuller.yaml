@@ -1,8 +1,8 @@
-{{- define "bt-app.datapuller" -}}
+{{ define "bt-app.datapuller" }}
 {{- $root := index . 0 -}}
 {{- $jobName := index . 1 -}}
 {{- $jobConfig := index . 2 -}}
-# {{- if not (eq $root.Values.env "dev") }}
+# {{ if not (eq $root.Values.env "dev") }}
 # Do not run CronJob in dev environment
 apiVersion: batch/v1
 kind: CronJob
@@ -28,8 +28,8 @@ spec:
                 - secretRef:
                     name: {{ include "bt-app.datapullerName" $root }}-secret
           restartPolicy: OnFailure
-{{- end }}
-# {{- end -}}
+{{ end }}
+# {{ end }}
 
 ---
 
@@ -72,11 +72,16 @@ spec:
 
 ---
 
-# Include the datapuller CronJob definitions
-{{- include "bt-app.datapuller" (list . "courses" .Values.datapuller.courses) }}
+{{ include "bt-app.datapuller" (list . "courses" .Values.datapuller.courses) }}
+
 ---
-{{- include "bt-app.datapuller" (list . "sections" .Values.datapuller.sections) }}
+
+{{ include "bt-app.datapuller" (list . "sections" .Values.datapuller.sections) }}
+
 ---
-{{- include "bt-app.datapuller" (list . "classes" .Values.datapuller.classes) }}
+
+{{ include "bt-app.datapuller" (list . "classes" .Values.datapuller.classes) }}
+
 ---
-{{- include "bt-app.datapuller" (list . "cleanup" .Values.datapuller.cleanup) }}
+
+{{ include "bt-app.datapuller" (list . "cleanup" .Values.datapuller.cleanup) }}
