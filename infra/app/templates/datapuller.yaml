@@ -28,7 +28,8 @@ spec:
                 - secretRef:
                     name: {{ include "bt-app.datapullerName" $root }}-secret
           restartPolicy: OnFailure
-{{- end }}{{- end -}}
+{{- end }}
+# {{- end -}}
 
 ---
 
