@@ -2,7 +2,6 @@
 {{- $root := index . 0 -}}
 {{- $jobName := index . 1 -}}
 {{- $jobConfig := index . 2 -}}
-# {{ if not (eq $root.Values.env "dev") }}
 # Do not run CronJob in dev environment
 apiVersion: batch/v1
 kind: CronJob
@@ -29,7 +28,6 @@ spec:
                     name: {{ include "bt-app.datapullerName" $root }}-secret
           restartPolicy: OnFailure
 {{ end }}
-# {{ end }}
 
 ---
 
@@ -68,7 +66,7 @@ spec:
         sealedsecrets.bitnami.com/namespace-wide: "true"
       name: {{ include "bt-app.datapullerName" . }}-secret
       labels:
-        {{- include "bt-app.datapullerLabels" . | nindent 4 }}
+        {{- include "bt-app.datapullerLabels" . | nindent 8 }}
 
 ---
 

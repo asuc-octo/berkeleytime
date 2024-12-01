@@ -76,7 +76,7 @@ spec:
         sealedsecrets.bitnami.com/namespace-wide: "true"
       name: {{ include "bt-app.backendName" .}}-secret
       labels:
-        {{- include "bt-app.backendLabels" . | nindent 4 }}
+        {{- include "bt-app.backendLabels" . | nindent 8 }}
     type: Opaque
 
 ---
