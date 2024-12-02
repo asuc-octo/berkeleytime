@@ -391,13 +391,15 @@ export function RatingsContainer() {
     }) as RatingDetailProps[];
   }, [aggregatedRatings]);
 
-  const hasRatings =
-    aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
+  const hasRatings = React.useMemo(() => {
+    return aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
       (acc: number, metric: any) => {
         return acc + metric.count;
       },
       0
     ) > 0;
+  }, [aggregatedRatings])
+    
 
   if (courseLoading) {
     return <div>Loading course data...</div>;
