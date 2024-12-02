@@ -282,7 +282,7 @@ export function RatingsContainer() {
   const userRatings = React.useMemo(() => {
     if (!userRatingsData?.userRatings?.classes) return null;
 
-    return userRatingsData.userRatings.classes.find(
+    const matchedRating = userRatingsData.userRatings.classes.find(
       (classRating: {
         subject: string;
         courseNumber: string;
@@ -291,11 +291,10 @@ export function RatingsContainer() {
         classNumber: string;
       }) =>
         classRating.subject === currentClass.subject &&
-        classRating.courseNumber === currentClass.courseNumber &&
-        classRating.semester === currentClass.semester &&
-        classRating.year === currentClass.year &&
-        classRating.classNumber === currentClass.number
+        classRating.courseNumber === currentClass.courseNumber
     ) as UserRating;
+
+    return matchedRating;
   }, [userRatingsData, currentClass]);
 
   const handleSubmitRatings = async (
