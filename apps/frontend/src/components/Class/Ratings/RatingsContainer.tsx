@@ -215,22 +215,23 @@ export function RatingsContainer() {
   });
 
   // Get user's existing ratings
-  console.log("Variables for GET_USER_RATINGS:", {
-    subject: currentClass?.subject,
-    number: currentClass?.courseNumber,
+  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(GET_USER_RATINGS, {
+    skip: !user
   });
-  const { data: userRatingsData } = useQuery(GET_USER_RATINGS);
 
   // Get aggregated ratings for display
-  console.log("Variables for GET_COURSE_RATINGS:", {
-    subject: currentClass?.subject,
-    number: currentClass?.courseNumber,
-  });
-  const { data: aggregatedRatings } = useQuery(GET_COURSE_RATINGS, {
-    variables: {
+  const { data: aggregatedRatings, loading: ratingsLoading } = useQuery(GET_COURSE_RATINGS, {
+    variables: currentClass?.subject && currentClass?.courseNumber ? {
       subject: currentClass.subject,
       number: currentClass.courseNumber,
+    } : undefined,
+    skip: !currentClass?.subject || !currentClass?.courseNumber,
+    onCompleted: (data) => {
+      console.log("GET_COURSE_RATINGS completed:", data);
     },
+    onError: (error) => {
+      console.error("GET_COURSE_RATINGS error:", error);
+    }
   });
 
   // Create rating mutation
