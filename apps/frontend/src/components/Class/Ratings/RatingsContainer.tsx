@@ -315,8 +315,10 @@ export function RatingsContainer() {
     console.log("Submitting ratings:", metricValues, "for term:", termInfo);
     try {
       await Promise.all(
-        (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
-          (metric) => {
+        (Object.keys(MetricName) as Array<keyof typeof MetricName>)
+        // TODO: Remove placeholder data before prod
+          .filter((metric) => metric !== 'Recommended')
+          .map((metric) => {
             return createRating({
               variables: {
                 subject: currentClass.subject,
@@ -328,8 +330,7 @@ export function RatingsContainer() {
                 value: metricValues[MetricName[metric]],
               },
             });
-          }
-        )
+          })
       );
 
       setModalOpen(false);
