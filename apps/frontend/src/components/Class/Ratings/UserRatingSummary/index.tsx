@@ -1,5 +1,6 @@
-import ratingStyles from "../Ratings.module.scss";
 import { MetricName } from "@repo/shared";
+
+import ratingStyles from "../Ratings.module.scss";
 import {
   UserRating,
   getMetricStatus,
