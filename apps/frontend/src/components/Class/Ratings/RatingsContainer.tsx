@@ -215,7 +215,7 @@ export function RatingsContainer() {
   });
 
   // Get user's existing ratings
-  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(
+  const { data: userRatingsData } = useQuery(
     GET_USER_RATINGS,
     {
       skip: !user,
@@ -223,7 +223,7 @@ export function RatingsContainer() {
   );
 
   // Get aggregated ratings for display
-  const { data: aggregatedRatings, loading: ratingsLoading } = useQuery(
+  const { data: aggregatedRatings } = useQuery(
     GET_COURSE_RATINGS,
     {
       variables:
