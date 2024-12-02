@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useMutation, useQuery } from "@apollo/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { EditPencil, NavArrowDown, Trash, ArrowRight } from "iconoir-react";
+import { ArrowRight, EditPencil, NavArrowDown, Trash } from "iconoir-react";
 import _ from "lodash";
+import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
 
 import { MetricName } from "@repo/shared";
 import { Button, Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
-import useClass from "@/hooks/useClass";
 import { useReadUser } from "@/hooks/api";
+import useClass from "@/hooks/useClass";
 import { signIn } from "@/lib/api";
 import {
   CREATE_RATING,
@@ -35,8 +36,6 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
-
-import { useSearchParams } from "react-router-dom";
 
 const PLACEHOLDER = false;
 
@@ -207,21 +206,21 @@ export function RatingsContainer() {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {}, [user, searchParams]);
-  
+
   const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
     variables: {
       subject: currentClass.subject,
       number: currentClass.courseNumber,
     },
   });
-  
+
   // Get user's existing ratings
   console.log("Variables for GET_USER_RATINGS:", {
     subject: currentClass?.subject,
     number: currentClass?.courseNumber,
   });
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS);
-  
+
   // Get aggregated ratings for display
   console.log("Variables for GET_COURSE_RATINGS:", {
     subject: currentClass?.subject,
@@ -231,7 +230,7 @@ export function RatingsContainer() {
     variables: {
       subject: currentClass.subject,
       number: currentClass.courseNumber,
-    }
+    },
   });
 
   // Create rating mutation
@@ -313,8 +312,8 @@ export function RatingsContainer() {
     try {
       await Promise.all(
         (Object.keys(MetricName) as Array<keyof typeof MetricName>)
-        // TODO: Remove placeholder data before prod
-          .filter((metric) => metric !== 'Recommended')
+          // TODO: Remove placeholder data before prod
+          .filter((metric) => metric !== "Recommended")
           .map((metric) => {
             return createRating({
               variables: {
@@ -370,36 +369,39 @@ export function RatingsContainer() {
       return null;
     }
 
-    return aggregatedRatings.course.aggregatedRatings.metrics.map((metric: any) => {
-      const allCategories = [5, 4, 3, 2, 1].map((rating) => {
-        const category = metric.categories.find(
-          (cat: any) => cat.value === rating
-        );
-        return {
-          rating,
-          percentage: category ? (category.count / metric.count) * 100 : 0,
-        };
-      });
+    return aggregatedRatings.course.aggregatedRatings.metrics.map(
+      (metric: any) => {
+        const allCategories = [5, 4, 3, 2, 1].map((rating) => {
+          const category = metric.categories.find(
+            (cat: any) => cat.value === rating
+          );
+          return {
+            rating,
+            percentage: category ? (category.count / metric.count) * 100 : 0,
+          };
+        });
 
-      return {
-        metric: metric.metricName,
-        stats: allCategories,
-        status: getMetricStatus(metric.metricName, metric.weightedAverage),
-        statusColor: getStatusColor(metric.weightedAverage),
-        reviewCount: metric.count,
-      };
-    }) as RatingDetailProps[];
+        return {
+          metric: metric.metricName,
+          stats: allCategories,
+          status: getMetricStatus(metric.metricName, metric.weightedAverage),
+          statusColor: getStatusColor(metric.weightedAverage),
+          reviewCount: metric.count,
+        };
+      }
+    ) as RatingDetailProps[];
   }, [aggregatedRatings]);
 
   const hasRatings = React.useMemo(() => {
-    return aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
-      (acc: number, metric: any) => {
-        return acc + metric.count;
-      },
-      0
-    ) > 0;
-  }, [aggregatedRatings])
-    
+    return (
+      aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
+        (acc: number, metric: any) => {
+          return acc + metric.count;
+        },
+        0
+      ) > 0
+    );
+  }, [aggregatedRatings]);
 
   if (courseLoading) {
     return <div>Loading course data...</div>;
