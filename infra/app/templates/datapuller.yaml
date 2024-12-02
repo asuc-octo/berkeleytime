@@ -11,6 +11,7 @@ metadata:
     {{- include "bt-app.datapullerLabels" $root | nindent 4 }}
 spec:
   schedule: "{{ $jobConfig.schedule }}"
+  timeZone: America/Los_Angeles
   suspend: {{ $jobConfig.suspend }}
   jobTemplate:
     spec:
