@@ -63,7 +63,6 @@
 .modalTitle {
   color: var(--text-color);
   text-align: center;
-  font-family: Inter;
   font-size: 28px;
   font-weight: 600;
   line-height: 32px;
@@ -75,11 +74,10 @@
   color: var(--subtitle-color);
   text-align: center;
   font-feature-settings: 'liga' off;
-  font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 24px; /* 150% */
+  line-height: 24px;
   letter-spacing: -0.15px;
   align-self: stretch;
 }

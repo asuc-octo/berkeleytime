@@ -145,6 +145,53 @@ export const createRating = async (
   );
 };
 
+const deleteRatingOperations = async (
+  context: any,
+  subject: string,
+  courseNumber: string,
+  semester: Semester,
+  year: number,
+  classNumber: string,
+  metricName: MetricName,
+  session: any
+) => {
+  const deletedRating = await RatingModel.findOneAndDelete(
+    {
+      createdBy: context.user._id,
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metricName,
+    },
+    { session }
+  );
+
+  if (!deletedRating) {
+    throw new Error("Rating not found");
+  }
+
+  await handleCategoryCountChange(
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
+    metricName,
+    deletedRating.value,
+    false,
+    session
+  );
+
+  const user = await UserModel.findOne({ googleId: context.user.googleId });
+  if (user) {
+    const newCount = Math.max(0, (user.classRatingsCount || 0) - 1);
+    user.classRatingsCount = newCount;
+    await user.save({ session });
+  }
+};
+
 export const deleteRating = async (
   context: any,
   subject: string,
@@ -153,51 +200,39 @@ export const deleteRating = async (
   year: number,
   classNumber: string,
   metricName: MetricName,
-  existingSession?: any // for nested transactions only, can basically ignore
+  existingSession?: any // for nested transactions only
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  const session = existingSession || (await connection.startSession());
-  try {
-    await session.withTransaction(async () => {
-      const deletedRating = await RatingModel.findOneAndDelete(
-        {
-          createdBy: context.user._id,
+  if (existingSession) {
+    // Just run the operations without starting a new transaction
+    await deleteRatingOperations(
+      context,
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metricName,
+      existingSession
+    );
+  } else {
+    // Start a new transaction only if we don't have an existing session
+    const session = await connection.startSession();
+    try {
+      await session.withTransaction(async () => {
+        await deleteRatingOperations(
+          context,
           subject,
           courseNumber,
           semester,
           year,
           classNumber,
           metricName,
-        },
-        { session }
-      );
-
-      if (!deletedRating) {
-        throw new Error("Rating not found");
-      }
-
-      await handleCategoryCountChange(
-        subject,
-        courseNumber,
-        semester,
-        year,
-        classNumber,
-        metricName,
-        deletedRating.value,
-        false,
-        session
-      );
-
-      const user = await UserModel.findOne({ googleId: context.user.googleId });
-      if (user) {
-        const newCount = Math.max(0, (user.classRatingsCount || 0) - 1);
-        user.classRatingsCount = newCount;
-        await user.save({ session });
-      }
-    });
-  } finally {
-    if (!existingSession) {
+          session
+        );
+      });
+    } finally {
       await session.endSession();
     }
   }
