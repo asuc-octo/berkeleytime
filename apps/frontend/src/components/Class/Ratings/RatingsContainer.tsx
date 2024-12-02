@@ -215,24 +215,33 @@ export function RatingsContainer() {
   });
 
   // Get user's existing ratings
-  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(GET_USER_RATINGS, {
-    skip: !user
-  });
+  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(
+    GET_USER_RATINGS,
+    {
+      skip: !user,
+    }
+  );
 
   // Get aggregated ratings for display
-  const { data: aggregatedRatings, loading: ratingsLoading } = useQuery(GET_COURSE_RATINGS, {
-    variables: currentClass?.subject && currentClass?.courseNumber ? {
-      subject: currentClass.subject,
-      number: currentClass.courseNumber,
-    } : undefined,
-    skip: !currentClass?.subject || !currentClass?.courseNumber,
-    onCompleted: (data) => {
-      console.log("GET_COURSE_RATINGS completed:", data);
-    },
-    onError: (error) => {
-      console.error("GET_COURSE_RATINGS error:", error);
+  const { data: aggregatedRatings, loading: ratingsLoading } = useQuery(
+    GET_COURSE_RATINGS,
+    {
+      variables:
+        currentClass?.subject && currentClass?.courseNumber
+          ? {
+              subject: currentClass.subject,
+              number: currentClass.courseNumber,
+            }
+          : undefined,
+      skip: !currentClass?.subject || !currentClass?.courseNumber,
+      onCompleted: (data) => {
+        console.log("GET_COURSE_RATINGS completed:", data);
+      },
+      onError: (error) => {
+        console.error("GET_COURSE_RATINGS error:", error);
+      },
     }
-  });
+  );
 
   // Create rating mutation
   const [createRating] = useMutation(CREATE_RATING, {
