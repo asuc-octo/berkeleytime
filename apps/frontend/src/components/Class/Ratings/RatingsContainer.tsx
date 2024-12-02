@@ -123,7 +123,7 @@ function RatingDetail({
         <div className={styles.titleAndStatusSection}>
           <div className={styles.titleSection}>
             <h3 className={styles.title}>{metric}</h3>
-            <ThemeTooltip content={`${metric}\n${getMetricTooltip(metric)}`}>
+            <ThemeTooltip content={`${getMetricTooltip(metric)}`}>
               <span className={styles.info}>
                 <svg
                   width="14"
