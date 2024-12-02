@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { useMutation, useQuery } from "@apollo/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { EditPencil, NavArrowDown, Trash } from "iconoir-react";
+import { EditPencil, NavArrowDown, Trash, ArrowRight } from "iconoir-react";
 import _ from "lodash";
 import ReactSelect from "react-select";
 
@@ -206,14 +206,8 @@ export function RatingsContainer() {
   const { data: user } = useReadUser();
   const [searchParams] = useSearchParams();
 
-  // Open modal automatically if we just returned from sign-in
-  useEffect(() => {
-    if (user && searchParams.get("from") === "signin") {
-      setModalOpen(true);
-    }
-  }, [user, searchParams]);
-
-  // Course data for terms
+  useEffect(() => {}, [user, searchParams]);
+  
   const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
     variables: {
       subject: currentClass.subject,
@@ -339,6 +333,31 @@ export function RatingsContainer() {
     }
   };
 
+  const RatingButton = React.useMemo(() => {
+    return user ? (
+      <Button
+        style={{
+          color: "#3B82F6",
+          backgroundColor: "var(--foreground-color)",
+        }}
+        onClick={() => setModalOpen(true)}
+      >
+        Add a rating
+      </Button>
+    ) : (
+      <Button
+        style={{
+          color: "white",
+          backgroundColor: "#3B82F6",
+        }}
+        onClick={() => signIn(window.location.pathname)}
+      >
+        Sign in to add ratings
+        <ArrowRight />
+      </Button>
+    );
+  }, [user, setModalOpen]);
+
   // Transform aggregated ratings into display format
   // TODO: Remove placeholder data before prod
   const ratingsData = React.useMemo(() => {
@@ -396,21 +415,7 @@ export function RatingsContainer() {
         )}
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {(hasRatings || PLACEHOLDER) && (
-              <Button
-                style={{
-                  color: "#3B82F6",
-                  backgroundColor: "var(--foreground-color)",
-                }}
-                onClick={() =>
-                  user
-                    ? setModalOpen(true)
-                    : signIn(window.location.pathname + "?from=signin")
-                }
-              >
-                Add a rating
-              </Button>
-            )}
+            {(hasRatings || PLACEHOLDER) && RatingButton}
             {/* Replace select dropdown with ReactSelect */}
             <div
               style={{
@@ -496,16 +501,7 @@ export function RatingsContainer() {
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>
-              <Button
-                style={{ color: "#3B82F6" }}
-                onClick={() =>
-                  user
-                    ? setModalOpen(true)
-                    : signIn(window.location.pathname + "?from=signin")
-                }
-              >
-                Add a rating
-              </Button>
+              {RatingButton}
             </div>
           ) : (
             ratingsData

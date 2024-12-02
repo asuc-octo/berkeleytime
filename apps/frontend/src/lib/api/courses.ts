@@ -68,6 +68,17 @@ export const READ_COURSE = gql`
         semester
         number
       }
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
+      }
     }
   }
 `;
