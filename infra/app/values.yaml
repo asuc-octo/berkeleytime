@@ -37,7 +37,6 @@ updater:
   suspend: false
   command: ["npm", "run", "update:catalog", "--workspace=backend"]
 
-
 datapuller:
   courses:
     schedule: "0 0 * * *"
@@ -46,7 +45,7 @@ datapuller:
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
   sections:
     schedule: "0 1 * * *"
     suspend: false
@@ -54,7 +53,7 @@ datapuller:
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
   classes:
     schedule: "0 2 * * *"
     suspend: false
@@ -62,7 +61,7 @@ datapuller:
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
   cleanup:
     schedule: "0 3 * * *"
     suspend: false
@@ -70,4 +69,4 @@ datapuller:
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
