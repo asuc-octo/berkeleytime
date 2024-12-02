@@ -99,7 +99,7 @@ const typedef = gql`
 
       metricName: MetricName!
       value: Int!
-    ): AggregatedRatings! @auth
+    ): Boolean! @auth
 
     deleteRating(
       "Class Identifiers"
@@ -109,7 +109,7 @@ const typedef = gql`
       year: Int!
       classNumber: String!
       metricName: MetricName!
-    ): AggregatedRatings! @auth
+    ): Boolean! @auth
   }
 `;
 

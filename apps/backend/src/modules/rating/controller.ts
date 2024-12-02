@@ -136,13 +136,7 @@ export const createRating = async (
     await session.endSession();
   }
 
-  return getClassAggregatedRatings(
-    subject,
-    courseNumber,
-    semester,
-    year,
-    classNumber
-  );
+  return true;
 };
 
 const deleteRatingOperations = async (
@@ -237,13 +231,7 @@ export const deleteRating = async (
     }
   }
 
-  return getClassAggregatedRatings(
-    subject,
-    courseNumber,
-    semester,
-    year,
-    classNumber
-  );
+  return true;
 };
 
 export const getUserClassRatings = async (

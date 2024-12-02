@@ -51,7 +51,7 @@ const resolvers: RatingModule.Resolvers = {
       { subject, courseNumber, semester, year, classNumber, metricName, value },
       context
     ) => {
-      const newRating = await createRating(
+      return createRating(
         context,
         subject,
         courseNumber,
@@ -61,7 +61,6 @@ const resolvers: RatingModule.Resolvers = {
         metricName,
         value
       );
-      return newRating as unknown as RatingModule.AggregatedRatings;
     },
 
     deleteRating: async (
@@ -69,7 +68,7 @@ const resolvers: RatingModule.Resolvers = {
       { subject, courseNumber, semester, year, classNumber, metricName },
       context
     ) => {
-      const deletedRating = await deleteRating(
+      return deleteRating(
         context,
         subject,
         courseNumber,
@@ -78,7 +77,6 @@ const resolvers: RatingModule.Resolvers = {
         classNumber,
         metricName
       );
-      return deletedRating as unknown as RatingModule.AggregatedRatings;
     },
   },
 };

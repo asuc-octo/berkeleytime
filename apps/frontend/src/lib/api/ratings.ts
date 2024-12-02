@@ -46,12 +46,7 @@ export const CREATE_RATING = gql`
       classNumber: $classNumber
       metricName: $metricName
       value: $value
-    ) {
-      metrics {
-        metricName
-        weightedAverage
-      }
-    }
+    )
   }
 `;
 
@@ -71,12 +66,7 @@ export const DELETE_RATING = gql`
       year: $year
       classNumber: $classNumber
       metricName: $metricName
-    ) {
-      metrics {
-        metricName
-        weightedAverage
-      }
-    }
+    )
   }
 `;
 
