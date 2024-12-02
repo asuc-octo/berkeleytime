@@ -2,7 +2,6 @@ import { ISectionItem, NewSectionModel } from "@repo/common";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import { Config } from "./config";
-import setup from "./shared";
 import mapSectionToNewSection from "./shared/sectionParser";
 import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
 
@@ -51,18 +50,3 @@ export async function updateSections(config: Config) {
 
   log.info(`Updated ${sections.length} sections for active terms`);
 }
-
-const initialize = async () => {
-  const { config } = await setup();
-  try {
-    config.log.info("\n=== UPDATE SECTIONS ===");
-    await updateSections(config);
-  } catch (error) {
-    config.log.error(error);
-    process.exit(1);
-  }
-
-  process.exit(0);
-};
-
-initialize();

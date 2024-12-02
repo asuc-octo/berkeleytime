@@ -30,7 +30,7 @@ const testDatabaseWrite = async (config: Config) => {
   }
 };
 
-const runDatapuller = async () => {
+export const runDatapuller = async () => {
   const { config } = await setup();
   try {
     config.log.info("\n=== TESTING DATABASE WRITE ===");
@@ -58,5 +58,3 @@ const runDatapuller = async () => {
 
   process.exit(0);
 };
-
-runDatapuller();

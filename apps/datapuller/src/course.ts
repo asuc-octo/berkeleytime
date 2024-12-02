@@ -2,7 +2,6 @@ import { ICourseItem, NewCourseModel } from "@repo/common";
 import { CoursesAPI } from "@repo/sis-api/courses";
 
 import { Config } from "./config";
-import setup from "./shared";
 import mapCourseToNewCourse, { CombinedCourse } from "./shared/courseParser";
 import { fetchPaginatedData } from "./shared/utils";
 
@@ -43,18 +42,3 @@ export async function updateCourses(config: Config) {
 
   log.info(`Updated ${courses.length} courses for active terms`);
 }
-
-const initialize = async () => {
-  const { config } = await setup();
-  try {
-    config.log.info("\n=== UPDATE COURSES ===");
-    await updateCourses(config);
-  } catch (error) {
-    config.log.error(error);
-    process.exit(1);
-  }
-
-  process.exit(0);
-};
-
-initialize();

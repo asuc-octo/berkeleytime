@@ -2,7 +2,6 @@ import { IClassItem, NewClassModel } from "@repo/common";
 import { ClassesAPI } from "@repo/sis-api/classes";
 
 import { Config } from "./config";
-import setup from "./shared";
 import mapClassToNewClass, { CombinedClass } from "./shared/classParser";
 import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
 
@@ -52,18 +51,3 @@ export async function updateClasses(config: Config) {
 
   log.info(`Updated ${classes.length} classes for active terms`);
 }
-
-const initialize = async () => {
-  const { config } = await setup();
-  try {
-    config.log.info("\n=== UPDATE CLASSES ===");
-    await updateClasses(config);
-  } catch (error) {
-    config.log.error(error);
-    process.exit(1);
-  }
-
-  process.exit(0);
-};
-
-initialize();
