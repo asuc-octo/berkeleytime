@@ -88,3 +88,23 @@ export const GET_USER_RATINGS = gql`
     }
   }
 `;
+
+export const GET_COURSE_RATINGS = gql`
+  query GetCourseRatings($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      subject
+      number
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
+      }
+    }
+  }
+`;

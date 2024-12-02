@@ -16,7 +16,7 @@ import { signIn } from "@/lib/api";
 import {
   CREATE_RATING,
   DELETE_RATING,
-  GET_AGGREGATED_RATINGS,
+  GET_COURSE_RATINGS,
   GET_USER_RATINGS,
   READ_COURSE,
 } from "@/lib/api";
@@ -219,24 +219,20 @@ export function RatingsContainer() {
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS);
 
   // Get aggregated ratings for display
-  const { data: aggregatedRatings } = useQuery(GET_AGGREGATED_RATINGS, {
+  const { data: aggregatedRatings } = useQuery(GET_COURSE_RATINGS, {
     variables: {
       subject: currentClass.subject,
-      courseNumber: currentClass.courseNumber,
-      semester: currentClass.semester,
-      year: currentClass.year,
-      classNumber: currentClass.number,
-      isAllTime: selectedTerm === "all",
+      number: currentClass.courseNumber,
     },
   });
 
   // Create rating mutation
   const [createRating] = useMutation(CREATE_RATING, {
-    refetchQueries: ["GetUserRatings", "GetAggregatedRatings"],
+    refetchQueries: ["GetUserRatings", "GetCourseRatings"],
   });
 
   const [deleteRating] = useMutation(DELETE_RATING, {
-    refetchQueries: ["GetUserRatings", "GetAggregatedRatings"],
+    refetchQueries: ["GetUserRatings", "GetCourseRatings"],
   });
 
   function deleteUserRating(userRating: UserRating) {
@@ -359,16 +355,15 @@ export function RatingsContainer() {
   }, [user, setModalOpen]);
 
   // Transform aggregated ratings into display format
-  // TODO: Remove placeholder data before prod
   const ratingsData = React.useMemo(() => {
     if (PLACEHOLDER) {
       return placeholderRatingsData;
     }
-    if (!aggregatedRatings?.aggregatedRatings?.metrics) {
+    if (!aggregatedRatings?.course?.aggregatedRatings?.metrics) {
       return null;
     }
 
-    return aggregatedRatings.aggregatedRatings.metrics.map((metric: any) => {
+    return aggregatedRatings.course.aggregatedRatings.metrics.map((metric: any) => {
       const allCategories = [5, 4, 3, 2, 1].map((rating) => {
         const category = metric.categories.find(
           (cat: any) => cat.value === rating
@@ -390,7 +385,7 @@ export function RatingsContainer() {
   }, [aggregatedRatings]);
 
   const hasRatings =
-    aggregatedRatings?.aggregatedRatings?.metrics?.reduce(
+    aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
       (acc: number, metric: any) => {
         return acc + metric.count;
       },
