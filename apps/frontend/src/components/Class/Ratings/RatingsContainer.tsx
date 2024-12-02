@@ -214,19 +214,24 @@ export function RatingsContainer() {
       number: currentClass.courseNumber,
     },
   });
-
+  
   // Get user's existing ratings
-  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(GET_USER_RATINGS, {
-    skip: !currentClass || !currentClass.subject || !currentClass.courseNumber
+  console.log("Variables for GET_USER_RATINGS:", {
+    subject: currentClass?.subject,
+    number: currentClass?.courseNumber,
   });
-
+  const { data: userRatingsData } = useQuery(GET_USER_RATINGS);
+  
   // Get aggregated ratings for display
-  const { data: aggregatedRatings, loading: ratingsLoading } = useQuery(GET_COURSE_RATINGS, {
+  console.log("Variables for GET_COURSE_RATINGS:", {
+    subject: currentClass?.subject,
+    number: currentClass?.courseNumber,
+  });
+  const { data: aggregatedRatings } = useQuery(GET_COURSE_RATINGS, {
     variables: {
       subject: currentClass.subject,
       number: currentClass.courseNumber,
-    },
-    skip: !currentClass || !currentClass.subject || !currentClass.courseNumber
+    }
   });
 
   // Create rating mutation
@@ -394,7 +399,7 @@ export function RatingsContainer() {
       0
     ) > 0;
 
-  if (courseLoading || userRatingsLoading || ratingsLoading) {
+  if (courseLoading) {
     return <div>Loading course data...</div>;
   }
 
@@ -412,7 +417,7 @@ export function RatingsContainer() {
         )}
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {(hasRatings || PLACEHOLDER) && RatingButton}
+            {(hasRatings || PLACEHOLDER) && !userRatings && RatingButton}
             {/* Replace select dropdown with ReactSelect */}
             <div
               style={{
