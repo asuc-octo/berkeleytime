@@ -8,7 +8,7 @@ import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
 
 import { MetricName } from "@repo/shared";
-import { Button, Container } from "@repo/theme";
+import { Button, Container, IconButton, Tooltip as ThemeTooltip } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
 import { useReadUser } from "@/hooks/api";
@@ -55,23 +55,17 @@ function MyRatingSummary({
           <h3>Your Rating Summary</h3>
           <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
         </div>
-        <div>
-          <span
-            className={styles.userRatingActionIcon}
-            onClick={() => {
-              setModalOpen(true);
-            }}
-          >
-            <EditPencil></EditPencil>
-          </span>
-          <span
-            className={styles.userRatingActionIcon}
-            onClick={() => {
-              deleteUserRating(userRatings);
-            }}
-          >
-            <Trash></Trash>
-          </span>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <ThemeTooltip content="Edit rating">
+            <IconButton onClick={() => setModalOpen(true)}>
+              <EditPencil />
+            </IconButton>
+          </ThemeTooltip>
+          <ThemeTooltip content="Delete rating">
+            <IconButton onClick={() => deleteUserRating(userRatings)}>
+              <Trash />
+            </IconButton>
+          </ThemeTooltip>
         </div>
       </div>
       <div className={styles.userRatingDataContainer}>
