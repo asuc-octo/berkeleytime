@@ -216,14 +216,17 @@ export function RatingsContainer() {
   });
 
   // Get user's existing ratings
-  const { data: userRatingsData } = useQuery(GET_USER_RATINGS);
+  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(GET_USER_RATINGS, {
+    skip: !currentClass || !currentClass.subject || !currentClass.courseNumber
+  });
 
   // Get aggregated ratings for display
-  const { data: aggregatedRatings } = useQuery(GET_COURSE_RATINGS, {
+  const { data: aggregatedRatings, loading: ratingsLoading } = useQuery(GET_COURSE_RATINGS, {
     variables: {
       subject: currentClass.subject,
       number: currentClass.courseNumber,
     },
+    skip: !currentClass || !currentClass.subject || !currentClass.courseNumber
   });
 
   // Create rating mutation
@@ -391,7 +394,7 @@ export function RatingsContainer() {
       0
     ) > 0;
 
-  if (courseLoading) {
+  if (courseLoading || userRatingsLoading || ratingsLoading) {
     return <div>Loading course data...</div>;
   }
 
