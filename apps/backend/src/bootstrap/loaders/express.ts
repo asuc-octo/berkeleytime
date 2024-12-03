@@ -6,8 +6,11 @@ import { type Application, json } from "express";
 import helmet from "helmet";
 import { RedisClientType } from "redis";
 
+
+
 import { config } from "../../config";
 import passportLoader from "./passport";
+
 
 export default async (
   app: Application,
@@ -26,7 +29,7 @@ export default async (
       origin: [
         config.url,
         "http://localhost:8080",
-        "http://localhost:5173",
+        "http://localhost:3000",
         // TODO: Remove
         "https://gn980r4n-8080.usw3.devtunnels.ms",
       ],
