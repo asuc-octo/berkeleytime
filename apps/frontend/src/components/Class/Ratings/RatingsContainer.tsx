@@ -455,7 +455,20 @@ export function RatingsContainer() {
           </div>
         </div>
 
-        <div className={styles.ratingsContainer}>
+        <div
+          className={styles.ratingsContainer}
+          style={{
+            backgroundColor:
+              !hasRatings && !PLACEHOLDER
+                ? "transparent"
+                : "var(--foreground-color)",
+            boxShadow:
+              !hasRatings && !PLACEHOLDER
+                ? "none"
+                : "0 1px 2px rgb(0 0 0 / 5%)",
+            border: !hasRatings && !PLACEHOLDER ? "none" : "1px solid var(--border-color)",
+          }}
+        >
           {!hasRatings && !PLACEHOLDER ? (
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
