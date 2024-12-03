@@ -197,6 +197,9 @@ export function RatingsContainer() {
   // Get user's existing ratings
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS, {
     skip: !user,
+    onError: (error) => {
+      console.error("GET_USER_RATINGS error:", error);
+    },
   });
 
   // Get aggregated ratings for display
@@ -209,9 +212,10 @@ export function RatingsContainer() {
           }
         : undefined,
     skip: !currentClass?.subject || !currentClass?.courseNumber,
-    onCompleted: (data) => {
-      console.log("GET_COURSE_RATINGS completed:", data);
-    },
+    // fetchPolicy: 'network-only',
+    // onCompleted: (data) => {
+    //   console.log("GET_COURSE_RATINGS completed:", data);
+    // },
     onError: (error) => {
       console.error("GET_COURSE_RATINGS error:", error);
     },

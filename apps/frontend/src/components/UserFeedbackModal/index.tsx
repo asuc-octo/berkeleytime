@@ -122,7 +122,8 @@ export function UserFeedbackModal({
                       </p>
                       <div
                         style={{
-                          maxWidth: "200px",
+                          maxWidth: "300px",
+                          margin: "30px",
                         }}
                       >
                         <ReactSelect
