@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DataTransferBoth, Xmark } from "iconoir-react";
 import { Link, useParams } from "react-router-dom";
 
-import { IconButton, Tooltip } from "@repo/theme";
+import { Tooltip } from "@repo/theme";
 
 import Week from "@/app/Schedule/Week";
 import Units from "@/components/Units";

@@ -71,9 +71,14 @@ export function AttendanceForm({
     <div className={styles.attendanceSection}>
       {/* Question 5 */}
       <div className={styles.formGroup}>
+<<<<<<< HEAD
         <h3>
           5. Is lecture attendance required?
         </h3>
+=======
+        <p style={{ marginBottom: "28px" }}
+        >5. Is lecture attendance required?</p>
+>>>>>>> 6a3adc988f2237510be2b03d0649acd8e06ac47b
         <BooleanOptions
           name="lectureAttendance"
           value={metricData["Attendance"] ?? null}
@@ -85,9 +90,13 @@ export function AttendanceForm({
 
       {/* Question 6 */}
       <div className={styles.formGroup}>
+<<<<<<< HEAD
         <h3>
           6. Were lectures recorded?
         </h3>
+=======
+        <p style={{ marginBottom: "28px" }}>6. Were lectures recorded?</p>
+>>>>>>> 6a3adc988f2237510be2b03d0649acd8e06ac47b
         <BooleanOptions
           name="lecturesRecorded"
           value={metricData["Recording"] ?? null}
