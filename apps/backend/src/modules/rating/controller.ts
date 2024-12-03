@@ -14,6 +14,7 @@ import {
   semestersByInstructorAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
+  courseRatingAggregator,
 } from "./helper/aggregator";
 import {
   checkRatingExists,
@@ -311,11 +312,8 @@ export const getCourseAggregatedRatings = async (
     `[GetCourseRatings] Fetching ratings for ${subject} ${courseNumber}`
   );
 
-  const aggregated = await ratingAggregator({
-    subject,
-    courseNumber,
-  });
-
+  const aggregated = await courseRatingAggregator(subject, courseNumber);
+  
   console.log(`[GetCourseRatings] Raw aggregation result:`, {
     hasResults: !!aggregated,
     resultCount: aggregated?.length,
