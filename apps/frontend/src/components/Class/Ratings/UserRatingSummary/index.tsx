@@ -1,5 +1,6 @@
-import ratingStyles from "../Ratings.module.scss";
 import { MetricName } from "@repo/shared";
+
+import ratingStyles from "../Ratings.module.scss";
 import {
   UserRating,
   getMetricStatus,
@@ -23,12 +24,14 @@ export default function UserRatingSummary({
             key={metric.metricName}
             className={ratingStyles.userRatingSection}
           >
-            <div className={ratingStyles.titleSection}>
-              <h3 className={ratingStyles.title}>{metric.metricName}</h3>
+            <div className={ratingStyles.userRationSectionMetrics}>
+              <div className={ratingStyles.titleSection}>
+                <h3 className={ratingStyles.title}>{metric.metricName}</h3>
+              </div>
+              <span className={ratingStyles[getStatusColor(metric.value)]}>
+                {getMetricStatus(metric.metricName, metric.value)}
+              </span>
             </div>
-            <span className={ratingStyles[getStatusColor(metric.value)]}>
-              {getMetricStatus(metric.metricName, metric.value)}
-            </span>
           </div>
         ))}
     </div>
