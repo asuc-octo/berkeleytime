@@ -36,7 +36,7 @@ export default function AttendanceRequirements({
   });
   const [createRating] = useMutation(CREATE_RATING, {refetchQueries: ["GetUserRatings", "GetCourseRatings"],
     });
-  const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
+  const { data: courseData } = useQuery(READ_COURSE, {
       variables: {
           subject: currentClass.subject,
           number: currentClass.courseNumber,
