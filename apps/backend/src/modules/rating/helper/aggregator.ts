@@ -188,29 +188,33 @@ export const semestersByInstructorAggregator = async (
       $match: {
         "class.course.displayName": displayName,
         "component.code": "LEC",
-        "meetings.assignedInstructors.instructor.names.formattedName": professorName
-      }
+        "meetings.assignedInstructors.instructor.names.formattedName":
+          professorName,
+      },
     },
     {
       $group: {
         _id: "$class.session.term.name",
-      }
+      },
     },
     {
       $match: {
-        _id: { $ne: null }
-      }
-    }
+        _id: { $ne: null },
+      },
+    },
   ]);
 };
 
-export const courseRatingAggregator = async (subject: string, courseNumber: string) => {
+export const courseRatingAggregator = async (
+  subject: string,
+  courseNumber: string
+) => {
   return await AggregatedMetricsModel.aggregate([
     {
       $match: {
         subject,
         courseNumber,
-        categoryCount: { $gt: 0 }
+        categoryCount: { $gt: 0 },
       },
     },
     {
@@ -236,9 +240,9 @@ export const courseRatingAggregator = async (subject: string, courseNumber: stri
           $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
         },
         categories: {
-          $push: { 
-            value: "$_id.categoryValue", 
-            count: "$categoryCount" 
+          $push: {
+            value: "$_id.categoryValue",
+            count: "$categoryCount",
           },
         },
       },

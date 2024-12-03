@@ -10,11 +10,11 @@ import {
   formatUserRatings,
 } from "./formatter";
 import {
+  courseRatingAggregator,
   ratingAggregator,
   semestersByInstructorAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
-  courseRatingAggregator,
 } from "./helper/aggregator";
 import {
   checkRatingExists,
@@ -313,7 +313,7 @@ export const getCourseAggregatedRatings = async (
   );
 
   const aggregated = await courseRatingAggregator(subject, courseNumber);
-  
+
   console.log(`[GetCourseRatings] Raw aggregation result:`, {
     hasResults: !!aggregated,
     resultCount: aggregated?.length,
