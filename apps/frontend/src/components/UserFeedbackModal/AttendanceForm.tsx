@@ -1,4 +1,5 @@
 import { MetricName } from "@repo/shared";
+
 import { MetricData } from "../Class/Ratings/helper/metricsUtil";
 import styles from "./UserFeedbackModal.module.scss";
 
@@ -71,9 +72,7 @@ export function AttendanceForm({
     <div className={styles.attendanceSection}>
       {/* Question 5 */}
       <div className={styles.formGroup}>
-        <h3>
-          5. Is lecture attendance required?
-        </h3>
+        <h3>5. Is lecture attendance required?</h3>
         <BooleanOptions
           name="lectureAttendance"
           value={metricData["Attendance"] ?? null}
@@ -85,9 +84,7 @@ export function AttendanceForm({
 
       {/* Question 6 */}
       <div className={styles.formGroup}>
-        <h3>
-          6. Were lectures recorded?
-        </h3>
+        <h3>6. Were lectures recorded?</h3>
         <BooleanOptions
           name="lecturesRecorded"
           value={metricData["Recording"] ?? null}
