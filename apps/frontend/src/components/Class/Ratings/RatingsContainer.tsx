@@ -97,17 +97,17 @@ export function RatingsContainer() {
     if (!courseData?.course?.classes) return [];
 
     return _.chain(courseData.course.classes)
-      .map((ClassData : any) => ({
+      .map((ClassData: any) => ({
         value: `${ClassData.semester} ${ClassData.year}`,
         label: `${ClassData.semester} ${ClassData.year}`,
         semester: ClassData.semester as Semester,
         year: ClassData.year,
       }))
-      .uniqBy((term : any) => `${term.semester}-${term.year}`)
+      .uniqBy((term: any) => `${term.semester}-${term.year}`)
       .orderBy(
         [
           "year",
-          (term : any) => {
+          (term: any) => {
             const semesterOrder = {
               [Semester.Spring]: 0,
               [Semester.Summer]: 1,
@@ -249,7 +249,7 @@ export function RatingsContainer() {
                       cursor: "pointer",
                       "&:hover": {
                         color: "white",
-                      }
+                      },
                     }),
                     singleValue: (base) => ({
                       ...base,
@@ -279,7 +279,10 @@ export function RatingsContainer() {
               !hasRatings && !PLACEHOLDER
                 ? "none"
                 : "0 1px 2px rgb(0 0 0 / 5%)",
-            border: !hasRatings && !PLACEHOLDER ? "none" : "1px solid var(--border-color)",
+            border:
+              !hasRatings && !PLACEHOLDER
+                ? "none"
+                : "1px solid var(--border-color)",
           }}
         >
           {!hasRatings && !PLACEHOLDER ? (
