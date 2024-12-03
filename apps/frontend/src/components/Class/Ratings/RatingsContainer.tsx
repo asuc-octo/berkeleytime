@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
-
 import { useMutation, useQuery } from "@apollo/client";
-import { ArrowRight, EditPencil, NavArrowDown, Trash } from "iconoir-react";
+import { ArrowRight, EditPencil, NavArrowDown, Trash, InfoCircle } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
-
 import { MetricName } from "@repo/shared";
 import {
   Button,
   Container,
   IconButton,
-  Tooltip as ThemeTooltip,
+  Tooltip,
 } from "@repo/theme";
-
 import UserFeedbackModal from "@/components/UserFeedbackModal";
 import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
@@ -26,7 +23,6 @@ import {
   READ_COURSE,
 } from "@/lib/api";
 import { Semester } from "@/lib/api/terms";
-
 import styles from "./Ratings.module.scss";
 import UserRatingSummary from "./UserRatingSummary";
 // TODO: Remove placeholder data before prod
@@ -60,16 +56,16 @@ function MyRatingSummary({
           <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
-          <ThemeTooltip content="Edit rating">
+          <Tooltip content="Edit rating">
             <IconButton onClick={() => setModalOpen(true)}>
               <EditPencil />
             </IconButton>
-          </ThemeTooltip>
-          <ThemeTooltip content="Delete rating">
+          </Tooltip>
+          <Tooltip content="Delete rating">
             <IconButton onClick={() => deleteUserRating(userRatings)}>
               <Trash />
             </IconButton>
-          </ThemeTooltip>
+          </Tooltip>
         </div>
       </div>
       <div className={styles.userRatingDataContainer}>
@@ -123,22 +119,11 @@ function RatingDetail({
         <div className={styles.titleAndStatusSection}>
           <div className={styles.titleSection}>
             <h3 className={styles.title}>{metric}</h3>
-            <ThemeTooltip content={`${getMetricTooltip(metric)}`}>
+            <Tooltip content={`${getMetricTooltip(metric)}`}>
               <span className={styles.info}>
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 12 12"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M5.41666 8.9165H6.58332V5.4165H5.41666V8.9165ZM5.99999 4.24984C6.16527 4.24984 6.30391 4.19384 6.41591 4.08184C6.52791 3.96984 6.58371 3.83139 6.58332 3.6665C6.58293 3.50161 6.52693 3.36317 6.41532 3.25117C6.30371 3.13917 6.16527 3.08317 5.99999 3.08317C5.83471 3.08317 5.69627 3.13917 5.58466 3.25117C5.47305 3.36317 5.41705 3.50161 5.41666 3.6665C5.41627 3.83139 5.47227 3.97003 5.58466 4.08242C5.69705 4.19481 5.83549 4.25061 5.99999 4.24984ZM5.99999 11.8332C5.19305 11.8332 4.43471 11.6799 3.72499 11.3735C3.01527 11.0671 2.39791 10.6515 1.87291 10.1269C1.34791 9.60231 0.932379 8.98495 0.626324 8.27484C0.320268 7.56473 0.167046 6.80639 0.166657 5.99984C0.166268 5.19328 0.319491 4.43495 0.626324 3.72484C0.933157 3.01473 1.34869 2.39737 1.87291 1.87275C2.39713 1.34814 3.01449 0.932615 3.72499 0.626171C4.43549 0.319726 5.19382 0.166504 5.99999 0.166504C6.80616 0.166504 7.56449 0.319726 8.27499 0.626171C8.98549 0.932615 9.60285 1.34814 10.1271 1.87275C10.6513 2.39737 11.067 3.01473 11.3742 3.72484C11.6815 4.43495 11.8345 5.19328 11.8333 5.99984C11.8322 6.80639 11.6789 7.56473 11.3737 8.27484C11.0684 8.98495 10.6529 9.60231 10.1271 10.1269C9.6013 10.6515 8.98393 11.0673 8.27499 11.3741C7.56605 11.6809 6.80771 11.8339 5.99999 11.8332ZM5.99999 10.6665C7.30277 10.6665 8.40624 10.2144 9.31041 9.31025C10.2146 8.40609 10.6667 7.30261 10.6667 5.99984C10.6667 4.69706 10.2146 3.59359 9.31041 2.68942C8.40624 1.78525 7.30277 1.33317 5.99999 1.33317C4.69721 1.33317 3.59374 1.78525 2.68957 2.68942C1.78541 3.59359 1.33332 4.69706 1.33332 5.99984C1.33332 7.30261 1.78541 8.40609 2.68957 9.31025C3.59374 10.2144 4.69721 10.6665 5.99999 10.6665Z"
-                    fill="#94A3B8"
-                  />
-                </svg>
+                <InfoCircle width={14} height={14} />
               </span>
-            </ThemeTooltip>
+            </Tooltip>
           </div>
           <span className={styles[statusColor]}>{status}</span>
         </div>
@@ -148,7 +133,6 @@ function RatingDetail({
           />
         </div>
       </div>
-
       {isExpanded && (
         <div className={styles.ratingContent}>
           {stats.map((stat, index) => (
@@ -212,10 +196,6 @@ export function RatingsContainer() {
           }
         : undefined,
     skip: !currentClass?.subject || !currentClass?.courseNumber,
-    // fetchPolicy: 'network-only',
-    // onCompleted: (data) => {
-    //   console.log("GET_COURSE_RATINGS completed:", data);
-    // },
     onError: (error) => {
       console.error("GET_COURSE_RATINGS error:", error);
     },
@@ -327,7 +307,7 @@ export function RatingsContainer() {
     return user ? (
       <Button
         style={{
-          color: "#3B82F6",
+          color: "var(--blue-500)",
           backgroundColor: "var(--foreground-color)",
           height: "38px",
         }}
@@ -340,9 +320,7 @@ export function RatingsContainer() {
         onClick={() => signIn(window.location.pathname)}
         variant="solid"
         className={styles.button}
-        style={{
-          height: "38px",
-        }}
+        style={{height: "38px"}}
       >
         Sign in to add ratings
         <ArrowRight />
@@ -414,12 +392,7 @@ export function RatingsContainer() {
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {(hasRatings || PLACEHOLDER) && !userRatings && RatingButton}
             {/* Replace select dropdown with ReactSelect */}
-            <div
-              style={{
-                marginLeft: "auto",
-                maxWidth: "300px",
-              }}
-            >
+            <div className={styles.termSelectWrapper}>
               {hasRatings && (
                 <ReactSelect
                   options={[
@@ -436,44 +409,8 @@ export function RatingsContainer() {
                   }
                   onChange={(option) => setSelectedTerm(option?.value || "all")}
                   placeholder="Select term"
-                  styles={{
-                    control: (base) => ({
-                      ...base,
-                      backgroundColor: "var(--foreground-color)",
-                      maxHeight: "35px",
-                      color: "var(--paragraph-color)",
-                      fontSize: "14px",
-                      fontWeight: "400",
-                      borderRadius: "4px",
-                      border: "1px solid var(--border-color)",
-                      minWidth: "231px",
-                    }),
-                    menu: (base) => ({
-                      ...base,
-                      backgroundColor: "var(--foreground-color)",
-                      color: "var(--paragraph-color)",
-                      fontWeight: "400",
-                      fontSize: "14px",
-                    }),
-                    option: (base) => ({
-                      ...base,
-                      backgroundColor: "var(--foreground-color)",
-                      color: "var(--paragraph-color)",
-                      border: "none",
-                      fontSize: "14px",
-                      "&:hover": {
-                        backgroundColor: "#3B82F6",
-                      },
-                    }),
-                    singleValue: (base) => ({
-                      ...base,
-                      color: "var(--paragraph-color)",
-                    }),
-                    dropdownIndicator: (base) => ({
-                      ...base,
-                      color: "var(--paragraph-color)",
-                    }),
-                  }}
+                  classNamePrefix="select"
+                  className={styles.termSelect}
                 />
               )}
             </div>
@@ -506,8 +443,7 @@ export function RatingsContainer() {
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
           initialMetricData={userRatingsData?.userRatings?.classes
-            ?.find(
-              (c: {
+            ?.find((c: {
                 subject: string;
                 courseNumber: string;
                 semester: Semester;

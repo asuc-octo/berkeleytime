@@ -42,7 +42,8 @@
   .info {
     color: var(--label-color);
     font-size: 14px;
-    display: block;
+    display: flex;
+    align-items: center;
     cursor: pointer;
     padding: 8px;
     margin: -8px;
@@ -422,4 +423,50 @@
   border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
+}
+
+.termSelectWrapper {
+  margin-left: auto;
+  max-width: 300px;
+}
+
+.termSelect {
+  :global {
+    .select__control {
+      background-color: var(--foreground-color);
+      max-height: 35px;
+      color: var(--paragraph-color);
+      font-size: 14px;
+      font-weight: 400;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      min-width: 231px;
+    }
+
+    .select__menu {
+      background-color: var(--foreground-color);
+      color: var(--paragraph-color);
+      font-weight: 400;
+      font-size: 14px;
+    }
+
+    .select__option {
+      background-color: var(--foreground-color);
+      color: var(--paragraph-color);
+      border: none;
+      font-size: 14px;
+
+      &:hover {
+        background-color: #3B82F6;
+      }
+    }
+
+    .select__single-value {
+      color: var(--paragraph-color);
+    }
+
+    .select__dropdown-indicator {
+      color: var(--paragraph-color);
+    }
+  }
 }
