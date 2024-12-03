@@ -38,12 +38,12 @@ export interface RatingDetailProps {
 // React Components
 export function RatingUserSummary({
   userRatings,
-  setModalOpen,
-  deleteUserRating,
+  setIsModalOpen,
+  ratingDelete,
 }: {
   userRatings: UserRating;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  deleteUserRating: Function;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  ratingDelete: Function;
 }) {
   return (
     <div className={styles.userRatingContainer}>
@@ -54,12 +54,12 @@ export function RatingUserSummary({
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
           <Tooltip content="Edit rating">
-            <IconButton onClick={() => setModalOpen(true)}>
+            <IconButton onClick={() => setIsModalOpen(true)}>
               <EditPencil />
             </IconButton>
           </Tooltip>
           <Tooltip content="Delete rating">
-            <IconButton onClick={() => deleteUserRating(userRatings)}>
+            <IconButton onClick={() => ratingDelete(userRatings)}>
               <Trash />
             </IconButton>
           </Tooltip>

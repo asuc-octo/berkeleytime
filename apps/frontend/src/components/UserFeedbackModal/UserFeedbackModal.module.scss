@@ -23,15 +23,18 @@
 }
 
 .modalHeader {
+  padding: 0px 84px;
+  padding-top: 10px;
   margin-bottom: 0px;
   text-align: left;
 }
 
 .modalTitle {
-  color: var(--heading-color);
   font-size: 24px;
-  font-weight: 500;
-  margin-bottom: 12px;
+  font-weight: 660;
+  font-feature-settings: "cv05" on, "cv13" on, "ss07" on, "cv12" on, "cv06" on;
+  color: var(--heading-color);
+  margin-bottom: 4px;
 }
 
 .subtitleRow {
@@ -43,9 +46,10 @@
 }
 
 .modalSubtitle {
-  color: var(--paragraph-color);
   font-size: 16px;
-  margin: 0;
+  line-height: 1.5;
+  color: var(--paragraph-color);
+  margin-bottom: 16px;
 }
 
 .modalContent {
@@ -55,8 +59,6 @@
 .combinedForm {
   max-height: calc(80vh - 220px);
   overflow-y: auto;
-  padding-right: 12px;
-  margin-right: -12px;
   margin-top:0;
   
   &::-webkit-scrollbar {
@@ -126,13 +128,9 @@
   border-bottom: 1px solid var(--border-color);
 }
 .formGroup {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   padding: 0 84px;
   padding-top: 38px;
-
-  &:last-child {
-    margin-bottom: 40px;
-  }
 
   h3, p {
     color: var(--paragraph-color);

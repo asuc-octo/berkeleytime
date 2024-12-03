@@ -40,8 +40,13 @@ import {
 
 const PLACEHOLDER = false;
 
+const isSemester = (value: string): boolean => {
+  const firstWord = value.split(" ")[0];
+  return Object.values(Semester).includes(firstWord as Semester);
+};
+
 export function RatingsContainer() {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
   const { data: user } = useReadUser();
@@ -92,17 +97,17 @@ export function RatingsContainer() {
     if (!courseData?.course?.classes) return [];
 
     return _.chain(courseData.course.classes)
-      .map((classInfo) => ({
-        value: `${classInfo.semester} ${classInfo.year}`,
-        label: `${classInfo.semester} ${classInfo.year}`,
-        semester: classInfo.semester as Semester,
-        year: classInfo.year,
+      .map((ClassData : any) => ({
+        value: `${ClassData.semester} ${ClassData.year}`,
+        label: `${ClassData.semester} ${ClassData.year}`,
+        semester: ClassData.semester as Semester,
+        year: ClassData.year,
       }))
-      .uniqBy((term) => `${term.semester}-${term.year}`)
+      .uniqBy((term : any) => `${term.semester}-${term.year}`)
       .orderBy(
         [
           "year",
-          (term) => {
+          (term : any) => {
             const semesterOrder = {
               [Semester.Spring]: 0,
               [Semester.Summer]: 1,
@@ -169,9 +174,7 @@ export function RatingsContainer() {
   const hasRatings = React.useMemo(() => {
     const totalRatings =
       aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
-        (acc: number, metric: any) => {
-          return acc + metric.count;
-        },
+        (total: number, metric: any) => total + metric.count,
         0
       ) ?? 0;
     return totalRatings > 0;
@@ -187,8 +190,8 @@ export function RatingsContainer() {
         {userRatings ? (
           <RatingUserSummary
             userRatings={userRatings}
-            setModalOpen={setModalOpen}
-            deleteUserRating={(userRating: UserRating) =>
+            setIsModalOpen={setIsModalOpen}
+            ratingDelete={(userRating: UserRating) =>
               ratingDelete(userRating, currentClass, deleteRating)
             }
           />
@@ -199,7 +202,7 @@ export function RatingsContainer() {
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {(hasRatings || PLACEHOLDER) &&
               !userRatings &&
-              RatingButton(user, setModalOpen)}
+              RatingButton(user, setIsModalOpen)}
             {/* Replace select dropdown with ReactSelect */}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
@@ -218,7 +221,6 @@ export function RatingsContainer() {
                   }
                   onChange={(option) => {
                     const selectedValue = option?.value || "all";
-                    // TODO: abstract out to a function
                     setSelectedTerm(selectedValue);
                   }}
                   placeholder="Select term"
@@ -245,6 +247,9 @@ export function RatingsContainer() {
                         : "transparent",
                       color: "var(--paragraph-color)",
                       cursor: "pointer",
+                      "&:hover": {
+                        color: "white",
+                      }
                     }),
                     singleValue: (base) => ({
                       ...base,
@@ -268,7 +273,7 @@ export function RatingsContainer() {
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>
-              {RatingButton(user, setModalOpen)}
+              {RatingButton(user, setIsModalOpen)}
             </div>
           ) : (
             ratingsData
@@ -283,7 +288,7 @@ export function RatingsContainer() {
 
         <UserFeedbackModal
           isOpen={isModalOpen}
-          onClose={() => setModalOpen(false)}
+          onClose={() => setIsModalOpen(false)}
           title="Rate Course"
           currentClass={currentClass}
           availableTerms={availableTerms}
@@ -294,7 +299,7 @@ export function RatingsContainer() {
                 termInfo,
                 createRating,
                 currentClass,
-                setModalOpen
+                setIsModalOpen
               );
             } catch (error) {
               console.error("Error submitting rating:", error);

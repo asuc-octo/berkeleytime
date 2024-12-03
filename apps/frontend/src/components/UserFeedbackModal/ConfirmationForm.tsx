@@ -19,7 +19,7 @@ export default function ConfirmationPopup({
         <Dialog.Content className={styles.modal}>
           <div className={styles.content}>
             <div className={styles.modalIcon}>
-              <CheckCircleSolid />
+              <CheckCircleSolid width={70} height={70} color="var(--blue-500)" />
             </div>
 
             <div className={styles.modalHeader}>

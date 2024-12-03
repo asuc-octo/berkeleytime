@@ -116,14 +116,14 @@ export function UserFeedbackModal({
                 <div className={styles.combinedForm}>
                   <div className={styles.ratingSection}>
                     <div className={styles.formGroup}>
-                      <p>
+                      <h3>
                         1. What semester did you take this course?{" "}
                         <RequiredAsterisk />
-                      </p>
+                      </h3>
                       <div
                         style={{
                           maxWidth: "300px",
-                          margin: "30px",
+                          marginLeft: "18px",
                         }}
                       >
                         <ReactSelect
