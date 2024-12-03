@@ -393,9 +393,7 @@ export default function Class({
                 <MenuItem>
                   Ratings
                   {getRatingsCount() > 0 && (
-                    <span className={styles.badge}>
-                      {getRatingsCount()}
-                    </span>
+                    <span className={styles.badge}>{getRatingsCount()}</span>
                   )}
                 </MenuItem>
               </Tabs.Trigger>
@@ -427,9 +425,7 @@ export default function Class({
                   <MenuItem active={isActive}>
                     Ratings
                     {getRatingsCount() > 0 && (
-                      <span className={styles.badge}>
-                        {getRatingsCount()}
-                      </span>
+                      <span className={styles.badge}>{getRatingsCount()}</span>
                     )}
                   </MenuItem>
                 )}

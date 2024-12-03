@@ -3,11 +3,11 @@ import { useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import ReactSelect from "react-select";
 
+import { MetricName } from "@repo/shared";
 import { Button } from "@repo/theme";
 
 import { Semester } from "@/lib/api/terms";
 
-import { MetricName } from "@repo/shared";
 import { MetricData } from "../Class/Ratings/helper/metricsUtil";
 import { AttendanceForm } from "./AttendanceForm";
 import ConfirmationPopup from "./ConfirmationForm";
@@ -147,38 +147,37 @@ export function UserFeedbackModal({
                               backgroundColor: "var(--foreground-color)",
                               maxHeight: "35px",
                               color: "var(--paragraph-color)",
-                              fontSize: '14px',
-                              fontWeight: '400',
-                              borderRadius: '4px',
+                              fontSize: "14px",
+                              fontWeight: "400",
+                              borderRadius: "4px",
                               border: "1px solid var(--border-color)",
-                              minWidth: '231px'
-          
+                              minWidth: "231px",
                             }),
                             menu: (base) => ({
                               ...base,
                               backgroundColor: "var(--foreground-color)",
                               color: "var(--paragraph-color)",
-                              fontWeight: '400',
-                              fontSize: '14px',
+                              fontWeight: "400",
+                              fontSize: "14px",
                             }),
                             option: (base) => ({
                               ...base,
                               backgroundColor: "var(--foreground-color)",
                               color: "var(--paragraph-color)",
                               border: "none",
-                              fontSize: '14px',
-                              '&:hover': {
-                                backgroundColor: "var(--blue-500)"
-                              }
+                              fontSize: "14px",
+                              "&:hover": {
+                                backgroundColor: "var(--blue-500)",
+                              },
                             }),
                             singleValue: (base) => ({
                               ...base,
-                              color: "var(--paragraph-color)"
+                              color: "var(--paragraph-color)",
                             }),
                             dropdownIndicator: (base) => ({
                               ...base,
-                              color: "var(--paragraph-color)"
-                            })
+                              color: "var(--paragraph-color)",
+                            }),
                           }}
                         />
                       </div>

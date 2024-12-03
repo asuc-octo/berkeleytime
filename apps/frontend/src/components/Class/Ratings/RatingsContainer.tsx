@@ -419,32 +419,34 @@ export function RatingsContainer() {
                   styles={{
                     control: (base) => ({
                       ...base,
-                      backgroundColor: 'var(--background-color)',
-                      borderColor: 'var(--border-color)',
-                      minHeight: '38px',
-                      maxHeight: '38px',
-                      width: '200px',
+                      backgroundColor: "var(--background-color)",
+                      borderColor: "var(--border-color)",
+                      minHeight: "38px",
+                      maxHeight: "38px",
+                      width: "200px",
                     }),
                     menu: (base) => ({
                       ...base,
-                      backgroundColor: 'var(--background-color)',
-                      border: '1px solid var(--border-color)',
+                      backgroundColor: "var(--background-color)",
+                      border: "1px solid var(--border-color)",
                     }),
                     option: (base, state) => ({
                       ...base,
-                      backgroundColor: state.isFocused ? 'var(--hover-color)' : 'transparent',
-                      color: 'var(--paragraph-color)',
-                      cursor: 'pointer',
+                      backgroundColor: state.isFocused
+                        ? "var(--hover-color)"
+                        : "transparent",
+                      color: "var(--paragraph-color)",
+                      cursor: "pointer",
                     }),
                     singleValue: (base) => ({
                       ...base,
-                      color: 'var(--paragraph-color)',
+                      color: "var(--paragraph-color)",
                     }),
                     input: (base) => ({
                       ...base,
-                      color: 'var(--paragraph-color)',
-                      maxWidth: '150px',
-                      overflow: 'hidden'
+                      color: "var(--paragraph-color)",
+                      maxWidth: "150px",
+                      overflow: "hidden",
                     }),
                   }}
                 />
