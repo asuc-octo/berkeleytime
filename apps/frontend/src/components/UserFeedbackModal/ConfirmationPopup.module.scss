@@ -1,24 +1,25 @@
 :root {
-  --background-color: #ffffff;
-  --foreground-color: #f1f5f9;
-  --text-color: #020617;
-  --subtitle-color: #64748b;
-  --button-background: #3b82f6;
-  --button-hover: #2563eb;
-  --footer-color: #E5E5E5;
+  --background-color: var(--light-foreground-color);
+  --foreground-color: var(--light-backdrop-color);
+  --text-color: var(--light-heading-color);
+  --subtitle-color: var(--light-paragraph-color);
+  --button-background: var(--blue-500);
+  --button-hover: var(--blue-600);
+  --footer-color: var(--neutral-200);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color: #1e293b;
-    --foreground-color: #334155;
-    --text-color: #e2e8f0;
-    --subtitle-color: #94a3b8;
-    --footer-color: #707070;
-    --button-background: #3b82f6;
-    --button-hover: #2563eb;
+    --background-color: var(--dark-foreground-color);
+    --foreground-color: var(--dark-background-color);
+    --text-color: var(--dark-heading-color);
+    --subtitle-color: var(--dark-paragraph-color);
+    --footer-color: var(--neutral-700);
+    --button-background: var(--blue-500);
+    --button-hover: var(--blue-600);
   }
 }
+
 .overlay {
   background-color: rgb(0 0 0 / 60%);
   position: fixed;

@@ -168,7 +168,7 @@ export function UserFeedbackModal({
                               border: "none",
                               fontSize: '14px',
                               '&:hover': {
-                                backgroundColor: "#3B82F6"
+                                backgroundColor: "var(--blue-500)"
                               }
                             }),
                             singleValue: (base) => ({
@@ -218,7 +218,7 @@ export function UserFeedbackModal({
                 </Dialog.Close>
                 <Button
                   style={{
-                    background: isFormValid ? "#3B82F6" : "#60A5FA",
+                    background: isFormValid ? "var(--blue-500)" : "#60A5FA",
                     color: "white",
                     transition: "background-color 0.2s ease",
                     cursor: isFormValid ? "pointer" : "default",
@@ -230,7 +230,7 @@ export function UserFeedbackModal({
                   }}
                   onMouseOut={(e: any) => {
                     if (isFormValid) {
-                      e.currentTarget.style.backgroundColor = "#3B82F6";
+                      e.currentTarget.style.backgroundColor = "var(--blue-500)";
                     }
                   }}
                   type="submit"

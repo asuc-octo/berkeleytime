@@ -108,7 +108,7 @@
 }
 
 .tooltipContent {
-  background-color: rgb(0 0 0);
+  background-color: var(--tooltip-color);
   border-radius: 4px;
   max-width: 256px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
@@ -117,17 +117,16 @@
 }
 
 .tooltipTitle {
-  color: white;
+  color: var(--light-foreground-color);
   font-size: 14px;
   font-weight: 500;
   padding-bottom: 10px;
   padding-top: 8px;
-  border-bottom: 1px solid #404040;
-  
+  border-bottom: 1px solid var(--neutral-600);
 }
 
 .tooltipDescription {
-  color: white;
+  color: var(--light-foreground-color);
   font-size: 13px;
   line-height: 1.4;
   padding-bottom: 10px;
@@ -164,36 +163,36 @@
 }
 
 .statusGreen {
-  color: #10B981;
+  color: var(--emerald-500);
   display: flex;
   padding: 4px 10px;
   justify-content: center;
   align-items: center;
   gap: 10px;
   border-radius: 5px;
-  background: var(--Green-100, #DCFCE7);
+  background: var(--emerald-100);
 }
 
 .statusOrange {
-  color: #FB923C;
+  color: var(--orange-400);
   display: flex;
   padding: 4px 10px;
   justify-content: center;
   align-items: center;
   gap: 10px;
   border-radius: 5px;
-  background: var(--Green-100, #FFEDD5);
+  background: var(--orange-100);
 }
 
 .statusRed {
-  color: #EF4444;
+  color: var(--red-500);
   display: flex;
   padding: 4px 10px;
   justify-content: center;
   align-items: center;
   gap: 10px;
   border-radius: 5px;
-  background: var(--Green-100, #FEE2E2);
+  background: var(--red-100);
 }
 
 .ratingContent {
@@ -232,13 +231,13 @@
   .barContainer {
     flex-grow: 1;
     height: 9px;
-    background-color: var(--Slate-200, #E2E8F0);
+    background-color: var(--slate-200);
     border-radius: 4px;
     overflow: hidden;
 
     .bar {
       height: 100%;
-      background-color: #475569;
+      background-color: var(--slate-600);
       border-radius: 4px;
       width: 0;
       transform-origin: left;
@@ -352,7 +351,7 @@
 .emptyRatings {
   text-align: center;
   padding: 48px 0;
-  color: var(--Slate-400, #94A3B8);
+  color: var(--slate-400);
     /* Web UI (Desktop)/Title/Title Medium */
   font-size: 14px;
   font-style: normal;
@@ -386,31 +385,31 @@
 @media (prefers-color-scheme: dark) {
   .statRow{
     .barContainer {
-      background-color: var(--Zinc-600, #52525B);;
+      background-color: var(--zinc-600);
       
       .bar {
-        background-color: var(--Zinc-400, #A1A1AA);
+        background-color: var(--zinc-400);
       }
     }
   }
   .statusGreen {
-    color: #49FBC0;
-    background: #003E1B;
+    color: var(--emerald-300);
+    background: var(--emerald-950);
   }
 
   .statusOrange {
-    color: #FF993E;
-    background: #472400;
+    color: var(--orange-300);
+    background: var(--orange-950);
   }
 
   .statusRed {
-    color: #FB4848;
-    background: #3D0000;
+    color: var(--red-300);
+    background: var(--red-950);
   }
   .titleSection {
 
     .title {
-      color: white;
+      color: var(--dark-heading-color);
     }
   }
 }
@@ -457,7 +456,7 @@
       font-size: 14px;
 
       &:hover {
-        background-color: #3B82F6;
+        background-color: var(--blue-500);
       }
     }
 

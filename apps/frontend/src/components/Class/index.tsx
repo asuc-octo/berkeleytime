@@ -148,7 +148,6 @@ export default function Class({
     courseNumber as string,
     number as string,
     {
-      // Allow class to be provided
       skip: !!providedClass,
     }
   );
@@ -224,6 +223,16 @@ export default function Class({
       }
     );
   }, [bookmarked]);
+
+  function getRatingsCount() {
+    if (!_class?.course?.aggregatedRatings?.metrics?.length) {
+      return 0;
+    }
+    return _class.course.aggregatedRatings.metrics.reduce(
+      (max: number, metric: any) => Math.max(max, metric.count),
+      0
+    );
+  }
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -383,9 +392,9 @@ export default function Class({
               <Tabs.Trigger value="ratings" asChild>
                 <MenuItem>
                   Ratings
-                  {_class.aggregatedRatings?.metrics[0]?.count > 0 && (
+                  {getRatingsCount() > 0 && (
                     <span className={styles.badge}>
-                      {_class.aggregatedRatings.metrics[0].count}
+                      {getRatingsCount()}
                     </span>
                   )}
                 </MenuItem>
@@ -417,21 +426,10 @@ export default function Class({
                 {({ isActive }) => (
                   <MenuItem active={isActive}>
                     Ratings
-                    {_class.aggregatedRatings?.metrics[0]?.count > 0 ? (
+                    {getRatingsCount() > 0 && (
                       <span className={styles.badge}>
-                        {_class.aggregatedRatings.metrics[0].count}
+                        {getRatingsCount()}
                       </span>
-                    ) : (
-                      <span
-                        style={{
-                          width: "6px",
-                          height: "6px",
-                          backgroundColor: "#3B82F6",
-                          borderRadius: "50%",
-                          display: "inline-block",
-                          marginLeft: "6px",
-                        }}
-                      />
                     )}
                   </MenuItem>
                 )}
