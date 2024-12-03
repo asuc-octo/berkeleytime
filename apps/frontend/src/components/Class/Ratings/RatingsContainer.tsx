@@ -40,10 +40,10 @@ import {
 
 const PLACEHOLDER = false;
 
-const isSemester = (value: string): boolean => {
-  const firstWord = value.split(" ")[0];
-  return Object.values(Semester).includes(firstWord as Semester);
-};
+// const isSemester = (value: string): boolean => {
+//   const firstWord = value.split(" ")[0];
+//   return Object.values(Semester).includes(firstWord as Semester);
+// };
 
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
