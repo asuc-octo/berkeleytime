@@ -71,7 +71,7 @@ export function AttendanceForm({
     <div className={styles.attendanceSection}>
       {/* Question 5 */}
       <div className={styles.formGroup}>
-        <p style={{ marginBottom: "30px" }}
+        <p style={{ marginBottom: "28px" }}
         >5. Is lecture attendance required?</p>
         <BooleanOptions
           name="lectureAttendance"
@@ -84,7 +84,7 @@ export function AttendanceForm({
 
       {/* Question 6 */}
       <div className={styles.formGroup}>
-        <p style={{ marginBottom: "30px" }}>6. Were lectures recorded?</p>
+        <p style={{ marginBottom: "28px" }}>6. Were lectures recorded?</p>
         <BooleanOptions
           name="lecturesRecorded"
           value={metricData["Recording"] ?? null}
