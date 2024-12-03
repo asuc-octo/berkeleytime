@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
+
 import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
@@ -19,6 +20,14 @@ import {
 import { Semester } from "@/lib/api/terms";
 
 import styles from "./Ratings.module.scss";
+import {
+  RatingButton,
+  RatingDetailProps,
+  RatingDetailView,
+  RatingUserSummary,
+  ratingDelete,
+  ratingSubmit,
+} from "./helper/RatingsContainerHelper";
 // TODO: Remove placeholder data before prod
 import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
@@ -28,14 +37,6 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
-import {
-  RatingUserSummary,
-  RatingDetailView,
-  RatingButton,
-  ratingDelete,
-  ratingSubmit,
-  RatingDetailProps,
-} from "./helper/RatingsContainerHelper";
 
 const PLACEHOLDER = false;
 
@@ -196,7 +197,9 @@ export function RatingsContainer() {
         )}
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {(hasRatings || PLACEHOLDER) && !userRatings && RatingButton(user, setModalOpen)}
+            {(hasRatings || PLACEHOLDER) &&
+              !userRatings &&
+              RatingButton(user, setModalOpen)}
             {/* Replace select dropdown with ReactSelect */}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
@@ -294,7 +297,7 @@ export function RatingsContainer() {
                 setModalOpen
               );
             } catch (error) {
-              console.error('Error submitting rating:', error);
+              console.error("Error submitting rating:", error);
             }
           }}
           initialMetricData={userRatingsData?.userRatings?.classes

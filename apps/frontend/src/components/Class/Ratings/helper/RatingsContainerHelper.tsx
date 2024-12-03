@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   ArrowRight,
   EditPencil,
@@ -7,17 +8,20 @@ import {
   Trash,
 } from "iconoir-react";
 import _ from "lodash";
+
 import { MetricName } from "@repo/shared";
 import { Button, IconButton, Tooltip } from "@repo/theme";
+
 import { signIn } from "@/lib/api";
 import { Semester } from "@/lib/api/terms";
+
 import styles from "../Ratings.module.scss";
 import UserRatingSummary from "../UserRatingSummary";
 import {
   MetricData,
   UserRating,
   formatDate,
-  getMetricTooltip
+  getMetricTooltip,
 } from "./metricsUtil";
 
 export interface RatingDetailProps {
