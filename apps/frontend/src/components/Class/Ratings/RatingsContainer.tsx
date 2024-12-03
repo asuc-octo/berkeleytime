@@ -383,12 +383,13 @@ export function RatingsContainer() {
   }, [aggregatedRatings]);
 
   const hasRatings = React.useMemo(() => {
-    const totalRatings = aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
-      (acc: number, metric: any) => {
-        return acc + metric.count;
-      },
-      0
-    ) ?? 0;
+    const totalRatings =
+      aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
+        (acc: number, metric: any) => {
+          return acc + metric.count;
+        },
+        0
+      ) ?? 0;
     console.log(totalRatings);
     return totalRatings > 0;
   }, [aggregatedRatings]);
