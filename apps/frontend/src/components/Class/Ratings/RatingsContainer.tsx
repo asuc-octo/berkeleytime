@@ -373,7 +373,6 @@ export function RatingsContainer() {
         },
         0
       ) ?? 0;
-    console.log(totalRatings);
     return totalRatings > 0;
   }, [aggregatedRatings]);
 
@@ -401,7 +400,7 @@ export function RatingsContainer() {
               {hasRatings && (
                 <ReactSelect
                   options={[
-                    { value: "all", label: "All Terms" },
+                    { value: "all", label: "Overall Ratings" },
                     ...availableTerms,
                   ]}
                   value={
@@ -412,7 +411,11 @@ export function RatingsContainer() {
                       label: "Overall Ratings",
                     }
                   }
-                  onChange={(option) => setSelectedTerm(option?.value || "all")}
+                  onChange={(option) => {
+                    const selectedValue = option?.value || "all";
+                    // TODO: abstract out to a function
+                    setSelectedTerm(selectedValue);
+                  }}
                   placeholder="Select term"
                   classNamePrefix="select"
                   className={styles.termSelect}
