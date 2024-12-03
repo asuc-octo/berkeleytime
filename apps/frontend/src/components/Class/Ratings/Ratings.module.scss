@@ -17,6 +17,7 @@
   padding-bottom: 5px;
   // TODO: Get real div color consistent with implementation
   border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
   
   &:last-child {
     border-bottom: none;
@@ -33,13 +34,15 @@
 .titleSection {
   display: flex;
   align-items: center;
+  justify-content: center; /* Centers content horizontally */
   gap: 8px;
   width: 161px;
 
+
   .title {
     color: var(--paragraph-color);
-    font-size: 16px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 500;
   }
 
   .info {
@@ -169,7 +172,7 @@
     text-align: center;
     opacity: 0;
     gap: 10px;
-    font-size: 16px;
+    font-size: 14px;
     animation: fadeIn 200ms ease forwards;
     animation-delay: calc(var(--delay) + 50ms);
   }
@@ -195,7 +198,7 @@
   .percentage {
     width: 48px;
     color: var(--paragraph-color);
-    font-size: 16px;
+    font-size: 14px;
     text-align: right;
     opacity: 0;
     animation: fadeIn 200ms ease forwards;
@@ -243,7 +246,7 @@
 .termDropdown__control {
   padding: 6px 12px; /* Smaller padding */
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--heading-color);
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
@@ -301,7 +304,7 @@
     /* Web UI (Desktop)/Title/Title Medium */
   font-size: 14px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 20px; /* 142.857% */
   letter-spacing: -0.1px;
   background-color: var(--background-color);
@@ -316,7 +319,7 @@
   button {
     margin-top: 32px;
     background-color: var(--foreground-color); 
-    font-weight: 400;
+    font-weight: 500;
   }
 }
 
