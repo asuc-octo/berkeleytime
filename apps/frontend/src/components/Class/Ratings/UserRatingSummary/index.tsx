@@ -1,4 +1,4 @@
-import { MetricName } from "@repo/shared";
+import { METRIC_ORDER, MetricName } from "@repo/shared";
 
 import ratingStyles from "../Ratings.module.scss";
 import {
@@ -13,27 +13,28 @@ export default function UserRatingSummary({
 }: {
   userRatings: UserRating;
 }) {
+  const sortedMetrics = userRatings.metrics
+    .filter((metric) => isMetricRating(MetricName[metric.metricName]))
+    .sort((a, b) => {
+      const indexA = METRIC_ORDER.indexOf(MetricName[a.metricName]);
+      const indexB = METRIC_ORDER.indexOf(MetricName[b.metricName]);
+      return indexA - indexB;
+    });
+
   return (
     <div>
-      {userRatings.metrics
-        .filter((metric) => {
-          return isMetricRating(MetricName[metric.metricName]);
-        })
-        .map((metric) => (
-          <div
-            key={metric.metricName}
-            className={ratingStyles.userRatingSection}
-          >
-            <div className={ratingStyles.userRationSectionMetrics}>
-              <div className={ratingStyles.titleSection}>
-                <h3 className={ratingStyles.title}>{metric.metricName}</h3>
-              </div>
-              <span className={ratingStyles[getStatusColor(metric.value)]}>
-                {getMetricStatus(metric.metricName, metric.value)}
-              </span>
+      {sortedMetrics.map((metric) => (
+        <div key={metric.metricName} className={ratingStyles.userRatingSection}>
+          <div className={ratingStyles.userRationSectionMetrics}>
+            <div className={ratingStyles.titleSection}>
+              <h3 className={ratingStyles.title}>{metric.metricName}</h3>
             </div>
+            <span className={ratingStyles[getStatusColor(metric.value)]}>
+              {getMetricStatus(metric.metricName, metric.value)}
+            </span>
           </div>
-        ))}
+        </div>
+      ))}
     </div>
   );
 }
