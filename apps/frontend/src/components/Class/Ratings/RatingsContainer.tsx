@@ -1,24 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import { useMutation, useQuery } from "@apollo/client";
-import {
-  ArrowRight,
-  EditPencil,
-  InfoCircle,
-  NavArrowDown,
-  Trash,
-} from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
-
-import { MetricName } from "@repo/shared";
-import { Button, Container, IconButton, Tooltip } from "@repo/theme";
+import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
 import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
-import { signIn } from "@/lib/api";
 import {
   CREATE_RATING,
   DELETE_RATING,
@@ -29,143 +19,25 @@ import {
 import { Semester } from "@/lib/api/terms";
 
 import styles from "./Ratings.module.scss";
-import UserRatingSummary from "./UserRatingSummary";
 // TODO: Remove placeholder data before prod
 import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
   MetricData,
   UserRating,
-  formatDate,
   getMetricStatus,
-  getMetricTooltip,
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
+import {
+  RatingUserSummary,
+  RatingDetailView,
+  RatingButton,
+  ratingDelete,
+  ratingSubmit,
+  RatingDetailProps,
+} from "./helper/RatingsContainerHelper";
 
 const PLACEHOLDER = false;
-
-function MyRatingSummary({
-  userRatings,
-  setModalOpen,
-  deleteUserRating,
-}: {
-  userRatings: UserRating;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  deleteUserRating: Function;
-}) {
-  return (
-    <div className={styles.userRatingContainer}>
-      <div className={styles.userRatingTitleContainer}>
-        <div>
-          <h3>Your Rating Summary</h3>
-          <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
-        </div>
-        <div style={{ display: "flex", gap: "12px" }}>
-          <Tooltip content="Edit rating">
-            <IconButton onClick={() => setModalOpen(true)}>
-              <EditPencil />
-            </IconButton>
-          </Tooltip>
-          <Tooltip content="Delete rating">
-            <IconButton onClick={() => deleteUserRating(userRatings)}>
-              <Trash />
-            </IconButton>
-          </Tooltip>
-        </div>
-      </div>
-      <div className={styles.userRatingDataContainer}>
-        <UserRatingSummary userRatings={userRatings} />
-      </div>
-    </div>
-  );
-}
-
-interface RatingDetailProps {
-  metric: MetricName;
-  stats: {
-    rating: number;
-    percentage: number;
-  }[];
-  status: string;
-  statusColor: string;
-  reviewCount: number;
-}
-
-function RatingDetail({
-  metric,
-  stats,
-  status,
-  statusColor,
-}: RatingDetailProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const [shouldAnimate, setShouldAnimate] = useState(false);
-
-  React.useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isExpanded) {
-      setShouldAnimate(false);
-      requestAnimationFrame(() => {
-        timer = setTimeout(() => {
-          setShouldAnimate(true);
-        }, 50);
-      });
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [isExpanded]);
-
-  return (
-    <div className={styles.ratingSection}>
-      <div
-        className={styles.ratingHeader}
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div className={styles.titleAndStatusSection}>
-          <div className={styles.titleSection}>
-            <h3 className={styles.title}>{metric}</h3>
-            <Tooltip content={`${getMetricTooltip(metric)}`}>
-              <span className={styles.info}>
-                <InfoCircle width={14} height={14} />
-              </span>
-            </Tooltip>
-          </div>
-          <span className={styles[statusColor]}>{status}</span>
-        </div>
-        <div className={styles.statusSection}>
-          <NavArrowDown
-            className={`${styles.arrow} ${isExpanded ? styles.expanded : ""}`}
-          />
-        </div>
-      </div>
-      {isExpanded && (
-        <div className={styles.ratingContent}>
-          {stats.map((stat, index) => (
-            <div
-              key={stat.rating}
-              className={styles.statRow}
-              style={{ "--delay": `${index * 60}ms` } as React.CSSProperties}
-            >
-              <span className={styles.rating}>{stat.rating}</span>
-              <div className={styles.barContainer}>
-                <div
-                  className={styles.bar}
-                  style={{
-                    width: shouldAnimate ? `${stat.percentage}%` : "0%",
-                    transitionDelay: `${index * 60}ms`,
-                  }}
-                />
-              </div>
-              <span className={styles.percentage}>
-                {shouldAnimate ? `${stat.percentage}%` : "0%"}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export function RatingsContainer() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -215,21 +87,6 @@ export function RatingsContainer() {
     refetchQueries: ["GetUserRatings", "GetCourseRatings"],
   });
 
-  function deleteUserRating(userRating: UserRating) {
-    userRating.metrics.forEach((metric) => {
-      deleteRating({
-        variables: {
-          subject: currentClass.subject,
-          courseNumber: currentClass.courseNumber,
-          semester: userRating.semester,
-          year: userRating.year,
-          classNumber: currentClass.number,
-          metricName: metric.metricName,
-        },
-      });
-    });
-  }
-
   const availableTerms = React.useMemo(() => {
     if (!courseData?.course?.classes) return [];
 
@@ -277,63 +134,6 @@ export function RatingsContainer() {
     return matchedRating;
   }, [userRatingsData, currentClass]);
 
-  const handleSubmitRatings = async (
-    metricValues: MetricData,
-    termInfo: { semester: Semester; year: number }
-  ) => {
-    console.log("Submitting ratings:", metricValues, "for term:", termInfo);
-    try {
-      await Promise.all(
-        (Object.keys(MetricName) as Array<keyof typeof MetricName>)
-          // TODO: Remove placeholder data before prod
-          .filter((metric) => metric !== "Recommended")
-          .map((metric) => {
-            return createRating({
-              variables: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                semester: termInfo.semester,
-                year: termInfo.year,
-                classNumber: currentClass.number,
-                metricName: metric,
-                value: metricValues[MetricName[metric]],
-              },
-            });
-          })
-      );
-
-      setModalOpen(false);
-    } catch (error) {
-      console.error("Error submitting ratings:", error);
-    }
-  };
-
-  const RatingButton = React.useMemo(() => {
-    return user ? (
-      <Button
-        style={{
-          color: "var(--blue-500)",
-          backgroundColor: "var(--foreground-color)",
-          height: "38px",
-        }}
-        onClick={() => setModalOpen(true)}
-      >
-        Add a rating
-      </Button>
-    ) : (
-      <Button
-        onClick={() => signIn(window.location.pathname)}
-        variant="solid"
-        className={styles.button}
-        style={{ height: "38px" }}
-      >
-        Sign in to add ratings
-        <ArrowRight />
-      </Button>
-    );
-  }, [user, setModalOpen]);
-
-  // Transform aggregated ratings into display format
   const ratingsData = React.useMemo(() => {
     if (PLACEHOLDER) {
       return placeholderRatingsData;
@@ -384,17 +184,19 @@ export function RatingsContainer() {
     <div className={styles.root}>
       <Container size="sm">
         {userRatings ? (
-          <MyRatingSummary
+          <RatingUserSummary
             userRatings={userRatings}
             setModalOpen={setModalOpen}
-            deleteUserRating={deleteUserRating}
+            deleteUserRating={(userRating: UserRating) =>
+              ratingDelete(userRating, currentClass, deleteRating)
+            }
           />
         ) : (
           <div></div>
         )}
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {(hasRatings || PLACEHOLDER) && !userRatings && RatingButton}
+            {(hasRatings || PLACEHOLDER) && !userRatings && RatingButton(user, setModalOpen)}
             {/* Replace select dropdown with ReactSelect */}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
@@ -463,14 +265,14 @@ export function RatingsContainer() {
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>
-              {RatingButton}
+              {RatingButton(user, setModalOpen)}
             </div>
           ) : (
             ratingsData
               ?.filter((ratingData) => isMetricRating(ratingData.metric))
               .map((ratingData) => (
                 <div className={styles.ratingSection} key={ratingData.metric}>
-                  <RatingDetail {...ratingData} />
+                  <RatingDetailView {...ratingData} />
                 </div>
               ))
           )}
@@ -482,7 +284,19 @@ export function RatingsContainer() {
           title="Rate Course"
           currentClass={currentClass}
           availableTerms={availableTerms}
-          onSubmit={handleSubmitRatings}
+          onSubmit={async (metricValues, termInfo) => {
+            try {
+              await ratingSubmit(
+                metricValues,
+                termInfo,
+                createRating,
+                currentClass,
+                setModalOpen
+              );
+            } catch (error) {
+              console.error('Error submitting rating:', error);
+            }
+          }}
           initialMetricData={userRatingsData?.userRatings?.classes
             ?.find(
               (c: {

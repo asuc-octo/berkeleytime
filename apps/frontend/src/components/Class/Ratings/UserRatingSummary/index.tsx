@@ -1,4 +1,4 @@
-import { MetricName, METRIC_ORDER } from "@repo/shared";
+import { METRIC_ORDER, MetricName } from "@repo/shared";
 
 import ratingStyles from "../Ratings.module.scss";
 import {
@@ -24,10 +24,7 @@ export default function UserRatingSummary({
   return (
     <div>
       {sortedMetrics.map((metric) => (
-        <div
-          key={metric.metricName}
-          className={ratingStyles.userRatingSection}
-        >
+        <div key={metric.metricName} className={ratingStyles.userRatingSection}>
           <div className={ratingStyles.userRationSectionMetrics}>
             <div className={ratingStyles.titleSection}>
               <h3 className={ratingStyles.title}>{metric.metricName}</h3>
