@@ -332,11 +332,9 @@ export function RatingsContainer() {
       </Button>
     ) : (
       <Button
-        style={{
-          color: "white",
-          backgroundColor: "#3B82F6",
-        }}
         onClick={() => signIn(window.location.pathname)}
+        variant="solid"
+        className={styles.button}
       >
         Sign in to add ratings
         <ArrowRight />
@@ -377,14 +375,14 @@ export function RatingsContainer() {
   }, [aggregatedRatings]);
 
   const hasRatings = React.useMemo(() => {
-    return (
-      aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
-        (acc: number, metric: any) => {
-          return acc + metric.count;
-        },
-        0
-      ) > 0
-    );
+    const totalRatings = aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
+      (acc: number, metric: any) => {
+        return acc + metric.count;
+      },
+      0
+    ) ?? 0;
+    console.log(totalRatings);
+    return totalRatings > 0;
   }, [aggregatedRatings]);
 
   if (courseLoading) {
