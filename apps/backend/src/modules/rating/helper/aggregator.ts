@@ -188,19 +188,8 @@ export const semestersByInstructorAggregator = async (
       $match: {
         "class.course.displayName": displayName,
         "component.code": "LEC",
-        meetings: {
-          $elemMatch: {
-            assignedInstructors: {
-              $elemMatch: {
-                "instructor.names": {
-                  $elemMatch: {
-                    formattedName: professorName,
-                  },
-                },
-              },
-            },
-          },
-        },
+        "meetings.assignedInstructors.instructor.names.formattedName":
+          professorName,
       },
     },
     {
@@ -211,6 +200,84 @@ export const semestersByInstructorAggregator = async (
     {
       $match: {
         _id: { $ne: null },
+      },
+    },
+  ]);
+};
+
+export const courseRatingAggregator = async (
+  subject: string,
+  courseNumber: string
+) => {
+  return await AggregatedMetricsModel.aggregate([
+    {
+      $match: {
+        subject,
+        courseNumber,
+        categoryCount: { $gt: 0 },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          subject: "$subject",
+          courseNumber: "$courseNumber",
+          metricName: "$metricName",
+          categoryValue: "$categoryValue",
+        },
+        categoryCount: { $sum: "$categoryCount" },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          subject: "$_id.subject",
+          courseNumber: "$_id.courseNumber",
+          metricName: "$_id.metricName",
+        },
+        totalCount: { $sum: "$categoryCount" },
+        sumValues: {
+          $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
+        },
+        categories: {
+          $push: {
+            value: "$_id.categoryValue",
+            count: "$categoryCount",
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          subject: "$_id.subject",
+          courseNumber: "$_id.courseNumber",
+        },
+        metrics: {
+          $push: {
+            metricName: "$_id.metricName",
+            count: "$totalCount",
+            weightedAverage: {
+              $cond: [
+                { $eq: ["$totalCount", 0] },
+                0,
+                { $divide: ["$sumValues", "$totalCount"] },
+              ],
+            },
+            categories: "$categories",
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        subject: "$_id.subject",
+        courseNumber: "$_id.courseNumber",
+        semester: null,
+        year: null,
+        classNumber: null,
+        metrics: 1,
       },
     },
   ]);

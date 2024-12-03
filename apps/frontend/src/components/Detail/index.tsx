@@ -1,21 +1,26 @@
 import { useState } from "react";
-import { Camera, UserCircle } from "iconoir-react";
+import React from "react";
 
+import { useMutation, useQuery } from "@apollo/client";
+import { Camera, UserCircle } from "iconoir-react";
+import _ from "lodash";
+
+import { MetricName } from "@repo/shared";
+
+import { MetricData } from "@/components/Class/Ratings/helper/metricsUtil";
 import UserFeedbackModal from "@/components/UserFeedbackModal";
+import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
+import {
+  CREATE_RATING,
+  GET_USER_RATINGS,
+  READ_COURSE,
+  Semester,
+} from "@/lib/api";
+
 import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
-import {
-    GET_USER_RATINGS, Semester, READ_COURSE, CREATE_RATING,
-} from "@/lib/api";
-import {MetricData} from "@/components/Class/Ratings/helper/metricsUtil";
-import React from "react";
-import {useMutation, useQuery} from "@apollo/client";
-import {useReadUser} from "@/hooks/api";
-import _ from "lodash";
-import { MetricName } from "@repo/shared";
-
 
 interface AttendanceRequirementsProps {
   attendanceRequired: boolean | null;
@@ -32,76 +37,76 @@ export default function AttendanceRequirements({
   const { class: currentClass } = useClass();
   const { data: user } = useReadUser();
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS, {
-      skip: !user,
+    skip: !user,
   });
-  const [createRating] = useMutation(CREATE_RATING, {refetchQueries: ["GetUserRatings", "GetCourseRatings"],
-    });
-  const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
-      variables: {
-          subject: currentClass.subject,
-          number: currentClass.courseNumber,
-        },
+  const [createRating] = useMutation(CREATE_RATING, {
+    refetchQueries: ["GetUserRatings", "GetCourseRatings"],
+  });
+  const { data: courseData } = useQuery(READ_COURSE, {
+    variables: {
+      subject: currentClass.subject,
+      number: currentClass.courseNumber,
+    },
   });
   const handleSubmitRatings = async (
-      metricValues: MetricData,
-      termInfo: { semester: Semester; year: number }
+    metricValues: MetricData,
+    termInfo: { semester: Semester; year: number }
   ) => {
-      console.log("Submitting ratings:", metricValues, "for term:", termInfo);
-      try {
-          await Promise.all(
-              (Object.keys(MetricName) as Array<keyof typeof MetricName>)
-                    // TODO: Remove placeholder data before prod
-                    .filter((metric) => metric !== "Recommended")
-                    .map((metric) => {
-                        return createRating({
-                            variables: {
-                                subject: currentClass.subject,
-                                courseNumber: currentClass.courseNumber,
-                                semester: termInfo.semester,
-                                year: termInfo.year,
-                                classNumber: currentClass.number,
-                                metricName: metric,
-                                value: metricValues[MetricName[metric]],
-                            },
-                        });
-                    })
-            );
+    console.log("Submitting ratings:", metricValues, "for term:", termInfo);
+    try {
+      await Promise.all(
+        (Object.keys(MetricName) as Array<keyof typeof MetricName>)
+          // TODO: Remove placeholder data before prod
+          .filter((metric) => metric !== "Recommended")
+          .map((metric) => {
+            return createRating({
+              variables: {
+                subject: currentClass.subject,
+                courseNumber: currentClass.courseNumber,
+                semester: termInfo.semester,
+                year: termInfo.year,
+                classNumber: currentClass.number,
+                metricName: metric,
+                value: metricValues[MetricName[metric]],
+              },
+            });
+          })
+      );
 
-            setModalOpen(false);
-        } catch (error) {
-            console.error("Error submitting ratings:", error);
-        }
-    };
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error submitting ratings:", error);
+    }
+  };
 
+  const availableTerms = React.useMemo(() => {
+    if (!courseData?.course?.classes) return [];
 
-    const availableTerms = React.useMemo(() => {
-        if (!courseData?.course?.classes) return [];
-
-        return _.chain(courseData.course.classes)
-            .map((classInfo) => ({
-                value: `${classInfo.semester} ${classInfo.year}`,
-                label: `${classInfo.semester} ${classInfo.year}`,
-                semester: classInfo.semester as Semester,
-                year: classInfo.year,
-            }))
-            .uniqBy((term) => `${term.semester}-${term.year}`)
-            .orderBy(
-                [
-                    "year",
-                    (term) => {
-                        const semesterOrder = {
-                            [Semester.Spring]: 0,
-                            [Semester.Summer]: 1,
-                            [Semester.Fall]: 2,
-                            [Semester.Winter]: 3,
-                        };
-                        return semesterOrder[term.semester as Semester];
-                    },
-                ],
-                ["desc", "asc"]
-            )
-            .value();
-    }, [courseData]);
+    return _.chain(courseData.course.classes)
+      .map((classInfo) => ({
+        value: `${classInfo.semester} ${classInfo.year}`,
+        label: `${classInfo.semester} ${classInfo.year}`,
+        semester: classInfo.semester as Semester,
+        year: classInfo.year,
+      }))
+      .uniqBy((term) => `${term.semester}-${term.year}`)
+      .orderBy(
+        [
+          "year",
+          (term) => {
+            const semesterOrder = {
+              [Semester.Spring]: 0,
+              [Semester.Summer]: 1,
+              [Semester.Fall]: 2,
+              [Semester.Winter]: 3,
+            };
+            return semesterOrder[term.semester as Semester];
+          },
+        ],
+        ["desc", "asc"]
+      )
+      .value();
+  }, [courseData]);
   if (submissionAmount < 5) {
     return (
       <div className={styles.attendanceRequirements}>
@@ -114,44 +119,44 @@ export default function AttendanceRequirements({
           className={styles.suggestEdit}
           onClick={(e) => {
             e.preventDefault();
-             setModalOpen(true);
+            setModalOpen(true);
           }}
         >
           Taken this course? Help others by adding what you know. →
         </a>
-          <UserFeedbackModal
-              isOpen={isModalOpen}
-              onClose={() => setModalOpen(false)}
-              title="Rate Course"
-              currentClass={currentClass}
-              availableTerms={availableTerms}
-              onSubmit={handleSubmitRatings}
-              initialMetricData={userRatingsData?.userRatings?.classes
-                  ?.find(
-                      (c: {
-                          subject: string;
-                          courseNumber: string;
-                          semester: Semester;
-                          year: number;
-                          classNumber: string;
-                      }) =>
-                          c.subject === currentClass.subject &&
-                          c.courseNumber === currentClass.courseNumber &&
-                          c.semester === currentClass.semester &&
-                          c.year === currentClass.year &&
-                          c.classNumber === currentClass.number
-                  )
-                  ?.metrics?.reduce(
-                      (
-                          acc: MetricData,
-                          metric: { metricName: string; value: number }
-                      ) => ({
-                          ...acc,
-                          [metric.metricName]: metric.value,
-                      }),
-                      {}
-                  )}
-          />
+        <UserFeedbackModal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Rate Course"
+          currentClass={currentClass}
+          availableTerms={availableTerms}
+          onSubmit={handleSubmitRatings}
+          initialMetricData={userRatingsData?.userRatings?.classes
+            ?.find(
+              (c: {
+                subject: string;
+                courseNumber: string;
+                semester: Semester;
+                year: number;
+                classNumber: string;
+              }) =>
+                c.subject === currentClass.subject &&
+                c.courseNumber === currentClass.courseNumber &&
+                c.semester === currentClass.semester &&
+                c.year === currentClass.year &&
+                c.classNumber === currentClass.number
+            )
+            ?.metrics?.reduce(
+              (
+                acc: MetricData,
+                metric: { metricName: string; value: number }
+              ) => ({
+                ...acc,
+                [metric.metricName]: metric.value,
+              }),
+              {}
+            )}
+        />
       </div>
     );
   }
@@ -190,41 +195,42 @@ export default function AttendanceRequirements({
           setModalOpen(true);
         }}
       >
-          Look inaccurate? Suggest an edit →      </a>
+        Look inaccurate? Suggest an edit →{" "}
+      </a>
 
-        <UserFeedbackModal
-            isOpen={isModalOpen}
-            onClose={() => setModalOpen(false)}
-            title="Rate Course"
-            currentClass={currentClass}
-            availableTerms={availableTerms}
-            onSubmit={handleSubmitRatings}
-            initialMetricData={userRatingsData?.userRatings?.classes
-                ?.find(
-                    (c: {
-                        subject: string;
-                        courseNumber: string;
-                        semester: Semester;
-                        year: number;
-                        classNumber: string;
-                    }) =>
-                        c.subject === currentClass.subject &&
-                        c.courseNumber === currentClass.courseNumber &&
-                        c.semester === currentClass.semester &&
-                        c.year === currentClass.year &&
-                        c.classNumber === currentClass.number
-                )
-                ?.metrics?.reduce(
-                    (
-                        acc: MetricData,
-                        metric: { metricName: string; value: number }
-                    ) => ({
-                        ...acc,
-                        [metric.metricName]: metric.value,
-                    }),
-                    {}
-                )}
-        />
+      <UserFeedbackModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Rate Course"
+        currentClass={currentClass}
+        availableTerms={availableTerms}
+        onSubmit={handleSubmitRatings}
+        initialMetricData={userRatingsData?.userRatings?.classes
+          ?.find(
+            (c: {
+              subject: string;
+              courseNumber: string;
+              semester: Semester;
+              year: number;
+              classNumber: string;
+            }) =>
+              c.subject === currentClass.subject &&
+              c.courseNumber === currentClass.courseNumber &&
+              c.semester === currentClass.semester &&
+              c.year === currentClass.year &&
+              c.classNumber === currentClass.number
+          )
+          ?.metrics?.reduce(
+            (
+              acc: MetricData,
+              metric: { metricName: string; value: number }
+            ) => ({
+              ...acc,
+              [metric.metricName]: metric.value,
+            }),
+            {}
+          )}
+      />
     </div>
   );
 }

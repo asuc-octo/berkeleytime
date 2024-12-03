@@ -6,9 +6,14 @@ export enum MetricName {
   Recording = "Recording",
   Recommended = "Recommended",
 }
+// typedef still have to be manipulated for backend
 
-// typedef for backend have to be updated manually
-// to modify MetricName enum, modify and compose backend typedef 
+// Define the standard order for rating metrics
+export const METRIC_ORDER = [
+  MetricName.Usefulness,
+  MetricName.Difficulty,
+  MetricName.Workload,
+];
 
 export const METRIC_MAPPINGS = {
   [MetricName.Usefulness]: {

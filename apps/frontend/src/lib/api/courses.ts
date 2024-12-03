@@ -35,6 +35,12 @@ export interface ICourse {
   title: string;
   toDate: string;
   typicallyOffered: Semester[] | null;
+  aggregatedRatings?: {
+    metrics: Array<{
+      count: number;
+      metricName: string;
+    }>;
+  };
 }
 
 export interface ReadCourseResponse {
