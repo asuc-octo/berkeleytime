@@ -325,6 +325,7 @@ export function RatingsContainer() {
         style={{
           color: "#3B82F6",
           backgroundColor: "var(--foreground-color)",
+          height: "38px",
         }}
         onClick={() => setModalOpen(true)}
       >
@@ -335,6 +336,9 @@ export function RatingsContainer() {
         onClick={() => signIn(window.location.pathname)}
         variant="solid"
         className={styles.button}
+        style={{
+          height: "38px",
+        }}
       >
         Sign in to add ratings
         <ArrowRight />

@@ -58,13 +58,13 @@
   display: flex;
   align-items: top;
   padding: 0px 60px;
-  margin-bottom: 16px;
+  margin: 16px 0px;
 }
 
 .userRatingTitleContainer {
   display: inline-block;
   margin: 24px 0px;
-  padding: 5px 30px;
+  padding: 5px 0px;
   width: 40%;
   h3 {
     margin: 0;
@@ -197,7 +197,7 @@
 
 .ratingContent {
   margin-top: 16px;
-  margin-left: 161px;;
+  margin-left: 161px;
   animation: slideDown 200ms ease forwards;
   color: var(--paragraph-color);
   padding-bottom: 40px;
