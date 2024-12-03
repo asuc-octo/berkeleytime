@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
+
 import { useMutation, useQuery } from "@apollo/client";
-import { ArrowRight, EditPencil, NavArrowDown, Trash, InfoCircle } from "iconoir-react";
+import {
+  ArrowRight,
+  EditPencil,
+  InfoCircle,
+  NavArrowDown,
+  Trash,
+} from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
+
 import { MetricName } from "@repo/shared";
-import {
-  Button,
-  Container,
-  IconButton,
-  Tooltip,
-} from "@repo/theme";
+import { Button, Container, IconButton, Tooltip } from "@repo/theme";
+
 import UserFeedbackModal from "@/components/UserFeedbackModal";
 import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
@@ -23,6 +27,7 @@ import {
   READ_COURSE,
 } from "@/lib/api";
 import { Semester } from "@/lib/api/terms";
+
 import styles from "./Ratings.module.scss";
 import UserRatingSummary from "./UserRatingSummary";
 // TODO: Remove placeholder data before prod
@@ -320,7 +325,7 @@ export function RatingsContainer() {
         onClick={() => signIn(window.location.pathname)}
         variant="solid"
         className={styles.button}
-        style={{height: "38px"}}
+        style={{ height: "38px" }}
       >
         Sign in to add ratings
         <ArrowRight />
@@ -443,7 +448,8 @@ export function RatingsContainer() {
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
           initialMetricData={userRatingsData?.userRatings?.classes
-            ?.find((c: {
+            ?.find(
+              (c: {
                 subject: string;
                 courseNumber: string;
                 semester: Semester;
