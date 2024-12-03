@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { Logger } from "tslog";
 
-async function cleanupLogs() {
+export async function cleanupLogs() {
   const logger = new Logger({ name: "LogCleanup" });
   const logDir = path.join(__dirname, "logs"); // Adjust the path if necessary
   const retentionDays = 7; // Number of days to retain logs
@@ -39,5 +39,3 @@ async function cleanupLogs() {
     process.exit(1);
   }
 }
-
-cleanupLogs();

@@ -7,7 +7,8 @@
     "update:sections": "tsx src/section.ts",
     "update:classes": "tsx src/class.ts",
     "cleanup:logs": "tsx src/cleanupLogs.ts",
-    "runDatapuller": "tsx src/runDatapuller.ts"
+    "runDatapuller": "tsx src/runDatapuller.ts",
+    "script": "tsx src/script.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

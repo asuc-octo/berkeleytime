@@ -21,6 +21,11 @@
       "dependsOn": ["generate", "^build"],
       "cache": false,
       "persistent": true
+    },
+    "script": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
     }
   }
 }

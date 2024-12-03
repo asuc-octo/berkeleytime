@@ -31,6 +31,19 @@ jobs:
         backend:
           image:
             tag: latest
+        datapuller:
+          courses:
+            image:
+              tag: latest
+          sections:
+            image:
+              tag: latest
+          classes:
+            image:
+              tag: latest
+          cleanup:
+            image:
+              tag: latest
         host: staging.stanfurdtime.com
         mongoUri: mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379

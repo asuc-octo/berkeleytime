@@ -11,6 +11,7 @@ metadata:
     {{- include "bt-app.datapullerLabels" $root | nindent 4 }}
 spec:
   schedule: "{{ $jobConfig.schedule }}"
+  timeZone: America/Los_Angeles
   suspend: {{ $jobConfig.suspend }}
   jobTemplate:
     spec:
@@ -20,7 +21,8 @@ spec:
             - name: datapuller-{{ $jobName }}
               image: "{{ $jobConfig.image.registry }}/{{ $jobConfig.image.repository }}:{{ $jobConfig.image.tag }}"
               imagePullPolicy: Always
-              command: {{ $jobConfig.command | toJson }}
+              command: ["turbo", "run", "script", "--filter=datapuller", "--env-mode=loose", "--"]
+              args: ["--script={{ $jobConfig.script | default $jobName }}"]
               envFrom:
                 - configMapRef:
                     name: {{ include "bt-app.datapullerName" $root }}-env

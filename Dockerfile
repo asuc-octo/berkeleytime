@@ -18,7 +18,7 @@ COPY --from=datapuller-builder /datapuller/out/full/ .
 ENTRYPOINT ["turbo", "run", "runDatapuller", "--filter=datapuller"]
 
 FROM datapuller-dev AS datapuller-prod
-ENTRYPOINT ["turbo", "run", "runDatapuller", "--filter=datapuller", "--env-mode=loose"]
+# ENTRYPOINT ["turbo", "run", "runDatapuller", "--filter=datapuller", "--env-mode=loose"]
 
 # backend
 FROM base AS backend-builder

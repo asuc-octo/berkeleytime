@@ -37,37 +37,36 @@ updater:
   suspend: false
   command: ["npm", "run", "update:catalog", "--workspace=backend"]
 
-
 datapuller:
   courses:
     schedule: "0 0 * * *"
     suspend: false
-    command: ["npm", "run", "update:courses", "--workspace=datapuller"]
+    script: "courses"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
   sections:
     schedule: "0 1 * * *"
     suspend: false
-    command: ["npm", "run", "update:sections", "--workspace=datapuller"]
+    script: "sections"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
   classes:
     schedule: "0 2 * * *"
     suspend: false
-    command: ["npm", "run", "update:classes", "--workspace=datapuller"]
+    script: "classes"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
   cleanup:
     schedule: "0 3 * * *"
     suspend: false
-    command: ["npm", "run", "cleanup:logs", "--workspace=datapuller"]
+    script: "logs"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
-      tag: latest
+      tag: prod
