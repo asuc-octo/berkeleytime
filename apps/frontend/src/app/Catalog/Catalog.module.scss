@@ -35,7 +35,7 @@
   }
 
   @media (width > 992px) {
-    &:not(.expanded) .panel {
+    &.collapsed .panel {
       display: none;
     }
 

@@ -12,7 +12,6 @@ import {
 import { Semester } from "@/lib/api";
 
 import Schedule from "./Schedule";
-import styles from "./ScheduleDrawer.module.scss";
 
 interface CourseDrawerProps {
   year: number;
@@ -54,12 +53,8 @@ const CourseDrawer = forwardRef<
           </Trigger>
         )}
         <Portal>
-          <Overlay className={styles.overlay} />
-          <Content
-            className={styles.content}
-            // TODO: Automatically focus a relevant element
-            onOpenAutoFocus={(event) => event.preventDefault()}
-          >
+          <Overlay />
+          <Content>
             <Schedule
               year={year}
               semester={semester}

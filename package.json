@@ -4,28 +4,27 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "test": "turbo run test",
     "start": "turbo run start --no-cache",
-    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,scss}\"",
     "postinstall": "patch-package"
   },
   "engines": {
     "node": ">=21.0.0",
     "npm": ">=10.0.0"
   },
-  "packageManager": "npm@10.5.0",
+  "packageManager": "npm@10.9.1",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "dependencies": {
-    "@repo/eslint-config": "*",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "dotenv-cli": "^7.4.4",
-    "eslint": "^9.15.0",
     "patch-package": "^8.0.0",
-    "prettier": "^3.3.3",
-    "turbo": "^2.3.1"
+    "prettier": "^3.4.1",
+    "turbo": "^2.3.3"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "latest"
   },
   "name": "berkeleytime"
 }

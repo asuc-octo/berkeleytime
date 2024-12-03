@@ -85,7 +85,7 @@ export default function Catalog() {
         pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}`,
       });
     },
-    [navigate, year, semester, location, term]
+    [navigate, location, term]
   );
 
   // TODO: Loading state
@@ -102,7 +102,7 @@ export default function Catalog() {
   return (
     <div
       className={classNames(styles.root, {
-        [styles.expanded]: expanded,
+        [styles.collapsed]: !expanded,
         [styles.open]: open,
       })}
     >

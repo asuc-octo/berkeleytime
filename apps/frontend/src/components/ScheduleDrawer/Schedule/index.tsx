@@ -4,8 +4,6 @@ import { useQuery } from "@apollo/client";
 
 import { READ_SCHEDULES, ReadSchedulesResponse, Semester } from "@/lib/api";
 
-import styles from "./Schedule.module.scss";
-
 interface ScheduleProps {
   year: number;
   semester: Semester;
@@ -17,9 +15,9 @@ interface ScheduleProps {
 export default function Schedule({
   year,
   semester,
-  subject,
-  courseNumber,
-  classNumber,
+  // subject,
+  // courseNumber,
+  // classNumber,
 }: ScheduleProps) {
   const { data } = useQuery<ReadSchedulesResponse>(READ_SCHEDULES);
 
@@ -31,11 +29,11 @@ export default function Schedule({
         (schedule) =>
           schedule.term.year === year && schedule.term.semester === semester
       ),
-    [data, year, semester, subject, courseNumber, classNumber]
+    [schedules, year, semester]
   );
 
   return (
-    <div className={styles.root}>
+    <div>
       {filteredSchedules.map(() => (
         <></>
       ))}

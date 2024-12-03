@@ -49,7 +49,7 @@ function Body({ children, dialog }: BodyProps) {
     <Suspense
       fallback={
         <Boundary>
-          <LoadingIndicator />
+          <LoadingIndicator size="lg" />
         </Boundary>
       }
     >
@@ -129,7 +129,7 @@ export default function Course({
       type: "course",
       data: input,
     } as CoursePin;
-  }, [input, pins]);
+  }, [input]);
 
   const pinned = useMemo(() => {
     if (!input) return;

@@ -56,11 +56,11 @@ function Body({ children, dialog }: BodyProps) {
     <Suspense
       fallback={
         <Boundary>
-          <LoadingIndicator />
+          <LoadingIndicator size="lg" />
         </Boundary>
       }
     >
-      {dialog ? children : <Outlet />}
+      <Container size="sm">{dialog ? children : <Outlet />}</Container>
     </Suspense>
   );
 }
@@ -136,8 +136,8 @@ export default function Class({
   const [updateUser] = useUpdateUser();
 
   const { data: course, loading: courseLoading } = useReadCourse(
-    subject as string,
-    courseNumber as string
+    providedClass?.subject ?? (subject as string),
+    providedClass?.courseNumber ?? (courseNumber as string)
   );
 
   const { data, loading } = useReadClass(
@@ -185,7 +185,7 @@ export default function Class({
         number,
       },
     } as ClassPin;
-  }, [year, semester, subject, courseNumber, number]);
+  }, [_class]);
 
   const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
@@ -222,7 +222,7 @@ export default function Class({
         },
       }
     );
-  }, [bookmarked]);
+  }, [_class, bookmarked, updateUser, user]);
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -406,29 +406,27 @@ export default function Class({
           )}
         </Container>
       </div>
-      <Container size="sm">
-        <ClassContext.Provider
-          value={{
-            class: _class,
-            course,
-          }}
-        >
-          <Body dialog={dialog}>
-            <Tabs.Content value="overview" asChild>
-              <Overview />
-            </Tabs.Content>
-            <Tabs.Content value="sections" asChild>
-              <Sections />
-            </Tabs.Content>
-            <Tabs.Content value="enrollment" asChild>
-              <Enrollment />
-            </Tabs.Content>
-            <Tabs.Content value="grades" asChild>
-              <Grades />
-            </Tabs.Content>
-          </Body>
-        </ClassContext.Provider>
-      </Container>
+      <ClassContext.Provider
+        value={{
+          class: _class,
+          course,
+        }}
+      >
+        <Body dialog={dialog}>
+          <Tabs.Content value="overview" asChild>
+            <Overview />
+          </Tabs.Content>
+          <Tabs.Content value="sections" asChild>
+            <Sections />
+          </Tabs.Content>
+          <Tabs.Content value="enrollment" asChild>
+            <Enrollment />
+          </Tabs.Content>
+          <Tabs.Content value="grades" asChild>
+            <Grades />
+          </Tabs.Content>
+        </Body>
+      </ClassContext.Provider>
     </Root>
   );
 }

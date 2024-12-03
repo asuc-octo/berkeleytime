@@ -246,7 +246,9 @@ const updateTerms = async () => {
   // Get all previous terms
   let currentTerm: TermType | undefined = terms[0];
 
-  while (currentTerm) {
+  let i = 5;
+
+  while (i > 0) {
     console.log(currentTerm.name);
 
     [currentTerm] = await queryPage<TermType>(
@@ -262,6 +264,8 @@ const updateTerms = async () => {
     );
 
     if (currentTerm) terms.push(currentTerm);
+
+    i--;
   }
 
   console.log(`Received ${terms.length} terms from SIS API.`);
@@ -274,6 +278,16 @@ const updateTerms = async () => {
 
   for (let i = 0; i < terms.length; i += batchSize) {
     const batch = terms.slice(i, i + batchSize);
+
+    batch.forEach((doc, index) => {
+      const instance = new TermModel(doc);
+      const error = instance.validateSync();
+      if (error) {
+        console.error(`Validation error for document ${index}:`, error);
+      } else {
+        console.log(`Document ${index} is valid.`);
+      }
+    });
 
     console.log(`Inserting batch ${i / batchSize + 1}...`);
 
