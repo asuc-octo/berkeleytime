@@ -223,6 +223,7 @@ export function RatingsContainer() {
                     const selectedValue = option?.value || "all";
                     setSelectedTerm(selectedValue);
                   }}
+                  isClearable={true}
                   placeholder="Select term"
                   classNamePrefix="select"
                   className={styles.termSelect}
@@ -260,6 +261,10 @@ export function RatingsContainer() {
                       color: "var(--paragraph-color)",
                       maxWidth: "150px",
                       overflow: "hidden",
+                    }),
+                    clearIndicator: (base, { getValue }) => ({
+                      ...base,
+                      display: getValue()[0]?.value === "all" ? "none" : "flex",
                     }),
                   }}
                 />
