@@ -165,36 +165,27 @@
   }
 }
 
+.statusGreen,
+.statusOrange,
+.statusRed {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  user-select: none;
+}
+
 .statusGreen {
   color: var(--emerald-500);
-  display: flex;
-  padding: 4px 10px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 5px;
   background: var(--emerald-100);
 }
 
 .statusOrange {
   color: var(--orange-400);
-  display: flex;
-  padding: 4px 10px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 5px;
   background: var(--orange-100);
 }
 
 .statusRed {
   color: var(--red-500);
-  display: flex;
-  padding: 4px 10px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 5px;
   background: var(--red-100);
 }
 

@@ -22,6 +22,7 @@ export const METRIC_MAPPINGS = {
     getStatus: (avg: number) =>
       avg >= 4 ? "Very Useful" : avg >= 2 ? "Moderately Useful" : "Not Useful",
     isRating: true,
+    isInverseRelationship: false,
   },
   [MetricName.Difficulty]: {
     tooltip:
@@ -29,6 +30,7 @@ export const METRIC_MAPPINGS = {
     getStatus: (avg: number) =>
       avg >= 4 ? "Very Difficult" : avg >= 2 ? "Moderately Difficult" : "Easy",
     isRating: true,
+    isInverseRelationship: true,
   },
   [MetricName.Workload]: {
     tooltip:
@@ -40,20 +42,24 @@ export const METRIC_MAPPINGS = {
           ? "Moderate Workload"
           : "Light Workload",
     isRating: true,
+    isInverseRelationship: true,
   },
   [MetricName.Attendance]: {
     tooltip: "Indicates if attendance is required for the course.",
     getStatus: (avg: number) => (avg > 0 ? "Required" : "Not Required"),
     isRating: false,
+    isInverseRelationship: true,
   },
   [MetricName.Recording]: {
     tooltip: "Indicates if the lectures are recorded for the course.",
     getStatus: (avg: number) => (avg > 0 ? "Recorded" : "Not Recorded"),
     isRating: false,
+    isInverseRelationship: true,
   },
   [MetricName.Recommended]: {
     tooltip: "Indicates if the lectures are recommended for the course.",
     getStatus: (avg: number) => (avg > 0 ? "Recommended" : "Not Recommended"),
     isRating: false,
+    isInverseRelationship: true,
   },
 };

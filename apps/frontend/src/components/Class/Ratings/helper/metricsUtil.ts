@@ -17,13 +17,13 @@ export function isMetricRating(metricName: MetricName) {
   return METRIC_MAPPINGS[metricName]?.isRating ?? false;
 }
 
-export function getStatusColor(weightedAverage: number): string {
+export function getStatusColor(metricName: MetricName, weightedAverage: number): string {
   if (weightedAverage >= 4) {
-    return "statusRed";
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "statusRed" : "statusGreen";
   } else if (weightedAverage >= 2) {
     return "statusOrange";
   } else {
-    return "statusGreen";
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "statusGreen" : "statusRed";
   }
 }
 

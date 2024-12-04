@@ -201,7 +201,7 @@ export function RatingsContainer() {
         metric: metric.metricName,
         stats: allCategories,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
-        statusColor: getStatusColor(metric.weightedAverage),
+        statusColor: getStatusColor(metric.metricName, metric.weightedAverage),
         reviewCount: metric.count,
       };
     }) as RatingDetailProps[];
