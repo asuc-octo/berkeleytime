@@ -62,7 +62,9 @@ export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
-  const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(null);
+  const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(
+    null
+  );
   const { data: user } = useReadUser();
   const [searchParams] = useSearchParams();
 
