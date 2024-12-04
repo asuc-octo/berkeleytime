@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { WarningCircle } from "iconoir-react";
+import { WarningTriangleSolid } from "iconoir-react";
 
 import styles from "./ConfirmationPopup.module.scss";
 
@@ -21,7 +21,7 @@ export default function DeleteRatingPopup({
         <Dialog.Content className={styles.modal}>
           <div className={styles.content}>
             <div className={styles.modalIcon}>
-              <WarningCircle width={70} height={70} color="var(--red-500)" />
+              <WarningTriangleSolid width={70} height={70} color="var(--red-500)" />
             </div>
 
             <div className={styles.modalHeader}>
@@ -35,12 +35,19 @@ export default function DeleteRatingPopup({
             </div>
 
             <div className={styles.modalFooter}>
-              <button onClick={onClose}>No, keeping my rating</button>
+              <button 
+                onClick={onClose}
+                style={{
+                  color: "var(--text-color)",
+                }}
+              >
+                No, keep my rating
+              </button>
               <button
                 onClick={onConfirmDelete}
                 className={styles.doneButton}
                 style={{
-                  backgroundColor: "red",
+                  backgroundColor: "var(--red-500)",
                   color: "white",
                   border: "none",
                   height: "100%",
