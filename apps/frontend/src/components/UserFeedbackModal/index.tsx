@@ -232,6 +232,11 @@ export function UserFeedbackModal({
                               ...base,
                               color: "var(--paragraph-color)",
                             }),
+                            placeholder: (base) => ({
+                              ...base,
+                              color: "var(--paragraph-color)",
+                              userSelect: "none",
+                            }),
                           }}
                         />
                       </div>
