@@ -131,21 +131,20 @@ export default function AttendanceRequirements({
           currentClass={currentClass}
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
-          initialUserClass={userRatingsData?.userRatings?.classes
-            ?.find(
-              (c: {
-                subject: string;
-                courseNumber: string;
-                semester: Semester;
-                year: number;
-                classNumber: string;
-              }) =>
-                c.subject === currentClass.subject &&
-                c.courseNumber === currentClass.courseNumber &&
-                c.semester === currentClass.semester &&
-                c.year === currentClass.year &&
-                c.classNumber === currentClass.number
-            )}
+          initialUserClass={userRatingsData?.userRatings?.classes?.find(
+            (c: {
+              subject: string;
+              courseNumber: string;
+              semester: Semester;
+              year: number;
+              classNumber: string;
+            }) =>
+              c.subject === currentClass.subject &&
+              c.courseNumber === currentClass.courseNumber &&
+              c.semester === currentClass.semester &&
+              c.year === currentClass.year &&
+              c.classNumber === currentClass.number
+          )}
         />
       </div>
     );
@@ -195,21 +194,20 @@ export default function AttendanceRequirements({
         currentClass={currentClass}
         availableTerms={availableTerms}
         onSubmit={handleSubmitRatings}
-        initialUserClass={userRatingsData?.userRatings?.classes
-          ?.find(
-            (c: {
-              subject: string;
-              courseNumber: string;
-              semester: Semester;
-              year: number;
-              classNumber: string;
-            }) =>
-              c.subject === currentClass.subject &&
-              c.courseNumber === currentClass.courseNumber &&
-              c.semester === currentClass.semester &&
-              c.year === currentClass.year &&
-              c.classNumber === currentClass.number
-          )}
+        initialUserClass={userRatingsData?.userRatings?.classes?.find(
+          (c: {
+            subject: string;
+            courseNumber: string;
+            semester: Semester;
+            year: number;
+            classNumber: string;
+          }) =>
+            c.subject === currentClass.subject &&
+            c.courseNumber === currentClass.courseNumber &&
+            c.semester === currentClass.semester &&
+            c.year === currentClass.year &&
+            c.classNumber === currentClass.number
+        )}
       />
     </div>
   );
