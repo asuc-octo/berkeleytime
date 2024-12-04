@@ -21,85 +21,95 @@
 }
 
 .overlay {
-  background-color: rgb(0 0 0 / 60%);
+  background-color: rgba(0, 0, 0, 0.4);
   position: fixed;
   inset: 0;
-  animation: overlayShow 100ms cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 50;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal {
-  background-color: var(--foreground-color);
-  border-radius: 8px;
-  box-shadow: 0 4px 32px rgb(0 0 0 / 25%);
+  background-color: var(--background-color);
+  border-radius: 6px;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+    hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90vw;
-  max-width: 784px;
-  max-height: 464px;
-  padding: 24px;
-  animation: contentShow 120ms cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 51;
+  width: 780px;
+  min-width: 450px;
+  height: 480px;
+  padding: 25px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .content {
-  padding: 24px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 16px;
+  gap: 15px;
+  height: 100%;
+  position: relative;
 }
 
 .modalIcon {
-  margin-top: 60px;
-  margin-bottom: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 80px;
 }
 
 .modalHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   text-align: center;
 }
 
 .modalTitle {
+  margin: 0;
+  font-weight: 500;
   color: var(--text-color);
-  text-align: center;
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 32px;
-  letter-spacing: -0.2px;
-  margin-bottom: 25px;
+  font-size: 17px;
 }
 
 .modalSubtitle {
+  margin: 10px 0 20px;
   color: var(--subtitle-color);
-  text-align: center;
-  font-feature-settings: 'liga' off;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: -0.15px;
-  align-self: stretch;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .modalFooter {
   display: flex;
-  width: 784px;
-  height: 97px;
-  padding: 32px 40px;
-  align-items: center;
-  gap: 40px;
+  gap: 50px;
   justify-content: flex-end;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-top: 24px;
   border-top: 1px solid var(--footer-color);
-  border-radius: 0px 0px 8px 8px;
-  width: 784px;
-  margin-top: 60px;
 }
 
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
 
 .doneButton {
   display: inline-flex;

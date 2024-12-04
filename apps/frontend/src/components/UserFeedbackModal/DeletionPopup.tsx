@@ -42,7 +42,7 @@ export default function DeleteRatingPopup({
               <button
                 onClick={onClose}
                 style={{
-                  color: "var(--text-color)",
+                  color: "var(--subtitle-color)",
                   cursor: "pointer",
                 }}
               >
@@ -55,7 +55,7 @@ export default function DeleteRatingPopup({
                   backgroundColor: "var(--red-500)",
                   color: "white",
                   border: "none",
-                  height: "100%",
+                  height: "32px",
                   padding: "10px 20px",
                   borderRadius: "5px",
                   cursor: "pointer",

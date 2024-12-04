@@ -31,9 +31,7 @@ export default function ConfirmationPopup({
                 Thank you for your input!
               </Dialog.Title>
               <Dialog.Description className={styles.modalSubtitle}>
-                Your contribution will help students make better
-              </Dialog.Description>
-              <Dialog.Description className={styles.modalSubtitle}>
+                Your contribution will help students make better <br />
                 informed decisions when selecting their courses.
               </Dialog.Description>
             </div>
