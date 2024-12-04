@@ -177,8 +177,11 @@ export function RatingsContainer() {
         ? termRatings.metrics
         : aggregatedRatings?.course?.aggregatedRatings?.metrics;
 
-    if (!metrics || !metrics.some(
-      (metric : any) => isMetricRating(metric.metricName) && metric.count !== 0)
+    if (
+      !metrics ||
+      !metrics.some(
+        (metric: any) => isMetricRating(metric.metricName) && metric.count !== 0
+      )
     ) {
       return null;
     }
