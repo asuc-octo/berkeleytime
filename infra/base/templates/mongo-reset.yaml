@@ -5,8 +5,10 @@ metadata:
   namespace: bt
 spec:
   schedule: "0 0 * * *" # Daily at 12 AM
+  timeZone: America/Los_Angeles
   jobTemplate:
     spec:
+      ttlSecondsAfterFinished: 10
       template:
         spec:
           serviceAccountName: bt-app-cleanup
@@ -20,8 +22,8 @@ spec:
                   set -e # Exit immediately if a command fails
 
                   # Find stage and dev MongoDB pods
-                  stage_pod=$(kubectl get pods -n bt | grep 'bt-stage-mongo' | grep -o '^[^ ]*')
-                  dev_pod=$(kubectl get pods -n bt | grep 'bt-dev-mongo' | grep -o '^[^ ]*')
+                  stage_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-stage-mongo')
+                  dev_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-dev-mongo')
 
                   # Dump staging MongoDB state
                   echo "Dumping staging MongoDB state..."
