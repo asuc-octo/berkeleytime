@@ -37,7 +37,16 @@ export default function ConfirmationPopup({
             </div>
 
             <div className={styles.modalFooter}>
-              <button onClick={onClose} className={styles.doneButton}>
+              <button
+                onClick={onClose}
+                className={styles.doneButton}
+                style={{
+                  height: "32px",
+                  padding: "10px 20px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
                 Done
               </button>
             </div>
