@@ -9,6 +9,7 @@ import { METRIC_ORDER } from "@repo/shared";
 import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
+import DeleteRatingPopup from "@/components/UserFeedbackModal/DeletionPopup";
 import { useReadTerms, useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {
@@ -39,7 +40,6 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
-import DeleteRatingPopup from "@/components/UserFeedbackModal/DeletionPopup";
 
 const PLACEHOLDER = false;
 
@@ -248,9 +248,7 @@ export function RatingsContainer() {
           <RatingUserSummary
             userRatings={userRatings}
             setIsModalOpen={setIsModalOpen}
-            ratingDelete={() =>
-              setIsDeleteModalOpen(true)
-            }
+            ratingDelete={() => setIsDeleteModalOpen(true)}
           />
         ) : (
           <div></div>
@@ -425,7 +423,8 @@ export function RatingsContainer() {
             setIsDeleteModalOpen(false);
           }}
           onConfirmDelete={() => {
-            if (userRatings) ratingDelete(userRatings, currentClass, deleteRating)
+            if (userRatings)
+              ratingDelete(userRatings, currentClass, deleteRating);
             setIsDeleteModalOpen(false);
           }}
         />
