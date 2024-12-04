@@ -269,7 +269,9 @@ export function RatingsContainer() {
                         (t) =>
                           t.semester === term.semester && t.year === term.year
                       )?.temporalPosition;
-                      const isPastTerm = termPosition === TemporalPosition.Past;
+                      const isValidTerm =
+                        termPosition === TemporalPosition.Past ||
+                        termPosition === TemporalPosition.Current;
 
                       // Filter for terms with ratings
                       const hasRatingsForTerm =
@@ -278,7 +280,7 @@ export function RatingsContainer() {
                             s.semester === term.semester && s.year === term.year
                         );
 
-                      return isPastTerm && hasRatingsForTerm;
+                      return isValidTerm && hasRatingsForTerm;
                     }),
                   ]}
                   value={
