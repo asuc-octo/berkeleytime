@@ -32,7 +32,6 @@ import {
 // TODO: Remove placeholder data before prod
 import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
-  MetricData,
   UserRating,
   getMetricStatus,
   getStatusColor,
@@ -161,9 +160,8 @@ export function RatingsContainer() {
       }) =>
         classRating.subject === currentClass.subject &&
         classRating.courseNumber === currentClass.courseNumber
-    ) as UserRating;
-
-    return matchedRating;
+    );
+    return matchedRating as UserRating //toUserRating(JSON.parse(JSON.stringify(matchedRating)))
   }, [userRatingsData, currentClass]);
 
   const ratingsData = React.useMemo(() => {
@@ -376,31 +374,7 @@ export function RatingsContainer() {
               console.error("Error submitting rating:", error);
             }
           }}
-          initialMetricData={userRatingsData?.userRatings?.classes
-            ?.find(
-              (c: {
-                subject: string;
-                courseNumber: string;
-                semester: Semester;
-                year: number;
-                classNumber: string;
-              }) =>
-                c.subject === currentClass.subject &&
-                c.courseNumber === currentClass.courseNumber &&
-                c.semester === currentClass.semester &&
-                c.year === currentClass.year &&
-                c.classNumber === currentClass.number
-            )
-            ?.metrics?.reduce(
-              (
-                acc: MetricData,
-                metric: { metricName: string; value: number }
-              ) => ({
-                ...acc,
-                [metric.metricName]: metric.value,
-              }),
-              {}
-            )}
+          initialUserClass={userRatings}
         />
       </Container>
     </div>
