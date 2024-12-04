@@ -57,7 +57,6 @@ export function UserFeedbackModal({
   initialUserClass,
 }: UserFeedbackModalProps) {
   const { data: termsData } = useReadTerms();
-  const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
   const [selectedTerm, setSelectedTerm] = useState<string | null>(
     initialUserClass?.semester && initialUserClass?.year
       ? `${initialUserClass.semester} ${initialUserClass.year}`
