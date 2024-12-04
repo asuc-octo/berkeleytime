@@ -9,6 +9,7 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: bt-app-cleanup
           containers:
             - name: reset-mongo
               image: alpine/k8s:1.29.11
