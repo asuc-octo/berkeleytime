@@ -104,11 +104,11 @@ export function RatingsContainer() {
 
   // Create rating mutation
   const [createRating] = useMutation(CREATE_RATING, {
-    refetchQueries: ["GetUserRatings", "GetCourseRatings"],
+    refetchQueries: ["GetUserRatings", "GetCourseRatings", "GetSemestersWithRatings"],
   });
 
   const [deleteRating] = useMutation(DELETE_RATING, {
-    refetchQueries: ["GetUserRatings", "GetCourseRatings"],
+    refetchQueries: ["GetUserRatings", "GetCourseRatings", "GetSemestersWithRatings"],
   });
 
   const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS, {
