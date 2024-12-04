@@ -6,8 +6,8 @@ import ReactSelect from "react-select";
 import { MetricName } from "@repo/shared";
 import { Button } from "@repo/theme";
 
-import { Semester, TemporalPosition } from "@/lib/api/terms";
 import { useReadTerms } from "@/hooks/api";
+import { Semester, TemporalPosition } from "@/lib/api/terms";
 
 import {
   MetricData,
@@ -121,7 +121,7 @@ export function UserFeedbackModal({
   // Filter for past terms
   const pastTerms = useMemo(() => {
     if (!termsData) return availableTerms;
-    
+
     const termPositions = termsData.reduce(
       (acc: Record<string, TemporalPosition>, term: any) => {
         acc[`${term.semester} ${term.year}`] = term.temporalPosition;

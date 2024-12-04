@@ -255,21 +255,23 @@ export function RatingsContainer() {
                 <ReactSelect
                   options={[
                     { value: "all", label: "Overall Ratings" },
-                    ...availableTerms.filter(term => {
+                    ...availableTerms.filter((term) => {
                       // Filter for past terms
                       const termPosition = termsData?.find(
-                        t => t.semester === term.semester && t.year === term.year
+                        (t) =>
+                          t.semester === term.semester && t.year === term.year
                       )?.temporalPosition;
                       const isPastTerm = termPosition === TemporalPosition.Past;
 
                       // Filter for terms with ratings
-                      const hasRatingsForTerm = semestersWithRatings?.semestersWithRatings?.some(
-                        (s: { semester: Semester; year: number }) =>
-                          s.semester === term.semester && s.year === term.year
-                      );
+                      const hasRatingsForTerm =
+                        semestersWithRatings?.semestersWithRatings?.some(
+                          (s: { semester: Semester; year: number }) =>
+                            s.semester === term.semester && s.year === term.year
+                        );
 
                       return isPastTerm && hasRatingsForTerm;
-                    })
+                    }),
                   ]}
                   value={
                     availableTerms.find(
