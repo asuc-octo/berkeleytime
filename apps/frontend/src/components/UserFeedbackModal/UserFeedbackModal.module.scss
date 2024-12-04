@@ -111,12 +111,13 @@
 
 .modalFooter {
   position: sticky;
-  margin-top: 25px;
-  padding-top: 20px;
+  margin-left: -24px;
+  margin-right: -24px;
+  padding: 24px 24px 0;
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 24px;
 }
 
 .sectionTitle {

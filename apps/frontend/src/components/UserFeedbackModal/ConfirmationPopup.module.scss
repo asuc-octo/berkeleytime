@@ -47,9 +47,9 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 18px;
   height: 100%;
   position: relative;
+  justify-content: space-between;
 }
 
 .modalIcon {
@@ -62,8 +62,9 @@
 .modalHeader {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 28px;
   text-align: center;
+  margin-bottom: 28px;
 }
 
 .modalTitle {
@@ -81,15 +82,13 @@
 }
 
 .modalFooter {
+  margin-left: -25px;
+  margin-right: -25px;
+  padding: 24px 24px 0;
+  border-top: 1px solid var(--border-color);
   display: flex;
-  gap: 50px;
   justify-content: flex-end;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding-top: 24px;
-  border-top: 1px solid var(--footer-color);
+  gap: 24px;
 }
 
 @keyframes overlayShow {
