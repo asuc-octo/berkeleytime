@@ -173,7 +173,7 @@ const typeDef = gql`
     createNewPlan: Plan @auth
 
     """
-    Takes in a new college, switches the user's college requirements
+    Edits Plan college and majorReqs
     """
     editPlan(plan: PlanInput!): Plan @auth
 
