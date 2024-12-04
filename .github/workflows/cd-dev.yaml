@@ -32,16 +32,16 @@ jobs:
   build-push:
     name: Build and Push Images and Charts
     needs: [compute-sha]
-    uses: ./.github/workflows/cd.yaml
+    uses: ./.github/workflows/cd-build.yaml
     with:
       image_tag: ${{ needs.compute-sha.outputs.sha_short }}
       chart_ver: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
     secrets: inherit
-            
+
   deploy:
     name: SSH and Deploy
     needs: [compute-sha, build-push]
-    uses: ./.github/workflows/deploy.yaml
+    uses: ./.github/workflows/cd-deploy.yaml
     with:
       environment: development
       name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}

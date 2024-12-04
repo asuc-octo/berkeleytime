@@ -9,7 +9,7 @@ on:
 jobs:
   build-push:
     name: Build and Push Images and Charts
-    uses: ./.github/workflows/cd.yaml
+    uses: ./.github/workflows/cd-build.yaml
     with:
       image_tag: latest
       chart_ver: 0.1.0-stage
@@ -18,7 +18,7 @@ jobs:
   deploy:
     name: SSH and Deploy
     needs: [build-push]
-    uses: ./.github/workflows/deploy.yaml
+    uses: ./.github/workflows/cd-deploy.yaml
     with:
       environment: staging
       name: bt-stage-app
