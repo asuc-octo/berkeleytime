@@ -43,7 +43,7 @@ export function RatingUserSummary({
 }: {
   userRatings: UserRating;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  ratingDelete: Function;
+  ratingDelete: () => void;
 }) {
   return (
     <div className={styles.userRatingContainer}>
@@ -59,7 +59,7 @@ export function RatingUserSummary({
             </IconButton>
           </Tooltip>
           <Tooltip content="Delete rating">
-            <IconButton onClick={() => ratingDelete(userRatings)}>
+            <IconButton onClick={() => ratingDelete()}>
               <Trash />
             </IconButton>
           </Tooltip>

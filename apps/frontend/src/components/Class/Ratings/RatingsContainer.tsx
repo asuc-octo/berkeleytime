@@ -39,6 +39,7 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
+import DeleteRatingPopup from "@/components/UserFeedbackModal/DeletionPopup";
 
 const PLACEHOLDER = false;
 
@@ -61,6 +62,7 @@ const isSemester = (value: string): boolean => {
 
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
   const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(
@@ -246,8 +248,8 @@ export function RatingsContainer() {
           <RatingUserSummary
             userRatings={userRatings}
             setIsModalOpen={setIsModalOpen}
-            ratingDelete={(userRating: UserRating) =>
-              ratingDelete(userRating, currentClass, deleteRating)
+            ratingDelete={() =>
+              setIsDeleteModalOpen(true)
             }
           />
         ) : (
@@ -416,6 +418,16 @@ export function RatingsContainer() {
             }
           }}
           initialUserClass={userRatings}
+        />
+        <DeleteRatingPopup
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+          }}
+          onConfirmDelete={() => {
+            if (userRatings) ratingDelete(userRatings, currentClass, deleteRating)
+            setIsDeleteModalOpen(false);
+          }}
         />
       </Container>
     </div>
