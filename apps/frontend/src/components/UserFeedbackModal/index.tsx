@@ -257,8 +257,8 @@ export function UserFeedbackModal({
                 </Dialog.Close>
                 <Button
                   style={{
-                    background: isFormValid ? "var(--blue-500)" : "#60A5FA",
-                    color: "white",
+                    background: isFormValid ? "var(--blue-500)" : "var(--foreground-color)",
+                    color: isFormValid ? "white" : "color-mix(in srgb, var(--paragraph-color) 50%, transparent)",
                     transition: "background-color 0.2s ease",
                     cursor: isFormValid ? "pointer" : "default",
                   }}
