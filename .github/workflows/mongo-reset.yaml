@@ -2,6 +2,7 @@ name: Reset Dev Mongo
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   reset-mongo:
