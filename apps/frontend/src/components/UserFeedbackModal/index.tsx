@@ -170,13 +170,15 @@ export function UserFeedbackModal({
                             value: term.value,
                             label: term.label,
                           }))}
-                          value={selectedTerm ? pastTerms.find(
-                            (term) => term.value === selectedTerm
-                          ) : null}
+                          value={
+                            selectedTerm
+                              ? pastTerms.find(
+                                  (term) => term.value === selectedTerm
+                                )
+                              : null
+                          }
                           onChange={(selectedOption: any) =>
-                            setSelectedTerm(
-                              selectedOption?.value || null
-                            )
+                            setSelectedTerm(selectedOption?.value || null)
                           }
                           placeholder="Select semester"
                           isClearable={true}
@@ -206,7 +208,9 @@ export function UserFeedbackModal({
                             }),
                             option: (base, state) => ({
                               ...base,
-                              backgroundColor: state.isFocused ? "var(--hover-color)" : "var(--foreground-color)",
+                              backgroundColor: state.isFocused
+                                ? "var(--hover-color)"
+                                : "var(--foreground-color)",
                               color: "var(--paragraph-color)",
                               cursor: "pointer",
                               "&:hover": {
