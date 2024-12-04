@@ -131,7 +131,7 @@ export default function AttendanceRequirements({
           currentClass={currentClass}
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
-          initialMetricData={userRatingsData?.userRatings?.classes
+          initialUserClass={userRatingsData?.userRatings?.classes
             ?.find(
               (c: {
                 subject: string;
@@ -145,16 +145,6 @@ export default function AttendanceRequirements({
                 c.semester === currentClass.semester &&
                 c.year === currentClass.year &&
                 c.classNumber === currentClass.number
-            )
-            ?.metrics?.reduce(
-              (
-                acc: MetricData,
-                metric: { metricName: string; value: number }
-              ) => ({
-                ...acc,
-                [metric.metricName]: metric.value,
-              }),
-              {}
             )}
         />
       </div>
@@ -205,7 +195,7 @@ export default function AttendanceRequirements({
         currentClass={currentClass}
         availableTerms={availableTerms}
         onSubmit={handleSubmitRatings}
-        initialMetricData={userRatingsData?.userRatings?.classes
+        initialUserClass={userRatingsData?.userRatings?.classes
           ?.find(
             (c: {
               subject: string;
@@ -219,16 +209,6 @@ export default function AttendanceRequirements({
               c.semester === currentClass.semester &&
               c.year === currentClass.year &&
               c.classNumber === currentClass.number
-          )
-          ?.metrics?.reduce(
-            (
-              acc: MetricData,
-              metric: { metricName: string; value: number }
-            ) => ({
-              ...acc,
-              [metric.metricName]: metric.value,
-            }),
-            {}
           )}
       />
     </div>
