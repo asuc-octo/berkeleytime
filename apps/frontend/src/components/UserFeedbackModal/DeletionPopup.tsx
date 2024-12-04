@@ -33,8 +33,8 @@ export default function DeleteRatingPopup({
                 Delete Rating
               </Dialog.Title>
               <Dialog.Description className={styles.modalSubtitle}>
-                This rating will be removed from your profile and will not be
-                included in the overall class ratings.
+                This rating will be removed from your profile and <br />
+                will not be included in the overall class ratings.
               </Dialog.Description>
             </div>
 
@@ -43,6 +43,7 @@ export default function DeleteRatingPopup({
                 onClick={onClose}
                 style={{
                   color: "var(--text-color)",
+                  cursor: "pointer",
                 }}
               >
                 No, keep my rating
