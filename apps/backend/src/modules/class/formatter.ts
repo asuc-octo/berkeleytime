@@ -51,8 +51,7 @@ export const formatClass = (_class: ClassType) => {
     gradingBasis: _class.gradingBasis?.description as ClassGradingBasis,
     finalExam: _class.finalExam?.code as ClassFinalExam,
     title: _class.classTitle,
-    decal: false,
-    decalInfo: null,
+    decal: null,
     unitsMax: _class.allowedUnits?.maximum as number,
     unitsMin: _class.allowedUnits?.minimum as number,
   } as IntermediateClass;
@@ -170,25 +169,13 @@ export const formatDecalInfo = (decal: DecalType) => {
 
   return {
     id: String(decal.id) || "",
-    semester: decal.semester || "",
     title: decal.title || "",
     description: decal.description || "",
     category: decal.category || "",
+    units: String(decal.units) || "",
     website: decal.website || "",
     application: decal.application || "",
     enroll: decal.enroll || "",
     contact: decal.contact || "",
-    units: String(decal.units) || "",
-    sections:
-      decal.sections?.map((section) => ({
-        title: section.title || "",
-        size: section.size || 0,
-        facilitators: section.faciliators || "",
-        location: section.location || "",
-        time: section.time || "",
-        starts: section.starts || "",
-        status: section.status || "",
-        ccn: section.ccn || 0,
-      })) || [],
   };
 };

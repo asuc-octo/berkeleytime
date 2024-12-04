@@ -1,5 +1,6 @@
 import { gql } from "graphql-tag";
 
+
 export default gql`
   scalar ClassNumber
 
@@ -21,28 +22,16 @@ export default gql`
     ): Section
   }
 
-  type DecalSection {
-    title: String
-    size: Int
-    location: String
-    time: String
-    starts: String
-    status: String
-    ccn: Int
-  }
-
   type DecalInfo {
     id: Int
-    semester: String
     title: String
     description: String
     category: String
+    units: String
     website: String
     application: String
     enroll: String
     contact: String
-    units: String
-    sections: [DecalSection]
   }
 
   type Class {
@@ -68,8 +57,7 @@ export default gql`
     title: String
     unitsMax: Float!
     unitsMin: Float!
-    decal: Boolean!
-    decalInfo: DecalInfo
+    decal: DecalInfo
   }
 
   enum ClassFinalExam {

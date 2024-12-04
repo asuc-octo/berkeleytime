@@ -1,17 +1,8 @@
 import mongoose, { InferSchemaType, Schema } from "mongoose";
 
-import { schemaOptions } from "../lib/common";
 
-const decalSection = {
-  title: String,
-  faciliators: String,
-  size: Number,
-  location: String,
-  time: String,
-  starts: String,
-  status: String,
-  ccn: Number,
-};
+
+import { schemaOptions } from "../lib/common";
 
 const decalSchemaObject = {
   id: {
@@ -23,7 +14,7 @@ const decalSchemaObject = {
     required: true,
   },
   units: {
-    type: Number,
+    type: String,
     required: true,
   },
   date: {
@@ -34,11 +25,13 @@ const decalSchemaObject = {
   description: String,
   website: String,
   application: String,
-  sections: [decalSection],
   enroll: String,
   contact: String,
-  course: String,
+
   semester: String,
+  year: String,
+  courseNumber: String,
+  subject: String,
 };
 
 export const decalSchema = new Schema(decalSchemaObject, schemaOptions);

@@ -1,20 +1,16 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
+
+
 import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
-import {
-  getClass,
-  getDecalInfo,
-  getPrimarySection,
-  getSecondarySections,
-  getSection,
-  isDecal,
-} from "./controller";
+import { getClass, getDecalInfo, getPrimarySection, getSecondarySections, getSection } from "./controller";
 import { IntermediateClass, IntermediateSection } from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
+
 
 const resolvers: ClassModule.Resolvers = {
   ClassNumber: new GraphQLScalarType({
@@ -150,33 +146,16 @@ const resolvers: ClassModule.Resolvers = {
     },
 
     decal: async (parent: IntermediateClass | ClassModule.Class) => {
-      const primarySection = await getPrimarySection(
+      const decalInfo = await getDecalInfo(
         parent.year,
         parent.semester,
-        parent.subject,
         parent.courseNumber,
-        parent.number
+        parent.subject
       );
 
-      if (!primarySection) return false;
+      if (!decalInfo) return null as any;
 
-      return await isDecal(primarySection.ccn);
-    },
-
-    decalInfo: async (parent: IntermediateClass | ClassModule.Class) => {
-      const primarySection = await getPrimarySection(
-        parent.year,
-        parent.semester,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
-
-      if (!primarySection || !(await isDecal(primarySection.ccn))) {
-        return null as any;
-      }
-
-      return await getDecalInfo(primarySection.ccn);
+      return decalInfo;
     },
   },
 
