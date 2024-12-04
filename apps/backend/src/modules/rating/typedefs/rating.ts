@@ -57,9 +57,11 @@ const typedef = gql`
     metricName: MetricName!
     value: Int!
   }
-  type SemesterAvailable {
-    year: Int!
+
+  type SemesterRatings {
     semester: Semester!
+    year: Int!
+    maxMetricCount: Int!
   }
 
   """
@@ -83,6 +85,11 @@ const typedef = gql`
       year: Int!
       classNumber: String!
     ): UserClass! @auth
+
+    semestersWithRatings(
+      subject: String!
+      courseNumber: String!
+    ): [SemesterRatings!]!
   }
 
   """

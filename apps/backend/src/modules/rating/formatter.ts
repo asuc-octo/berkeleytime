@@ -4,6 +4,7 @@ import {
   Metric,
   MetricName,
   Semester,
+  SemesterRatings,
   UserClass,
   UserMetric,
   UserRatings,
@@ -67,4 +68,12 @@ export const formatUserClassRatings = (ratings: UserClass): UserClass => {
     })),
     lastUpdated: ratings.lastUpdated,
   };
+};
+
+export const formatSemesterRatings = (semesters: any[]): SemesterRatings[] => {
+  return semesters.map((semester) => ({
+    semester: semester.semester as Semester,
+    year: semester.year,
+    maxMetricCount: semester.maxMetricCount,
+  }));
 };

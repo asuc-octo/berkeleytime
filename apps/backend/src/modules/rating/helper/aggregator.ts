@@ -282,3 +282,45 @@ export const courseRatingAggregator = async (
     },
   ]);
 };
+
+export const semestersWithRatingsAggregator = async (
+  subject: string,
+  courseNumber: string
+) => {
+  return await AggregatedMetricsModel.aggregate([
+    {
+      $match: {
+        subject,
+        courseNumber,
+        categoryCount: { $gt: 0 }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          semester: "$semester",
+          year: "$year",
+          metricName: "$metricName"
+        },
+        totalCount: { $sum: "$categoryCount" }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          semester: "$_id.semester",
+          year: "$_id.year"
+        },
+        maxMetricCount: { $max: "$totalCount" }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        semester: "$_id.semester",
+        year: "$_id.year",
+        maxMetricCount: 1
+      }
+    }
+  ]);
+};

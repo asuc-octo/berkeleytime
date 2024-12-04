@@ -4,6 +4,7 @@ import {
   getClassAggregatedRatings,
   getUserClassRatings,
   getUserRatings,
+  getSemestersWithRatings,
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
 
@@ -43,6 +44,14 @@ const resolvers: RatingModule.Resolvers = {
         classNumber
       );
       return userClassRatings as unknown as RatingModule.UserClass;
+    },
+
+    semestersWithRatings: async (
+      _: unknown,
+      { subject, courseNumber }: { subject: string; courseNumber: string }
+    ) => {
+      const semesters = await getSemestersWithRatings(subject, courseNumber);
+      return semesters as unknown as RatingModule.SemesterRatings[];
     },
   },
   Mutation: {

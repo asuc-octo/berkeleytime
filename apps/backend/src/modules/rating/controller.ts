@@ -8,6 +8,7 @@ import {
   formatAggregatedRatings,
   formatUserClassRatings,
   formatUserRatings,
+  formatSemesterRatings,
 } from "./formatter";
 import {
   courseRatingAggregator,
@@ -15,6 +16,7 @@ import {
   semestersByInstructorAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
+  semestersWithRatingsAggregator,
 } from "./helper/aggregator";
 import {
   checkRatingExists,
@@ -340,6 +342,14 @@ export const getCourseAggregatedRatings = async (
   );
 
   return formattedResult;
+};
+
+export const getSemestersWithRatings = async (
+  subject: string,
+  courseNumber: string
+) => {
+  const semesters = await semestersWithRatingsAggregator(subject, courseNumber);
+  return formatSemesterRatings(semesters);
 };
 
 // Helper functions
