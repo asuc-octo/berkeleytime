@@ -47,7 +47,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px;
   height: 100%;
   position: relative;
 }
@@ -62,19 +62,19 @@
 .modalHeader {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 18px;
   text-align: center;
 }
 
 .modalTitle {
   margin: 0;
-  font-weight: 500;
+  font-size: 28px;
+  font-weight: 600;
   color: var(--text-color);
-  font-size: 17px;
 }
 
 .modalSubtitle {
-  margin: 10px 0 20px;
+  margin: 0px 20px;
   color: var(--subtitle-color);
   font-size: 15px;
   line-height: 1.5;
