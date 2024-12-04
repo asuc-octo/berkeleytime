@@ -21,7 +21,11 @@ export default function DeleteRatingPopup({
         <Dialog.Content className={styles.modal}>
           <div className={styles.content}>
             <div className={styles.modalIcon}>
-              <WarningTriangleSolid width={70} height={70} color="var(--red-500)" />
+              <WarningTriangleSolid
+                width={70}
+                height={70}
+                color="var(--red-500)"
+              />
             </div>
 
             <div className={styles.modalHeader}>
@@ -35,7 +39,7 @@ export default function DeleteRatingPopup({
             </div>
 
             <div className={styles.modalFooter}>
-              <button 
+              <button
                 onClick={onClose}
                 style={{
                   color: "var(--text-color)",
