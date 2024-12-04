@@ -6,17 +6,17 @@ import { METRIC_MAPPINGS } from "@repo/shared";
 import { MetricName, Semester } from "../../generated-types/graphql";
 import {
   formatAggregatedRatings,
+  formatSemesterRatings,
   formatUserClassRatings,
   formatUserRatings,
-  formatSemesterRatings,
 } from "./formatter";
 import {
   courseRatingAggregator,
   ratingAggregator,
   semestersByInstructorAggregator,
+  semestersWithRatingsAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
-  semestersWithRatingsAggregator,
 } from "./helper/aggregator";
 import {
   checkRatingExists,

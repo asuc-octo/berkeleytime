@@ -292,35 +292,35 @@ export const semestersWithRatingsAggregator = async (
       $match: {
         subject,
         courseNumber,
-        categoryCount: { $gt: 0 }
-      }
+        categoryCount: { $gt: 0 },
+      },
     },
     {
       $group: {
         _id: {
           semester: "$semester",
           year: "$year",
-          metricName: "$metricName"
+          metricName: "$metricName",
         },
-        totalCount: { $sum: "$categoryCount" }
-      }
+        totalCount: { $sum: "$categoryCount" },
+      },
     },
     {
       $group: {
         _id: {
           semester: "$_id.semester",
-          year: "$_id.year"
+          year: "$_id.year",
         },
-        maxMetricCount: { $max: "$totalCount" }
-      }
+        maxMetricCount: { $max: "$totalCount" },
+      },
     },
     {
       $project: {
         _id: 0,
         semester: "$_id.semester",
         year: "$_id.year",
-        maxMetricCount: 1
-      }
-    }
+        maxMetricCount: 1,
+      },
+    },
   ]);
 };

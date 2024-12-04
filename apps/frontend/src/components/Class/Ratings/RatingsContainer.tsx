@@ -5,10 +5,11 @@ import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
 
+import { METRIC_ORDER } from "@repo/shared";
 import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
-import { useReadUser, useReadTerms } from "@/hooks/api";
+import { useReadTerms, useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {
   CREATE_RATING,
@@ -38,7 +39,6 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
-import { METRIC_ORDER } from "@repo/shared";
 
 const PLACEHOLDER = false;
 
@@ -64,9 +64,11 @@ const filterPastTerms = (terms: any[], termsData: any[] | undefined) => {
   const termPositions = termsData.reduce(
     (acc: Record<string, TemporalPosition>, term: any) => {
       acc[`${term.semester} ${term.year}`] = term.temporalPosition;
-    return acc;
-  }, {});
-  const filteredTerms = terms.filter(term => {
+      return acc;
+    },
+    {}
+  );
+  const filteredTerms = terms.filter((term) => {
     const position = termPositions[term.value];
     return position === TemporalPosition.Past;
   });
@@ -181,7 +183,7 @@ export function RatingsContainer() {
     if (semestersWithRatings?.semestersWithRatings) {
       return filtered.filter((term) =>
         semestersWithRatings.semestersWithRatings.some(
-          (s: { semester: Semester; year: number }) => 
+          (s: { semester: Semester; year: number }) =>
             s.semester === term.semester && s.year === term.year
         )
       );

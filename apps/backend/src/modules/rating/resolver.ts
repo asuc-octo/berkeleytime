@@ -2,9 +2,9 @@ import {
   createRating,
   deleteRating,
   getClassAggregatedRatings,
+  getSemestersWithRatings,
   getUserClassRatings,
   getUserRatings,
-  getSemestersWithRatings,
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
 
