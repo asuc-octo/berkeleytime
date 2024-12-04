@@ -15,6 +15,7 @@ import {
   DELETE_RATING,
   GET_AGGREGATED_RATINGS,
   GET_COURSE_RATINGS,
+  GET_SEMESTERS_WITH_RATINGS,
   GET_USER_RATINGS,
   READ_COURSE,
 } from "@/lib/api";
@@ -37,6 +38,7 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
+import { METRIC_ORDER } from "@repo/shared";
 
 const PLACEHOLDER = false;
 
@@ -126,12 +128,23 @@ export function RatingsContainer() {
 
   const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS, {
     onCompleted: (data) => {
-      console.log("GET_AGGREGATED_RATINGS completed:", data);
       setTermRatings(data.aggregatedRatings);
     },
     onError: (error) => {
       console.error("GET_AGGREGATED_RATINGS error:", error);
     },
+  });
+
+  // Get semesters with ratings
+  const { data: semestersWithRatings } = useQuery(GET_SEMESTERS_WITH_RATINGS, {
+    variables:
+      currentClass?.subject && currentClass?.courseNumber
+        ? {
+            subject: currentClass.subject,
+            courseNumber: currentClass.courseNumber,
+          }
+        : undefined,
+    skip: !currentClass?.subject || !currentClass?.courseNumber,
   });
 
   const availableTerms = React.useMemo(() => {
@@ -163,8 +176,19 @@ export function RatingsContainer() {
       .value();
 
     const filtered = filterPastTerms(terms, termsData);
+
+    // Filter terms based on whether they have ratings
+    if (semestersWithRatings?.semestersWithRatings) {
+      return filtered.filter((term) =>
+        semestersWithRatings.semestersWithRatings.some(
+          (s: { semester: Semester; year: number }) => 
+            s.semester === term.semester && s.year === term.year
+        )
+      );
+    }
+
     return filtered;
-  }, [courseData, termsData]);
+  }, [courseData, termsData, semestersWithRatings]);
 
   const userRatings = React.useMemo(() => {
     if (!userRatingsData?.userRatings?.classes) return null;
@@ -180,7 +204,7 @@ export function RatingsContainer() {
         classRating.subject === currentClass.subject &&
         classRating.courseNumber === currentClass.courseNumber
     );
-    return matchedRating as UserRating; //toUserRating(JSON.parse(JSON.stringify(matchedRating)))
+    return matchedRating as UserRating;
   }, [userRatingsData, currentClass]);
 
   const ratingsData = React.useMemo(() => {
@@ -188,7 +212,6 @@ export function RatingsContainer() {
       return placeholderRatingsData;
     }
 
-    // Use term-specific ratings if available, otherwise use overall ratings
     const metrics =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
@@ -256,7 +279,6 @@ export function RatingsContainer() {
             {(hasRatings || PLACEHOLDER) &&
               !userRatings &&
               RatingButton(user, setIsModalOpen)}
-            {/* Replace select dropdown with ReactSelect */}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
                 <ReactSelect
@@ -366,6 +388,11 @@ export function RatingsContainer() {
           ) : (
             ratingsData
               ?.filter((ratingData) => isMetricRating(ratingData.metric))
+              .sort((a, b) => {
+                const indexA = METRIC_ORDER.indexOf(a.metric);
+                const indexB = METRIC_ORDER.indexOf(b.metric);
+                return indexA - indexB;
+              })
               .map((ratingData) => (
                 <div className={styles.ratingSection} key={ratingData.metric}>
                   <RatingDetailView {...ratingData} />

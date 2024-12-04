@@ -28,6 +28,16 @@ export const GET_AGGREGATED_RATINGS = gql`
   }
 `;
 
+export const GET_SEMESTERS_WITH_RATINGS = gql`
+  query GetSemestersWithRatings($subject: String!, $courseNumber: String!) {
+    semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
+      semester
+      year
+      maxMetricCount
+    }
+  }
+`;
+
 export const CREATE_RATING = gql`
   mutation CreateRating(
     $subject: String!
