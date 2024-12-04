@@ -111,6 +111,7 @@ export function RatingsContainer() {
 
   const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS, {
     onCompleted: (data) => {
+      console.log("GET_AGGREGATED_RATINGS completed:", data);
       setTermRatings(data.aggregatedRatings);
     },
     onError: (error) => {
@@ -176,7 +177,7 @@ export function RatingsContainer() {
         ? termRatings.metrics
         : aggregatedRatings?.course?.aggregatedRatings?.metrics;
 
-    if (!metrics) {
+    if (!metrics || !metrics.some((metric) => isMetricRating(metric.metricName) && metric.count !== 0)) {
       return null;
     }
 
