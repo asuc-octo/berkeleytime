@@ -58,12 +58,10 @@ export function UserFeedbackModal({
 }: UserFeedbackModalProps) {
   const { data: termsData } = useReadTerms();
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
-  const [selectedTerm, setSelectedTerm] = useState(
+  const [selectedTerm, setSelectedTerm] = useState<string | null>(
     initialUserClass?.semester && initialUserClass?.year
       ? `${initialUserClass.semester} ${initialUserClass.year}`
-      : availableTerms.length > 0
-        ? availableTerms[0].value
-        : defaultTerm
+      : null
   );
   const [metricData, setMetricData] = useState(
     toMetricData(
@@ -162,7 +160,7 @@ export function UserFeedbackModal({
                       </h3>
                       <div
                         style={{
-                          maxWidth: "300px",
+                          width: "231px",
                           marginLeft: "18px",
                         }}
                       >
@@ -172,47 +170,60 @@ export function UserFeedbackModal({
                             value: term.value,
                             label: term.label,
                           }))}
-                          value={pastTerms.find(
+                          value={selectedTerm ? pastTerms.find(
                             (term) => term.value === selectedTerm
-                          )}
+                          ) : null}
                           onChange={(selectedOption: any) =>
                             setSelectedTerm(
-                              selectedOption?.value || defaultTerm
+                              selectedOption?.value || null
                             )
                           }
-                          classNamePrefix="termDropdown"
+                          placeholder="Select semester"
+                          isClearable={true}
+                          classNamePrefix="select"
+                          className={styles.termSelect}
                           styles={{
                             control: (base) => ({
                               ...base,
                               backgroundColor: "var(--foreground-color)",
-                              maxHeight: "35px",
-                              color: "var(--paragraph-color)",
-                              fontSize: "14px",
-                              fontWeight: "400",
-                              borderRadius: "4px",
-                              border: "1px solid var(--border-color)",
-                              minWidth: "231px",
+                              borderColor: "var(--border-color)",
+                              minHeight: "38px",
+                              maxHeight: "38px",
+                              width: "100%",
+                              "&:hover": {
+                                borderColor: "var(--blue-400)",
+                              },
+                              "&:focus-within": {
+                                borderColor: "var(--blue-500)",
+                                boxShadow: "0 0 0 2px var(--blue-200)",
+                              },
                             }),
                             menu: (base) => ({
                               ...base,
                               backgroundColor: "var(--foreground-color)",
-                              color: "var(--paragraph-color)",
-                              fontWeight: "400",
-                              fontSize: "14px",
+                              border: "1px solid var(--border-color)",
+                              width: "100%",
                             }),
-                            option: (base) => ({
+                            option: (base, state) => ({
                               ...base,
-                              backgroundColor: "var(--foreground-color)",
+                              backgroundColor: state.isFocused ? "var(--hover-color)" : "var(--foreground-color)",
                               color: "var(--paragraph-color)",
-                              border: "none",
-                              fontSize: "14px",
+                              cursor: "pointer",
                               "&:hover": {
                                 backgroundColor: "var(--blue-500)",
+                                color: "white",
                               },
                             }),
                             singleValue: (base) => ({
                               ...base,
                               color: "var(--paragraph-color)",
+                            }),
+                            input: (base) => ({
+                              ...base,
+                              color: "var(--paragraph-color)",
+                              maxWidth: "150px",
+                              overflow: "hidden",
+                              marginRight: "8px",
                             }),
                             dropdownIndicator: (base) => ({
                               ...base,
