@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
@@ -13,6 +13,7 @@ import useClass from "@/hooks/useClass";
 import {
   CREATE_RATING,
   DELETE_RATING,
+  GET_AGGREGATED_RATINGS,
   GET_COURSE_RATINGS,
   GET_USER_RATINGS,
   READ_COURSE,
@@ -40,15 +41,16 @@ import {
 
 const PLACEHOLDER = false;
 
-// const isSemester = (value: string): boolean => {
-//   const firstWord = value.split(" ")[0];
-//   return Object.values(Semester).includes(firstWord as Semester);
-// };
+const isSemester = (value: string): boolean => {
+  const firstWord = value.split(" ")[0];
+  return Object.values(Semester).includes(firstWord as Semester);
+};
 
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
+  const [termRatings, setTermRatings] = useState(null);
   const { data: user } = useReadUser();
   const [searchParams] = useSearchParams();
 
@@ -91,6 +93,15 @@ export function RatingsContainer() {
 
   const [deleteRating] = useMutation(DELETE_RATING, {
     refetchQueries: ["GetUserRatings", "GetCourseRatings"],
+  });
+
+  const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS, {
+    onCompleted: (data) => {
+      setTermRatings(data.aggregatedRatings);
+    },
+    onError: (error) => {
+      console.error("GET_AGGREGATED_RATINGS error:", error);
+    },
   });
 
   const availableTerms = React.useMemo(() => {
@@ -144,32 +155,36 @@ export function RatingsContainer() {
     if (PLACEHOLDER) {
       return placeholderRatingsData;
     }
-    if (!aggregatedRatings?.course?.aggregatedRatings?.metrics) {
+
+    // Use term-specific ratings if available, otherwise use overall ratings
+    const metrics = selectedTerm !== "all" && termRatings?.metrics
+      ? termRatings.metrics
+      : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+
+    if (!metrics) {
       return null;
     }
 
-    return aggregatedRatings.course.aggregatedRatings.metrics.map(
-      (metric: any) => {
-        const allCategories = [5, 4, 3, 2, 1].map((rating) => {
-          const category = metric.categories.find(
-            (cat: any) => cat.value === rating
-          );
-          return {
-            rating,
-            percentage: category ? (category.count / metric.count) * 100 : 0,
-          };
-        });
-
+    return metrics.map((metric: any) => {
+      const allCategories = [5, 4, 3, 2, 1].map((rating) => {
+        const category = metric.categories.find(
+          (cat: any) => cat.value === rating
+        );
         return {
-          metric: metric.metricName,
-          stats: allCategories,
-          status: getMetricStatus(metric.metricName, metric.weightedAverage),
-          statusColor: getStatusColor(metric.weightedAverage),
-          reviewCount: metric.count,
+          rating,
+          percentage: category ? (category.count / metric.count) * 100 : 0,
         };
-      }
-    ) as RatingDetailProps[];
-  }, [aggregatedRatings]);
+      });
+
+      return {
+        metric: metric.metricName,
+        stats: allCategories,
+        status: getMetricStatus(metric.metricName, metric.weightedAverage),
+        statusColor: getStatusColor(metric.weightedAverage),
+        reviewCount: metric.count,
+      };
+    }) as RatingDetailProps[];
+  }, [aggregatedRatings, selectedTerm, termRatings]);
 
   const hasRatings = React.useMemo(() => {
     const totalRatings =
@@ -222,6 +237,20 @@ export function RatingsContainer() {
                   onChange={(option) => {
                     const selectedValue = option?.value || "all";
                     setSelectedTerm(selectedValue);
+                    if (selectedValue === "all") {
+                      setTermRatings(null);
+                    } else if (isSemester(selectedValue)) {
+                      const [semester, year] = selectedValue.split(" ");
+                      getAggregatedRatings({
+                        variables: {
+                          subject: currentClass.subject,
+                          courseNumber: currentClass.courseNumber,
+                          semester: semester,
+                          year: parseInt(year),
+                          classNumber: currentClass.number,
+                        },
+                      });
+                    }
                   }}
                   isClearable={true}
                   placeholder="Select term"
