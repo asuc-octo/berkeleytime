@@ -1,4 +1,4 @@
-import { MetricName, METRIC_MAPPINGS } from "@repo/shared";
+import { METRIC_MAPPINGS, MetricName } from "@repo/shared";
 
 export type MetricData = Record<MetricName, number | undefined>;
 
@@ -17,13 +17,20 @@ export function isMetricRating(metricName: MetricName) {
   return METRIC_MAPPINGS[metricName]?.isRating ?? false;
 }
 
-export function getStatusColor(metricName: MetricName, weightedAverage: number): string {
+export function getStatusColor(
+  metricName: MetricName,
+  weightedAverage: number
+): string {
   if (weightedAverage >= 4) {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "statusRed" : "statusGreen";
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
+      ? "statusRed"
+      : "statusGreen";
   } else if (weightedAverage >= 2) {
     return "statusOrange";
   } else {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "statusGreen" : "statusRed";
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
+      ? "statusGreen"
+      : "statusRed";
   }
 }
 

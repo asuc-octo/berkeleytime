@@ -29,7 +29,11 @@ export default function UserRatingSummary({
             <div className={ratingStyles.titleSection}>
               <h3 className={ratingStyles.title}>{metric.metricName}</h3>
             </div>
-            <span className={ratingStyles[getStatusColor(metric.metricName, metric.value)]}>
+            <span
+              className={
+                ratingStyles[getStatusColor(metric.metricName, metric.value)]
+              }
+            >
               {getMetricStatus(metric.metricName, metric.value)}
             </span>
           </div>
