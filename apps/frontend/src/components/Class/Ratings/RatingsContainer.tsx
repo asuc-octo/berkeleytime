@@ -9,6 +9,7 @@ import { METRIC_ORDER } from "@repo/shared";
 import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
+import DeleteRatingPopup from "@/components/UserFeedbackModal/DeletionPopup";
 import { useReadTerms, useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {
@@ -61,6 +62,7 @@ const isSemester = (value: string): boolean => {
 
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
   const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(
@@ -246,9 +248,7 @@ export function RatingsContainer() {
           <RatingUserSummary
             userRatings={userRatings}
             setIsModalOpen={setIsModalOpen}
-            ratingDelete={(userRating: UserRating) =>
-              ratingDelete(userRating, currentClass, deleteRating)
-            }
+            ratingDelete={() => setIsDeleteModalOpen(true)}
           />
         ) : (
           <div></div>
@@ -418,6 +418,17 @@ export function RatingsContainer() {
             }
           }}
           initialUserClass={userRatings}
+        />
+        <DeleteRatingPopup
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+          }}
+          onConfirmDelete={() => {
+            if (userRatings)
+              ratingDelete(userRatings, currentClass, deleteRating);
+            setIsDeleteModalOpen(false);
+          }}
         />
       </Container>
     </div>
