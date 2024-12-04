@@ -1,0 +1,4 @@
+name: Reset Dev Mongo
+
+on:
+  workflow_dispatch:
