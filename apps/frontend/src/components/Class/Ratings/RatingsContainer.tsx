@@ -8,7 +8,7 @@ import ReactSelect from "react-select";
 import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
-import { useReadUser } from "@/hooks/api";
+import { useReadUser, useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {
   CREATE_RATING,
@@ -18,7 +18,7 @@ import {
   GET_USER_RATINGS,
   READ_COURSE,
 } from "@/lib/api";
-import { Semester } from "@/lib/api/terms";
+import { Semester, TemporalPosition } from "@/lib/api/terms";
 
 import styles from "./Ratings.module.scss";
 import {
@@ -57,6 +57,21 @@ const isSemester = (value: string): boolean => {
   return Object.values(Semester).includes(firstWord as Semester);
 };
 
+const filterPastTerms = (terms: any[], termsData: any[] | undefined) => {
+  if (!termsData) return terms;
+  const termPositions = termsData.reduce(
+    (acc: Record<string, TemporalPosition>, term: any) => {
+      acc[`${term.semester} ${term.year}`] = term.temporalPosition;
+    return acc;
+  }, {});
+  const filteredTerms = terms.filter(term => {
+    const position = termPositions[term.value];
+    return position === TemporalPosition.Past;
+  });
+
+  return filteredTerms;
+};
+
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { class: currentClass } = useClass();
@@ -66,6 +81,7 @@ export function RatingsContainer() {
   );
   const { data: user } = useReadUser();
   const [searchParams] = useSearchParams();
+  const { data: termsData } = useReadTerms();
 
   useEffect(() => {}, [user, searchParams]);
 
@@ -121,7 +137,7 @@ export function RatingsContainer() {
   const availableTerms = React.useMemo(() => {
     if (!courseData?.course?.classes) return [];
 
-    return _.chain(courseData.course.classes)
+    const terms = _.chain(courseData.course.classes)
       .map((ClassData: any) => ({
         value: `${ClassData.semester} ${ClassData.year}`,
         label: `${ClassData.semester} ${ClassData.year}`,
@@ -145,7 +161,10 @@ export function RatingsContainer() {
         ["desc", "asc"]
       )
       .value();
-  }, [courseData]);
+
+    const filtered = filterPastTerms(terms, termsData);
+    return filtered;
+  }, [courseData, termsData]);
 
   const userRatings = React.useMemo(() => {
     if (!userRatingsData?.userRatings?.classes) return null;
