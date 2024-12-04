@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
@@ -41,6 +41,18 @@ import {
 
 const PLACEHOLDER = false;
 
+interface AggregatedRatings {
+  metrics: {
+    metricName: string;
+    count: number;
+    weightedAverage: number;
+    categories: {
+      value: number;
+      count: number;
+    }[];
+  }[];
+}
+
 const isSemester = (value: string): boolean => {
   const firstWord = value.split(" ")[0];
   return Object.values(Semester).includes(firstWord as Semester);
@@ -50,7 +62,7 @@ export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
-  const [termRatings, setTermRatings] = useState(null);
+  const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(null);
   const { data: user } = useReadUser();
   const [searchParams] = useSearchParams();
 
@@ -157,9 +169,10 @@ export function RatingsContainer() {
     }
 
     // Use term-specific ratings if available, otherwise use overall ratings
-    const metrics = selectedTerm !== "all" && termRatings?.metrics
-      ? termRatings.metrics
-      : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+    const metrics =
+      selectedTerm !== "all" && termRatings?.metrics
+        ? termRatings.metrics
+        : aggregatedRatings?.course?.aggregatedRatings?.metrics;
 
     if (!metrics) {
       return null;
