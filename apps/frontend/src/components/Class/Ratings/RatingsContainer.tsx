@@ -161,7 +161,7 @@ export function RatingsContainer() {
         classRating.subject === currentClass.subject &&
         classRating.courseNumber === currentClass.courseNumber
     );
-    return matchedRating as UserRating //toUserRating(JSON.parse(JSON.stringify(matchedRating)))
+    return matchedRating as UserRating; //toUserRating(JSON.parse(JSON.stringify(matchedRating)))
   }, [userRatingsData, currentClass]);
 
   const ratingsData = React.useMemo(() => {

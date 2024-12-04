@@ -86,10 +86,13 @@ export interface UserRating {
   ];
 }
 
-export function toMetricData(arr : 
-  {
+export function toMetricData(
+  arr: {
     metricName: MetricName;
     value: number | undefined;
-  }[]) {
-  return arr.reduce((acc, v) => { return {...acc, [v.metricName]: v.value}}, {}) as MetricData
+  }[]
+) {
+  return arr.reduce((acc, v) => {
+    return { ...acc, [v.metricName]: v.value };
+  }, {}) as MetricData;
 }

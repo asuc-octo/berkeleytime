@@ -8,7 +8,11 @@ import { Button } from "@repo/theme";
 
 import { Semester } from "@/lib/api/terms";
 
-import { MetricData, UserRating, toMetricData } from "../Class/Ratings/helper/metricsUtil";
+import {
+  MetricData,
+  UserRating,
+  toMetricData,
+} from "../Class/Ratings/helper/metricsUtil";
 import { AttendanceForm } from "./AttendanceForm";
 import ConfirmationPopup from "./ConfirmationForm";
 import { RatingsForm } from "./RatingForm";
@@ -53,17 +57,28 @@ export function UserFeedbackModal({
 }: UserFeedbackModalProps) {
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
   const [selectedTerm, setSelectedTerm] = useState(
-    initialUserClass?.semester && initialUserClass?.year ? `${initialUserClass.semester} ${initialUserClass.year}` : availableTerms.length > 0 ? availableTerms[0].value : defaultTerm
+    initialUserClass?.semester && initialUserClass?.year
+      ? `${initialUserClass.semester} ${initialUserClass.year}`
+      : availableTerms.length > 0
+        ? availableTerms[0].value
+        : defaultTerm
   );
-  const [metricData, setMetricData] = useState(toMetricData(initialUserClass?.metrics ??
-    Object.values(MetricName).map((metric) => { return {metricName: metric, value: undefined} })
-  ));
+  const [metricData, setMetricData] = useState(
+    toMetricData(
+      initialUserClass?.metrics ??
+        Object.values(MetricName).map((metric) => {
+          return { metricName: metric, value: undefined };
+        })
+    )
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (initialUserClass?.semester && initialUserClass?.year) setSelectedTerm(`${initialUserClass.semester} ${initialUserClass.year}`)
-    if (initialUserClass?.metrics) setMetricData(toMetricData(initialUserClass.metrics))
-  }, [initialUserClass])
+    if (initialUserClass?.semester && initialUserClass?.year)
+      setSelectedTerm(`${initialUserClass.semester} ${initialUserClass.year}`);
+    if (initialUserClass?.metrics)
+      setMetricData(toMetricData(initialUserClass.metrics));
+  }, [initialUserClass]);
 
   const isFormValid = useMemo(() => {
     const isTermValid = selectedTerm && selectedTerm.length > 0;
