@@ -2,7 +2,6 @@ name: Reset Dev Mongo
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
   reset-mongo:
@@ -18,7 +17,7 @@ jobs:
           script: |
             set -e  # Exit immediately if a command fails
 
-            # Update reste-dev-mongo CronJob
+            # Update reset-dev-mongo CronJob
             kubectl apply -f infra/base/templates/mongo-reset.yaml
 
             # Create Mongo job from mongo-reset
