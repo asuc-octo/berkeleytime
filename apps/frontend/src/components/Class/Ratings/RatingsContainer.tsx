@@ -59,23 +59,6 @@ const isSemester = (value: string): boolean => {
   return Object.values(Semester).includes(firstWord as Semester);
 };
 
-const filterPastTerms = (terms: any[], termsData: any[] | undefined) => {
-  if (!termsData) return terms;
-  const termPositions = termsData.reduce(
-    (acc: Record<string, TemporalPosition>, term: any) => {
-      acc[`${term.semester} ${term.year}`] = term.temporalPosition;
-      return acc;
-    },
-    {}
-  );
-  const filteredTerms = terms.filter((term) => {
-    const position = termPositions[term.value];
-    return position === TemporalPosition.Past;
-  });
-
-  return filteredTerms;
-};
-
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { class: currentClass } = useClass();
@@ -152,7 +135,7 @@ export function RatingsContainer() {
   const availableTerms = React.useMemo(() => {
     if (!courseData?.course?.classes) return [];
 
-    const terms = _.chain(courseData.course.classes)
+    return _.chain(courseData.course.classes)
       .map((ClassData: any) => ({
         value: `${ClassData.semester} ${ClassData.year}`,
         label: `${ClassData.semester} ${ClassData.year}`,
@@ -176,21 +159,7 @@ export function RatingsContainer() {
         ["desc", "asc"]
       )
       .value();
-
-    const filtered = filterPastTerms(terms, termsData);
-
-    // Filter terms based on whether they have ratings
-    if (semestersWithRatings?.semestersWithRatings) {
-      return filtered.filter((term) =>
-        semestersWithRatings.semestersWithRatings.some(
-          (s: { semester: Semester; year: number }) =>
-            s.semester === term.semester && s.year === term.year
-        )
-      );
-    }
-
-    return filtered;
-  }, [courseData, termsData, semestersWithRatings]);
+  }, [courseData]);
 
   const userRatings = React.useMemo(() => {
     if (!userRatingsData?.userRatings?.classes) return null;
@@ -286,7 +255,21 @@ export function RatingsContainer() {
                 <ReactSelect
                   options={[
                     { value: "all", label: "Overall Ratings" },
-                    ...availableTerms,
+                    ...availableTerms.filter(term => {
+                      // Filter for past terms
+                      const termPosition = termsData?.find(
+                        t => t.semester === term.semester && t.year === term.year
+                      )?.temporalPosition;
+                      const isPastTerm = termPosition === TemporalPosition.Past;
+
+                      // Filter for terms with ratings
+                      const hasRatingsForTerm = semestersWithRatings?.semestersWithRatings?.some(
+                        (s: { semester: Semester; year: number }) =>
+                          s.semester === term.semester && s.year === term.year
+                      );
+
+                      return isPastTerm && hasRatingsForTerm;
+                    })
                   ]}
                   value={
                     availableTerms.find(

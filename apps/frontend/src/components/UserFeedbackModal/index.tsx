@@ -6,7 +6,8 @@ import ReactSelect from "react-select";
 import { MetricName } from "@repo/shared";
 import { Button } from "@repo/theme";
 
-import { Semester } from "@/lib/api/terms";
+import { Semester, TemporalPosition } from "@/lib/api/terms";
+import { useReadTerms } from "@/hooks/api";
 
 import {
   MetricData,
@@ -55,6 +56,7 @@ export function UserFeedbackModal({
   onSubmit,
   initialUserClass,
 }: UserFeedbackModalProps) {
+  const { data: termsData } = useReadTerms();
   const defaultTerm = `${currentClass.semester} ${currentClass.year}`;
   const [selectedTerm, setSelectedTerm] = useState(
     initialUserClass?.semester && initialUserClass?.year
@@ -116,6 +118,24 @@ export function UserFeedbackModal({
   };
   const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
 
+  // Filter for past terms
+  const pastTerms = useMemo(() => {
+    if (!termsData) return availableTerms;
+    
+    const termPositions = termsData.reduce(
+      (acc: Record<string, TemporalPosition>, term: any) => {
+        acc[`${term.semester} ${term.year}`] = term.temporalPosition;
+        return acc;
+      },
+      {}
+    );
+
+    return availableTerms.filter((term) => {
+      const position = termPositions[term.value];
+      return position === TemporalPosition.Past;
+    });
+  }, [availableTerms, termsData]);
+
   return (
     <>
       <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -148,11 +168,11 @@ export function UserFeedbackModal({
                       >
                         <ReactSelect
                           id="term-selection"
-                          options={availableTerms.map((term) => ({
+                          options={pastTerms.map((term) => ({
                             value: term.value,
                             label: term.label,
                           }))}
-                          value={availableTerms.find(
+                          value={pastTerms.find(
                             (term) => term.value === selectedTerm
                           )}
                           onChange={(selectedOption: any) =>
