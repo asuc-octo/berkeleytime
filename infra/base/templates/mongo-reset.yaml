@@ -37,6 +37,8 @@ spec:
                   kubectl cp --namespace=bt \
                     /tmp/stage_backup.gz "$dev_pod:/tmp/stage_backup.gz"
                   kubectl exec --namespace=bt \
+                    "$dev_pod" -- mongosh bt --eval "db.dropDatabase()"
+                  kubectl exec --namespace=bt \
                     "$dev_pod" -- mongorestore --archive=/tmp/stage_backup.gz --gzip --drop
                   kubectl exec --namespace=bt \
                     "$dev_pod" -- rm /tmp/stage_backup.gz
