@@ -1,19 +1,21 @@
 import { Logger } from "tslog";
 
-import { updateClasses } from "./class";
+import updateClasses from "./class";
 import { cleanupLogs } from "./cleanupLogs";
-import { Config } from "./config";
-import { updateCourses } from "./course";
-import { runDatapuller } from "./runDatapuller";
-import { updateSections } from "./section";
+import updateCourses from "./course";
+import updateGradeDistributions from "./grade-distribution";
+import main from "./main";
+import updateSections from "./section";
 import setup from "./shared";
+import { Config } from "./shared/config";
 
 const scriptMap: { [key: string]: (config: Config) => Promise<void> } = {
   courses: updateCourses,
   sections: updateSections,
   classes: updateClasses,
+  "grade-distributions": updateGradeDistributions,
   logs: cleanupLogs,
-  datapuller: runDatapuller,
+  main: main,
 };
 
 const parseArgs = (

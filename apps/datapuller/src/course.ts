@@ -1,30 +1,21 @@
-import { ICourseItem, NewCourseModel } from "@repo/common";
-import { CoursesAPI } from "@repo/sis-api/courses";
+import { NewCourseModel } from "@repo/common";
 
-import { Config } from "./config";
-import mapCourseToNewCourse, { CombinedCourse } from "./shared/courseParser";
-import { fetchPaginatedData } from "./shared/utils";
+import { getCourses } from "./lib/courses";
+import { Config } from "./shared/config";
 
-export async function updateCourses(config: Config) {
-  const log = config.log;
-  const coursesAPI = new CoursesAPI();
+// TODO: Transaction
+const updateCourses = async ({
+  sis: { COURSE_APP_ID, COURSE_APP_KEY },
+  log,
+}: Config) => {
+  log.info(`Fetching courses`);
 
-  const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
-    log,
-    coursesAPI.v4,
-    null,
-    "findCourseCollectionUsingGet",
-    {
-      app_id: config.sis.COURSE_APP_ID,
-      app_key: config.sis.COURSE_APP_KEY,
-    },
-    (data) => data.apiResponse.response.courses || [],
-    mapCourseToNewCourse,
-    "courses"
-  );
+  // Get all courses
+  const courses = await getCourses(log, COURSE_APP_ID, COURSE_APP_KEY);
 
-  log.info("Example Course:", courses[0]);
+  log.info(`Fetched ${courses.length.toLocaleString()} courses`);
 
+  // Delete existing courses
   await NewCourseModel.deleteMany({});
 
   // Insert courses in batches of 5000
@@ -33,12 +24,12 @@ export async function updateCourses(config: Config) {
   for (let i = 0; i < courses.length; i += insertBatchSize) {
     const batch = courses.slice(i, i + insertBatchSize);
 
-    console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.info(`Inserting batch ${i / insertBatchSize + 1}`);
 
     await NewCourseModel.insertMany(batch, { ordered: false });
   }
 
-  console.log(`Completed updating database with new course data.`);
+  log.info(`Finished inserting ${courses.length.toLocaleString()} courses`);
+};
 
-  log.info(`Updated ${courses.length} courses for active terms`);
-}
+export default updateCourses;

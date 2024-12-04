@@ -1,37 +1,34 @@
-import { IClassItem, NewClassModel } from "@repo/common";
-import { ClassesAPI } from "@repo/sis-api/classes";
+import { NewClassModel } from "@repo/common";
 
-import { Config } from "./config";
-import mapClassToNewClass, { CombinedClass } from "./shared/classParser";
-import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
+import { getClasses } from "./lib/classes";
+import { getActiveTerms } from "./lib/terms";
+import { Config } from "./shared/config";
 
-export async function updateClasses(config: Config) {
-  const log = config.log;
-  const classesAPI = new ClassesAPI();
+const updateClasses = async ({
+  log,
+  sis: { TERM_APP_ID, TERM_APP_KEY, CLASS_APP_ID, CLASS_APP_KEY },
+}: Config) => {
+  log.info(`Fetching active terms`);
 
-  log.info("Fetching Active Terms");
-  const activeTerms = await fetchActiveTerms(log, {
-    app_id: config.sis.TERM_APP_ID,
-    app_key: config.sis.TERM_APP_KEY,
-  });
+  // Get active terms
+  const activeTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY);
 
-  const classes = await fetchPaginatedData<IClassItem, CombinedClass>(
+  log.info(`Fetched ${activeTerms.length.toLocaleString()} active terms`);
+
+  log.info(`Fetching classes for active terms`);
+
+  const classes = await getClasses(
     log,
-    classesAPI.v1,
-    activeTerms,
-    "getClassesUsingGet",
-    {
-      app_id: config.sis.CLASS_APP_ID,
-      app_key: config.sis.CLASS_APP_KEY,
-    },
-    (data) => data.apiResponse.response.classes || [],
-    mapClassToNewClass,
-    "classes"
+    CLASS_APP_ID,
+    CLASS_APP_KEY,
+    activeTerms.map((term) => term.id as string)
   );
-  log.info(activeTerms);
 
-  log.info("Example Class:", classes[0]);
+  log.info(
+    `Fetched ${classes.length.toLocaleString()} classes for active terms`
+  );
 
+  // Delete existing classes for active terms
   await NewClassModel.deleteMany({
     "session.term.id": { $in: activeTerms },
   });
@@ -42,12 +39,14 @@ export async function updateClasses(config: Config) {
   for (let i = 0; i < classes.length; i += insertBatchSize) {
     const batch = classes.slice(i, i + insertBatchSize);
 
-    console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.info(`Inserting batch ${i / insertBatchSize + 1}`);
 
     await NewClassModel.insertMany(batch, { ordered: false });
   }
 
-  console.log(`Completed updating database with new class data.`);
+  log.info(
+    `Finished inserting ${classes.length.toLocaleString()} classes for active terms`
+  );
+};
 
-  log.info(`Updated ${classes.length} classes for active terms`);
-}
+export default updateClasses;

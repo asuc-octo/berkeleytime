@@ -1,5 +1,5 @@
-import mongooseLoader from "../bootstrap/loaders/mongoose";
-import { loadConfig } from "../config";
+import { loadConfig } from "./config";
+import mongooseLoader from "./mongoose";
 
 export default async function setup() {
   const config = loadConfig();

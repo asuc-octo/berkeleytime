@@ -7,15 +7,14 @@
       "dependsOn": ["generate", "^build"],
       "outputs": ["dist/**"]
     },
-    "runDatapuller": {
-      "cache": true
-    },
     "generate": {
       "outputs": ["*/generated-types/**"]
     },
     "lint": {},
     "start": {
-      "dependsOn": ["generate", "^build"]
+      "dependsOn": ["generate", "^build"],
+      "cache": false,
+      "persistent": true
     },
     "dev": {
       "dependsOn": ["generate", "^build"],

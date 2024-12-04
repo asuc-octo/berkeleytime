@@ -2,49 +2,6 @@ import fs from "fs/promises";
 import path from "path";
 import { Logger } from "tslog";
 
-import { Term, TermsAPI } from "@repo/sis-api/terms";
-
-type TemporalPosition = "" | "Previous" | "Current" | "Next";
-
-export async function fetchActiveTerms(
-  logger: Logger<unknown>,
-  headers: Record<string, string>
-): Promise<string[]> {
-  const termsAPI = new TermsAPI();
-  const activeTermIds: string[] = [];
-
-  const currentTerms: TemporalPosition[] = ["Current", "Next"];
-
-  for (const term of currentTerms) {
-    try {
-      logger.info(`Fetching ${term} terms`);
-      const response = await termsAPI.v2.getByTermsUsingGet(
-        {
-          "temporal-position": term,
-        },
-        {
-          headers,
-        }
-      );
-      const data = await response.json();
-      activeTermIds.push(...data.response.terms.map((term: Term) => term.id));
-    } catch (error: any) {
-      logger.error(
-        `Unexpected error querying API for ${term} terms. Error: "${error}"`
-      );
-      logger.error(`Error details: ${JSON.stringify(error, null, 2)}`);
-      if (error.cause) {
-        logger.error(`Error cause: ${error.cause}`);
-      }
-    }
-  }
-  const uniqueActiveTermIds = Array.from(new Set(activeTermIds));
-
-  logger.info(`Fetched ${uniqueActiveTermIds.length} unique active term IDs`);
-
-  return uniqueActiveTermIds;
-}
-
 export async function fetchPaginatedData<T, R>(
   logger: Logger<unknown>,
   api: any,

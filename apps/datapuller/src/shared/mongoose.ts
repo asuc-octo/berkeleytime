@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { Config } from "../../config";
+import { Config } from "./config";
 
 // Close the Mongoose default connection is the event of application termination
 process.on("SIGINT", async () => {

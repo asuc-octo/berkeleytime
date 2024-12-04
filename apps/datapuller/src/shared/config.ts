@@ -1,15 +1,18 @@
 import dotenv from "dotenv";
 import { Logger } from "tslog";
 
+// Safely get the environment variable in the process
 const env = (name: string): string => {
   const value = process.env[name];
 
-  if (!value) throw new Error(`Missing: process.env['${name}'].`);
+  if (!value) {
+    throw new Error(`Missing: process.env['${name}'].`);
+  }
 
   return value;
 };
 
-export interface Environment {
+export interface Config {
   log: Logger<unknown>;
   isDev: boolean;
   mongoDB: {
@@ -23,9 +26,15 @@ export interface Environment {
     TERM_APP_ID: string;
     TERM_APP_KEY: string;
   };
+  aws: {
+    DATABASE: string;
+    S3_OUTPUT: string;
+    REGION_NAME: string;
+    WORKGROUP: string;
+  };
 }
 
-export function loadConfig(): Environment {
+export function loadConfig(): Config {
   dotenv.config();
 
   const log = new Logger({
@@ -46,6 +55,12 @@ export function loadConfig(): Environment {
       COURSE_APP_KEY: env("SIS_COURSE_APP_KEY"),
       TERM_APP_ID: env("SIS_TERM_APP_ID"),
       TERM_APP_KEY: env("SIS_TERM_APP_KEY"),
+    },
+    aws: {
+      DATABASE: env("AWS_DATABASE"),
+      S3_OUTPUT: env("AWS_S3_OUTPUT"),
+      REGION_NAME: env("AWS_REGION_NAME"),
+      WORKGROUP: env("AWS_WORKGROUP"),
     },
   };
 }

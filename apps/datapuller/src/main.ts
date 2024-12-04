@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
-import { updateClasses } from "./class";
-import { Config } from "./config";
-import { updateCourses } from "./course";
-import { updateSections } from "./section";
+import updateClasses from "./class";
+import updateCourses from "./course";
+import updateSections from "./section";
 import setup from "./shared";
+import { Config } from "./shared/config";
 
 const testDatabaseWrite = async (config: Config) => {
   const TestSchema = new mongoose.Schema({
@@ -30,8 +30,9 @@ const testDatabaseWrite = async (config: Config) => {
   }
 };
 
-export const runDatapuller = async () => {
+const main = async () => {
   const { config } = await setup();
+
   try {
     config.log.info("\n=== TESTING DATABASE WRITE ===");
     const writeSuccessful = await testDatabaseWrite(config);
@@ -58,3 +59,5 @@ export const runDatapuller = async () => {
 
   process.exit(0);
 };
+
+export default main;
