@@ -272,7 +272,7 @@ export default function Map({ selectedSections }: MapProps) {
   return (
     <div className={styles.root}>
       <div className={styles.toolBar}>
-        <Button className={styles.button}>
+        <Button>
           <ArrowSeparateVertical />
           Monday
         </Button>

@@ -1,17 +1,12 @@
 import { gql } from "@apollo/client";
 
-import { AcademicCareer, IClass, InstructionMethod } from ".";
+import {
+  AcademicCareer,
+  GradeDistribution,
+  IClass,
+  InstructionMethod,
+} from ".";
 import { Semester } from "./terms";
-
-export interface Grade {
-  letter: string;
-  count: number;
-}
-
-export interface GradeDistribution {
-  average: number | null;
-  distribution: Grade[];
-}
 
 export interface ICourse {
   // Identifiers

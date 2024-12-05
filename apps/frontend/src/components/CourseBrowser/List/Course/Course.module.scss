@@ -30,18 +30,8 @@
     flex-grow: 1;
     font-size: 14px;
 
-    .heading, .title {
-      color: var(--heading-color);
-      margin-bottom: 8px;
-      line-height: 1;
-    }
-
     .heading {
       font-weight: 700;
-    }
-
-    .title {
-      font-weight: 500;
     }
 
     .description {

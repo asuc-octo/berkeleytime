@@ -15,6 +15,20 @@
   &[data-state="closed"] {
     animation: fadeOut 250ms ease-out;
   }
+
+  .body {
+    padding: 12px;
+  }
+}
+
+body[data-theme="dark"] .overlay {
+  background: linear-gradient(to left, rgb(0 0 0 / 50%) 384px, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not([data-theme]) .overlay {
+    background: linear-gradient(to left, rgb(0 0 0 / 50%) 384px, transparent);
+  }
 }
 
 .content {

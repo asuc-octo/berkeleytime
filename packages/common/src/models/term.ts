@@ -5,7 +5,7 @@ import { descriptor } from "../lib/sis";
 
 const temporalPosition = {
   type: String,
-  enum: ["Past", "Current", "Future"],
+  enum: ["Previous", "Current", "Next", "Future", "Past"],
 };
 
 export const semester = {

@@ -34,7 +34,7 @@
 		"moment": "^2.30.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-router-dom": "^6.28.0",
+		"react-router-dom": "^7.0.1",
 		"react-select": "^5.8.3",
 		"recharts": "^2.13.3",
 		"sass-embedded": "^1.81.0"
@@ -44,16 +44,17 @@
 		"@repo/typescript-config": "*",
 		"@types/lodash": "^4.17.13",
 		"@types/mapbox-gl": "^3.4.1",
-		"@types/node": "^22.9.1",
+		"@types/node": "^22.10.0",
 		"@types/react": "^18.3.12",
 		"@types/react-dom": "^18.3.1",
-		"@vitejs/plugin-react": "^4.3.3",
+		"@vitejs/plugin-react": "^4.3.4",
 		"eslint": "^9.15.0",
 		"eslint-plugin-react-hooks": "^5.0.0",
 		"eslint-plugin-react-refresh": "^0.4.14",
-		"sass": "^1.81.0",
+		"sass": "^1.69.0",
+		"sass-embedded-linux-musl-arm64": "^1.69.0",
 		"serve": "^14.2.4",
-		"typescript": "^5.6.3",
-		"vite": "^5.4.11"
+		"typescript": "^5.7.2",
+		"vite": "^6.0.1"
 	}
 }

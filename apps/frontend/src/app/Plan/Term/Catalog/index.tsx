@@ -55,7 +55,7 @@ export default function Catalog({
             </p>
           </Dialog.Title>
           <Dialog.Close asChild>
-            <IconButton className={styles.close}>
+            <IconButton>
               <Xmark />
             </IconButton>
           </Dialog.Close>

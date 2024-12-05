@@ -30,19 +30,14 @@
     flex-grow: 1;
     font-size: 14px;
 
-    .heading, .title {
-      color: var(--heading-color);
-      margin-bottom: 8px;
-      line-height: 1;
-    }
-
     .heading {
       font-weight: 660;
-      font-feature-settings: "cv05" on, "cv13" on, "ss07" on, "cv12" on, "cv06" on;
-    }
-
-    .title {
-      font-weight: 500;
+      font-feature-settings:
+        "cv05" on,
+        "cv13" on,
+        "ss07" on,
+        "cv12" on,
+        "cv06" on;
     }
 
     .description {

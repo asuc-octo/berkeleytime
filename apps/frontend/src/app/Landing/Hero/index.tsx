@@ -113,7 +113,7 @@ export default function Hero() {
               autoFocus
               placeholder="Search for courses..."
             />
-            <Button className={styles.button} variant="solid">
+            <Button variant="solid">
               Go
               <ArrowRight />
             </Button>

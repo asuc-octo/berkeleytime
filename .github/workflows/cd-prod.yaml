@@ -18,7 +18,7 @@ jobs:
   build-push:
     name: Build and Push Images and Charts
     needs: [branch-check]
-    uses: ./.github/workflows/cd.yaml
+    uses: ./.github/workflows/cd-build.yaml
     with:
       image_tag: prod
       chart_ver: "1.0.0"
@@ -27,7 +27,7 @@ jobs:
   deploy:
     name: SSH and Deploy
     needs: [build-push]
-    uses: ./.github/workflows/deploy.yaml
+    uses: ./.github/workflows/cd-deploy.yaml
     with:
       environment: production
       name: bt-prod-app
