@@ -103,16 +103,18 @@ export default function AttendanceRequirements({
     if (!courseData?.course?.classes) return [] as TermInfo[];
 
     return _.chain(courseData.course.classes as ClassInfo[])
-      .map((classInfo: ClassInfo): TermInfo => ({
-        value: `${classInfo.semester} ${classInfo.year}`,
-        label: `${classInfo.semester} ${classInfo.year}`,
-        semester: classInfo.semester as Semester,
-        year: classInfo.year,
-      }))
+      .map(
+        (classInfo: ClassInfo): TermInfo => ({
+          value: `${classInfo.semester} ${classInfo.year}`,
+          label: `${classInfo.semester} ${classInfo.year}`,
+          semester: classInfo.semester as Semester,
+          year: classInfo.year,
+        })
+      )
       .uniqBy((term: TermInfo) => `${term.semester}-${term.year}`)
       .orderBy(
         [
-          'year',
+          "year",
           (term: TermInfo) => {
             const semesterOrder = {
               [Semester.Spring]: 0,
@@ -123,7 +125,7 @@ export default function AttendanceRequirements({
             return semesterOrder[term.semester];
           },
         ] as const,
-        ['desc', 'asc']
+        ["desc", "asc"]
       )
       .value() as TermInfo[];
   }, [courseData]);
