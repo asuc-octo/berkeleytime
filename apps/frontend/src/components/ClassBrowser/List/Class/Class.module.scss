@@ -30,33 +30,14 @@
     flex-grow: 1;
     font-size: 14px;
 
-    .heading, .title {
-      color: var(--heading-color);
-      margin-bottom: 8px;
-      line-height: 1;
-    }
-
     .heading {
       font-weight: 660;
-      font-feature-settings: "cv05" on, "cv13" on, "ss07" on, "cv12" on, "cv06" on;
-
-      .decalTag {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 12px;
-        margin-left: 8px;
-        border-radius: 100px;
-        background-color: var(--blue-50, #E6F3FF);  // Using system color if available
-        color: var(--blue-500, #2196F3);           // Using system color if available
-        font-size: 14px;
-        font-weight: 500;
-        font-feature-settings: normal;  // Reset inherited feature settings
-        line-height: 1;
-      }
-    }
-
-    .title {
-      font-weight: 500;
+      font-feature-settings:
+        "cv05" on,
+        "cv13" on,
+        "ss07" on,
+        "cv12" on,
+        "cv06" on;
     }
 
     .description {
@@ -69,6 +50,16 @@
       gap: 12px;
       margin-top: 12px;
       align-items: center;
+    }
+
+    .decalTag {
+      background-color: #2A7BE4;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-left: 8px;
+      display: inline-block;
     }
   }
 }

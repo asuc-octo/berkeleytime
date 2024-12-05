@@ -333,6 +333,17 @@ export const READ_CLASS = gql`
         startDate
         endDate
       }
+      decal {
+        id
+        title
+        description
+        category
+        units
+        website
+        application
+        enroll
+        contact
+      }
     }
   }
 `;
@@ -352,14 +363,6 @@ export const GET_CATALOG = gql`
       gradingBasis
       decal {
         id
-        title
-        description
-        category
-        units
-        website
-        application
-        enroll
-        contact
       }
       primarySection {
         component

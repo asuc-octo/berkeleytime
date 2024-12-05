@@ -54,7 +54,7 @@ export default function Catalog({ onClassSelect, children }: CatalogProps) {
         <div className={styles.header}>
           Add a course to this schedule
           <Dialog.Close asChild>
-            <IconButton className={styles.close}>
+            <IconButton>
               <Xmark />
             </IconButton>
           </Dialog.Close>

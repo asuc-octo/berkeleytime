@@ -9,22 +9,22 @@
     flex-direction: column;
     padding: 24px;
 
-    .button {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      color: var(--blue-500);
-      line-height: 1;
-      cursor: pointer;
-      font-weight: 500;
-      margin-top: 12px;
-      transition: all 100ms ease-in-out;
+    // .button {
+    //   display: flex;
+    //   align-items: center;
+    //   gap: 12px;
+    //   font-size: 14px;
+    //   color: var(--blue-500);
+    //   line-height: 1;
+    //   cursor: pointer;
+    //   font-weight: 500;
+    //   margin-top: 12px;
+    //   transition: all 100ms ease-in-out;
 
-      &:hover {
-        color: var(--blue-600);
-      }
-    }
+    //   &:hover {
+    //     color: var(--blue-600);
+    //   }
+    // }
 
     .label {
       font-size: 14px;
@@ -46,7 +46,8 @@
         color: var(--heading-color);
       }
 
-      &:hover .checkbox:not([data-state="checked"]), &:hover .radio:not([data-state="checked"]) {
+      &:hover .checkbox:not([data-state="checked"]),
+      &:hover .radio:not([data-state="checked"]) {
         border-color: var(--heading-color);
       }
 
@@ -143,7 +144,7 @@
   @media (992px < width <= 1400px) {
     &.responsive {
       width: 384px;
-      
+
       .body {
         padding-top: 12px;
       }
