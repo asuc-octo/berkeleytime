@@ -278,7 +278,7 @@ const updateTerms = async () => {
   await TermModel.deleteMany({});
 
   await TermModel.insertMany(terms);
-  
+
   // Split terms into batches of 5000
   const batchSize = 5000;
 
