@@ -22,17 +22,37 @@ import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
 
-interface AttendanceRequirementsProps {
-  attendanceRequired: boolean | null;
-  lecturesRecorded: boolean | null;
-  submissionAmount?: number; // Optional prop with default value
+interface Props {
+  attendanceRequired?: boolean;
+  lecturesRecorded?: boolean;
+  submissionAmount?: number;
+}
+
+interface ClassInfo {
+  semester: string;
+  year: number;
+}
+
+interface TermInfo {
+  semester: Semester;
+  year: number;
+  value: string;
+  label: string;
+}
+
+interface UserClass {
+  subject: string;
+  courseNumber: string;
+  semester: Semester;
+  year: number;
+  classNumber: string;
 }
 
 export default function AttendanceRequirements({
-  attendanceRequired,
-  lecturesRecorded,
-  submissionAmount = 0, // Default value set to 0
-}: AttendanceRequirementsProps) {
+  attendanceRequired = false,
+  lecturesRecorded = false,
+  submissionAmount = 0,
+}: Props) {
   const [isModalOpen, setModalOpen] = useState(false);
   const { class: currentClass } = useClass();
   const { data: user } = useReadUser();
@@ -80,32 +100,32 @@ export default function AttendanceRequirements({
   };
 
   const availableTerms = React.useMemo(() => {
-    if (!courseData?.course?.classes) return [];
+    if (!courseData?.course?.classes) return [] as TermInfo[];
 
-    return _.chain(courseData.course.classes)
-      .map((classInfo) => ({
+    return _.chain(courseData.course.classes as ClassInfo[])
+      .map((classInfo: ClassInfo): TermInfo => ({
         value: `${classInfo.semester} ${classInfo.year}`,
         label: `${classInfo.semester} ${classInfo.year}`,
         semester: classInfo.semester as Semester,
         year: classInfo.year,
       }))
-      .uniqBy((term) => `${term.semester}-${term.year}`)
+      .uniqBy((term: TermInfo) => `${term.semester}-${term.year}`)
       .orderBy(
         [
-          "year",
-          (term) => {
+          'year',
+          (term: TermInfo) => {
             const semesterOrder = {
               [Semester.Spring]: 0,
               [Semester.Summer]: 1,
               [Semester.Fall]: 2,
               [Semester.Winter]: 3,
             };
-            return semesterOrder[term.semester as Semester];
+            return semesterOrder[term.semester];
           },
-        ],
-        ["desc", "asc"]
+        ] as const,
+        ['desc', 'asc']
       )
-      .value();
+      .value() as TermInfo[];
   }, [courseData]);
   if (submissionAmount < 5) {
     return (
@@ -132,13 +152,7 @@ export default function AttendanceRequirements({
           availableTerms={availableTerms}
           onSubmit={handleSubmitRatings}
           initialUserClass={userRatingsData?.userRatings?.classes?.find(
-            (c: {
-              subject: string;
-              courseNumber: string;
-              semester: Semester;
-              year: number;
-              classNumber: string;
-            }) =>
+            (c: UserClass) =>
               c.subject === currentClass.subject &&
               c.courseNumber === currentClass.courseNumber &&
               c.semester === currentClass.semester &&
@@ -195,13 +209,7 @@ export default function AttendanceRequirements({
         availableTerms={availableTerms}
         onSubmit={handleSubmitRatings}
         initialUserClass={userRatingsData?.userRatings?.classes?.find(
-          (c: {
-            subject: string;
-            courseNumber: string;
-            semester: Semester;
-            year: number;
-            classNumber: string;
-          }) =>
+          (c: UserClass) =>
             c.subject === currentClass.subject &&
             c.courseNumber === currentClass.courseNumber &&
             c.semester === currentClass.semester &&

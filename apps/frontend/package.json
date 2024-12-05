@@ -22,8 +22,8 @@
 		"@radix-ui/react-separator": "^1.1.0",
 		"@radix-ui/react-tabs": "^1.1.1",
 		"@radix-ui/react-tooltip": "^1.1.4",
-		"@repo/theme": "*",
 		"@repo/shared": "*",
+		"@repo/theme": "*",
 		"@shopify/draggable": "^1.1.3",
 		"@tanstack/react-virtual": "^3.10.9",
 		"classnames": "^2.5.1",
@@ -42,6 +42,7 @@
 	"devDependencies": {
 		"@repo/eslint-config": "*",
 		"@repo/typescript-config": "*",
+		"@types/lodash": "^4.17.13",
 		"@types/mapbox-gl": "^3.4.1",
 		"@types/node": "^22.9.1",
 		"@types/react": "^18.3.12",

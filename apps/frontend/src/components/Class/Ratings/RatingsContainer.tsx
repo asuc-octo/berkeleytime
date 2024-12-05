@@ -60,6 +60,13 @@ const isSemester = (value: string): boolean => {
   return Object.values(Semester).includes(firstWord as Semester);
 };
 
+interface Term {
+  semester: Semester;
+  year: number;
+  value: string;
+  label: string;
+}
+
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -263,7 +270,7 @@ export function RatingsContainer() {
                 <ReactSelect
                   options={[
                     { value: "all", label: "Overall Ratings" },
-                    ...availableTerms.filter((term) => {
+                    ...availableTerms.filter((term: Term) => {
                       // Filter for past terms
                       const termPosition = termsData?.find(
                         (t) =>
