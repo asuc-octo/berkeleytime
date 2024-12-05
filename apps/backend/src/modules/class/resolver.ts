@@ -1,18 +1,16 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
+
+
 import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
-import {
-  getClass,
-  getPrimarySection,
-  getSecondarySections,
-  getSection,
-} from "./controller";
+import { getClass, getDecalInfo, getPrimarySection, getSecondarySections, getSection } from "./controller";
 import { IntermediateClass, IntermediateSection } from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
+
 
 const resolvers: ClassModule.Resolvers = {
   ClassNumber: new GraphQLScalarType({
@@ -145,6 +143,19 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return gradeDistribution;
+    },
+
+    decal: async (parent: IntermediateClass | ClassModule.Class) => {
+      const decalInfo = await getDecalInfo(
+        parent.year,
+        parent.semester,
+        parent.courseNumber,
+        parent.subject
+      );
+
+      if (!decalInfo) return null as any;
+
+      return decalInfo;
     },
   },
 

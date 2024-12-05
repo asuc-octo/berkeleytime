@@ -1,4 +1,4 @@
-import { ClassType, SectionType } from "@repo/common";
+import { ClassType, DecalType, SectionType } from "@repo/common";
 
 import {
   ClassFinalExam,
@@ -51,6 +51,7 @@ export const formatClass = (_class: ClassType) => {
     gradingBasis: _class.gradingBasis?.description as ClassGradingBasis,
     finalExam: _class.finalExam?.code as ClassFinalExam,
     title: _class.classTitle,
+    decal: null,
     unitsMax: _class.allowedUnits?.maximum as number,
     unitsMin: _class.allowedUnits?.minimum as number,
   } as IntermediateClass;
@@ -92,42 +93,47 @@ export const formatSection = (section: SectionType) => {
     endDate: formatDate(section?.endDate),
     startDate: formatDate(section?.startDate),
 
-    meetings: section.meetings?.map((m) => ({
-      days: [
-        m.meetsSunday,
-        m.meetsMonday,
-        m.meetsTuesday,
-        m.meetsWednesday,
-        m.meetsThursday,
-        m.meetsFriday,
-        m.meetsSaturday,
-      ],
+    meetings:
+      section.meetings?.map((m) => ({
+        days: [
+          m.meetsSunday,
+          m.meetsMonday,
+          m.meetsTuesday,
+          m.meetsWednesday,
+          m.meetsThursday,
+          m.meetsFriday,
+          m.meetsSaturday,
+        ],
 
-      endDate: formatDate(m.endDate),
-      endTime: m.endTime,
-      location: m.location?.description,
-      startDate: formatDate(m.startDate),
-      startTime: m.startTime,
+        endDate: formatDate(m.endDate),
+        endTime: m.endTime,
+        location: m.location?.description,
+        startDate: formatDate(m.startDate),
+        startTime: m.startTime,
 
-      instructors: m?.assignedInstructors
-        ?.filter(
-          (i) => i.printInScheduleOfClasses && i.instructor?.names != undefined
-        )
-        .map((i) => {
-          // Primary name has precedence over preferred name
-          let nameInfo = i.instructor?.names?.find(
-            (n) => n.type?.code === "PRI"
-          );
-          if (nameInfo == undefined) {
-            nameInfo = i.instructor?.names?.find((n) => n.type?.code === "PRF");
-          }
+        instructors:
+          m?.assignedInstructors
+            ?.filter(
+              (i) =>
+                i.printInScheduleOfClasses && i.instructor?.names != undefined
+            )
+            .map((i) => {
+              // Primary name has precedence over preferred name
+              let nameInfo = i.instructor?.names?.find(
+                (n) => n.type?.code === "PRI"
+              );
+              if (nameInfo == undefined) {
+                nameInfo = i.instructor?.names?.find(
+                  (n) => n.type?.code === "PRF"
+                );
+              }
 
-          return {
-            givenName: nameInfo?.givenName as string,
-            familyName: nameInfo?.familyName as string,
-          };
-        }),
-    })),
+              return {
+                givenName: nameInfo?.givenName as string,
+                familyName: nameInfo?.familyName as string,
+              };
+            }) || [],
+      })) || [],
 
     exams: section.exams?.map((e) => ({
       date: formatDate(e.date),
@@ -156,4 +162,20 @@ export const formatSection = (section: SectionType) => {
       enrollMax: sr.maxEnroll as number,
     })),
   } as IntermediateSection;
+};
+
+export const formatDecalInfo = (decal: DecalType) => {
+  if (!decal) return null;
+
+  return {
+    id: String(decal.id) || "",
+    title: decal.title || "",
+    description: decal.description || "",
+    category: decal.category || "",
+    units: String(decal.units) || "",
+    website: decal.website || "",
+    application: decal.application || "",
+    enroll: decal.enroll || "",
+    contact: decal.contact || "",
+  };
 };

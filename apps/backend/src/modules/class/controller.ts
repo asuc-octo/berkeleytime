@@ -1,6 +1,9 @@
-import { ClassModel, SectionModel } from "@repo/common";
+import { ClassModel, DecalModel, SectionModel } from "@repo/common";
 
-import { formatClass, formatSection } from "./formatter";
+
+
+import { formatClass, formatDecalInfo, formatSection } from "./formatter";
+
 
 export const getClass = async (
   year: number,
@@ -74,4 +77,22 @@ export const getSection = async (
   if (!section) return null;
 
   return formatSection(section);
+};
+
+export const getDecalInfo = async (
+  year: number,
+  semester: string,
+  courseNumber: string,
+  subject: string
+) => {
+  const decal = await DecalModel.findOne({
+    year: `${year}`,
+    semester,
+    courseNumber,
+    subject,
+  }).lean();
+
+  if (!decal) return null;
+
+  return formatDecalInfo(decal);
 };
