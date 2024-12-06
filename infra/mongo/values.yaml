@@ -8,6 +8,11 @@ mongodb:
   image:
     tag: 7.0.5
 
+  architecture: replicaset
+  aribter:
+    enabled: false
+  replicaCount: 1
+
   auth:
     enabled: false
 
