@@ -166,9 +166,11 @@ export function RatingButton(
   ) : (
     <Button
       onClick={() => signIn(window.location.pathname)}
-      variant="solid"
-      className={styles.button}
-      style={{ height: "38px" }}
+      style={{
+        color: "var(--blue-500)",
+        backgroundColor: "var(--foreground-color)",
+        height: "38px",
+      }}
     >
       Sign in to add ratings
       <ArrowRight />
