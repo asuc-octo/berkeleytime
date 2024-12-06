@@ -20,6 +20,7 @@ const Class = {
   Grades: lazy(() => import("@/components/Class/Grades")),
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
+  Ratings: lazy(() => import("@/components/Class/Ratings")),
 };
 
 const Course = {
@@ -144,6 +145,10 @@ const router = createBrowserRouter([
           {
             element: <Class.Grades />,
             path: "grades",
+          },
+          {
+            element: <Class.Ratings />,
+            path: "ratings",
           },
           {
             path: "*",

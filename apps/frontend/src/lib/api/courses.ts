@@ -30,6 +30,12 @@ export interface ICourse {
   title: string;
   toDate: string;
   typicallyOffered: Semester[] | null;
+  aggregatedRatings?: {
+    metrics: Array<{
+      count: number;
+      metricName: string;
+    }>;
+  };
 }
 
 export interface ReadCourseResponse {
@@ -62,6 +68,17 @@ export const READ_COURSE = gql`
         year
         semester
         number
+      }
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
       }
     }
   }
