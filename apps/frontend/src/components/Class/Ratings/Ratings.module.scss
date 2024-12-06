@@ -286,7 +286,6 @@
   }
 }
 
-
 /* Dropdown styling */
 .termDropdown__control {
   padding: 6px 12px; /* Smaller padding */
@@ -346,7 +345,7 @@
   text-align: center;
   padding: 48px 0;
   color: var(--slate-400);
-    /* Web UI (Desktop)/Title/Title Medium */
+  /* Web UI (Desktop)/Title/Title Medium */
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -361,7 +360,7 @@
 
   button {
     margin-top: 32px;
-    background-color: var(--foreground-color); 
+    background-color: var(--foreground-color);
     font-weight: 400;
   }
 }
@@ -377,10 +376,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .statRow{
+  .statRow {
     .barContainer {
       background-color: var(--zinc-600);
-      
+
       .bar {
         background-color: var(--zinc-400);
       }
@@ -401,7 +400,6 @@
     background: var(--red-950);
   }
   .titleSection {
-
     .title {
       color: var(--dark-heading-color);
     }
@@ -464,7 +462,7 @@
   }
 }
 
- .info {
+.info {
   display: inline-flex;
   cursor: pointer;
 }

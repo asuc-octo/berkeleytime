@@ -1,9 +1,9 @@
 import { RatingModel, UserModel } from "@repo/common";
+
 import { MetricName } from "../../../generated-types/graphql";
+import { booleanScaleMetrics, numberScaleMetrics } from "../controller";
 
-import { numberScaleMetrics, booleanScaleMetrics } from "../controller";
-
-const ratingThreshold = 100
+const ratingThreshold = 100;
 
 export const checkRatingExists = async (
   context: any,
@@ -24,10 +24,7 @@ export const checkUserClassRatingsCount = async (context: any) => {
   return (user?.classRatingsCount || 0) < ratingThreshold;
 };
 
-export const checkValueConstraint = (
-  metricName: MetricName,
-  value: number
-) => {
+export const checkValueConstraint = (metricName: MetricName, value: number) => {
   if (numberScaleMetrics.includes(metricName)) {
     if (value < 1 || value > 5 || !Number.isInteger(value)) {
       throw new Error(
