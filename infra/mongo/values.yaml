@@ -9,7 +9,7 @@ mongodb:
     tag: 7.0.5
 
   architecture: replicaset
-  aribter:
+  arbiter:
     enabled: false
   replicaCount: 1
 
