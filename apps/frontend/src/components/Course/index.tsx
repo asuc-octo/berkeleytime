@@ -49,7 +49,7 @@ function Body({ children, dialog }: BodyProps) {
     <Suspense
       fallback={
         <Boundary>
-          <LoadingIndicator />
+          <LoadingIndicator size="lg" />
         </Boundary>
       }
     >

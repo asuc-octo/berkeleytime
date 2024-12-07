@@ -1,45 +1,21 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
-export const GradtrakCustomEventSchema = new Schema({
-  start_time: {
-    type: String,
-    required: true,
-    trim: true,
-    alias: "start",
-  },
-  end_time: {
-    type: String,
-    required: true,
-    trim: true,
-    alias: "end",
-  },
+export const PlanCustomEventSchema = new Schema({
   title: {
     type: String,
     required: false,
     alias: "name",
   },
-  location: {
-    type: String,
-    required: false,
-    trim: true,
-    alias: "place",
-  },
   description: {
     type: String,
     required: false,
   },
-  days_of_week: {
-    type: String,
-    required: false,
-    trim: true,
-    alias: "days",
-  },
-  uni_reqs: {
+  uniReqs: {
     type: [String],
     required: false,
     trim: true,
   },
-  college_reqs: {
+  collegeReqs: {
     type: [String],
     required: false,
     trim: true,
@@ -47,27 +23,17 @@ export const GradtrakCustomEventSchema = new Schema({
 });
 
 export const selectedCourseSchema = new Schema({
-  class_ID: {
+  classID: {
     type: String,
     trim: true,
     required: true,
   },
-  primary_section_ID: {
-    type: String,
-    trim: true,
-    required: false,
-  },
-  secondary_section_IDs: {
-    type: [String],
-    trim: true,
-    required: false,
-  },
-  uni_reqs: {
+  uniReqs: {
     type: [String],
     required: false,
     trim: true,
   },
-  college_reqs: {
+  collegeReqs: {
     type: [String],
     required: false,
     trim: true,
@@ -84,26 +50,21 @@ export const planTermSchema = new Schema(
       type: [selectedCourseSchema],
       required: true,
     },
-    user_email: {
+    userEmail: {
       type: String,
       required: true,
     },
-    term: {
-      type: {
-        year: {
-          type: Number,
-          required: true,
-        },
-        planTerm: {
-          type: String,
-          required: true,
-          trim: true,
-        },
-      },
-      required: false,
+    year: {
+      type: Number,
+      required: true,
     },
-    custom_events: {
-      type: [GradtrakCustomEventSchema],
+    term: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    customEvents: {
+      type: [PlanCustomEventSchema],
       required: false,
     },
   }
@@ -120,24 +81,24 @@ export const majorReqSchema = new Schema({
     trim: true,
     required: true,
   },
-  num_courses_required: {
+  numCoursesRequired: {
     type: Number,
     required: true,
   },
-  satisfying_course_ids: {
+  satisfyingCourseIds: {
     type: [String],
     trim: true,
     required: false,
   },
-  is_minor: {
+  isMinor: {
     type: Boolean,
     required: false
   }
 });
 
-export const gradtrakSchema = new Schema(
+export const planSchema = new Schema(
   {
-    user_email: {
+    userEmail: {
       type: String,
       required: true,
       trim: true,
@@ -151,15 +112,15 @@ export const gradtrakSchema = new Schema(
       type: planTermSchema,
       required: true,
     },
-    uni_reqs: {
+    uniReqs: {
       type: [String!],
       required: true,
     },
-    college_reqs: {
+    collegeReqs: {
       type: [String!],
       required: true,
     },
-    major_reqs: {
+    majorReqs: {
       type: [majorReqSchema],
       required: true,
     }
@@ -167,9 +128,9 @@ export const gradtrakSchema = new Schema(
   { timestamps: true }
 );
 
-export type GradtrakCustomEventType = Document &
-  InferSchemaType<typeof GradtrakCustomEventSchema>;
-export const CustomEventModel = mongoose.model<GradtrakCustomEventType>('customEvent', GradtrakCustomEventSchema);
+export type PlanCustomEventType = Document &
+  InferSchemaType<typeof PlanCustomEventSchema>;
+export const CustomEventModel = mongoose.model<PlanCustomEventType>('customEvent', PlanCustomEventSchema);
 
 export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> & Document;
 export const SelectedCourseModel = mongoose.model<SelectedCourseType>('course', selectedCourseSchema);
@@ -180,23 +141,21 @@ export const MajorReqModel = mongoose.model<MajorReqType>('majorReq', majorReqSc
 export interface PlanTermType extends Document {
   name?: string;
   courses: SelectedCourseType[];
-  user_email: string;
-  term?: {
-    year: number;
-    planTerm: string;
-  };
-  custom_events?: GradtrakCustomEventType[];
+  userEmail: string;
+  year: number;
+  term: string;
+  customEvents?: PlanCustomEventType[];
 }
 export const PlanTermModel = mongoose.model<PlanTermType>('planTerm', planTermSchema);
 
-export interface GradtrakType extends Document {
-  user_email: string;
+export interface PlanType extends Document {
+  userEmail: string;
   planTerms: PlanTermType[];
   miscellaneous: PlanTermType;
-  uni_reqs: string[];
-  college_reqs: string[];
-  major_reqs: MajorReqType[];
+  uniReqs: string[];
+  collegeReqs: string[];
+  majorReqs: MajorReqType[];
   createdAt: Date;
   updatedAt: Date;
 }
-export const GradtrakModel = mongoose.model<GradtrakType>('gradtrak', gradtrakSchema);
+export const PlanModel = mongoose.model<PlanType>('plan', planSchema);

@@ -29,6 +29,7 @@ enum Letter {
 
 interface Grade {
   letter: Letter;
+  percentage: number;
   count: number;
 }
 
@@ -96,10 +97,13 @@ export const getDistribution = (distributions: GradeDistributionType[]) => {
     }
   );
 
+  const total = Object.values(distribution).reduce((acc, count) => acc + count);
+
   return Object.entries(distribution).map(
     ([field, count]) =>
       ({
         letter: letters[field],
+        percentage: count / total,
         count,
       }) as Grade
   );

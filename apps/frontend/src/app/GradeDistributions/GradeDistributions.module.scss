@@ -14,5 +14,12 @@
     display: flex;
     flex-direction: column;
     overflow: auto;
+    gap: 24px;
+
+    .grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(384px, 1fr));
+    }
   }
 }

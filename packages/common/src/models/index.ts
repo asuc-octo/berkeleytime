@@ -7,4 +7,4 @@ export * from "./course";
 export * from "./course";
 export * from "./section";
 export * from "./grade-distribution";
-export * from "./gradtrak";
+export * from "./plan";

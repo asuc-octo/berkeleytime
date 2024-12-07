@@ -1,5 +1,5 @@
 import resolver from "./resolver";
-import typeDef from "./typedefs/gradtrak";
+import typeDef from "./typedefs/plan";
 
 export default {
   resolver,
