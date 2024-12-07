@@ -2,7 +2,8 @@ import {
   PlanTermInput,
   SelectedCourseInput,
   CustomEventInput,
-  PlanInput
+  PlanInput,
+  Colleges
 } from "../../generated-types/graphql";
 import {
   getPlanByUser,
@@ -51,8 +52,11 @@ const resolvers: PlanModule.Resolvers = {
     ) {
       return setClasses(args.id, args.courses, args.customEvents, context);
     },
-    createNewPlan(_parent, _args, context) {
-      return createPlan(context);
+    createNewPlan(
+      _parent, 
+      args: { college: Colleges }, 
+      context) {
+      return createPlan(args.college, context);
     }, 
     editPlan(
       _parent,

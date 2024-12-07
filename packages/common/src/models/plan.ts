@@ -54,19 +54,14 @@ export const planTermSchema = new Schema(
       type: String,
       required: true,
     },
+    year: {
+      type: Number,
+      required: true,
+    },
     term: {
-      type: {
-        year: {
-          type: Number,
-          required: true,
-        },
-        planTerm: {
-          type: String,
-          required: true,
-          trim: true,
-        },
-      },
-      required: false,
+      type: String,
+      required: true,
+      trim: true,
     },
     customEvents: {
       type: [PlanCustomEventSchema],

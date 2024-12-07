@@ -9,6 +9,7 @@ import {
   PlanTermInput,
   SelectedCourseInput,
   PlanInput,
+  Colleges
 } from "../../generated-types/graphql";
 import { formatPlanTerm, formatPlan } from "./formatter";
 
@@ -110,7 +111,7 @@ export async function createPlanTerm(
   });
 
   // add to plan
-  const gt = await PlanModel.findOne({ user_email: context.user.email });
+  const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
@@ -185,6 +186,7 @@ export async function setClasses(
 
 // create a new plan
 export async function createPlan(
+  college: Colleges,
   context: any
 ): Promise<Plan> {
   if (!context.user.email) throw new Error("Unauthorized");
@@ -201,12 +203,25 @@ export async function createPlan(
     year: -1,
     term: "Misc",
   });
-  console.log(miscellaneous);
+
+  let collegeReqs = [""];
+  
+  // set college
+  if (college as String == "LnS") {
+    collegeReqs = LnSReqs;
+  } else if (college as String == "CoE") {
+    collegeReqs = CoEReqs;
+  } else if (college as String == "HAAS") {
+    collegeReqs = HaasReqs;
+  } else {
+    collegeReqs = [];
+  }
+
   const newPlan = await PlanModel.create({
     userEmail: context.user.email,
     planTerms: [],
     miscellaneous: miscellaneous,
-    collegeReqs: [],
+    collegeReqs: collegeReqs,
     uniReqs: UniReqs,
     majorReqs: [],
   });

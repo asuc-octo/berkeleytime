@@ -168,9 +168,9 @@ const typeDef = gql`
 
   type Mutation {
     """
-    Takes in user's email, creates a new Plan record in the database, and returns the Plan
+    Takes in user's email and a college, creates a new Plan record in the database, and returns the Plan
     """
-    createNewPlan: Plan @auth
+    createNewPlan(college: Colleges!): Plan @auth
 
     """
     Edits Plan college and majorReqs
