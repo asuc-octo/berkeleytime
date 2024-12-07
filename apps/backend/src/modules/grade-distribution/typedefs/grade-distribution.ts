@@ -8,6 +8,7 @@ export default gql`
 
   type Grade @cacheControl(maxAge: 1) {
     letter: String!
+    percentage: Float!
     count: Int!
   }
 
