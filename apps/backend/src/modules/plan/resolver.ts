@@ -7,7 +7,6 @@ import {
 } from "../../generated-types/graphql";
 import {
   getPlanByUser,
-  getPlanTermByID,
   removePlanTerm,
   createPlanTerm,
   editPlanTerm,
@@ -22,9 +21,6 @@ const resolvers: PlanModule.Resolvers = {
   Query: {
     planByUser(_parent, _args, context) {
       return getPlanByUser(context);
-    },
-    planTermByID(_parent, args: { id: string }) {
-      return getPlanTermByID(args.id);
     },
   },
   Mutation: {

@@ -129,16 +129,16 @@ const typeDef = gql`
   }
 
   input CustomEventInput {
-    title: String
-    description: String
-    uniReqs: [UniReqs!]
-    collegeReqs: [CollegeReqs!]
+    title: String!
+    description: String!
+    uniReqs: [UniReqs!]!
+    collegeReqs: [CollegeReqs!]!
   }
 
   input SelectedCourseInput {
     classID: String!
-    uniReqs: [UniReqs!]
-    collegeReqs: [CollegeReqs!]
+    uniReqs: [UniReqs!]!
+    collegeReqs: [CollegeReqs!]!
   }
 
   input PlanInput {
@@ -147,11 +147,11 @@ const typeDef = gql`
   }
 
   input PlanTermInput {
-    name: String
+    name: String!
     year: Int!
     term: String!
-    courses: [SelectedCourseInput!]
-    customEvents: [CustomEventInput!]
+    courses: [SelectedCourseInput!]!
+    customEvents: [CustomEventInput!]!
   }
 
   type Query {
@@ -159,11 +159,6 @@ const typeDef = gql`
     Takes in user's email and returns their entire plan
     """
     planByUser: Plan @auth
-    
-    """
-    Takes in an ID and returns the planTerm for that term.
-    """
-    planTermByID(id: ID!): PlanTerm
   }
 
   type Mutation {

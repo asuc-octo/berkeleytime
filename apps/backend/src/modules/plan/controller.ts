@@ -59,15 +59,6 @@ export async function getPlanByUser(
   return formatPlan(gt);
 }
 
-// get the planTerm for a user and a specific term
-export async function getPlanTermByID(id: string): Promise<PlanTerm> {
-  const planTermFromID = await PlanTermModel.findById({ _id: id });
-  if (!planTermFromID) {
-    throw new Error("No planTerms found with this ID");
-  }
-  return formatPlanTerm(planTermFromID);
-}
-
 // delete a planTerm specified by ObjectID
 export async function removePlanTerm(planTermID: string, context: any): Promise<string> {
   if (!context.user.email) throw new Error("Unauthorized");
