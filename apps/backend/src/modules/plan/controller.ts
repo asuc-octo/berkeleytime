@@ -49,9 +49,9 @@ const HaasReqs = [
 export async function getPlanByUser(
   context: any
 ): Promise<Plan | null> {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user.email) throw new Error("Unauthorized");
 
-  const gt = await PlanModel.findOne({ userEmail: context.user._id });
+  const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
@@ -69,10 +69,10 @@ export async function getPlanTermByID(id: string): Promise<PlanTerm> {
 
 // delete a planTerm specified by ObjectID
 export async function removePlanTerm(planTermID: string, context: any): Promise<string> {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user.email) throw new Error("Unauthorized");
 
   // check if planTerm belongs to plan
-  const gt = await PlanModel.findOne({ userEmail: context.user._id });
+  const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
@@ -99,18 +99,18 @@ export async function createPlanTerm(
   mainPlanTerm: PlanTermInput,
   context: any
 ): Promise<PlanTerm> {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user.email) throw new Error("Unauthorized");
   if (mainPlanTerm.customEvents) {
     mainPlanTerm.customEvents.forEach(removeNullEventVals);
   }
   const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
-  nonNullPlanTerm.userEmail = context.user._id;
+  nonNullPlanTerm.userEmail = context.user.email;
   const newPlanTerm = new PlanTermModel({
     ...nonNullPlanTerm
   });
 
   // add to plan
-  const gt = await PlanModel.findOne({ user_email: context.user._id });
+  const gt = await PlanModel.findOne({ user_email: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
@@ -126,8 +126,8 @@ export async function editPlanTerm(
   mainPlanTerm: PlanTermInput,
   context: any
 ): Promise<PlanTerm> {
-  if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await PlanModel.findOne({ userEmail: context.user._id });
+  if (!context.user.email) throw new Error("Unauthorized");
+  const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
@@ -135,7 +135,7 @@ export async function editPlanTerm(
     mainPlanTerm.customEvents.forEach(removeNullEventVals);
   }
   const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
-  nonNullPlanTerm.userEmail = context.user._id;
+  nonNullPlanTerm.userEmail = context.user.email;
   const updatedPlanTerm = new PlanTermModel({
     ...nonNullPlanTerm
   });
@@ -161,8 +161,8 @@ export async function setClasses(
   customEvents: CustomEventInput[],
   context: any
 ): Promise<PlanTerm> {
-  if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await PlanModel.findOne({ userEmail: context.user._id });
+  if (!context.user.email) throw new Error("Unauthorized");
+  const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
@@ -187,9 +187,9 @@ export async function setClasses(
 export async function createPlan(
   context: any
 ): Promise<Plan> {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user.email) throw new Error("Unauthorized");
   // if existing plan, overwrite
-  const gt = await PlanModel.findOne({ userEmail: context.user._id });
+  const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (gt) {
     throw new Error("User already has existing plan");
   }
@@ -197,10 +197,13 @@ export async function createPlan(
     name: "Miscellaneous",
     courses: [],
     customEvents: [],
-    userEmail: context.user._id
+    userEmail: context.user.email,
+    year: -1,
+    term: "Misc",
   });
+  console.log(miscellaneous);
   const newPlan = await PlanModel.create({
-    userEmail: context.user._id,
+    userEmail: context.user.email,
     planTerms: [],
     miscellaneous: miscellaneous,
     collegeReqs: [],
@@ -214,8 +217,8 @@ export async function editPlan(
   plan: PlanInput,
   context: any
 ): Promise<Plan> {
-  if (!context.user._id) throw new Error("Unauthorized");
-  const gt = await PlanModel.findOne({ userEmail: context.user._id });
+  if (!context.user.email) throw new Error("Unauthorized");
+  const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
@@ -239,10 +242,11 @@ export async function editPlan(
 export async function deletePlan(
   context: any
 ): Promise<string> {
-  if (!context.user._id) throw new Error("Unauthorized");
-  await PlanModel.deleteOne({ user_email: context.user._id })
+  if (!context.user.email) throw new Error("Unauthorized");
+  console.log(context.user);
+  await PlanModel.deleteOne({ userEmail: context.user.email })
   .catch(err => {
     return err;
   });
-  return context.user._id;
+  return context.user.email;
 }
