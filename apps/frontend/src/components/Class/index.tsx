@@ -350,6 +350,7 @@ export default function Class({
           </div>
           <h1 className={styles.heading}>
             {_class.subject} {_class.courseNumber} #{_class.number}
+            {_class.decal && <span className={styles.decalTag}>Decal</span>}
           </h1>
           <p className={styles.description}>
             {_class.title || _class.course.title}
@@ -367,43 +368,73 @@ export default function Class({
           </div>
           {dialog ? (
             <Tabs.List className={styles.menu} defaultValue="overview">
-              <Tabs.Trigger value="overview" asChild>
-                <MenuItem>Overview</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="sections" asChild>
-                <MenuItem>Sections</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="enrollment" asChild>
-                <MenuItem>Enrollment</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="grades" asChild>
-                <MenuItem>Grades</MenuItem>
-              </Tabs.Trigger>
+             {_class.decal ? (
+                <>
+                  <Tabs.Trigger value="overview" asChild>
+                    <MenuItem>Overview</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="enrollment" asChild>
+                    <MenuItem>Enrollment</MenuItem>
+                  </Tabs.Trigger>
+                </>
+              ) : (
+                <>
+                  <Tabs.Trigger value="overview" asChild>
+                    <MenuItem>Overview</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="sections" asChild>
+                    <MenuItem>Sections</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="enrollment" asChild>
+                    <MenuItem>Enrollment</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="grades" asChild>
+                    <MenuItem>Grades</MenuItem>
+                  </Tabs.Trigger>
+                </>
+              )}
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
-              <NavLink to={{ ...location, pathname: "." }} end>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Overview</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "sections" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Sections</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "enrollment" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Enrollment</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "grades" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Grades</MenuItem>
-                )}
-              </NavLink>
-            </div>
-          )}
+              {_class.decal ? (
+                <>
+                  <NavLink to={{ ...location, pathname: "." }} end>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Overview</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                </>
+              ) : (
+                <>
+                  <NavLink to={{ ...location, pathname: "." }} end>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Overview</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "sections" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Sections</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "grades" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Grades</MenuItem>
+                    )}
+                  </NavLink>
+              </>
+            )}
+          </div>
+        )}
         </Container>
       </div>
       <ClassContext.Provider
@@ -413,18 +444,31 @@ export default function Class({
         }}
       >
         <Body dialog={dialog}>
-          <Tabs.Content value="overview" asChild>
-            <Overview />
-          </Tabs.Content>
-          <Tabs.Content value="sections" asChild>
-            <Sections />
-          </Tabs.Content>
-          <Tabs.Content value="enrollment" asChild>
-            <Enrollment />
-          </Tabs.Content>
-          <Tabs.Content value="grades" asChild>
-            <Grades />
-          </Tabs.Content>
+        {_class.decal ? (
+          <>
+            <Tabs.Content value="overview" asChild>
+              <Overview />
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <Enrollment />
+            </Tabs.Content>
+          </>
+        ) : (
+          <>
+            <Tabs.Content value="overview" asChild>
+              <Overview />
+            </Tabs.Content>
+            <Tabs.Content value="sections" asChild>
+              <Sections />
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <Enrollment />
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <Grades />
+            </Tabs.Content>
+          </>
+        )}
         </Body>
       </ClassContext.Provider>
     </Root>
