@@ -1,7 +1,10 @@
 import { gql } from "@apollo/client";
 
+
+
 import { GradeDistribution, ICourse } from ".";
 import { ITerm, Semester } from "./terms";
+
 
 export enum InstructionMethod {
   Unknown = "UNK",
@@ -181,6 +184,18 @@ export interface IMeeting {
   instructors: IInstructor[];
 }
 
+export interface IClassDecalInfo {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  units: string;
+  website: string;
+  application: string;
+  enroll: string;
+  contact: string;
+}
+
 export interface IClass {
   // Identifiers
   year: number;
@@ -204,6 +219,7 @@ export interface IClass {
   title: string | null;
   unitsMax: number;
   unitsMin: number;
+  decal: IClassDecalInfo | null;
 }
 
 export interface ReadClassResponse {
@@ -317,6 +333,17 @@ export const READ_CLASS = gql`
         startDate
         endDate
       }
+      decal {
+        id
+        title
+        description
+        category
+        units
+        website
+        application
+        enroll
+        contact
+      }
     }
   }
 `;
@@ -334,6 +361,9 @@ export const GET_CATALOG = gql`
       unitsMin
       finalExam
       gradingBasis
+      decal {
+        id
+      }
       primarySection {
         component
         online

@@ -28,6 +28,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
       primarySection: { enrollCount, enrollMax, waitlistCount, waitlistMax },
       unitsMax,
       unitsMin,
+      decal,
       index,
       onClick,
     },
@@ -43,6 +44,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
         <div className={styles.text}>
           <p className={styles.heading}>
             {subject} {courseNumber} #{number}
+            {decal && <span className={styles.decalTag}>Decal</span>}
           </p>
           <p className={styles.description}>{title ?? courseTitle}</p>
           <div className={styles.row}>

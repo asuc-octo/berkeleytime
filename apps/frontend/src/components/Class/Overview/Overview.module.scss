@@ -2,6 +2,11 @@
   padding: 24px 0;
   font-size: 14px;
 
+  .link {
+    color: #2A7BE4;  // Blue color
+    text-decoration: underline;
+  }
+
   .label {
     margin-top: 24px;
     color: var(--label-color);

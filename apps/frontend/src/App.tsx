@@ -1,11 +1,7 @@
 import { lazy } from "react";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import {
-  RouterProvider,
-  createBrowserRouter,
-  redirect,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter, redirect } from "react-router-dom";
 
 import { ThemeProvider } from "@repo/theme";
 
