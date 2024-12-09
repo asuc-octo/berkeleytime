@@ -66,6 +66,11 @@ export const userSchema = new Schema(
         },
       ],
     },
+    classRatingsCount: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
     refresh_token: {
       type: String,
       trim: true,

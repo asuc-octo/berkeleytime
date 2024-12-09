@@ -36,6 +36,7 @@ export default gql`
     sections: [Section!]!
     term: Term!
     gradeDistribution: GradeDistribution!
+    aggregatedRatings: AggregatedRatings!
 
     "Attributes"
     gradingBasis: ClassGradingBasis!
