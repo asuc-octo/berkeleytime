@@ -80,7 +80,7 @@ export function RatingDetailView({
   status,
   statusColor,
   reviewCount,
-  weightedAverage
+  weightedAverage,
 }: RatingDetailProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [shouldAnimate, setShouldAnimate] = useState(false);
@@ -116,7 +116,9 @@ export function RatingDetailView({
             </Tooltip>
           </div>
           <span className={styles[statusColor]}>{status}</span>
-          <span className={styles.metricAverage}>{`${weightedAverage.toFixed(1)} / 5.0`}</span>
+          <span
+            className={styles.metricAverage}
+          >{`${weightedAverage.toFixed(1)} / 5.0`}</span>
         </div>
         <div className={styles.statusSection}>
           <NavArrowDown
@@ -133,7 +135,9 @@ export function RatingDetailView({
               style={{ "--delay": `${index * 60}ms` } as React.CSSProperties}
             >
               <span className={styles.rating}>{stat.rating}</span>
-              <Tooltip content={`${Math.round(stat.count * 100 / reviewCount)}% of users left this rating`}>
+              <Tooltip
+                content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
+              >
                 <div className={styles.barContainer}>
                   <div
                     className={styles.bar}

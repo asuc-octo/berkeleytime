@@ -220,7 +220,7 @@ export function RatingsContainer() {
         const category = metric.categories.find(
           (cat: any) => cat.value === rating
         );
-        maxCount = Math.max(maxCount, category ? category.count : 0)
+        maxCount = Math.max(maxCount, category ? category.count : 0);
       });
 
       const allCategories = [5, 4, 3, 2, 1].map((rating) => {
@@ -233,14 +233,14 @@ export function RatingsContainer() {
           barPercentage: category ? (category.count / maxCount) * 100 : 0,
         };
       });
-      console.log(metric.metricName, metric.weightedAverage)
+      console.log(metric.metricName, metric.weightedAverage);
       return {
         metric: metric.metricName,
         stats: allCategories,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
         statusColor: getStatusColor(metric.metricName, metric.weightedAverage),
         reviewCount: metric.count,
-        weightedAverage: metric.weightedAverage
+        weightedAverage: metric.weightedAverage,
       };
     }) as RatingDetailProps[];
   }, [aggregatedRatings, selectedTerm, termRatings]);

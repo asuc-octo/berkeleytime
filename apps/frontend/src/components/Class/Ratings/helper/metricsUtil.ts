@@ -30,7 +30,7 @@ export function getStatusColor(
       ? "statusLow"
       : "statusHigh";
   } else if (weightedAverage >= 2.7) {
-    return "statusMedium"
+    return "statusMedium";
   } else if (weightedAverage >= 1.9) {
     return METRIC_MAPPINGS[metricName]?.isInverseRelationship
       ? "statusHigh"
