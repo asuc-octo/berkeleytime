@@ -21,16 +21,24 @@ export function getStatusColor(
   metricName: MetricName,
   weightedAverage: number
 ): string {
-  if (weightedAverage >= 4) {
+  if (weightedAverage >= 4.3) {
     return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "statusRed"
-      : "statusGreen";
-  } else if (weightedAverage >= 2) {
-    return "statusOrange";
+      ? "statusVeryLow"
+      : "statusVeryHigh";
+  } else if (weightedAverage >= 3.5) {
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
+      ? "statusLow"
+      : "statusHigh";
+  } else if (weightedAverage >= 2.7) {
+    return "statusMedium"
+  } else if (weightedAverage >= 1.9) {
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
+      ? "statusHigh"
+      : "statusLow";
   } else {
     return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "statusGreen"
-      : "statusRed";
+      ? "statusVeryHigh"
+      : "statusVeryLow";
   }
 }
 

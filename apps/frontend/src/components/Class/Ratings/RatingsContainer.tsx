@@ -215,22 +215,32 @@ export function RatingsContainer() {
     }
 
     return metrics.map((metric: any) => {
+      let maxCount = 1;
+      [5, 4, 3, 2, 1].map((rating) => {
+        const category = metric.categories.find(
+          (cat: any) => cat.value === rating
+        );
+        maxCount = Math.max(maxCount, category ? category.count : 0)
+      });
+
       const allCategories = [5, 4, 3, 2, 1].map((rating) => {
         const category = metric.categories.find(
           (cat: any) => cat.value === rating
         );
         return {
           rating,
-          percentage: category ? (category.count / metric.count) * 100 : 0,
+          count: category ? category.count : 0,
+          barPercentage: category ? (category.count / maxCount) * 100 : 0,
         };
       });
-
+      console.log(metric.metricName, metric.weightedAverage)
       return {
         metric: metric.metricName,
         stats: allCategories,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
         statusColor: getStatusColor(metric.metricName, metric.weightedAverage),
         reviewCount: metric.count,
+        weightedAverage: metric.weightedAverage
       };
     }) as RatingDetailProps[];
   }, [aggregatedRatings, selectedTerm, termRatings]);

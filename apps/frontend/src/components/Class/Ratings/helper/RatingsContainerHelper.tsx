@@ -28,11 +28,13 @@ export interface RatingDetailProps {
   metric: MetricName;
   stats: {
     rating: number;
-    percentage: number;
+    barPercentage: number;
+    count: number;
   }[];
   status: string;
   statusColor: string;
   reviewCount: number;
+  weightedAverage: number;
 }
 
 // React Components
@@ -77,8 +79,10 @@ export function RatingDetailView({
   stats,
   status,
   statusColor,
+  reviewCount,
+  weightedAverage
 }: RatingDetailProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   React.useEffect(() => {
@@ -112,6 +116,7 @@ export function RatingDetailView({
             </Tooltip>
           </div>
           <span className={styles[statusColor]}>{status}</span>
+          <span className={styles.metricAverage}>{`${weightedAverage.toFixed(1)} / 5.0`}</span>
         </div>
         <div className={styles.statusSection}>
           <NavArrowDown
@@ -128,17 +133,19 @@ export function RatingDetailView({
               style={{ "--delay": `${index * 60}ms` } as React.CSSProperties}
             >
               <span className={styles.rating}>{stat.rating}</span>
-              <div className={styles.barContainer}>
-                <div
-                  className={styles.bar}
-                  style={{
-                    width: shouldAnimate ? `${stat.percentage}%` : "0%",
-                    transitionDelay: `${index * 60}ms`,
-                  }}
-                />
-              </div>
+              <Tooltip content={`${Math.round(stat.count * 100 / reviewCount)}% of users left this rating`}>
+                <div className={styles.barContainer}>
+                  <div
+                    className={styles.bar}
+                    style={{
+                      width: shouldAnimate ? `${stat.barPercentage}%` : "0%",
+                      transitionDelay: `${index * 60}ms`,
+                    }}
+                  />
+                </div>
+              </Tooltip>
               <span className={styles.percentage}>
-                {shouldAnimate ? `${stat.percentage}%` : "0%"}
+                {shouldAnimate ? `${stat.count}` : "0%"}
               </span>
             </div>
           ))}

@@ -20,7 +20,7 @@ export const METRIC_MAPPINGS = {
     tooltip:
       "This refers to how beneficial the course is for academic, professional, or personal growth.",
     getStatus: (avg: number) =>
-      avg >= 4 ? "Very Useful" : avg >= 2 ? "Moderately Useful" : "Not Useful",
+      avg >= 4.3 ? "Very Useful" : avg >= 3.5 ? "Useful" : avg >= 2.7 ? "Moderately Useful" : avg >= 1.9 ? "Barely Useful" : "Not Useful",
     isRating: true,
     isInverseRelationship: false,
   },
@@ -28,7 +28,7 @@ export const METRIC_MAPPINGS = {
     tooltip:
       "This indicates the level of challenge students face in understanding course material.",
     getStatus: (avg: number) =>
-      avg >= 4 ? "Very Difficult" : avg >= 2 ? "Moderately Difficult" : "Easy",
+      avg >= 4.3 ? "Very Difficult" : avg >= 3.5 ? "Difficult" : avg >= 2.7 ? "Moderately Difficult" : avg >= 1.9 ? "Easy" : "Very Easy",
     isRating: true,
     isInverseRelationship: true,
   },
@@ -36,11 +36,7 @@ export const METRIC_MAPPINGS = {
     tooltip:
       "This represents the time and effort required for course assignments and activities.",
     getStatus: (avg: number) =>
-      avg >= 4
-        ? "Very Heavy"
-        : avg >= 2
-          ? "Moderate Workload"
-          : "Light Workload",
+      avg >= 4.3 ? "Very Heavy" : avg >= 3.5 ? "Heavy" : avg >= 2.7 ? "Moderate" : avg >= 1.9 ? "Light" : "Very Light",
     isRating: true,
     isInverseRelationship: true,
   },
