@@ -33,7 +33,7 @@ import {
   ratingSubmit,
 } from "./helper/RatingsContainerHelper";
 // TODO: Remove placeholder data before prod
-import { placeholderRatingsData } from "./helper/devPlaceholderData";
+// import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
   UserRating,
   getMetricStatus,
@@ -196,9 +196,9 @@ export function RatingsContainer() {
   }, [userRatingsData, currentClass]);
 
   const ratingsData = React.useMemo(() => {
-    if (PLACEHOLDER) {
-      return placeholderRatingsData;
-    }
+    // if (PLACEHOLDER) {
+    //   return placeholderRatingsData;
+    // }
 
     const metrics =
       selectedTerm !== "all" && termRatings?.metrics

@@ -1,5 +1,7 @@
 import { MetricName } from "@repo/shared";
 
+// OUTDATED
+
 export const placeholderRatingsData = [
   {
     metric: MetricName["Usefulness"],
