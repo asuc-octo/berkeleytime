@@ -4,9 +4,10 @@ FROM rust:1.83 AS docs-dev
 RUN ["cargo", "install", "mdbook", "--vers", "^0.4", "--locked"]
 RUN ["cargo", "install", "mdbook-alerts"]
 
-COPY . .
+COPY . ./docs
+VOLUME ["/docs"]
 EXPOSE 3000
-ENTRYPOINT ["mdbook", "serve", "--port=3000"]
+ENTRYPOINT ["mdbook", "serve", "--hostname=0.0.0.0", "--port=3000", "docs"]
 
 # prod
 FROM rust:1.83 AS docs-builder
