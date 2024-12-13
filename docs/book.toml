@@ -1,0 +1,13 @@
+[book]
+title = "Berkeleytime Documentation"
+authors = ["Berkeleytime Developers"]
+description = "The Berkeleytime documentation for developers"
+language = "en"
+multilingual = false
+src = "src"
+
+[output.html]
+git-repository-url = "https://github.com/asuc-octo/berkeleytime/tree/gql/docs"
+# edit-url-template = "https://github.com/asuc-octo/berkeleytime/tree/gql/docs/{path}"
+
+[preprocessor.alerts]
