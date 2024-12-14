@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavArrowLeft, NavArrowRight } from 'iconoir-react';
 
-import dolores from '../../assets/img/about/dolores-social.jpg';
-import matt from '../../assets/img/about/matt-falling.jpg';
-import retreat from '../../assets/img/about/retreat.jpg';
-import rooftop from '../../assets/img/about/rooftop-social.jpg';
-import start from '../../assets/img/about/start.jpg';
+import dolores from '../../assets/img/about/group/dolores-social.jpg';
+import matt from '../../assets/img/about/group/matt-falling.jpg';
+import retreat from '../../assets/img/about/group/retreat.jpg';
+import rooftop from '../../assets/img/about/group/rooftop-social.jpg';
+import start from '../../assets/img/about/group/start.jpg';
 
 enum Sliding {
 	Still = 0,
