@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavArrowLeft, NavArrowRight } from 'iconoir-react';
 
-import dolores from '../../assets/img/about/dolores.jpg';
-import matt from '../../assets/img/about/matt-falling.jpg';
-import retreat from '../../assets/img/about/retreat.jpg';
-import rooftop from '../../assets/img/about/rooftop-social.jpg';
-import start from '../../assets/img/about/start.jpg';
+import doe from '../../assets/img/about/group/doe.jpg';
+import michaels from '../../assets/img/about/group/michaels.jpg';
+import retreat from '../../assets/img/about/group/retreat.jpg';
+import grace_janet from '../../assets/img/about/group/grace_janet.jpg';
+import will from '../../assets/img/about/group/will.jpg';
+import jemma from '../../assets/img/about/group/jemma.jpg';
+import christina_janet from '../../assets/img/about/group/christina_janet.jpg';
+import retreat_silly from '../../assets/img/about/group/retreat_silly.png';
+import zoom from '../../assets/img/about/group/zoom.png';
 
 enum Sliding {
 	Still = 0,
@@ -14,11 +18,15 @@ enum Sliding {
 }
 
 const images = [
-	{ img: dolores, alt: 'dolores park social' },
-	{ img: matt, alt: 'matt falling' },
+	{ img: retreat_silly, alt: 'retreat silly' },
+	{ img: zoom, alt: 'zoom' },
+	{ img: doe, alt: 'doe' },
+	{ img: grace_janet, alt: 'grace_janet' },
 	{ img: retreat, alt: 'retreat' },
-	{ img: rooftop, alt: 'rooftop social' },
-	{ img: start, alt: 'start photo' },
+	{ img: christina_janet, alt: 'christina_janet' },
+	{ img: michaels, alt: 'michaels' },
+	{ img: will, alt: 'will' },
+	{ img: jemma, alt: 'jemma' }
 ];
 
 const wrap = (val: number) => (val + images.length) % images.length;

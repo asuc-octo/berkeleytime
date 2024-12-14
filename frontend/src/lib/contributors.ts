@@ -159,9 +159,8 @@ export const current: Contributors = {
 			role: 'Member',
 			site: 'https://www.linkedin.com/in/chengming-li-7b284a251',
 			img: {
-				base: path('chengming1.jpg'),
-				silly: path('chengming2.jpg'),
-			},
+				base: path('chengming1.jpg')
+			}
 		},
 		{
 			name: 'Garima Upadhyay',
@@ -235,10 +234,11 @@ export const current: Contributors = {
 		{
 			name: 'Cheuk Ki Wong',
 			role: 'Member',
-			site: 'https://www.linkedin.com/in/cheuk-ki-wong-90b65522a/',
-			img: {
-				base: path('cheuk1.jpg'),
-			},
+			site: 'https://www.linkedin.com/in/cheuk-ki-wong-90b65522a/'
+			// img: {
+			// 	base: path('cheuk1.jpg'),
+			// 	silly: path('cheuk2.jpg')
+			// }
 		},
 		{
 			name: 'Sean Lim',
