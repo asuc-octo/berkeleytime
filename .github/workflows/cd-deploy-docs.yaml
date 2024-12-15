@@ -24,7 +24,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./docs
+          context: docs
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
@@ -32,6 +32,7 @@ jobs:
 
   deploy:
     name: SSH and Deploy
+    needs: [build-push]
     runs-on: ubuntu-latest
     environment: documentation
 
