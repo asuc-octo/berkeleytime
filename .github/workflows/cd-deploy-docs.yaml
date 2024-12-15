@@ -4,7 +4,7 @@ concurrency: documentation
 
 on:
   push:
-    branches: [master, gql. docs/init]
+    branches: [master, gql, docs/init]
 
 jobs:
   build-push:
