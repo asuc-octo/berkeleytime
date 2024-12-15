@@ -7,7 +7,7 @@ Welcome to the infrastructure section.
 
 ## What is Infrastructure?
 
-![application-infrastructure-layers](./app-infra-layer.svg)
+![application-infrastructure-layers](./assets/app-infra-layer.svg)
 
 Infrastructure relates to the services, tools, and abstractions that the application layer is deployed on top of.
 

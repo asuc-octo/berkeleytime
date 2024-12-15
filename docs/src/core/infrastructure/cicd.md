@@ -7,30 +7,30 @@ The deployment process is different for development, staging, and production env
 1. Go to the [actions page](https://github.com/asuc-octo/berkeleytime/actions).
     <details><summary>Image</summary>
 
-    ![Github Actions Page](https://github.com/user-attachments/assets/c68528ab-dddc-42a9-b5d1-b8e0a57c4224)
+    ![Github Actions Page](./assets/cicd-dev-1.png)
 
     </details>
 
 2. Ensure "Deploy to Development" is the selected action on the left sidebar.
     <details><summary>Image</summary>
 
-    ![Deploy to Development Sidebar Button](https://github.com/user-attachments/assets/4cb49b39-3fb2-4d73-93a3-87e3261b1430)
+    ![Deploy to Development Sidebar Button](./assets/cicd-dev-2.png)
 
     </details>
 
 3. Navigate to the "Run workflow" button on the right. Select your branch and input a time to live in hours. Please keep this value a reasonable number.
     <details><summary>Image</summary>
 
-    ![Deploy to Development Action Menu](https://github.com/user-attachments/assets/ec156ddc-f06b-44c0-8722-9bf71c8a4687)
+    ![Deploy to Development Action Menu](./assets/cicd-dev-3.png)
 
     </details>
 
 4. Once the action starts running, click into the action and watch the status of each step. If the deployment fails, the action will fail as well.
     <details><summary>Images</summary>
 
-    ![Deploy to Development Action Running](https://github.com/user-attachments/assets/5e1b56e4-e811-4261-b62e-5cef184edb2b)
+    ![Deploy to Development Action Running](./assets/cicd-dev-4.png)
     You can view the logs of each step by navigating the left sidebar.
-    ![Deploy to Development Action Logs](https://github.com/user-attachments/assets/22bbcfd2-4ff0-4d5e-af6b-344c6045d356)
+    ![Deploy to Development Action Logs](./assets/cicd-dev-5.png)
 
     </details>
 

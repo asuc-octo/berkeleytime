@@ -35,7 +35,7 @@ docker run --publish XXXX:3000 --volume ./docs:/docs "docs:dev"
 
 #### Without Containerization
 
-To build and view the docs locally, `mdBook` must be installed by following the guide [here](https://rust-lang.github.io/mdBook/guide/installation.html). It is recommended to [build the source from Rust](https://rust-lang.github.io/mdBook/guide/installation.html#build-from-source-using-rust), but this requires Rust to be installed locally.
+To build and view the docs locally, `mdBook` must be installed by following the guide [here](https://rust-lang.github.io/mdBook/guide/installation.html#build-from-source-using-rust). It is necessary to install Rust locally as there is a dependency that is installed with `cargo`. Thus, it is highly recommended to [build mdbook from Rust](https://rust-lang.github.io/mdBook/guide/installation.html#build-from-source-using-rust).
 
 ```sh
 # Install mdbook-alerts dependency with cargo
@@ -56,6 +56,17 @@ Changes in the markdown files will be shown live.
 
 ### Creating Books with Markdown and mdBook
 
-[Here](https://www.markdownguide.org/basic-syntax/) is a quick guide on markdown's syntax.
+As these docs are primarily written with markdown, feel free to check [this quick guide](https://www.markdownguide.org/basic-syntax/) on markdown's syntax.
 
-The `mdBook` guide on [creating books](https://rust-lang.github.io/mdBook/guide/creating.html) does a good job documenting the steps to creating books.
+To add new pages to the docs, check out the [`mdBook` guide](https://rust-lang.github.io/mdBook/guide/creating.html). Below is a step-by-step guide on creating a new page:
+
+1. Create a new `.md` file in the `src` directory. For example, if you want your new page to be in the Infrastructure section, you should put the new file in `src/infrastructure`.
+
+2. Add this file to `SUMMARY.md`. The indentation indicates which section your file will go under. For example:
+
+    ```md
+    - [Infrastructure](./infrastructure/README.md)
+        - [My New File's Title](./infrastructure/my-new-file.md)
+    ```
+
+3. Add content to your file and see the results!
