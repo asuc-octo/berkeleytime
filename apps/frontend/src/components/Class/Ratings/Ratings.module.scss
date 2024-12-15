@@ -151,6 +151,12 @@
   align-self: stretch;
 }
 
+.metricAverage {
+  color: var(--label-color);
+  padding-left: 6px;
+  font-size: 14px;
+}
+
 .reviewCount {
   color: var(--paragraph-color);
   font-size: 14px;
@@ -165,26 +171,38 @@
   }
 }
 
-.statusGreen,
-.statusOrange,
-.statusRed {
-  padding: 4px 8px;
+.statusVeryHigh,
+.statusHigh,
+.statusMedium,
+.statusLow,
+.statusVeryLow {
+  padding: 6px 10px;
   border-radius: 4px;
   font-size: 14px;
   user-select: none;
 }
 
-.statusGreen {
+.statusVeryHigh {
   color: var(--emerald-500);
   background: var(--emerald-100);
 }
 
-.statusOrange {
+.statusHigh {
+  color: var(--emerald-500);
+  background: var(--emerald-100);
+}
+
+.statusMedium {
   color: var(--orange-400);
   background: var(--orange-100);
 }
 
-.statusRed {
+.statusLow {
+  color: var(--emerald-500);
+  background: var(--emerald-100);
+}
+
+.statusVeryLow {
   color: var(--red-500);
   background: var(--red-100);
 }
@@ -286,7 +304,6 @@
   }
 }
 
-
 /* Dropdown styling */
 .termDropdown__control {
   padding: 6px 12px; /* Smaller padding */
@@ -346,7 +363,7 @@
   text-align: center;
   padding: 48px 0;
   color: var(--slate-400);
-    /* Web UI (Desktop)/Title/Title Medium */
+  /* Web UI (Desktop)/Title/Title Medium */
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -361,7 +378,7 @@
 
   button {
     margin-top: 32px;
-    background-color: var(--foreground-color); 
+    background-color: var(--foreground-color);
     font-weight: 400;
   }
 }
@@ -377,10 +394,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .statRow{
+  .statRow {
     .barContainer {
       background-color: var(--zinc-600);
-      
+
       .bar {
         background-color: var(--zinc-400);
       }
@@ -401,7 +418,6 @@
     background: var(--red-950);
   }
   .titleSection {
-
     .title {
       color: var(--dark-heading-color);
     }
@@ -464,7 +480,7 @@
   }
 }
 
- .info {
+.info {
   display: inline-flex;
   cursor: pointer;
 }

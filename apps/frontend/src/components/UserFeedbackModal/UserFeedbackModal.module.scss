@@ -35,7 +35,12 @@
 .modalTitle {
   font-size: 28px;
   font-weight: 660;
-  font-feature-settings: "cv05" on, "cv13" on, "ss07" on, "cv12" on, "cv06" on;
+  font-feature-settings:
+    "cv05" on,
+    "cv13" on,
+    "ss07" on,
+    "cv12" on,
+    "cv06" on;
   color: var(--heading-color);
   margin-bottom: 4px;
 }
@@ -62,23 +67,23 @@
 .combinedForm {
   max-height: calc(80vh - 220px);
   overflow-y: auto;
-  margin-top:0;
-  
+  margin-top: 0;
+
   &::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: var(--background-color);
     border-radius: 3px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: var(--label-color);
     border-radius: 3px;
     opacity: 0.8;
-    
+
     &:hover {
       background: var(--paragraph-color);
     }
@@ -174,7 +179,8 @@
   padding: 0 84px;
   padding-top: 38px;
 
-  h3, p {
+  h3,
+  p {
     color: var(--paragraph-color);
     font-size: 14px;
     font-weight: 400;
@@ -337,14 +343,13 @@
   }
 }
 
-
 /* Dropdown styling */
 .termDropdown__control {
   padding: 6px 12px; /* Smaller padding */
   font-size: 14px;
   font-weight: 400;
   color: var(--heading-color);
-  background-color: var(--foreground-color); 
+  background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   outline: none;
