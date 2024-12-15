@@ -8,6 +8,6 @@ src = "src"
 
 [output.html]
 git-repository-url = "https://github.com/asuc-octo/berkeleytime/tree/gql/docs"
-# edit-url-template = "https://github.com/asuc-octo/berkeleytime/tree/gql/docs/{path}"
+edit-url-template = "https://github.com/asuc-octo/berkeleytime/tree/gql/docs/{path}"
 
 [preprocessor.alerts]
