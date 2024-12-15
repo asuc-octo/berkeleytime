@@ -1,0 +1,64 @@
+name: Deploy Docs (Production)
+
+concurrency: documentation
+
+on:
+  push:
+    branches: [master, gql. docs/init]
+
+jobs:
+  build-push:
+    name: Build and Push Docs Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./docs
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
+          cache-to: type=inline
+
+  deploy:
+    name: SSH and Deploy
+    runs-on: ubuntu-latest
+    environment: documentation
+
+    steps:
+      - name: SSH and Helm Install
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            # Check if helm chart exists
+            helm status bt-prod-docs &>/dev/null && status=true || status=false
+
+            # Upgrade helm chart, or install if not exists
+            helm upgrade bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs \
+              --install \
+              --version=1.0.0 \
+              --namespace=bt \
+              --set host=docs.stanfurdtime.com \
+
+            # Restart deployment if helm chart existed
+            if [ $status = true ]; then
+              kubectl rollout restart deployment bt-prod-docs-docs
+            fi
+
+            # Check container status
+            kubectl rollout status --timeout=180s deployment bt-prod-docs-docs
