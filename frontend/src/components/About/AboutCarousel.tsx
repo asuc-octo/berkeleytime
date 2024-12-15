@@ -14,8 +14,8 @@ enum Sliding {
 }
 
 const images = [
-	{ img: retreat, alt: 'retreat' },
 	{ img: matt, alt: 'matt falling' },
+	{ img: retreat, alt: 'retreat' },
 	{ img: start, alt: 'start photo' },
 	{ img: dolores, alt: 'dolores park social' },
 	{ img: rooftop, alt: 'rooftop social' },
