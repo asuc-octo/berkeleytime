@@ -39,39 +39,30 @@ The deployment process is different for development, staging, and production env
     <details><summary>Example Success Deployment Log</summary>
 
     ```
-    ======CMD======
-    set -e  # Exit immediately if a command fails
-    cd ./infra
-    # Uninstall the old helm chart if it exists
-    helm uninstall bt-dev-app-3be6e4c || true
-    # Install new chart
-    helm install bt-dev-app-3be6e4c ./app --namespace=bt \
-      --set env=dev \
-      --set ttl=1 \
-      --set-string frontend.image.tag=3be6e4c \
-      --set-string backend.image.tag=3be6e4c \
-      --set host=3be6e4c.stanfurdtime.com \
-      --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-      --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
-      --set nodeEnv=development
-    # Check container status
-    kubectl rollout status --timeout=180s deployment bt-dev-app-3be6e4c-backend
-    kubectl rollout status --timeout=180s deployment bt-dev-app-3be6e4c-frontend
-    ======END======
-    out: release "bt-dev-app-3be6e4c" uninstalled
-    out: NAME: bt-dev-app-3be6e4c
-    out: LAST DEPLOYED: Wed Nov 13 03:25:20 2024
-    out: NAMESPACE: bt
-    out: STATUS: deployed
-    out: REVISION: 1
-    out: TEST SUITE: None
-    out: Waiting for deployment "bt-dev-app-3be6e4c-backend" rollout to finish: 0 of 2 updated replicas are available...
-    out: Waiting for deployment "bt-dev-app-3be6e4c-backend" rollout to finish: 1 of 2 updated replicas are available...
-    out: deployment "bt-dev-app-3be6e4c-backend" successfully rolled out
-    out: deployment "bt-dev-app-3be6e4c-frontend" successfully rolled out
-    ==============================================
-    ✅ Successfully executed commands to all host.
-    ==============================================
+    ======= CLI Version =======
+    Drone SSH version 1.8.0
+    ===========================
+    Release "bt-dev-app-69d94b6" does not exist. Installing it now.
+    Pulled: registry-1.docker.io/octoberkeleytime/bt-app:0.1.0-dev.69d94b6
+    Digest: sha256:e3d020b8582b8b4c583f026f79e4ab2b374386ce67ea5ee43aa65c6b334f9db0
+    W1204 22:20:37.827877 2103423 warnings.go:70] unknown field "spec.template.app.kubernetes.io/instance"
+    W1204 22:20:37.827939 2103423 warnings.go:70] unknown field "spec.template.app.kubernetes.io/managed-by"
+    W1204 22:20:37.827947 2103423 warnings.go:70] unknown field "spec.template.app.kubernetes.io/name"
+    W1204 22:20:37.827952 2103423 warnings.go:70] unknown field "spec.template.env"
+    W1204 22:20:37.827956 2103423 warnings.go:70] unknown field "spec.template.helm.sh/chart"
+    NAME: bt-dev-app-69d94b6
+    LAST DEPLOYED: Wed Dec  4 22:20:36 2024
+    NAMESPACE: bt
+    STATUS: deployed
+    REVISION: 1
+    TEST SUITE: None
+    Waiting for deployment "bt-dev-app-69d94b6-backend" rollout to finish: 0 of 2 updated replicas are available...
+    Waiting for deployment "bt-dev-app-69d94b6-backend" rollout to finish: 1 of 2 updated replicas are available...
+    deployment "bt-dev-app-69d94b6-backend" successfully rolled out
+    deployment "bt-dev-app-69d94b6-frontend" successfully rolled out
+    ===============================================
+    ✅ Successfully executed commands to all hosts.
+    ===============================================
     ```
 
     </details>
