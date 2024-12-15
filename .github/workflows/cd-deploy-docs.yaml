@@ -28,10 +28,12 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: docs
-          push: true
+          target: docs-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod-cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod-cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod-cache,mode=max
+          platforms: linux/amd64
+          push: true
 
   deploy:
     name: SSH and Deploy
