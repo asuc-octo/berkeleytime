@@ -30,8 +30,8 @@ jobs:
           context: docs
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
-          cache-to: type=inline
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod-cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod-cache
 
   deploy:
     name: SSH and Deploy
