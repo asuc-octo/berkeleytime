@@ -1,12 +1,13 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { WarningTriangleSolid } from "iconoir-react";
+import { useState } from "react";
 
 import styles from "./ConfirmationPopup.module.scss";
 
 interface DeleteRatingPopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirmDelete: () => void;
+  onConfirmDelete: () => Promise<void>;
 }
 
 export default function DeleteRatingPopup({
@@ -14,6 +15,18 @@ export default function DeleteRatingPopup({
   onClose,
   onConfirmDelete,
 }: DeleteRatingPopupProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await onConfirmDelete();
+      onClose();
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
@@ -39,18 +52,21 @@ export default function DeleteRatingPopup({
             </div>
 
             <div className={styles.modalFooter}>
+              {!isDeleting && (
+                <button
+                  onClick={onClose}
+                  style={{
+                    color: "var(--subtitle-color)",
+                    cursor: "pointer",
+                  }}
+                >
+                  No, keep my rating
+                </button>
+              )}
               <button
-                onClick={onClose}
-                style={{
-                  color: "var(--subtitle-color)",
-                  cursor: "pointer",
-                }}
-              >
-                No, keep my rating
-              </button>
-              <button
-                onClick={onConfirmDelete}
+                onClick={handleDelete}
                 className={styles.doneButton}
+                disabled={isDeleting}
                 style={{
                   backgroundColor: "var(--red-500)",
                   color: "white",
@@ -58,10 +74,11 @@ export default function DeleteRatingPopup({
                   height: "32px",
                   padding: "10px 20px",
                   borderRadius: "5px",
-                  cursor: "pointer",
+                  cursor: isDeleting ? "default" : "pointer",
+                  opacity: isDeleting ? 0.7 : 1,
                 }}
               >
-                Yes, delete
+                {isDeleting ? "Deleting..." : "Yes, delete"}
               </button>
             </div>
           </div>

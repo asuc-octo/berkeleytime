@@ -179,12 +179,12 @@ export function RatingButton(
 }
 
 // Utility functions
-export const ratingDelete = (
+export const ratingDelete = async (
   userRating: UserRating,
   currentClass: any,
   deleteRating: any
 ) => {
-  userRating.metrics.forEach((metric) => {
+  const deletePromises = userRating.metrics.map((metric) =>
     deleteRating({
       variables: {
         subject: currentClass.subject,
@@ -194,8 +194,9 @@ export const ratingDelete = (
         classNumber: currentClass.number,
         metricName: metric.metricName,
       },
-    });
-  });
+    })
+  );
+  await Promise.all(deletePromises);
 };
 
 export const ratingSubmit = async (

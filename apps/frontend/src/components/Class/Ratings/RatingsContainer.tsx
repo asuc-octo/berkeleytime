@@ -431,10 +431,10 @@ export function RatingsContainer() {
           onClose={() => {
             setIsDeleteModalOpen(false);
           }}
-          onConfirmDelete={() => {
-            if (userRatings)
-              ratingDelete(userRatings, currentClass, deleteRating);
-            setIsDeleteModalOpen(false);
+          onConfirmDelete={async () => {
+            if (userRatings) {
+              await ratingDelete(userRatings, currentClass, deleteRating);
+            }
           }}
         />
       </Container>
