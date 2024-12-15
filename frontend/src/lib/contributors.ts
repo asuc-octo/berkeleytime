@@ -142,7 +142,7 @@ export const current: Contributors = {
 			site: 'https://www.linkedin.com/in/wangaurelia/',
 			img: {
 				base: path('aurelia1.jpg'),
-				silly: path('aurelia2.jpg')
+				silly: path('aurelia2.png')
 			}
 		},
 		{

@@ -14,11 +14,11 @@ enum Sliding {
 }
 
 const images = [
+	{ img: retreat, alt: 'retreat' },
+	{ img: matt, alt: 'matt falling' },
 	{ img: start, alt: 'start photo' },
 	{ img: dolores, alt: 'dolores park social' },
 	{ img: rooftop, alt: 'rooftop social' },
-	{ img: retreat, alt: 'retreat' },
-	{ img: matt, alt: 'matt falling' },
 ];
 
 const wrap = (val: number) => (val + images.length) % images.length;
