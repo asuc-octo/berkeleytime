@@ -13,7 +13,7 @@ const PastContributors = () => (
 					{section.name}
 				</H6>
 				<div>
-					{section.items.map((member) => (
+					{section.items.sort((a, b) => a.name.localeCompare(b.name)).map((member) => (
 						<div key={member.name} className="contributor-card">
 							<div className="name">
 								<p className="bt-light-bold">{member.name}</p>
