@@ -1,17 +1,17 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { CheckCircleSolid } from "iconoir-react";
 
-import styles from "./ConfirmationPopup.module.scss";
+import styles from "./Popup.module.scss";
 
-interface ConfirmationPopupProps {
+interface SubmissionPopupProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function ConfirmationPopup({
+export default function SubmissionPopup({
   isOpen,
   onClose,
-}: ConfirmationPopupProps) {
+}: SubmissionPopupProps) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>

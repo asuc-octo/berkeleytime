@@ -15,7 +15,7 @@ import {
   toMetricData,
 } from "../Class/Ratings/helper/metricsUtil";
 import { AttendanceForm } from "./AttendanceForm";
-import ConfirmationPopup from "./ConfirmationForm";
+import SubmissionPopup from "./SubmissionPopup";
 import { RatingsForm } from "./RatingForm";
 import styles from "./UserFeedbackModal.module.scss";
 
@@ -106,14 +106,14 @@ export function UserFeedbackModal({
       });
 
       onClose();
-      setIsConfirmationPopupOpen(true);
+      setIsSubmissionPopupOpen(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
+  const [isSubmissionPopupOpen, setIsSubmissionPopupOpen] = useState(false);
 
   // Filter for past terms
   const pastTerms = useMemo(() => {
@@ -315,9 +315,9 @@ export function UserFeedbackModal({
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-      <ConfirmationPopup
-        isOpen={isConfirmationPopupOpen}
-        onClose={() => setIsConfirmationPopupOpen(false)}
+      <SubmissionPopup
+        isOpen={isSubmissionPopupOpen}
+        onClose={() => setIsSubmissionPopupOpen(false)}
       />
     </>
   );

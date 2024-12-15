@@ -1,8 +1,9 @@
-import * as Dialog from "@radix-ui/react-dialog";
-import { WarningTriangleSolid } from "iconoir-react";
 import { useState } from "react";
 
-import styles from "./ConfirmationPopup.module.scss";
+import * as Dialog from "@radix-ui/react-dialog";
+import { WarningTriangleSolid } from "iconoir-react";
+
+import styles from "./Popup.module.scss";
 
 interface DeleteRatingPopupProps {
   isOpen: boolean;
