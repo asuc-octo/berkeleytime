@@ -4,7 +4,7 @@ concurrency: documentation
 
 on:
   push:
-    branches: [master, gql]
+    branches: [master, gql, docs/init]
 
 jobs:
   detect-changes:
