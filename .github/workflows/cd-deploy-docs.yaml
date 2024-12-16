@@ -30,7 +30,7 @@ jobs:
     name: Build and Push Docs Image
     needs: [detect-changes]
     runs-on: ubuntu-latest
-    if: needs.detect-changes.outputs.any_changed == 'true'
+    if: needs.detect-changes.outputs.changed == 'true'
 
     steps:
       - name: Checkout Repository
