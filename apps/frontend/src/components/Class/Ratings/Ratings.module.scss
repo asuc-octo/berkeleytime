@@ -398,7 +398,7 @@
     .barContainer {
       background-color: var(--zinc-600);
       .bar {
-        background-color: var(--zinc-400);
+        background-color: var(--zinc-200);
       }
     }
   }
@@ -406,6 +406,30 @@
     .title {
       color: var(--dark-heading-color);
     }
+  }
+  .statusVeryHigh {
+    color: #11CA96;
+    background: #2C4538;
+  }
+  
+  .statusHigh {
+    color: #10B981;
+    background: #23372E;
+  }
+  
+  .statusMedium {
+    color: #FCA469;
+    background: #5A3E26;
+  }
+  
+  .statusLow {
+    color: #F87171;
+    background: #3E2A2A;
+  }
+  
+  .statusVeryLow {
+    color: #FF7D7C;
+    background: #5B2B2B;
   }
 }
 
