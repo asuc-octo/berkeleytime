@@ -6,14 +6,13 @@
 Welcome to the infrastructure section.
 
 > [!NOTE]
-> Infrastructure concepts tends to be more complex than application concepts. Don't be discouraged if a large amount of content in the infrastructure section is confusing!
+> Infrastructure concepts tend to be more complex than application concepts. Don't be discouraged if a large amount of content in the infrastructure section is confusing!
 
 ## What is Infrastructure?
 
 ![application-infrastructure-layers](./assets/app-infra-layer.svg)
 
-Infrastructure relates to the services, tools, and abstractions that the application layer is deployed on top of.
+Software infrastructure refers to the services and tools that create an underlying layer of abstractions that the application is developed on. Compared to the application layer, infrastructure is significantly more broad in its responsibilities, although these responsibilities are more common in software development.
 
-While common application-layer services, such as the backend and frontend services, relate to Berkeleytime application-specific tasks, the infrastructure-layer services relate to more generalized software development tasks, such as service deployment, system design, and developer experience.
-
-In addition, we tend to use open-source services and tools to solve infrastructure-layer tasks instead of creating in-house tools. The motivation behind this philosophy is to not reinvent the wheel—there is little open-source software like Berkeleytime, but there are many databases, caches, reverse proxies, etc. that we can use.
+> [!IMPORTANT]
+> We aim to use a **small** set of **existing** solutions with large communities. This philosophy reduces the [cognitive load](https://thevaluable.dev/cognitive-load-theory-software-developer/) on each developer and simplifies the onboarding process. This approach is valuable for creating long-lasting software, especially when our developers are cycled out after only ~4 years.
