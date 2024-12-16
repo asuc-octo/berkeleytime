@@ -214,15 +214,32 @@ export const ratingSubmit = async (
   metricValues: MetricData,
   termInfo: { semester: Semester; year: number },
   createRating: any,
+  deleteRating: any,
   currentClass: any,
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   try {
     await Promise.all(
       (Object.keys(MetricName) as Array<keyof typeof MetricName>)
-        // TODO: Remove placeholder data before prod
         .filter((metric) => metric !== "Recommended")
         .map((metric) => {
+          const value = metricValues[MetricName[metric]];
+          
+          // If value is null, send a deleteRating request
+          if (value === null) {
+            return deleteRating({
+              variables: {
+                subject: currentClass.subject,
+                courseNumber: currentClass.courseNumber,
+                semester: termInfo.semester,
+                year: termInfo.year,
+                classNumber: currentClass.number,
+                metricName: metric,
+              },
+            });
+          }
+          
+          // Otherwise send createRating request
           return createRating({
             variables: {
               subject: currentClass.subject,
@@ -231,7 +248,7 @@ export const ratingSubmit = async (
               year: termInfo.year,
               classNumber: currentClass.number,
               metricName: metric,
-              value: metricValues[MetricName[metric]],
+              value,
             },
           });
         })

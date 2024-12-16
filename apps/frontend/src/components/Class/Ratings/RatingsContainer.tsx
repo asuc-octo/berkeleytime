@@ -426,6 +426,7 @@ export function RatingsContainer() {
                 metricValues,
                 termInfo,
                 createRating,
+                deleteRating,
                 currentClass,
                 setIsModalOpen
               );
