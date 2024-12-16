@@ -258,11 +258,11 @@
     }
   }
 
-  .percentage {
-    width: 48px;
+  .count {
+    width: 24px;
     color: var(--paragraph-color);
     font-size: 16px;
-    text-align: right;
+    text-align: center;
     opacity: 0;
     animation: fadeIn 200ms ease forwards;
     animation-delay: calc(var(--delay) + 100ms);

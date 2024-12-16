@@ -20,7 +20,6 @@ export interface TooltipProps {
 export const Tooltip = forwardRef<
   HTMLButtonElement,
   TooltipProps &
-    // TODO: Determine which props should be customizable
     Pick<TooltipContentProps, "sideOffset" | "side" | "collisionPadding"> &
     Omit<TooltipTriggerProps, "asChild">
 >(
@@ -50,6 +49,45 @@ export const Tooltip = forwardRef<
             <div className={styles.content}>
               <Arrow className={styles.arrow} />
               {content}
+            </div>
+          </Content>
+        </Portal>
+      </Root>
+    );
+  }
+);
+
+export const AlternateTooltip = forwardRef<
+  HTMLButtonElement,
+  TooltipProps &
+    Pick<TooltipContentProps, "sideOffset" | "side" | "collisionPadding"> &
+    Omit<TooltipTriggerProps, "asChild">
+>(
+  (
+    {
+      content,
+      children,
+      sideOffset = 8,
+      collisionPadding = 8,
+      side = "bottom",
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <Root disableHoverableContent>
+        <Trigger {...props} ref={ref} asChild>
+          {children}
+        </Trigger>
+        <Portal>
+          <Content
+            asChild
+            side={side}
+            sideOffset={sideOffset}
+            collisionPadding={collisionPadding}
+          >
+            <div className={styles.alternateContent}>
+              <span className={styles.percentage}>{content}</span>
             </div>
           </Content>
         </Portal>

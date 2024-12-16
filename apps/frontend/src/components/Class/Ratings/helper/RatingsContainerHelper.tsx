@@ -10,7 +10,7 @@ import {
 import _ from "lodash";
 
 import { MetricName } from "@repo/shared";
-import { Button, IconButton, Tooltip } from "@repo/theme";
+import { AlternateTooltip, Button, IconButton, Tooltip } from "@repo/theme";
 
 import { signIn } from "@/lib/api";
 import { Semester } from "@/lib/api/terms";
@@ -135,7 +135,7 @@ export function RatingDetailView({
               style={{ "--delay": `${index * 60}ms` } as React.CSSProperties}
             >
               <span className={styles.rating}>{stat.rating}</span>
-              <Tooltip
+              <AlternateTooltip 
                 content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
               >
                 <div className={styles.barContainer}>
@@ -147,8 +147,8 @@ export function RatingDetailView({
                     }}
                   />
                 </div>
-              </Tooltip>
-              <span className={styles.percentage}>
+              </AlternateTooltip>
+              <span className={styles.count}>
                 {shouldAnimate ? `${stat.count}` : "0%"}
               </span>
             </div>
