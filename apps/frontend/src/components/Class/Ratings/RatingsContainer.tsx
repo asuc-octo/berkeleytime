@@ -418,7 +418,7 @@ export function RatingsContainer() {
         <UserFeedbackModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Rate Course"
+          title={userRatings ? "Edit Rating" : "Rate Course"}
           currentClass={currentClass}
           availableTerms={availableTerms}
           onSubmit={async (metricValues, termInfo) => {
