@@ -57,19 +57,27 @@ export function UserFeedbackModal({
   initialUserClass,
 }: UserFeedbackModalProps) {
   const { data: termsData } = useReadTerms();
-  const [selectedTerm, setSelectedTerm] = useState<string | null>(
-    initialUserClass?.semester && initialUserClass?.year
-      ? `${initialUserClass.semester} ${initialUserClass.year}`
-      : null
+  const initialMetricData = useMemo(
+    () =>
+      toMetricData(
+        initialUserClass?.metrics ??
+          Object.values(MetricName).map((metric) => {
+            return { metricName: metric, value: undefined };
+          })
+      ),
+    [initialUserClass?.metrics]
   );
-  const [metricData, setMetricData] = useState(
-    toMetricData(
-      initialUserClass?.metrics ??
-        Object.values(MetricName).map((metric) => {
-          return { metricName: metric, value: undefined };
-        })
-    )
+
+  const initialTermValue = useMemo(
+    () =>
+      initialUserClass?.semester && initialUserClass?.year
+        ? `${initialUserClass.semester} ${initialUserClass.year}`
+        : null,
+    [initialUserClass?.semester, initialUserClass?.year]
   );
+
+  const [selectedTerm, setSelectedTerm] = useState<string | null>(initialTermValue);
+  const [metricData, setMetricData] = useState(initialMetricData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -79,14 +87,22 @@ export function UserFeedbackModal({
       setMetricData(toMetricData(initialUserClass.metrics));
   }, [initialUserClass]);
 
+  const hasChanges = useMemo(() => {
+    const termChanged = selectedTerm !== initialTermValue;
+    const metricsChanged = Object.values(MetricName).some(
+      (metric) => metricData[metric] !== initialMetricData[metric]
+    );
+    return termChanged || metricsChanged;
+  }, [selectedTerm, metricData, initialTermValue, initialMetricData]);
+
   const isFormValid = useMemo(() => {
     const isTermValid = selectedTerm && selectedTerm.length > 0;
     const areRatingsValid =
       typeof metricData[MetricName.Usefulness] === "number" &&
       typeof metricData[MetricName.Difficulty] === "number" &&
       typeof metricData[MetricName.Workload] === "number";
-    return isTermValid && areRatingsValid;
-  }, [selectedTerm, metricData]);
+    return isTermValid && areRatingsValid && hasChanges;
+  }, [selectedTerm, metricData, hasChanges]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,19 +151,8 @@ export function UserFeedbackModal({
 
   const handleClose = () => {
     // Reset form state to initial values when closing
-    setMetricData(
-      toMetricData(
-        initialUserClass?.metrics ??
-          Object.values(MetricName).map((metric) => {
-            return { metricName: metric, value: undefined };
-          })
-      )
-    );
-    setSelectedTerm(
-      initialUserClass?.semester && initialUserClass?.year
-        ? `${initialUserClass.semester} ${initialUserClass.year}`
-        : null
-    );
+    setMetricData(initialMetricData);
+    setSelectedTerm(initialTermValue);
     onClose();
   };
 
