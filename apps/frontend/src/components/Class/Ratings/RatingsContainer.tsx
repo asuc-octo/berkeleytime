@@ -192,6 +192,7 @@ export function RatingsContainer() {
         classRating.subject === currentClass.subject &&
         classRating.courseNumber === currentClass.courseNumber
     );
+    console.log('Current userRatings:', matchedRating);
     return matchedRating as UserRating;
   }, [userRatingsData, currentClass]);
 
@@ -428,7 +429,8 @@ export function RatingsContainer() {
                 createRating,
                 deleteRating,
                 currentClass,
-                setIsModalOpen
+                setIsModalOpen,
+                userRatings
               );
             } catch (error) {
               console.error("Error submitting rating:", error);
@@ -436,6 +438,7 @@ export function RatingsContainer() {
           }}
           initialUserClass={userRatings}
         />
+        
         <DeleteRatingPopup
           isOpen={isDeleteModalOpen}
           onClose={() => {

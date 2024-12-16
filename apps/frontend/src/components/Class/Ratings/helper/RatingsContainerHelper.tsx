@@ -216,27 +216,34 @@ export const ratingSubmit = async (
   createRating: any,
   deleteRating: any,
   currentClass: any,
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  currentRatings?: { metrics: Array<{ metricName: string }> } | null
 ) => {
   try {
     await Promise.all(
       (Object.keys(MetricName) as Array<keyof typeof MetricName>)
-        .filter((metric) => metric !== "Recommended")
         .map((metric) => {
           const value = metricValues[MetricName[metric]];
-          
-          // If value is null, send a deleteRating request
-          if (value === null) {
-            return deleteRating({
-              variables: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                semester: termInfo.semester,
-                year: termInfo.year,
-                classNumber: currentClass.number,
-                metricName: metric,
-              },
-            });
+          console.log(metric, value);
+          // If value is null or undefined, only send deleteRating if the metric exists in current ratings
+          if (value === null || value === undefined) {
+            const metricExists = currentRatings?.metrics?.some(
+              m => m.metricName === metric
+            );
+            if (metricExists) {
+              return deleteRating({
+                variables: {
+                  subject: currentClass.subject,
+                  courseNumber: currentClass.courseNumber,
+                  semester: termInfo.semester,
+                  year: termInfo.year,
+                  classNumber: currentClass.number,
+                  metricName: metric,
+                },
+              });
+            }
+            // Skip if metric doesn't exist in current ratings
+            return Promise.resolve();
           }
           
           // Otherwise send createRating request
