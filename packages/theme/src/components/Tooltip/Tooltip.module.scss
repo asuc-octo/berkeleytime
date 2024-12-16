@@ -22,18 +22,17 @@
 
 .alternateContent {
   border-radius: 12px;
-  padding: 16px 20px;
-  background-color: white;
-  animation: fadeIn 100ms ease-in;
-  font-size: 16px;
-  line-height: 1.5;
-  color: rgb(95, 116, 141);
+  padding: 8px 14px;
+  background-color: var(--foreground-color);
+  font-size: 14px;
+  color: var(--blue-500);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 998;
   white-space: pre-wrap;
   word-wrap: break-word;
   max-width: 400px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  transform-origin: top left;
 
   .percentage {
     color: rgb(66, 133, 244);
