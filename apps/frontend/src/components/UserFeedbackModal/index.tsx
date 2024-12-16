@@ -107,7 +107,6 @@ export function UserFeedbackModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
-    console.log("Submitting ratings:", metricData);
     setIsSubmitting(true);
 
     try {
@@ -322,10 +321,6 @@ export function UserFeedbackModal({
                   //disabled={!isFormValid || isSubmitting}
                   onClick={(e: any) => {
                     e.preventDefault();
-                    console.log("Button clicked", {
-                      isFormValid,
-                      isSubmitting,
-                    });
                     if (isFormValid) {
                       handleSubmit(e);
                     }

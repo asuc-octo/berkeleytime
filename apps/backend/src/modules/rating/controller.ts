@@ -310,22 +310,10 @@ export const getCourseAggregatedRatings = async (
   subject: string,
   courseNumber: string
 ) => {
-  console.log(
-    `[GetCourseRatings] Fetching ratings for ${subject} ${courseNumber}`
-  );
 
   const aggregated = await courseRatingAggregator(subject, courseNumber);
 
-  console.log(`[GetCourseRatings] Raw aggregation result:`, {
-    hasResults: !!aggregated,
-    resultCount: aggregated?.length,
-    firstResult: aggregated?.[0] ? "exists" : "null",
-  });
-
   if (!aggregated || !aggregated[0]) {
-    console.log(
-      `[GetCourseRatings] No ratings found for ${subject} ${courseNumber}`
-    );
     return {
       subject,
       courseNumber,
@@ -337,10 +325,6 @@ export const getCourseAggregatedRatings = async (
   }
 
   const formattedResult = formatAggregatedRatings(aggregated[0]);
-  console.log(
-    `[GetCourseRatings] Returning formatted ratings with ${formattedResult.metrics.length} metrics`
-  );
-
   return formattedResult;
 };
 

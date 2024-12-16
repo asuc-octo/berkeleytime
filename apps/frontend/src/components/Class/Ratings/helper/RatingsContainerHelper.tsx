@@ -217,7 +217,6 @@ export const ratingSubmit = async (
   currentClass: any,
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
-  console.log("Submitting ratings:", metricValues, "for term:", termInfo);
   try {
     await Promise.all(
       (Object.keys(MetricName) as Array<keyof typeof MetricName>)

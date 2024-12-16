@@ -72,7 +72,6 @@ export default function AttendanceRequirements({
     metricValues: MetricData,
     termInfo: { semester: Semester; year: number }
   ) => {
-    console.log("Submitting ratings:", metricValues, "for term:", termInfo);
     try {
       await Promise.all(
         (Object.keys(MetricName) as Array<keyof typeof MetricName>)

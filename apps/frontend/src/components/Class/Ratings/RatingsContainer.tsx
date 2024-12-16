@@ -233,7 +233,6 @@ export function RatingsContainer() {
           barPercentage: category ? (category.count / maxCount) * 100 : 0,
         };
       });
-      console.log(metric.metricName, metric.weightedAverage);
       return {
         metric: metric.metricName,
         stats: allCategories,
