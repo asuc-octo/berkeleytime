@@ -133,9 +133,27 @@ export function UserFeedbackModal({
     });
   }, [availableTerms, termsData]);
 
+  const handleClose = () => {
+    // Reset form state to initial values when closing
+    setMetricData(
+      toMetricData(
+        initialUserClass?.metrics ??
+          Object.values(MetricName).map((metric) => {
+            return { metricName: metric, value: undefined };
+          })
+      )
+    );
+    setSelectedTerm(
+      initialUserClass?.semester && initialUserClass?.year
+        ? `${initialUserClass.semester} ${initialUserClass.year}`
+        : null
+    );
+    onClose();
+  };
+
   return (
     <>
-      <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <Dialog.Root open={isOpen} onOpenChange={handleClose}>
         <Dialog.Portal>
           <Dialog.Overlay className={styles.overlay} />
           <Dialog.Content className={styles.modal}>

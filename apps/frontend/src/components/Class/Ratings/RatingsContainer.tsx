@@ -5,7 +5,7 @@ import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 import ReactSelect from "react-select";
 
-import { METRIC_ORDER } from "@repo/shared";
+import { METRIC_ORDER, MetricName } from "@repo/shared";
 import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
