@@ -21,6 +21,8 @@ export function getStatusColor(
   metricName: MetricName,
   weightedAverage: number
 ): string {
+  // For usefulness (not inverse relationship), high numbers should be green
+  // For difficulty and workload (inverse relationship), high numbers should be red
   if (weightedAverage >= 4.3) {
     return METRIC_MAPPINGS[metricName]?.isInverseRelationship
       ? "statusVeryLow"
