@@ -163,18 +163,20 @@ export function RatingButton(
   user: any,
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  return user ? (
+  if (user) {
+    return (
     <Button
       style={{
         color: "var(--blue-500)",
         backgroundColor: "var(--foreground-color)",
         height: "38px",
       }}
-      onClick={() => setModalOpen(true)}
+      onClick={() => signIn(window.location.pathname)}
     >
       Add a rating
     </Button>
-  ) : (
+    )} else {
+      return (
     <Button
       onClick={() => signIn(window.location.pathname)}
       style={{
@@ -186,7 +188,7 @@ export function RatingButton(
       Sign in to add ratings
       <ArrowRight />
     </Button>
-  );
+  )}
 }
 
 // Utility functions
@@ -224,7 +226,6 @@ export const ratingSubmit = async (
       (Object.keys(MetricName) as Array<keyof typeof MetricName>)
         .map((metric) => {
           const value = metricValues[MetricName[metric]];
-          console.log(metric, value);
           // If value is null or undefined, only send deleteRating if the metric exists in current ratings
           if (value === null || value === undefined) {
             const metricExists = currentRatings?.metrics?.some(

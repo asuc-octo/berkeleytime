@@ -17,10 +17,13 @@ import {
   READ_COURSE,
   Semester,
 } from "@/lib/api";
+import { signIn } from "@/lib/api";
 
 import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
+
+const DISPLAY_THRESHOLD = 5;
 
 interface Props {
   attendanceRequired?: boolean;
@@ -128,43 +131,51 @@ export default function AttendanceRequirements({
       )
       .value() as TermInfo[];
   }, [courseData]);
-  if (submissionAmount < 5) {
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (user) {
+      setModalOpen(true);
+    } else {
+      signIn(window.location.pathname);
+    }
+  };
+
+  if (submissionAmount < DISPLAY_THRESHOLD) {
     return (
       <div className={styles.attendanceRequirements}>
-        <p className={styles.label}>Attendance Requirements</p>
+        <p className={styles.label}>User-Submitted Class Requirements</p>
         <p className={styles.description}>
-          No attendance information currently exists for this course.
+          No user-submitted information is available for this course yet.
         </p>
         <a
           href="#"
           className={styles.suggestEdit}
-          onClick={(e) => {
-            e.preventDefault();
-            setModalOpen(true);
-          }}
+          onClick={handleClick}
         >
-          Taken this course? Help others by adding what you know. →
+          Taken this course? Help others by adding what you know →
         </a>
-        <UserFeedbackModal
-          isOpen={isModalOpen}
-          onClose={() => setModalOpen(false)}
-          title="Rate Course"
-          currentClass={currentClass}
-          availableTerms={availableTerms}
-          onSubmit={handleSubmitRatings}
-          initialUserClass={userRatingsData?.userRatings?.classes?.find(
-            (c: UserClass) =>
-              c.subject === currentClass.subject &&
-              c.courseNumber === currentClass.courseNumber &&
-              c.semester === currentClass.semester &&
-              c.year === currentClass.year &&
-              c.classNumber === currentClass.number
-          )}
-        />
+        {user && (
+          <UserFeedbackModal
+            isOpen={isModalOpen}
+            onClose={() => setModalOpen(false)}
+            title="Rate Course"
+            currentClass={currentClass}
+            availableTerms={availableTerms}
+            onSubmit={handleSubmitRatings}
+            initialUserClass={userRatingsData?.userRatings?.classes?.find(
+              (c: UserClass) =>
+                c.subject === currentClass.subject &&
+                c.courseNumber === currentClass.courseNumber &&
+                c.semester === currentClass.semester &&
+                c.year === currentClass.year &&
+                c.classNumber === currentClass.number
+            )}
+          />
+        )}
       </div>
     );
   }
-
   return (
     <div className={styles.attendanceRequirements}>
       <p className={styles.label}>Attendance Requirements</p>
@@ -175,9 +186,7 @@ export default function AttendanceRequirements({
           <img className={styles.icon} src={MyIcon2} />
         )}
         <span className={styles.description}>
-          {attendanceRequired
-            ? "Attendance Required"
-            : "Attendance Not Required"}
+          {attendanceRequired ? "Attendance Required" : "Attendance Not Required"}
         </span>
       </div>
 
@@ -194,30 +203,29 @@ export default function AttendanceRequirements({
       <a
         href="#"
         className={styles.suggestEdit}
-        onClick={(e) => {
-          e.preventDefault();
-          setModalOpen(true);
-        }}
+        onClick={handleClick}
       >
         Look inaccurate? Suggest an edit →{" "}
       </a>
 
-      <UserFeedbackModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        title="Rate Course"
-        currentClass={currentClass}
-        availableTerms={availableTerms}
-        onSubmit={handleSubmitRatings}
-        initialUserClass={userRatingsData?.userRatings?.classes?.find(
-          (c: UserClass) =>
-            c.subject === currentClass.subject &&
-            c.courseNumber === currentClass.courseNumber &&
-            c.semester === currentClass.semester &&
-            c.year === currentClass.year &&
-            c.classNumber === currentClass.number
-        )}
-      />
+      {user && (
+        <UserFeedbackModal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Rate Course"
+          currentClass={currentClass}
+          availableTerms={availableTerms}
+          onSubmit={handleSubmitRatings}
+          initialUserClass={userRatingsData?.userRatings?.classes?.find(
+            (c: UserClass) =>
+              c.subject === currentClass.subject &&
+              c.courseNumber === currentClass.courseNumber &&
+              c.semester === currentClass.semester &&
+              c.year === currentClass.year &&
+              c.classNumber === currentClass.number
+          )}
+        />
+      )}
     </div>
   );
 }
