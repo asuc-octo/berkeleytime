@@ -7,9 +7,28 @@ on:
     branches: [master, gql]
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changed.outputs.any_changed }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Detect Changed Files
+        uses: tj-actions/changed-files@v45
+        id: changed
+        with:
+          files: |
+            docs/**
+
   build-push:
     name: Build and Push Docs Image
+    needs: [detect-changes]
     runs-on: ubuntu-latest
+    if: needs.detect-changes.outputs.any_changed == 'true'
 
     steps:
       - name: Checkout Repository
