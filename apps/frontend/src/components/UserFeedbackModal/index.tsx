@@ -331,7 +331,13 @@ export function UserFeedbackModal({
                     }
                   }}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Rating"}
+                  {isSubmitting
+                    ? "Submitting..."
+                    : (!hasChanges && initialUserClass)
+                      ? "No Changes Made"
+                      : initialUserClass
+                        ? "Submit Edit"
+                        : "Submit Rating"}
                 </Button>
               </div>
             </form>
