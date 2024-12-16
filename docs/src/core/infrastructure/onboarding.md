@@ -36,5 +36,3 @@ This guide assumes basic experience with SSH.
     ssh hozer-51
     # as opposed to root@hozer-51.ocf.berkeley.edu
     ```
-
-fake change 2
