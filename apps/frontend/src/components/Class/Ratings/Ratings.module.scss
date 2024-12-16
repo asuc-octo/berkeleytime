@@ -397,25 +397,10 @@
   .statRow {
     .barContainer {
       background-color: var(--zinc-600);
-
       .bar {
         background-color: var(--zinc-400);
       }
     }
-  }
-  .statusGreen {
-    color: var(--emerald-300);
-    background: var(--emerald-950);
-  }
-
-  .statusOrange {
-    color: var(--orange-300);
-    background: var(--orange-950);
-  }
-
-  .statusRed {
-    color: var(--red-300);
-    background: var(--red-950);
   }
   .titleSection {
     .title {
