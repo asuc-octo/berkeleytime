@@ -2,21 +2,20 @@
 networks:
   bt:
     name: bt
-    external: true
 services:
-  datapuller:
-    build:
-      context: .
-      target: datapuller-dev
-    depends_on:
-      mongo1:
-        condition: service_healthy
-    networks:
-      - bt
-    restart: always
-    volumes:
-      - ./apps/datapuller/src:/datapuller/apps/datapuller/src
-      - ./.env:/datapuller/apps/datapuller/.env
+  # datapuller:
+  #   build:
+  #     context: .
+  #     target: datapuller-dev
+  #   depends_on:
+  #     mongo1:
+  #       condition: service_healthy
+  #   networks:
+  #     - bt
+  #   restart: always
+  #   volumes:
+  #     - ./apps/datapuller/src:/datapuller/apps/datapuller/src
+  #     - ./.env:/datapuller/apps/datapuller/.env
   backend:
     build:
       context: .
