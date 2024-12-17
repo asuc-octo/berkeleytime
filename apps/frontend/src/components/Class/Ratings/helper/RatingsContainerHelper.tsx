@@ -161,21 +161,23 @@ export function RatingDetailView({
 
 export function RatingButton(
   user: any,
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  onOpenModal: (open: boolean) => void
 ) {
   if (user) {
     return (
       <Button
         className={styles.ratingButton}
-        onClick={() => setModalOpen(true)}
+        onClick={() => onOpenModal(true)}
       >
         Add a rating
       </Button>
     );
   } else {
+    const currentPath = window.location.pathname;
+    const redirectPath = `${currentPath}?feedbackModal=true`;
     return (
       <Button
-        onClick={() => signIn(window.location.pathname)}
+        onClick={() => signIn(redirectPath)}
         className={styles.ratingButton}
       >
         Sign in to add ratings

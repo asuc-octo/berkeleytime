@@ -18,6 +18,7 @@ export const checkRatingExists = async (
   });
 };
 
+// TODO: USER_MAX_RATINGS not working yet
 export const checkUserClassRatingsCount = async (context: any) => {
   const user = await UserModel.findOne({ googleId: context.user.googleId });
   return (user?.classRatingsCount || 0) < USER_MAX_RATINGS;

@@ -331,7 +331,7 @@ export function UserFeedbackModal({
                   {isSubmitting
                     ? "Submitting..."
                     : !hasChanges && initialUserClass
-                      ? "No Changes Made"
+                      ? "No Changes"
                       : initialUserClass
                         ? "Submit Edit"
                         : "Submit Rating"}

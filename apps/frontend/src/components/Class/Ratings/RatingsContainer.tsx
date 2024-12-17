@@ -76,10 +76,26 @@ export function RatingsContainer() {
     null
   );
   const { data: user } = useReadUser();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 
-  useEffect(() => {}, [user, searchParams]);
+  const handleModalStateChange = (open: boolean) => {
+    setIsModalOpen(open);
+    if (open) {
+      searchParams.set("feedbackModal", "true");
+      setSearchParams(searchParams);
+    } else if (searchParams.get("feedbackModal")) {
+      searchParams.delete("feedbackModal");
+      setSearchParams(searchParams);
+    }
+  };
+
+  useEffect(() => {
+    // Check if we should open the modal based on URL parameter
+    if (user && searchParams.get("feedbackModal") === "true") {
+      handleModalStateChange(true);
+    }
+  }, [user, searchParams]);
 
   const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
     variables: {
@@ -274,7 +290,7 @@ export function RatingsContainer() {
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {(hasRatings || PLACEHOLDER) &&
               !userRatings &&
-              RatingButton(user, setIsModalOpen)}
+              RatingButton(user, handleModalStateChange)}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
                 <ReactSelect
@@ -397,7 +413,7 @@ export function RatingsContainer() {
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>
-              {RatingButton(user, setIsModalOpen)}
+              {RatingButton(user, handleModalStateChange)}
             </div>
           ) : (
             ratingsData
@@ -417,7 +433,7 @@ export function RatingsContainer() {
 
         <UserFeedbackModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => handleModalStateChange(false)}
           title={userRatings ? "Edit Rating" : "Rate Course"}
           currentClass={currentClass}
           availableTerms={availableTerms}
