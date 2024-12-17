@@ -171,7 +171,7 @@ export function RatingButton(
         backgroundColor: "var(--foreground-color)",
         height: "38px",
       }}
-      onClick={() => signIn(window.location.pathname)}
+      onClick={() => setModalOpen(true)}
     >
       Add a rating
     </Button>
