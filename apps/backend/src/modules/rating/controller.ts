@@ -13,7 +13,6 @@ import {
 import {
   courseRatingAggregator,
   ratingAggregator,
-  semestersByInstructorAggregator,
   semestersWithRatingsAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
@@ -32,33 +31,33 @@ export const booleanScaleMetrics = Object.entries(METRIC_MAPPINGS)
   .filter(([_, config]) => !config.isRating)
   .map(([metric]) => metric) as MetricName[];
 
-const getSemestersByInstructor = async (
-  professorName: string,
-  subject: string,
-  courseNumber: string
-): Promise<string[]> => {
-  const semesterInstances = await semestersByInstructorAggregator(
-    professorName,
-    subject,
-    courseNumber
-  );
-  const result = semesterInstances.map((i: any) => i._id);
-  return result;
-};
+// const getSemestersByInstructor = async (
+//   professorName: string,
+//   subject: string,
+//   courseNumber: string
+// ): Promise<string[]> => {
+//   const semesterInstances = await semestersByInstructorAggregator(
+//     professorName,
+//     subject,
+//     courseNumber
+//   );
+//   const result = semesterInstances.map((i: any) => i._id);
+//   return result;
+// };
 
 // not fully implemented
-export const getRatingByInstructor = async (
-  professorName: string,
-  subject: string,
-  courseNumber: string
-) => {
-  const semesters = await getSemestersByInstructor(
-    professorName,
-    subject,
-    courseNumber
-  );
-  return semesters;
-};
+// export const getRatingByInstructor = async (
+//   professorName: string,
+//   subject: string,
+//   courseNumber: string
+// ) => {
+//   const semesters = await getSemestersByInstructor(
+//     professorName,
+//     subject,
+//     courseNumber
+//   );
+//   return semesters;
+// };
 
 export const createRating = async (
   context: any,

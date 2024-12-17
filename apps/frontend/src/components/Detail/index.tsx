@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Camera, UserCircle } from "iconoir-react";
 import _ from "lodash";
 
-import { MetricName } from "@repo/shared";
+import { MetricName, MINIMUM_RESPONSES_THRESHOLD } from "@repo/shared";
 
 import { MetricData } from "@/components/Class/Ratings/helper/metricsUtil";
 import UserFeedbackModal from "@/components/UserFeedbackModal";
@@ -22,8 +22,6 @@ import { signIn } from "@/lib/api";
 import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
-
-const DISPLAY_THRESHOLD = 5;
 
 interface Props {
   attendanceRequired?: boolean;
@@ -71,6 +69,9 @@ export default function AttendanceRequirements({
       number: currentClass.courseNumber,
     },
   });
+
+
+  // TODO: USE SHARED COMPONENT FOR THIS
   const handleSubmitRatings = async (
     metricValues: MetricData,
     termInfo: { semester: Semester; year: number }
@@ -94,7 +95,6 @@ export default function AttendanceRequirements({
             });
           })
       );
-
       setModalOpen(false);
     } catch (error) {
       console.error("Error submitting ratings:", error);
@@ -141,7 +141,8 @@ export default function AttendanceRequirements({
     }
   };
 
-  if (submissionAmount < DISPLAY_THRESHOLD) {
+  // TODO: Submission should check for CONSENSUS_THRESHOLD - logic for decision on the frontend based on yes/no count
+  if (submissionAmount < MINIMUM_RESPONSES_THRESHOLD) {
     return (
       <div className={styles.attendanceRequirements}>
         <p className={styles.label}>User-Submitted Class Requirements</p>

@@ -165,30 +165,24 @@ export function RatingButton(
 ) {
   if (user) {
     return (
-    <Button
-      style={{
-        color: "var(--blue-500)",
-        backgroundColor: "var(--foreground-color)",
-        height: "38px",
-      }}
-      onClick={() => setModalOpen(true)}
-    >
-      Add a rating
-    </Button>
-    )} else {
-      return (
-    <Button
-      onClick={() => signIn(window.location.pathname)}
-      style={{
-        color: "var(--blue-500)",
-        backgroundColor: "var(--foreground-color)",
-        height: "38px",
-      }}
-    >
-      Sign in to add ratings
-      <ArrowRight />
-    </Button>
-  )}
+      <Button
+        className={styles.ratingButton}
+        onClick={() => setModalOpen(true)}
+      >
+        Add a rating
+      </Button>
+    );
+  } else {
+    return (
+      <Button
+        onClick={() => signIn(window.location.pathname)}
+        className={styles.ratingButton}
+      >
+        Sign in to add ratings
+        <ArrowRight />
+      </Button>
+    );
+  }
 }
 
 // Utility functions

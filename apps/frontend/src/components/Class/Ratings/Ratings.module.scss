@@ -392,6 +392,12 @@
   margin: 0; /* Remove unnecessary margin */
 }
 
+.ratingButton {
+  color: var(--blue-500) !important;
+  background-color: var(--foreground-color);
+  height: 38px;
+}
+
 @media (prefers-color-scheme: dark) {
   .statRow {
     .barContainer {
