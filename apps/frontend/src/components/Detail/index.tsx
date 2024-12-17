@@ -1,4 +1,4 @@
-import { Camera, UserCircle } from "iconoir-react";
+import { VideoCamera, VideoCameraOff, User, UserXmark } from "iconoir-react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
 
@@ -8,8 +8,6 @@ import { useReadUser } from "@/hooks/api";
 import { signIn } from "@/lib/api";
 
 import styles from "./Detail.module.scss";
-import MyIcon2 from "./attended.svg";
-import MyIcon1 from "./recorded.svg";
 
 interface Props {
   attendanceRequired?: boolean;
@@ -57,9 +55,9 @@ export default function AttendanceRequirements({
       <p className={styles.label}>User-Submitted Class Requirements</p>
       <div>
         {attendanceRequired ? (
-          <UserCircle className={styles.icon} />
+          <User className={styles.icon} />
         ) : (
-          <img className={styles.icon} src={MyIcon2} />
+          <UserXmark className={styles.icon} />
         )}
         <span className={styles.description}>
           {attendanceRequired
@@ -70,9 +68,9 @@ export default function AttendanceRequirements({
 
       <div className={styles.description}>
         {lecturesRecorded ? (
-          <Camera className={styles.icon} />
+          <VideoCamera className={styles.icon} />
         ) : (
-          <img className={styles.icon} src={MyIcon1} />
+          <VideoCameraOff className={styles.icon} />
         )}
         <span>
           {lecturesRecorded ? "Lectures Recorded" : "Lectures Not Recorded"}
