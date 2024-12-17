@@ -93,10 +93,10 @@ export function RatingsContainer() {
 
   useEffect(() => {
     // Check if we should open the modal based on URL parameter or if we just navigated to ratings
-    if (user && (searchParams.get("feedbackModal") === "true" || window.location.hash === "#openFeedback")) {
+    if (user && searchParams.get("feedbackModal") === "true") {
       handleModalStateChange(true);
     }
-  }, [user, searchParams, window.location.hash]);
+  }, [user, searchParams]);
 
   const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
     variables: {

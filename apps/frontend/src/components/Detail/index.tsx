@@ -8,6 +8,9 @@ import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
 
+import { useReadUser } from "@/hooks/api";
+import { signIn } from "@/lib/api";
+
 interface Props {
   attendanceRequired?: boolean;
   lecturesRecorded?: boolean;
@@ -20,6 +23,17 @@ export default function AttendanceRequirements({
   lecturesRecorded = true,
   submissionAmount = 0,
 }: Props) {
+  const { data: user } = useReadUser();
+
+  const handleFeedbackClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      const currentPath = window.location.pathname;
+      const redirectPath = `${currentPath}/ratings?feedbackModal=true`;
+      signIn(redirectPath);
+    }
+  };
+
   // TODO: Submission should check for CONSENSUS_THRESHOLD - logic for decision on the frontend based on yes/no count
   if (submissionAmount < MINIMUM_RESPONSES_THRESHOLD) {
     return (
@@ -28,7 +42,7 @@ export default function AttendanceRequirements({
         <p className={styles.description}>
           No user-submitted information is available for this course yet.
         </p>
-        <Link to="ratings#openFeedback" className={styles.suggestEdit}>
+        <Link to="ratings?feedbackModal=true" className={styles.suggestEdit} onClick={handleFeedbackClick}>
           Taken this course? Help others by adding what you know →
         </Link>
       </div>
@@ -60,7 +74,7 @@ export default function AttendanceRequirements({
           {lecturesRecorded ? "Lectures Recorded" : "Lectures Not Recorded"}
         </span>
       </div>
-      <Link to="ratings#openFeedback" className={styles.suggestEdit}>
+      <Link to="ratings?feedbackModal=true" className={styles.suggestEdit} onClick={handleFeedbackClick}>
         Look inaccurate? Suggest an edit →{" "}
       </Link>
     </div>
