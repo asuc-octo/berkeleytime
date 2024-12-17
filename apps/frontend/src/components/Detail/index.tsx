@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 
 import { MINIMUM_RESPONSES_THRESHOLD } from "@repo/shared";
 
+import { useReadUser } from "@/hooks/api";
+import { signIn } from "@/lib/api";
+
 import styles from "./Detail.module.scss";
 import MyIcon2 from "./attended.svg";
 import MyIcon1 from "./recorded.svg";
-
-import { useReadUser } from "@/hooks/api";
-import { signIn } from "@/lib/api";
 
 interface Props {
   attendanceRequired?: boolean;
@@ -42,7 +42,11 @@ export default function AttendanceRequirements({
         <p className={styles.description}>
           No user-submitted information is available for this course yet.
         </p>
-        <Link to="ratings?feedbackModal=true" className={styles.suggestEdit} onClick={handleFeedbackClick}>
+        <Link
+          to="ratings?feedbackModal=true"
+          className={styles.suggestEdit}
+          onClick={handleFeedbackClick}
+        >
           Taken this course? Help others by adding what you know →
         </Link>
       </div>
@@ -74,7 +78,11 @@ export default function AttendanceRequirements({
           {lecturesRecorded ? "Lectures Recorded" : "Lectures Not Recorded"}
         </span>
       </div>
-      <Link to="ratings?feedbackModal=true" className={styles.suggestEdit} onClick={handleFeedbackClick}>
+      <Link
+        to="ratings?feedbackModal=true"
+        className={styles.suggestEdit}
+        onClick={handleFeedbackClick}
+      >
         Look inaccurate? Suggest an edit →{" "}
       </Link>
     </div>

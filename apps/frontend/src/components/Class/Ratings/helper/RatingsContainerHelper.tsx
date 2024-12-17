@@ -159,16 +159,10 @@ export function RatingDetailView({
   );
 }
 
-export function RatingButton(
-  user: any,
-  onOpenModal: (open: boolean) => void
-) {
+export function RatingButton(user: any, onOpenModal: (open: boolean) => void) {
   if (user) {
     return (
-      <Button
-        className={styles.ratingButton}
-        onClick={() => onOpenModal(true)}
-      >
+      <Button className={styles.ratingButton} onClick={() => onOpenModal(true)}>
         Add a rating
       </Button>
     );
