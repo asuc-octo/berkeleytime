@@ -1,12 +1,15 @@
-import Details from "@/components/Details";
-import useClass from "@/hooks/useClass";
-import styles from "./Overview.module.scss";
-import { VideoCamera, VideoCameraOff, User, UserXmark } from "iconoir-react";
+import { User, UserXmark, VideoCamera, VideoCameraOff } from "iconoir-react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+
 import { MINIMUM_RESPONSES_THRESHOLD } from "@repo/shared";
+
+import Details from "@/components/Details";
 import { useReadUser } from "@/hooks/api";
+import useClass from "@/hooks/useClass";
 import { signIn } from "@/lib/api";
+
+import styles from "./Overview.module.scss";
 
 export default function Overview() {
   const { class: _class } = useClass();
@@ -52,7 +55,9 @@ function AttendanceRequirements({
   if (submissionAmount < MINIMUM_RESPONSES_THRESHOLD) {
     return (
       <div className={styles.attendanceRequirements}>
-        <p className={styles.attendanceLabel}>User-Submitted Class Requirements</p>
+        <p className={styles.attendanceLabel}>
+          User-Submitted Class Requirements
+        </p>
         <p className={styles.attendanceDescription}>
           No user-submitted information is available for this course yet.
         </p>
@@ -68,7 +73,9 @@ function AttendanceRequirements({
   }
   return (
     <div className={styles.attendanceRequirements}>
-      <p className={styles.attendanceLabel}>User-Submitted Class Requirements</p>
+      <p className={styles.attendanceLabel}>
+        User-Submitted Class Requirements
+      </p>
       <div>
         {attendanceRequired ? (
           <User className={styles.icon} />
