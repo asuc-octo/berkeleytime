@@ -40,11 +40,11 @@ export interface RatingDetailProps {
 // React Components
 export function RatingUserSummary({
   userRatings,
-  setIsModalOpen,
+  onOpenModal,
   ratingDelete,
 }: {
   userRatings: UserRating;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onOpenModal: (open: boolean) => void;
   ratingDelete: () => void;
 }) {
   return (
@@ -56,7 +56,7 @@ export function RatingUserSummary({
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
           <Tooltip content="Edit rating">
-            <IconButton onClick={() => setIsModalOpen(true)}>
+            <IconButton onClick={() => onOpenModal(true)}>
               <EditPencil />
             </IconButton>
           </Tooltip>

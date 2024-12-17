@@ -281,7 +281,7 @@ export function RatingsContainer() {
         {userRatings ? (
           <RatingUserSummary
             userRatings={userRatings}
-            setIsModalOpen={setIsModalOpen}
+            onOpenModal={handleModalStateChange}
             ratingDelete={() => setIsDeleteModalOpen(true)}
           />
         ) : (
