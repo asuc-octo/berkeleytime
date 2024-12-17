@@ -309,7 +309,6 @@ export const getCourseAggregatedRatings = async (
   subject: string,
   courseNumber: string
 ) => {
-
   const aggregated = await courseRatingAggregator(subject, courseNumber);
 
   if (!aggregated || !aggregated[0]) {

@@ -182,28 +182,28 @@
 }
 
 .statusVeryHigh {
-  color: #10B981;
-  background: #BBF7D0;
+  color: #10b981;
+  background: #bbf7d0;
 }
 
 .statusHigh {
-  color: #10B981;
-  background: #F0FDF4;
+  color: #10b981;
+  background: #f0fdf4;
 }
 
 .statusMedium {
-  color: #FB933C;
-  background: #FFECD5;
+  color: #fb933c;
+  background: #ffecd5;
 }
 
 .statusLow {
-  color: #EF4444;
-  background: #FFF2F2;
+  color: #ef4444;
+  background: #fff2f2;
 }
 
 .statusVeryLow {
-  color: #EF4444;
-  background: #FECACA;
+  color: #ef4444;
+  background: #fecaca;
 }
 
 .ratingContent {
@@ -413,28 +413,28 @@
     }
   }
   .statusVeryHigh {
-    color: #11CA96;
-    background: #2C4538;
+    color: #11ca96;
+    background: #2c4538;
   }
-  
+
   .statusHigh {
-    color: #10B981;
-    background: #23372E;
+    color: #10b981;
+    background: #23372e;
   }
-  
+
   .statusMedium {
-    color: #FCA469;
-    background: #5A3E26;
+    color: #fca469;
+    background: #5a3e26;
   }
-  
+
   .statusLow {
-    color: #F87171;
-    background: #3E2A2A;
+    color: #f87171;
+    background: #3e2a2a;
   }
-  
+
   .statusVeryLow {
-    color: #FF7D7C;
-    background: #5B2B2B;
+    color: #ff7d7c;
+    background: #5b2b2b;
   }
 }
 
@@ -474,7 +474,7 @@
     .select__dropdown-indicator,
     .select__clear-indicator {
       color: var(--paragraph-color);
-      
+
       &:hover {
         color: var(--heading-color);
       }

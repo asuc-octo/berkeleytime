@@ -1,7 +1,6 @@
-
-import { Link } from "react-router-dom";
 import { Camera, UserCircle } from "iconoir-react";
 import _ from "lodash";
+import { Link } from "react-router-dom";
 
 import { MINIMUM_RESPONSES_THRESHOLD } from "@repo/shared";
 
@@ -29,10 +28,7 @@ export default function AttendanceRequirements({
         <p className={styles.description}>
           No user-submitted information is available for this course yet.
         </p>
-        <Link
-          to="ratings"
-          className={styles.suggestEdit}
-        >
+        <Link to="ratings" className={styles.suggestEdit}>
           Taken this course? Help others by adding what you know →
         </Link>
       </div>
@@ -48,7 +44,9 @@ export default function AttendanceRequirements({
           <img className={styles.icon} src={MyIcon2} />
         )}
         <span className={styles.description}>
-          {attendanceRequired ? "Attendance Required" : "Attendance Not Required"}
+          {attendanceRequired
+            ? "Attendance Required"
+            : "Attendance Not Required"}
         </span>
       </div>
 
@@ -62,10 +60,7 @@ export default function AttendanceRequirements({
           {lecturesRecorded ? "Lectures Recorded" : "Lectures Not Recorded"}
         </span>
       </div>
-      <Link
-        to="ratings"
-        className={styles.suggestEdit}
-      >
+      <Link to="ratings" className={styles.suggestEdit}>
         Look inaccurate? Suggest an edit →{" "}
       </Link>
     </div>

@@ -135,7 +135,7 @@ export function RatingDetailView({
               style={{ "--delay": `${index * 60}ms` } as React.CSSProperties}
             >
               <span className={styles.rating}>{stat.rating}</span>
-              <AlternateTooltip 
+              <AlternateTooltip
                 content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
               >
                 <div className={styles.barContainer}>
@@ -213,17 +213,19 @@ export const ratingSubmit = async (
   deleteRating: any,
   currentClass: any,
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  currentRatings?: { metrics: Array<{ metricName: string; value: number }> } | null
+  currentRatings?: {
+    metrics: Array<{ metricName: string; value: number }>;
+  } | null
 ) => {
   try {
     await Promise.all(
-      (Object.keys(MetricName) as Array<keyof typeof MetricName>)
-        .map((metric) => {
+      (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
+        (metric) => {
           const value = metricValues[MetricName[metric]];
           // If value is null or undefined, only send deleteRating if the metric exists in current ratings
           if (value === null || value === undefined) {
             const metricExists = currentRatings?.metrics?.some(
-              m => m.metricName === metric
+              (m) => m.metricName === metric
             );
             if (metricExists) {
               return deleteRating({
@@ -258,7 +260,8 @@ export const ratingSubmit = async (
               value,
             },
           });
-        })
+        }
+      )
     );
 
     setModalOpen(false);

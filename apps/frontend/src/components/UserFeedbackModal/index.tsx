@@ -15,8 +15,8 @@ import {
   toMetricData,
 } from "../Class/Ratings/helper/metricsUtil";
 import { AttendanceForm } from "./AttendanceForm";
-import SubmissionPopup from "./SubmissionPopup";
 import { RatingsForm } from "./RatingForm";
+import SubmissionPopup from "./SubmissionPopup";
 import styles from "./UserFeedbackModal.module.scss";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
@@ -76,7 +76,9 @@ export function UserFeedbackModal({
     [initialUserClass?.semester, initialUserClass?.year]
   );
 
-  const [selectedTerm, setSelectedTerm] = useState<string | null>(initialTermValue);
+  const [selectedTerm, setSelectedTerm] = useState<string | null>(
+    initialTermValue
+  );
   const [metricData, setMetricData] = useState(initialMetricData);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -328,7 +330,7 @@ export function UserFeedbackModal({
                 >
                   {isSubmitting
                     ? "Submitting..."
-                    : (!hasChanges && initialUserClass)
+                    : !hasChanges && initialUserClass
                       ? "No Changes Made"
                       : initialUserClass
                         ? "Submit Edit"
