@@ -453,6 +453,7 @@
   max-width: 300px;
 }
 
+// duplicate exists in userFeedbackModal
 .termSelect {
   :global {
     .select__control {
@@ -461,9 +462,22 @@
       color: var(--paragraph-color);
       font-size: 14px;
       font-weight: 400;
-      border-radius: 4px;
+      border-radius: 8px;
       border: 1px solid var(--border-color);
       min-width: 231px;
+    }
+
+    .select__indicator-separator {
+      background-color: var(--border-color);
+    }
+
+    .select__dropdown-indicator,
+    .select__clear-indicator {
+      color: var(--paragraph-color);
+      
+      &:hover {
+        color: var(--heading-color);
+      }
     }
 
     .select__menu {
@@ -485,10 +499,6 @@
     }
 
     .select__single-value {
-      color: var(--paragraph-color);
-    }
-
-    .select__dropdown-indicator {
       color: var(--paragraph-color);
     }
   }
