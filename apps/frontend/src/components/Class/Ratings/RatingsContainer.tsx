@@ -80,6 +80,7 @@ export function RatingsContainer() {
   const { data: termsData } = useReadTerms();
 
   const handleModalStateChange = (open: boolean) => {
+    console.log("handleModalStateChange", open);
     setIsModalOpen(open);
     if (open) {
       searchParams.set("feedbackModal", "true");
@@ -91,11 +92,11 @@ export function RatingsContainer() {
   };
 
   useEffect(() => {
-    // Check if we should open the modal based on URL parameter
-    if (user && searchParams.get("feedbackModal") === "true") {
+    // Check if we should open the modal based on URL parameter or if we just navigated to ratings
+    if (user && (searchParams.get("feedbackModal") === "true" || window.location.hash === "#openFeedback")) {
       handleModalStateChange(true);
     }
-  }, [user, searchParams]);
+  }, [user, searchParams, window.location.hash]);
 
   const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
     variables: {

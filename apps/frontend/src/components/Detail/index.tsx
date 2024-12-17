@@ -28,7 +28,7 @@ export default function AttendanceRequirements({
         <p className={styles.description}>
           No user-submitted information is available for this course yet.
         </p>
-        <Link to="ratings" className={styles.suggestEdit}>
+        <Link to="ratings#openFeedback" className={styles.suggestEdit}>
           Taken this course? Help others by adding what you know →
         </Link>
       </div>
@@ -60,7 +60,7 @@ export default function AttendanceRequirements({
           {lecturesRecorded ? "Lectures Recorded" : "Lectures Not Recorded"}
         </span>
       </div>
-      <Link to="ratings" className={styles.suggestEdit}>
+      <Link to="ratings#openFeedback" className={styles.suggestEdit}>
         Look inaccurate? Suggest an edit →{" "}
       </Link>
     </div>
