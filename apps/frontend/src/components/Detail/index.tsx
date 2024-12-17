@@ -40,7 +40,7 @@ export default function AttendanceRequirements({
   }
   return (
     <div className={styles.attendanceRequirements}>
-      <p className={styles.label}>Attendance Requirements</p>
+      <p className={styles.label}>User-Submitted Class Requirements</p>
       <div>
         {attendanceRequired ? (
           <UserCircle className={styles.icon} />

@@ -213,7 +213,7 @@ export const ratingSubmit = async (
   deleteRating: any,
   currentClass: any,
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  currentRatings?: { metrics: Array<{ metricName: string }> } | null
+  currentRatings?: { metrics: Array<{ metricName: string; value: number }> } | null
 ) => {
   try {
     await Promise.all(
@@ -240,8 +240,13 @@ export const ratingSubmit = async (
             // Skip if metric doesn't exist in current ratings
             return Promise.resolve();
           }
-          
-          // Otherwise send createRating request
+          // Check if the current rating value is different from the new value
+          const currentMetric = currentRatings?.metrics.find(
+            (m) => m.metricName === metric
+          );
+          if (currentMetric?.value === value) {
+            return Promise.resolve();
+          }
           return createRating({
             variables: {
               subject: currentClass.subject,
