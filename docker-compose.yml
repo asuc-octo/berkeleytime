@@ -8,7 +8,8 @@ services:
   #     context: .
   #     target: datapuller-dev
   #   depends_on:
-  #     - mongodb
+  #     mongo1:
+  #       condition: service_healthy
   #   networks:
   #     - bt
   #   restart: always
@@ -20,8 +21,10 @@ services:
       context: .
       target: backend-dev
     depends_on:
-      - redis
-      - mongodb
+      mongo1:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - bt
     restart: always
@@ -39,15 +42,23 @@ services:
       - ./apps/frontend/src:/frontend/apps/frontend/src
       - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/frontend/public:/frontend/apps/frontend/public
-  mongodb:
-    image: mongo:5
-    networks:
-      - bt
+  mongo1:
+    image: mongo:7
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
       - 27017:27017
-    restart: always
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo1:27017',priority:1}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
     volumes:
-      - ./db:/data/db
+      - ./data/mongo1/db:/data/db
+      - ./data/mongo1/configdb:/data/configdb
+    networks:
+      - bt
   nginx:
     depends_on:
       - backend

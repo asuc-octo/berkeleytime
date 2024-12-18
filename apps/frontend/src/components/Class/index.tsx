@@ -45,6 +45,7 @@ const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
+const Ratings = lazy(() => import("./Ratings"));
 
 interface BodyProps {
   children: ReactNode;
@@ -136,8 +137,8 @@ export default function Class({
   const [updateUser] = useUpdateUser();
 
   const { data: course, loading: courseLoading } = useReadCourse(
-    providedClass?.subject ?? (subject as string),
-    providedClass?.courseNumber ?? (courseNumber as string)
+    providedClass?.subject || (subject as string),
+    providedClass?.courseNumber || (courseNumber as string)
   );
 
   const { data, loading } = useReadClass(
@@ -147,7 +148,6 @@ export default function Class({
     courseNumber as string,
     number as string,
     {
-      // Allow class to be provided
       skip: !!providedClass,
     }
   );
@@ -223,6 +223,17 @@ export default function Class({
       }
     );
   }, [_class, bookmarked, updateUser, user]);
+
+  // TODO: courseAggregatedRatings should be updated on mutations. This also affects userSubmitted section
+  function getRatingsCount() {
+    if (!_class?.course?.aggregatedRatings?.metrics?.length) {
+      return 0;
+    }
+    return _class.course.aggregatedRatings.metrics.reduce(
+      (max: number, metric: any) => Math.max(max, metric.count),
+      0
+    );
+  }
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -379,6 +390,14 @@ export default function Class({
               <Tabs.Trigger value="grades" asChild>
                 <MenuItem>Grades</MenuItem>
               </Tabs.Trigger>
+              <Tabs.Trigger value="ratings" asChild>
+                <MenuItem>
+                  Ratings
+                  {getRatingsCount() > 0 && (
+                    <span className={styles.badge}>{getRatingsCount()}</span>
+                  )}
+                </MenuItem>
+              </Tabs.Trigger>
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
@@ -402,31 +421,46 @@ export default function Class({
                   <MenuItem active={isActive}>Grades</MenuItem>
                 )}
               </NavLink>
+              <NavLink to={{ pathname: "ratings" }}>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>
+                    Ratings
+                    {getRatingsCount() > 0 && (
+                      <span className={styles.badge}>{getRatingsCount()}</span>
+                    )}
+                  </MenuItem>
+                )}
+              </NavLink>
             </div>
           )}
         </Container>
       </div>
-      <ClassContext.Provider
-        value={{
-          class: _class,
-          course,
-        }}
-      >
-        <Body dialog={dialog}>
-          <Tabs.Content value="overview" asChild>
-            <Overview />
-          </Tabs.Content>
-          <Tabs.Content value="sections" asChild>
-            <Sections />
-          </Tabs.Content>
-          <Tabs.Content value="enrollment" asChild>
-            <Enrollment />
-          </Tabs.Content>
-          <Tabs.Content value="grades" asChild>
-            <Grades />
-          </Tabs.Content>
-        </Body>
-      </ClassContext.Provider>
+      <Container size="sm">
+        <ClassContext.Provider
+          value={{
+            class: _class,
+            course,
+          }}
+        >
+          <Body dialog={dialog}>
+            <Tabs.Content value="overview" asChild>
+              <Overview />
+            </Tabs.Content>
+            <Tabs.Content value="sections" asChild>
+              <Sections />
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <Enrollment />
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <Grades />
+            </Tabs.Content>
+            <Tabs.Content value="ratings" asChild>
+              <Ratings />
+            </Tabs.Content>
+          </Body>
+        </ClassContext.Provider>
+      </Container>
     </Root>
   );
 }

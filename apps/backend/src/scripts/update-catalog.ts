@@ -251,6 +251,10 @@ const updateTerms = async () => {
   while (i > 0) {
     console.log(currentTerm.name);
 
+    if (Number.parseInt(currentTerm.name.slice(0, 4)) < 2022) {
+      break;
+    }
+
     [currentTerm] = await queryPage<TermType>(
       config.sis.TERM_APP_ID,
       config.sis.TERM_APP_KEY,
@@ -272,6 +276,8 @@ const updateTerms = async () => {
 
   // Remove all terms
   await TermModel.deleteMany({});
+
+  await TermModel.insertMany(terms);
 
   // Split terms into batches of 5000
   const batchSize = 5000;
@@ -308,7 +314,7 @@ const initialize = async () => {
     await updateCourses();
 
     const currentTerms = await TermModel.find({
-      temporalPosition: { $in: ["Current", "Future"] },
+      temporalPosition: { $in: ["Current", "Future", "Past"] },
     }).lean();
 
     // Remove duplicate terms
@@ -316,6 +322,7 @@ const initialize = async () => {
       ({ id }, index) =>
         index === currentTerms.findIndex((term) => term.id === id)
     );
+    console.log(filteredTerms);
 
     console.log("\n=== UPDATE CLASSES ===");
     await updateClasses(filteredTerms);
