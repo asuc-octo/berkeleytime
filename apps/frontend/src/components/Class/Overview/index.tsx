@@ -7,14 +7,12 @@ import {
 } from "iconoir-react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
-
 import {
   CONSENSUS_THRESHOLD,
   METRIC_MAPPINGS,
   MINIMUM_RESPONSES_THRESHOLD,
   MetricName,
 } from "@repo/shared";
-
 import Details from "@/components/Details";
 import CourseContext from "@/contexts/CourseContext";
 import { useReadUser } from "@/hooks/api";
@@ -22,8 +20,14 @@ import useClass from "@/hooks/useClass";
 import useCourse from "@/hooks/useCourse";
 import { signIn } from "@/lib/api";
 import { ICourse } from "@/lib/api";
-
 import styles from "./Overview.module.scss";
+
+enum Consensus {
+  Yes = "Yes",
+  No = "No",
+  BellowThreshold = "BellowThreshold",
+  Indeterminate = "Indeterminate",
+}
 
 export default function Overview() {
   const { class: _class } = useClass();
@@ -41,8 +45,6 @@ export default function Overview() {
   );
 }
 
-// first check that there is at least 1 metric with over threshold responses
-// if so, then run a local check for each metric to get what to display
 function AttendanceRequirements() {
   const { data: user } = useReadUser();
   const { course: _course } = useCourse();
@@ -176,13 +178,6 @@ function AttendanceRequirements() {
       </Link>
     </div>
   );
-}
-
-enum Consensus {
-  Yes = "Yes",
-  No = "No",
-  BellowThreshold = "BellowThreshold",
-  Indeterminate = "Indeterminate",
 }
 
 function getResponse(course: ICourse, metricName: MetricName): Consensus {
