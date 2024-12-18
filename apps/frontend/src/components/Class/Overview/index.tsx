@@ -1,18 +1,29 @@
-import { User, UserXmark, VideoCamera, VideoCameraOff, QuestionMark} from "iconoir-react";
+import {
+  QuestionMark,
+  User,
+  UserXmark,
+  VideoCamera,
+  VideoCameraOff,
+} from "iconoir-react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
 
-import { MINIMUM_RESPONSES_THRESHOLD,CONSENSUS_THRESHOLD, MetricName, METRIC_MAPPINGS } from "@repo/shared";
+import {
+  CONSENSUS_THRESHOLD,
+  METRIC_MAPPINGS,
+  MINIMUM_RESPONSES_THRESHOLD,
+  MetricName,
+} from "@repo/shared";
 
 import Details from "@/components/Details";
 import CourseContext from "@/contexts/CourseContext";
 import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
+import useCourse from "@/hooks/useCourse";
 import { signIn } from "@/lib/api";
 import { ICourse } from "@/lib/api";
 
 import styles from "./Overview.module.scss";
-import useCourse from "@/hooks/useCourse";
 
 export default function Overview() {
   const { class: _class } = useClass();
@@ -24,7 +35,7 @@ export default function Overview() {
         <p className={styles.userSubmissionDescription}>
           {_class.description ?? _class.course.description}
         </p>
-        <AttendanceRequirements/>
+        <AttendanceRequirements />
       </div>
     </CourseContext.Provider>
   );
@@ -46,8 +57,10 @@ function AttendanceRequirements() {
   const responses = {
     Recording: getResponse(_course, MetricName.Recording),
     Attendance: getResponse(_course, MetricName.Attendance),
-  }
-  const atLeastOneConsensus = Object.values(responses).some(c => c !== Consensus.Indeterminate);
+  };
+  const atLeastOneConsensus = Object.values(responses).some(
+    (c) => c !== Consensus.Indeterminate
+  );
   if (!atLeastOneConsensus) {
     return (
       <div className={styles.userSubmissionRequirements}>
@@ -93,19 +106,9 @@ function AttendanceRequirements() {
                   </span>
                 </>
               );
-            default:
-              return (
-                <>
-                  <QuestionMark className={styles.icon} />
-                  <span className={styles.userSubmissionDescription}>
-                    Attendance Requirement Unknown
-                  </span>
-                </>
-              );
           }
         })()}
       </div>
-
       <div>
         {(() => {
           switch (responses.Recording) {
@@ -127,17 +130,30 @@ function AttendanceRequirements() {
                   </span>
                 </>
               );
-            default:
-              return (
-                <>
-                  <QuestionMark className={styles.icon} />
-                  <span className={styles.userSubmissionDescription}>
-                    Recording Status Unknown
-                  </span>
-                </>
-              );
           }
         })()}
+      </div>
+      <div>
+        {(responses.Attendance === Consensus.Indeterminate || 
+          responses.Attendance === Consensus.BellowThreshold) && (
+          <>
+            <QuestionMark className={styles.icon} style={{ color: "var(--label-color)" }} />
+            <span className={styles.userSubmissionDescription} style={{ color: "var(--label-color)" }}>
+              Unknown Attendance Requirement
+            </span>
+          </>
+        )}
+      </div>
+      <div>
+        {(responses.Recording === Consensus.Indeterminate || 
+          responses.Recording === Consensus.BellowThreshold) && (
+          <>
+            <QuestionMark className={styles.icon} style={{ color: "var(--label-color)" }} />
+            <span className={styles.userSubmissionDescription} style={{ color: "var(--label-color)" }}>
+              Unknown Recording Status
+            </span>
+          </>
+        )}
       </div>
       <Link
         to="ratings?feedbackModal=true"
@@ -160,13 +176,15 @@ enum Consensus {
 function getResponse(course: ICourse, metricName: MetricName): Consensus {
   if (METRIC_MAPPINGS[metricName].isRating) {
     throw new Error("getConsensus should not be called for rating metrics");
-  };
+  }
   if (!course?.aggregatedRatings?.metrics) return Consensus.BellowThreshold;
-  const metric = course.aggregatedRatings.metrics.find(m => m.metricName === metricName);
+  const metric = course.aggregatedRatings.metrics.find(
+    (m) => m.metricName === metricName
+  );
   if (!metric?.categories) return Consensus.BellowThreshold;
 
-  const yesCount = metric.categories.find(c => c.value === 1)?.count || 0;
-  const noCount = metric.categories.find(c => c.value === 0)?.count || 0;
+  const yesCount = metric.categories.find((c) => c.value === 1)?.count || 0;
+  const noCount = metric.categories.find((c) => c.value === 0)?.count || 0;
   const total = yesCount + noCount;
   if (total < MINIMUM_RESPONSES_THRESHOLD) {
     return Consensus.BellowThreshold;
