@@ -1,8 +1,8 @@
 import { RatingModel } from "@repo/common";
+import { USER_MAX_ALL_RATINGS, USER_MAX_SEMESTER_RATINGS } from "@repo/shared";
 
 import { MetricName, UserRatings } from "../../../generated-types/graphql";
 import { booleanScaleMetrics, numberScaleMetrics } from "../controller";
-import { USER_MAX_ALL_RATINGS, USER_MAX_SEMESTER_RATINGS } from "@repo/shared";
 
 export const checkRatingExists = async (
   context: any,
@@ -21,9 +21,9 @@ export const checkRatingExists = async (
 export const checkUserMaxRatingsContraint = async (
   userRatings: UserRatings,
   semester: string,
-  year: number,
+  year: number
 ) => {
-  console.log(userRatings.classes)
+  console.log(userRatings.classes);
   console.log(
     `Checking user max ratings constraint: ${userRatings.count} ratings`
   );
@@ -32,11 +32,12 @@ export const checkUserMaxRatingsContraint = async (
   }
   // check for count of ratings within the same semester instance.
   const ratingsInSemester = userRatings.classes.filter(
-    (userClass) =>
-      userClass.semester === semester && userClass.year === year
+    (userClass) => userClass.semester === semester && userClass.year === year
   );
   if (ratingsInSemester.length >= USER_MAX_SEMESTER_RATINGS) {
-    throw new Error(`User has reached the maximum number of ratings in this term`);
+    throw new Error(
+      `User has reached the maximum number of ratings in this term`
+    );
   }
 };
 
