@@ -134,22 +134,34 @@ function AttendanceRequirements() {
         })()}
       </div>
       <div>
-        {(responses.Attendance === Consensus.Indeterminate || 
+        {(responses.Attendance === Consensus.Indeterminate ||
           responses.Attendance === Consensus.BellowThreshold) && (
           <>
-            <QuestionMark className={styles.icon} style={{ color: "var(--label-color)" }} />
-            <span className={styles.userSubmissionDescription} style={{ color: "var(--label-color)" }}>
+            <QuestionMark
+              className={styles.icon}
+              style={{ color: "var(--label-color)" }}
+            />
+            <span
+              className={styles.userSubmissionDescription}
+              style={{ color: "var(--label-color)" }}
+            >
               Unknown Attendance Requirement
             </span>
           </>
         )}
       </div>
       <div>
-        {(responses.Recording === Consensus.Indeterminate || 
+        {(responses.Recording === Consensus.Indeterminate ||
           responses.Recording === Consensus.BellowThreshold) && (
           <>
-            <QuestionMark className={styles.icon} style={{ color: "var(--label-color)" }} />
-            <span className={styles.userSubmissionDescription} style={{ color: "var(--label-color)" }}>
+            <QuestionMark
+              className={styles.icon}
+              style={{ color: "var(--label-color)" }}
+            />
+            <span
+              className={styles.userSubmissionDescription}
+              style={{ color: "var(--label-color)" }}
+            >
               Unknown Recording Status
             </span>
           </>
