@@ -59,7 +59,7 @@ function AttendanceRequirements() {
     Attendance: getResponse(_course, MetricName.Attendance),
   };
   const atLeastOneConsensus = Object.values(responses).some(
-    (c) => c !== Consensus.Indeterminate
+    (c) => c == Consensus.Yes || c == Consensus.No
   );
   if (!atLeastOneConsensus) {
     return (
