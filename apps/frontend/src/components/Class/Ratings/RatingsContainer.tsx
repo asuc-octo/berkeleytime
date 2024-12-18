@@ -80,7 +80,6 @@ export function RatingsContainer() {
   const { data: termsData } = useReadTerms();
 
   const handleModalStateChange = (open: boolean) => {
-    console.log("handleModalStateChange", open);
     setIsModalOpen(open);
     if (open) {
       searchParams.set("feedbackModal", "true");
@@ -209,7 +208,6 @@ export function RatingsContainer() {
         classRating.subject === currentClass.subject &&
         classRating.courseNumber === currentClass.courseNumber
     );
-    console.log("Current userRatings:", matchedRating);
     return matchedRating as UserRating;
   }, [userRatingsData, currentClass]);
 

@@ -31,9 +31,17 @@ export interface ICourse {
   toDate: string;
   typicallyOffered: Semester[] | null;
   aggregatedRatings?: {
+    __typename?: "AggregatedRatings";
     metrics: Array<{
+      __typename?: "Metric";
       count: number;
       metricName: string;
+      weightedAverage: number;
+      categories: Array<{
+        __typename?: "MetricCategory";
+        count: number;
+        value: number;
+      }>;
     }>;
   };
 }
