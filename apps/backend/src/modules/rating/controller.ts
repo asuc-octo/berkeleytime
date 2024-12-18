@@ -17,7 +17,11 @@ import {
   userClassRatingsAggregator,
   userRatingsAggregator,
 } from "./helper/aggregator";
-import { checkRatingExists, checkValueConstraint } from "./helper/checkConstraints";
+import {
+  checkRatingExists,
+  checkUserMaxRatingsContraint,
+  checkValueConstraint,
+} from "./helper/checkConstraints";
 
 export const numberScaleMetrics = Object.entries(METRIC_MAPPINGS)
   .filter(([_, config]) => config.isRating)
@@ -67,6 +71,12 @@ export const createRating = async (
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
   checkValueConstraint(metricName, value);
+
+  // Get current user ratings before making any changes
+  const userRatings = await getUserRatings(context);
+  checkUserMaxRatingsContraint(userRatings, semester, year);
+
+  // check for user ratings count total + for this semester instance.
 
   const session = await connection.startSession();
   try {
