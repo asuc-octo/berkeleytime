@@ -1,5 +1,4 @@
-import { RatingModel, UserModel } from "@repo/common";
-import { USER_MAX_RATINGS } from "@repo/shared";
+import { RatingModel } from "@repo/common";
 
 import { MetricName } from "../../../generated-types/graphql";
 import { booleanScaleMetrics, numberScaleMetrics } from "../controller";
@@ -10,18 +9,12 @@ export const checkRatingExists = async (
   courseNumber: string,
   metricName: MetricName
 ) => {
-  return await RatingModel.findOne({
+  return RatingModel.findOne({
+    createdBy: context.user._id,
     subject,
     courseNumber,
     metricName,
-    createdBy: context.user._id,
   });
-};
-
-// TODO: USER_MAX_RATINGS not working yet
-export const checkUserClassRatingsCount = async (context: any) => {
-  const user = await UserModel.findOne({ googleId: context.user.googleId });
-  return (user?.classRatingsCount || 0) < USER_MAX_RATINGS;
 };
 
 export const checkValueConstraint = (metricName: MetricName, value: number) => {

@@ -1,6 +1,6 @@
 import { connection } from "mongoose";
 
-import { AggregatedMetricsModel, RatingModel, UserModel } from "@repo/common";
+import { AggregatedMetricsModel, RatingModel } from "@repo/common";
 import { METRIC_MAPPINGS } from "@repo/shared";
 
 import { MetricName, Semester } from "../../generated-types/graphql";
@@ -17,11 +17,7 @@ import {
   userClassRatingsAggregator,
   userRatingsAggregator,
 } from "./helper/aggregator";
-import {
-  checkRatingExists,
-  checkUserClassRatingsCount,
-  checkValueConstraint,
-} from "./helper/checkConstraints";
+import { checkRatingExists, checkValueConstraint } from "./helper/checkConstraints";
 
 export const numberScaleMetrics = Object.entries(METRIC_MAPPINGS)
   .filter(([_, config]) => config.isRating)
@@ -81,11 +77,7 @@ export const createRating = async (
         courseNumber,
         metricName
       );
-
       if (!existingRating) {
-        if (!checkUserClassRatingsCount(context)) {
-          throw new Error("User has reached the rating threshold");
-        }
         await createNewRating(
           context,
           {
@@ -151,41 +143,41 @@ const deleteRatingOperations = async (
   metricName: MetricName,
   session: any
 ) => {
-  const deletedRating = await RatingModel.findOneAndDelete(
-    {
-      createdBy: context.user._id,
-      subject,
-      courseNumber,
-      semester,
-      year,
-      classNumber,
-      metricName,
-    },
-    { session }
-  );
-
-  if (!deletedRating) {
-    throw new Error("Rating not found");
-  }
-
-  await handleCategoryCountChange(
+  const rating = await RatingModel.findOne({
+    createdBy: context.user._id,
     subject,
     courseNumber,
     semester,
     year,
     classNumber,
     metricName,
-    deletedRating.value,
-    false,
-    session
-  );
+  });
 
-  const user = await UserModel.findOne({ googleId: context.user.googleId });
-  if (user) {
-    const newCount = Math.max(0, (user.classRatingsCount || 0) - 1);
-    user.classRatingsCount = newCount;
-    await user.save({ session });
+  if (!rating) {
+    throw new Error("Rating not found");
   }
+
+  await Promise.all([
+    RatingModel.deleteOne(
+      {
+        _id: rating._id,
+      },
+      { session }
+    ),
+    handleCategoryCountChange(
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metricName,
+      rating.value,
+      false,
+      session
+    ),
+  ]);
+
+  return rating;
 };
 
 export const deleteRating = async (
@@ -367,11 +359,6 @@ const createNewRating = async (context: any, ratingData: any, session: any) => {
       value,
       true,
       session
-    ),
-    UserModel.findOneAndUpdate(
-      { googleId: context.user.googleId },
-      { $inc: { classRatingsCount: 1 } },
-      { session }
     ),
   ]);
 };

@@ -224,6 +224,8 @@ export default function Class({
     );
   }, [_class, bookmarked, updateUser, user]);
 
+
+  // TODO: courseAggregatedRatings should be updated on mutations. This also affects userSubmitted section
   function getRatingsCount() {
     if (!_class?.course?.aggregatedRatings?.metrics?.length) {
       return 0;
