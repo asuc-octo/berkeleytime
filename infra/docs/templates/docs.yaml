@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bt-docs.docsName" . }}
+  labels:
+    {{- include "bt-docs.docsLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "bt-docs.docsLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bt-docs.docsLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: docs
+          image: {{ printf "%s/%s:%s" .Values.docs.image.registry .Values.docs.image.repository ( toString .Values.docs.image.tag ) }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.docs.port }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bt-docs.docsName" . }}-svc
+  labels:
+    {{- include "bt-docs.docsLabels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "bt-docs.docsLabels" . | nindent 4 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.port }}
+      targetPort: {{ .Values.docs.port }}

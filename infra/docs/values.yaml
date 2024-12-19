@@ -1,0 +1,13 @@
+issuer: letsencrypt-prod
+
+host: docs.berkeleytime.com
+port: 80
+
+docs:
+  port: 80
+  path: /
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-docs
+    tag: prod
