@@ -36,8 +36,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
-import { useReadTerms } from "@/hooks/api/terms";
-import { IClass, Semester, TemporalPosition } from "@/lib/api";
+import { IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -224,15 +223,6 @@ export default function Class({
       }
     );
   }, [_class, bookmarked, updateUser, user]);
-
-  // const { data: termsData } = useReadTerms();
-
-  // function ratingTabExists() {
-  //   const pastTerms = termsData?.filter(
-  //     (term) => term.temporalPosition === TemporalPosition.Past
-  //   ) || [];
-  //   return pastTerms.length > 0;
-  // }
 
   function getRatingsCount() {
     if (!_class?.course?.aggregatedRatings?.metrics?.length) {
