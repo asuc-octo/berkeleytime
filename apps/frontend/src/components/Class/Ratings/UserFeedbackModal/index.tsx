@@ -7,7 +7,7 @@ import { MetricName } from "@repo/shared";
 import { Button } from "@repo/theme";
 
 import { useReadTerms } from "@/hooks/api";
-import { Semester, TemporalPosition } from "@/lib/api/terms";
+import { Semester, TemporalPosition } from "@/lib/api";
 
 import ratingStyles from "../Ratings.module.scss";
 import { MetricData, UserRating, toMetricData } from "../helper/metricsUtil";

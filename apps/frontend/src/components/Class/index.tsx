@@ -36,7 +36,8 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
-import { IClass, Semester } from "@/lib/api";
+import { useReadTerms } from "@/hooks/api/terms";
+import { IClass, Semester, TemporalPosition } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -224,7 +225,15 @@ export default function Class({
     );
   }, [_class, bookmarked, updateUser, user]);
 
-  // TODO: courseAggregatedRatings should be updated on mutations. This also affects userSubmitted section
+  // const { data: termsData } = useReadTerms();
+
+  // function ratingTabExists() {
+  //   const pastTerms = termsData?.filter(
+  //     (term) => term.temporalPosition === TemporalPosition.Past
+  //   ) || [];
+  //   return pastTerms.length > 0;
+  // }
+
   function getRatingsCount() {
     if (!_class?.course?.aggregatedRatings?.metrics?.length) {
       return 0;

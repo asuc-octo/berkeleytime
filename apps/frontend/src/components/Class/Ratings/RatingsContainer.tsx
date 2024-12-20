@@ -213,15 +213,10 @@ export function RatingsContainer() {
   }, [userRatingsData, currentClass]);
 
   const ratingsData = React.useMemo(() => {
-    // if (PLACEHOLDER) {
-    //   return placeholderRatingsData;
-    // }
-
     const metrics =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
         : aggregatedRatings?.course?.aggregatedRatings?.metrics;
-
     if (
       !metrics ||
       !metrics.some(
@@ -230,7 +225,6 @@ export function RatingsContainer() {
     ) {
       return null;
     }
-
     return metrics.map((metric: any) => {
       let maxCount = 1;
       [5, 4, 3, 2, 1].map((rating) => {
@@ -269,11 +263,9 @@ export function RatingsContainer() {
       ) ?? 0;
     return totalRatings > 0;
   }, [aggregatedRatings]);
-
   if (courseLoading) {
     return <div>Loading course data...</div>;
   }
-
   return (
     <div className={styles.root}>
       <Container size="sm">
@@ -359,20 +351,20 @@ export function RatingsContainer() {
           className={styles.ratingsContainer}
           style={{
             backgroundColor:
-              !hasRatings && !PLACEHOLDER
+              !hasRatings
                 ? "transparent"
                 : "var(--foreground-color)",
             boxShadow:
-              !hasRatings && !PLACEHOLDER
+              !hasRatings
                 ? "none"
                 : "0 1px 2px rgb(0 0 0 / 5%)",
             border:
-              !hasRatings && !PLACEHOLDER
+              !hasRatings
                 ? "none"
                 : "1px solid var(--border-color)",
           }}
         >
-          {!hasRatings && !PLACEHOLDER ? (
+          {!hasRatings ? (
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>

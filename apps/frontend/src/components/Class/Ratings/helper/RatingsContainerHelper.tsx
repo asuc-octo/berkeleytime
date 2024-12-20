@@ -9,7 +9,7 @@ import {
 } from "iconoir-react";
 import _ from "lodash";
 
-import { MetricName } from "@repo/shared";
+import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { AlternateTooltip, Button, IconButton, Tooltip } from "@repo/theme";
 
 import { signIn } from "@/lib/api";
@@ -184,33 +184,6 @@ export function RatingButton(user: any, onOpenModal: (open: boolean) => void) {
 }
 
 // Utility functions
-export const ratingDelete = async (
-  userRating: UserRating,
-  currentClass: any,
-  deleteRating: any
-) => {
-  const deletePromises = userRating.metrics.map((metric) =>
-    deleteRating({
-      variables: {
-        subject: currentClass.subject,
-        courseNumber: currentClass.courseNumber,
-        semester: userRating.semester,
-        year: userRating.year,
-        classNumber: currentClass.number,
-        metricName: metric.metricName,
-      },
-      refetchQueries: [
-        "GetClass",
-        "GetUserRatings",
-        "GetCourseRatings",
-        "GetSemestersWithRatings",
-      ],
-      awaitRefetchQueries: true
-    })
-  );
-  await Promise.all(deletePromises);
-};
-
 export const ratingSubmit = async (
   metricValues: MetricData,
   termInfo: { semester: Semester; year: number },
@@ -223,12 +196,23 @@ export const ratingSubmit = async (
   } | null
 ) => {
   try {
+    const populatedMetrics = Object.keys(MetricName).filter((metric) =>
+      metricValues[MetricName[metric as keyof typeof MetricName]] !== null &&
+      metricValues[MetricName[metric as keyof typeof MetricName]] !== undefined
+    );
+    if (populatedMetrics.length === 0) {
+      throw new Error(`No populated metrics`);
+    }
+    const missingRequiredMetrics = REQUIRED_METRICS.filter(metric => !populatedMetrics.includes(metric));
+    if (missingRequiredMetrics.length > 0) {
+      throw new Error(`Missing required metrics: ${missingRequiredMetrics.join(', ')}`);
+    }
     await Promise.all(
       (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
         (metric) => {
           const value = metricValues[MetricName[metric]];
-          // If value is null or undefined, only send deleteRating if the metric exists in current ratings
-          if (value === null || value === undefined) {
+          // If metric is not in populated metrics but was in current ratings, delete
+          if (!populatedMetrics.includes(metric)) {
             const metricExists = currentRatings?.metrics?.some(
               (m) => m.metricName === metric
             );
@@ -286,4 +270,31 @@ export const ratingSubmit = async (
   } catch (error) {
     console.error("Error submitting ratings:", error);
   }
+};
+
+export const ratingDelete = async (
+  userRating: UserRating,
+  currentClass: any,
+  deleteRating: any
+) => {
+  const deletePromises = userRating.metrics.map((metric) =>
+    deleteRating({
+      variables: {
+        subject: currentClass.subject,
+        courseNumber: currentClass.courseNumber,
+        semester: userRating.semester,
+        year: userRating.year,
+        classNumber: currentClass.number,
+        metricName: metric.metricName,
+      },
+      refetchQueries: [
+        "GetClass",
+        "GetUserRatings",
+        "GetCourseRatings",
+        "GetSemestersWithRatings",
+      ],
+      awaitRefetchQueries: true
+    })
+  );
+  await Promise.all(deletePromises);
 };
