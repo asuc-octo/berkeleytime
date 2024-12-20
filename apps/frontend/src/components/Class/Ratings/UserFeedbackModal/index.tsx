@@ -224,18 +224,7 @@ export function UserFeedbackModal({
               <div className={styles.modalFooter}>
                 <Dialog.Close asChild>
                   <Button
-                    style={{
-                      border: "none",
-                      color: "var(--paragraph-color)",
-                      transition: "color 0.2s ease",
-                      background: "none",
-                    }}
-                    onMouseOver={(e: any) => {
-                      e.currentTarget.style.color = "var(--heading-color)";
-                    }}
-                    onMouseOut={(e: any) => {
-                      e.currentTarget.style.color = "var(--paragraph-color)";
-                    }}
+                    className={styles.cancelButton}
                     type="button"
                   >
                     Cancel

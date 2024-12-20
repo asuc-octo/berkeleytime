@@ -101,6 +101,18 @@
   display: flex;
   justify-content: flex-end;
   gap: 24px;
+
+  .cancelButton {
+    border: none;
+    color: var(--paragraph-color);
+    transition: color 0.2s ease;
+    background: none;
+
+    &:hover {
+      background-color: var(--foreground-color);
+      color: var(--heading-color);
+    }
+  }
 }
 
 .sectionTitle {
@@ -227,20 +239,6 @@
   }
 }
 
-.cancelButton {
-  color: var(--red-500)
-  // border: none;
-  // border-radius: 4px;
-  // color: var(--paragraph-color);
-  // transition: color 0.2s ease;
-  // background: none;
-  // padding: 8px 16px;
-
-  // &:hover {
-  //   color: var(--heading-color);
-  // }
-}
-
 .submitButton {
   transition: background-color 0.2s ease;
 
@@ -250,7 +248,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: var(--blue-500);
+      background-color: var(--button-hover);
     }
   }
 
