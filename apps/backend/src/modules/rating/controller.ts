@@ -74,7 +74,13 @@ export const createRating = async (
 
   // Get current user ratings before making any changes
   const userRatings = await getUserRatings(context);
-  checkUserMaxRatingsContraint(userRatings, subject, courseNumber, semester, year);
+  checkUserMaxRatingsContraint(
+    userRatings,
+    subject,
+    courseNumber,
+    semester,
+    year
+  );
 
   // check for user ratings count total + for this semester instance.
 

@@ -1,6 +1,8 @@
 import { useState } from "react";
+
 import * as Dialog from "@radix-ui/react-dialog";
 import { CheckCircleSolid, WarningTriangleSolid } from "iconoir-react";
+
 import styles from "./Popup.module.scss";
 
 interface SubmissionPopupProps {
@@ -14,10 +16,7 @@ interface DeleteRatingPopupProps {
   onConfirmDelete: () => Promise<void>;
 }
 
-export function SubmissionPopup({
-  isOpen,
-  onClose,
-}: SubmissionPopupProps) {
+export function SubmissionPopup({ isOpen, onClose }: SubmissionPopupProps) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>

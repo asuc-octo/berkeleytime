@@ -26,12 +26,15 @@ export const checkUserMaxRatingsContraint = async (
   year: number
 ) => {
   const filteredClasses = userRatings.classes.filter(
-    (userClass) => !(userClass.subject === subject && userClass.courseNumber === courseNumber)
+    (userClass) =>
+      !(
+        userClass.subject === subject && userClass.courseNumber === courseNumber
+      )
   );
   const filteredUserRatings = {
     ...userRatings,
     classes: filteredClasses,
-    count: filteredClasses.length
+    count: filteredClasses.length,
   };
   if (filteredUserRatings.count >= USER_MAX_ALL_RATINGS) {
     throw new Error(`User has reached the maximum number of ratings`);
