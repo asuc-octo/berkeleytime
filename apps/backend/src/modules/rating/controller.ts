@@ -1,5 +1,6 @@
-import { connection } from "mongoose";
 import { GraphQLError } from "graphql";
+import { connection } from "mongoose";
+
 import { AggregatedMetricsModel, RatingModel } from "@repo/common";
 import { METRIC_MAPPINGS } from "@repo/shared";
 
@@ -71,7 +72,7 @@ export const createRating = async (
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
-      extensions: { code: 'UNAUTHENTICATED' }
+      extensions: { code: "UNAUTHENTICATED" },
     });
   }
   checkValueConstraint(metricName, value);
@@ -175,7 +176,7 @@ const deleteRatingOperations = async (
 
   if (!rating) {
     throw new GraphQLError("Rating not found", {
-      extensions: { code: 'NOT_FOUND' }
+      extensions: { code: "NOT_FOUND" },
     });
   }
 
@@ -214,7 +215,7 @@ export const deleteRating = async (
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
-      extensions: { code: 'UNAUTHENTICATED' }
+      extensions: { code: "UNAUTHENTICATED" },
     });
   }
 
@@ -264,7 +265,7 @@ export const getUserClassRatings = async (
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
-      extensions: { code: 'UNAUTHENTICATED' }
+      extensions: { code: "UNAUTHENTICATED" },
     });
   }
   const userRatings = await userClassRatingsAggregator(
@@ -290,7 +291,7 @@ export const getUserClassRatings = async (
 export const getUserRatings = async (context: any) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
-      extensions: { code: 'UNAUTHENTICATED' }
+      extensions: { code: "UNAUTHENTICATED" },
     });
   }
 
@@ -469,7 +470,7 @@ const handleCategoryCountChange = async (
         break;
       default:
         throw new GraphQLError("Invalid metric name", {
-          extensions: { code: 'INVALID_ARGUMENT' }
+          extensions: { code: "INVALID_ARGUMENT" },
         });
     }
     for (const v of valueRange) {
@@ -490,8 +491,11 @@ const handleCategoryCountChange = async (
       );
     }
   } else {
-    throw new GraphQLError("Aggregated Rating does not exist, cannot decrement", {
-      extensions: { code: 'NOT_FOUND' }
-    });
+    throw new GraphQLError(
+      "Aggregated Rating does not exist, cannot decrement",
+      {
+        extensions: { code: "NOT_FOUND" },
+      }
+    );
   }
 };

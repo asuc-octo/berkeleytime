@@ -1,3 +1,5 @@
+import { GraphQLError } from "graphql";
+
 import {
   createRating,
   deleteRating,
@@ -7,7 +9,6 @@ import {
   getUserRatings,
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
-import { GraphQLError } from "graphql";
 
 const resolvers: RatingModule.Resolvers = {
   Query: {
@@ -32,11 +33,11 @@ const resolvers: RatingModule.Resolvers = {
         }
         // Convert any other errors to GraphQLError
         throw new GraphQLError(
-          typeof error === 'object' && error !== null && 'message' in error
+          typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : 'An unexpected error occurred',
+            : "An unexpected error occurred",
           {
-            extensions: { code: 'INTERNAL_SERVER_ERROR' }
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
           }
         );
       }
@@ -53,11 +54,11 @@ const resolvers: RatingModule.Resolvers = {
         }
         // Convert any other errors to GraphQLError
         throw new GraphQLError(
-          typeof error === 'object' && error !== null && 'message' in error
+          typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : 'An unexpected error occurred',
+            : "An unexpected error occurred",
           {
-            extensions: { code: 'INTERNAL_SERVER_ERROR' }
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
           }
         );
       }
@@ -85,11 +86,11 @@ const resolvers: RatingModule.Resolvers = {
         }
         // Convert any other errors to GraphQLError
         throw new GraphQLError(
-          typeof error === 'object' && error !== null && 'message' in error
+          typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : 'An unexpected error occurred',
+            : "An unexpected error occurred",
           {
-            extensions: { code: 'INTERNAL_SERVER_ERROR' }
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
           }
         );
       }
@@ -109,11 +110,11 @@ const resolvers: RatingModule.Resolvers = {
         }
         // Convert any other errors to GraphQLError
         throw new GraphQLError(
-          typeof error === 'object' && error !== null && 'message' in error
+          typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : 'An unexpected error occurred',
+            : "An unexpected error occurred",
           {
-            extensions: { code: 'INTERNAL_SERVER_ERROR' }
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
           }
         );
       }
@@ -143,11 +144,11 @@ const resolvers: RatingModule.Resolvers = {
         }
         // Convert any other errors to GraphQLError
         throw new GraphQLError(
-          typeof error === 'object' && error !== null && 'message' in error
+          typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : 'An unexpected error occurred',
+            : "An unexpected error occurred",
           {
-            extensions: { code: 'INTERNAL_SERVER_ERROR' }
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
           }
         );
       }
@@ -175,11 +176,11 @@ const resolvers: RatingModule.Resolvers = {
         }
         // Convert any other errors to GraphQLError
         throw new GraphQLError(
-          typeof error === 'object' && error !== null && 'message' in error
+          typeof error === "object" && error !== null && "message" in error
             ? String(error.message)
-            : 'An unexpected error occurred',
+            : "An unexpected error occurred",
           {
-            extensions: { code: 'INTERNAL_SERVER_ERROR' }
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
           }
         );
       }

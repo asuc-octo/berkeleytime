@@ -65,24 +65,24 @@ export default async (redis: RedisClientType) => {
     cache: new RedisCache(redis),
     formatError: (formattedError, error) => {
       // Return BAD_USER_INPUT errors as 400s
-      if (formattedError.extensions?.code === 'BAD_USER_INPUT') {
+      if (formattedError.extensions?.code === "BAD_USER_INPUT") {
         return {
           ...formattedError,
           extensions: {
             ...formattedError.extensions,
-            http: { status: 400 }
-          }
+            http: { status: 400 },
+          },
         };
       }
       // Return other errors as internal server errors
       return {
         message: formattedError.message,
         extensions: {
-          code: 'INTERNAL_SERVER_ERROR',
-          http: { status: 500 }
-        }
+          code: "INTERNAL_SERVER_ERROR",
+          http: { status: 500 },
+        },
       };
-    }
+    },
   });
 
   await server.start();
