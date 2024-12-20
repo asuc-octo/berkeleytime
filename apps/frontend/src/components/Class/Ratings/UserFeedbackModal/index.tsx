@@ -9,11 +9,7 @@ import { Button } from "@repo/theme";
 import { useReadTerms } from "@/hooks/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
 
-import {
-  MetricData,
-  UserRating,
-  toMetricData,
-} from "../helper/metricsUtil";
+import { MetricData, UserRating, toMetricData } from "../helper/metricsUtil";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
 import { SubmitRatingPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
