@@ -13,9 +13,9 @@ import {
   MetricData,
   UserRating,
   toMetricData,
-} from "../Class/Ratings/helper/metricsUtil";
+} from "../helper/metricsUtil";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
-import { SubmissionPopup } from "./FeedbackPopups";
+import { SubmitRatingPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
@@ -122,14 +122,14 @@ export function UserFeedbackModal({
       });
 
       onClose();
-      setIsSubmissionPopupOpen(true);
+      setIsSubmitRatingPopupOpen(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  const [isSubmissionPopupOpen, setIsSubmissionPopupOpen] = useState(false);
+  const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
 
   // Filter for past terms
   const pastTerms = useMemo(() => {
@@ -340,9 +340,9 @@ export function UserFeedbackModal({
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-      <SubmissionPopup
-        isOpen={isSubmissionPopupOpen}
-        onClose={() => setIsSubmissionPopupOpen(false)}
+      <SubmitRatingPopup
+        isOpen={isSubmitRatingPopupOpen}
+        onClose={() => setIsSubmitRatingPopupOpen(false)}
       />
     </>
   );

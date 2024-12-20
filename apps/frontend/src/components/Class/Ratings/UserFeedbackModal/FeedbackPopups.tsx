@@ -5,7 +5,7 @@ import { CheckCircleSolid, WarningTriangleSolid } from "iconoir-react";
 
 import styles from "./Popup.module.scss";
 
-interface SubmissionPopupProps {
+interface SubmitRatingPopupProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -16,7 +16,7 @@ interface DeleteRatingPopupProps {
   onConfirmDelete: () => Promise<void>;
 }
 
-export function SubmissionPopup({ isOpen, onClose }: SubmissionPopupProps) {
+export function SubmitRatingPopup({ isOpen, onClose }: SubmitRatingPopupProps) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>

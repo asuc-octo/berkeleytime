@@ -1,6 +1,6 @@
 import { MetricName } from "@repo/shared";
 
-import { MetricData } from "../Class/Ratings/helper/metricsUtil";
+import { MetricData } from "../helper/metricsUtil";
 import styles from "./UserFeedbackModal.module.scss";
 
 interface BooleanInputProps {

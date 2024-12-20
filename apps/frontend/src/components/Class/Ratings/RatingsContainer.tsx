@@ -8,8 +8,8 @@ import ReactSelect from "react-select";
 import { METRIC_ORDER } from "@repo/shared";
 import { Container } from "@repo/theme";
 
-import UserFeedbackModal from "@/components/UserFeedbackModal";
-import { DeleteRatingPopup } from "@/components/UserFeedbackModal/FeedbackPopups";
+import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
+import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/FeedbackPopups";
 import { useReadTerms, useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {
