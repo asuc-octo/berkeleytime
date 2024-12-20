@@ -4,10 +4,10 @@ repos:
     hooks:
       - id: format
         name: format
-        entry: npm run format
+        entry: npx prettier --write
         language: system
+        files: \.(ts|tsx)$
         stages: [pre-push]
-        pass_filenames: false
       - id: build
         name: build
         entry: npm run build
