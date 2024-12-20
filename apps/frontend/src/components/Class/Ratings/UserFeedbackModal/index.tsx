@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
 import ReactSelect from "react-select";
@@ -78,6 +78,7 @@ export function UserFeedbackModal({
   );
   const [metricData, setMetricData] = useState(initialMetricData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const hasAutoSelected = useRef(false);
 
   useEffect(() => {
     if (initialUserClass?.semester && initialUserClass?.year)
@@ -147,10 +148,19 @@ export function UserFeedbackModal({
     });
   }, [availableTerms, termsData]);
 
+  // Auto-select term if only one option is available
+  useEffect(() => {
+    if (pastTerms.length === 1 && !selectedTerm && !hasAutoSelected.current) {
+      setSelectedTerm(pastTerms[0].value);
+      hasAutoSelected.current = true;
+    }
+  }, [pastTerms, selectedTerm]);
+
   const handleClose = () => {
     // Reset form state to initial values when closing
     setMetricData(initialMetricData);
-    setSelectedTerm(initialTermValue);
+    setSelectedTerm(null);
+    hasAutoSelected.current = false; // Reset the auto-selection flag when closing
     onClose();
   };
 
@@ -252,7 +262,10 @@ export function UserFeedbackModal({
       </Dialog.Root>
       <SubmitRatingPopup
         isOpen={isSubmitRatingPopupOpen}
-        onClose={() => setIsSubmitRatingPopupOpen(false)}
+        onClose={() => {
+          setIsSubmitRatingPopupOpen(false);
+          hasAutoSelected.current = false;
+        }}
       />
     </>
   );
