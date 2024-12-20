@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  width: 161px;
+  width: 140px;
 
   .title {
     color: var(--paragraph-color);
@@ -170,40 +170,41 @@
   }
 }
 
-.statusVeryHigh,
-.statusHigh,
-.statusMedium,
-.statusLow,
-.statusVeryLow {
+.status {
   padding: 6px 10px;
   border-radius: 4px;
   font-size: 14px;
   user-select: none;
-}
 
-.statusVeryHigh {
-  color: #10b981;
-  background: #bbf7d0;
-}
+  &-veryHigh {
+    @extend .status;
+    color: #10b981;
+    background: #bbf7d0;
+  }
 
-.statusHigh {
-  color: #10b981;
-  background: #f0fdf4;
-}
+  &-high {
+    @extend .status;
+    color: #10b981;
+    background: #f0fdf4;
+  }
 
-.statusMedium {
-  color: #fb933c;
-  background: #ffecd5;
-}
+  &-medium {
+    @extend .status;
+    color: #fb933c;
+    background: #ffecd5;
+  }
 
-.statusLow {
-  color: #ef4444;
-  background: #fff2f2;
-}
+  &-low {
+    @extend .status;
+    color: #ef4444;
+    background: #fff2f2;
+  }
 
-.statusVeryLow {
-  color: #ef4444;
-  background: #fecaca;
+  &-veryLow {
+    @extend .status;
+    color: #ef4444;
+    background: #fecaca;
+  }
 }
 
 .ratingContent {
@@ -418,29 +419,31 @@
       color: var(--dark-heading-color);
     }
   }
-  .statusVeryHigh {
-    color: #11ca96;
-    background: #2c4538;
-  }
+  .status {
+    &-veryHigh {
+      color: #11ca96;
+      background: #2c4538;
+    }
 
-  .statusHigh {
-    color: #10b981;
-    background: #23372e;
-  }
+    &-high {
+      color: #10b981;
+      background: #23372e;
+    }
 
-  .statusMedium {
-    color: #fca469;
-    background: #5a3e26;
-  }
+    &-medium {
+      color: #fca469;
+      background: #5a3e26;
+    }
 
-  .statusLow {
-    color: #f87171;
-    background: #3e2a2a;
-  }
+    &-low {
+      color: #f87171;
+      background: #3e2a2a;
+    }
 
-  .statusVeryLow {
-    color: #ff7d7c;
-    background: #5b2b2b;
+    &-veryLow {
+      color: #ff7d7c;
+      background: #5b2b2b;
+    }
   }
 }
 

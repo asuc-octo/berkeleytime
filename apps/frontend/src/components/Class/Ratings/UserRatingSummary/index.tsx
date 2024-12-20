@@ -36,6 +36,7 @@ export default function UserRatingSummary({
             >
               {getMetricStatus(metric.metricName, metric.value)}
             </span>
+            <span className={ratingStyles.metricAverage}>{`${metric.value}.0 / 5.0`}</span>
           </div>
         </div>
       ))}

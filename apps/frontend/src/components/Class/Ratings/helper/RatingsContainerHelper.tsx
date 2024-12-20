@@ -118,7 +118,8 @@ export function RatingDetailView({
           <span className={styles[statusColor]}>{status}</span>
           <span
             className={styles.metricAverage}
-          >{`${weightedAverage.toFixed(1)} / 5.0`}</span>
+          >{`${weightedAverage.toFixed(1)} / 5.0`}
+          </span>
         </div>
         <div className={styles.statusSection}>
           <NavArrowDown
