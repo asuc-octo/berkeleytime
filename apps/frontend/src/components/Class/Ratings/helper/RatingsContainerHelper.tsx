@@ -148,7 +148,9 @@ export function RatingDetailView({
                   />
                 </AlternateTooltip>
               </div>
-              <span className={`${styles.count} ${stat.count === 0 ? styles.empty : ''}`}>
+              <span
+                className={`${styles.count} ${stat.count === 0 ? styles.empty : ""}`}
+              >
                 {shouldAnimate ? `${stat.count}` : "0%"}
               </span>
             </div>
