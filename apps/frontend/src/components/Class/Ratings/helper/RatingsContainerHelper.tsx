@@ -199,6 +199,12 @@ export const ratingDelete = async (
         classNumber: currentClass.number,
         metricName: metric.metricName,
       },
+      refetchQueries: [
+        'GetClass',
+        'GetUserRatings',
+        'GetCourseRatings',
+        'GetSemestersWithRatings'
+      ]
     })
   );
   await Promise.all(deletePromises);
@@ -235,6 +241,12 @@ export const ratingSubmit = async (
                   classNumber: currentClass.number,
                   metricName: metric,
                 },
+                refetchQueries: [
+                  'GetClass',
+                  'GetUserRatings',
+                  'GetCourseRatings',
+                  'GetSemestersWithRatings'
+                ]
               });
             }
             // Skip if metric doesn't exist in current ratings
@@ -257,6 +269,12 @@ export const ratingSubmit = async (
               metricName: metric,
               value,
             },
+            refetchQueries: [
+              'GetClass',
+              'GetUserRatings',
+              'GetCourseRatings',
+              'GetSemestersWithRatings'
+            ]
           });
         }
       )

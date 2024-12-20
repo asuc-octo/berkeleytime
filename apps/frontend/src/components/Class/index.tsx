@@ -393,9 +393,10 @@ export default function Class({
               <Tabs.Trigger value="ratings" asChild>
                 <MenuItem>
                   Ratings
-                  {getRatingsCount() > 0 && (
-                    <span className={styles.badge}>{getRatingsCount()}</span>
-                  )}
+                  {(() => {
+                    const count = getRatingsCount();
+                    return count > 0 && <span className={styles.badge}>{count}</span>;
+                  })()}
                 </MenuItem>
               </Tabs.Trigger>
             </Tabs.List>
@@ -425,9 +426,10 @@ export default function Class({
                 {({ isActive }) => (
                   <MenuItem active={isActive}>
                     Ratings
-                    {getRatingsCount() > 0 && (
-                      <span className={styles.badge}>{getRatingsCount()}</span>
-                    )}
+                    {(() => {
+                      const count = getRatingsCount();
+                      return count > 0 && <span className={styles.badge}>{count}</span>;
+                    })()}
                   </MenuItem>
                 )}
               </NavLink>
