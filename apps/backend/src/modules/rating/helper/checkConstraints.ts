@@ -25,7 +25,6 @@ export const checkUserMaxRatingsContraint = async (
   semester: string,
   year: number
 ) => {
-  // Exclude class that is being added from userRatings
   const filteredClasses = userRatings.classes.filter(
     (userClass) => !(userClass.subject === subject && userClass.courseNumber === courseNumber)
   );
@@ -34,11 +33,9 @@ export const checkUserMaxRatingsContraint = async (
     classes: filteredClasses,
     count: filteredClasses.length
   };
-  // Check total ratings constraint with filtered data
   if (filteredUserRatings.count >= USER_MAX_ALL_RATINGS) {
     throw new Error(`User has reached the maximum number of ratings`);
   }
-  // Check semester ratings constraint with filtered data
   const ratingsInSemester = filteredUserRatings.classes.filter(
     (userClass) => userClass.semester === semester && userClass.year === year
   );

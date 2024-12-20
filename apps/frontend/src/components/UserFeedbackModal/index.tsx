@@ -14,9 +14,8 @@ import {
   UserRating,
   toMetricData,
 } from "../Class/Ratings/helper/metricsUtil";
-import { AttendanceForm } from "./AttendanceForm";
-import { RatingsForm } from "./RatingForm";
-import SubmissionPopup from "./SubmissionPopup";
+import { AttendanceForm, RatingsForm } from "./FeedbackForm";
+import { SubmissionPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;

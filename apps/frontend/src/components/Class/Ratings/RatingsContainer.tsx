@@ -9,7 +9,7 @@ import { METRIC_ORDER } from "@repo/shared";
 import { Container } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/UserFeedbackModal";
-import DeleteRatingPopup from "@/components/UserFeedbackModal/DeletionPopup";
+import { DeleteRatingPopup } from "@/components/UserFeedbackModal/FeedbackPopups";
 import { useReadTerms, useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {

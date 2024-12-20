@@ -1,9 +1,12 @@
 import { useState } from "react";
-
 import * as Dialog from "@radix-ui/react-dialog";
-import { WarningTriangleSolid } from "iconoir-react";
-
+import { CheckCircleSolid, WarningTriangleSolid } from "iconoir-react";
 import styles from "./Popup.module.scss";
+
+interface SubmissionPopupProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
 interface DeleteRatingPopupProps {
   isOpen: boolean;
@@ -11,7 +14,55 @@ interface DeleteRatingPopupProps {
   onConfirmDelete: () => Promise<void>;
 }
 
-export default function DeleteRatingPopup({
+export function SubmissionPopup({
+  isOpen,
+  onClose,
+}: SubmissionPopupProps) {
+  return (
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <Dialog.Portal>
+        <Dialog.Overlay className={styles.overlay} />
+        <Dialog.Content className={styles.modal}>
+          <div className={styles.content}>
+            <div className={styles.modalIcon}>
+              <CheckCircleSolid
+                width={70}
+                height={70}
+                color="var(--blue-500)"
+              />
+            </div>
+            <div className={styles.modalHeader}>
+              <Dialog.Title className={styles.modalTitle}>
+                Thank you for your input!
+              </Dialog.Title>
+              <Dialog.Description className={styles.modalSubtitle}>
+                Your contribution will help students make better <br />
+                informed decisions when selecting their courses.
+              </Dialog.Description>
+            </div>
+
+            <div className={styles.modalFooter}>
+              <button
+                onClick={onClose}
+                className={styles.doneButton}
+                style={{
+                  height: "32px",
+                  padding: "10px 20px",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+export function DeleteRatingPopup({
   isOpen,
   onClose,
   onConfirmDelete,
