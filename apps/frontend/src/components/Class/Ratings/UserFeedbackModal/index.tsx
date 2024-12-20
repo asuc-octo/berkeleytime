@@ -9,12 +9,12 @@ import { Button } from "@repo/theme";
 import { useReadTerms } from "@/hooks/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
 
+import ratingStyles from "../Ratings.module.scss";
 import { MetricData, UserRating, toMetricData } from "../helper/metricsUtil";
+import { termSelectStyle } from "../helper/termSelectStyle";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
 import { SubmitRatingPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
-import ratingStyles from "../Ratings.module.scss";
-import { termSelectStyle } from "../helper/termSelectStyle";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 
@@ -223,10 +223,7 @@ export function UserFeedbackModal({
 
               <div className={styles.modalFooter}>
                 <Dialog.Close asChild>
-                  <Button
-                    className={styles.cancelButton}
-                    type="button"
-                  >
+                  <Button className={styles.cancelButton} type="button">
                     Cancel
                   </Button>
                 </Dialog.Close>

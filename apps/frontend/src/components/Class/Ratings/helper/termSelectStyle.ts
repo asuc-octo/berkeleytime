@@ -1,4 +1,4 @@
-import { StylesConfig } from 'react-select';
+import { StylesConfig } from "react-select";
 
 interface OptionType {
   value: string;

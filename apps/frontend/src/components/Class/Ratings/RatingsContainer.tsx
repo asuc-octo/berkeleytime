@@ -32,7 +32,6 @@ import {
   ratingDelete,
   ratingSubmit,
 } from "./helper/RatingsContainerHelper";
-import { termSelectStyle } from "./helper/termSelectStyle";
 // TODO: Remove placeholder data before prod
 // import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
@@ -41,6 +40,7 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./helper/metricsUtil";
+import { termSelectStyle } from "./helper/termSelectStyle";
 
 const PLACEHOLDER = false;
 

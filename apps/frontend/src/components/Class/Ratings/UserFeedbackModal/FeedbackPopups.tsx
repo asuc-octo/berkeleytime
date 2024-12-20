@@ -104,10 +104,7 @@ export function DeleteRatingPopup({
 
             <div className={styles.modalFooter}>
               {!isDeleting && (
-                <button
-                  onClick={onClose}
-                  className={styles.keepButton}
-                >
+                <button onClick={onClose} className={styles.keepButton}>
                   No, keep my rating
                 </button>
               )}

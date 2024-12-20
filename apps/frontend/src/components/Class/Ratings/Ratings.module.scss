@@ -227,7 +227,7 @@
     margin-bottom: 0;
   }
 
-  .rating {
+  .metric {
     width: 24px;
     color: var(--paragraph-color);
     font-weight: 500;
@@ -237,6 +237,7 @@
     font-size: 16px;
     animation: fadeIn 200ms ease forwards;
     animation-delay: calc(var(--delay) + 50ms);
+    user-select: none;
   }
 
   .barContainer {
@@ -265,6 +266,11 @@
     opacity: 0;
     animation: fadeIn 200ms ease forwards;
     animation-delay: calc(var(--delay) + 100ms);
+    user-select: none;
+
+    &.empty {
+      color: var(--label-color);
+    }
   }
 }
 

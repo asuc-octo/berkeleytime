@@ -134,11 +134,11 @@ export function RatingDetailView({
               className={styles.statRow}
               style={{ "--delay": `${index * 60}ms` } as React.CSSProperties}
             >
-              <span className={styles.rating}>{stat.rating}</span>
-              <AlternateTooltip
-                content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
-              >
-                <div className={styles.barContainer}>
+              <span className={styles.metric}>{stat.rating}</span>
+              <div className={styles.barContainer}>
+                <AlternateTooltip
+                  content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
+                >
                   <div
                     className={styles.bar}
                     style={{
@@ -146,9 +146,9 @@ export function RatingDetailView({
                       transitionDelay: `${index * 60}ms`,
                     }}
                   />
-                </div>
-              </AlternateTooltip>
-              <span className={styles.count}>
+                </AlternateTooltip>
+              </div>
+              <span className={`${styles.count} ${stat.count === 0 ? styles.empty : ''}`}>
                 {shouldAnimate ? `${stat.count}` : "0%"}
               </span>
             </div>
