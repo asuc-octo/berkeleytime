@@ -178,7 +178,7 @@ export function UserFeedbackModal({
                       </h3>
                       <div
                         style={{
-                          width: "231px",
+                          width: "230px",
                           marginLeft: "18px",
                         }}
                       >
@@ -205,56 +205,47 @@ export function UserFeedbackModal({
                           styles={{
                             control: (base) => ({
                               ...base,
-                              backgroundColor: "var(--foreground-color)",
                               borderColor: "var(--border-color)",
-                              minHeight: "38px",
-                              maxHeight: "38px",
+                              height: "38px",
                               width: "100%",
-                              "&:hover": {
-                                borderColor: "var(--blue-400)",
-                              },
-                              "&:focus-within": {
-                                borderColor: "var(--blue-500)",
-                                boxShadow: "0 0 0 2px var(--blue-200)",
-                              },
                             }),
                             menu: (base) => ({
                               ...base,
-                              backgroundColor: "var(--foreground-color)",
+                              borderRadius: "4px",
                               border: "1px solid var(--border-color)",
-                              width: "100%",
                             }),
-                            option: (base, state) => ({
+                            menuList: (base) => ({
                               ...base,
-                              backgroundColor: state.isFocused
-                                ? "var(--hover-color)"
-                                : "var(--foreground-color)",
-                              color: "var(--paragraph-color)",
+                              padding: 0,
+                            }),
+                            option: (base) => ({
+                              ...base,
                               cursor: "pointer",
+                              borderRadius: "4px",
                               "&:hover": {
                                 backgroundColor: "var(--blue-500)",
                                 color: "white",
                               },
                             }),
-                            singleValue: (base) => ({
-                              ...base,
-                              color: "var(--paragraph-color)",
-                            }),
                             input: (base) => ({
                               ...base,
                               color: "var(--paragraph-color)",
-                              maxWidth: "150px",
                               overflow: "hidden",
-                              marginRight: "8px",
-                            }),
-                            dropdownIndicator: (base) => ({
-                              ...base,
-                              color: "var(--paragraph-color)",
                             }),
                             placeholder: (base) => ({
                               ...base,
                               color: "var(--paragraph-color)",
                               userSelect: "none",
+                            }),
+                            dropdownIndicator: (base) => ({
+                              ...base,
+                              color: "var(--paragraph-color)",
+                              cursor: "pointer",
+                            }),
+                            clearIndicator: (base, { getValue, selectProps: { inputValue } }) => ({
+                              ...base,
+                              display: getValue()[0]?.value === "all" || inputValue ? "none" : "flex",
+                              cursor: "pointer",
                             }),
                           }}
                         />

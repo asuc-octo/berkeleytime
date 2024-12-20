@@ -348,41 +348,47 @@ export function RatingsContainer() {
                   styles={{
                     control: (base) => ({
                       ...base,
-                      backgroundColor: "var(--background-color)",
                       borderColor: "var(--border-color)",
-                      minHeight: "38px",
-                      maxHeight: "38px",
-                      width: "200px",
+                      height: "38px",
+                      width: "100%",
                     }),
                     menu: (base) => ({
                       ...base,
-                      backgroundColor: "var(--background-color)",
+                      borderRadius: "4px",
                       border: "1px solid var(--border-color)",
                     }),
-                    option: (base, state) => ({
+                    menuList: (base) => ({
                       ...base,
-                      backgroundColor: state.isFocused
-                        ? "var(--hover-color)"
-                        : "transparent",
-                      color: "var(--paragraph-color)",
+                      padding: 0,
+                    }),
+                    option: (base) => ({
+                      ...base,
                       cursor: "pointer",
+                      borderRadius: "4px",
                       "&:hover": {
+                        backgroundColor: "var(--blue-500)",
                         color: "white",
                       },
-                    }),
-                    singleValue: (base) => ({
-                      ...base,
-                      color: "var(--paragraph-color)",
                     }),
                     input: (base) => ({
                       ...base,
                       color: "var(--paragraph-color)",
-                      maxWidth: "150px",
                       overflow: "hidden",
                     }),
-                    clearIndicator: (base, { getValue }) => ({
+                    placeholder: (base) => ({
                       ...base,
-                      display: getValue()[0]?.value === "all" ? "none" : "flex",
+                      color: "var(--paragraph-color)",
+                      userSelect: "none",
+                    }),
+                    dropdownIndicator: (base) => ({
+                      ...base,
+                      color: "var(--paragraph-color)",
+                      cursor: "pointer",
+                    }),
+                    clearIndicator: (base, { getValue, selectProps: { inputValue } }) => ({
+                      ...base,
+                      display: getValue()[0]?.value === "all" || inputValue ? "none" : "flex",
+                      cursor: "pointer",
                     }),
                   }}
                 />

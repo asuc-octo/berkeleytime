@@ -136,3 +136,26 @@
 .doneButton:hover {
   background: var(--button-hover);
 }
+
+.keepButton {
+  color: var(--subtitle-color);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 10px 20px;
+}
+
+.deleteButton {
+  background-color: var(--red-500);
+  color: white;
+  border: none;
+  height: 32px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.7;
+  }
+}

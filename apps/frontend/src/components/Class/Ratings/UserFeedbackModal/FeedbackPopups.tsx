@@ -106,28 +106,15 @@ export function DeleteRatingPopup({
               {!isDeleting && (
                 <button
                   onClick={onClose}
-                  style={{
-                    color: "var(--subtitle-color)",
-                    cursor: "pointer",
-                  }}
+                  className={styles.keepButton}
                 >
                   No, keep my rating
                 </button>
               )}
               <button
                 onClick={handleDelete}
-                className={styles.doneButton}
+                className={styles.deleteButton}
                 disabled={isDeleting}
-                style={{
-                  backgroundColor: "var(--red-500)",
-                  color: "white",
-                  border: "none",
-                  height: "32px",
-                  padding: "10px 20px",
-                  borderRadius: "5px",
-                  cursor: isDeleting ? "default" : "pointer",
-                  opacity: isDeleting ? 0.7 : 1,
-                }}
               >
                 {isDeleting ? "Deleting..." : "Yes, delete"}
               </button>
