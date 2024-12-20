@@ -1,3 +1,5 @@
+// Add new metrics here. Supports unused metrics (it wont break the frontend)
+// Backend typedef needs to be updated as well
 export enum MetricName {
   Usefulness = "Usefulness",
   Difficulty = "Difficulty",
@@ -6,10 +8,16 @@ export enum MetricName {
   Recording = "Recording",
   Recommended = "Recommended",
 }
-// typedef still have to be manipulated for backend
 
 // Define the standard order for rating metrics
 export const METRIC_ORDER = [
+  MetricName.Usefulness,
+  MetricName.Difficulty,
+  MetricName.Workload,
+];
+
+// frontend only sends query to the backend if these metrics are populated
+export const REQUIRED_METRICS = [
   MetricName.Usefulness,
   MetricName.Difficulty,
   MetricName.Workload,

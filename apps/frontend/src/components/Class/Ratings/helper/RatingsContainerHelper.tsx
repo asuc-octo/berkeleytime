@@ -205,6 +205,7 @@ export const ratingDelete = async (
         "GetCourseRatings",
         "GetSemestersWithRatings",
       ],
+      awaitRefetchQueries: true
     })
   );
   await Promise.all(deletePromises);
@@ -275,6 +276,7 @@ export const ratingSubmit = async (
               "GetCourseRatings",
               "GetSemestersWithRatings",
             ],
+            awaitRefetchQueries: true
           });
         }
       )
