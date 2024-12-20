@@ -196,16 +196,22 @@ export const ratingSubmit = async (
   } | null
 ) => {
   try {
-    const populatedMetrics = Object.keys(MetricName).filter((metric) =>
-      metricValues[MetricName[metric as keyof typeof MetricName]] !== null &&
-      metricValues[MetricName[metric as keyof typeof MetricName]] !== undefined
+    const populatedMetrics = Object.keys(MetricName).filter(
+      (metric) =>
+        metricValues[MetricName[metric as keyof typeof MetricName]] !== null &&
+        metricValues[MetricName[metric as keyof typeof MetricName]] !==
+          undefined
     );
     if (populatedMetrics.length === 0) {
       throw new Error(`No populated metrics`);
     }
-    const missingRequiredMetrics = REQUIRED_METRICS.filter(metric => !populatedMetrics.includes(metric));
+    const missingRequiredMetrics = REQUIRED_METRICS.filter(
+      (metric) => !populatedMetrics.includes(metric)
+    );
     if (missingRequiredMetrics.length > 0) {
-      throw new Error(`Missing required metrics: ${missingRequiredMetrics.join(', ')}`);
+      throw new Error(
+        `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
+      );
     }
     await Promise.all(
       (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
@@ -260,7 +266,7 @@ export const ratingSubmit = async (
               "GetCourseRatings",
               "GetSemestersWithRatings",
             ],
-            awaitRefetchQueries: true
+            awaitRefetchQueries: true,
           });
         }
       )
@@ -293,7 +299,7 @@ export const ratingDelete = async (
         "GetCourseRatings",
         "GetSemestersWithRatings",
       ],
-      awaitRefetchQueries: true
+      awaitRefetchQueries: true,
     })
   );
   await Promise.all(deletePromises);

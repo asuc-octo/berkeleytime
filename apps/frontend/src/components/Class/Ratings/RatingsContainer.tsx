@@ -346,18 +346,11 @@ export function RatingsContainer() {
         <div
           className={styles.ratingsContainer}
           style={{
-            backgroundColor:
-              !hasRatings
-                ? "transparent"
-                : "var(--foreground-color)",
-            boxShadow:
-              !hasRatings
-                ? "none"
-                : "0 1px 2px rgb(0 0 0 / 5%)",
-            border:
-              !hasRatings
-                ? "none"
-                : "1px solid var(--border-color)",
+            backgroundColor: !hasRatings
+              ? "transparent"
+              : "var(--foreground-color)",
+            boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
+            border: !hasRatings ? "none" : "1px solid var(--border-color)",
           }}
         >
           {!hasRatings ? (
