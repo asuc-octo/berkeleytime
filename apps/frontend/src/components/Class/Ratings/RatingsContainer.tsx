@@ -325,7 +325,8 @@ export function RatingsContainer() {
                     }
                   }
                   onChange={(option) => {
-                    const selectedValue = option?.value || "all";
+                    // Handle both single option and multi-value cases
+                    const selectedValue = option && 'value' in option ? option.value : "all";
                     setSelectedTerm(selectedValue);
                     if (selectedValue === "all") {
                       setTermRatings(null);
