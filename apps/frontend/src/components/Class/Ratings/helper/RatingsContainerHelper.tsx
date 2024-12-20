@@ -116,9 +116,8 @@ export function RatingDetailView({
             </Tooltip>
           </div>
           <span className={styles[statusColor]}>{status}</span>
-          <span
-            className={styles.metricAverage}
-          >{`${weightedAverage.toFixed(1)} / 5.0`}
+          <span className={styles.metricAverage}>
+            {`${weightedAverage.toFixed(1)} / 5.0`}
           </span>
         </div>
         <div className={styles.statusSection}>
@@ -201,11 +200,11 @@ export const ratingDelete = async (
         metricName: metric.metricName,
       },
       refetchQueries: [
-        'GetClass',
-        'GetUserRatings',
-        'GetCourseRatings',
-        'GetSemestersWithRatings'
-      ]
+        "GetClass",
+        "GetUserRatings",
+        "GetCourseRatings",
+        "GetSemestersWithRatings",
+      ],
     })
   );
   await Promise.all(deletePromises);
@@ -243,11 +242,11 @@ export const ratingSubmit = async (
                   metricName: metric,
                 },
                 refetchQueries: [
-                  'GetClass',
-                  'GetUserRatings',
-                  'GetCourseRatings',
-                  'GetSemestersWithRatings'
-                ]
+                  "GetClass",
+                  "GetUserRatings",
+                  "GetCourseRatings",
+                  "GetSemestersWithRatings",
+                ],
               });
             }
             // Skip if metric doesn't exist in current ratings
@@ -271,11 +270,11 @@ export const ratingSubmit = async (
               value,
             },
             refetchQueries: [
-              'GetClass',
-              'GetUserRatings',
-              'GetCourseRatings',
-              'GetSemestersWithRatings'
-            ]
+              "GetClass",
+              "GetUserRatings",
+              "GetCourseRatings",
+              "GetSemestersWithRatings",
+            ],
           });
         }
       )

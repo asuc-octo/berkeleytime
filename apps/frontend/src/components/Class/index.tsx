@@ -395,7 +395,9 @@ export default function Class({
                   Ratings
                   {(() => {
                     const count = getRatingsCount();
-                    return count > 0 && <span className={styles.badge}>{count}</span>;
+                    return (
+                      count > 0 && <span className={styles.badge}>{count}</span>
+                    );
                   })()}
                 </MenuItem>
               </Tabs.Trigger>
@@ -428,7 +430,11 @@ export default function Class({
                     Ratings
                     {(() => {
                       const count = getRatingsCount();
-                      return count > 0 && <span className={styles.badge}>{count}</span>;
+                      return (
+                        count > 0 && (
+                          <span className={styles.badge}>{count}</span>
+                        )
+                      );
                     })()}
                   </MenuItem>
                 )}

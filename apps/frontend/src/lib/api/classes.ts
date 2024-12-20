@@ -268,17 +268,6 @@ export const READ_CLASS = gql`
           count
         }
       }
-      aggregatedRatings {
-        metrics {
-          categories {
-            count
-            value
-          }
-          count
-          metricName
-          weightedAverage
-        }
-      }
       course {
         title
         description
