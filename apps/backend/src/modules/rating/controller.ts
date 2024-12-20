@@ -1,5 +1,5 @@
 import { connection } from "mongoose";
-
+import { GraphQLError } from "graphql";
 import { AggregatedMetricsModel, RatingModel } from "@repo/common";
 import { METRIC_MAPPINGS } from "@repo/shared";
 
@@ -69,7 +69,11 @@ export const createRating = async (
   metricName: MetricName,
   value: number
 ) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: 'UNAUTHENTICATED' }
+    });
+  }
   checkValueConstraint(metricName, value);
 
   // Get current user ratings before making any changes
@@ -170,7 +174,9 @@ const deleteRatingOperations = async (
   });
 
   if (!rating) {
-    throw new Error("Rating not found");
+    throw new GraphQLError("Rating not found", {
+      extensions: { code: 'NOT_FOUND' }
+    });
   }
 
   await Promise.all([
@@ -206,7 +212,11 @@ export const deleteRating = async (
   metricName: MetricName,
   existingSession?: any // for nested transactions only
 ) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: 'UNAUTHENTICATED' }
+    });
+  }
 
   if (existingSession) {
     // Just run the operations without starting a new transaction
@@ -252,7 +262,11 @@ export const getUserClassRatings = async (
   year: number,
   classNumber: string
 ) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: 'UNAUTHENTICATED' }
+    });
+  }
   const userRatings = await userClassRatingsAggregator(
     context,
     subject,
@@ -274,7 +288,11 @@ export const getUserClassRatings = async (
 };
 
 export const getUserRatings = async (context: any) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: 'UNAUTHENTICATED' }
+    });
+  }
 
   const userRatings = await userRatingsAggregator(context);
   if (!userRatings.length)
@@ -450,7 +468,9 @@ const handleCategoryCountChange = async (
         valueRange = [0, 1];
         break;
       default:
-        throw new Error("Invalid metric name");
+        throw new GraphQLError("Invalid metric name", {
+          extensions: { code: 'INVALID_ARGUMENT' }
+        });
     }
     for (const v of valueRange) {
       await AggregatedMetricsModel.create(
@@ -470,6 +490,8 @@ const handleCategoryCountChange = async (
       );
     }
   } else {
-    throw new Error("Aggregated Rating does not exist, cannot decrement");
+    throw new GraphQLError("Aggregated Rating does not exist, cannot decrement", {
+      extensions: { code: 'NOT_FOUND' }
+    });
   }
 };
