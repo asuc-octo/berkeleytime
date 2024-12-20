@@ -32,6 +32,7 @@ import {
   ratingDelete,
   ratingSubmit,
 } from "./helper/RatingsContainerHelper";
+import { termSelectStyle } from "./helper/termSelectStyle";
 // TODO: Remove placeholder data before prod
 // import { placeholderRatingsData } from "./helper/devPlaceholderData";
 import {
@@ -345,52 +346,7 @@ export function RatingsContainer() {
                   placeholder="Select term"
                   classNamePrefix="select"
                   className={styles.termSelect}
-                  styles={{
-                    control: (base) => ({
-                      ...base,
-                      borderColor: "var(--border-color)",
-                      height: "38px",
-                      width: "100%",
-                    }),
-                    menu: (base) => ({
-                      ...base,
-                      borderRadius: "4px",
-                      border: "1px solid var(--border-color)",
-                    }),
-                    menuList: (base) => ({
-                      ...base,
-                      padding: 0,
-                    }),
-                    option: (base) => ({
-                      ...base,
-                      cursor: "pointer",
-                      borderRadius: "4px",
-                      "&:hover": {
-                        backgroundColor: "var(--blue-500)",
-                        color: "white",
-                      },
-                    }),
-                    input: (base) => ({
-                      ...base,
-                      color: "var(--paragraph-color)",
-                      overflow: "hidden",
-                    }),
-                    placeholder: (base) => ({
-                      ...base,
-                      color: "var(--paragraph-color)",
-                      userSelect: "none",
-                    }),
-                    dropdownIndicator: (base) => ({
-                      ...base,
-                      color: "var(--paragraph-color)",
-                      cursor: "pointer",
-                    }),
-                    clearIndicator: (base, { getValue, selectProps: { inputValue } }) => ({
-                      ...base,
-                      display: getValue()[0]?.value === "all" || inputValue ? "none" : "flex",
-                      cursor: "pointer",
-                    }),
-                  }}
+                  styles={termSelectStyle}
                 />
               )}
             </div>

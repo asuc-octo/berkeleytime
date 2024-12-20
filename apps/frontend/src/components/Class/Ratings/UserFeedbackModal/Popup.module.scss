@@ -33,7 +33,7 @@
 .modal {
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 8px;
   box-shadow:
     hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
     hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
@@ -89,11 +89,14 @@
 .modalFooter {
   margin-left: -25px;
   margin-right: -25px;
-  padding: 24px 24px 0;
+  padding: 0px 24px;
+  padding-top: 24px;
   border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: flex-end;
   gap: 24px;
+  align-items: center;
+  min-height: fit-content;
 }
 
 @keyframes overlayShow {
@@ -118,41 +121,61 @@
 
 .doneButton {
   display: inline-flex;
-  padding: 8px 16px;
-  justify-content: center;
   align-items: center;
-  border-radius: 6px;
+  justify-content: center;
   background: var(--button-background);
   color: white;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-  letter-spacing: 0.1px;
   border: none;
+  height: 32px;
+  min-width: 76px;
+  padding: 0 16px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
   transition: background-color 150ms ease;
-}
 
-.doneButton:hover {
-  background: var(--button-hover);
+  &:hover {
+    background: var(--button-hover);
+  }
 }
 
 .keepButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--subtitle-color);
   cursor: pointer;
   background: none;
   border: none;
-  padding: 10px 20px;
+  height: 32px;
+  min-width: 140px;
+  padding: 0 16px;
+  font-size: 14px;
+  transition: color 150ms ease;
+
+  &:hover {
+    color: var(--text-color);
+  }
 }
 
 .deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: var(--red-500);
   color: white;
   border: none;
   height: 32px;
-  padding: 10px 20px;
-  border-radius: 5px;
+  min-width: 100px;
+  padding: 0 16px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
+  transition: background-color 150ms ease;
+
+  &:hover {
+    background-color: var(--red-600);
+  }
 
   &:disabled {
     cursor: default;

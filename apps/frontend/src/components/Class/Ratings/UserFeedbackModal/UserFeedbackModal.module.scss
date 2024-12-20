@@ -92,82 +92,8 @@
   }
 }
 
-.termSelect {
-  :global {
-    .select__control {
-      background-color: var(--foreground-color);
-      max-height: 35px;
-      color: var(--paragraph-color);
-      font-size: 14px;
-      font-weight: 400;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      min-width: 230px;
-    }
-
-    .select__indicator-separator {
-      background-color: var(--border-color);
-    }
-
-    .select__dropdown-indicator,
-    .select__clear-indicator {
-      color: var(--paragraph-color);
-
-      &:hover {
-        color: var(--heading-color);
-      }
-    }
-
-    .select__menu {
-      background-color: var(--foreground-color);
-      color: var(--paragraph-color);
-      font-weight: 400;
-      font-size: 14px;
-    }
-
-    .select__option {
-      background-color: var(--foreground-color);
-      color: var(--paragraph-color);
-      border: none;
-      font-size: 14px;
-
-      &:hover {
-        background-color: var(--blue-500);
-        color: white;
-      }
-    }
-
-    .select__single-value {
-      color: var(--paragraph-color);
-    }
-  }
-}
-
-.termDropdown {
-  padding: 4px 12px;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--heading-color);
-  background-color: var(--foreground-color);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  outline: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 120px;
-
-  &:hover {
-    border-color: var(--blue-400);
-  }
-
-  &:focus {
-    border-color: var(--blue-500);
-    box-shadow: 0 0 0 2px var(--blue-200);
-  }
-}
-
 .modalFooter {
-  position: sticky;
+  // position: sticky;
   margin-left: -24px;
   margin-right: -24px;
   padding: 24px 24px 0;
@@ -185,6 +111,7 @@
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border-color);
 }
+
 .formGroup {
   margin-bottom: 20px;
   padding: 0 84px;
@@ -300,11 +227,43 @@
   }
 }
 
-// .attendanceSection {
-//   margin-top: 32px;
-//   padding-top: 32px;
-//   border-top: 1px solid var(--border-color);
-// }
+.cancelButton {
+  color: var(--red-500)
+  // border: none;
+  // border-radius: 4px;
+  // color: var(--paragraph-color);
+  // transition: color 0.2s ease;
+  // background: none;
+  // padding: 8px 16px;
+
+  // &:hover {
+  //   color: var(--heading-color);
+  // }
+}
+
+.submitButton {
+  transition: background-color 0.2s ease;
+
+  &.valid {
+    background: var(--blue-500);
+    color: white;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--blue-500);
+    }
+  }
+
+  &.invalid {
+    background: var(--foreground-color);
+    cursor: default;
+
+    &:hover {
+      background: var(--foreground-color);
+      color: var(--paragraph-color);
+    }
+  }
+}
 
 @keyframes overlayShow {
   from {
@@ -350,60 +309,5 @@
   &:focus {
     outline: none;
     color: var(--heading-color);
-  }
-}
-
-/* Dropdown styling */
-.termDropdown__control {
-  padding: 6px 12px; /* Smaller padding */
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--heading-color);
-  background-color: var(--foreground-color);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-  min-width: 120px;
-  max-width: 80px;
-  min-height: 38px;
-
-  &:hover {
-    border-color: var(--blue-400);
-  }
-
-  &:focus-within {
-    border-color: var(--blue-500);
-    box-shadow: 0 0 0 2px var(--blue-200);
-  }
-}
-
-/* Selected value */
-.termDropdown__single-value {
-  color: var(--heading-color);
-}
-
-/* Dropdown menu styling */
-.termDropdown__menu {
-  z-index: 100;
-  background-color: var(--foreground-color);
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Dropdown option styling */
-.termDropdown__option {
-  padding: 8px 12px;
-  color: var(--paragraph-color);
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--background-hover-color);
-  }
-
-  &--is-selected {
-    background-color: var(--blue-500);
-    color: white;
   }
 }

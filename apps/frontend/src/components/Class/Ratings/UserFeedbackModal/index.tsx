@@ -13,6 +13,8 @@ import { MetricData, UserRating, toMetricData } from "../helper/metricsUtil";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
 import { SubmitRatingPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
+import ratingStyles from "../Ratings.module.scss";
+import { termSelectStyle } from "../helper/termSelectStyle";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 
@@ -201,53 +203,8 @@ export function UserFeedbackModal({
                           placeholder="Select semester"
                           isClearable={true}
                           classNamePrefix="select"
-                          className={styles.termSelect}
-                          styles={{
-                            control: (base) => ({
-                              ...base,
-                              borderColor: "var(--border-color)",
-                              height: "38px",
-                              width: "100%",
-                            }),
-                            menu: (base) => ({
-                              ...base,
-                              borderRadius: "4px",
-                              border: "1px solid var(--border-color)",
-                            }),
-                            menuList: (base) => ({
-                              ...base,
-                              padding: 0,
-                            }),
-                            option: (base) => ({
-                              ...base,
-                              cursor: "pointer",
-                              borderRadius: "4px",
-                              "&:hover": {
-                                backgroundColor: "var(--blue-500)",
-                                color: "white",
-                              },
-                            }),
-                            input: (base) => ({
-                              ...base,
-                              color: "var(--paragraph-color)",
-                              overflow: "hidden",
-                            }),
-                            placeholder: (base) => ({
-                              ...base,
-                              color: "var(--paragraph-color)",
-                              userSelect: "none",
-                            }),
-                            dropdownIndicator: (base) => ({
-                              ...base,
-                              color: "var(--paragraph-color)",
-                              cursor: "pointer",
-                            }),
-                            clearIndicator: (base, { getValue, selectProps: { inputValue } }) => ({
-                              ...base,
-                              display: getValue()[0]?.value === "all" || inputValue ? "none" : "flex",
-                              cursor: "pointer",
-                            }),
-                          }}
+                          className={ratingStyles.termSelect}
+                          styles={termSelectStyle}
                         />
                       </div>
                     </div>
@@ -285,28 +242,8 @@ export function UserFeedbackModal({
                   </Button>
                 </Dialog.Close>
                 <Button
-                  style={{
-                    background: isFormValid
-                      ? "var(--blue-500)"
-                      : "var(--foreground-color)",
-                    color: isFormValid
-                      ? "white"
-                      : "color-mix(in srgb, var(--paragraph-color) 50%, transparent)",
-                    transition: "background-color 0.2s ease",
-                    cursor: isFormValid ? "pointer" : "default",
-                  }}
-                  onMouseOver={(e: any) => {
-                    if (isFormValid) {
-                      e.currentTarget.style.backgroundColor = "#2563EB";
-                    }
-                  }}
-                  onMouseOut={(e: any) => {
-                    if (isFormValid) {
-                      e.currentTarget.style.backgroundColor = "var(--blue-500)";
-                    }
-                  }}
+                  className={`${styles.submitButton} ${isFormValid ? styles.valid : styles.invalid}`}
                   type="submit"
-                  //disabled={!isFormValid || isSubmitting}
                   onClick={(e: any) => {
                     e.preventDefault();
                     if (isFormValid) {
