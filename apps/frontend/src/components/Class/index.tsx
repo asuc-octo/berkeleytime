@@ -36,7 +36,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
-import { IClass, Semester } from "@/lib/api";
+import { IAggregatedRatings, IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -45,6 +45,7 @@ const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
+const Ratings = lazy(() => import("./Ratings"));
 
 interface BodyProps {
   children: ReactNode;
@@ -147,7 +148,6 @@ export default function Class({
     courseNumber as string,
     number as string,
     {
-      // Allow class to be provided
       skip: !!providedClass,
     }
   );
@@ -223,6 +223,17 @@ export default function Class({
       }
     );
   }, [_class, bookmarked, updateUser, user]);
+
+  const ratingsCount = useMemo(() => {
+    if (!_class?.course?.aggregatedRatings?.metrics) {
+      return 0;
+    }
+    return _class.course.aggregatedRatings.metrics.reduce(
+      (max: number, metric: IAggregatedRatings["metrics"][number]) =>
+        Math.max(max, metric.count),
+      0
+    );
+  }, [_class?.course?.aggregatedRatings?.metrics]);
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -379,6 +390,14 @@ export default function Class({
               <Tabs.Trigger value="grades" asChild>
                 <MenuItem>Grades</MenuItem>
               </Tabs.Trigger>
+              <Tabs.Trigger value="ratings" asChild>
+                <MenuItem>
+                  Ratings
+                  {ratingsCount > 0 && (
+                    <span className={styles.badge}>{ratingsCount}</span>
+                  )}
+                </MenuItem>
+              </Tabs.Trigger>
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
@@ -402,31 +421,46 @@ export default function Class({
                   <MenuItem active={isActive}>Grades</MenuItem>
                 )}
               </NavLink>
+              <NavLink to={{ pathname: "ratings" }}>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>
+                    Ratings
+                    {ratingsCount > 0 && (
+                      <span className={styles.badge}>{ratingsCount}</span>
+                    )}
+                  </MenuItem>
+                )}
+              </NavLink>
             </div>
           )}
         </Container>
       </div>
-      <ClassContext.Provider
-        value={{
-          class: _class,
-          course,
-        }}
-      >
-        <Body dialog={dialog}>
-          <Tabs.Content value="overview" asChild>
-            <Overview />
-          </Tabs.Content>
-          <Tabs.Content value="sections" asChild>
-            <Sections />
-          </Tabs.Content>
-          <Tabs.Content value="enrollment" asChild>
-            <Enrollment />
-          </Tabs.Content>
-          <Tabs.Content value="grades" asChild>
-            <Grades />
-          </Tabs.Content>
-        </Body>
-      </ClassContext.Provider>
+      <Container size="sm">
+        <ClassContext.Provider
+          value={{
+            class: _class,
+            course,
+          }}
+        >
+          <Body dialog={dialog}>
+            <Tabs.Content value="overview" asChild>
+              <Overview />
+            </Tabs.Content>
+            <Tabs.Content value="sections" asChild>
+              <Sections />
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <Enrollment />
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <Grades />
+            </Tabs.Content>
+            <Tabs.Content value="ratings" asChild>
+              <Ratings />
+            </Tabs.Content>
+          </Body>
+        </ClassContext.Provider>
+      </Container>
     </Root>
   );
 }

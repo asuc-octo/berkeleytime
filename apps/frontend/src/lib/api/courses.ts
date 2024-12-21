@@ -6,6 +6,7 @@ import {
   IClass,
   InstructionMethod,
 } from ".";
+import { IAggregatedRatings } from "./ratings";
 import { Semester } from "./terms";
 
 export interface ICourse {
@@ -30,6 +31,7 @@ export interface ICourse {
   title: string;
   toDate: string;
   typicallyOffered: Semester[] | null;
+  aggregatedRatings?: IAggregatedRatings;
 }
 
 export interface ReadCourseResponse {
@@ -62,6 +64,17 @@ export const READ_COURSE = gql`
         year
         semester
         number
+      }
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
       }
     }
   }

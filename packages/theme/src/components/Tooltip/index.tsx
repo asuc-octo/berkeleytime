@@ -20,7 +20,6 @@ export interface TooltipProps {
 export const Tooltip = forwardRef<
   HTMLButtonElement,
   TooltipProps &
-    // TODO: Determine which props should be customizable
     Pick<TooltipContentProps, "sideOffset" | "side" | "collisionPadding"> &
     Omit<TooltipTriggerProps, "asChild">
 >(

@@ -17,6 +17,7 @@ export default gql`
     classes: [Class!]!
     crossListing: [Course!]!
     requiredCourses: [Course!]!
+    aggregatedRatings: AggregatedRatings!
 
     "Attributes"
     requirements: String

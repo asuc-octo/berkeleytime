@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 
 import { GradeDistribution, ICourse } from ".";
+import { IAggregatedRatings } from "./ratings";
 import { ITerm, Semester } from "./terms";
 
 export enum InstructionMethod {
@@ -165,6 +166,8 @@ export interface ISection {
   startDate: string;
   endDate: string;
   exams: IExam[];
+  attendanceRequired: boolean;
+  lecturesRecorded: boolean;
 }
 
 export interface IReservation {
@@ -195,6 +198,7 @@ export interface IClass {
   sections: ISection[];
   term: ITerm;
   gradeDistribution: GradeDistribution;
+  aggregatedRatings: IAggregatedRatings;
 
   // Attributes
   session: string;
@@ -246,6 +250,17 @@ export const READ_CLASS = gql`
       course {
         title
         description
+        aggregatedRatings {
+          metrics {
+            categories {
+              count
+              value
+            }
+            count
+            metricName
+            weightedAverage
+          }
+        }
         gradeDistribution {
           average
           distribution {
