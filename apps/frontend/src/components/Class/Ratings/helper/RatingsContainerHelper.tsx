@@ -1,5 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 
+import {
+  Arrow,
+  Content,
+  Portal,
+  Root,
+  TooltipContentProps,
+  TooltipTriggerProps,
+  Trigger,
+} from "@radix-ui/react-tooltip";
 import {
   ArrowRight,
   EditPencil,
@@ -10,7 +19,7 @@ import {
 import _ from "lodash";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { AlternateTooltip, Button, IconButton, Tooltip } from "@repo/theme";
+import { Button, IconButton, Tooltip } from "@repo/theme";
 
 import { signIn } from "@/lib/api";
 import { Semester } from "@/lib/api/terms";
@@ -23,6 +32,50 @@ import {
   formatDate,
   getMetricTooltip,
 } from "./metricsUtil";
+
+interface TooltipProps {
+  children: React.ReactNode;
+  content: string;
+}
+
+export const AlternateTooltip = forwardRef<
+  HTMLButtonElement,
+  TooltipProps &
+    Pick<TooltipContentProps, "sideOffset" | "side" | "collisionPadding"> &
+    Omit<TooltipTriggerProps, "asChild">
+>(
+  (
+    {
+      content,
+      children,
+      sideOffset = 8,
+      collisionPadding = 8,
+      side = "bottom",
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <Root disableHoverableContent>
+        <Trigger {...props} ref={ref} asChild>
+          {children}
+        </Trigger>
+        <Portal>
+          <Content
+            asChild
+            side={side}
+            sideOffset={sideOffset}
+            collisionPadding={collisionPadding}
+          >
+            <div className={styles.percentageTooltip}>
+              <span className={styles.percentage}>{content}</span>
+            </div>
+          </Content>
+        </Portal>
+      </Root>
+    );
+  }
+);
 
 export interface RatingDetailProps {
   metric: MetricName;
