@@ -16,10 +16,8 @@ import {
 } from "@repo/shared";
 
 import Details from "@/components/Details";
-import CourseContext from "@/contexts/CourseContext";
 import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
-import useCourse from "@/hooks/useCourse";
 import { signIn } from "@/lib/api";
 import { ICourse } from "@/lib/api";
 
@@ -35,22 +33,20 @@ enum Consensus {
 export default function Overview() {
   const { class: _class } = useClass();
   return (
-    <CourseContext.Provider value={{ course: _class.course }}>
     <div className={styles.root}>
       <Details {..._class.primarySection.meetings[0]} />
       <p className={styles.userSubmissionLabel}>Description</p>
       <p className={styles.userSubmissionDescription}>
         {_class.description ?? _class.course.description}
       </p>
-        <AttendanceRequirements />
+      <AttendanceRequirements />
     </div>
-    </CourseContext.Provider>
   );
 }
 
 function AttendanceRequirements() {
   const { data: user } = useReadUser();
-  const { course: _course } = useCourse();
+  const { class: _class } = useClass();
   const handleFeedbackClick = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
@@ -60,8 +56,8 @@ function AttendanceRequirements() {
     }
   };
   const responses = {
-    Recording: getResponse(_course, MetricName.Recording),
-    Attendance: getResponse(_course, MetricName.Attendance),
+    Recording: getResponse(_class.course, MetricName.Recording),
+    Attendance: getResponse(_class.course, MetricName.Attendance),
   };
   const atLeastOneConsensus = Object.values(responses).some(
     (c) => c == Consensus.Yes || c == Consensus.No
