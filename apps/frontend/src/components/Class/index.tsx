@@ -224,15 +224,15 @@ export default function Class({
     );
   }, [_class, bookmarked, updateUser, user]);
 
-  function getRatingsCount() {
-    if (!_class?.course?.aggregatedRatings?.metrics?.length) {
+  const ratingsCount = useMemo(() => {
+    if (!_class?.course?.aggregatedRatings?.metrics) {
       return 0;
     }
     return _class.course.aggregatedRatings.metrics.reduce(
       (max: number, metric: IAggregatedRatings['metrics'][number]) => Math.max(max, metric.count),
       0
     );
-  }
+  }, [_class?.course?.aggregatedRatings?.metrics]);
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -392,12 +392,11 @@ export default function Class({
               <Tabs.Trigger value="ratings" asChild>
                 <MenuItem>
                   Ratings
-                  {(() => {
-                    const count = getRatingsCount();
-                    return (
-                      count > 0 && <span className={styles.badge}>{count}</span>
-                    );
-                  })()}
+                  {ratingsCount > 0 && (
+                    <span className={styles.badge}>
+                      {ratingsCount}
+                    </span>
+                  )}
                 </MenuItem>
               </Tabs.Trigger>
             </Tabs.List>
@@ -427,14 +426,11 @@ export default function Class({
                 {({ isActive }) => (
                   <MenuItem active={isActive}>
                     Ratings
-                    {(() => {
-                      const count = getRatingsCount();
-                      return (
-                        count > 0 && (
-                          <span className={styles.badge}>{count}</span>
-                        )
-                      );
-                    })()}
+                    {ratingsCount > 0 && (
+                      <span className={styles.badge}>
+                        {ratingsCount}
+                      </span>
+                    )}
                   </MenuItem>
                 )}
               </NavLink>
