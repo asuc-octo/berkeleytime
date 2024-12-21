@@ -36,14 +36,14 @@ export default function Overview() {
   const { class: _class } = useClass();
   return (
     <CourseContext.Provider value={{ course: _class.course }}>
-      <div className={styles.root}>
-        <Details {..._class.primarySection.meetings[0]} />
-        <p className={styles.userSubmissionLabel}>Description</p>
-        <p className={styles.userSubmissionDescription}>
-          {_class.description ?? _class.course.description}
-        </p>
+    <div className={styles.root}>
+      <Details {..._class.primarySection.meetings[0]} />
+      <p className={styles.userSubmissionLabel}>Description</p>
+      <p className={styles.userSubmissionDescription}>
+        {_class.description ?? _class.course.description}
+      </p>
         <AttendanceRequirements />
-      </div>
+    </div>
     </CourseContext.Provider>
   );
 }
@@ -91,54 +91,22 @@ function AttendanceRequirements() {
         User-Submitted Class Requirements
       </p>
       <div>
-        {(() => {
-          switch (responses.Attendance) {
-            case Consensus.Yes:
-              return (
-                <>
-                  <User className={styles.icon} />
-                  <span className={styles.userSubmissionDescription}>
-                    Attendance Required
-                  </span>
-                </>
-              );
-            case Consensus.No:
-              return (
-                <>
-                  <UserXmark className={styles.icon} />
-                  <span className={styles.userSubmissionDescription}>
-                    Attendance Not Required
-                  </span>
-                </>
-              );
-          }
-        })()}
-      </div>
-      <div>
-        {(() => {
-          switch (responses.Recording) {
-            case Consensus.Yes:
-              return (
-                <>
-                  <VideoCamera className={styles.icon} />
-                  <span className={styles.userSubmissionDescription}>
-                    Lectures Recorded
-                  </span>
-                </>
-              );
-            case Consensus.No:
-              return (
-                <>
-                  <VideoCameraOff className={styles.icon} />
-                  <span className={styles.userSubmissionDescription}>
-                    Lectures Not Recorded
-                  </span>
-                </>
-              );
-          }
-        })()}
-      </div>
-      <div>
+        {responses.Attendance === Consensus.Yes && (
+          <>
+            <User className={styles.icon} />
+            <span className={styles.userSubmissionDescription}>
+              Attendance Required
+            </span>
+          </>
+        )}
+        {responses.Attendance === Consensus.No && (
+          <>
+            <UserXmark className={styles.icon} />
+            <span className={styles.userSubmissionDescription}>
+              Attendance Not Required
+            </span>
+          </>
+        )}
         {(responses.Attendance === Consensus.Indeterminate ||
           responses.Attendance === Consensus.BellowThreshold) && (
           <>
@@ -156,6 +124,22 @@ function AttendanceRequirements() {
         )}
       </div>
       <div>
+        {responses.Recording === Consensus.Yes && (
+          <>
+            <VideoCamera className={styles.icon} />
+            <span className={styles.userSubmissionDescription}>
+              Lectures Recorded
+            </span>
+          </>
+        )}
+        {responses.Recording === Consensus.No && (
+          <>
+            <VideoCameraOff className={styles.icon} />
+            <span className={styles.userSubmissionDescription}>
+              Lectures Not Recorded
+            </span>
+          </>
+        )}
         {(responses.Recording === Consensus.Indeterminate ||
           responses.Recording === Consensus.BellowThreshold) && (
           <>
