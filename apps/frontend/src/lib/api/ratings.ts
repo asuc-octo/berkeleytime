@@ -1,5 +1,19 @@
 import { gql } from "@apollo/client";
 
+export interface IMetric {
+  categories: {
+    count: number;
+    value: number;
+  }[];
+  count: number;
+  metricName: string;
+  weightedAverage: number;
+}
+
+export interface IAggregatedRatings {
+  metrics: IMetric[];
+}
+
 export const GET_AGGREGATED_RATINGS = gql`
   query GetAggregatedRatings(
     $subject: String!

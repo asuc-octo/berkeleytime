@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 
 import { GradeDistribution, ICourse } from ".";
 import { ITerm, Semester } from "./terms";
+import { IAggregatedRatings } from "./ratings";
 
 export enum InstructionMethod {
   Unknown = "UNK",
@@ -181,28 +182,6 @@ export interface IMeeting {
   location: string;
   startTime: string;
   instructors: IInstructor[];
-}
-
-export interface IMetric {
-  categories: {
-    count: number;
-    value: number;
-  }[];
-  count: number;
-  metricName: string;
-  weightedAverage: number;
-}
-
-export interface IAggregatedRatings {
-  metrics: Array<{
-    count: number;
-    categories?: Array<{
-      count: number;
-      value: number;
-    }>;
-    metricName?: string;
-    weightedAverage?: number;
-  }>;
 }
 
 export interface IClass {
