@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import _ from "lodash";
