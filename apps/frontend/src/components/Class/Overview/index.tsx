@@ -1,9 +1,10 @@
 import _ from "lodash";
+
 import Details from "@/components/Details";
 import useClass from "@/hooks/useClass";
-import { UserSubmittedData } from "./UserSubmittedData";
 
 import styles from "./Overview.module.scss";
+import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
   const { class: _class } = useClass();
@@ -18,4 +19,3 @@ export default function Overview() {
     </div>
   );
 }
-

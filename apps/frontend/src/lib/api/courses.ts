@@ -1,5 +1,4 @@
 import { gql } from "@apollo/client";
-import { IAggregatedRatings } from "./ratings";
 
 import {
   AcademicCareer,
@@ -7,6 +6,7 @@ import {
   IClass,
   InstructionMethod,
 } from ".";
+import { IAggregatedRatings } from "./ratings";
 import { Semester } from "./terms";
 
 export interface ICourse {

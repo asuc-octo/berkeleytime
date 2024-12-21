@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 import { GradeDistribution, ICourse } from ".";
-import { ITerm, Semester } from "./terms";
 import { IAggregatedRatings } from "./ratings";
+import { ITerm, Semester } from "./terms";
 
 export enum InstructionMethod {
   Unknown = "UNK",

@@ -36,7 +36,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
-import { IClass, IAggregatedRatings, Semester } from "@/lib/api";
+import { IAggregatedRatings, IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -229,7 +229,8 @@ export default function Class({
       return 0;
     }
     return _class.course.aggregatedRatings.metrics.reduce(
-      (max: number, metric: IAggregatedRatings['metrics'][number]) => Math.max(max, metric.count),
+      (max: number, metric: IAggregatedRatings["metrics"][number]) =>
+        Math.max(max, metric.count),
       0
     );
   }, [_class?.course?.aggregatedRatings?.metrics]);
@@ -393,9 +394,7 @@ export default function Class({
                 <MenuItem>
                   Ratings
                   {ratingsCount > 0 && (
-                    <span className={styles.badge}>
-                      {ratingsCount}
-                    </span>
+                    <span className={styles.badge}>{ratingsCount}</span>
                   )}
                 </MenuItem>
               </Tabs.Trigger>
@@ -427,9 +426,7 @@ export default function Class({
                   <MenuItem active={isActive}>
                     Ratings
                     {ratingsCount > 0 && (
-                      <span className={styles.badge}>
-                        {ratingsCount}
-                      </span>
+                      <span className={styles.badge}>{ratingsCount}</span>
                     )}
                   </MenuItem>
                 )}
