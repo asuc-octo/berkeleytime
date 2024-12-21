@@ -63,7 +63,7 @@ export default async (redis: RedisClientType) => {
     // TODO(production): Disable introspection in production
     introspection: true,
     cache: new RedisCache(redis),
-    formatError: (formattedError, error) => {
+    formatError: (formattedError) => {
       // Return BAD_USER_INPUT errors as 400s
       if (formattedError.extensions?.code === "BAD_USER_INPUT") {
         return {
