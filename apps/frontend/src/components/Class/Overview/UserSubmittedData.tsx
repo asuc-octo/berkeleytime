@@ -32,7 +32,7 @@ enum Consensus {
 export function UserSubmittedData() {
   const { data: user } = useReadUser();
   const { class: _class } = useClass();
-  const handleFeedbackClick = (e: React.MouseEvent) => {
+  const handleFeedbackClick = (e: MouseEvent) => {
     if (!user) {
       e.preventDefault();
       const currentPath = window.location.pathname;

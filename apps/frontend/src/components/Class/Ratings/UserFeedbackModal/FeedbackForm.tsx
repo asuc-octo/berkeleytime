@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction} from "react";
 import { MetricName } from "@repo/shared";
 
 import { MetricData } from "../helper/metricsUtil";
@@ -13,12 +14,12 @@ interface BooleanInputProps {
 
 interface AttendanceFormProps {
   metricData: MetricData;
-  setMetricData: React.Dispatch<React.SetStateAction<MetricData>>;
+  setMetricData: Dispatch<SetStateAction<MetricData>>;
 }
 
 interface RatingsFormProps {
   metricData: MetricData;
-  setMetricData: React.Dispatch<React.SetStateAction<MetricData>>;
+  setMetricData: Dispatch<SetStateAction<MetricData>>;
 }
 
 interface RatingScaleProps {

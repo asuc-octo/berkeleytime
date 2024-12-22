@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, FormEvent } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
 import ReactSelect from "react-select";
@@ -108,7 +108,7 @@ export function UserFeedbackModal({
     return isTermValid && areRatingsValid && hasChanges;
   }, [selectedTerm, metricData, hasChanges]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     setIsSubmitting(true);
@@ -251,8 +251,11 @@ export function UserFeedbackModal({
                     }
                   }}
                 >
-                  {isSubmitting ? "Submitting..." : 
-                  initialUserClass ? "Submit Edit" : "Submit Rating"}
+                  {isSubmitting
+                    ? "Submitting..."
+                    : initialUserClass
+                      ? "Submit Edit"
+                      : "Submit Rating"}
                 </Button>
               </div>
             </form>
