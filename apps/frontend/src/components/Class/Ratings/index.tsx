@@ -41,8 +41,13 @@ import {
   isMetricRating,
 } from "./helper/metricsUtil";
 import { termSelectStyle } from "./helper/termSelectStyle";
-{/* // TODO: [CROWD-SOURCED-DATA] edge case: first semester a class is offered - user cannot submit a rating */}
-{/* // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend */}
+
+{
+  /* // TODO: [CROWD-SOURCED-DATA] edge case: first semester a class is offered - user cannot submit a rating */
+}
+{
+  /* // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend */
+}
 
 interface AggregatedRatings {
   metrics: {
@@ -285,10 +290,10 @@ export function RatingsContainer() {
     return totalRatings > 0;
   }, [aggregatedRatings]);
 
-  const ratingsCount = useMemo(
-    () => (ratingsData ? getRatingsCount(ratingsData) : 0),
-    [ratingsData]
-  );
+  // const ratingsCount = useMemo(
+  //   () => (ratingsData ? getRatingsCount(ratingsData) : 0),
+  //   [ratingsData]
+  // );
 
   if (courseLoading) {
     return <div>Loading course data...</div>;
