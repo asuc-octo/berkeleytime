@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, memo, useEffect } from "react";
 
 import {
   Content,
@@ -213,7 +213,7 @@ export function RatingDetailView({
   );
 }
 
-export function RatingButton(user: any, onOpenModal: (open: boolean) => void) {
+export const RatingButton = React.memo(({ user, onOpenModal }: { user: any; onOpenModal: (open: boolean) => void }) => {
   if (user) {
     return (
       <Button className={styles.ratingButton} onClick={() => onOpenModal(true)}>
@@ -233,7 +233,7 @@ export function RatingButton(user: any, onOpenModal: (open: boolean) => void) {
       </Button>
     );
   }
-}
+});
 
 // Utility functions
 export const ratingSubmit = async (

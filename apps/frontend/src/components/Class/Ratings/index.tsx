@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import _ from "lodash";
@@ -76,7 +76,7 @@ export function RatingsContainer() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 
-  const handleModalStateChange = (open: boolean) => {
+  const handleModalStateChange = useCallback((open: boolean) => {
     setIsModalOpen(open);
     if (open) {
       searchParams.set("feedbackModal", "true");
@@ -85,7 +85,7 @@ export function RatingsContainer() {
       searchParams.delete("feedbackModal");
       setSearchParams(searchParams);
     }
-  };
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     // Check if we should open the modal based on URL parameter or if we just navigated to ratings
@@ -278,7 +278,7 @@ export function RatingsContainer() {
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             {hasRatings &&
               !userRatings &&
-              RatingButton(user, handleModalStateChange)}
+              <RatingButton user={user} onOpenModal={handleModalStateChange} />}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
                 <ReactSelect
@@ -357,7 +357,7 @@ export function RatingsContainer() {
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>
-              {RatingButton(user, handleModalStateChange)}
+              <RatingButton user={user} onOpenModal={handleModalStateChange} />
             </div>
           ) : (
             ratingsData
