@@ -31,6 +31,7 @@ import {
   RatingUserSummary,
   ratingDelete,
   ratingSubmit,
+  getRatingsCount
 } from "./helper/RatingsContainerHelper";
 import {
   UserRating,
@@ -281,6 +282,11 @@ export function RatingsContainer() {
       ) ?? 0;
     return totalRatings > 0;
   }, [aggregatedRatings]);
+
+  const ratingsCount = useMemo(() => 
+    ratingsData ? getRatingsCount(ratingsData) : 0
+  , [ratingsData]);
+
   if (courseLoading) {
     return <div>Loading course data...</div>;
   }
@@ -404,6 +410,15 @@ export function RatingsContainer() {
                   <RatingDetailView {...ratingData} />
                 </div>
               ))
+          )}
+        </div>
+
+        {/* // TODO: Rating count information has not been passed through design */}
+        <div>
+          {hasRatings && ratingsData && selectedTerm !== "all" && (
+            <div className={styles.ratingsCountContainer}>
+              This semester has been rated by {ratingsCount} user{ratingsCount !== 1 ? 's' : ''}
+            </div>
           )}
         </div>
 

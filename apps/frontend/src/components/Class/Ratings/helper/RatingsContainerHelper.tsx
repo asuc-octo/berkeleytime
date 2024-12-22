@@ -393,3 +393,10 @@ export const ratingDelete = async (
   );
   await Promise.all(deletePromises);
 };
+
+export const getRatingsCount = (ratingsData: RatingDetailProps[]): number => {
+  if (!ratingsData?.length) return 0;
+  return Math.max(...ratingsData.map(metric => 
+    metric.stats.reduce((total, stat) => total + stat.count, 0)
+  ));
+};
