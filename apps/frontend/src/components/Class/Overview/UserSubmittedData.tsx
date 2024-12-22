@@ -7,6 +7,7 @@ import {
 } from "iconoir-react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+import { MouseEvent as ReactMouseEvent } from 'react';
 
 import {
   CONSENSUS_THRESHOLD,
@@ -32,7 +33,7 @@ enum Consensus {
 export function UserSubmittedData() {
   const { data: user } = useReadUser();
   const { class: _class } = useClass();
-  const handleFeedbackClick = (e: MouseEvent) => {
+  const handleFeedbackClick = (e: ReactMouseEvent<HTMLAnchorElement>) => {
     if (!user) {
       e.preventDefault();
       const currentPath = window.location.pathname;
