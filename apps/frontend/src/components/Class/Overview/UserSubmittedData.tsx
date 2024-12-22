@@ -1,3 +1,5 @@
+import { MouseEvent as ReactMouseEvent } from "react";
+
 import {
   QuestionMark,
   User,
@@ -7,7 +9,6 @@ import {
 } from "iconoir-react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
-import { MouseEvent as ReactMouseEvent } from 'react';
 
 import {
   CONSENSUS_THRESHOLD,
