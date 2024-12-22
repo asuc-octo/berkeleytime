@@ -414,15 +414,15 @@ export function RatingsContainer() {
           )}
         </div>
 
-        {/* // TODO: Rating count information has not been passed through design */}
-        <div>
+        {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
+        {/* <div>
           {hasRatings && ratingsData && selectedTerm !== "all" && (
             <div className={styles.ratingsCountContainer}>
               This semester has been rated by {ratingsCount} user
               {ratingsCount !== 1 ? "s" : ""}
             </div>
           )}
-        </div>
+        </div> */}
 
         <UserFeedbackModal
           isOpen={isModalOpen}

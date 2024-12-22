@@ -20,6 +20,7 @@ export const checkRatingExists = async (
   });
 };
 
+{/* // TODO: [CROWD-SOURCED-DATA] create pipline for showing error on frontend */}
 export const checkUserMaxRatingsContraint = async (
   userRatings: UserRatings,
   subject: string,
