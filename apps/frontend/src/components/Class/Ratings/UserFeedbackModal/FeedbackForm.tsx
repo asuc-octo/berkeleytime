@@ -1,4 +1,5 @@
-import { Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from "react";
+
 import { MetricName } from "@repo/shared";
 
 import { MetricData } from "../helper/metricsUtil";
