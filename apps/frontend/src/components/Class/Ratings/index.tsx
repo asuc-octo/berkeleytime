@@ -107,8 +107,9 @@ export function RatingsContainer() {
   );
 
   useEffect(() => {
-    // Check if we should open the modal based on URL parameter and rating constraints
-    if (user && searchParams.get("feedbackModal") === "true") {
+    // Check if we should open/close the modal based on URL parameter
+    const feedbackModalParam = searchParams.get("feedbackModal");
+    if (user && feedbackModalParam === "true") {
       const canRate = checkConstraint(userRatingsData);
       if (canRate) {
         handleModalStateChange(true);
@@ -117,6 +118,9 @@ export function RatingsContainer() {
         searchParams.delete("feedbackModal");
         setSearchParams(searchParams);
       }
+    } else if (feedbackModalParam !== "true" && isModalOpen) {
+      // Close the modal if the parameter is not present
+      handleModalStateChange(false);
     }
   }, [
     user,
@@ -124,6 +128,7 @@ export function RatingsContainer() {
     userRatingsData,
     handleModalStateChange,
     setSearchParams,
+    isModalOpen,
   ]);
 
   // Get aggregated ratings for display
