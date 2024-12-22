@@ -29,7 +29,6 @@ import {
   RatingDetailProps,
   RatingDetailView,
   RatingUserSummary,
-  getRatingsCount,
   ratingDelete,
   ratingSubmit,
 } from "./helper/RatingsContainerHelper";
