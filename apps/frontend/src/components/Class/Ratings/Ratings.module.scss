@@ -401,6 +401,17 @@
   color: var(--blue-500) !important;
   background-color: var(--foreground-color);
   height: 38px;
+
+  &.invalid {
+    background: var(--background-color);
+    cursor: default;
+    color: var(--paragraph-color) !important;
+
+    &:hover {
+      background: var(--background-color);
+      color: var(--paragraph-color) !important;
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {

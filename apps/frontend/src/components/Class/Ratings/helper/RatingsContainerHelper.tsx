@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, memo, useEffect } from "react";
+import { forwardRef, useState, useEffect, ReactNode, memo, Dispatch, SetStateAction, CSSProperties } from "react";
 
 import {
   Content,
@@ -30,10 +30,11 @@ import {
   UserRating,
   formatDate,
   getMetricTooltip,
+  checkConstraint,
 } from "./metricsUtil";
 
 interface TooltipProps {
-  children: React.ReactNode;
+  children: ReactNode;
   content: string;
 }
 
@@ -137,7 +138,7 @@ export function RatingDetailView({
   const [isExpanded, setIsExpanded] = useState(false);
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isExpanded) {
       setShouldAnimate(false);
@@ -184,7 +185,7 @@ export function RatingDetailView({
             <div
               key={stat.rating}
               className={styles.statRow}
-              style={{ "--delay": `${index * 60}ms` } as React.CSSProperties}
+              style={{ "--delay": `${index * 60}ms` } as CSSProperties}
             >
               <span className={styles.metric}>{stat.rating}</span>
               <div className={styles.barContainer}>
@@ -213,16 +214,40 @@ export function RatingDetailView({
   );
 }
 
-export const RatingButton = React.memo(({ user, onOpenModal }: { user: any; onOpenModal: (open: boolean) => void }) => {
+export const RatingButton = memo(({ 
+  user, 
+  onOpenModal,
+  userRatingData 
+}: { 
+  user: any; 
+  onOpenModal: (open: boolean) => void;
+  userRatingData?: any;
+}) => {
   if (user) {
-    return (
-      <Button className={styles.ratingButton} onClick={() => onOpenModal(true)}>
-        Add a rating
-      </Button>
-    );
+    const canRate = checkConstraint(userRatingData);
+    console.log(canRate);
+    if (canRate) {
+      return (
+        <Button 
+          className={styles.ratingButton} 
+          onClick={() => onOpenModal(true)}
+        >
+          Add a rating
+        </Button>
+      );
+    } else {
+      return (
+        <Button 
+          className={`${styles.ratingButton} ${styles.invalid}`} 
+          disabled
+        >
+          Max Ratings Reached
+        </Button>
+      );
+    }
   } else {
     const currentPath = window.location.pathname;
-    const redirectPath = `${currentPath}?feedbackModal=true`;
+    const redirectPath = `${currentPath}${checkConstraint(userRatingData) ? '?feedbackModal=true' : ''}`;
     return (
       <Button
         onClick={() => signIn(redirectPath)}
@@ -242,7 +267,7 @@ export const ratingSubmit = async (
   createRating: any,
   deleteRating: any,
   currentClass: any,
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  setModalOpen: Dispatch<SetStateAction<boolean>>,
   currentRatings?: {
     metrics: Array<{ metricName: string; value: number }>;
   } | null

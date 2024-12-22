@@ -1,4 +1,4 @@
-import { METRIC_MAPPINGS, MetricName } from "@repo/shared";
+import { METRIC_MAPPINGS, MetricName, USER_MAX_ALL_RATINGS } from "@repo/shared";
 
 export type MetricData = Record<MetricName, number | undefined>;
 
@@ -106,3 +106,10 @@ export function toMetricData(
     return { ...acc, [v.metricName]: v.value };
   }, {}) as MetricData;
 }
+
+export const checkConstraint = (userRatingData: any): boolean => {
+  if (!userRatingData?.userRatings?.classes) {
+    return true; // If no data, user can still rate
+  }
+  return userRatingData.userRatings.classes.length <= USER_MAX_ALL_RATINGS;
+};
