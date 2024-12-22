@@ -1,4 +1,13 @@
-import { forwardRef, useState, useEffect, ReactNode, memo, Dispatch, SetStateAction, CSSProperties } from "react";
+import {
+  CSSProperties,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  forwardRef,
+  memo,
+  useEffect,
+  useState,
+} from "react";
 
 import {
   Content,
@@ -28,9 +37,9 @@ import UserRatingSummary from "../UserRatingSummary";
 import {
   MetricData,
   UserRating,
+  checkConstraint,
   formatDate,
   getMetricTooltip,
-  checkConstraint,
 } from "./metricsUtil";
 
 interface TooltipProps {
@@ -214,51 +223,53 @@ export function RatingDetailView({
   );
 }
 
-export const RatingButton = memo(({ 
-  user, 
-  onOpenModal,
-  userRatingData 
-}: { 
-  user: any; 
-  onOpenModal: (open: boolean) => void;
-  userRatingData?: any;
-}) => {
-  if (user) {
-    const canRate = checkConstraint(userRatingData);
-    console.log(canRate);
-    if (canRate) {
-      return (
-        <Button 
-          className={styles.ratingButton} 
-          onClick={() => onOpenModal(true)}
-        >
-          Add a rating
-        </Button>
-      );
+export const RatingButton = memo(
+  ({
+    user,
+    onOpenModal,
+    userRatingData,
+  }: {
+    user: any;
+    onOpenModal: (open: boolean) => void;
+    userRatingData?: any;
+  }) => {
+    if (user) {
+      const canRate = checkConstraint(userRatingData);
+      console.log(canRate);
+      if (canRate) {
+        return (
+          <Button
+            className={styles.ratingButton}
+            onClick={() => onOpenModal(true)}
+          >
+            Add a rating
+          </Button>
+        );
+      } else {
+        return (
+          <Button
+            className={`${styles.ratingButton} ${styles.invalid}`}
+            disabled
+          >
+            Max Ratings Reached
+          </Button>
+        );
+      }
     } else {
+      const currentPath = window.location.pathname;
+      const redirectPath = `${currentPath}${checkConstraint(userRatingData) ? "?feedbackModal=true" : ""}`;
       return (
-        <Button 
-          className={`${styles.ratingButton} ${styles.invalid}`} 
-          disabled
+        <Button
+          onClick={() => signIn(redirectPath)}
+          className={styles.ratingButton}
         >
-          Max Ratings Reached
+          Sign in to add ratings
+          <ArrowRight />
         </Button>
       );
     }
-  } else {
-    const currentPath = window.location.pathname;
-    const redirectPath = `${currentPath}${checkConstraint(userRatingData) ? '?feedbackModal=true' : ''}`;
-    return (
-      <Button
-        onClick={() => signIn(redirectPath)}
-        className={styles.ratingButton}
-      >
-        Sign in to add ratings
-        <ArrowRight />
-      </Button>
-    );
   }
-});
+);
 
 // Utility functions
 export const ratingSubmit = async (

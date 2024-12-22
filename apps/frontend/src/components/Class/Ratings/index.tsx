@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import _ from "lodash";
@@ -34,10 +34,10 @@ import {
 } from "./helper/RatingsContainerHelper";
 import {
   UserRating,
+  checkConstraint,
   getMetricStatus,
   getStatusColor,
   isMetricRating,
-  checkConstraint,
 } from "./helper/metricsUtil";
 import { termSelectStyle } from "./helper/termSelectStyle";
 
@@ -92,16 +92,19 @@ export function RatingsContainer() {
     },
   });
 
-  const handleModalStateChange = useCallback((open: boolean) => {
-    setIsModalOpen(open);
-    if (open) {
-      searchParams.set("feedbackModal", "true");
-      setSearchParams(searchParams);
-    } else if (searchParams.get("feedbackModal")) {
-      searchParams.delete("feedbackModal");
-      setSearchParams(searchParams);
-    }
-  }, [searchParams, setSearchParams]);
+  const handleModalStateChange = useCallback(
+    (open: boolean) => {
+      setIsModalOpen(open);
+      if (open) {
+        searchParams.set("feedbackModal", "true");
+        setSearchParams(searchParams);
+      } else if (searchParams.get("feedbackModal")) {
+        searchParams.delete("feedbackModal");
+        setSearchParams(searchParams);
+      }
+    },
+    [searchParams, setSearchParams]
+  );
 
   useEffect(() => {
     // Check if we should open the modal based on URL parameter and rating constraints
@@ -115,7 +118,13 @@ export function RatingsContainer() {
         setSearchParams(searchParams);
       }
     }
-  }, [user, searchParams, userRatingsData, handleModalStateChange, setSearchParams]);
+  }, [
+    user,
+    searchParams,
+    userRatingsData,
+    handleModalStateChange,
+    setSearchParams,
+  ]);
 
   // Get aggregated ratings for display
   const { data: aggregatedRatings } = useQuery(GET_COURSE_RATINGS, {
@@ -284,13 +293,13 @@ export function RatingsContainer() {
         )}
         <div className={styles.header}>
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {hasRatings &&
-              !userRatings &&
-              <RatingButton 
-                user={user} 
-                onOpenModal={handleModalStateChange} 
+            {hasRatings && !userRatings && (
+              <RatingButton
+                user={user}
+                onOpenModal={handleModalStateChange}
                 userRatingData={userRatingsData}
-              />}
+              />
+            )}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
                 <ReactSelect
@@ -369,9 +378,9 @@ export function RatingsContainer() {
             <div className={styles.emptyRatings}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>
-              <RatingButton 
-                user={user} 
-                onOpenModal={handleModalStateChange} 
+              <RatingButton
+                user={user}
+                onOpenModal={handleModalStateChange}
                 userRatingData={userRatingsData}
               />
             </div>

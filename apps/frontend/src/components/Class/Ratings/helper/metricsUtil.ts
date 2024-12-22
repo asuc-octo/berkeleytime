@@ -1,4 +1,8 @@
-import { METRIC_MAPPINGS, MetricName, USER_MAX_ALL_RATINGS } from "@repo/shared";
+import {
+  METRIC_MAPPINGS,
+  MetricName,
+  USER_MAX_ALL_RATINGS,
+} from "@repo/shared";
 
 export type MetricData = Record<MetricName, number | undefined>;
 
