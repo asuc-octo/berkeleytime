@@ -120,10 +120,12 @@ export const checkConstraint = (
   }
   // Filter out the current class from the count if it exists
   const otherClasses = userRatingData.userRatings.classes.filter(
-    (classData: { subject: string; courseNumber: string }) => 
-      !(currentClass && 
-        classData.subject === currentClass.subject && 
-        classData.courseNumber === currentClass.courseNumber)
+    (classData: { subject: string; courseNumber: string }) =>
+      !(
+        currentClass &&
+        classData.subject === currentClass.subject &&
+        classData.courseNumber === currentClass.courseNumber
+      )
   );
   return otherClasses.length <= USER_MAX_ALL_RATINGS;
 };
