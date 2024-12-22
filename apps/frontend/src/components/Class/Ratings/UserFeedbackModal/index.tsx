@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import ReactSelect from "react-select";
 
-import { MetricName } from "@repo/shared";
+import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { Button } from "@repo/theme";
 
 import { useReadTerms } from "@/hooks/api";
@@ -92,7 +92,11 @@ export function UserFeedbackModal({
     const metricsChanged = Object.values(MetricName).some(
       (metric) => metricData[metric] !== initialMetricData[metric]
     );
-    return termChanged || metricsChanged;
+    // Check if all required metrics are filled out
+    const allRequiredMetricsFilled = REQUIRED_METRICS.every(
+      (metric) => typeof metricData[metric] === "number"
+    );
+    return allRequiredMetricsFilled && (termChanged || metricsChanged);
   }, [selectedTerm, metricData, initialTermValue, initialMetricData]);
 
   const isFormValid = useMemo(() => {
@@ -247,13 +251,7 @@ export function UserFeedbackModal({
                     }
                   }}
                 >
-                  {isSubmitting
-                    ? "Submitting..."
-                    : !hasChanges && initialUserClass
-                      ? "No Changes"
-                      : initialUserClass
-                        ? "Submit Edit"
-                        : "Submit Rating"}
+                  Submit Edit
                 </Button>
               </div>
             </form>
