@@ -251,7 +251,8 @@ export function UserFeedbackModal({
                     }
                   }}
                 >
-                  Submit Edit
+                  {isSubmitting ? "Submitting..." : 
+                  initialUserClass ? "Submit Edit" : "Submit Rating"}
                 </Button>
               </div>
             </form>
