@@ -111,9 +111,19 @@ export function toMetricData(
   }, {}) as MetricData;
 }
 
-export const checkConstraint = (userRatingData: any): boolean => {
+export const checkConstraint = (
+  userRatingData: any,
+  currentClass?: { subject: string; courseNumber: string } | null
+): boolean => {
   if (!userRatingData?.userRatings?.classes) {
     return true; // If no data, user can still rate
   }
-  return userRatingData.userRatings.classes.length <= USER_MAX_ALL_RATINGS;
+  // Filter out the current class from the count if it exists
+  const otherClasses = userRatingData.userRatings.classes.filter(
+    (classData: { subject: string; courseNumber: string }) => 
+      !(currentClass && 
+        classData.subject === currentClass.subject && 
+        classData.courseNumber === currentClass.courseNumber)
+  );
+  return otherClasses.length <= USER_MAX_ALL_RATINGS;
 };

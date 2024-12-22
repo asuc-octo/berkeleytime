@@ -303,6 +303,7 @@ export function RatingsContainer() {
                 user={user}
                 onOpenModal={handleModalStateChange}
                 userRatingData={userRatingsData}
+                currentClass={currentClass}
               />
             )}
             <div className={styles.termSelectWrapper}>
@@ -387,6 +388,7 @@ export function RatingsContainer() {
                 user={user}
                 onOpenModal={handleModalStateChange}
                 userRatingData={userRatingsData}
+                currentClass={currentClass}
               />
             </div>
           ) : (

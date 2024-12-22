@@ -228,14 +228,15 @@ export const RatingButton = memo(
     user,
     onOpenModal,
     userRatingData,
+    currentClass,
   }: {
     user: any;
     onOpenModal: (open: boolean) => void;
     userRatingData?: any;
+    currentClass?: { subject: string; courseNumber: string } | null;
   }) => {
     if (user) {
-      const canRate = checkConstraint(userRatingData);
-      console.log(canRate);
+      const canRate = checkConstraint(userRatingData, currentClass);
       if (canRate) {
         return (
           <Button
@@ -257,7 +258,7 @@ export const RatingButton = memo(
       }
     } else {
       const currentPath = window.location.pathname;
-      const redirectPath = `${currentPath}${checkConstraint(userRatingData) ? "?feedbackModal=true" : ""}`;
+      const redirectPath = `${currentPath}${checkConstraint(userRatingData, currentClass) ? "?feedbackModal=true" : ""}`;
       return (
         <Button
           onClick={() => signIn(redirectPath)}
