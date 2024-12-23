@@ -17,6 +17,7 @@
     - [Architecture](./core/infrastructure/architecture.md)
     - [Kubernetes & Helm](./core/infrastructure/kubernetes-helm.md)
     - [CI/CD](./core/infrastructure/cicd.md)
+        - [CI/CD Overview](./core/infrastructure/cicd-overview.md)
 
 ---
 

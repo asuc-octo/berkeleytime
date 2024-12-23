@@ -1,8 +1,10 @@
 # Continuous Integration/Continuous Deployment
 
-The deployment process is different for development, staging, and production environments.
+## Usage
 
-## Development
+The deployment process is different for [development](#development), [staging](#staging), and [production](#production) environments.
+
+### Development
 
 1. Go to the [actions page](https://github.com/asuc-octo/berkeleytime/actions).
     <details><summary>Image</summary>
@@ -67,10 +69,10 @@ The deployment process is different for development, staging, and production env
 
     </details>
 
-## Staging
+### Staging
 
-The staging CI/CD pipeline runs on every push to `master` (currently `gql`). The staging website can be viewed at `staging.stanfurdtime.com`.
+The staging CI/CD pipeline is automatically run on every push to `master` (currently `gql`). The staging website can be viewed at `staging.stanfurdtime.com`.
 
-## Production
+### Production
 
 The production CI/CD pipeline is manually run with a process similar to the development pipeline. However, the production pipeline can only be run on `master` and `gql`.
