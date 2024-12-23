@@ -53,8 +53,7 @@ helm install bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app --na
 helm install bt-stage-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
     --version=1.0.0 \
     --set mongodb.commonLabels.env=stage \
-    --set hostPath=/data/stage/db \
-    --set mongodb.persistence.existingClaim=bt-stage-mongo-pvc
+    --set hostPath=/data/stage/db
 
 helm install bt-stage-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
     --version=1.0.0 \
@@ -68,6 +67,7 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
     --set host=staging.stanfurdtime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379 \
+# TODO(core): change mongoUri to replicaset
 
 # ==========
 # DEVELOPMENT
@@ -76,8 +76,7 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
 helm install bt-dev-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
     --version=1.0.0 \
     --set mongodb.commonLabels.env=dev \
-    --set hostPath=/data/dev/db \
-    --set mongodb.persistence.existingClaim=bt-dev-mongo-pvc
+    --set hostPath=/data/dev/db
 
 helm install bt-dev-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
     --version=1.0.0 \
@@ -90,6 +89,6 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
     --set frontend.image.tag=dev1 \
     --set backend.image.tag=dev1 \
     --set host=dev1.stanfurdtime.com \
-    --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+    --set mongoUri=mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
     --set nodeEnv=development
