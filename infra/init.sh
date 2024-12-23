@@ -67,6 +67,7 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
     --set host=staging.stanfurdtime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379 \
+# TODO(core): change mongoUri to replicaset
 
 # ==========
 # DEVELOPMENT
