@@ -17,10 +17,11 @@ mongodb:
     enabled: false
 
   persistence:
-    existingClaim: bt-prod-mongo-pvc
+    storageClass: manual
 
     # path in pod. should be same for all mongo pods.
     size: 10Gi
 
+  # required for persistence. without, data is not saved across pod restarts.
   volumePermissions:
     enabled: true
