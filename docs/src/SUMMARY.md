@@ -4,6 +4,13 @@
 
 ---
 
+# Getting Started
+
+- [Local Development](./getting-started/local-development.md)
+- [Deployment with CI/CD](./getting-started/deployment-with-cicd.md)
+
+---
+
 # Core Documentation
 
 - [Backend](./core/backend/README.md)
@@ -17,7 +24,6 @@
     - [Architecture](./core/infrastructure/architecture.md)
     - [Kubernetes & Helm](./core/infrastructure/kubernetes-helm.md)
     - [CI/CD](./core/infrastructure/cicd.md)
-        - [CI/CD Overview](./core/infrastructure/cicd-overview.md)
 
 ---
 

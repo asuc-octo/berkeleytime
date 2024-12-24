@@ -1,9 +1,9 @@
 # Onboarding
 
 > [!WARNING]
-> Running commands in the `hozer-51` machine can break production! Please continue with caution.
+> Running commands in `hozer-51` can break production! Please continue with caution.
 
-The production website is hosted on a machine supplied by [the OCF](https://www.ocf.berkeley.edu/). This machine will be referenced as `hozer-51` in these docs. SSH allows us to connect to the `hozer-51` machine with a shell terminal, allowing us to infra-related tasks.
+The Berkeleytime website is hosted on a machine supplied by [the OCF](https://www.ocf.berkeley.edu/). This machine will be referenced as `hozer-51` in these docs. SSH allows us to connect to `hozer-51` with a shell terminal, allowing us to infra-related tasks.
 
 This guide assumes basic experience with SSH.
 
