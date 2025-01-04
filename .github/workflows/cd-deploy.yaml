@@ -15,6 +15,10 @@ on:
         description: "Helm chart version"
         required: true
         type: string
+      host:
+        description: "Hostname for the deployment"
+        required: true
+        type: string
       values:
         description: "Helm chart override values (yaml)"
         required: true
@@ -55,3 +59,7 @@ jobs:
             # Check container status
             kubectl rollout status --timeout=180s deployment ${{ inputs.name }}-backend
             kubectl rollout status --timeout=180s deployment ${{ inputs.name }}-frontend
+
+      - name: Output Summary
+        run: |
+          echo "# Deployment available at [${{ inputs.host }}](${{ inputs.host }}). :rocket:" >> $GITHUB_STEP_SUMMARY
