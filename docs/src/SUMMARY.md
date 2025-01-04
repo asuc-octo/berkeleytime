@@ -21,9 +21,8 @@
 
 - [Infrastructure](./core/infrastructure/README.md)
     - [Onboarding](./core/infrastructure/onboarding.md)
-    - [Architecture](./core/infrastructure/architecture.md)
-    - [Kubernetes & Helm](./core/infrastructure/kubernetes-helm.md)
-    - [CI/CD](./core/infrastructure/cicd.md)
+    - [CI/CD Workflow](./core/infrastructure/cicd-workflow.md)
+    - [Runbooks](./core/infrastructure/runbooks.md)
 
 ---
 

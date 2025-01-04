@@ -4,6 +4,7 @@ WORKDIR /docs
 
 RUN ["cargo", "install", "mdbook", "--vers", "^0.4", "--locked"]
 RUN ["cargo", "install", "mdbook-alerts"]
+RUN ["cargo", "install", "mdbook-toc"]
 
 COPY . .
 VOLUME ["/docs"]
