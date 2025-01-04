@@ -37,7 +37,7 @@ The deployment process is different for [development](#development), [staging](#
 
     </details>
 
-5. After the action succeeds, go to `www.abcdefg.dev.stanfurdtime.com`, where `abcdefg` is the first 7 characters of the latest commit's hash. This is also shown on the summary tab of an action workflow.
+5. After the action succeeds, go to `www.abcdefg.dev.stanfurdtime.com`, where `abcdefg` is the first 7 characters of the latest commit's hash. This is also shown on the summary tab of an action workflow. A hyperlink to the deployment is also available near the bottom of the Summary page of the workflow run.
 
     <details><summary>Example Success Deployment Log</summary>
 
@@ -67,6 +67,8 @@ The deployment process is different for [development](#development), [staging](#
     ✅ Successfully executed commands to all hosts.
     ===============================================
     ```
+
+    ![Deploy to Development Link](./assets/cicd-dev-6.png)
 
     </details>
 

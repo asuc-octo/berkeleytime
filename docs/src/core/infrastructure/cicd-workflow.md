@@ -23,4 +23,3 @@ The differences between the three environments are managed by each individual wo
 [^2]: Development, Staging, and Production
 
 [^3]: Ideally, these would follow [semantic versioning](https://semver.org/), but this is rather difficult to enforce and automate.
-
