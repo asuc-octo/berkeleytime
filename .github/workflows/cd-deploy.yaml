@@ -62,4 +62,4 @@ jobs:
 
       - name: Output Summary
         run: |
-          echo "# Deployment available at [${{ inputs.host }}](${{ inputs.host }}). :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "# :white_check_mark: Deployment available at [${{ inputs.host }}](https://${{ inputs.host }})." >> $GITHUB_STEP_SUMMARY

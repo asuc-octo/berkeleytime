@@ -36,8 +36,8 @@ jobs:
           target: ${{ matrix.image }}-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}
           cache-from: |
-            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}
-            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:prod
+            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache
+            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:prod-cache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache,mode=max
           platforms: linux/amd64
           push: true
