@@ -89,3 +89,7 @@ jobs:
 
             # Check container status
             kubectl rollout status --timeout=180s deployment bt-prod-docs-docs
+
+      - name: Output Summary
+        run: |
+          echo "# :white_check_mark: Deployment available at [docs.stanfurdtime.com](https://docs.stanfurdtime.com)." >> $GITHUB_STEP_SUMMARY
