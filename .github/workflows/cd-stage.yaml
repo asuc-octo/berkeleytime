@@ -32,8 +32,7 @@ jobs:
           image:
             tag: latest
         host: staging.stanfurdtime.com
-        mongoUri: mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt
+        mongoUri: bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
       host: staging.stanfurdtime.com
-    # TODO(core): change mongoUri to replicaset
     secrets: inherit
