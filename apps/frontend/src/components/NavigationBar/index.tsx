@@ -54,13 +54,20 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
             </MenuItem>
           )}
         </NavLink>
+        <NavLink to="/profile">
+          {({ isActive }) => (
+            <MenuItem className={styles.item} active={isActive}>
+              Profile
+            </MenuItem>
+          )}
+        </NavLink>
       </div>
       <Button
         onClick={() => (user ? signOut() : signIn())}
         variant="solid"
         className={styles.button}
       >
-        {user ? user.email : "Sign in"}
+        {user ? "Log Out" : "Sign In"}
         {user ? <User /> : <ArrowRight />}
       </Button>
       <PinsDrawer>

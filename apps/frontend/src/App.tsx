@@ -12,6 +12,7 @@ import { ThemeProvider } from "@repo/theme";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import PinsProvider from "@/components/PinsProvider";
+import Profile from "./app/Profile";
 
 // TODO: Experiment with server-side rendering for static pages and hydration for dynamic pages
 
@@ -85,6 +86,15 @@ const router = createBrowserRouter([
       {
         element: <About />,
         path: "about",
+      },
+    ],
+  },
+  {
+    element: <Layout />,
+    children: [
+      {
+        element: <Profile />,
+        path: "profile",
       },
     ],
   },
