@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import classNames from "classnames";
 import { HelpCircle, ProfileCircle, Star } from "iconoir-react";
 
-import ClassBrowser from "@/components/ClassBrowser";
 import { useReadUser } from "@/hooks/api/users/useReadUser";
 import { signIn } from "@/lib/api";
 import { IUser } from "@/lib/api";
