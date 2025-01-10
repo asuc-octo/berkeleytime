@@ -1,6 +1,9 @@
 # Deployment with CI/CD
 
 The deployment process is different for [development](#development), [staging](#staging), and [production](#production) environments.
+- **Development**: Best for short-term deployments to simulate a production environment as closely as possible. Useful for deploying feature branches before merging into `master`.
+- **Staging**: The last "testing" environment to catch bugs before reaching production. Reserved for the latest commit on `master`.
+- **Production**: User facing website! Changes being pushed to production should be thoroughly tested on a developer's local machine and in development and staging environments.
 
 ## Development
 
@@ -34,7 +37,7 @@ The deployment process is different for [development](#development), [staging](#
 
     </details>
 
-5. After the action succeeds, go to `www.abcdefg.dev.stanfurdtime.com`, where `abcdefg` is the first 7 characters of the latest commit's hash. This is also shown on the summary tab of an action workflow.
+5. After the action succeeds, go to `www.abcdefg.dev.stanfurdtime.com`, where `abcdefg` is the first 7 characters of the latest commit's hash. This is also shown on the summary tab of an action workflow. A hyperlink to the deployment is also available near the bottom of the Summary page of the workflow run.
 
     <details><summary>Example Success Deployment Log</summary>
 
@@ -64,6 +67,8 @@ The deployment process is different for [development](#development), [staging](#
     ✅ Successfully executed commands to all hosts.
     ===============================================
     ```
+
+    ![Deploy to Development Link](./assets/cicd-dev-6.png)
 
     </details>
 

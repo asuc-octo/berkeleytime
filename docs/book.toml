@@ -11,3 +11,7 @@ git-repository-url = "https://github.com/asuc-octo/berkeleytime/tree/gql/docs"
 edit-url-template = "https://github.com/asuc-octo/berkeleytime/tree/gql/docs/{path}"
 
 [preprocessor.alerts]
+
+[preprocessor.toc]
+command = "mdbook-toc"
+renderer = ["html"]

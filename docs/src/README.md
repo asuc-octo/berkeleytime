@@ -20,26 +20,29 @@ Using Docker allows us to build the docs without downloading dependencies on our
 # Ensure you are on the latest commit
 git pull
 
-# Build the container
+# Build the container (only needed once every time docs/Dockerfile changes!)
 docker build --target docs-dev --tag="docs:dev" ./docs
 
 # Run the container
 docker run --publish 3000:3000 --volume ./docs:/docs "docs:dev"
 ```
 
-The docs should be available at `http://localhost:3000/`. To change the port to port `XXXX`, modify the last command:
+The docs should be available at `http://localhost:3000/` with live reload. To change the port to port `XXXX`, modify the last command:
 ```sh
 # Run the container and publish the docs to http://localhost:XXXX/
 docker run --publish XXXX:3000 --volume ./docs:/docs "docs:dev"
 ```
 
+To kill the container, you can use the Docker Desktop UI or run `docker kill [container id]`. You can find the container ID from `docker ps`.
+
 #### Without Containerization
 
-To build and view the docs locally, `mdBook` must be installed by following the guide [here](https://rust-lang.github.io/mdBook/guide/installation.html#build-from-source-using-rust). It is necessary to install Rust locally as there is a dependency that is installed with `cargo`. Thus, it is highly recommended to [build mdbook from Rust](https://rust-lang.github.io/mdBook/guide/installation.html#build-from-source-using-rust).
+To build and view the docs locally, `mdBook` must be installed by following the guide [here](https://rust-lang.github.io/mdBook/guide/installation.html#build-from-source-using-rust). It is necessary to install Rust locally as there are dependencies that are installed with `cargo`. Thus, it is highly recommended to [build mdbook from Rust](https://rust-lang.github.io/mdBook/guide/installation.html#build-from-source-using-rust).
 
 ```sh
-# Install mdbook-alerts dependency with cargo
+# Install mdbook preprocessors with cargo
 cargo install mdbook-alerts
+cargo install mdbook-toc
 
 # ./berkeleytime
 # Ensure you are on the latest commit
