@@ -37,10 +37,10 @@ import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
 import { IClass, Semester } from "@/lib/api";
+import { addToRecent } from "@/lib/recents";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
-import { addToRecent } from "@/lib/recents";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -196,11 +196,13 @@ export default function Class({
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
           (bookmarkedClass) =>
-            !(bookmarkedClass.subject === _class?.subject &&
-            bookmarkedClass.courseNumber === _class?.courseNumber &&
-            bookmarkedClass.number === _class?.number &&
-            bookmarkedClass.year === _class?.year &&
-            bookmarkedClass.semester === _class?.semester)
+            !(
+              bookmarkedClass.subject === _class?.subject &&
+              bookmarkedClass.courseNumber === _class?.courseNumber &&
+              bookmarkedClass.number === _class?.number &&
+              bookmarkedClass.year === _class?.year &&
+              bookmarkedClass.semester === _class?.semester
+            )
         )
       : user.bookmarkedClasses.concat(_class);
     await updateUser(
@@ -238,8 +240,8 @@ export default function Class({
       year: _class.year,
       semester: _class.semester,
       courseNumber: _class.courseNumber,
-      number: _class.number
-    })
+      number: _class.number,
+    });
   }
 
   return (
