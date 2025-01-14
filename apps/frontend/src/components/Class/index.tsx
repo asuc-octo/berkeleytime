@@ -264,7 +264,7 @@ export default function Class({
                     [styles.active]: bookmarked,
                   })}
                   onClick={() => bookmark()}
-                  // disabled={userLoading} // setting disabled to false still appears on my version
+                  disabled={userLoading} // setting disabled to false still appears on my version
                 >
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>

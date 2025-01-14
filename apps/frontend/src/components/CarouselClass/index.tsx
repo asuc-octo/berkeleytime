@@ -1,12 +1,12 @@
-import { MouseEventHandler, forwardRef, useMemo } from "react";
+import { useMemo } from "react";
 
-import { ArrowRight, NewTab, OpenInWindow } from "iconoir-react";
+import { OpenInWindow } from "iconoir-react";
 
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { useReadClass } from "@/hooks/api";
-import { IClass, Semester } from "@/lib/api";
+import { Semester } from "@/lib/api";
 
 import styles from "./CarouselClass.module.scss";
 
