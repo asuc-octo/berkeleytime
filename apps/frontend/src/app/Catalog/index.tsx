@@ -144,6 +144,8 @@ export default function Catalog() {
           />
         ) : (
           <Dashboard
+            term={term}
+            onSelect={handleSelect}
             expanded={expanded}
             setExpanded={setExpanded}
             setOpen={setOpen}

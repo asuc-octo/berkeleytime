@@ -40,6 +40,7 @@ import { IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
+import { addToRecent } from "@/lib/recents";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -195,14 +196,13 @@ export default function Class({
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
           (bookmarkedClass) =>
-            bookmarkedClass.subject === _class?.subject &&
+            !(bookmarkedClass.subject === _class?.subject &&
             bookmarkedClass.courseNumber === _class?.courseNumber &&
             bookmarkedClass.number === _class?.number &&
             bookmarkedClass.year === _class?.year &&
-            bookmarkedClass.semester === _class?.semester
+            bookmarkedClass.semester === _class?.semester)
         )
       : user.bookmarkedClasses.concat(_class);
-
     await updateUser(
       {
         bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
@@ -232,6 +232,14 @@ export default function Class({
   // TODO: Error state
   if (!course || !_class || !pin) {
     return <></>;
+  } else {
+    addToRecent({
+      subject: _class.subject,
+      year: _class.year,
+      semester: _class.semester,
+      courseNumber: _class.courseNumber,
+      number: _class.number
+    })
   }
 
   return (
@@ -254,7 +262,7 @@ export default function Class({
                     [styles.active]: bookmarked,
                   })}
                   onClick={() => bookmark()}
-                  disabled={userLoading}
+                  // disabled={userLoading} // setting disabled to false still appears on my version
                 >
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
