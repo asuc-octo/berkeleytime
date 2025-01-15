@@ -45,7 +45,7 @@ export default function Catalog() {
     return parseInt(providedYear) || null;
   }, [providedYear]);
 
-  const [selectedTerm, changeTerm] = useState<ITerm|null>(null);
+  const [selectedTerm, changeTerm] = useState<ITerm | null>(null);
 
   const term = useMemo(() => {
     if (!terms) return null;
@@ -62,7 +62,7 @@ export default function Catalog() {
       .find((term) => term.temporalPosition === TemporalPosition.Future);
 
     return (
-      selectedTerm ?? 
+      selectedTerm ??
       terms?.find((term) => term.year === year && term.semester === semester) ??
       currentTerm ??
       nextTerm

@@ -20,18 +20,17 @@ const Content = forwardRef<
   );
 });
 
-const Item = forwardRef<
-  HTMLDivElement,
-  ComponentProps<typeof Primitive.Item>
->(({ className, ...props }, forwardedRef) => {
-  return (
-    <Primitive.Item
-      {...props}
-      ref={forwardedRef}
-      className={classNames(styles.item, className)}
-    />
-  )
-})
+const Item = forwardRef<HTMLDivElement, ComponentProps<typeof Primitive.Item>>(
+  ({ className, ...props }, forwardedRef) => {
+    return (
+      <Primitive.Item
+        {...props}
+        ref={forwardedRef}
+        className={classNames(styles.item, className)}
+      />
+    );
+  }
+);
 
 export const DropdownMenu = {
   Root: Primitive.Root,
