@@ -7,3 +7,4 @@ export * from "./MenuItem";
 export * from "./ThemeProvider";
 export * from "./Tooltip";
 export * from "./Dialog";
+export * from "./DropdownMenu";

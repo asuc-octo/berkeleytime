@@ -15,11 +15,14 @@ import CarouselClass from "@/components/CarouselClass";
 import { useReadUser } from "@/hooks/api";
 import { ITerm } from "@/lib/api";
 import { getRecents } from "@/lib/recents";
+import { DropdownMenu } from "@repo/theme";
 
 import styles from "./Dashboard.module.scss";
 
 interface DashboardProps {
   term: ITerm | null | undefined;
+  termList: ITerm[] | undefined;
+  changeTerm: React.Dispatch<React.SetStateAction<ITerm | null>>;
   onSelect: (subject: string, courseNumber: string, number: string) => void;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
@@ -65,6 +68,8 @@ function formatDate(date: Date): string {
 
 export default function Dashboard({
   term,
+  termList,
+  changeTerm,
   onSelect,
   expanded,
   setExpanded,
@@ -82,10 +87,26 @@ export default function Dashboard({
     <div className={styles.root}>
       <Container size="sm">
         <div className={styles.header}>
-          <Button>
-            <ArrowSeparateVertical />
-            Switch terms
-          </Button>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button>
+                <ArrowSeparateVertical />
+                Switch terms
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content sideOffset={5}>
+              {termList ? termList.filter(
+      ({ year, semester }, index) =>
+        index === termList.findIndex((term) => term.semester === semester && term.year === year)
+    ).map((t) => {
+                return <DropdownMenu.Item
+                  key={`${t.semester} ${t.year}`}
+                  onClick={() => { changeTerm(t) }}
+                >{t.semester} {t.year}</DropdownMenu.Item>
+              }) : <></>}
+              <DropdownMenu.Arrow style={{ fill: "var(--foreground-color)" }} />
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
           <div className={styles.toggle}>
             <Button variant="solid" onClick={() => setOpen(false)}>
               Search
