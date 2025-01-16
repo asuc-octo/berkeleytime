@@ -1,12 +1,10 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigation } from 'react-router-dom';
 import ReactGA from 'react-ga';
-// import Banner from './Banner';
 import Navigation from './Navigation';
 import BTLoader from './BTLoader';
 import Footer from './Footer';
 import Meta from './Meta';
-import Banner from './Banner';
 
 ReactGA.initialize('UA-35316609-1');
 
@@ -29,7 +27,7 @@ export default function RootLayout({ footer }: LayoutProps) {
 
 	return (
 		<>
-			<Banner />
+			{/* <Banner /> */}
 			<Navigation />
 			<Meta title="Berkeleytime" />
 			{navigate.state == 'loading' ? (

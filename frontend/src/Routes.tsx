@@ -52,14 +52,14 @@ const router = createBrowserRouter([
 			{ path: '/legal/privacy', lazy: PrivacyPolicy },
 			{ path: '/legal/terms', lazy: TermsOfService },
 			{ path: '/redirect', lazy: RedirectLink },
-			{
-				path: '/survey',
-				loader: () => {
-					window.location.href = 'https://berkeley.qualtrics.com/jfe/form/SV_0rDr0SJfMuPZvRs';
+			// {
+			// 	path: '/survey',
+			// 	loader: () => {
+			// 		window.location.href = 'https://berkeley.qualtrics.com/jfe/form/SV_0rDr0SJfMuPZvRs';
 
-					return null;
-				}
-			},
+			// 		return null;
+			// 	}
+			// },
 			{
 				path: '/decal-survey',
 				loader: () => {
