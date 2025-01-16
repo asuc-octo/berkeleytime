@@ -51,7 +51,7 @@ Sometimes, releases will be stuck in an `uninstalling` state. This command quick
 3. Create a sealed secret from the previously created manifest:
 
     ```sh
-    kubeseal --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
+    kubeseal --controller-name bt-sealed-secrets --controller-namespace bt --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
     ```
 
     If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
