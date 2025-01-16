@@ -5,6 +5,7 @@ concurrency: staging
 on:
   push:
     branches: [master, gql]
+    paths-ignore: ["docs/**"]
 
 jobs:
   build-push:
