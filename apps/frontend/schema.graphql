@@ -29,7 +29,7 @@ type Query {
     givenName: String
     familyName: String
   ): GradeDistribution!
-  catalog(year: Int!, semester: Semester!): [Class!]!
+  catalog(year: Int!, semester: Semester!, query: String): [Class!]!
   ping: String! @deprecated(reason: "test")
   schedules: [Schedule]
   schedule(id: ID!): Schedule
@@ -101,6 +101,7 @@ type GradeDistribution {
 
 type Grade {
   letter: String!
+  percentage: Float!
   count: Int!
 }
 

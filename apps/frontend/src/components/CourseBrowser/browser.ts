@@ -142,8 +142,6 @@ export const initialize = (courses: ICourse[]) => {
       },
       // { name: "subject", weight: 1.5 },
     ],
-    // TODO: Fuse types are wrong for sortFn
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // sortFn: (a: any, b: any) => {
     //   // First, sort by score
     //   if (a.score - b.score) return a.score - b.score;

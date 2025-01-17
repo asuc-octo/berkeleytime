@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { Xmark } from "iconoir-react";
+import moment from "moment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { IconButton } from "@repo/theme";
@@ -47,14 +48,21 @@ export default function Catalog() {
   const term = useMemo(() => {
     if (!terms) return null;
 
-    const currentTerm = terms?.find(
+    // Default to the current term
+    const currentTerm = terms.find(
       (term) => term.temporalPosition === TemporalPosition.Current
     );
 
-    // Default to the current term
+    // Fall back to the next term when the current term has ended
+    const nextTerm = terms
+      .filter((term) => term.startDate)
+      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
+      .find((term) => term.temporalPosition === TemporalPosition.Future);
+
     return (
       terms?.find((term) => term.year === year && term.semester === semester) ??
-      currentTerm
+      currentTerm ??
+      nextTerm
     );
   }, [terms, year, semester]);
 
@@ -85,7 +93,7 @@ export default function Catalog() {
         pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}`,
       });
     },
-    [navigate, year, semester, location, term]
+    [navigate, location, term]
   );
 
   // TODO: Loading state
@@ -102,7 +110,7 @@ export default function Catalog() {
   return (
     <div
       className={classNames(styles.root, {
-        [styles.expanded]: expanded,
+        [styles.collapsed]: !expanded,
         [styles.open]: open,
       })}
     >

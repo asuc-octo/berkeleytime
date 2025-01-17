@@ -10,7 +10,7 @@ import {
 } from "react";
 
 export type PropsOf<
-  C extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>,
+  C extends keyof JSX.IntrinsicElements | JSXElementConstructor<unknown>,
 > = JSX.LibraryManagedAttributes<C, ComponentPropsWithoutRef<C>>;
 
 type AsProp<C extends ElementType> = {
@@ -18,18 +18,18 @@ type AsProp<C extends ElementType> = {
 };
 
 export type ExtendableProps<
-  ExtendedProps = {},
-  OverrideProps = {},
+  ExtendedProps = object,
+  OverrideProps = object,
 > = OverrideProps & Omit<ExtendedProps, keyof OverrideProps>;
 
 export type InheritableElementProps<
   C extends ElementType,
-  Props = {},
+  Props = object,
 > = ExtendableProps<PropsOf<C>, Props>;
 
 export type PolymorphicComponentProps<
   C extends ElementType,
-  Props = {},
+  Props = object,
 > = InheritableElementProps<C, Props & AsProp<C>>;
 
 export type PolymorphicRef<C extends ElementType> =
@@ -37,5 +37,5 @@ export type PolymorphicRef<C extends ElementType> =
 
 export type PolymorphicComponentPropsWithRef<
   C extends ElementType,
-  Props = {},
+  Props = object,
 > = PolymorphicComponentProps<C, Props> & { ref?: PolymorphicRef<C> };
