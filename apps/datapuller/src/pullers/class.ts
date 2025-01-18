@@ -47,5 +47,7 @@ export async function updateClasses(config: Config) {
     await NewClassModel.insertMany(batch, { ordered: false });
   }
 
-  log.info(`Completed updating database with ${classes.length} classes for ${activeTerms.length} active terms.`);
+  log.info(
+    `Completed updating database with ${classes.length} classes for ${activeTerms.length} active terms.`
+  );
 }

@@ -47,5 +47,7 @@ export async function updateSections(config: Config) {
     await NewSectionModel.insertMany(batch, { ordered: false });
   }
 
-  log.info(`Completed updating database with ${sections.length} sections for ${activeTerms.length} active terms.`);
+  log.info(
+    `Completed updating database with ${sections.length} sections for ${activeTerms.length} active terms.`
+  );
 }

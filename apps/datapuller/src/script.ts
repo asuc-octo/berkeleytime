@@ -1,8 +1,8 @@
-import { updateClasses } from "./pullers/class";
 import { Config } from "./config";
+import { updateClasses } from "./pullers/class";
 import { updateCourses } from "./pullers/course";
-import { runDatapuller } from "./runDatapuller";
 import { updateSections } from "./pullers/section";
+import { runDatapuller } from "./runDatapuller";
 import setup from "./shared";
 
 const scriptMap: { [key: string]: (config: Config) => Promise<void> } = {
@@ -25,12 +25,13 @@ const parseArgs = (
   return result;
 };
 
-
 const runScript = async () => {
   const args = parseArgs(process.argv.slice(2));
 
   if (!args.script || !scriptMap[args.script]) {
-    throw new Error("Please specify a valid script: courses, sections, classes, or datapuller.");
+    throw new Error(
+      "Please specify a valid script: courses, sections, classes, or datapuller."
+    );
   }
 
   const { config } = await setup();

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-import { updateClasses } from "./pullers/class";
 import { Config } from "./config";
+import { updateClasses } from "./pullers/class";
 import { updateCourses } from "./pullers/course";
 import { updateSections } from "./pullers/section";
 import setup from "./shared";
