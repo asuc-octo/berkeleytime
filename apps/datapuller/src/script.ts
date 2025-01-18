@@ -45,6 +45,7 @@ const runScript = async () => {
     await scriptMap[args.script](config);
 
     logger.info(`${args.script} script completed successfully`);
+    process.exit(0);
   } catch (error: any) {
     logger.error(`${args.script} script failed: ${error.message}`);
     process.exit(1);
