@@ -52,7 +52,7 @@ const classSchema = new Schema<IClassItem>({
   subject: { type: String, required: true },
   termId: { type: String, required: true }, // session.term.id
   sessionId: { type: String, required: true }, // session.id
-  number: { type: String, required: true },
+  number: { type: String, required: true, unique: true },
   offeringNumber: { type: Number },
   title: { type: String }, // classTitle
   description: { type: String }, // classDescription

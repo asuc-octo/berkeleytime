@@ -118,8 +118,8 @@ export interface ICourseItemDocument extends ICourseItem, Document {}
 
 const courseSchema = new Schema<ICourseItem>({
   courseId: { type: String, required: true, unique: true },
-  subject: { type: String, required: true, unique: true },
-  number: { type: String, required: true, unique: true },
+  subject: { type: String, required: true },
+  number: { type: String, required: true },
   title: { type: String },
   description: { type: String },
   academicCareer: { type: String },

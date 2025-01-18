@@ -70,7 +70,7 @@ const sectionSchema = new Schema<ISectionItem>({
   classNumber: { type: String, required: true },
   sessionId: { type: String },
   termId: { type: String },
-  sectionId: { type: String, required: true },
+  sectionId: { type: String, required: true, unique: true },
   number: { type: String, required: true },
   subject: { type: String, required: true },
   courseNumber: { type: String, required: true },
