@@ -5,6 +5,11 @@ import { updateSections } from "./pullers/section";
 import { runDatapuller } from "./runDatapuller";
 import setup from "./shared";
 
+type cliArgs = {
+  script: string;
+  [key: string]: string;
+};
+
 const scriptMap: { [key: string]: (config: Config) => Promise<void> } = {
   courses: updateCourses,
   sections: updateSections,
@@ -12,10 +17,8 @@ const scriptMap: { [key: string]: (config: Config) => Promise<void> } = {
   datapuller: runDatapuller,
 };
 
-const parseArgs = (
-  args: string[]
-): { script: string; [key: string]: string } => {
-  const result: { script: string; [key: string]: string } = { script: "" };
+const parseArgs = (args: string[]): cliArgs => {
+  const result: cliArgs = { script: "" };
   args.forEach((arg) => {
     const [key, value] = arg.split("=");
     if (key.startsWith("--")) {

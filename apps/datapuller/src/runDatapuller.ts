@@ -58,5 +58,3 @@ export const runDatapuller = async () => {
 
   process.exit(0);
 };
-
-runDatapuller();

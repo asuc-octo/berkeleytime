@@ -70,7 +70,7 @@ const sectionSchema = new Schema<ISectionItem>({
   classNumber: { type: String, required: true },
   sessionId: { type: String },
   termId: { type: String },
-  sectionId: { type: String, required: true, unique: true },
+  sectionId: { type: String, required: true },
   number: { type: String, required: true },
   subject: { type: String, required: true },
   courseNumber: { type: String, required: true },
@@ -135,6 +135,7 @@ const sectionSchema = new Schema<ISectionItem>({
     },
   ],
 });
+sectionSchema.index({ sectionId: 1 }, { unique: true });
 
 export const NewSectionModel: Model<ISectionItem> = model<ISectionItem>(
   "NewSection",

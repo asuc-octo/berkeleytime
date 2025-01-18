@@ -52,7 +52,7 @@ const classSchema = new Schema<IClassItem>({
   subject: { type: String, required: true },
   termId: { type: String, required: true }, // session.term.id
   sessionId: { type: String, required: true }, // session.id
-  number: { type: String, required: true, unique: true },
+  number: { type: String, required: true },
   offeringNumber: { type: Number },
   title: { type: String }, // classTitle
   description: { type: String }, // classDescription
@@ -72,6 +72,7 @@ const classSchema = new Schema<IClassItem>({
   requirementDesignation: { type: String }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
 });
+classSchema.index({ courseId: 1, number: 1 }, { unique: true });
 
 export const NewClassModel: Model<IClassItem> = model<IClassItem>(
   "NewClass",
