@@ -35,6 +35,8 @@ export function loadConfig(): Config {
     prettyLogTimeZone: "local",
   });
 
+  log.info("Loading config...");
+
   return {
     log,
     mongoDB: {

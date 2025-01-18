@@ -12,7 +12,10 @@ metadata:
 spec:
   schedule: "{{ $jobConfig.schedule }}"
   timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
   suspend: {{ $jobConfig.suspend }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:
@@ -42,6 +45,7 @@ metadata:
     {{- include "bt-app.datapullerLabels" . | nindent 4 }}
 data:
   MONGODB_URI: {{ .Values.mongoUri }}
+  TZ: America/Los_Angeles # for tslog
 
 ---
 

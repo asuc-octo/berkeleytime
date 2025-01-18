@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
-import { updateClasses } from "./class";
+import { updateClasses } from "./pullers/class";
 import { Config } from "./config";
-import { updateCourses } from "./course";
-import { updateSections } from "./section";
+import { updateCourses } from "./pullers/course";
+import { updateSections } from "./pullers/section";
 import setup from "./shared";
 
 const testDatabaseWrite = async (config: Config) => {
@@ -58,3 +58,5 @@ export const runDatapuller = async () => {
 
   process.exit(0);
 };
+
+runDatapuller();

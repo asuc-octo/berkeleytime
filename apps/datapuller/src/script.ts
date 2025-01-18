@@ -1,18 +1,14 @@
-import { Logger } from "tslog";
-
-import { updateClasses } from "./class";
-import { cleanupLogs } from "./cleanupLogs";
+import { updateClasses } from "./pullers/class";
 import { Config } from "./config";
-import { updateCourses } from "./course";
+import { updateCourses } from "./pullers/course";
 import { runDatapuller } from "./runDatapuller";
-import { updateSections } from "./section";
+import { updateSections } from "./pullers/section";
 import setup from "./shared";
 
 const scriptMap: { [key: string]: (config: Config) => Promise<void> } = {
   courses: updateCourses,
   sections: updateSections,
   classes: updateClasses,
-  logs: cleanupLogs,
   datapuller: runDatapuller,
 };
 
@@ -29,18 +25,16 @@ const parseArgs = (
   return result;
 };
 
-const args = parseArgs(process.argv.slice(2));
-
-if (!args.script || !scriptMap[args.script]) {
-  console.error(
-    "Please specify a valid script: courses, sections, classes, logs, or datapuller"
-  );
-  process.exit(1);
-}
 
 const runScript = async () => {
+  const args = parseArgs(process.argv.slice(2));
+
+  if (!args.script || !scriptMap[args.script]) {
+    throw new Error("Please specify a valid script: courses, sections, classes, or datapuller.");
+  }
+
   const { config } = await setup();
-  const logger = new Logger({ name: "ScriptRunner" });
+  const logger = config.log.getSubLogger({ name: "ScriptRunner" });
   try {
     logger.info(`Starting ${args.script} script`);
 
