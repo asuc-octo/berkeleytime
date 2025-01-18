@@ -7,8 +7,8 @@
       "dependsOn": ["generate", "^build"],
       "outputs": ["dist/**"]
     },
-    "course": {
-      "cache": false
+    "runDatapuller": {
+      "cache": true
     },
     "generate": {
       "outputs": ["*/generated-types/**"]
@@ -19,6 +19,11 @@
     },
     "dev": {
       "dependsOn": ["generate", "^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "script": {
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     }
