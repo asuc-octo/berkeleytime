@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import { ArrowRight, Menu, Pin, User } from "iconoir-react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { Button, IconButton, MenuItem } from "@repo/theme";
 
 import { useReadUser } from "@/hooks/api";
-import { signIn, signOut } from "@/lib/api";
+import { signIn } from "@/lib/api";
 
 import PinsDrawer from "../Layout/PinsDrawer";
 import styles from "./NavigationBar.module.scss";
@@ -17,6 +17,10 @@ interface NavigationBarProps {
 
 export default function NavigationBar({ invert }: NavigationBarProps) {
   const { data: user } = useReadUser();
+
+  const navigate = useNavigate();
+
+  const profileRedirect = () => { navigate("/profile") }
 
   return (
     <div
@@ -54,20 +58,13 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
             </MenuItem>
           )}
         </NavLink>
-        <NavLink to="/profile">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Profile
-            </MenuItem>
-          )}
-        </NavLink>
       </div>
       <Button
-        onClick={() => (user ? signOut() : signIn())}
+        onClick={() => (user ? profileRedirect() : signIn())}
         variant="solid"
         className={styles.button}
       >
-        {user ? "Log Out" : "Sign In"}
+        {user ? user.email : "Sign In"}
         {user ? <User /> : <ArrowRight />}
       </Button>
       <PinsDrawer>

@@ -1,13 +1,14 @@
 import { useState } from "react";
 
 import classNames from "classnames";
-import { HelpCircle, ProfileCircle, Star } from "iconoir-react";
+import { HelpCircle, ProfileCircle, Star, LogOut } from "iconoir-react";
 
 import { useReadUser } from "@/hooks/api/users/useReadUser";
-import { signIn } from "@/lib/api";
+import { signIn, signOut } from "@/lib/api";
 import { IUser } from "@/lib/api";
 
 import styles from "./Profile.module.scss";
+import { useNavigate } from "react-router-dom";
 
 function YourAccount({ user }: { user: IUser | undefined }) {
   if (!user) return <></>;
@@ -43,8 +44,10 @@ export default function Profile() {
 
   const [activeView, changeActiveView] = useState(0);
 
+  const navigate = useNavigate();
+
   if (!userLoading && !user) {
-    signIn();
+    navigate("..");
   }
 
   return (
@@ -84,6 +87,13 @@ export default function Profile() {
           >
             <HelpCircle />
             <span>Support</span>
+          </div>
+          <div
+            className={ styles.navItem }
+            onClick={() => signOut()}
+          >
+            <LogOut/>
+            <span>Sign Out</span>
           </div>
         </div>
         {userLoading ? (
