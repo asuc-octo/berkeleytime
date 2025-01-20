@@ -22,6 +22,7 @@ import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
 import styles from "./Manage.module.scss";
 import Map from "./Map";
+import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
 
 export default function Editor() {
@@ -370,10 +371,12 @@ export default function Editor() {
           <Copy />
           Clone
         </Button>
-        <Button variant="solid">
-          Share
-          <ShareIos />
-        </Button>
+        <ShareDialog>
+          <Button variant="solid">
+            Share
+            <ShareIos />
+          </Button>
+        </ShareDialog>
       </div>
       <div className={styles.body}>
         <SideBar
