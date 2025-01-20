@@ -20,7 +20,9 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
 
   const navigate = useNavigate();
 
-  const profileRedirect = () => { navigate("/profile") }
+  const profileRedirect = () => {
+    navigate("/profile");
+  };
 
   return (
     <div
