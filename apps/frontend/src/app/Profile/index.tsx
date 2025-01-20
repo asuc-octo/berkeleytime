@@ -5,7 +5,7 @@ import { HelpCircle, LogOut, ProfileCircle, Star } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import { useReadUser } from "@/hooks/api/users/useReadUser";
-import { signIn, signOut } from "@/lib/api";
+import { signOut } from "@/lib/api";
 import { IUser } from "@/lib/api";
 
 import styles from "./Profile.module.scss";
