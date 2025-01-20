@@ -5,11 +5,12 @@ concurrency: staging
 on:
   push:
     branches: [master, gql]
+    paths-ignore: ["docs/**"]
 
 jobs:
   build-push:
     name: Build and Push Images and Charts
-    uses: ./.github/workflows/cd.yaml
+    uses: ./.github/workflows/cd-build.yaml
     with:
       image_tag: latest
       chart_ver: 0.1.0-stage
@@ -18,7 +19,7 @@ jobs:
   deploy:
     name: SSH and Deploy
     needs: [build-push]
-    uses: ./.github/workflows/deploy.yaml
+    uses: ./.github/workflows/cd-deploy.yaml
     with:
       environment: staging
       name: bt-stage-app
@@ -45,6 +46,7 @@ jobs:
             image:
               tag: latest
         host: staging.stanfurdtime.com
-        mongoUri: mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt
+        mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
+      host: staging.stanfurdtime.com
     secrets: inherit
