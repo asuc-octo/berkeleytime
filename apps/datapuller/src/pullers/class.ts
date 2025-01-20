@@ -1,12 +1,12 @@
 import { IClassItem, NewClassModel } from "@repo/common";
 import { ClassesAPI } from "@repo/sis-api/classes";
 
-import { Config } from "./config";
-import mapClassToNewClass, { CombinedClass } from "./shared/classParser";
-import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
+import { Config } from "../config";
+import mapClassToNewClass, { CombinedClass } from "../parsers/class";
+import { fetchActiveTerms, fetchPaginatedData } from "../shared/utils";
 
 export async function updateClasses(config: Config) {
-  const log = config.log;
+  const log = config.log.getSubLogger({ name: "ClassesPuller" });
   const classesAPI = new ClassesAPI();
 
   log.info("Fetching Active Terms");
@@ -14,6 +14,7 @@ export async function updateClasses(config: Config) {
     app_id: config.sis.TERM_APP_ID,
     app_key: config.sis.TERM_APP_KEY,
   });
+  log.info(`Active term IDs: ${activeTerms}`);
 
   const classes = await fetchPaginatedData<IClassItem, CombinedClass>(
     log,
@@ -28,9 +29,8 @@ export async function updateClasses(config: Config) {
     mapClassToNewClass,
     "classes"
   );
-  log.info(activeTerms);
 
-  log.info("Example Class:", classes[0]);
+  log.info("Example class:", classes[0]);
 
   await NewClassModel.deleteMany({
     "session.term.id": { $in: activeTerms },
@@ -42,12 +42,12 @@ export async function updateClasses(config: Config) {
   for (let i = 0; i < classes.length; i += insertBatchSize) {
     const batch = classes.slice(i, i + insertBatchSize);
 
-    console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.info(`Inserting batch ${i / insertBatchSize + 1}...`);
 
     await NewClassModel.insertMany(batch, { ordered: false });
   }
 
-  console.log(`Completed updating database with new class data.`);
-
-  log.info(`Updated ${classes.length} classes for active terms`);
+  log.info(
+    `Completed updating database with ${classes.length} classes for ${activeTerms.length} active terms.`
+  );
 }

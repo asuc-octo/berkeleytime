@@ -72,6 +72,7 @@ const classSchema = new Schema<IClassItem>({
   requirementDesignation: { type: String }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
 });
+classSchema.index({ courseId: 1, number: 1 }, { unique: true });
 
 export const NewClassModel: Model<IClassItem> = model<IClassItem>(
   "NewClass",

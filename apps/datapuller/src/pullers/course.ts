@@ -1,12 +1,12 @@
 import { ICourseItem, NewCourseModel } from "@repo/common";
 import { CoursesAPI } from "@repo/sis-api/courses";
 
-import { Config } from "./config";
-import mapCourseToNewCourse, { CombinedCourse } from "./shared/courseParser";
-import { fetchPaginatedData } from "./shared/utils";
+import { Config } from "../config";
+import mapCourseToNewCourse, { CombinedCourse } from "../parsers/course";
+import { fetchPaginatedData } from "../shared/utils";
 
 export async function updateCourses(config: Config) {
-  const log = config.log;
+  const log = config.log.getSubLogger({ name: "CoursesPuller" });
   const coursesAPI = new CoursesAPI();
 
   const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
@@ -23,7 +23,7 @@ export async function updateCourses(config: Config) {
     "courses"
   );
 
-  log.info("Example Course:", courses[0]);
+  log.info("Example course:", courses[0]);
 
   await NewCourseModel.deleteMany({});
 
@@ -33,12 +33,10 @@ export async function updateCourses(config: Config) {
   for (let i = 0; i < courses.length; i += insertBatchSize) {
     const batch = courses.slice(i, i + insertBatchSize);
 
-    console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.info(`Inserting batch ${i / insertBatchSize + 1}...`);
 
     await NewCourseModel.insertMany(batch, { ordered: false });
   }
 
-  console.log(`Completed updating database with new course data.`);
-
-  log.info(`Updated ${courses.length} courses for active terms`);
+  log.info(`Completed updating database with ${courses.length} courses.`);
 }

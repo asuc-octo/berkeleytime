@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
-import { updateClasses } from "./class";
 import { Config } from "./config";
-import { updateCourses } from "./course";
-import { updateSections } from "./section";
+import { updateClasses } from "./pullers/class";
+import { updateCourses } from "./pullers/course";
+import { updateSections } from "./pullers/section";
 import setup from "./shared";
 
 const testDatabaseWrite = async (config: Config) => {

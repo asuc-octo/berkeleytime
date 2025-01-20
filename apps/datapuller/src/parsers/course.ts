@@ -21,6 +21,7 @@ export default function mapCourseToNewCourse(
     ([_, value]) => !value
   );
   if (missingField) {
+    // some obscure course objects won't have an ID, ie. discussions (course number 999)
     throw new Error(
       `Course ${subject} ${number} is missing essential field: ${missingField[0]}`
     );

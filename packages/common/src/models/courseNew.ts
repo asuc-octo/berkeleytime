@@ -117,9 +117,9 @@ export interface ICourseItem {
 export interface ICourseItemDocument extends ICourseItem, Document {}
 
 const courseSchema = new Schema<ICourseItem>({
-  courseId: { type: String, required: true, unique: true },
-  subject: { type: String, required: true, unique: true },
-  number: { type: String, required: true, unique: true },
+  courseId: { type: String, required: true },
+  subject: { type: String, required: true },
+  number: { type: String, required: true },
   title: { type: String },
   description: { type: String },
   academicCareer: { type: String },
@@ -207,6 +207,7 @@ const courseSchema = new Schema<ICourseItem>({
   createdDate: { type: String },
   updatedDate: { type: String },
 });
+courseSchema.index({ courseId: 1 }, { unique: true });
 
 export const NewCourseModel: Model<ICourseItem> = model<ICourseItem>(
   "NewCourse",

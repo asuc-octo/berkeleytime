@@ -6,7 +6,6 @@
     "update:courses": "tsx src/course.ts",
     "update:sections": "tsx src/section.ts",
     "update:classes": "tsx src/class.ts",
-    "cleanup:logs": "tsx src/cleanupLogs.ts",
     "runDatapuller": "tsx src/runDatapuller.ts",
     "script": "tsx src/script.ts"
   },

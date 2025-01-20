@@ -1,5 +1,3 @@
-import fs from "fs/promises";
-import path from "path";
 import { Logger } from "tslog";
 
 import { Term, TermsAPI } from "@repo/sis-api/terms";
@@ -60,19 +58,6 @@ export async function fetchPaginatedData<T, R>(
   let page = 1;
   let totalErrorCount = 0;
 
-  // Get the current date to include in the log file name
-  const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-
-  // Set up the error log file path based on dataType and date
-  const logDir = path.join(__dirname, "logs");
-  const errorLogFile = path.join(
-    logDir,
-    `error_${dataType}_${currentDate}.log`
-  );
-
-  // Ensure the log directory exists
-  await fs.mkdir(logDir, { recursive: true });
-
   const fetchBatch = async (termId?: string) => {
     const promises = [];
 
@@ -102,7 +87,7 @@ export async function fetchPaginatedData<T, R>(
     return flattenedResults;
   };
 
-  const processBatch = async (termId?: string) => {
+  const processBatch = async (logger: Logger<unknown>, termId?: string) => {
     const batchData = await fetchBatch(termId);
     if (batchData.length === 0) return false;
 
@@ -117,27 +102,9 @@ export async function fetchPaginatedData<T, R>(
         totalErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);
         logger.error("Problematic item:", JSON.stringify(item, null, 2));
-
-        // Log detailed error to the error file
-        const timestamp = new Date().toISOString();
-        const errorMessage = `${timestamp} - Error processing item at index ${index}: ${error.message}\n`;
-        const itemData = `Item data: ${JSON.stringify(item, null, 2)}\n\n`;
-
-        fs.appendFile(errorLogFile, errorMessage + itemData).catch(
-          (fsError) => {
-            logger.error(
-              `Failed to write to error log file: ${fsError.message}`
-            );
-          }
-        );
       }
       return acc;
     }, [] as T[]);
-
-    if (batchErrorCount > 0) {
-      const batchErrorMessage = `${new Date().toISOString()} - Batch error count: ${batchErrorCount}\n`;
-      await fs.appendFile(errorLogFile, batchErrorMessage);
-    }
 
     results.push(...transformedData);
     page += queryBatchSize;
@@ -148,39 +115,18 @@ export async function fetchPaginatedData<T, R>(
     for (const term of terms) {
       let hasMoreData = true;
       while (hasMoreData) {
-        hasMoreData = await processBatch(term);
+        hasMoreData = await processBatch(logger, term);
       }
       page = 1;
     }
   } else {
     let hasMoreData = true;
     while (hasMoreData) {
-      hasMoreData = await processBatch();
+      hasMoreData = await processBatch(logger);
     }
   }
 
   logger.info(`Total errors encountered for ${dataType}: ${totalErrorCount}`);
 
-  // Log totalErrorCount to the error file
-  const totalErrorMessage = `${new Date().toISOString()} - Total errors encountered: ${totalErrorCount}\n\n`;
-  try {
-    await fs.appendFile(errorLogFile, totalErrorMessage);
-    logger.info(`Error count for ${dataType} logged to ${errorLogFile}`);
-  } catch (error) {
-    logger.error(`Failed to log error count for ${dataType} to file: ${error}`);
-  }
-
   return results;
-}
-
-export function getRequiredField<T>(
-  value: T | undefined,
-  fieldName: string,
-  defaultValue: T
-): T {
-  if (value === undefined || value === null) {
-    console.warn(`Missing required field: ${fieldName}`);
-    return defaultValue;
-  }
-  return value;
 }
