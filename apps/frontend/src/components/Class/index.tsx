@@ -1,4 +1,11 @@
-import { ReactNode, Suspense, lazy, useCallback, useEffect, useMemo } from "react";
+import {
+  ReactNode,
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 
 import { DialogClose } from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -229,7 +236,7 @@ export default function Class({
   useEffect(() => {
     if (!_class) return;
 
-    console.log(_class)
+    console.log(_class);
 
     addToRecent({
       subject: _class.subject,

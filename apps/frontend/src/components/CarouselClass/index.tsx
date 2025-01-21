@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { OpenInWindow } from "iconoir-react";
+import { Link } from "react-router-dom";
 
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
@@ -9,7 +10,6 @@ import { useReadClass } from "@/hooks/api";
 import { Semester } from "@/lib/api";
 
 import styles from "./CarouselClass.module.scss";
-import { Link } from "react-router-dom";
 
 interface CarouselClassProps {
   year: number;

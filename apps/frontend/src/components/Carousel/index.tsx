@@ -35,27 +35,34 @@ export default function Carousel({ title, Icon, children, to }: CarouselProps) {
     const children = containerRef.current.children;
     for (let i = children.length; i >= 0; i--) {
       const element = children.item(i) as HTMLDivElement;
-      if (element && element.offsetLeft < containerRef.current.scrollLeft - 50) {
-        containerRef.current.scrollLeft = element.offsetLeft - (element.offsetWidth - element.clientWidth);
+      if (
+        element &&
+        element.offsetLeft < containerRef.current.scrollLeft - 50
+      ) {
+        containerRef.current.scrollLeft =
+          element.offsetLeft - (element.offsetWidth - element.clientWidth);
         return;
       }
     }
     containerRef.current.scrollLeft -= containerRef.current.offsetWidth / 3;
-  }
+  };
   const scrollRight = () => {
     // scroll to next card to the right
     if (!containerRef.current) return;
     const children = containerRef.current.children;
     for (let i = 0; i < children.length; i++) {
       const element = children.item(i) as HTMLDivElement;
-      if (element && element.offsetLeft > containerRef.current.scrollLeft + 50) {
-        containerRef.current.scrollLeft = element.offsetLeft - (element.offsetWidth - element.clientWidth);
+      if (
+        element &&
+        element.offsetLeft > containerRef.current.scrollLeft + 50
+      ) {
+        containerRef.current.scrollLeft =
+          element.offsetLeft - (element.offsetWidth - element.clientWidth);
         return;
       }
     }
     containerRef.current.scrollLeft += containerRef.current.offsetWidth / 3;
-  }
-
+  };
 
   return (
     <div className={styles.root}>
@@ -70,7 +77,7 @@ export default function Carousel({ title, Icon, children, to }: CarouselProps) {
             <ArrowRight />
           </Link>
         )}
-        <IconButton onClick={ scrollLeft }>
+        <IconButton onClick={scrollLeft}>
           <NavArrowLeft />
         </IconButton>
         <IconButton onClick={scrollRight}>

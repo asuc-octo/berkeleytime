@@ -7,6 +7,8 @@ import {
   Expand,
   Search,
 } from "iconoir-react";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 import { Button, Container, IconButton, Tooltip } from "@repo/theme";
 import { DropdownMenu } from "@repo/theme";
@@ -18,8 +20,6 @@ import { ITerm } from "@/lib/api";
 import { getRecents } from "@/lib/recents";
 
 import styles from "./Dashboard.module.scss";
-import { useNavigate } from "react-router-dom";
-import moment from "moment";
 
 interface DashboardProps {
   term: ITerm | null | undefined;
@@ -72,7 +72,9 @@ export default function Dashboard({
                     return (
                       <DropdownMenu.Item
                         key={`${t.semester} ${t.year}`}
-                        onClick={() => navigate(`/catalog/${t.year}/${t.semester}`)}
+                        onClick={() =>
+                          navigate(`/catalog/${t.year}/${t.semester}`)
+                        }
                       >
                         {t.semester} {t.year}
                       </DropdownMenu.Item>

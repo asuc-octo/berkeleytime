@@ -27,11 +27,13 @@ export function addToRecent({
   } as RecentClassData;
   recents = recents.filter(
     (rcd) =>
-      !(newRcd.subject == rcd.subject &&
+      !(
+        newRcd.subject == rcd.subject &&
         newRcd.year == rcd.year &&
         newRcd.semester == rcd.semester &&
         newRcd.courseNumber == rcd.courseNumber &&
-        newRcd.number == rcd.number)
+        newRcd.number == rcd.number
+      )
   );
   recents.push(newRcd);
   recents.splice(0, recents.length - RECENTS_LIST_MAX_LENGTH);
