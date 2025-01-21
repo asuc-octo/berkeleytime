@@ -9,9 +9,9 @@ import { useReadClass } from "@/hooks/api";
 import { Semester } from "@/lib/api";
 
 import styles from "./CarouselClass.module.scss";
+import { Link } from "react-router-dom";
 
 interface CarouselClassProps {
-  onSelect: (subject: string, courseNumber: string, number: string) => void;
   year: number;
   semester: Semester;
   subject: string;
@@ -20,7 +20,6 @@ interface CarouselClassProps {
 }
 
 export default function CarouselClass({
-  onSelect,
   year,
   semester,
   subject,
@@ -40,9 +39,9 @@ export default function CarouselClass({
   return loading || !_class ? (
     <></>
   ) : (
-    <div
+    <Link
       className={styles.root}
-      onClick={() => onSelect(subject, courseNumber, number)}
+      to={`/catalog/${year}/${semester}/${subject}/${courseNumber}/${number}`}
     >
       <div className={styles.text}>
         <p className={styles.heading}>
@@ -67,6 +66,6 @@ export default function CarouselClass({
           <OpenInWindow />
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

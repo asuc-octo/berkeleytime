@@ -11,7 +11,7 @@ import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import { ITerm, Semester, TemporalPosition } from "@/lib/api";
+import { Semester, TemporalPosition } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 import Dashboard from "./Dashboard";
@@ -45,8 +45,6 @@ export default function Catalog() {
     return parseInt(providedYear) || null;
   }, [providedYear]);
 
-  const [selectedTerm, changeTerm] = useState<ITerm | null>(null);
-
   const term = useMemo(() => {
     if (!terms) return null;
 
@@ -62,12 +60,11 @@ export default function Catalog() {
       .find((term) => term.temporalPosition === TemporalPosition.Future);
 
     return (
-      selectedTerm ??
       terms?.find((term) => term.year === year && term.semester === semester) ??
       currentTerm ??
       nextTerm
     );
-  }, [terms, year, semester, selectedTerm]);
+  }, [terms, year, semester]);
 
   const subject = useMemo(
     () => providedSubject?.toUpperCase(),
@@ -149,8 +146,6 @@ export default function Catalog() {
           <Dashboard
             term={term}
             termList={terms}
-            changeTerm={changeTerm}
-            onSelect={handleSelect}
             expanded={expanded}
             setExpanded={setExpanded}
             setOpen={setOpen}

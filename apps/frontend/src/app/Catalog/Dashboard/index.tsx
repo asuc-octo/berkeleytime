@@ -18,59 +18,20 @@ import { ITerm } from "@/lib/api";
 import { getRecents } from "@/lib/recents";
 
 import styles from "./Dashboard.module.scss";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 interface DashboardProps {
   term: ITerm | null | undefined;
   termList: ITerm[] | undefined;
-  changeTerm: React.Dispatch<React.SetStateAction<ITerm | null>>;
-  onSelect: (subject: string, courseNumber: string, number: string) => void;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-function getOrdinalSuffix(day: number): string {
-  if (day > 3 && day < 21) return "th"; // applies to 11-20
-  switch (day % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
-}
-
-function formatDate(date: Date): string {
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const day = date.getDate();
-  const month = monthNames[date.getMonth()];
-  const ordinalSuffix = getOrdinalSuffix(day);
-
-  return `${month} ${day}${ordinalSuffix}`;
-}
-
 export default function Dashboard({
   term,
   termList,
-  changeTerm,
-  onSelect,
   expanded,
   setExpanded,
   setOpen,
@@ -82,6 +43,8 @@ export default function Dashboard({
   const recents = getRecents().filter(
     (v) => v.semester == term.semester && v.year == term.year
   );
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles.root}>
@@ -109,9 +72,7 @@ export default function Dashboard({
                     return (
                       <DropdownMenu.Item
                         key={`${t.semester} ${t.year}`}
-                        onClick={() => {
-                          changeTerm(t);
-                        }}
+                        onClick={() => navigate(`/catalog/${t.year}/${t.semester}`)}
                       >
                         {t.semester} {t.year}
                       </DropdownMenu.Item>
@@ -140,8 +101,8 @@ export default function Dashboard({
         </p>
         {term.startDate && term.endDate ? (
           <p className={styles.paragraph}>
-            {formatDate(new Date(term.startDate))} through{" "}
-            {formatDate(new Date(term.endDate!))}
+            {moment(term.startDate).format("MMMM Do")} through{" "}
+            {moment(term.endDate).format("MMMM Do")}
           </p>
         ) : (
           <></>
@@ -170,7 +131,6 @@ export default function Dashboard({
                 return (
                   <div key={i} className={styles.card}>
                     <CarouselClass
-                      onSelect={onSelect}
                       subject={c.subject}
                       year={c.year}
                       semester={c.semester}
@@ -182,9 +142,7 @@ export default function Dashboard({
               })
           )}
         </Carousel>
-        {recents.length == 0 ? (
-          <></>
-        ) : (
+        {recents.length !== 0 && (
           <Carousel title="Recently viewed" Icon={<Search />}>
             {" "}
             {recents
@@ -192,11 +150,11 @@ export default function Dashboard({
                 (c) =>
                   !term || (c.year == term.year && c.semester == term.semester)
               )
+              .reverse()
               .map((c, i) => {
                 return (
                   <div key={i} className={styles.card}>
                     <CarouselClass
-                      onSelect={onSelect}
                       subject={c.subject}
                       year={c.year}
                       semester={c.semester}

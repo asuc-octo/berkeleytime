@@ -1,4 +1,4 @@
-import { ReactNode, Suspense, lazy, useCallback, useMemo } from "react";
+import { ReactNode, Suspense, lazy, useCallback, useEffect, useMemo } from "react";
 
 import { DialogClose } from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -226,6 +226,20 @@ export default function Class({
     );
   }, [_class, bookmarked, updateUser, user]);
 
+  useEffect(() => {
+    if (!_class) return;
+
+    console.log(_class)
+
+    addToRecent({
+      subject: _class.subject,
+      year: _class.year,
+      semester: _class.semester,
+      courseNumber: _class.courseNumber,
+      number: _class.number,
+    });
+  }, [_class]);
+
   // TODO: Loading state
   if (loading || courseLoading) {
     return <></>;
@@ -234,14 +248,6 @@ export default function Class({
   // TODO: Error state
   if (!course || !_class || !pin) {
     return <></>;
-  } else {
-    addToRecent({
-      subject: _class.subject,
-      year: _class.year,
-      semester: _class.semester,
-      courseNumber: _class.courseNumber,
-      number: _class.number,
-    });
   }
 
   return (
