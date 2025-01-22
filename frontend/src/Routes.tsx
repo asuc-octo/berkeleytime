@@ -21,7 +21,7 @@ const PrivacyPolicy = () => import('./views/PrivacyPolicy');
 const TermsOfService = () => import('./views/TermsOfService');
 const RedirectLink = () => import('./views/RedirectLink');
 const Apply = () => import('./views/Apply');
-// const InfoSesh = () => import('./views/InfoSesh');
+const InfoSesh = () => import('./views/InfoSesh');
 const Chats = () => import('./views/Chats');
 
 function ScheduleRedirect() {
@@ -70,7 +70,7 @@ const router = createBrowserRouter([
 				}
 			},
 			{ path: '/apply', lazy: Apply },
-			// { path: '/infosesh', lazy: InfoSesh },
+			{ path: '/infosesh', lazy: InfoSesh },
 			{ path: '/chats', lazy: Chats },
 		]
 	},
