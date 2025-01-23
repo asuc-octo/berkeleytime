@@ -1,8 +1,8 @@
 import { GradeDistributionModel } from "@repo/common";
 
-import { getGradeDistributionDataByTerm } from "./lib/grade-distributions";
-import { getCurrentTerm } from "./lib/terms";
-import { Config } from "./shared/config";
+import { getGradeDistributionDataByTerm } from "../lib/grade-distributions";
+import { getCurrentTerm } from "../lib/terms";
+import { Config } from "../shared/config";
 
 // TODO: Transaction
 const updateGradeDistributions = async ({
@@ -49,7 +49,7 @@ const updateGradeDistributions = async ({
   }
 
   log.info(
-    `Finished inserting ${gradeDistributions.length.toLocaleString()} courses`
+    `Completed updating database with ${gradeDistributions.length.toLocaleString()} courses.`
   );
 };
 

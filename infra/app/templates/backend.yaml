@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: {{ printf "%s/%s:%s" .Values.backend.image.registry .Values.backend.image.repository ( toString .Values.backend.image.tag ) }}
+          image: {{ printf "%s/%s:%s" .Values.backend.image.registry .Values.backend.image.repository .Values.backend.image.tag }}
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.backend.port }}

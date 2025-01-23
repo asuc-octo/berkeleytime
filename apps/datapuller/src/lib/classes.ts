@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import { IClassItem } from "@repo/common";
 import { Class, ClassesAPI } from "@repo/sis-api/classes";
 
-import { fetchPaginatedData } from "./sis-api";
+import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automatically generated type
 export type CombinedClass = Class & {

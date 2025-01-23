@@ -44,18 +44,15 @@ export async function fetchPaginatedData<T, R>(
     return flattenedResults;
   };
 
-  const processBatch = async (logger: Logger<unknown>, termId?: string) => {
+  const processBatch = async (termId?: string) => {
     const batchData = await fetchBatch(termId);
     if (batchData.length === 0) return false;
-
-    let batchErrorCount = 0;
 
     const transformedData = batchData.reduce((acc, item, index) => {
       try {
         const processedItem = itemProcessor(item);
         acc.push(processedItem);
       } catch (error: any) {
-        batchErrorCount++;
         totalErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);
         logger.error("Problematic item:", JSON.stringify(item, null, 2));
@@ -72,18 +69,30 @@ export async function fetchPaginatedData<T, R>(
     for (const term of terms) {
       let hasMoreData = true;
       while (hasMoreData) {
-        hasMoreData = await processBatch(logger, term);
+        hasMoreData = await processBatch(term);
       }
       page = 1;
     }
   } else {
     let hasMoreData = true;
     while (hasMoreData) {
-      hasMoreData = await processBatch(logger);
+      hasMoreData = await processBatch();
     }
   }
 
   logger.info(`Total errors encountered for ${dataType}: ${totalErrorCount}`);
 
   return results;
+}
+
+export function getRequiredField<T>(
+  value: T | undefined,
+  fieldName: string,
+  defaultValue: T
+): T {
+  if (value === undefined || value === null) {
+    console.warn(`Missing required field: ${fieldName}`);
+    return defaultValue;
+  }
+  return value;
 }

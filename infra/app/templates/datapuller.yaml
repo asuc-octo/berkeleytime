@@ -12,14 +12,21 @@ metadata:
 spec:
   schedule: "{{ $jobConfig.schedule }}"
   timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
   suspend: {{ $jobConfig.suspend }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:
         spec:
           containers:
             - name: datapuller-{{ $jobName }}
+<<<<<<< HEAD
               image: "{{ $jobConfig.image.registry }}/{{ $jobConfig.image.repository }}:{{ $jobConfig.image.tag }}"
+=======
+              image: {{ printf "%s/%s:%s" $jobConfig.image.registry $jobConfig.image.repository ( toString $jobConfig.image.tag ) }}
+>>>>>>> feat-updater-scripts
               imagePullPolicy: Always
               command: ["turbo", "run", "script", "--filter=datapuller", "--env-mode=loose", "--"]
               args: ["--script={{ $jobConfig.script | default $jobName }}"]
@@ -42,6 +49,7 @@ metadata:
     {{- include "bt-app.datapullerLabels" . | nindent 4 }}
 data:
   MONGODB_URI: {{ .Values.mongoUri }}
+  TZ: America/Los_Angeles # for tslog
 
 ---
 
@@ -81,7 +89,10 @@ spec:
 ---
 
 {{ include "bt-app.datapuller" (list . "classes" .Values.datapuller.classes) }}
+<<<<<<< HEAD
 
 ---
 
 {{ include "bt-app.datapuller" (list . "cleanup" .Values.datapuller.cleanup) }}
+=======
+>>>>>>> feat-updater-scripts

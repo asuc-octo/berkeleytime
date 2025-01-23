@@ -1,4 +1,4 @@
-import { QueryExecutor } from "./aws-athena";
+import { QueryExecutor } from "./api/aws-athena";
 
 export interface GradeDistributionRow {
   course_id: string;

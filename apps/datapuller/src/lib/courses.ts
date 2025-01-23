@@ -4,7 +4,7 @@ import { ICourseItem } from "@repo/common";
 import { Course as ClassCourse } from "@repo/sis-api/classes";
 import { Course, CoursesAPI } from "@repo/sis-api/courses";
 
-import { fetchPaginatedData } from "./sis-api";
+import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automically generated type
 export type CombinedCourse = Course & {

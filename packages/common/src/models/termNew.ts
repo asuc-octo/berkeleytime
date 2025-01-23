@@ -67,7 +67,7 @@ const termSchema = new Schema<ITermItem>({
     enum: ["Previous", "Current", "Next", "Past", "Future"],
     required: true,
   },
-  id: { type: String, required: true, unique: true },
+  id: { type: String, required: true },
   name: { type: String, required: true },
   category: { type: String, required: true },
   academicYear: { type: String, required: true },
@@ -126,5 +126,6 @@ const termSchema = new Schema<ITermItem>({
     required: true,
   },
 });
+termSchema.index({ id: 1 }, { unique: true });
 
 export const NewTermModel = model<ITermItem>("NewTerm", termSchema);

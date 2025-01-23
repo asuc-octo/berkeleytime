@@ -14,7 +14,6 @@ const env = (name: string): string => {
 
 export interface Config {
   log: Logger<unknown>;
-  isDev: boolean;
   mongoDB: {
     uri: string;
   };
@@ -42,9 +41,10 @@ export function loadConfig(): Config {
     prettyLogTimeZone: "local",
   });
 
+  log.info("Loading config...");
+
   return {
     log,
-    isDev: env("NODE_ENV") === "development",
     mongoDB: {
       uri: env("MONGODB_URI"),
     },

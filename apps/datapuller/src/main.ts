@@ -1,63 +1,57 @@
-import mongoose from "mongoose";
-
-import updateClasses from "./class";
-import updateCourses from "./course";
-import updateSections from "./section";
+import updateClasses from "./pullers/classes";
+import updateCourses from "./pullers/courses";
+import updateGradeDistributions from "./pullers/grade-distributions";
+import main from "./pullers/main";
+import updateSections from "./pullers/sections";
 import setup from "./shared";
 import { Config } from "./shared/config";
 
-const testDatabaseWrite = async (config: Config) => {
-  const TestSchema = new mongoose.Schema({
-    testField: String,
-    timestamp: Date,
-  });
-
-  const TestModel = mongoose.model("Test", TestSchema);
-
-  try {
-    const testDocument = new TestModel({
-      testField: "Test write from runDatapuller",
-      timestamp: new Date(),
-    });
-
-    const result = await testDocument.save();
-    config.log.info("Test document written successfully:", result);
-
-    return true;
-  } catch (error) {
-    config.log.error("Error writing to database:", error);
-    return false;
-  }
+type cliArgs = {
+  puller: string;
+  [key: string]: string | boolean;
 };
 
-const main = async () => {
-  const { config } = await setup();
+const scriptMap: { [key: string]: (config: Config) => Promise<void> } = {
+  courses: updateCourses,
+  sections: updateSections,
+  classes: updateClasses,
+  "grade-distributions": updateGradeDistributions,
+  main: main,
+};
 
-  try {
-    config.log.info("\n=== TESTING DATABASE WRITE ===");
-    const writeSuccessful = await testDatabaseWrite(config);
-    if (!writeSuccessful) {
-      throw new Error(
-        "Failed to write to the database. Please check your connection and permissions."
-      );
+const parseArgs = (args: string[]): cliArgs => {
+  const result: cliArgs = { puller: "" };
+  args.forEach((arg) => {
+    const [key, value] = arg.split("=");
+    if (key.startsWith("--")) {
+      result[key.slice(2)] = value || "true";
     }
+  });
+  return result;
+};
 
-    config.log.info("\n=== UPDATE COURSES ===");
-    await updateCourses(config);
+const runScript = async () => {
+  const args = parseArgs(process.argv.slice(2));
 
-    config.log.info("\n=== UPDATE SECTIONS ===");
-    await updateSections(config);
+  if (!args.puller || !scriptMap[args.puller]) {
+    throw new Error(
+      "Please specify a valid script: " + Object.keys(scriptMap).join(", ")
+    );
+  }
 
-    config.log.info("\n=== UPDATE CLASSES ===");
-    await updateClasses(config);
+  const { config } = await setup();
+  const logger = config.log.getSubLogger({ name: "ScriptRunner" });
+  try {
+    logger.info(`Starting ${args.puller} script`);
 
-    config.log.info("\n=== DATA PULLING COMPLETED ===");
-  } catch (error) {
-    config.log.error(error);
+    await scriptMap[args.puller](config);
+
+    logger.info(`${args.puller} script completed successfully`);
+    process.exit(0);
+  } catch (error: any) {
+    logger.error(`${args.puller} script failed: ${error.message}`);
     process.exit(1);
   }
-
-  process.exit(0);
 };
 
-export default main;
+runScript();

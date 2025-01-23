@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import { ISectionItem } from "@repo/common";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
-import { fetchPaginatedData } from "./sis-api";
+import { fetchPaginatedData } from "./api/sis-api";
 
 export const formatSection = (input: ClassSection) => {
   // Remove whitespace to prevent ambiguity
