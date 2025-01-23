@@ -57,3 +57,11 @@ datapuller:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
       tag: prod
+  grade-distributions:
+    schedule: "0 3 * * *"
+    suspend: false
+    script: "grade-distributions"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
