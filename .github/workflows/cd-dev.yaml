@@ -11,7 +11,7 @@ on:
         description: "Deployment time to live in hours"
         required: true
         type: number
-        default: 24
+        default: 1
 
 jobs:
   compute-sha:
