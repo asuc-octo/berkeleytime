@@ -75,16 +75,7 @@ spec:
 
 ---
 
-{{- include "bt-app.datapuller" (list . "courses" .Values.datapuller.courses ) }}
-
+{{- range $jobName, $jobConfig := .Values.datapuller }}
+{{- include "bt-app.datapuller" (list $ $jobName $jobConfig) }}
 ---
-
-{{- include "bt-app.datapuller" (list . "sections" .Values.datapuller.sections ) }}
-
----
-
-{{- include "bt-app.datapuller" (list . "classes" .Values.datapuller.classes ) }}
-
----
-
-{{- include "bt-app.datapuller" (list . "grade-distributions" .Values.datapuller.grades ) }}
+{{- end }}
