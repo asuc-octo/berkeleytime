@@ -3,11 +3,7 @@
   "private": true,
   "scripts": {
     "build": "tsc --noEmit",
-    "update:courses": "tsx src/course.ts",
-    "update:sections": "tsx src/section.ts",
-    "update:classes": "tsx src/class.ts",
-    "runDatapuller": "tsx src/runDatapuller.ts",
-    "script": "tsx src/script.ts"
+    "main": "tsx src/main.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -15,9 +11,12 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
+    "@aws-sdk/client-athena": "^3.734.0",
+    "@aws-sdk/client-s3": "^3.734.0",
     "@repo/common": "*",
     "@repo/sis-api": "*",
     "dotenv": "^16.4.5",
+    "papaparse": "^5.5.1",
     "tslog": "^4.9.3"
   }
 }

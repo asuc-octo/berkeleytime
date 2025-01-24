@@ -25,6 +25,12 @@ export interface Config {
     TERM_APP_ID: string;
     TERM_APP_KEY: string;
   };
+  aws: {
+    DATABASE: string;
+    S3_OUTPUT: string;
+    REGION_NAME: string;
+    WORKGROUP: string;
+  };
 }
 
 export function loadConfig(): Config {
@@ -49,6 +55,12 @@ export function loadConfig(): Config {
       COURSE_APP_KEY: env("SIS_COURSE_APP_KEY"),
       TERM_APP_ID: env("SIS_TERM_APP_ID"),
       TERM_APP_KEY: env("SIS_TERM_APP_KEY"),
+    },
+    aws: {
+      DATABASE: env("AWS_DATABASE"),
+      S3_OUTPUT: env("AWS_S3_OUTPUT"),
+      REGION_NAME: env("AWS_REGION_NAME"),
+      WORKGROUP: env("AWS_WORKGROUP"),
     },
   };
 }

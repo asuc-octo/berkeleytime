@@ -78,7 +78,6 @@ export interface ICourseItem {
       }[];
     }[];
   };
-
   // requirementsFulfilled[].code
   requirementsFulfilled?: string[];
   courseObjectives?: string[];

@@ -1,49 +1,4 @@
-import fs from "fs/promises";
-import path from "path";
 import { Logger } from "tslog";
-
-import { Term, TermsAPI } from "@repo/sis-api/terms";
-
-type TemporalPosition = "" | "Previous" | "Current" | "Next";
-
-export async function fetchActiveTerms(
-  logger: Logger<unknown>,
-  headers: Record<string, string>
-): Promise<string[]> {
-  const termsAPI = new TermsAPI();
-  const activeTermIds: string[] = [];
-
-  const currentTerms: TemporalPosition[] = ["Current", "Next"];
-
-  for (const term of currentTerms) {
-    try {
-      logger.info(`Fetching ${term} terms`);
-      const response = await termsAPI.v2.getByTermsUsingGet(
-        {
-          "temporal-position": term,
-        },
-        {
-          headers,
-        }
-      );
-      const data = await response.json();
-      activeTermIds.push(...data.response.terms.map((term: Term) => term.id));
-    } catch (error: any) {
-      logger.error(
-        `Unexpected error querying API for ${term} terms. Error: "${error}"`
-      );
-      logger.error(`Error details: ${JSON.stringify(error, null, 2)}`);
-      if (error.cause) {
-        logger.error(`Error cause: ${error.cause}`);
-      }
-    }
-  }
-  const uniqueActiveTermIds = Array.from(new Set(activeTermIds));
-
-  logger.info(`Fetched ${uniqueActiveTermIds.length} unique active term IDs`);
-
-  return uniqueActiveTermIds;
-}
 
 export async function fetchPaginatedData<T, R>(
   logger: Logger<unknown>,
@@ -59,19 +14,6 @@ export async function fetchPaginatedData<T, R>(
   const queryBatchSize = 50;
   let page = 1;
   let totalErrorCount = 0;
-
-  // Get the current date to include in the log file name
-  const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
-
-  // Set up the error log file path based on dataType and date
-  const logDir = path.join(__dirname, "logs");
-  const errorLogFile = path.join(
-    logDir,
-    `error_${dataType}_${currentDate}.log`
-  );
-
-  // Ensure the log directory exists
-  await fs.mkdir(logDir, { recursive: true });
 
   const fetchBatch = async (termId?: string) => {
     const promises = [];
@@ -106,38 +48,17 @@ export async function fetchPaginatedData<T, R>(
     const batchData = await fetchBatch(termId);
     if (batchData.length === 0) return false;
 
-    let batchErrorCount = 0;
-
     const transformedData = batchData.reduce((acc, item, index) => {
       try {
         const processedItem = itemProcessor(item);
         acc.push(processedItem);
       } catch (error: any) {
-        batchErrorCount++;
         totalErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);
         logger.error("Problematic item:", JSON.stringify(item, null, 2));
-
-        // Log detailed error to the error file
-        const timestamp = new Date().toISOString();
-        const errorMessage = `${timestamp} - Error processing item at index ${index}: ${error.message}\n`;
-        const itemData = `Item data: ${JSON.stringify(item, null, 2)}\n\n`;
-
-        fs.appendFile(errorLogFile, errorMessage + itemData).catch(
-          (fsError) => {
-            logger.error(
-              `Failed to write to error log file: ${fsError.message}`
-            );
-          }
-        );
       }
       return acc;
     }, [] as T[]);
-
-    if (batchErrorCount > 0) {
-      const batchErrorMessage = `${new Date().toISOString()} - Batch error count: ${batchErrorCount}\n`;
-      await fs.appendFile(errorLogFile, batchErrorMessage);
-    }
 
     results.push(...transformedData);
     page += queryBatchSize;
@@ -160,15 +81,6 @@ export async function fetchPaginatedData<T, R>(
   }
 
   logger.info(`Total errors encountered for ${dataType}: ${totalErrorCount}`);
-
-  // Log totalErrorCount to the error file
-  const totalErrorMessage = `${new Date().toISOString()} - Total errors encountered: ${totalErrorCount}\n\n`;
-  try {
-    await fs.appendFile(errorLogFile, totalErrorMessage);
-    logger.info(`Error count for ${dataType} logged to ${errorLogFile}`);
-  } catch (error) {
-    logger.error(`Failed to log error count for ${dataType} to file: ${error}`);
-  }
 
   return results;
 }
