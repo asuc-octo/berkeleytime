@@ -14,7 +14,7 @@ The differences between the three environments are managed by each individual wo
 | --- | --- | --- | --- |
 | k8s Pod Prefix | `bt-dev-*` | `bt-stage-*` | `bt-prod-*` |
 | Container Tags | `[commit hash]` | `latest` | `prod` |
-| Helm Chart Versions[^3] | `0.1.0-dev.[commit hash]` | `0.1.0-stage` | `1.0.0` |
+| Helm Chart Versions[^3] | `0.1.0-dev-[commit hash]` | `0.1.0-stage` | `1.0.0` |
 | TTL (Time to Live) | `[GitHub Action input]` | N/A | N/A |
 | Deployment Count Limit | 8 | 1 | 1 |
 

@@ -35,7 +35,7 @@ jobs:
     uses: ./.github/workflows/cd-build.yaml
     with:
       image_tag: ${{ needs.compute-sha.outputs.sha_short }}
-      chart_ver: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
+      chart_ver: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
     secrets: inherit
 
   deploy:
@@ -45,7 +45,7 @@ jobs:
     with:
       environment: development
       name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
-      version: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
+      version: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
       values: |
         env: dev
         ttl: ${{ inputs.ttl }}
