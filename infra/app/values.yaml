@@ -36,7 +36,7 @@ datapuller:
   courses:
     schedule: "0 0 * * *"
     suspend: false
-    script: "courses"
+    puller: "courses"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
@@ -44,7 +44,7 @@ datapuller:
   sections:
     schedule: "0 1 * * *"
     suspend: false
-    script: "sections"
+    puller: "sections"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
@@ -52,7 +52,7 @@ datapuller:
   classes:
     schedule: "0 2 * * *"
     suspend: false
-    script: "classes"
+    puller: "classes"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
@@ -60,7 +60,7 @@ datapuller:
   grades:
     schedule: "0 3 * * *"
     suspend: false
-    script: "grade-distributions"
+    puller: "grade-distributions"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller

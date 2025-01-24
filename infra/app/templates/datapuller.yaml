@@ -24,7 +24,7 @@ spec:
               image: {{ printf "%s/%s:%s" $jobConfig.image.registry $jobConfig.image.repository ( toString $jobConfig.image.tag ) }}
               imagePullPolicy: Always
               command: ["turbo", "run", "main", "--filter=datapuller", "--env-mode=loose", "--"]
-              args: ["--script={{ $jobConfig.script | default $jobName }}"]
+              args: ["--puller={{ $jobConfig.puller | default $jobName }}"]
               envFrom:
                 - configMapRef:
                     name: {{ include "bt-app.datapullerName" $root }}-env
