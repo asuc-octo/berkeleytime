@@ -108,7 +108,6 @@ export class QueryExecutor {
         const execution = await this.athenaClient.send(command);
 
         queryStatus = execution.QueryExecution?.Status?.State;
-        console.log(queryStatus);
 
         if (queryStatus === "FAILED" || queryStatus === "CANCELLED") {
           throw new Error(

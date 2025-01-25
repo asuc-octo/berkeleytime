@@ -34,7 +34,7 @@ backend:
 
 datapuller:
   courses:
-    schedule: "0 0 * * *"
+    schedule: "0 4 * * *"
     suspend: false
     puller: "courses"
     image:
@@ -42,7 +42,7 @@ datapuller:
       repository: octoberkeleytime/bt-datapuller
       tag: prod
   sections:
-    schedule: "0 1 * * *"
+    schedule: "10 4 * * *"
     suspend: false
     puller: "sections"
     image:
@@ -50,7 +50,7 @@ datapuller:
       repository: octoberkeleytime/bt-datapuller
       tag: prod
   classes:
-    schedule: "0 2 * * *"
+    schedule: "20 4 * * *"
     suspend: false
     puller: "classes"
     image:
@@ -58,7 +58,7 @@ datapuller:
       repository: octoberkeleytime/bt-datapuller
       tag: prod
   grades:
-    schedule: "0 3 * * *"
+    schedule: "25 4 * * *"
     suspend: false
     puller: "grade-distributions"
     image:
