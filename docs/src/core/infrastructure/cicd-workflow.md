@@ -17,6 +17,7 @@ The differences between the three environments are managed by each individual wo
 | Helm Chart Versions[^3] | `0.1.0-dev-[commit hash]` | `0.1.0-stage` | `1.0.0` |
 | TTL (Time to Live) | `[GitHub Action input]` | N/A | N/A |
 | Deployment Count Limit | 8 | 1 | 1 |
+| Datapuller `suspend` | `true` | `false` | `false` |
 
 [^1]: In the past, we have used a self-hosted GitLab instance. However, the CI/CD pipeline was obscured behind a admin login page. Hopefully, with GitHub actions, the deployment process will be more transparent and accessible to all engineers. Please don't break anything though!
 
