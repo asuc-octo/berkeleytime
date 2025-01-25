@@ -57,15 +57,19 @@ jobs:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:
           courses:
+            suspend: true
             image:
               tag: '${{ needs.compute-sha.outputs.sha_short }}'
           sections:
+            suspend: true
             image:
               tag: '${{ needs.compute-sha.outputs.sha_short }}'
           classes:
+            suspend: true
             image:
               tag: '${{ needs.compute-sha.outputs.sha_short }}'
           grades:
+            suspend: true
             image:
               tag: '${{ needs.compute-sha.outputs.sha_short }}'
         host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
