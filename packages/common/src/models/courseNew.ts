@@ -206,7 +206,7 @@ const courseSchema = new Schema<ICourseItem>({
   createdDate: { type: String },
   updatedDate: { type: String },
 });
-courseSchema.index({ courseId: 1 }, { unique: true });
+courseSchema.index({ courseId: 1 });
 
 export const NewCourseModel: Model<ICourseItem> = model<ICourseItem>(
   "NewCourse",

@@ -91,7 +91,7 @@ export const getClasses = async (
     logger,
     classesAPI.v1,
     termIds || null,
-    "getClasses",
+    "getClassesUsingGet",
     {
       app_id: id,
       app_key: key,
