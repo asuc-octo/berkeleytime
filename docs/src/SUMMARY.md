@@ -16,6 +16,7 @@
 - [Backend](./core/backend/README.md)
 
 - [Datapuller](./core/datapuller/README.md)
+    - [Local Development](./core/datapuller/local-development.md)
 
 - [Frontend](./core/frontend/README.md)
 
