@@ -21,10 +21,10 @@ docker run --volume ./.env:/datapuller/apps/datapuller/.env --network bt \
     "datapuller-dev" "--puller=courses"
 ```
 
-The possible pullers are `courses`, `classes`, `sections`, `grade-distributions`, and `main`.
+The valid pullers are `courses`, `classes`, `sections`, `grade-distributions`, and `main`.
 
 [^1]: Here, I reference the Docker world's terminology. In the Docker world, the `ENTRYPOINT` instruction denotes the the executable that cannot be overriden after the image is built. The `CMD` instruction denotes an argument that can be overriden after the image is built. In the Kubernetes world, the `ENTRYPOINT` analogous is the `command` field, while the `CMD` equivalent is the `args` field.
 
 ## Remote Development
 
-The development CI/CD pipeline marks all `datapuller` CronJobs as [suspended](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/cron-job-v1/#CronJobSpec), preventing the `datapuller` jobs to be scheduled. To test, [manually run the desired script](../infrastructure/runbooks.md#manually-run-datapuller).
+The development CI/CD pipeline marks all `datapuller` CronJobs as [suspended](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/cron-job-v1/#CronJobSpec), preventing the `datapuller` jobs to be scheduled. To test a change, [manually run the desired puller](../infrastructure/runbooks.md#manually-run-datapuller).
