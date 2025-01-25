@@ -1,8 +1,5 @@
 # Infrastructure
 
-> [!WARNING]
-> The infrastructure section is currently under construction.
-
 Welcome to the infrastructure section.
 
 > [!NOTE]
