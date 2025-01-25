@@ -84,15 +84,3 @@ export async function fetchPaginatedData<T, R>(
 
   return results;
 }
-
-export function getRequiredField<T>(
-  value: T | undefined,
-  fieldName: string,
-  defaultValue: T
-): T {
-  if (value === undefined || value === null) {
-    console.warn(`Missing required field: ${fieldName}`);
-    return defaultValue;
-  }
-  return value;
-}
