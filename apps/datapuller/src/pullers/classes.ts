@@ -10,9 +10,14 @@ const updateClasses = async ({
 }: Config) => {
   log.info(`Fetching active terms.`);
 
-  const activeTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY);
+  const allActiveTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
+  const activeTerms = allActiveTerms.filter(
+    (term) => term.academicCareer?.description === "Undergraduate"
+  );
 
-  log.info(`Fetched ${activeTerms.length.toLocaleString()} active terms.`);
+  log.info(
+    `Fetched ${activeTerms.length.toLocaleString()} active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
+  );
 
   log.info(`Fetching classes for active terms`);
 
@@ -29,7 +34,7 @@ const updateClasses = async ({
 
   // Delete existing classes for active terms
   await NewClassModel.deleteMany({
-    "session.term.id": { $in: activeTerms },
+    termId: { $in: activeTerms.map((term) => term.id) },
   });
 
   // Insert classes in batches of 5000

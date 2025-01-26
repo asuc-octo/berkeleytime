@@ -135,7 +135,10 @@ const sectionSchema = new Schema<ISectionItem>({
     },
   ],
 });
-sectionSchema.index({ sectionId: 1 });
+sectionSchema.index(
+  { termId: 1, sessionId: 1, sectionId: 1 },
+  { unique: true }
+);
 
 export const NewSectionModel: Model<ISectionItem> = model<ISectionItem>(
   "NewSection",

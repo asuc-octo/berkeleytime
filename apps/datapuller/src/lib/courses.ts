@@ -11,6 +11,10 @@ export type CombinedCourse = Course & {
   gradeReplacement: ClassCourse["gradeReplacement"];
 };
 
+const filterCourse = (input: CombinedCourse): boolean => {
+  return input.status?.code === "ACTIVE";
+};
+
 export const formatCourse = (input: CombinedCourse) => {
   const courseId = input.identifiers?.find(
     (i) => i.type === "cs-course-id"
@@ -148,8 +152,8 @@ export const getCourses = async (
       app_key: key,
     },
     (data) => data.apiResponse.response.courses || [],
-    formatCourse,
-    "courses"
+    filterCourse,
+    formatCourse
   );
 
   return courses;

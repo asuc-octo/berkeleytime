@@ -72,7 +72,18 @@ const classSchema = new Schema<IClassItem>({
   requirementDesignation: { type: String }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
 });
-classSchema.index({ courseId: 1, number: 1 });
+// classes are unique by termId, courseId, number, subject, and courseNumber. we do not enforce this as this index is too large
+classSchema.index(
+  {
+    termId: 1,
+    sessionId: 1,
+    courseId: 1,
+    number: 1,
+    subject: 1,
+    courseNumber: 1,
+  },
+  { unique: true }
+);
 
 export const NewClassModel: Model<IClassItem> = model<IClassItem>(
   "NewClass",

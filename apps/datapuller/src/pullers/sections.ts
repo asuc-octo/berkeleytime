@@ -4,16 +4,20 @@ import { getSections } from "../lib/sections";
 import { getActiveTerms } from "../lib/terms";
 import { Config } from "../shared/config";
 
-// TODO: Transaction
 const updateSections = async ({
   log,
   sis: { TERM_APP_ID, TERM_APP_KEY, CLASS_APP_ID, CLASS_APP_KEY },
 }: Config) => {
   log.info(`Fetching active terms.`);
 
-  const activeTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY);
+  const allActiveTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
+  const activeTerms = allActiveTerms.filter(
+    (term) => term.academicCareer?.description === "Undergraduate"
+  );
 
-  log.info(`Fetched ${activeTerms.length.toLocaleString()} active terms.`);
+  log.info(
+    `Fetched ${activeTerms.length.toLocaleString()} active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
+  );
 
   log.info(`Fetching sections for active terms.`);
 
@@ -30,7 +34,7 @@ const updateSections = async ({
 
   // Delete existing sections for active terms
   await NewSectionModel.deleteMany({
-    "session.term.id": { $in: activeTerms },
+    termId: { $in: activeTerms.map((term) => term.id) },
   });
 
   // Insert sections in batches of 5000

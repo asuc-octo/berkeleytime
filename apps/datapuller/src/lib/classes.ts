@@ -21,6 +21,10 @@ export type CombinedClass = Class & {
   };
 };
 
+export const filterClass = (input: CombinedClass): boolean => {
+  return input.status?.code === "A";
+};
+
 export const formatClass = (input: CombinedClass) => {
   const courseId = input.course?.identifiers?.find(
     (i) => i.type === "cs-course-id"
@@ -97,8 +101,8 @@ export const getClasses = async (
       app_key: key,
     },
     (data) => data.apiResponse.response.classes || [],
-    formatClass,
-    "classes"
+    filterClass,
+    formatClass
   );
 
   return courses;

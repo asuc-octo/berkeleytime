@@ -5,6 +5,10 @@ import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import { fetchPaginatedData } from "./api/sis-api";
 
+const filterSection = (input: ClassSection): boolean => {
+  return input.status?.code === "A";
+};
+
 export const formatSection = (input: ClassSection) => {
   // Remove whitespace to prevent ambiguity
   const subject = input.class?.course?.subjectArea?.code?.replaceAll(" ", "");
@@ -138,8 +142,8 @@ export const getSections = async (
       app_key: key,
     },
     (data) => data.apiResponse.response.classSections || [],
-    formatSection,
-    "classSections"
+    filterSection,
+    formatSection
   );
 
   return sections;

@@ -11,7 +11,7 @@ type cliArgs = {
   [key: string]: string | boolean;
 };
 
-const scriptMap: { [key: string]: (config: Config) => Promise<void> } = {
+const pullerMap: { [key: string]: (config: Config) => Promise<void> } = {
   courses: updateCourses,
   sections: updateSections,
   classes: updateClasses,
@@ -30,28 +30,28 @@ const parseArgs = (args: string[]): cliArgs => {
   return result;
 };
 
-const runScript = async () => {
+const runPuller = async () => {
   const args = parseArgs(process.argv.slice(2));
 
-  if (!args.puller || !scriptMap[args.puller]) {
+  if (!args.puller || !pullerMap[args.puller]) {
     throw new Error(
-      "Please specify a valid script: " + Object.keys(scriptMap).join(", ")
+      "Please specify a valid puller: " + Object.keys(pullerMap).join(", ")
     );
   }
 
   const { config } = await setup();
-  const logger = config.log.getSubLogger({ name: "ScriptRunner" });
+  const logger = config.log.getSubLogger({ name: "PullerRunner" });
   try {
-    logger.info(`Starting ${args.puller} script`);
+    logger.info(`Starting ${args.puller} puller`);
 
-    await scriptMap[args.puller](config);
+    await pullerMap[args.puller](config);
 
-    logger.info(`${args.puller} script completed successfully`);
+    logger.info(`${args.puller} puller completed successfully`);
     process.exit(0);
   } catch (error: any) {
-    logger.error(`${args.puller} script failed: ${error.message}`);
+    logger.error(`${args.puller} puller failed: ${error.message}`);
     process.exit(1);
   }
 };
 
-runScript();
+runPuller();

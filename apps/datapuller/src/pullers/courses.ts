@@ -3,7 +3,6 @@ import { NewCourseModel } from "@repo/common";
 import { getCourses } from "../lib/courses";
 import { Config } from "../shared/config";
 
-// TODO: Transaction
 const updateCourses = async ({
   sis: { COURSE_APP_ID, COURSE_APP_KEY },
   log,

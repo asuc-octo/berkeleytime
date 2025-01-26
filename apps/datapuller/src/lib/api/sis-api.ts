@@ -7,8 +7,8 @@ export async function fetchPaginatedData<T, R>(
   method: string,
   headers: Record<string, string>,
   responseProcessor: (data: any) => R[],
-  itemProcessor: (item: R) => T,
-  dataType: string
+  itemFilter: (item: R) => boolean,
+  itemProcessor: (item: R) => T
 ): Promise<T[]> {
   const results: T[] = [];
   const queryBatchSize = 50;
@@ -32,7 +32,7 @@ export async function fetchPaginatedData<T, R>(
           .then((response: any) => response.json())
           .then((data: any) => responseProcessor(data))
           .catch((error: any) => {
-            logger.error(`Error fetching page ${page + i}: ${error.message}`);
+            logger.warn(`Error fetching page ${page + i}: ${error.message}`);
             return [];
           })
       );
@@ -50,8 +50,10 @@ export async function fetchPaginatedData<T, R>(
 
     const transformedData = batchData.reduce((acc, item, index) => {
       try {
-        const processedItem = itemProcessor(item);
-        acc.push(processedItem);
+        if (itemFilter(item)) {
+          const processedItem = itemProcessor(item);
+          acc.push(processedItem);
+        }
       } catch (error: any) {
         totalErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);
@@ -67,6 +69,7 @@ export async function fetchPaginatedData<T, R>(
 
   if (terms && terms.length > 0) {
     for (const term of terms) {
+      logger.info(`Fetching for term ${term}`);
       let hasMoreData = true;
       while (hasMoreData) {
         hasMoreData = await processBatch(term);
@@ -80,7 +83,7 @@ export async function fetchPaginatedData<T, R>(
     }
   }
 
-  logger.info(`Total errors encountered for ${dataType}: ${totalErrorCount}`);
+  logger.warn(`Total errors encountered: ${totalErrorCount}`);
 
   return results;
 }
