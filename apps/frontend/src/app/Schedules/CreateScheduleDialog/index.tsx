@@ -1,20 +1,19 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
 
-import ReactSelect from "react-select";
-
 import { Xmark } from "iconoir-react";
+import { useNavigate } from "react-router-dom";
+import ReactSelect from "react-select";
 
 import { Button, Dialog, IconButton } from "@repo/theme";
 
-import styles from "./CreateScheduleDialog.module.scss";
-
-import { termSelectStyle } from "./selectStyle";
 import { useCreateSchedule, useReadTerms } from "@/hooks/api";
 import { ITerm, Semester } from "@/lib/api";
-import { useNavigate } from "react-router-dom";
+
+import styles from "./CreateScheduleDialog.module.scss";
+import { termSelectStyle } from "./selectStyle";
 
 interface CreateScheduleDialogProps {
-  defaultName: string
+  defaultName: string;
   children: ReactNode;
 }
 
@@ -22,13 +21,15 @@ interface CreateScheduleDialogProps {
 // TODO: Invite collaborators
 
 function termString(term: ITerm) {
-  return `${term.semester} ${term.year}`
+  return `${term.semester} ${term.year}`;
 }
 
-export default function CreateScheduleDialog({ children, defaultName }: CreateScheduleDialogProps) {
-
-  const [name, setName] = useState(defaultName)
-  const [term, setTerm] = useState("")
+export default function CreateScheduleDialog({
+  children,
+  defaultName,
+}: CreateScheduleDialogProps) {
+  const [name, setName] = useState(defaultName);
+  const [term, setTerm] = useState("");
 
   const [createSchedule] = useCreateSchedule();
 
@@ -38,16 +39,25 @@ export default function CreateScheduleDialog({ children, defaultName }: CreateSc
 
   useEffect(() => {
     if (!terms) return;
-    setTerm(`${terms[0].semester} ${terms[0].year}`)
-  }, [terms])
+    setTerm(`${terms[0].semester} ${terms[0].year}`);
+  }, [terms]);
 
   const options = useMemo(() => {
-    return (!termsLoading && terms) ? terms.filter((t, index) =>
-    index === terms.findIndex((term) => term.year === t.year && term.semester === t.semester)).map((term) => ({
-      value: termString(term),
-      label: termString(term)
-    })) : []
-  }, [terms])
+    return !termsLoading && terms
+      ? terms
+          .filter(
+            (t, index) =>
+              index ===
+              terms.findIndex(
+                (term) => term.year === t.year && term.semester === t.semester
+              )
+          )
+          .map((term) => ({
+            value: termString(term),
+            label: termString(term),
+          }))
+      : [];
+  }, [terms]);
 
   return (
     <Dialog.Root>
@@ -72,9 +82,7 @@ export default function CreateScheduleDialog({ children, defaultName }: CreateSc
         </div>
         <div className={styles.column}>
           <div className={styles.row}>
-            <label>
-              Name
-            </label>
+            <label>Name</label>
             <input
               type="url"
               className={styles.input}
@@ -83,30 +91,28 @@ export default function CreateScheduleDialog({ children, defaultName }: CreateSc
             />
           </div>
           <div className={styles.row}>
-            <label style={{lineHeight: "38px"}}>
-              Semester
-            </label>
-            <ReactSelect 
+            <label style={{ lineHeight: "38px" }}>Semester</label>
+            <ReactSelect
               options={options}
-              value={term ? options.find((({value}) => value == term)) : null}
+              value={term ? options.find(({ value }) => value == term) : null}
               onChange={(e: any) => setTerm(e?.value || null)}
               styles={termSelectStyle}
             />
           </div>
           <div className={styles.buttonCont}>
-            <Button 
+            <Button
               variant="solid"
               onClick={async () => {
-                  const res = await createSchedule({
-                    name: name,
-                    year: Number(term.split(" ")[1]),
-                    semester: term.split(" ")[0] as Semester,
-                  })
-                  if (res.data?.createSchedule._id) navigate(res.data?.createSchedule._id)
-                }
-              }
+                const res = await createSchedule({
+                  name: name,
+                  year: Number(term.split(" ")[1]),
+                  semester: term.split(" ")[0] as Semester,
+                });
+                if (res.data?.createSchedule._id)
+                  navigate(res.data?.createSchedule._id);
+              }}
             >
-                Create
+              Create
             </Button>
           </div>
         </div>

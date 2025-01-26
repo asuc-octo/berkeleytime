@@ -103,7 +103,7 @@ function Root({ title, Icon, children, to }: RootProps) {
 const Carousel = {
   Root,
   Class,
-  Schedule
+  Schedule,
 };
 
 export default Carousel;

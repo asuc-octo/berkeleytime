@@ -2,17 +2,17 @@ import { IScheduleClass, ScheduleIdentifier, Semester } from "@/lib/api";
 
 enum Recent {
   Classes,
-  Schedules
+  Schedules,
 }
 
 const Key = {
   [Recent.Classes]: "recent-classes",
-  [Recent.Schedules]: "recent-schedule"
-}
+  [Recent.Schedules]: "recent-schedule",
+};
 const MaxLength = {
   [Recent.Classes]: 10,
-  [Recent.Schedules]: 5
-}
+  [Recent.Schedules]: 5,
+};
 
 interface RecentClassData {
   subject: string;
@@ -23,26 +23,24 @@ interface RecentClassData {
 }
 
 interface RecentScheduleData {
-  _id: ScheduleIdentifier,
-  name: string,
-  classes: IScheduleClass[],
-  semester: Semester,
-  year: number
+  _id: ScheduleIdentifier;
+  name: string;
+  classes: IScheduleClass[];
+  semester: Semester;
+  year: number;
 }
 
 function addToRecent(type: Recent, obj: any) {
   let recents = getRecent(type);
 
-  recents = recents.filter(
-    (recent) => {
-      let allEqual = true;
-      for (let key of Object.keys(recent)) {
-        if (typeof recent[key] == 'string')
-        allEqual = allEqual && (recent[key] === obj[key])
-      }
-      return !allEqual
+  recents = recents.filter((recent) => {
+    let allEqual = true;
+    for (let key of Object.keys(recent)) {
+      if (typeof recent[key] == "string")
+        allEqual = allEqual && recent[key] === obj[key];
     }
-  );
+    return !allEqual;
+  });
 
   recents.unshift(obj);
 
@@ -70,11 +68,17 @@ export function addRecentClass({
   courseNumber,
   number,
 }: RecentClassData) {
-  addToRecent(Recent.Classes, { subject: subject, year: year, semester: semester, courseNumber: courseNumber, number: number })
+  addToRecent(Recent.Classes, {
+    subject: subject,
+    year: year,
+    semester: semester,
+    courseNumber: courseNumber,
+    number: number,
+  });
 }
 
 export function getRecentClasses() {
-  return getRecent(Recent.Classes) as RecentClassData[]
+  return getRecent(Recent.Classes) as RecentClassData[];
 }
 
 export function addRecentSchedule({
@@ -82,11 +86,17 @@ export function addRecentSchedule({
   name,
   classes,
   semester,
-  year
+  year,
 }: RecentScheduleData) {
-  addToRecent(Recent.Schedules, { _id: _id, name: name, classes: classes, semester: semester, year: year })
+  addToRecent(Recent.Schedules, {
+    _id: _id,
+    name: name,
+    classes: classes,
+    semester: semester,
+    year: year,
+  });
 }
 
 export function getRecentSchedules() {
-  return getRecent(Recent.Schedules) as RecentScheduleData[]
+  return getRecent(Recent.Schedules) as RecentScheduleData[];
 }
