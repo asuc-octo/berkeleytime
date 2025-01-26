@@ -32,7 +32,36 @@ backend:
     repository: octoberkeleytime/bt-backend
     tag: prod
 
-updater:
-  schedule: "0 0 * * *"
-  suspend: false
-  command: ["npm", "run", "update:catalog", "--workspace=backend"]
+datapuller:
+  courses:
+    schedule: "0 4 * * *"
+    suspend: false
+    puller: "courses"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  sections:
+    schedule: "10 4 * * *"
+    suspend: false
+    puller: "sections"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  classes:
+    schedule: "20 4 * * *"
+    suspend: false
+    puller: "classes"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  grades:
+    schedule: "25 4 * * *"
+    suspend: false
+    puller: "grade-distributions"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
