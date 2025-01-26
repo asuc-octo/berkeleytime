@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
@@ -10,6 +10,7 @@ import Week from "@/app/Schedule/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
 import { ISection, READ_CLASS, ReadClassResponse } from "@/lib/api";
+import { addRecentSchedule } from "@/lib/recent";
 
 import { getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
@@ -23,6 +24,10 @@ import SideBar from "./SideBar";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
+
+  useEffect(() => {
+    addRecentSchedule(schedule);
+  }, [schedule]);
 
   const apolloClient = useApolloClient();
   const [updateSchedule] = useUpdateSchedule();
@@ -210,8 +215,6 @@ export default function Editor() {
 
       // Move existing classes to the top rather than duplicating them
       if (existingClass) {
-        console.log("existingClass", existingClass);
-
         const index = _schedule.classes.findIndex(
           (selectedClass) =>
             selectedClass.class.subject === subject &&
