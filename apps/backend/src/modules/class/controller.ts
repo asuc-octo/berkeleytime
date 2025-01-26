@@ -1,4 +1,4 @@
-import { ClassModel, SectionModel } from "@repo/common";
+import { ClassModel, ClassType, SectionModel, SectionType } from "@repo/common";
 
 import { formatClass, formatSection } from "./formatter";
 
@@ -18,7 +18,7 @@ export const getClass = async (
 
   if (!_class) return null;
 
-  return formatClass(_class);
+  return formatClass(_class as ClassType);
 };
 
 export const getSecondarySections = async (
@@ -35,7 +35,7 @@ export const getSecondarySections = async (
     "class.number": { $regex: `^(${number[number.length - 1]}|999)` },
   }).lean();
 
-  return sections.map(formatSection);
+  return sections.map((section) => formatSection(section as SectionType));
 };
 
 export const getPrimarySection = async (
@@ -54,7 +54,7 @@ export const getPrimarySection = async (
 
   if (!section) return null;
 
-  return formatSection(section);
+  return formatSection(section as SectionType);
 };
 
 export const getSection = async (
@@ -73,5 +73,5 @@ export const getSection = async (
 
   if (!section) return null;
 
-  return formatSection(section);
+  return formatSection(section as SectionType);
 };

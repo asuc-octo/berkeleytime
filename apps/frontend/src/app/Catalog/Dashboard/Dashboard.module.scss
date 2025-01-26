@@ -8,6 +8,13 @@
     border-radius: 8px;
     background-color: var(--foreground-color);
     flex-shrink: 0;
+
+    .error {
+      color: var(--paragraph-color);
+      text-align: center;
+      margin-top: 46px;
+      font-size: 14px;
+    }
   }
 
   .header {

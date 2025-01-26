@@ -8,6 +8,7 @@ repos:
         language: system
         files: \.(ts|tsx)$
         stages: [pre-push]
+        fail_fast: true
       - id: build
         name: build
         entry: npm run build

@@ -3,6 +3,7 @@ import { GraphQLResolveInfo } from "graphql";
 
 import {
   ClassModel,
+  ClassType,
   CourseModel,
   CourseType,
   GradeDistributionModel,
@@ -480,7 +481,7 @@ export const getCatalog = async (
       const id = getId(course?.identifiers);
       if (!id) return accumulator;
 
-      accumulator[id] = course;
+      accumulator[id] = course as CourseType;
       return accumulator;
     },
     {} as Record<string, CourseType>
@@ -495,9 +496,9 @@ export const getCatalog = async (
       const id = `${courseId}-${number}`;
       if (!id) return accumulator;
 
-      accumulator[id] = accumulator[id]
-        ? [...accumulator[id], section]
-        : [section];
+      accumulator[id] = (
+        accumulator[id] ? [...accumulator[id], section] : [section]
+      ) as SectionType[];
 
       return accumulator;
     },
@@ -537,7 +538,7 @@ export const getCatalog = async (
     }
 
     const formattedClass = {
-      ...formatClass(_class),
+      ...formatClass(_class as ClassType),
       primarySection: formattedPrimarySection,
       sections: formattedSections,
       course: formattedCourse,
