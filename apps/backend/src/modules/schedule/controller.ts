@@ -1,4 +1,4 @@
-import { ClassModel, ScheduleModel, TermModel } from "@repo/common";
+import { ClassModel, ClassType, ScheduleModel, TermModel } from "@repo/common";
 
 import {
   CreateScheduleInput,
@@ -115,7 +115,7 @@ export const getClasses = async (
     if (!_class) continue;
 
     classes.push({
-      class: formatClass(_class) as unknown as ClassModule.Class,
+      class: formatClass(_class as ClassType) as unknown as ClassModule.Class,
       selectedSections: selectedClass.sections,
     } as ScheduleModule.SelectedClass);
   }
