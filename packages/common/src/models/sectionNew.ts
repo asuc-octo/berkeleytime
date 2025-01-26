@@ -3,8 +3,8 @@ import { Document, Model, Schema, model } from "mongoose";
 export interface ISectionItem {
   courseId: string;
   classNumber: string;
-  sessionId?: string;
-  termId?: string;
+  sessionId: string;
+  termId: string;
   sectionId: string;
   number: string;
   subject: string;

@@ -48,8 +48,8 @@ export const formatSection = (input: ClassSection) => {
   const output: ISectionItem = {
     courseId: courseId!,
     classNumber: classNumber!,
-    sessionId: input.class?.session?.id,
-    termId: input.class?.session?.term?.id,
+    sessionId: sessionId!,
+    termId: termId!,
     sectionId: sectionId!,
     number: number!,
     subject: subject!,
