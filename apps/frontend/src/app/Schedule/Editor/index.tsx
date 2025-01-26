@@ -395,6 +395,7 @@ export default function Editor() {
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (
             <Week
+              events={schedule.events}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />

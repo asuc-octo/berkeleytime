@@ -1,10 +1,11 @@
 import { ReactNode, useMemo, useState } from "react";
 
-import { ArrowRight, Xmark } from "iconoir-react";
+import { ArrowRight, Trash, Xmark } from "iconoir-react";
+import { useNavigate } from "react-router-dom";
 
 import { Button, Dialog, IconButton } from "@repo/theme";
 
-import { useUpdateSchedule } from "@/hooks/api";
+import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
 
 import styles from "./EditDialog.module.scss";
@@ -19,6 +20,8 @@ interface EditDialogProps {
 export default function EditDialog({ children }: EditDialogProps) {
   const { schedule } = useSchedule();
   const [updateSchedule, { loading }] = useUpdateSchedule();
+  const [deleteSchedule] = useDeleteSchedule();
+  const navigate = useNavigate();
 
   const [name, setName] = useState(schedule.name);
 
@@ -28,7 +31,18 @@ export default function EditDialog({ children }: EditDialogProps) {
     const value = name.trim();
 
     setName(value);
-    updateSchedule(schedule._id, { name });
+
+    updateSchedule(
+      schedule._id,
+      { name },
+      { optimisticResponse: { updateSchedule: { ...schedule, name } } }
+    );
+  };
+
+  const remove = async () => {
+    await deleteSchedule(schedule._id);
+
+    navigate("/schedules");
   };
 
   return (
@@ -53,6 +67,10 @@ export default function EditDialog({ children }: EditDialogProps) {
           </Dialog.Close>
         </div>
         <div className={styles.column}>
+          <Button onClick={() => remove()}>
+            <Trash />
+            Delete
+          </Button>
           <input
             type="text"
             className={styles.input}

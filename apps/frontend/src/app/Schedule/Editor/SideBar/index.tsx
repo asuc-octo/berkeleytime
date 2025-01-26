@@ -10,8 +10,10 @@ import useSchedule from "@/hooks/useSchedule";
 import { Semester } from "@/lib/api";
 
 import { getUnits } from "../../schedule";
+import EventDialog from "../EventDialog";
 import Catalog from "./Catalog";
 import Class from "./Class";
+import Event from "./Event";
 import styles from "./SideBar.module.scss";
 
 interface SideBarProps {
@@ -107,8 +109,19 @@ export default function SideBar({
             </Button>
           </Catalog>
         )}
+        {editing && (
+          <EventDialog>
+            <Button className={styles.button} variant="solid">
+              Add event
+              <Plus />
+            </Button>
+          </EventDialog>
+        )}
       </div>
       <div className={styles.body} ref={bodyRef}>
+        {schedule.events?.map((event, index) => {
+          return <Event key={index} event={event} />;
+        })}
         {schedule.classes.map((selectedClass, index) => {
           return (
             <Class

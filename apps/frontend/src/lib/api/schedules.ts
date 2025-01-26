@@ -21,6 +21,7 @@ export interface IScheduleClassInput {
 
 export interface IScheduleEvent {
   startTime: string;
+  _id: string;
   endTime: string;
   title: string;
   location?: string;
@@ -66,6 +67,14 @@ export const READ_SCHEDULE = gql`
       term {
         startDate
         endDate
+      }
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
       }
       classes {
         class {
@@ -162,6 +171,14 @@ export const UPDATE_SCHEDULE = gql`
       term {
         startDate
         endDate
+      }
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
       }
       classes {
         class {
@@ -265,6 +282,14 @@ export const CREATE_SCHEDULE = gql`
       year
       createdBy
       semester
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+      }
       classes {
         class {
           subject

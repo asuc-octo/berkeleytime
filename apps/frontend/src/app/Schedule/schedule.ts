@@ -1,4 +1,23 @@
-import { ISchedule, ISection } from "@/lib/api";
+import { ISchedule, IScheduleEvent, ISection } from "@/lib/api";
+
+interface BaseEvent {
+  days: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];
+  startTime: string;
+  endTime: string;
+  id: string;
+}
+
+interface SectionEvent extends BaseEvent {
+  type: "section";
+  section: ISection;
+}
+
+interface CustomEvent extends BaseEvent {
+  type: "custom";
+  event: IScheduleEvent;
+}
+
+export type ScheduleEvent = SectionEvent | CustomEvent;
 
 const defaultUnits = [0, 0];
 
