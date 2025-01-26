@@ -1,42 +1,38 @@
-import { forwardRef } from "react";
+import { ComponentPropsWithRef, ElementType } from "react";
 
 import classNames from "classnames";
 
-import type * as Polymorphic from "../../lib/polymorphism";
 import styles from "./IconButton.module.scss";
 
-interface Props {
-  variant?: "outline";
+interface Props<T> {
+  active?: boolean;
   disabled?: boolean;
+  variant?: "outline";
+  as?: T;
 }
 
-type PolymorphicIconButton = Polymorphic.ForwardRefComponent<"button", Props>;
+export type IconButtonProps<T extends ElementType> = Props<T> &
+  Omit<ComponentPropsWithRef<T>, keyof Props<T>>;
 
-export const IconButton = forwardRef(
-  (
-    {
-      children,
-      className,
-      disabled,
-      as: Component = "button",
-      variant = "outline",
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <Component
-        data-disabled={disabled}
-        disabled={disabled}
-        data-variant={variant}
-        className={classNames(styles.root, className)}
-        ref={ref}
-        {...props}
-      >
-        {children}
-      </Component>
-    );
-  }
-) as PolymorphicIconButton;
+export function IconButton<T extends ElementType>({
+  children,
+  className,
+  disabled,
+  as,
+  variant = "outline",
+  ...props
+}: IconButtonProps<T>) {
+  const Component = as || "button";
 
-IconButton.displayName = "IconButton";
+  return (
+    <Component
+      data-disabled={disabled}
+      disabled={disabled}
+      data-variant={variant}
+      className={classNames(styles.root, className)}
+      {...props}
+    >
+      {children}
+    </Component>
+  );
+}

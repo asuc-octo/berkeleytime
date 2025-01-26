@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { ArrowRight, Menu, Pin, User } from "iconoir-react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 import { Button, IconButton, MenuItem } from "@repo/theme";
 
@@ -17,12 +17,6 @@ interface NavigationBarProps {
 
 export default function NavigationBar({ invert }: NavigationBarProps) {
   const { data: user } = useReadUser();
-
-  const navigate = useNavigate();
-
-  const profileRedirect = () => {
-    navigate("/profile");
-  };
 
   return (
     <div
@@ -61,14 +55,26 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
           )}
         </NavLink>
       </div>
-      <Button
-        onClick={() => (user ? profileRedirect() : signIn())}
-        variant="solid"
-        className={styles.button}
-      >
-        {user ? user.email : "Sign In"}
-        {user ? <User /> : <ArrowRight />}
-      </Button>
+      {user ? (
+        <Button
+          as={Link}
+          to={"/profile"}
+          variant="solid"
+          className={styles.button}
+        >
+          {user.email}
+          <User />
+        </Button>
+      ) : (
+        <Button
+          onClick={() => signIn()}
+          variant="solid"
+          className={styles.button}
+        >
+          Sign in
+          <ArrowRight />
+        </Button>
+      )}
       <PinsDrawer>
         <IconButton>
           <Pin />

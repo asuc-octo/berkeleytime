@@ -13,7 +13,7 @@ import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import PinsProvider from "@/components/PinsProvider";
 
-import Profile from "./app/Profile";
+const Profile = lazy(() => import("@/app/Profile"));
 
 // TODO: Experiment with server-side rendering for static pages and hydration for dynamic pages
 
