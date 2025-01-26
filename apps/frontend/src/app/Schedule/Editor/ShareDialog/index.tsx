@@ -89,6 +89,7 @@ export default function ShareDialog({ children }: ShareDialogProps) {
         <div className={styles.column}>
           <div className={styles.row}>
             <input
+              readOnly
               type="url"
               className={styles.input}
               value={window.location.origin + window.location.pathname}

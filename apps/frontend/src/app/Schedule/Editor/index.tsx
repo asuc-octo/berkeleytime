@@ -1,13 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
-import {
-  ArrowLeft,
-  Copy,
-  Settings,
-  ShareIos,
-  ViewColumns2,
-} from "iconoir-react";
+import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
 import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
@@ -21,6 +15,7 @@ import { getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
 import CloneDialog from "./CloneDialog";
+import EditDialog from "./EditDialog";
 import styles from "./Manage.module.scss";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
@@ -345,11 +340,13 @@ export default function Editor() {
           </Tooltip>
           <p className={styles.heading}>{schedule.name}</p>
           {editing && (
-            <Tooltip content="Settings">
-              <IconButton>
-                <Settings />
-              </IconButton>
-            </Tooltip>
+            <EditDialog>
+              <Tooltip content="Edit">
+                <IconButton>
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+            </EditDialog>
           )}
           <div className={styles.separator} />
         </div>
