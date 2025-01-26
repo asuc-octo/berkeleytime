@@ -29,8 +29,8 @@ export const Button = forwardRef(
         {...props}
         ref={ref}
         data-variant={variant}
-        disabled={disabled}
-        data-disabled={disabled}
+        disabled={disabled || undefined}
+        data-disabled={disabled || undefined}
         className={classNames(styles.root, className)}
       >
         {children}

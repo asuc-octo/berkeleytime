@@ -26,8 +26,8 @@ export const IconButton = forwardRef(
   ) => {
     return (
       <Component
-        data-disabled={disabled}
-        disabled={disabled}
+        disabled={disabled || undefined}
+        data-disabled={disabled || undefined}
         data-variant={variant}
         className={classNames(styles.root, className)}
         ref={ref}
