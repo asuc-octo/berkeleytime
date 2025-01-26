@@ -7,15 +7,16 @@ import { Link, To } from "react-router-dom";
 import { IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
+import Class from "./Class";
 
-interface CarouselProps {
+interface RootProps {
   title: string;
   Icon: ReactNode;
   children: ReactNode;
   to?: To;
 }
 
-export default function Carousel({ title, Icon, children, to }: CarouselProps) {
+function Root({ title, Icon, children, to }: RootProps) {
   const [start, setStart] = useState(false);
   const [end, setEnd] = useState(false);
 
@@ -97,3 +98,10 @@ export default function Carousel({ title, Icon, children, to }: CarouselProps) {
     </div>
   );
 }
+
+const Carousel = {
+  Root,
+  Class,
+};
+
+export default Carousel;

@@ -44,7 +44,7 @@ import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
 import { IClass, Semester } from "@/lib/api";
-import { addToRecent } from "@/lib/recents";
+import { addRecentClass } from "@/lib/recent-classes";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -236,9 +236,7 @@ export default function Class({
   useEffect(() => {
     if (!_class) return;
 
-    console.log(_class);
-
-    addToRecent({
+    addRecentClass({
       subject: _class.subject,
       year: _class.year,
       semester: _class.semester,
@@ -277,7 +275,7 @@ export default function Class({
                     [styles.active]: bookmarked,
                   })}
                   onClick={() => bookmark()}
-                  disabled={userLoading} // setting disabled to false still appears on my version
+                  disabled={userLoading}
                 >
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
@@ -361,7 +359,7 @@ export default function Class({
                     as={Link}
                     to={{
                       ...location,
-                      pathname: `/catalog/${year}/${semester}`,
+                      pathname: `/catalog/${_class.year}/${_class.semester}`,
                     }}
                     onClick={() => onClose()}
                   >

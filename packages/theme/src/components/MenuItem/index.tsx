@@ -27,7 +27,8 @@ export const MenuItem = forwardRef(
     return (
       <Component
         ref={ref}
-        data-disabled={disabled}
+        data-disabled={disabled ?? undefined}
+        disabled={disabled ?? undefined}
         className={classNames(
           styles.root,
           {

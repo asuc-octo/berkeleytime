@@ -102,7 +102,7 @@ export default function Catalog() {
   }
 
   // TODO: Error state
-  if (!term) {
+  if (!terms || !term) {
     return <></>;
   }
 
@@ -145,7 +145,7 @@ export default function Catalog() {
         ) : (
           <Dashboard
             term={term}
-            termList={terms}
+            terms={terms}
             expanded={expanded}
             setExpanded={setExpanded}
             setOpen={setOpen}

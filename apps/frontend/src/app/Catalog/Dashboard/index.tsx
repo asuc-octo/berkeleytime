@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 
 import {
   ArrowSeparateVertical,
@@ -14,16 +14,15 @@ import { Button, Container, IconButton, Tooltip } from "@repo/theme";
 import { DropdownMenu } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
-import CarouselClass from "@/components/CarouselClass";
 import { useReadUser } from "@/hooks/api";
 import { ITerm } from "@/lib/api";
-import { getRecents } from "@/lib/recents";
+import { getRecentClasses } from "@/lib/recent-classes";
 
 import styles from "./Dashboard.module.scss";
 
 interface DashboardProps {
-  term: ITerm | null | undefined;
-  termList: ITerm[] | undefined;
+  term: ITerm;
+  terms: ITerm[];
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -31,20 +30,23 @@ interface DashboardProps {
 
 export default function Dashboard({
   term,
-  termList,
+  terms,
   expanded,
   setExpanded,
   setOpen,
 }: DashboardProps) {
+  const navigate = useNavigate();
   const { data: user, loading: userLoading } = useReadUser();
 
-  if (!term) return <></>;
-
-  const recents = getRecents().filter(
-    (v) => v.semester == term.semester && v.year == term.year
+  const recentClasses = useMemo(
+    () =>
+      getRecentClasses().filter(
+        (recentClass) =>
+          recentClass.semester === term.semester &&
+          recentClass.year === term.year
+      ),
+    [term]
   );
-
-  const navigate = useNavigate();
 
   return (
     <div className={styles.root}>
@@ -58,32 +60,21 @@ export default function Dashboard({
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content sideOffset={5}>
-              {termList ? (
-                termList
-                  .filter(
-                    ({ year, semester }, index) =>
-                      index ===
-                      termList.findIndex(
-                        (term) =>
-                          term.semester === semester && term.year === year
-                      )
-                  )
-                  .map((t) => {
-                    return (
-                      <DropdownMenu.Item
-                        key={`${t.semester} ${t.year}`}
-                        onClick={() =>
-                          navigate(`/catalog/${t.year}/${t.semester}`)
-                        }
-                      >
-                        {t.semester} {t.year}
-                      </DropdownMenu.Item>
-                    );
-                  })
-              ) : (
-                <></>
-              )}
-              <DropdownMenu.Arrow style={{ fill: "var(--foreground-color)" }} />
+              {terms
+                .filter(
+                  ({ year, semester }) =>
+                    year !== term.year || semester !== term.semester
+                )
+                .map(({ year, semester }) => {
+                  return (
+                    <DropdownMenu.Item
+                      key={`${semester} ${year}`}
+                      onClick={() => navigate(`/catalog/${year}/${semester}`)}
+                    >
+                      {semester} {year}
+                    </DropdownMenu.Item>
+                  );
+                })}
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           <div className={styles.toggle}>
@@ -101,20 +92,17 @@ export default function Dashboard({
         <p className={styles.heading}>
           {term.semester} {term.year}
         </p>
-        {term.startDate && term.endDate ? (
+        {term.startDate && term.endDate && (
           <p className={styles.paragraph}>
             {moment(term.startDate).format("MMMM Do")} through{" "}
             {moment(term.endDate).format("MMMM Do")}
           </p>
-        ) : (
-          <></>
         )}
-        {/* <Carousel title="Upcoming events" Icon={<Calendar />} to="/semesters">
-          <div className={styles.card}></div>
-          <div className={styles.card}></div>
-          <div className={styles.card}></div>
-        </Carousel> */}
-        <Carousel title="Bookmarked" Icon={<BookmarkSolid />} to="/account">
+        <Carousel.Root
+          title="Bookmarked"
+          Icon={<BookmarkSolid />}
+          to="/account"
+        >
           {userLoading || !user ? (
             <div className={styles.card}>
               <div className={styles.error}>Sign in to bookmark classes</div>
@@ -126,47 +114,41 @@ export default function Dashboard({
           ) : (
             user?.bookmarkedClasses
               .filter(
-                (c) =>
-                  !term || (c.year == term.year && c.semester == term.semester)
+                (bookmarkedClass) =>
+                  bookmarkedClass.year === term.year &&
+                  bookmarkedClass.semester === term.semester
               )
-              .map((c, i) => {
+              .map((bookmarkedClass, i) => {
                 return (
-                  <div key={i} className={styles.card}>
-                    <CarouselClass
-                      subject={c.subject}
-                      year={c.year}
-                      semester={c.semester}
-                      courseNumber={c.courseNumber}
-                      number={c.number}
-                    />
-                  </div>
+                  <Carousel.Class
+                    key={i}
+                    subject={bookmarkedClass.subject}
+                    year={bookmarkedClass.year}
+                    semester={bookmarkedClass.semester}
+                    courseNumber={bookmarkedClass.courseNumber}
+                    number={bookmarkedClass.number}
+                  />
                 );
               })
           )}
-        </Carousel>
-        {recents.length !== 0 && (
-          <Carousel title="Recently viewed" Icon={<Search />}>
-            {" "}
-            {recents
-              .filter(
-                (c) =>
-                  !term || (c.year == term.year && c.semester == term.semester)
-              )
-              .reverse()
-              .map((c, i) => {
+        </Carousel.Root>
+        {recentClasses.length !== 0 && (
+          <Carousel.Root title="Recently viewed" Icon={<Search />}>
+            {recentClasses.map(
+              ({ subject, year, semester, courseNumber, number }, i) => {
                 return (
-                  <div key={i} className={styles.card}>
-                    <CarouselClass
-                      subject={c.subject}
-                      year={c.year}
-                      semester={c.semester}
-                      courseNumber={c.courseNumber}
-                      number={c.number}
-                    />
-                  </div>
+                  <Carousel.Class
+                    key={i}
+                    subject={subject}
+                    year={year}
+                    semester={semester}
+                    courseNumber={courseNumber}
+                    number={number}
+                  />
                 );
-              })}
-          </Carousel>
+              }
+            )}
+          </Carousel.Root>
         )}
       </Container>
     </div>
