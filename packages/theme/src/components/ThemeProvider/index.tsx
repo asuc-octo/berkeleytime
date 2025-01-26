@@ -38,9 +38,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         }}
       >
         <TooltipProvider delayDuration={250}>
-          <ThemeContext.Provider value={{ theme: theme, setTheme }}>
+          <ThemeContext value={{ theme: theme, setTheme }}>
             {children}
-          </ThemeContext.Provider>
+          </ThemeContext>
         </TooltipProvider>
       </IconoirProvider>
     </div>

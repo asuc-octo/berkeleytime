@@ -73,7 +73,7 @@ export default function PinsProvider({ children }: PinsProviderProps) {
   };
 
   return (
-    <PinsContext.Provider
+    <PinsContext
       value={{
         pins,
         addPin,
@@ -84,6 +84,6 @@ export default function PinsProvider({ children }: PinsProviderProps) {
       }}
     >
       {children}
-    </PinsContext.Provider>
+    </PinsContext>
   );
 }
