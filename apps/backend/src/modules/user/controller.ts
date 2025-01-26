@@ -1,4 +1,10 @@
-import { ClassModel, CourseModel, UserModel } from "@repo/common";
+import {
+  ClassModel,
+  ClassType,
+  CourseModel,
+  CourseType,
+  UserModel,
+} from "@repo/common";
 
 import { UpdateUserInput } from "../../generated-types/graphql";
 import { formatClass } from "../class/formatter";
@@ -45,7 +51,7 @@ export const getBookmarkedCourses = async (
 
     if (!course) continue;
 
-    courses.push(course);
+    courses.push(course as CourseType);
   }
 
   return courses.map(formatCourse);
@@ -66,7 +72,7 @@ export const getBookmarkedClasses = async (
 
     if (!_class) continue;
 
-    classes.push(_class);
+    classes.push(_class as ClassType);
   }
 
   return classes.map(formatClass);

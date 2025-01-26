@@ -12,50 +12,18 @@
   flex-direction: column;
   gap: 24px;
 
-  .row {
-    display: flex;
-    gap: 12px;
-
-    .input {
-      flex-grow: 1;
-      height: 32px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      padding: 0 12px;
-    }
+  .input {
+    flex-grow: 1;
+    height: 32px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0 12px;
   }
 
   .column {
     gap: 16px;
     display: flex;
     flex-direction: column;
-  }
-
-  .label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .checkbox {
-    width: 16px;
-    height: 16px;
-    display: grid;
-    place-items: center;
-    border-radius: 4px;
-
-    &[data-state="checked"] {
-      background-color: var(--blue-500);
-      color: white;
-    }
-
-    &[data-state="unchecked"] {
-      border: 2px solid var(--paragraph-color);
-    }
-
-    &:hover:not([data-state="checked"]) {
-      border-color: var(--heading-color);
-    }
   }
 
   .description {

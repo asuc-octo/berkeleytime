@@ -346,7 +346,7 @@ export default function Course({
         </Container>
       </div>
       <Container size="sm">
-        <CourseContext.Provider
+        <CourseContext
           value={{
             course,
           }}
@@ -365,7 +365,7 @@ export default function Course({
               <Grades />
             </Tabs.Content>
           </Body>
-        </CourseContext.Provider>
+        </CourseContext>
       </Container>
     </Root>
   );

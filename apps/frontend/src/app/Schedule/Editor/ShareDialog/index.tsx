@@ -1,9 +1,18 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useRef, useState } from "react";
 
 import * as Checkbox from "@radix-ui/react-checkbox";
-import { Check, PasteClipboard, Xmark } from "iconoir-react";
+import {
+  Check,
+  ClipboardCheck,
+  PasteClipboard,
+  ShareIos,
+  Xmark,
+} from "iconoir-react";
 
 import { Button, Dialog, IconButton } from "@repo/theme";
+
+import { useUpdateSchedule } from "@/hooks/api";
+import useSchedule from "@/hooks/useSchedule";
 
 import styles from "./ShareDialog.module.scss";
 
@@ -15,7 +24,46 @@ interface ShareDialogProps {
 // TODO: Invite collaborators
 
 export default function ShareDialog({ children }: ShareDialogProps) {
-  const [checked, setChecked] = useState(false);
+  const { schedule } = useSchedule();
+  const [updateSchedule, { loading }] = useUpdateSchedule();
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const [copied, setCopied] = useState(false);
+
+  const content = useMemo(
+    () => ({
+      url: window.location.href,
+      title: schedule.name,
+      text: `View my ${schedule.semester} ${schedule.year} schedule on Berkeleytime`,
+    }),
+    [schedule]
+  );
+
+  const canShare = navigator.canShare && navigator.canShare?.(content);
+
+  const copy = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    setCopied(true);
+
+    navigator.clipboard.writeText(window.location.href);
+
+    timeoutRef.current = setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+  };
+
+  const handleCheckedChange = async (checked: boolean) => {
+    await updateSchedule(
+      schedule._id,
+      { public: checked },
+      {
+        optimisticResponse: {
+          updateSchedule: { ...schedule, public: checked },
+        },
+      }
+    );
+  };
 
   return (
     <Dialog.Root>
@@ -41,21 +89,30 @@ export default function ShareDialog({ children }: ShareDialogProps) {
         <div className={styles.column}>
           <div className={styles.row}>
             <input
+              readOnly
               type="url"
               className={styles.input}
               value={window.location.origin + window.location.pathname}
             />
-            <Button variant="solid">
-              <PasteClipboard />
-              Copy link
-            </Button>
+            {canShare ? (
+              <Button variant="solid" onClick={() => navigator.share(content)}>
+                Share
+                <ShareIos />
+              </Button>
+            ) : (
+              <Button variant="solid" onClick={() => copy()}>
+                {copied ? <ClipboardCheck /> : <PasteClipboard />}
+                {copied ? "Copied" : "Copy link"}
+              </Button>
+            )}
           </div>
           <label htmlFor="public" className={styles.label}>
             <Checkbox.Root
               className={styles.checkbox}
               id="public"
-              checked={checked}
-              onCheckedChange={(checked) => setChecked(checked as boolean)}
+              checked={schedule.public}
+              onCheckedChange={handleCheckedChange}
+              disabled={loading}
             >
               <Checkbox.Indicator>
                 <Check width={12} height={12} />

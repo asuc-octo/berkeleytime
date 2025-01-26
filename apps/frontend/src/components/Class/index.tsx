@@ -427,7 +427,7 @@ export default function Class({
           )}
         </Container>
       </div>
-      <ClassContext.Provider
+      <ClassContext
         value={{
           class: _class,
           course,
@@ -447,7 +447,7 @@ export default function Class({
             <Grades />
           </Tabs.Content>
         </Body>
-      </ClassContext.Provider>
+      </ClassContext>
     </Root>
   );
 }

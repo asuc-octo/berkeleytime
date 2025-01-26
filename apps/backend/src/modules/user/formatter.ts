@@ -12,6 +12,7 @@ export type IntermediateUser = Omit<UserModule.User, keyof UserRelationships> &
 
 export const formatUser = (user: UserType) => {
   return {
+    _id: user._id,
     email: user.email,
     student: user.email.endsWith("@berkeley.edu"),
     bookmarkedCourses: user.bookmarkedCourses,

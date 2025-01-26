@@ -268,7 +268,7 @@ export default function ClassBrowser({
   };
 
   return (
-    <BrowserContext.Provider
+    <BrowserContext
       value={{
         expanded,
         responsive,
@@ -308,6 +308,6 @@ export default function ClassBrowser({
         <Filters />
         <List onSelect={onSelect} />
       </div>
-    </BrowserContext.Provider>
+    </BrowserContext>
   );
 }

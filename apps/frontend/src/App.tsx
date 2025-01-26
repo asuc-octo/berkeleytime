@@ -13,6 +13,8 @@ import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import PinsProvider from "@/components/PinsProvider";
 
+const Profile = lazy(() => import("@/app/Profile"));
+
 // TODO: Experiment with server-side rendering for static pages and hydration for dynamic pages
 
 const Class = {
@@ -85,6 +87,15 @@ const router = createBrowserRouter([
       {
         element: <About />,
         path: "about",
+      },
+    ],
+  },
+  {
+    element: <Layout />,
+    children: [
+      {
+        element: <Profile />,
+        path: "profile",
       },
     ],
   },

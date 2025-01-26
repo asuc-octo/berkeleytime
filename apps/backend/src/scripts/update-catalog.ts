@@ -318,10 +318,10 @@ const initialize = async () => {
     );
 
     console.log("\n=== UPDATE CLASSES ===");
-    await updateClasses(filteredTerms);
+    await updateClasses(filteredTerms as TermType[]);
 
     console.log("\n=== UPDATE SECTIONS ===");
-    await updateSections(filteredTerms);
+    await updateSections(filteredTerms as TermType[]);
   } catch (error) {
     console.error(error);
 

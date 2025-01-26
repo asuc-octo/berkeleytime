@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
-import {
-  ArrowLeft,
-  Copy,
-  Settings,
-  ShareIos,
-  ViewColumns2,
-} from "iconoir-react";
+import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
 import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
@@ -20,6 +14,8 @@ import { ISection, READ_CLASS, ReadClassResponse } from "@/lib/api";
 import { getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
+import CloneDialog from "./CloneDialog";
+import EditDialog from "./EditDialog";
 import styles from "./Manage.module.scss";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
@@ -27,7 +23,7 @@ import SideBar from "./SideBar";
 import { addRecentSchedule } from "@/lib/recent";
 
 export default function Editor() {
-  const { schedule } = useSchedule();
+  const { schedule, editing } = useSchedule();
 
   useEffect(() => {
     addRecentSchedule(schedule)
@@ -347,11 +343,15 @@ export default function Editor() {
             </Link>
           </Tooltip>
           <p className={styles.heading}>{schedule.name}</p>
-          <Tooltip content="Settings">
-            <IconButton>
-              <Settings />
-            </IconButton>
-          </Tooltip>
+          {editing && (
+            <EditDialog>
+              <Tooltip content="Edit">
+                <IconButton>
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+            </EditDialog>
+          )}
           <div className={styles.separator} />
         </div>
         <div className={styles.tabs}>
@@ -371,20 +371,23 @@ export default function Editor() {
             Compare
           </Button>
         </Link>
-        <Button>
-          <Copy />
-          Clone
-        </Button>
-        <ShareDialog>
-          <Button variant="solid">
-            Share
-            <ShareIos />
+        <CloneDialog>
+          <Button>
+            <Copy />
+            Clone
           </Button>
-        </ShareDialog>
+        </CloneDialog>
+        {editing && (
+          <ShareDialog>
+            <Button variant="solid">
+              Share
+              <ShareIos />
+            </Button>
+          </ShareDialog>
+        )}
       </div>
       <div className={styles.body}>
         <SideBar
-          schedule={schedule}
           expanded={expanded}
           onClassSelect={handleClassSelect}
           onSectionSelect={handleSectionSelect}
