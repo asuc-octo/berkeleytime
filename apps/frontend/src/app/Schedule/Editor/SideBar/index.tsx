@@ -6,7 +6,8 @@ import { Plus } from "iconoir-react";
 import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
-import { ISchedule, Semester } from "@/lib/api";
+import useSchedule from "@/hooks/useSchedule";
+import { Semester } from "@/lib/api";
 
 import { getUnits } from "../../schedule";
 import Catalog from "./Catalog";
@@ -14,7 +15,6 @@ import Class from "./Class";
 import styles from "./SideBar.module.scss";
 
 interface SideBarProps {
-  schedule: ISchedule;
   expanded: boolean[];
   onSortEnd: (previousIndex: number, currentIndex: number) => void;
   onClassSelect: (
@@ -39,7 +39,6 @@ interface SideBarProps {
 }
 
 export default function SideBar({
-  schedule,
   onClassSelect,
   expanded,
   onSectionSelect,
@@ -48,6 +47,8 @@ export default function SideBar({
   onExpandedChange,
   onSortEnd,
 }: SideBarProps) {
+  const { schedule, editing } = useSchedule();
+
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const [minimum, maximum] = useMemo(() => getUnits(schedule), [schedule]);
@@ -94,16 +95,18 @@ export default function SideBar({
             </Units>
           </div>
         </div>
-        <Catalog
-          onClassSelect={onClassSelect}
-          semester={Semester.Fall}
-          year={2024}
-        >
-          <Button className={styles.button} variant="solid">
-            Add class
-            <Plus />
-          </Button>
-        </Catalog>
+        {editing && (
+          <Catalog
+            onClassSelect={onClassSelect}
+            semester={Semester.Fall}
+            year={2024}
+          >
+            <Button className={styles.button} variant="solid">
+              Add class
+              <Plus />
+            </Button>
+          </Catalog>
+        )}
       </div>
       <div className={styles.body} ref={bodyRef}>
         {schedule.classes.map((selectedClass, index) => {

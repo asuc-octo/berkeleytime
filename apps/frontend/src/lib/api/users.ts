@@ -5,6 +5,7 @@ import { ICourse } from "./courses";
 import { Semester } from "./terms";
 
 export interface IUser {
+  _id: string;
   email: string;
   student: boolean;
   bookmarkedCourses: ICourse[];
@@ -18,6 +19,7 @@ export interface ReadUserResponse {
 export const READ_USER = gql`
   query GetUser {
     user {
+      _id
       email
       student
       bookmarkedCourses {

@@ -40,12 +40,11 @@ export interface IScheduleInput {
 export interface ISchedule {
   __typename: "Schedule";
   _id: ScheduleIdentifier;
+  public: boolean;
   name: string;
   classes: IScheduleClass[];
   events: IScheduleEvent[];
   createdBy: string;
-  beginDate: string;
-  endDate: string;
   term: ITerm;
   year: number;
   semester: Semester;
