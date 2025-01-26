@@ -16,7 +16,8 @@ export const formatSection = (input: ClassSection) => {
   const courseId = input.class?.course?.identifiers?.find(
     (i) => i.type === "cs-course-id"
   )?.id;
-
+  const sessionId = input.class?.session?.id;
+  const termId = input.class?.session?.term?.id;
   const courseNumber = input.class?.course?.catalogNumber?.formatted;
   const classNumber = input.class?.number;
   const number = input.number;
@@ -26,6 +27,8 @@ export const formatSection = (input: ClassSection) => {
 
   const essentialFields = {
     courseId,
+    sessionId,
+    termId,
     classNumber,
     sectionId,
     number,

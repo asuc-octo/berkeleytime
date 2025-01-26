@@ -68,8 +68,8 @@ export interface ISectionItemDocument extends ISectionItem, Document {}
 const sectionSchema = new Schema<ISectionItem>({
   courseId: { type: String, required: true },
   classNumber: { type: String, required: true },
-  sessionId: { type: String },
-  termId: { type: String },
+  sessionId: { type: String, required: true },
+  termId: { type: String, required: true },
   sectionId: { type: String, required: true },
   number: { type: String, required: true },
   subject: { type: String, required: true },
