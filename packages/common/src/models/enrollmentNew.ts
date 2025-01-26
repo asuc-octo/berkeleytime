@@ -48,6 +48,16 @@ const enrollmentSchema = new Schema<IEnrollmentItem>({
       maxWaitlist: { type: Number },
       openReserved: { type: Number },
       instructorAddConsentRequired: { type: Boolean },
+      instructorDropConsentRequired: { type: Boolean },
+      seatReservations: [
+        {
+          number: { type: Number },
+          requirementGroup: { type: String },
+          fromDate: { type: String },
+          maxEnroll: { type: Number },
+          enrolledCount: { type: Number },
+        },
+      ],
     },
   ],
 });
