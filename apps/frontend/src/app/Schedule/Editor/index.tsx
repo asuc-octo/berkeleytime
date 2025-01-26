@@ -20,13 +20,14 @@ import { ISection, READ_CLASS, ReadClassResponse } from "@/lib/api";
 import { getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
+import CloneDialog from "./CloneDialog";
 import styles from "./Manage.module.scss";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
 
 export default function Editor() {
-  const { schedule } = useSchedule();
+  const { schedule, editing } = useSchedule();
 
   const apolloClient = useApolloClient();
   const [updateSchedule] = useUpdateSchedule();
@@ -343,11 +344,13 @@ export default function Editor() {
             </Link>
           </Tooltip>
           <p className={styles.heading}>{schedule.name}</p>
-          <Tooltip content="Settings">
-            <IconButton>
-              <Settings />
-            </IconButton>
-          </Tooltip>
+          {editing && (
+            <Tooltip content="Settings">
+              <IconButton>
+                <Settings />
+              </IconButton>
+            </Tooltip>
+          )}
           <div className={styles.separator} />
         </div>
         <div className={styles.tabs}>
@@ -367,20 +370,23 @@ export default function Editor() {
             Compare
           </Button>
         </Link>
-        <Button>
-          <Copy />
-          Clone
-        </Button>
-        <ShareDialog>
-          <Button variant="solid">
-            Share
-            <ShareIos />
+        <CloneDialog>
+          <Button>
+            <Copy />
+            Clone
           </Button>
-        </ShareDialog>
+        </CloneDialog>
+        {editing && (
+          <ShareDialog>
+            <Button variant="solid">
+              Share
+              <ShareIos />
+            </Button>
+          </ShareDialog>
+        )}
       </div>
       <div className={styles.body}>
         <SideBar
-          schedule={schedule}
           expanded={expanded}
           onClassSelect={handleClassSelect}
           onSectionSelect={handleSectionSelect}
