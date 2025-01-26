@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import {
@@ -24,9 +24,14 @@ import styles from "./Manage.module.scss";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
+import { addRecentSchedule } from "@/lib/recent";
 
 export default function Editor() {
   const { schedule } = useSchedule();
+
+  useEffect(() => {
+    addRecentSchedule(schedule)
+  }, [schedule])
 
   const apolloClient = useApolloClient();
   const [updateSchedule] = useUpdateSchedule();
@@ -214,7 +219,6 @@ export default function Editor() {
 
       // Move existing classes to the top rather than duplicating them
       if (existingClass) {
-        console.log("existingClass", existingClass);
 
         const index = _schedule.classes.findIndex(
           (selectedClass) =>
