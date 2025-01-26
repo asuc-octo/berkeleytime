@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "tsc --noEmit",
-    "course": "tsx src/course.ts"
+    "main": "tsx src/main.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.10",
@@ -11,9 +11,12 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@aws-sdk/client-athena": "^3.734.0",
+    "@aws-sdk/client-s3": "^3.735.0",
     "@repo/common": "*",
     "@repo/sis-api": "*",
     "dotenv": "^16.4.7",
+    "papaparse": "^5.5.1",
     "tslog": "^4.9.3"
   }
 }

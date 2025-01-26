@@ -21,19 +21,19 @@ Using Docker allows us to build the docs without downloading dependencies on our
 git pull
 
 # Build the container (only needed once every time docs/Dockerfile changes!)
-docker build --target docs-dev --tag="docs:dev" ./docs
+docker build --target=docs-dev --tag="docs:dev" ./docs
 
 # Run the container
 docker run --publish 3000:3000 --volume ./docs:/docs "docs:dev"
 ```
 
-The docs should be available at `http://localhost:3000/` with live reload. To change the port to port `XXXX`, modify the last command:
-```sh
-# Run the container and publish the docs to http://localhost:XXXX/
-docker run --publish XXXX:3000 --volume ./docs:/docs "docs:dev"
-```
+The docs should be available at `http://localhost:3000/` with live reload. To kill the container, you can use the Docker Desktop UI or run `docker kill [container id]`. You can find the container ID from `docker ps`.
 
-To kill the container, you can use the Docker Desktop UI or run `docker kill [container id]`. You can find the container ID from `docker ps`.
+> [!TIP]
+> To change the port from the above `3000`, modify the `docker run` command as follows, replacing the `XXXX` with your desired port:
+> ```sh
+> docker run --publish XXXX:3000 --volume ./docs:/docs "docs:dev"
+> ```
 
 #### Without Containerization
 

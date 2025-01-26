@@ -25,7 +25,8 @@ export function MenuItem<T extends ElementType>({
 
   return (
     <Component
-      data-disabled={disabled}
+      data-disabled={disabled || undefined}
+      disabled={disabled || undefined}
       className={classNames(
         styles.root,
         {

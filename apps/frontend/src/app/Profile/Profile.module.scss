@@ -1,82 +1,81 @@
 .root {
-    margin-top: 5vh;
-    min-height: 100vh;
-    margin-left: 25%;
+  margin-top: 5vh;
+  min-height: 100vh;
+  margin-left: 25%;
+  color: var(--heading-color);
+
+  .body {
+    position: relative;
+  }
+
+  .sidebar {
+    position: absolute;
+    top: 0;
+    left: -182px;
+    width: 150px;
+    color: var(--label-color);
+  }
+
+  .navItem {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    span {
+      margin-left: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 18px;
+      white-space: nowrap;
+    }
+  }
+
+  .navItem.active {
     color: var(--heading-color);
+    border-left: solid 2px var(--blue-500);
+    border-radius: 0;
+  }
+  .navItem:hover {
+    color: var(--heading-color);
+  }
 
-    .body {
-        position: relative;
-    }
+  .content {
+    flex: 1;
+    padding: 40px;
+  }
 
-    .sidebar {
-        position: absolute;
-        top: 0;
-        left: -182px;
-        width: 150px;
-        color: var(--label-color);
-    }
+  h1 {
+    font-size: 32px;
+    margin-bottom: 40px;
+  }
 
-    .navItem {
-        padding: .5rem 1rem;
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        width: 100%;
-        span {
-            margin-left: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 18px;
-            white-space: nowrap;
-        }
-    }
+  h2 {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
 
-    .navItem.active {
-        color: var(--heading-color);
-        border-left: solid 2px var(--blue-500);
-        border-radius: 0;
-    }
-    .navItem:hover {
-        color: var(--heading-color);
-    }
+  .infoItem {
+    display: flex;
+    height: 50px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--paragraph-color);
+    align-items: center;
+  }
 
-    .content {
-        flex: 1;
-        padding: 40px;
-    }
+  .infoItem label {
+    color: var(--text-gray);
+    margin-bottom: 8px;
+    width: 250px;
+    max-width: 30%;
+    flex: 0 0 auto;
+    display: inline-block;
+    margin: 0;
+  }
 
-    h1 {
-        font-size: 32px;
-        margin-bottom: 40px;
-    }
-
-    h2 {
-        font-size: 24px;
-        margin-bottom: 24px;
-    }
-
-    .infoItem {
-        display: flex;
-        height: 50px;
-        border-bottom: 1px solid var(--border-color);
-        color: var(--paragraph-color);
-        align-items: center;
-    }
-
-    .infoItem label {
-        color: var(--text-gray);
-        margin-bottom: 8px;
-        width: 250px;
-        max-width: 30%;
-        flex: 0 0 auto;
-        display: inline-block;
-        margin: 0;
-    }
-
-    .infoValue {
-        font-size: 16px;
-    }
-
+  .infoValue {
+    font-size: 16px;
+  }
 }

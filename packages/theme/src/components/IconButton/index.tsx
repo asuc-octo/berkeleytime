@@ -26,8 +26,8 @@ export function IconButton<T extends ElementType>({
 
   return (
     <Component
-      data-disabled={disabled}
-      disabled={disabled}
+      data-disabled={disabled || undefined}
+      disabled={disabled || undefined}
       data-variant={variant}
       className={classNames(styles.root, className)}
       {...props}

@@ -28,8 +28,8 @@ export function Button<T extends ElementType>({
     <Component
       {...props}
       data-variant={variant}
-      disabled={disabled}
-      data-disabled={disabled}
+      disabled={disabled || undefined}
+      data-disabled={disabled || undefined}
       className={classNames(styles.root, className)}
     >
       {children}
