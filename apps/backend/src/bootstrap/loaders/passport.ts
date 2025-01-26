@@ -1,4 +1,4 @@
-import RedisStore from "connect-redis";
+import { RedisStore } from "connect-redis";
 import type { Application } from "express";
 import session from "express-session";
 import passport from "passport";

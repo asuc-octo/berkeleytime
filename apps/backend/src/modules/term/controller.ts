@@ -1,4 +1,4 @@
-import { TermModel } from "@repo/common";
+import { TermModel, TermType } from "@repo/common";
 
 import { Semester } from "../../generated-types/graphql";
 import { formatTerm } from "./formatter";
@@ -6,7 +6,7 @@ import { formatTerm } from "./formatter";
 export const getTerms = async () => {
   const terms = await TermModel.find().lean();
 
-  return terms.map(formatTerm);
+  return terms.map((term) => formatTerm(term as TermType));
 };
 
 export const getTerm = async (year: number, semester: Semester) => {
@@ -16,5 +16,5 @@ export const getTerm = async (year: number, semester: Semester) => {
 
   if (!term) return null;
 
-  return formatTerm(term);
+  return formatTerm(term as TermType);
 };
