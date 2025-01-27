@@ -1,0 +1,75 @@
+body {
+    background: white;
+}
+.about {
+    align-items: center;
+    padding-top: 58px;
+    display: flex;
+    flex-direction: column;
+    .aboutOurTeam {
+        text-align: center;
+        width: 500px;
+        h2 {
+            color: var(--heading-color);
+            font-weight: 600;
+            font-size: 26px;
+            margin-bottom: .5rem !important;
+        }
+        p {
+            color: var(--paragraph-color);
+            font-size: 14px;
+            line-height: 28px;
+        }
+    }
+
+    .values {
+		margin-bottom: 80px;
+
+        h3 {
+            text-align: center;
+            padding: 40px;
+            font-size: 24px;
+        }
+
+		.valueRow {
+            display: flex;
+            width: 60%;
+            margin-left: 20%;
+        }
+
+		.value-col {
+			margin-bottom: 20px;
+            flex: 33%;
+
+			.value {
+				height: 100%;
+				padding: 0 20px;
+
+				.value-content {
+					height: 100%;
+					border-radius: 4px;
+					border: solid 2px #6d6a7238;
+					padding: 20px 10px;
+
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+
+					h6 {
+						font-size: 18px;
+						font-weight: bold;
+						margin: 20px 0 10px;
+					}
+
+					p {
+						text-align: center;
+						width: 95%;
+						line-height: 1.75;
+						color: #8a8a8a;
+					}
+				}
+			}
+		}
+	}
+
+}
