@@ -1,7 +1,5 @@
 import { EmojiTalkingHappy, Leaf, LightBulbOn } from "iconoir-react";
 
-import { Container } from "@repo/theme";
-
 import styles from "./About.module.scss";
 // import CurrentContributors from '../components/About/CurrentContributors';
 // import PastContributors from '../components/About/PastContributors';
