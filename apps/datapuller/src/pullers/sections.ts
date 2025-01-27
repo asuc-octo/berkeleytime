@@ -16,7 +16,7 @@ const updateSections = async ({
   );
 
   log.info(
-    `Fetched ${activeTerms.length.toLocaleString()} active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
+    `Fetched ${activeTerms.length.toLocaleString()} undergraduate active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
   );
 
   log.info(`Fetching sections for active terms.`);

@@ -1,5 +1,6 @@
 import updateClasses from "./pullers/classes";
 import updateCourses from "./pullers/courses";
+import updateEnrollmentHistories from "./pullers/enrollment";
 import updateGradeDistributions from "./pullers/grade-distributions";
 import main from "./pullers/main";
 import updateSections from "./pullers/sections";
@@ -16,6 +17,7 @@ const pullerMap: { [key: string]: (config: Config) => Promise<void> } = {
   sections: updateSections,
   classes: updateClasses,
   "grade-distributions": updateGradeDistributions,
+  enrollments: updateEnrollmentHistories,
   main: main,
 };
 

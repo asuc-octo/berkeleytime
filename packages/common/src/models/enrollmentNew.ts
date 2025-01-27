@@ -1,42 +1,50 @@
 import { Document, Model, Schema, model } from "mongoose";
 
-export interface IEnrollmentItem {
+export interface IEnrollmentHistoryItem {
   termId: string;
   sessionId: string;
   sectionId: string;
-  data: [
-    {
-      time: string;
-      status?: string;
+
+  // maps number to requirementGroup
+  seatReservations?: {
+    number: number;
+    requirementGroup?: string;
+    fromDate: string;
+  }[];
+  history: {
+    time: string;
+    status?: string;
+    enrolledCount?: number;
+    reservedCount?: number;
+    waitlistedCount?: number;
+    minEnroll?: number;
+    maxEnroll?: number;
+    maxWaitlist?: number;
+    openReserved?: number;
+    instructorAddConsentRequired?: boolean;
+    instructorDropConsentRequired?: boolean;
+    seatReservations?: {
+      number: number; // maps to seatReservations.number to get requirementGroup
+      maxEnroll: number;
       enrolledCount?: number;
-      reservedCount?: number;
-      waitlistedCount?: number;
-      minEnroll?: number;
-      maxEnroll?: number;
-      maxWaitlist?: number;
-      openReserved?: number;
-      instructorAddConsentRequired?: boolean;
-      instructorDropConsentRequired?: boolean;
-      seatReservations?: [
-        {
-          number?: number;
-          requirementGroup?: string;
-          fromDate?: string;
-          maxEnroll?: number;
-          enrolledCount?: number;
-        },
-      ];
-    },
-  ];
+    }[];
+  }[];
 }
 
-export interface IEnrollmentItemDocument extends IEnrollmentItem, Document {}
+export interface IEnrollmentSingularItem
+  extends Omit<IEnrollmentHistoryItem, "history"> {
+  data: IEnrollmentHistoryItem["history"][0];
+}
 
-const enrollmentSchema = new Schema<IEnrollmentItem>({
+export interface IEnrollmentHistoryItemDocument
+  extends IEnrollmentHistoryItem,
+    Document {}
+
+const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
   termId: { type: String, required: true },
   sessionId: { type: String, required: true },
   sectionId: { type: String, required: true },
-  data: [
+  history: [
     {
       time: { type: String, required: true },
       status: { type: String },
@@ -52,19 +60,27 @@ const enrollmentSchema = new Schema<IEnrollmentItem>({
       seatReservations: [
         {
           number: { type: Number },
-          requirementGroup: { type: String },
-          fromDate: { type: String },
           maxEnroll: { type: Number },
           enrolledCount: { type: Number },
         },
       ],
     },
   ],
+  seatReservations: [
+    {
+      number: { type: Number },
+      requirementGroup: { type: String },
+      fromDate: { type: String },
+    },
+  ],
 });
-enrollmentSchema.index(
+enrollmentHistorySchema.index(
   { termId: 1, sessionId: 1, sectionId: 1 },
   { unique: true }
 );
 
-export const NewEnrollmentModel: Model<IEnrollmentItem> =
-  model<IEnrollmentItem>("NewEnrollment", enrollmentSchema);
+export const NewEnrollmentHistoryModel: Model<IEnrollmentHistoryItem> =
+  model<IEnrollmentHistoryItem>(
+    "NewEnrollmentHistory",
+    enrollmentHistorySchema
+  );

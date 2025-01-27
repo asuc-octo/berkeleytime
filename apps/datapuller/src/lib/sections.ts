@@ -5,7 +5,7 @@ import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import { fetchPaginatedData } from "./api/sis-api";
 
-const filterSection = (input: ClassSection): boolean => {
+export const filterSection = (input: ClassSection): boolean => {
   return input.status?.code === "A";
 };
 
