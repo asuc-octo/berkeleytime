@@ -8,7 +8,7 @@ on:
     paths-ignore: ["docs/**"]
 
 env:
-  deployment_url: staging.stanfurdtime.com
+  DEPLOYMENT_URL: staging.stanfurdtime.com
 
 jobs:
   build-push:
@@ -48,8 +48,8 @@ jobs:
           grades:
             image:
               tag: latest
-        host: ${{ env.deployment_url }}
+        host: $DEPLOYMENT_URL
         mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
-      host: ${{ env.deployment_url }}
+      host: $DEPLOYMENT_URL
     secrets: inherit

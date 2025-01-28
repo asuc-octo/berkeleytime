@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  deployment_url: stanfurdtime.com
+  DEPLOYMENT_URL: stanfurdtime.com
 
 jobs:
   branch-check:
@@ -36,6 +36,6 @@ jobs:
       name: bt-prod-app
       version: "1.0.0"
       values: |
-        host: ${{ env.deployment_url }}
-      host: ${{ env.deployment_url }}
+        host: $DEPLOYMENT_URL
+      host: $DEPLOYMENT_URL
     secrets: inherit
