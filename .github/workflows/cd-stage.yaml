@@ -7,6 +7,9 @@ on:
     branches: [master, gql]
     paths-ignore: ["docs/**"]
 
+env:
+  deployment_url: staging.stanfurdtime.com
+
 jobs:
   build-push:
     name: Build and Push Images and Charts
@@ -45,8 +48,8 @@ jobs:
           grades:
             image:
               tag: latest
-        host: staging.stanfurdtime.com
+        host: ${{ env.deployment_url }}
         mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
-      host: staging.stanfurdtime.com
+      host: ${{ env.deployment_url }}
     secrets: inherit

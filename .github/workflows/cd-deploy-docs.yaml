@@ -7,6 +7,9 @@ on:
     branches: [master, gql]
     paths: ["docs/**"]
 
+env:
+  deployment_url: docs.stanfurdtime.com
+
 jobs:
   build-push:
     name: Build and Push Docs Image
@@ -40,7 +43,9 @@ jobs:
     name: SSH and Deploy
     needs: [build-push]
     runs-on: ubuntu-latest
-    environment: documentation
+    environment:
+      name: documentation
+      url: https://${{ env.deployment_url }}
 
     steps:
       - name: SSH and Helm Install
@@ -60,7 +65,7 @@ jobs:
               --install \
               --version=1.0.0 \
               --namespace=bt \
-              --set host=docs.stanfurdtime.com
+              --set host=${{ env.deployment_url }}
 
             # Restart deployment if helm chart existed
             if [ $status = true ]; then
@@ -72,4 +77,4 @@ jobs:
 
       - name: Output Summary
         run: |
-          echo "# :white_check_mark: Deployment available at [docs.stanfurdtime.com](https://docs.stanfurdtime.com)." >> $GITHUB_STEP_SUMMARY
+          echo "# :white_check_mark: Deployment available at [${{ env.deployment_url }}](https://${{ env.deployment_url }}}})." >> $GITHUB_STEP_SUMMARY
