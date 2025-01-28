@@ -29,9 +29,7 @@ jobs:
     needs: [build-push]
     uses: ./.github/workflows/cd-deploy.yaml
     with:
-      environment:
-        name: production
-        url: https://stanfurdtime.com
+      environment: production
       name: bt-prod-app
       version: "1.0.0"
       values: |

@@ -43,9 +43,7 @@ jobs:
     needs: [compute-sha, build-push]
     uses: ./.github/workflows/cd-deploy.yaml
     with:
-      environment:
-        name: development
-        url: https://${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
+      environment: development
       name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
       version: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
       values: |

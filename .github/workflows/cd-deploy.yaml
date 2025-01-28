@@ -28,7 +28,9 @@ jobs:
   deploy:
     name: SSH and Deploy
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment:
+      name: ${{ inputs.environment }}
+      url: https://${{ inputs.host }}
 
     steps:
       - name: SSH and Helm Install
