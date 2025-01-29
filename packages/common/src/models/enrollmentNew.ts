@@ -1,4 +1,4 @@
-import { Document, Model, Schema, model } from "mongoose";
+import { Document, InferSchemaType, Model, Schema, model } from "mongoose";
 
 export interface IEnrollmentItem {
   termId: string;

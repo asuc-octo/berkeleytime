@@ -1,3 +1,5 @@
+import { IGradeDistributionItem } from "@repo/common";
+
 import { QueryExecutor } from "./api/aws-athena";
 
 export interface GradeDistributionRow {
@@ -37,16 +39,20 @@ export interface GradeDistributionRow {
 
 export const formatDistribution = (distribution: GradeDistributionRow) => {
   // TODO: Pivot the data
-  return {
+  const output: IGradeDistributionItem = {
+    courseId: distribution.course_id,
     subject: distribution.subject_cd,
     courseNumber: distribution.course_number,
     courseOfferingNumber: parseInt(distribution.course_offer_nbr),
     termId: distribution.semester_year_term_cd,
-    session: distribution.session_code,
+    sessionId: distribution.session_code,
+
     classNumber: distribution.class_number,
     sectionNumber: distribution.class_section_cd,
+
     count: parseInt(distribution.grade_count),
     distinct: parseInt(distribution.distinct_grades),
+
     countAPlus: parseInt(distribution.grade_count_a_plus),
     countA: parseInt(distribution.grade_count_a),
     countAMinus: parseInt(distribution.grade_count_a_minus),
@@ -70,19 +76,54 @@ export const formatDistribution = (distribution: GradeDistributionRow) => {
     countH: parseInt(distribution.grade_count_h),
     countPC: parseInt(distribution.grade_count_pc),
   };
+
+  return output;
 };
 
 /**
  * Get grade distribution rows for a specific term
  */
-export const getGradeDistributionDataByTerm = async (
+export const getGradeDistributionDataByTerms = async (
   database: string,
   s3Output: string,
   regionName: string,
   workGroup: string,
-  termId: string
+  termIds: string[]
 ) => {
-  const query = `SELECT course_id, course_offer_nbr, semester_year_term_cd, class_number, subject_cd, course_number, session_code, class_section_cd, grade_count, distinct_grades, grade_count_a_plus, grade_count_a, grade_count_a_minus, grade_count_b_plus, grade_count_b, grade_count_b_minus, grade_count_c_plus, grade_count_c, grade_count_c_minus, grade_count_d_plus, grade_count_d, grade_count_d_minus, grade_count_f, grade_count_p, grade_count_np, grade_count_s, grade_count_u, grade_count_cr, grade_count_nc, grade_count_hh, grade_count_h, grade_count_pc FROM "lf_cs_curated"."student_grade_distribution_data" WHERE semester_year_term_cd = '${termId}'`;
+  const query = `SELECT
+      course_id,
+      course_offer_nbr,
+      semester_year_term_cd,
+      class_number,
+      subject_cd,
+      course_number,
+      session_code,
+      class_section_cd,
+      grade_count,
+      distinct_grades,
+      grade_count_a_plus,
+      grade_count_a,
+      grade_count_a_minus,
+      grade_count_b_plus,
+      grade_count_b,
+      grade_count_b_minus,
+      grade_count_c_plus,
+      grade_count_c,
+      grade_count_c_minus,
+      grade_count_d_plus,
+      grade_count_d,
+      grade_count_d_minus,
+      grade_count_f,
+      grade_count_p,
+      grade_count_np,
+      grade_count_s,
+      grade_count_u,
+      grade_count_cr,
+      grade_count_nc,
+      grade_count_hh,
+      grade_count_h,
+      grade_count_pc
+    FROM "lf_cs_curated"."student_grade_distribution_data" WHERE semester_year_term_cd IN ('${termIds.join("', '")}')`;
 
   const enrollment = new QueryExecutor(
     database,
@@ -94,5 +135,8 @@ export const getGradeDistributionDataByTerm = async (
 
   const data = await enrollment.execute<GradeDistributionRow>();
 
-  return data;
+  if (!data) {
+    return [];
+  }
+  return data.map(formatDistribution);
 };

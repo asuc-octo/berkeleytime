@@ -1,40 +1,50 @@
 import { GradeDistributionModel } from "@repo/common";
 
-import { getGradeDistributionDataByTerm } from "../lib/grade-distributions";
-import { getCurrentTerm } from "../lib/terms";
+import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
+import { getPreviousTerm } from "../lib/terms";
 import { Config } from "../shared/config";
 
-// TODO: Transaction
 const updateGradeDistributions = async ({
   aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP },
   sis: { TERM_APP_ID, TERM_APP_KEY },
   log,
 }: Config) => {
-  log.info("Fetching current term");
+  log.info("Fetching previous term");
 
-  // Get current term
-  const currentTerm = await getCurrentTerm(log, TERM_APP_ID, TERM_APP_KEY);
+  // Get previous term
+  const previousTerms = await getPreviousTerm(log, TERM_APP_ID, TERM_APP_KEY);
 
-  // TODO: Error for no current term
-  if (!currentTerm) return;
+  if (!previousTerms) {
+    log.error("No previous term found, skipping update");
+    return;
+  }
 
-  log.info("Querying grade distributions for current term");
+  log.info(
+    `Querying grade distributions for previous terms: ${previousTerms.map((term) => term.name + " " + term.academicCareer?.description).join(", ")}`
+  );
+  const previousTermIds = previousTerms.map((term) => term.id!);
 
-  // Query grade distributions for current term
-  const gradeDistributions = await getGradeDistributionDataByTerm(
+  const gradeDistributions = await getGradeDistributionDataByTerms(
     DATABASE,
     S3_OUTPUT,
     REGION_NAME,
     WORKGROUP,
-    currentTerm.id as string
+    previousTermIds
   );
 
   // TODO: Error for no grade distributions
-  if (!gradeDistributions) return;
+  if (!gradeDistributions) {
+    log.error("No grade distributions found, skipping update");
+    return;
+  }
 
-  // Delete existing grade distributions for current term
+  log.info(
+    `Fetched ${gradeDistributions.length.toLocaleString()} grade distributions.`
+  );
+
+  // Delete existing grade distributions for previous terms
   await GradeDistributionModel.deleteMany({
-    termId: currentTerm.id,
+    termId: { $in: previousTermIds },
   });
 
   // Insert grade distributions in batches of 5000
