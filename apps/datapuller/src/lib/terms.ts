@@ -143,9 +143,9 @@ export const getTerms = async (
 };
 
 /**
- * Get previous terms denoted by the "Previous" temporal position.
+ * Fetch all previous terms denoted by the "Previous" temporal position.
  */
-export const getPreviousTerm = async (
+export const getPreviousTerms = async (
   logger: Logger<unknown>,
   id: string,
   key: string

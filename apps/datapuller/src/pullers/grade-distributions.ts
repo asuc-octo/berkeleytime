@@ -1,7 +1,7 @@
 import { GradeDistributionModel } from "@repo/common";
 
 import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
-import { getPreviousTerm } from "../lib/terms";
+import { getPreviousTerms } from "../lib/terms";
 import { Config } from "../shared/config";
 
 const updateGradeDistributions = async ({
@@ -12,7 +12,7 @@ const updateGradeDistributions = async ({
   log.info("Fetching previous term");
 
   // Get previous term
-  const previousTerms = await getPreviousTerm(log, TERM_APP_ID, TERM_APP_KEY);
+  const previousTerms = await getPreviousTerms(log, TERM_APP_ID, TERM_APP_KEY);
 
   if (!previousTerms) {
     log.error("No previous term found, skipping update");
