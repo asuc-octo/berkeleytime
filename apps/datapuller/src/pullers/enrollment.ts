@@ -23,31 +23,36 @@ const enrollmentSingularsEqual = (
     a.openReserved === b.openReserved,
     a.instructorAddConsentRequired === b.instructorAddConsentRequired,
     a.instructorDropConsentRequired === b.instructorDropConsentRequired,
-  ];
-
-  if (
-    a.seatReservations instanceof Array &&
-    b.seatReservations instanceof Array
-  ) {
-    if (a.seatReservations.length !== b.seatReservations.length) return false;
-    for (const aSeats of a.seatReservations) {
-      for (const bSeats of b.seatReservations) {
-        if (aSeats.number === bSeats.number) {
-          conditions.push(aSeats.enrolledCount === bSeats.enrolledCount);
-          conditions.push(aSeats.maxEnroll === bSeats.maxEnroll);
-        }
-      }
-    }
-  } else if (
-    (!(a.seatReservations instanceof Array) &&
-      b.seatReservations instanceof Array) ||
-    (!(a.seatReservations instanceof Array) &&
-      b.seatReservations instanceof Array)
-  ) {
+  ] as const;
+  if (!conditions.every((condition) => condition)) {
     return false;
   }
 
-  return conditions.every((condition) => condition);
+  const aSeatReservationsEmpty =
+    a.seatReservations == undefined || a.seatReservations.length == 0;
+  const bSeatReservationsEmpty =
+    b.seatReservations == undefined || b.seatReservations.length == 0;
+  if (aSeatReservationsEmpty != bSeatReservationsEmpty) {
+    return false;
+  }
+
+  if (a.seatReservations && b.seatReservations) {
+    if (a.seatReservations.length !== b.seatReservations.length) return false;
+    for (const aSeats of a.seatReservations) {
+      const bSeats = b.seatReservations.find(
+        (bSeats) => bSeats.number === aSeats.number
+      );
+      if (
+        !bSeats ||
+        aSeats.enrolledCount !== bSeats.enrolledCount ||
+        aSeats.maxEnroll !== bSeats.maxEnroll
+      ) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 };
 
 const updateEnrollmentHistories = async ({
@@ -110,9 +115,6 @@ const updateEnrollmentHistories = async ({
           sectionId: enrollmentSingular.sectionId,
         },
         {
-          $setOnInsert: {
-            seatReservations: enrollmentSingular.seatReservations,
-          },
           $push: {
             history: enrollmentSingular.data,
           },

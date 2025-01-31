@@ -46,6 +46,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
   sectionId: { type: String, required: true },
   history: [
     {
+      _id: false,
       time: { type: String, required: true },
       status: { type: String },
       enrolledCount: { type: Number },
@@ -59,6 +60,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
       instructorDropConsentRequired: { type: Boolean },
       seatReservations: [
         {
+          _id: false,
           number: { type: Number },
           maxEnroll: { type: Number },
           enrolledCount: { type: Number },
@@ -68,6 +70,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
   ],
   seatReservations: [
     {
+      _id: false,
       number: { type: Number },
       requirementGroup: { type: String },
       fromDate: { type: String },
