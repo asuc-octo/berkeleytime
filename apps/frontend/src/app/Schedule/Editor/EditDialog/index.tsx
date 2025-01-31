@@ -9,6 +9,7 @@ import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
 
 import styles from "./EditDialog.module.scss";
+import { removeRecentSchedule } from "@/lib/recent";
 
 interface EditDialogProps {
   children: ReactNode;
@@ -40,6 +41,9 @@ export default function EditDialog({ children }: EditDialogProps) {
   };
 
   const remove = async () => {
+    
+    removeRecentSchedule(schedule);
+
     await deleteSchedule(schedule._id);
 
     navigate("/schedules");

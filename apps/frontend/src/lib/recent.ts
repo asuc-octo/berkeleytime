@@ -30,22 +30,34 @@ interface RecentScheduleData {
   year: number;
 }
 
-function addToRecent(type: Recent, obj: any) {
+function filterRecents(type: Recent, obj: any) {
   let recents = getRecent(type);
 
   recents = recents.filter((recent) => {
     let allEqual = true;
     for (let key of Object.keys(recent)) {
-      if (typeof recent[key] == "string")
+      if (typeof recent[key] == "string" && key !== "name")
         allEqual = allEqual && recent[key] === obj[key];
     }
     return !allEqual;
   });
 
+  return recents;
+}
+
+function addToRecent(type: Recent, obj: any) {
+  let recents = filterRecents(type, obj);
+
   recents.unshift(obj);
 
   recents = recents.slice(0, MaxLength[type]);
 
+  const item = JSON.stringify(recents);
+  localStorage.setItem(Key[type], item);
+}
+
+function removeFromRecent(type: Recent, obj: any) {
+  const recents = filterRecents(type, obj);
   const item = JSON.stringify(recents);
   localStorage.setItem(Key[type], item);
 }
@@ -89,6 +101,22 @@ export function addRecentSchedule({
   year,
 }: RecentScheduleData) {
   addToRecent(Recent.Schedules, {
+    _id: _id,
+    name: name,
+    classes: classes,
+    semester: semester,
+    year: year,
+  });
+}
+
+export function removeRecentSchedule({
+  _id,
+  name,
+  classes,
+  semester,
+  year,
+}: RecentScheduleData) {
+  removeFromRecent(Recent.Schedules, {
     _id: _id,
     name: name,
     classes: classes,
