@@ -33,7 +33,7 @@ export default function Schedules() {
           },
           {} as { [key: string]: ISchedule[] }
         )
-      : {} as { [key: string]: ISchedule[] };
+      : ({} as { [key: string]: ISchedule[] });
   }, [schedules]);
 
   const recentSchedules = getRecentSchedules();
