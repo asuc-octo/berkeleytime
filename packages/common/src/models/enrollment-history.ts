@@ -5,7 +5,8 @@ export interface IEnrollmentHistoryItem {
   sessionId: string;
   sectionId: string;
 
-  // maps number to requirementGroup
+  // maps number to requirementGroup.
+  // this assumes that these fields are constant over time.
   seatReservations?: {
     number: number;
     requirementGroup?: string;
@@ -83,7 +84,4 @@ enrollmentHistorySchema.index(
 );
 
 export const NewEnrollmentHistoryModel: Model<IEnrollmentHistoryItem> =
-  model<IEnrollmentHistoryItem>(
-    "NewEnrollmentHistory",
-    enrollmentHistorySchema
-  );
+  model<IEnrollmentHistoryItem>("EnrollmentHistory", enrollmentHistorySchema);
