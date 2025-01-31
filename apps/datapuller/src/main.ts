@@ -16,7 +16,7 @@ const pullerMap: { [key: string]: (config: Config) => Promise<void> } = {
   courses: updateCourses,
   sections: updateSections,
   classes: updateClasses,
-  "grade-distributions": updateGradeDistributions,
+  grades: updateGradeDistributions,
   enrollments: updateEnrollmentHistories,
   main: main,
 };
