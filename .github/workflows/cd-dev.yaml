@@ -72,7 +72,7 @@ jobs:
             suspend: true
             image:
               tag: '${{ needs.compute-sha.outputs.sha_short }}'
-          enrollments::
+          enrollments:
             suspend: true
             image:
               tag: '${{ needs.compute-sha.outputs.sha_short }}'
