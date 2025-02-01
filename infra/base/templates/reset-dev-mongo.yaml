@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: reset-dev-mongo
+  name: {{ .Release.Name }}-reset-dev-mongo
   namespace: bt
 spec:
   schedule: "0 5 * * *" # Daily at 5 AM, after datapuller
