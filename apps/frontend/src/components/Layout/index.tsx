@@ -7,23 +7,20 @@ import { Boundary, LoadingIndicator } from "@repo/theme";
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 
+import Banner from "./Banner";
 import Feedback from "./Feedback";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {
   header?: boolean;
   footer?: boolean;
-  feedback?: boolean;
 }
 
-export default function Layout({
-  header = true,
-  footer = true,
-  feedback = true,
-}: LayoutProps) {
+export default function Layout({ header = true, footer = true }: LayoutProps) {
   return (
     <div className={styles.root}>
       <div className={styles.view}>
+        <Banner />
         {header && <NavigationBar />}
         <Suspense
           fallback={
@@ -36,7 +33,7 @@ export default function Layout({
         </Suspense>
       </div>
       {footer && <Footer />}
-      {feedback && <Feedback />}
+      <Feedback />
     </div>
   );
 }

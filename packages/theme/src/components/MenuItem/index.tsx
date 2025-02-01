@@ -1,46 +1,42 @@
-import { forwardRef } from "react";
+import { ComponentPropsWithRef, ElementType } from "react";
 
 import classNames from "classnames";
 
-import type * as Polymorphic from "../../lib/polymorphism";
 import styles from "./MenuItem.module.scss";
 
-interface Props {
+interface Props<T> {
   active?: boolean;
   disabled?: boolean;
+  as?: T;
 }
 
-type PolymorphicMenuItem = Polymorphic.ForwardRefComponent<"button", Props>;
+export type MenuItemProps<T extends ElementType> = Props<T> &
+  Omit<ComponentPropsWithRef<T>, keyof Props<T>>;
 
-export const MenuItem = forwardRef(
-  (
-    {
-      active,
-      children,
-      className,
-      disabled,
-      as: Component = "button",
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <Component
-        ref={ref}
-        data-disabled={disabled}
-        className={classNames(
-          styles.root,
-          {
-            active,
-          },
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </Component>
-    );
-  }
-) as PolymorphicMenuItem;
+export function MenuItem<T extends ElementType>({
+  active,
+  children,
+  className,
+  disabled,
+  as,
+  ...props
+}: MenuItemProps<T>) {
+  const Component = as || "button";
 
-MenuItem.displayName = "MenuItem";
+  return (
+    <Component
+      data-disabled={disabled || undefined}
+      disabled={disabled || undefined}
+      className={classNames(
+        styles.root,
+        {
+          active,
+        },
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </Component>
+  );
+}

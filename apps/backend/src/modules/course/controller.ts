@@ -1,4 +1,4 @@
-import { ClassModel, CourseModel } from "@repo/common";
+import { ClassModel, ClassType, CourseModel, CourseType } from "@repo/common";
 
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
@@ -14,7 +14,7 @@ export const getCourse = async (subject: string, number: string) => {
 
   if (!course) return null;
 
-  return formatCourse(course);
+  return formatCourse(course as CourseType);
 };
 
 export const getClassesByCourse = async (
@@ -26,7 +26,7 @@ export const getClassesByCourse = async (
     "course.catalogNumber.formatted": courseNumber,
   }).lean();
 
-  return classes.map(formatClass);
+  return classes.map((_class) => formatClass(_class as ClassType));
 };
 
 export const getAssociatedCourses = async (courses: string[]) => {
@@ -60,7 +60,7 @@ export const getAssociatedCourses = async (courses: string[]) => {
                 associatedCourse.catalogNumber?.formatted
           ) === index
       )
-      .map(formatCourse)
+      .map((course) => formatCourse(course as CourseType))
   );
 };
 

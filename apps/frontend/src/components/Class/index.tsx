@@ -1,4 +1,11 @@
-import { ReactNode, Suspense, lazy, useCallback, useMemo } from "react";
+import {
+  ReactNode,
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 
 import { DialogClose } from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -37,6 +44,7 @@ import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
 import { IClass, Semester } from "@/lib/api";
+import { addRecentClass } from "@/lib/recent-classes";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -195,14 +203,15 @@ export default function Class({
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
           (bookmarkedClass) =>
-            bookmarkedClass.subject === _class?.subject &&
-            bookmarkedClass.courseNumber === _class?.courseNumber &&
-            bookmarkedClass.number === _class?.number &&
-            bookmarkedClass.year === _class?.year &&
-            bookmarkedClass.semester === _class?.semester
+            !(
+              bookmarkedClass.subject === _class?.subject &&
+              bookmarkedClass.courseNumber === _class?.courseNumber &&
+              bookmarkedClass.number === _class?.number &&
+              bookmarkedClass.year === _class?.year &&
+              bookmarkedClass.semester === _class?.semester
+            )
         )
       : user.bookmarkedClasses.concat(_class);
-
     await updateUser(
       {
         bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
@@ -223,6 +232,18 @@ export default function Class({
       }
     );
   }, [_class, bookmarked, updateUser, user]);
+
+  useEffect(() => {
+    if (!_class) return;
+
+    addRecentClass({
+      subject: _class.subject,
+      year: _class.year,
+      semester: _class.semester,
+      courseNumber: _class.courseNumber,
+      number: _class.number,
+    });
+  }, [_class]);
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -338,7 +359,7 @@ export default function Class({
                     as={Link}
                     to={{
                       ...location,
-                      pathname: `/catalog/${year}/${semester}`,
+                      pathname: `/catalog/${_class.year}/${_class.semester}`,
                     }}
                     onClick={() => onClose()}
                   >
@@ -406,7 +427,7 @@ export default function Class({
           )}
         </Container>
       </div>
-      <ClassContext.Provider
+      <ClassContext
         value={{
           class: _class,
           course,
@@ -426,7 +447,7 @@ export default function Class({
             <Grades />
           </Tabs.Content>
         </Body>
-      </ClassContext.Provider>
+      </ClassContext>
     </Root>
   );
 }

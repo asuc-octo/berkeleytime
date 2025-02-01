@@ -8,14 +8,20 @@ mongodb:
   image:
     tag: 7.0.5
 
+  architecture: replicaset
+  arbiter:
+    enabled: false
+  replicaCount: 1
+
   auth:
     enabled: false
 
   persistence:
-    existingClaim: bt-prod-mongo-pvc
+    storageClass: manual
 
     # path in pod. should be same for all mongo pods.
     size: 10Gi
 
+  # required for persistence. without, data is not saved across pod restarts.
   volumePermissions:
     enabled: true

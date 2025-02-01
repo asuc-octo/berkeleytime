@@ -4,7 +4,7 @@ ttl: 24 # in hours
 host: berkeleytime.com
 port: 80
 
-mongoUri: mongodb://bt-prod-mongo-mongodb.bt.svc.cluster.local:27017/bt
+mongoUri: mongodb://bt-prod-mongo-mongodb.bt.svc.cluster.local:27017/bt # TODO(core): change to replicaset
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
 nodeEnv: production
 
@@ -32,7 +32,44 @@ backend:
     repository: octoberkeleytime/bt-backend
     tag: prod
 
-updater:
-  schedule: "0 0 * * *"
-  suspend: false
-  command: ["npm", "run", "update:catalog", "--workspace=backend"]
+datapuller:
+  courses:
+    schedule: "0 4 * * *"
+    suspend: false
+    puller: "courses"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  sections:
+    schedule: "10 4 * * *"
+    suspend: false
+    puller: "sections"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  classes:
+    schedule: "20 4 * * *"
+    suspend: false
+    puller: "classes"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  grades:
+    schedule: "25 4 * * *"
+    suspend: false
+    puller: "grades"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  enrollments:
+    schedule: "0/15 * * * *"
+    suspend: false
+    puller: "enrollments"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod

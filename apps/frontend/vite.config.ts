@@ -12,7 +12,13 @@ export default defineConfig({
       "@": resolve(__dirname, "src"),
     },
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [["babel-plugin-react-compiler"]],
+      },
+    }),
+  ],
   css: {
     modules: {
       localsConvention: "camelCaseOnly",
