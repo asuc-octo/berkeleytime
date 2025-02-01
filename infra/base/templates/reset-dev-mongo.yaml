@@ -6,6 +6,8 @@ metadata:
 spec:
   schedule: "0 5 * * *" # Daily at 5 AM, after datapuller
   timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
+  suspend: false
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 180
