@@ -143,21 +143,22 @@ export const getTerms = async (
 };
 
 /**
- * Fetch the current term denoted by the "Current" temporal position.
+ * Fetch all previous terms denoted by the "Previous" temporal position.
  */
-export const getCurrentTerm = async (
+export const getPreviousTerms = async (
   logger: Logger<unknown>,
   id: string,
   key: string
 ) => {
   const termsAPI = new TermsAPI();
 
-  logger.info(`Fetching current term...`);
+  logger.info(`Fetching previous terms...`);
 
   try {
     const response = await termsAPI.v2.getByTermsUsingGet(
       {
-        "temporal-position": "Current",
+        "temporal-position": "Previous",
+        "as-of-date": new Date().toISOString().split("T")[0], // format as yyyy-mm-dd
       },
       {
         headers: {
@@ -167,12 +168,12 @@ export const getCurrentTerm = async (
       }
     );
 
-    const currentTerm = response.data.response.terms;
-    if (!currentTerm) throw new Error("No current term found");
+    const previousTerms = response.data.response.terms;
+    if (!previousTerms) throw new Error("No previous terms found");
 
     logger.info(`Fetched current term...`);
 
-    return currentTerm[0];
+    return previousTerms;
   } catch (error: unknown) {
     const parsedError = error as Error;
 
