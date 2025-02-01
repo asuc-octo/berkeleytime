@@ -60,7 +60,15 @@ datapuller:
   grades:
     schedule: "25 4 * * *"
     suspend: false
-    puller: "grade-distributions"
+    puller: "grades"
+    image:
+      registry: docker.io
+      repository: octoberkeleytime/bt-datapuller
+      tag: prod
+  enrollments:
+    schedule: "0/15 * * * *"
+    suspend: false
+    puller: "enrollments"
     image:
       registry: docker.io
       repository: octoberkeleytime/bt-datapuller
