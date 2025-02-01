@@ -4,16 +4,16 @@ metadata:
   name: reset-dev-mongo
   namespace: bt
 spec:
-  schedule: "0 0 * * *" # Daily at 12 AM
+  schedule: "0 5 * * *" # Daily at 5 AM, after datapuller
   timeZone: America/Los_Angeles
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: 60
+      ttlSecondsAfterFinished: 180
       template:
         spec:
-          serviceAccountName: bt-app-cleanup
+          serviceAccountName: bt-k8s-role
           containers:
-            - name: reset-mongo
+            - name: reset-dev-mongo
               image: alpine/k8s:1.29.11
               command:
                 - sh
