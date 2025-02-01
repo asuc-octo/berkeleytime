@@ -1,6 +1,8 @@
 name: Deploy to Staging
 
-concurrency: staging
+concurrency:
+  group: staging
+  cancel-in-progress: true
 
 on:
   push:
