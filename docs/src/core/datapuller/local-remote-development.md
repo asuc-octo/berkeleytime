@@ -4,11 +4,8 @@
 
 The nature of the `datapuller` separates it from the backend and frontend services. Thus, when testing locally, it is quicker and easier to build and run the `datapuller` separately from the backend/frontend stack.
 
-To run a specific puller, the datapuller must first be built, then the specific puller must be passed as a command[^1]. In addition, a Mongo instance should be running in the same network and the correct `MONGO_URI` in `.env`.
-
+The `datapuller` inserts data into the Mongo database. Thus, to test locally, a Mongo instance must first be running locally and be accessible to the `datapuller` container. Make sure the `MONGO_URI` value in `.env` is correct.
 ```sh
-# ./berkeleytime
-
 # Run a Mongo instance. The name flag changes the MONGO_URI.
 # Here, it would be mongodb://mongodb:27017/bt?replicaSet=rs0.
 docker run --name mongodb --network bt --detach "mongo:7.0.5" \
@@ -17,6 +14,12 @@ docker run --name mongodb --network bt --detach "mongo:7.0.5" \
 # Initiate the replica set.
 docker exec mongodb mongosh --eval \
     "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongodb:27017'}]})"
+```
+
+To run a specific puller, the datapuller must first be built, then the specific puller must be passed as a command[^1]. After modifying any code, the container must be re-built for changes to be reflected.
+
+```sh
+# ./berkeleytime
 
 # Build the datapuller-dev image
 docker build --target datapuller-dev --tag "datapuller-dev" .
