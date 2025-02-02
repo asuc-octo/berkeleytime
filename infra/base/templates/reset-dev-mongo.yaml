@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-reset-dev-mongo
+  namespace: bt
+spec:
+  schedule: "0 5 * * *" # Daily at 5 AM, after datapuller
+  timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
+  suspend: false
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 180
+      template:
+        spec:
+          serviceAccountName: bt-k8s-role
+          containers:
+            - name: reset-dev-mongo
+              image: alpine/k8s:1.29.11
+              command:
+                - sh
+                - -c
+                - |
+                  set -e # Exit immediately if a command fails
+
+                  # Find stage and dev MongoDB pods
+                  stage_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-stage-mongo')
+                  dev_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-dev-mongo')
+
+                  # Dump staging MongoDB state
+                  echo "Dumping staging MongoDB state..."
+                  kubectl exec --namespace=bt \
+                    "$stage_pod" -- mongodump --archive=/tmp/stage_backup.gz --gzip
+                  kubectl cp --namespace=bt \
+                    "$stage_pod:/tmp/stage_backup.gz" /tmp/stage_backup.gz
+                  kubectl exec --namespace=bt \
+                    "$stage_pod" -- rm /tmp/stage_backup.gz
+
+                  # Restore dump into dev MongoDB
+                  echo "Restoring dump into dev MongoDB..."
+                  kubectl cp --namespace=bt \
+                    /tmp/stage_backup.gz "$dev_pod:/tmp/stage_backup.gz"
+                  kubectl exec --namespace=bt \
+                    "$dev_pod" -- mongosh bt --eval "db.dropDatabase()"
+                  kubectl exec --namespace=bt \
+                    "$dev_pod" -- mongorestore --archive=/tmp/stage_backup.gz --gzip --drop
+                  kubectl exec --namespace=bt \
+                    "$dev_pod" -- rm /tmp/stage_backup.gz
+
+                  # Cleanup local files
+                  rm /tmp/stage_backup.gz
+                  echo "MongoDB reset completed successfully!"
+          restartPolicy: Never

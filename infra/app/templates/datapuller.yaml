@@ -19,6 +19,8 @@ spec:
     spec:
       template:
         spec:
+          labels:
+            {{- include "bt-app.datapullerLabels" $root | nindent 12 }}
           containers:
             - name: datapuller-{{ $jobName }}
               image: {{ printf "%s/%s:%s" $jobConfig.image.registry $jobConfig.image.repository ( toString $jobConfig.image.tag ) }}
