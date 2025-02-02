@@ -1,6 +1,8 @@
 name: Deploy Docs (Production)
 
-concurrency: documentation
+concurrency:
+  group: documentation
+  cancel-in-progress: true
 
 on:
   push:
