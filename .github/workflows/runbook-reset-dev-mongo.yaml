@@ -18,7 +18,7 @@ jobs:
             set -e  # Exit immediately if a command fails
 
             # Create Mongo job from mongo-reset
-            kubectl create job --from=cronjob/bt-reset-dev-mongo bt-reset-dev-mongo-ga-manual
+            kubectl create job --from=cronjob/bt-base-reset-dev-mongo bt-base-reset-dev-mongo-ga-manual
             echo "MongoDB reset scheduled."
 
             # Wait for job_pod log output
