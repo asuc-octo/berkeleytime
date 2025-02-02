@@ -4,7 +4,7 @@ ttl: 24 # in hours
 host: berkeleytime.com
 port: 80
 
-mongoUri: mongodb://bt-prod-mongo-mongodb.bt.svc.cluster.local:27017/bt # TODO(core): change to replicaset
+mongoUri: mongodb://bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
 nodeEnv: production
 
