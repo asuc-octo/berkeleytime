@@ -10,8 +10,13 @@ To run a specific puller, the datapuller must first be built, then the specific 
 # ./berkeleytime
 
 # Run a Mongo instance. The name flag changes the MONGO_URI.
-# Here, it would be mongodb://mongodb:27017/bt.
-docker run --name mongodb --network bt --detach "mongo:7.0.5"
+# Here, it would be mongodb://mongodb:27017/bt?replicaSet=rs0.
+docker run --name mongodb --network bt --detach "mongo:7.0.5" \
+    mongod --replSet rs0 --bind_ip_all
+
+# Initiate the replica set.
+docker exec mongodb mongosh --eval \
+    "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongodb:27017'}]})"
 
 # Build the datapuller-dev image
 docker build --target datapuller-dev --tag "datapuller-dev" .
@@ -21,7 +26,7 @@ docker run --volume ./.env:/datapuller/apps/datapuller/.env --network bt \
     "datapuller-dev" "--puller=courses"
 ```
 
-The valid pullers are `courses`, `classes`, `sections`, `grade-distributions`, and `main`.
+The valid pullers are `courses`, `classes`, `sections`, `grades`, `enrollments`, and `main`.
 
 [^1]: Here, I reference the Docker world's terminology. In the Docker world, the `ENTRYPOINT` instruction denotes the the executable that cannot be overriden after the image is built. The `CMD` instruction denotes an argument that can be overriden after the image is built. In the Kubernetes world, the `ENTRYPOINT` analogous is the `command` field, while the `CMD` equivalent is the `args` field.
 
