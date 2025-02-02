@@ -7,6 +7,9 @@ The `datapuller` inserts data into the Mongo database. Thus, to test locally, a 
 ```sh
 # ./berkeleytime
 
+# Start up docker-compose.yml
+docker compose up -d
+
 # Build the datapuller-dev image
 docker build --target datapuller-dev --tag "datapuller-dev" .
 
