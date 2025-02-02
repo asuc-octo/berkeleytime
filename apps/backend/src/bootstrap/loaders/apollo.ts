@@ -6,7 +6,6 @@ import { KeyValueCache } from "@apollo/utils.keyvaluecache";
 import { ApolloArmor } from "@escape.tech/graphql-armor";
 import { RedisClientType } from "redis";
 
-import { config } from "../../config";
 import { buildSchema } from "../graphql/buildSchema";
 
 class RedisCache implements KeyValueCache {
@@ -61,7 +60,8 @@ export default async (redis: RedisClientType) => {
       }),
       responseCachePlugin(),
     ],
-    introspection: config.isDev,
+    // TODO(prod): introspection: config.isDev,
+    introspection: true,
     cache: new RedisCache(redis),
   });
 
