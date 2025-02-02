@@ -62,8 +62,8 @@ export default function Dashboard({
             <DropdownMenu.Content sideOffset={5}>
               {terms
                 .filter(
-                  ({ year, semester }) =>
-                    year !== term.year || semester !== term.semester
+                  ({ year, semester }, index) =>
+                    index === terms.findIndex((term) => term.semester === semester && term.year === year)
                 )
                 .map(({ year, semester }) => {
                   return (

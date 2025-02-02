@@ -1,0 +1,14 @@
+.root {
+  width: 60%;
+  margin: auto;
+  .row {
+    margin-top: 30px;
+    display: flex;
+  }
+  .term {
+    flex: 30%;
+    color: var(--label-color);
+    text-align: center;
+    line-height: 121px;
+  }
+}
