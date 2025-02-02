@@ -67,7 +67,7 @@ export default function PinsProvider({ children }: PinsProviderProps) {
 
   const clearPins = () => {
     updatePins([]);
-  }
+  };
 
   const updatePins = (pins: Pin[]) => {
     setPins(pins);
@@ -85,7 +85,7 @@ export default function PinsProvider({ children }: PinsProviderProps) {
         pinEventListeners,
         addPinEventListener,
         removePinEventListener,
-        clearPins
+        clearPins,
       }}
     >
       {children}

@@ -343,7 +343,7 @@ export default function Class({
                       as={Link}
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
                     >
-                      <Expand/>
+                      <Expand />
                     </IconButton>
                   </DialogClose>
                 </Tooltip>

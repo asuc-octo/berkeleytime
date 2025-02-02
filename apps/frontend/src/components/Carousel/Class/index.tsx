@@ -1,7 +1,7 @@
+import ClassCard from "@/components/ClassCard";
 import { Semester } from "@/lib/api";
 
 import styles from "./Class.module.scss";
-import ClassCard from "@/components/ClassCard";
 
 interface ClassProps {
   year: number;
@@ -18,15 +18,17 @@ export default function Class({
   courseNumber,
   number,
 }: ClassProps) {
-  return <div className={styles.cont}>
-    <ClassCard
-      year={year}
-      semester={semester}
-      subject={subject}
-      courseNumber={courseNumber}
-      number={number}
-    />
-  </div>
+  return (
+    <div className={styles.cont}>
+      <ClassCard
+        year={year}
+        semester={semester}
+        subject={subject}
+        courseNumber={courseNumber}
+        number={number}
+      />
+    </div>
+  );
   // return <div className={styles.root}>
   //   <ClassCard
   //     year={year}
