@@ -1,8 +1,8 @@
 import { Globe, Trophy } from "iconoir-react";
-import { Tooltip } from "recharts";
 
 import { past } from "../../../lib/contributors";
 import styles from "./Contributors.module.scss";
+import { Tooltip } from "@repo/theme";
 
 const Past = () => (
   <div>
