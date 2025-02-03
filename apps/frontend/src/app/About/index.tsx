@@ -25,7 +25,7 @@ export default function About() {
           <div className={styles.valueCol}>
             <div className={styles.value}>
               <div className={styles.valueContent}>
-                <Leaf width={60} height={60}/>
+                <Leaf width={60} height={60} />
                 <h6>Growth</h6>
                 <p>
                   You’ll grow your technical skills as you tackle real
@@ -38,7 +38,7 @@ export default function About() {
           <div className={styles.valueCol}>
             <div className={styles.value}>
               <div className={styles.valueContent}>
-                <LightBulbOn width={60} height={60}/>
+                <LightBulbOn width={60} height={60} />
                 <h6>Curiosity</h6>
                 <p>
                   We value team members that are curious about solving difficult
@@ -51,7 +51,7 @@ export default function About() {
           <div className={styles.valueCol}>
             <div className={styles.value}>
               <div className={styles.valueContent}>
-                <EmojiTalkingHappy width={60} height={60}/>
+                <EmojiTalkingHappy width={60} height={60} />
                 <h6>Passion</h6>
                 <p>
                   Genuine commitment and dedication are critical to moving the

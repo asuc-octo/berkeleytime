@@ -24,29 +24,31 @@ const Current = () => (
           )}
           <div className={styles.contributorCardBody}>
             <div className={styles.bio}>
-              <div className={styles.name}><p>{name}</p></div>
+              <div className={styles.name}>
+                <p>{name}</p>
+              </div>
               <div className={styles.role}>{role}</div>
             </div>
             <div className={styles.links}>
               {site ? (
-                  <a href={site}>
-                    <Globe width={16} height={16} />
-                  </a>
-                ) : null}
-              <br/>
+                <a href={site}>
+                  <Globe width={16} height={16} />
+                </a>
+              ) : null}
+              <br />
               {podCupWins && podCupWins.length > 0 ? (
-                  <Tooltip
-                    content={`Pod Cup Winner: ${podCupWins
-                      .reduce((acc, pcw) => {
-                        return `${acc}, ${pcw.pod} (${pcw.semester})`;
-                      }, "")
-                      .substring(2)}`}
-                  >
-                    <Trophy/>
-                  </Tooltip>
-                ) : (
-                  <></>
-                )}
+                <Tooltip
+                  content={`Pod Cup Winner: ${podCupWins
+                    .reduce((acc, pcw) => {
+                      return `${acc}, ${pcw.pod} (${pcw.semester})`;
+                    }, "")
+                    .substring(2)}`}
+                >
+                  <Trophy />
+                </Tooltip>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>

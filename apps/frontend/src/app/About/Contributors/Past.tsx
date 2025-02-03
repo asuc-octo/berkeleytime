@@ -1,8 +1,8 @@
 import { Globe, Trophy } from "iconoir-react";
+import { Tooltip } from "recharts";
 
 import { past } from "../../../lib/contributors";
 import styles from "./Contributors.module.scss";
-import { Tooltip } from "recharts";
 
 const Past = () => (
   <div>
@@ -17,7 +17,9 @@ const Past = () => (
               <div key={member.name} className={styles.contributorCard}>
                 <div className={styles.contributorCardBody}>
                   <div className={styles.bio}>
-                    <div className={styles.name}><p>{member.name}</p></div>
+                    <div className={styles.name}>
+                      <p>{member.name}</p>
+                    </div>
                     {member.role ? (
                       <div className={styles.role}>{member.role}</div>
                     ) : null}
