@@ -1,5 +1,5 @@
 body {
-    background: white;
+    background: var(--background-color);
 }
 .about {
     align-items: center;
@@ -29,6 +29,11 @@ body {
             text-align: center;
             padding: 40px;
             font-size: 24px;
+            color: var(--heading-color);
+        }
+        
+        svg {
+            color: var(--blue-500);
         }
 
 		.valueRow {
@@ -48,7 +53,7 @@ body {
 				.value-content {
 					height: 100%;
 					border-radius: 4px;
-					border: solid 2px #6d6a7238;
+					border: solid 2px var(--border-color);
 					padding: 20px 10px;
 
 					display: flex;
@@ -59,13 +64,14 @@ body {
 						font-size: 18px;
 						font-weight: bold;
 						margin: 20px 0 10px;
+                        color: var(--heading-color);
 					}
 
 					p {
 						text-align: center;
 						width: 95%;
 						line-height: 1.75;
-						color: #8a8a8a;
+						color: var(--paragraph-color);
 					}
 				}
 			}

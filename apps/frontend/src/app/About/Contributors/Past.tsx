@@ -1,7 +1,8 @@
-import { Globe } from "iconoir-react";
+import { Globe, Trophy } from "iconoir-react";
 
 import { past } from "../../../lib/contributors";
 import styles from "./Contributors.module.scss";
+import { Tooltip } from "recharts";
 
 const Past = () => (
   <div>
@@ -14,17 +15,35 @@ const Past = () => (
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((member) => (
               <div key={member.name} className={styles.contributorCard}>
-                <div className={styles.name}>
-                  <p>{member.name}</p>
-                  {member.site ? (
-                    <a href={member.site}>
-                      <Globe width={16} height={16} color={"#8A8A8A"} />
-                    </a>
-                  ) : null}
+                <div className={styles.contributorCardBody}>
+                  <div className={styles.bio}>
+                    <div className={styles.name}><p>{member.name}</p></div>
+                    {member.role ? (
+                      <div className={styles.role}>{member.role}</div>
+                    ) : null}
+                  </div>
+                  <div className={styles.bio}>
+                    {member.site ? (
+                      <a href={member.site}>
+                        <Globe width={16} height={16} color={"#8A8A8A"} />
+                      </a>
+                    ) : null}
+                    <br />
+                    {member.podCupWins && member.podCupWins.length > 0 ? (
+                      <Tooltip
+                        content={`Pod Cup Winner: ${member.podCupWins
+                          .reduce((acc, pcw) => {
+                            return `${acc}, ${pcw.pod} (${pcw.semester})`;
+                          }, "")
+                          .substring(2)}`}
+                      >
+                        <Trophy />
+                      </Tooltip>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </div>
-                {member.role ? (
-                  <div className={styles.role}>{member.role}</div>
-                ) : null}
               </div>
             ))}
         </div>
