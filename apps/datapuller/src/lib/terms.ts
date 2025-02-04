@@ -91,10 +91,9 @@ export const getTerms = async (
 
     logger.error(`Unexpected error fetching term: "${parsedError}"`);
     logger.error(`Error details: ${JSON.stringify(parsedError, null, 2)}`);
-
-    if (!parsedError.cause) return;
-
     logger.error(`Error cause: ${parsedError.cause}`);
+
+    return terms;
   }
 
   logger.info(`Fetched ${terms.length} initial terms...`);
@@ -122,18 +121,19 @@ export const getTerms = async (
       );
 
       const currentTerms = currentResponse.data.response.terms;
-      if (!currentTerms) continue;
+      if (!currentTerms) throw new Error("No terms found");
 
       terms.push(...currentTerms);
+
+      currentTerm = currentTerms[0];
     } catch (error: unknown) {
       const parsedError = error as Error;
 
       logger.error(`Unexpected error fetching term: "${parsedError}"`);
       logger.error(`Error details: ${JSON.stringify(parsedError, null, 2)}`);
-
-      if (!parsedError.cause) continue;
-
       logger.error(`Error cause: ${parsedError.cause}`);
+
+      break;
     }
   }
 
@@ -171,17 +171,12 @@ export const getPreviousTerms = async (
     const previousTerms = response.data.response.terms;
     if (!previousTerms) throw new Error("No previous terms found");
 
-    logger.info(`Fetched current term...`);
-
     return previousTerms;
   } catch (error: unknown) {
     const parsedError = error as Error;
 
     logger.error(`Unexpected error fetching term: "${parsedError}"`);
     logger.error(`Error details: ${JSON.stringify(parsedError, null, 2)}`);
-
-    if (!parsedError.cause) return;
-
     logger.error(`Error cause: ${parsedError.cause}`);
   }
 };
