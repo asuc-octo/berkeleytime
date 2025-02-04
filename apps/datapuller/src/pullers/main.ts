@@ -4,6 +4,8 @@ import setup from "../shared";
 import { Config } from "../shared/config";
 import updateClasses from "./classes";
 import updateCourses from "./courses";
+import updateEnrollmentHistories from "./enrollment";
+import updateGradeDistributions from "./grade-distributions";
 import updateSections from "./sections";
 
 const testDatabaseWrite = async (config: Config) => {
@@ -50,6 +52,12 @@ const main = async () => {
 
     config.log.info("\n=== UPDATE CLASSES ===");
     await updateClasses(config);
+
+    config.log.info("\n=== UPDATE ENROLLMENTS ===");
+    await updateEnrollmentHistories(config);
+
+    config.log.info("\n=== UPDATE GRADES ===");
+    await updateGradeDistributions(config);
 
     config.log.info("\n=== DATA PULLING COMPLETED ===");
   } catch (error) {
