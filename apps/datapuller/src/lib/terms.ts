@@ -11,7 +11,6 @@ const formatTerm = (term: Term) => {
   const academicYear = term.academicYear;
   const beginDate = term.beginDate;
   const endDate = term.endDate;
-  const sessions = term.sessions;
 
   const essentialFields = {
     academicCareerCode,
@@ -21,15 +20,16 @@ const formatTerm = (term: Term) => {
     academicYear,
     beginDate,
     endDate,
-    sessions,
   };
 
   const missingField = Object.keys(essentialFields).find(
     (key) => !essentialFields[key as keyof typeof essentialFields]
   );
 
-  if (missingField)
+  if (missingField) {
+    console.log(term);
     throw new Error(`Missing essential section field: ${missingField[0]}`);
+  }
 
 
   const output: ITermItem = {
@@ -52,7 +52,7 @@ const formatTerm = (term: Term) => {
     selfServicePlanEndDate: term.selfServicePlanEndDate,
     selfServiceEnrollBeginDate: term.selfServiceEnrollBeginDate,
     selfServiceEnrollEndDate: term.selfServiceEnrollEndDate,
-    sessions: term.sessions!.map((session) => ({
+    sessions: term.sessions?.map((session) => ({
       temporalPosition: session.temporalPosition! as "Current" | "Past" | "Future",
       id: session.id!,
       name: session.name!,
@@ -84,7 +84,7 @@ const formatTerm = (term: Term) => {
 }
 
 /**
- * Fetch all active terms denoted by the "Previous", "Current", and "Next" temporal positions.
+ * Fetch all nearby terms denoted by the "Previous", "Current", and "Next" temporal positions.
  */
 export const getNearbyTerms = async (
   logger: Logger<unknown>,
@@ -99,7 +99,7 @@ export const getNearbyTerms = async (
 
   for (const temporalPosition of temporalPositions) {
     try {
-      logger.info(`Fetching "${temporalPosition}" terms...`);
+      logger.trace(`Fetching "${temporalPosition}" terms...`);
 
       const response = await termsAPI.v2.getByTermsUsingGet(
         {
@@ -130,7 +130,7 @@ export const getNearbyTerms = async (
     }
   }
 
-  logger.info(`Fetched ${terms.length} active terms...`);
+  logger.info(`Fetched ${terms.length} nearby terms...`);
 
   return terms;
 };
@@ -147,7 +147,7 @@ export const getAllTerms = async (
 
   const terms: ITermItem[] = [];
 
-  logger.info(`Fetching initial terms...`);
+  logger.trace(`Fetching initial terms...`);
 
   try {
     const initialResponse = await termsAPI.v2.getByTermsUsingGet(
@@ -180,7 +180,7 @@ export const getAllTerms = async (
 
   let currentTerm = terms[0];
 
-  logger.info(`Fetching remaining terms...`);
+  logger.trace(`Fetching remaining terms...`);
 
   while (currentTerm) {
     try {

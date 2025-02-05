@@ -35,7 +35,7 @@ const pullerMap: { [key: string]: (config: Config, ...arg: any) => Promise<unkno
 const termsSelectorsMap: { [key: string]: TermSelector } = {
   previous: getRecentPastTerms,
   active: getActiveTerms,
-  lastFiveYears: getLastFiveYearsTerms,
+  "last-five-years": getLastFiveYearsTerms,
 } as const;
 
 const runPuller = async () => {
@@ -58,7 +58,7 @@ const runPuller = async () => {
   const { config } = await setup();
   const logger = config.log.getSubLogger({ name: "PullerRunner" });
   try {
-    logger.trace(`Starting ${args.puller} puller with args: ${JSON.stringify(args)}`);
+    logger.info(`Starting ${args.puller} puller with args: ${JSON.stringify(args)}`);
 
     if (args.puller === "terms") {
       await pullerMap[args.puller](config, args["all-terms"]!);

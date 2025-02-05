@@ -27,7 +27,7 @@ export interface ITermItem {
   selfServicePlanEndDate?: string;
   selfServiceEnrollBeginDate?: string;
   selfServiceEnrollEndDate?: string;
-  sessions: {
+  sessions?: {
     temporalPosition: "Current" | "Past" | "Future";
     id: string;
     name: string;
@@ -116,7 +116,6 @@ const termSchema = new Schema<ITermItem>({
         },
       },
     ],
-    required: true,
   },
 });
 termSchema.index({ id: 1, academicCareerCode: 1 }, { unique: true });
