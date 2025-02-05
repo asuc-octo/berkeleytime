@@ -4,8 +4,8 @@ import {
 } from "@repo/common";
 
 import { getEnrollmentSingulars } from "../lib/enrollment";
-import { getActiveTerms } from "../lib/terms";
 import { Config } from "../shared/config";
+import { getActiveTerms } from "../shared/term-selectors";
 
 // enrollmentSingulars are equivalent if their data points are all equal
 const enrollmentSingularsEqual = (
@@ -57,31 +57,40 @@ const enrollmentSingularsEqual = (
 
 const updateEnrollmentHistories = async ({
   log,
-  sis: { TERM_APP_ID, TERM_APP_KEY, CLASS_APP_ID, CLASS_APP_KEY },
+  sis: { CLASS_APP_ID, CLASS_APP_KEY },
 }: Config) => {
-  log.info(`Fetching active terms.`);
+  log.trace(`Fetching terms...`);
 
-  const allActiveTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const activeTerms = allActiveTerms.filter(
-    (term) => term.academicCareer?.description === "Undergraduate"
+  const allTerms = await getActiveTerms(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
+  const terms = allTerms.filter(
+    (term) => term.academicCareerCode === "UGRD"
   );
 
   log.info(
-    `Fetched ${activeTerms.length.toLocaleString()} undergraduate active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
+    `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
   );
+  if (terms.length == 0) {
+    log.warn(`No terms found, skipping update.`);
+    return;
+  }
+  const termIds = terms.map((term) => term.id);
 
-  log.info(`Fetching enrollment for active terms.`);
+  log.trace(`Fetching enrollments`);
 
   const enrollmentSingulars = await getEnrollmentSingulars(
     log,
     CLASS_APP_ID,
     CLASS_APP_KEY,
-    activeTerms.map((term) => term.id as string)
+    termIds
   );
 
   log.info(
-    `Fetched ${enrollmentSingulars.length.toLocaleString()} enrollments for active terms.`
+    `Fetched ${enrollmentSingulars.length.toLocaleString()} enrollments.`
   );
+  if (!enrollmentSingulars) {
+    log.warn(`No enrollments found, skipping update.`);
+    return;
+  }
 
   let updateCount = 0;
   for (const enrollmentSingular of enrollmentSingulars) {
@@ -126,9 +135,8 @@ const updateEnrollmentHistories = async ({
 
     session.endSession();
   }
-
   log.info(
-    `Completed updating database with ${enrollmentSingulars.length.toLocaleString()} enrollments, modified ${updateCount.toLocaleString()} documents for ${activeTerms.length.toLocaleString()} active terms.`
+    `Completed updating database with ${enrollmentSingulars.length.toLocaleString()} enrollments, updated ${updateCount.toLocaleString()} documents.`
   );
 };
 

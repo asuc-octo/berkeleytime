@@ -1,56 +1,74 @@
-import updateClasses from "./pullers/classes";
-import updateCourses from "./pullers/courses";
-import updateEnrollmentHistories from "./pullers/enrollment";
-import updateGradeDistributions from "./pullers/grade-distributions";
-import main from "./pullers/main";
-import updateSections from "./pullers/sections";
-import updateTerms from "./pullers/terms";
+import { parseArgs } from "node:util";
 import setup from "./shared";
 import { Config } from "./shared/config";
+import { type TermSelector, getRecentPastTerms, getActiveTerms, getLastFiveYearsTerms } from "./shared/term-selectors";
+import updateCourses from "./pullers/courses";
+import updateSections from "./pullers/sections";
+import updateClasses from "./pullers/classes";
+import updateEnrollmentHistories from "./pullers/enrollment";
+import updateGradeDistributions from "./pullers/grade-distributions";
+import updateTerms from "./pullers/terms";
 
-type cliArgs = {
-  puller: string;
-  [key: string]: string | boolean;
-};
+const cliArgs = {
+  puller: {
+    type: "string" as const
+  },
+  terms: {
+    type: "string" as const
+  },
+  "all-terms": {
+    type: "boolean" as const
+  },
+} as const;
 
-const pullerMap: { [key: string]: (config: Config) => Promise<void> } = {
+const pullersThatRequireTerms = ["classes", "sections", "grades"];
+
+const pullerMap: { [key: string]: (config: Config, ...arg: any) => Promise<unknown> } = {
   courses: updateCourses,
   sections: updateSections,
   classes: updateClasses,
   grades: updateGradeDistributions,
   enrollments: updateEnrollmentHistories,
   terms: updateTerms,
-  main: main,
-};
+} as const;
 
-const parseArgs = (args: string[]): cliArgs => {
-  const result: cliArgs = { puller: "" };
-  args.forEach((arg) => {
-    const [key, value] = arg.split("=");
-    if (key.startsWith("--")) {
-      result[key.slice(2)] = value || "true";
-    }
-  });
-  return result;
-};
+const termsSelectorsMap: { [key: string]: TermSelector } = {
+  previous: getRecentPastTerms,
+  active: getActiveTerms,
+  lastFiveYears: getLastFiveYearsTerms,
+} as const;
 
 const runPuller = async () => {
-  const args = parseArgs(process.argv.slice(2));
+  const { values: args } = parseArgs({ options: cliArgs });
 
   if (!args.puller || !pullerMap[args.puller]) {
     throw new Error(
-      "Please specify a valid puller: " + Object.keys(pullerMap).join(", ")
+      "Please specify a valid puller argument: " + Object.keys(pullerMap).join(", ")
     );
+  }
+
+  const requiresTermsArg = pullersThatRequireTerms.find((puller) => puller === args.puller) !== undefined;
+  if (requiresTermsArg && (!args.terms || !termsSelectorsMap[args.terms])) {
+    // terms is a required argument for all pullers except terms
+    throw new Error(
+      "Please specify a valid terms argument: " + Object.keys(termsSelectorsMap).join(", ")
+    )
   }
 
   const { config } = await setup();
   const logger = config.log.getSubLogger({ name: "PullerRunner" });
   try {
-    logger.info(`Starting ${args.puller} puller`);
+    logger.trace(`Starting ${args.puller} puller with args: ${JSON.stringify(args)}`);
 
-    await pullerMap[args.puller](config);
+    if (args.puller === "terms") {
+      await pullerMap[args.puller](config, args["all-terms"]!);
+    } else if (requiresTermsArg) {
+      await pullerMap[args.puller](config, termsSelectorsMap[args.terms!]);
+    } else {
+      await pullerMap[args.puller](config);
+    }
 
-    logger.info(`${args.puller} puller completed successfully`);
+    logger.trace(`${args.puller} puller completed successfully`);
     process.exit(0);
   } catch (error: any) {
     logger.error(`${args.puller} puller failed: ${error.message}`);

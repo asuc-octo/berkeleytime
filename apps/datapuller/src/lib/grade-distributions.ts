@@ -2,7 +2,7 @@ import { IGradeDistributionItem } from "@repo/common";
 
 import { QueryExecutor } from "./api/aws-athena";
 
-export interface GradeDistributionRow {
+interface GradeDistributionRow {
   course_id: string;
   course_offer_nbr: string;
   semester_year_term_cd: string;
@@ -37,7 +37,7 @@ export interface GradeDistributionRow {
   grade_count_pc: string;
 }
 
-export const formatDistribution = (distribution: GradeDistributionRow) => {
+const formatDistribution = (distribution: GradeDistributionRow) => {
   // TODO: Pivot the data
   const output: IGradeDistributionItem = {
     courseId: distribution.course_id,

@@ -11,7 +11,7 @@ process.on("SIGINT", async () => {
 // Your Mongoose setup goes here
 export default async (config: Config): Promise<mongoose.Mongoose> => {
   // Connect to MongoDB
-  config.log.info("Connecting to MongoDB...");
+  config.log.trace("Connecting to MongoDB...");
   config.log.info("MongoDB URI:", config.mongoDB.uri);
   const connection = mongoose.connect(config.mongoDB.uri);
 

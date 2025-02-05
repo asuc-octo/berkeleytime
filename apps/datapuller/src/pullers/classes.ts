@@ -1,55 +1,68 @@
 import { NewClassModel } from "@repo/common";
 
 import { getClasses } from "../lib/classes";
-import { getActiveTerms } from "../lib/terms";
 import { Config } from "../shared/config";
+import { type TermSelector } from "../shared/term-selectors";
 
 const updateClasses = async ({
   log,
-  sis: { TERM_APP_ID, TERM_APP_KEY, CLASS_APP_ID, CLASS_APP_KEY },
-}: Config) => {
-  log.info(`Fetching active terms.`);
+  sis: { CLASS_APP_ID, CLASS_APP_KEY },
+}: Config, termSelector: TermSelector) => {
+  log.trace(`Fetching terms....`);
 
-  const allActiveTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const activeTerms = allActiveTerms.filter(
-    (term) => term.academicCareer?.description === "Undergraduate"
+  const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
+  const terms = allTerms.filter(
+    (term) => term.academicCareerCode === "UGRD"
   );
 
   log.info(
-    `Fetched ${activeTerms.length.toLocaleString()} undergraduate active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
+    `Fetched ${terms.length.toLocaleString()} undergraduate terms: ${terms.map((term) => term.name).toLocaleString()}.`
   );
+  if (terms.length == 0) {
+    log.warn(`No terms found, skipping update.`);
+    return;
+  }
+  const termIds = terms.map((term) => term.id);
 
-  log.info(`Fetching classes for active terms`);
+  log.trace(`Fetching classes...`);
 
   const classes = await getClasses(
     log,
     CLASS_APP_ID,
     CLASS_APP_KEY,
-    activeTerms.map((term) => term.id as string)
+    termIds
   );
 
   log.info(
-    `Fetched ${classes.length.toLocaleString()} classes for active terms.`
+    `Fetched ${classes.length.toLocaleString()} classes.`
   );
+  if (!classes) {
+    log.warn(`No classes found, skipping update.`);
+    return;
+  }
 
-  // Delete existing classes for active terms
-  await NewClassModel.deleteMany({
-    termId: { $in: activeTerms.map((term) => term.id) },
+  log.trace("Deleting classes to be replaced...");
+
+  const { deletedCount } = await NewClassModel.deleteMany({
+    termId: { $in: terms.map((term) => term.id) },
   });
 
-  // Insert classes in batches of 5000
-  const insertBatchSize = 5000;
+  log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
 
+  // Insert classes in batches of 5000
+  let totalInserted = 0;
+  const insertBatchSize = 5000;
   for (let i = 0; i < classes.length; i += insertBatchSize) {
     const batch = classes.slice(i, i + insertBatchSize);
 
-    log.info(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-    await NewClassModel.insertMany(batch, { ordered: false });
+    const { insertedCount } = await NewClassModel.insertMany(batch, { ordered: false, rawResult: true });
+    totalInserted += insertedCount;
   }
 
   log.info(
-    `Completed updating database with ${classes.length.toLocaleString()} classes ${activeTerms.length.toLocaleString()} for active terms`
+    `Completed updating database with ${classes.length.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
   );
 };
 

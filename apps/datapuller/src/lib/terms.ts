@@ -1,20 +1,101 @@
 import { Logger } from "tslog";
 
 import { Term, TermsAPI } from "@repo/sis-api/terms";
+import { ITermItem } from "@repo/common";
+
+const formatTerm = (term: Term) => {
+  const academicCareerCode = term.academicCareer?.code;
+  const temporalPosition = term.temporalPosition as "Current" | "Past" | "Future" | undefined;
+  const id = term.id;
+  const name = term.name;
+  const academicYear = term.academicYear;
+  const beginDate = term.beginDate;
+  const endDate = term.endDate;
+  const sessions = term.sessions;
+
+  const essentialFields = {
+    academicCareerCode,
+    temporalPosition,
+    id,
+    name,
+    academicYear,
+    beginDate,
+    endDate,
+    sessions,
+  };
+
+  const missingField = Object.keys(essentialFields).find(
+    (key) => !essentialFields[key as keyof typeof essentialFields]
+  );
+
+  if (missingField)
+    throw new Error(`Missing essential section field: ${missingField[0]}`);
+
+
+  const output: ITermItem = {
+    academicCareerCode: academicCareerCode!,
+    temporalPosition: temporalPosition!,
+    id: id!,
+    name: name!,
+    academicYear: academicYear!,
+    beginDate: beginDate!,
+    endDate: endDate!,
+    weeksOfInstruction: term.weeksOfInstruction,
+    holidayScheduleCode: term.holidaySchedule?.code,
+    censusDate: term.censusDate,
+    fullyEnrolledDeadline: term.fullyEnrolledDeadline,
+    fullyGradedDeadline: term.fullyGradedDeadline,
+    cancelDeadline: term.cancelDeadline,
+    withdrawNoPenaltyDeadline: term.withdrawNoPenaltyDeadline,
+    degreeConferDate: term.degreeConferDate,
+    selfServicePlanBeginDate: term.selfServicePlanBeginDate,
+    selfServicePlanEndDate: term.selfServicePlanEndDate,
+    selfServiceEnrollBeginDate: term.selfServiceEnrollBeginDate,
+    selfServiceEnrollEndDate: term.selfServiceEnrollEndDate,
+    sessions: term.sessions!.map((session) => ({
+      temporalPosition: session.temporalPosition! as "Current" | "Past" | "Future",
+      id: session.id!,
+      name: session.name!,
+      beginDate: session.beginDate!,
+      endDate: session.endDate!,
+      weeksOfInstruction: session.weeksOfInstruction,
+      holidaySchedule: session.holidaySchedule?.code,
+      censusDate: session.censusDate,
+      sixtyPercentPoint: session.sixtyPercentPoint,
+      openEnrollmentDate: session.openEnrollmentDate,
+      enrollBeginDate: session.enrollBeginDate,
+      enrollEndDate: session.enrollEndDate,
+      waitListEndDate: session.waitListEndDate,
+      fullyEnrolledDeadline: session.fullyEnrolledDeadline,
+      dropDeletedFromRecordDeadline: session.dropDeletedFromRecordDeadline,
+      dropRetainedOnRecordDeadline: session.dropRetainedOnRecordDeadline,
+      dropWithPenaltyDeadline: session.dropWithPenaltyDeadline,
+      cancelDeadline: session.cancelDeadline,
+      withdrawNoPenaltyDeadline: session.withdrawNoPenaltyDeadline,
+      withdrawWithPenaltyDeadline: session.withdrawWithPenaltyDeadline,
+      timePeriods: session.timePeriods?.map((timePeriod) => ({
+        periodDescription: timePeriod.period.description!,
+        endDate: timePeriod.endDate,
+      })),
+    })),
+  };
+
+  return output;
+}
 
 /**
- * Fetch all active terms denoted by the "Current" and "Next" temporal positions.
+ * Fetch all active terms denoted by the "Previous", "Current", and "Next" temporal positions.
  */
-export const getActiveTerms = async (
+export const getNearbyTerms = async (
   logger: Logger<unknown>,
   id: string,
   key: string
 ) => {
   const termsAPI = new TermsAPI();
 
-  const temporalPositions = ["Current", "Next"] as const;
+  const temporalPositions = ["Previous", "Current", "Next"] as const;
 
-  const terms: Term[] = [];
+  const terms: ITermItem[] = [];
 
   for (const temporalPosition of temporalPositions) {
     try {
@@ -33,10 +114,10 @@ export const getActiveTerms = async (
       );
 
       // TODO: Filter out redundant terms
-      const currentTerms = response.data.response.terms;
-      if (!currentTerms) continue;
+      const responseTerms = response.data.response.terms;
+      if (!responseTerms) continue;
 
-      terms.push(...currentTerms);
+      terms.push(...responseTerms.map(formatTerm));
     } catch (error: unknown) {
       const parsedError = error as Error;
 
@@ -55,16 +136,16 @@ export const getActiveTerms = async (
 };
 
 /**
- * Recursively fetch all terms denoted by the "Previous" temporal position.
+ * Recursively fetch all terms.
  */
-export const getTerms = async (
+export const getAllTerms = async (
   logger: Logger<unknown>,
   id: string,
   key: string
 ) => {
   const termsAPI = new TermsAPI();
 
-  const terms: Term[] = [];
+  const terms: ITermItem[] = [];
 
   logger.info(`Fetching initial terms...`);
 
@@ -81,11 +162,10 @@ export const getTerms = async (
       }
     );
 
-    // TODO: Filter out redundant terms
     const initialTerms = initialResponse.data.response.terms;
     if (!initialTerms) throw new Error("No initial terms found");
 
-    terms.push(...initialTerms);
+    terms.push(...initialTerms.map(formatTerm));
   } catch (error: unknown) {
     const parsedError = error as Error;
 
@@ -123,9 +203,9 @@ export const getTerms = async (
       const currentTerms = currentResponse.data.response.terms;
       if (!currentTerms) throw new Error("No terms found");
 
-      terms.push(...currentTerms);
-
-      currentTerm = currentTerms[0];
+      const additionalTerms = currentTerms.map(formatTerm);
+      terms.push(...additionalTerms);
+      currentTerm = additionalTerms[0];
     } catch (error: unknown) {
       const parsedError = error as Error;
 
@@ -140,43 +220,4 @@ export const getTerms = async (
   logger.info(`Fetched ${terms.length} total terms...`);
 
   return terms;
-};
-
-/**
- * Fetch all previous terms denoted by the "Previous" temporal position.
- */
-export const getPreviousTerms = async (
-  logger: Logger<unknown>,
-  id: string,
-  key: string
-) => {
-  const termsAPI = new TermsAPI();
-
-  logger.info(`Fetching previous terms...`);
-
-  try {
-    const response = await termsAPI.v2.getByTermsUsingGet(
-      {
-        "temporal-position": "Previous",
-        "as-of-date": new Date().toISOString().split("T")[0], // format as yyyy-mm-dd
-      },
-      {
-        headers: {
-          app_id: id,
-          app_key: key,
-        },
-      }
-    );
-
-    const previousTerms = response.data.response.terms;
-    if (!previousTerms) throw new Error("No previous terms found");
-
-    return previousTerms;
-  } catch (error: unknown) {
-    const parsedError = error as Error;
-
-    logger.error(`Unexpected error fetching term: "${parsedError}"`);
-    logger.error(`Error details: ${JSON.stringify(parsedError, null, 2)}`);
-    logger.error(`Error cause: ${parsedError.cause}`);
-  }
 };

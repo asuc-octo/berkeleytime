@@ -1,65 +1,66 @@
 import { GradeDistributionModel } from "@repo/common";
 
 import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
-import { getPreviousTerms } from "../lib/terms";
 import { Config } from "../shared/config";
+import { TermSelector } from "../shared/term-selectors";
 
 const updateGradeDistributions = async ({
   aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP },
-  sis: { TERM_APP_ID, TERM_APP_KEY },
   log,
-}: Config) => {
-  log.info("Fetching previous term");
+}: Config, termSelector: TermSelector) => {
+  log.trace("Fetching terms...");
 
-  // Get previous term
-  const previousTerms = await getPreviousTerms(log, TERM_APP_ID, TERM_APP_KEY);
-
-  if (!previousTerms) {
-    log.error("No previous term found, skipping update");
-    return;
-  }
+  const terms = await termSelector();
 
   log.info(
-    `Querying grade distributions for previous terms: ${previousTerms.map((term) => term.name + " " + term.academicCareer?.description).join(", ")}`
+    `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
   );
-  const previousTermIds = previousTerms.map((term) => term.id!);
+  if (terms.length == 0) {
+    log.warn("No terms found, skipping update");
+    return;
+  }
+  const termIds = terms.map((term) => term.id);
+
+  log.trace("Fetching grade distributions...");
 
   const gradeDistributions = await getGradeDistributionDataByTerms(
     DATABASE,
     S3_OUTPUT,
     REGION_NAME,
     WORKGROUP,
-    previousTermIds
+    termIds
   );
-
-  // TODO: Error for no grade distributions
-  if (!gradeDistributions) {
-    log.error("No grade distributions found, skipping update");
-    return;
-  }
 
   log.info(
     `Fetched ${gradeDistributions.length.toLocaleString()} grade distributions.`
   );
+  if (!gradeDistributions) {
+    log.warn("No grade distributions found, skipping update");
+    return;
+  }
 
-  // Delete existing grade distributions for previous terms
-  await GradeDistributionModel.deleteMany({
-    termId: { $in: previousTermIds },
+  log.trace("Deleting grade distributions to be replaced...");
+
+  const { deletedCount } = await GradeDistributionModel.deleteMany({
+    termId: { $in: termIds },
   });
 
-  // Insert grade distributions in batches of 5000
-  const insertBatchSize = 5000;
+  log.info(`Deleted ${deletedCount.toLocaleString()} grade distributions.`);
 
+  // Insert grade distributions in batches of 5000
+  let totalInserted = 0;
+  const insertBatchSize = 5000;
   for (let i = 0; i < gradeDistributions.length; i += insertBatchSize) {
     const batch = gradeDistributions.slice(i, i + insertBatchSize);
 
-    log.info(`Inserting batch ${i / insertBatchSize + 1}`);
+    log.trace(`Inserting batch ${i / insertBatchSize + 1}`);
 
-    await GradeDistributionModel.insertMany(batch, { ordered: false });
+    const { insertedCount } = await GradeDistributionModel.insertMany(batch, { ordered: false, rawResult: true });
+    totalInserted += insertedCount;
   }
 
   log.info(
-    `Completed updating database with ${gradeDistributions.length.toLocaleString()} courses.`
+    `Completed updating database with ${gradeDistributions.length.toLocaleString()} grade distributions, inserted ${totalInserted.toLocaleString()} documents.`
   );
 };
 
