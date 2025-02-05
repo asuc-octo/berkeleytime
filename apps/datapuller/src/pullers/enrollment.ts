@@ -62,9 +62,7 @@ const updateEnrollmentHistories = async ({
   log.trace(`Fetching terms...`);
 
   const allTerms = await getActiveTerms(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const terms = allTerms.filter(
-    (term) => term.academicCareerCode === "UGRD"
-  );
+  const terms = allTerms.filter((term) => term.academicCareerCode === "UGRD");
 
   log.info(
     `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`

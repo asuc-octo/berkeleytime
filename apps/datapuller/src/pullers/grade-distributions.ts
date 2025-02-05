@@ -4,10 +4,10 @@ import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
 import { Config } from "../shared/config";
 import { TermSelector } from "../shared/term-selectors";
 
-const updateGradeDistributions = async ({
-  aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP },
-  log,
-}: Config, termSelector: TermSelector) => {
+const updateGradeDistributions = async (
+  { aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP }, log }: Config,
+  termSelector: TermSelector
+) => {
   log.trace("Fetching terms...");
 
   const terms = await termSelector();
@@ -55,7 +55,10 @@ const updateGradeDistributions = async ({
 
     log.trace(`Inserting batch ${i / insertBatchSize + 1}`);
 
-    const { insertedCount } = await GradeDistributionModel.insertMany(batch, { ordered: false, rawResult: true });
+    const { insertedCount } = await GradeDistributionModel.insertMany(batch, {
+      ordered: false,
+      rawResult: true,
+    });
     totalInserted += insertedCount;
   }
 

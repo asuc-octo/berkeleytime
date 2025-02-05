@@ -4,16 +4,14 @@ import { getSections } from "../lib/sections";
 import { Config } from "../shared/config";
 import { type TermSelector } from "../shared/term-selectors";
 
-const updateSections = async ({
-  log,
-  sis: { CLASS_APP_ID, CLASS_APP_KEY },
-}: Config, termSelector: TermSelector) => {
+const updateSections = async (
+  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
+  termSelector: TermSelector
+) => {
   log.trace(`Fetching terms...`);
 
   const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const terms = allTerms.filter(
-    (term) => term.academicCareerCode === "UGRD"
-  );
+  const terms = allTerms.filter((term) => term.academicCareerCode === "UGRD");
 
   log.info(
     `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
@@ -26,16 +24,9 @@ const updateSections = async ({
 
   log.trace(`Fetching sections...`);
 
-  const sections = await getSections(
-    log,
-    CLASS_APP_ID,
-    CLASS_APP_KEY,
-    termIds,
-  );
+  const sections = await getSections(log, CLASS_APP_ID, CLASS_APP_KEY, termIds);
 
-  log.info(
-    `Fetched ${sections.length.toLocaleString()} sections.`
-  );
+  log.info(`Fetched ${sections.length.toLocaleString()} sections.`);
   if (!sections) {
     log.warn(`No sections found, skipping update.`);
     return;
@@ -57,7 +48,10 @@ const updateSections = async ({
 
     log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-    const { insertedCount } = await NewSectionModel.insertMany(batch, { ordered: false, rawResult: true });
+    const { insertedCount } = await NewSectionModel.insertMany(batch, {
+      ordered: false,
+      rawResult: true,
+    });
     totalInserted += insertedCount;
   }
 

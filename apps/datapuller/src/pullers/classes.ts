@@ -4,16 +4,14 @@ import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
 import { type TermSelector } from "../shared/term-selectors";
 
-const updateClasses = async ({
-  log,
-  sis: { CLASS_APP_ID, CLASS_APP_KEY },
-}: Config, termSelector: TermSelector) => {
+const updateClasses = async (
+  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
+  termSelector: TermSelector
+) => {
   log.trace(`Fetching terms....`);
 
   const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const terms = allTerms.filter(
-    (term) => term.academicCareerCode === "UGRD"
-  );
+  const terms = allTerms.filter((term) => term.academicCareerCode === "UGRD");
 
   log.info(
     `Fetched ${terms.length.toLocaleString()} undergraduate terms: ${terms.map((term) => term.name).toLocaleString()}.`
@@ -26,16 +24,9 @@ const updateClasses = async ({
 
   log.trace(`Fetching classes...`);
 
-  const classes = await getClasses(
-    log,
-    CLASS_APP_ID,
-    CLASS_APP_KEY,
-    termIds
-  );
+  const classes = await getClasses(log, CLASS_APP_ID, CLASS_APP_KEY, termIds);
 
-  log.info(
-    `Fetched ${classes.length.toLocaleString()} classes.`
-  );
+  log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
   if (!classes) {
     log.warn(`No classes found, skipping update.`);
     return;
@@ -57,7 +48,10 @@ const updateClasses = async ({
 
     log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-    const { insertedCount } = await NewClassModel.insertMany(batch, { ordered: false, rawResult: true });
+    const { insertedCount } = await NewClassModel.insertMany(batch, {
+      ordered: false,
+      rawResult: true,
+    });
     totalInserted += insertedCount;
   }
 

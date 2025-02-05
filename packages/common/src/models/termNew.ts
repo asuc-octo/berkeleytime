@@ -85,7 +85,7 @@ const termSchema = new Schema<ITermItem>({
         temporalPosition: {
           type: String,
           enum: ["Previous", "Current", "Next", "Past", "Future"],
-          required: true
+          required: true,
         },
         id: { type: String, required: true },
         name: { type: String, required: true },

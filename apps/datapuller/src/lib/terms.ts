@@ -1,11 +1,15 @@
 import { Logger } from "tslog";
 
-import { Term, TermsAPI } from "@repo/sis-api/terms";
 import { ITermItem } from "@repo/common";
+import { Term, TermsAPI } from "@repo/sis-api/terms";
 
 const formatTerm = (term: Term) => {
   const academicCareerCode = term.academicCareer?.code;
-  const temporalPosition = term.temporalPosition as "Current" | "Past" | "Future" | undefined;
+  const temporalPosition = term.temporalPosition as
+    | "Current"
+    | "Past"
+    | "Future"
+    | undefined;
   const id = term.id;
   const name = term.name;
   const academicYear = term.academicYear;
@@ -31,7 +35,6 @@ const formatTerm = (term: Term) => {
     throw new Error(`Missing essential section field: ${missingField[0]}`);
   }
 
-
   const output: ITermItem = {
     academicCareerCode: academicCareerCode!,
     temporalPosition: temporalPosition!,
@@ -53,7 +56,10 @@ const formatTerm = (term: Term) => {
     selfServiceEnrollBeginDate: term.selfServiceEnrollBeginDate,
     selfServiceEnrollEndDate: term.selfServiceEnrollEndDate,
     sessions: term.sessions?.map((session) => ({
-      temporalPosition: session.temporalPosition! as "Current" | "Past" | "Future",
+      temporalPosition: session.temporalPosition! as
+        | "Current"
+        | "Past"
+        | "Future",
       id: session.id!,
       name: session.name!,
       beginDate: session.beginDate!,
@@ -81,7 +87,7 @@ const formatTerm = (term: Term) => {
   };
 
   return output;
-}
+};
 
 /**
  * Fetch all nearby terms denoted by the "Previous", "Current", and "Next" temporal positions.

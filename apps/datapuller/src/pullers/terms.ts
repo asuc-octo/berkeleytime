@@ -1,17 +1,17 @@
 import { NewTermModel } from "@repo/common";
 
-import { getNearbyTerms, getAllTerms } from "../lib/terms";
+import { getAllTerms, getNearbyTerms } from "../lib/terms";
 import { Config } from "../shared/config";
 
-const updateTerms = async ({
-  sis: { TERM_APP_ID, TERM_APP_KEY },
-  log,
-}: Config, allTerms: boolean) => {
+const updateTerms = async (
+  { sis: { TERM_APP_ID, TERM_APP_KEY }, log }: Config,
+  allTerms: boolean
+) => {
   log.trace(`Fetching terms...`);
 
-  const terms = allTerms ?
-    await getAllTerms(log, TERM_APP_ID, TERM_APP_KEY) :
-    await getNearbyTerms(log, TERM_APP_ID, TERM_APP_KEY);
+  const terms = allTerms
+    ? await getAllTerms(log, TERM_APP_ID, TERM_APP_KEY)
+    : await getNearbyTerms(log, TERM_APP_ID, TERM_APP_KEY);
 
   log.info(`Fetched ${terms.length.toLocaleString()} terms.`);
   if (terms.length === 0) {

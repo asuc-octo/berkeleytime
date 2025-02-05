@@ -1,29 +1,37 @@
 import { parseArgs } from "node:util";
-import setup from "./shared";
-import { Config } from "./shared/config";
-import { type TermSelector, getRecentPastTerms, getActiveTerms, getLastFiveYearsTerms } from "./shared/term-selectors";
-import updateCourses from "./pullers/courses";
-import updateSections from "./pullers/sections";
+
 import updateClasses from "./pullers/classes";
+import updateCourses from "./pullers/courses";
 import updateEnrollmentHistories from "./pullers/enrollment";
 import updateGradeDistributions from "./pullers/grade-distributions";
+import updateSections from "./pullers/sections";
 import updateTerms from "./pullers/terms";
+import setup from "./shared";
+import { Config } from "./shared/config";
+import {
+  type TermSelector,
+  getActiveTerms,
+  getLastFiveYearsTerms,
+  getRecentPastTerms,
+} from "./shared/term-selectors";
 
 const cliArgs = {
   puller: {
-    type: "string" as const
+    type: "string" as const,
   },
   terms: {
-    type: "string" as const
+    type: "string" as const,
   },
   "all-terms": {
-    type: "boolean" as const
+    type: "boolean" as const,
   },
 } as const;
 
 const pullersThatRequireTerms = ["classes", "sections", "grades"];
 
-const pullerMap: { [key: string]: (config: Config, ...arg: any) => Promise<unknown> } = {
+const pullerMap: {
+  [key: string]: (config: Config, ...arg: any) => Promise<unknown>;
+} = {
   courses: updateCourses,
   sections: updateSections,
   classes: updateClasses,
@@ -43,22 +51,28 @@ const runPuller = async () => {
 
   if (!args.puller || !pullerMap[args.puller]) {
     throw new Error(
-      "Please specify a valid puller argument: " + Object.keys(pullerMap).join(", ")
+      "Please specify a valid puller argument: " +
+        Object.keys(pullerMap).join(", ")
     );
   }
 
-  const requiresTermsArg = pullersThatRequireTerms.find((puller) => puller === args.puller) !== undefined;
+  const requiresTermsArg =
+    pullersThatRequireTerms.find((puller) => puller === args.puller) !==
+    undefined;
   if (requiresTermsArg && (!args.terms || !termsSelectorsMap[args.terms])) {
     // terms is a required argument for all pullers except terms
     throw new Error(
-      "Please specify a valid terms argument: " + Object.keys(termsSelectorsMap).join(", ")
-    )
+      "Please specify a valid terms argument: " +
+        Object.keys(termsSelectorsMap).join(", ")
+    );
   }
 
   const { config } = await setup();
   const logger = config.log.getSubLogger({ name: "PullerRunner" });
   try {
-    logger.info(`Starting ${args.puller} puller with args: ${JSON.stringify(args)}`);
+    logger.info(
+      `Starting ${args.puller} puller with args: ${JSON.stringify(args)}`
+    );
 
     if (args.puller === "terms") {
       await pullerMap[args.puller](config, args["all-terms"]!);
