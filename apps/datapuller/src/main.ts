@@ -1,49 +1,33 @@
 import { parseArgs } from "node:util";
 
-import updateClasses from "./pullers/classes";
-import updateCourses from "./pullers/courses";
-import updateEnrollmentHistories from "./pullers/enrollment";
-import updateGradeDistributions from "./pullers/grade-distributions";
-import updateSections from "./pullers/sections";
-import updateTerms from "./pullers/terms";
+import classesPuller from "./pullers/classes";
+import coursesPuller from "./pullers/courses";
+import enrollmentHistoriesPuller from "./pullers/enrollment";
+import gradeDistributionsPuller from "./pullers/grade-distributions";
+import sectionsPuller from "./pullers/sections";
+import termsPuller from "./pullers/terms";
 import setup from "./shared";
 import { Config } from "./shared/config";
-import {
-  type TermSelector,
-  getActiveTerms,
-  getLastFiveYearsTerms,
-  getRecentPastTerms,
-} from "./shared/term-selectors";
 
 const cliArgs = {
   puller: {
     type: "string" as const,
   },
-  terms: {
-    type: "string" as const,
-  },
-  "all-terms": {
-    type: "boolean" as const,
-  },
 } as const;
-
-const pullersThatRequireTerms = ["classes", "sections", "grades"];
 
 const pullerMap: {
   [key: string]: (config: Config, ...arg: any) => Promise<unknown>;
 } = {
-  courses: updateCourses,
-  sections: updateSections,
-  classes: updateClasses,
-  grades: updateGradeDistributions,
-  enrollments: updateEnrollmentHistories,
-  terms: updateTerms,
-} as const;
-
-const termsSelectorsMap: { [key: string]: TermSelector } = {
-  previous: getRecentPastTerms,
-  active: getActiveTerms,
-  "last-five-years": getLastFiveYearsTerms,
+  courses: coursesPuller.updateCourses,
+  "sections-active": sectionsPuller.activeTerms,
+  // "sections-last-five-years": sectionsPuller.lastFiveYearsTerms,
+  "classes-active": classesPuller.activeTerms,
+  // "classes-last-five-years": classesPuller.lastFiveYearsTerms,
+  "grades-recent": gradeDistributionsPuller.recentPastTerms,
+  // "grades-last-five-years": gradeDistributionsPuller.lastFiveYearsTerms,
+  enrollments: enrollmentHistoriesPuller.updateEnrollmentHistories,
+  "terms-all": termsPuller.allTerms,
+  "terms-nearby": termsPuller.nearbyTerms,
 } as const;
 
 const runPuller = async () => {
@@ -56,17 +40,6 @@ const runPuller = async () => {
     );
   }
 
-  const requiresTermsArg =
-    pullersThatRequireTerms.find((puller) => puller === args.puller) !==
-    undefined;
-  if (requiresTermsArg && (!args.terms || !termsSelectorsMap[args.terms])) {
-    // terms is a required argument for all pullers except terms
-    throw new Error(
-      "Please specify a valid terms argument: " +
-        Object.keys(termsSelectorsMap).join(", ")
-    );
-  }
-
   const { config } = await setup();
   const logger = config.log.getSubLogger({ name: "PullerRunner" });
   try {
@@ -74,13 +47,7 @@ const runPuller = async () => {
       `Starting ${args.puller} puller with args: ${JSON.stringify(args)}`
     );
 
-    if (args.puller === "terms") {
-      await pullerMap[args.puller](config, args["all-terms"]!);
-    } else if (requiresTermsArg) {
-      await pullerMap[args.puller](config, termsSelectorsMap[args.terms!]);
-    } else {
-      await pullerMap[args.puller](config);
-    }
+    await pullerMap[args.puller](config);
 
     logger.trace(`${args.puller} puller completed successfully`);
     process.exit(0);

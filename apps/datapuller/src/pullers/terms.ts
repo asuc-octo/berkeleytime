@@ -51,4 +51,15 @@ const updateTerms = async (
   );
 };
 
-export default updateTerms;
+const allTerms = async (config: Config) => {
+  return updateTerms(config, true);
+};
+
+const nearbyTerms = async (config: Config) => {
+  return updateTerms(config, false);
+};
+
+export default {
+  allTerms,
+  nearbyTerms,
+};

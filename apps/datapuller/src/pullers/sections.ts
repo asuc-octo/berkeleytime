@@ -2,7 +2,11 @@ import { NewSectionModel } from "@repo/common";
 
 import { getSections } from "../lib/sections";
 import { Config } from "../shared/config";
-import { type TermSelector } from "../shared/term-selectors";
+import {
+  type TermSelector,
+  getActiveTerms,
+  getLastFiveYearsTerms,
+} from "../shared/term-selectors";
 
 const updateSections = async (
   { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
@@ -60,4 +64,15 @@ const updateSections = async (
   );
 };
 
-export default updateSections;
+const activeTerms = async (config: Config) => {
+  return updateSections(config, getActiveTerms);
+};
+
+const lastFiveYearsTerms = async (config: Config) => {
+  return updateSections(config, getLastFiveYearsTerms);
+};
+
+export default {
+  activeTerms,
+  lastFiveYearsTerms,
+};

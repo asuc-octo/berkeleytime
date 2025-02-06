@@ -41,10 +41,10 @@ datapuller:
   cronjobs:
     terms-all:
       schedule: "0 4 1 * *"
-      args: ["--puller=terms", "--all-terms"]
+      args: ["--puller=terms-all"]
     terms-nearby:
       schedule: "0 4 2-31 * *"
-      args: ["--puller=terms"]
+      args: ["--puller=terms-nearby"]
 
     courses:
       schedule: "5 4 * * *"
@@ -52,24 +52,24 @@ datapuller:
 
     # sections-last-five-years:
     #   schedule: "10 4 1 * *"
-    #   args: ["--puller=sections", "--terms=last-five-years"]
+    #   args: ["--puller=sections-last-five-years"]
     sections-active:
       schedule: "15 4 2-31 * *"
-      args: ["--puller=sections", "--terms=active"]
+      args: ["--puller=sections-active"]
 
     # classes-last-five-years:
     #   schedule: "20 4 1 * *"
-    #   args: ["--puller=classes", "--terms=last-five-years"]
+    #   args: ["--puller=classes-last-five-years"]
     classes-active:
       schedule: "25 4 2-31 * *"
-      args: ["--puller=classes", "--terms=active"]
+      args: ["--puller=classes-active"]
 
     # grades-last-five-years:
     #   schedule: "35 4 1 * *"
-    #   args: ["--puller=grades", "--terms=last-five-years"]
-    grades-previous:
+    #   args: ["--puller=grades-last-five-years"]
+    grades-recent:
       schedule: "30 4 2-31 * *"
-      args: ["--puller=grades", "--terms=previous"]
+      args: ["--puller=grades-recent"]
 
     enrollments:
       schedule: "0/15 * * * *"

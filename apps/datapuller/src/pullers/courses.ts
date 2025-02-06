@@ -80,4 +80,4 @@ const updateCourses = async ({
   );
 };
 
-export default updateCourses;
+export default { updateCourses };

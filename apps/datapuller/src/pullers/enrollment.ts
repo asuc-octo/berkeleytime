@@ -138,4 +138,4 @@ const updateEnrollmentHistories = async ({
   );
 };
 
-export default updateEnrollmentHistories;
+export default { updateEnrollmentHistories };

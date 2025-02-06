@@ -2,7 +2,11 @@ import { GradeDistributionModel } from "@repo/common";
 
 import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
 import { Config } from "../shared/config";
-import { TermSelector } from "../shared/term-selectors";
+import {
+  TermSelector,
+  getLastFiveYearsTerms,
+  getRecentPastTerms,
+} from "../shared/term-selectors";
 
 const updateGradeDistributions = async (
   { aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP }, log }: Config,
@@ -67,4 +71,15 @@ const updateGradeDistributions = async (
   );
 };
 
-export default updateGradeDistributions;
+const recentPastTerms = async (config: Config) => {
+  return updateGradeDistributions(config, getRecentPastTerms);
+};
+
+const lastFiveYearsTerms = async (config: Config) => {
+  return updateGradeDistributions(config, getLastFiveYearsTerms);
+};
+
+export default {
+  recentPastTerms,
+  lastFiveYearsTerms,
+};

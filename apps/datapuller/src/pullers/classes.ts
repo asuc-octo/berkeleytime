@@ -2,7 +2,11 @@ import { NewClassModel } from "@repo/common";
 
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
-import { type TermSelector } from "../shared/term-selectors";
+import {
+  type TermSelector,
+  getActiveTerms,
+  getLastFiveYearsTerms,
+} from "../shared/term-selectors";
 
 const updateClasses = async (
   { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
@@ -60,4 +64,15 @@ const updateClasses = async (
   );
 };
 
-export default updateClasses;
+const activeTerms = async (config: Config) => {
+  return updateClasses(config, getActiveTerms);
+};
+
+const lastFiveYearsTerms = async (config: Config) => {
+  return updateClasses(config, getLastFiveYearsTerms);
+};
+
+export default {
+  activeTerms,
+  lastFiveYearsTerms,
+};
