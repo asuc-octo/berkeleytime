@@ -6,7 +6,7 @@ import Select, { SingleValue } from "react-select";
 import { Button, IconButton } from "@repo/theme";
 
 import Drawer from "@/components/Drawer";
-import { useReadCourse, useReadCourseWithInstructor } from "@/hooks/api";
+import { useReadCourseWithInstructor } from "@/hooks/api";
 import { ICourse } from "@/lib/api";
 
 import styles from "./GradesDrawer.module.scss";

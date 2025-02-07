@@ -6,9 +6,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -87,32 +84,32 @@ const toPercent = (decimal: number) => {
 
 const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
 
-const input = [
-  {
-    subject: "COMPSCI",
-    courseNumber: "61B",
-  },
-  {
-    subject: "COMPSCI",
-    courseNumber: "61B",
-    year: 2024,
-    semester: "Spring",
-  },
-  {
-    subject: "COMPSCI",
-    courseNumber: "61B",
-    year: 2024,
-    semester: "Spring",
-  },
-  {
-    subject: "COMPSCI",
-    courseNumber: "61A",
-    year: 2024,
-    semester: "Spring",
-    givenName: "John",
-    familyName: "DeNero",
-  },
-];
+// const input = [
+//   {
+//     subject: "COMPSCI",
+//     courseNumber: "61B",
+//   },
+//   {
+//     subject: "COMPSCI",
+//     courseNumber: "61B",
+//     year: 2024,
+//     semester: "Spring",
+//   },
+//   {
+//     subject: "COMPSCI",
+//     courseNumber: "61B",
+//     year: 2024,
+//     semester: "Spring",
+//   },
+//   {
+//     subject: "COMPSCI",
+//     courseNumber: "61A",
+//     year: 2024,
+//     semester: "Spring",
+//     givenName: "John",
+//     familyName: "DeNero",
+//   },
+// ];
 
 export default function GradeDistributions() {
   const client = useApolloClient();
