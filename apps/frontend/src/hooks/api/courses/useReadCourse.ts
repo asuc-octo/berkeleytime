@@ -1,6 +1,10 @@
 import { QueryHookOptions, useQuery } from "@apollo/client";
 
-import { READ_COURSE, READ_COURSE_WITH_INSTRUCTOR, ReadCourseResponse } from "@/lib/api";
+import {
+  READ_COURSE,
+  READ_COURSE_WITH_INSTRUCTOR,
+  ReadCourseResponse,
+} from "@/lib/api";
 
 export const useReadCourse = (
   subject: string,

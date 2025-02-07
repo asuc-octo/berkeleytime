@@ -31,7 +31,7 @@ export default function CourseBrowser({
   responsive = true,
   persistent,
   defaultSemesters,
-  showGrades = false
+  showGrades = false,
 }: CourseBrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();

@@ -38,7 +38,7 @@ export default function List({
   setCurrentQuery,
   persistent,
   loading,
-  showGrades
+  showGrades,
 }: ListProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();

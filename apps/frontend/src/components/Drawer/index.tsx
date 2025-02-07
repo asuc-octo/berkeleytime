@@ -1,8 +1,10 @@
 import { ReactNode } from "react";
 
-import styles from "./Drawer.module.scss";
-import { Dialog } from "@repo/theme";
 import classNames from "classnames";
+
+import { Dialog } from "@repo/theme";
+
+import styles from "./Drawer.module.scss";
 
 interface Props {
   onOpenChange?: (open: boolean) => void;
@@ -25,39 +27,50 @@ interface UncontrolledProps extends Props {
 
 export type DrawerProps = ControlledProps | UncontrolledProps;
 
-type BaseDrawerProps = DrawerProps & {left: boolean}
+type BaseDrawerProps = DrawerProps & { left: boolean };
 
 function BaseDrawer({
-    children,
-    open,
-    changeOpen,
-    onOpenChange,
-    left,
-    content,
-    ...props
-  }: BaseDrawerProps) {
-    return (
-      <Dialog.Root onOpenChange={onOpenChange} open={open}>
-        <Dialog.Title style={{display: "none"}}/>
-        {children && (
-          <Dialog.Trigger {...props} asChild>
-            { children }
-          </Dialog.Trigger>
-        )}
-        <Dialog.Content className={classNames([styles.content, (left) ? styles.left : styles.right])} onPointerDownOutside={ (open && changeOpen) ? () => {changeOpen(false)} : () => {}}>
-            { content }
-        </Dialog.Content>
-      </Dialog.Root>
-    );
-  }
+  children,
+  open,
+  changeOpen,
+  onOpenChange,
+  left,
+  content,
+  ...props
+}: BaseDrawerProps) {
+  return (
+    <Dialog.Root onOpenChange={onOpenChange} open={open}>
+      <Dialog.Title style={{ display: "none" }} />
+      {children && (
+        <Dialog.Trigger {...props} asChild>
+          {children}
+        </Dialog.Trigger>
+      )}
+      <Dialog.Content
+        className={classNames([
+          styles.content,
+          left ? styles.left : styles.right,
+        ])}
+        onPointerDownOutside={
+          open && changeOpen
+            ? () => {
+                changeOpen(false);
+              }
+            : () => {}
+        }
+      >
+        {content}
+      </Dialog.Content>
+    </Dialog.Root>
+  );
+}
 
-const Left = (props: DrawerProps) => BaseDrawer({...props, left: true})
-const Right = (props: DrawerProps) => BaseDrawer({...props, left: false})
+const Left = (props: DrawerProps) => BaseDrawer({ ...props, left: true });
+const Right = (props: DrawerProps) => BaseDrawer({ ...props, left: false });
 
 const Drawer = {
-    Left,
-    Right
+  Left,
+  Right,
 };
-  
-  export default Drawer;
-  
+
+export default Drawer;

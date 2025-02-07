@@ -82,10 +82,10 @@ interface Output {
 }
 
 const toPercent = (decimal: number) => {
-	return `${(decimal).toFixed(0)}%`;
+  return `${decimal.toFixed(0)}%`;
 };
 
-const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"]
+const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
 
 const input = [
   {
@@ -206,7 +206,7 @@ export default function GradeDistributions() {
   }, [initialize]);
 
   const data = useMemo(
-    () => 
+    () =>
       outputs?.reduce(
         (acc, output, index) => {
           output.gradeDistribution.distribution.forEach((grade) => {
@@ -219,21 +219,21 @@ export default function GradeDistributions() {
           return acc;
         },
         [
-          { letter: "A+"},
-          { letter: "A"},
-          { letter: "A-"},
-          { letter: "B+"},
-          { letter: "B"},
-          { letter: "B-"},
-          { letter: "C+"},
-          { letter: "C"},
-          { letter: "C-"},
-          { letter: "D+"},
-          { letter: "D"},
-          { letter: "D-"},
-          { letter: "F"},
-          { letter: "P"},
-          { letter: "NP"},
+          { letter: "A+" },
+          { letter: "A" },
+          { letter: "A-" },
+          { letter: "B+" },
+          { letter: "B" },
+          { letter: "B-" },
+          { letter: "C+" },
+          { letter: "C" },
+          { letter: "C-" },
+          { letter: "D+" },
+          { letter: "D" },
+          { letter: "D-" },
+          { letter: "F" },
+          { letter: "P" },
+          { letter: "NP" },
         ] as {
           letter: string;
           [key: number]: number;
@@ -245,9 +245,7 @@ export default function GradeDistributions() {
   return (
     <div className={styles.root}>
       <div className={styles.panel}>
-        <SideBar
-          selectedCourses={inputs}
-        />
+        <SideBar selectedCourses={inputs} />
       </div>
       {loading ? (
         <Boundary>
@@ -272,31 +270,54 @@ export default function GradeDistributions() {
                 fill="var(--label-color)"
                 tickMargin={8}
               />
-              <YAxis tickFormatter={toPercent}/>
-              {(outputs?.length) && (<Tooltip labelStyle={{color: "var(--heading-color)",}} contentStyle={{backgroundColor: "var(--backdrop-color)", border: "none"}} cursor={{fill: "var(--foreground-color)"}} formatter={toPercent}/>)}
+              <YAxis tickFormatter={toPercent} />
+              {outputs?.length && (
+                <Tooltip
+                  labelStyle={{ color: "var(--heading-color)" }}
+                  contentStyle={{
+                    backgroundColor: "var(--backdrop-color)",
+                    border: "none",
+                  }}
+                  cursor={{ fill: "var(--foreground-color)" }}
+                  formatter={toPercent}
+                />
+              )}
               {outputs?.map((output, index) => (
-                <Bar dataKey={index} fill={COLOR_ORDER[index]} key={index} name={`${output.input.subject} ${output.input.courseNumber}`}/>
+                <Bar
+                  dataKey={index}
+                  fill={COLOR_ORDER[index]}
+                  key={index}
+                  name={`${output.input.subject} ${output.input.courseNumber}`}
+                />
               ))}
             </BarChart>
           </ResponsiveContainer>
           <div className={styles.legend}>
-            {outputs && outputs?.map((output, index) => 
-              <div className={styles.info}>
-                <div className={styles.heading}>
-                  <span style={{backgroundColor: COLOR_ORDER[index]}} className={styles.color}/>
-                  <span className={styles.course}>{output.input.subject} {output.input.courseNumber}</span>
+            {outputs &&
+              outputs?.map((output, index) => (
+                <div className={styles.info}>
+                  <div className={styles.heading}>
+                    <span
+                      style={{ backgroundColor: COLOR_ORDER[index] }}
+                      className={styles.color}
+                    />
+                    <span className={styles.course}>
+                      {output.input.subject} {output.input.courseNumber}
+                    </span>
+                  </div>
+                  <div className={styles.distType}>
+                    {output.input.givenName && output.input.familyName
+                      ? `${output.input.givenName} ${output.input.familyName} `
+                      : "All Instructors "}
+                    •
+                    {output.input.semester && output.input.year
+                      ? ` ${output.input.semester} ${output.input.year}`
+                      : " All Semesters"}
+                  </div>
                 </div>
-                <div className={styles.distType}>
-                  {output.input.givenName && output.input.familyName ? `${output.input.givenName} ${output.input.familyName} ` : "All Instructors "}
-                   • 
-                  {output.input.semester && output.input.year ? ` ${output.input.semester} ${output.input.year}` : " All Semesters"}
-                </div>
-              </div>
-            )}
+              ))}
           </div>
-          { !(outputs?.length) && (<div>
-            No Classes Selected
-          </div>)}
+          {!outputs?.length && <div>No Classes Selected</div>}
         </div>
       )}
     </div>
