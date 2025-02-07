@@ -32,7 +32,7 @@ import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import usePins from "@/hooks/usePins";
 import { ICourse } from "@/lib/api";
 
-import styles from "./Class.module.scss";
+import styles from "./Course.module.scss";
 
 const Classes = lazy(() => import("./Classes"));
 const Enrollment = lazy(() => import("./Enrollment"));

@@ -26,6 +26,7 @@ import {
 import { colors } from "@/lib/section";
 
 import styles from "./GradeDistributions.module.scss";
+import SideBar from "./SideBar";
 
 // const data = [
 //   {
@@ -80,32 +81,38 @@ interface Output {
   input: Input;
 }
 
-// const input = [
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//     year: 2024,
-//     semester: "Spring",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//     year: 2024,
-//     semester: "Spring",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61A",
-//     year: 2024,
-//     semester: "Spring",
-//     givenName: "John",
-//     familyName: "DeNero",
-//   },
-// ];
+const toPercent = (decimal: number) => {
+	return `${(decimal).toFixed(0)}%`;
+};
+
+const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"]
+
+const input = [
+  {
+    subject: "COMPSCI",
+    courseNumber: "61B",
+  },
+  {
+    subject: "COMPSCI",
+    courseNumber: "61B",
+    year: 2024,
+    semester: "Spring",
+  },
+  {
+    subject: "COMPSCI",
+    courseNumber: "61B",
+    year: 2024,
+    semester: "Spring",
+  },
+  {
+    subject: "COMPSCI",
+    courseNumber: "61A",
+    year: 2024,
+    semester: "Spring",
+    givenName: "John",
+    familyName: "DeNero",
+  },
+];
 
 export default function GradeDistributions() {
   const client = useApolloClient();
@@ -146,8 +153,8 @@ export default function GradeDistributions() {
           courseNumber: output[1],
           year: parseInt(term?.[0]),
           semester: term?.[1] as Semester,
-          familyName: professor?.[0],
-          givenName: professor?.[1],
+          familyName: professor?.[1],
+          givenName: professor?.[0],
         };
 
         return acc.concat(parsedInput);
@@ -199,25 +206,35 @@ export default function GradeDistributions() {
   }, [initialize]);
 
   const data = useMemo(
-    () =>
+    () => 
       outputs?.reduce(
         (acc, output, index) => {
           output.gradeDistribution.distribution.forEach((grade) => {
             const column = acc.find((item) => item.letter === grade.letter);
+            if (!column) return;
             const percent = Math.round(grade.percentage * 100);
-
-            if (!column) {
-              acc.push({ letter: grade.letter, [index]: percent });
-
-              return;
-            }
-
             column[index] = percent;
           });
 
           return acc;
         },
-        [] as {
+        [
+          { letter: "A+"},
+          { letter: "A"},
+          { letter: "A-"},
+          { letter: "B+"},
+          { letter: "B"},
+          { letter: "B-"},
+          { letter: "C+"},
+          { letter: "C"},
+          { letter: "C-"},
+          { letter: "D+"},
+          { letter: "D"},
+          { letter: "D-"},
+          { letter: "F"},
+          { letter: "P"},
+          { letter: "NP"},
+        ] as {
           letter: string;
           [key: number]: number;
         }[]
@@ -227,14 +244,18 @@ export default function GradeDistributions() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.panel}></div>
+      <div className={styles.panel}>
+        <SideBar
+          selectedCourses={inputs}
+        />
+      </div>
       {loading ? (
         <Boundary>
           <LoadingIndicator size="lg" />
         </Boundary>
       ) : (
         <div className={styles.view}>
-          <ResponsiveContainer width="100%" height={256}>
+          <ResponsiveContainer width="100%" height={500}>
             <BarChart
               syncId="grade-distributions"
               width={730}
@@ -251,72 +272,31 @@ export default function GradeDistributions() {
                 fill="var(--label-color)"
                 tickMargin={8}
               />
-              <YAxis />
-              <Legend />
-              <Tooltip />
-              {outputs?.map((_, index) => (
-                <Bar dataKey={index} fill={outputs[index].color} key={index} />
+              <YAxis tickFormatter={toPercent}/>
+              {(outputs?.length) && (<Tooltip labelStyle={{color: "var(--heading-color)",}} contentStyle={{backgroundColor: "var(--backdrop-color)", border: "none"}} cursor={{fill: "var(--foreground-color)"}} formatter={toPercent}/>)}
+              {outputs?.map((output, index) => (
+                <Bar dataKey={index} fill={COLOR_ORDER[index]} key={index} name={`${output.input.subject} ${output.input.courseNumber}`}/>
               ))}
             </BarChart>
           </ResponsiveContainer>
-          <ResponsiveContainer width="100%" height={256}>
-            <LineChart
-              syncId="grade-distributions"
-              width={730}
-              height={250}
-              data={data}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--border-color)"
-              />
-              <XAxis
-                dataKey="letter"
-                fill="var(--label-color)"
-                tickMargin={8}
-              />
-              <YAxis />
-              <Legend />
-              <Tooltip />
-              {outputs?.map((_, index) => (
-                <Line
-                  dataKey={index}
-                  stroke={outputs[index].color}
-                  key={index}
-                  type="natural"
-                  dot={false}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-          <div className={styles.grid}>
-            {outputs?.map((_, index) => (
-              <ResponsiveContainer width="100%" height={256} key={index}>
-                <BarChart
-                  syncId="grade-distributions"
-                  width={730}
-                  height={250}
-                  data={data}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="var(--border-color)"
-                  />
-                  <XAxis
-                    dataKey="letter"
-                    fill="var(--label-color)"
-                    tickMargin={8}
-                  />
-                  <YAxis />
-                  <Legend />
-                  <Tooltip cursor={{ fill: "var(--backdrop-color)" }} />
-                  <Bar dataKey={index} fill={outputs[index].color} />
-                </BarChart>
-              </ResponsiveContainer>
-            ))}
+          <div className={styles.legend}>
+            {outputs && outputs?.map((output, index) => 
+              <div className={styles.info}>
+                <div className={styles.heading}>
+                  <span style={{backgroundColor: COLOR_ORDER[index]}} className={styles.color}/>
+                  <span className={styles.course}>{output.input.subject} {output.input.courseNumber}</span>
+                </div>
+                <div className={styles.distType}>
+                  {output.input.givenName && output.input.familyName ? `${output.input.givenName} ${output.input.familyName} ` : "All Instructors "}
+                   • 
+                  {output.input.semester && output.input.year ? ` ${output.input.semester} ${output.input.year}` : " All Semesters"}
+                </div>
+              </div>
+            )}
           </div>
+          { !(outputs?.length) && (<div>
+            No Classes Selected
+          </div>)}
         </div>
       )}
     </div>

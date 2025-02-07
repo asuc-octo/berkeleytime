@@ -67,6 +67,45 @@ export const READ_COURSE = gql`
   }
 `;
 
+export const READ_COURSE_WITH_INSTRUCTOR = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      subject
+      number
+      title
+      description
+      academicCareer
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
+        }
+      }
+      gradingBasis
+      finalExam
+      requirements
+      requiredCourses {
+        subject
+        number
+      }
+      classes {
+        year
+        semester
+        number
+        primarySection {
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 export interface GetCoursesResponse {
   courses: ICourse[];
 }
@@ -77,12 +116,13 @@ export const GET_COURSES = gql`
       subject
       number
       title
+      # TODO: Grade distribution not yet supported by backend
       gradeDistribution {
         average
-        distribution {
-          letter
-          count
-        }
+        # distribution {
+        #   letter
+        #   count
+        # }
       }
       academicCareer
       finalExam

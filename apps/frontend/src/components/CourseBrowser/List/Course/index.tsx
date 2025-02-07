@@ -10,10 +10,11 @@ import styles from "./Course.module.scss";
 interface CourseProps {
   index: number;
   onClick: MouseEventHandler<HTMLDivElement>;
+  showGrades: boolean;
 }
 
 const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
-  ({ title, subject, number, gradeDistribution, index, onClick }, ref) => {
+  ({ title, subject, number, gradeDistribution, index, onClick, showGrades }, ref) => {
     return (
       <div
         className={styles.root}
@@ -26,9 +27,9 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
             {subject} {number}
           </p>
           <p className={styles.description}>{title}</p>
-          <div className={styles.row}>
+          { showGrades && <div className={styles.row}>
             <AverageGrade gradeDistribution={gradeDistribution} />
-          </div>
+          </div>}
         </div>
         <div className={styles.column}>
           <div className={styles.icon}>
