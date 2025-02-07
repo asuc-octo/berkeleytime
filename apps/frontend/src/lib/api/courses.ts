@@ -67,6 +67,20 @@ export const READ_COURSE = gql`
   }
 `;
 
+export const READ_COURSE_GRADE_DIST = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
+        }
+      }
+    }
+  }
+`;
+
 export const READ_COURSE_WITH_INSTRUCTOR = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {

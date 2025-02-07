@@ -33,7 +33,7 @@ import {
   Tooltip,
 } from "@repo/theme";
 
-import AverageGrade from "@/components/AverageGrade";
+import {AverageGrade} from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import CourseDrawer from "@/components/CourseDrawer";

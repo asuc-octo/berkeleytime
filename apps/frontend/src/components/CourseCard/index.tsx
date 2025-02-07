@@ -4,7 +4,7 @@ import { ArrowRight } from "iconoir-react";
 
 import { useReadCourse } from "@/hooks/api";
 
-import AverageGrade from "../AverageGrade";
+import {AverageGrade} from "../AverageGrade";
 import CourseDrawer from "../CourseDrawer";
 import styles from "./CourseCard.module.scss";
 

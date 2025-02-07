@@ -24,6 +24,7 @@ import { colors } from "@/lib/section";
 
 import styles from "./GradeDistributions.module.scss";
 import SideBar from "./SideBar";
+import HoverInfo from "./HoverInfo";
 
 // const data = [
 //   {
@@ -117,6 +118,8 @@ export default function GradeDistributions() {
 
   const [loading, setLoading] = useState(false);
   const [outputs, setOutputs] = useState<Output[] | null>(null);
+
+  const [hoveredLetter, setHoveredLetter] = useState<string|null>(null);
 
   const inputs = useMemo(
     () =>
@@ -239,6 +242,10 @@ export default function GradeDistributions() {
     [outputs]
   );
 
+  function udpateGraphHover (data: any) {
+    setHoveredLetter(data.letter)
+  }
+
   return (
     <div className={styles.root}>
       <div className={styles.panel}>
@@ -250,11 +257,11 @@ export default function GradeDistributions() {
         </Boundary>
       ) : (
         <div className={styles.view}>
-          <ResponsiveContainer width="100%" height={500}>
+          <ResponsiveContainer width="100%" height={450}>
             <BarChart
               syncId="grade-distributions"
               width={730}
-              height={250}
+              height={200}
               data={data}
             >
               <CartesianGrid
@@ -285,6 +292,7 @@ export default function GradeDistributions() {
                   fill={COLOR_ORDER[index]}
                   key={index}
                   name={`${output.input.subject} ${output.input.courseNumber}`}
+                  onMouseMove={udpateGraphHover}
                 />
               ))}
             </BarChart>
@@ -292,26 +300,17 @@ export default function GradeDistributions() {
           <div className={styles.legend}>
             {outputs &&
               outputs?.map((output, index) => (
-                <div className={styles.info}>
-                  <div className={styles.heading}>
-                    <span
-                      style={{ backgroundColor: COLOR_ORDER[index] }}
-                      className={styles.color}
-                    />
-                    <span className={styles.course}>
-                      {output.input.subject} {output.input.courseNumber}
-                    </span>
-                  </div>
-                  <div className={styles.distType}>
-                    {output.input.givenName && output.input.familyName
-                      ? `${output.input.givenName} ${output.input.familyName} `
-                      : "All Instructors "}
-                    •
-                    {output.input.semester && output.input.year
-                      ? ` ${output.input.semester} ${output.input.year}`
-                      : " All Semesters"}
-                  </div>
-                </div>
+                <HoverInfo
+                  color={COLOR_ORDER[index]}
+                  subject={output.input.subject}
+                  courseNumber={output.input.courseNumber}
+                  givenName={output.input.givenName}
+                  familyName={output.input.familyName}
+                  semester={output.input.semester}
+                  year={output.input.year}
+                  gradeDistribution={output.gradeDistribution}
+                  hoveredLetter={hoveredLetter}
+                />
               ))}
           </div>
           {!outputs?.length && <div>No Classes Selected</div>}
