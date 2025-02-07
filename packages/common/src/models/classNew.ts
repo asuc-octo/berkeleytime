@@ -72,7 +72,7 @@ const classSchema = new Schema<IClassItem>({
   requirementDesignation: { type: String }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
 });
-// classes are unique by termId, courseId, number, subject, and courseNumber. we do not enforce this as this index is too large
+// classes are unique by termId, courseId, number, subject, and courseNumber
 classSchema.index(
   {
     termId: 1,
