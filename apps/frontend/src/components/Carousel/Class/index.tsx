@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { ArrowRight } from "iconoir-react";
 
-import {AverageGrade} from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { useReadClass } from "@/hooks/api";

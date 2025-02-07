@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { Book } from "iconoir-react";
 
-import {AverageGrade} from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import Units from "@/components/Units";
 import { ICourse } from "@/lib/api";
 

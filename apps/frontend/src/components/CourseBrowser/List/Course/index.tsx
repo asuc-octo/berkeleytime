@@ -2,7 +2,7 @@ import { MouseEventHandler, forwardRef } from "react";
 
 import { ArrowRight } from "iconoir-react";
 
-import {AverageGrade} from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import { ICourse } from "@/lib/api";
 
 import styles from "./Course.module.scss";

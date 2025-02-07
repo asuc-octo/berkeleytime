@@ -1,8 +1,10 @@
-import { GradeDistribution, Semester } from "@/lib/api";
-import styles from "./HoverInfo.module.scss";
+import { useMemo } from "react";
+
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
 import { useReadCourseGradeDist } from "@/hooks/api";
-import { useMemo } from "react";
+import { GradeDistribution, Semester } from "@/lib/api";
+
+import styles from "./HoverInfo.module.scss";
 
 interface HoverInfoProps {
   color: string;
@@ -17,11 +19,24 @@ interface HoverInfoProps {
 }
 
 const GRADE_STYLE = { display: "inline-block", marginRight: "4px" };
-const GRADE_ORDER = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"]
+const GRADE_ORDER = [
+  "A+",
+  "A",
+  "A-",
+  "B+",
+  "B",
+  "B-",
+  "C+",
+  "C",
+  "C-",
+  "D+",
+  "D",
+  "D-",
+  "F",
+];
 
 function addOrdinalSuffix(n: string) {
-  if (n === "11" || n === "12" || n === "13")
-    return n + "th";
+  if (n === "11" || n === "12" || n === "13") return n + "th";
 
   switch (n.charAt(n.length - 1)) {
     case "1":
@@ -44,68 +59,110 @@ export default function HoverInfo({
   familyName,
   semester,
   year,
-  hoveredLetter
+  hoveredLetter,
 }: HoverInfoProps) {
-
   const { data: courseData } = useReadCourseGradeDist(subject, courseNumber);
 
-  const courseGradeDist = useMemo(() => courseData?.gradeDistribution ?? null, [courseData]);
+  const courseGradeDist = useMemo(
+    () => courseData?.gradeDistribution ?? null,
+    [courseData]
+  );
 
-  const { lower: lowerPercentile, upper: upperPercentile, count: hoveredCount, total: gradeDistTotal } = useMemo(() => {
-    const ret: { 
-      lower: string | null, 
-      upper: string | null, 
-      count: number | null, 
-      total: number } = { lower: null, upper: null, count: null, total: 0 };
+  const {
+    lower: lowerPercentile,
+    upper: upperPercentile,
+    count: hoveredCount,
+    total: gradeDistTotal,
+  } = useMemo(() => {
+    const ret: {
+      lower: string | null;
+      upper: string | null;
+      count: number | null;
+      total: number;
+    } = { lower: null, upper: null, count: null, total: 0 };
     if (!gradeDistribution || !hoveredLetter) return ret;
-    ret.total = gradeDistribution.distribution.reduce((acc, g) => acc + g.count, 0);
-    if (hoveredLetter === "NP" || hoveredLetter === "P") return { 
-      lower: "N/A", 
-      upper: "N/A", 
-      count: gradeDistribution.distribution.find((g) => g.letter === hoveredLetter)?.count ?? 0,
-      total: ret.total 
-    };
+    ret.total = gradeDistribution.distribution.reduce(
+      (acc, g) => acc + g.count,
+      0
+    );
+    if (hoveredLetter === "NP" || hoveredLetter === "P")
+      return {
+        lower: "N/A",
+        upper: "N/A",
+        count:
+          gradeDistribution.distribution.find((g) => g.letter === hoveredLetter)
+            ?.count ?? 0,
+        total: ret.total,
+      };
     GRADE_ORDER.reduce((acc, grade) => {
-      if (grade === hoveredLetter) ret.upper = addOrdinalSuffix(((ret.total - acc) * 100 / ret.total).toFixed(0));
-      const count = (gradeDistribution.distribution.find((g) => g.letter === grade)?.count ?? 0);
+      if (grade === hoveredLetter)
+        ret.upper = addOrdinalSuffix(
+          (((ret.total - acc) * 100) / ret.total).toFixed(0)
+        );
+      const count =
+        gradeDistribution.distribution.find((g) => g.letter === grade)?.count ??
+        0;
       acc += count;
       if (grade === hoveredLetter) {
-        ret.lower = addOrdinalSuffix(((ret.total - acc) * 100 / ret.total).toFixed(0));
+        ret.lower = addOrdinalSuffix(
+          (((ret.total - acc) * 100) / ret.total).toFixed(0)
+        );
         ret.count = count;
       }
       return acc;
-    }, 0)
+    }, 0);
     return ret;
-  }, [hoveredLetter, gradeDistribution])
+  }, [hoveredLetter, gradeDistribution]);
 
-  return <div className={styles.info}>
-    <div className={styles.heading}>
-      <span
-        style={{ backgroundColor: color }}
-        className={styles.color}
-      />
-      <span className={styles.course}>
-        {subject} {courseNumber}
-      </span>
-    </div>
-    <div className={styles.distType}>
-      {givenName && familyName
-        ? `${givenName} ${familyName} `
-        : "All Instructors "}
-      •
-      {semester && year
-        ? ` ${semester} ${year}`
-        : " All Semesters"}
-    </div>
-    <div className={styles.label}>Course Average</div>
-    <div className={styles.value}>{courseGradeDist ? <span><AverageGrade style={GRADE_STYLE} gradeDistribution={courseGradeDist} />({gradeDistribution.average?.toFixed(3)})</span> : "(...)"}</div>
-    <div className={styles.label}>Section Average</div>
-    <div className={styles.value}><AverageGrade style={GRADE_STYLE} gradeDistribution={gradeDistribution} tooltip="for this instructor/semester combination" />({gradeDistribution.average?.toFixed(3)})</div>
-    {hoveredLetter &&
-      <div>
-        <div className={styles.label}>{lowerPercentile} - {upperPercentile} Percentile</div>
-        <div className={styles.value}><ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />({hoveredCount}/{gradeDistTotal}, {((hoveredCount ?? 0)/gradeDistTotal*100).toFixed(1)}%)</div>
+  return (
+    <div className={styles.info}>
+      <div className={styles.heading}>
+        <span style={{ backgroundColor: color }} className={styles.color} />
+        <span className={styles.course}>
+          {subject} {courseNumber}
+        </span>
       </div>
-    }
-  </div>
+      <div className={styles.distType}>
+        {givenName && familyName
+          ? `${givenName} ${familyName} `
+          : "All Instructors "}
+        •{semester && year ? ` ${semester} ${year}` : " All Semesters"}
+      </div>
+      <div className={styles.label}>Course Average</div>
+      <div className={styles.value}>
+        {courseGradeDist ? (
+          <span>
+            <AverageGrade
+              style={GRADE_STYLE}
+              gradeDistribution={courseGradeDist}
+            />
+            ({gradeDistribution.average?.toFixed(3)})
+          </span>
+        ) : (
+          "(...)"
+        )}
+      </div>
+      <div className={styles.label}>Section Average</div>
+      <div className={styles.value}>
+        <AverageGrade
+          style={GRADE_STYLE}
+          gradeDistribution={gradeDistribution}
+          tooltip="for this instructor/semester combination"
+        />
+        ({gradeDistribution.average?.toFixed(3)})
+      </div>
+      {hoveredLetter && (
+        <div>
+          <div className={styles.label}>
+            {lowerPercentile} - {upperPercentile} Percentile
+          </div>
+          <div className={styles.value}>
+            <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
+            {hoveredCount}/{gradeDistTotal},{" "}
+            {(((hoveredCount ?? 0) / gradeDistTotal) * 100).toFixed(1)}%)
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

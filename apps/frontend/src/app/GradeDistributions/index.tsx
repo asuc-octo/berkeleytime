@@ -23,8 +23,8 @@ import {
 import { colors } from "@/lib/section";
 
 import styles from "./GradeDistributions.module.scss";
-import SideBar from "./SideBar";
 import HoverInfo from "./HoverInfo";
+import SideBar from "./SideBar";
 
 // const data = [
 //   {
@@ -119,7 +119,7 @@ export default function GradeDistributions() {
   const [loading, setLoading] = useState(false);
   const [outputs, setOutputs] = useState<Output[] | null>(null);
 
-  const [hoveredLetter, setHoveredLetter] = useState<string|null>(null);
+  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
 
   const inputs = useMemo(
     () =>
@@ -242,8 +242,8 @@ export default function GradeDistributions() {
     [outputs]
   );
 
-  function udpateGraphHover (data: any) {
-    setHoveredLetter(data.letter)
+  function udpateGraphHover(data: any) {
+    setHoveredLetter(data.letter);
   }
 
   return (

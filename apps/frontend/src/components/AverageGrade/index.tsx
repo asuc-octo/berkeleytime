@@ -17,7 +17,7 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
-export function ColoredGrade({grade, style} : ColoredGradeProps) {
+export function ColoredGrade({ grade, style }: ColoredGradeProps) {
   const color = useMemo(
     () =>
       grade === "N/A"
@@ -29,15 +29,17 @@ export function ColoredGrade({grade, style} : ColoredGradeProps) {
             : "var(--rose-500)",
     [grade]
   );
-  return <div className={styles.trigger} style={{ color, ...style }}>
-    {grade}
-  </div>
+  return (
+    <div className={styles.trigger} style={{ color, ...style }}>
+      {grade}
+    </div>
+  );
 }
 
 export function AverageGrade({
   gradeDistribution: { average },
   style,
-  tooltip="across all semesters this course has been offered"
+  tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
   const text = useMemo(
     () =>
@@ -86,7 +88,7 @@ export function AverageGrade({
   return (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
-        <ColoredGrade style={style} grade={text}/>
+        <ColoredGrade style={style} grade={text} />
       </Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
