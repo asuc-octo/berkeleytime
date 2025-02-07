@@ -8,6 +8,8 @@ import {
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
 
+const TERMS_PER_API_BATCH = 4;
+
 const updateClasses = async (
   { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
   termSelector: TermSelector
@@ -24,43 +26,56 @@ const updateClasses = async (
     log.warn(`No terms found, skipping update.`);
     return;
   }
-  const termIds = terms.map((term) => term.id);
 
-  log.trace(`Fetching classes...`);
-
-  const classes = await getClasses(log, CLASS_APP_ID, CLASS_APP_KEY, termIds);
-
-  log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
-  if (!classes) {
-    log.warn(`No classes found, skipping update.`);
-    return;
-  }
-
-  log.trace("Deleting classes to be replaced...");
-
-  const { deletedCount } = await NewClassModel.deleteMany({
-    termId: { $in: terms.map((term) => term.id) },
-  });
-
-  log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
-
-  // Insert classes in batches of 5000
+  let totalClasses = 0;
   let totalInserted = 0;
-  const insertBatchSize = 5000;
-  for (let i = 0; i < classes.length; i += insertBatchSize) {
-    const batch = classes.slice(i, i + insertBatchSize);
+  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
+    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
+    const termsBatchIds = termsBatch.map((term) => term.id);
 
-    log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.trace(
+      `Fetching classes for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
+    );
 
-    const { insertedCount } = await NewClassModel.insertMany(batch, {
-      ordered: false,
-      rawResult: true,
+    const classes = await getClasses(
+      log,
+      CLASS_APP_ID,
+      CLASS_APP_KEY,
+      termsBatchIds
+    );
+
+    log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
+    if (!classes) {
+      log.warn(`No classes found, skipping update.`);
+      return;
+    }
+    totalClasses += classes.length;
+
+    log.trace("Deleting classes to be replaced...");
+
+    const { deletedCount } = await NewClassModel.deleteMany({
+      termId: { $in: termsBatchIds },
     });
-    totalInserted += insertedCount;
+
+    log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
+
+    // Insert classes in batches of 5000
+    const insertBatchSize = 5000;
+    for (let i = 0; i < classes.length; i += insertBatchSize) {
+      const batch = classes.slice(i, i + insertBatchSize);
+
+      log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
+
+      const { insertedCount } = await NewClassModel.insertMany(batch, {
+        ordered: false,
+        rawResult: true,
+      });
+      totalInserted += insertedCount;
+    }
   }
 
   log.info(
-    `Completed updating database with ${classes.length.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
+    `Completed updating database with ${totalClasses.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
   );
 };
 

@@ -7,6 +7,8 @@ import { getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
 import { getActiveTerms } from "../shared/term-selectors";
 
+const TERMS_PER_API_BATCH = 4;
+
 // enrollmentSingulars are equivalent if their data points are all equal
 const enrollmentSingularsEqual = (
   a: IEnrollmentSingularItem["data"],
@@ -71,70 +73,79 @@ const updateEnrollmentHistories = async ({
     log.warn(`No terms found, skipping update.`);
     return;
   }
-  const termIds = terms.map((term) => term.id);
 
-  log.trace(`Fetching enrollments`);
+  let totalEnrollmentSingulars = 0;
+  let totalUpdated = 0;
+  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
+    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
+    const termsBatchIds = termsBatch.map((term) => term.id);
 
-  const enrollmentSingulars = await getEnrollmentSingulars(
-    log,
-    CLASS_APP_ID,
-    CLASS_APP_KEY,
-    termIds
-  );
+    log.trace(
+      `Fetching enrollments for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
+    );
 
-  log.info(
-    `Fetched ${enrollmentSingulars.length.toLocaleString()} enrollments.`
-  );
-  if (!enrollmentSingulars) {
-    log.warn(`No enrollments found, skipping update.`);
-    return;
-  }
+    const enrollmentSingulars = await getEnrollmentSingulars(
+      log,
+      CLASS_APP_ID,
+      CLASS_APP_KEY,
+      termsBatchIds
+    );
 
-  let updateCount = 0;
-  for (const enrollmentSingular of enrollmentSingulars) {
-    const session = await NewEnrollmentHistoryModel.startSession();
+    log.info(
+      `Fetched ${enrollmentSingulars.length.toLocaleString()} enrollments.`
+    );
+    if (!enrollmentSingulars) {
+      log.warn(`No enrollments found, skipping update.`);
+      return;
+    }
+    totalEnrollmentSingulars += enrollmentSingulars.length;
 
-    await session.withTransaction(async () => {
-      // find existing history
-      const doc = await NewEnrollmentHistoryModel.findOne(
-        {
-          termId: enrollmentSingular.termId,
-          sessionId: enrollmentSingular.sessionId,
-          sectionId: enrollmentSingular.sectionId,
-        },
-        null,
-        { session }
-      ).lean();
+    for (const enrollmentSingular of enrollmentSingulars) {
+      const session = await NewEnrollmentHistoryModel.startSession();
 
-      // skip if no change
-      if (doc && doc.history.length > 0) {
-        const lastHistory = doc.history[doc.history.length - 1];
-        if (enrollmentSingularsEqual(lastHistory, enrollmentSingular.data)) {
-          return;
-        }
-      }
-
-      // append to history array, upsert if needed
-      const op = await NewEnrollmentHistoryModel.updateOne(
-        {
-          termId: enrollmentSingular.termId,
-          sessionId: enrollmentSingular.sessionId,
-          sectionId: enrollmentSingular.sectionId,
-        },
-        {
-          $push: {
-            history: enrollmentSingular.data,
+      await session.withTransaction(async () => {
+        // find existing history
+        const doc = await NewEnrollmentHistoryModel.findOne(
+          {
+            termId: enrollmentSingular.termId,
+            sessionId: enrollmentSingular.sessionId,
+            sectionId: enrollmentSingular.sectionId,
           },
-        },
-        { upsert: true, session }
-      );
-      updateCount += op.modifiedCount + op.upsertedCount;
-    });
+          null,
+          { session }
+        ).lean();
 
-    session.endSession();
+        // skip if no change
+        if (doc && doc.history.length > 0) {
+          const lastHistory = doc.history[doc.history.length - 1];
+          if (enrollmentSingularsEqual(lastHistory, enrollmentSingular.data)) {
+            return;
+          }
+        }
+
+        // append to history array, upsert if needed
+        const op = await NewEnrollmentHistoryModel.updateOne(
+          {
+            termId: enrollmentSingular.termId,
+            sessionId: enrollmentSingular.sessionId,
+            sectionId: enrollmentSingular.sectionId,
+          },
+          {
+            $push: {
+              history: enrollmentSingular.data,
+            },
+          },
+          { upsert: true, session }
+        );
+        totalUpdated += op.modifiedCount + op.upsertedCount;
+      });
+
+      session.endSession();
+    }
   }
+
   log.info(
-    `Completed updating database with ${enrollmentSingulars.length.toLocaleString()} enrollments, updated ${updateCount.toLocaleString()} documents.`
+    `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments, updated ${totalUpdated.toLocaleString()} documents.`
   );
 };
 
