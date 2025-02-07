@@ -50,23 +50,23 @@ datapuller:
       schedule: "5 4 * * *"
       args: ["--puller=courses"]
 
-    # sections-last-five-years:
-    #   schedule: "10 4 1 * *"
-    #   args: ["--puller=sections-last-five-years"]
+    sections-last-five-years:
+      schedule: "10 4 1 * *"
+      args: ["--puller=sections-last-five-years"]
     sections-active:
       schedule: "15 4 2-31 * *"
       args: ["--puller=sections-active"]
 
-    # classes-last-five-years:
-    #   schedule: "20 4 1 * *"
-    #   args: ["--puller=classes-last-five-years"]
+    classes-last-five-years:
+      schedule: "20 4 1 * *"
+      args: ["--puller=classes-last-five-years"]
     classes-active:
       schedule: "25 4 2-31 * *"
       args: ["--puller=classes-active"]
 
-    # grades-last-five-years:
-    #   schedule: "35 4 1 * *"
-    #   args: ["--puller=grades-last-five-years"]
+    grades-last-five-years:
+      schedule: "35 4 1 * *"
+      args: ["--puller=grades-last-five-years"]
     grades-recent:
       schedule: "30 4 2-31 * *"
       args: ["--puller=grades-recent"]
