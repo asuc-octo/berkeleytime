@@ -6,7 +6,7 @@ import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 import { fetchPaginatedData } from "./api/sis-api";
 import { filterSection } from "./sections";
 
-export const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
+const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
   const termId = input.class?.session?.term?.id;
   const sessionId = input.class?.session?.id;
   const sectionId = input.id?.toString();

@@ -3,6 +3,7 @@ export * from "./schedule";
 export * from "./user";
 export * from "./class";
 export * from "./term";
+export * from "./termNew";
 export * from "./course";
 export * from "./section";
 export * from "./sectionNew";

@@ -1,56 +1,93 @@
 import { NewClassModel } from "@repo/common";
 
 import { getClasses } from "../lib/classes";
-import { getActiveTerms } from "../lib/terms";
 import { Config } from "../shared/config";
+import {
+  type TermSelector,
+  getActiveTerms,
+  getLastFiveYearsTerms,
+} from "../shared/term-selectors";
 
-const updateClasses = async ({
-  log,
-  sis: { TERM_APP_ID, TERM_APP_KEY, CLASS_APP_ID, CLASS_APP_KEY },
-}: Config) => {
-  log.info(`Fetching active terms.`);
+const TERMS_PER_API_BATCH = 4;
 
-  const allActiveTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const activeTerms = allActiveTerms.filter(
-    (term) => term.academicCareer?.description === "Undergraduate"
-  );
+const updateClasses = async (
+  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
+  termSelector: TermSelector
+) => {
+  log.trace(`Fetching terms....`);
 
-  log.info(
-    `Fetched ${activeTerms.length.toLocaleString()} undergraduate active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
-  );
-
-  log.info(`Fetching classes for active terms`);
-
-  const classes = await getClasses(
-    log,
-    CLASS_APP_ID,
-    CLASS_APP_KEY,
-    activeTerms.map((term) => term.id as string)
-  );
+  const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
+  const terms = allTerms.filter((term) => term.academicCareerCode === "UGRD");
 
   log.info(
-    `Fetched ${classes.length.toLocaleString()} classes for active terms.`
+    `Fetched ${terms.length.toLocaleString()} undergraduate terms: ${terms.map((term) => term.name).toLocaleString()}.`
   );
+  if (terms.length == 0) {
+    log.warn(`No terms found, skipping update.`);
+    return;
+  }
 
-  // Delete existing classes for active terms
-  await NewClassModel.deleteMany({
-    termId: { $in: activeTerms.map((term) => term.id) },
-  });
+  let totalClasses = 0;
+  let totalInserted = 0;
+  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
+    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
+    const termsBatchIds = termsBatch.map((term) => term.id);
 
-  // Insert classes in batches of 5000
-  const insertBatchSize = 5000;
+    log.trace(
+      `Fetching classes for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
+    );
 
-  for (let i = 0; i < classes.length; i += insertBatchSize) {
-    const batch = classes.slice(i, i + insertBatchSize);
+    const classes = await getClasses(
+      log,
+      CLASS_APP_ID,
+      CLASS_APP_KEY,
+      termsBatchIds
+    );
 
-    log.info(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
+    if (!classes) {
+      log.warn(`No classes found, skipping update.`);
+      return;
+    }
+    totalClasses += classes.length;
 
-    await NewClassModel.insertMany(batch, { ordered: false });
+    log.trace("Deleting classes to be replaced...");
+
+    const { deletedCount } = await NewClassModel.deleteMany({
+      termId: { $in: termsBatchIds },
+    });
+
+    log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
+
+    // Insert classes in batches of 5000
+    const insertBatchSize = 5000;
+    for (let i = 0; i < classes.length; i += insertBatchSize) {
+      const batch = classes.slice(i, i + insertBatchSize);
+
+      log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
+
+      const { insertedCount } = await NewClassModel.insertMany(batch, {
+        ordered: false,
+        rawResult: true,
+      });
+      totalInserted += insertedCount;
+    }
   }
 
   log.info(
-    `Completed updating database with ${classes.length.toLocaleString()} classes ${activeTerms.length.toLocaleString()} for active terms`
+    `Completed updating database with ${totalClasses.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
   );
 };
 
-export default updateClasses;
+const activeTerms = async (config: Config) => {
+  return updateClasses(config, getActiveTerms);
+};
+
+const lastFiveYearsTerms = async (config: Config) => {
+  return updateClasses(config, getLastFiveYearsTerms);
+};
+
+export default {
+  activeTerms,
+  lastFiveYearsTerms,
+};

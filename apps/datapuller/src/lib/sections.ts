@@ -9,7 +9,7 @@ export const filterSection = (input: ClassSection): boolean => {
   return input.status?.code === "A";
 };
 
-export const formatSection = (input: ClassSection) => {
+const formatSection = (input: ClassSection) => {
   // Remove whitespace to prevent ambiguity
   const subject = input.class?.course?.subjectArea?.code?.replaceAll(" ", "");
 

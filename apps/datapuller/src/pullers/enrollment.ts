@@ -4,8 +4,10 @@ import {
 } from "@repo/common";
 
 import { getEnrollmentSingulars } from "../lib/enrollment";
-import { getActiveTerms } from "../lib/terms";
 import { Config } from "../shared/config";
+import { getActiveTerms } from "../shared/term-selectors";
+
+const TERMS_PER_API_BATCH = 4;
 
 // enrollmentSingulars are equivalent if their data points are all equal
 const enrollmentSingularsEqual = (
@@ -57,79 +59,94 @@ const enrollmentSingularsEqual = (
 
 const updateEnrollmentHistories = async ({
   log,
-  sis: { TERM_APP_ID, TERM_APP_KEY, CLASS_APP_ID, CLASS_APP_KEY },
+  sis: { CLASS_APP_ID, CLASS_APP_KEY },
 }: Config) => {
-  log.info(`Fetching active terms.`);
+  log.trace(`Fetching terms...`);
 
-  const allActiveTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const activeTerms = allActiveTerms.filter(
-    (term) => term.academicCareer?.description === "Undergraduate"
-  );
+  const allTerms = await getActiveTerms(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
+  const terms = allTerms.filter((term) => term.academicCareerCode === "UGRD");
 
   log.info(
-    `Fetched ${activeTerms.length.toLocaleString()} undergraduate active terms: ${activeTerms.map((term) => term.name).toLocaleString()}.`
+    `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
   );
+  if (terms.length == 0) {
+    log.warn(`No terms found, skipping update.`);
+    return;
+  }
 
-  log.info(`Fetching enrollment for active terms.`);
+  let totalEnrollmentSingulars = 0;
+  let totalUpdated = 0;
+  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
+    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
+    const termsBatchIds = termsBatch.map((term) => term.id);
 
-  const enrollmentSingulars = await getEnrollmentSingulars(
-    log,
-    CLASS_APP_ID,
-    CLASS_APP_KEY,
-    activeTerms.map((term) => term.id as string)
-  );
+    log.trace(
+      `Fetching enrollments for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
+    );
 
-  log.info(
-    `Fetched ${enrollmentSingulars.length.toLocaleString()} enrollments for active terms.`
-  );
+    const enrollmentSingulars = await getEnrollmentSingulars(
+      log,
+      CLASS_APP_ID,
+      CLASS_APP_KEY,
+      termsBatchIds
+    );
 
-  let updateCount = 0;
-  for (const enrollmentSingular of enrollmentSingulars) {
-    const session = await NewEnrollmentHistoryModel.startSession();
+    log.info(
+      `Fetched ${enrollmentSingulars.length.toLocaleString()} enrollments.`
+    );
+    if (!enrollmentSingulars) {
+      log.warn(`No enrollments found, skipping update.`);
+      return;
+    }
+    totalEnrollmentSingulars += enrollmentSingulars.length;
 
-    await session.withTransaction(async () => {
-      // find existing history
-      const doc = await NewEnrollmentHistoryModel.findOne(
-        {
-          termId: enrollmentSingular.termId,
-          sessionId: enrollmentSingular.sessionId,
-          sectionId: enrollmentSingular.sectionId,
-        },
-        null,
-        { session }
-      ).lean();
+    for (const enrollmentSingular of enrollmentSingulars) {
+      const session = await NewEnrollmentHistoryModel.startSession();
 
-      // skip if no change
-      if (doc && doc.history.length > 0) {
-        const lastHistory = doc.history[doc.history.length - 1];
-        if (enrollmentSingularsEqual(lastHistory, enrollmentSingular.data)) {
-          return;
-        }
-      }
-
-      // append to history array, upsert if needed
-      const op = await NewEnrollmentHistoryModel.updateOne(
-        {
-          termId: enrollmentSingular.termId,
-          sessionId: enrollmentSingular.sessionId,
-          sectionId: enrollmentSingular.sectionId,
-        },
-        {
-          $push: {
-            history: enrollmentSingular.data,
+      await session.withTransaction(async () => {
+        // find existing history
+        const doc = await NewEnrollmentHistoryModel.findOne(
+          {
+            termId: enrollmentSingular.termId,
+            sessionId: enrollmentSingular.sessionId,
+            sectionId: enrollmentSingular.sectionId,
           },
-        },
-        { upsert: true, session }
-      );
-      updateCount += op.modifiedCount + op.upsertedCount;
-    });
+          null,
+          { session }
+        ).lean();
 
-    session.endSession();
+        // skip if no change
+        if (doc && doc.history.length > 0) {
+          const lastHistory = doc.history[doc.history.length - 1];
+          if (enrollmentSingularsEqual(lastHistory, enrollmentSingular.data)) {
+            return;
+          }
+        }
+
+        // append to history array, upsert if needed
+        const op = await NewEnrollmentHistoryModel.updateOne(
+          {
+            termId: enrollmentSingular.termId,
+            sessionId: enrollmentSingular.sessionId,
+            sectionId: enrollmentSingular.sectionId,
+          },
+          {
+            $push: {
+              history: enrollmentSingular.data,
+            },
+          },
+          { upsert: true, session }
+        );
+        totalUpdated += op.modifiedCount + op.upsertedCount;
+      });
+
+      session.endSession();
+    }
   }
 
   log.info(
-    `Completed updating database with ${enrollmentSingulars.length.toLocaleString()} enrollments, modified ${updateCount.toLocaleString()} documents for ${activeTerms.length.toLocaleString()} active terms.`
+    `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments, updated ${totalUpdated.toLocaleString()} documents.`
   );
 };
 
-export default updateEnrollmentHistories;
+export default { updateEnrollmentHistories };

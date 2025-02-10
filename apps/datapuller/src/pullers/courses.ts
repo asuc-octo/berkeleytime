@@ -38,28 +38,31 @@ const updateCourses = async ({
   sis: { COURSE_APP_ID, COURSE_APP_KEY },
   log,
 }: Config) => {
-  log.info(`Fetching courses.`);
+  log.trace(`Fetching courses...`);
 
-  // Get all courses
   const allCourses = await getCourses(log, COURSE_APP_ID, COURSE_APP_KEY);
   const courses = getLatestUniqueCourses(allCourses);
 
   log.info(`Fetched ${courses.length.toLocaleString()} courses.`);
+  if (!courses) {
+    log.warn("No courses found, skipping update.");
+    return;
+  }
 
-  log.info("Deleting courses no longer in SIS...");
-  // Delete existing courses
+  log.trace("Deleting courses no longer in SIS...");
+
   const { deletedCount } = await NewCourseModel.deleteMany({
     courseId: { $nin: courses.map((course) => course.courseId) },
   });
-  log.info(`Deleted ${deletedCount.toLocaleString()} existing courses.`);
+
+  log.info(`Deleted ${deletedCount.toLocaleString()} courses.`);
 
   // Insert courses in batches of 5000
   const insertBatchSize = 5000;
-
   for (let i = 0; i < courses.length; i += insertBatchSize) {
     const batch = courses.slice(i, i + insertBatchSize);
 
-    log.info(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
     await NewCourseModel.bulkWrite(
       batch.map((course) => ({
@@ -77,4 +80,4 @@ const updateCourses = async ({
   );
 };
 
-export default updateCourses;
+export default { updateCourses };

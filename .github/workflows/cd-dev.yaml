@@ -56,26 +56,9 @@ jobs:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:
-          courses:
-            suspend: true
-            image:
-              tag: '${{ needs.compute-sha.outputs.sha_short }}'
-          sections:
-            suspend: true
-            image:
-              tag: '${{ needs.compute-sha.outputs.sha_short }}'
-          classes:
-            suspend: true
-            image:
-              tag: '${{ needs.compute-sha.outputs.sha_short }}'
-          grades:
-            suspend: true
-            image:
-              tag: '${{ needs.compute-sha.outputs.sha_short }}'
-          enrollments:
-            suspend: true
-            image:
-              tag: '${{ needs.compute-sha.outputs.sha_short }}'
+          suspend: true
+          image:
+            tag: '${{ needs.compute-sha.outputs.sha_short }}'
         host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
         mongoUri: mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379

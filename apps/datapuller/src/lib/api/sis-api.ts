@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 export async function fetchPaginatedData<T, R>(
   logger: Logger<unknown>,
   api: any,
-  terms: string[] | null,
+  termIds: string[] | null,
   method: string,
   headers: Record<string, string>,
   responseProcessor: (data: any) => R[],
@@ -17,6 +17,7 @@ export async function fetchPaginatedData<T, R>(
 
   const fetchBatch = async (termId?: string) => {
     const promises = [];
+    let errorCount = 0;
 
     for (let i = 0; i < queryBatchSize; i++) {
       const params: Record<string, any> = {
@@ -33,6 +34,7 @@ export async function fetchPaginatedData<T, R>(
           .then((data: any) => responseProcessor(data))
           .catch((error: any) => {
             logger.warn(`Error fetching page ${page + i}: ${error.message}`);
+            errorCount++;
             return [];
           })
       );
@@ -41,11 +43,11 @@ export async function fetchPaginatedData<T, R>(
     const batchResults = await Promise.all(promises);
     const flattenedResults = batchResults.flat();
 
-    return flattenedResults;
+    return [flattenedResults, errorCount] as const;
   };
 
   const processBatch = async (termId?: string) => {
-    const batchData = await fetchBatch(termId);
+    const [batchData, errorCount] = await fetchBatch(termId);
     if (batchData.length === 0) return false;
 
     const transformedData = batchData.reduce((acc, item, index) => {
@@ -64,15 +66,16 @@ export async function fetchPaginatedData<T, R>(
 
     results.push(...transformedData);
     page += queryBatchSize;
-    return true;
+
+    return errorCount < queryBatchSize / 10; // allow 10% error rate
   };
 
-  if (terms && terms.length > 0) {
-    for (const term of terms) {
-      logger.info(`Fetching for term ${term}`);
+  if (termIds && termIds.length > 0) {
+    for (const termId of termIds) {
+      logger.info(`Fetching for term ${termId}`);
       let hasMoreData = true;
       while (hasMoreData) {
-        hasMoreData = await processBatch(term);
+        hasMoreData = await processBatch(termId);
       }
       page = 1;
     }
