@@ -132,7 +132,7 @@ const updateEnrollmentHistories = async ({
             sectionId: enrollmentSingular.sectionId,
           },
           {
-            $setOnInsert: {
+            $set: {
               seatReservationTypes: enrollmentSingular.seatReservationTypes,
             },
             $push: {
