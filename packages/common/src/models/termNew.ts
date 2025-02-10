@@ -1,10 +1,37 @@
-import { Schema, model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 
 /*
  * The term schema is used to store information about the academic term, such as
  * the academic year, begin date, end date, and deadlines for various actions.
  * https://developers.api.berkeley.edu/api/232/interactive-docs
  */
+
+export interface ISessionItem {
+  temporalPosition: "Current" | "Past" | "Future";
+  id: string;
+  name: string;
+  beginDate: string;
+  endDate: string;
+  weeksOfInstruction?: number;
+  holidayScheduleCode?: string;
+  censusDate?: string;
+  sixtyPercentPoint?: string;
+  openEnrollmentDate?: string;
+  enrollBeginDate?: string;
+  enrollEndDate?: string;
+  waitListEndDate?: string;
+  fullyEnrolledDeadline?: string;
+  dropDeletedFromRecordDeadline?: string;
+  dropRetainedOnRecordDeadline?: string;
+  dropWithPenaltyDeadline?: string;
+  cancelDeadline?: string;
+  withdrawNoPenaltyDeadline?: string;
+  withdrawWithPenaltyDeadline?: string;
+  timePeriods?: {
+    periodDescription: string;
+    endDate: string;
+  }[];
+}
 
 // TODO: WORK IN PROGRESS
 export interface ITermItem {
@@ -27,32 +54,7 @@ export interface ITermItem {
   selfServicePlanEndDate?: string;
   selfServiceEnrollBeginDate?: string;
   selfServiceEnrollEndDate?: string;
-  sessions?: {
-    temporalPosition: "Current" | "Past" | "Future";
-    id: string;
-    name: string;
-    beginDate: string;
-    endDate: string;
-    weeksOfInstruction?: number;
-    holidayScheduleCode?: string;
-    censusDate?: string;
-    sixtyPercentPoint?: string;
-    openEnrollmentDate?: string;
-    enrollBeginDate?: string;
-    enrollEndDate?: string;
-    waitListEndDate?: string;
-    fullyEnrolledDeadline?: string;
-    dropDeletedFromRecordDeadline?: string;
-    dropRetainedOnRecordDeadline?: string;
-    dropWithPenaltyDeadline?: string;
-    cancelDeadline?: string;
-    withdrawNoPenaltyDeadline?: string;
-    withdrawWithPenaltyDeadline?: string;
-    timePeriods?: {
-      periodDescription: string;
-      endDate: string;
-    }[];
-  }[];
+  sessions?: ISessionItem[];
 }
 
 const termSchema = new Schema<ITermItem>({
@@ -84,7 +86,7 @@ const termSchema = new Schema<ITermItem>({
       {
         temporalPosition: {
           type: String,
-          enum: ["Previous", "Current", "Next", "Past", "Future"],
+          enum: ["Current", "Past", "Future"],
           required: true,
         },
         id: { type: String, required: true },
@@ -120,4 +122,7 @@ const termSchema = new Schema<ITermItem>({
 });
 termSchema.index({ id: 1, academicCareerCode: 1 }, { unique: true });
 
-export const NewTermModel = model<ITermItem>("NewTerm", termSchema);
+export const NewTermModel: Model<ITermItem> = model<ITermItem>(
+  "NewTerm",
+  termSchema
+);

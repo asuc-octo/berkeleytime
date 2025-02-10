@@ -2,49 +2,58 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   enum Semester {
-    # Summer
     Summer
-
-    # Fall
     Fall
-
-    # Spring
     Spring
-
-    # Winter
     Winter
   }
 
   enum TemporalPosition {
-    # Past
     Past
-
-    # Current
     Current
-
-    # Future
     Future
   }
 
+  enum AcademicCareerCode {
+    "Graduate"
+    GRAD
+
+    "Law"
+    LAW
+
+    "UC Berkeley Extension"
+    UCBX
+
+    "Undergraduate"
+    UGRD
+  }
+
+  "Unique session identifier within a term. Maps to session.id"
+  scalar SessionIdentifier
+
   """
-  Session
+  Session, for example Summer Session A
   """
   type Session {
     temporalPosition: TemporalPosition!
-    # id: Int!
+    id: SessionIdentifier!
     name: String!
-    startDate: String
-    endDate: String
+    beginDate: String!
+    endDate: String!
   }
+
+  "Unique term identifier. Maps to term.id"
+  scalar TermIdentifier
 
   """
   Term
   """
   type Term {
-    semester: Semester!
-    year: Int!
     temporalPosition: TemporalPosition!
-    startDate: String!
+    id: TermIdentifier!
+    academicCareerCode: AcademicCareerCode!
+    name: String!
+    beginDate: String!
     endDate: String!
     sessions: [Session!]!
   }
@@ -53,7 +62,7 @@ const typedef = gql`
     """
     Query for terms.
     """
-    terms: [Term]
+    terms: [Term!]!
 
     """
     Query for a term.
