@@ -1,4 +1,4 @@
-import { NewTermModel } from "@repo/common";
+import { NewTermModel, TermModel } from "@repo/common";
 
 import { TermModule } from "./generated-types/module-types";
 
@@ -33,4 +33,20 @@ export const getTerm = async (id: string, academicCareerCode: string) => {
   if (!term) return null;
 
   return term as TermModule.Term;
+};
+
+/**
+ * To be deprecated.
+ */
+export const getTermByYearSemester = async (
+  academicYear: number,
+  semester: string
+) => {
+  const term = await TermModel.findOne({
+    name: `${academicYear} ${semester} `,
+  }).lean();
+
+  if (!term) return null;
+
+  return term;
 };
