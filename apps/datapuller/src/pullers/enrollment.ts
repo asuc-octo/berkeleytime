@@ -31,17 +31,18 @@ const enrollmentSingularsEqual = (
   }
 
   const aSeatReservationsEmpty =
-    a.seatReservations == undefined || a.seatReservations.length == 0;
+    a.seatReservationCounts == undefined || a.seatReservationCounts.length == 0;
   const bSeatReservationsEmpty =
-    b.seatReservations == undefined || b.seatReservations.length == 0;
+    b.seatReservationCounts == undefined || b.seatReservationCounts.length == 0;
   if (aSeatReservationsEmpty != bSeatReservationsEmpty) {
     return false;
   }
 
-  if (a.seatReservations && b.seatReservations) {
-    if (a.seatReservations.length !== b.seatReservations.length) return false;
-    for (const aSeats of a.seatReservations) {
-      const bSeats = b.seatReservations.find(
+  if (a.seatReservationCounts && b.seatReservationCounts) {
+    if (a.seatReservationCounts.length !== b.seatReservationCounts.length)
+      return false;
+    for (const aSeats of a.seatReservationCounts) {
+      const bSeats = b.seatReservationCounts.find(
         (bSeats) => bSeats.number === aSeats.number
       );
       if (
@@ -131,6 +132,9 @@ const updateEnrollmentHistories = async ({
             sectionId: enrollmentSingular.sectionId,
           },
           {
+            $setOnInsert: {
+              seatReservationTypes: enrollmentSingular.seatReservationTypes,
+            },
             $push: {
               history: enrollmentSingular.data,
             },

@@ -7,7 +7,7 @@ export interface IEnrollmentHistoryItem {
 
   // maps number to requirementGroup.
   // this assumes that these fields are constant over time.
-  seatReservations?: {
+  seatReservationTypes?: {
     number: number;
     requirementGroup?: string;
     fromDate: string;
@@ -24,7 +24,7 @@ export interface IEnrollmentHistoryItem {
     openReserved?: number;
     instructorAddConsentRequired?: boolean;
     instructorDropConsentRequired?: boolean;
-    seatReservations?: {
+    seatReservationCounts?: {
       number: number; // maps to seatReservations.number to get requirementGroup
       maxEnroll: number;
       enrolledCount?: number;
@@ -59,7 +59,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
       openReserved: { type: Number },
       instructorAddConsentRequired: { type: Boolean },
       instructorDropConsentRequired: { type: Boolean },
-      seatReservations: [
+      seatReservationCounts: [
         {
           _id: false,
           number: { type: Number },
@@ -69,7 +69,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
       ],
     },
   ],
-  seatReservations: [
+  seatReservationTypes: [
     {
       _id: false,
       number: { type: Number },
