@@ -22,7 +22,7 @@ spec:
         spec:
           metadata:
             labels:
-              {{- include "bt-app.datapullerLabels" $root | nindent 14 }}
+              env: {{ $root.Values.env }}
           containers:
             - name: datapuller-{{ $jobName }}
               image: {{ printf "%s/%s:%s" $root.Values.datapuller.image.registry $root.Values.datapuller.image.repository ( toString $root.Values.datapuller.image.tag ) }}
