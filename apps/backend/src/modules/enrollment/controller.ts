@@ -11,9 +11,7 @@ export const getEnrollment = async (
     termId,
     sessionId,
     sectionId,
-  })
-    .select("-_id -__v")
-    .lean();
+  }).lean();
 
   return enrollment as EnrollmentModule.Enrollment;
 };

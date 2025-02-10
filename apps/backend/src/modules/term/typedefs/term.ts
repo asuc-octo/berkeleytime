@@ -9,8 +9,13 @@ const typedef = gql`
   }
 
   enum TemporalPosition {
+    "All past terms."
     Past
+
+    "The current term. "
     Current
+
+    "The future terms. Usually only includes the immediate next term."
     Future
   }
 
@@ -35,8 +40,11 @@ const typedef = gql`
   Session, for example Summer Session A
   """
   type Session {
-    temporalPosition: TemporalPosition!
+    "Identifiers"
     id: SessionIdentifier!
+
+    "Attributes"
+    temporalPosition: TemporalPosition!
     name: String!
     beginDate: String!
     endDate: String!
@@ -49,9 +57,12 @@ const typedef = gql`
   Term
   """
   type Term {
-    temporalPosition: TemporalPosition!
+    "Identifiers"
     id: TermIdentifier!
     academicCareerCode: AcademicCareerCode!
+
+    "Attributes"
+    temporalPosition: TemporalPosition!
     name: String!
     beginDate: String!
     endDate: String!
@@ -67,7 +78,7 @@ const typedef = gql`
     """
     Query for a term.
     """
-    term(year: Int!, semester: Semester!): Term
+    term(id: TermIdentifier!, academicCareerCode: AcademicCareerCode!): Term
   }
 `;
 

@@ -1,6 +1,5 @@
 import { NewTermModel } from "@repo/common";
 
-import { Semester } from "../../generated-types/graphql";
 import { TermModule } from "./generated-types/module-types";
 
 // database schema fields to select on queries.
@@ -21,17 +20,15 @@ const fields = {
 };
 
 export const getTerms = async () => {
-  const terms = await NewTermModel.find({}).lean().select(fields);
+  const terms = await NewTermModel.find({}).select(fields).lean();
 
   return terms as TermModule.Term[];
 };
 
-export const getTerm = async (year: number, semester: Semester) => {
-  const term = await NewTermModel.findOne({
-    name: `${year} ${semester}`,
-  })
-    .lean()
-    .select(fields);
+export const getTerm = async (id: string, academicCareerCode: string) => {
+  const term = await NewTermModel.findOne({ id, academicCareerCode })
+    .select(fields)
+    .lean();
 
   if (!term) return null;
 
