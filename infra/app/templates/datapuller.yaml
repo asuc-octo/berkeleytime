@@ -16,12 +16,15 @@ spec:
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 1
   jobTemplate:
+    metadata:
+      labels:
+        {{- include "bt-app.datapullerLabels" $root | nindent 8 }}
     spec:
       ttlSecondsAfterFinished: 172800
-      metadata:
-        labels:
-          {{- include "bt-app.datapullerLabels" $root | nindent 10 }}
       template:
+        metadata:
+          labels:
+            {{- include "bt-app.datapullerLabels" $root | nindent 12 }}
         spec:
           containers:
             - name: datapuller-{{ $jobName }}
