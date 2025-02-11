@@ -1,20 +1,52 @@
-import { TermModel, TermType } from "@repo/common";
+import { NewTermModel, TermModel } from "@repo/common";
 
-import { Semester } from "../../generated-types/graphql";
-import { formatTerm } from "./formatter";
+import { TermModule } from "./generated-types/module-types";
 
-export const getTerms = async () => {
-  const terms = await TermModel.find().lean();
-
-  return terms.map((term) => formatTerm(term as TermType));
+// database schema fields to select on queries.
+const fields = {
+  academicCareerCode: 1,
+  temporalPosition: 1,
+  id: 1,
+  name: 1,
+  beginDate: 1,
+  endDate: 1,
+  sessions: {
+    temporalPosition: 1,
+    id: 1,
+    name: 1,
+    beginDate: 1,
+    endDate: 1,
+  },
 };
 
-export const getTerm = async (year: number, semester: Semester) => {
+export const getTerms = async () => {
+  const terms = await NewTermModel.find({}).select(fields).lean();
+
+  return terms as TermModule.Term[];
+};
+
+export const getTerm = async (id: string, academicCareerCode: string) => {
+  const term = await NewTermModel.findOne({ id, academicCareerCode })
+    .select(fields)
+    .lean();
+
+  if (!term) return null;
+
+  return term as TermModule.Term;
+};
+
+/**
+ * To be deprecated.
+ */
+export const getTermByYearSemester = async (
+  academicYear: number,
+  semester: string
+) => {
   const term = await TermModel.findOne({
-    name: `${year} ${semester}`,
+    name: `${academicYear} ${semester} `,
   }).lean();
 
   if (!term) return null;
 
-  return formatTerm(term as TermType);
+  return term;
 };

@@ -1,48 +1,17 @@
-import { SectionModel, SectionType, TermModel } from "@repo/common";
-import { ClassesAPI } from "@repo/sis-api/classes";
+import { NewEnrollmentHistoryModel } from "@repo/common";
 
-import { config } from "../../config";
-import { Semester } from "../../generated-types/graphql";
-import { formatSection } from "../class/formatter";
+import { EnrollmentModule } from "./generated-types/module-types";
 
 export const getEnrollment = async (
-  year: number,
-  semester: Semester,
-  subject: string,
-  courseNumber: string,
-  number: string
+  termId: string,
+  sessionId: string,
+  sectionId: string
 ) => {
-  const term = await TermModel.findOne({
-    name: `${year} ${semester}`,
-  });
+  const enrollment = await NewEnrollmentHistoryModel.findOne({
+    termId,
+    sessionId,
+    sectionId,
+  }).lean();
 
-  if (!term) throw new Error("Term not found");
-
-  const section = await SectionModel.findOne({
-    "class.session.term.id": term.id,
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": courseNumber,
-    number: number,
-  });
-
-  if (!section) throw new Error("Section not found");
-
-  const client = new ClassesAPI();
-
-  const response = await client.v1.getClassSectionByTermAndSectionIdUsingGet(
-    section.id,
-    { "term-id": term.id },
-    {
-      headers: {
-        app_key: config.sis.CLASS_APP_KEY,
-        app_id: config.sis.CLASS_APP_ID,
-      },
-    }
-  );
-
-  const raw = response.data.apiResponse?.response.classSections?.[0];
-
-  if (!raw) throw new Error("Something went error");
-
-  return formatSection(raw as unknown as SectionType);
+  return enrollment as EnrollmentModule.Enrollment;
 };

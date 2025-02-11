@@ -3,7 +3,7 @@ import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
-import { getTerm } from "../term/controller";
+import { getTermByYearSemester } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
   getClass,
@@ -90,7 +90,7 @@ const resolvers: ClassModule.Resolvers = {
     term: async (parent: IntermediateClass | ClassModule.Class) => {
       if (parent.term) return parent.term;
 
-      const term = await getTerm(parent.year, parent.semester);
+      const term = await getTermByYearSemester(parent.year, parent.semester);
 
       return term as unknown as TermModule.Term;
     },
@@ -152,7 +152,7 @@ const resolvers: ClassModule.Resolvers = {
     term: async (parent: IntermediateSection | ClassModule.Section) => {
       if (parent.term) return parent.term;
 
-      const term = await getTerm(parent.year, parent.semester);
+      const term = await getTermByYearSemester(parent.year, parent.semester);
 
       return term as unknown as TermModule.Term;
     },
