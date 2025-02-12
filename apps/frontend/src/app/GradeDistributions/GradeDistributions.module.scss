@@ -15,6 +15,7 @@
     flex-direction: column;
     overflow: auto;
     gap: 24px;
+    position: relative;
 
     .grid {
       display: grid;
@@ -25,5 +26,16 @@
       margin-left: 30px;
       color: var(--paragraph-color);
     }
+  }
+  .empty {
+    position: absolute;
+    color: var(--label-color);
+    text-align: center;
+    font-size: 14px;
+    left: 0; 
+    right: 0; 
+    top: 25vh;
+    margin-inline: auto; 
+    width: fit-content;
   }
 }

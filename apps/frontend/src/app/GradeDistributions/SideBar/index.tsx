@@ -86,6 +86,7 @@ export default function SideBar({ selectedCourses }: SideBarProps) {
         className={styles.button}
         variant="solid"
         onClick={() => setCourseSelectOpen(true)}
+        // disabled={selectedCourses.length < 4}
       >
         Add course
         <Plus />
