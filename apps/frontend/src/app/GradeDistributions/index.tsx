@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
+import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
   Bar,
@@ -25,7 +26,6 @@ import { colors } from "@/lib/section";
 import styles from "./GradeDistributions.module.scss";
 import HoverInfo from "./HoverInfo";
 import SideBar from "./SideBar";
-import { FrameAltEmpty } from "iconoir-react";
 
 // const data = [
 //   {
@@ -314,7 +314,15 @@ export default function GradeDistributions() {
                 />
               ))}
           </div>
-          {!outputs?.length && <div className={styles.empty}><FrameAltEmpty height={24} width={24}/><br/>You have not added<br/>any classes yet</div>}
+          {!outputs?.length && (
+            <div className={styles.empty}>
+              <FrameAltEmpty height={24} width={24} />
+              <br />
+              You have not added
+              <br />
+              any classes yet
+            </div>
+          )}
         </div>
       )}
     </div>
