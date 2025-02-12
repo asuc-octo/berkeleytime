@@ -308,7 +308,6 @@ const initialize = async () => {
     await updateCourses();
 
     const terms = await TermModel.find({
-      "academicCareer.code": "UGRD",
       academicYear: { $in: ["2024", "2025"] },
     }).lean();
 
