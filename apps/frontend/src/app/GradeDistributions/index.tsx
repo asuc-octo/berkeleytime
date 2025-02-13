@@ -174,6 +174,7 @@ export default function GradeDistributions() {
           const response = await client.query<ReadGradeDistributionResponse>({
             query: READ_GRADE_DISTRIBUTION,
             variables,
+            fetchPolicy: 'no-cache'
           });
 
           return response;
@@ -311,6 +312,7 @@ export default function GradeDistributions() {
                   year={output.input.year}
                   gradeDistribution={output.gradeDistribution}
                   hoveredLetter={hoveredLetter}
+                  key={index}
                 />
               ))}
           </div>

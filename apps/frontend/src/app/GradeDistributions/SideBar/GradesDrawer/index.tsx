@@ -83,26 +83,29 @@ export default function GradesDrawer({
     }
     return [...list, ...opts];
   }, [courseData, selectedSemester, byData]);
+
   const semesterOptions: OptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_SEMESTER];
     if (!courseData) return list;
     const filteredClasses =
-      selectedInstructor?.value === "all" || byData?.value === "semester"
+      byData?.value === "semester"
         ? courseData.classes
-        : courseData.classes.filter((c) =>
-            c.primarySection.meetings.find((m) =>
-              m.instructors.find(
-                (i) =>
-                  selectedInstructor?.value ===
-                  `${i.familyName}, ${i.givenName}`
+        : selectedInstructor?.value === "all" 
+          ? []
+          : courseData.classes.filter((c) =>
+              c.primarySection.meetings.find((m) =>
+                m.instructors.find(
+                  (i) =>
+                    selectedInstructor?.value ===
+                    `${i.familyName}, ${i.givenName}`
+                )
               )
-            )
-          );
-    const filteredOptions = filteredClasses.map((c) => {
+            );
+    const filteredOptions = Array.from(new Set(filteredClasses.map((c) => `${c.semester} ${c.year}`))).map((t) => {
       return {
-        value: `${c.semester} ${c.year}`,
-        label: `${c.semester} ${c.year}`,
-      };
+        value: t,
+        label: t
+      }
     });
     if (filteredOptions.length == 1) {
       if (selectedSemester != filteredOptions[0])

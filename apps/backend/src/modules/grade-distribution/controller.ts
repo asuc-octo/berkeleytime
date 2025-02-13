@@ -300,14 +300,18 @@ export const getGradeDistributionByInstructorAndSemester = async (
     "class.session.term.name": name,
   });
 
+  const terms = await TermModel.find({
+    "name": name
+  })
+
   if (sections.length === 0) throw new Error("No classes found");
 
   const distributions = await GradeDistributionModel.find({
     classNumber: { $in: sections.map((section) => section.id) },
+    termId: { $in: terms.map((term) => term.id) },
   });
 
-  // if (distributions.length === 0)
-  //   throw new Error("No grade distributions found");
+  if (distributions.length === 0) throw new Error("No grades found");
 
   const distribution = getDistribution(distributions);
 

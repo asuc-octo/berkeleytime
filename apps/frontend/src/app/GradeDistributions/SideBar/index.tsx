@@ -86,12 +86,12 @@ export default function SideBar({ selectedCourses }: SideBarProps) {
         className={styles.button}
         variant="solid"
         onClick={() => setCourseSelectOpen(true)}
-        // disabled={selectedCourses.length < 4}
+        disabled={selectedCourses.length >= 4}
       >
         Add course
         <Plus />
       </Button>
-      {selectedCourses.map((course) => {
+      {selectedCourses.map((course, index) => {
         const instructor =
           course.familyName && course.givenName
             ? `${course.givenName} ${course.familyName}`
@@ -101,32 +101,21 @@ export default function SideBar({ selectedCourses }: SideBarProps) {
             ? `${course.semester} ${course.year}`
             : "All Semesters";
         return (
-          <div className={styles.courseCard}>
+          <div className={styles.courseCard} key={index}>
             <DeleteContainer
               onClick={() => {
-                console.log(course);
-                console.log(
-                  courseTermProfToURL(
-                    course.subject,
-                    course.courseNumber,
-                    course.givenName,
-                    course.familyName,
-                    course.semester,
-                    course.year
-                  )
-                );
-                console.log(searchParams.getAll("input"));
-                searchParams.delete(
-                  "input",
-                  courseTermProfToURL(
-                    course.subject,
-                    course.courseNumber,
-                    course.givenName,
-                    course.familyName,
-                    course.semester,
-                    course.year
-                  )
-                );
+                // maintaining order is tricky when avoiding deleting all duplicates
+                const order = searchParams.getAll("input");
+                if (order.length == 1) searchParams.delete("input");
+                else {
+                  order.forEach((inp, i) => {
+                    if (i == 0) searchParams.set("input", inp);
+                    else {
+                      if (i == index) return;
+                      searchParams.append("input", inp);
+                    }
+                  });
+                }
                 setSearchParams(searchParams);
               }}
             >
