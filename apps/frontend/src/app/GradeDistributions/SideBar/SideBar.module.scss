@@ -1,0 +1,18 @@
+.root {
+  width: 384px;
+  border-right: 1px solid var(--border-color);
+  flex-shrink: 0;
+  background-color: var(--background-color);
+  overflow: auto;
+  padding: 12px;
+  .courseCard {
+    margin-bottom: 10px;
+  }
+  .button {
+    height: 48px;
+    padding: 0 16px;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

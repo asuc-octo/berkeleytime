@@ -1,0 +1,18 @@
+.root {
+    padding-right: 40px;
+    padding-top: 10px;
+    border-radius: 5px;
+    position: relative;
+    // background-color: var(--backdrop-color);
+    .delete {
+        position: absolute;
+        right: 0;
+        top: 10px;
+        background-color: var(--cancel-color);
+        color: var(--cancel-accent-color);
+        &:hover {
+            background-color: var(--cancel-hover-color);
+            color: var(--cancel-accent-color);
+        }
+    }
+}
