@@ -174,7 +174,7 @@ export default function GradeDistributions() {
           const response = await client.query<ReadGradeDistributionResponse>({
             query: READ_GRADE_DISTRIBUTION,
             variables,
-            fetchPolicy: 'no-cache'
+            fetchPolicy: "no-cache",
           });
 
           return response;

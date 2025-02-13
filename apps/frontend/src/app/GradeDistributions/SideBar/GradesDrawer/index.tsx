@@ -90,7 +90,7 @@ export default function GradesDrawer({
     const filteredClasses =
       byData?.value === "semester"
         ? courseData.classes
-        : selectedInstructor?.value === "all" 
+        : selectedInstructor?.value === "all"
           ? []
           : courseData.classes.filter((c) =>
               c.primarySection.meetings.find((m) =>
@@ -101,11 +101,13 @@ export default function GradesDrawer({
                 )
               )
             );
-    const filteredOptions = Array.from(new Set(filteredClasses.map((c) => `${c.semester} ${c.year}`))).map((t) => {
+    const filteredOptions = Array.from(
+      new Set(filteredClasses.map((c) => `${c.semester} ${c.year}`))
+    ).map((t) => {
       return {
         value: t,
-        label: t
-      }
+        label: t,
+      };
     });
     if (filteredOptions.length == 1) {
       if (selectedSemester != filteredOptions[0])

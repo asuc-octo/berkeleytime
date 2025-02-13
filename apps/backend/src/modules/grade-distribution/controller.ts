@@ -301,8 +301,8 @@ export const getGradeDistributionByInstructorAndSemester = async (
   });
 
   const terms = await TermModel.find({
-    "name": name
-  })
+    name: name,
+  });
 
   if (sections.length === 0) throw new Error("No classes found");
 
