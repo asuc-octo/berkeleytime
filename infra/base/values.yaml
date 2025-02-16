@@ -4,3 +4,23 @@ acme:
   server: https://acme-v02.api.letsencrypt.org/directory
   cfApiTokenSecretName: cloudflare-api-token-stanfurdtime-secret
 ipAddressRange: 169.229.226.51-169.229.226.51
+
+oauth2-proxy:
+  config:
+    existingSecret: github-oauth-secret
+    clientID:
+      key: client-id
+    clientSecret:
+      key: client-secret
+    cookieSecret:
+      key: cookie-secret
+    provider: "github"
+    githubOrg: "asuc-octo"
+    githubTeam: "asuc-octo/berkeleytime"
+    emailDomains: ["*"]
+    upstreamTimeout: "30s"
+    cookie:
+      name: "_oauth2_proxy"
+      secure: true
+      httpOnly: true
+      expire: "4h"
