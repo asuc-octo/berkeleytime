@@ -15,13 +15,13 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - staff.berkeleytime.com
-      secretName: staff-bt-tls
+        - staff.{{ .Values.host }}
+      secretName: bt-staff-tls
   rules:
-    - host: staff.berkeleytime.com
+    - host: staff.{{ .Values.host }}
       http:
         paths:
-          - path: /
+          - path: {{ .Values.frontend.path }}
             pathType: Prefix
             backend:
               service:
@@ -34,7 +34,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-main-ingress
+  name: {{ .Release.Name }}-ingress
   labels:
     {{- include "bt-app.labels" . | nindent 4 }}
   annotations:
