@@ -16,7 +16,7 @@ spec:
   tls:
     - hosts:
         - staff.{{ .Values.host }}
-      secretName: bt-staff-tls
+      secretName: bt-tls
   rules:
     - host: staff.{{ .Values.host }}
       http:
