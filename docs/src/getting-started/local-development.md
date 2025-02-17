@@ -1,5 +1,35 @@
 # Local Development
 
+## Starting up the Application
+
+Local development has a few local dependencies:
+- [Python](https://www.python.org/downloads/)
+- [Node.js](https://nodejs.org/en)
+- [Docker Desktop](https://www.docker.com/)
+- [pre-commit](https://pre-commit.com/#install)
+
+Next:
+```sh
+# ./berkeleytime
+
+# Continue installation of dependencies.
+pre-commit install
+npm install
+```
+
+Currently, the main development occurs on the `gql` branch. Please make sure you are on this branch!
+
+```sh
+# ./berkeleytime
+git switch gql
+
+# Create .env from template file
+cp .env.template .env
+
+# Ensure Docker Desktop is running. Start up application
+docker compose up -d
+```
+
 ## Seeding Local Database
 
 A seeded database is required for some pages on the frontend.
