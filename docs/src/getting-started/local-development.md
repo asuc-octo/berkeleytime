@@ -30,6 +30,14 @@ cp .env.template .env
 docker compose up -d
 ```
 
+## Common Commands
+
+Upon changing any [GraphQL](https://www.graphql-js.org/docs/) typedefs, the generated types must be regenerated:
+```sh
+# ./berkeleytime
+npx turbo run generate
+```
+
 ## Seeding Local Database
 
 A seeded database is required for some pages on the frontend.
