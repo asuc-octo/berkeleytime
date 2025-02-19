@@ -1,52 +1,93 @@
 import { NewSectionModel } from "@repo/common";
 
 import { getSections } from "../lib/sections";
-import { getActiveTerms } from "../lib/terms";
 import { Config } from "../shared/config";
+import {
+  type TermSelector,
+  getActiveTerms,
+  getLastFiveYearsTerms,
+} from "../shared/term-selectors";
 
-// TODO: Transaction
-const updateSections = async ({
-  log,
-  sis: { TERM_APP_ID, TERM_APP_KEY, CLASS_APP_ID, CLASS_APP_KEY },
-}: Config) => {
-  log.info(`Fetching active terms.`);
+const TERMS_PER_API_BATCH = 4;
 
-  const activeTerms = await getActiveTerms(log, TERM_APP_ID, TERM_APP_KEY);
+const updateSections = async (
+  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
+  termSelector: TermSelector
+) => {
+  log.trace(`Fetching terms...`);
 
-  log.info(`Fetched ${activeTerms.length.toLocaleString()} active terms.`);
-
-  log.info(`Fetching sections for active terms.`);
-
-  const sections = await getSections(
-    log,
-    CLASS_APP_ID,
-    CLASS_APP_KEY,
-    activeTerms.map((term) => term.id as string)
-  );
+  const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
+  const terms = allTerms.filter((term) => term.academicCareerCode === "UGRD");
 
   log.info(
-    `Fetched ${sections.length.toLocaleString()} sections for active terms.`
+    `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
   );
+  if (terms.length == 0) {
+    log.warn(`No terms found, skipping update.`);
+    return;
+  }
 
-  // Delete existing sections for active terms
-  await NewSectionModel.deleteMany({
-    "session.term.id": { $in: activeTerms },
-  });
+  let totalSections = 0;
+  let totalInserted = 0;
+  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
+    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
+    const termsBatchIds = termsBatch.map((term) => term.id);
 
-  // Insert sections in batches of 5000
-  const insertBatchSize = 5000;
+    log.trace(
+      `Fetching sections for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
+    );
 
-  for (let i = 0; i < sections.length; i += insertBatchSize) {
-    const batch = sections.slice(i, i + insertBatchSize);
+    const sections = await getSections(
+      log,
+      CLASS_APP_ID,
+      CLASS_APP_KEY,
+      termsBatchIds
+    );
 
-    log.info(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.info(`Fetched ${sections.length.toLocaleString()} sections.`);
+    if (!sections) {
+      log.warn(`No sections found, skipping update.`);
+      return;
+    }
+    totalSections += sections.length;
 
-    await NewSectionModel.insertMany(batch, { ordered: false });
+    log.trace("Deleting sections to be replaced...");
+
+    const { deletedCount } = await NewSectionModel.deleteMany({
+      termId: { $in: termsBatchIds },
+    });
+
+    log.info(`Deleted ${deletedCount.toLocaleString()} sections.`);
+
+    // Insert sections in batches of 5000
+    const insertBatchSize = 5000;
+    for (let i = 0; i < sections.length; i += insertBatchSize) {
+      const batch = sections.slice(i, i + insertBatchSize);
+
+      log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
+
+      const { insertedCount } = await NewSectionModel.insertMany(batch, {
+        ordered: false,
+        rawResult: true,
+      });
+      totalInserted += insertedCount;
+    }
   }
 
   log.info(
-    `Completed updating database with ${sections.length.toLocaleString()} sections for ${activeTerms.length.toLocaleString()} active terms.`
+    `Completed updating database with ${totalSections.toLocaleString()} sections, inserted ${totalInserted.toLocaleString()} documents.`
   );
 };
 
-export default updateSections;
+const activeTerms = async (config: Config) => {
+  return updateSections(config, getActiveTerms);
+};
+
+const lastFiveYearsTerms = async (config: Config) => {
+  return updateSections(config, getLastFiveYearsTerms);
+};
+
+export default {
+  activeTerms,
+  lastFiveYearsTerms,
+};

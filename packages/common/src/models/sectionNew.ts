@@ -3,8 +3,8 @@ import { Document, Model, Schema, model } from "mongoose";
 export interface ISectionItem {
   courseId: string;
   classNumber: string;
-  sessionId?: string;
-  termId?: string;
+  sessionId: string;
+  termId: string;
   sectionId: string;
   number: string;
   subject: string;
@@ -68,8 +68,8 @@ export interface ISectionItemDocument extends ISectionItem, Document {}
 const sectionSchema = new Schema<ISectionItem>({
   courseId: { type: String, required: true },
   classNumber: { type: String, required: true },
-  sessionId: { type: String },
-  termId: { type: String },
+  sessionId: { type: String, required: true },
+  termId: { type: String, required: true },
   sectionId: { type: String, required: true },
   number: { type: String, required: true },
   subject: { type: String, required: true },
@@ -135,7 +135,10 @@ const sectionSchema = new Schema<ISectionItem>({
     },
   ],
 });
-sectionSchema.index({ sectionId: 1 });
+sectionSchema.index(
+  { termId: 1, sessionId: 1, sectionId: 1 },
+  { unique: true }
+);
 
 export const NewSectionModel: Model<ISectionItem> = model<ISectionItem>(
   "NewSection",

@@ -7,11 +7,15 @@ import { Course, CoursesAPI } from "@repo/sis-api/courses";
 import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automically generated type
-export type CombinedCourse = Course & {
+type CombinedCourse = Course & {
   gradeReplacement: ClassCourse["gradeReplacement"];
 };
 
-export const formatCourse = (input: CombinedCourse) => {
+const filterCourse = (input: CombinedCourse): boolean => {
+  return input.status?.code === "ACTIVE";
+};
+
+const formatCourse = (input: CombinedCourse) => {
   const courseId = input.identifiers?.find(
     (i) => i.type === "cs-course-id"
   )?.id;
@@ -148,8 +152,8 @@ export const getCourses = async (
       app_key: key,
     },
     (data) => data.apiResponse.response.courses || [],
-    formatCourse,
-    "courses"
+    filterCourse,
+    formatCourse
   );
 
   return courses;

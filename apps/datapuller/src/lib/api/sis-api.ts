@@ -3,12 +3,12 @@ import { Logger } from "tslog";
 export async function fetchPaginatedData<T, R>(
   logger: Logger<unknown>,
   api: any,
-  terms: string[] | null,
+  termIds: string[] | null,
   method: string,
   headers: Record<string, string>,
   responseProcessor: (data: any) => R[],
-  itemProcessor: (item: R) => T,
-  dataType: string
+  itemFilter: (item: R) => boolean,
+  itemProcessor: (item: R) => T
 ): Promise<T[]> {
   const results: T[] = [];
   const queryBatchSize = 50;
@@ -17,6 +17,7 @@ export async function fetchPaginatedData<T, R>(
 
   const fetchBatch = async (termId?: string) => {
     const promises = [];
+    let errorCount = 0;
 
     for (let i = 0; i < queryBatchSize; i++) {
       const params: Record<string, any> = {
@@ -32,7 +33,8 @@ export async function fetchPaginatedData<T, R>(
           .then((response: any) => response.json())
           .then((data: any) => responseProcessor(data))
           .catch((error: any) => {
-            logger.error(`Error fetching page ${page + i}: ${error.message}`);
+            logger.warn(`Error fetching page ${page + i}: ${error.message}`);
+            errorCount++;
             return [];
           })
       );
@@ -41,17 +43,19 @@ export async function fetchPaginatedData<T, R>(
     const batchResults = await Promise.all(promises);
     const flattenedResults = batchResults.flat();
 
-    return flattenedResults;
+    return [flattenedResults, errorCount] as const;
   };
 
   const processBatch = async (termId?: string) => {
-    const batchData = await fetchBatch(termId);
+    const [batchData, errorCount] = await fetchBatch(termId);
     if (batchData.length === 0) return false;
 
     const transformedData = batchData.reduce((acc, item, index) => {
       try {
-        const processedItem = itemProcessor(item);
-        acc.push(processedItem);
+        if (itemFilter(item)) {
+          const processedItem = itemProcessor(item);
+          acc.push(processedItem);
+        }
       } catch (error: any) {
         totalErrorCount++;
         logger.error(`Error processing item at index ${index}:`, error);
@@ -62,14 +66,16 @@ export async function fetchPaginatedData<T, R>(
 
     results.push(...transformedData);
     page += queryBatchSize;
-    return true;
+
+    return errorCount < queryBatchSize / 10; // allow 10% error rate
   };
 
-  if (terms && terms.length > 0) {
-    for (const term of terms) {
+  if (termIds && termIds.length > 0) {
+    for (const termId of termIds) {
+      logger.info(`Fetching for term ${termId}`);
       let hasMoreData = true;
       while (hasMoreData) {
-        hasMoreData = await processBatch(term);
+        hasMoreData = await processBatch(termId);
       }
       page = 1;
     }
@@ -80,7 +86,7 @@ export async function fetchPaginatedData<T, R>(
     }
   }
 
-  logger.info(`Total errors encountered for ${dataType}: ${totalErrorCount}`);
+  logger.warn(`Total errors encountered: ${totalErrorCount}`);
 
   return results;
 }

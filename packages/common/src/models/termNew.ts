@@ -1,6 +1,4 @@
-import { Document, Schema, model } from "mongoose";
-
-import { descriptor } from "../lib/sis";
+import { Model, Schema, model } from "mongoose";
 
 /*
  * The term schema is used to store information about the academic term, such as
@@ -8,124 +6,123 @@ import { descriptor } from "../lib/sis";
  * https://developers.api.berkeley.edu/api/232/interactive-docs
  */
 
-// TODO: WORK IN PROGRESS
-export interface ITermItem {
-  academicCareer: typeof descriptor;
-  temporalPosition: "Previous" | "Current" | "Next" | "Past" | "Future";
+export interface ISessionItem {
+  temporalPosition: "Current" | "Past" | "Future";
   id: string;
   name: string;
-  category: typeof descriptor;
-  academicYear: string;
   beginDate: string;
   endDate: string;
-  weeksOfInstruction: number;
-  holidaySchedule: string;
-  censusDate: string;
-  fullyEnrolledDeadline: string;
-  fullyGradedDeadline: string;
-  cancelDeadline: string;
-  withdrawNoPenaltyDeadline: string;
-  degreeConferDate: string;
-  selfServicePlanBeginDate: string;
-  selfServicePlanEndDate: string;
-  selfServiceEnrollBeginDate: string;
-  selfServiceEnrollEndDate: string;
-  sessions: {
-    temporalPosition: "Previous" | "Current" | "Next" | "Past" | "Future";
-    id: string;
-    name: string;
-    beginDate: string;
+  weeksOfInstruction?: number;
+  holidayScheduleCode?: string;
+  censusDate?: string;
+  sixtyPercentPoint?: string;
+  openEnrollmentDate?: string;
+  enrollBeginDate?: string;
+  enrollEndDate?: string;
+  waitListEndDate?: string;
+  fullyEnrolledDeadline?: string;
+  dropDeletedFromRecordDeadline?: string;
+  dropRetainedOnRecordDeadline?: string;
+  dropWithPenaltyDeadline?: string;
+  cancelDeadline?: string;
+  withdrawNoPenaltyDeadline?: string;
+  withdrawWithPenaltyDeadline?: string;
+  timePeriods?: {
+    periodDescription: string;
     endDate: string;
-    weeksOfInstruction: number;
-    holidaySchedule: string;
-    censusDate: string;
-    sixtyPercentPoint: string;
-    openEnrollmentDate: string;
-    enrollBeginDate: string;
-    enrollEndDate: string;
-    waitlistEndDate: string;
-    fullyEnrolledDeadline: string;
-    dropDeletedFromRecordDeadline: string;
-    dropRetainOnRecordDeadline: string;
-    dropWithPenaltyDeadline: string;
-    cancelDeadline: string;
-    withdrawNoPenaltyDeadline: string;
-    withdrawWithPenaltyDeadline: string;
-    timePeriods: {
-      period: string;
-      endDate: string;
-    }[];
   }[];
 }
 
-export interface ITermItemDocument extends ITermItem, Document {}
+// TODO: WORK IN PROGRESS
+export interface ITermItem {
+  academicCareerCode: string;
+  temporalPosition: "Current" | "Past" | "Future";
+  id: string;
+  name: string;
+  academicYear: string;
+  beginDate: string;
+  endDate: string;
+  weeksOfInstruction?: number;
+  holidayScheduleCode?: string;
+  censusDate?: string;
+  fullyEnrolledDeadline?: string;
+  fullyGradedDeadline?: string;
+  cancelDeadline?: string;
+  withdrawNoPenaltyDeadline?: string;
+  degreeConferDate?: string;
+  selfServicePlanBeginDate?: string;
+  selfServicePlanEndDate?: string;
+  selfServiceEnrollBeginDate?: string;
+  selfServiceEnrollEndDate?: string;
+  sessions?: ISessionItem[];
+}
 
 const termSchema = new Schema<ITermItem>({
-  academicCareer: { type: String, required: true },
+  academicCareerCode: { type: String, required: true },
   temporalPosition: {
     type: String,
-    enum: ["Previous", "Current", "Next", "Past", "Future"],
+    enum: ["Current", "Past", "Future"],
     required: true,
   },
   id: { type: String, required: true },
   name: { type: String, required: true },
-  category: { type: String, required: true },
   academicYear: { type: String, required: true },
   beginDate: { type: String, required: true },
   endDate: { type: String, required: true },
-  weeksOfInstruction: { type: Number, required: true },
-  holidaySchedule: { type: String, required: true },
-  censusDate: { type: String, required: true },
-  fullyEnrolledDeadline: { type: String, required: true },
-  fullyGradedDeadline: { type: String, required: true },
-  cancelDeadline: { type: String, required: true },
-  withdrawNoPenaltyDeadline: { type: String, required: true },
-  degreeConferDate: { type: String, required: true },
-  selfServicePlanBeginDate: { type: String, required: true },
-  selfServicePlanEndDate: { type: String, required: true },
-  selfServiceEnrollBeginDate: { type: String, required: true },
-  selfServiceEnrollEndDate: { type: String, required: true },
+  weeksOfInstruction: { type: Number },
+  holidayScheduleCode: { type: String },
+  censusDate: { type: String },
+  fullyEnrolledDeadline: { type: String },
+  fullyGradedDeadline: { type: String },
+  cancelDeadline: { type: String },
+  withdrawNoPenaltyDeadline: { type: String },
+  degreeConferDate: { type: String },
+  selfServicePlanBeginDate: { type: String },
+  selfServicePlanEndDate: { type: String },
+  selfServiceEnrollBeginDate: { type: String },
+  selfServiceEnrollEndDate: { type: String },
   sessions: {
     type: [
       {
         temporalPosition: {
           type: String,
-          enum: ["Previous", "Current", "Next", "Past", "Future"],
+          enum: ["Current", "Past", "Future"],
           required: true,
         },
         id: { type: String, required: true },
         name: { type: String, required: true },
         beginDate: { type: String, required: true },
         endDate: { type: String, required: true },
-        weeksOfInstruction: { type: Number, required: true },
-        holidaySchedule: { type: String, required: true },
-        censusDate: { type: String, required: true },
-        sixtyPercentPoint: { type: String, required: true },
-        openEnrollmentDate: { type: String, required: true },
-        enrollBeginDate: { type: String, required: true },
-        enrollEndDate: { type: String, required: true },
-        waitlistEndDate: { type: String, required: true },
-        fullyEnrolledDeadline: { type: String, required: true },
-        dropDeletedFromRecordDeadline: { type: String, required: true },
-        dropRetainOnRecordDeadline: { type: String, required: true },
-        dropWithPenaltyDeadline: { type: String, required: true },
-        cancelDeadline: { type: String, required: true },
-        withdrawNoPenaltyDeadline: { type: String, required: true },
-        withdrawWithPenaltyDeadline: { type: String, required: true },
+        weeksOfInstruction: { type: Number },
+        holidayScheduleCode: { type: String },
+        censusDate: { type: String },
+        sixtyPercentPoint: { type: String },
+        openEnrollmentDate: { type: String },
+        enrollBeginDate: { type: String },
+        enrollEndDate: { type: String },
+        waitListEndDate: { type: String },
+        fullyEnrolledDeadline: { type: String },
+        dropDeletedFromRecordDeadline: { type: String },
+        dropRetainedOnRecordDeadline: { type: String },
+        dropWithPenaltyDeadline: { type: String },
+        cancelDeadline: { type: String },
+        withdrawNoPenaltyDeadline: { type: String },
+        withdrawWithPenaltyDeadline: { type: String },
         timePeriods: {
           type: [
             {
-              period: { type: String, required: true },
+              periodDescription: { type: String, required: true },
               endDate: { type: String, required: true },
             },
           ],
-          required: true,
         },
       },
     ],
-    required: true,
   },
 });
-termSchema.index({ id: 1 }, { unique: true });
+termSchema.index({ id: 1, academicCareerCode: 1 }, { unique: true });
 
-export const NewTermModel = model<ITermItem>("NewTerm", termSchema);
+export const NewTermModel: Model<ITermItem> = model<ITermItem>(
+  "NewTerm",
+  termSchema
+);

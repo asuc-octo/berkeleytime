@@ -246,7 +246,7 @@ const updateTerms = async () => {
   // Get all previous terms
   let currentTerm: TermType | undefined = terms[0];
 
-  let i = 5;
+  let i = 10;
 
   while (i > 0) {
     console.log(currentTerm.name);
@@ -307,21 +307,15 @@ const initialize = async () => {
     console.log("\n=== UPDATE COURSES ===");
     await updateCourses();
 
-    const currentTerms = await TermModel.find({
-      temporalPosition: { $in: ["Current", "Future"] },
+    const terms = await TermModel.find({
+      academicYear: { $in: ["2024", "2025"] },
     }).lean();
 
-    // Remove duplicate terms
-    const filteredTerms = currentTerms.filter(
-      ({ id }, index) =>
-        index === currentTerms.findIndex((term) => term.id === id)
-    );
-
     console.log("\n=== UPDATE CLASSES ===");
-    await updateClasses(filteredTerms as TermType[]);
+    await updateClasses(terms as TermType[]);
 
     console.log("\n=== UPDATE SECTIONS ===");
-    await updateSections(filteredTerms as TermType[]);
+    await updateSections(terms as TermType[]);
   } catch (error) {
     console.error(error);
 

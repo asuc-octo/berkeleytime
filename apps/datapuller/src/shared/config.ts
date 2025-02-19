@@ -41,7 +41,7 @@ export function loadConfig(): Config {
     prettyLogTimeZone: "local",
   });
 
-  log.info("Loading config...");
+  log.trace("Loading config...");
 
   return {
     log,

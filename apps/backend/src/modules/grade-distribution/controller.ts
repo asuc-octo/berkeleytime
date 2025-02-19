@@ -1,6 +1,6 @@
 import {
   GradeDistributionModel,
-  GradeDistributionType,
+  IGradeDistributionItem,
   SectionModel,
   TermModel,
 } from "@repo/common";
@@ -33,7 +33,7 @@ interface Grade {
   count: number;
 }
 
-export const getDistribution = (distributions: GradeDistributionType[]) => {
+export const getDistribution = (distributions: IGradeDistributionItem[]) => {
   const distribution = distributions.reduce(
     (
       acc,

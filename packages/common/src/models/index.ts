@@ -9,3 +9,5 @@ export * from "./sectionNew";
 export * from "./courseNew";
 export * from "./classNew";
 export * from "./grade-distribution";
+export * from "./enrollment-history";
+export * from "./termNew";

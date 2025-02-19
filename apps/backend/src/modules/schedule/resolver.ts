@@ -1,5 +1,5 @@
 import { Semester } from "../../generated-types/graphql";
-import { getTerm } from "../term/controller";
+import { getTermByYearSemester } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
   createSchedule,
@@ -31,7 +31,10 @@ const resolvers: ScheduleModule.Resolvers = {
     term: async (parent: IntermediateSchedule | ScheduleModule.Schedule) => {
       if (parent.term) return parent.term;
 
-      const term = await getTerm(parent.year, parent.semester as Semester);
+      const term = await getTermByYearSemester(
+        parent.year,
+        parent.semester as Semester
+      );
 
       return term as unknown as TermModule.Term;
     },

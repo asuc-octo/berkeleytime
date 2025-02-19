@@ -13,17 +13,20 @@
 
 # Core Documentation
 
-- [Backend](./core/backend/README.md)
+- [Data](./core/data/README.md)
 
 - [Datapuller](./core/datapuller/README.md)
-    - [Local & Remote Development](./core/datapuller/local-remote-development.md)
+
+  - [Local & Remote Development](./core/datapuller/local-remote-development.md)
+
+- [Backend](./core/backend/README.md)
 
 - [Frontend](./core/frontend/README.md)
 
 - [Infrastructure](./core/infrastructure/README.md)
-    - [Onboarding](./core/infrastructure/onboarding.md)
-    - [CI/CD Workflow](./core/infrastructure/cicd-workflow.md)
-    - [Runbooks](./core/infrastructure/runbooks.md)
+  - [Onboarding](./core/infrastructure/onboarding.md)
+  - [CI/CD Workflow](./core/infrastructure/cicd-workflow.md)
+  - [Runbooks](./core/infrastructure/runbooks.md)
 
 ---
 

@@ -1,6 +1,8 @@
 name: Deploy to Staging
 
-concurrency: staging
+concurrency:
+  group: staging
+  cancel-in-progress: true
 
 on:
   push:
@@ -33,18 +35,8 @@ jobs:
           image:
             tag: latest
         datapuller:
-          courses:
-            image:
-              tag: latest
-          sections:
-            image:
-              tag: latest
-          classes:
-            image:
-              tag: latest
-          grades:
-            image:
-              tag: latest
+          image:
+            tag: latest
         host: staging.stanfurdtime.com
         mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379

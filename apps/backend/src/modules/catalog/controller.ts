@@ -7,7 +7,7 @@ import {
   CourseModel,
   CourseType,
   GradeDistributionModel,
-  GradeDistributionType,
+  IGradeDistributionItem,
   SectionModel,
   SectionType,
   TermModel,
@@ -460,7 +460,7 @@ export const getCatalog = async (
 
         return accumulator;
       },
-      {} as Record<string, GradeDistributionType[]>
+      {} as Record<string, IGradeDistributionItem[]>
     );
 
     const entries = Object.entries(reducedGradeDistributions);
