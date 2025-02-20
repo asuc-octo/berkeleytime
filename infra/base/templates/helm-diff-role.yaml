@@ -20,3 +20,18 @@ rules:
 - apiGroups: ["networking.k8s.io"]
   resources: ["ingresses"]
   verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: helm-diff-rolebinding
+  namespace: bt
+subjects:
+- kind: ServiceAccount
+  name: helm-diff-sa
+  namespace: bt
+roleRef:
+  kind: Role
+  name: helm-diff-role
+  apiGroup: rbac.authorization.k8s.io
