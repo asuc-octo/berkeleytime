@@ -12,25 +12,10 @@ jobs:
   helm-diff:
     runs-on: ubuntu-latest
     steps:
-      - name: Get PR Details
-        id: pr
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              pull_number: context.issue.number
-            });
-            return { 
-              ref: pr.head.ref,
-              sha: pr.head.sha
-            };
-
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          ref: ${{ steps.pr.outputs.ref }}
+          ref: refs/pull/${{ inputs.pr_number }}/head
 
       - name: Set up Helm
         uses: azure/setup-helm@v1
@@ -56,48 +41,25 @@ jobs:
           echo "${{ secrets.HELM_DIFF_KUBECONFIG }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
 
-      - name: Generate Diffs
-        id: diff
+      - name: Generate and Show Diffs
         run: |
-          {
-            echo 'DIFF<<EOF'
-            echo "### Helm Diff Results"
-            echo
-            echo "#### Base Chart"
-            echo '```'
-            helm diff upgrade bt-base ./infra/base \
-              --install \
-              --namespace=bt || true
-            echo '```'
-            echo
-            echo "#### App Chart"
-            echo '```'
-            helm diff upgrade bt-prod-app ./infra/app \
-              --install \
-              --namespace=bt \
-              --set host=stanfurdtime.com \
-              --version=1.0.0 || true
-            echo '```'
-            echo EOF
-          } >> $GITHUB_ENV
-
-      - name: Comment PR
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const diff = process.env.DIFF;
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              issue_number: context.issue.number,
-              body: diff
-            });
-
-
-
-
-
-
+          echo "### Helm Diff Results"
+          echo
+          echo "#### Base Chart"
+          echo '```'
+          helm diff upgrade bt-base ./infra/base \
+            --install \
+            --namespace=bt || true
+          echo '```'
+          echo
+          echo "#### App Chart"
+          echo '```'
+          helm diff upgrade bt-prod-app ./infra/app \
+            --install \
+            --namespace=bt \
+            --set host=stanfurdtime.com \
+            --version=1.0.0 || true
+          echo '```'
 
 
 
