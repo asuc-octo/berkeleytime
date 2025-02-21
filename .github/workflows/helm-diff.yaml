@@ -38,7 +38,7 @@ jobs:
       - name: Set up kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.HELM_DIFF_KUBECONFIG }}" | base64 -d > ~/.kube/config
+          echo "${{ secrets.HELM_DIFF_KUBECONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
 
       - name: Generate and Show Diffs
