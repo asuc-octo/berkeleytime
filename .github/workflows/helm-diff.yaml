@@ -42,24 +42,82 @@ jobs:
           chmod 600 ~/.kube/config
 
       - name: Generate and Show Diffs
+        id: generate-diff
         run: |
-          echo "### Helm Diff Results"
-          echo
-          echo "#### Base Chart"
-          echo '```'
-          helm diff upgrade bt-base ./infra/base \
-            --install \
-            --namespace=bt || true
-          echo '```'
-          echo
-          echo "#### App Chart"
-          echo '```'
+          # Create a temporary file for the output
+          echo "### Helm Diff Results" > diff_output.md
+          echo "" >> diff_output.md
+          
+          # Function to process helm diff output
+          process_diff() {
+            local current_resource=""
+            local diff_content=""
+            local in_diff=false
+            
+            while IFS= read -r line; do
+              if [[ $line =~ ^"bt, "* ]]; then
+                # If we were processing a previous diff, save it
+                if [ "$current_resource" != "" ]; then
+                  echo "<details>" >> diff_output.md
+                  echo "<summary>$current_resource</summary>" >> diff_output.md
+                  echo "" >> diff_output.md
+                  echo "\`\`\`diff" >> diff_output.md
+                  echo "$diff_content" >> diff_output.md
+                  echo "\`\`\`" >> diff_output.md
+                  echo "</details>" >> diff_output.md
+                  echo "" >> diff_output.md
+                fi
+                # Start new resource
+                current_resource="${line#bt, }"
+                diff_content=""
+                in_diff=true
+              elif [ "$in_diff" = true ]; then
+                diff_content+="$line"$'\n'
+              fi
+            done
+            
+            # Save the last resource
+            if [ "$current_resource" != "" ]; then
+              echo "<details>" >> diff_output.md
+              echo "<summary>$current_resource</summary>" >> diff_output.md
+              echo "" >> diff_output.md
+              echo "\`\`\`diff" >> diff_output.md
+              echo "$diff_content" >> diff_output.md
+              echo "\`\`\`" >> diff_output.md
+              echo "</details>" >> diff_output.md
+              echo "" >> diff_output.md
+            fi
+          }
+          
+          echo "#### App Chart Changes" >> diff_output.md
+          echo "" >> diff_output.md
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --version=1.0.0 || true
-          echo '```'
+            --version=1.0.0 2>&1 | process_diff
+          
+          # Save the output as a step output
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "diff<<$EOF" >> $GITHUB_OUTPUT
+          cat diff_output.md >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const diff = process.env.DIFF;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: process.env.PR_NUMBER,
+              body: diff
+            });
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          DIFF: ${{ steps.generate-diff.outputs.diff }}
 
 
 
