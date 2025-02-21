@@ -1,12 +1,15 @@
 name: Generate Helm Diffs for PR
 
 on:
-  issue_comment:
-    types: [created]
+  workflow_call:
+    inputs:
+      pr_number:
+        description: 'PR number to generate diff for'
+        required: true
+        type: string
 
 jobs:
   helm-diff:
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '/helm-diff')
     runs-on: ubuntu-latest
     steps:
       - name: Get PR Details
