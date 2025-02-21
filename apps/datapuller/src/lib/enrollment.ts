@@ -8,13 +8,23 @@ import { filterSection } from "./sections";
 
 const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
   const termId = input.class?.session?.term?.id;
+  const year = input.class?.session?.term?.name?.split(" ")[0];
+  const semester = input.class?.session?.term?.name?.split(" ")[1];
   const sessionId = input.class?.session?.id;
   const sectionId = input.id?.toString();
+  const subject = input.class?.course?.subjectArea?.code?.replaceAll(" ", "");
+  const courseNumber = input.class?.course?.catalogNumber?.formatted;
+  const sectionNumber = input.number;
 
   const essentialFields = {
     termId,
+    year,
+    semester,
     sessionId,
     sectionId,
+    subject,
+    courseNumber,
+    sectionNumber,
   };
 
   const missingField = Object.keys(essentialFields).find(
@@ -26,8 +36,14 @@ const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
 
   const output: IEnrollmentSingularItem = {
     termId: termId!,
+    year: parseInt(year!),
+    semester: semester!,
     sessionId: sessionId!,
     sectionId: sectionId!,
+    subject: subject!,
+    courseNumber: courseNumber!,
+    sectionNumber: sectionNumber!,
+
     data: {
       time: time.toISOString(),
       status: input.enrollmentStatus?.status?.code,
