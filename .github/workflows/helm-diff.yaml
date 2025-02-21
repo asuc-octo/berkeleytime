@@ -1,7 +1,7 @@
 name: Generate Helm Diffs for PR
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       pr_number:
         description: 'PR number to generate diff for'
