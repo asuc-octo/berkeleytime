@@ -12,33 +12,36 @@ const resolvers: GradeDistributionModule.Resolvers = {
     grade: async (
       _,
       {
+        year,
+        semester,
+        sessionId,
         subject,
         courseNumber,
         classNumber,
-        year,
-        semester,
-        givenName,
         familyName,
+        givenName,
       }
     ) => {
-      if (year && semester && givenName && familyName) {
+      if (year && semester && sessionId && givenName && familyName) {
         return await getGradeDistributionByInstructorAndSemester(
-          subject,
-          courseNumber,
           year,
           semester,
-          givenName,
-          familyName
+          sessionId,
+          subject,
+          courseNumber,
+          familyName,
+          givenName
         );
       }
 
-      if (year && semester && classNumber) {
+      if (year && semester && sessionId && classNumber) {
         return await getGradeDistributionByClass(
+          year,
+          semester,
+          sessionId,
           subject,
           courseNumber,
-          classNumber,
-          year,
-          semester
+          classNumber
         );
       }
 
@@ -51,12 +54,13 @@ const resolvers: GradeDistributionModule.Resolvers = {
         );
       }
 
-      if (year && semester) {
+      if (year && semester && sessionId) {
         return await getGradeDistributionBySemester(
-          subject,
-          courseNumber,
           year,
-          semester
+          semester,
+          sessionId,
+          subject,
+          courseNumber
         );
       }
 

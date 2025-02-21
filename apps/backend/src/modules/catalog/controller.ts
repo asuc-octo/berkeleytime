@@ -2,15 +2,15 @@ import Fuse from "fuse.js";
 import { GraphQLResolveInfo } from "graphql";
 
 import {
-  ClassModel,
-  ClassType,
-  CourseModel,
-  CourseType,
   GradeDistributionModel,
+  IClassItem,
+  ICourseItem,
   IGradeDistributionItem,
-  SectionModel,
-  SectionType,
-  TermModel,
+  ISectionItem,
+  NewClassModel,
+  NewCourseModel,
+  NewSectionModel,
+  NewTermModel,
 } from "@repo/common";
 
 import { getFields } from "../../utils/graphql";
@@ -22,11 +22,6 @@ import {
   getDistribution,
 } from "../grade-distribution/controller";
 import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
-
-const getId = (identifiers?: CourseType["identifiers"]) => {
-  return identifiers?.find((identifier) => identifier.type === "cs-course-id")
-    ?.id;
-};
 
 export const getIndex = (classes: ClassModule.Class[]) => {
   const list = classes.map((_class) => {
@@ -368,11 +363,11 @@ export const getCatalog = async (
   info: GraphQLResolveInfo,
   query?: string | null
 ) => {
-  const name = `${year} ${semester}`;
-
-  const term = await TermModel.findOne({
-    name,
-  }).lean();
+  const term = await NewTermModel.findOne({
+    name: `${year} ${semester}`,
+  })
+    .select({ _id: 1 })
+    .lean();
 
   if (!term) throw new Error("Invalid term");
 
@@ -389,44 +384,26 @@ export const getCatalog = async (
    */
 
   // Fetch available classes for the term
-  const classes = await ClassModel.find({
-    "session.term.name": name,
+  const classes = await NewClassModel.find({
+    year,
+    semester,
     anyPrintInScheduleOfClasses: true,
   }).lean();
 
   // Filtering by identifiers reduces the amount of data returned for courses and sections
-  const courseIds = Array.from(
-    classes.reduce((accumulator, _class) => {
-      const courseId = getId(_class.course?.identifiers);
-      if (!courseId) return accumulator;
-
-      accumulator.add(courseId);
-      return accumulator;
-    }, new Set<string>())
-  );
+  const courseIds = classes.map((_class) => _class.courseId);
 
   // Fetch available courses for the term
-  const courses = await CourseModel.find({
-    identifiers: {
-      // The bottleneck seems to be the amount of data we are fetching and not the query itself
-      $elemMatch: {
-        type: "cs-course-id",
-        id: { $in: Array.from(courseIds) },
-      },
-    },
+  const courses = await NewCourseModel.find({
+    courseId: { $in: courseIds },
     printInCatalog: true,
   }).lean();
 
   // Fetch available sections for the term
-  const sections = await SectionModel.find({
-    "class.session.term.name": name,
-    "class.course.identifiers": {
-      // The bottleneck seems to be the amount of data we are fetching and not the query itself
-      $elemMatch: {
-        type: "cs-course-id",
-        id: { $in: Array.from(courseIds) },
-      },
-    },
+  const sections = await NewSectionModel.find({
+    year,
+    semester,
+    courseId: { $in: courseIds },
     printInScheduleOfClasses: true,
   }).lean();
 
@@ -439,20 +416,20 @@ export const getCatalog = async (
   const includesGradeDistribution = children.includes("gradeDistribution");
 
   if (includesGradeDistribution) {
-    const sectionIds = sections.map((section) => section.id);
+    const sectionIds = sections.map((section) => section.sectionId);
 
     const gradeDistributions = await GradeDistributionModel.find({
       // The bottleneck seems to be the amount of data we are fetching and not the query itself
-      classNumber: { $in: sectionIds },
+      sectionId: { $in: sectionIds },
     }).lean();
 
     const reducedGradeDistributions = gradeDistributions.reduce(
       (accumulator, gradeDistribution) => {
-        const courseId = `${gradeDistribution.subject} ${gradeDistribution.courseNumber}`;
-        const sectionId = gradeDistribution.classNumber;
+        const courseSubjectNumber = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
+        const sectionId = gradeDistribution.sectionId;
 
-        accumulator[courseId] = accumulator[courseId]
-          ? [...accumulator[courseId], gradeDistribution]
+        accumulator[courseSubjectNumber] = accumulator[courseSubjectNumber]
+          ? [...accumulator[courseSubjectNumber], gradeDistribution]
           : [gradeDistribution];
         accumulator[sectionId] = accumulator[sectionId]
           ? [...accumulator[sectionId], gradeDistribution]
@@ -478,36 +455,31 @@ export const getCatalog = async (
   // Turn courses into a map to decrease time complexity for filtering
   const reducedCourses = courses.reduce(
     (accumulator, course) => {
-      const id = getId(course?.identifiers);
-      if (!id) return accumulator;
-
-      accumulator[id] = course as CourseType;
+      accumulator[course.courseId] = course as ICourseItem;
       return accumulator;
     },
-    {} as Record<string, CourseType>
+    {} as Record<string, ICourseItem>
   );
 
   // Turn sections into a map to decrease time complexity for filtering
   const reducedSections = sections.reduce(
     (accumulator, section) => {
-      const courseId = getId(section.class?.course?.identifiers);
-      const number = section.class?.number;
+      const courseId = section.courseId;
+      const classNumber = section.classNumber;
 
-      const id = `${courseId}-${number}`;
-      if (!id) return accumulator;
+      const id = `${courseId}-${classNumber}`;
 
       accumulator[id] = (
         accumulator[id] ? [...accumulator[id], section] : [section]
-      ) as SectionType[];
+      ) as ISectionItem[];
 
       return accumulator;
     },
-    {} as Record<string, SectionType[]>
+    {} as Record<string, ISectionItem[]>
   );
 
   const reducedClasses = classes.reduce((accumulator, _class) => {
-    const courseId = getId(_class.course?.identifiers);
-    if (!courseId) return accumulator;
+    const courseId = _class.courseId;
 
     const course = reducedCourses[courseId];
     if (!course) return accumulator;
@@ -515,7 +487,7 @@ export const getCatalog = async (
     const sections = reducedSections[`${courseId}-${_class.number}`];
     if (!sections) return accumulator;
 
-    const index = sections.findIndex((section) => section.association?.primary);
+    const index = sections.findIndex((section) => section.primary);
     if (index === -1) return accumulator;
 
     const formattedPrimarySection = formatSection(sections.splice(index, 1)[0]);
@@ -527,7 +499,7 @@ export const getCatalog = async (
 
     // Add grade distribution to course
     if (includesGradeDistribution) {
-      const key = `${course.subjectArea?.code} ${course.catalogNumber?.formatted}`;
+      const key = `${course.subject}-${course.number}`;
       const gradeDistribution = parsedGradeDistributions[key];
 
       // Fall back to an empty grade distribution to prevent resolving the field again
@@ -538,7 +510,7 @@ export const getCatalog = async (
     }
 
     const formattedClass = {
-      ...formatClass(_class as ClassType),
+      ...formatClass(_class as IClassItem),
       primarySection: formattedPrimarySection,
       sections: formattedSections,
       course: formattedCourse,
@@ -546,7 +518,7 @@ export const getCatalog = async (
 
     // Add grade distribution to class
     if (includesGradeDistribution) {
-      const sectionId = formattedPrimarySection.ccn;
+      const sectionId = formattedPrimarySection.sectionId;
 
       // Fall back to an empty grade distribution to prevent resolving the field again
       const gradeDistribution = parsedGradeDistributions[sectionId] ?? {

@@ -2,8 +2,10 @@ import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
 import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
+import { getEnrollment } from "../enrollment/controller";
+import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
-import { getTermByYearSemester } from "../term/controller";
+import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
   getClass,
@@ -51,8 +53,7 @@ const resolvers: ClassModule.Resolvers = {
     description:
       "Unique 5-digit section identifier (CCN), such as 28082 or 67231",
     parseLiteral(ast) {
-      if (ast.kind === Kind.INT && ast.value.length === 5)
-        return parseInt(ast.value);
+      if (ast.kind === Kind.STRING && ast.value.length === 5) return ast.value;
 
       throw new GraphQLError("Provided value is not a section identifier", {
         extensions: { code: "BAD_USER_INPUT" },
@@ -61,10 +62,14 @@ const resolvers: ClassModule.Resolvers = {
   }),
 
   Query: {
-    class: async (_, { subject, courseNumber, number, year, semester }) => {
+    class: async (
+      _,
+      { year, semester, sessionId, subject, courseNumber, number }
+    ) => {
       const _class = await getClass(
         year,
         semester,
+        sessionId,
         subject,
         courseNumber,
         number
@@ -73,10 +78,14 @@ const resolvers: ClassModule.Resolvers = {
       return _class as unknown as ClassModule.Class;
     },
 
-    section: async (_, { subject, courseNumber, number, year, semester }) => {
+    section: async (
+      _,
+      { year, semester, sessionId, subject, courseNumber, number }
+    ) => {
       const section = await getSection(
         year,
         semester,
+        sessionId,
         subject,
         courseNumber,
         number
@@ -90,7 +99,7 @@ const resolvers: ClassModule.Resolvers = {
     term: async (parent: IntermediateClass | ClassModule.Class) => {
       if (parent.term) return parent.term;
 
-      const term = await getTermByYearSemester(parent.year, parent.semester);
+      const term = await getTerm(parent.year, parent.semester);
 
       return term as unknown as TermModule.Term;
     },
@@ -109,6 +118,7 @@ const resolvers: ClassModule.Resolvers = {
       const primarySection = await getPrimarySection(
         parent.year,
         parent.semester,
+        parent.sessionId,
         parent.subject,
         parent.courseNumber,
         parent.number
@@ -123,6 +133,7 @@ const resolvers: ClassModule.Resolvers = {
       const secondarySections = await getSecondarySections(
         parent.year,
         parent.semester,
+        parent.sessionId,
         parent.subject,
         parent.courseNumber,
         parent.number
@@ -137,11 +148,12 @@ const resolvers: ClassModule.Resolvers = {
       if (parent.gradeDistribution) return parent.gradeDistribution;
 
       const gradeDistribution = await getGradeDistributionByClass(
+        parent.year,
+        parent.semester,
+        parent.sessionId,
         parent.subject,
         parent.courseNumber,
-        parent.number,
-        parent.year,
-        parent.semester
+        parent.number
       );
 
       return gradeDistribution;
@@ -152,9 +164,17 @@ const resolvers: ClassModule.Resolvers = {
     term: async (parent: IntermediateSection | ClassModule.Section) => {
       if (parent.term) return parent.term;
 
-      const term = await getTermByYearSemester(parent.year, parent.semester);
+      const term = await getTerm(parent.year, parent.semester);
 
-      return term as unknown as TermModule.Term;
+      return term as TermModule.Term;
+    },
+
+    course: async (parent: IntermediateSection | ClassModule.Section) => {
+      if (typeof parent.course !== "string") return parent.course;
+
+      const course = await getCourse(parent.subject, parent.courseNumber);
+
+      return course as unknown as CourseModule.Course;
     },
 
     class: async (parent: IntermediateSection | ClassModule.Section) => {
@@ -163,20 +183,30 @@ const resolvers: ClassModule.Resolvers = {
       const _class = await getClass(
         parent.year,
         parent.semester,
+        parent.sessionId,
         parent.subject,
         parent.courseNumber,
-        parent.classNumber
+        parent.number
       );
 
       return _class as unknown as ClassModule.Class;
     },
 
-    course: async (parent: IntermediateSection | ClassModule.Section) => {
-      if (parent.course) return parent.course;
+    enrollment: async (parent: IntermediateSection | ClassModule.Section) => {
+      if (parent.enrollment) return parent.enrollment;
 
-      const course = await getCourse(parent.subject, parent.courseNumber);
+      const enrollmentHistory = await getEnrollment(
+        parent.year,
+        parent.semester,
+        parent.sessionId,
+        parent.subject,
+        parent.courseNumber,
+        parent.sectionId
+      );
+      const latestEnrollmentSingular =
+        enrollmentHistory.history[enrollmentHistory.history.length - 1];
 
-      return course as unknown as CourseModule.Course;
+      return latestEnrollmentSingular as EnrollmentModule.EnrollmentSingular;
     },
   },
 

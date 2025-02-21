@@ -1,8 +1,8 @@
 import {
-  ClassModel,
-  ClassType,
-  CourseModel,
-  CourseType,
+  IClassItem,
+  ICourseItem,
+  NewClassModel,
+  NewCourseModel,
   UserModel,
 } from "@repo/common";
 
@@ -42,16 +42,16 @@ export const getBookmarkedCourses = async (
   const courses = [];
 
   for (const bookmarkedCourse of bookmarkedCourses) {
-    const course = await CourseModel.findOne({
-      "subjectArea.code": bookmarkedCourse.subject,
-      "catalogNumber.formatted": bookmarkedCourse.number,
+    const course = await NewCourseModel.findOne({
+      subject: bookmarkedCourse.subject,
+      number: bookmarkedCourse.number,
     })
       .sort({ fromDate: -1 })
       .lean();
 
     if (!course) continue;
 
-    courses.push(course as CourseType);
+    courses.push(course as ICourseItem);
   }
 
   return courses.map(formatCourse);
@@ -63,16 +63,18 @@ export const getBookmarkedClasses = async (
   const classes = [];
 
   for (const bookmarkedClass of bookmarkedClasses) {
-    const _class = await ClassModel.findOne({
+    const _class = await NewClassModel.findOne({
+      year: bookmarkedClass.year,
+      semester: bookmarkedClass.semester,
+      sessionId: bookmarkedClass.sessionId ? bookmarkedClass.sessionId : "1",
+      subject: bookmarkedClass.subject,
+      courseNumber: bookmarkedClass.courseNumber,
       number: bookmarkedClass.number,
-      "course.subjectArea.code": bookmarkedClass.subject,
-      "course.catalogNumber.formatted": bookmarkedClass.courseNumber,
-      "session.term.name": `${bookmarkedClass.year} ${bookmarkedClass.semester}`,
     }).lean();
 
     if (!_class) continue;
 
-    classes.push(_class as ClassType);
+    classes.push(_class as IClassItem);
   }
 
   return classes.map(formatClass);

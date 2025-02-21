@@ -1,27 +1,26 @@
 import { gql } from "graphql-tag";
 
 export default gql`
-  scalar TermId
-  scalar SessionId
-  scalar SectionId
-
   type Query {
     enrollment(
-      termId: TermId!
-      sessionId: SessionId!
-      sectionId: SectionId!
+      year: Int!
+      semester: Semester!
+      sessionId: SessionIdentifier
+      subject: String!
+      courseNumber: CourseNumber!
+      sectionNumber: SectionNumber!
     ): Enrollment!
   }
 
   type Enrollment {
     "Identifiers"
-    termId: TermId!
-    sessionId: SessionId!
-    sectionId: SectionId!
+    termId: TermIdentifier!
+    sessionId: SessionIdentifier!
+    sectionId: SectionIdentifier!
 
     "Attributes"
     seatReservationTypes: [SeatReservationType!]!
-    history: [EnrollmentHistory!]!
+    history: [EnrollmentSingular!]!
   }
 
   type SeatReservationType {
@@ -30,9 +29,9 @@ export default gql`
     fromDate: String!
   }
 
-  type EnrollmentHistory {
+  type EnrollmentSingular {
     time: String!
-    status: String!
+    status: EnrollmentStatus!
     enrolledCount: Int!
     reservedCount: Int!
     waitlistedCount: Int!
@@ -43,6 +42,14 @@ export default gql`
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
     seatReservationCounts: [SeatReservationCount!]!
+  }
+
+  enum EnrollmentStatus {
+    "Closed"
+    C
+
+    "Open"
+    O
   }
 
   type SeatReservationCount {
