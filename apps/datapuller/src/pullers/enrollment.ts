@@ -116,6 +116,34 @@ const updateEnrollmentHistories = async ({
           { session }
         ).lean();
 
+        // migration (02/20/2025): add missing identifier fields
+        if (
+          doc &&
+          (!doc.year ||
+            !doc.semester ||
+            !doc.subject ||
+            !doc.courseNumber ||
+            !doc.sectionNumber)
+        ) {
+          await NewEnrollmentHistoryModel.updateOne(
+            {
+              termId: enrollmentSingular.termId,
+              sessionId: enrollmentSingular.sessionId,
+              sectionId: enrollmentSingular.sectionId,
+            },
+            {
+              $set: {
+                year: enrollmentSingular.year,
+                semester: enrollmentSingular.semester,
+                subject: enrollmentSingular.subject,
+                courseNumber: enrollmentSingular.courseNumber,
+                sectionNumber: enrollmentSingular.sectionNumber,
+              },
+            },
+            { session }
+          );
+        }
+
         // skip if no change
         if (doc && doc.history.length > 0) {
           const lastHistory = doc.history[doc.history.length - 1];
