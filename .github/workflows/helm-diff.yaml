@@ -1,0 +1,11 @@
+name: Generate Helm Diffs for PR
+on:
+  workflow_dispatch:
+
+jobs:
+  example-job:
+    name: placeholder
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Message
+        run: echo "wow adit is so cool"
