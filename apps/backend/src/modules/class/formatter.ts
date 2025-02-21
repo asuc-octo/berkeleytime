@@ -2,19 +2,19 @@ import { IClassItem, ISectionItem } from "@repo/common";
 
 import { ClassModule } from "./generated-types/module-types";
 
-const classRelationships = {
-  term: null,
-  course: null,
-  primarySection: null,
-  sections: null,
-  gradeDistribution: null,
-};
+interface ClassRelationships {
+  term: null;
+  course: null;
+  primarySection: null;
+  sections: null;
+  gradeDistribution: null;
+}
 
 export type IntermediateClass = Omit<
   ClassModule.Class,
-  keyof typeof classRelationships
+  keyof ClassRelationships
 > &
-  typeof classRelationships;
+  ClassRelationships;
 
 export const formatDate = (date?: string | number | Date | null) => {
   if (!date) return date;
@@ -27,16 +27,21 @@ export const formatDate = (date?: string | number | Date | null) => {
 export const formatClass = (_class: IClassItem) => {
   const output = {
     ..._class,
-    ...classRelationships,
 
     unitsMax: _class.allowedUnits?.maximum || 0,
     unitsMin: _class.allowedUnits?.minimum || 0,
+
+    term: null,
+    course: null,
+    primarySection: null,
+    sections: null,
+    gradeDistribution: null,
   } as IntermediateClass;
 
   return output;
 };
 
-export interface SectionRelationships {
+interface SectionRelationships {
   course: string;
 
   term: null;

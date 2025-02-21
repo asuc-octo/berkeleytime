@@ -2,7 +2,7 @@ import { ICourseItem } from "@repo/common";
 
 import { CourseModule } from "./generated-types/module-types";
 
-export interface CourseRelationships {
+interface CourseRelationships {
   classes: null;
   gradeDistribution: null;
   crossListing: string[];
