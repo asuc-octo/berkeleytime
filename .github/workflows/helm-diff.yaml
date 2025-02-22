@@ -92,29 +92,27 @@ jobs:
               } >> diff_output.md
             fi
           }
-
+          
           # First update dependencies if needed
           helm dependency update ./infra/app
           
-          # Print raw helm diff output for debugging
+          # Print raw helm diff output for debugging (filtered to remove helm.sh/chart noise)
           echo "=== DEBUG: Raw helm diff output ==="
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --set version=1.0.0 \
-            --version 1.0.0 2>&1 | tee /dev/stderr
+            --version 1.0.0 2>&1 | sed '/helm.sh\/chart/d' | tee /dev/stderr
           echo "=== END DEBUG ==="
-
-          # Actual processing
+          
+          # Process diff output, filtering out chart version differences
           echo "#### App Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --set version=1.0.0 \
-            --version 1.0.0 2>&1 | process_diff
+            --version 1.0.0 2>&1 | sed '/helm.sh\/chart/d' | process_diff
           
           # Save the diff output as a step output using a unique delimiter
           delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
@@ -135,15 +133,4 @@ jobs:
         env:
           PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}
-
-
-
-
-
-
-
-
-
-
-
 
