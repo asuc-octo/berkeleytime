@@ -98,8 +98,10 @@ jobs:
           echo "" >> diff_output.md
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
+            --dependency-update \
             --namespace=bt \
-            --set host=stanfurdtime.com 2>&1 | process_diff
+            --set host=stanfurdtime.com \
+            --set version=1.0.0 2>&1 | process_diff
           
           # Save the diff output as a step output using a unique delimiter
           delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
