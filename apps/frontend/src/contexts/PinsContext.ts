@@ -38,6 +38,7 @@ export interface PinsContextType {
   pinEventListeners: PinEventListener[];
   addPinEventListener: Dispatch<PinEventListener>;
   removePinEventListener: Dispatch<PinEventListener>;
+  clearPins: () => void;
 }
 
 const PinsContext = createContext<PinsContextType | null>(null);

@@ -54,7 +54,6 @@ body[data-theme="dark"] .overlay {
     padding: 12px;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--foreground-color);
-    display: flex;
     gap: 12px;
   }
 }
@@ -96,5 +95,27 @@ body[data-theme="dark"] .overlay {
 
   to {
     opacity: 0;
+  }
+}
+.exit {
+  position: absolute;
+  right: 12px;
+}
+
+.menu {
+  margin-top: 20px;
+  button {
+    display: inline-block;
+  }
+}
+
+.cardContainer {
+  padding: 0 15px;
+  margin-top: 15px;
+  .term {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    font-size: 16px;
+    color: var(--label-color);
   }
 }
