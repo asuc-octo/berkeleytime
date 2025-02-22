@@ -102,7 +102,8 @@ jobs:
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --set version=1.0.0 2>&1 | tee /dev/stderr
+            --set version=1.0.0 \
+            --version 1.0.0 2>&1 | tee /dev/stderr
           echo "=== END DEBUG ==="
 
           # Actual processing
@@ -112,7 +113,8 @@ jobs:
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --set version=1.0.0 2>&1 | process_diff
+            --set version=1.0.0 \
+            --version 1.0.0 2>&1 | process_diff
           
           # Save the diff output as a step output using a unique delimiter
           delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
