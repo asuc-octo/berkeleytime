@@ -41,30 +41,73 @@ jobs:
           echo "${{ secrets.HELM_DIFF_KUBECONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
 
-      - name: Generate Helm Diff and Save Output
+      - name: Generate and Format Diffs
         id: generate-diff
         run: |
-          # Create diff file and add header
+          # Create header for the diff output file
           echo "### Helm Diff Results" > diff_output.md
           echo "" >> diff_output.md
+          
+          # Function to process diff output and wrap each resource in a dropdown
+          process_diff() {
+            local resource=""
+            local diff_content=""
+            local in_diff=false
+
+            while IFS= read -r line; do
+              if [[ $line =~ ^"bt, "* ]]; then
+                # If a new resource is found, output the previous one (if exists)
+                if [ -n "$resource" ]; then
+                  {
+                    echo "<details>"
+                    echo "<summary>$resource</summary>"
+                    echo ""
+                    echo "\`\`\`diff"
+                    echo "$diff_content"
+                    echo "\`\`\`"
+                    echo "</details>"
+                    echo ""
+                  } >> diff_output.md
+                fi
+                # Start a new resource block
+                resource="${line#bt, }"
+                diff_content=""
+                in_diff=true
+              elif [ "$in_diff" = true ]; then
+                diff_content+="$line"$'\n'
+              fi
+            done
+
+            # Output the last resource block if exists
+            if [ -n "$resource" ]; then
+              {
+                echo "<details>"
+                echo "<summary>$resource</summary>"
+                echo ""
+                echo "\`\`\`diff"
+                echo "$diff_content"
+                echo "\`\`\`"
+                echo "</details>"
+                echo ""
+              } >> diff_output.md
+            fi
+          }
+          
+          # Append diff for the App Chart to the output file
           echo "#### App Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
-
-          # Run Helm diff and append output (errors are captured too)
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
-            --set host=stanfurdtime.com \
-            --version=1.0.0 2>&1 >> diff_output.md || true
-
-          # Save the diff output as a step output for use in later steps.
-          # We use a random delimiter to wrap the output.
+            --set host=stanfurdtime.com 2>&1 | process_diff
+          
+          # Save the diff output as a step output using a unique delimiter
           delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "diff<<$delim" >> $GITHUB_OUTPUT
           cat diff_output.md >> $GITHUB_OUTPUT
           echo "$delim" >> $GITHUB_OUTPUT
 
-      - name: Post Diff as a PR Comment
+      - name: Comment PR with Diff Output
         uses: actions/github-script@v6
         with:
           script: |
@@ -77,3 +120,15 @@ jobs:
         env:
           PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}
+
+
+
+
+
+
+
+
+
+
+
+
