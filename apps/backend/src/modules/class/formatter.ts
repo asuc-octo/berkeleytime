@@ -59,6 +59,7 @@ export const formatSection = (section: ISectionItem) => {
   const output = {
     ...section,
 
+    online: section.instructionMode === "O",
     course: section.courseId,
 
     term: null,

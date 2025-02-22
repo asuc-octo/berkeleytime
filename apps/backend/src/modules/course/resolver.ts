@@ -131,15 +131,15 @@ const resolvers: CourseModule.Resolvers = {
     Y: "Written final exam conducted during the scheduled final exam period",
   },
 
-  ClassGradingBasis: {
-    ESU: "Elective Satisfactory/Unsat",
-    SUS: "Satisfactory/Unsatisfactory",
-    OPT: "Student Option",
-    PNP: "Pass/Not Pass",
-    BMT: "Multi-Term Course: Not Graded",
-    GRD: "Graded",
-    IOP: "Instructor Option",
-  },
+  // ClassGradingBasis: {
+  //   ESU: "Elective Satisfactory/Unsat",
+  //   SUS: "Satisfactory/Unsatisfactory",
+  //   OPT: "Student Option",
+  //   PNP: "Pass/Not Pass",
+  //   BMT: "Multi-Term Course: Not Graded",
+  //   GRD: "Graded",
+  //   IOP: "Instructor Option",
+  // },
 };
 
 export default resolvers;

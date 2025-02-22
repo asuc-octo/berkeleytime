@@ -75,10 +75,20 @@ export default function Class({
                 gradeDistribution={_class.course.gradeDistribution}
               /> */}
               <Capacity
-                enrollCount={_class.primarySection.enrollCount}
-                enrollMax={_class.primarySection.enrollMax}
-                waitlistCount={_class.primarySection.waitlistCount}
-                waitlistMax={_class.primarySection.waitlistMax}
+                enrolledCount={
+                  _class.primarySection.enrollment.latestEnrollment
+                    .enrolledCount
+                }
+                maxEnroll={
+                  _class.primarySection.enrollment.latestEnrollment.maxEnroll
+                }
+                waitlistedCount={
+                  _class.primarySection.enrollment.latestEnrollment
+                    .waitlistedCount
+                }
+                maxWaitlist={
+                  _class.primarySection.enrollment.latestEnrollment.maxWaitlist
+                }
               />
               <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
             </div>
@@ -119,7 +129,7 @@ export default function Class({
                 </div>
                 {groups[group]?.map((section) => {
                   const active = selectedSections.some(
-                    (selectedSection) => selectedSection === section.ccn
+                    (selectedSection) => selectedSection === section.sectionId
                   );
 
                   return (
@@ -143,7 +153,7 @@ export default function Class({
                         )
                       }
                       {...section}
-                      key={section.ccn}
+                      key={section.sectionId}
                     />
                   );
                 })}

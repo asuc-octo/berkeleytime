@@ -126,10 +126,9 @@ export const getClasses = async (
     if (!_class) continue;
 
     const sections = await NewSectionModel.find({
-      year,
-      semester,
-      sessionId: sessionId ? sessionId : "1",
-      id: { $in: selectedClass.sectionIds },
+      termId: _class.termId,
+      sessionId: _class.sessionId,
+      sectionId: { $in: selectedClass.sectionIds },
     }).lean();
 
     classes.push({

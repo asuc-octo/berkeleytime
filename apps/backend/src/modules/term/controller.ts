@@ -1,6 +1,6 @@
 import { NewTermModel } from "@repo/common";
 
-import { TermModule } from "./generated-types/module-types";
+import { formatTerm } from "./formatter";
 
 // database schema fields to select on queries.
 const fields = {
@@ -22,7 +22,7 @@ const fields = {
 export const getTerms = async () => {
   const terms = await NewTermModel.find({}).select(fields).lean();
 
-  return terms as TermModule.Term[];
+  return terms.map(formatTerm);
 };
 
 export const getTerm = async (
@@ -39,5 +39,5 @@ export const getTerm = async (
 
   if (!term) return null;
 
-  return term as TermModule.Term;
+  return formatTerm(term);
 };

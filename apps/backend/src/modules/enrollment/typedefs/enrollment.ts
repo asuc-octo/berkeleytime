@@ -9,14 +9,19 @@ export default gql`
       subject: String!
       courseNumber: CourseNumber!
       sectionNumber: SectionNumber!
-    ): Enrollment!
+    ): Enrollment
   }
 
   type Enrollment {
     "Identifiers"
     termId: TermIdentifier!
+    year: Int!
+    semester: Semester!
     sessionId: SessionIdentifier!
     sectionId: SectionIdentifier!
+    subject: String!
+    courseNumber: CourseNumber!
+    sectionNumber: SectionNumber!
 
     "Attributes"
     seatReservationTypes: [SeatReservationType!]!

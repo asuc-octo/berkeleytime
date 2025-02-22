@@ -19,5 +19,23 @@ export const getEnrollment = async (
     sectionNumber,
   }).lean();
 
+  if (!enrollment) return null;
+
+  return enrollment as EnrollmentModule.Enrollment;
+};
+
+export const getEnrollmentBySectionId = async (
+  termId: string,
+  sessionId: string,
+  sectionId: string
+) => {
+  const enrollment = await NewEnrollmentHistoryModel.findOne({
+    termId,
+    sessionId,
+    sectionId,
+  }).lean();
+
+  if (!enrollment) return null;
+
   return enrollment as EnrollmentModule.Enrollment;
 };

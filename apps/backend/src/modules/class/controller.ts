@@ -24,8 +24,6 @@ export const getClass = async (
     number,
   }).lean();
 
-  console.log(sessionId);
-
   if (!_class) return null;
 
   return formatClass(_class as IClassItem);

@@ -18,6 +18,8 @@ export type IntermediateCourse = Omit<
 export function formatCourse(course: ICourseItem) {
   const output = {
     ...course,
+    gradingBasis: course.gradingBasis as CourseModule.CourseGradingBasis,
+    finalExam: course.finalExam as CourseModule.CourseFinalExam,
 
     classes: null,
     gradeDistribution: null,

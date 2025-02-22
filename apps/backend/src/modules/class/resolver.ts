@@ -2,8 +2,7 @@ import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
 import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
-import { getEnrollment } from "../enrollment/controller";
-import { EnrollmentModule } from "../enrollment/generated-types/module-types";
+import { getEnrollmentBySectionId } from "../enrollment/controller";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
@@ -195,22 +194,21 @@ const resolvers: ClassModule.Resolvers = {
     enrollment: async (parent: IntermediateSection | ClassModule.Section) => {
       if (parent.enrollment) return parent.enrollment;
 
-      const enrollmentHistory = await getEnrollment(
-        parent.year,
-        parent.semester,
+      const enrollmentHistory = await getEnrollmentBySectionId(
+        parent.termId,
         parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
         parent.sectionId
       );
       const latestEnrollmentSingular =
-        enrollmentHistory.history[enrollmentHistory.history.length - 1];
+        enrollmentHistory?.history[enrollmentHistory?.history.length - 1];
 
-      return latestEnrollmentSingular as EnrollmentModule.EnrollmentSingular;
+      return {
+        latestEnrollment: latestEnrollmentSingular,
+        seatReservationTypes: enrollmentHistory?.seatReservationTypes,
+      } as ClassModule.LatestEnrollment;
     },
   },
 
-  // @ts-expect-error - Not sure how to type this
   // Session: {
   //   R: "1",
   //   S: "12W",
@@ -222,15 +220,15 @@ const resolvers: ClassModule.Resolvers = {
   //   F: "3W2",
   // },
 
-  ClassGradingBasis: {
-    ESU: "Elective Satisfactory/Unsat",
-    SUS: "Satisfactory/Unsatisfactory",
-    OPT: "Student Option",
-    PNP: "Pass/Not Pass",
-    BMT: "Multi-Term Course: Not Graded",
-    GRD: "Graded",
-    IOP: "Instructor Option",
-  },
+  // ClassGradingBasis: {
+  //   ESU: "Elective Satisfactory/Unsat",
+  //   SUS: "Satisfactory/Unsatisfactory",
+  //   OPT: "Student Option",
+  //   PNP: "Pass/Not Pass",
+  //   BMT: "Multi-Term Course: Not Graded",
+  //   GRD: "Graded",
+  //   IOP: "Instructor Option",
+  // },
 };
 
 export default resolvers;

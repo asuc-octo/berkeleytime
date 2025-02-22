@@ -27,9 +27,9 @@ export default gql`
     termId: TermIdentifier!
     sessionId: SessionIdentifier!
     courseId: String!
-    number: ClassNumber!
     subject: String!
     courseNumber: CourseNumber!
+    number: ClassNumber!
 
     "Relationships"
     term: Term!
@@ -102,7 +102,7 @@ export default gql`
     term: Term!
     course: Course!
     class: Class!
-    enrollment: EnrollmentSingular!
+    enrollment: LatestEnrollment!
 
     "Attributes"
     year: Int!
@@ -118,6 +118,12 @@ export default gql`
     component: Component!
     meetings: [Meeting!]!
     exams: [Exam!]!
+    online: Boolean!
+  }
+
+  type LatestEnrollment {
+    latestEnrollment: EnrollmentSingular
+    seatReservationTypes: [SeatReservationType!]
   }
 
   enum Component {

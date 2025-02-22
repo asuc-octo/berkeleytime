@@ -60,7 +60,7 @@ const typedef = gql`
     name: String!
     year: Int!
     semester: Semester!
-    sessionId: SessionIdentifier
+    sessionId: SessionIdentifier!
     events: [EventInput!]
     classes: [SelectedClassInput!]
     public: Boolean

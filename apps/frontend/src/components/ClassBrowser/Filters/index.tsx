@@ -215,7 +215,11 @@ export default function Filters() {
   ]);
 
   const amountOpen = useMemo(
-    () => includedClasses.filter((_class) => _class.primarySection.open).length,
+    () =>
+      includedClasses.filter(
+        (_class) =>
+          _class.primarySection.enrollment.latestEnrollment.status === "O"
+      ).length,
     [includedClasses]
   );
 
