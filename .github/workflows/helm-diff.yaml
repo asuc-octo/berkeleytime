@@ -48,8 +48,7 @@ jobs:
           echo "### Helm Diff Results" > diff_output.md
           echo "" >> diff_output.md
           
-          # Function to process diff output and wrap each resource in a dropdown.
-          # It now checks that the diff content is non-empty (ignoring whitespace)
+          # Function to process diff output and wrap each resource in a dropdown
           process_diff() {
             local resource=""
             local diff_content=""
@@ -57,8 +56,8 @@ jobs:
 
             while IFS= read -r line; do
               if [[ $line =~ ^"bt, "* ]]; then
-                # If a new resource is found, output the previous one if diff_content is non-empty
-                if [ -n "$resource" ] && [ -n "$(echo "$diff_content" | sed '/^[[:space:]]*$/d')" ]; then
+                # If a new resource is found, output the previous one (if exists)
+                if [ -n "$resource" ]; then
                   {
                     echo "<details>"
                     echo "<summary>$resource</summary>"
@@ -79,8 +78,8 @@ jobs:
               fi
             done
 
-            # Output the last resource block if non-empty
-            if [ -n "$resource" ] && [ -n "$(echo "$diff_content" | sed '/^[[:space:]]*$/d')" ]; then
+            # Output the last resource block if exists
+            if [ -n "$resource" ]; then
               {
                 echo "<details>"
                 echo "<summary>$resource</summary>"
@@ -97,7 +96,7 @@ jobs:
           # First update dependencies if needed
           helm dependency update ./infra/app
           
-          # Print raw helm diff output for debugging (filtered to remove helm.sh/chart lines)
+          # Print raw helm diff output for debugging (filtered to remove helm.sh/chart noise)
           echo "=== DEBUG: Raw helm diff output ==="
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
@@ -106,8 +105,7 @@ jobs:
             --version 1.0.0 2>&1 | sed '/helm.sh\/chart/d' | tee /dev/stderr
           echo "=== END DEBUG ==="
           
-          # Process diff output, filtering out chart version differences.
-          # Any resource block that becomes empty after filtering will be skipped.
+          # Process diff output, filtering out chart version differences
           echo "#### App Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
           helm diff upgrade bt-prod-app ./infra/app \
@@ -135,3 +133,4 @@ jobs:
         env:
           PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}
+
