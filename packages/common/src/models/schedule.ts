@@ -49,7 +49,7 @@ export const selectedClassSchema = new Schema({
     trim: true,
     required: true,
   },
-  sections: {
+  sectionIds: {
     type: [Number],
     required: false,
   },
@@ -82,6 +82,10 @@ export const scheduleSchema = new Schema(
     },
     semester: {
       ...semester,
+      required: true,
+    },
+    sessionId: {
+      type: String,
       required: true,
     },
     events: {

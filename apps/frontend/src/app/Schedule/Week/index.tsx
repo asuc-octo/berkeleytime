@@ -22,7 +22,9 @@ const adjustAttachedEvents = (
 
     positions[id][1]++;
 
-    const section = relevantSections.find((section) => id === section.ccn);
+    const section = relevantSections.find(
+      (section) => id === section.sectionId
+    );
     if (!section) return;
 
     const top = getY(section.meetings[0].startTime);
@@ -121,7 +123,7 @@ export default function Week({
             );
           }
 
-          positions[section.ccn] = [
+          positions[section.sectionId] = [
             position,
             attachedSections.length === 0
               ? 1
@@ -129,17 +131,17 @@ export default function Week({
           ];
 
           for (let i = top; i < top + height; i++) {
-            minutes[i].push(section.ccn);
+            minutes[i].push(section.sectionId);
           }
         }
 
         return relevantSections.map((section) => {
-          const [position, columns] = positions[section.ccn];
+          const [position, columns] = positions[section.sectionId];
 
           return {
             ...section,
             position,
-            active: section.ccn !== currentSection?.ccn,
+            active: section.sectionId !== currentSection?.sectionId,
             columns,
           };
         });
@@ -212,7 +214,7 @@ export default function Week({
                 <div key={hour} className={styles.hour}></div>
               ))}
               {events.map((event) => (
-                <Event key={event.ccn} {...event} />
+                <Event key={event.sectionId} {...event} />
               ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}
             </div>

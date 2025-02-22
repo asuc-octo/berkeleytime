@@ -121,6 +121,7 @@ const termSchema = new Schema<ITermItem>({
   },
 });
 termSchema.index({ id: 1, academicCareerCode: 1 }, { unique: true });
+termSchema.index({ name: 1 });
 
 export const NewTermModel: Model<ITermItem> = model<ITermItem>(
   "NewTerm",

@@ -48,7 +48,7 @@ export default function Calendar({
           exams,
           subject,
           courseNumber: number,
-          ccn,
+          sectionId,
         } = section;
 
         for (const meeting of meetings) {
@@ -59,7 +59,7 @@ export default function Calendar({
             endDate,
             subject,
             number,
-            active: currentSection?.ccn === ccn,
+            active: currentSection?.sectionId === sectionId,
             days,
             startTime,
             endTime,
@@ -84,7 +84,7 @@ export default function Calendar({
             date,
             subject: subject,
             number: number,
-            active: currentSection?.ccn === ccn,
+            active: currentSection?.sectionId === sectionId,
             startTime,
             endTime,
             startDate,

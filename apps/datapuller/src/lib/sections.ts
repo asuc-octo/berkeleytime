@@ -69,22 +69,6 @@ const formatSection = (input: ClassSection) => {
     primary: input.association?.primary,
     type: input.type?.code,
     combinedSections: input.combination?.combinedSections,
-    enrollment: {
-      status: input.enrollmentStatus?.status?.code,
-      enrolledCount: input.enrollmentStatus?.enrolledCount,
-      minEnroll: input.enrollmentStatus?.minEnroll,
-      maxEnroll: input.enrollmentStatus?.maxEnroll,
-      waitlistedCount: input.enrollmentStatus?.waitlistedCount,
-      maxWaitlist: input.enrollmentStatus?.maxWaitlist,
-      reservations: input.enrollmentStatus?.seatReservations?.map(
-        (reservation) => ({
-          number: reservation.number,
-          requirementGroup: reservation.requirementGroup?.description,
-          maxEnroll: reservation.maxEnroll,
-          enrolledCount: reservation.enrolledCount,
-        })
-      ),
-    },
     exams: input.exams?.map((exam) => ({
       date: exam.date,
       startTime: exam.startTime,

@@ -46,7 +46,7 @@ const typedef = gql`
     "Attributes"
     temporalPosition: TemporalPosition!
     name: String!
-    beginDate: String!
+    startDate: String!
     endDate: String!
   }
 
@@ -63,10 +63,11 @@ const typedef = gql`
 
     "Attributes"
     temporalPosition: TemporalPosition!
-    name: String!
-    beginDate: String!
+    year: Int!
+    semester: Semester!
+    startDate: String!
     endDate: String!
-    sessions: [Session!]!
+    sessions: [Session!]
   }
 
   type Query {

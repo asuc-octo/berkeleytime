@@ -24,20 +24,6 @@ export interface ISectionItem {
   primary?: boolean;
   type?: string;
   combinedSections?: number[];
-  enrollment?: {
-    status?: string;
-    enrolledCount?: number;
-    minEnroll?: number;
-    maxEnroll?: number;
-    waitlistedCount?: number;
-    maxWaitlist?: number;
-    reservations?: {
-      number?: number;
-      requirementGroup?: string;
-      maxEnroll?: number;
-      enrolledCount?: number;
-    }[];
-  };
   exams?: {
     date?: string;
     startTime?: string;
@@ -66,14 +52,20 @@ export interface ISectionItem {
 export interface ISectionItemDocument extends ISectionItem, Document {}
 
 const sectionSchema = new Schema<ISectionItem>({
+  // identifiers
+  termId: { type: String, required: true },
+  sessionId: { type: String, required: true },
+  sectionId: { type: String, required: true },
+
+  // relationships
   courseId: { type: String, required: true },
   classNumber: { type: String, required: true },
-  sessionId: { type: String, required: true },
-  termId: { type: String, required: true },
-  sectionId: { type: String, required: true },
-  number: { type: String, required: true },
   subject: { type: String, required: true },
   courseNumber: { type: String, required: true },
+  number: { type: String, required: true },
+  primary: { type: Boolean },
+
+  // attributes
   year: { type: Number, required: true },
   semester: { type: String, required: true },
   component: { type: String },
@@ -86,25 +78,8 @@ const sectionSchema = new Schema<ISectionItem>({
   endDate: { type: String },
   addConsentRequired: { type: String },
   dropConsentRequired: { type: String },
-  primary: { type: Boolean },
   type: { type: String },
   combinedSections: { type: [Number] },
-  enrollment: {
-    status: { type: String },
-    enrolledCount: { type: Number },
-    minEnroll: { type: Number },
-    maxEnroll: { type: Number },
-    waitlistedCount: { type: Number },
-    maxWaitlist: { type: Number },
-    reservations: [
-      {
-        number: { type: Number },
-        requirementGroup: { type: String },
-        maxEnroll: { type: Number },
-        enrolledCount: { type: Number },
-      },
-    ],
-  },
   exams: [
     {
       date: { type: String },
@@ -137,6 +112,17 @@ const sectionSchema = new Schema<ISectionItem>({
 });
 sectionSchema.index(
   { termId: 1, sessionId: 1, sectionId: 1 },
+  { unique: true }
+);
+sectionSchema.index(
+  {
+    year: 1,
+    semester: 1,
+    sessionId: 1,
+    subject: 1,
+    courseNumber: 1,
+    number: 1,
+  },
   { unique: true }
 );
 

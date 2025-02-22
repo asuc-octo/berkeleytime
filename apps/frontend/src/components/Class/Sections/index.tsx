@@ -117,19 +117,25 @@ export default function Sections() {
         {Object.values(groups).map((sections) => (
           <div className={styles.group}>
             {sections.map((section) => (
-              <div className={styles.section} key={section.ccn}>
+              <div className={styles.section} key={section.sectionId}>
                 <div className={styles.header}>
                   <div className={styles.text}>
                     <p className={styles.heading}>
                       {componentMap[section.component]} {section.number}
                     </p>
-                    <CCN ccn={section.ccn} />
+                    <CCN sectionId={section.sectionId} />
                   </div>
                   <Capacity
-                    enrollCount={section.enrollCount}
-                    enrollMax={section.enrollMax}
-                    waitlistCount={section.waitlistCount}
-                    waitlistMax={section.waitlistMax}
+                    enrolledCount={
+                      section.enrollment.latestEnrollment.enrolledCount
+                    }
+                    maxEnroll={section.enrollment.latestEnrollment.maxEnroll}
+                    waitlistedCount={
+                      section.enrollment.latestEnrollment.waitlistedCount
+                    }
+                    maxWaitlist={
+                      section.enrollment.latestEnrollment.maxWaitlist
+                    }
                   />
                   <Tooltip content="Berkeley Academic Guide">
                     <a

@@ -146,14 +146,14 @@ const courseSchema = new Schema<ICourseItem>({
     recommendedText: { type: String },
     recommendedCourses: { type: [String] },
     requiredText: { type: String },
-    requiredCourses: { type: [String] },
+    requiredCourses: { type: [String] }, // stored as courseIds
   },
   gradeReplacement: {
     text: { type: String },
     group: { type: String },
     courses: { type: [String] },
   },
-  crossListing: { type: [String] },
+  crossListing: { type: [String] }, // stored as `${subject} ${number}`
   formatsOffered: {
     description: { type: String },
     typicallyOffered: {
@@ -207,6 +207,13 @@ const courseSchema = new Schema<ICourseItem>({
   updatedDate: { type: String },
 });
 courseSchema.index({ courseId: 1 }, { unique: true });
+courseSchema.index(
+  {
+    subject: 1,
+    number: 1,
+  },
+  { unique: true }
+);
 
 export const NewCourseModel: Model<ICourseItem> = model<ICourseItem>(
   "NewCourse",

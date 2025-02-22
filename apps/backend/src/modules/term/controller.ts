@@ -1,6 +1,6 @@
-import { NewTermModel, TermModel } from "@repo/common";
+import { NewTermModel } from "@repo/common";
 
-import { TermModule } from "./generated-types/module-types";
+import { formatTerm } from "./formatter";
 
 // database schema fields to select on queries.
 const fields = {
@@ -22,31 +22,22 @@ const fields = {
 export const getTerms = async () => {
   const terms = await NewTermModel.find({}).select(fields).lean();
 
-  return terms as TermModule.Term[];
+  return terms.map(formatTerm);
 };
 
-export const getTerm = async (id: string, academicCareerCode: string) => {
-  const term = await NewTermModel.findOne({ id, academicCareerCode })
+export const getTerm = async (
+  year: number,
+  semester: string,
+  academicCareerCode: string = "UGRD"
+) => {
+  const term = await NewTermModel.findOne({
+    name: `${year} ${semester}`,
+    academicCareerCode,
+  })
     .select(fields)
     .lean();
 
   if (!term) return null;
 
-  return term as TermModule.Term;
-};
-
-/**
- * To be deprecated.
- */
-export const getTermByYearSemester = async (
-  academicYear: number,
-  semester: string
-) => {
-  const term = await TermModel.findOne({
-    name: `${academicYear} ${semester} `,
-  }).lean();
-
-  if (!term) return null;
-
-  return term;
+  return formatTerm(term);
 };

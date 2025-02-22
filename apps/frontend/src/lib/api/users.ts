@@ -32,6 +32,7 @@ export const READ_USER = gql`
         courseNumber
         year
         semester
+        sessionId
       }
     }
   }
@@ -48,6 +49,7 @@ export interface IBookmarkedClassInput {
   courseNumber: string;
   year: number;
   semester: Semester;
+  sessionId: string | null;
 }
 
 export interface IUserInput {
@@ -76,6 +78,7 @@ export const UPDATE_USER = gql`
         courseNumber
         year
         semester
+        sessionId
       }
     }
   }

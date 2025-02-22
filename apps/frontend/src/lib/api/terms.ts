@@ -24,7 +24,7 @@ export interface ITerm {
   year: number;
   semester: Semester;
   temporalPosition: TemporalPosition;
-  sessions: ISession[];
+  sessions: ISession[] | null;
   startDate?: string;
   endDate?: string;
 }
@@ -42,7 +42,7 @@ export const READ_TERMS = gql`
       sessions {
         name
         startDate
-        endDate
+        startDate
         temporalPosition
       }
       startDate

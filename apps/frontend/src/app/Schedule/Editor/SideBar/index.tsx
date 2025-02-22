@@ -109,7 +109,7 @@ export default function SideBar({
         {schedule.classes.map((selectedClass, index) => {
           return (
             <Class
-              key={selectedClass.class.primarySection.ccn}
+              key={selectedClass.class.primarySection.sectionId}
               {...selectedClass}
               expanded={expanded[index]}
               onExpandedChange={(expanded) => onExpandedChange(index, expanded)}
