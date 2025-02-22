@@ -1,18 +1,21 @@
 name: Generate Helm Diffs for PR
 
 on:
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to generate diff for'
+        required: true
+        type: string
 
 jobs:
   helm-diff:
-    if: github.event.issue.pull_request != null && startsWith(github.event.comment.body, '/helm-diff')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.issue.number }}/head
+          ref: refs/pull/${{ inputs.pr_number }}/head
 
       - name: Set up Helm
         uses: azure/setup-helm@v1
@@ -113,8 +116,21 @@ jobs:
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: Number(process.env.PR_NUMBER),
               body: process.env.DIFF
             });
         env:
+          PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}
+
+
+
+
+
+
+
+
+
+
+
+
