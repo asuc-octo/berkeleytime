@@ -8,6 +8,4 @@ Berkeleytime was created by [Yuxin Zhu](http://yuxinzhu.com/) and [Noah Gilmore]
 
 ## Development
 
-Much of the current development is on [the node branch](https://github.com/asuc-octo/berkeleytime/tree/node).
-
-It hasn't been updated recently, but this project does have [a wiki](https://github.com/asuc-octo/berkeleytime/wiki).
+Much of the current development is on [the gql branch](https://github.com/asuc-octo/berkeleytime/tree/gql).
