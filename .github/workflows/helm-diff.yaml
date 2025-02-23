@@ -102,7 +102,7 @@ jobs:
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --version 1.0.0 2>&1 | sed '/helm.sh\/chart/d' | tee /dev/stderr
+            --version 1.0.0 2>&1 | tee /dev/stderr
           echo "=== END DEBUG ==="
           
           # Process diff output, filtering out chart version differences
@@ -112,7 +112,7 @@ jobs:
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --version 1.0.0 2>&1 | sed '/helm.sh\/chart/d' | process_diff
+            --version 1.0.0 2>&1 | process_diff
           
           # Save the diff output as a step output using a unique delimiter
           delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
