@@ -14,6 +14,7 @@ import { ICourse, Semester } from "@/lib/api";
 
 import GradesDrawer from "./GradesDrawer";
 import styles from "./SideBar.module.scss";
+import CourseAdd from "./CourseAdd";
 
 interface SelectedCourse {
   subject: string;
@@ -82,15 +83,10 @@ export default function SideBar({ selectedCourses }: SideBarProps) {
 
   return (
     <div className={styles.root}>
-      <Button
-        className={styles.button}
-        variant="solid"
-        onClick={() => setCourseSelectOpen(true)}
-        disabled={selectedCourses.length >= 4}
-      >
-        Add course
-        <Plus />
-      </Button>
+      <CourseAdd
+        selectedCourses={selectedCourses}
+        addCourse={addCourse}
+      />
       {selectedCourses.map((course, index) => {
         const instructor =
           course.familyName && course.givenName

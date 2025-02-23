@@ -5,6 +5,8 @@
   background-color: var(--background-color);
   overflow: auto;
   padding: 12px;
+  position: relative;
+  height: 95vh;
   .courseCard {
     margin-bottom: 10px;
   }
