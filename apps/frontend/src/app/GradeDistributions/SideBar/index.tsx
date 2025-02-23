@@ -12,9 +12,9 @@ import Drawer from "@/components/Drawer";
 import { useReadCourse } from "@/hooks/api";
 import { ICourse, Semester } from "@/lib/api";
 
+import CourseAdd from "./CourseAdd";
 import GradesDrawer from "./GradesDrawer";
 import styles from "./SideBar.module.scss";
-import CourseAdd from "./CourseAdd";
 
 interface SelectedCourse {
   subject: string;
@@ -83,10 +83,7 @@ export default function SideBar({ selectedCourses }: SideBarProps) {
 
   return (
     <div className={styles.root}>
-      <CourseAdd
-        selectedCourses={selectedCourses}
-        addCourse={addCourse}
-      />
+      <CourseAdd selectedCourses={selectedCourses} addCourse={addCourse} />
       {selectedCourses.map((course, index) => {
         const instructor =
           course.familyName && course.givenName

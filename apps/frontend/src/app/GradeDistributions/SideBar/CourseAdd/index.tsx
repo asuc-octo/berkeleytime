@@ -1,14 +1,16 @@
-import { Button, IconButton } from "@repo/theme";
+import { useMemo, useState } from "react";
 
+import { useQuery } from "@apollo/client";
+import { UniqueFieldDefinitionNamesRule } from "graphql";
+import { ArrowDown, ArrowUp, Plus } from "iconoir-react";
 import Select, { SingleValue } from "react-select";
 
-import styles from "./CourseAdd.module.scss";
-import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
-import { ArrowDown, ArrowUp, Plus } from "iconoir-react";
-import { useMemo, useState } from "react";
-import { useQuery } from "@apollo/client";
+import { Button, IconButton } from "@repo/theme";
+
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { UniqueFieldDefinitionNamesRule } from "graphql";
+import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
+
+import styles from "./CourseAdd.module.scss";
 
 type CourseOptionType = {
   value: ICourse;
@@ -20,7 +22,6 @@ type OptionType = {
   label: string;
 };
 
-
 interface SelectedCourse {
   subject: string;
   courseNumber: string;
@@ -31,7 +32,7 @@ interface SelectedCourse {
 }
 
 interface CourseAddProps {
-  selectedCourses: SelectedCourse[],
+  selectedCourses: SelectedCourse[];
   addCourse: (course: ICourse, term: string, instructor: string) => void;
 }
 
@@ -46,13 +47,13 @@ const byOptions = [
 
 export default function CourseAdd({
   selectedCourses,
-  addCourse
-} : CourseAddProps) {
-
+  addCourse,
+}: CourseAddProps) {
   const [expanded, setExpanded] = useState(false);
   const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSES);
 
-  const [selectedCourse, setSelectedCourse] = useState<SingleValue<CourseOptionType>>(null);
+  const [selectedCourse, setSelectedCourse] =
+    useState<SingleValue<CourseOptionType>>(null);
 
   const { data: courseData } = useReadCourseWithInstructor(
     selectedCourse?.value.subject ?? "",
@@ -64,10 +65,10 @@ export default function CourseAdd({
     return data?.courses.map((c) => {
       return {
         value: c,
-        label: `${c.subject} ${c.number}`
-      }
-    })
-  }, [data])
+        label: `${c.subject} ${c.number}`,
+      };
+    });
+  }, [data]);
 
   const [byData, setByData] =
     useState<SingleValue<OptionType>>(DEFAULT_BY_OPTION);
@@ -84,7 +85,7 @@ export default function CourseAdd({
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
     if (!courseData) return list;
 
-    console.log(courseData.classes)
+    console.log(courseData.classes);
 
     const mySet = new Set();
     courseData?.classes.forEach((c) => {
@@ -132,7 +133,7 @@ export default function CourseAdd({
         label: t,
       };
     });
-    console.log(filteredOptions)
+    console.log(filteredOptions);
     if (filteredOptions.length == 1) {
       if (selectedSemester != filteredOptions[0])
         setSelectedSemester(filteredOptions[0]);
@@ -141,92 +142,99 @@ export default function CourseAdd({
     return [...list, ...filteredOptions];
   }, [courseData, selectedInstructor, byData]);
 
-  return <div>
-    { expanded && <div>
-      <div className={styles.courseSelectRow}>
-        <span className={styles.courseSelectCont}>
-          <Select
-            options={coursesOptions}
-            value={selectedCourse}
-            onChange={(v) => {
-              setSelectedCourse(v)
-            }}
-          />
-        </span>
-        <IconButton
-          onClick={() => { setExpanded(false) }}
-        >
-          <ArrowUp/>
-        </IconButton>
-      </div>
-      <div className={styles.selectCont}>
-        <Select
-          options={byOptions}
-          value={byData}
-          onChange={(s) => {
-            setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
-            setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
-            setByData(s);
-          }}
-        />
-      </div>
-      <div className={styles.selectCont}>
-        {byData?.value === "instructor" ? (
-          <Select
-            options={instructorOptions}
-            value={selectedInstructor}
-            onChange={(s) => {
-              setSelectedInstructor(s);
-            }}
-          />
-        ) : (
-          <Select
-            options={semesterOptions}
-            value={selectedSemester}
-            onChange={(s) => {
-              setSelectedSemester(s);
-            }}
-          />
-        )}
-      </div>
-      <div className={styles.selectCont}>
-        {byData?.value === "semester" ? (
-          <Select
-            options={instructorOptions}
-            value={selectedInstructor}
-            onChange={(s) => {
-              setSelectedInstructor(s);
-            }}
-          />
-        ) : (
-          <Select
-            options={semesterOptions}
-            value={selectedSemester}
-            onChange={(s) => {
-              setSelectedSemester(s);
-            }}
-          />
-        )}
-      </div>
-    </div>}
-    <Button
-      className={styles.button}
-      variant="solid"
-      onClick={() => {
-        if (!expanded) setExpanded(true);
-        else {
-          if (!selectedCourse || !selectedSemester || !selectedInstructor) return;
+  return (
+    <div>
+      {expanded && (
+        <div>
+          <div className={styles.courseSelectRow}>
+            <span className={styles.courseSelectCont}>
+              <Select
+                options={coursesOptions}
+                value={selectedCourse}
+                onChange={(v) => {
+                  setSelectedCourse(v);
+                }}
+              />
+            </span>
+            <IconButton
+              onClick={() => {
+                setExpanded(false);
+              }}
+            >
+              <ArrowUp />
+            </IconButton>
+          </div>
+          <div className={styles.selectCont}>
+            <Select
+              options={byOptions}
+              value={byData}
+              onChange={(s) => {
+                setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
+                setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
+                setByData(s);
+              }}
+            />
+          </div>
+          <div className={styles.selectCont}>
+            {byData?.value === "instructor" ? (
+              <Select
+                options={instructorOptions}
+                value={selectedInstructor}
+                onChange={(s) => {
+                  setSelectedInstructor(s);
+                }}
+              />
+            ) : (
+              <Select
+                options={semesterOptions}
+                value={selectedSemester}
+                onChange={(s) => {
+                  setSelectedSemester(s);
+                }}
+              />
+            )}
+          </div>
+          <div className={styles.selectCont}>
+            {byData?.value === "semester" ? (
+              <Select
+                options={instructorOptions}
+                value={selectedInstructor}
+                onChange={(s) => {
+                  setSelectedInstructor(s);
+                }}
+              />
+            ) : (
+              <Select
+                options={semesterOptions}
+                value={selectedSemester}
+                onChange={(s) => {
+                  setSelectedSemester(s);
+                }}
+              />
+            )}
+          </div>
+        </div>
+      )}
+      <Button
+        className={styles.button}
+        variant="solid"
+        onClick={() => {
+          if (!expanded) setExpanded(true);
+          else {
+            if (!selectedCourse || !selectedSemester || !selectedInstructor)
+              return;
             addCourse(
               selectedCourse.value,
               selectedSemester.value,
               selectedInstructor.value
             );
-        }
-      }}
-      disabled={selectedCourses.length >= 4}
-    >
-      Add course
-      {expanded ? <Plus /> : <ArrowDown/> }
-    </Button>
-  </div>
+          }
+        }}
+        disabled={selectedCourses.length >= 4}
+      >
+        Add course
+        {expanded ? <Plus /> : <ArrowDown />}
+      </Button>
+    </div>
+  );
 }
