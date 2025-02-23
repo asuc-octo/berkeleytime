@@ -13,7 +13,7 @@ oauth2-proxy:
     cookieSecret: cookie-secret
     provider: "github"
     githubOrg: "asuc-octo"
-    githubTeam: "asuc-octo/berkeleytime"
+    githubTeam: "Berkeleytime"
     emailDomains: ["*"]
     upstreamTimeout: "30s"
     cookie:
