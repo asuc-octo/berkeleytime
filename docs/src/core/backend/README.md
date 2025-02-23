@@ -2,6 +2,8 @@
 
 Welcome to the backend section.
 
+<!-- toc -->
+
 ## What is the backend?
 
 The backend application service is the user-facing API server responsible for serving data to the frontend. Communication between the backend and frontend is done with HTTPS, as do most websites on the modern internet. To see more on how the backend service interacts with other components in the Berkeleytime system, view the [architecture page](../infrastructure/onboarding.md#architecture)
@@ -44,7 +46,7 @@ Here is a list of services bootstrapped by the files in `src/bootstrap`:
 - **MongoDB ORM:** [Mongoose](https://mongoosejs.com/)
 - **Cache Connection:** [Redis](https://redis.io/)
 
-A module within `src/modules` contains a collection of files necessary to serve the GraphQL queries for its domain. The file structure of the modules are all very similar. Below is the user module as an example:
+The bulk of the application logic is split into separate modules within the `src/modules` directory. A module contains a collection of files necessary to serve the GraphQL queries for its domain. The file structure of the modules are all very similar. Below is the user module as an example:
 
 ```
 .
@@ -78,7 +80,7 @@ The above diagram shows a simplified request-to-response pipeline within a modul
 
 3. The controller queries the database, using user input to filter documents. We use [Mongoose](https://mongoosejs.com/) as an abstraction layer between our application logic and MongoDB queries.[^2] Both [Mongoose docs](https://mongoosejs.com/docs/index.html) and [MongoDB docs](https://www.mongodb.com/docs/manual/crud/) on queries are valuable resources.
 
-4. The formatter translates the DB response from a database type into a GraphQL type. Note that not all modules have a formatter because the database type and GraphQL type are sometimes identical.
+4. The formatter translates the DB response from a database type, from `berkeleytime/packages/common/src/models`, into a GraphQL type, from `[module]/generated_types/module-types.ts`. Note that not all modules have a formatter because the database type and GraphQL type are sometimes identical.
 
 5. Finally, the result is returned as a [GraphQL response](https://graphql.org/learn/response/) in the shape of a JSON, matching the query from step 1.[^3]
 
