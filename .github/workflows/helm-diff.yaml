@@ -20,7 +20,7 @@ jobs:
       - name: Checkout PR Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ inputs.pr_number }}/head
+          ref: refs/pull/${{ github.event_name == 'workflow_dispatch' ? inputs.pr_number : github.event.issue.number }}/head
 
       - name: Set up Helm
         uses: azure/setup-helm@v1
@@ -98,7 +98,7 @@ jobs:
             fi
           }
           
-          # First update dependencies if needed
+          # Update chart dependencies if needed
           helm dependency update ./infra/app
           helm dependency update ./infra/base
           
@@ -111,7 +111,7 @@ jobs:
             --namespace=bt \
             --set host=stanfurdtime.com \
             --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
-            
+          
           # Process base chart diff output and log raw diff
           echo "" >> diff_output.md
           echo "#### Base Chart Changes" >> diff_output.md
@@ -161,4 +161,3 @@ jobs:
         env:
           PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}
-
