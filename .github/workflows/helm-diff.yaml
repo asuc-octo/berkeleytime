@@ -7,9 +7,14 @@ on:
         description: 'PR number to generate diff for'
         required: true
         type: string
+  issue_comment:
+    types: [created]
 
 jobs:
   helm-diff:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.pull_request && contains(github.event.comment.body, '/helm-diff'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR Code
@@ -96,22 +101,22 @@ jobs:
           # First update dependencies if needed
           helm dependency update ./infra/app
           
-          # Print raw helm diff output for debugging (filtered to remove helm.sh/chart noise)
-          echo "=== DEBUG: Raw helm diff output ==="
-          helm diff upgrade bt-prod-app ./infra/app \
-            --install \
-            --namespace=bt \
-            --set host=stanfurdtime.com \
-            --version 1.0.0 2>&1 | tee /dev/stderr
-          echo "=== END DEBUG ==="
-          
-          # Process diff output, filtering out chart version differences
+          # Process app chart diff output
           echo "#### App Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
+            --version 1.0.0 2>&1 | process_diff
+            
+          # Process base chart diff output
+          echo "" >> diff_output.md
+          echo "#### Base Chart Changes" >> diff_output.md
+          echo "" >> diff_output.md
+          helm diff upgrade bt-base ./infra/base \
+            --install \
+            --namespace=bt \
             --version 1.0.0 2>&1 | process_diff
           
           # Save the diff output as a step output using a unique delimiter
