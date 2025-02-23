@@ -75,7 +75,7 @@ const classSchema = new Schema<IClassItem>({
 classSchema.index(
   {
     year: 1,
-    semetser: 1,
+    semester: 1,
     sessionId: 1,
     subject: 1,
     courseNumber: 1,

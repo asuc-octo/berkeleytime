@@ -42,7 +42,7 @@ export const READ_TERMS = gql`
       sessions {
         name
         startDate
-        startDate
+        endDate
         temporalPosition
       }
       startDate
