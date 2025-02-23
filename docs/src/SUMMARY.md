@@ -13,13 +13,13 @@
 
 # Core Documentation
 
+- [Backend](./core/backend/README.md)
+
 - [Data](./core/data/README.md)
 
 - [Datapuller](./core/datapuller/README.md)
 
   - [Local & Remote Development](./core/datapuller/local-remote-development.md)
-
-- [Backend](./core/backend/README.md)
 
 - [Frontend](./core/frontend/README.md)
 
