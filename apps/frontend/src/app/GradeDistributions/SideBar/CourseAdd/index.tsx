@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { UniqueFieldDefinitionNamesRule } from "graphql";
 import { ArrowDown, ArrowUp, Plus } from "iconoir-react";
 import Select, { SingleValue } from "react-select";
 
@@ -50,7 +49,7 @@ export default function CourseAdd({
   addCourse,
 }: CourseAddProps) {
   const [expanded, setExpanded] = useState(false);
-  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSES);
+  const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
 
   const [selectedCourse, setSelectedCourse] =
     useState<SingleValue<CourseOptionType>>(null);
