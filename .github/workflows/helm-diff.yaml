@@ -102,29 +102,41 @@ jobs:
           helm dependency update ./infra/app
           helm dependency update ./infra/base
           
-          # Process app chart diff output
+          # Process app chart diff output and log raw diff
           echo "#### App Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
+          echo "Raw App Chart Diff:" >> /tmp/raw_diffs.log
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
             --set host=stanfurdtime.com \
-            --version 1.0.0 2>&1 | process_diff
+            --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
             
-          # Process base chart diff output
+          # Process base chart diff output and log raw diff
           echo "" >> diff_output.md
           echo "#### Base Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
+          echo "Raw Base Chart Diff:" >> /tmp/raw_diffs.log
           helm diff upgrade bt-base ./infra/base \
             --install \
             --namespace=bt \
-            --version 1.0.0 2>&1 | process_diff
+            --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
           
-          # Save the diff output as a step output using a unique delimiter
+          # Log the raw diffs to GitHub Actions output
+          echo "raw_diffs<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/raw_diffs.log >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Save the formatted diff output as a step output using a unique delimiter
           delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "diff<<$delim" >> $GITHUB_OUTPUT
           cat diff_output.md >> $GITHUB_OUTPUT
           echo "$delim" >> $GITHUB_OUTPUT
+
+      - name: Log Raw Diffs
+        run: |
+          echo "Raw Helm Diffs:"
+          echo "${{ steps.generate-diff.outputs.raw_diffs }}"
 
       - name: Comment PR with Diff Output
         uses: actions/github-script@v6
