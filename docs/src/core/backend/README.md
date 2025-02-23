@@ -94,3 +94,42 @@ The above diagram shows a simplified request-to-response pipeline within a modul
 [^2]: The Mongoose abstraction is very similar to the built-in MongoDB query language.
 
 [^3]: Fields not requested are automatically removed.
+
+### Database Models
+
+In addition to the API server, the backend service is responsible for managing MongoDB usage—specifically, how our data is organized and defined through collections, models, and indexes.
+
+```
+.
+├── apps
+│   └── backend                         # Backend codebase
+├── packages                            # Shared packages across apps
+│   └── common
+│       └── src
+│           └── models                  # All database models
+│               └── [model].ts          # Example model file
+```
+
+A model file will contain TypeScript types mirroring the database model, a Mongoose model definition, and database index declarations.
+
+```ts
+// packages/common/src/models/termNew.ts
+
+// defines TypeScript type for nested object
+export interface ISessionItem { /* ... */ }
+
+// defines TypeScript type for term object
+export interface ITermItem { /* ... */ }
+
+// defines Mongoose schema using TypeScript type
+const termSchema = new Schema<ITermItem>({ /* ... */ });
+
+// defines database indexes
+termSchema.index( /* ... */ );
+
+// creates Mongo model instance
+export const TermModel: Model<ITermItem> = model<ITermItem>(
+  "term",
+  termSchema
+);
+```
