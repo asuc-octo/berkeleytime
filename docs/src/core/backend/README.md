@@ -75,11 +75,17 @@ The above diagram shows a simplified request-to-response pipeline within a modul
 
 1. A [GraphQL request](https://graphql.org/learn/queries/) is sent to the backend server. A request looks like a JSON skeleton, containing only keys but no values. The request is "routed" to the specific module.[^1]
 
-2. The resolver handles the request by calling the specific controller method necessary. For more information on how the resolver should be designed, it is recommended to consult the [Apollo Server documentation on resolvers](https://www.apollographql.com/docs/apollo-server/data/resolvers).
+2. The **resolver** handles the request by calling the specific controller method necessary.
 
-3. The controller queries the database, using user input to filter documents. We use [Mongoose](https://mongoosejs.com/) as an abstraction layer between our application logic and MongoDB queries.[^2] Both [Mongoose docs](https://mongoosejs.com/docs/index.html) and [MongoDB docs](https://www.mongodb.com/docs/manual/crud/) on queries are valuable resources.
+    - For more information on how the resolver should be designed, it is recommended to consult the [Apollo Server documentation on resolvers](https://www.apollographql.com/docs/apollo-server/data/resolvers).
 
-4. The formatter translates the DB response from a database type, from `berkeleytime/packages/common/src/models`, into a GraphQL type, from `[module]/generated_types/module-types.ts`. Note that not all modules have a formatter because the database type and GraphQL type are sometimes identical.
+3. The **controller** queries the Mongo database, using user input to filter documents.
+
+    - We use [Mongoose](https://mongoosejs.com/) as an abstraction layer between our application logic and MongoDB queries.[^2] Both [Mongoose docs](https://mongoosejs.com/docs/index.html) and [MongoDB docs](https://www.mongodb.com/docs/manual/crud/) on queries are valuable resources.
+
+4. The **formatter** translates the DB response from a database type, from `berkeleytime/packages/common/src/models`, into a GraphQL type, from `[module]/generated_types/module-types.ts`.
+
+    - Note that not all modules have a formatter because the database type and GraphQL type are sometimes identical.
 
 5. Finally, the result is returned as a [GraphQL response](https://graphql.org/learn/response/) in the shape of a JSON, matching the query from step 1.[^3]
 
