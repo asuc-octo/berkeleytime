@@ -46,7 +46,7 @@ The deployment process is different for [development](#development), [staging](#
     Drone SSH version 1.8.0
     ===========================
     Release "bt-dev-app-69d94b6" does not exist. Installing it now.
-    Pulled: registry-1.docker.io/octoberkeleytime/bt-app:1.0.0-dev.69d94b6
+    Pulled: registry-1.docker.io/octoberkeleytime/bt-app:0.1.0-dev.69d94b6
     Digest: sha256:e3d020b8582b8b4c583f026f79e4ab2b374386ce67ea5ee43aa65c6b334f9db0
     W1204 22:20:37.827877 2103423 warnings.go:70] unknown field "spec.template.app.kubernetes.io/instance"
     W1204 22:20:37.827939 2103423 warnings.go:70] unknown field "spec.template.app.kubernetes.io/managed-by"

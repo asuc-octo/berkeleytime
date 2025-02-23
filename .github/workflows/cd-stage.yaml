@@ -15,7 +15,7 @@ jobs:
     uses: ./.github/workflows/cd-build.yaml
     with:
       image_tag: latest
-      chart_ver: 1.0.0-stage
+      chart_ver: 0.1.0-stage
     secrets: inherit
 
   deploy:
@@ -25,7 +25,7 @@ jobs:
     with:
       environment: staging
       name: bt-stage-app
-      version: 1.0.0-stage
+      version: 0.1.0-stage
       values: |
         env: stage
         frontend:

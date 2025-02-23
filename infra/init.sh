@@ -60,7 +60,7 @@ helm install bt-stage-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis
     --set redis.commonLabels.env=stage
 
 helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --namespace=bt \
-    --version=1.0.0-stage \
+    --version=0.1.0-stage \
     --set env=stage \
     --set frontend.image.tag=latest \
     --set backend.image.tag=latest \
@@ -82,7 +82,7 @@ helm install bt-dev-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis -
     --set redis.commonLabels.env=dev
 
 helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --namespace=bt \
-    --version=1.0.0-dev \
+    --version=0.1.0-dev \
     --set env=dev \
     --set ttl=24 \
     --set frontend.image.tag=dev1 \
