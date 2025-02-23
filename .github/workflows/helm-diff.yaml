@@ -121,6 +121,16 @@ jobs:
             --install \
             --namespace=bt \
             --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
+
+          # Add a dropdown for the raw diff output
+          echo "" >> diff_output.md
+          echo "<details>" >> diff_output.md
+          echo "<summary>📋 Raw Helm Diff Output</summary>" >> diff_output.md
+          echo "" >> diff_output.md
+          echo "\`\`\`" >> diff_output.md
+          cat /tmp/raw_diffs.log >> diff_output.md
+          echo "\`\`\`" >> diff_output.md
+          echo "</details>" >> diff_output.md
           
           # Log the raw diffs to GitHub Actions output
           echo "raw_diffs<<EOF" >> $GITHUB_OUTPUT
