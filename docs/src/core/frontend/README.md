@@ -1,59 +1,188 @@
 # Frontend
 
-This section provides an overview of the basic Frontend infrastructure.
+We maintain a static, single-page application (SPA) at [berkeleytime.com](https://berkeleytime.com). Once compiled, the application consists only of HTML, JavaScript, and CSS files served to visitors. No server generates responses at request time. Instead, the SPA utilizes the browser to fetch data from the backend service hosted at [berkeleytime.com/api/graphql](https://berkeleytime.com/api/graphql).
 
-## What is the frontend?
-The frontend is what you see when you load berkeleytime.com. It contains the code for the components, designs, and styles that make up the website, as well as the logic to pull data from the backend and display it.
+We originally chose this pattern because most developers are familiar with React, Vue, Svelte, or other SPA frameworks and we did not want to opt for a more opinionated meta-framework like Next.js or Remix for now. However, there are always trade-offs.
 
-## The Berkeleytime Frontend Service
+The frontend consists of the design, components, and logic that make up our SPA.
 
-### Tech Stack
+## Recommendations
 
-The frontend uses the following technologies:
+- Use VSCode
+- Install the [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension
+- Install the [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension
 
-- **Programming Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Runtime Environment:** [NodeJS](https://nodejs.org/)
-- **Web Server Framework:** [React](https://react.dev/)
-- **Client-Side GraphQL:** [Apollo Client](https://www.apollographql.com/docs/react)
+## Stack
+
+Berkeleytime is built entirely with [TypeScript](https://www.typescriptlang.org/) and the frontend follows suit with strictly-typed [React](https://react.dev/) built with [Vite](https://vite.dev/). Because we use [Apollo](https://www.apollographql.com/docs) for our GraphQL server, use the [React Apollo client](https://www.apollographql.com/docs/react) for fetching and mutating data on the frontend.
+
+```typescript
+import { QueryHookOptions, useQuery } from "@apollo/client";
+
+import { READ_CLASS, ReadClassResponse, Semester } from "@/lib/api";
+
+export const useReadClass = (
+  year: number,
+  semester: Semester,
+  subject: string,
+  courseNumber: string,
+  number: string,
+  options?: Omit<QueryHookOptions<ReadClassResponse>, "variables">
+) => {
+  const query = useQuery<ReadClassResponse>(READ_CLASS, {
+    ...options,
+    variables: {
+      year,
+      semester,
+      subject,
+      courseNumber,
+      number,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.class,
+  };
+};
+```
 
 ### Structure
 
-The frontend codebase follows the following structure:
+The frontend consists of not only the SPA, but also various packages used to modularize our codebase and separate concerns. These packages are managed by [Turborepo](https://turbo.build/repo/docs), a build system designed for scaling monorepos, but I won't dive too deep into how Turborepo works right now.
+
+```bash
+apps/
+  ...
+  frontend/                     # React SPA served at https://berkeleytime.com
+  ...
+packages/
+  ...
+  theme/                        # React design system
+  eslint-config/                # Shared utility package for ESLint configuration files
+  typescript-config/            # Shared utility package for TypeScript configured files
+  ...
 ```
+
+You can see how the frontend app depends on these packages within the `apps/frontend/package.json`.
+
+```json
+{
+  "name": "frontend",
+  // ...
+  "dependencies": {
+    // ...
+    "@repo/theme": "*",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    // ...
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/react": "^19.0.8",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.19.0",
+    "typescript": "^5.7.3",
+    "vite": "6.0.8"
+  }
+}
+```
+
+### Design system
+
+We maintain a design system built on top of [Radix primitives](https://www.radix-ui.com/primitives), a library of unstyled, accessible, pre-built React components like dialogs, dropdown menus, and tooltips. By standardizing components, colors, icons, and other patterns, we can reduce the amount of effort required to build new features or maintain consistency across the frontend.
+
+The design system houses standalone components that do not require any external context. They maintain design consistency and should function whether or not they are used in the context of Berkeleytime. More complex components specific to Berkeleytime, such as for classes or courses, live in the frontend app and will be discussed later.
+
+We use [Iconoir icons](https://iconoir.com/) and the [Inter typeface family](https://rsms.me/inter/). These design decisions, and reusable design tokens, are all abstracted away within the theme package and the `ThemeProvider` React component.
+
+```bash
+# packages/theme/src
+...
+components/                          # React components for the design system
+  ...
+  ThemeProvider/                     # Entry point component
+  Button/
+  Dialog/
+  Tooltip/
+  ...
+contexts/                            # React contexts for the design system
+hooks/                               # React hooks for the design system
+...
+```
+
+We built our design system with light and dark themes in mind, and the color tokens will respond accordingly. When building interfaces within Berkeleytime, standard color tokens should be used to ensure consistency depending on the selected theme.
+
+```scss
+// packages/theme/components/ThemeProvider/ThemeProvider.module.scss
+
+@mixin light-theme {
+  --foreground-color: var(--light-foreground-color);
+  --background-color: var(--light-background-color);
+  --backdrop-color: var(--light-backdrop-color);
+
+  // ...
+}
+
+@mixin dark-theme {
+  --foreground-color: var(--dark-foreground-color);
+  --background-color: var(--dark-background-color);
+  --backdrop-color: var(--dark-backdrop-color);
+
+  // ...
+}
+
+body[data-theme="dark"] {
+  @include dark-theme;
+}
+
+body[data-theme="light"] {
+  @include light-theme;
+}
+
+body:not([data-theme]) {
+  @include light-theme;
+
+  @media (prefers-color-scheme: dark) {
+    @include dark-theme;
+  }
+}
+```
+
+### Application
+
+I'm sure you've seen a [Vite, React, and TypeScript app](https://vite.dev/guide/#scaffolding-your-first-vite-project) in the wild before, and we tend to follow most common practices, which includes using [React Router](https://reactrouter.com/home).
+
+```bash
+#
 src/
-  app/                          # contains main frontend pages
-  components/                   # contains components reused throughout the frontend
-  contexts/                     # defines contexts (to pass data through component tree)
-  hooks/                        # defines hooks to contexts or queries from src/lib
-  lib/                          # contains general-purpose logic for frontend
-    api/                        # defines GraphQL types and queries
-  main.tsx                      # initializes App
-  App.tsx                       # initializes React 
-index.html                      # overall entrypoint for website, sources main.tsx
+  app/                    # Views, pages, and scoped components
+  components/             # Reusable components built around Berkeleytime
+  contexts/               # React contexts
+  hooks/                  # React hooks
+  lib/                    # Utility functions and general logic
+    api/                  # GraphQL types and queries
+    ...
+  main.tsx
+  App.tsx                 # Routing and React entry point
+  index.html
+  ...
+  vite.config.ts
 ```
-For extremely commonly-used, theme-related components (such as buttons, theme colors, etc.), it may be useful to gain an understanding of the `packages/theme` folder which exists outside the frontend app:
-```
-src/ 
-  components/                   # simple, commonly used components
-  contexts/                     # contexts for theme
-  hooks/                        # hooks for theme
-```
-Many of the components in this folder are derived from [Radix Primitives](https://www.radix-ui.com/primitives/docs/overview/introduction). These can be imported from `@repo/theme`.
 
-### Conventions
-A typical folder (in `src/app` or `src/components`) is structured as so:
+## Conventions
+
+We use [SCSS modules](https://vite.dev/guide/features#css-modules) for scoping styles to components and reducing global CSS clutter. A typical folder (in `src/app` or `src/components`) should be structured like so.
+
+```bash
+# apps/frontend
+src/app/[COMPONENT]/
+  index.tsx
+  [COMPONENT].module.scss
+  ...
+  [CHILD_COMPONENT]/
+    index.tsx
+    [CHILD_COMPONENT].module.scss
 ```
-src/app/[PAGE_NAME]/
-  index.tsx                             # root file defining and exporting relevant components
-  [PAGE_NAME].modlue.scss               # CSS file to be imported by index.tsx
-  [CHILD_COMPONENT_NAME]/
-    index.tsx                           # root file for a subcomponent
-    [CHILD_COMPONENT_NAME].module.scss  # style file
-```
-Child components should be used whenever significant logic is needed for a part of the main page (or for a child component of another component). If these child components need to be used for multiple pages, they should be moved to `src/components` and code duplication should be avoided as much as possible.
 
-## Useful Commands
-- `npm run lint`: Outputs ESLint warnings
-- `npm run analyze`: Analyzes bundle size
-
-
+Child components should be used in your best judgment whenever significant logic must be refactored out of the component for structural or organizational purposes. If child components are reused in multiple pages or components, they should be moved as high up in the file structure as is required or moved to `src/components`.
