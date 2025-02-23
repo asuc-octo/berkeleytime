@@ -1,11 +1,26 @@
 name: Generate Helm Diffs for PR
+
 on:
-  workflow_dispatch:
+  issue_comment:
+    types: [created]
 
 jobs:
-  example-job:
-    name: placeholder
+  check-comment:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/test') }}
     runs-on: ubuntu-latest
     steps:
-      - name: Print Message
-        run: echo "wow adit is so cool"
+      - name: Get PR Details
+        id: pr
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            return pr.data;
+
+      - name: Test Output
+        run: |
+          echo "wow adit is so cool"
