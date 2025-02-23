@@ -25,14 +25,14 @@ import {
   Tooltip,
 } from "@repo/theme";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import usePins from "@/hooks/usePins";
 import { ICourse } from "@/lib/api";
 
-import styles from "./Class.module.scss";
+import styles from "./Course.module.scss";
 
 const Classes = lazy(() => import("./Classes"));
 const Enrollment = lazy(() => import("./Enrollment"));
