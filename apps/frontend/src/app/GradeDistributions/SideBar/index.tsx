@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-
-import { Plus } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
-
-import { Button } from "@repo/theme";
 
 import CourseBrowser from "@/components/CourseBrowser";
 import CourseCard from "@/components/CourseCard";
