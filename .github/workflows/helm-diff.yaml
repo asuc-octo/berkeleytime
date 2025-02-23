@@ -21,6 +21,6 @@ jobs:
             });
             return pr.data;
 
-      - name: Generate Helm Diff
+      - name: Test Output
         run: |
           echo "wow adit is so cool"
