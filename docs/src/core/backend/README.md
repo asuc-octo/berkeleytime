@@ -32,7 +32,6 @@ The backend codebase has a simple folder layout, as described below.
 │       └── index.ts                    # Bootstrapping/Loading entrypoint.
 │   └── modules                         # Business logic of the app divided by domain.
 │       └── index.ts                    # Modules entrypoint.
-|
 │   ├── utils                           # Collection of utility function
 │   ├── config.ts                       # Handles environment variable loading
 │   └── main.ts                         # Backend entrypoint
