@@ -14,6 +14,7 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  Expand,
   OpenBook,
   OpenNewWindow,
   Pin,
@@ -342,7 +343,7 @@ export default function Class({
                       as={Link}
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
                     >
-                      <Xmark />
+                      <Expand />
                     </IconButton>
                   </DialogClose>
                 </Tooltip>
