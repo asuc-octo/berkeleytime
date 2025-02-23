@@ -124,8 +124,8 @@ jobs:
 
           # Add a dropdown for the raw diff output
           echo "" >> diff_output.md
+          echo "#### 📋 Raw Helm Diff Output" >> diff_output.md
           echo "<details>" >> diff_output.md
-          echo "<summary>📋 Raw Helm Diff Output</summary>" >> diff_output.md
           echo "" >> diff_output.md
           echo "\`\`\`" >> diff_output.md
           cat /tmp/raw_diffs.log >> diff_output.md
