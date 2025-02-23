@@ -21,24 +21,6 @@
     k create job --from cronjob/bt-prod-datapuller-courses bt-prod-datapuller-courses-manual-01
     ```
 
-## Previewing Infrastructural Changes with `/helm-diff` before deployment
-
-The `/helm-diff` command can be used in pull request comments to preview Helm changes before they are deployed. This is particularly useful when:
-
-1. Making changes to Helm chart values in `infra/app` or `infra/base`
-2. Upgrading Helm chart versions or dependencies
-3. Modifying Kubernetes resource configurations
-
-To use it:
-1. Comment `/helm-diff` on any pull request
-2. The workflow will generate a diff showing:
-   - Changes to both app and base charts
-   - Resource modifications (deployments, services, etc.)
-   - Configuration updates
-
-The diff output is formatted as collapsible sections for each resource, with a raw diff available at the bottom for detailed inspection.
-
-
 ## Uninstall ALL development helm releases
 
 ```sh
