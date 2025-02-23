@@ -6,15 +6,17 @@ import { Plus } from "iconoir-react";
 import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
-import { ISchedule, Semester } from "@/lib/api";
+import useSchedule from "@/hooks/useSchedule";
+import { Semester } from "@/lib/api";
 
 import { getUnits } from "../../schedule";
+import EventDialog from "../EventDialog";
 import Catalog from "./Catalog";
 import Class from "./Class";
+import Event from "./Event";
 import styles from "./SideBar.module.scss";
 
 interface SideBarProps {
-  schedule: ISchedule;
   expanded: boolean[];
   onSortEnd: (previousIndex: number, currentIndex: number) => void;
   onClassSelect: (
@@ -39,7 +41,6 @@ interface SideBarProps {
 }
 
 export default function SideBar({
-  schedule,
   onClassSelect,
   expanded,
   onSectionSelect,
@@ -48,6 +49,8 @@ export default function SideBar({
   onExpandedChange,
   onSortEnd,
 }: SideBarProps) {
+  const { schedule, editing } = useSchedule();
+
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const [minimum, maximum] = useMemo(() => getUnits(schedule), [schedule]);
@@ -94,18 +97,31 @@ export default function SideBar({
             </Units>
           </div>
         </div>
-        <Catalog
-          onClassSelect={onClassSelect}
-          semester={Semester.Fall}
-          year={2024}
-        >
-          <Button className={styles.button} variant="solid">
-            Add class
-            <Plus />
-          </Button>
-        </Catalog>
+        {editing && (
+          <Catalog
+            onClassSelect={onClassSelect}
+            semester={Semester.Fall}
+            year={2024}
+          >
+            <Button className={styles.button} variant="solid">
+              Add class
+              <Plus />
+            </Button>
+          </Catalog>
+        )}
+        {editing && (
+          <EventDialog>
+            <Button className={styles.button} variant="solid">
+              Add event
+              <Plus />
+            </Button>
+          </EventDialog>
+        )}
       </div>
       <div className={styles.body} ref={bodyRef}>
+        {schedule.events?.map((event, index) => {
+          return <Event key={index} event={event} />;
+        })}
         {schedule.classes.map((selectedClass, index) => {
           return (
             <Class

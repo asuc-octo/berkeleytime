@@ -16,7 +16,7 @@ import { DropdownMenu } from "@repo/theme";
 import Carousel from "@/components/Carousel";
 import { useReadUser } from "@/hooks/api";
 import { ITerm } from "@/lib/api";
-import { getRecentClasses } from "@/lib/recent-classes";
+import { getRecentClasses } from "@/lib/recent";
 
 import styles from "./Dashboard.module.scss";
 

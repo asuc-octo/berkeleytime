@@ -10,6 +10,7 @@ const typedef = gql`
     startTime: String!
     endTime: String!
     days: [Boolean!]!
+    _id: ID!
     location: String
     title: String!
     description: String

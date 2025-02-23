@@ -8,6 +8,7 @@ import { IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
 import Class from "./Class";
+import Schedule from "./Schedule";
 
 interface RootProps {
   title: string;
@@ -102,6 +103,7 @@ function Root({ title, Icon, children, to }: RootProps) {
 const Carousel = {
   Root,
   Class,
+  Schedule,
 };
 
 export default Carousel;

@@ -1,0 +1,27 @@
+.header {
+    padding: 5rem 1rem;
+    text-align: center;
+    margin-left: 25%;
+    max-width: 50%;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--heading-color);
+    text-align: center;
+}
+
+.prompt {
+    margin-bottom: 2rem;
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--paragraph-color);
+    text-align: center;
+}
+
+.schedulesCont {
+    max-width: 70%;
+    margin-left: 15%;
+}

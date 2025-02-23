@@ -1,9 +1,9 @@
-.trigger {
+.root {
   position: absolute;
   z-index: 2;
   padding: 8px;
   border-radius: 4px;
-  background-color: var(--blue-500);
+  background-color: var(--gray-500);
   font-size: 12px;
   opacity: 0.5;
 
@@ -25,26 +25,5 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-  }
-}
-
-.content {
-  height: 128px;
-  width: 320px;
-  background-color: var(--foreground-color);
-  border-radius: 8px;
-  box-shadow: 0 0 16px rgb(0 0 0 / 10%);
-  z-index: 989;
-  opacity: 0;
-  animation: fadeIn 100ms ease-in-out forwards;
-
-  .arrow {
-    fill: var(--foreground-color);
-  }
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
   }
 }

@@ -1,9 +1,9 @@
 @mixin dark-theme {
-  background-color: rgb(0 0 0 / 80%);
+  background-color: rgba(#18181b, 0.8);
 }
 
 @mixin light-theme {
-  background-color: rgb(255 255 255 / 80%);
+  background-color: rgba(#f8fafc, 0.8);
 }
 
 body[data-theme="dark"] {

@@ -24,5 +24,5 @@ export const formatSchedule = async (schedule: ScheduleType) => {
     semester: schedule.semester,
     term: null,
     events: schedule.events,
-  } as IntermediateSchedule;
+  } as unknown as IntermediateSchedule;
 };

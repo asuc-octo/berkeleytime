@@ -17,11 +17,16 @@ interface CatalogProps {
     number: string
   ) => void;
   children: ReactNode;
-  semester: string;
+  semester: Semester;
   year: number;
 }
 
-export default function Catalog({ onClassSelect, children }: CatalogProps) {
+export default function Catalog({
+  onClassSelect,
+  children,
+  year,
+  semester,
+}: CatalogProps) {
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -61,8 +66,8 @@ export default function Catalog({ onClassSelect, children }: CatalogProps) {
         </div>
         <div className={styles.body}>
           <ClassBrowser
-            semester={Semester.Fall}
-            year={2024}
+            semester={semester}
+            year={year}
             onSelect={handleSelect}
             responsive={false}
           />
