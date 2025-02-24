@@ -72,18 +72,18 @@ const classSchema = new Schema<IClassItem>({
   requirementDesignation: { type: String }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
 });
-// classes are unique by termId, courseId, number, subject, and courseNumber
 classSchema.index(
   {
-    termId: 1,
+    year: 1,
+    semester: 1,
     sessionId: 1,
-    courseId: 1,
-    number: 1,
     subject: 1,
     courseNumber: 1,
+    number: 1,
   },
   { unique: true }
 );
+classSchema.index({ courseId: 1 });
 
 export const NewClassModel: Model<IClassItem> = model<IClassItem>(
   "NewClass",

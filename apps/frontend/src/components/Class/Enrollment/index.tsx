@@ -12,7 +12,8 @@ import {
 import useClass from "@/hooks/useClass";
 
 import styles from "./Enrollment.module.scss";
-import Reservations from "./Reservations";
+
+// import Reservations from "./Reservations";
 
 const series = [
   {
@@ -126,11 +127,11 @@ export default function Enrollment() {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <Reservations
-        enrollCount={_class.primarySection.enrollCount}
-        enrollMax={_class.primarySection.enrollMax}
-        reservations={_class.primarySection.reservations}
-      />
+      {/* <Reservations
+        enrolledCount={_class.primarySection.enrollment.latest.enrolledCount}
+        maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
+        reservations={_class.primarySection.enrollment.latest.seatReservationCounts}
+      /> */}
     </div>
   );
 }

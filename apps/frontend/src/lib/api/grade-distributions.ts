@@ -17,22 +17,24 @@ export interface ReadGradeDistributionResponse {
 
 export const READ_GRADE_DISTRIBUTION = gql`
   query GetGradeDistribution(
+    $year: Int
+    $semester: Semester
+    $sessionId: SessionIdentifier
     $subject: String!
     $courseNumber: CourseNumber!
     $classNumber: ClassNumber
-    $year: Int
-    $semester: Semester
-    $givenName: String
     $familyName: String
+    $givenName: String
   ) {
     grade(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
       subject: $subject
       courseNumber: $courseNumber
       classNumber: $classNumber
-      year: $year
-      semester: $semester
-      givenName: $givenName
       familyName: $familyName
+      givenName: $givenName
     ) {
       average
       distribution {

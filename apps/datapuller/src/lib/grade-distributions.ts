@@ -47,7 +47,7 @@ const formatDistribution = (distribution: GradeDistributionRow) => {
     termId: distribution.semester_year_term_cd,
     sessionId: distribution.session_code,
 
-    classNumber: distribution.class_number,
+    sectionId: distribution.class_number, // not sure why tf the api is like this
     sectionNumber: distribution.class_section_cd,
 
     count: parseInt(distribution.grade_count),

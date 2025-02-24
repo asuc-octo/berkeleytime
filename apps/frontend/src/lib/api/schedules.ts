@@ -49,6 +49,7 @@ export interface ISchedule {
   term: ITerm;
   year: number;
   semester: Semester;
+  sessionId: string;
 }
 
 export interface ReadScheduleResponse {
@@ -65,32 +66,37 @@ export const READ_SCHEDULE = gql`
       year
       semester
       term {
-        startDate
+        beginDate
         endDate
       }
       classes {
         class {
           subject
-          unitsMax
-          unitsMin
           courseNumber
           number
+          unitsMax
+          unitsMin
           course {
             title
           }
           primarySection {
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
             number
             startDate
             endDate
-            ccn
             component
-            enrollCount
-            enrollMax
-            waitlistCount
-            waitlistMax
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -110,18 +116,23 @@ export const READ_SCHEDULE = gql`
             }
           }
           sections {
-            number
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
-            ccn
-            component
-            enrollCount
+            number
             startDate
             endDate
-            enrollMax
-            waitlistCount
-            waitlistMax
+            component
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -167,26 +178,31 @@ export const UPDATE_SCHEDULE = gql`
       classes {
         class {
           subject
-          unitsMax
-          unitsMin
           courseNumber
           number
+          unitsMax
+          unitsMin
           course {
             title
           }
           primarySection {
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
             number
             startDate
             endDate
-            ccn
             component
-            enrollCount
-            enrollMax
-            waitlistCount
-            waitlistMax
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -206,18 +222,23 @@ export const UPDATE_SCHEDULE = gql`
             }
           }
           sections {
-            number
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
-            ccn
-            component
-            enrollCount
+            number
             startDate
             endDate
-            enrollMax
-            waitlistCount
-            waitlistMax
+            component
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -266,6 +287,7 @@ export const CREATE_SCHEDULE = gql`
       year
       createdBy
       semester
+      sessionId
       classes {
         class {
           subject
@@ -289,6 +311,7 @@ export const READ_SCHEDULES = gql`
       name
       year
       semester
+      sessionId
       classes {
         class {
           subject

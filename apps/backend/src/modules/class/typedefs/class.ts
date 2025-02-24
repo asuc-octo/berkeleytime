@@ -7,6 +7,7 @@ export default gql`
     class(
       year: Int!
       semester: Semester!
+      sessionId: SessionIdentifier
       subject: String!
       courseNumber: CourseNumber!
       number: ClassNumber!
@@ -14,30 +15,32 @@ export default gql`
     section(
       year: Int!
       semester: Semester!
+      sessionId: SessionIdentifier
       subject: String!
       courseNumber: CourseNumber!
-      classNumber: ClassNumber!
       number: SectionNumber!
     ): Section
   }
 
   type Class {
     "Identifiers"
+    termId: TermIdentifier!
+    sessionId: SessionIdentifier!
+    courseId: String!
     subject: String!
     courseNumber: CourseNumber!
     number: ClassNumber!
-    year: Int!
-    semester: Semester!
-    session: String!
 
     "Relationships"
+    term: Term!
     course: Course!
     primarySection: Section!
     sections: [Section!]!
-    term: Term!
     gradeDistribution: GradeDistribution!
 
     "Attributes"
+    year: Int!
+    semester: Semester!
     gradingBasis: ClassGradingBasis!
     finalExam: ClassFinalExam!
     description: String
@@ -91,35 +94,31 @@ export default gql`
 
   type Section {
     "Identifiers"
+    termId: TermIdentifier!
+    sessionId: SessionIdentifier!
+    sectionId: SectionIdentifier!
+
+    "Relationships"
+    term: Term!
+    course: Course!
+    class: Class!
+    enrollment: Enrollment
+
+    "Attributes"
+    year: Int!
+    semester: Semester!
     subject: String!
     courseNumber: CourseNumber!
     classNumber: ClassNumber!
     number: SectionNumber!
-    year: Int!
-    semester: Semester!
-    ccn: SectionIdentifier!
-
-    "Relationships"
-    class: Class!
-    course: Course!
-    term: Term!
-
-    "Attributes"
-    session: String!
+    startDate: String!
+    endDate: String!
     primary: Boolean!
-    enrollmentHistory: [EnrollmentDay!]
+    instructionMode: String!
     component: Component!
     meetings: [Meeting!]!
     exams: [Exam!]!
-    startDate: String!
-    endDate: String!
     online: Boolean!
-    open: Boolean!
-    reservations: [Reservation!]
-    enrollCount: Int!
-    waitlistCount: Int!
-    enrollMax: Int!
-    waitlistMax: Int!
   }
 
   enum Component {
@@ -214,7 +213,19 @@ export default gql`
     startTime: String!
     endTime: String!
     location: String!
-    final: Boolean!
+    type: ExamType!
+  }
+
+  enum ExamType {
+    "Final"
+    FIN
+
+    "Midterm"
+    MID
+
+    ALT
+
+    MAK
   }
 
   type Instructor {
