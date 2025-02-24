@@ -1,4 +1,4 @@
-import { NewClassModel } from "@repo/common";
+import { ClassModel } from "@repo/common";
 
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
@@ -53,7 +53,7 @@ const updateClasses = async (
 
     log.trace("Deleting classes to be replaced...");
 
-    const { deletedCount } = await NewClassModel.deleteMany({
+    const { deletedCount } = await ClassModel.deleteMany({
       termId: { $in: termsBatchIds },
     });
 
@@ -66,7 +66,7 @@ const updateClasses = async (
 
       log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-      const { insertedCount } = await NewClassModel.insertMany(batch, {
+      const { insertedCount } = await ClassModel.insertMany(batch, {
         ordered: false,
         rawResult: true,
       });

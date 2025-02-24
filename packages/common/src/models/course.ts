@@ -1,155 +1,221 @@
-import mongoose, { InferSchemaType, Schema } from "mongoose";
+import { Document, Model, Schema, model } from "mongoose";
 
-import { schemaOptions } from "../lib/common";
-import { descriptor, identifier } from "../lib/sis";
+export interface ICourseItem {
+  // identifiers[type=cs-course-id]
+  courseId: string;
+  // subjectArea.code
+  subject: string;
+  // catalogNumber.formatted
+  number: string;
+  title?: string;
+  description?: string;
+  // academicCareer.code
+  academicCareer?: string;
+  // primaryInstructionMethod.code
+  primaryInstructionMethod?: string;
+  // gradingBasis.code
+  gradingBasis?: string;
+  // status.code
+  status?: string;
+  fromDate?: string;
+  toDate?: string;
+  printInCatalog?: boolean;
+  // finalExam.code
+  finalExam?: string;
+  // academicGroup.code
+  academicGroup?: string;
+  // academicOrganization.code
+  academicOrganization?: string;
+  instructorAddConsentRequired?: boolean;
+  instructorDropConsentRequired?: boolean;
+  allowMultipleEnrollments?: boolean;
+  spansMultipleTerms?: boolean;
+  multipleTermNumber?: number;
+  anyFeesExist?: boolean;
+  repeatability?: {
+    repeatable?: boolean;
+    maxCredit?: number;
+    maxCount?: number;
+  };
+  preparation?: {
+    recommendedText?: string;
+    // recommendedCourses.identifiers[type=cs-course-id]
+    recommendedCourses?: string[];
+    requiredText?: string;
+    // requiredCourses.identifiers[type=cs-course-id]
+    requiredCourses?: string[];
+  };
 
-// source: https://developers.api.berkeley.edu/api/100/interactive-docs
-const minimalCourse = {
-  identifiers: [identifier],
-  subjectArea: descriptor,
-  catalogNumber: {
-    prefix: String,
-    number: String,
-    suffix: String,
-    formatted: String,
-  },
-  displayName: String,
-  title: String,
-  transcriptTitle: String,
-};
+  gradeReplacement?: {
+    // gradeReplacementText
+    text?: string;
+    // gradeReplacementGroup
+    group?: string;
+    // gradeReplacementCourses.identifiers[type=cs-course-id]
+    courses?: string[];
+  };
 
-const courseSchemaObject = {
-  identifiers: [identifier],
-  subjectArea: descriptor,
-  catalogNumber: {
-    prefix: String,
-    number: String,
-    suffix: String,
-    formatted: String,
-  },
-  classSubjectArea: descriptor,
-  displayName: String,
-  classDisplayName: String,
-  formerDisplayName: String,
-  title: String,
-  transcriptTitle: String,
-  description: String,
-  academicCareer: descriptor,
-  academicGroup: descriptor,
-  academicOrganization: descriptor,
-  departmentNicknames: String,
-  primaryInstructionMethod: descriptor,
-  credit: {
-    type: { type: String },
-    value: {
-      fixed: {
-        units: Number,
-      },
-      range: {
-        minUnits: Number,
-        maxUnits: Number,
-      },
-      discrete: {
-        units: [Number],
-      },
-    },
-  },
-  gradingBasis: descriptor,
-  blindGrading: Boolean,
-  status: descriptor,
-  fromDate: String,
-  toDate: Date,
-  createdDate: Date,
-  updatedDate: Date,
-  printInCatalog: Boolean,
-  printInstructors: Boolean,
-  anyFeesExist: Boolean,
-  finalExam: descriptor,
-  instructorAddConsentRequired: Boolean,
-  instructorDropConsentRequired: Boolean,
-  allowMultipleEnrollments: Boolean,
-  spansMultipleTerms: Boolean,
-  multipleTermNumber: Number,
-  contactHours: Number,
-  workloadHours: Number,
-  enrollmentUnitLoadCalculator: descriptor,
-  tie: descriptor,
-  cip: descriptor,
-  hegis: descriptor,
+  // crossListing.courses.identifiers[type=cs-course-id]
+  crossListing?: string[];
+  // formatsOffered.typicallyOffered.terms[]
+  formatsOffered?: {
+    description?: string;
+    // typicallyOffered.terms[]
+    typicallyOffered?: {
+      comments?: string;
+      terms?: string[];
+    };
+    formats?: {
+      termsAllowed?: string[];
+      description?: string;
+      components?: {
+        // instructionMethod.code
+        instructionMethod?: string;
+        primary?: boolean;
+        minContactHours?: number;
+        maxContactHours?: number;
+        feesExist?: boolean;
+      }[];
+    }[];
+  };
+  // requirementsFulfilled[].code
+  requirementsFulfilled?: string[];
+  courseObjectives?: string[];
+  studentLearningOutcomes?: string[];
+  creditRestriction?: {
+    // restrictionText
+    text?: string;
+    // restrictionCourses
+    courses?: {
+      // course.identifiers[type=cs-course-id]
+      courseId?: string;
+      maxCreditPercentage?: number;
+    }[];
+  };
+  blindGrading?: boolean;
+  credit?: {
+    type?: string;
+    value?: {
+      discrete?: number[];
+      fixed?: number;
+      range?: {
+        maxUnits?: number;
+        minUnits?: number;
+      };
+    };
+  };
+  // NOTE: Determine how formatsOffered factors
+  workloadHours?: number;
+  contactHours?: number;
+  // NOTE: Replace with cs-course-id of former course
+  formerDisplayName?: string;
+  createdDate?: string;
+  updatedDate?: string;
+}
+
+export interface ICourseItemDocument extends ICourseItem, Document {}
+
+const courseSchema = new Schema<ICourseItem>({
+  courseId: { type: String, required: true },
+  subject: { type: String, required: true },
+  number: { type: String, required: true },
+  title: { type: String },
+  description: { type: String },
+  academicCareer: { type: String },
+  primaryInstructionMethod: { type: String },
+  gradingBasis: { type: String },
+  status: { type: String },
+  fromDate: { type: String },
+  toDate: { type: String },
+  printInCatalog: { type: Boolean },
+  finalExam: { type: String },
+  academicGroup: { type: String },
+  academicOrganization: { type: String },
+  instructorAddConsentRequired: { type: Boolean },
+  instructorDropConsentRequired: { type: Boolean },
+  allowMultipleEnrollments: { type: Boolean },
+  spansMultipleTerms: { type: Boolean },
+  multipleTermNumber: { type: Number },
+  anyFeesExist: { type: Boolean },
   repeatability: {
-    repeatable: Boolean,
-    description: String,
-    maxCredit: Number,
-    maxCount: Number,
+    repeatable: { type: Boolean },
+    maxCredit: { type: Number },
+    maxCount: { type: Number },
   },
   preparation: {
-    recommendedText: String,
-    recommendedCourses: [minimalCourse],
-    requiredText: String,
-    requiredCourses: [minimalCourse],
-  },
-  requisites: descriptor,
-  creditRestriction: {
-    restrictionText: String,
-    restrictionCourses: [
-      {
-        course: minimalCourse,
-        maxCreditPercentage: Number,
-      },
-    ],
+    recommendedText: { type: String },
+    recommendedCourses: { type: [String] },
+    requiredText: { type: String },
+    requiredCourses: { type: [String] }, // stored as courseIds
   },
   gradeReplacement: {
-    gradeReplacementGroup: String,
-    gradeReplacementText: String,
-    gradeReplacementCourses: [minimalCourse],
+    text: { type: String },
+    group: { type: String },
+    courses: { type: [String] },
   },
-  courseObjectives: [String],
-  studentLearningOutcomes: [String],
-  proposedInstructors: [String],
+  crossListing: { type: [String] }, // stored as `${subject} ${number}`
   formatsOffered: {
-    description: String,
+    description: { type: String },
+    typicallyOffered: {
+      comments: { type: String },
+      terms: { type: [String] },
+    },
     formats: [
       {
-        termsAllowed: [String],
-        sessionType: String,
-        description: String,
-        aggregateCountactHours: Number,
-        aggregateMinContactHours: Number,
-        aggregateMaxContactHours: Number,
-        minWorkloadHours: Number,
-        maxWorkloadHours: Number,
-        anyFeesExist: Boolean,
-        finalExam: descriptor,
+        termsAllowed: { type: [String] },
+        description: { type: String },
         components: [
           {
-            instructionMethod: descriptor,
-            primary: Boolean,
-            contactHours: Number,
-            minContactHours: Number,
-            maxContactHours: Number,
-            finalExam: descriptor,
-            feesExist: Boolean,
+            instructionMethod: { type: String },
+            primary: { type: Boolean },
+            minContactHours: { type: Number },
+            maxContactHours: { type: Number },
+            feesExist: { type: Boolean },
           },
         ],
       },
     ],
-    typicallyOffered: {
-      terms: [String],
-      comments: String,
+  },
+  requirementsFulfilled: { type: [String] },
+  courseObjectives: { type: [String] },
+  studentLearningOutcomes: { type: [String] },
+  creditRestriction: {
+    text: { type: String },
+    courses: [
+      {
+        courseId: { type: String },
+        maxCreditPercentage: { type: Number },
+      },
+    ],
+  },
+  blindGrading: { type: Boolean },
+  credit: {
+    type: { type: String },
+    value: {
+      discrete: { type: [Number] },
+      fixed: { type: Number },
+      range: {
+        maxUnits: { type: Number },
+        minUnits: { type: Number },
+      },
     },
-    summerOnly: Boolean,
   },
-  crossListing: {
-    count: Number,
-    courses: [String],
+  workloadHours: { type: Number },
+  contactHours: { type: Number },
+  formerDisplayName: { type: String },
+  createdDate: { type: String },
+  updatedDate: { type: String },
+});
+courseSchema.index({ courseId: 1 }, { unique: true });
+courseSchema.index(
+  {
+    subject: 1,
+    number: 1,
   },
-  classCrossListing: {
-    count: Number,
-    courses: [String],
-  },
-  requirementsFulfilled: [descriptor],
-};
+  { unique: true }
+);
 
-export const courseSchema = new Schema(courseSchemaObject, schemaOptions);
-export const CourseModel = mongoose.model("Course", courseSchema, "course");
-export type CourseType = InferSchemaType<typeof courseSchema>;
+export const CourseModel: Model<ICourseItem> = model<ICourseItem>(
+  "courses",
+  courseSchema
+);

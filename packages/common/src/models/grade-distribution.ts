@@ -98,6 +98,6 @@ gradeDistributionSchema.index({
 });
 
 export const GradeDistributionModel = mongoose.model(
-  "GradeDistributions",
+  "gradeDistributions",
   gradeDistributionSchema
 );

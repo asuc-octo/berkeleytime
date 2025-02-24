@@ -1,8 +1,8 @@
 import {
+  ClassModel,
+  CourseModel,
   IClassItem,
   ICourseItem,
-  NewClassModel,
-  NewCourseModel,
   UserModel,
 } from "@repo/common";
 
@@ -42,7 +42,7 @@ export const getBookmarkedCourses = async (
   const courses = [];
 
   for (const bookmarkedCourse of bookmarkedCourses) {
-    const course = await NewCourseModel.findOne({
+    const course = await CourseModel.findOne({
       subject: bookmarkedCourse.subject,
       number: bookmarkedCourse.number,
     })
@@ -63,7 +63,7 @@ export const getBookmarkedClasses = async (
   const classes = [];
 
   for (const bookmarkedClass of bookmarkedClasses) {
-    const _class = await NewClassModel.findOne({
+    const _class = await ClassModel.findOne({
       year: bookmarkedClass.year,
       semester: bookmarkedClass.semester,
       sessionId: bookmarkedClass.sessionId ? bookmarkedClass.sessionId : "1",

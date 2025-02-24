@@ -1,7 +1,7 @@
 import {
   GradeDistributionModel,
   IGradeDistributionItem,
-  NewSectionModel,
+  SectionModel,
 } from "@repo/common";
 
 enum Letter {
@@ -191,7 +191,7 @@ export const getGradeDistributionByClass = async (
   courseNumber: string,
   sectionNumber: string
 ) => {
-  const section = await NewSectionModel.findOne({
+  const section = await SectionModel.findOne({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",
@@ -254,7 +254,7 @@ export const getGradeDistributionByInstructor = async (
   familyName: string,
   givenName: string
 ) => {
-  const sections = await NewSectionModel.find({
+  const sections = await SectionModel.find({
     subject,
     courseNumber,
     "meetings.instructors.familyName": familyName,
@@ -291,7 +291,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
   familyName: string,
   givenName: string
 ) => {
-  const sections = await NewSectionModel.find({
+  const sections = await SectionModel.find({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",

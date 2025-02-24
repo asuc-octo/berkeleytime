@@ -1,156 +1,132 @@
-import mongoose, { InferSchemaType, Schema } from "mongoose";
+import { Document, Model, Schema, model } from "mongoose";
 
-import { schemaOptions } from "../lib/common";
-import { descriptor, identifier } from "../lib/sis";
-import { classSchema } from "./class";
+export interface ISectionItem {
+  courseId: string;
+  classNumber: string;
+  sessionId: string;
+  termId: string;
+  sectionId: string;
+  number: string;
+  subject: string;
+  courseNumber: string;
+  year: number;
+  semester: string;
+  component?: string;
+  status?: string;
+  instructionMode?: string;
+  printInScheduleOfClasses?: boolean;
+  graded?: boolean;
+  feesExist?: boolean;
+  startDate?: string;
+  endDate?: string;
+  addConsentRequired?: string;
+  dropConsentRequired?: string;
+  primary?: boolean;
+  type?: string;
+  combinedSections?: number[];
+  exams?: {
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    location?: string;
+    number?: number;
+    type?: string;
+  }[];
+  meetings?: {
+    number?: number;
+    days?: boolean[];
+    startTime?: string;
+    endTime?: string;
+    startDate?: string;
+    endDate?: string;
+    location?: string;
+    instructors?: {
+      printInScheduleOfClasses?: boolean;
+      familyName?: string;
+      givenName?: string;
+      role?: string;
+    }[];
+  }[];
+}
 
-const party = {
-  id: String,
-  name: String,
-};
+export interface ISectionItemDocument extends ISectionItem, Document {}
 
-// source: https://developers.api.berkeley.edu/api/18/interactive-docs
-const sectionSchemaObject = {
-  id: Number,
-  class: classSchema,
-  number: String,
-  component: descriptor,
-  displayName: String,
-  instructionMode: descriptor,
-  type: { type: descriptor },
-  academicOrganization: descriptor,
-  academicGroup: descriptor,
-  startDate: Date,
-  endDate: Date,
-  status: descriptor,
-  cancelDate: Date, // The docs say "cancelleDate" but the API returns "cancelDate"
-  association: {
-    primary: Boolean,
-    primaryAssociatedComponent: descriptor,
-    primaryAssociatedSectionId: Number,
-    primaryAssociatedSectionIds: [Number],
-    associatedClass: Number,
-  },
-  enrollmentStatus: {
-    status: descriptor,
-    enrolledCount: Number,
-    reservedCount: Number,
-    waitlistedCount: Number,
-    minEnroll: Number,
-    maxEnroll: Number,
-    maxWaitlist: Number,
-    openReserved: Number,
-    instructorAddConsentRequired: Boolean,
-    instructorDropConsentRequired: Boolean,
-    seatReservations: [
-      {
-        number: Number,
-        requirementGroup: descriptor,
-        fromDate: Date,
-        maxEnroll: Number,
-        enrolledCount: Number,
-      },
-    ],
-  },
-  printInScheduleOfClasses: Boolean,
-  addConsentRequired: descriptor,
-  dropConsentRequired: descriptor,
-  graded: Boolean,
-  feesExist: Boolean,
-  characteristics: [descriptor],
-  roomShare: Boolean,
-  sectionAttributes: [
+const sectionSchema = new Schema<ISectionItem>({
+  // identifiers
+  termId: { type: String, required: true },
+  sessionId: { type: String, required: true },
+  sectionId: { type: String, required: true },
+
+  // relationships
+  courseId: { type: String, required: true },
+  classNumber: { type: String, required: true },
+  subject: { type: String, required: true },
+  courseNumber: { type: String, required: true },
+  number: { type: String, required: true },
+  primary: { type: Boolean },
+
+  // attributes
+  year: { type: Number, required: true },
+  semester: { type: String, required: true },
+  component: { type: String },
+  status: { type: String },
+  instructionMode: { type: String },
+  printInScheduleOfClasses: { type: Boolean },
+  graded: { type: Boolean },
+  feesExist: { type: Boolean },
+  startDate: { type: String },
+  endDate: { type: String },
+  addConsentRequired: { type: String },
+  dropConsentRequired: { type: String },
+  type: { type: String },
+  combinedSections: { type: [Number] },
+  exams: [
     {
-      attribute: descriptor,
-      value: descriptor,
-    },
-  ],
-  roomCharacteristics: [
-    {
-      code: String,
-      description: String,
-      formalDescription: String,
-      active: Boolean,
-      fromDate: Date,
-      toDate: Date,
-      quantity: Number,
+      date: { type: String },
+      startTime: { type: String },
+      endTime: { type: String },
+      location: { type: String },
+      number: { type: Number },
+      type: { type: String },
     },
   ],
   meetings: [
     {
-      number: Number,
-      meetsDays: String,
-      meetsMonday: Boolean,
-      meetsTuesday: Boolean,
-      meetsWednesday: Boolean,
-      meetsThursday: Boolean,
-      meetsFriday: Boolean,
-      meetsSaturday: Boolean,
-      meetsSunday: Boolean,
-      startTime: String,
-      endTime: String,
-      location: descriptor,
-      building: descriptor,
-      assignedInstructors: [
+      number: { type: Number },
+      days: { type: [Boolean] },
+      startTime: { type: String },
+      endTime: { type: String },
+      startDate: { type: String },
+      endDate: { type: String },
+      location: { type: String },
+      instructors: [
         {
-          assignmentNumber: Number,
-          instructor: {
-            identifiers: [identifier],
-            names: [
-              {
-                type: { type: descriptor },
-                familyName: String,
-                givenName: String,
-                middleName: String,
-                suffixName: String,
-                formattedName: String,
-                perferred: Boolean,
-                disclose: Boolean,
-                uiControl: descriptor,
-                lastChangedBy: party,
-                fromDate: Date,
-                toDate: Date,
-              },
-            ],
-            /*  There are additional optional fields in the "person" model,
-                    but they are not typically included in a section response,
-                    so I shall exclude them from here to minimize clutter.      */
-          },
-          role: descriptor,
-          contactMinutes: Number,
-          printInScheduleOfClasses: Boolean,
-          gradeRosterAccess: descriptor,
+          printInScheduleOfClasses: { type: Boolean },
+          familyName: { type: String },
+          givenName: { type: String },
+          role: { type: String },
         },
       ],
-      startDate: Date,
-      endDate: Date,
-      meetingTopic: descriptor,
-      meetingDescription: String,
     },
   ],
-  exams: [
-    {
-      number: Number,
-      type: { type: descriptor },
-      location: descriptor,
-      building: descriptor,
-      date: Date,
-      startTime: String,
-      endTime: String,
-    },
-  ],
-  combination: {
-    id: String,
-    description: String,
-    type: { type: descriptor },
-    enrolledCountCombinedSections: Number,
-    waitlistedCountCombinedSections: Number,
-    maxEnrollCombinedSections: Number,
-    maxWaitlistCombinedSections: Number,
-    combinedSections: [Number],
+});
+sectionSchema.index(
+  { termId: 1, sessionId: 1, sectionId: 1 },
+  { unique: true }
+);
+sectionSchema.index(
+  {
+    year: 1,
+    semester: 1,
+    sessionId: 1,
+    subject: 1,
+    courseNumber: 1,
+    number: 1,
   },
-};
+  { unique: true }
+);
 
-const sectionSchema = new Schema(sectionSchemaObject, schemaOptions);
-export const SectionModel = mongoose.model("Section", sectionSchema);
-export type SectionType = InferSchemaType<typeof sectionSchema>;
+export const SectionModel: Model<ISectionItem> = model<ISectionItem>(
+  "sections",
+  sectionSchema
+);

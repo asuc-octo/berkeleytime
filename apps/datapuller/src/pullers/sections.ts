@@ -1,4 +1,4 @@
-import { NewSectionModel } from "@repo/common";
+import { SectionModel } from "@repo/common";
 
 import { getSections } from "../lib/sections";
 import { Config } from "../shared/config";
@@ -53,7 +53,7 @@ const updateSections = async (
 
     log.trace("Deleting sections to be replaced...");
 
-    const { deletedCount } = await NewSectionModel.deleteMany({
+    const { deletedCount } = await SectionModel.deleteMany({
       termId: { $in: termsBatchIds },
     });
 
@@ -66,7 +66,7 @@ const updateSections = async (
 
       log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-      const { insertedCount } = await NewSectionModel.insertMany(batch, {
+      const { insertedCount } = await SectionModel.insertMany(batch, {
         ordered: false,
         rawResult: true,
       });

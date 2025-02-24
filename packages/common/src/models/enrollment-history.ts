@@ -106,4 +106,4 @@ enrollmentHistorySchema.index(
 );
 
 export const NewEnrollmentHistoryModel: Model<IEnrollmentHistoryItem> =
-  model<IEnrollmentHistoryItem>("EnrollmentHistory", enrollmentHistorySchema);
+  model<IEnrollmentHistoryItem>("enrollmentHistories", enrollmentHistorySchema);

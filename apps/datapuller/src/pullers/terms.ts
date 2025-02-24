@@ -1,4 +1,4 @@
-import { NewTermModel } from "@repo/common";
+import { TermModel } from "@repo/common";
 
 import { getAllTerms, getNearbyTerms } from "../lib/terms";
 import { Config } from "../shared/config";
@@ -22,7 +22,7 @@ const updateTerms = async (
 
   log.trace("Deleting terms to be replaced...");
 
-  const { deletedCount } = await NewTermModel.deleteMany({
+  const { deletedCount } = await TermModel.deleteMany({
     id: { $nin: termIds },
   });
 
@@ -35,7 +35,7 @@ const updateTerms = async (
 
     log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-    await NewTermModel.bulkWrite(
+    await TermModel.bulkWrite(
       batch.map((term) => ({
         updateOne: {
           filter: { id: term.id, academicCareerCode: term.academicCareerCode },
