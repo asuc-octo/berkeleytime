@@ -80,6 +80,6 @@ export const userSchema = new Schema(
   }
 );
 
-export const UserModel = mongoose.model("user", userSchema);
+export const UserModel = mongoose.model("users", userSchema);
 
 export type UserType = Document & InferSchemaType<typeof userSchema>;

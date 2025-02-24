@@ -127,6 +127,6 @@ sectionSchema.index(
 );
 
 export const SectionModel: Model<ISectionItem> = model<ISectionItem>(
-  "Section",
+  "sections",
   sectionSchema
 );

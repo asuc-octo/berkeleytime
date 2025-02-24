@@ -86,6 +86,6 @@ classSchema.index(
 classSchema.index({ courseId: 1 });
 
 export const ClassModel: Model<IClassItem> = model<IClassItem>(
-  "Class",
+  "classes",
   classSchema
 );

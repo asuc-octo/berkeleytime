@@ -104,6 +104,6 @@ export type CustomEventType = Document &
 export type SelectedClassType = Document &
   InferSchemaType<typeof selectedClassSchema>;
 
-export const ScheduleModel = mongoose.model("schedule", scheduleSchema);
+export const ScheduleModel = mongoose.model("schedules", scheduleSchema);
 
 export type ScheduleType = Document & InferSchemaType<typeof scheduleSchema>;

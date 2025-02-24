@@ -1,4 +1,3 @@
-export * from "./grade";
 export * from "./schedule";
 export * from "./user";
 export * from "./class";

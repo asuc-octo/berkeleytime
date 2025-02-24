@@ -123,4 +123,7 @@ const termSchema = new Schema<ITermItem>({
 termSchema.index({ id: 1, academicCareerCode: 1 }, { unique: true });
 termSchema.index({ name: 1 });
 
-export const TermModel: Model<ITermItem> = model<ITermItem>("Term", termSchema);
+export const TermModel: Model<ITermItem> = model<ITermItem>(
+  "terms",
+  termSchema
+);

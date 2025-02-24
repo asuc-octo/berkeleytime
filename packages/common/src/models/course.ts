@@ -216,6 +216,6 @@ courseSchema.index(
 );
 
 export const CourseModel: Model<ICourseItem> = model<ICourseItem>(
-  "Course",
+  "courses",
   courseSchema
 );
