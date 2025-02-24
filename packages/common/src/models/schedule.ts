@@ -1,7 +1,5 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
-import { semester } from "./term";
-
 export const customEventSchema = new Schema({
   startTime: {
     type: String,
@@ -81,7 +79,8 @@ export const scheduleSchema = new Schema(
       required: true,
     },
     semester: {
-      ...semester,
+      type: String,
+      enum: ["Spring", "Summer", "Fall", "Winter"],
       required: true,
     },
     sessionId: {

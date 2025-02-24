@@ -2,15 +2,15 @@ import Fuse from "fuse.js";
 import { GraphQLResolveInfo } from "graphql";
 
 import {
+  ClassModel,
+  CourseModel,
   GradeDistributionModel,
   IClassItem,
   ICourseItem,
   IGradeDistributionItem,
   ISectionItem,
-  NewClassModel,
-  NewCourseModel,
-  NewSectionModel,
-  NewTermModel,
+  SectionModel,
+  TermModel,
 } from "@repo/common";
 
 import { getFields } from "../../utils/graphql";
@@ -363,7 +363,7 @@ export const getCatalog = async (
   info: GraphQLResolveInfo,
   query?: string | null
 ) => {
-  const term = await NewTermModel.findOne({
+  const term = await TermModel.findOne({
     name: `${year} ${semester}`,
   })
     .select({ _id: 1 })
@@ -384,7 +384,7 @@ export const getCatalog = async (
    */
 
   // Fetch available classes for the term
-  const classes = await NewClassModel.find({
+  const classes = await ClassModel.find({
     year,
     semester,
     anyPrintInScheduleOfClasses: true,
@@ -394,13 +394,13 @@ export const getCatalog = async (
   const courseIds = classes.map((_class) => _class.courseId);
 
   // Fetch available courses for the term
-  const courses = await NewCourseModel.find({
+  const courses = await CourseModel.find({
     courseId: { $in: courseIds },
     printInCatalog: true,
   }).lean();
 
   // Fetch available sections for the term
-  const sections = await NewSectionModel.find({
+  const sections = await SectionModel.find({
     year,
     semester,
     courseId: { $in: courseIds },

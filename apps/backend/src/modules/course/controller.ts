@@ -1,17 +1,11 @@
-import {
-  CourseModel,
-  IClassItem,
-  ICourseItem,
-  NewClassModel,
-  NewCourseModel,
-} from "@repo/common";
+import { ClassModel, CourseModel, IClassItem, ICourseItem } from "@repo/common";
 
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
 export const getCourse = async (subject: string, number: string) => {
-  const course = await NewCourseModel.findOne({ subject, number })
+  const course = await CourseModel.findOne({ subject, number })
     .sort({ fromDate: -1 })
     .lean();
 
@@ -21,7 +15,7 @@ export const getCourse = async (subject: string, number: string) => {
 };
 
 export const getClassesByCourse = async (courseId: string) => {
-  const classes = await NewClassModel.find({
+  const classes = await ClassModel.find({
     courseId,
   }).lean();
 
@@ -43,7 +37,7 @@ export const getAssociatedCoursesBySubjectNumber = async (
     };
   });
 
-  const associatedCourses = await NewCourseModel.find({
+  const associatedCourses = await CourseModel.find({
     $or: queries,
   })
     .sort({ fromDate: -1 })
@@ -65,7 +59,7 @@ export const getAssociatedCoursesBySubjectNumber = async (
 };
 
 export const getAssociatedCoursesById = async (courseIds: string[]) => {
-  const associatedCourses = await NewCourseModel.find({
+  const associatedCourses = await CourseModel.find({
     courseId: { $in: courseIds },
   })
     .sort({ fromDate: -1 })

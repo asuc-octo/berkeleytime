@@ -113,7 +113,7 @@ In addition to the API server, the backend service is responsible for managing M
 A model file will contain TypeScript types mirroring the database model, a Mongoose model definition, and database index declarations.
 
 ```ts
-// packages/common/src/models/termNew.ts
+// packages/common/src/models/term.ts
 
 // defines TypeScript type for nested object
 export interface ISessionItem { /* ... */ }
@@ -129,7 +129,7 @@ termSchema.index( /* ... */ );
 
 // creates Mongo model instance
 export const TermModel: Model<ITermItem> = model<ITermItem>(
-  "term",
+  "Term",
   termSchema
 );
 ```

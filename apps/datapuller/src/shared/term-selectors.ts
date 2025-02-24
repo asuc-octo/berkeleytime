@@ -1,4 +1,4 @@
-import { ITermItem, NewTermModel } from "@repo/common";
+import { ITermItem, TermModel } from "@repo/common";
 
 export type TermSelector = () => Promise<ITermItem[]>;
 
@@ -6,7 +6,7 @@ export type TermSelector = () => Promise<ITermItem[]>;
  * Gets the 8 latest past terms. 8 is an overestimation of the 4 unique terms (UGRD, GRAD, LAW, UCBX) in a single semester.
  */
 export const getRecentPastTerms = async () => {
-  const pastTerms = await NewTermModel.find({ temporalPosition: "Past" })
+  const pastTerms = await TermModel.find({ temporalPosition: "Past" })
     .lean()
     .sort({ endDate: -1 })
     .limit(8);
@@ -15,7 +15,7 @@ export const getRecentPastTerms = async () => {
 };
 
 export const getActiveTerms = async () => {
-  return NewTermModel.find({
+  return TermModel.find({
     temporalPosition: { $in: ["Current", "Future"] },
   }).lean();
 };
@@ -26,5 +26,5 @@ export const getActiveTerms = async () => {
 export const getLastFiveYearsTerms = async () => {
   const since = new Date().getFullYear() - 5;
 
-  return NewTermModel.find({ academicYear: { $gte: since.toString() } }).lean();
+  return TermModel.find({ academicYear: { $gte: since.toString() } }).lean();
 };

@@ -1,8 +1,8 @@
 import {
+  ClassModel,
   IClassItem,
   ISectionItem,
-  NewClassModel,
-  NewSectionModel,
+  SectionModel,
 } from "@repo/common";
 
 import { formatClass, formatSection } from "./formatter";
@@ -15,7 +15,7 @@ export const getClass = async (
   courseNumber: string,
   number: string
 ) => {
-  const _class = await NewClassModel.findOne({
+  const _class = await ClassModel.findOne({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",
@@ -37,7 +37,7 @@ export const getSecondarySections = async (
   courseNumber: string,
   number: string
 ) => {
-  const sections = await NewSectionModel.find({
+  const sections = await SectionModel.find({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",
@@ -57,7 +57,7 @@ export const getPrimarySection = async (
   courseNumber: string,
   number: string
 ) => {
-  const section = await NewSectionModel.findOne({
+  const section = await SectionModel.findOne({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",
@@ -80,7 +80,7 @@ export const getSection = async (
   courseNumber: string,
   number: string
 ) => {
-  const section = await NewSectionModel.findOne({
+  const section = await SectionModel.findOne({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",

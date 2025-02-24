@@ -1,9 +1,9 @@
 import {
+  ClassModel,
   IClassItem,
-  NewClassModel,
-  NewSectionModel,
-  NewTermModel,
   ScheduleModel,
+  SectionModel,
+  TermModel,
 } from "@repo/common";
 
 import {
@@ -55,7 +55,7 @@ export const createSchedule = async (
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  const term = await NewTermModel.findOne({
+  const term = await TermModel.findOne({
     name: `${input.year} ${input.semester}`,
   })
     .select({ _id: 1 })
@@ -114,7 +114,7 @@ export const getClasses = async (
   const classes = [];
 
   for (const selectedClass of selectedClasses) {
-    const _class = await NewClassModel.findOne({
+    const _class = await ClassModel.findOne({
       year,
       semester,
       sessionId: sessionId ? sessionId : "1",
@@ -125,7 +125,7 @@ export const getClasses = async (
 
     if (!_class) continue;
 
-    const sections = await NewSectionModel.find({
+    const sections = await SectionModel.find({
       termId: _class.termId,
       sessionId: _class.sessionId,
       sectionId: { $in: selectedClass.sectionIds },

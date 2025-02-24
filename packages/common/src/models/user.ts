@@ -1,7 +1,5 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
-import { semester } from "./term";
-
 export const userSchema = new Schema(
   {
     googleId: {
@@ -32,7 +30,8 @@ export const userSchema = new Schema(
             required: true,
           },
           semester: {
-            ...semester,
+            type: String,
+            enum: ["Spring", "Summer", "Fall", "Winter"],
             required: true,
           },
           subject: {

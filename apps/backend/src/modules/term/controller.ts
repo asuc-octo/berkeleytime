@@ -1,4 +1,4 @@
-import { NewTermModel } from "@repo/common";
+import { TermModel } from "@repo/common";
 
 import { formatTerm } from "./formatter";
 
@@ -20,7 +20,7 @@ const fields = {
 };
 
 export const getTerms = async () => {
-  const terms = await NewTermModel.find({}).select(fields).lean();
+  const terms = await TermModel.find({}).select(fields).lean();
 
   return terms.map(formatTerm);
 };
@@ -30,7 +30,7 @@ export const getTerm = async (
   semester: string,
   academicCareerCode: string = "UGRD"
 ) => {
-  const term = await NewTermModel.findOne({
+  const term = await TermModel.findOne({
     name: `${year} ${semester}`,
     academicCareerCode,
   })
