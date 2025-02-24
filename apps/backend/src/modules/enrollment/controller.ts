@@ -1,10 +1,11 @@
 import { NewEnrollmentHistoryModel } from "@repo/common";
 
+import { Semester } from "../../generated-types/graphql";
 import { formatEnrollment } from "./formatter";
 
 export const getEnrollment = async (
   year: number,
-  semester: string,
+  semester: Semester,
   sessionId: string | null,
   subject: string,
   courseNumber: string,

@@ -109,7 +109,7 @@ export const READ_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime
@@ -145,7 +145,7 @@ export const READ_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime
@@ -215,7 +215,7 @@ export const UPDATE_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime
@@ -251,7 +251,7 @@ export const UPDATE_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime

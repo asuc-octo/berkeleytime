@@ -111,7 +111,6 @@ const resolvers: CourseModule.Resolvers = {
     },
   },
 
-  // @ts-expect-error - Not sure how to type properly
   // Session: {
   //   R: "1",
   //   S: "12W",
@@ -123,13 +122,13 @@ const resolvers: CourseModule.Resolvers = {
   //   F: "3W2",
   // },
 
-  CourseFinalExam: {
-    D: "To be decided by the instructor when the class is offered",
-    N: "No final exam",
-    A: "Alternative method of final assessment",
-    C: "Common Final Exam",
-    Y: "Written final exam conducted during the scheduled final exam period",
-  },
+  // CourseFinalExam: {
+  //   D: "To be decided by the instructor when the class is offered",
+  //   N: "No final exam",
+  //   A: "Alternative method of final assessment",
+  //   C: "Common Final Exam",
+  //   Y: "Written final exam conducted during the scheduled final exam period",
+  // },
 
   // ClassGradingBasis: {
   //   ESU: "Elective Satisfactory/Unsat",

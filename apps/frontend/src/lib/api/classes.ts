@@ -111,6 +111,13 @@ export enum FinalExam {
   Undecided = "D",
 }
 
+export enum ExamType {
+  Final = "FIN",
+  Midterm = "MID",
+  Alternate = "ALT",
+  MakeUp = "MAK",
+}
+
 export interface IInstructor {
   familyName: string;
   givenName: string;
@@ -119,7 +126,7 @@ export interface IInstructor {
 export interface IExam {
   date: string;
   location: string;
-  final: boolean;
+  type: ExamType;
   startTime: string;
   endTime: string;
 }
@@ -279,7 +286,7 @@ export const READ_CLASS = gql`
         }
         exams {
           date
-          final
+          type
           location
           startTime
           endTime
@@ -290,7 +297,6 @@ export const READ_CLASS = gql`
         sectionId
         component
         online
-        open
         startDate
         endDate
         enrollment {
@@ -319,7 +325,7 @@ export const READ_CLASS = gql`
         }
         exams {
           date
-          final
+          type
           location
           startTime
           endTime

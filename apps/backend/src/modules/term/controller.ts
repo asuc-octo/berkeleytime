@@ -1,5 +1,6 @@
 import { TermModel } from "@repo/common";
 
+import { AcademicCareerCode, Semester } from "../../generated-types/graphql";
 import { formatTerm } from "./formatter";
 
 // database schema fields to select on queries.
@@ -27,8 +28,8 @@ export const getTerms = async () => {
 
 export const getTerm = async (
   year: number,
-  semester: string,
-  academicCareerCode: string = "UGRD"
+  semester: Semester,
+  academicCareerCode: AcademicCareerCode = "UGRD"
 ) => {
   const term = await TermModel.findOne({
     name: `${year} ${semester}`,

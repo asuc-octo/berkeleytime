@@ -74,26 +74,24 @@ export const getCourses = async () => {
     {
       $match: {
         printInCatalog: true,
-        "status.code": "ACTIVE",
-        "catalogNumber.prefix": "",
       },
     },
     {
       $sort: {
-        "classSubjectArea.code": 1,
-        "catalogNumber.formatted": 1,
+        subject: 1,
+        number: 1,
         fromDate: -1,
       },
     },
-    {
-      $group: {
-        _id: "$displayName",
-        document: { $first: "$$ROOT" },
-      },
-    },
-    {
-      $replaceRoot: { newRoot: "$document" },
-    },
+    // {
+    //   $group: {
+    //     _id: "$displayName",
+    //     document: { $first: "$$ROOT" },
+    //   },
+    // },
+    // {
+    //   $replaceRoot: { newRoot: "$document" },
+    // },
   ]);
 
   // /* Map grades to course keys for easy lookup */
@@ -130,9 +128,7 @@ export const getCourses = async () => {
 
   return courses.map((c) => ({
     ...formatCourse(c),
-    gradeDistribution: {
-      average: null,
-    },
+    gradeDistribution: null,
   })) as (Exclude<IntermediateCourse, "gradeDistribution"> & {
     gradeDistribution: CourseModule.Course["gradeDistribution"];
   })[];

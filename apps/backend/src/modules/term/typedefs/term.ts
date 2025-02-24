@@ -79,7 +79,7 @@ const typedef = gql`
     """
     Query for a term.
     """
-    term(id: TermIdentifier!, academicCareerCode: AcademicCareerCode!): Term
+    term(year: Int!, semester: Semester!): Term
   }
 `;
 

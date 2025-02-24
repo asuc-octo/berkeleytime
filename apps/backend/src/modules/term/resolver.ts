@@ -35,7 +35,7 @@ const resolvers: TermModule.Resolvers = {
   Query: {
     terms: () => getTerms(),
 
-    term: (_, { id, academicCareerCode }) => getTerm(id, academicCareerCode),
+    term: (_, { year, semester }) => getTerm(year, semester),
   },
 };
 
