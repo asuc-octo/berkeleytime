@@ -62,7 +62,7 @@ The bulk of the application logic is split into separate modules within the `src
 │           └── resolver.ts             # GraphQL resolver
 ```
 
-### Inside a Module
+#### Inside a Module
 
 <p align="center">
     <img
@@ -95,7 +95,7 @@ The above diagram shows a simplified request-to-response pipeline within a modul
 
 [^3]: Fields not requested are automatically removed.
 
-### Database Models
+#### Database Models
 
 In addition to the API server, the backend service is responsible for managing MongoDB usage—specifically, how our data is organized and defined through collections, models, and indexes.
 
@@ -133,3 +133,9 @@ export const TermModel: Model<ITermItem> = model<ITermItem>(
   termSchema
 );
 ```
+
+### Testing the API
+
+To test the GraphQL API, it is recommended to first [seed the local database](../../getting-started/local-development.md#seeding-local-database) in order to have data.
+
+API testing is mainly done through the [Apollo GraphQL Sandbox](https://www.apollographql.com/docs/apollo-sandbox) available at `http://localhost:8080/api/graphql` when the backend container is running. While the UI is helpful for creating queries for you, it is highly recommended to review the [GraphQL docs](https://graphql.org/learn/), specifically the [queries](https://graphql.org/learn/queries/) and [mutations](https://graphql.org/learn/mutations/) pages.
