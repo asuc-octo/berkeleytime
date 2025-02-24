@@ -26,6 +26,7 @@ export default gql`
     "Attributes"
     seatReservationTypes: [SeatReservationType!]!
     history: [EnrollmentSingular!]!
+    latest: EnrollmentSingular
   }
 
   type SeatReservationType {

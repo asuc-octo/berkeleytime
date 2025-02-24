@@ -1,11 +1,6 @@
 import { gql } from "@apollo/client";
 
-import {
-  GradeDistribution,
-  ICourse,
-  IEnrollmentSingular,
-  ISeatReservationType,
-} from ".";
+import { GradeDistribution, ICourse, IEnrollment } from ".";
 import { ITerm, Semester } from "./terms";
 
 export enum InstructionMethod {
@@ -129,11 +124,6 @@ export interface IExam {
   endTime: string;
 }
 
-export interface ILatestEnrollment {
-  latestEnrollment: IEnrollmentSingular;
-  seatReservationTypes: ISeatReservationType[];
-}
-
 export interface ISection {
   // Identifiers
   termId: string;
@@ -144,7 +134,7 @@ export interface ISection {
   term: ITerm;
   course: ICourse;
   class: IClass;
-  enrollment: ILatestEnrollment;
+  enrollment: IEnrollment;
 
   // Attributes
   year: number;
@@ -264,7 +254,7 @@ export const READ_CLASS = gql`
         startDate
         endDate
         enrollment {
-          latestEnrollment {
+          latest {
             status
             enrolledCount
             maxEnroll
@@ -304,7 +294,8 @@ export const READ_CLASS = gql`
         startDate
         endDate
         enrollment {
-          latestEnrollment {
+          latest {
+            status
             enrolledCount
             maxEnroll
             waitlistedCount
@@ -356,7 +347,7 @@ export const GET_CATALOG = gql`
         online
         instructionMode
         enrollment {
-          latestEnrollment {
+          latest {
             status
             enrolledCount
             maxEnroll

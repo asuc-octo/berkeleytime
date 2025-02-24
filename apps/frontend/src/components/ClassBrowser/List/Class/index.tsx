@@ -27,12 +27,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
       number,
       primarySection: {
         enrollment: {
-          latestEnrollment: {
-            enrolledCount,
-            maxEnroll,
-            waitlistedCount,
-            maxWaitlist,
-          },
+          latest: { enrolledCount, maxEnroll, waitlistedCount, maxWaitlist },
         },
       },
       unitsMax,

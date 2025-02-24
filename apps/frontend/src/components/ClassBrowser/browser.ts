@@ -59,7 +59,7 @@ export const getFilteredClasses = (
       // Filter by open
       if (
         currentOpen &&
-        _class.primarySection.enrollment.latestEnrollment.status !== "O"
+        _class.primarySection.enrollment.latest.status !== "O"
       ) {
         acc.excludedClasses.push(_class);
 

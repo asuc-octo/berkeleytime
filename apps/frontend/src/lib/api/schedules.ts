@@ -89,7 +89,7 @@ export const READ_SCHEDULE = gql`
             endDate
             component
             enrollment {
-              latestEnrollment {
+              latest {
                 status
                 enrolledCount
                 maxEnroll
@@ -125,7 +125,7 @@ export const READ_SCHEDULE = gql`
             endDate
             component
             enrollment {
-              latestEnrollment {
+              latest {
                 status
                 enrolledCount
                 maxEnroll
@@ -195,7 +195,7 @@ export const UPDATE_SCHEDULE = gql`
             endDate
             component
             enrollment {
-              latestEnrollment {
+              latest {
                 status
                 enrolledCount
                 maxEnroll
@@ -231,7 +231,7 @@ export const UPDATE_SCHEDULE = gql`
             endDate
             component
             enrollment {
-              latestEnrollment {
+              latest {
                 status
                 enrolledCount
                 maxEnroll

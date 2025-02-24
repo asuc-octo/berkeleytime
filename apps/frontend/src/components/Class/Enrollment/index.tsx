@@ -128,9 +128,9 @@ export default function Enrollment() {
         </ResponsiveContainer>
       </div>
       {/* <Reservations
-        enrolledCount={_class.primarySection.enrollment.latestEnrollment.enrolledCount}
-        maxEnroll={_class.primarySection.enrollment.latestEnrollment.maxEnroll}
-        reservations={_class.primarySection.enrollment.latestEnrollment.seatReservationCounts}
+        enrolledCount={_class.primarySection.enrollment.latest.enrolledCount}
+        maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
+        reservations={_class.primarySection.enrollment.latest.seatReservationCounts}
       /> */}
     </div>
   );

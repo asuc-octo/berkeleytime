@@ -44,6 +44,7 @@ export interface IEnrollment {
 
   seatReservationTypes: ISeatReservationType[];
   history: IEnrollmentSingular[];
+  latest: IEnrollmentSingular;
 }
 
 export interface ReadEnrollmentResponse {

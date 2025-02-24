@@ -185,7 +185,7 @@ export default function ClassBrowser({
           const getOpenSeats = ({
             primarySection: {
               enrollment: {
-                latestEnrollment: { enrolledCount, maxEnroll },
+                latest: { enrolledCount, maxEnroll },
               },
             },
           }: IClass) => maxEnroll - enrolledCount;
@@ -197,7 +197,7 @@ export default function ClassBrowser({
           const getPercentOpenSeats = ({
             primarySection: {
               enrollment: {
-                latestEnrollment: { enrolledCount, maxEnroll },
+                latest: { enrolledCount, maxEnroll },
               },
             },
           }: IClass) =>

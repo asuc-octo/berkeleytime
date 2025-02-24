@@ -1,6 +1,6 @@
 import { NewEnrollmentHistoryModel } from "@repo/common";
 
-import { EnrollmentModule } from "./generated-types/module-types";
+import { formatEnrollment } from "./formatter";
 
 export const getEnrollment = async (
   year: number,
@@ -21,7 +21,7 @@ export const getEnrollment = async (
 
   if (!enrollment) return null;
 
-  return enrollment as EnrollmentModule.Enrollment;
+  return formatEnrollment(enrollment);
 };
 
 export const getEnrollmentBySectionId = async (
@@ -37,5 +37,5 @@ export const getEnrollmentBySectionId = async (
 
   if (!enrollment) return null;
 
-  return enrollment as EnrollmentModule.Enrollment;
+  return formatEnrollment(enrollment);
 };

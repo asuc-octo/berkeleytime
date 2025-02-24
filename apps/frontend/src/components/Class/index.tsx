@@ -380,18 +380,13 @@ export default function Class({
             <AverageGrade gradeDistribution={_class.course.gradeDistribution} />
             <Capacity
               enrolledCount={
-                _class.primarySection.enrollment.latestEnrollment.enrolledCount
+                _class.primarySection.enrollment.latest.enrolledCount
               }
-              maxEnroll={
-                _class.primarySection.enrollment.latestEnrollment.maxEnroll
-              }
+              maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
               waitlistedCount={
-                _class.primarySection.enrollment.latestEnrollment
-                  .waitlistedCount
+                _class.primarySection.enrollment.latest.waitlistedCount
               }
-              maxWaitlist={
-                _class.primarySection.enrollment.latestEnrollment.maxWaitlist
-              }
+              maxWaitlist={_class.primarySection.enrollment.latest.maxWaitlist}
             />
             <Units unitsMax={_class.unitsMax} unitsMin={_class.unitsMin} />
             {_class && <CCN sectionId={_class.primarySection.sectionId} />}

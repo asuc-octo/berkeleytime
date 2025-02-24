@@ -199,13 +199,8 @@ const resolvers: ClassModule.Resolvers = {
         parent.sessionId,
         parent.sectionId
       );
-      const latestEnrollmentSingular =
-        enrollmentHistory?.history[enrollmentHistory?.history.length - 1];
 
-      return {
-        latestEnrollment: latestEnrollmentSingular,
-        seatReservationTypes: enrollmentHistory?.seatReservationTypes,
-      } as ClassModule.LatestEnrollment;
+      return enrollmentHistory;
     },
   },
 

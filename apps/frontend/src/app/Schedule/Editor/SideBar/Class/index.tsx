@@ -76,18 +76,14 @@ export default function Class({
               /> */}
               <Capacity
                 enrolledCount={
-                  _class.primarySection.enrollment.latestEnrollment
-                    .enrolledCount
+                  _class.primarySection.enrollment.latest.enrolledCount
                 }
-                maxEnroll={
-                  _class.primarySection.enrollment.latestEnrollment.maxEnroll
-                }
+                maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
                 waitlistedCount={
-                  _class.primarySection.enrollment.latestEnrollment
-                    .waitlistedCount
+                  _class.primarySection.enrollment.latest.waitlistedCount
                 }
                 maxWaitlist={
-                  _class.primarySection.enrollment.latestEnrollment.maxWaitlist
+                  _class.primarySection.enrollment.latest.maxWaitlist
                 }
               />
               <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />

@@ -102,7 +102,7 @@ export default gql`
     term: Term!
     course: Course!
     class: Class!
-    enrollment: LatestEnrollment!
+    enrollment: Enrollment
 
     "Attributes"
     year: Int!
@@ -119,11 +119,6 @@ export default gql`
     meetings: [Meeting!]!
     exams: [Exam!]!
     online: Boolean!
-  }
-
-  type LatestEnrollment {
-    latestEnrollment: EnrollmentSingular
-    seatReservationTypes: [SeatReservationType!]
   }
 
   enum Component {
