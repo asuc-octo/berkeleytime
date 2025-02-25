@@ -26,8 +26,9 @@ git switch gql
 # Create .env from template file
 cp .env.template .env
 
-# Install dependencies for local code editor intellisense.
+# Setup local code editor intellisense.
 npm install
+npx turbo run generate
 
 # Ensure Docker Desktop is running. Start up application
 docker compose up -d
