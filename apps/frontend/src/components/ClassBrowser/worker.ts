@@ -118,17 +118,25 @@ addEventListener(
 
       if (sortBy === SortBy.OpenSeats) {
         const getOpenSeats = ({
-          primarySection: { enrollCount, enrollMax },
-        }: IClass) => enrollMax - enrollCount;
+          primarySection: {
+            enrollment: {
+              latest: { enrolledCount, maxEnroll },
+            },
+          },
+        }: IClass) => maxEnroll - enrolledCount;
 
         return getOpenSeats(b) - getOpenSeats(a);
       }
 
       if (sortBy === SortBy.PercentOpenSeats) {
         const getPercentOpenSeats = ({
-          primarySection: { enrollCount, enrollMax },
+          primarySection: {
+            enrollment: {
+              latest: { enrolledCount, maxEnroll },
+            },
+          },
         }: IClass) =>
-          enrollMax === 0 ? 0 : (enrollMax - enrollCount) / enrollMax;
+          maxEnroll === 0 ? 0 : (maxEnroll - enrolledCount) / maxEnroll;
 
         return getPercentOpenSeats(b) - getPercentOpenSeats(a);
       }

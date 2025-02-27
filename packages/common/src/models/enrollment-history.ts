@@ -2,16 +2,14 @@ import { Document, Model, Schema, model } from "mongoose";
 
 export interface IEnrollmentHistoryItem {
   termId: string;
+  year: number;
+  semester: string;
   sessionId: string;
   sectionId: string;
+  subject: string;
+  courseNumber: string;
+  sectionNumber: string;
 
-  // maps number to requirementGroup.
-  // this assumes that these fields are constant over time.
-  seatReservations?: {
-    number: number;
-    requirementGroup?: string;
-    fromDate: string;
-  }[];
   history: {
     time: string;
     status?: string;
@@ -24,11 +22,18 @@ export interface IEnrollmentHistoryItem {
     openReserved?: number;
     instructorAddConsentRequired?: boolean;
     instructorDropConsentRequired?: boolean;
-    seatReservations?: {
+    seatReservationCounts?: {
       number: number; // maps to seatReservations.number to get requirementGroup
       maxEnroll: number;
       enrolledCount?: number;
     }[];
+  }[];
+  // maps number to requirementGroup.
+  // this assumes that these fields are constant over time.
+  seatReservationTypes?: {
+    number: number;
+    requirementGroup?: string;
+    fromDate: string;
   }[];
 }
 
@@ -43,8 +48,14 @@ export interface IEnrollmentHistoryItemDocument
 
 const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
   termId: { type: String, required: true },
+  year: { type: Number, required: true },
+  semester: { type: String, required: true },
   sessionId: { type: String, required: true },
   sectionId: { type: String, required: true },
+  subject: { type: String, required: true },
+  courseNumber: { type: String, required: true },
+  sectionNumber: { type: String, required: true },
+
   history: [
     {
       _id: false,
@@ -59,7 +70,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
       openReserved: { type: Number },
       instructorAddConsentRequired: { type: Boolean },
       instructorDropConsentRequired: { type: Boolean },
-      seatReservations: [
+      seatReservationCounts: [
         {
           _id: false,
           number: { type: Number },
@@ -69,7 +80,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
       ],
     },
   ],
-  seatReservations: [
+  seatReservationTypes: [
     {
       _id: false,
       number: { type: Number },
@@ -82,6 +93,17 @@ enrollmentHistorySchema.index(
   { termId: 1, sessionId: 1, sectionId: 1 },
   { unique: true }
 );
+enrollmentHistorySchema.index(
+  {
+    year: 1,
+    semester: 1,
+    sessionId: 1,
+    subject: 1,
+    courseNumber: 1,
+    sectionNumber: 1,
+  },
+  { unique: true }
+);
 
 export const NewEnrollmentHistoryModel: Model<IEnrollmentHistoryItem> =
-  model<IEnrollmentHistoryItem>("EnrollmentHistory", enrollmentHistorySchema);
+  model<IEnrollmentHistoryItem>("enrollmentHistories", enrollmentHistorySchema);

@@ -2,7 +2,7 @@ import { IGradeDistributionItem } from "@repo/common";
 
 import { QueryExecutor } from "./api/aws-athena";
 
-export interface GradeDistributionRow {
+interface GradeDistributionRow {
   course_id: string;
   course_offer_nbr: string;
   semester_year_term_cd: string;
@@ -37,7 +37,7 @@ export interface GradeDistributionRow {
   grade_count_pc: string;
 }
 
-export const formatDistribution = (distribution: GradeDistributionRow) => {
+const formatDistribution = (distribution: GradeDistributionRow) => {
   // TODO: Pivot the data
   const output: IGradeDistributionItem = {
     courseId: distribution.course_id,
@@ -47,7 +47,7 @@ export const formatDistribution = (distribution: GradeDistributionRow) => {
     termId: distribution.semester_year_term_cd,
     sessionId: distribution.session_code,
 
-    classNumber: distribution.class_number,
+    sectionId: distribution.class_number, // not sure why tf the api is like this
     sectionNumber: distribution.class_section_cd,
 
     count: parseInt(distribution.grade_count),

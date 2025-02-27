@@ -6,7 +6,6 @@
   display: flex;
   flex-direction: column;
 
-
   @media (width <=992px) {
     width: 100%;
   }
@@ -33,7 +32,6 @@
     animation: slideOutL 250ms ease-in;
   }
 }
-
 
 @keyframes slideInR {
   from {

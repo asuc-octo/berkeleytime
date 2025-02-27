@@ -10,7 +10,7 @@ export interface IGradeDistributionItem {
   sessionId: string;
 
   // TODO: CCN?
-  classNumber: string;
+  sectionId: string;
   sectionNumber: string;
 
   // Grade distribution
@@ -55,7 +55,7 @@ const gradeDistributionSchema = new Schema<IGradeDistributionItem>(
     termId: { type: String, required: true },
     sessionId: { type: String, required: true },
 
-    classNumber: { type: String, required: true },
+    sectionId: { type: String, required: true },
     sectionNumber: { type: String, required: true },
 
     count: { type: Number, required: true },
@@ -92,8 +92,12 @@ gradeDistributionSchema.index(
   { termId: 1, classNumber: 1, sectionNumber: 1 },
   { unique: true }
 );
+gradeDistributionSchema.index({
+  subject: 1,
+  courseNumber: 1,
+});
 
 export const GradeDistributionModel = mongoose.model(
-  "GradeDistributions",
+  "gradeDistributions",
   gradeDistributionSchema
 );

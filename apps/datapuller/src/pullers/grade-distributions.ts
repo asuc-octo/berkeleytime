@@ -1,66 +1,95 @@
 import { GradeDistributionModel } from "@repo/common";
 
 import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
-import { getPreviousTerms } from "../lib/terms";
 import { Config } from "../shared/config";
+import {
+  TermSelector,
+  getLastFiveYearsTerms,
+  getRecentPastTerms,
+} from "../shared/term-selectors";
 
-const updateGradeDistributions = async ({
-  aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP },
-  sis: { TERM_APP_ID, TERM_APP_KEY },
-  log,
-}: Config) => {
-  log.info("Fetching previous term");
+const TERMS_PER_API_BATCH = 100;
 
-  // Get previous term
-  const previousTerms = await getPreviousTerms(log, TERM_APP_ID, TERM_APP_KEY);
+const updateGradeDistributions = async (
+  { aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP }, log }: Config,
+  termSelector: TermSelector
+) => {
+  log.trace("Fetching terms...");
 
-  if (!previousTerms) {
-    log.error("No previous term found, skipping update");
+  const terms = await termSelector();
+
+  log.info(
+    `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
+  );
+  if (terms.length == 0) {
+    log.warn("No terms found, skipping update");
     return;
   }
 
-  log.info(
-    `Querying grade distributions for previous terms: ${previousTerms.map((term) => term.name + " " + term.academicCareer?.description).join(", ")}`
-  );
-  const previousTermIds = previousTerms.map((term) => term.id!);
+  let totalGradeDistributions = 0;
+  let totalInserted = 0;
+  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
+    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
+    const termsBatchIds = termsBatch.map((term) => term.id);
 
-  const gradeDistributions = await getGradeDistributionDataByTerms(
-    DATABASE,
-    S3_OUTPUT,
-    REGION_NAME,
-    WORKGROUP,
-    previousTermIds
-  );
+    log.trace(
+      `Fetching grade distributions for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
+    );
 
-  // TODO: Error for no grade distributions
-  if (!gradeDistributions) {
-    log.error("No grade distributions found, skipping update");
-    return;
+    const gradeDistributions = await getGradeDistributionDataByTerms(
+      DATABASE,
+      S3_OUTPUT,
+      REGION_NAME,
+      WORKGROUP,
+      termsBatchIds
+    );
+
+    log.info(
+      `Fetched ${gradeDistributions.length.toLocaleString()} grade distributions.`
+    );
+    if (!gradeDistributions) {
+      log.warn("No grade distributions found, skipping update");
+      return;
+    }
+
+    log.trace("Deleting grade distributions to be replaced...");
+
+    const { deletedCount } = await GradeDistributionModel.deleteMany({
+      termId: { $in: termsBatchIds },
+    });
+
+    log.info(`Deleted ${deletedCount.toLocaleString()} grade distributions.`);
+
+    // Insert grade distributions in batches of 5000
+    let totalInserted = 0;
+    const insertBatchSize = 5000;
+    for (let i = 0; i < gradeDistributions.length; i += insertBatchSize) {
+      const batch = gradeDistributions.slice(i, i + insertBatchSize);
+
+      log.trace(`Inserting batch ${i / insertBatchSize + 1}`);
+
+      const { insertedCount } = await GradeDistributionModel.insertMany(batch, {
+        ordered: false,
+        rawResult: true,
+      });
+      totalInserted += insertedCount;
+    }
   }
 
   log.info(
-    `Fetched ${gradeDistributions.length.toLocaleString()} grade distributions.`
-  );
-
-  // Delete existing grade distributions for previous terms
-  await GradeDistributionModel.deleteMany({
-    termId: { $in: previousTermIds },
-  });
-
-  // Insert grade distributions in batches of 5000
-  const insertBatchSize = 5000;
-
-  for (let i = 0; i < gradeDistributions.length; i += insertBatchSize) {
-    const batch = gradeDistributions.slice(i, i + insertBatchSize);
-
-    log.info(`Inserting batch ${i / insertBatchSize + 1}`);
-
-    await GradeDistributionModel.insertMany(batch, { ordered: false });
-  }
-
-  log.info(
-    `Completed updating database with ${gradeDistributions.length.toLocaleString()} courses.`
+    `Completed updating database with ${totalGradeDistributions.toLocaleString()} grade distributions, inserted ${totalInserted.toLocaleString()} documents.`
   );
 };
 
-export default updateGradeDistributions;
+const recentPastTerms = async (config: Config) => {
+  return updateGradeDistributions(config, getRecentPastTerms);
+};
+
+const lastFiveYearsTerms = async (config: Config) => {
+  return updateGradeDistributions(config, getLastFiveYearsTerms);
+};
+
+export default {
+  recentPastTerms,
+  lastFiveYearsTerms,
+};

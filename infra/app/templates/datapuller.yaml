@@ -12,21 +12,26 @@ spec:
   schedule: "{{ $jobConfig.schedule }}"
   timeZone: America/Los_Angeles
   concurrencyPolicy: Forbid
-  suspend: {{ $jobConfig.suspend }}
-  successfulJobsHistoryLimit: 3
-  failedJobsHistoryLimit: 3
+  suspend: {{ $root.Values.datapuller.suspend }}
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
   jobTemplate:
+    metadata:
+      labels:
+        {{- include "bt-app.datapullerLabels" $root | nindent 8 }}
     spec:
+      ttlSecondsAfterFinished: 172800
       template:
-        spec:
+        metadata:
           labels:
             {{- include "bt-app.datapullerLabels" $root | nindent 12 }}
+        spec:
           containers:
             - name: datapuller-{{ $jobName }}
-              image: {{ printf "%s/%s:%s" $jobConfig.image.registry $jobConfig.image.repository ( toString $jobConfig.image.tag ) }}
+              image: {{ printf "%s/%s:%s" $root.Values.datapuller.image.registry $root.Values.datapuller.image.repository ( toString $root.Values.datapuller.image.tag ) }}
               imagePullPolicy: Always
               command: ["turbo", "run", "main", "--filter=datapuller", "--env-mode=loose", "--"]
-              args: ["--puller={{ $jobConfig.puller | default $jobName }}"]
+              args: {{ $jobConfig.args | toYaml | nindent 16 }}
               envFrom:
                 - configMapRef:
                     name: {{ include "bt-app.datapullerName" $root }}-env
@@ -81,7 +86,7 @@ spec:
 
 ---
 
-{{- range $jobName, $jobConfig := .Values.datapuller }}
+{{- range $jobName, $jobConfig := .Values.datapuller.cronjobs }}
 {{- include "bt-app.datapuller" (list $ $jobName $jobConfig) }}
 ---
 {{- end }}

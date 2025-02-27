@@ -6,7 +6,7 @@ import { Class, ClassesAPI } from "@repo/sis-api/classes";
 import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automatically generated type
-export type CombinedClass = Class & {
+type CombinedClass = Class & {
   requisites: {
     code: {
       type: string;
@@ -21,11 +21,11 @@ export type CombinedClass = Class & {
   };
 };
 
-export const filterClass = (input: CombinedClass): boolean => {
+const filterClass = (input: CombinedClass): boolean => {
   return input.status?.code === "A";
 };
 
-export const formatClass = (input: CombinedClass) => {
+const formatClass = (input: CombinedClass) => {
   const courseId = input.course?.identifiers?.find(
     (i) => i.type === "cs-course-id"
   )?.id;

@@ -57,10 +57,14 @@ export default function Class({
           <div className={styles.row}>
             <AverageGrade gradeDistribution={_class.gradeDistribution} />
             <Capacity
-              enrollCount={_class.primarySection.enrollCount}
-              enrollMax={_class.primarySection.enrollMax}
-              waitlistCount={_class.primarySection.waitlistCount}
-              waitlistMax={_class.primarySection.waitlistMax}
+              enrolledCount={
+                _class.primarySection.enrollment.latest.enrolledCount
+              }
+              maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
+              waitlistedCount={
+                _class.primarySection.enrollment.latest.waitlistedCount
+              }
+              maxWaitlist={_class.primarySection.enrollment.latest.maxWaitlist}
             />
             <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
           </div>

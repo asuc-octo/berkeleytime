@@ -1,46 +1,44 @@
 import { TermModel } from "@repo/common";
 
-import { getTerms } from "../lib/terms";
+import { getAllTerms, getNearbyTerms } from "../lib/terms";
 import { Config } from "../shared/config";
 
-const updateTerms = async ({
-  sis: { TERM_APP_ID, TERM_APP_KEY },
-  log,
-}: Config) => {
-  log.info(`Fetching terms.`);
+const updateTerms = async (
+  { sis: { TERM_APP_ID, TERM_APP_KEY }, log }: Config,
+  allTerms: boolean
+) => {
+  log.trace(`Fetching terms...`);
 
-  // Get all courses
-  const terms = await getTerms(log, TERM_APP_ID, TERM_APP_KEY);
-
-  if (terms.length === 0) {
-    log.info("No terms found.");
-
-    return;
-  }
+  const terms = allTerms
+    ? await getAllTerms(log, TERM_APP_ID, TERM_APP_KEY)
+    : await getNearbyTerms(log, TERM_APP_ID, TERM_APP_KEY);
 
   log.info(`Fetched ${terms.length.toLocaleString()} terms.`);
+  if (terms.length === 0) {
+    log.info("No terms found.");
+    return;
+  }
+  const termIds = terms.map((term) => term.id);
 
-  log.info("Deleting terms...");
+  log.trace("Deleting terms to be replaced...");
 
-  // Delete existing terms not in SIS
   const { deletedCount } = await TermModel.deleteMany({
-    id: { $nin: terms.map((term) => term.id) },
+    id: { $nin: termIds },
   });
 
-  log.info(`Deleted ${deletedCount.toLocaleString()} existing terms.`);
+  log.info(`Deleted ${deletedCount.toLocaleString()} terms.`);
 
   // Insert terms in batches of 5000
   const insertBatchSize = 5000;
-
   for (let i = 0; i < terms.length; i += insertBatchSize) {
     const batch = terms.slice(i, i + insertBatchSize);
 
-    log.info(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
     await TermModel.bulkWrite(
       batch.map((term) => ({
         updateOne: {
-          filter: { id: term.id },
+          filter: { id: term.id, academicCareerCode: term.academicCareerCode },
           update: { $set: term },
           upsert: true,
         },
@@ -53,4 +51,15 @@ const updateTerms = async ({
   );
 };
 
-export default updateTerms;
+const allTerms = async (config: Config) => {
+  return updateTerms(config, true);
+};
+
+const nearbyTerms = async (config: Config) => {
+  return updateTerms(config, false);
+};
+
+export default {
+  allTerms,
+  nearbyTerms,
+};

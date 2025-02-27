@@ -42,7 +42,9 @@ jobs:
     name: SSH and Deploy
     needs: [build-push]
     runs-on: ubuntu-latest
-    environment: documentation
+    environment:
+      name: documentation
+      url: https://docs.stanfurdtime.com
 
     steps:
       - name: SSH and Helm Install

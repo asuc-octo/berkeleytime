@@ -220,6 +220,7 @@ export default function Class({
           courseNumber: bookmarkedClass.courseNumber,
           year: bookmarkedClass.year,
           semester: bookmarkedClass.semester,
+          sessionId: bookmarkedClass.sessionId,
         })),
       },
       {
@@ -378,13 +379,17 @@ export default function Class({
           <div className={styles.group}>
             <AverageGrade gradeDistribution={_class.course.gradeDistribution} />
             <Capacity
-              enrollCount={_class.primarySection.enrollCount}
-              enrollMax={_class.primarySection.enrollMax}
-              waitlistCount={_class.primarySection.waitlistCount}
-              waitlistMax={_class.primarySection.waitlistMax}
+              enrolledCount={
+                _class.primarySection.enrollment.latest.enrolledCount
+              }
+              maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
+              waitlistedCount={
+                _class.primarySection.enrollment.latest.waitlistedCount
+              }
+              maxWaitlist={_class.primarySection.enrollment.latest.maxWaitlist}
             />
             <Units unitsMax={_class.unitsMax} unitsMin={_class.unitsMin} />
-            {_class && <CCN ccn={_class.primarySection.ccn} />}
+            {_class && <CCN sectionId={_class.primarySection.sectionId} />}
           </div>
           {dialog ? (
             <Tabs.List className={styles.menu} defaultValue="overview">
