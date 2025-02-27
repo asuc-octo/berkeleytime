@@ -3,8 +3,19 @@ import { EnrollmentModule } from "./generated-types/module-types";
 
 const resolvers: EnrollmentModule.Resolvers = {
   Query: {
-    enrollment: async (_, { termId, sessionId, sectionId }) =>
-      getEnrollment(termId, sessionId, sectionId),
+    enrollment: async (
+      _,
+      { year, semester, sessionId, subject, courseNumber, sectionNumber }
+    ) => {
+      return await getEnrollment(
+        year,
+        semester,
+        sessionId,
+        subject,
+        courseNumber,
+        sectionNumber
+      );
+    },
   },
 };
 

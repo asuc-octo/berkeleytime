@@ -25,7 +25,11 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
       },
       title,
       number,
-      primarySection: { enrollCount, enrollMax, waitlistCount, waitlistMax },
+      primarySection: {
+        enrollment: {
+          latest: { enrolledCount, maxEnroll, waitlistedCount, maxWaitlist },
+        },
+      },
       unitsMax,
       unitsMin,
       index,
@@ -48,10 +52,10 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
           <div className={styles.row}>
             <AverageGrade gradeDistribution={gradeDistribution} />
             <Capacity
-              enrollCount={enrollCount}
-              enrollMax={enrollMax}
-              waitlistCount={waitlistCount}
-              waitlistMax={waitlistMax}
+              enrolledCount={enrolledCount}
+              maxEnroll={maxEnroll}
+              waitlistedCount={waitlistedCount}
+              maxWaitlist={maxWaitlist}
             />
             <Units unitsMin={unitsMin} unitsMax={unitsMax} />
           </div>

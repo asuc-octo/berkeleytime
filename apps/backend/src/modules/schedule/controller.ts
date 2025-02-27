@@ -1,4 +1,10 @@
-import { ClassModel, ClassType, ScheduleModel, TermModel } from "@repo/common";
+import {
+  ClassModel,
+  IClassItem,
+  ScheduleModel,
+  SectionModel,
+  TermModel,
+} from "@repo/common";
 
 import {
   CreateScheduleInput,
@@ -51,7 +57,9 @@ export const createSchedule = async (
 
   const term = await TermModel.findOne({
     name: `${input.year} ${input.semester}`,
-  });
+  })
+    .select({ _id: 1 })
+    .lean();
 
   if (!term) throw new Error("Invalid term");
 
@@ -98,25 +106,34 @@ export const updateSchedule = async (
 };
 
 export const getClasses = async (
-  year: Number,
+  year: number,
   semester: Semester,
+  sessionId: string,
   selectedClasses: SelectedClassInput[]
 ) => {
   const classes = [];
 
   for (const selectedClass of selectedClasses) {
     const _class = await ClassModel.findOne({
+      year,
+      semester,
+      sessionId: sessionId ? sessionId : "1",
+      subject: selectedClass.subject,
+      courseNumber: selectedClass.courseNumber,
       number: selectedClass.number,
-      "course.subjectArea.code": selectedClass.subject,
-      "course.catalogNumber.formatted": selectedClass.courseNumber,
-      "session.term.name": `${year} ${semester}`,
     }).lean();
 
     if (!_class) continue;
 
+    const sections = await SectionModel.find({
+      termId: _class.termId,
+      sessionId: _class.sessionId,
+      sectionId: { $in: selectedClass.sectionIds },
+    }).lean();
+
     classes.push({
-      class: formatClass(_class as ClassType) as unknown as ClassModule.Class,
-      selectedSections: selectedClass.sections,
+      class: formatClass(_class as IClassItem) as unknown as ClassModule.Class,
+      selectedSections: sections as unknown as ClassModule.Section[],
     } as ScheduleModule.SelectedClass);
   }
 

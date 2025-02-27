@@ -1,4 +1,4 @@
-import { ICourseItem, NewCourseModel } from "@repo/common";
+import { CourseModel, ICourseItem } from "@repo/common";
 
 import { getCourses } from "../lib/courses";
 import { Config } from "../shared/config";
@@ -51,7 +51,7 @@ const updateCourses = async ({
 
   log.trace("Deleting courses no longer in SIS...");
 
-  const { deletedCount } = await NewCourseModel.deleteMany({
+  const { deletedCount } = await CourseModel.deleteMany({
     courseId: { $nin: courses.map((course) => course.courseId) },
   });
 
@@ -64,7 +64,7 @@ const updateCourses = async ({
 
     log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-    await NewCourseModel.bulkWrite(
+    await CourseModel.bulkWrite(
       batch.map((course) => ({
         updateOne: {
           filter: { courseId: course.courseId },

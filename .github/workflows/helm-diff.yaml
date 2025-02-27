@@ -1,0 +1,164 @@
+name: Generate Helm Diffs for PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to generate diff for'
+        required: true
+        type: string
+  issue_comment:
+    types: [created]
+
+jobs:
+  helm-diff:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.pull_request && contains(github.event.comment.body, '/helm-diff'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Code
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ inputs.pr_number }}/head
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: '3.10.2'
+
+      - name: Install Helm Diff Plugin
+        run: helm plugin install https://github.com/databus23/helm-diff
+
+      - name: Add Helm Repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add bitnami-labs https://bitnami-labs.github.io/sealed-secrets/
+          helm repo add cert-manager https://charts.jetstack.io
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo add metallb https://metallb.github.io/metallb
+          helm repo add oauth2-proxy https://oauth2-proxy.github.io/manifests
+          helm repo update
+
+      - name: Set up kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.HELM_DIFF_KUBECONFIG }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Generate and Format Diffs
+        id: generate-diff
+        run: |
+          # Create header for the diff output file
+          echo "### Helm Diff Results" > diff_output.md
+          echo "" >> diff_output.md
+          
+          # Function to process diff output and wrap each resource in a dropdown
+          process_diff() {
+            local resource=""
+            local diff_content=""
+            local in_diff=false
+
+            while IFS= read -r line; do
+              if [[ $line =~ ^"bt, "* ]]; then
+                # If a new resource is found, output the previous one (if exists)
+                if [ -n "$resource" ]; then
+                  {
+                    echo "<details>"
+                    echo "<summary>$resource</summary>"
+                    echo ""
+                    echo "\`\`\`diff"
+                    echo "$diff_content"
+                    echo "\`\`\`"
+                    echo "</details>"
+                    echo ""
+                  } >> diff_output.md
+                fi
+                # Start a new resource block
+                resource="${line#bt, }"
+                diff_content=""
+                in_diff=true
+              elif [ "$in_diff" = true ]; then
+                diff_content+="$line"$'\n'
+              fi
+            done
+
+            # Output the last resource block if exists
+            if [ -n "$resource" ]; then
+              {
+                echo "<details>"
+                echo "<summary>$resource</summary>"
+                echo ""
+                echo "\`\`\`diff"
+                echo "$diff_content"
+                echo "\`\`\`"
+                echo "</details>"
+                echo ""
+              } >> diff_output.md
+            fi
+          }
+          
+          # First update dependencies if needed
+          helm dependency update ./infra/app
+          helm dependency update ./infra/base
+          
+          # Process app chart diff output and log raw diff
+          echo "#### App Chart Changes" >> diff_output.md
+          echo "" >> diff_output.md
+          echo "Raw App Chart Diff:" >> /tmp/raw_diffs.log
+          helm diff upgrade bt-prod-app ./infra/app \
+            --install \
+            --namespace=bt \
+            --set host=stanfurdtime.com \
+            --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
+            
+          # Process base chart diff output and log raw diff
+          echo "" >> diff_output.md
+          echo "#### Base Chart Changes" >> diff_output.md
+          echo "" >> diff_output.md
+          echo "Raw Base Chart Diff:" >> /tmp/raw_diffs.log
+          helm diff upgrade bt-base ./infra/base \
+            --install \
+            --namespace=bt \
+            --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
+
+          # Add a dropdown for the raw diff output
+          echo "" >> diff_output.md
+          echo "#### 📋 Raw Helm Diff Output" >> diff_output.md
+          echo "<details>" >> diff_output.md
+          echo "" >> diff_output.md
+          echo "\`\`\`" >> diff_output.md
+          cat /tmp/raw_diffs.log >> diff_output.md
+          echo "\`\`\`" >> diff_output.md
+          echo "</details>" >> diff_output.md
+          
+          # Log the raw diffs to GitHub Actions output
+          echo "raw_diffs<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/raw_diffs.log >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Save the formatted diff output as a step output using a unique delimiter
+          delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "diff<<$delim" >> $GITHUB_OUTPUT
+          cat diff_output.md >> $GITHUB_OUTPUT
+          echo "$delim" >> $GITHUB_OUTPUT
+
+      - name: Log Raw Diffs
+        run: |
+          echo "Raw Helm Diffs:"
+          echo "${{ steps.generate-diff.outputs.raw_diffs }}"
+
+      - name: Comment PR with Diff Output
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.PR_NUMBER),
+              body: process.env.DIFF
+            });
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          DIFF: ${{ steps.generate-diff.outputs.diff }}
+
