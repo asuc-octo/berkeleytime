@@ -7,6 +7,28 @@ export default gql`
   type Query {
     course(subject: String!, number: CourseNumber!): Course
     courses: [Course!]!
+    comments(
+      subject: String!
+      number: CourseNumber!
+      userEmail: String
+    ): [Comment!]!
+  }
+
+  type Comment {
+    subject: String!
+    number: CourseNumber!
+    userEmail: String!
+    content: String!
+    createdAt: String!
+  }
+
+  type Mutation {
+    addComment(
+      subject: String!
+      number: CourseNumber!
+      userEmail: String!
+      content: String!
+    ): Comment!
   }
 
   type Course {

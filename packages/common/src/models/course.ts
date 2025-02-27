@@ -1,5 +1,29 @@
 import { Document, Model, Schema, model } from "mongoose";
 
+// typescript interface for a comment
+export interface CommentItem {
+  subject: string;
+  number: string;
+  userEmail: string;
+  content: string;
+  createdAt: string;
+}
+
+// creates a schema and tells mongo how a comment should be stored
+const CommentSchema = new Schema<CommentItem>({
+  subject: { type: String, required: true },
+  number: { type: String, required: true },
+  userEmail: { type: String, required: true },
+  content: { type: String, required: true },
+  createdAt: { type: String, default: () => new Date().toISOString()},
+});
+
+// creates and exports a mongoose model (we can now interact with db)
+export const CommentModel: Model<CommentItem> = model<CommentItem>(
+  "Comment",
+  CommentSchema
+);
+
 export interface ICourseItem {
   // identifiers[type=cs-course-id]
   courseId: string;

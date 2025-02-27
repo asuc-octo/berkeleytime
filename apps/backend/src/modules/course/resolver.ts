@@ -2,13 +2,15 @@ import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import {
+  addComment,
   getAssociatedCoursesById,
   getAssociatedCoursesBySubjectNumber,
   getClassesByCourse,
+  getComment,
   getCourse,
   getCourses,
 } from "./controller";
-import { IntermediateCourse } from "./formatter";
+import { IntermediateCourse, formatComment } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
 const resolvers: CourseModule.Resolvers = {
@@ -51,6 +53,21 @@ const resolvers: CourseModule.Resolvers = {
       const courses = getCourses();
 
       return courses as unknown as CourseModule.Course[];
+    },
+
+    comments: async (_, { subject, number, userEmail }, _context, _info) => {
+      const allComments = await getComment(
+        subject,
+        number,
+        userEmail || undefined
+      );
+      return allComments.map((comment) => ({
+        subject: comment.subject,
+        number: comment.number,
+        userEmail: comment.userEmail, 
+        content: comment.content,
+        createdAt: comment.createdAt,
+      }));
     },
   },
 
@@ -108,6 +125,12 @@ const resolvers: CourseModule.Resolvers = {
       );
 
       return gradeDistribution;
+    },
+  },
+  Mutation: {
+    addComment: async (_, { subject, number, userEmail, content }) => {
+      const newComment = await addComment(subject, number, userEmail, content);
+      return newComment;
     },
   },
 

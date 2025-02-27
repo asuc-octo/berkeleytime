@@ -1,4 +1,4 @@
-import { ICourseItem } from "@repo/common";
+import { CommentItem, ICourseItem } from "@repo/common";
 
 import { CourseModule } from "./generated-types/module-types";
 
@@ -28,4 +28,14 @@ export function formatCourse(course: ICourseItem) {
   } as IntermediateCourse;
 
   return output;
+}
+
+export function formatComment(message: CommentItem) {
+  return {
+    subject: message.subject,
+    number: message.number,
+    user: message.userEmail,
+    content: message.content,
+    createdAt: new Date(message.createdAt).toLocaleString(), // Formatting date
+  };
 }

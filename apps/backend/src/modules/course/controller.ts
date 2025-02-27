@@ -1,8 +1,49 @@
-import { ClassModel, CourseModel, IClassItem, ICourseItem } from "@repo/common";
+import {
+  ClassModel,
+  CommentModel,
+  CourseModel,
+  IClassItem,
+  ICourseItem,
+} from "@repo/common";
 
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
+
+export const addComment = async (
+  subject: string,
+  number: string,
+  userEmail: string,
+  content: string
+) => {
+  console.log(CommentModel);
+  const newComment = new CommentModel({
+    subject,
+    number,
+    userEmail,
+    content,
+    createdAt: new Date().toISOString(),
+  });
+  await newComment.save(); // saves comment to db
+  return newComment;
+};
+
+export const getComment = async (
+  subject: string,
+  number: string,
+  userEmail?: string
+) => {
+  const filter: { subject: string; number: string; userEmail?: string } = {
+    subject,
+    number,
+  };
+  if (userEmail) {
+    filter.userEmail = userEmail; // Only add if provided
+  }
+  const comments = await CommentModel.find(filter);
+
+  return comments;
+};
 
 export const getCourse = async (subject: string, number: string) => {
   const course = await CourseModel.findOne({ subject, number })
