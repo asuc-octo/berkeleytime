@@ -15,7 +15,7 @@ const CommentSchema = new Schema<CommentItem>({
   number: { type: String, required: true },
   userEmail: { type: String, required: true },
   content: { type: String, required: true },
-  createdAt: { type: String, default: () => new Date().toISOString()},
+  createdAt: { type: String, default: () => new Date().toISOString() },
 });
 
 // creates and exports a mongoose model (we can now interact with db)

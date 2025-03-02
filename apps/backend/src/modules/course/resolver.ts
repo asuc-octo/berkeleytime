@@ -61,13 +61,16 @@ const resolvers: CourseModule.Resolvers = {
         number,
         userEmail || undefined
       );
-      return allComments.map((comment) => ({
-        subject: comment.subject,
-        number: comment.number,
-        userEmail: comment.userEmail, 
-        content: comment.content,
-        createdAt: comment.createdAt,
-      }));
+      return allComments.map(
+        (comment) =>
+          ({
+            subject: comment.subject,
+            number: comment.number,
+            userEmail: comment.userEmail,
+            content: comment.content,
+            createdAt: comment.createdAt,
+          }) as CourseModule.Comment
+      );
     },
   },
 
