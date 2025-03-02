@@ -5,22 +5,21 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Banner() {
-	const [open, setOpen] = useState(() => localStorage.getItem('sp25recruitment') !== '1');
+	const [open, setOpen] = useState(() => localStorage.getItem('enrollment-survey') !== '1');
 
 	const closeBanner = () => {
 		setOpen(false);
-		localStorage.setItem('sp25recruitment', '1');
+		localStorage.setItem('enrollment-survey', '1');
 	};
 
 	return open ? (
 		<div className="banner">
 			<div className="content">
 				<p>
-				Berkeleytime is recruiting passionate developers, designers, researchers and more for Spring
-				2025!
+				We are looking to improve our features to redesign the enrollment experience!
 				</p>
-				<Link to="/apply">
-					<Button size="sm">Apply Now</Button>
+				<Link to="https://bit.ly/berkeleytime-enrollment">
+					<Button size="sm">Fill out our Survey</Button>
 				</Link>
 			</div>
 			<img src={close} alt="close" onClick={() => closeBanner()} />
