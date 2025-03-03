@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import * as Tooltip from "@radix-ui/react-tooltip";
 import { User } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
 import styles from "./Capacity.module.scss";
 

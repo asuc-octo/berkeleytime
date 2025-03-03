@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { FrameAltEmpty } from "iconoir-react";
+import { useSearchParams } from "react-router-dom";
 
 import { LoadingIndicator } from "@repo/theme";
 
@@ -26,7 +26,7 @@ export default function List({ onSelect }: ListProps) {
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
-    paddingEnd: 72,
+    // paddingEnd: 72,
     gap: 12,
   });
 
@@ -36,38 +36,31 @@ export default function List({ onSelect }: ListProps) {
 
   const items = virtualizer.getVirtualItems();
 
-  const totalSize = virtualizer.getTotalSize();
-
   return (
     <div ref={rootRef} className={styles.root}>
       <div
         className={styles.view}
         style={{
-          height: totalSize,
+          height: `${virtualizer.getTotalSize()}px`,
         }}
       >
         <Header />
         {loading && items.length === 0 ? (
           <div className={styles.placeholder}>
             <LoadingIndicator size="lg" />
-            <div className={styles.text}>
-              <p className={styles.heading}>Fetching courses...</p>
-              <p className={styles.description}>
-                Search for, filter, and sort courses to narrow down your
-                results.
-              </p>
-            </div>
+            <p className={styles.heading}>Fetching courses...</p>
+            <p className={styles.description}>
+              Search for, filter, and sort courses to narrow down your results.
+            </p>
           </div>
         ) : items.length === 0 ? (
           <div className={styles.placeholder}>
             <FrameAltEmpty width={32} height={32} />
-            <div className={styles.text}>
-              <p className={styles.heading}>No courses found</p>
-              <p className={styles.description}>
-                Find courses by broadening your search or entering a different
-                query.
-              </p>
-            </div>
+            <p className={styles.heading}>No courses found</p>
+            <p className={styles.description}>
+              Find courses by broadening your search or entering a different
+              query.
+            </p>
           </div>
         ) : (
           <div
@@ -95,13 +88,13 @@ export default function List({ onSelect }: ListProps) {
             })}
           </div>
         )}
-        <div className={styles.footer}>
+        {/* <div className={styles.footer}>
           <Link to="/discover" className={styles.button}>
             <Sparks />
             <p className={styles.text}>Try discovering courses</p>
             <ArrowRight />
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -1,42 +1,11 @@
-.content {
-  height: 100dvh;
-  right: 0;
-  top: 0;
+.drawer {
   background-color: var(--background-color);
   width: 640px;
   border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
 
-  &[data-state="open"] {
-    animation: slideIn 250ms ease-in;
-  }
-
-  &[data-state="closed"] {
-    animation: slideOut 250ms ease-out;
-  }
-
   @media (width <= 992px) {
     width: 100%;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(100%);
   }
 }

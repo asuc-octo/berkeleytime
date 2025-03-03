@@ -4,7 +4,7 @@ import { Position, ZoomIn, ZoomOut } from "iconoir-react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import { IconButton, usePrefersColorScheme, useTheme } from "@repo/theme";
+import { IconButton, useColorScheme, useTheme } from "@repo/theme";
 
 import { buildings } from "@/lib/location";
 
@@ -23,7 +23,7 @@ mapboxgl.accessToken = TOKEN;
 export default function Map() {
   const { theme } = useTheme();
 
-  const scheme = usePrefersColorScheme();
+  const scheme = useColorScheme();
 
   const currentTheme = useMemo(() => theme ?? scheme, [theme, scheme]);
 

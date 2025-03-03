@@ -7,12 +7,7 @@ import { ArrowSeparateVertical, Walking, ZoomIn, ZoomOut } from "iconoir-react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import {
-  Button,
-  IconButton,
-  usePrefersColorScheme,
-  useTheme,
-} from "@repo/theme";
+import { Button, IconButton, useColorScheme, useTheme } from "@repo/theme";
 
 import { ISection } from "@/lib/api";
 import { buildings } from "@/lib/location";
@@ -36,7 +31,7 @@ interface MapProps {
 export default function Map({ selectedSections }: MapProps) {
   const { theme } = useTheme();
 
-  const scheme = usePrefersColorScheme();
+  const scheme = useColorScheme();
 
   const currentTheme = useMemo(() => theme ?? scheme, [theme, scheme]);
 

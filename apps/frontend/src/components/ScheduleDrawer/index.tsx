@@ -1,13 +1,6 @@
-import { ReactNode, forwardRef, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
-import {
-  Content,
-  DialogTriggerProps,
-  Overlay,
-  Portal,
-  Root,
-  Trigger,
-} from "@radix-ui/react-dialog";
+import { Dialog } from "@repo/theme";
 
 import { Semester } from "@/lib/api";
 
@@ -24,49 +17,33 @@ interface CourseDrawerProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-// TODO: Determine if this component would be better suited as a global context
-const CourseDrawer = forwardRef<
-  HTMLButtonElement,
-  CourseDrawerProps & Omit<DialogTriggerProps, "asChild">
->(
-  (
-    {
-      subject,
-      children,
-      courseNumber,
-      classNumber,
-      year,
-      semester,
-      open,
-      onOpenChange,
-      ...props
-    },
-    ref
-  ) => {
-    const trigger = useMemo(() => open === undefined, [open]);
+export default function CourseDrawer({
+  subject,
+  children,
+  courseNumber,
+  classNumber,
+  year,
+  semester,
+  open,
+  onOpenChange,
+}: CourseDrawerProps) {
+  const trigger = useMemo(() => open === undefined, [open]);
 
-    return (
-      <Root onOpenChange={onOpenChange} open={open}>
-        {trigger && (
-          <Trigger {...props} asChild ref={ref}>
-            {children}
-          </Trigger>
-        )}
-        <Portal>
-          <Overlay />
-          <Content>
-            <Schedule
-              year={year}
-              semester={semester}
-              subject={subject}
-              courseNumber={courseNumber}
-              classNumber={classNumber}
-            />
-          </Content>
-        </Portal>
-      </Root>
-    );
-  }
-);
-
-export default CourseDrawer;
+  return (
+    <Dialog.Root onOpenChange={onOpenChange} open={open}>
+      {trigger && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Drawer>
+          <Schedule
+            year={year}
+            semester={semester}
+            subject={subject}
+            courseNumber={courseNumber}
+            classNumber={classNumber}
+          />
+        </Dialog.Drawer>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}

@@ -1,6 +1,5 @@
-import { ReactNode, Suspense, lazy, useMemo } from "react";
+import { ReactNode, lazy, useMemo } from "react";
 
-import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
 import {
   Bookmark,
@@ -8,31 +7,22 @@ import {
   Expand,
   GridPlus,
   Link as LinkIcon,
-  Pin,
-  PinSolid,
   ShareIos,
   Xmark,
 } from "iconoir-react";
+import { Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
-import {
-  Boundary,
-  Container,
-  Dialog,
-  IconButton,
-  LoadingIndicator,
-  MenuItem,
-  Tooltip,
-} from "@repo/theme";
+import { Container, Dialog, IconButton, MenuItem, Tooltip } from "@repo/theme";
 
 import AverageGrade from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
-import usePins from "@/hooks/usePins";
 import { ICourse } from "@/lib/api";
 
-import styles from "./Class.module.scss";
+import SuspenseBoundary from "../SuspenseBoundary";
+import styles from "./Course.module.scss";
 
 const Classes = lazy(() => import("./Classes"));
 const Enrollment = lazy(() => import("./Enrollment"));
@@ -45,17 +35,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
-  return (
-    <Suspense
-      fallback={
-        <Boundary>
-          <LoadingIndicator size="lg" />
-        </Boundary>
-      }
-    >
-      {dialog ? children : <Outlet />}
-    </Suspense>
-  );
+  return dialog ? children : <Outlet />;
 }
 
 interface RootProps {
@@ -97,7 +77,7 @@ export default function Course({
   dialog,
   course: providedCourse,
 }: CourseProps) {
-  const { pins, addPin, removePin } = usePins();
+  // const { pins, addPin, removePin } = usePins();
 
   const location = useLocation();
 
@@ -131,16 +111,16 @@ export default function Course({
     } as CoursePin;
   }, [input]);
 
-  const pinned = useMemo(() => {
-    if (!input) return;
+  // const pinned = useMemo(() => {
+  //   if (!input) return;
 
-    return pins.find(
-      (pin) =>
-        pin.type === "course" &&
-        pin.data.subject === input.subject &&
-        pin.data.number === input.number
-    );
-  }, [input, pins]);
+  //   return pins.find(
+  //     (pin) =>
+  //       pin.type === "course" &&
+  //       pin.data.subject === input.subject &&
+  //       pin.data.number === input.number
+  //   );
+  // }, [input, pins]);
 
   const bookmarked = useMemo(() => {
     if (!user || !input) return;
@@ -248,7 +228,7 @@ export default function Course({
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
-              {/* TODO: Reusable pin button */}
+              {/* TODO: Reusable pin button
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
@@ -258,7 +238,7 @@ export default function Course({
                 >
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip content="Add to plan">
                 <IconButton>
                   <GridPlus />
@@ -353,16 +333,24 @@ export default function Course({
         >
           <Body dialog={dialog}>
             <Tabs.Content value="overview" asChild>
-              <Overview />
+              <SuspenseBoundary>
+                <Overview />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="classes" asChild>
-              <Classes />
+              <SuspenseBoundary>
+                <Classes />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="enrollment" asChild>
-              <Enrollment />
+              <SuspenseBoundary>
+                <Enrollment />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="grades" asChild>
-              <Grades />
+              <SuspenseBoundary>
+                <Grades />
+              </SuspenseBoundary>
             </Tabs.Content>
           </Body>
         </CourseContext>

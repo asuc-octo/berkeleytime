@@ -334,11 +334,6 @@
   --tooltip-color: var(--dark-tooltip-color);
 }
 
-.root {
-  display: flex;
-  flex-direction: column;
-}
-
 body[data-theme="dark"] {
   @include dark-theme;
 }

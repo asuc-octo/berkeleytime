@@ -15,7 +15,6 @@ export type IconButtonProps<T extends ElementType> = Props<T> &
   Omit<ComponentPropsWithRef<T>, keyof Props<T>>;
 
 export function IconButton<T extends ElementType>({
-  children,
   className,
   disabled,
   as,
@@ -31,8 +30,6 @@ export function IconButton<T extends ElementType>({
       data-variant={variant}
       className={classNames(styles.root, className)}
       {...props}
-    >
-      {children}
-    </Component>
+    />
   );
 }

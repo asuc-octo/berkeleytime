@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
-import * as HoverCard from "@radix-ui/react-hover-card";
 import classNames from "classnames";
+import { HoverCard } from "radix-ui";
 
 import { ISection, componentMap } from "@/lib/api";
 import { getColor } from "@/lib/section";

@@ -1,4 +1,4 @@
-import { MouseEventHandler, forwardRef } from "react";
+import { ComponentPropsWithRef, MouseEventHandler } from "react";
 
 import { ArrowRight } from "iconoir-react";
 
@@ -9,65 +9,55 @@ import { IClass } from "@/lib/api";
 
 import styles from "./Class.module.scss";
 
-interface ClassProps {
+interface Props {
   index: number;
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 
-const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
-  (
-    {
-      course: {
-        title: courseTitle,
-        subject,
-        number: courseNumber,
-        gradeDistribution,
-      },
-      title,
-      number,
-      primarySection: {
-        enrollment: {
-          latest: { enrolledCount, maxEnroll, waitlistedCount, maxWaitlist },
-        },
-      },
-      unitsMax,
-      unitsMin,
-      index,
-      onClick,
+type ClassProps = Props & IClass;
+
+export default function Class({
+  course: {
+    title: courseTitle,
+    subject,
+    number: courseNumber,
+    gradeDistribution,
+  },
+  title,
+  number,
+  primarySection: {
+    enrollment: {
+      latest: { enrolledCount, maxEnroll, waitlistedCount, maxWaitlist },
     },
-    ref
-  ) => {
-    return (
-      <div
-        className={styles.root}
-        ref={ref}
-        data-index={index}
-        onClick={onClick}
-      >
-        <div className={styles.text}>
-          <p className={styles.heading}>
-            {subject} {courseNumber} #{number}
-          </p>
-          <p className={styles.description}>{title ?? courseTitle}</p>
-          <div className={styles.row}>
-            <AverageGrade gradeDistribution={gradeDistribution} />
-            <Capacity
-              enrolledCount={enrolledCount}
-              maxEnroll={maxEnroll}
-              waitlistedCount={waitlistedCount}
-              maxWaitlist={maxWaitlist}
-            />
-            <Units unitsMin={unitsMin} unitsMax={unitsMax} />
-          </div>
-        </div>
-        <div className={styles.column}>
-          <div className={styles.icon}>
-            <ArrowRight />
-          </div>
+  },
+  unitsMax,
+  unitsMin,
+  index,
+  ...props
+}: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
+  return (
+    <div className={styles.root} data-index={index} {...props}>
+      <div className={styles.text}>
+        <p className={styles.heading}>
+          {subject} {courseNumber} #{number}
+        </p>
+        <p className={styles.description}>{title ?? courseTitle}</p>
+        <div className={styles.row}>
+          <AverageGrade gradeDistribution={gradeDistribution} />
+          <Capacity
+            enrolledCount={enrolledCount}
+            maxEnroll={maxEnroll}
+            waitlistedCount={waitlistedCount}
+            maxWaitlist={maxWaitlist}
+          />
+          <Units unitsMin={unitsMin} unitsMax={unitsMax} />
         </div>
       </div>
-    );
-  }
-);
-
-export default Course;
+      <div className={styles.column}>
+        <div className={styles.icon}>
+          <ArrowRight />
+        </div>
+      </div>
+    </div>
+  );
+}
