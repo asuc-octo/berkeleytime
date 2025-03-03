@@ -1,0 +1,45 @@
+.content {
+  width: 500px;
+  .header {
+    padding: 24px 30px;
+    padding-bottom: 0;
+    background-color: var(--foreground-color);
+    border-bottom: 1px solid var(--border-color);
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .heading {
+      font-size: 24px;
+      font-weight: 660;
+      font-feature-settings:
+        "cv05" on,
+        "cv13" on,
+        "ss07" on,
+        "cv12" on,
+        "cv06" on;
+      color: var(--heading-color);
+      margin-bottom: 8px;
+    }
+    .description {
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--paragraph-color);
+      margin-bottom: 24px;
+    }
+  }
+  .body {
+    padding: 20px;
+    .select-cont {
+      margin-bottom: 10px;
+    }
+    .button {
+      height: 48px;
+      padding: 0 16px;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+}
