@@ -37,17 +37,17 @@ export default gql`
 
   type EnrollmentSingular {
     time: String!
-    status: EnrollmentStatus!
+    status: EnrollmentStatus
     enrolledCount: Int!
-    reservedCount: Int!
+    reservedCount: Int
     waitlistedCount: Int!
-    minEnroll: Int!
+    minEnroll: Int
     maxEnroll: Int!
     maxWaitlist: Int!
-    openReserved: Int!
+    openReserved: Int
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
-    seatReservationCounts: [SeatReservationCount!]!
+    seatReservationCounts: [SeatReservationCount!]
   }
 
   enum EnrollmentStatus {
