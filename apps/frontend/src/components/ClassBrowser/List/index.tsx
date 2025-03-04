@@ -16,6 +16,8 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
+  "use no memo";
+
   const { classes, loading } = useBrowser();
 
   const rootRef = useRef<HTMLDivElement>(null);
