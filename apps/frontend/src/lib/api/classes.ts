@@ -377,3 +377,42 @@ export const GET_CATALOG = gql`
     }
   }
 `;
+
+export interface Comment {
+  subject: string;
+  number: string;
+  userEmail: string;
+  content: string;
+  createdAt: string;
+}
+export interface getCommentsResponse {
+  comments: Comment[];
+}
+
+export const GET_COMMENTS = gql`
+  query GetComments($subject: String!, $number: CourseNumber!, $userEmail: String) {
+    comments(subject: $subject, number: $number, userEmail: $userEmail) {
+      subject
+      number
+      userEmail
+      content
+      createdAt
+    }
+  }
+`;
+
+export interface CreateCommentResponse {
+  addComment: Comment;
+}
+
+export const ADD_COMMENT = gql`
+  mutation addComment($subject: String!, $number: CourseNumber!, $userEmail: String!, $content: String!) {
+    addComment(subject: $subject, number: $number, userEmail: $userEmail, content: $content) {
+      subject
+      number
+      userEmail
+      content
+      createdAt
+    }
+  }
+`;
