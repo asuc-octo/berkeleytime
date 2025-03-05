@@ -24,7 +24,6 @@ const Class = {
   Sections: lazy(() => import("@/components/Class/Sections")),
   // added comment
   Comments: lazy(() => import("@/components/Class/Comments")),
-
 };
 
 const Course = {
@@ -34,7 +33,6 @@ const Course = {
   Overview: lazy(() => import("@/components/Course/Overview")),
   Classes: lazy(() => import("@/components/Course/Classes")),
   Comments: lazy(() => import("@/components/Class/Comments")),
-
 };
 
 const Catalog = lazy(() => import("@/app/Catalog"));
@@ -135,7 +133,7 @@ const router = createBrowserRouter([
             element: <Course.Grades />,
             path: "grades",
           },
-  
+
           {
             path: "*",
             loader: () => redirect("."),

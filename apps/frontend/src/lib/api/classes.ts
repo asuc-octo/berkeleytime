@@ -390,7 +390,11 @@ export interface getCommentsResponse {
 }
 
 export const GET_COMMENTS = gql`
-  query GetComments($subject: String!, $number: CourseNumber!, $userEmail: String) {
+  query GetComments(
+    $subject: String!
+    $number: CourseNumber!
+    $userEmail: String
+  ) {
     comments(subject: $subject, number: $number, userEmail: $userEmail) {
       subject
       number
@@ -406,8 +410,18 @@ export interface CreateCommentResponse {
 }
 
 export const ADD_COMMENT = gql`
-  mutation addComment($subject: String!, $number: CourseNumber!, $userEmail: String!, $content: String!) {
-    addComment(subject: $subject, number: $number, userEmail: $userEmail, content: $content) {
+  mutation addComment(
+    $subject: String!
+    $number: CourseNumber!
+    $userEmail: String!
+    $content: String!
+  ) {
+    addComment(
+      subject: $subject
+      number: $number
+      userEmail: $userEmail
+      content: $content
+    ) {
       subject
       number
       userEmail

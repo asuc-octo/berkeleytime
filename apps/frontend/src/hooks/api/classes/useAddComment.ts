@@ -7,7 +7,6 @@ import { ADD_COMMENT, CreateCommentResponse } from "@/lib/api";
 export const useAddComment = () => {
   const mutation = useMutation<CreateCommentResponse>(ADD_COMMENT, {
     update(cache, { data }) {
-
       const newComment = data?.addComment;
 
       if (!newComment) return;

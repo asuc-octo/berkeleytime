@@ -1,6 +1,6 @@
 import { QueryHookOptions, useQuery } from "@apollo/client";
 
-import { READ_CLASS, ReadClassResponse, Semester} from "@/lib/api";
+import { READ_CLASS, ReadClassResponse, Semester } from "@/lib/api";
 
 export const useReadClass = (
   year: number,

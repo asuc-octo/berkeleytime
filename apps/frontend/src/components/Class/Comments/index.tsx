@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { useAddComment } from "@/hooks/api/classes/useAddComment";
 import { useGetComments } from "@/hooks/api/classes/useGetComments";
 import useClass from "@/hooks/useClass";
@@ -10,7 +11,10 @@ export default function Comments() {
   const [value, setValue] = useState("");
 
   // Fetch comments for the class
-  const { data: comments } = useGetComments(_class.subject, _class.courseNumber);
+  const { data: comments } = useGetComments(
+    _class.subject,
+    _class.courseNumber
+  );
 
   // Mutation for adding a new comment
   const [addComment] = useAddComment();
@@ -48,7 +52,7 @@ export default function Comments() {
       <button onClick={handleSubmit} className={styles.button}>
         Submit
       </button>
-      
+
       {comments && comments.length > 0 ? (
         <ul>
           {comments.map((comment, index) => (
@@ -56,7 +60,13 @@ export default function Comments() {
               <p>
                 <strong>{comment.userEmail}</strong>: {comment.content}
               </p>
-              <p style={{ fontSize: "12px", color: "gray", marginBottom:"12px"}}>
+              <p
+                style={{
+                  fontSize: "12px",
+                  color: "gray",
+                  marginBottom: "12px",
+                }}
+              >
                 {new Date(comment.createdAt).toLocaleString()}
               </p>
             </li>
