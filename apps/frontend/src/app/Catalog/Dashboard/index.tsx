@@ -16,10 +16,10 @@ import { DropdownMenu } from "@repo/theme";
 import Carousel from "@/components/Carousel";
 import { useReadUser } from "@/hooks/api";
 import { ITerm } from "@/lib/api";
+import { sortDescendingTerm } from "@/lib/classes";
 import { getRecentClasses } from "@/lib/recent-classes";
 
 import styles from "./Dashboard.module.scss";
-import { sortDescendingTerm } from "@/lib/classes";
 
 interface DashboardProps {
   term: ITerm;
@@ -60,7 +60,7 @@ export default function Dashboard({
                 Switch terms
               </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content sideOffset={5} style={{maxHeight: 200}}>
+            <DropdownMenu.Content sideOffset={5} style={{ maxHeight: 200 }}>
               {terms
                 .filter(
                   ({ year, semester }, index) =>

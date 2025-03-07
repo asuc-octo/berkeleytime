@@ -25,9 +25,7 @@ export default function Class({
   },
   title,
   number,
-  primarySection: {
-    enrollment
-  },
+  primarySection: { enrollment },
   unitsMax,
   unitsMin,
   index,
@@ -46,7 +44,7 @@ export default function Class({
             enrolledCount={enrollment?.latest.enrolledCount}
             maxEnroll={enrollment?.latest.maxEnroll}
             waitlistedCount={enrollment?.latest.waitlistedCount}
-          maxWaitlist={enrollment?.latest.maxWaitlist}
+            maxWaitlist={enrollment?.latest.maxWaitlist}
           />
           <Units unitsMin={unitsMin} unitsMax={unitsMax} />
         </div>

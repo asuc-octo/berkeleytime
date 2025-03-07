@@ -59,9 +59,13 @@ export default function ClassCard({
           <div className={styles.footer}>
             <AverageGrade gradeDistribution={_class.gradeDistribution} />
             <Capacity
-              enrolledCount={_class.primarySection.enrollment?.latest.enrolledCount}
+              enrolledCount={
+                _class.primarySection.enrollment?.latest.enrolledCount
+              }
               maxEnroll={_class.primarySection.enrollment?.latest.maxEnroll}
-              waitlistedCount={_class.primarySection.enrollment?.latest.waitlistedCount}
+              waitlistedCount={
+                _class.primarySection.enrollment?.latest.waitlistedCount
+              }
               maxWaitlist={_class.primarySection.enrollment?.latest.maxWaitlist}
             />
             <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
