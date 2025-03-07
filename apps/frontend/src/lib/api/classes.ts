@@ -125,7 +125,7 @@ export interface IInstructor {
 
 export interface IExam {
   date: string;
-  location: string;
+  location?: string;
   type: ExamType;
   startTime: string;
   endTime: string;
@@ -141,7 +141,7 @@ export interface ISection {
   term: ITerm;
   course: ICourse;
   class: IClass;
-  enrollment: IEnrollment;
+  enrollment?: IEnrollment;
 
   // Attributes
   year: number;

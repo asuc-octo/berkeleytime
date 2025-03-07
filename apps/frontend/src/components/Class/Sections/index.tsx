@@ -126,10 +126,10 @@ export default function Sections() {
                     <CCN sectionId={section.sectionId} />
                   </div>
                   <Capacity
-                    enrolledCount={section.enrollment.latest.enrolledCount}
-                    maxEnroll={section.enrollment.latest.maxEnroll}
-                    waitlistedCount={section.enrollment.latest.waitlistedCount}
-                    maxWaitlist={section.enrollment.latest.maxWaitlist}
+                    enrolledCount={section.enrollment?.latest.enrolledCount}
+                    maxEnroll={section.enrollment?.latest.maxEnroll}
+                    waitlistedCount={section.enrollment?.latest.waitlistedCount}
+                    maxWaitlist={section.enrollment?.latest.maxWaitlist}
                   />
                   <Tooltip content="Berkeley Academic Guide">
                     <a

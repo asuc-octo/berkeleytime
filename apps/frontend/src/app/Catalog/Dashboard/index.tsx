@@ -19,6 +19,7 @@ import { ITerm } from "@/lib/api";
 import { getRecentClasses } from "@/lib/recent-classes";
 
 import styles from "./Dashboard.module.scss";
+import { sortDescendingTerm } from "@/lib/classes";
 
 interface DashboardProps {
   term: ITerm;
@@ -59,12 +60,16 @@ export default function Dashboard({
                 Switch terms
               </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content sideOffset={5}>
+            <DropdownMenu.Content sideOffset={5} style={{maxHeight: 200}}>
               {terms
                 .filter(
-                  ({ year, semester }) =>
-                    year !== term.year || semester !== term.semester
+                  ({ year, semester }, index) =>
+                    index ===
+                    terms.findIndex(
+                      (term) => term.semester === semester && term.year === year
+                    )
                 )
+                .toSorted(sortDescendingTerm((d) => d))
                 .map(({ year, semester }) => {
                   return (
                     <DropdownMenu.Item
