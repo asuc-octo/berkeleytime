@@ -17,6 +17,7 @@ import styles from "./Carousel.module.scss";
 function Item({ className, ...props }: ComponentPropsWithRef<"div">) {
   return <div className={classNames(styles.item, className)} {...props} />;
 }
+import Schedule from "./Schedule";
 
 interface RootProps {
   title: string;
@@ -111,6 +112,7 @@ function Root({ title, Icon, children, to }: RootProps) {
 const Carousel = {
   Root,
   Item,
+  Schedule,
 };
 
 export default Carousel;

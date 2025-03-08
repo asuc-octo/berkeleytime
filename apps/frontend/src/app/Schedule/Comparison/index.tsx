@@ -128,7 +128,12 @@ export default function Comparison() {
               setCurrent((previous) => (previous === 0 ? null : previous))
             }
           >
-            <Week selectedSections={selectedSections} y={y} updateY={setY} />
+            <Week
+              events={schedule.events}
+              selectedSections={selectedSections}
+              y={y}
+              updateY={setY}
+            />
           </div>
         </div>
         <div className={styles.panel}>
@@ -155,6 +160,7 @@ export default function Comparison() {
             }
           >
             <Week
+              events={comparison?.events ?? []}
               selectedSections={selectedComparisonSections}
               y={y}
               updateY={setY}

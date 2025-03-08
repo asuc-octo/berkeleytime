@@ -1,12 +1,11 @@
 import { useMemo } from "react";
 
 import classNames from "classnames";
-import { HoverCard } from "radix-ui";
 
-import { ISection, componentMap } from "@/lib/api";
+import { componentMap } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
-import { getY } from "../../schedule";
+import { ScheduleEvent, getY } from "../../schedule";
 import styles from "./Event.module.scss";
 
 interface EventProps {
@@ -15,49 +14,52 @@ interface EventProps {
   active: boolean;
 }
 
+// TODO: Hover card
 export default function Event({
   columns,
   position,
-  meetings: [{ startTime, endTime }],
-  subject,
-  courseNumber,
-  component,
-  number,
+  startTime,
+  endTime,
   active,
-}: EventProps & ISection) {
+  ...props
+}: EventProps & ScheduleEvent) {
   const top = useMemo(() => getY(startTime!), [startTime]);
 
   const height = useMemo(() => getY(endTime!) - top + 1, [top, endTime]);
 
-  // TODO: Hover card content
+  const style = useMemo(() => {
+    const style: Record<string, string> = {
+      top: `${top + 1}px`,
+      height: `${height - 2}px`,
+      width: `calc((100% - 4px - ${columns - 1} * 2px) / ${columns})`,
+      left: `calc(2px + calc((100% - 4px - ${columns - 1} * 2px) / ${columns}) * ${position} + 2px * ${position})`,
+    };
+
+    if (props.type === "section") {
+      style.backgroundColor = getColor(
+        props.section.subject,
+        props.section.courseNumber
+      );
+    }
+
+    return style;
+  }, [columns, position, top, height, props]);
+
   return (
-    <HoverCard.Root openDelay={0} closeDelay={100}>
-      <HoverCard.Trigger asChild>
-        <div
-          className={classNames(styles.trigger, { [styles.active]: active })}
-          style={{
-            top: `${top + 1}px`,
-            backgroundColor: getColor(subject, courseNumber),
-            height: `${height - 2}px`,
-            width: `calc((100% - 4px - ${columns - 1} * 2px) / ${columns})`,
-            left: `calc(2px + calc((100% - 4px - ${columns - 1} * 2px) / ${columns}) * ${position} + 2px * ${position})`,
-          }}
-        >
-          <div className={styles.heading}>
-            {subject} {courseNumber}
-          </div>
-          <div className={styles.description}>
-            {componentMap[component]} {number}
-          </div>
-        </div>
-      </HoverCard.Trigger>
-      <HoverCard.Portal>
-        <HoverCard.Content asChild collisionPadding={8} sideOffset={8}>
-          <div className={styles.content}>
-            <HoverCard.Arrow className={styles.arrow} />
-          </div>
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard.Root>
+    <div
+      className={classNames(styles.root, { [styles.active]: active })}
+      style={style}
+    >
+      <div className={styles.heading}>
+        {props.type === "section"
+          ? `${props.section.subject} ${props.section.courseNumber}`
+          : props.event.title}
+      </div>
+      <div className={styles.description}>
+        {props.type === "section"
+          ? `${componentMap[props.section.component]} ${props.section.number}`
+          : "Custom event"}
+      </div>
+    </div>
   );
 }

@@ -16,7 +16,6 @@ export type IntermediateSchedule = Omit<
 export const formatSchedule = async (schedule: ScheduleType) => {
   return {
     ...schedule,
-
     term: null,
-  } as IntermediateSchedule;
+  } as unknown as IntermediateSchedule;
 };

@@ -27,7 +27,7 @@ import ClassDrawer from "@/components/ClassDrawer";
 import { useReadUser } from "@/hooks/api";
 import { IClass, ITerm, READ_CLASS, ReadClassResponse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
-import { getRecentClasses } from "@/lib/recent-classes";
+import { getRecentClasses } from "@/lib/recent";
 
 import styles from "./Dashboard.module.scss";
 
