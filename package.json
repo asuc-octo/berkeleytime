@@ -12,7 +12,7 @@
     "node": ">=21.0.0",
     "npm": ">=10.0.0"
   },
-  "packageManager": "npm@11.1.0",
+  "packageManager": "npm@11.2.0",
   "workspaces": [
     "apps/*",
     "packages/*"
