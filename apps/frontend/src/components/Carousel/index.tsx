@@ -1,4 +1,10 @@
-import { ReactNode, UIEvent, useRef, useState } from "react";
+import {
+  ComponentPropsWithRef,
+  ReactNode,
+  UIEvent,
+  useRef,
+  useState,
+} from "react";
 
 import classNames from "classnames";
 import { ArrowRight, NavArrowLeft, NavArrowRight } from "iconoir-react";
@@ -7,7 +13,10 @@ import { Link, To } from "react-router-dom";
 import { IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
-import Class from "./Class";
+
+function Item({ className, ...props }: ComponentPropsWithRef<"div">) {
+  return <div className={classNames(styles.item, className)} {...props} />;
+}
 import Schedule from "./Schedule";
 
 interface RootProps {
@@ -102,7 +111,7 @@ function Root({ title, Icon, children, to }: RootProps) {
 
 const Carousel = {
   Root,
-  Class,
+  Item,
   Schedule,
 };
 

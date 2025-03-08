@@ -1,37 +1,21 @@
-import {
-  ReactNode,
-  Suspense,
-  lazy,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import { ReactNode, lazy, useCallback, useEffect, useMemo } from "react";
 
-import { DialogClose } from "@radix-ui/react-dialog";
-import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
 import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  Expand,
   OpenBook,
   OpenNewWindow,
-  Pin,
-  PinSolid,
   SidebarCollapse,
   SidebarExpand,
   Xmark,
 } from "iconoir-react";
+import { Dialog, Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
-import {
-  Boundary,
-  Container,
-  IconButton,
-  LoadingIndicator,
-  MenuItem,
-  Tooltip,
-} from "@repo/theme";
+import { Container, IconButton, MenuItem, Tooltip } from "@repo/theme";
 
 import AverageGrade from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
@@ -42,11 +26,11 @@ import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import usePins from "@/hooks/usePins";
 import { IClass, Semester } from "@/lib/api";
 import { addRecentClass } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
+import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
 
 const Enrollment = lazy(() => import("./Enrollment"));
@@ -60,17 +44,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
-  return (
-    <Suspense
-      fallback={
-        <Boundary>
-          <LoadingIndicator size="lg" />
-        </Boundary>
-      }
-    >
-      <Container size="sm">{dialog ? children : <Outlet />}</Container>
-    </Suspense>
-  );
+  return dialog ? children : <Outlet />;
 }
 
 interface RootProps {
@@ -136,7 +110,7 @@ export default function Class({
   onClose,
   dialog,
 }: ClassProps) {
-  const { pins, addPin, removePin } = usePins();
+  // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
 
   const { data: user, loading: userLoading } = useReadUser();
@@ -195,7 +169,7 @@ export default function Class({
     } as ClassPin;
   }, [_class]);
 
-  const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
+  // const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
   const bookmark = useCallback(async () => {
     if (!user || !_class) return;
@@ -220,6 +194,7 @@ export default function Class({
           courseNumber: bookmarkedClass.courseNumber,
           year: bookmarkedClass.year,
           semester: bookmarkedClass.semester,
+          sessionId: bookmarkedClass.sessionId,
         })),
       },
       {
@@ -280,7 +255,7 @@ export default function Class({
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
-              {/* TODO: Reusable pin button */}
+              {/* TODO: Reusable pin button
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
@@ -290,7 +265,7 @@ export default function Class({
                 >
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip content="Add to schedule">
                 <IconButton>
                   <CalendarPlus />
@@ -337,23 +312,23 @@ export default function Class({
               </Tooltip>
               {dialog && (
                 <Tooltip content="Expand">
-                  <DialogClose asChild>
+                  <Dialog.Close asChild>
                     <IconButton
                       as={Link}
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
                     >
-                      <Xmark />
+                      <Expand />
                     </IconButton>
-                  </DialogClose>
+                  </Dialog.Close>
                 </Tooltip>
               )}
               <Tooltip content="Close">
                 {dialog ? (
-                  <DialogClose asChild>
+                  <Dialog.Close asChild>
                     <IconButton>
                       <Xmark />
                     </IconButton>
-                  </DialogClose>
+                  </Dialog.Close>
                 ) : (
                   <IconButton
                     as={Link}
@@ -378,13 +353,17 @@ export default function Class({
           <div className={styles.group}>
             <AverageGrade gradeDistribution={_class.course.gradeDistribution} />
             <Capacity
-              enrollCount={_class.primarySection.enrollCount}
-              enrollMax={_class.primarySection.enrollMax}
-              waitlistCount={_class.primarySection.waitlistCount}
-              waitlistMax={_class.primarySection.waitlistMax}
+              enrolledCount={
+                _class.primarySection.enrollment?.latest.enrolledCount
+              }
+              maxEnroll={_class.primarySection.enrollment?.latest.maxEnroll}
+              waitlistedCount={
+                _class.primarySection.enrollment?.latest.waitlistedCount
+              }
+              maxWaitlist={_class.primarySection.enrollment?.latest.maxWaitlist}
             />
             <Units unitsMax={_class.unitsMax} unitsMin={_class.unitsMin} />
-            {_class && <CCN ccn={_class.primarySection.ccn} />}
+            {_class && <CCN sectionId={_class.primarySection.sectionId} />}
           </div>
           {dialog ? (
             <Tabs.List className={styles.menu} defaultValue="overview">
@@ -427,27 +406,37 @@ export default function Class({
           )}
         </Container>
       </div>
-      <ClassContext
-        value={{
-          class: _class,
-          course,
-        }}
-      >
-        <Body dialog={dialog}>
-          <Tabs.Content value="overview" asChild>
-            <Overview />
-          </Tabs.Content>
-          <Tabs.Content value="sections" asChild>
-            <Sections />
-          </Tabs.Content>
-          <Tabs.Content value="enrollment" asChild>
-            <Enrollment />
-          </Tabs.Content>
-          <Tabs.Content value="grades" asChild>
-            <Grades />
-          </Tabs.Content>
-        </Body>
-      </ClassContext>
+      <Container size="sm">
+        <ClassContext
+          value={{
+            class: _class,
+            course,
+          }}
+        >
+          <Body dialog={dialog}>
+            <Tabs.Content value="overview" asChild>
+              <SuspenseBoundary>
+                <Overview />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="sections" asChild>
+              <SuspenseBoundary>
+                <Sections />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <SuspenseBoundary>
+                <Enrollment />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <SuspenseBoundary>
+                <Grades />
+              </SuspenseBoundary>
+            </Tabs.Content>
+          </Body>
+        </ClassContext>
+      </Container>
     </Root>
   );
 }

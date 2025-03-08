@@ -3,7 +3,7 @@ import { gql } from "graphql-tag";
 export default gql`
   type GradeDistribution @cacheControl(maxAge: 1) {
     average: Float
-    distribution: [Grade!]!
+    distribution: [Grade!]
   }
 
   type Grade @cacheControl(maxAge: 1) {
@@ -14,13 +14,14 @@ export default gql`
 
   type Query {
     grade(
+      year: Int
+      semester: Semester
+      sessionId: SessionIdentifier
       subject: String!
       courseNumber: CourseNumber!
       classNumber: ClassNumber
-      year: Int
-      semester: Semester
-      givenName: String
       familyName: String
+      givenName: String
     ): GradeDistribution!
   }
 `;

@@ -1,4 +1,4 @@
-import { MouseEventHandler, forwardRef } from "react";
+import { ComponentPropsWithRef, MouseEventHandler } from "react";
 
 import { ArrowRight } from "iconoir-react";
 
@@ -7,37 +7,37 @@ import { ICourse } from "@/lib/api";
 
 import styles from "./Course.module.scss";
 
-interface CourseProps {
+interface Props {
   index: number;
   onClick: MouseEventHandler<HTMLDivElement>;
 }
 
-const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
-  ({ title, subject, number, gradeDistribution, index, onClick }, ref) => {
-    return (
-      <div
-        className={styles.root}
-        ref={ref}
-        data-index={index}
-        onClick={onClick}
-      >
-        <div className={styles.text}>
-          <p className={styles.heading}>
-            {subject} {number}
-          </p>
-          <p className={styles.description}>{title}</p>
-          <div className={styles.row}>
-            <AverageGrade gradeDistribution={gradeDistribution} />
-          </div>
-        </div>
-        <div className={styles.column}>
-          <div className={styles.icon}>
-            <ArrowRight />
-          </div>
+type CourseProps = Props & ICourse;
+
+export default function Course({
+  title,
+  subject,
+  number,
+  gradeDistribution,
+  index,
+  ...props
+}: CourseProps & Omit<ComponentPropsWithRef<"div">, keyof CourseProps>) {
+  return (
+    <div className={styles.root} data-index={index} {...props}>
+      <div className={styles.text}>
+        <p className={styles.heading}>
+          {subject} {number}
+        </p>
+        <p className={styles.description}>{title}</p>
+        <div className={styles.row}>
+          <AverageGrade gradeDistribution={gradeDistribution} />
         </div>
       </div>
-    );
-  }
-);
-
-export default Course;
+      <div className={styles.column}>
+        <div className={styles.icon}>
+          <ArrowRight />
+        </div>
+      </div>
+    </div>
+  );
+}

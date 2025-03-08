@@ -3,10 +3,11 @@
 ## Starting up the Application
 
 Local development has a few local dependencies:
-- [Python](https://www.python.org/downloads/)
 - [Node.js](https://nodejs.org/en)
 - [Docker Desktop](https://www.docker.com/)
-- [pre-commit](https://pre-commit.com/#install)
+- pre-commit
+    - [With pip](https://pre-commit.com/#install)
+    - [With brew](https://formulae.brew.sh/formula/pre-commit)
 
 Next:
 ```sh
@@ -14,7 +15,6 @@ Next:
 
 # Continue installation of dependencies.
 pre-commit install
-npm install
 ```
 
 Currently, the main development occurs on the `gql` branch. Please make sure you are on this branch!
@@ -25,6 +25,10 @@ git switch gql
 
 # Create .env from template file
 cp .env.template .env
+
+# Setup local code editor intellisense.
+npm install
+npx turbo run generate
 
 # Ensure Docker Desktop is running. Start up application
 docker compose up -d

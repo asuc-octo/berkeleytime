@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ArrowRight, Menu, Pin, User } from "iconoir-react";
+import { ArrowRight, Menu, User } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
 
 import { Button, IconButton, MenuItem } from "@repo/theme";
@@ -7,7 +7,6 @@ import { Button, IconButton, MenuItem } from "@repo/theme";
 import { useReadUser } from "@/hooks/api";
 import { signIn } from "@/lib/api";
 
-import PinsDrawer from "../Layout/PinsDrawer";
 import styles from "./NavigationBar.module.scss";
 import SideBar from "./SideBar";
 
@@ -75,11 +74,11 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
           <ArrowRight />
         </Button>
       )}
-      <PinsDrawer>
+      {/* <PinsDrawer>
         <IconButton>
           <Pin />
         </IconButton>
-      </PinsDrawer>
+      </PinsDrawer> */}
     </div>
   );
 }

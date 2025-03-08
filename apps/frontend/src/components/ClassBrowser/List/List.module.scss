@@ -49,36 +49,36 @@
       }
     }
 
-    .footer {
-      padding: 12px;
-      position: sticky;
-      bottom: 0;
-      background: linear-gradient(to top, var(--background-color), transparent);
+    // .footer {
+    //   padding: 12px;
+    //   position: sticky;
+    //   bottom: 0;
+    //   background: linear-gradient(to top, var(--background-color), transparent);
 
-      .button {
-        width: 100%;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        border-radius: 4px;
-        background-color: var(--blue-500);
-        color: white;
-        padding: 0 16px;
-        gap: 16px;
-        cursor: pointer;
-        transition: all 100ms ease-in-out;
+    //   .button {
+    //     width: 100%;
+    //     height: 48px;
+    //     display: flex;
+    //     align-items: center;
+    //     border-radius: 4px;
+    //     background-color: var(--blue-500);
+    //     color: white;
+    //     padding: 0 16px;
+    //     gap: 16px;
+    //     cursor: pointer;
+    //     transition: all 100ms ease-in-out;
 
-        .text {
-          flex-grow: 1;
-          font-size: 14px;
-          font-weight: 500;
-          line-height: 1;
-        }
+    //     .text {
+    //       flex-grow: 1;
+    //       font-size: 14px;
+    //       font-weight: 500;
+    //       line-height: 1;
+    //     }
 
-        &:hover {
-          background-color: var(--blue-600);
-        }
-      }
-    }
+    //     &:hover {
+    //       background-color: var(--blue-600);
+    //     }
+    //   }
+    // }
   }
 }

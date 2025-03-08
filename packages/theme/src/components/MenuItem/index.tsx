@@ -15,7 +15,6 @@ export type MenuItemProps<T extends ElementType> = Props<T> &
 
 export function MenuItem<T extends ElementType>({
   active,
-  children,
   className,
   disabled,
   as,
@@ -35,8 +34,6 @@ export function MenuItem<T extends ElementType>({
         className
       )}
       {...props}
-    >
-      {children}
-    </Component>
+    />
   );
 }

@@ -1,11 +1,12 @@
 import { ReactNode, useEffect, useState } from "react";
 
-import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { IconoirProvider } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
 import { Theme, ThemeContext } from "@repo/theme";
 
-import styles from "./ThemeProvider.module.scss";
+import { StackContext } from "../../contexts/StackContext";
+import "./ThemeProvider.scss";
 
 export interface ThemeProviderProps {
   children: ReactNode;
@@ -29,7 +30,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [theme]);
 
   return (
-    <div className={styles.root}>
+    <StackContext value={1000}>
       <IconoirProvider
         iconProps={{
           strokeWidth: 2,
@@ -37,12 +38,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
           height: 16,
         }}
       >
-        <TooltipProvider delayDuration={250}>
+        <Tooltip.Provider delayDuration={250}>
           <ThemeContext value={{ theme: theme, setTheme }}>
             {children}
           </ThemeContext>
-        </TooltipProvider>
+        </Tooltip.Provider>
       </IconoirProvider>
-    </div>
+    </StackContext>
   );
 }

@@ -15,7 +15,7 @@ function YourAccount({ user }: { user: IUser | undefined }) {
   return (
     <div>
       <h2>Personal Information</h2>
-      <div className={styles.infoGrid}>
+      <div>
         <div className={styles.infoItem}>
           <label>bConnected Email</label>
           <span className={styles.infoValue}>{user.email}</span>

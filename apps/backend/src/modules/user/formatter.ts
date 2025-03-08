@@ -2,7 +2,7 @@ import { UserType } from "@repo/common";
 
 import { UserModule } from "./generated-types/module-types";
 
-export interface UserRelationships {
+interface UserRelationships {
   bookmarkedCourses: UserModule.BookmarkedCourseInput[];
   bookmarkedClasses: UserModule.BookmarkedClassInput[];
 }

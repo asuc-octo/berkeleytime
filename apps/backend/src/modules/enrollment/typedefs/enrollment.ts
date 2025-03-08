@@ -1,27 +1,32 @@
 import { gql } from "graphql-tag";
 
 export default gql`
-  scalar TermId
-  scalar SessionId
-  scalar SectionId
-
   type Query {
     enrollment(
-      termId: TermId!
-      sessionId: SessionId!
-      sectionId: SectionId!
-    ): Enrollment!
+      year: Int!
+      semester: Semester!
+      sessionId: SessionIdentifier
+      subject: String!
+      courseNumber: CourseNumber!
+      sectionNumber: SectionNumber!
+    ): Enrollment
   }
 
   type Enrollment {
     "Identifiers"
-    termId: TermId!
-    sessionId: SessionId!
-    sectionId: SectionId!
+    termId: TermIdentifier!
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier!
+    sectionId: SectionIdentifier!
+    subject: String!
+    courseNumber: CourseNumber!
+    sectionNumber: SectionNumber!
 
     "Attributes"
-    seatReservationTypes: [SeatReservationType!]!
-    history: [EnrollmentHistory!]!
+    seatReservationTypes: [SeatReservationType!]
+    history: [EnrollmentSingular!]!
+    latest: EnrollmentSingular
   }
 
   type SeatReservationType {
@@ -30,19 +35,27 @@ export default gql`
     fromDate: String!
   }
 
-  type EnrollmentHistory {
+  type EnrollmentSingular {
     time: String!
-    status: String!
+    status: EnrollmentStatus
     enrolledCount: Int!
-    reservedCount: Int!
+    reservedCount: Int
     waitlistedCount: Int!
-    minEnroll: Int!
+    minEnroll: Int
     maxEnroll: Int!
     maxWaitlist: Int!
-    openReserved: Int!
+    openReserved: Int
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
-    seatReservationCounts: [SeatReservationCount!]!
+    seatReservationCounts: [SeatReservationCount!]
+  }
+
+  enum EnrollmentStatus {
+    "Closed"
+    C
+
+    "Open"
+    O
   }
 
   type SeatReservationCount {

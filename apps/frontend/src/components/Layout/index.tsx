@@ -1,8 +1,4 @@
-import { Suspense } from "react";
-
 import { Outlet } from "react-router";
-
-import { Boundary, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
@@ -22,15 +18,7 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
       <div className={styles.view}>
         <Banner />
         {header && <NavigationBar />}
-        <Suspense
-          fallback={
-            <Boundary>
-              <LoadingIndicator size="lg" />
-            </Boundary>
-          }
-        >
-          <Outlet />
-        </Suspense>
+        <Outlet />
       </div>
       {footer && <Footer />}
       <Feedback />

@@ -47,27 +47,26 @@ export default function Catalog({
   return (
     <Dialog.Root onOpenChange={handleOpenChange} open={open}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
-      <Dialog.Content className={styles.content}>
-        <div className={styles.header}>
-          <Dialog.Title asChild>
-            <p className={styles.title}>
-              Add a course to {semester} {year}
-            </p>
-          </Dialog.Title>
-          <Dialog.Close asChild>
-            <IconButton>
-              <Xmark />
-            </IconButton>
-          </Dialog.Close>
-        </div>
-        <div className={styles.body}>
-          <CourseBrowser
-            onSelect={handleClick}
-            responsive={false}
-            defaultSemesters={[semester]}
-          />
-        </div>
-      </Dialog.Content>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Drawer align="start" className={styles.drawer}>
+          <div className={styles.header}>
+            Add a course to {semester} {year}
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </div>
+          <div className={styles.body}>
+            <CourseBrowser
+              onSelect={handleClick}
+              responsive={false}
+              defaultSemesters={[semester]}
+            />
+          </div>
+        </Dialog.Drawer>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 }

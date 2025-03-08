@@ -15,14 +15,7 @@ export type IntermediateSchedule = Omit<
 
 export const formatSchedule = async (schedule: ScheduleType) => {
   return {
-    _id: schedule._id as string,
-    name: schedule.name,
-    createdBy: schedule.createdBy,
-    public: schedule.public,
-    classes: schedule.classes,
-    year: schedule.year,
-    semester: schedule.semester,
+    ...schedule,
     term: null,
-    events: schedule.events,
   } as unknown as IntermediateSchedule;
 };

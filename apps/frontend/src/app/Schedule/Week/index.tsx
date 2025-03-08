@@ -108,7 +108,7 @@ export default function Week({
                 startTime: section.meetings[0].startTime,
                 endTime: section.meetings[0].endTime,
                 days: section.meetings[0].days,
-                id: section.ccn,
+                id: section.sectionId,
                 type: "section",
               }) as ScheduleEvent
           );
@@ -172,7 +172,7 @@ export default function Week({
           return {
             ...event,
             position,
-            active: event.id !== currentSection?.ccn,
+            active: event.id !== currentSection?.sectionId,
             columns,
           };
         });

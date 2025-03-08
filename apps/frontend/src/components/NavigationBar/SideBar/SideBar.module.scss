@@ -1,19 +1,8 @@
-.content {
-  height: 100dvh;
-  left: 0;
-  top: 0;
+.drawer {
   background-color: var(--foreground-color);
   width: 288px;
   display: flex;
   flex-direction: column;
-
-  &[data-state="open"] {
-    animation: slideIn 150ms ease-out;
-  }
-
-  &[data-state="closed"] {
-    animation: slideOut 150ms ease-in;
-  }
 
   @media (width > 512px) {
     border-right: 1px solid var(--border-color);
@@ -81,25 +70,5 @@
         color: var(--blue-600);
       }
     }
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(-100%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-100%);
   }
 }

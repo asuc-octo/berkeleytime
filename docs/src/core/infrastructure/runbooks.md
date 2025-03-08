@@ -20,6 +20,23 @@
     ```sh
     k create job --from cronjob/bt-prod-datapuller-courses bt-prod-datapuller-courses-manual-01
     ```
+## Previewing Infra Changes with `/helm-diff` before deployment
+
+The `/helm-diff` command can be used in pull request comments to preview Helm changes before they are deployed. This is particularly useful when:
+
+1. Making changes to Helm chart values in `infra/app` or `infra/base`
+2. Upgrading Helm chart versions or dependencies
+3. Modifying Kubernetes resource configurations
+
+To use it:
+1. Comment `/helm-diff` on any pull request
+2. The workflow will generate a diff showing:
+   - Changes to both app and base charts
+   - Resource modifications (deployments, services, etc.)
+   - Configuration updates
+
+The diff output is formatted as collapsible sections for each resource, with a raw diff available at the bottom for debugging.
+
 
 ## Uninstall ALL development helm releases
 
@@ -51,7 +68,8 @@ Sometimes, releases will be stuck in an `uninstalling` state. This command quick
 3. Create a sealed secret from the previously created manifest:
 
     ```sh
-    kubeseal --controller-name bt-sealed-secrets --controller-namespace bt --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
+    kubeseal --controller-name bt-sealed-secrets --controller-namespace bt \
+        --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
     ```
 
     If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
