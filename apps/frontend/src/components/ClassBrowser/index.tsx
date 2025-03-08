@@ -182,26 +182,23 @@ export default function ClassBrowser({
         }
 
         if (sortBy === SortBy.OpenSeats) {
-          const getOpenSeats = ({
-            primarySection: {
-              enrollment: {
-                latest: { enrolledCount, maxEnroll },
-              },
-            },
-          }: IClass) => maxEnroll - enrolledCount;
+          const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
+            enrollment
+              ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
+              : 0;
 
           return getOpenSeats(b) - getOpenSeats(a);
         }
 
         if (sortBy === SortBy.PercentOpenSeats) {
           const getPercentOpenSeats = ({
-            primarySection: {
-              enrollment: {
-                latest: { enrolledCount, maxEnroll },
-              },
-            },
+            primarySection: { enrollment },
           }: IClass) =>
-            maxEnroll === 0 ? 0 : (maxEnroll - enrolledCount) / maxEnroll;
+            enrollment?.latest.maxEnroll
+              ? (enrollment.latest.maxEnroll -
+                  enrollment.latest.enrolledCount) /
+                enrollment.latest.maxEnroll
+              : 0;
 
           return getPercentOpenSeats(b) - getPercentOpenSeats(a);
         }
