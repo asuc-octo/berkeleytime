@@ -68,6 +68,18 @@ export default async (
           isAuthenticated: req.isAuthenticated(),
           logout: (callback: (err: any) => void) => req.logout(callback),
         },
+        // user: req.user
+        // ? {
+        //     ...req.user,
+        //     isAuthenticated: req.isAuthenticated(),
+        //     logout: (callback: (err: any) => void) => req.logout(callback),
+        //   }
+        // : {
+        //     id: "testUserId123",
+        //     role: "admin",
+        //     isAuthenticated: true,  // 让 auth 解析器认为用户已登录
+        //     logout: (callback: (err: any) => void) => callback(null),
+        //   },
       }),
     })
   );
