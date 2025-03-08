@@ -118,9 +118,9 @@ addEventListener(
 
       if (sortBy === SortBy.OpenSeats) {
         const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-          enrollment === undefined
-            ? 0
-            : enrollment.latest.maxEnroll - enrollment.latest.enrolledCount;
+          enrollment
+            ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
+            : 0;
 
         return getOpenSeats(b) - getOpenSeats(a);
       }
@@ -129,10 +129,10 @@ addEventListener(
         const getPercentOpenSeats = ({
           primarySection: { enrollment },
         }: IClass) =>
-          enrollment === undefined || enrollment.latest.maxEnroll === 0
-            ? 0
-            : (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
-              enrollment.latest.maxEnroll;
+          enrollment?.latest.maxEnroll
+            ? (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
+              enrollment.latest.maxEnroll
+            : 0;
 
         return getPercentOpenSeats(b) - getPercentOpenSeats(a);
       }

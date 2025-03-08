@@ -5,9 +5,10 @@ import { Tooltip } from "radix-ui";
 
 import styles from "./Capacity.module.scss";
 
-const getColor = (count: number | undefined, capacity: number | undefined) => {
-  if (count === undefined || capacity === undefined)
+const getColor = (count?: number, capacity?: number) => {
+  if (typeof count !== "number" || typeof capacity !== "number")
     return "var(--paragraph-color)";
+
   const percentage = count / capacity;
 
   return percentage >= 0.75
@@ -18,10 +19,10 @@ const getColor = (count: number | undefined, capacity: number | undefined) => {
 };
 
 interface CapacityProps {
-  enrolledCount: number | undefined;
-  maxEnroll: number | undefined;
-  waitlistedCount: number | undefined;
-  maxWaitlist: number | undefined;
+  enrolledCount?: number;
+  maxEnroll?: number;
+  waitlistedCount?: number;
+  maxWaitlist?: number;
 }
 
 export default function Capacity({
