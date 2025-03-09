@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 
 dotenv.config();
-console.log(process.cwd())
+console.log(process.cwd());
 console.log("PORT:", process.env.PORT);
 
 // Safely get the environment variable in the process

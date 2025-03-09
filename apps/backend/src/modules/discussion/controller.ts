@@ -1,6 +1,5 @@
 import { DiscussionModel } from "@repo/common";
 
-
 export const getDiscussions = async (courseNumber: string, email?: string) => {
   const filter: any = { courseNumber };
   if (email) filter.email = email;

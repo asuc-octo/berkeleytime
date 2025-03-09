@@ -219,4 +219,3 @@ export const CourseModel: Model<ICourseItem> = model<ICourseItem>(
   "courses",
   courseSchema
 );
-

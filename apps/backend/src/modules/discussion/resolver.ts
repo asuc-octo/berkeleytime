@@ -1,4 +1,4 @@
-import { getDiscussions, addDiscussion } from "./controller";
+import { addDiscussion, getDiscussions } from "./controller";
 import { DiscussionModule } from "./generated-types/module-types";
 
 const resolvers: DiscussionModule.Resolvers = {
@@ -13,7 +13,11 @@ const resolvers: DiscussionModule.Resolvers = {
   Mutation: {
     addDiscussion: async (
       _: any,
-      { courseNumber, email, content }: { courseNumber: string; email: string; content: string }
+      {
+        courseNumber,
+        email,
+        content,
+      }: { courseNumber: string; email: string; content: string }
     ) => {
       return addDiscussion(courseNumber, email, content);
     },
@@ -21,4 +25,3 @@ const resolvers: DiscussionModule.Resolvers = {
 };
 
 export default resolvers;
-
