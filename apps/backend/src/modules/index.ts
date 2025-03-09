@@ -9,6 +9,7 @@ import GradeDistribution from "./grade-distribution";
 import Schedule from "./schedule";
 import Term from "./term";
 import User from "./user";
+import Discussion from "./discussion";
 
 const modules = [
   User,
@@ -20,6 +21,7 @@ const modules = [
   Course,
   Class,
   Enrollment,
+  Discussion
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));

@@ -7,6 +7,7 @@ import {
 import { IntermediateUser } from "./formatter";
 import { UserModule } from "./generated-types/module-types";
 
+
 const resolvers: UserModule.Resolvers = {
   Query: {
     user: async (_, __, context) => {
