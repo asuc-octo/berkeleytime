@@ -1,16 +1,51 @@
 .root {
-  padding: 24px 0;
-  font-size: 14px;
-
-  .label {
-    margin-top: 24px;
-    color: var(--label-color);
-    line-height: 1;
-  }
-
-  .description {
-    color: var(--paragraph-color);
-    margin-top: 8px;
-    line-height: 1.5;
-  }
+  padding: 20px;
 }
+
+.dialogContent {
+  background-color: var(--foreground-color);
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.commentsList {
+  margin-top: 20px;
+}
+
+.comment {
+  padding: 10px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.commentText {
+  font-size: 16px;
+}
+
+.commentUser {
+  font-size: 14px;
+  color: #555;
+}
+
+// button {
+//   padding: 10px 16px;
+//   background-color: #007bff;
+//   color: white;
+//   border: none;
+//   border-radius: 5px;
+//   cursor: pointer;
+// }
+
+// button:hover {
+//   background-color: #0056b3;
+// }

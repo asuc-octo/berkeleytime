@@ -1,12 +1,9 @@
 import { gql } from "@apollo/client";
 
-import { ICourse } from "./courses";
-import { IUser } from "./users";
-
 export interface IDiscussion {
   text: string;
-  user: IUser;
-  course: ICourse;
+  userId: string;
+  courseId: string;
   timestamp: string; // ISO string or Date object
 }
 
@@ -14,31 +11,19 @@ export const GET_DISCUSSIONS_BY_COURSE = gql`
   query GetDiscussionsByCourse($courseId: String!) {
     getDiscussionsByCourse(courseId: $courseId) {
       text
-      user {
-        id
-        name
-      }
-      course {
-        courseId
-        title
-      }
+      userId
+      courseId
       timestamp
     }
   }
 `;
 
 export const ADD_DISCUSSION = gql`
-  query AddDiscussion($courseId: String!, $text: String!, $userId: String!) {
-    addDiscussion(courseId: $courseId, text: $text, userId: $userId) {
+  mutation AddDiscussion($courseId: String!, $text: String!) {
+    addDiscussion(courseId: $courseId, text: $text) {
       text
-      user {
-        id
-        name
-      }
-      course {
-        courseId
-        title
-      }
+      userId
+      courseId
       timestamp
     }
   }
