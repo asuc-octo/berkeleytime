@@ -24,13 +24,10 @@ const resolvers = {
   Mutation: {
     addDiscussion: async (
       _: any,
-      {
-        courseId,
-        text,
-        userId,
-      }: { courseId: string; text: string; userId: string }
+      { courseId, text }: { courseId: string; text: string },
+      context: any
     ) => {
-      const newDiscussion = await addDiscussion(courseId, text, userId);
+      const newDiscussion = await addDiscussion(courseId, text, context);
       return newDiscussion;
     },
   },

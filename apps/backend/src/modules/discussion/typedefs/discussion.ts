@@ -4,8 +4,8 @@ import { gql } from "graphql-tag";
 export default gql`
   type Discussion {
     text: String!
-    user: User!
-    course: Course!
+    userId: String!
+    courseId: String!
     timestamp: String!
   }
 
@@ -17,6 +17,6 @@ export default gql`
 
   # Mutation types modifies data
   type Mutation {
-    addDiscussion(courseId: String!, text: String!, userId: String!): Discussion
+    addDiscussion(courseId: String!, text: String!): Discussion
   }
 `;

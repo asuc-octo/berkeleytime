@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 // Put Discussions under Course (e.g. COMPSCI 61B)
 // Question: include IClass?
-import { IDiscussion, ICourse, IUser } from "@/lib/api";
+import { ICourse, IDiscussion, IUser } from "@/lib/api";
 
 // TODO: ability to update Discussions
 export interface DiscussionsContextType {

@@ -1,19 +1,22 @@
 // discussion/controller.ts – Business logic
 import { DiscussionModel } from "@repo/common";
+
 import { formatDiscussion } from "./formatter";
 
 export const addDiscussion = async (
   courseId: string,
   text: string,
-  userId: string
+  context: any
 ) => {
+  if (!context.user._id) throw new Error("Unauthorized");
+
   if (!text || text.trim().length === 0)
     throw new Error("Discussion text cannot be empty");
 
   const newDiscussion = new DiscussionModel({
-    course: courseId,
+    courseId: courseId,
     text,
-    user: userId,
+    userId: context.user._id,
     timestamp: new Date().toISOString(),
   });
 
@@ -25,7 +28,7 @@ export const addDiscussion = async (
 export const getDiscussionsByCourse = async (courseId: string) => {
   if (!courseId) throw new Error("Course ID is required");
 
-  const Discussions = await DiscussionModel.find({ course: courseId }).sort({
+  const Discussions = await DiscussionModel.find({ courseId: courseId }).sort({
     timestamp: -1,
   });
 
@@ -35,7 +38,7 @@ export const getDiscussionsByCourse = async (courseId: string) => {
 export const filterDiscussionsByUser = async (userId: string) => {
   if (!userId) throw new Error("User ID is required");
 
-  const discussions = await DiscussionModel.find({ user: userId });
+  const discussions = await DiscussionModel.find({ userId: userId });
 
   return discussions.map(formatDiscussion);
 };

@@ -5,4 +5,4 @@ export * from "./terms";
 export * from "./schedules";
 export * from "./grade-distributions";
 export * from "./enrollment";
-export * from "./discussion"
+export * from "./discussion";

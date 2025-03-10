@@ -22,6 +22,7 @@ const Class = {
   Grades: lazy(() => import("@/components/Class/Grades")),
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
 };
 
 const Course = {
@@ -30,6 +31,7 @@ const Course = {
   Grades: lazy(() => import("@/components/Course/Grades")),
   Overview: lazy(() => import("@/components/Course/Overview")),
   Classes: lazy(() => import("@/components/Course/Classes")),
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
 };
 
 const Catalog = lazy(() => import("@/app/Catalog"));
@@ -131,6 +133,10 @@ const router = createBrowserRouter([
             path: "grades",
           },
           {
+            element: <Course.Discussion />,
+            path: "discussion",
+          },
+          {
             path: "*",
             loader: () => redirect("."),
           },
@@ -155,6 +161,10 @@ const router = createBrowserRouter([
           {
             element: <Class.Grades />,
             path: "grades",
+          },
+          {
+            element: <Class.Discussion />,
+            path: "discussion",
           },
           {
             path: "*",
