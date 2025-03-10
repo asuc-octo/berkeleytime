@@ -1,21 +1,21 @@
-import { useState } from "react";
+// import { useState } from "react";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTrigger,
-} from "@radix-ui/react-dialog";
+// import {
+//   Dialog,
+//   DialogClose,
+//   DialogContent,
+//   DialogTrigger,
+// } from "@radix-ui/react-dialog";
 
-import { Button } from "@repo/theme";
+// import { Button } from "@repo/theme";
 
 import useClass from "@/hooks/useClass";
 
-import styles from "./Discussion.module.scss";
+// import styles from "./Discussion.module.scss";
 
 export default function Discussion() {
   const { class: _class } = useClass();
-  const [commentText, setCommentText] = useState("");
+  // const [commentText, setCommentText] = useState("");
 
   return <div></div>;
 
