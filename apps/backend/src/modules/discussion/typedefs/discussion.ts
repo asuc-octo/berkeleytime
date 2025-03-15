@@ -1,13 +1,12 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-
   type Comment {
     _id: ID!
     createdBy: String!
     timestamp: String!
-    text: String! 
-    courseNumber: String! 
+    text: String!
+    courseNumber: String!
   }
 
   type Query {

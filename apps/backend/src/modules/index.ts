@@ -4,12 +4,12 @@ import Catalog from "./catalog";
 import Class from "./class";
 import Common from "./common";
 import Course from "./course";
+import Discussion from "./discussion";
 import Enrollment from "./enrollment";
 import GradeDistribution from "./grade-distribution";
 import Schedule from "./schedule";
 import Term from "./term";
 import User from "./user";
-import Discussion from "./discussion";
 
 const modules = [
   User,
@@ -21,7 +21,7 @@ const modules = [
   Course,
   Class,
   Enrollment,
-  Discussion
+  Discussion,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));

@@ -1,26 +1,27 @@
-import { CommentModel } from "@repo/common"; 
+import { CommentModel } from "@repo/common";
+
 //import { Types } from "mongoose";
-import { formatDiscussion } from "./formatter"
+import { formatDiscussion } from "./formatter";
+
 //import mongoose from "mongoose";
 
-export const getComments = async(courseNumber: string, createdBy?: string) => {
+export const getComments = async (courseNumber: string, createdBy?: string) => {
   try {
     console.log("createdBy:", createdBy);
-    const filter: any = {courseNumber};
+    const filter: any = { courseNumber };
     if (createdBy) {
       filter.createdBy = createdBy;
     }
-    const discussion = await CommentModel.find(filter).sort({timestamp: -1});
+    const discussion = await CommentModel.find(filter).sort({ timestamp: -1 });
     return discussion.map(formatDiscussion);
-
   } catch (error) {
-    throw new Error ('Error');
+    throw new Error("Error");
   }
-}
+};
 
-export const addComment = async(
+export const addComment = async (
   //context: any,
-  courseNumber: string, 
+  courseNumber: string,
   text: string,
   createdBy: string
 ) => {
@@ -28,8 +29,8 @@ export const addComment = async(
     courseNumber: courseNumber,
     text: text,
     createdBy: createdBy,
-    timestamp: new Date()
+    timestamp: new Date(),
   });
 
   return await formatDiscussion(comment);
-}
+};

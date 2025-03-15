@@ -11,4 +11,4 @@ export * from "./classNew";
 export * from "./grade-distribution";
 export * from "./enrollment-history";
 export * from "./termNew";
-export * from "./discussion"
+export * from "./discussion";
