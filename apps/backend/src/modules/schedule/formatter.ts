@@ -1,6 +1,7 @@
 import { ScheduleType } from "@repo/common";
 
 import { ScheduleModule } from "./generated-types/module-types";
+import schedule from ".";
 
 export interface ScheduleRelationships {
   classes: ScheduleModule.SelectedClassInput[];
@@ -15,7 +16,7 @@ export type IntermediateSchedule = Omit<
 
 export const formatSchedule = async (schedule: ScheduleType) => {
   return {
-    ...schedule,
+    ...(schedule.toObject()),
     term: null,
   } as unknown as IntermediateSchedule;
 };

@@ -41,10 +41,10 @@ export const getSelectedSections = (schedule?: ISchedule) => {
     schedule?.classes.flatMap(({ selectedSections, class: _class }) =>
       selectedSections.reduce((acc, section) => {
         const _section =
-          _class.primarySection.sectionId === section
+          _class.primarySection.sectionId === section.sectionId
             ? _class.primarySection
             : _class.sections.find(
-                (currentSection) => currentSection.sectionId === section
+                (currentSection) => currentSection.sectionId === section.sectionId
               );
 
         return _section ? [...acc, _section] : acc;

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { IClass } from "../api";
+import { IClass, ISection } from "../api";
 import { ITerm, Semester } from "./terms";
 
 export type ScheduleIdentifier = string & {
@@ -9,14 +9,14 @@ export type ScheduleIdentifier = string & {
 
 export interface IScheduleClass {
   class: IClass;
-  selectedSections: string[];
+  selectedSections: ISection[];
 }
 
 export interface IScheduleClassInput {
   subject: string;
   courseNumber: string;
   number: string;
-  sections: string[];
+  sectionIds: string[];
 }
 
 export interface IScheduleEvent {
@@ -33,6 +33,7 @@ export interface IScheduleInput {
   name: string;
   year: number;
   semester: Semester;
+  sessionId: any;
   classes?: IScheduleClassInput[];
   events?: IScheduleEvent[];
   public?: boolean;
@@ -66,7 +67,7 @@ export const READ_SCHEDULE = gql`
       year
       semester
       term {
-        beginDate
+        startDate
         endDate
       }
       events {
@@ -160,7 +161,9 @@ export const READ_SCHEDULE = gql`
             }
           }
         }
-        selectedSections
+        selectedSections {
+          sectionId
+        }
       }
     }
   }
@@ -274,7 +277,9 @@ export const UPDATE_SCHEDULE = gql`
             }
           }
         }
-        selectedSections
+        selectedSections {
+          sectionId
+        }
       }
     }
   }
@@ -318,7 +323,7 @@ export const CREATE_SCHEDULE = gql`
           courseNumber
           number
         }
-        selectedSections
+        # selectedSections
       }
     }
   }
@@ -342,7 +347,7 @@ export const READ_SCHEDULES = gql`
           courseNumber
           number
         }
-        selectedSections
+        # selectedSections
       }
     }
   }

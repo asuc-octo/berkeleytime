@@ -29,7 +29,7 @@ export default function CreateScheduleDialog({
   defaultName,
 }: CreateScheduleDialogProps) {
   const [name, setName] = useState(defaultName);
-  const [term, setTerm] = useState("");
+  const [term, setTerm] = useState<ITerm|null>(null);
 
   const [createSchedule] = useCreateSchedule();
 
@@ -39,7 +39,7 @@ export default function CreateScheduleDialog({
 
   useEffect(() => {
     if (!terms) return;
-    setTerm(`${terms[0].semester} ${terms[0].year}`);
+    setTerm(terms[0]);
   }, [terms]);
 
   const options = useMemo(() => {
@@ -53,7 +53,7 @@ export default function CreateScheduleDialog({
               )
           )
           .map((term) => ({
-            value: termString(term),
+            value: term,
             label: termString(term),
           }))
       : [];
@@ -103,10 +103,12 @@ export default function CreateScheduleDialog({
             <Button
               variant="solid"
               onClick={async () => {
+                if (term == null) return;
                 const res = await createSchedule({
                   name: name,
-                  year: Number(term.split(" ")[1]),
-                  semester: term.split(" ")[0] as Semester,
+                  year: Number(termString(term).split(" ")[1]),
+                  semester: termString(term).split(" ")[0] as Semester,
+                  sessionId: term.sessions[0].id
                 });
                 if (res.data?.createSchedule._id)
                   navigate(res.data?.createSchedule._id);

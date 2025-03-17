@@ -77,7 +77,7 @@ export default function Editor() {
       const selectedSections = selectedClass.selectedSections.filter(
         (selectedSection) => {
           const currentSection = selectedClass.class.sections.find(
-            (section) => section.sectionId === selectedSection
+            (section) => section.sectionId === selectedSection.sectionId
           );
 
           return !currentSection || currentSection !== section;
@@ -85,7 +85,7 @@ export default function Editor() {
       );
 
       // Add the selected section
-      selectedClass.selectedSections = [...selectedSections, section.sectionId];
+      selectedClass.selectedSections = [...selectedSections, section];
 
       // Update the schedule
       updateSchedule(
@@ -99,7 +99,7 @@ export default function Editor() {
               subject,
               courseNumber,
               number,
-              sections: selectedSections,
+              sectionIds: selectedSections.map((s) => s.sectionId),
             })
           ),
         },
@@ -159,7 +159,7 @@ export default function Editor() {
       );
 
       // Ignore selected sections
-      if (selectedSections.includes(section.sectionId)) return;
+      if (selectedSections.includes(section)) return;
 
       setCurrentSection(section);
     },
@@ -187,7 +187,7 @@ export default function Editor() {
               subject,
               courseNumber,
               number,
-              sections: selectedSections,
+              sectionIds: selectedSections.map((s) => s.sectionId),
             })
           ),
         },
@@ -245,7 +245,7 @@ export default function Editor() {
                 subject,
                 courseNumber,
                 number,
-                sections: selectedSections,
+                sectionIds: selectedSections.map((s) => s.sectionId),
               })
             ),
           },
@@ -276,7 +276,7 @@ export default function Editor() {
 
       const _class = data.class;
 
-      const selectedSections = [_class.primarySection.sectionId];
+      const selectedSections = [_class.primarySection];
 
       const kinds = Array.from(
         new Set(_class.sections.map((section) => section.component))
@@ -288,7 +288,7 @@ export default function Editor() {
           .filter((section) => section.component === kind)
           .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        selectedSections.push(section.sectionId);
+        selectedSections.push(section);
       }
 
       _schedule.classes.push({
@@ -308,7 +308,7 @@ export default function Editor() {
               subject,
               courseNumber,
               number,
-              sections: selectedSections,
+              sectionIds: selectedSections.map((s) => s.sectionId),
             })
           ),
         },
