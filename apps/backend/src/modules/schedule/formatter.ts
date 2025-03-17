@@ -1,6 +1,5 @@
 import { ScheduleType } from "@repo/common";
 
-import schedule from ".";
 import { ScheduleModule } from "./generated-types/module-types";
 
 export interface ScheduleRelationships {
