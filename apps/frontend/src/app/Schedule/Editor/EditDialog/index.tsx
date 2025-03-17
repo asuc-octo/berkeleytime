@@ -51,41 +51,44 @@ export default function EditDialog({ children }: EditDialogProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
-      <Dialog.Content className={styles.content}>
-        <div className={styles.header}>
-          <div className={styles.text}>
-            <Dialog.Title asChild>
-              <p className={styles.title}>Edit schedule</p>
-            </Dialog.Title>
-            <Dialog.Description asChild>
-              <p className={styles.description}>
-                Update the name of your schedule
-              </p>
-            </Dialog.Description>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Card className={styles.content}>
+          <div className={styles.header}>
+            <div className={styles.text}>
+              <Dialog.Title asChild>
+                <p className={styles.title}>Edit schedule</p>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <p className={styles.description}>
+                  Update or delete the schedule
+                </p>
+              </Dialog.Description>
+            </div>
+            <Button onClick={() => remove()}>
+              <Trash />
+              Delete
+            </Button>
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
           </div>
-          <Dialog.Close asChild>
-            <IconButton>
-              <Xmark />
-            </IconButton>
-          </Dialog.Close>
-        </div>
-        <div className={styles.column}>
-          <Button onClick={() => remove()}>
-            <Trash />
-            Delete
-          </Button>
-          <input
-            type="text"
-            className={styles.input}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
-          <Button disabled={saved || loading} onClick={() => save()}>
-            Save
-            <ArrowRight />
-          </Button>
-        </div>
-      </Dialog.Content>
+          <div className={styles.column}>
+            <input
+              type="text"
+              className={styles.input}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+            <Button disabled={saved || loading} onClick={() => save()}>
+              Save
+              <ArrowRight />
+            </Button>
+          </div>
+        </Dialog.Card>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 }

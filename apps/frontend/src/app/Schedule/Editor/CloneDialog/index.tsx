@@ -46,29 +46,32 @@ export default function CloneDialog({ children }: CloneDialogProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
-      <Dialog.Content className={styles.content}>
-        <div className={styles.header}>
-          <div className={styles.text}>
-            <Dialog.Title asChild>
-              <p className={styles.title}>Clone schedule</p>
-            </Dialog.Title>
-            <Dialog.Description asChild>
-              <p className={styles.description}>
-                Create a copy of this schedule
-              </p>
-            </Dialog.Description>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Card className={styles.content}>
+          <div className={styles.header}>
+            <div className={styles.text}>
+              <Dialog.Title asChild>
+                <p className={styles.title}>Clone schedule</p>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <p className={styles.description}>
+                  Create a copy of this schedule
+                </p>
+              </Dialog.Description>
+            </div>
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
           </div>
-          <Dialog.Close asChild>
-            <IconButton>
-              <Xmark />
-            </IconButton>
-          </Dialog.Close>
-        </div>
-        <Button onClick={() => confirm()} variant="solid">
-          Confirm
-          <ArrowRight />
-        </Button>
-      </Dialog.Content>
+          <Button onClick={() => confirm()} variant="solid">
+            Confirm
+            <ArrowRight />
+          </Button>
+        </Dialog.Card>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 }

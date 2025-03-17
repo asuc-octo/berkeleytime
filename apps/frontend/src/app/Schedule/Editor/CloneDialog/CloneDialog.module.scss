@@ -1,12 +1,4 @@
-/* TODO: State animations */
 .content {
-  width: 448px;
-  background-color: var(--foreground-color);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
   padding: 24px;
   display: flex;
   flex-direction: column;

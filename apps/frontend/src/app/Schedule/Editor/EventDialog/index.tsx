@@ -61,37 +61,40 @@ export default function EventDialog({ children }: EventDialogProps) {
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
-      <Dialog.Content className={styles.content}>
-        <div className={styles.header}>
-          <div className={styles.text}>
-            <Dialog.Title asChild>
-              <p className={styles.title}>Add event</p>
-            </Dialog.Title>
-            <Dialog.Description asChild>
-              <p className={styles.description}>
-                Insert a custom event in your schedule
-              </p>
-            </Dialog.Description>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Card className={styles.content}>
+          <div className={styles.header}>
+            <div className={styles.text}>
+              <Dialog.Title asChild>
+                <p className={styles.title}>Add event</p>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <p className={styles.description}>
+                  Insert a custom event in your schedule
+                </p>
+              </Dialog.Description>
+            </div>
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
           </div>
-          <Dialog.Close asChild>
-            <IconButton>
-              <Xmark />
-            </IconButton>
-          </Dialog.Close>
-        </div>
-        <div className={styles.column}>
-          <input
-            type="text"
-            className={styles.input}
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-          />
-          <Button onClick={() => save()}>
-            Save
-            <ArrowRight />
-          </Button>
-        </div>
-      </Dialog.Content>
+          <div className={styles.column}>
+            <input
+              type="text"
+              className={styles.input}
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
+            <Button onClick={() => save()}>
+              Save
+              <ArrowRight />
+            </Button>
+          </div>
+        </Dialog.Card>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 }
