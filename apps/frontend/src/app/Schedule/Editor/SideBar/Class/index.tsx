@@ -4,7 +4,7 @@ import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { Component, IClass, componentMap } from "@/lib/api";
+import { Component, IClass, ISection, componentMap } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -14,7 +14,7 @@ interface ClassProps {
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
   class: IClass;
-  selectedSections: string[];
+  selectedSections: ISection[];
   onSectionSelect: (
     subject: string,
     courseNumber: string,
@@ -125,7 +125,7 @@ export default function Class({
                 </div>
                 {groups[group]?.map((section) => {
                   const active = selectedSections.some(
-                    (selectedSection) => selectedSection === section.sectionId
+                    (selectedSection) => selectedSection.sectionId === section.sectionId
                   );
 
                   return (

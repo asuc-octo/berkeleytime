@@ -31,10 +31,11 @@ export default function CloneDialog({ children }: CloneDialogProps) {
         subject: _class.class.subject,
         courseNumber: _class.class.courseNumber,
         number: _class.class.number,
-        sections: _class.selectedSections,
+        sectionIds: _class.selectedSections.map((s) => s.sectionId),
       })),
       events: schedule.events,
       name: `${schedule.name} (copy)`,
+      sessionId: schedule.sessionId
     });
 
     if (!data) return;
