@@ -49,6 +49,11 @@ interface WeekProps {
   updateY?: (y: number | null) => void;
 }
 
+function rotateRight<T>(arr: T[]): T[] {
+  if (arr.length === 0) return arr;
+  return [arr[arr.length - 1], ...arr.slice(0, arr.length - 1)];
+}
+
 export default function Week({
   selectedSections,
   currentSection,
@@ -239,7 +244,7 @@ export default function Week({
           ))}
         </div>
         <div className={styles.week}>
-          {days.map((events, day) => (
+          {rotateRight(days).map((events, day) => (
             <div key={day} className={styles.day}>
               {[...Array(18)].map((_, hour) => (
                 <div key={hour} className={styles.hour}></div>

@@ -21,13 +21,15 @@ export default function EventDialog({ children }: EventDialogProps) {
   const [open, setOpen] = useState(false);
   const [updateSchedule] = useUpdateSchedule();
 
-  const [title, setTitle] = useState("Test");
-  const [description] = useState("Test event");
-  const [startTime] = useState("11:30");
-  const [endTime] = useState("15:50");
-  const [days] = useState([false, true, false, true, false, true, false]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("Custom event");
+  const [startTime, setStartTime] = useState("11:30");
+  const [endTime, setEndTime] = useState("15:50");
+  const [days, setDays] = useState([false, false, false, false, false, false, false]);
 
   const save = () => {
+    if (title === "") return;
+    if (parseInt(startTime.replace(':', ''), 10) >= parseInt(endTime.replace(':', ''), 10)) return;
     const temporaryIdentifier = crypto.randomUUID();
 
     const event = {
@@ -41,7 +43,10 @@ export default function EventDialog({ children }: EventDialogProps) {
     updateSchedule(
       schedule._id,
       {
-        events: schedule.events ? [...schedule.events, event] : [event],
+        events: schedule.events ? [...(schedule.events.map((e) => {
+          const { _id, __typename, ...rest} = e as any || {};
+          return rest;
+        })), event] : [event],
       },
       {
         optimisticResponse: {
@@ -82,11 +87,66 @@ export default function EventDialog({ children }: EventDialogProps) {
             </Dialog.Close>
           </div>
           <div className={styles.column}>
+            <label className={styles.label}>Name</label>
             <input
               type="text"
               className={styles.input}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
+              placeholder="Enter title"
+            />
+            <label className={styles.label}>Days</label>
+            <div className={styles.daySelect}>
+              <p>Su<input type="checkbox" onChange={(e) => {
+                days[6] = e.target.checked;
+                setDays(days);
+              }}/></p>
+              <p>M<input type="checkbox" onChange={(e) => {
+                days[0] = e.target.checked;
+                setDays(days);
+              }}/></p>
+              <p>Tu<input type="checkbox" onChange={(e) => {
+                days[1] = e.target.checked;
+                setDays(days);
+              }}/></p>
+              <p>W<input type="checkbox" onChange={(e) => {
+                days[2] = e.target.checked;
+                setDays(days);
+              }}/></p>
+              <p>Th<input type="checkbox" onChange={(e) => {
+                days[3] = e.target.checked;
+                setDays(days);
+              }}/></p>
+              <p>F<input type="checkbox" onChange={(e) => {
+                days[4] = e.target.checked;
+                setDays(days);
+              }}/></p>
+              <p>Sa<input type="checkbox" onChange={(e) => {
+                days[5] = e.target.checked;
+                setDays(days);
+              }}/></p>
+            </div>
+            <label className={styles.label}>Time</label>
+            <p className={styles.time}>Start time<input
+              type="time"
+              value={startTime}
+              min="00:00"
+              max="23:59"
+              onChange={(e) => setStartTime(e.target.value)}
+            /></p>
+            <p className={styles.time}>End time <input
+              type="time"
+              value={endTime}
+              min="00:00"
+              max="23:59"
+              onChange={(e) => setEndTime(e.target.value)}
+            /></p>
+            <label className={styles.label}>Description</label>
+            <input
+              type="text"
+              className={styles.input}
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
             />
             <Button onClick={() => save()}>
               Save

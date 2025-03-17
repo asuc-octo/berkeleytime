@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
+import { ArrowSeparateVertical, ArrowUnionVertical, Xmark } from "iconoir-react";
 
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
@@ -9,6 +9,7 @@ import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
+import { IconButton } from "@repo/theme";
 
 interface ClassProps {
   expanded: boolean;
@@ -60,35 +61,40 @@ export default function Class({
           className={styles.header}
           onClick={() => onExpandedChange(!expanded)}
         >
-          <div className={styles.icon}>
-            {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
-          </div>
-          <div className={styles.text}>
-            <p className={styles.heading}>
-              {_class.subject} {_class.courseNumber}
-            </p>
-            <p className={styles.description}>
-              {_class.title ?? _class.course.title}
-            </p>
-            <div className={styles.row}>
-              {/* <AverageGrade
-                gradeDistribution={_class.course.gradeDistribution}
-              /> */}
-              <Capacity
-                enrolledCount={
-                  _class.primarySection.enrollment?.latest.enrolledCount
-                }
-                maxEnroll={_class.primarySection.enrollment?.latest.maxEnroll}
-                waitlistedCount={
-                  _class.primarySection.enrollment?.latest.waitlistedCount
-                }
-                maxWaitlist={
-                  _class.primarySection.enrollment?.latest.maxWaitlist
-                }
-              />
-              <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
+          <div className={styles.row}>
+            <div className={styles.icon}>
+              {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
+            </div>
+            <div className={styles.text}>
+              <p className={styles.heading}>
+                {_class.subject} {_class.courseNumber}
+              </p>
+              <p className={styles.description}>
+                {_class.title ?? _class.course.title}
+              </p>
+              <div className={styles.row}>
+                {/* <AverageGrade
+                  gradeDistribution={_class.course.gradeDistribution}
+                /> */}
+                <Capacity
+                  enrolledCount={
+                    _class.primarySection.enrollment?.latest.enrolledCount
+                  }
+                  maxEnroll={_class.primarySection.enrollment?.latest.maxEnroll}
+                  waitlistedCount={
+                    _class.primarySection.enrollment?.latest.waitlistedCount
+                  }
+                  maxWaitlist={
+                    _class.primarySection.enrollment?.latest.maxWaitlist
+                  }
+                />
+                <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
+              </div>
             </div>
           </div>
+          <IconButton className={styles.delete}>
+            <Xmark/>
+          </IconButton>
         </div>
         {expanded && (
           <div className={styles.group}>

@@ -65,42 +65,54 @@
 
   .header {
     display: flex;
-    cursor: pointer;
-    gap: 12px;
-    align-items: flex-start;
+    justify-content: space-between;
     transition: all 100ms ease-in-out;
 
     &:hover .icon {
       color: var(--heading-color);
     }
 
-    .icon {
-      color: var(--paragraph-color);
-      flex-shrink: 0;
+    .row {
+      display: flex;
+      cursor: pointer;
+      gap: 12px;
+      align-items: flex-start;
+      
+      .icon {
+        color: var(--paragraph-color);
+        flex-shrink: 0;
+      }
+
+      .text {
+        flex-grow: 1;
+        font-size: 14px;
+
+        .heading {
+          font-weight: 700;
+          color: var(--heading-color);
+          margin-bottom: 8px;
+          line-height: 1;
+        }
+
+        .description {
+          color: var(--paragraph-color);
+          line-height: 1.5;
+        }
+
+        .row {
+          display: flex;
+          gap: 12px;
+          margin-top: 12px;
+          align-items: center;
+          line-height: 1;
+        }
+      }
     }
 
-    .text {
-      flex-grow: 1;
-      font-size: 14px;
-
-      .heading {
-        font-weight: 700;
-        color: var(--heading-color);
-        margin-bottom: 8px;
-        line-height: 1;
-      }
-
-      .description {
-        color: var(--paragraph-color);
-        line-height: 1.5;
-      }
-
-      .row {
-        display: flex;
-        gap: 12px;
-        margin-top: 12px;
-        align-items: center;
-        line-height: 1;
+    .delete {
+      color: var(--cancel-accent-color);
+      &:hover {
+        color: var(--cancel-accent-color);
       }
     }
   }

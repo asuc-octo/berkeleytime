@@ -12,6 +12,12 @@
     padding: 0 12px;
   }
 
+  .label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--heading-color);
+  }
+
   .column {
     gap: 16px;
     display: flex;
@@ -40,6 +46,28 @@
         color: var(--heading-color);
         line-height: 1;
       }
+    }
+  }
+
+  .day-select {
+    p {
+      display: inline-flex;
+      color: var(--paragraph-color);
+    }
+    p input {
+      margin-left: 4px;
+      margin-right: 8px;
+    }
+  }
+
+  .time {
+    color: var(--paragraph-color);
+    display: flex;
+    justify-content: space-between;
+    input {
+      margin-left: 10px;
+      width: 45%;
+      display: inline;
     }
   }
 }
