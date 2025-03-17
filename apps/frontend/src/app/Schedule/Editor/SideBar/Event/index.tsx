@@ -1,9 +1,10 @@
 import { ArrowSeparateVertical, Xmark } from "iconoir-react";
 
+import { IconButton } from "@repo/theme";
+
 import { IScheduleEvent } from "@/lib/api";
 
 import styles from "./Event.module.scss";
-import { IconButton } from "@repo/theme";
 
 interface EventProps {
   event: IScheduleEvent;
@@ -25,7 +26,7 @@ export default function Event({ event }: EventProps) {
             </div>
           </div>
           <IconButton className={styles.delete}>
-            <Xmark/>
+            <Xmark />
           </IconButton>
         </div>
       </div>

@@ -1,6 +1,12 @@
 import { useMemo } from "react";
 
-import { ArrowSeparateVertical, ArrowUnionVertical, Xmark } from "iconoir-react";
+import {
+  ArrowSeparateVertical,
+  ArrowUnionVertical,
+  Xmark,
+} from "iconoir-react";
+
+import { IconButton } from "@repo/theme";
 
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
@@ -9,7 +15,6 @@ import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
-import { IconButton } from "@repo/theme";
 
 interface ClassProps {
   expanded: boolean;
@@ -93,7 +98,7 @@ export default function Class({
             </div>
           </div>
           <IconButton className={styles.delete}>
-            <Xmark/>
+            <Xmark />
           </IconButton>
         </div>
         {expanded && (
