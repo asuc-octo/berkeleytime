@@ -29,7 +29,7 @@ export default function CreateScheduleDialog({
   defaultName,
 }: CreateScheduleDialogProps) {
   const [name, setName] = useState(defaultName);
-  const [term, setTerm] = useState<ITerm|null>(null);
+  const [term, setTerm] = useState<ITerm | null>(null);
 
   const [createSchedule] = useCreateSchedule();
 
@@ -108,7 +108,7 @@ export default function CreateScheduleDialog({
                   name: name,
                   year: Number(termString(term).split(" ")[1]),
                   semester: termString(term).split(" ")[0] as Semester,
-                  sessionId: term.sessions[0].id
+                  sessionId: term.sessions[0].id,
                 });
                 if (res.data?.createSchedule._id)
                   navigate(res.data?.createSchedule._id);

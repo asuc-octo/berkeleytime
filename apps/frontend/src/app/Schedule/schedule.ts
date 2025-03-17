@@ -44,7 +44,8 @@ export const getSelectedSections = (schedule?: ISchedule) => {
           _class.primarySection.sectionId === section.sectionId
             ? _class.primarySection
             : _class.sections.find(
-                (currentSection) => currentSection.sectionId === section.sectionId
+                (currentSection) =>
+                  currentSection.sectionId === section.sectionId
               );
 
         return _section ? [...acc, _section] : acc;
