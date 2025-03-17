@@ -35,7 +35,7 @@ export default function CloneDialog({ children }: CloneDialogProps) {
       })),
       events: schedule.events,
       name: `${schedule.name} (copy)`,
-      sessionId: schedule.sessionId
+      sessionId: schedule.sessionId,
     });
 
     if (!data) return;

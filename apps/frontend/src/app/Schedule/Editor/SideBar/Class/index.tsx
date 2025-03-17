@@ -125,7 +125,8 @@ export default function Class({
                 </div>
                 {groups[group]?.map((section) => {
                   const active = selectedSections.some(
-                    (selectedSection) => selectedSection.sectionId === section.sectionId
+                    (selectedSection) =>
+                      selectedSection.sectionId === section.sectionId
                   );
 
                   return (
