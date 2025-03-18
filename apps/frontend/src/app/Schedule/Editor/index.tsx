@@ -77,16 +77,16 @@ export default function Editor() {
 
       if (!section) return;
 
-      setCurrentSection(null);
-
       // Filter out selected sections from the same component
       const selectedSections = selectedClass.selectedSections.filter(
         (selectedSection) => {
+          // return selectedSection.sectionId == section.sectionId
+
           const currentSection = selectedClass.class.sections.find(
             (section) => section.sectionId === selectedSection.sectionId
           );
 
-          return !currentSection || currentSection !== section;
+          return !currentSection || currentSection.component !== section.component || currentSection.sectionId == section.sectionId;
         }
       );
 
