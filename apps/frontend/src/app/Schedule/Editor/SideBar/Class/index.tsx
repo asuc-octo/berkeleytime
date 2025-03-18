@@ -10,12 +10,7 @@ import { IconButton } from "@repo/theme";
 
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import {
-  Component,
-  IClass,
-  ISection,
-  componentMap,
-} from "@/lib/api";
+import { Component, IClass, ISection, componentMap } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
