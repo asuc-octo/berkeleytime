@@ -86,7 +86,11 @@ export default function Editor() {
             (section) => section.sectionId === selectedSection.sectionId
           );
 
-          return !currentSection || currentSection.component !== section.component || currentSection.sectionId == section.sectionId;
+          return (
+            !currentSection ||
+            currentSection.component !== section.component ||
+            currentSection.sectionId == section.sectionId
+          );
         }
       );
 
