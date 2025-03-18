@@ -51,7 +51,7 @@ export default function SideBar({
   onExpandedChange,
   onSortEnd,
   onDeleteClass,
-  onDeleteEvent
+  onDeleteEvent,
 }: SideBarProps) {
   const { schedule, editing } = useSchedule();
 
