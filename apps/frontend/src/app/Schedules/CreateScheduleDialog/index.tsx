@@ -112,7 +112,7 @@ export default function CreateScheduleDialog({
             <div className={styles.row}>
               <label>Name</label>
               <input
-                type="url"
+                type="text"
                 className={styles.input}
                 value={name}
                 onChange={(e) => setName(e.target.value)}

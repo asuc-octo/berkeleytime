@@ -66,6 +66,7 @@ export const READ_SCHEDULE = gql`
       createdBy
       year
       semester
+      sessionId
       term {
         startDate
         endDate

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 import { ArrowRight, Xmark } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,10 @@ export default function CloneDialog({ children }: CloneDialogProps) {
 
   const [createSchedule] = useCreateSchedule();
 
+  const [name, setName] = useState(`${schedule.name} (copy)`);
+
+  console.log(schedule)
+
   const confirm = async () => {
     const { data } = await createSchedule({
       year: schedule.year,
@@ -33,8 +37,11 @@ export default function CloneDialog({ children }: CloneDialogProps) {
         number: _class.class.number,
         sectionIds: _class.selectedSections.map((s) => s.sectionId),
       })),
-      events: schedule.events,
-      name: `${schedule.name} (copy)`,
+      events: schedule.events.map((e) => {
+        const { _id, __typename, ...rest } = (e as any) || {};
+        return rest;
+      }),
+      name: name,
       sessionId: schedule.sessionId,
     });
 
@@ -66,6 +73,12 @@ export default function CloneDialog({ children }: CloneDialogProps) {
               </IconButton>
             </Dialog.Close>
           </div>
+          <input
+            type="text"
+            className={styles.input}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
           <Button onClick={() => confirm()} variant="solid">
             Confirm
             <ArrowRight />
