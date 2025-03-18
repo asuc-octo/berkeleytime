@@ -9,7 +9,7 @@ import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
 import Week from "@/app/Schedule/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-import { ISection, READ_CLASS, ReadClassResponse } from "@/lib/api";
+import { IClass, IScheduleEvent, ISection, READ_CLASS, ReadClassResponse } from "@/lib/api";
 import { addRecentSchedule } from "@/lib/recent";
 
 import { getY } from "../schedule";
@@ -330,6 +330,53 @@ export default function Editor() {
     });
   };
 
+  const handleDeleteEvent = (event: IScheduleEvent) => {
+    updateSchedule(
+      schedule._id,
+      {
+        events: schedule.events.filter((e) => e._id != event._id).map((e) => {
+          const { _id, __typename, ...rest } = (e as any) || {};
+          return rest;
+        })
+      },
+      {
+        optimisticResponse: {
+          updateSchedule: {
+            ...schedule,
+            events: schedule.events.filter((e) => e._id != event._id),
+          }
+        },
+      }
+    );
+  }
+
+  const handleDeleteClass = (_class: IClass) => {
+    updateSchedule(
+      schedule._id,
+      {
+        classes: schedule.classes.filter((c) => c.class.courseId != _class.courseId).map(
+          ({
+            selectedSections,
+            class: { number, subject, courseNumber },
+          }) => ({
+            subject,
+            courseNumber,
+            number,
+            sectionIds: selectedSections.map((s) => s.sectionId),
+          })
+        ),
+      },
+      {
+        optimisticResponse: {
+          updateSchedule: {
+            ...schedule,
+            classes: schedule.classes.filter((c) => c.class.courseId != _class.courseId)
+          },
+        },
+      }
+    );
+  }
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
@@ -394,6 +441,8 @@ export default function Editor() {
           onSectionMouseOver={handleSectionMouseOver}
           onSectionMouseOut={() => setCurrentSection(null)}
           onSortEnd={handleSortEnd}
+          onDeleteClass={handleDeleteClass}
+          onDeleteEvent={handleDeleteEvent}
         />
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (

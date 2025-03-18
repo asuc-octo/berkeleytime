@@ -10,7 +10,7 @@ import { IconButton } from "@repo/theme";
 
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { Component, IClass, ISection, componentMap } from "@/lib/api";
+import { Component, IClass, IScheduleClass, ISection, componentMap } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -34,6 +34,7 @@ interface ClassProps {
     number: string
   ) => void;
   onSectionMouseOut: () => void;
+  onDelete: (cls: IClass) => void;
 }
 
 export default function Class({
@@ -44,6 +45,7 @@ export default function Class({
   onSectionSelect,
   onSectionMouseOver,
   onSectionMouseOut,
+  onDelete
 }: ClassProps) {
   const groups = useMemo(() => {
     const sortedSections = _class.sections.toSorted((a, b) =>
@@ -97,7 +99,7 @@ export default function Class({
               </div>
             </div>
           </div>
-          <IconButton className={styles.delete}>
+          <IconButton className={styles.delete} onClick={() => { onDelete(_class) }}>
             <Xmark />
           </IconButton>
         </div>

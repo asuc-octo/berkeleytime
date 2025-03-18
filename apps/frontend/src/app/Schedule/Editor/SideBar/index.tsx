@@ -7,7 +7,7 @@ import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
 import useSchedule from "@/hooks/useSchedule";
-import { Semester } from "@/lib/api";
+import { IClass, IScheduleEvent, Semester } from "@/lib/api";
 
 import { getUnits } from "../../schedule";
 import EventDialog from "../EventDialog";
@@ -38,6 +38,8 @@ interface SideBarProps {
   ) => void;
   onSectionMouseOut: () => void;
   onExpandedChange: (index: number, expanded: boolean) => void;
+  onDeleteClass: (cls: IClass) => void;
+  onDeleteEvent: (event: IScheduleEvent) => void;
 }
 
 export default function SideBar({
@@ -48,6 +50,8 @@ export default function SideBar({
   onSectionMouseOut,
   onExpandedChange,
   onSortEnd,
+  onDeleteClass,
+  onDeleteEvent
 }: SideBarProps) {
   const { schedule, editing } = useSchedule();
 
@@ -120,7 +124,7 @@ export default function SideBar({
       </div>
       <div className={styles.body} ref={bodyRef}>
         {schedule.events?.map((event, index) => {
-          return <Event key={index} event={event} />;
+          return <Event key={index} event={event} onDelete={onDeleteEvent} />;
         })}
         {schedule.classes.map((selectedClass, index) => {
           return (
@@ -132,6 +136,7 @@ export default function SideBar({
               onSectionSelect={onSectionSelect}
               onSectionMouseOver={onSectionMouseOver}
               onSectionMouseOut={onSectionMouseOut}
+              onDelete={onDeleteClass}
             />
           );
         })}

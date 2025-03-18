@@ -8,9 +8,10 @@ import styles from "./Event.module.scss";
 
 interface EventProps {
   event: IScheduleEvent;
+  onDelete: (event: IScheduleEvent) => void;
 }
 
-export default function Event({ event }: EventProps) {
+export default function Event({ event, onDelete }: EventProps) {
   return (
     <div className={styles.root} data-draggable>
       <div className={styles.border} />
@@ -25,7 +26,7 @@ export default function Event({ event }: EventProps) {
               <p className={styles.description}>{event.description}</p>
             </div>
           </div>
-          <IconButton className={styles.delete}>
+          <IconButton className={styles.delete} onClick={() => { onDelete(event) }}>
             <Xmark />
           </IconButton>
         </div>
