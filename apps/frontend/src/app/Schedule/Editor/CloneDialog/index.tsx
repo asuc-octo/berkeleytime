@@ -25,8 +25,6 @@ export default function CloneDialog({ children }: CloneDialogProps) {
 
   const [name, setName] = useState(`${schedule.name} (copy)`);
 
-  console.log(schedule)
-
   const confirm = async () => {
     const { data } = await createSchedule({
       year: schedule.year,

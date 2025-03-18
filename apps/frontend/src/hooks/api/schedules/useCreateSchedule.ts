@@ -49,7 +49,6 @@ export const useCreateSchedule = () => {
 
   const createSchedule = useCallback(
     async (schedule: IScheduleInput) => {
-      console.log(schedule)
       const mutate = mutation[0];
 
       return await mutate({ variables: { schedule } });

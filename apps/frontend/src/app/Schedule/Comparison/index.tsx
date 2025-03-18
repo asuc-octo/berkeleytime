@@ -15,7 +15,6 @@ import { getSelectedSections, getUnits } from "../schedule";
 import styles from "./Comparison.module.scss";
 
 export default function Comparison() {
-
   const navigate = useNavigate();
 
   const { data: schedules } = useReadSchedules();
@@ -98,23 +97,32 @@ export default function Comparison() {
           {/* Information is redundant -> <p className={styles.paragraph}>{schedule.semester} {schedule.year}</p> */}
         </div>
         <div className={styles.group}>
-          <p className={styles.heading}>{ comparison ? comparison.name : "No schedule selected" }</p>
+          <p className={styles.heading}>
+            {comparison ? comparison.name : "No schedule selected"}
+          </p>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <IconButton>
                 <DataTransferBoth />
               </IconButton>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content style={{width: 250, position: "relative", left: -30}}>
-              { 
-                schedules && (
-                  schedules.map((_schedule) => {
-                    return <DropdownMenu.Item onClick={() => { navigate(`/schedules/${schedule._id}/compare/${_schedule._id}`) }}>
+            <DropdownMenu.Content
+              style={{ width: 250, position: "relative", left: -30 }}
+            >
+              {schedules &&
+                schedules.map((_schedule) => {
+                  return (
+                    <DropdownMenu.Item
+                      onClick={() => {
+                        navigate(
+                          `/schedules/${schedule._id}/compare/${_schedule._id}`
+                        );
+                      }}
+                    >
                       {_schedule.name} - {_schedule.semester} {_schedule.year}
                     </DropdownMenu.Item>
-                  })
-                )
-              }
+                  );
+                })}
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           <Tooltip content="Close">
@@ -129,7 +137,9 @@ export default function Comparison() {
       <div className={styles.body}>
         <div className={styles.panel}>
           <div className={styles.context}>
-            <div className={styles.data}>{schedule.semester} {schedule.year}</div>
+            <div className={styles.data}>
+              {schedule.semester} {schedule.year}
+            </div>
             <div className={styles.data}>
               {schedule.classes.length === 1
                 ? "1 class"
@@ -158,7 +168,9 @@ export default function Comparison() {
         </div>
         <div className={styles.panel}>
           <div className={styles.context}>
-            <div className={styles.data}>{comparison?.semester} {comparison?.year}</div>
+            <div className={styles.data}>
+              {comparison?.semester} {comparison?.year}
+            </div>
             <div className={styles.data}>
               {comparison
                 ? comparison.classes.length === 1
