@@ -100,7 +100,7 @@ export default function Dashboard({
 
   return (
     <div className={styles.root}>
-      <Container size="sm">
+      <Container size="3">
         <div className={styles.header}>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>

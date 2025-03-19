@@ -5,7 +5,7 @@ import { Xmark } from "iconoir-react";
 import moment from "moment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { IconButton } from "@repo/theme";
+import { Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
@@ -132,7 +132,7 @@ export default function Catalog() {
           />
         </div>
       </div>
-      <div className={styles.view}>
+      <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
           <></>
         ) : _class ? (
@@ -151,7 +151,7 @@ export default function Catalog() {
             setOpen={setOpen}
           />
         )}
-      </div>
+      </Flex>
     </div>
   );
 }

@@ -1,9 +1,12 @@
 import { ReactNode, useEffect, useState } from "react";
 
+// https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage
+import { Theme } from "@radix-ui/themes";
+import "@radix-ui/themes/layout.css";
 import { IconoirProvider } from "iconoir-react";
 import { Tooltip } from "radix-ui";
 
-import { Theme, ThemeContext } from "@repo/theme";
+import { ThemeContext, Theme as ThemeType } from "@repo/theme";
 
 import { StackContext } from "../../contexts/StackContext";
 import "./ThemeProvider.scss";
@@ -14,7 +17,7 @@ export interface ThemeProviderProps {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") as Theme
+    () => localStorage.getItem("theme") as ThemeType
   );
 
   useEffect(() => {
@@ -40,7 +43,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       >
         <Tooltip.Provider delayDuration={250}>
           <ThemeContext value={{ theme: theme, setTheme }}>
-            {children}
+            {/* https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage */}
+            <Theme>{children}</Theme>
           </ThemeContext>
         </Tooltip.Provider>
       </IconoirProvider>
