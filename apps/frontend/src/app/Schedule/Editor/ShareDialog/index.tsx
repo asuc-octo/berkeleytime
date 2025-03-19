@@ -9,7 +9,7 @@ import {
   Xmark,
 } from "iconoir-react";
 
-import { Button, Dialog, IconButton } from "@repo/theme";
+import { Button, Dialog, Flex, IconButton } from "@repo/theme";
 
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
@@ -70,26 +70,26 @@ export default function ShareDialog({ children }: ShareDialogProps) {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
-        <Dialog.Card className={styles.content}>
-          <div className={styles.header}>
-            <div className={styles.text}>
-              <Dialog.Title asChild>
-                <p className={styles.title}>Share schedule</p>
-              </Dialog.Title>
-              <Dialog.Description asChild>
-                <p className={styles.description}>
-                  Manage who can view your schedule
-                </p>
-              </Dialog.Description>
-            </div>
-            <Dialog.Close asChild>
-              <IconButton>
-                <Xmark />
-              </IconButton>
-            </Dialog.Close>
-          </div>
-          <div className={styles.column}>
-            <div className={styles.row}>
+        <Dialog.Card>
+          <Flex p="5" direction="column" gap="5">
+            <Flex align="start" gap="5">
+              <Flex direction="column" gap="1" flexGrow="1">
+                <Dialog.Title asChild>
+                  <p className={styles.title}>Share schedule</p>
+                </Dialog.Title>
+                <Dialog.Description asChild>
+                  <p className={styles.description}>
+                    Manage who can view your schedule
+                  </p>
+                </Dialog.Description>
+              </Flex>
+              <Dialog.Close asChild>
+                <IconButton>
+                  <Xmark />
+                </IconButton>
+              </Dialog.Close>
+            </Flex>
+            <Flex gap="4">
               <input
                 readOnly
                 type="url"
@@ -110,7 +110,7 @@ export default function ShareDialog({ children }: ShareDialogProps) {
                   {copied ? "Copied" : "Copy link"}
                 </Button>
               )}
-            </div>
+            </Flex>
             <label htmlFor="public" className={styles.label}>
               <Checkbox.Root
                 className={styles.checkbox}
@@ -127,7 +127,7 @@ export default function ShareDialog({ children }: ShareDialogProps) {
                 Anyone with the link can view
               </span>
             </label>
-          </div>
+          </Flex>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

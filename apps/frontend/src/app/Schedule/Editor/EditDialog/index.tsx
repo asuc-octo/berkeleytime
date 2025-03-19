@@ -3,7 +3,7 @@ import { ReactNode, useMemo, useState } from "react";
 import { ArrowRight, Trash, Xmark } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Dialog, IconButton } from "@repo/theme";
+import { Button, Dialog, Flex, IconButton } from "@repo/theme";
 
 import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
@@ -53,29 +53,29 @@ export default function EditDialog({ children }: EditDialogProps) {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
-        <Dialog.Card className={styles.content}>
-          <div className={styles.header}>
-            <div className={styles.text}>
-              <Dialog.Title asChild>
-                <p className={styles.title}>Edit schedule</p>
-              </Dialog.Title>
-              <Dialog.Description asChild>
-                <p className={styles.description}>
-                  Update or delete the schedule
-                </p>
-              </Dialog.Description>
-            </div>
-            <Button onClick={() => remove()}>
-              <Trash />
-              Delete
-            </Button>
-            <Dialog.Close asChild>
-              <IconButton>
-                <Xmark />
-              </IconButton>
-            </Dialog.Close>
-          </div>
-          <div className={styles.column}>
+        <Dialog.Card>
+          <Flex p="5" direction="column" gap="5">
+            <Flex align="start" gap="5">
+              <Flex direction="column" gap="1" flexGrow="1">
+                <Dialog.Title asChild>
+                  <p className={styles.title}>Edit schedule</p>
+                </Dialog.Title>
+                <Dialog.Description asChild>
+                  <p className={styles.description}>
+                    Update or delete the schedule
+                  </p>
+                </Dialog.Description>
+              </Flex>
+              <Button onClick={() => remove()}>
+                <Trash />
+                Delete
+              </Button>
+              <Dialog.Close asChild>
+                <IconButton>
+                  <Xmark />
+                </IconButton>
+              </Dialog.Close>
+            </Flex>
             <input
               type="text"
               className={styles.input}
@@ -86,7 +86,7 @@ export default function EditDialog({ children }: EditDialogProps) {
               Save
               <ArrowRight />
             </Button>
-          </div>
+          </Flex>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

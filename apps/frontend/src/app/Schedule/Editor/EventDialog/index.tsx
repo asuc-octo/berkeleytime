@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 
 import { ArrowRight, Xmark } from "iconoir-react";
 
-import { Button, Dialog, IconButton } from "@repo/theme";
+import { Button, Dialog, Flex, IconButton } from "@repo/theme";
 
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
@@ -58,6 +58,9 @@ export default function EventDialog({ children }: EventDialogProps) {
         events: schedule.events
           ? [
               ...schedule.events.map((e) => {
+                // TODO: Clean up
+
+                // eslint-disable-next-line
                 const { _id, __typename, ...rest } = (e as any) || {};
                 return rest;
               }),
@@ -85,139 +88,147 @@ export default function EventDialog({ children }: EventDialogProps) {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
-        <Dialog.Card className={styles.content}>
-          <div className={styles.header}>
-            <div className={styles.text}>
-              <Dialog.Title asChild>
-                <p className={styles.title}>Add event</p>
-              </Dialog.Title>
-              <Dialog.Description asChild>
-                <p className={styles.description}>
-                  Insert a custom event in your schedule
+        <Dialog.Card>
+          <Flex p="5" direction="column" gap="5">
+            <Flex align="start" gap="5">
+              <Flex direction="column" gap="1" flexGrow="1">
+                <Dialog.Title asChild>
+                  <p className={styles.title}>Add event</p>
+                </Dialog.Title>
+                <Dialog.Description asChild>
+                  <p className={styles.description}>
+                    Insert a custom event in your schedule
+                  </p>
+                </Dialog.Description>
+              </Flex>
+              <Dialog.Close asChild>
+                <IconButton>
+                  <Xmark />
+                </IconButton>
+              </Dialog.Close>
+            </Flex>
+            <Flex direction="column" gap="2">
+              <label className={styles.label}>Name</label>
+              <input
+                type="text"
+                className={styles.input}
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder="Enter title"
+              />
+            </Flex>
+            <Flex direction="column" gap="2">
+              <label className={styles.label}>Days</label>
+              <div className={styles.daySelect}>
+                <p>
+                  Su
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      days[6] = e.target.checked;
+                      setDays(days);
+                    }}
+                  />
                 </p>
-              </Dialog.Description>
-            </div>
-            <Dialog.Close asChild>
-              <IconButton>
-                <Xmark />
-              </IconButton>
-            </Dialog.Close>
-          </div>
-          <div className={styles.column}>
-            <label className={styles.label}>Name</label>
-            <input
-              type="text"
-              className={styles.input}
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder="Enter title"
-            />
-            <label className={styles.label}>Days</label>
-            <div className={styles.daySelect}>
-              <p>
-                Su
+                <p>
+                  M
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      days[0] = e.target.checked;
+                      setDays(days);
+                    }}
+                  />
+                </p>
+                <p>
+                  Tu
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      days[1] = e.target.checked;
+                      setDays(days);
+                    }}
+                  />
+                </p>
+                <p>
+                  W
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      days[2] = e.target.checked;
+                      setDays(days);
+                    }}
+                  />
+                </p>
+                <p>
+                  Th
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      days[3] = e.target.checked;
+                      setDays(days);
+                    }}
+                  />
+                </p>
+                <p>
+                  F
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      days[4] = e.target.checked;
+                      setDays(days);
+                    }}
+                  />
+                </p>
+                <p>
+                  Sa
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      days[5] = e.target.checked;
+                      setDays(days);
+                    }}
+                  />
+                </p>
+              </div>
+            </Flex>
+            <Flex direction="column" gap="2">
+              <label className={styles.label}>Time</label>
+              <p className={styles.time}>
+                Start time
                 <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    days[6] = e.target.checked;
-                    setDays(days);
-                  }}
+                  type="time"
+                  value={startTime}
+                  min="00:00"
+                  max="23:59"
+                  onChange={(e) => setStartTime(e.target.value)}
                 />
               </p>
-              <p>
-                M
+              <p className={styles.time}>
+                End time{" "}
                 <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    days[0] = e.target.checked;
-                    setDays(days);
-                  }}
+                  type="time"
+                  value={endTime}
+                  min="00:00"
+                  max="23:59"
+                  onChange={(e) => setEndTime(e.target.value)}
                 />
               </p>
-              <p>
-                Tu
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    days[1] = e.target.checked;
-                    setDays(days);
-                  }}
-                />
-              </p>
-              <p>
-                W
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    days[2] = e.target.checked;
-                    setDays(days);
-                  }}
-                />
-              </p>
-              <p>
-                Th
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    days[3] = e.target.checked;
-                    setDays(days);
-                  }}
-                />
-              </p>
-              <p>
-                F
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    days[4] = e.target.checked;
-                    setDays(days);
-                  }}
-                />
-              </p>
-              <p>
-                Sa
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    days[5] = e.target.checked;
-                    setDays(days);
-                  }}
-                />
-              </p>
-            </div>
-            <label className={styles.label}>Time</label>
-            <p className={styles.time}>
-              Start time
+            </Flex>
+            <Flex direction="column" gap="2">
+              <label className={styles.label}>Description</label>
               <input
-                type="time"
-                value={startTime}
-                min="00:00"
-                max="23:59"
-                onChange={(e) => setStartTime(e.target.value)}
+                type="text"
+                className={styles.input}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
               />
-            </p>
-            <p className={styles.time}>
-              End time{" "}
-              <input
-                type="time"
-                value={endTime}
-                min="00:00"
-                max="23:59"
-                onChange={(e) => setEndTime(e.target.value)}
-              />
-            </p>
-            <label className={styles.label}>Description</label>
-            <input
-              type="text"
-              className={styles.input}
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-            />
+            </Flex>
             <Button onClick={() => save()}>
               Save
               <ArrowRight />
             </Button>
-          </div>
+          </Flex>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

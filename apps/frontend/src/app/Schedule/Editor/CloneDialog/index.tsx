@@ -3,7 +3,7 @@ import { ReactNode, useState } from "react";
 import { ArrowRight, Xmark } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Dialog, IconButton } from "@repo/theme";
+import { Button, Dialog, Flex, IconButton } from "@repo/theme";
 
 import { useCreateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
@@ -36,7 +36,11 @@ export default function CloneDialog({ children }: CloneDialogProps) {
         sectionIds: _class.selectedSections.map((s) => s.sectionId),
       })),
       events: schedule.events.map((e) => {
+        // TODO: Clean up
+
+        // eslint-disable-next-line
         const { _id, __typename, ...rest } = (e as any) || {};
+
         return rest;
       }),
       name: name,
@@ -53,34 +57,36 @@ export default function CloneDialog({ children }: CloneDialogProps) {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
-        <Dialog.Card className={styles.content}>
-          <div className={styles.header}>
-            <div className={styles.text}>
-              <Dialog.Title asChild>
-                <p className={styles.title}>Clone schedule</p>
-              </Dialog.Title>
-              <Dialog.Description asChild>
-                <p className={styles.description}>
-                  Create a copy of this schedule
-                </p>
-              </Dialog.Description>
-            </div>
-            <Dialog.Close asChild>
-              <IconButton>
-                <Xmark />
-              </IconButton>
-            </Dialog.Close>
-          </div>
-          <input
-            type="text"
-            className={styles.input}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Button onClick={() => confirm()} variant="solid">
-            Confirm
-            <ArrowRight />
-          </Button>
+        <Dialog.Card>
+          <Flex p="5" direction="column" gap="5">
+            <Flex align="start" gap="5">
+              <Flex direction="column" gap="1" flexGrow="1">
+                <Dialog.Title asChild>
+                  <p className={styles.title}>Clone schedule</p>
+                </Dialog.Title>
+                <Dialog.Description asChild>
+                  <p className={styles.description}>
+                    Create a copy of this schedule
+                  </p>
+                </Dialog.Description>
+              </Flex>
+              <Dialog.Close asChild>
+                <IconButton>
+                  <Xmark />
+                </IconButton>
+              </Dialog.Close>
+            </Flex>
+            <input
+              type="text"
+              className={styles.input}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <Button onClick={() => confirm()} variant="solid">
+              Confirm
+              <ArrowRight />
+            </Button>
+          </Flex>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

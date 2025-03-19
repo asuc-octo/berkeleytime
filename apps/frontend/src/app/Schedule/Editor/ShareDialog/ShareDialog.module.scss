@@ -1,77 +1,47 @@
-.content {
-  padding: 24px;
+.input {
+  flex-grow: 1;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0 12px;
+}
+
+.label {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  align-items: center;
+  gap: 12px;
+}
 
-  .row {
-    display: flex;
-    gap: 12px;
+.checkbox {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
 
-    .input {
-      flex-grow: 1;
-      height: 32px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      padding: 0 12px;
-    }
+  &[data-state="checked"] {
+    background-color: var(--blue-500);
+    color: white;
   }
 
-  .column {
-    gap: 16px;
-    display: flex;
-    flex-direction: column;
+  &[data-state="unchecked"] {
+    border: 2px solid var(--paragraph-color);
   }
 
-  .label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  &:hover:not([data-state="checked"]) {
+    border-color: var(--heading-color);
   }
+}
 
-  .checkbox {
-    width: 16px;
-    height: 16px;
-    display: grid;
-    place-items: center;
-    border-radius: 4px;
+.description {
+  font-size: 14px;
+  color: var(--paragraph-color);
+  line-height: 1;
+}
 
-    &[data-state="checked"] {
-      background-color: var(--blue-500);
-      color: white;
-    }
-
-    &[data-state="unchecked"] {
-      border: 2px solid var(--paragraph-color);
-    }
-
-    &:hover:not([data-state="checked"]) {
-      border-color: var(--heading-color);
-    }
-  }
-
-  .description {
-    font-size: 14px;
-    color: var(--paragraph-color);
-    line-height: 1;
-  }
-
-  .header {
-    display: flex;
-    gap: 16px;
-
-    .text {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-
-      .title {
-        font-size: 16px;
-        font-weight: 500;
-        color: var(--heading-color);
-        line-height: 1;
-      }
-    }
-  }
+.title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--heading-color);
+  line-height: 1;
 }
