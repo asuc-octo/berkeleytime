@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import { Theme } from "@radix-ui/themes";
 import classNames from "classnames";
 import { Dialog as Primitive } from "radix-ui";
 
@@ -29,14 +30,17 @@ function Content({ className, style, ...props }: Primitive.DialogContentProps) {
 
   return (
     <StackContext value={stack}>
-      <Primitive.Content
-        {...props}
-        className={classNames(styles.content, className)}
-        style={{
-          ...style,
-          zIndex: stack,
-        }}
-      />
+      {/* https://github.com/radix-ui/themes/issues/135 */}
+      <Theme>
+        <Primitive.Content
+          {...props}
+          className={classNames(styles.content, className)}
+          style={{
+            ...style,
+            zIndex: stack,
+          }}
+        />
+      </Theme>
     </StackContext>
   );
 }
