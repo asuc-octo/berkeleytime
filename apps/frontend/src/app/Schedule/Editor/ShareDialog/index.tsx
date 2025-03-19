@@ -1,20 +1,20 @@
 import { ReactNode, useMemo, useRef, useState } from "react";
 
-import * as Checkbox from "@radix-ui/react-checkbox";
-import {
-  Check,
-  ClipboardCheck,
-  PasteClipboard,
-  ShareIos,
-  Xmark,
-} from "iconoir-react";
+import { ClipboardCheck, PasteClipboard, ShareIos, Xmark } from "iconoir-react";
 
-import { Button, Dialog, Flex, IconButton } from "@repo/theme";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  Flex,
+  Heading,
+  IconButton,
+  Input,
+  Text,
+} from "@repo/theme";
 
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-
-import styles from "./ShareDialog.module.scss";
 
 interface ShareDialogProps {
   children: ReactNode;
@@ -71,16 +71,14 @@ export default function ShareDialog({ children }: ShareDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="5" direction="column" gap="5">
-            <Flex align="start" gap="5">
+          <Flex p="4" direction="column" gap="4">
+            <Flex align="start" gap="4">
               <Flex direction="column" gap="1" flexGrow="1">
                 <Dialog.Title asChild>
-                  <p className={styles.title}>Share schedule</p>
+                  <Heading>Share schedule</Heading>
                 </Dialog.Title>
                 <Dialog.Description asChild>
-                  <p className={styles.description}>
-                    Manage who can view your schedule
-                  </p>
+                  <Text>Manage who can view your schedule</Text>
                 </Dialog.Description>
               </Flex>
               <Dialog.Close asChild>
@@ -89,44 +87,39 @@ export default function ShareDialog({ children }: ShareDialogProps) {
                 </IconButton>
               </Dialog.Close>
             </Flex>
-            <Flex gap="4">
-              <input
-                readOnly
-                type="url"
-                className={styles.input}
-                value={window.location.origin + window.location.pathname}
-              />
-              {canShare ? (
-                <Button
-                  variant="solid"
-                  onClick={() => navigator.share(content)}
-                >
-                  Share
-                  <ShareIos />
-                </Button>
-              ) : (
-                <Button variant="solid" onClick={() => copy()}>
-                  {copied ? <ClipboardCheck /> : <PasteClipboard />}
-                  {copied ? "Copied" : "Copy link"}
-                </Button>
-              )}
+            <Flex direction="column" gap="3">
+              <Flex gap="3">
+                <Input
+                  readOnly
+                  type="url"
+                  value={window.location.origin + window.location.pathname}
+                />
+                {canShare ? (
+                  <Button
+                    variant="solid"
+                    onClick={() => navigator.share(content)}
+                  >
+                    Share
+                    <ShareIos />
+                  </Button>
+                ) : (
+                  <Button variant="solid" onClick={() => copy()}>
+                    {copied ? <ClipboardCheck /> : <PasteClipboard />}
+                    {copied ? "Copied" : "Copy link"}
+                  </Button>
+                )}
+              </Flex>
+              <label>
+                <Flex align="center" gap="3">
+                  <Checkbox
+                    checked={schedule.public}
+                    onCheckedChange={handleCheckedChange}
+                    disabled={loading}
+                  />
+                  <Text as="span">Anyone with the link can view</Text>
+                </Flex>
+              </label>
             </Flex>
-            <label htmlFor="public" className={styles.label}>
-              <Checkbox.Root
-                className={styles.checkbox}
-                id="public"
-                checked={schedule.public}
-                onCheckedChange={handleCheckedChange}
-                disabled={loading}
-              >
-                <Checkbox.Indicator>
-                  <Check width={12} height={12} />
-                </Checkbox.Indicator>
-              </Checkbox.Root>
-              <span className={styles.description}>
-                Anyone with the link can view
-              </span>
-            </label>
           </Flex>
         </Dialog.Card>
       </Dialog.Portal>

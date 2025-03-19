@@ -3,12 +3,20 @@ import { ReactNode, useState } from "react";
 import { ArrowRight, Xmark } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Dialog, Flex, IconButton } from "@repo/theme";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  Flex,
+  Heading,
+  IconButton,
+  Input,
+  LoadingIndicator,
+  Text,
+} from "@repo/theme";
 
 import { useCreateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-
-import styles from "./CloneDialog.module.scss";
 
 interface CloneDialogProps {
   children: ReactNode;
@@ -24,8 +32,14 @@ export default function CloneDialog({ children }: CloneDialogProps) {
   const [createSchedule] = useCreateSchedule();
 
   const [name, setName] = useState(`${schedule.name} (copy)`);
+  const [events, setEvents] = useState(true);
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const confirm = async () => {
+    setLoading(true);
+
     const { data } = await createSchedule({
       year: schedule.year,
       semester: schedule.semester,
@@ -35,56 +49,82 @@ export default function CloneDialog({ children }: CloneDialogProps) {
         number: _class.class.number,
         sectionIds: _class.selectedSections.map((s) => s.sectionId),
       })),
-      events: schedule.events.map((e) => {
-        // TODO: Clean up
+      events: events
+        ? schedule.events.map((e) => {
+            // TODO: Clean up
 
-        // eslint-disable-next-line
-        const { _id, __typename, ...rest } = (e as any) || {};
+            // eslint-disable-next-line
+            const { _id, __typename, ...rest } = (e as any) || {};
 
-        return rest;
-      }),
+            return rest;
+          })
+        : [],
       name: name,
       sessionId: schedule.sessionId,
     });
 
+    setLoading(false);
+
     if (!data) return;
 
-    navigate(`/schedules/${data?.createSchedule._id}`);
+    navigate(`/schedules/${data.createSchedule._id}`);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open && loading) return;
+
+    setOpen(open);
   };
 
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="5" direction="column" gap="5">
-            <Flex align="start" gap="5">
+          <Flex p="4" direction="column" gap="4">
+            <Flex align="start" gap="4">
               <Flex direction="column" gap="1" flexGrow="1">
                 <Dialog.Title asChild>
-                  <p className={styles.title}>Clone schedule</p>
+                  <Heading>Clone schedule</Heading>
                 </Dialog.Title>
                 <Dialog.Description asChild>
-                  <p className={styles.description}>
-                    Create a copy of this schedule
-                  </p>
+                  <Text>Create a copy of this schedule</Text>
                 </Dialog.Description>
               </Flex>
               <Dialog.Close asChild>
-                <IconButton>
+                <IconButton disabled={loading}>
                   <Xmark />
                 </IconButton>
               </Dialog.Close>
             </Flex>
-            <input
-              type="text"
-              className={styles.input}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <Button onClick={() => confirm()} variant="solid">
+            <Flex direction="column" gap="3">
+              <Input
+                placeholder="Schedule name"
+                value={name}
+                disabled={loading}
+                onChange={(event) => setName(event.target.value)}
+              />
+              <label>
+                <Flex align="center" gap="3">
+                  <Checkbox
+                    disabled={loading}
+                    checked={events}
+                    onCheckedChange={(value) => setEvents(value as boolean)}
+                  />
+                  <Text as="span">Include custom events</Text>
+                </Flex>
+              </label>
+            </Flex>
+            <Button
+              onClick={() => confirm()}
+              variant="solid"
+              disabled={loading}
+            >
               Confirm
-              <ArrowRight />
+              <LoadingIndicator loading={loading}>
+                <ArrowRight />
+              </LoadingIndicator>
             </Button>
           </Flex>
         </Dialog.Card>

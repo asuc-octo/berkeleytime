@@ -2,7 +2,16 @@ import { ReactNode, useState } from "react";
 
 import { ArrowRight, Xmark } from "iconoir-react";
 
-import { Button, Dialog, Flex, IconButton } from "@repo/theme";
+import {
+  Button,
+  Dialog,
+  Flex,
+  Heading,
+  IconButton,
+  Input,
+  Label,
+  Text,
+} from "@repo/theme";
 
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
@@ -22,7 +31,7 @@ export default function EventDialog({ children }: EventDialogProps) {
   const [updateSchedule] = useUpdateSchedule();
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("Custom event");
+  const [description, setDescription] = useState("");
   const [startTime, setStartTime] = useState("11:30");
   const [endTime, setEndTime] = useState("15:50");
   const [days, setDays] = useState([
@@ -89,16 +98,14 @@ export default function EventDialog({ children }: EventDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="5" direction="column" gap="5">
-            <Flex align="start" gap="5">
+          <Flex p="4" direction="column" gap="4">
+            <Flex align="start" gap="4">
               <Flex direction="column" gap="1" flexGrow="1">
                 <Dialog.Title asChild>
-                  <p className={styles.title}>Add event</p>
+                  <Heading>Add a custom event</Heading>
                 </Dialog.Title>
                 <Dialog.Description asChild>
-                  <p className={styles.description}>
-                    Insert a custom event in your schedule
-                  </p>
+                  <Text>Insert a custom event in your schedule</Text>
                 </Dialog.Description>
               </Flex>
               <Dialog.Close asChild>
@@ -108,17 +115,16 @@ export default function EventDialog({ children }: EventDialogProps) {
               </Dialog.Close>
             </Flex>
             <Flex direction="column" gap="2">
-              <label className={styles.label}>Name</label>
-              <input
+              <Label>Name</Label>
+              <Input
                 type="text"
-                className={styles.input}
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
-                placeholder="Enter title"
+                placeholder="Enter a name"
               />
             </Flex>
             <Flex direction="column" gap="2">
-              <label className={styles.label}>Days</label>
+              <Label>Days</Label>
               <div className={styles.daySelect}>
                 <p>
                   Su
@@ -193,7 +199,7 @@ export default function EventDialog({ children }: EventDialogProps) {
               </div>
             </Flex>
             <Flex direction="column" gap="2">
-              <label className={styles.label}>Time</label>
+              <Label>Time</Label>
               <p className={styles.time}>
                 Start time
                 <input
@@ -216,16 +222,16 @@ export default function EventDialog({ children }: EventDialogProps) {
               </p>
             </Flex>
             <Flex direction="column" gap="2">
-              <label className={styles.label}>Description</label>
-              <input
+              <Label>Description</Label>
+              <Input
                 type="text"
-                className={styles.input}
+                placeholder="Enter a description"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
               />
             </Flex>
-            <Button onClick={() => save()}>
-              Save
+            <Button variant="solid" onClick={() => save()}>
+              Add
               <ArrowRight />
             </Button>
           </Flex>

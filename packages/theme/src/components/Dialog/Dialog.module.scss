@@ -51,10 +51,6 @@
   &[data-state="closed"] {
     animation: jumpOut 150ms ease-out;
   }
-
-  input {
-    color: var(--paragraph-color);
-  }
 }
 
 @keyframes jumpIn {

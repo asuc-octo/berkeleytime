@@ -3,13 +3,19 @@ import { ReactNode, useMemo, useState } from "react";
 import { ArrowRight, Trash, Xmark } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Dialog, Flex, IconButton } from "@repo/theme";
+import {
+  Button,
+  Dialog,
+  Flex,
+  Heading,
+  IconButton,
+  Input,
+  Text,
+} from "@repo/theme";
 
 import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
 import { removeRecentSchedule } from "@/lib/recent";
-
-import styles from "./EditDialog.module.scss";
 
 interface EditDialogProps {
   children: ReactNode;
@@ -21,10 +27,12 @@ interface EditDialogProps {
 export default function EditDialog({ children }: EditDialogProps) {
   const { schedule } = useSchedule();
   const [updateSchedule, { loading }] = useUpdateSchedule();
-  const [deleteSchedule] = useDeleteSchedule();
+  const [deleteSchedule, { loading: pending }] = useDeleteSchedule();
   const navigate = useNavigate();
 
   const [name, setName] = useState(schedule.name);
+
+  const [open, setOpen] = useState(false);
 
   const saved = useMemo(() => schedule.name === name.trim(), [schedule, name]);
 
@@ -40,6 +48,7 @@ export default function EditDialog({ children }: EditDialogProps) {
     );
   };
 
+  // TODO: Confirmation dialog
   const remove = async () => {
     removeRecentSchedule(schedule);
 
@@ -48,41 +57,50 @@ export default function EditDialog({ children }: EditDialogProps) {
     navigate("/schedules");
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open && (loading || pending)) return;
+
+    setOpen(open);
+  };
+
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="5" direction="column" gap="5">
-            <Flex align="start" gap="5">
+          <Flex p="4" direction="column" gap="4">
+            <Flex align="start" gap="4">
               <Flex direction="column" gap="1" flexGrow="1">
                 <Dialog.Title asChild>
-                  <p className={styles.title}>Edit schedule</p>
+                  <Heading>Edit schedule</Heading>
                 </Dialog.Title>
                 <Dialog.Description asChild>
-                  <p className={styles.description}>
-                    Update or delete the schedule
-                  </p>
+                  <Text>Update or delete the schedule</Text>
                 </Dialog.Description>
               </Flex>
-              <Button onClick={() => remove()}>
-                <Trash />
-                Delete
-              </Button>
-              <Dialog.Close asChild>
-                <IconButton>
-                  <Xmark />
-                </IconButton>
-              </Dialog.Close>
+              <Flex gap="3">
+                <Button onClick={() => remove()} disabled={loading || pending}>
+                  <Trash />
+                  Delete
+                </Button>
+                <Dialog.Close asChild>
+                  <IconButton disabled={loading || pending}>
+                    <Xmark />
+                  </IconButton>
+                </Dialog.Close>
+              </Flex>
             </Flex>
-            <input
-              type="text"
-              className={styles.input}
+            <Input
+              disabled={loading || pending}
               value={name}
               onChange={(event) => setName(event.target.value)}
             />
-            <Button disabled={saved || loading} onClick={() => save()}>
+            <Button
+              variant="solid"
+              disabled={saved || loading || pending}
+              onClick={() => save()}
+            >
               Save
               <ArrowRight />
             </Button>
