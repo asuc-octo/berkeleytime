@@ -1,3 +1,5 @@
+import { ComponentPropsWithRef } from "react";
+
 import { ArrowRight } from "iconoir-react";
 
 import AverageGrade from "@/components/AverageGrade";
@@ -11,9 +13,12 @@ interface ClassProps {
   class: IClass;
 }
 
-export default function ClassCard({ class: data }: ClassProps) {
+export default function ClassCard({
+  class: data,
+  ...props
+}: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   return (
-    <div className={styles.root}>
+    <div className={styles.root} {...props}>
       <div className={styles.body}>
         <p className={styles.heading}>
           {data.subject} {data.courseNumber} #{data.number}
