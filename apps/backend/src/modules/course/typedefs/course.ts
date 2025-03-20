@@ -7,6 +7,8 @@ export default gql`
   type Query {
     course(subject: String!, number: CourseNumber!): Course
     courses: [Course!]!
+
+    # TODO: Add semantic search query
   }
 
   type Course {
