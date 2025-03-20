@@ -3,18 +3,6 @@ networks:
   bt:
     name: bt
 services:
-  # datapuller:
-  #   build:
-  #     context: .
-  #     target: datapuller-dev
-  #   depends_on:
-  #     - mongodb
-  #   networks:
-  #     - bt
-  #   restart: always
-  #   volumes:
-  #     - ./apps/datapuller/src:/datapuller/apps/datapuller/src
-  #     - ./.env:/datapuller/apps/datapuller/.env
   backend:
     build:
       context: .
@@ -40,14 +28,22 @@ services:
       - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/frontend/public:/frontend/apps/frontend/public
   mongodb:
-    image: mongo:5
+    image: mongo:7.0.5
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     networks:
       - bt
     ports:
       - 27017:27017
-    restart: always
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017',priority:1}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
     volumes:
-      - ./db:/data/db
+      - ./data/mongodb/db:/data/db
+      - ./data/mongodb/configdb:/data/configdb
   nginx:
     depends_on:
       - backend
@@ -61,9 +57,9 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
   redis:
-    image: redis:6
+    image: redis:7.2.4
     ports:
       - 6379:6379
-    restart: always
     networks:
       - bt
+    restart: always

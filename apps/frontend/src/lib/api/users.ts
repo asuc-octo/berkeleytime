@@ -5,6 +5,7 @@ import { ICourse } from "./courses";
 import { Semester } from "./terms";
 
 export interface IUser {
+  _id: string;
   email: string;
   student: boolean;
   bookmarkedCourses: ICourse[];
@@ -18,6 +19,7 @@ export interface ReadUserResponse {
 export const READ_USER = gql`
   query GetUser {
     user {
+      _id
       email
       student
       bookmarkedCourses {
@@ -32,6 +34,7 @@ export const READ_USER = gql`
         courseNumber
         year
         semester
+        sessionId
       }
     }
   }
@@ -48,6 +51,7 @@ export interface IBookmarkedClassInput {
   courseNumber: string;
   year: number;
   semester: Semester;
+  sessionId: string | null;
 }
 
 export interface IUserInput {
@@ -76,6 +80,7 @@ export const UPDATE_USER = gql`
         courseNumber
         year
         semester
+        sessionId
       }
     }
   }

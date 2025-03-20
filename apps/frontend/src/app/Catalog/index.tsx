@@ -2,9 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { Xmark } from "iconoir-react";
+import moment from "moment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { IconButton } from "@repo/theme";
+import { Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
@@ -47,14 +48,21 @@ export default function Catalog() {
   const term = useMemo(() => {
     if (!terms) return null;
 
-    const currentTerm = terms?.find(
+    // Default to the current term
+    const currentTerm = terms.find(
       (term) => term.temporalPosition === TemporalPosition.Current
     );
 
-    // Default to the current term
+    // Fall back to the next term when the current term has ended
+    const nextTerm = terms
+      .filter((term) => term.startDate)
+      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
+      .find((term) => term.temporalPosition === TemporalPosition.Future);
+
     return (
       terms?.find((term) => term.year === year && term.semester === semester) ??
-      currentTerm
+      currentTerm ??
+      nextTerm
     );
   }, [terms, year, semester]);
 
@@ -94,7 +102,7 @@ export default function Catalog() {
   }
 
   // TODO: Error state
-  if (!term) {
+  if (!terms || !term) {
     return <></>;
   }
 
@@ -124,7 +132,7 @@ export default function Catalog() {
           />
         </div>
       </div>
-      <div className={styles.view}>
+      <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
           <></>
         ) : _class ? (
@@ -136,12 +144,14 @@ export default function Catalog() {
           />
         ) : (
           <Dashboard
+            term={term}
+            terms={terms}
             expanded={expanded}
             setExpanded={setExpanded}
             setOpen={setOpen}
           />
         )}
-      </div>
+      </Flex>
     </div>
   );
 }

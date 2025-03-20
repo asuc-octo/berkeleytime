@@ -1,82 +1,100 @@
-import { ClassModel, DecalModel, SectionModel } from "@repo/common";
-
-
+import {
+  ClassModel,
+  DecalModel,
+  IClassItem,
+  ISectionItem,
+  SectionModel,
+} from "@repo/common";
 
 import { formatClass, formatDecalInfo, formatSection } from "./formatter";
-
 
 export const getClass = async (
   year: number,
   semester: string,
+  sessionId: string,
   subject: string,
   courseNumber: string,
-  classNumber: string
+  number: string
 ) => {
   const _class = await ClassModel.findOne({
-    "course.subjectArea.code": subject,
-    "course.catalogNumber.formatted": courseNumber,
-    "session.term.name": `${year} ${semester}`,
-    number: classNumber,
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
+    subject,
+    courseNumber,
+    number,
   }).lean();
+
+  console.log(await ClassModel.countDocuments({}));
 
   if (!_class) return null;
 
-  return formatClass(_class);
+  return formatClass(_class as IClassItem);
 };
 
 export const getSecondarySections = async (
   year: number,
   semester: string,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string
 ) => {
   const sections = await SectionModel.find({
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": courseNumber,
-    "class.session.term.name": `${year} ${semester}`,
-    "class.number": { $regex: `^(${number[number.length - 1]}|999)` },
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
+    subject,
+    courseNumber,
+    number: { $regex: `^(${number[number.length - 1]}|999)` },
   }).lean();
 
-  return sections.map(formatSection);
+  return sections.map((section) => formatSection(section as ISectionItem));
 };
 
 export const getPrimarySection = async (
   year: number,
   semester: string,
-  subject: string,
-  courseNumber: string,
-  classNumber: string
-) => {
-  const section = await SectionModel.findOne({
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": courseNumber,
-    "class.session.term.name": `${year} ${semester}`,
-    "class.number": classNumber,
-  }).lean();
-
-  if (!section) return null;
-
-  return formatSection(section);
-};
-
-export const getSection = async (
-  year: number,
-  semester: string,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string
 ) => {
   const section = await SectionModel.findOne({
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": courseNumber,
-    "class.session.term.name": `${year} ${semester}`,
-    number: number,
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
+    subject,
+    courseNumber,
+    number,
+    primary: true,
   }).lean();
 
   if (!section) return null;
 
-  return formatSection(section);
+  return formatSection(section as ISectionItem);
+};
+
+export const getSection = async (
+  year: number,
+  semester: string,
+  sessionId: string,
+  subject: string,
+  courseNumber: string,
+  number: string
+) => {
+  const section = await SectionModel.findOne({
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
+    subject,
+    courseNumber,
+    number,
+  }).lean();
+
+  if (!section) return null;
+
+  return formatSection(section as ISectionItem);
 };
 
 export const getDecalInfo = async (

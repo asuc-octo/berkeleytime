@@ -34,4 +34,5 @@ jobs:
       version: "1.0.0"
       values: |
         host: stanfurdtime.com
+      host: stanfurdtime.com
     secrets: inherit

@@ -15,6 +15,11 @@ interface CalendarProps {
   term: ITerm;
 }
 
+function rotateRight<T>(arr: T[]): T[] {
+  if (arr.length === 0) return arr;
+  return [arr[arr.length - 1], ...arr.slice(0, arr.length - 1)];
+}
+
 export default function Calendar({
   selectedSections,
   currentSection,
@@ -48,7 +53,7 @@ export default function Calendar({
           exams,
           subject,
           courseNumber: number,
-          ccn,
+          sectionId,
         } = section;
 
         for (const meeting of meetings) {
@@ -59,7 +64,7 @@ export default function Calendar({
             endDate,
             subject,
             number,
-            active: currentSection?.ccn === ccn,
+            active: currentSection?.sectionId === sectionId,
             days,
             startTime,
             endTime,
@@ -84,7 +89,7 @@ export default function Calendar({
             date,
             subject: subject,
             number: number,
-            active: currentSection?.ccn === ccn,
+            active: currentSection?.sectionId === sectionId,
             startTime,
             endTime,
             startDate,
@@ -161,7 +166,7 @@ export default function Calendar({
           return (
             <Week
               key={index}
-              days={days}
+              days={rotateRight(days)}
               finals={index === 18}
               dead={index === 17}
               first={first}

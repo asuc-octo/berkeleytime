@@ -57,7 +57,10 @@ export const getFilteredClasses = (
   return classes.reduce(
     (acc, _class) => {
       // Filter by open
-      if (currentOpen && !_class.primarySection.open) {
+      if (
+        currentOpen &&
+        _class.primarySection.enrollment?.latest.status !== "O"
+      ) {
         acc.excludedClasses.push(_class);
 
         return acc;

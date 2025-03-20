@@ -1,4 +1,23 @@
-import { ISchedule, ISection } from "@/lib/api";
+import { ISchedule, IScheduleEvent, ISection } from "@/lib/api";
+
+interface BaseEvent {
+  days: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];
+  startTime: string;
+  endTime: string;
+  id: string;
+}
+
+interface SectionEvent extends BaseEvent {
+  type: "section";
+  section: ISection;
+}
+
+interface CustomEvent extends BaseEvent {
+  type: "custom";
+  event: IScheduleEvent;
+}
+
+export type ScheduleEvent = SectionEvent | CustomEvent;
 
 const defaultUnits = [0, 0];
 
@@ -22,10 +41,11 @@ export const getSelectedSections = (schedule?: ISchedule) => {
     schedule?.classes.flatMap(({ selectedSections, class: _class }) =>
       selectedSections.reduce((acc, section) => {
         const _section =
-          _class.primarySection.ccn === section
+          _class.primarySection.sectionId === section.sectionId
             ? _class.primarySection
             : _class.sections.find(
-                (currentSection) => currentSection.ccn === section
+                (currentSection) =>
+                  currentSection.sectionId === section.sectionId
               );
 
         return _section ? [...acc, _section] : acc;

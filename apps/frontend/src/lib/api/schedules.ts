@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { IClass } from "../api";
+import { IClass, ISection } from "../api";
 import { ITerm, Semester } from "./terms";
 
 export type ScheduleIdentifier = string & {
@@ -9,18 +9,19 @@ export type ScheduleIdentifier = string & {
 
 export interface IScheduleClass {
   class: IClass;
-  selectedSections: string[];
+  selectedSections: ISection[];
 }
 
 export interface IScheduleClassInput {
   subject: string;
   courseNumber: string;
   number: string;
-  sections: string[];
+  sectionIds: string[];
 }
 
 export interface IScheduleEvent {
   startTime: string;
+  _id: string;
   endTime: string;
   title: string;
   location?: string;
@@ -32,6 +33,7 @@ export interface IScheduleInput {
   name: string;
   year: number;
   semester: Semester;
+  sessionId: any;
   classes?: IScheduleClassInput[];
   events?: IScheduleEvent[];
   public?: boolean;
@@ -40,15 +42,15 @@ export interface IScheduleInput {
 export interface ISchedule {
   __typename: "Schedule";
   _id: ScheduleIdentifier;
+  public: boolean;
   name: string;
   classes: IScheduleClass[];
   events: IScheduleEvent[];
   createdBy: string;
-  beginDate: string;
-  endDate: string;
   term: ITerm;
   year: number;
   semester: Semester;
+  sessionId: string;
 }
 
 export interface ReadScheduleResponse {
@@ -64,33 +66,47 @@ export const READ_SCHEDULE = gql`
       createdBy
       year
       semester
+      sessionId
       term {
         startDate
         endDate
       }
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+      }
       classes {
         class {
           subject
-          unitsMax
-          unitsMin
           courseNumber
           number
+          unitsMax
+          unitsMin
           course {
             title
           }
           primarySection {
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
             number
             startDate
             endDate
-            ccn
             component
-            enrollCount
-            enrollMax
-            waitlistCount
-            waitlistMax
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -103,25 +119,30 @@ export const READ_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime
             }
           }
           sections {
-            number
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
-            ccn
-            component
-            enrollCount
+            number
             startDate
             endDate
-            enrollMax
-            waitlistCount
-            waitlistMax
+            component
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -134,14 +155,16 @@ export const READ_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime
             }
           }
         }
-        selectedSections
+        selectedSections {
+          sectionId
+        }
       }
     }
   }
@@ -164,29 +187,42 @@ export const UPDATE_SCHEDULE = gql`
         startDate
         endDate
       }
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+      }
       classes {
         class {
           subject
-          unitsMax
-          unitsMin
           courseNumber
           number
+          unitsMax
+          unitsMin
           course {
             title
           }
           primarySection {
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
             number
             startDate
             endDate
-            ccn
             component
-            enrollCount
-            enrollMax
-            waitlistCount
-            waitlistMax
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -199,25 +235,30 @@ export const UPDATE_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime
             }
           }
           sections {
-            number
+            sectionId
+            subject
             courseNumber
             classNumber
-            subject
-            ccn
-            component
-            enrollCount
+            number
             startDate
             endDate
-            enrollMax
-            waitlistCount
-            waitlistMax
+            component
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
             meetings {
               days
               location
@@ -230,14 +271,16 @@ export const UPDATE_SCHEDULE = gql`
             }
             exams {
               date
-              final
+              type
               location
               startTime
               endTime
             }
           }
         }
-        selectedSections
+        selectedSections {
+          sectionId
+        }
       }
     }
   }
@@ -266,13 +309,22 @@ export const CREATE_SCHEDULE = gql`
       year
       createdBy
       semester
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+      }
+      sessionId
       classes {
         class {
           subject
           courseNumber
           number
         }
-        selectedSections
+        # selectedSections
       }
     }
   }
@@ -289,13 +341,14 @@ export const READ_SCHEDULES = gql`
       name
       year
       semester
+      sessionId
       classes {
         class {
           subject
           courseNumber
           number
         }
-        selectedSections
+        # selectedSections
       }
     }
   }

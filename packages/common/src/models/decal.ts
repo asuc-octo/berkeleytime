@@ -1,7 +1,5 @@
 import mongoose, { InferSchemaType, Schema } from "mongoose";
 
-
-
 import { schemaOptions } from "../lib/common";
 
 const decalSchemaObject = {

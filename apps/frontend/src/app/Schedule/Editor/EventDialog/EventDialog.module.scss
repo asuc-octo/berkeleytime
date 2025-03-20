@@ -1,0 +1,23 @@
+.day-select {
+  p {
+    display: inline-flex;
+    color: var(--paragraph-color);
+  }
+
+  p input {
+    margin-left: 4px;
+    margin-right: 8px;
+  }
+}
+
+.time {
+  color: var(--paragraph-color);
+  display: flex;
+  justify-content: space-between;
+
+  input {
+    margin-left: 10px;
+    width: 45%;
+    display: inline;
+  }
+}

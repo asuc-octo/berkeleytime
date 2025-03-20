@@ -1,10 +1,13 @@
 name: Deploy to Staging
 
-concurrency: staging
+concurrency:
+  group: staging
+  cancel-in-progress: true
 
 on:
   push:
     branches: [master, gql]
+    paths-ignore: ["docs/**"]
 
 jobs:
   build-push:
@@ -31,7 +34,11 @@ jobs:
         backend:
           image:
             tag: latest
+        datapuller:
+          image:
+            tag: latest
         host: staging.stanfurdtime.com
-        mongoUri: mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt
+        mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
+      host: staging.stanfurdtime.com
     secrets: inherit

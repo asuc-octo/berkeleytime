@@ -1,9 +1,8 @@
 import { ReactNode } from "react";
 
-import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark, XmarkCircle } from "iconoir-react";
 
-import { Button, IconButton } from "@repo/theme";
+import { Button, Dialog, IconButton } from "@repo/theme";
 
 import usePins from "@/hooks/usePins";
 
@@ -22,7 +21,7 @@ export default function PinsDrawer({ children }: PinsDrawerProps) {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content}>
+        <Dialog.Drawer className={styles.drawer}>
           <div className={styles.header}>
             <Button>
               <XmarkCircle />
@@ -42,7 +41,7 @@ export default function PinsDrawer({ children }: PinsDrawerProps) {
               </div>
             ))}
           </div>
-        </Dialog.Content>
+        </Dialog.Drawer>
       </Dialog.Portal>
     </Dialog.Root>
   );

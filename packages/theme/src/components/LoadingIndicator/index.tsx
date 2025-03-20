@@ -1,10 +1,10 @@
-import { ComponentPropsWithoutRef, ReactNode, forwardRef } from "react";
+import { ComponentPropsWithRef, ReactNode } from "react";
 
 import classNames from "classnames";
 
 import styles from "./LoadingIndicator.module.scss";
 
-type Props = {
+export type LoadingIndicatorProps = {
   size?: "md" | "lg";
 } & (
   | {
@@ -17,23 +17,21 @@ type Props = {
     }
 );
 
-export type LoadingIndicatorProps = Props &
-  Omit<ComponentPropsWithoutRef<"div">, keyof Props>;
-
-export const LoadingIndicator = forwardRef<
-  HTMLDivElement,
-  LoadingIndicatorProps
->(({ size = "md", children, loading, className, ...props }, ref) => {
+export function LoadingIndicator({
+  size = "md",
+  children,
+  loading,
+  className,
+  ...props
+}: LoadingIndicatorProps &
+  Omit<ComponentPropsWithRef<"div">, keyof LoadingIndicatorProps>) {
   return !children || (children && loading) ? (
     <div
       {...props}
       className={classNames(styles.root, className)}
       data-size={size}
-      ref={ref}
     />
   ) : (
     children
   );
-});
-
-LoadingIndicator.displayName = "LoadingIndicator";
+}

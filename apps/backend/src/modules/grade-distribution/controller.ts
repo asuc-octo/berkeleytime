@@ -1,11 +1,8 @@
 import {
   GradeDistributionModel,
-  GradeDistributionType,
+  IGradeDistributionItem,
   SectionModel,
-  TermModel,
 } from "@repo/common";
-
-import { Semester } from "../../generated-types/graphql";
 
 enum Letter {
   APlus = "A+",
@@ -33,7 +30,7 @@ interface Grade {
   count: number;
 }
 
-export const getDistribution = (distributions: GradeDistributionType[]) => {
+export const getDistribution = (distributions: IGradeDistributionItem[]) => {
   const distribution = distributions.reduce(
     (
       acc,
@@ -171,8 +168,8 @@ export const getGradeDistributionByCourse = async (
   number: string
 ) => {
   const distributions = await GradeDistributionModel.find({
-    courseNumber: number,
     subject,
+    courseNumber: number,
   });
 
   // if (distributions.length === 0)
@@ -187,28 +184,31 @@ export const getGradeDistributionByCourse = async (
 };
 
 export const getGradeDistributionByClass = async (
+  year: number,
+  semester: string,
+  sessionId: string,
   subject: string,
   courseNumber: string,
-  number: string,
-  year: number,
-  semester: Semester
+  sectionNumber: string
 ) => {
-  const name = `${year} ${semester}`;
-
   const section = await SectionModel.findOne({
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": courseNumber,
-    "class.session.term.name": name,
-    number,
-    "association.primary": true,
-  });
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
+    subject,
+    courseNumber,
+    number: sectionNumber,
+    primary: true,
+  })
+    .select({ sectionId: 1 })
+    .lean();
 
   if (!section) throw new Error("Class not found");
 
   const distributions = await GradeDistributionModel.find({
-    courseNumber,
     subject,
-    classNumber: section.id,
+    courseNumber,
+    sectionId: section.sectionId,
   });
 
   // if (distributions.length === 0)
@@ -223,20 +223,18 @@ export const getGradeDistributionByClass = async (
 };
 
 export const getGradeDistributionBySemester = async (
-  subject: string,
-  number: string,
   year: number,
-  semester: Semester
+  semester: string,
+  sessionId: string,
+  subject: string,
+  courseNumber: string
 ) => {
-  const name = `${year} ${semester}`;
-  const term = await TermModel.findOne({ name }).lean();
-
-  if (!term) throw new Error("Term not found");
-
   const distributions = await GradeDistributionModel.find({
-    courseNumber: number,
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
     subject,
-    termId: term.id,
+    courseNumber,
   });
 
   // if (distributions.length === 0)
@@ -252,22 +250,25 @@ export const getGradeDistributionBySemester = async (
 
 export const getGradeDistributionByInstructor = async (
   subject: string,
-  number: string,
+  courseNumber: string,
   familyName: string,
   givenName: string
 ) => {
   const sections = await SectionModel.find({
-    "meetings.assignedInstructors.instructor.names.familyName": familyName,
-    "meetings.assignedInstructors.instructor.names.givenName": givenName,
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": number,
-    "association.primary": true,
-  });
+    subject,
+    courseNumber,
+    "meetings.instructors.familyName": familyName,
+    "meetings.instructors.givenName": givenName,
+    primary: true,
+  })
+    .select({ sectionId: 1 })
+    .lean();
 
   if (sections.length === 0) throw new Error("No classes found");
 
+  const sectionIds = sections.map((section) => section.sectionId);
   const distributions = await GradeDistributionModel.find({
-    classNumber: { $in: sections.map((section) => section.id) },
+    sectionId: { $in: sectionIds },
   });
 
   // if (distributions.length === 0)
@@ -282,28 +283,32 @@ export const getGradeDistributionByInstructor = async (
 };
 
 export const getGradeDistributionByInstructorAndSemester = async (
-  subject: string,
-  number: string,
   year: number,
-  semester: Semester,
-  givenName: string,
-  familyName: string
+  semester: string,
+  sessionId: string,
+  subject: string,
+  courseNumber: string,
+  familyName: string,
+  givenName: string
 ) => {
-  const name = `${year} ${semester}`;
-
   const sections = await SectionModel.find({
-    "meetings.assignedInstructors.instructor.names.familyName": familyName,
-    "meetings.assignedInstructors.instructor.names.givenName": givenName,
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": number,
-    "association.primary": true,
-    "class.session.term.name": name,
-  });
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
+    subject,
+    courseNumber,
+    "meetings.instructors.familyName": familyName,
+    "meetings.instructors.givenName": givenName,
+    primary: true,
+  })
+    .select({ sectionId: 1 })
+    .lean();
 
   if (sections.length === 0) throw new Error("No classes found");
 
+  const sectionIds = sections.map((section) => section.sectionId);
   const distributions = await GradeDistributionModel.find({
-    classNumber: { $in: sections.map((section) => section.id) },
+    sectionId: { $in: sectionIds },
   });
 
   // if (distributions.length === 0)

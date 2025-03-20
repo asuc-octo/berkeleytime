@@ -1,0 +1,29 @@
+.root {
+  flex-shrink: 0;
+  height: 32px;
+  background-color: var(--orange-900);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  color: white;
+  transition: background-color 100ms ease-in-out;
+
+  &:hover {
+    background-color: var(--orange-800);
+  }
+
+  @media (width <= 992px) {
+    display: none;
+  }
+
+  .group {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .text {
+    font-size: 12px;
+  }
+}

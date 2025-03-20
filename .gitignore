@@ -27,3 +27,4 @@ bt_seed.sql
 bt_seed.sql.gz
 .turbo
 generated-types/
+stage_backup.gz

@@ -6,11 +6,8 @@ import { type Application, json } from "express";
 import helmet from "helmet";
 import { RedisClientType } from "redis";
 
-
-
 import { config } from "../../config";
 import passportLoader from "./passport";
-
 
 export default async (
   app: Application,

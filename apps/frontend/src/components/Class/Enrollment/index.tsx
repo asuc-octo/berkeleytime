@@ -12,7 +12,8 @@ import {
 import useClass from "@/hooks/useClass";
 
 import styles from "./Enrollment.module.scss";
-import Reservations from "./Reservations";
+
+// import Reservations from "./Reservations";
 
 const series = [
   {
@@ -67,16 +68,16 @@ export default function Enrollment() {
       {_class.decal ? (
         <div className={styles.decalContent}>
           <p className={styles.decalLabel}>Application</p>
-          {(_class.decal.website || _class.decal.application) ? (
+          {_class.decal.website || _class.decal.application ? (
             <>
               {_class.decal.website && (
                 <p className={styles.decalDescription}>
                   Course Website{" "}
                   <a
-                  href={_class.decal.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.decalLink}
+                    href={_class.decal.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.decalLink}
                   >
                     {_class.decal.website}
                   </a>
@@ -97,7 +98,7 @@ export default function Enrollment() {
               )}
             </>
           ) : (
-          <p className={styles.decalDescription}>N/A</p>
+            <p className={styles.decalDescription}>N/A</p>
           )}
           <p className={styles.decalLabel}>Enrollment Instructions</p>
           <p className={styles.decalDescription}>
@@ -168,11 +169,11 @@ export default function Enrollment() {
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <Reservations
+          {/* <Reservations
             enrollCount={_class.primarySection.enrollCount}
             enrollMax={_class.primarySection.enrollMax}
             reservations={_class.primarySection.reservations}
-          />
+          /> */}
         </>
       )}
     </div>
