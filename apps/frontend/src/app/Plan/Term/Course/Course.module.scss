@@ -30,13 +30,9 @@
     display: flex;
     gap: 12px;
 
-    .icon {
-      flex-shrink: 0;
-    }
-
     .text {
       flex-grow: 1;
-  
+
       .title {
         font-size: 14px;
         font-weight: 700;
@@ -44,25 +40,19 @@
         line-height: 1;
         margin-bottom: 8px;
       }
-  
+
       .description {
         font-size: 14px;
         color: var(--paragraph-color);
         line-height: 1.5;
         margin-bottom: 12px;
       }
-  
+
       .row {
         display: flex;
         gap: 12px;
         align-items: center;
-  
-        .basis {
-          font-size: 14px;
-          line-height: 1;
-          color: var(--paragraph-color);
-        }
-  
+
         .badge {
           height: 32px;
           border-radius: 16px;

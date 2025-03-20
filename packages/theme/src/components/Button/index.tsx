@@ -1,51 +1,35 @@
-import { ElementType, ReactNode, forwardRef } from "react";
+import { ComponentPropsWithRef, ElementType } from "react";
 
 import classNames from "classnames";
 
-import {
-  PolymorphicComponentPropsWithRef,
-  PolymorphicRef,
-} from "../../lib/polymorphism";
 import styles from "./Button.module.scss";
 
-interface Props {
-  variant?: "solid" | "outline";
+interface Props<T> {
+  active?: boolean;
   disabled?: boolean;
+  variant?: "outline" | "solid";
+  as?: T;
 }
 
-export type ButtonProps<C extends ElementType> =
-  PolymorphicComponentPropsWithRef<C, Props>;
+export type ButtonProps<T extends ElementType> = Props<T> &
+  Omit<ComponentPropsWithRef<T>, keyof Props<T>>;
 
-const PolymorphicComponent = forwardRef(
-  <C extends ElementType = "button">(
-    {
-      children,
-      className,
-      disabled,
-      variant = "outline",
-      ...props
-    }: ButtonProps<C>,
-    ref: PolymorphicRef<C>
-  ) => {
-    return (
-      <button
-        {...props}
-        ref={ref}
-        data-variant={variant}
-        disabled={disabled}
-        data-disabled={disabled}
-        className={classNames(styles.root, className)}
-      >
-        {children}
-      </button>
-    );
-  }
-);
+export function Button<T extends ElementType>({
+  className,
+  disabled,
+  variant = "outline",
+  as,
+  ...props
+}: ButtonProps<T>) {
+  const Component = as || "button";
 
-PolymorphicComponent.displayName = "Button";
-
-export const Button = PolymorphicComponent as <
-  T extends ElementType = "button",
->(
-  props: ButtonProps<T>
-) => ReactNode | null;
+  return (
+    <Component
+      {...props}
+      data-variant={variant}
+      disabled={disabled || undefined}
+      data-disabled={disabled || undefined}
+      className={classNames(styles.root, className)}
+    />
+  );
+}

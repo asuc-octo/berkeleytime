@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrowRight, Clock } from "iconoir-react";
 
-import { Button } from "@repo/theme";
+import { Box, Button, Container } from "@repo/theme";
 
 import NavigationBar from "@/components/NavigationBar";
 
@@ -97,41 +97,43 @@ export default function Hero() {
   return (
     <div className={styles.root} ref={root}>
       <NavigationBar invert />
-      <div className={styles.container}>
-        <div className={styles.text}>
-          <h1 className={styles.heading}>
-            Confidently plan and manage your schedule
-          </h1>
-          <h2 className={styles.description}>
-            Berkeley's largest course discovery platform built and run by
-            students, for students
-          </h2>
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <input
-              className={styles.input}
-              type="text"
-              autoFocus
-              placeholder="Search for courses..."
-            />
-            <Button className={styles.button} variant="solid">
-              Go
-              <ArrowRight />
-            </Button>
-          </form>
-        </div>
-        <div className={styles.clock}>
-          <Clock height={24} width={24} />
-          <p className={styles.heading}>
-            {new Date(milliseconds).toLocaleTimeString(undefined, {
-              hour: "numeric",
-              minute: "numeric",
-              second: "numeric",
-            })}
-          </p>
-          <p className={styles.description}>Berkeley time</p>
-        </div>
-        <img className={styles.campanile} src={step.image} />
-      </div>
+      <Box px="5">
+        <Container flexGrow="1" className={styles.container}>
+          <div className={styles.text}>
+            <h1 className={styles.heading}>
+              Confidently plan and manage your schedule
+            </h1>
+            <h2 className={styles.description}>
+              Berkeley's largest course discovery platform built and run by
+              students, for students
+            </h2>
+            <form className={styles.form} onSubmit={handleSubmit}>
+              <input
+                className={styles.input}
+                type="text"
+                autoFocus
+                placeholder="Search for courses..."
+              />
+              <Button variant="solid">
+                Go
+                <ArrowRight />
+              </Button>
+            </form>
+          </div>
+          <div className={styles.clock}>
+            <Clock height={24} width={24} />
+            <p className={styles.heading}>
+              {new Date(milliseconds).toLocaleTimeString(undefined, {
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric",
+              })}
+            </p>
+            <p className={styles.description}>Berkeley time</p>
+          </div>
+          <img className={styles.campanile} src={step.image} />
+        </Container>
+      </Box>
       <img className={styles.wave} src={wave} />
     </div>
   );

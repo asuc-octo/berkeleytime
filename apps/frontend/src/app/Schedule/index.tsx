@@ -14,9 +14,9 @@ export default function Schedule() {
   });
 
   return schedule ? (
-    <ScheduleContext.Provider value={{ schedule }}>
+    <ScheduleContext value={{ schedule }}>
       <Outlet />
-    </ScheduleContext.Provider>
+    </ScheduleContext>
   ) : (
     <></>
   );

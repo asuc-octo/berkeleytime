@@ -8,6 +8,13 @@
     border-radius: 8px;
     background-color: var(--foreground-color);
     flex-shrink: 0;
+
+    .error {
+      color: var(--paragraph-color);
+      text-align: center;
+      margin-top: 46px;
+      font-size: 14px;
+    }
   }
 
   .header {
@@ -32,7 +39,12 @@
     font-size: 24px;
     line-height: 1.25;
     font-weight: 660;
-    font-feature-settings: "cv05" on, "cv13" on, "ss07" on, "cv12" on, "cv06" on;
+    font-feature-settings:
+      "cv05" on,
+      "cv13" on,
+      "ss07" on,
+      "cv12" on,
+      "cv06" on;
     color: var(--heading-color);
     margin-top: 32px;
   }

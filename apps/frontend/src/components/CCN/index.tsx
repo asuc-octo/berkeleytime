@@ -1,16 +1,16 @@
 import { MouseEvent, useRef, useState } from "react";
 
-import * as Tooltip from "@radix-ui/react-tooltip";
 import { ClipboardCheck, Hashtag, PasteClipboard } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
 import styles from "./CCN.module.scss";
 
 interface CCNProps {
-  ccn: string;
+  sectionId: string;
   tooltip?: false;
 }
 
-export default function CCN({ ccn, tooltip }: CCNProps) {
+export default function CCN({ sectionId, tooltip }: CCNProps) {
   const textRef = useRef<HTMLSpanElement>(null);
 
   const [over, setOver] = useState(false);
@@ -33,7 +33,7 @@ export default function CCN({ ccn, tooltip }: CCNProps) {
     selection?.removeAllRanges();
     selection?.addRange(range);
 
-    navigator.clipboard.writeText(ccn);
+    navigator.clipboard.writeText(sectionId);
 
     setCopied(true);
 
@@ -57,7 +57,7 @@ export default function CCN({ ccn, tooltip }: CCNProps) {
           ) : (
             <Hashtag />
           )}
-          <span ref={textRef}>{ccn}</span>
+          <span ref={textRef}>{sectionId}</span>
         </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>

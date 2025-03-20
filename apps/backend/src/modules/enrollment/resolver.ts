@@ -5,17 +5,16 @@ const resolvers: EnrollmentModule.Resolvers = {
   Query: {
     enrollment: async (
       _,
-      { year, semester, subject, courseNumber, number }
+      { year, semester, sessionId, subject, courseNumber, sectionNumber }
     ) => {
-      const enrollment = await getEnrollment(
+      return await getEnrollment(
         year,
         semester,
+        sessionId,
         subject,
         courseNumber,
-        number
+        sectionNumber
       );
-
-      return enrollment as unknown as EnrollmentModule.Section;
     },
   },
 };

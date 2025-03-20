@@ -1,6 +1,7 @@
 import { gql } from "graphql-tag";
 
 export default gql`
+  scalar CourseIdentifier
   scalar CourseNumber
 
   type Query {
@@ -10,6 +11,7 @@ export default gql`
 
   type Course {
     "Identifiers"
+    courseId: CourseIdentifier!
     subject: String!
     number: CourseNumber!
 
@@ -17,12 +19,12 @@ export default gql`
     classes: [Class!]!
     crossListing: [Course!]!
     requiredCourses: [Course!]!
+    gradeDistribution: GradeDistribution!
 
     "Attributes"
     requirements: String
     description: String!
     fromDate: String!
-    gradeDistribution: GradeDistribution!
     gradingBasis: CourseGradingBasis!
     finalExam: CourseFinalExam
     academicCareer: AcademicCareer!

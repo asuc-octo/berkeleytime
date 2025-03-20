@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useMutation } from "@apollo/client";
+import { Reference, useMutation } from "@apollo/client";
 
 import {
   DELETE_SCHEDULE,
@@ -19,7 +19,7 @@ export const useDeleteSchedule = () => {
         fields: {
           schedules: (existingSchedules = [], { readField }) =>
             existingSchedules.filter(
-              (reference: any) => readField("_id", reference) !== id
+              (reference: Reference) => readField("_id", reference) !== id
             ),
         },
       });

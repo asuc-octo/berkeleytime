@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { GradeDistribution, ICourse } from ".";
+import { GradeDistribution, ICourse, IEnrollment } from ".";
 import { ITerm, Semester } from "./terms";
 
 export enum InstructionMethod {
@@ -103,24 +103,19 @@ export const componentMap: Record<Component, string> = {
   [Component.Recitation]: "Recitation",
 };
 
-export enum AcademicCareer {
-  Undergraduate = "UGRD",
-  Graduate = "GRAD",
-  Extension = "UCBX",
-}
-
-export const academicCareers: Record<AcademicCareer, string> = {
-  [AcademicCareer.Undergraduate]: "Undergraduate",
-  [AcademicCareer.Graduate]: "Graduate",
-  [AcademicCareer.Extension]: "Extension",
-};
-
 export enum FinalExam {
   Written = "Y",
   Common = "C",
   None = "N",
   Alternate = "A",
   Undecided = "D",
+}
+
+export enum ExamType {
+  Final = "FIN",
+  Midterm = "MID",
+  Alternate = "ALT",
+  MakeUp = "MAK",
 }
 
 export interface IInstructor {
@@ -130,41 +125,39 @@ export interface IInstructor {
 
 export interface IExam {
   date: string;
-  location: string;
-  final: boolean;
+  location?: string;
+  type: ExamType;
   startTime: string;
   endTime: string;
 }
 
 export interface ISection {
   // Identifiers
+  termId: string;
+  sessionId: string;
+  sectionId: string;
+
+  // Relationships
+  term: ITerm;
+  course: ICourse;
+  class: IClass;
+  enrollment?: IEnrollment;
+
+  // Attributes
   year: number;
   semester: Semester;
   subject: string;
   courseNumber: string;
   classNumber: string;
   number: string;
-  ccn: string;
-
-  // Relationships
-  course: ICourse;
-  class: IClass;
-  term: ITerm;
-
-  // Attributes
-  enrollCount: number;
-  enrollMax: number;
-  component: Component;
-  primary: boolean;
-  waitlistCount: number;
-  waitlistMax: number;
-  online: boolean;
-  open: boolean;
-  meetings: IMeeting[];
-  reservations: IReservation[];
   startDate: string;
   endDate: string;
+  primary: boolean;
+  instructionMode: string;
+  component: Component;
+  meetings: IMeeting[];
   exams: IExam[];
+  online: boolean;
 }
 
 export interface IReservation {
@@ -183,21 +176,23 @@ export interface IMeeting {
 
 export interface IClass {
   // Identifiers
-  year: number;
-  semester: Semester;
+  termId: string;
+  sessionId: string;
+  courseId: string;
   subject: string;
   courseNumber: string;
   number: string;
 
   // Relationships
+  term: ITerm;
   course: ICourse;
   primarySection: ISection;
   sections: ISection[];
-  term: ITerm;
   gradeDistribution: GradeDistribution;
 
   // Attributes
-  session: string;
+  year: number;
+  semester: Semester;
   gradingBasis: string;
   finalExam: string;
   description: string | null;
@@ -214,6 +209,7 @@ export const READ_CLASS = gql`
   query GetClass(
     $year: Int!
     $semester: Semester!
+    $sessionId: SessionIdentifier
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -221,6 +217,7 @@ export const READ_CLASS = gql`
     class(
       year: $year
       semester: $semester
+      sessionId: $sessionId
       subject: $subject
       courseNumber: $courseNumber
       number: $number
@@ -246,10 +243,6 @@ export const READ_CLASS = gql`
       course {
         title
         description
-        classes {
-          year
-          semester
-        }
         gradeDistribution {
           average
           distribution {
@@ -262,13 +255,24 @@ export const READ_CLASS = gql`
       }
       primarySection {
         number
-        ccn
-        enrollCount
-        enrollMax
-        reservations {
-          enrollCount
-          enrollMax
-          group
+        sectionId
+        component
+        online
+        startDate
+        endDate
+        enrollment {
+          latest {
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+          seatReservationTypes {
+            number
+            requirementGroup
+            fromDate
+          }
         }
         meetings {
           days
@@ -282,44 +286,50 @@ export const READ_CLASS = gql`
         }
         exams {
           date
-          final
+          type
           location
           startTime
           endTime
         }
-        component
-        waitlistCount
-        waitlistMax
-        startDate
-        endDate
       }
       sections {
         number
-        ccn
-        enrollCount
-        enrollMax
-        exams {
-          date
-          final
-          location
-          startTime
-          endTime
+        sectionId
+        component
+        online
+        startDate
+        endDate
+        enrollment {
+          latest {
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+          seatReservationTypes {
+            number
+            requirementGroup
+            fromDate
+          }
         }
         meetings {
           days
+          location
           endTime
           startTime
-          location
           instructors {
             familyName
             givenName
           }
         }
-        component
-        waitlistCount
-        waitlistMax
-        startDate
-        endDate
+        exams {
+          date
+          type
+          location
+          startTime
+          endTime
+        }
       }
     }
   }
@@ -341,11 +351,16 @@ export const GET_CATALOG = gql`
       primarySection {
         component
         online
-        open
-        enrollCount
-        enrollMax
-        waitlistCount
-        waitlistMax
+        instructionMode
+        enrollment {
+          latest {
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+        }
         meetings {
           days
         }

@@ -1,5 +1,5 @@
-import styles from "./About.module.scss";
+import { Container } from "@repo/theme";
 
 export default function About() {
-  return <div className={styles.root}></div>;
+  return <Container>About</Container>;
 }

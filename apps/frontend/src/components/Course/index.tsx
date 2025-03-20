@@ -1,6 +1,5 @@
-import { ReactNode, Suspense, useMemo } from "react";
+import { ReactNode, lazy, useMemo } from "react";
 
-import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
 import {
   Bookmark,
@@ -8,19 +7,18 @@ import {
   Expand,
   GridPlus,
   Link as LinkIcon,
-  Pin,
-  PinSolid,
   ShareIos,
   Xmark,
 } from "iconoir-react";
+import { Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
-  Boundary,
+  Box,
   Container,
   Dialog,
+  Flex,
   IconButton,
-  LoadingIndicator,
   MenuItem,
   Tooltip,
 } from "@repo/theme";
@@ -29,14 +27,15 @@ import AverageGrade from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
-import usePins from "@/hooks/usePins";
 import { ICourse } from "@/lib/api";
 
-import styles from "./Class.module.scss";
-import Classes from "./Classes";
-import Enrollment from "./Enrollment";
-import Grades from "./Grades";
-import Overview from "./Overview";
+import SuspenseBoundary from "../SuspenseBoundary";
+import styles from "./Course.module.scss";
+
+const Classes = lazy(() => import("./Classes"));
+const Enrollment = lazy(() => import("./Enrollment"));
+const Grades = lazy(() => import("./Grades"));
+const Overview = lazy(() => import("./Overview"));
 
 interface BodyProps {
   children: ReactNode;
@@ -44,19 +43,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
-  return dialog ? (
-    children
-  ) : (
-    <Suspense
-      fallback={
-        <Boundary>
-          <LoadingIndicator />
-        </Boundary>
-      }
-    >
-      <Outlet />
-    </Suspense>
-  );
+  return dialog ? children : <Outlet />;
 }
 
 interface RootProps {
@@ -66,11 +53,11 @@ interface RootProps {
 
 function Root({ dialog, children }: RootProps) {
   return dialog ? (
-    <Tabs.Root defaultValue="overview" className={styles.root}>
+    <Tabs.Root asChild defaultValue="overview">
       {children}
     </Tabs.Root>
   ) : (
-    <div className={styles.root}>{children}</div>
+    children
   );
 }
 
@@ -98,11 +85,11 @@ export default function Course({
   dialog,
   course: providedCourse,
 }: CourseProps) {
-  const { pins, addPin, removePin } = usePins();
+  // const { pins, addPin, removePin } = usePins();
 
   const location = useLocation();
 
-  const { data: user } = useReadUser();
+  const { data: user, loading: userLoading } = useReadUser();
 
   const [updateUser] = useUpdateUser();
 
@@ -130,18 +117,18 @@ export default function Course({
       type: "course",
       data: input,
     } as CoursePin;
-  }, [input, pins]);
+  }, [input]);
 
-  const pinned = useMemo(() => {
-    if (!input) return;
+  // const pinned = useMemo(() => {
+  //   if (!input) return;
 
-    return pins.find(
-      (pin) =>
-        pin.type === "course" &&
-        pin.data.subject === input.subject &&
-        pin.data.number === input.number
-    );
-  }, [input, pins]);
+  //   return pins.find(
+  //     (pin) =>
+  //       pin.type === "course" &&
+  //       pin.data.subject === input.subject &&
+  //       pin.data.number === input.number
+  //   );
+  // }, [input, pins]);
 
   const bookmarked = useMemo(() => {
     if (!user || !input) return;
@@ -233,138 +220,162 @@ export default function Course({
   // TODO: Differentiate between class and course
   return (
     <Root dialog={dialog}>
-      <div className={styles.header}>
-        <Container size="sm">
-          <div className={styles.row}>
-            <div className={styles.group}>
-              <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
-                <IconButton
-                  className={classNames(styles.bookmark, {
-                    [styles.active]: bookmarked,
-                  })}
-                  onClick={() => bookmark()}
-                >
-                  {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                </IconButton>
-              </Tooltip>
-              <Tooltip content={pinned ? "Remove pin" : "Pin"}>
-                <IconButton
-                  className={classNames(styles.bookmark, {
-                    [styles.active]: pinned,
-                  })}
-                  onClick={() => (pinned ? removePin(pin) : addPin(pin))}
-                >
-                  {pinned ? <PinSolid /> : <Pin />}
-                </IconButton>
-              </Tooltip>
-              <Tooltip content="Add to plan">
-                <IconButton>
-                  <GridPlus />
-                </IconButton>
-              </Tooltip>
-            </div>
-            <div className={styles.group}>
-              {canShare ? (
-                <Tooltip content="Share">
-                  <IconButton onClick={() => share()}>
-                    <ShareIos />
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <Tooltip content="Copy link">
-                  <IconButton onClick={() => share()}>
-                    <LinkIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {dialog && (
-                <Tooltip content="Expand">
-                  <IconButton as={Link} to={`/courses/${subject}/${number}`}>
-                    <Expand />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {dialog && (
-                <Tooltip content="Close">
-                  <Dialog.Close asChild>
-                    <IconButton>
-                      <Xmark />
+      <Flex direction="column" flexGrow="1">
+        <Box className={styles.header} px="5" pt="5">
+          <Container size="3">
+            <Flex direction="column" gap="5">
+              <Flex justify="between">
+                <Flex gap="3">
+                  {/* TODO: Reusable bookmark button */}
+                  <Tooltip
+                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
+                  >
+                    <IconButton
+                      className={classNames(styles.bookmark, {
+                        [styles.active]: bookmarked,
+                      })}
+                      onClick={() => bookmark()}
+                      disabled={userLoading}
+                    >
+                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                     </IconButton>
-                  </Dialog.Close>
-                </Tooltip>
+                  </Tooltip>
+                  {/* TODO: Reusable pin button
+                    <Tooltip content={pinned ? "Remove pin" : "Pin"}>
+                      <IconButton
+                        className={classNames(styles.bookmark, {
+                          [styles.active]: pinned,
+                        })}
+                        onClick={() => (pinned ? removePin(pin) : addPin(pin))}
+                      >
+                        {pinned ? <PinSolid /> : <Pin />}
+                      </IconButton>
+                    </Tooltip> */}
+                  <Tooltip content="Add to plan">
+                    <IconButton>
+                      <GridPlus />
+                    </IconButton>
+                  </Tooltip>
+                </Flex>
+                <Flex gap="3">
+                  {canShare ? (
+                    <Tooltip content="Share">
+                      <IconButton onClick={() => share()}>
+                        <ShareIos />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip content="Copy link">
+                      <IconButton onClick={() => share()}>
+                        <LinkIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {dialog && (
+                    <Tooltip content="Expand">
+                      <IconButton
+                        as={Link}
+                        to={`/courses/${subject}/${number}`}
+                      >
+                        <Expand />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {dialog && (
+                    <Tooltip content="Close">
+                      <Dialog.Close asChild>
+                        <IconButton>
+                          <Xmark />
+                        </IconButton>
+                      </Dialog.Close>
+                    </Tooltip>
+                  )}
+                </Flex>
+              </Flex>
+              <Flex direction="column" gap="4">
+                <Flex direction="column" gap="1">
+                  <h1 className={styles.heading}>
+                    {subject} {number}
+                  </h1>
+                  <p className={styles.description}>{course.title}</p>
+                </Flex>
+                <Flex gap="3" align="center">
+                  <AverageGrade gradeDistribution={course.gradeDistribution} />
+                </Flex>
+              </Flex>
+              {dialog ? (
+                <Tabs.List asChild defaultValue="overview">
+                  <Flex mx="-3" mb="3">
+                    <Tabs.Trigger value="overview" asChild>
+                      <MenuItem>Overview</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="classes" asChild>
+                      <MenuItem>Classes</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="enrollment" asChild>
+                      <MenuItem>Enrollment</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="grades" asChild>
+                      <MenuItem>Grades</MenuItem>
+                    </Tabs.Trigger>
+                  </Flex>
+                </Tabs.List>
+              ) : (
+                <Flex mx="-3" mb="3">
+                  <NavLink to={{ ...location, pathname: "." }} end>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Overview</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "classes" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Classes</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "grades" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Grades</MenuItem>
+                    )}
+                  </NavLink>
+                </Flex>
               )}
-            </div>
-          </div>
-          <h1 className={styles.heading}>
-            {subject} {number}
-          </h1>
-          <p className={styles.description}>{course.title}</p>
-          <div className={styles.group}>
-            <AverageGrade gradeDistribution={course.gradeDistribution} />
-          </div>
-          {dialog ? (
-            <Tabs.List className={styles.menu} defaultValue="overview">
-              <Tabs.Trigger value="overview" asChild>
-                <MenuItem>Overview</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="classes" asChild>
-                <MenuItem>Classes</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="enrollment" asChild>
-                <MenuItem>Enrollment</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="grades" asChild>
-                <MenuItem>Grades</MenuItem>
-              </Tabs.Trigger>
-            </Tabs.List>
-          ) : (
-            <div className={styles.menu}>
-              <NavLink to={{ ...location, pathname: "." }} end>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Overview</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "classes" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Classes</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "enrollment" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Enrollment</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "grades" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Grades</MenuItem>
-                )}
-              </NavLink>
-            </div>
-          )}
-        </Container>
-      </div>
-      <Container size="sm">
-        <CourseContext.Provider
+            </Flex>
+          </Container>
+        </Box>
+        <CourseContext
           value={{
             course,
           }}
         >
           <Body dialog={dialog}>
             <Tabs.Content value="overview" asChild>
-              <Overview />
+              <SuspenseBoundary>
+                <Overview />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="classes" asChild>
-              <Classes />
+              <SuspenseBoundary>
+                <Classes />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="enrollment" asChild>
-              <Enrollment />
+              <SuspenseBoundary>
+                <Enrollment />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="grades" asChild>
-              <Grades />
+              <SuspenseBoundary>
+                <Grades />
+              </SuspenseBoundary>
             </Tabs.Content>
           </Body>
-        </CourseContext.Provider>
-      </Container>
+        </CourseContext>
+      </Flex>
     </Root>
   );
 }

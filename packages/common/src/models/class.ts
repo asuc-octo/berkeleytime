@@ -1,97 +1,91 @@
-import mongoose, { InferSchemaType, Schema } from "mongoose";
+import { Document, Model, Schema, model } from "mongoose";
 
-import { schemaOptions } from "../lib/common";
-import { descriptor } from "../lib/sis";
-import { courseSchema } from "./course";
+export interface IClassItem {
+  // course.identifiers[cs-course-id]
+  courseId: string;
+  courseNumber: string;
+  year: number;
+  semester: string;
+  // session.term.id
+  termId: string;
+  // session.id
+  sessionId: string;
+  number: string;
+  subject: string;
+  offeringNumber?: number;
+  // classTitle
+  title?: string;
+  // classDescription
+  description?: string;
+  allowedUnits?: {
+    minimum?: number;
+    maximum?: number;
+    forAcademicProgress?: number;
+    forFinancialAid?: number;
+  };
+  // gradingBasis.code
+  gradingBasis?: string;
+  // status.code
+  status?: string;
+  // finalExam.code
+  finalExam?: string;
+  // instructionMode.code
+  instructionMode?: string;
+  anyPrintInScheduleOfClasses?: boolean;
+  contactHours?: number;
+  // NOTE: Exclude if always the same as course blindGrading
+  blindGrading?: boolean;
+  // NOTE: Exclude if always the same as course requirementsFulfilled
+  // requirementDesignation.code
+  requirementDesignation?: string;
+  // requisites.description
+  requisites?: string;
+}
 
-// source: https://developers.api.berkeley.edu/api/18/interactive-docs
-const classSchemaObject = {
-  course: courseSchema,
-  offeringNumber: Number,
-  session: {
-    id: String,
-    name: String,
-    term: {
-      id: String,
-      name: String,
-    },
-    timePeriods: [
-      {
-        period: descriptor,
-        endDate: Date,
-      },
-    ],
-  },
-  number: String,
-  displayName: String,
-  classTitle: String,
-  classTranscriptTitle: String,
-  classDescription: String,
-  primaryComponent: descriptor,
+export interface IClassItemDocument extends IClassItem, Document {}
+
+const classSchema = new Schema<IClassItem>({
+  courseId: { type: String, required: true }, // course.identifiers[cs-course-id]
+  courseNumber: { type: String, required: true },
+  year: { type: Number, required: true },
+  semester: { type: String, required: true },
+  subject: { type: String, required: true },
+  termId: { type: String, required: true }, // session.term.id
+  sessionId: { type: String, required: true }, // session.id
+  number: { type: String, required: true },
+  offeringNumber: { type: Number },
+  title: { type: String }, // classTitle
+  description: { type: String }, // classDescription
   allowedUnits: {
-    minimum: Number,
-    maximum: Number,
-    forAcademicProgress: Number,
-    forFinancialAid: Number,
+    minimum: { type: Number },
+    maximum: { type: Number },
+    forAcademicProgress: { type: Number },
+    forFinancialAid: { type: Number },
   },
-  gradingBasis: descriptor,
-  requirementDesignation: descriptor,
-  contactHours: Number,
-  blindGrading: Boolean,
-  assignedClassMaterials: {
-    status: descriptor,
-    noneAssigned: Boolean,
-    instructions: String,
-    classMaterials: [
-      {
-        sequenceNumber: Number,
-        type: { type: descriptor },
-        status: descriptor,
-        title: String,
-        author: String,
-        isbn: String,
-        yearPublished: String,
-        publisher: String,
-        edition: String,
-        price: {
-          amount: Number,
-          currency: descriptor,
-        },
-        notes: String,
-      },
-    ],
+  gradingBasis: { type: String }, // gradingBasis.code
+  status: { type: String }, // status.code
+  finalExam: { type: String }, // finalExam.code
+  instructionMode: { type: String }, // instructionMode.code
+  anyPrintInScheduleOfClasses: { type: Boolean },
+  contactHours: { type: Number },
+  blindGrading: { type: Boolean }, // NOTE: Exclude if always the same as course blindGrading
+  requirementDesignation: { type: String }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
+  requisites: { type: String }, // requisites.description
+});
+classSchema.index(
+  {
+    year: 1,
+    semester: 1,
+    sessionId: 1,
+    subject: 1,
+    courseNumber: 1,
+    number: 1,
   },
-  instructionMode: descriptor,
-  status: descriptor,
-  lastCancelled: String,
-  anyPrintInScheduleOfClasses: Boolean,
-  anyPrintInstructors: Boolean,
-  anyFeesExist: Boolean,
-  finalExam: descriptor,
-  aggregateEnrollmentStatus: {
-    status: descriptor,
-    enrolledCount: Number,
-    reservedCount: Number,
-    waitlistedCount: Number,
-    minEnroll: Number,
-    maxEnroll: Number,
-    maxWaitlist: Number,
-    openReserved: Number,
-    instructorAddConsentRequired: Boolean,
-    instructorDropConsentRequired: Boolean,
-    seatReservations: [
-      {
-        number: Number,
-        requirementGroup: descriptor,
-        fromDate: Date,
-        maxEnroll: Number,
-        enrolledCount: Number,
-      },
-    ],
-  },
-  requisites: descriptor, // not in the API spec but can still appear here instead of in course.requisites
-};
+  { unique: true }
+);
+classSchema.index({ courseId: 1 });
 
-export const classSchema = new Schema(classSchemaObject, schemaOptions);
-export const ClassModel = mongoose.model("Class", classSchema, "class");
-export type ClassType = InferSchemaType<typeof classSchema>;
+export const ClassModel: Model<IClassItem> = model<IClassItem>(
+  "classes",
+  classSchema
+);

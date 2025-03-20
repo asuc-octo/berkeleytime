@@ -1,9 +1,8 @@
 import { Dispatch, useMemo } from "react";
 
-import * as Checkbox from "@radix-ui/react-checkbox";
-import * as RadioGroup from "@radix-ui/react-radio-group";
 import classNames from "classnames";
 import { Check } from "iconoir-react";
+import { Checkbox, RadioGroup } from "radix-ui";
 
 import { Component, componentMap } from "@/lib/api";
 
@@ -215,7 +214,10 @@ export default function Filters() {
   ]);
 
   const amountOpen = useMemo(
-    () => includedClasses.filter((_class) => _class.primarySection.open).length,
+    () =>
+      includedClasses.filter(
+        (_class) => _class.primarySection.enrollment?.latest.status === "O"
+      ).length,
     [includedClasses]
   );
 

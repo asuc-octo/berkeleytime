@@ -20,6 +20,7 @@ const typedef = gql`
   input BookmarkedClassInput {
     year: Int!
     semester: Semester!
+    sessionId: SessionIdentifier
     subject: String!
     courseNumber: CourseNumber!
     number: ClassNumber!

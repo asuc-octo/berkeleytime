@@ -75,7 +75,7 @@ export default function Editor() {
       const selectedSections = selectedClass.selectedSections.filter(
         (selectedSection) => {
           const currentSection = selectedClass.class.sections.find(
-            (section) => section.ccn === selectedSection
+            (section) => section.sectionId === selectedSection
           );
 
           return !currentSection || currentSection !== section;
@@ -83,7 +83,7 @@ export default function Editor() {
       );
 
       // Add the selected section
-      selectedClass.selectedSections = [...selectedSections, section.ccn];
+      selectedClass.selectedSections = [...selectedSections, section.sectionId];
 
       // Update the schedule
       updateSchedule(
@@ -108,7 +108,7 @@ export default function Editor() {
         }
       );
     },
-    [setCurrentSection]
+    [setCurrentSection, schedule, updateSchedule]
   );
 
   const handleSectionMouseOver = useCallback(
@@ -157,11 +157,11 @@ export default function Editor() {
       );
 
       // Ignore selected sections
-      if (selectedSections.includes(section.ccn)) return;
+      if (selectedSections.includes(section.sectionId)) return;
 
       setCurrentSection(section);
     },
-    [setCurrentSection, tab]
+    [schedule, tab]
   );
 
   const handleSortEnd = useCallback(
@@ -196,7 +196,7 @@ export default function Editor() {
         }
       );
     },
-    [schedule]
+    [schedule, updateSchedule]
   );
 
   const handleClassSelect = useCallback(
@@ -276,7 +276,7 @@ export default function Editor() {
 
       const _class = data.class;
 
-      const selectedSections = [_class.primarySection.ccn];
+      const selectedSections = [_class.primarySection.sectionId];
 
       const kinds = Array.from(
         new Set(_class.sections.map((section) => section.component))
@@ -288,7 +288,7 @@ export default function Editor() {
           .filter((section) => section.component === kind)
           .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        selectedSections.push(section.ccn);
+        selectedSections.push(section.sectionId);
       }
 
       _schedule.classes.push({
@@ -319,7 +319,7 @@ export default function Editor() {
         }
       );
     },
-    [apolloClient, setExpanded, schedule]
+    [apolloClient, setExpanded, schedule, updateSchedule]
   );
 
   const handleExpandedChange = (index: number, expanded: boolean) => {

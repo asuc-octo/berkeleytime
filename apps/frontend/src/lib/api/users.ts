@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 
 import { IClass } from "./classes";
 import { ICourse } from "./courses";
+import { Semester } from "./terms";
 
 export interface IUser {
   email: string;
@@ -31,6 +32,7 @@ export const READ_USER = gql`
         courseNumber
         year
         semester
+        sessionId
       }
     }
   }
@@ -45,8 +47,9 @@ export interface IBookmarkedClassInput {
   subject: string;
   number: string;
   courseNumber: string;
-  year: string;
-  semester: string;
+  year: number;
+  semester: Semester;
+  sessionId: string | null;
 }
 
 export interface IUserInput {
@@ -75,6 +78,7 @@ export const UPDATE_USER = gql`
         courseNumber
         year
         semester
+        sessionId
       }
     }
   }

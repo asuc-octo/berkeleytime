@@ -11,8 +11,8 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "tsx": "^4.17.0",
-    "typescript": "^5.5.4",
-    "swagger-typescript-api": "^13.0.21"
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "swagger-typescript-api": "^13.0.23"
   }
 }
