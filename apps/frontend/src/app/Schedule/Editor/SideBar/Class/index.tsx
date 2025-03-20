@@ -99,12 +99,7 @@ export default function Class({
               </div>
             </div>
           </div>
-          <IconButton
-            className={styles.delete}
-            onClick={() => {
-              onDelete(_class);
-            }}
-          >
+          <IconButton onClick={() => onDelete(_class)}>
             <Xmark />
           </IconButton>
         </div>

@@ -26,12 +26,7 @@ export default function Event({ event, onDelete }: EventProps) {
               <p className={styles.description}>{event.description}</p>
             </div>
           </div>
-          <IconButton
-            className={styles.delete}
-            onClick={() => {
-              onDelete(event);
-            }}
-          >
+          <IconButton onClick={() => onDelete(event)}>
             <Xmark />
           </IconButton>
         </div>
