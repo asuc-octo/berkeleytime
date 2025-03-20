@@ -4,21 +4,27 @@ import { ArrowRight, Xmark } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 import ReactSelect from "react-select";
 
-import { Button, Dialog, IconButton } from "@repo/theme";
+import {
+  Button,
+  Dialog,
+  Flex,
+  Heading,
+  IconButton,
+  Input,
+  Label,
+  LoadingIndicator,
+  Text,
+} from "@repo/theme";
 
 import { useCreateSchedule, useReadTerms } from "@/hooks/api";
 import { Semester } from "@/lib/api";
 
-import styles from "./CreateScheduleDialog.module.scss";
-import { termSelectStyle } from "./selectStyle";
+import styles from "./styles";
 
 interface CreateScheduleDialogProps {
   defaultName: string;
   children: ReactNode;
 }
-
-// TODO: Collaborative editing
-// TODO: Invite collaborators
 
 export default function CreateScheduleDialog({
   children,
@@ -30,23 +36,26 @@ export default function CreateScheduleDialog({
   const [name, setName] = useState(defaultName);
   const [localTerm, setLocalTerm] = useState<string | null>(null);
 
-  const { data, loading } = useReadTerms();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { data: terms, loading: pending } = useReadTerms();
 
   const term = useMemo(() => {
     if (localTerm) return localTerm;
 
-    if (!data?.[0]) return;
+    if (!terms?.[0]) return;
 
-    return `${data[0].semester} ${data[0].year}`;
-  }, [localTerm, data]);
+    return `${terms[0].semester} ${terms[0].year}`;
+  }, [localTerm, terms]);
 
   const options = useMemo(
     () =>
-      data
+      terms
         ?.filter(
           (t, index) =>
             index ===
-            data.findIndex(
+            terms.findIndex(
               (term) => term.year === t.year && term.semester === t.semester
             )
         )
@@ -58,7 +67,7 @@ export default function CreateScheduleDialog({
             label: value,
           };
         }),
-    [data]
+    [terms]
   );
 
   const handleClick = async () => {
@@ -66,81 +75,91 @@ export default function CreateScheduleDialog({
 
     const [semester, year] = term.split(" ");
 
-    const _term = data?.find(
+    const _term = terms?.find(
       (t) => t.semester === semester && t.year === Number(year)
     );
 
     if (!_term) return;
 
+    setLoading(true);
+
     // TODO: Error handling, loading state
-    const response = await createSchedule({
+    const { data } = await createSchedule({
       name: name,
       year: Number(year),
       semester: semester as Semester,
       sessionId: _term.sessions[0].id,
     });
 
-    if (!response.data?.createSchedule._id) return;
+    setLoading(false);
 
-    navigate(response.data.createSchedule._id);
+    if (!data) return;
+
+    navigate(data.createSchedule._id);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open && loading) return;
+
+    setOpen(open);
   };
 
   return (
-    <Dialog.Root>
+    <Dialog.Root onOpenChange={handleOpenChange} open={open}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Overlay />
       <Dialog.Portal>
-        <Dialog.Card className={styles.content}>
-          <div className={styles.header}>
-            <div className={styles.text}>
-              <Dialog.Title asChild>
-                <p className={styles.title}>Create a schedule</p>
-              </Dialog.Title>
-              <Dialog.Description asChild>
-                <p className={styles.description}>
-                  Select the semester and enter a name
-                </p>
-              </Dialog.Description>
-            </div>
-            <Dialog.Close asChild>
-              <IconButton>
-                <Xmark />
-              </IconButton>
-            </Dialog.Close>
-          </div>
-          <div className={styles.column}>
-            <div className={styles.row}>
-              <label>Name</label>
-              <input
+        <Dialog.Card>
+          <Flex direction="column" gap="4" p="4">
+            <Flex gap="4">
+              <Flex direction="column" gap="1" flexGrow="1">
+                <Dialog.Title asChild>
+                  <Heading>Create a schedule</Heading>
+                </Dialog.Title>
+                <Dialog.Description asChild>
+                  <Text>Select the semester and enter a name</Text>
+                </Dialog.Description>
+              </Flex>
+              <Dialog.Close asChild>
+                <IconButton disabled={loading}>
+                  <Xmark />
+                </IconButton>
+              </Dialog.Close>
+            </Flex>
+            <Flex direction="column" gap="2">
+              <Label>Name</Label>
+              <Input
+                disabled={loading}
                 type="text"
-                className={styles.input}
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(event) => setName(event.target.value)}
               />
-            </div>
-            <div className={styles.row}>
-              <label>Semester</label>
+            </Flex>
+            <Flex direction="column" gap="2">
+              <Label>Semester</Label>
               <ReactSelect
                 options={options}
+                placeholder="Select a semester"
+                isDisabled={loading || pending}
                 value={options?.find(({ value }) => value == term)}
                 onChange={(value) =>
                   // @ts-expect-error - ReactSelect does not have a type for the value
                   setLocalTerm(value?.value)
                 }
-                styles={termSelectStyle}
+                styles={styles}
               />
-            </div>
-            <div className={styles.buttonCont}>
-              <Button
-                disabled={loading}
-                variant="solid"
-                onClick={() => handleClick()}
-              >
-                Create
+            </Flex>
+            <Button
+              disabled={loading || pending}
+              variant="solid"
+              onClick={() => handleClick()}
+            >
+              Create
+              <LoadingIndicator loading={loading}>
                 <ArrowRight />
-              </Button>
-            </div>
-          </div>
+              </LoadingIndicator>
+            </Button>
+          </Flex>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

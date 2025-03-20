@@ -61,7 +61,7 @@ export default function Schedules() {
           <CreateScheduleDialog
             defaultName={`Schedule ${schedules.length + 1}`}
           >
-            <Button variant="solid">Create Schedule</Button>
+            <Button variant="solid">Create a schedule</Button>
           </CreateScheduleDialog>
         </div>
         <div className={styles.schedulesCont}>

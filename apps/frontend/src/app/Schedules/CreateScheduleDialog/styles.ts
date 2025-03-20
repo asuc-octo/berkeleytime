@@ -5,7 +5,7 @@ interface OptionType {
   label: string;
 }
 
-export const termSelectStyle: StylesConfig<OptionType> = {
+const styles: StylesConfig<OptionType> = {
   control: (base) => ({
     ...base,
     borderColor: "var(--border-color)",
@@ -53,3 +53,5 @@ export const termSelectStyle: StylesConfig<OptionType> = {
     cursor: "pointer",
   }),
 };
+
+export default styles;
