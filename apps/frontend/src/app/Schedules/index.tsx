@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import { Calendar, Search } from "iconoir-react";
+import { Calendar, Plus, Search } from "iconoir-react";
 
-import { Button, Container } from "@repo/theme";
+import { Box, Button, Container, Flex } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
 import Footer from "@/components/Footer";
@@ -47,7 +47,7 @@ export default function Schedules() {
   }
 
   return (
-    <div>
+    <Box p="5">
       <Container style={{ marginBottom: "80px" }}>
         <div className={styles.header}>
           <div className={styles.title}>
@@ -61,10 +61,13 @@ export default function Schedules() {
           <CreateScheduleDialog
             defaultName={`Schedule ${schedules.length + 1}`}
           >
-            <Button variant="solid">Create a schedule</Button>
+            <Button variant="solid">
+              <Plus />
+              Create a schedule
+            </Button>
           </CreateScheduleDialog>
         </div>
-        <div className={styles.schedulesCont}>
+        <Flex direction="column" gap="5">
           {recentSchedules.length !== 0 && (
             <Carousel.Root title="Recently viewed" Icon={<Search />}>
               {recentSchedules.map(
@@ -107,9 +110,9 @@ export default function Schedules() {
                 </Carousel.Root>
               );
             })}
-        </div>
+        </Flex>
       </Container>
       <Footer />
-    </div>
+    </Box>
   );
 }
