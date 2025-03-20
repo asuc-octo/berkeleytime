@@ -63,3 +63,27 @@ WORKDIR /frontend
 RUN ["turbo", "run", "build", "--filter=frontend", "--env-mode=loose"]
 
 ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]
+
+
+# ag-frontend
+FROM base AS ag-frontend-builder
+WORKDIR /ag-frontend
+COPY . .
+RUN ["turbo", "prune", "ag-frontend", "--docker"]
+
+FROM base AS ag-frontend-dev
+WORKDIR /frontend
+
+COPY --from=ag-frontend-builder /ag-frontend/out/json/ .
+COPY --from=ag-frontend-builder /ag-frontend/out/package-lock.json ./package-lock.json
+RUN ["npm", "install"]
+
+COPY --from=ag-frontend-builder /ag-frontend/out/full/ .
+ENTRYPOINT ["turbo", "run", "dev", "--filter=ag-frontend"]
+
+FROM ag-frontend-dev AS ag-frontend-prod
+WORKDIR /ag-frontend
+
+RUN ["turbo", "run", "build", "--filter=ag-frontend", "--env-mode=loose"]
+
+ENTRYPOINT ["turbo", "run", "start", "--filter=ag-frontend"]
