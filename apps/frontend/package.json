@@ -26,6 +26,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.0",
+    "react-select": "^5.10.1",
     "recharts": "^2.15.1"
   },
   "devDependencies": {

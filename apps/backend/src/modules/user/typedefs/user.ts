@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   type User {
+    _id: ID!
     email: String!
     student: Boolean!
     bookmarkedCourses: [Course!]!
