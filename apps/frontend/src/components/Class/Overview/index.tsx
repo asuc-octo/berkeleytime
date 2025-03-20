@@ -5,6 +5,7 @@ import styles from "./Overview.module.scss";
 
 export default function Overview() {
   const { class: _class } = useClass();
+  console.log(_class);
 
   return (
     <div className={styles.root}>
