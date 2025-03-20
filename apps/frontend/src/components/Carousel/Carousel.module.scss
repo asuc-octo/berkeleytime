@@ -1,3 +1,8 @@
+.item {
+  flex-shrink: 0;
+  width: 288px;
+}
+
 .root {
   display: flex;
   flex-direction: column;
@@ -54,6 +59,7 @@
       gap: 16px;
       scrollbar-width: none;
       scroll-behavior: smooth;
+      position: relative;
     }
   }
 

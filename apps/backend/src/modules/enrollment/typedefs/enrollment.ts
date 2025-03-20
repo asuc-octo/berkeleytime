@@ -24,7 +24,7 @@ export default gql`
     sectionNumber: SectionNumber!
 
     "Attributes"
-    seatReservationTypes: [SeatReservationType!]!
+    seatReservationTypes: [SeatReservationType!]
     history: [EnrollmentSingular!]!
     latest: EnrollmentSingular
   }

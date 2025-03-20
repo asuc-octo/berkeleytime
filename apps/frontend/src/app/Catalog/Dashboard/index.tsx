@@ -1,5 +1,13 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
+import { useApolloClient } from "@apollo/client";
 import {
   ArrowSeparateVertical,
   BookmarkSolid,
@@ -14,8 +22,11 @@ import { Button, Container, IconButton, Tooltip } from "@repo/theme";
 import { DropdownMenu } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
+import ClassCard from "@/components/ClassCard";
+import ClassDrawer from "@/components/ClassDrawer";
 import { useReadUser } from "@/hooks/api";
-import { ITerm } from "@/lib/api";
+import { IClass, ITerm, READ_CLASS, ReadClassResponse } from "@/lib/api";
+import { sortByTermDescending } from "@/lib/classes";
 import { getRecentClasses } from "@/lib/recent-classes";
 
 import styles from "./Dashboard.module.scss";
@@ -36,21 +47,60 @@ export default function Dashboard({
   setOpen,
 }: DashboardProps) {
   const navigate = useNavigate();
-  const { data: user, loading: userLoading } = useReadUser();
+  const client = useApolloClient();
 
-  const recentClasses = useMemo(
+  const { data: user } = useReadUser();
+
+  const bookmarkedClasses = useMemo(
     () =>
-      getRecentClasses().filter(
-        (recentClass) =>
-          recentClass.semester === term.semester &&
-          recentClass.year === term.year
+      user?.bookmarkedClasses.filter(
+        (bookmarkedClass) =>
+          bookmarkedClass.year === term.year &&
+          bookmarkedClass.semester === term.semester
       ),
-    [term]
+    [term, user]
   );
+
+  const [recentClasses, setRecentClasses] = useState<IClass[]>([]);
+
+  const initialize = useCallback(async () => {
+    const recentClasses = getRecentClasses();
+
+    const responses = await Promise.all(
+      recentClasses.map(async (recentClass) => {
+        const { subject, year, semester, courseNumber, number } = recentClass;
+
+        try {
+          const response = await client.query<ReadClassResponse>({
+            query: READ_CLASS,
+            variables: {
+              subject,
+              year,
+              semester,
+              courseNumber,
+              number,
+            },
+          });
+
+          return response.data.class;
+        } catch {
+          // TODO: Handle errors
+
+          return;
+        }
+      })
+    );
+
+    setRecentClasses(responses.filter((response) => !!response));
+  }, [client]);
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   return (
     <div className={styles.root}>
-      <Container size="sm">
+      <Container size="3">
         <div className={styles.header}>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -59,12 +109,16 @@ export default function Dashboard({
                 Switch terms
               </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content sideOffset={5}>
+            <DropdownMenu.Content sideOffset={5} style={{ maxHeight: 200 }}>
               {terms
                 .filter(
-                  ({ year, semester }) =>
-                    year !== term.year || semester !== term.semester
+                  ({ year, semester }, index) =>
+                    index ===
+                    terms.findIndex(
+                      (term) => term.semester === semester && term.year === year
+                    )
                 )
+                .toSorted(sortByTermDescending)
                 .map(({ year, semester }) => {
                   return (
                     <DropdownMenu.Item
@@ -103,51 +157,34 @@ export default function Dashboard({
           Icon={<BookmarkSolid />}
           to="/account"
         >
-          {userLoading || !user ? (
+          {/* TODO: Better placeholder states */}
+          {!bookmarkedClasses ? (
             <div className={styles.card}>
               <div className={styles.error}>Sign in to bookmark classes</div>
             </div>
-          ) : user?.bookmarkedClasses.length == 0 ? (
+          ) : bookmarkedClasses.length === 0 ? (
             <div className={styles.card}>
               <div className={styles.error}>No bookmarked classes</div>
             </div>
           ) : (
-            user?.bookmarkedClasses
-              .filter(
-                (bookmarkedClass) =>
-                  bookmarkedClass.year === term.year &&
-                  bookmarkedClass.semester === term.semester
-              )
-              .map((bookmarkedClass, i) => {
-                return (
-                  <Carousel.Class
-                    key={i}
-                    subject={bookmarkedClass.subject}
-                    year={bookmarkedClass.year}
-                    semester={bookmarkedClass.semester}
-                    courseNumber={bookmarkedClass.courseNumber}
-                    number={bookmarkedClass.number}
-                  />
-                );
-              })
+            bookmarkedClasses.map((bookmarkedClass, index) => (
+              <ClassDrawer {...bookmarkedClass}>
+                <Carousel.Item key={index}>
+                  <ClassCard class={bookmarkedClass} />
+                </Carousel.Item>
+              </ClassDrawer>
+            ))
           )}
         </Carousel.Root>
-        {recentClasses.length !== 0 && (
+        {recentClasses.length > 0 && (
           <Carousel.Root title="Recently viewed" Icon={<Search />}>
-            {recentClasses.map(
-              ({ subject, year, semester, courseNumber, number }, i) => {
-                return (
-                  <Carousel.Class
-                    key={i}
-                    subject={subject}
-                    year={year}
-                    semester={semester}
-                    courseNumber={courseNumber}
-                    number={number}
-                  />
-                );
-              }
-            )}
+            {recentClasses.map((recentClass, index) => (
+              <ClassDrawer {...recentClass}>
+                <Carousel.Item key={index}>
+                  <ClassCard class={recentClass} />
+                </Carousel.Item>
+              </ClassDrawer>
+            ))}
           </Carousel.Root>
         )}
       </Container>

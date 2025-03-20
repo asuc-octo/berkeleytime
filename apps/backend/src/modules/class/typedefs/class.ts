@@ -212,7 +212,7 @@ export default gql`
     date: String!
     startTime: String!
     endTime: String!
-    location: String!
+    location: String
     type: ExamType!
   }
 

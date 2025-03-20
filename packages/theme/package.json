@@ -6,11 +6,12 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "@types/react": "^19.0.10",
+    "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@radix-ui/themes": "^3.2.1",
     "classnames": "^2.5.1",
     "iconoir-react": "^7.10.1",
     "radix-ui": "^1.1.3",

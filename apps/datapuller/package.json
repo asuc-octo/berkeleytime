@@ -6,8 +6,8 @@
     "main": "tsx src/main.ts"
   },
   "devDependencies": {
-    "@types/node": "^22.13.8",
-    "eslint": "^9.21.0",
+    "@types/node": "^22.13.9",
+    "eslint": "^9.22.0",
     "typescript": "^5.8.2"
   },
   "dependencies": {
