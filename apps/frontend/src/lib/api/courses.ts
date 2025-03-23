@@ -1,10 +1,6 @@
 import { gql } from "@apollo/client";
 
-import {
-  GradeDistribution,
-  IClass,
-  InstructionMethod,
-} from ".";
+import { GradeDistribution, IClass, InstructionMethod } from ".";
 import { IAggregatedRatings } from "./ratings";
 import { Semester } from "./terms";
 
