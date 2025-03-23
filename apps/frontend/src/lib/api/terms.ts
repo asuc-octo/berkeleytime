@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+export type SessionIdentifier = string;
+
 export enum Semester {
   Fall = "Fall",
   Spring = "Spring",
@@ -14,6 +16,7 @@ export enum TemporalPosition {
 }
 
 export interface ISession {
+  id: SessionIdentifier;
   name: string;
   startDate?: string;
   endDate?: string;
@@ -24,7 +27,7 @@ export interface ITerm {
   year: number;
   semester: Semester;
   temporalPosition: TemporalPosition;
-  sessions: ISession[] | null;
+  sessions: ISession[];
   startDate?: string;
   endDate?: string;
 }
@@ -40,6 +43,7 @@ export const READ_TERMS = gql`
       semester
       temporalPosition
       sessions {
+        id
         name
         startDate
         endDate

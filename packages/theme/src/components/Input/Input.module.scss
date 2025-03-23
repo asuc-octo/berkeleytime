@@ -1,0 +1,17 @@
+.root {
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0 12px;
+  color: var(--heading-color);
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:focus {
+    border-color: var(--blue-500);
+    outline: 4px solid var(--blue-100);
+  }
+}
