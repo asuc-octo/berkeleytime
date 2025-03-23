@@ -12,6 +12,7 @@
     "@apollo/client": "3.13.4",
     "@floating-ui/dom": "^1.6.13",
     "@mapbox/mapbox-gl-directions": "^4.3.1",
+    "@repo/shared": "*",
     "@repo/theme": "*",
     "@shopify/draggable": "^1.1.4",
     "@tanstack/react-virtual": "^3.13.4",

@@ -60,7 +60,7 @@ export default function Map() {
         layout: {},
         paint: {
           "line-width": 1,
-          "line-color": "#3b82f6",
+          "line-color": "var(--blue-500)",
           "line-opacity": 0.5,
           "line-dasharray": [2, 2],
         },
@@ -72,7 +72,7 @@ export default function Map() {
         source: "campus",
         layout: {},
         paint: {
-          "fill-color": "#3b82f6",
+          "fill-color": "var(--blue-500)",
           "fill-opacity": 0.05,
         },
       });

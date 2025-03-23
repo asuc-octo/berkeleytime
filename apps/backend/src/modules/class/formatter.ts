@@ -2,12 +2,25 @@ import { IClassItem, ISectionItem } from "@repo/common";
 
 import { ClassModule } from "./generated-types/module-types";
 
+// Add enum types that were missing
+enum ClassGradingBasis {
+  GRADED = "Graded",
+  PASSED_NOT_PASSED = "Passed/Not Passed",
+  SATISFACTORY_UNSATISFACTORY = "Satisfactory/Unsatisfactory",
+}
+
+enum ClassFinalExam {
+  NONE = "None",
+  EXAM = "Exam",
+}
+
 interface ClassRelationships {
   term: null;
   course: null;
   primarySection: null;
   sections: null;
   gradeDistribution: null;
+  aggregatedRatings: null;
 }
 
 export type IntermediateClass = Omit<
@@ -36,9 +49,14 @@ export const formatClass = (_class: IClassItem) => {
     primarySection: null,
     sections: null,
     gradeDistribution: null,
-  } as IntermediateClass;
+    aggregatedRatings: null,
 
-  return output;
+    description: _class.description,
+    gradingBasis: _class.gradingBasis as ClassGradingBasis,
+    finalExam: _class.finalExam as ClassFinalExam,
+    title: _class.title,
+  };
+  return output as unknown as IntermediateClass;
 };
 
 interface SectionRelationships {
@@ -61,6 +79,8 @@ export const formatSection = (section: ISectionItem) => {
 
     online: section.instructionMode === "O",
     course: section.courseId,
+    attendanceRequired: false, // Default value
+    lecturesRecorded: false, // Default value
 
     term: null,
     class: null,

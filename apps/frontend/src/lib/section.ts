@@ -1,14 +1,50 @@
-import { Component, Semester } from "./api";
+import { Component, IClass, Semester } from "./api";
 
 export const getExternalLink = (
-  year: number,
-  semester: Semester,
-  subject: string,
-  courseNumber: string,
-  sectionNumber: string,
-  kind: Component
+  yearOrClass: number | IClass,
+  semester?: Semester,
+  subject?: string,
+  courseNumber?: string,
+  sectionNumber?: string,
+  kind?: Component
 ) => {
-  return `https://classes.berkeley.edu/content/${year}-${semester.toLowerCase()}-${subject.toLowerCase()}-${courseNumber}-${sectionNumber}-${kind.toLowerCase()}-${sectionNumber}`;
+  // Handle case where first argument is a class object
+  if (typeof yearOrClass === "object") {
+    const classObj = yearOrClass;
+    const primarySection = classObj.primarySection;
+
+    if (
+      !classObj.year ||
+      !classObj.semester ||
+      !classObj.subject ||
+      !classObj.courseNumber ||
+      !classObj.number ||
+      !primarySection?.component
+    ) {
+      console.error(
+        "Missing required class properties for external link",
+        classObj
+      );
+      return "#";
+    }
+
+    return `https://classes.berkeley.edu/content/${classObj.year}-${classObj.semester.toLowerCase()}-${classObj.subject.toLowerCase()}-${classObj.courseNumber}-${classObj.number}-${primarySection.component.toLowerCase()}-${classObj.number}`;
+  }
+
+  // Handle case with individual parameters
+  if (
+    !yearOrClass ||
+    !semester ||
+    !subject ||
+    !courseNumber ||
+    !sectionNumber ||
+    !kind
+  ) {
+    console.error("Missing required parameters for external link");
+    return "#";
+  }
+
+  return `https://classes.berkeley.edu/content/${yearOrClass}-${semester.toLowerCase()}-${subject.toLowerCase()}-${courseNumber}-${sectionNumber}-${kind.toLowerCase()}-${sectionNumber}`;
 };
 
 export const colors = [

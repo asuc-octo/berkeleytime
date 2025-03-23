@@ -37,6 +37,7 @@ export default gql`
     primarySection: Section!
     sections: [Section!]!
     gradeDistribution: GradeDistribution!
+    aggregatedRatings: AggregatedRatings!
 
     "Attributes"
     year: Int!
@@ -119,6 +120,8 @@ export default gql`
     meetings: [Meeting!]!
     exams: [Exam!]!
     online: Boolean!
+    attendanceRequired: Boolean
+    lecturesRecorded: Boolean
   }
 
   enum Component {
