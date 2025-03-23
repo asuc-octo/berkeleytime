@@ -1,48 +1,42 @@
-import { SectionModel, SectionType, TermModel } from "@repo/common";
-import { ClassesAPI } from "@repo/sis-api/classes";
+import { NewEnrollmentHistoryModel } from "@repo/common";
 
-import { config } from "../../config";
 import { Semester } from "../../generated-types/graphql";
-import { formatSection } from "../class/formatter";
+import { formatEnrollment } from "./formatter";
 
 export const getEnrollment = async (
   year: number,
   semester: Semester,
+  sessionId: string | null,
   subject: string,
   courseNumber: string,
-  number: string
+  sectionNumber: string
 ) => {
-  const term = await TermModel.findOne({
-    name: `${year} ${semester}`,
-  });
+  const enrollment = await NewEnrollmentHistoryModel.findOne({
+    year,
+    semester,
+    sessionId: sessionId ? sessionId : "1",
+    subject,
+    courseNumber,
+    sectionNumber,
+  }).lean();
 
-  if (!term) throw new Error("Term not found");
+  if (!enrollment) return null;
 
-  const section = await SectionModel.findOne({
-    "class.session.term.id": term.id,
-    "class.course.subjectArea.code": subject,
-    "class.course.catalogNumber.formatted": courseNumber,
-    number: number,
-  });
+  return formatEnrollment(enrollment);
+};
 
-  if (!section) throw new Error("Section not found");
+export const getEnrollmentBySectionId = async (
+  termId: string,
+  sessionId: string,
+  sectionId: string
+) => {
+  const enrollment = await NewEnrollmentHistoryModel.findOne({
+    termId,
+    sessionId,
+    sectionId,
+  }).lean();
 
-  const client = new ClassesAPI();
+  if (!enrollment) return null;
 
-  const response = await client.v1.getClassSectionByTermAndSectionIdUsingGet(
-    section.id,
-    { "term-id": term.id },
-    {
-      headers: {
-        app_key: config.sis.CLASS_APP_KEY,
-        app_id: config.sis.CLASS_APP_ID,
-      },
-    }
-  );
-
-  const raw = response.data.apiResponse?.response.classSections?.[0];
-
-  if (!raw) throw new Error("Something went error");
-
-  return formatSection(raw as unknown as SectionType);
+  return formatEnrollment(enrollment);
 };

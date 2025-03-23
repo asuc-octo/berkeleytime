@@ -1,27 +1,25 @@
-import { ReactNode, Suspense, lazy, useCallback, useMemo } from "react";
+import { ReactNode, lazy, useCallback, useEffect, useMemo } from "react";
 
-import { DialogClose } from "@radix-ui/react-dialog";
-import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
 import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  Expand,
   OpenBook,
   OpenNewWindow,
-  Pin,
-  PinSolid,
   SidebarCollapse,
   SidebarExpand,
   Xmark,
 } from "iconoir-react";
+import { Dialog, Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
-  Boundary,
+  Box,
   Container,
+  Flex,
   IconButton,
-  LoadingIndicator,
   MenuItem,
   Tooltip,
 } from "@repo/theme";
@@ -37,8 +35,10 @@ import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import usePins from "@/hooks/usePins";
 import { IAggregatedRatings, IClass, Semester } from "@/lib/api";
+import { addRecentClass } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
+import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
 
 const Enrollment = lazy(() => import("./Enrollment"));
@@ -53,17 +53,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
-  return (
-    <Suspense
-      fallback={
-        <Boundary>
-          <LoadingIndicator size="lg" />
-        </Boundary>
-      }
-    >
-      <Container size="sm">{dialog ? children : <Outlet />}</Container>
-    </Suspense>
-  );
+  return dialog ? children : <Outlet />;
 }
 
 interface RootProps {
@@ -73,11 +63,11 @@ interface RootProps {
 
 function Root({ dialog, children }: RootProps) {
   return dialog ? (
-    <Tabs.Root defaultValue="overview" className={styles.root}>
+    <Tabs.Root asChild defaultValue="overview">
       {children}
     </Tabs.Root>
   ) : (
-    <div className={styles.root}>{children}</div>
+    children
   );
 }
 
@@ -129,7 +119,7 @@ export default function Class({
   onClose,
   dialog,
 }: ClassProps) {
-  const { pins, addPin, removePin } = usePins();
+  // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
 
   const { data: user, loading: userLoading } = useReadUser();
@@ -141,7 +131,7 @@ export default function Class({
     providedClass?.courseNumber ?? (courseNumber as string)
   );
 
-  const { data, loading } = useReadClass(
+  const { data: _class, loading } = useReadClass(
     year as number,
     semester as Semester,
     subject as string,
@@ -152,25 +142,25 @@ export default function Class({
     }
   );
 
-  const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+  const _classData = useMemo(() => providedClass ?? _class, [_class, providedClass]);
 
   const bookmarked = useMemo(
     () =>
       user?.bookmarkedClasses.some(
         (bookmarkedClass) =>
-          bookmarkedClass.subject === _class?.subject &&
-          bookmarkedClass.courseNumber === _class?.courseNumber &&
-          bookmarkedClass.number === _class?.number &&
-          bookmarkedClass.year === _class?.year &&
-          bookmarkedClass.semester === _class?.semester
+          bookmarkedClass.subject === _classData?.subject &&
+          bookmarkedClass.courseNumber === _classData?.courseNumber &&
+          bookmarkedClass.number === _classData?.number &&
+          bookmarkedClass.year === _classData?.year &&
+          bookmarkedClass.semester === _classData?.semester
       ),
-    [user, _class]
+    [user, _classData]
   );
 
   const pin = useMemo(() => {
-    if (!_class) return;
+    if (!_classData) return;
 
-    const { year, semester, subject, courseNumber, number } = _class;
+    const { year, semester, subject, courseNumber, number } = _classData;
 
     const id = `${year}-${semester}-${subject}-${courseNumber}-${number}`;
 
@@ -185,24 +175,25 @@ export default function Class({
         number,
       },
     } as ClassPin;
-  }, [_class]);
+  }, [_classData]);
 
-  const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
+  // const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
   const bookmark = useCallback(async () => {
-    if (!user || !_class) return;
+    if (!user || !_classData) return;
 
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
           (bookmarkedClass) =>
-            bookmarkedClass.subject === _class?.subject &&
-            bookmarkedClass.courseNumber === _class?.courseNumber &&
-            bookmarkedClass.number === _class?.number &&
-            bookmarkedClass.year === _class?.year &&
-            bookmarkedClass.semester === _class?.semester
+            !(
+              bookmarkedClass.subject === _classData?.subject &&
+              bookmarkedClass.courseNumber === _classData?.courseNumber &&
+              bookmarkedClass.number === _classData?.number &&
+              bookmarkedClass.year === _classData?.year &&
+              bookmarkedClass.semester === _classData?.semester
+            )
         )
-      : user.bookmarkedClasses.concat(_class);
-
+      : user.bookmarkedClasses.concat(_classData);
     await updateUser(
       {
         bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
@@ -211,6 +202,7 @@ export default function Class({
           courseNumber: bookmarkedClass.courseNumber,
           year: bookmarkedClass.year,
           semester: bookmarkedClass.semester,
+          sessionId: bookmarkedClass.sessionId,
         })),
       },
       {
@@ -222,245 +214,219 @@ export default function Class({
         },
       }
     );
-  }, [_class, bookmarked, updateUser, user]);
+  }, [_classData, bookmarked, updateUser, user]);
+
+  useEffect(() => {
+    if (!_classData) return;
+
+    addRecentClass({
+      subject: _classData.subject,
+      year: _classData.year,
+      semester: _classData.semester,
+      courseNumber: _classData.courseNumber,
+      number: _classData.number,
+    });
+  }, [_classData]);
 
   const ratingsCount = useMemo(() => {
-    if (!_class?.course?.aggregatedRatings?.metrics) {
+    if (!_classData?.course?.aggregatedRatings?.metrics) {
       return 0;
     }
-    return _class.course.aggregatedRatings.metrics.reduce(
+    return _classData.course.aggregatedRatings.metrics.reduce(
       (max: number, metric: IAggregatedRatings["metrics"][number]) =>
         Math.max(max, metric.count),
       0
     );
-  }, [_class?.course?.aggregatedRatings?.metrics]);
+  }, [_classData?.course?.aggregatedRatings?.metrics]);
 
   // TODO: Loading state
   if (loading || courseLoading) {
-    return <></>;
+    return null;
   }
 
-  // TODO: Error state
-  if (!course || !_class || !pin) {
-    return <></>;
+  if (!_classData || !course) {
+    return null;
   }
 
   return (
     <Root dialog={dialog}>
-      <div className={styles.header}>
-        <Container size="sm">
-          <div className={styles.row}>
-            <div className={styles.group}>
-              {!dialog && (
-                <Tooltip content={expanded ? "Expand" : "Collapse"}>
+      <Box className={styles.root}>
+        <Box className={classNames(styles.header, { [styles.expanded]: expanded })}>
+          <Container>
+            <Flex justify="between" align="center">
+              <Flex gap="sm">
+                <Tooltip content="Expand">
                   <IconButton onClick={() => onExpandedChange(!expanded)}>
                     {expanded ? <SidebarCollapse /> : <SidebarExpand />}
                   </IconButton>
                 </Tooltip>
-              )}
-              {/* TODO: Reusable bookmark button */}
-              <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
-                <IconButton
-                  className={classNames(styles.bookmark, {
-                    [styles.active]: bookmarked,
-                  })}
-                  onClick={() => bookmark()}
-                  disabled={userLoading}
-                >
-                  {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                </IconButton>
-              </Tooltip>
-              {/* TODO: Reusable pin button */}
-              <Tooltip content={pinned ? "Remove pin" : "Pin"}>
-                <IconButton
-                  className={classNames(styles.bookmark, {
-                    [styles.active]: pinned,
-                  })}
-                  onClick={() => (pinned ? removePin(pin) : addPin(pin))}
-                >
-                  {pinned ? <PinSolid /> : <Pin />}
-                </IconButton>
-              </Tooltip>
-              <Tooltip content="Add to schedule">
-                <IconButton>
-                  <CalendarPlus />
-                </IconButton>
-              </Tooltip>
-            </div>
-            <div className={styles.group}>
-              {dialog ? (
-                <Tooltip content="View course">
+                <Tooltip content="Open in new tab">
                   <IconButton
                     as={Link}
-                    to={`/courses/${_class.subject}/${_class.courseNumber}`}
+                    to={`/classes/${_classData.year}/${_classData.semester}/${_classData.subject}/${_classData.courseNumber}/${_classData.number}`}
+                  >
+                    <OpenNewWindow />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip content="Add to schedule">
+                  <IconButton as={Link} to={`/schedules/add/${_classData._id}`}>
+                    <CalendarPlus />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
+                  <IconButton onClick={() => bookmark()}>
+                    {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                  </IconButton>
+                </Tooltip>
+                <Tooltip content="View on Berkeley Academic Guide">
+                  <IconButton
+                    as="a"
+                    href={getExternalLink(_classData)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <OpenBook />
                   </IconButton>
                 </Tooltip>
-              ) : (
-                <CourseDrawer
-                  subject={_class.subject}
-                  number={_class.courseNumber}
-                >
-                  <Tooltip content="View course">
-                    <IconButton>
-                      <OpenBook />
-                    </IconButton>
-                  </Tooltip>
-                </CourseDrawer>
-              )}
-              <Tooltip content="Berkeley Academic Guide">
-                <IconButton
-                  as="a"
-                  href={getExternalLink(
-                    _class.year,
-                    _class.semester,
-                    _class.subject,
-                    _class.courseNumber,
-                    _class.primarySection.number,
-                    _class.primarySection.component
-                  )}
-                  target="_blank"
-                >
-                  <OpenNewWindow />
-                </IconButton>
-              </Tooltip>
-              {dialog && (
-                <Tooltip content="Expand">
-                  <DialogClose asChild>
+              </Flex>
+              <Flex gap="sm">
+                {dialog ? (
+                  <Dialog.Close asChild>
+                    <Tooltip content="Close">
+                      <IconButton>
+                        <Xmark />
+                      </IconButton>
+                    </Tooltip>
+                  </Dialog.Close>
+                ) : (
+                  <Tooltip content="Close">
                     <IconButton
                       as={Link}
-                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
+                      to={{
+                        ...location,
+                        pathname: `/catalog/${_classData.year}/${_classData.semester}`,
+                      }}
+                      onClick={() => onClose()}
                     >
                       <Xmark />
                     </IconButton>
-                  </DialogClose>
-                </Tooltip>
-              )}
-              <Tooltip content="Close">
-                {dialog ? (
-                  <DialogClose asChild>
-                    <IconButton>
-                      <Xmark />
-                    </IconButton>
-                  </DialogClose>
-                ) : (
-                  <IconButton
-                    as={Link}
-                    to={{
-                      ...location,
-                      pathname: `/catalog/${year}/${semester}`,
-                    }}
-                    onClick={() => onClose()}
-                  >
-                    <Xmark />
-                  </IconButton>
+                  </Tooltip>
                 )}
-              </Tooltip>
+              </Flex>
+            </Flex>
+            <h1 className={styles.heading}>
+              {_classData.subject} {_classData.courseNumber} #{_classData.number}
+            </h1>
+            <p className={styles.description}>
+              {_classData.title || _classData.course.title}
+            </p>
+            <div className={styles.group}>
+              <AverageGrade gradeDistribution={_classData.course.gradeDistribution} />
+              <Capacity
+                enrollCount={_classData.primarySection.enrollCount}
+                enrollMax={_classData.primarySection.enrollMax}
+                waitlistCount={_classData.primarySection.waitlistCount}
+                waitlistMax={_classData.primarySection.waitlistMax}
+              />
+              <Units unitsMax={_classData.unitsMax} unitsMin={_classData.unitsMin} />
+              {_classData && <CCN ccn={_classData.primarySection.ccn} />}
             </div>
-          </div>
-          <h1 className={styles.heading}>
-            {_class.subject} {_class.courseNumber} #{_class.number}
-          </h1>
-          <p className={styles.description}>
-            {_class.title || _class.course.title}
-          </p>
-          <div className={styles.group}>
-            <AverageGrade gradeDistribution={_class.course.gradeDistribution} />
-            <Capacity
-              enrollCount={_class.primarySection.enrollCount}
-              enrollMax={_class.primarySection.enrollMax}
-              waitlistCount={_class.primarySection.waitlistCount}
-              waitlistMax={_class.primarySection.waitlistMax}
-            />
-            <Units unitsMax={_class.unitsMax} unitsMin={_class.unitsMin} />
-            {_class && <CCN ccn={_class.primarySection.ccn} />}
-          </div>
-          {dialog ? (
-            <Tabs.List className={styles.menu} defaultValue="overview">
-              <Tabs.Trigger value="overview" asChild>
-                <MenuItem>Overview</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="sections" asChild>
-                <MenuItem>Sections</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="enrollment" asChild>
-                <MenuItem>Enrollment</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="grades" asChild>
-                <MenuItem>Grades</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="ratings" asChild>
-                <MenuItem>
-                  Ratings
-                  {ratingsCount > 0 && (
-                    <span className={styles.badge}>{ratingsCount}</span>
+            {dialog ? (
+              <Tabs.List className={styles.menu}>
+                <Flex gap="md">
+                  <Tabs.Trigger value="overview" asChild>
+                    <MenuItem>Overview</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="sections" asChild>
+                    <MenuItem>Sections</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="enrollment" asChild>
+                    <MenuItem>Enrollment</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="grades" asChild>
+                    <MenuItem>Grades</MenuItem>
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="ratings" asChild>
+                    <MenuItem>
+                      Ratings
+                      {ratingsCount > 0 && (
+                        <span className={styles.badge}>{ratingsCount}</span>
+                      )}
+                    </MenuItem>
+                  </Tabs.Trigger>
+                </Flex>
+              </Tabs.List>
+            ) : (
+              <Flex gap="md" className={styles.menu}>
+                <NavLink to={{ ...location, pathname: "." }} end>
+                  {({ isActive }) => (
+                    <MenuItem active={isActive}>Overview</MenuItem>
                   )}
-                </MenuItem>
-              </Tabs.Trigger>
-            </Tabs.List>
-          ) : (
-            <div className={styles.menu}>
-              <NavLink to={{ ...location, pathname: "." }} end>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Overview</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "sections" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Sections</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "enrollment" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Enrollment</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "grades" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Grades</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ pathname: "ratings" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>
-                    Ratings
-                    {ratingsCount > 0 && (
-                      <span className={styles.badge}>{ratingsCount}</span>
-                    )}
-                  </MenuItem>
-                )}
-              </NavLink>
-            </div>
-          )}
-        </Container>
-      </div>
-      <Container size="sm">
+                </NavLink>
+                <NavLink to={{ ...location, pathname: "sections" }}>
+                  {({ isActive }) => (
+                    <MenuItem active={isActive}>Sections</MenuItem>
+                  )}
+                </NavLink>
+                <NavLink to={{ ...location, pathname: "enrollment" }}>
+                  {({ isActive }) => (
+                    <MenuItem active={isActive}>Enrollment</MenuItem>
+                  )}
+                </NavLink>
+                <NavLink to={{ ...location, pathname: "grades" }}>
+                  {({ isActive }) => (
+                    <MenuItem active={isActive}>Grades</MenuItem>
+                  )}
+                </NavLink>
+                <NavLink to={{ pathname: "ratings" }}>
+                  {({ isActive }) => (
+                    <MenuItem active={isActive}>
+                      Ratings
+                      {ratingsCount > 0 && (
+                        <span className={styles.badge}>{ratingsCount}</span>
+                      )}
+                    </MenuItem>
+                  )}
+                </NavLink>
+              </Flex>
+            )}
+          </Container>
+        </Box>
         <ClassContext.Provider
           value={{
-            class: _class,
+            class: _classData,
             course,
           }}
         >
           <Body dialog={dialog}>
             <Tabs.Content value="overview" asChild>
-              <Overview />
+              <SuspenseBoundary>
+                <Overview />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="sections" asChild>
-              <Sections />
+              <SuspenseBoundary>
+                <Sections />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="enrollment" asChild>
-              <Enrollment />
+              <SuspenseBoundary>
+                <Enrollment />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="grades" asChild>
-              <Grades />
+              <SuspenseBoundary>
+                <Grades />
+              </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="ratings" asChild>
-              <Ratings />
+              <SuspenseBoundary>
+                <Ratings />
+              </SuspenseBoundary>
             </Tabs.Content>
           </Body>
         </ClassContext.Provider>
-      </Container>
+      </Box>
     </Root>
   );
 }

@@ -60,7 +60,7 @@ export default async (redis: RedisClientType) => {
       }),
       responseCachePlugin(),
     ],
-    // TODO(production): Disable introspection in production
+    // TODO(prod): introspection: config.isDev,
     introspection: true,
     cache: new RedisCache(redis),
     formatError: (formattedError) => {

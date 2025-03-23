@@ -1,18 +1,24 @@
+import ClassCard from "@/components/ClassCard";
 import useCourse from "@/hooks/useCourse";
+import { sortByTermDescending } from "@/lib/classes";
+
+import styles from "./Classes.module.scss";
 
 export default function Classes() {
   const { course } = useCourse();
 
+  // TODO: UI and drawer vs. link for classes depending on dialog state
   return (
-    <div>
-      {course.classes.map((_class, index) => (
-        <div key={index}>
-          <h2>
-            {_class.year} {_class.semester}
-          </h2>
-          <p>{_class.title}</p>
-        </div>
-      ))}
+    <div className={styles.root}>
+      {course.classes &&
+        course.classes.toSorted(sortByTermDescending).map((_class, index) => (
+          <div key={index} className={styles.row}>
+            <div className={styles.term}>
+              {_class.semester} {_class.year}
+            </div>
+            <ClassCard class={_class} />
+          </div>
+        ))}
     </div>
   );
 }

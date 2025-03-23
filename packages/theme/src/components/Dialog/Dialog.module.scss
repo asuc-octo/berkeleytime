@@ -1,50 +1,16 @@
-@mixin dark-theme {
-  background-color: rgb(0 0 0 / 80%);
-}
-
-@mixin light-theme {
-  background-color: rgb(255 255 255 / 80%);
-}
-
-body[data-theme="dark"] {
-  .overlay {
-    @include dark-theme;
-  }
-}
-
-body[data-theme="light"] {
-  .overlay {
-    @include light-theme;
-  }
-}
-
-body:not([data-theme]) {
-  .overlay {
-    @include light-theme;
-
-    @media (prefers-color-scheme: dark) {
-      @include dark-theme;
-    }
-  }
-}
-
 .overlay {
   inset: 0;
   position: fixed;
-  z-index: 988;
+  background-color: var(--background-color);
+  opacity: 0.9;
 
   &[data-state="open"] {
-    animation: fadeIn 250ms ease-in;
+    animation: fadeIn 150ms ease-in;
   }
 
   &[data-state="closed"] {
-    animation: fadeOut 250ms ease-out;
+    animation: fadeOut 150ms ease-out;
   }
-}
-
-.content {
-  position: fixed;
-  z-index: 989;
 }
 
 @keyframes fadeIn {
@@ -63,6 +29,128 @@ body:not([data-theme]) {
   }
 
   to {
+    opacity: 0;
+  }
+}
+
+.card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 512px;
+  max-width: calc(100% - 48px);
+
+  &[data-state="open"] {
+    animation: jumpIn 150ms ease-in;
+  }
+
+  &[data-state="closed"] {
+    animation: jumpOut 150ms ease-out;
+  }
+}
+
+@keyframes jumpIn {
+  from {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes jumpOut {
+  from {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+
+  &[data-align="start"] {
+    left: 0;
+
+    &[data-state="open"] {
+      animation: slideInStart 150ms ease-in;
+    }
+
+    &[data-state="closed"] {
+      animation: slideOutStart 150ms ease-out;
+    }
+  }
+
+  &[data-align="end"] {
+    right: 0;
+
+    &[data-state="open"] {
+      animation: slideInEnd 150ms ease-in;
+    }
+
+    &[data-state="closed"] {
+      animation: slideOutEnd 150ms ease-out;
+    }
+  }
+}
+
+@keyframes slideInStart {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutStart {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInEnd {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutEnd {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(100%);
     opacity: 0;
   }
 }

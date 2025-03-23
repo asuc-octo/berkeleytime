@@ -1,7 +1,6 @@
 import { gql } from "@apollo/client";
 
 import {
-  AcademicCareer,
   GradeDistribution,
   IClass,
   InstructionMethod,
@@ -9,8 +8,21 @@ import {
 import { IAggregatedRatings } from "./ratings";
 import { Semester } from "./terms";
 
+export enum AcademicCareer {
+  Undergraduate = "UGRD",
+  Graduate = "GRAD",
+  Extension = "UCBX",
+}
+
+export const academicCareers: Record<AcademicCareer, string> = {
+  [AcademicCareer.Undergraduate]: "Undergraduate",
+  [AcademicCareer.Graduate]: "Graduate",
+  [AcademicCareer.Extension]: "Extension",
+};
+
 export interface ICourse {
   // Identifiers
+  courseId: string;
   subject: string;
   number: string;
 
@@ -22,13 +34,13 @@ export interface ICourse {
 
   // Attributes
   requirements: string | null;
-  primaryInstructionMethod: InstructionMethod;
   description: string;
   fromDate: string;
   gradingBasis: string;
   finalExam: string | null;
   academicCareer: AcademicCareer;
   title: string;
+  primaryInstructionMethod: InstructionMethod;
   toDate: string;
   typicallyOffered: Semester[] | null;
   aggregatedRatings?: IAggregatedRatings;
@@ -41,6 +53,7 @@ export interface ReadCourseResponse {
 export const READ_COURSE = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
+      courseId
       subject
       number
       title

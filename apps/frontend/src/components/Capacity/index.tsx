@@ -1,11 +1,14 @@
 import { useMemo } from "react";
 
-import * as Tooltip from "@radix-ui/react-tooltip";
 import { User } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
 import styles from "./Capacity.module.scss";
 
-const getColor = (count: number, capacity: number) => {
+const getColor = (count?: number, capacity?: number) => {
+  if (typeof count !== "number" || typeof capacity !== "number")
+    return "var(--paragraph-color)";
+
   const percentage = count / capacity;
 
   return percentage >= 0.75
@@ -16,26 +19,26 @@ const getColor = (count: number, capacity: number) => {
 };
 
 interface CapacityProps {
-  enrollCount: number;
-  enrollMax: number;
-  waitlistCount: number;
-  waitlistMax: number;
+  enrolledCount?: number;
+  maxEnroll?: number;
+  waitlistedCount?: number;
+  maxWaitlist?: number;
 }
 
 export default function Capacity({
-  enrollCount,
-  enrollMax,
-  waitlistCount,
-  waitlistMax,
+  enrolledCount,
+  maxEnroll,
+  waitlistedCount,
+  maxWaitlist,
 }: CapacityProps) {
   const color = useMemo(
-    () => getColor(enrollCount, enrollMax),
-    [enrollCount, enrollMax]
+    () => getColor(enrolledCount, maxEnroll),
+    [enrolledCount, maxEnroll]
   );
 
   const waitlistColor = useMemo(
-    () => getColor(waitlistCount, waitlistMax),
-    [waitlistCount, waitlistMax]
+    () => getColor(waitlistedCount, maxWaitlist),
+    [waitlistedCount, maxWaitlist]
   );
 
   return (
@@ -44,9 +47,11 @@ export default function Capacity({
         <div className={styles.trigger}>
           <User />
           <p className={styles.text}>
-            <span style={{ color }}>{enrollCount.toLocaleString()}</span>
+            <span style={{ color }}>
+              {enrolledCount?.toLocaleString() ?? " - "}
+            </span>
             &nbsp;/&nbsp;
-            {enrollMax.toLocaleString()}
+            {maxEnroll?.toLocaleString() ?? " - "}
           </p>
         </div>
       </Tooltip.Trigger>
@@ -62,18 +67,22 @@ export default function Capacity({
             <div className={styles.row}>
               <p className={styles.key}>Enrolled</p>
               <p>
-                <span style={{ color }}>{enrollCount.toLocaleString()}</span>
+                <span style={{ color }}>
+                  {enrolledCount?.toLocaleString() ?? " - "}
+                </span>
                 &nbsp;/&nbsp;
                 <span className={styles.value}>
-                  {enrollMax.toLocaleString()}
+                  {maxEnroll?.toLocaleString() ?? " - "}
                 </span>
                 &nbsp;(
                 <span style={{ color }}>
-                  {enrollMax === 0
-                    ? 0
-                    : Math.round(
-                        (enrollCount / enrollMax) * 100
-                      ).toLocaleString()}
+                  {enrolledCount === undefined || maxEnroll === undefined
+                    ? "N/A"
+                    : maxEnroll === 0
+                      ? 0
+                      : Math.round(
+                          (enrolledCount / maxEnroll) * 100
+                        ).toLocaleString()}
                   %
                 </span>
                 )
@@ -84,17 +93,19 @@ export default function Capacity({
               <p className={styles.key}>Waitlisted</p>
               <p>
                 <span style={{ color: waitlistColor }}>
-                  {waitlistCount.toLocaleString()}
+                  {waitlistedCount?.toLocaleString() ?? " - "}
                 </span>
                 &nbsp;/&nbsp;
-                {waitlistMax.toLocaleString()}
+                {maxWaitlist?.toLocaleString() ?? " - "}
                 &nbsp;(
                 <span style={{ color: waitlistColor }}>
-                  {waitlistMax === 0
-                    ? 0
-                    : Math.round(
-                        (waitlistCount / waitlistMax) * 100
-                      ).toLocaleString()}
+                  {waitlistedCount === undefined || maxWaitlist === undefined
+                    ? "N/A"
+                    : maxWaitlist === 0
+                      ? 0
+                      : Math.round(
+                          (waitlistedCount / maxWaitlist) * 100
+                        ).toLocaleString()}
                   %
                 </span>
                 )

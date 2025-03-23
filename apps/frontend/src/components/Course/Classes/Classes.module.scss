@@ -1,0 +1,19 @@
+.root {
+  max-width: 600px;
+  margin: auto;
+  overflow-y: scroll;
+  height: 100%;
+
+  .row {
+    margin-top: 30px;
+    display: flex;
+  }
+
+  .term {
+    // flex: 40%;
+    color: var(--label-color);
+    text-align: center;
+    margin-top: 60px;
+    min-width: 200px;
+  }
+}

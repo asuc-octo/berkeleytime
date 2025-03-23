@@ -37,6 +37,7 @@ export default function Header() {
           placeholder={`Search ${semester} ${year} classes...`}
           onFocus={() => setExpanded(false)}
           autoFocus
+          autoComplete="off"
         />
         <div className={styles.label}>{classes.length.toLocaleString()}</div>
         <IconButton onClick={() => setExpanded(!expanded)}>

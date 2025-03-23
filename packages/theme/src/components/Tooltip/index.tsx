@@ -1,58 +1,47 @@
-import { ReactNode, forwardRef } from "react";
+import { ComponentPropsWithRef, ReactNode } from "react";
 
-import {
-  Arrow,
-  Content,
-  Portal,
-  Root,
-  TooltipContentProps,
-  TooltipTriggerProps,
-  Trigger,
-} from "@radix-ui/react-tooltip";
+import { Tooltip as Primitive } from "radix-ui";
 
+import { useStack } from "../../hooks/useStack";
 import styles from "./Tooltip.module.scss";
 
-export interface TooltipProps {
+interface Props {
   children: ReactNode;
   content: string;
 }
 
-export const Tooltip = forwardRef<
-  HTMLButtonElement,
-  TooltipProps &
-    Pick<TooltipContentProps, "sideOffset" | "side" | "collisionPadding"> &
-    Omit<TooltipTriggerProps, "asChild">
->(
-  (
-    {
-      content,
-      children,
-      sideOffset = 8,
-      collisionPadding = 8,
-      side = "bottom",
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <Root disableHoverableContent>
-        <Trigger {...props} ref={ref} asChild>
-          {children}
-        </Trigger>
-        <Portal>
-          <Content
-            asChild
-            side={side}
-            sideOffset={sideOffset}
-            collisionPadding={collisionPadding}
-          >
-            <div className={styles.content}>
-              <Arrow className={styles.arrow} />
-              {content}
-            </div>
-          </Content>
-        </Portal>
-      </Root>
-    );
-  }
-);
+export type TooltipProps = Props &
+  Omit<Primitive.TooltipTriggerProps, "asChild"> &
+  Pick<
+    Primitive.TooltipContentProps,
+    "sideOffset" | "side" | "collisionPadding"
+  >;
+
+export function Tooltip({
+  content,
+  sideOffset = 8,
+  collisionPadding = 8,
+  side = "bottom",
+  ...props
+}: Omit<ComponentPropsWithRef<"button">, keyof TooltipProps> & TooltipProps) {
+  const stack = useStack();
+
+  return (
+    <Primitive.Root disableHoverableContent>
+      <Primitive.Trigger {...props} asChild />
+      <Primitive.Portal>
+        <Primitive.Content
+          asChild
+          side={side}
+          sideOffset={sideOffset}
+          collisionPadding={collisionPadding}
+        >
+          <div className={styles.content} style={{ zIndex: stack + 1 }}>
+            <Primitive.Arrow className={styles.arrow} />
+            {content}
+          </div>
+        </Primitive.Content>
+      </Primitive.Portal>
+    </Primitive.Root>
+  );
+}

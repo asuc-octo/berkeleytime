@@ -91,3 +91,11 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
     --set mongoUri=mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
     --set nodeEnv=development
+
+# ==========
+# DOCS
+# ==========
+
+helm install bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs --namespace=bt \
+    --version=1.0.0 \
+    --set host=docs.stanfurdtime.com

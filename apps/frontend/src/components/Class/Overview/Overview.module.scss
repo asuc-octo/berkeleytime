@@ -1,18 +1,13 @@
-.root {
-  padding: 24px 0;
+.label {
+  color: var(--label-color);
+  line-height: 1;
   font-size: 14px;
+}
 
-  .label {
-    margin-top: 24px;
-    color: var(--label-color);
-    line-height: 1;
-  }
-
-  .description {
-    color: var(--paragraph-color);
-    margin-top: 8px;
-    line-height: 1.5;
-  }
+.description {
+  color: var(--paragraph-color);
+  line-height: 1.5;
+  font-size: 14px;
 }
 
 .userSubmissionLabel {

@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DataTransferBoth, Xmark } from "iconoir-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { IconButton } from "@repo/theme";
-import { Tooltip } from "@repo/theme";
+import { DropdownMenu, IconButton, Tooltip } from "@repo/theme";
 
 import Week from "@/app/Schedule/Week";
 import Units from "@/components/Units";
-import { useReadSchedule } from "@/hooks/api";
+import { useReadSchedule, useReadSchedules } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
 import { ScheduleIdentifier } from "@/lib/api";
 
@@ -16,6 +15,10 @@ import { getSelectedSections, getUnits } from "../schedule";
 import styles from "./Comparison.module.scss";
 
 export default function Comparison() {
+  const navigate = useNavigate();
+
+  const { data: schedules } = useReadSchedules();
+
   const { schedule } = useSchedule();
 
   const { comparisonId } = useParams();
@@ -90,14 +93,38 @@ export default function Comparison() {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.group}>
-          <p className={styles.heading}>Untitled Fall 2024 schedule</p>
-          <p className={styles.paragraph}>Fall 2024</p>
+          <p className={styles.heading}>{schedule.name}</p>
+          {/* Information is redundant -> <p className={styles.paragraph}>{schedule.semester} {schedule.year}</p> */}
         </div>
         <div className={styles.group}>
-          <p className={styles.heading}>No schedule selected</p>
-          <IconButton>
-            <DataTransferBoth />
-          </IconButton>
+          <p className={styles.heading}>
+            {comparison ? comparison.name : "No schedule selected"}
+          </p>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton>
+                <DataTransferBoth />
+              </IconButton>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content
+              style={{ width: 250, position: "relative", left: -30 }}
+            >
+              {schedules &&
+                schedules.map((_schedule) => {
+                  return (
+                    <DropdownMenu.Item
+                      onClick={() => {
+                        navigate(
+                          `/schedules/${schedule._id}/compare/${_schedule._id}`
+                        );
+                      }}
+                    >
+                      {_schedule.name} - {_schedule.semester} {_schedule.year}
+                    </DropdownMenu.Item>
+                  );
+                })}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
           <Tooltip content="Close">
             <Link to="../">
               <IconButton>
@@ -110,7 +137,9 @@ export default function Comparison() {
       <div className={styles.body}>
         <div className={styles.panel}>
           <div className={styles.context}>
-            <div className={styles.data}>Fall 2024</div>
+            <div className={styles.data}>
+              {schedule.semester} {schedule.year}
+            </div>
             <div className={styles.data}>
               {schedule.classes.length === 1
                 ? "1 class"
@@ -129,12 +158,19 @@ export default function Comparison() {
               setCurrent((previous) => (previous === 0 ? null : previous))
             }
           >
-            <Week selectedSections={selectedSections} y={y} updateY={setY} />
+            <Week
+              events={schedule.events}
+              selectedSections={selectedSections}
+              y={y}
+              updateY={setY}
+            />
           </div>
         </div>
         <div className={styles.panel}>
           <div className={styles.context}>
-            <div className={styles.data}>Fall 2024</div>
+            <div className={styles.data}>
+              {comparison?.semester} {comparison?.year}
+            </div>
             <div className={styles.data}>
               {comparison
                 ? comparison.classes.length === 1
@@ -156,6 +192,7 @@ export default function Comparison() {
             }
           >
             <Week
+              events={comparison?.events ?? []}
               selectedSections={selectedComparisonSections}
               y={y}
               updateY={setY}

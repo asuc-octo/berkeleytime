@@ -1,6 +1,8 @@
 name: Deploy to Staging
 
-concurrency: staging
+concurrency:
+  group: staging
+  cancel-in-progress: true
 
 on:
   push:
@@ -30,6 +32,9 @@ jobs:
           image:
             tag: latest
         backend:
+          image:
+            tag: latest
+        datapuller:
           image:
             tag: latest
         host: staging.stanfurdtime.com

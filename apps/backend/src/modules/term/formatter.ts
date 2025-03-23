@@ -1,30 +1,22 @@
-import { SessionType, TermType } from "@repo/common";
+import { ISessionItem, ITermItem } from "@repo/common";
 
-import { formatDate } from "../class/formatter";
 import { TermModule } from "./generated-types/module-types";
 
-export const formatSession = (session: SessionType) => {
-  const { name, beginDate, endDate, temporalPosition } = session;
-
+const formatSession = (session: ISessionItem) => {
   return {
-    name,
-    startDate: formatDate(beginDate),
-    endDate: formatDate(endDate),
-    temporalPosition: temporalPosition as TermModule.TemporalPosition,
+    ...session,
+    startDate: session.beginDate,
   } as TermModule.Session;
 };
 
-export const formatTerm = (term: TermType) => {
-  const { name, temporalPosition, sessions, beginDate, endDate } = term;
-
-  const [year, semester] = name.split(" ");
+export const formatTerm = (term: ITermItem) => {
+  const [year, semester] = term.name.split(" ");
 
   return {
-    semester: semester as TermModule.Semester,
+    ...term,
     year: parseInt(year),
-    temporalPosition: temporalPosition as TermModule.TemporalPosition,
-    sessions: sessions.map(formatSession),
-    startDate: formatDate(beginDate),
-    endDate: formatDate(endDate),
+    semester,
+    startDate: term.beginDate,
+    sessions: term.sessions?.map(formatSession),
   } as TermModule.Term;
 };

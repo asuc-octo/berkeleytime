@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
 
-import * as Checkbox from "@radix-ui/react-checkbox";
-import * as RadioGroup from "@radix-ui/react-radio-group";
 import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
+import { Checkbox, RadioGroup } from "radix-ui";
 import { useSearchParams } from "react-router-dom";
 
 import {
