@@ -299,7 +299,7 @@ export function RatingsContainer() {
   }
   return (
     <div className={styles.root}>
-      <Container size="sm">
+      <Container size="2">
         {userRatings ? (
           <RatingUserSummary
             userRatings={userRatings}
