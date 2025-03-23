@@ -55,9 +55,8 @@ export const formatClass = (_class: IClassItem) => {
     gradingBasis: _class.gradingBasis as ClassGradingBasis,
     finalExam: _class.finalExam as ClassFinalExam,
     title: _class.title,
-  } as IntermediateClass;
-
-  return output;
+  };
+  return output as unknown as IntermediateClass;
 };
 
 interface SectionRelationships {
