@@ -77,11 +77,11 @@ export const getColorForCourse = (
 	course: CourseOverviewFragment | string
 ): string =>
 	COURSE_PALETTE[
-		(schedule.courses.length -
-			(schedule.courses.findIndex((c) =>
-				typeof course === 'string' ? c.id === course : c.id === course.id
-			) || 0)) %
-			COURSE_PALETTE.length
+	(schedule.courses.length -
+		(schedule.courses.findIndex((c) =>
+			typeof course === 'string' ? c.id === course : c.id === course.id
+		) || 0)) %
+	COURSE_PALETTE.length
 	];
 
 /**
@@ -136,13 +136,13 @@ export const deserializeSchedule = (schedule: ScheduleFragment): Schedule => ({
 		.flatMap((section) =>
 			section.primary
 				? [
-						{ ...section.primary, courseId: section.course.id },
-						...getNodes(section.secondary).map((secondary) => ({
-							courseId: section.course.id,
-							lectureId: section.primary!.id,
-							...secondary
-						}))
-				  ]
+					{ ...section.primary, courseId: section.course.id },
+					...getNodes(section.secondary).map((secondary) => ({
+						courseId: section.course.id,
+						lectureId: section.primary!.id,
+						...secondary
+					}))
+				]
 				: []
 		)
 		.filter((n): n is SchedulerSectionType => !!n)
@@ -175,8 +175,8 @@ export const serializeSchedule = (schedule: Schedule, semester: Semester): Backe
  * Generates iCal file string.
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
-	const SEMESTER_START = new Date(2025, 0, 14);
-	const LAST_COURSE_DAY = new Date(2025, 4, 16);
+	const SEMESTER_START = new Date(2025, 7, 27); // july 27th
+	const LAST_COURSE_DAY = new Date(2025, 11, 5); // dec 5th
 
 	const dateToICal = (date: Date) => {
 		// Function to pad a number with leading zeros
@@ -301,5 +301,5 @@ export const formatScheduleError = (error?: Error | null): Error | string | null
 	(error.message.includes('No permission')
 		? 'This schedule is not publicly accessible.'
 		: error.message.includes('not a valid UUID') || error.message.includes('Invalid Schedule ID')
-		? 'That schedule does not exist.'
-		: 'An error occured loading scheduler information. Please try again later.');
+			? 'That schedule does not exist.'
+			: 'An error occured loading scheduler information. Please try again later.');

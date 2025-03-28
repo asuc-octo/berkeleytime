@@ -1,27 +1,27 @@
-"""Configurations for Fall 2024."""
-from berkeleytime.config.finals.semesters.fall2024 import *
+"""Configurations for Fall 2025."""
+from berkeleytime.config.finals.semesters.fall2025 import *
 
 import datetime
 
 CURRENT_SEMESTER = 'fall'
-CURRENT_YEAR = '2024'
-CURRENT_SEMESTER_DISPLAY = 'Fall 2024'
+CURRENT_YEAR = '2025'
+CURRENT_SEMESTER_DISPLAY = 'Fall 2025'
 
 # SIS API Keys
 SIS_TERM_ID = 2248
 
 TELEBEARS = {
-    'phase1_start': datetime.datetime(2024, 4, 22),
-    'phase1_end': datetime.datetime(2024, 6, 21),
-    'phase2_start': datetime.datetime(2024, 7, 22),
-    'phase2_end': datetime.datetime(2024, 8, 18),
+    'phase1_start': datetime.datetime(2025, 4, 14), # april 14th
+    'phase1_end': datetime.datetime(2025, 6, 13), # june 13th
+    'phase2_start': datetime.datetime(2025, 7, 21), # july 21st
+    'phase2_end': datetime.datetime(2025, 8, 17), # august 17th
 
-    'adj_start': datetime.datetime(2024, 8, 19),
+    'adj_start': datetime.datetime(2025, 8, 18), # august 18th
 }
 
 INSTRUCTION = {
-    'instruction_start': datetime.datetime(2024, 8, 28, 00, 00),
-    'instruction_end': datetime.datetime(2024, 12, 13, 00, 00)
+    'instruction_start': datetime.datetime(2025, 8, 27, 00, 00), # august 27th
+    'instruction_end': datetime.datetime(2025, 12, 12, 00, 00) # december 12th
 }
 
 # Please don't edit anything below this line unless you know what you are doing
