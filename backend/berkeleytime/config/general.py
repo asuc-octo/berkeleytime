@@ -25,6 +25,7 @@ from berkeleytime.config.semesters import (
     spring2024,
     fall2024,
     spring2025,
+    fall2025,
 )
 
 GRADE_POINT = {
@@ -68,6 +69,7 @@ PAST_SEMESTERS = [
     {'semester': 'fall', 'year': '2023', 'display': 'Fall 2023'},
     {'semester': 'spring', 'year': '2024', 'display': 'Spring 2024'},
     {'semester': 'fall', 'year': '2024', 'display': 'Fall 2024'},
+    {'semester': 'spring', 'year': '2025', 'display': 'Spring 2025'},
 ]
 
 PAST_SEMESTERS_SIS = [
@@ -88,6 +90,7 @@ PAST_SEMESTERS_SIS = [
     {'semester': 'fall', 'year': '2023', 'display': 'Fall 2023'},
     {'semester': 'spring', 'year': '2024', 'display': 'Spring 2024'},
     {'semester': 'fall', 'year': '2024', 'display': 'Fall 2024'},
+    {'semester': 'spring', 'year': '2025', 'display': 'Spring 2025'},
 ]
 
 
@@ -119,6 +122,7 @@ PAST_SEMESTERS_TELEBEARS_JSON = {
     'spring 2024': spring2024.TELEBEARS_JSON,
     'fall 2024': fall2024.TELEBEARS_JSON,
     'spring 2025': spring2025.TELEBEARS_JSON,
+    'fall 2025': fall2025.TELEBEARS_JSON,
 }
 
 PAST_SEMESTERS_TELEBEARS = {
@@ -147,6 +151,7 @@ PAST_SEMESTERS_TELEBEARS = {
     'spring 2024': spring2024.TELEBEARS,
     'fall 2024': fall2024.TELEBEARS,
     'spring 2025': spring2025.TELEBEARS,
+    'fall 2025': fall2025.TELEBEARS,
 }
 
 # Classes with special characters
