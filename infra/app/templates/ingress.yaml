@@ -1,3 +1,36 @@
+# staff.berkeleytime.com ingress with oauth2 proxy
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-staff-ingress
+  labels:
+    {{- include "bt-app.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/issuer: {{ .Values.issuerName }}
+    nginx.ingress.kubernetes.io/auth-url: "https://staff.{{ .Values.host }}/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://staff.{{ .Values.host }}/oauth2/start?rd=$escaped_request_uri"
+    nginx.ingress.kubernetes.io/auth-response-headers: "Authorization"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - staff.{{ .Values.host }}
+      secretName: bt-tls
+  rules:
+    - host: staff.{{ .Values.host }}
+      http:
+        paths:
+          - path: {{ .Values.frontend.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bt-app.frontendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}
+
+---
+# berkeleytime.com ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
