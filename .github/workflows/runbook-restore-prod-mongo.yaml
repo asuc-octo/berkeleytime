@@ -9,19 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: SSH and Reset MongoDB
-      uses: appleboy/ssh-action@v1.2.0
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-        set -e  # Exit immediately if a command fails
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
 
-        # Create Mongo job from mongo-restore
-        kubectl create job --from=job/bt-base-restore-prod-mongo bt-base-restore-prod-mongo-ga-manual
-        echo "MongoDB restore scheduled."
+            # Create Mongo job from mongo-restore
+            kubectl create job --from=job/bt-base-restore-prod-mongo bt-base-restore-prod-mongo-ga-manual
+            echo "MongoDB restore scheduled."
 
-        # Wait for job_pod log output
-        job_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-base-restore-prod-mongo-ga-manual')
-        kubectl wait --for=condition=ready pod/$job_pod -n bt --timeout=30s
-        kubectl logs -f $job_pod -n bt
+            # Wait for job_pod log output
+            job_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-base-restore-prod-mongo-ga-manual')
+            kubectl wait --for=condition=ready pod/$job_pod -n bt --timeout=30s
+            kubectl logs -f $job_pod -n bt
