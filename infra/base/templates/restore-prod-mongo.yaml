@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-restore-prod-mongo
+  namespace: bt
+spec:
+  template:
+    spec:
+      serviceAccountName: bt-k8s-role
+      containers:
+        - name: backup-prod-mongo
+        image: alpine/k8s:1.29.11
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -e # Exit immediately if a command fails
+
+            # Find production MongoDB pod
+            prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
+
+            # Download production MongoDB backup
+            echo "Downloading backup from s3 bucket..."
+            aws s3 cp s3://$BUCKET_NAME/prod_backup.gz /tmp/prod_backup.gz --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
+
+            # Restore dump into production MongoDB
+            echo "Restoring production MongoDB from backup..."
+            kubectl cp --namespace=bt \
+              /tmp/prod_backup.gz "$prod_pod:/tmp/prod_backup.gz"
+            kubectl exec --namespace=bt \
+              "$prod_pod" -- mongosh bt --eval "db.dropDatabase()"
+            kubectl exec --namespace=bt \
+              "$prod_pod" -- mongorestore --archive=/tmp/prod_backup.gz --gzip --drop
+            kubectl exec --namespace=bt \
+              "$prod_pod" -- rm /tmp/prod_backup.gz
+
+            # Cleanup local files
+            rm /tmp/prod_backup.gz
+            echo "MongoDB restore completed successfully!"
+        env:
+          - name: ACCOUNT_ID
+            value: ff660bd2dac18c00551ed509d24ef4d7
+          - name: BUCKET_NAME
+            value: prod-mongo-backups
+    restartPolicy: Never

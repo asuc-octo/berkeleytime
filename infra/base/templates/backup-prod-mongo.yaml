@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-backup-prod-mongo
+  namespace: bt
+spec:
+  schedule: "0 5 * * *" # Daily at 5 AM
+  timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
+  suspend: false
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 180
+      template:
+        spec:
+          serviceAccountName: bt-k8s-role
+          containers:
+            - name: backup-prod-mongo
+              image: alpine/k8s:1.29.11
+              command:
+                - sh
+                - -c
+                - |
+                  set -e # Exit immediately if a command fails
+
+                  # Find production MongoDB pod
+                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
+
+                  # Dump production MongoDB state
+                  echo "Dumping prod MongoDB state..."
+                  kubectl exec --namespace=bt \
+                    "$prod_pod" -- mongodump --archive=/tmp/prod_backup.gz --gzip
+                  kubectl cp --namespace=bt \
+                    "$prod_pod:/tmp/prod_backup.gz" /tmp/prod_backup.gz
+                  kubectl exec --namespace=bt \
+                    "$prod_pod" -- rm /tmp/prod_backup.gz
+
+                  # Upload production MongoDB backup
+                  echo "Uploading backup to s3 bucket..."
+                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/ \
+                    --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
+
+                  # Cleanup local files
+                  rm /tmp/prod_backup.gz
+                  echo "MongoDB backup completed successfully!"
+              env:
+                - name: ACCOUNT_ID
+                  value: ff660bd2dac18c00551ed509d24ef4d7
+                - name: BUCKET_NAME
+                  value: prod-mongo-backups
+          restartPolicy: Never
