@@ -21,7 +21,8 @@ spec:
 
             # Download production MongoDB backup
             echo "Downloading backup from s3 bucket..."
-            aws s3 cp s3://$BUCKET_NAME/prod_backup.gz /tmp/prod_backup.gz --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
+            aws s3 cp s3://$BUCKET_NAME/prod_backup.gz /tmp/prod_backup.gz \
+              --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
 
             # Restore dump into production MongoDB
             echo "Restoring production MongoDB from backup..."

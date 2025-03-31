@@ -38,7 +38,8 @@ spec:
                   # Upload production MongoDB backup
                   echo "Uploading backup to s3 bucket..."
                   aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/ \
-                    --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
+                    --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com \
+                    --checksum-algorithm CRC32
 
                   # Cleanup local files
                   rm /tmp/prod_backup.gz
