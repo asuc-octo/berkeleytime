@@ -1,0 +1,35 @@
+.root {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+
+  .table {
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table th,
+  .table td {
+    text-align: left;
+  }
+  
+  .table tr:last-child { // idk why this isn't removing the last child's bottom border
+    border-bottom: none;
+  }
+
+  .table tr:hover {
+    background: #f1f1f1;
+  }
+
+  .table .header:hover {
+    background-color: transparent;
+  }
+  .check:hover {
+    cursor: pointer;
+  }
+}

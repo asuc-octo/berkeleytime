@@ -1,0 +1,15 @@
+.root {
+  padding: 60px 0;
+  margin: auto 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .add {
+    align-self: flex-start;
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+}
+

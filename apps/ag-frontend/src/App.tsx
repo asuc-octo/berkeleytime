@@ -7,6 +7,7 @@ import {
   createBrowserRouter,
   redirect,
 } from "react-router-dom";
+import AddPost from "./app/AddPost";
 
 import Landing from "@/app/Landing";
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "*",
     loader: () => redirect("/"),
+  },
+  {
+    path: "/add-post",
+    element: <AddPost />,  
   },
 ]);
 
