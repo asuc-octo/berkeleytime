@@ -8,7 +8,7 @@ import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
   getClass,
-  getDecalInfo,
+  getDecal,
   getPrimarySection,
   getSecondarySections,
   getSection,
@@ -66,14 +66,14 @@ const resolvers: ClassModule.Resolvers = {
       _,
       { year, semester, sessionId, subject, courseNumber, number }
     ) => {
-      const _class = await getClass(
+      const _class = await getClass({
         year,
         semester,
         sessionId,
         subject,
         courseNumber,
-        number
-      );
+        number,
+      });
 
       return _class as unknown as ClassModule.Class;
     },
@@ -82,14 +82,14 @@ const resolvers: ClassModule.Resolvers = {
       _,
       { year, semester, sessionId, subject, courseNumber, number }
     ) => {
-      const section = await getSection(
+      const section = await getSection({
         year,
         semester,
         sessionId,
         subject,
         courseNumber,
-        number
-      );
+        number,
+      });
 
       return section as unknown as ClassModule.Section;
     },
@@ -115,14 +115,17 @@ const resolvers: ClassModule.Resolvers = {
     primarySection: async (parent: IntermediateClass | ClassModule.Class) => {
       if (parent.primarySection) return parent.primarySection;
 
-      const primarySection = await getPrimarySection(
-        parent.year,
-        parent.semester,
-        parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
+      const { year, semester, sessionId, subject, courseNumber, number } =
+        parent;
+
+      const primarySection = await getPrimarySection({
+        year,
+        semester,
+        sessionId,
+        subject,
+        courseNumber,
+        number,
+      });
 
       return primarySection as unknown as ClassModule.Section;
     },
@@ -130,14 +133,17 @@ const resolvers: ClassModule.Resolvers = {
     sections: async (parent: IntermediateClass | ClassModule.Class) => {
       if (parent.sections) return parent.sections;
 
-      const secondarySections = await getSecondarySections(
-        parent.year,
-        parent.semester,
-        parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
+      const { year, semester, sessionId, subject, courseNumber, number } =
+        parent;
+
+      const secondarySections = await getSecondarySections({
+        year,
+        semester,
+        sessionId,
+        subject,
+        courseNumber,
+        number,
+      });
 
       return secondarySections as unknown as ClassModule.Section[];
     },
@@ -160,16 +166,19 @@ const resolvers: ClassModule.Resolvers = {
     },
 
     decal: async (parent: IntermediateClass | ClassModule.Class) => {
-      const decalInfo = await getDecalInfo(
-        parent.year,
-        parent.semester,
-        parent.courseNumber,
-        parent.subject
-      );
+      if (parent.decal) return parent.decal;
 
-      if (!decalInfo) return null as any;
+      const { year, semester, subject, courseNumber, number } = parent;
 
-      return decalInfo;
+      const decal = await getDecal({
+        year,
+        semester,
+        subject,
+        courseNumber,
+        number,
+      });
+
+      return decal;
     },
   },
 
@@ -193,14 +202,17 @@ const resolvers: ClassModule.Resolvers = {
     class: async (parent: IntermediateSection | ClassModule.Section) => {
       if (parent.class) return parent.class;
 
-      const _class = await getClass(
-        parent.year,
-        parent.semester,
-        parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
+      const { year, semester, sessionId, subject, courseNumber, number } =
+        parent;
+
+      const _class = await getClass({
+        year,
+        semester,
+        sessionId,
+        subject,
+        courseNumber,
+        number,
+      });
 
       return _class as unknown as ClassModule.Class;
     },

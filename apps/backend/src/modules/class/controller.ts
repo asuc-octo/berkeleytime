@@ -6,67 +6,79 @@ import {
   SectionModel,
 } from "@repo/common";
 
-import { formatClass, formatDecalInfo, formatSection } from "./formatter";
+import { formatClass, formatDecal, formatSection } from "./formatter";
 
-export const getClass = async (
-  year: number,
-  semester: string,
-  sessionId: string,
-  subject: string,
-  courseNumber: string,
-  number: string
-) => {
+/**
+ * Get a class
+ * @default sessionId "1"
+ */
+export const getClass = async ({
+  sessionId = "1",
+  ...options
+}: {
+  year: number;
+  semester: string;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+}) => {
   const _class = await ClassModel.findOne({
-    year,
-    semester,
-    sessionId: sessionId ? sessionId : "1",
-    subject,
-    courseNumber,
-    number,
+    sessionId,
+    ...options,
   }).lean();
-
-  console.log(await ClassModel.countDocuments({}));
 
   if (!_class) return null;
 
   return formatClass(_class as IClassItem);
 };
 
-export const getSecondarySections = async (
-  year: number,
-  semester: string,
-  sessionId: string,
-  subject: string,
-  courseNumber: string,
-  number: string
-) => {
+/**
+ * Get the secondary sections for a class
+ * - Includes any 999 sections
+ * - Includes any sections prefixed by the primary section
+ * - Does not include the primary section
+ * @default sessionId "1"
+ */
+export const getSecondarySections = async ({
+  sessionId = "1",
+  number,
+  ...options
+}: {
+  year: number;
+  semester: string;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+}) => {
   const sections = await SectionModel.find({
-    year,
-    semester,
-    sessionId: sessionId ? sessionId : "1",
-    subject,
-    courseNumber,
-    number: { $regex: `^(${number[number.length - 1]}|999)` },
+    ...options,
+    sessionId,
+    number: { $regex: `^(?:${number[number.length - 1]}\d\d|999)$` },
   }).lean();
 
   return sections.map((section) => formatSection(section as ISectionItem));
 };
 
-export const getPrimarySection = async (
-  year: number,
-  semester: string,
-  sessionId: string,
-  subject: string,
-  courseNumber: string,
-  number: string
-) => {
+/**
+ * Get the primary section for a class
+ * @default sessionId "1"
+ */
+export const getPrimarySection = async ({
+  sessionId = "1",
+  ...options
+}: {
+  year: number;
+  semester: string;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+}) => {
   const section = await SectionModel.findOne({
-    year,
-    semester,
-    sessionId: sessionId ? sessionId : "1",
-    subject,
-    courseNumber,
-    number,
+    ...options,
+    sessionId,
     primary: true,
   }).lean();
 
@@ -75,21 +87,24 @@ export const getPrimarySection = async (
   return formatSection(section as ISectionItem);
 };
 
-export const getSection = async (
-  year: number,
-  semester: string,
-  sessionId: string,
-  subject: string,
-  courseNumber: string,
-  number: string
-) => {
+/**
+ * Get a section
+ * @default sessionId "1"
+ */
+export const getSection = async ({
+  sessionId = "1",
+  ...options
+}: {
+  year: number;
+  semester: string;
+  sessionId?: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+}) => {
   const section = await SectionModel.findOne({
-    year,
-    semester,
-    sessionId: sessionId ? sessionId : "1",
-    subject,
-    courseNumber,
-    number,
+    ...options,
+    sessionId,
   }).lean();
 
   if (!section) return null;
@@ -97,20 +112,16 @@ export const getSection = async (
   return formatSection(section as ISectionItem);
 };
 
-export const getDecalInfo = async (
-  year: number,
-  semester: string,
-  courseNumber: string,
-  subject: string
-) => {
-  const decal = await DecalModel.findOne({
-    year: `${year}`,
-    semester,
-    courseNumber,
-    subject,
-  }).lean();
+export const getDecal = async (options: {
+  year: number;
+  semester: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+}) => {
+  const decal = await DecalModel.findOne(options).lean();
 
   if (!decal) return null;
 
-  return formatDecalInfo(decal);
+  return formatDecal(decal);
 };

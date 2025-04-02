@@ -22,8 +22,15 @@ export default gql`
     ): Section
   }
 
-  type DecalInfo {
-    id: Int
+  type Decal {
+    "Identifiers"
+    termId: TermIdentifier!
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+
+    "Attributes"
+    externalId: String!
     title: String
     description: String
     category: String
@@ -31,6 +38,7 @@ export default gql`
     website: String
     application: String
     enroll: String
+    date: String
     contact: String
   }
 
@@ -49,6 +57,7 @@ export default gql`
     primarySection: Section!
     sections: [Section!]!
     gradeDistribution: GradeDistribution!
+    decal: Decal
 
     "Attributes"
     year: Int!
@@ -59,7 +68,6 @@ export default gql`
     title: String
     unitsMax: Float!
     unitsMin: Float!
-    decal: DecalInfo
   }
 
   enum ClassFinalExam {

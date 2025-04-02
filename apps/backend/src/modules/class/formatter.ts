@@ -1,4 +1,4 @@
-import { DecalType, IClassItem, ISectionItem } from "@repo/common";
+import { DecalType, IClassItem, IDecal, ISectionItem } from "@repo/common";
 
 import { ClassModule } from "./generated-types/module-types";
 
@@ -71,18 +71,8 @@ export const formatSection = (section: ISectionItem) => {
   return output;
 };
 
-export const formatDecalInfo = (decal: DecalType) => {
+export const formatDecal = (decal: DecalType) => {
   if (!decal) return null;
 
-  return {
-    id: String(decal.id) || "",
-    title: decal.title || "",
-    description: decal.description || "",
-    category: decal.category || "",
-    units: String(decal.units) || "",
-    website: decal.website || "",
-    application: decal.application || "",
-    enroll: decal.enroll || "",
-    contact: decal.contact || "",
-  };
+  return decal as IDecal;
 };
