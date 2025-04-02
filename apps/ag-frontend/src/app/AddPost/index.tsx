@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+// import { useReadTerms } from "@hooks/api";
 // Adjust the import path
 
 import {
@@ -16,7 +16,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { usePosts } from "../Landing";
 import { Post } from "../Landing";
 import styles from "./AddPost.module.scss";
-import { useReadTerms } from "@hooks/api";
 
 // Placeholder types for terms and classes (replace with actual queries)
 interface Term {
@@ -40,8 +39,7 @@ export default function AddPost() {
   const [postTitle, setPostTitle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [comment, setComment] = useState("");
-//   const { data: terms, loading: termsLoading } = useReadTerms();
-
+  //   const { data: terms, loading: termsLoading } = useReadTerms();
 
   // Fetch terms (replace with actual query)
   useEffect(() => {

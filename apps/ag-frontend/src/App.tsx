@@ -7,10 +7,10 @@ import {
   createBrowserRouter,
   redirect,
 } from "react-router-dom";
-import AddPost from "./app/AddPost";
 
 import Landing from "@/app/Landing";
 
+import AddPost from "./app/AddPost";
 import "./reset.css";
 
 const router = createBrowserRouter([
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/add-post",
-    element: <AddPost />,  
+    element: <AddPost />,
   },
 ]);
 
