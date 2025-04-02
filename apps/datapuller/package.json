@@ -2,7 +2,7 @@
   "name": "datapuller",
   "private": true,
   "scripts": {
-    "build": "tsc --noEmit",
+    "build": "tsc",
     "main": "tsx src/main.ts"
   },
   "devDependencies": {
@@ -15,7 +15,9 @@
     "@aws-sdk/client-s3": "^3.758.0",
     "@repo/common": "*",
     "@repo/sis-api": "*",
+    "@types/jsdom": "^21.1.7",
     "dotenv": "^16.4.7",
+    "jsdom": "^26.0.0",
     "papaparse": "^5.5.2",
     "tslog": "^4.9.3"
   }

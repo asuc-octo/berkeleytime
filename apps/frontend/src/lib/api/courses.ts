@@ -101,3 +101,43 @@ export const GET_COURSES = gql`
     }
   }
 `;
+
+export interface GetClassesResponse {
+  catalog: ICourse[];
+}
+
+export const GET_CLASSES = gql`
+  query GetClasses($year: Int!, $semester: Semester!) {
+    catalog(year: $year, semester: $semester) {
+      subject
+      number
+      title
+      gradeDistribution {
+        average
+      }
+      academicCareer
+      classes {
+        subject
+        courseNumber
+        number
+        title
+        unitsMax
+        unitsMin
+        finalExam
+        gradingBasis
+        primarySection {
+          component
+          online
+          open
+          enrollCount
+          enrollMax
+          waitlistCount
+          waitlistMax
+          meetings {
+            days
+          }
+        }
+      }
+    }
+  }
+`;

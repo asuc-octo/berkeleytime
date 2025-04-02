@@ -18,6 +18,23 @@
       "cv12" on,
       "cv06" on;
     color: var(--heading-color);
+
+    .decalTag {
+      width: 54px;
+      height: 28px;
+      background-color: var(--blue-100);
+      color: var(--blue-500);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      margin-left: 16px;
+    }
   }
 
   .description {
