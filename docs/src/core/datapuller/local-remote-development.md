@@ -18,7 +18,17 @@ docker run --volume ./.env:/datapuller/apps/datapuller/.env --network bt \
     "datapuller-dev" "--puller=courses"
 ```
 
-The valid pullers are `courses`, `classes`, `sections`, `grades`, `enrollments`, and `main`.
+The valid pullers are:
+- `courses`
+- `sections-active`
+- `sections-last-five-years`
+- `classes-active`
+- `classes-last-five-years`
+- `grades-recent`
+- `grades-last-five-years`
+- `enrollments`
+- `terms-all`
+- `terms-nearby`
 
 > [!TIP]
 >  If you do not need any other services (backend, frontend), then you can run a Mongo instance independently from the `docker-compose.yml` configuration. However, the below commands do not allow data persistence.
