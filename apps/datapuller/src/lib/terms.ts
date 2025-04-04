@@ -101,7 +101,7 @@ export const getNearbyTerms = async (
   const headers = {
     app_id: id,
     app_key: key,
-  }
+  };
 
   const temporalPositions = ["Previous", "Current", "Next"] as const;
 
@@ -125,7 +125,10 @@ export const getNearbyTerms = async (
       if (temporalPosition === "Next") {
         // we need to fetch Summer and Fall terms at the same time (both begin enrollment during the Spring)
         const secondResponse = await termsAPI.v2.getByTermsUsingGet(
-          { "temporal-position": "Next", "as-of-date": responseTerms[0].endDate },
+          {
+            "temporal-position": "Next",
+            "as-of-date": responseTerms[0].endDate,
+          },
           { headers }
         );
         const secondResponseTerms = secondResponse.data.response.terms;
@@ -161,8 +164,7 @@ export const getAllTerms = async (
   const headers = {
     app_id: id,
     app_key: key,
-  }
-
+  };
 
   const terms: ITermItem[] = [];
 

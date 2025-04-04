@@ -65,7 +65,22 @@ const updateEnrollmentHistories = async ({
   log.trace(`Fetching terms...`);
 
   const allTerms = await getActiveTerms(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const terms = allTerms.filter((term) => term.academicCareerCode === "UGRD");
+  const terms = allTerms.filter((term) => {
+    if (term.academicCareerCode !== "UGRD") {
+      return false;
+    }
+
+    if (!term.sessions) return true;
+    return term.sessions.some((session) => {
+      if (!session.enrollBeginDate || !session.enrollEndDate) return false;
+
+      const now = Date.now();
+      const enrollBeginDate = new Date(session.enrollBeginDate).getTime();
+      const enrollEndDate = new Date(session.enrollEndDate).getTime();
+
+      return now >= enrollBeginDate && now <= enrollEndDate;
+    });
+  });
 
   log.info(
     `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
