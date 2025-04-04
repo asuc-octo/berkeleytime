@@ -6,11 +6,13 @@ metadata:
     {{- include "bt-app.labels" . | nindent 4 }}
   annotations:
     cert-manager.io/issuer: {{ .Values.issuer }}
+    nginx.ingress.kubernetes.io/permanent-redirect: "https://stanfurdtime.com$request_uri"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - {{ .Values.host }}
+        - beta.berkeleytime.com
       secretName: bt-tls
   rules:
     - host: {{ .Values.host }}
@@ -30,3 +32,13 @@ spec:
                 name: {{ include "bt-app.backendName" . }}-svc
                 port:
                   number: {{ .Values.port }}
+    - host: beta.berkeleytime.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dummy-service  # Dummy service because we're redirecting
+                port:
+                  number: 80
