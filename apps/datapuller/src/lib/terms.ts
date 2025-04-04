@@ -98,6 +98,10 @@ export const getNearbyTerms = async (
   key: string
 ) => {
   const termsAPI = new TermsAPI();
+  const headers = {
+    app_id: id,
+    app_key: key,
+  }
 
   const temporalPositions = ["Previous", "Current", "Next"] as const;
 
@@ -108,15 +112,8 @@ export const getNearbyTerms = async (
       logger.trace(`Fetching "${temporalPosition}" terms...`);
 
       const response = await termsAPI.v2.getByTermsUsingGet(
-        {
-          "temporal-position": temporalPosition,
-        },
-        {
-          headers: {
-            app_id: id,
-            app_key: key,
-          },
-        }
+        { "temporal-position": temporalPosition },
+        { headers }
       );
 
       // TODO: Filter out redundant terms
@@ -124,6 +121,17 @@ export const getNearbyTerms = async (
       if (!responseTerms) continue;
 
       terms.push(...responseTerms.map(formatTerm));
+
+      if (temporalPosition === "Next") {
+        // we need to fetch Summer and Fall terms at the same time (both begin enrollment during the Spring)
+        const secondResponse = await termsAPI.v2.getByTermsUsingGet(
+          { "temporal-position": "Next", "as-of-date": responseTerms[0].endDate },
+          { headers }
+        );
+        const secondResponseTerms = secondResponse.data.response.terms;
+        if (!secondResponseTerms) continue;
+        terms.push(...secondResponseTerms.map(formatTerm));
+      }
     } catch (error: unknown) {
       const parsedError = error as Error;
 
@@ -150,6 +158,11 @@ export const getAllTerms = async (
   key: string
 ) => {
   const termsAPI = new TermsAPI();
+  const headers = {
+    app_id: id,
+    app_key: key,
+  }
+
 
   const terms: ITermItem[] = [];
 
@@ -161,10 +174,7 @@ export const getAllTerms = async (
         "temporal-position": "Next",
       },
       {
-        headers: {
-          app_id: id,
-          app_key: key,
-        },
+        headers,
       }
     );
 
@@ -172,6 +182,16 @@ export const getAllTerms = async (
     if (!initialTerms) throw new Error("No initial terms found");
 
     terms.push(...initialTerms.map(formatTerm));
+
+    // we need to fetch Summer and Fall terms at the same time (both begin enrollment during the Spring)
+    const secondResponse = await termsAPI.v2.getByTermsUsingGet(
+      { "temporal-position": "Next", "as-of-date": initialTerms[0].endDate },
+      { headers }
+    );
+    const secondInitialTerms = secondResponse.data.response.terms;
+    if (secondInitialTerms) {
+      terms.push(...secondInitialTerms.map(formatTerm));
+    }
   } catch (error: unknown) {
     const parsedError = error as Error;
 
@@ -199,10 +219,7 @@ export const getAllTerms = async (
           "as-of-date": currentTerm.beginDate,
         },
         {
-          headers: {
-            app_id: id,
-            app_key: key,
-          },
+          headers,
         }
       );
 
