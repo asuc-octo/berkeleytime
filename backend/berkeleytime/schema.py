@@ -2,7 +2,6 @@ import graphene
 
 from catalog.schema import Query as CatalogQuery
 from enrollment.schema import Query as EnrollmentQuery
-from forms.schema import Query as FormsQuery
 from grades.schema import Query as GradesQuery
 from playlist.schema import Query as PlaylistQuery
 from user.schema import Query as UserQuery
@@ -11,7 +10,7 @@ from scheduler.schema import Query as SchedulerQuery
 from scheduler.schema import Mutation as SchedulerMutation
 
 class Query(
-    CatalogQuery, EnrollmentQuery, FormsQuery,
+    CatalogQuery, EnrollmentQuery,
     GradesQuery, PlaylistQuery, UserQuery, SchedulerQuery
 ):
     ping = graphene.String()

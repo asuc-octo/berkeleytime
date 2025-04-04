@@ -20,7 +20,6 @@ from graphql_jwt.decorators import jwt_cookie
 
 import catalog.views
 import enrollment.views
-import forms.views
 import grades.views
 import user.views
 from berkeleytime.graphql_cache import cache_graphql
@@ -64,9 +63,4 @@ urlpatterns = [
     re_path(r'^enrollment/aggregate/(?P<course_id>\d+)/(?P<semester>[a-z]+)/(?P<year>\d+)/$', enrollment.views.enrollment_aggregate_json),
     ## Get enrollment data for a given section
     re_path(r'^enrollment/data/(?P<section_id>\d+)/$', enrollment.views.enrollment_json),
-
-    # Forms
-    re_path(r'^forms/config/(?P<config_name>[\w\d]+)/$', forms.views.get_config),
-    path('forms/submit/', forms.views.record_response),
-    re_path(r'^forms/upload/(?P<config_name>[\w\d]+)/(?P<file_name>.+)/$', forms.views.upload_file_view),
 ]

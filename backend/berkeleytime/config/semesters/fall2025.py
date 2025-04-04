@@ -8,7 +8,7 @@ CURRENT_YEAR = '2025'
 CURRENT_SEMESTER_DISPLAY = 'Fall 2025'
 
 # SIS API Keys
-SIS_TERM_ID = 2248
+SIS_TERM_ID = 2258
 
 TELEBEARS = {
     'phase1_start': datetime.datetime(2025, 4, 14), # april 14th

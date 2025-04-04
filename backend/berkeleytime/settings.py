@@ -98,7 +98,6 @@ INSTALLED_APPS = [
     'enrollment',
     'grades',
     'playlist',
-    'forms',
     'user',
     'graphene_django',
     'scheduler'
