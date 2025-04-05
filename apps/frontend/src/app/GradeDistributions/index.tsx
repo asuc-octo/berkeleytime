@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Boundary, LoadingIndicator } from "@repo/theme";
+import { Boundary, Flex, LoadingIndicator, Box } from "@repo/theme";
 
 import {
   GradeDistribution,
@@ -25,7 +25,7 @@ import { colors } from "@/lib/section";
 
 import styles from "./GradeDistributions.module.scss";
 import HoverInfo from "./HoverInfo";
-import SideBar from "./SideBar";
+import CourseManage from "./CourseManage";
 
 // const data = [
 //   {
@@ -249,84 +249,72 @@ export default function GradeDistributions() {
   }
 
   return (
-    <div className={styles.root}>
-      <div className={styles.panel}>
-        <SideBar selectedCourses={inputs} />
-      </div>
-      {loading ? (
-        <Boundary>
-          <LoadingIndicator size="lg" />
-        </Boundary>
-      ) : (
-        <div className={styles.view}>
-          <ResponsiveContainer width="100%" height={450}>
-            <BarChart
-              syncId="grade-distributions"
-              width={730}
-              height={200}
-              data={data}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--border-color)"
-              />
-              <XAxis
-                dataKey="letter"
-                fill="var(--label-color)"
-                tickMargin={8}
-              />
-              <YAxis tickFormatter={toPercent} />
-              {outputs?.length && (
-                <Tooltip
-                  labelStyle={{ color: "var(--heading-color)" }}
-                  contentStyle={{
-                    backgroundColor: "var(--backdrop-color)",
-                    border: "none",
-                  }}
-                  cursor={{ fill: "var(--foreground-color)" }}
-                  formatter={toPercent}
-                />
+    <Box p="5">
+      <Flex direction="column">
+        <CourseManage selectedCourses={inputs} />
+        {loading ? (
+          <Boundary>
+            <LoadingIndicator size="lg" />
+          </Boundary>
+        ) : (
+          <Flex direction="row">
+            <div className={styles.view}>
+              <ResponsiveContainer width="100%" height={450}>
+                <BarChart
+                  syncId="grade-distributions"
+                  width={730}
+                  height={200}
+                  data={data}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--border-color)"
+                  />
+                  <XAxis
+                    dataKey="letter"
+                    fill="var(--label-color)"
+                    tickMargin={8}
+                  />
+                  <YAxis tickFormatter={toPercent} />
+                  {outputs?.length && (
+                    <Tooltip
+                      labelStyle={{ color: "var(--heading-color)" }}
+                      contentStyle={{
+                        backgroundColor: "var(--backdrop-color)",
+                        border: "none",
+                      }}
+                      cursor={{ fill: "var(--foreground-color)" }}
+                      formatter={toPercent}
+                    />
+                  )}
+                  {outputs?.map((output, index) => (
+                    <Bar
+                      dataKey={index}
+                      fill={COLOR_ORDER[index]}
+                      key={index}
+                      name={`${output.input.subject} ${output.input.courseNumber}`}
+                      onMouseMove={udpateGraphHover}
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+              {!outputs?.length && (
+                <div className={styles.empty}>
+                  <FrameAltEmpty height={24} width={24} />
+                  <br />
+                  You have not added
+                  <br />
+                  any classes yet
+                </div>
               )}
-              {outputs?.map((output, index) => (
-                <Bar
-                  dataKey={index}
-                  fill={COLOR_ORDER[index]}
-                  key={index}
-                  name={`${output.input.subject} ${output.input.courseNumber}`}
-                  onMouseMove={udpateGraphHover}
-                />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-          <div className={styles.legend}>
-            {outputs &&
-              outputs?.map((output, index) => (
-                <HoverInfo
-                  color={COLOR_ORDER[index]}
-                  subject={output.input.subject}
-                  courseNumber={output.input.courseNumber}
-                  givenName={output.input.givenName}
-                  familyName={output.input.familyName}
-                  semester={output.input.semester}
-                  year={output.input.year}
-                  gradeDistribution={output.gradeDistribution}
-                  hoveredLetter={hoveredLetter}
-                  key={index}
-                />
-              ))}
-          </div>
-          {!outputs?.length && (
-            <div className={styles.empty}>
-              <FrameAltEmpty height={24} width={24} />
-              <br />
-              You have not added
-              <br />
-              any classes yet
             </div>
-          )}
-        </div>
-      )}
-    </div>
+            {/* TODO: populate this so that update hover also figures out which series we're hovering over
+            <HoverInfo
+            /> */}
+          </Flex>
+        )}
+      </Flex>
+    </Box>
   );
 }

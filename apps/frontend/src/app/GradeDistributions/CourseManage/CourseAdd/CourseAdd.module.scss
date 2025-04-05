@@ -1,16 +1,14 @@
 .button {
-  height: 48px;
-  padding: 0 16px;
   justify-content: space-between;
-  width: 100%;
   margin-bottom: 10px;
 }
 .select-cont {
   margin-bottom: 10px;
+  width: 15%;
 }
 .course-select-cont {
-  width: 80%;
   display: inline-block;
+  width: 30%;
 }
 .course-select-row {
   display: flex;
