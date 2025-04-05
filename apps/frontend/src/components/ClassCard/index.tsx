@@ -2,7 +2,7 @@ import { ComponentPropsWithRef } from "react";
 
 import { ArrowRight } from "iconoir-react";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
@@ -27,7 +27,7 @@ export default function ClassCard({
         <div className={styles.footer}>
           <AverageGrade gradeDistribution={data.gradeDistribution} />
           <Capacity
-            enrolledCount={data.primarySection.enrollment?.latest.enrolledCount}
+            enrolledCount={data.primarySection.enrollment?.latest.enrolledCount} 
             maxEnroll={data.primarySection.enrollment?.latest.maxEnroll}
             waitlistedCount={
               data.primarySection.enrollment?.latest.waitlistedCount

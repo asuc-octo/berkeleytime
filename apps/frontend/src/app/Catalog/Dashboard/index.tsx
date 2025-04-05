@@ -60,22 +60,22 @@ export default function Dashboard({
 
   const { data: user } = useReadUser();
 
-  const bookmarkedClasses = useMemo(
-    () =>
-      user?.bookmarkedClasses.filter(
-        (bookmarkedClass) =>
-          bookmarkedClass.year === term.year &&
-          bookmarkedClass.semester === term.semester
-      ),
-    [term, user]
-  );
-
+  // const bookmarkedClasses = useMemo(
+  //   () =>
+  //     user?.bookmarkedClasses.filter(
+  //       (bookmarkedClass) =>
+  //         bookmarkedClass.year === term.year &&
+  //         bookmarkedClass.semester === term.semester
+  //     ),
+  //   [term, user]
+  // );
   const [recentClasses, setRecentClasses] = useState<IClass[]>([]);
-
+  const [bookmarkedClasses, setBookmarkedClasses] = useState<IClass[]>([]);
+    
   const initialize = useCallback(async () => {
     const recentClasses = getRecentClasses();
 
-    const responses = await Promise.all(
+    const recentResponses = await Promise.all(
       recentClasses.map(async (recentClass) => {
         const { subject, year, semester, courseNumber, number } = recentClass;
 
@@ -100,12 +100,56 @@ export default function Dashboard({
       })
     );
 
-    setRecentClasses(responses.filter((response) => !!response));
+    setRecentClasses(recentResponses.filter((response) => !!response));
+
   }, [client]);
+
+  const renderBookmarkedClasses = useCallback(async () => {
+
+    const bookmarkedClasses = user?.bookmarkedClasses.filter(
+      (bookmarkedClass) =>
+        bookmarkedClass.year === term.year &&
+        bookmarkedClass.semester === term.semester
+    )
+
+    if (bookmarkedClasses) {
+      const bookmarkedResponses = await Promise.all(
+        bookmarkedClasses.map(async (recentClass) => {
+          const { subject, year, semester, courseNumber, number } = recentClass;
+
+          try {
+            const response = await client.query<ReadClassResponse>({
+              query: READ_CLASS,
+              variables: {
+                subject,
+                year,
+                semester,
+                courseNumber,
+                number,
+              },
+            });
+
+            return response.data.class;
+          } catch {
+            // TODO: Handle errors
+
+            return;
+          }
+        })
+      );
+
+      setBookmarkedClasses(bookmarkedResponses.filter((response) => !!response));
+
+    }
+  }, [client, term, user]);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  useEffect(() => {
+    renderBookmarkedClasses();
+  }, [renderBookmarkedClasses]);
 
   return (
     <Box p="5">

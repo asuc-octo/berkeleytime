@@ -4,6 +4,7 @@ const typedef = gql`
   type User {
     _id: ID!
     email: String!
+    name: String!
     student: Boolean!
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!

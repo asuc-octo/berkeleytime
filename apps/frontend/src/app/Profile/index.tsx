@@ -17,8 +17,20 @@ function YourAccount({ user }: { user: IUser | undefined }) {
       <h2>Personal Information</h2>
       <div>
         <div className={styles.infoItem}>
+          <label>Full Name</label>
+          <span className={styles.infoValue}>
+            {user.name}
+          </span>
+        </div>
+        <div className={styles.infoItem}>
           <label>bConnected Email</label>
           <span className={styles.infoValue}>{user.email}</span>
+        </div>
+        <div className={styles.infoItem}>
+          <label>Student Account</label>
+          <span className={styles.infoValue}>
+            {user.student ? "Yes" : "No"}
+          </span>
         </div>
         <div className={styles.infoItem}>
           <label>Student Account</label>

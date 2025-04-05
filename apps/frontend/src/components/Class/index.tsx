@@ -208,7 +208,7 @@ export default function Class({
         optimisticResponse: {
           updateUser: {
             ...user,
-            bookmarkedClasses,
+            bookmarkedClasses: user.bookmarkedClasses,
           },
         },
       }
