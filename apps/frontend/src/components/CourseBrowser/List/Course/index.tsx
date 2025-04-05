@@ -2,7 +2,7 @@ import { ComponentPropsWithRef, MouseEventHandler } from "react";
 
 import { ArrowRight } from "iconoir-react";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import { ICourse } from "@/lib/api";
 
 import styles from "./Course.module.scss";
@@ -10,6 +10,7 @@ import styles from "./Course.module.scss";
 interface Props {
   index: number;
   onClick: MouseEventHandler<HTMLDivElement>;
+  showGrades: boolean;
 }
 
 type CourseProps = Props & ICourse;

@@ -1,21 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
+import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { Boundary, LoadingIndicator } from "@repo/theme";
+import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import {
   GradeDistribution,
@@ -25,7 +23,9 @@ import {
 } from "@/lib/api";
 import { colors } from "@/lib/section";
 
+import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
+import HoverInfo from "./HoverInfo";
 
 // const data = [
 //   {
@@ -80,6 +80,12 @@ interface Output {
   input: Input;
 }
 
+const toPercent = (decimal: number) => {
+  return `${decimal.toFixed(0)}%`;
+};
+
+const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
+
 // const input = [
 //   {
 //     subject: "COMPSCI",
@@ -114,6 +120,8 @@ export default function GradeDistributions() {
   const [loading, setLoading] = useState(false);
   const [outputs, setOutputs] = useState<Output[] | null>(null);
 
+  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
+
   const inputs = useMemo(
     () =>
       searchParams.getAll("input").reduce((acc, input) => {
@@ -146,8 +154,8 @@ export default function GradeDistributions() {
           courseNumber: output[1],
           year: parseInt(term?.[0]),
           semester: term?.[1] as Semester,
-          familyName: professor?.[0],
-          givenName: professor?.[1],
+          familyName: professor?.[1],
+          givenName: professor?.[0],
         };
 
         return acc.concat(parsedInput);
@@ -166,6 +174,7 @@ export default function GradeDistributions() {
           const response = await client.query<ReadGradeDistributionResponse>({
             query: READ_GRADE_DISTRIBUTION,
             variables,
+            fetchPolicy: "no-cache",
           });
 
           return response;
@@ -204,20 +213,30 @@ export default function GradeDistributions() {
         (acc, output, index) => {
           output.gradeDistribution.distribution.forEach((grade) => {
             const column = acc.find((item) => item.letter === grade.letter);
+            if (!column) return;
             const percent = Math.round(grade.percentage * 100);
-
-            if (!column) {
-              acc.push({ letter: grade.letter, [index]: percent });
-
-              return;
-            }
-
             column[index] = percent;
           });
 
           return acc;
         },
-        [] as {
+        [
+          { letter: "A+" },
+          { letter: "A" },
+          { letter: "A-" },
+          { letter: "B+" },
+          { letter: "B" },
+          { letter: "B-" },
+          { letter: "C+" },
+          { letter: "C" },
+          { letter: "C-" },
+          { letter: "D+" },
+          { letter: "D" },
+          { letter: "D-" },
+          { letter: "F" },
+          { letter: "P" },
+          { letter: "NP" },
+        ] as {
           letter: string;
           [key: number]: number;
         }[]
@@ -225,78 +244,26 @@ export default function GradeDistributions() {
     [outputs]
   );
 
+  function udpateGraphHover(data: any) {
+    setHoveredLetter(data.letter);
+  }
+
   return (
-    <div className={styles.root}>
-      <div className={styles.panel}></div>
-      {loading ? (
-        <Boundary>
-          <LoadingIndicator size="lg" />
-        </Boundary>
-      ) : (
-        <div className={styles.view}>
-          <ResponsiveContainer width="100%" height={256}>
-            <BarChart
-              syncId="grade-distributions"
-              width={730}
-              height={250}
-              data={data}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--border-color)"
-              />
-              <XAxis
-                dataKey="letter"
-                fill="var(--label-color)"
-                tickMargin={8}
-              />
-              <YAxis />
-              <Legend />
-              <Tooltip />
-              {outputs?.map((_, index) => (
-                <Bar dataKey={index} fill={outputs[index].color} key={index} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-          <ResponsiveContainer width="100%" height={256}>
-            <LineChart
-              syncId="grade-distributions"
-              width={730}
-              height={250}
-              data={data}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--border-color)"
-              />
-              <XAxis
-                dataKey="letter"
-                fill="var(--label-color)"
-                tickMargin={8}
-              />
-              <YAxis />
-              <Legend />
-              <Tooltip />
-              {outputs?.map((_, index) => (
-                <Line
-                  dataKey={index}
-                  stroke={outputs[index].color}
-                  key={index}
-                  type="natural"
-                  dot={false}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-          <div className={styles.grid}>
-            {outputs?.map((_, index) => (
-              <ResponsiveContainer width="100%" height={256} key={index}>
+    <Box p="5">
+      <Flex direction="column">
+        <CourseManage selectedCourses={inputs} />
+        {loading ? (
+          <Boundary>
+            <LoadingIndicator size="lg" />
+          </Boundary>
+        ) : (
+          <Flex direction="row">
+            <div className={styles.view}>
+              <ResponsiveContainer width="100%" height={450}>
                 <BarChart
                   syncId="grade-distributions"
                   width={730}
-                  height={250}
+                  height={200}
                   data={data}
                 >
                   <CartesianGrid
@@ -309,16 +276,45 @@ export default function GradeDistributions() {
                     fill="var(--label-color)"
                     tickMargin={8}
                   />
-                  <YAxis />
-                  <Legend />
-                  <Tooltip cursor={{ fill: "var(--backdrop-color)" }} />
-                  <Bar dataKey={index} fill={outputs[index].color} />
+                  <YAxis tickFormatter={toPercent} />
+                  {outputs?.length && (
+                    <Tooltip
+                      labelStyle={{ color: "var(--heading-color)" }}
+                      contentStyle={{
+                        backgroundColor: "var(--backdrop-color)",
+                        border: "none",
+                      }}
+                      cursor={{ fill: "var(--foreground-color)" }}
+                      formatter={toPercent}
+                    />
+                  )}
+                  {outputs?.map((output, index) => (
+                    <Bar
+                      dataKey={index}
+                      fill={COLOR_ORDER[index]}
+                      key={index}
+                      name={`${output.input.subject} ${output.input.courseNumber}`}
+                      onMouseMove={udpateGraphHover}
+                    />
+                  ))}
                 </BarChart>
               </ResponsiveContainer>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+              {!outputs?.length && (
+                <div className={styles.empty}>
+                  <FrameAltEmpty height={24} width={24} />
+                  <br />
+                  You have not added
+                  <br />
+                  any classes yet
+                </div>
+              )}
+            </div>
+            {/* TODO: populate this so that update hover also figures out which series we're hovering over
+            <HoverInfo
+            /> */}
+          </Flex>
+        )}
+      </Flex>
+    </Box>
   );
 }

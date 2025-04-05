@@ -2,7 +2,7 @@ import { ArrowRight } from "iconoir-react";
 
 import { ICourse } from "@/lib/api";
 
-import AverageGrade from "../AverageGrade";
+import { AverageGrade } from "../AverageGrade";
 import styles from "./CourseCard.module.scss";
 
 interface CourseCardProps {

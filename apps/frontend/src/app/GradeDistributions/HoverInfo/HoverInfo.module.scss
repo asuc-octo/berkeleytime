@@ -1,0 +1,28 @@
+.info {
+  display: inline-block;
+  width: 250px;
+
+  .heading {
+    margin-bottom: 5px;
+
+    .color {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 10px;
+    }
+
+    .course {
+      color: var(--heading-color);
+      font-size: 18px;
+    }
+  }
+  .label {
+    font-family: Inter, sans-serif;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-top: 8px;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+}
