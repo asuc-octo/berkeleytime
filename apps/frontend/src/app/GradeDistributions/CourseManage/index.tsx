@@ -100,12 +100,12 @@ export default function CourseManage({ selectedCourses }: SideBarProps) {
             : "All Semesters";
         return (
           <div className={styles.courseCard} key={index}>
-              {/* TODO: Better course card interface */}
-              <span>
-                {course.subject}
-                {course.courseNumber}
-                {`${instructor} • ${semester}`}
-              </span>
+            {/* TODO: Better course card interface */}
+            <span>
+              {course.subject}
+              {course.courseNumber}
+              {`${instructor} • ${semester}`}
+            </span>
           </div>
         );
       })}

@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Boundary, Flex, LoadingIndicator, Box } from "@repo/theme";
+import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import {
   GradeDistribution,
@@ -23,9 +23,9 @@ import {
 } from "@/lib/api";
 import { colors } from "@/lib/section";
 
+import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
 import HoverInfo from "./HoverInfo";
-import CourseManage from "./CourseManage";
 
 // const data = [
 //   {

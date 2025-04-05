@@ -215,7 +215,7 @@ export default function CourseAdd({
         disabled={selectedCourses.length >= 4}
       >
         Add course
-       <Plus />
+        <Plus />
       </Button>
     </Flex>
   );
