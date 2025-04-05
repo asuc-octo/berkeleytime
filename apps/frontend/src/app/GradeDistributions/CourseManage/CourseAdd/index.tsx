@@ -6,20 +6,25 @@ import Select, { SingleValue } from "react-select";
 
 import { Button, Flex, IconButton } from "@repo/theme";
 
+import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
+import { getRecentClasses } from "@/lib/recent";
 
 import styles from "./CourseAdd.module.scss";
+
+type OptionType = {
+  value: string;
+  label: string;
+};
 
 type CourseOptionType = {
   value: ICourse;
   label: string;
 };
 
-type OptionType = {
-  value: string;
-  label: string;
-};
+const [selectedCourse, setSelectedCourse] =
+  useState<SingleValue<CourseOptionType>>(null);
 
 interface SelectedCourse {
   subject: string;
@@ -140,19 +145,33 @@ export default function CourseAdd({
     return [...list, ...filteredOptions];
   }, [courseData, selectedInstructor, byData]);
 
+  const handleCourseSelect = (course: {
+    subject: string;
+    courseNumber: string;
+  }) => {
+    const matchingCourse = data?.courses.find(
+      (c) => c.subject === course.subject && c.number === course.courseNumber
+    );
+
+    if (!matchingCourse) return;
+
+    setSelectedCourse({
+      value: matchingCourse,
+      label: `${matchingCourse.subject} ${matchingCourse.number}`,
+    });
+
+    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
+    setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
+  };
+
   return (
-    <Flex direction="row" gap="3">
+    <Flex direction={{ base: "column", md: "row" }} gap="3">
       <div className={styles.courseSelectCont}>
-        <Select
-          options={coursesOptions}
-          value={selectedCourse}
-          onChange={(v) => {
-            setSelectedCourse(v);
-          }}
-        />
+        <CourseSearch onSelect={handleCourseSelect} />
       </div>
       <div className={styles.selectCont}>
         <Select
+          classNamePrefix="react-select"
           options={byOptions}
           value={byData}
           onChange={(s) => {
@@ -165,6 +184,7 @@ export default function CourseAdd({
       <div className={styles.selectCont}>
         {byData?.value === "instructor" ? (
           <Select
+            classNamePrefix="react-select"
             options={instructorOptions}
             value={selectedInstructor}
             onChange={(s) => {
@@ -173,6 +193,7 @@ export default function CourseAdd({
           />
         ) : (
           <Select
+            classNamePrefix="react-select"
             options={semesterOptions}
             value={selectedSemester}
             onChange={(s) => {
@@ -184,6 +205,7 @@ export default function CourseAdd({
       <div className={styles.selectCont}>
         {byData?.value === "semester" ? (
           <Select
+            classNamePrefix="react-select"
             options={instructorOptions}
             value={selectedInstructor}
             onChange={(s) => {
@@ -192,6 +214,7 @@ export default function CourseAdd({
           />
         ) : (
           <Select
+            classNamePrefix="react-select"
             options={semesterOptions}
             value={selectedSemester}
             onChange={(s) => {

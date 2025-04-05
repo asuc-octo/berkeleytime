@@ -1,0 +1,77 @@
+.searchInput {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #fff;
+
+  &::placeholder {
+    color: #aaa;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #555;
+  }
+}
+
+.section {
+  padding: 0.5rem 0;
+
+  h2 {
+    padding: 0 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.recentCourses,
+.catalogList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.courseButton,
+.catalogItem {
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0.625rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  span {
+    font-weight: 500;
+  }
+}
+
+.dropdownPanel {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 0.5rem;
+  margin-top: 0.25rem;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10;
+  position: absolute;
+  width: 33%;
+}
