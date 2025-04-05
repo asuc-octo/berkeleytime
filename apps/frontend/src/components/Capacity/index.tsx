@@ -1,11 +1,14 @@
 import { useMemo } from "react";
 
-import * as Tooltip from "@radix-ui/react-tooltip";
 import { User } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
 import styles from "./Capacity.module.scss";
 
-const getColor = (count: number, capacity: number) => {
+const getColor = (count?: number, capacity?: number) => {
+  if (typeof count !== "number" || typeof capacity !== "number")
+    return "var(--paragraph-color)";
+
   const percentage = count / capacity;
 
   return percentage >= 0.75
@@ -16,10 +19,10 @@ const getColor = (count: number, capacity: number) => {
 };
 
 interface CapacityProps {
-  enrolledCount: number;
-  maxEnroll: number;
-  waitlistedCount: number;
-  maxWaitlist: number;
+  enrolledCount?: number;
+  maxEnroll?: number;
+  waitlistedCount?: number;
+  maxWaitlist?: number;
 }
 
 export default function Capacity({
@@ -44,9 +47,11 @@ export default function Capacity({
         <div className={styles.trigger}>
           <User />
           <p className={styles.text}>
-            <span style={{ color }}>{enrolledCount.toLocaleString()}</span>
+            <span style={{ color }}>
+              {enrolledCount?.toLocaleString() ?? " - "}
+            </span>
             &nbsp;/&nbsp;
-            {maxEnroll.toLocaleString()}
+            {maxEnroll?.toLocaleString() ?? " - "}
           </p>
         </div>
       </Tooltip.Trigger>
@@ -62,18 +67,22 @@ export default function Capacity({
             <div className={styles.row}>
               <p className={styles.key}>Enrolled</p>
               <p>
-                <span style={{ color }}>{enrolledCount.toLocaleString()}</span>
+                <span style={{ color }}>
+                  {enrolledCount?.toLocaleString() ?? " - "}
+                </span>
                 &nbsp;/&nbsp;
                 <span className={styles.value}>
-                  {maxEnroll.toLocaleString()}
+                  {maxEnroll?.toLocaleString() ?? " - "}
                 </span>
                 &nbsp;(
                 <span style={{ color }}>
-                  {maxEnroll === 0
-                    ? 0
-                    : Math.round(
-                        (enrolledCount / maxEnroll) * 100
-                      ).toLocaleString()}
+                  {enrolledCount === undefined || maxEnroll === undefined
+                    ? "N/A"
+                    : maxEnroll === 0
+                      ? 0
+                      : Math.round(
+                          (enrolledCount / maxEnroll) * 100
+                        ).toLocaleString()}
                   %
                 </span>
                 )
@@ -84,17 +93,19 @@ export default function Capacity({
               <p className={styles.key}>Waitlisted</p>
               <p>
                 <span style={{ color: waitlistColor }}>
-                  {waitlistedCount.toLocaleString()}
+                  {waitlistedCount?.toLocaleString() ?? " - "}
                 </span>
                 &nbsp;/&nbsp;
-                {maxWaitlist.toLocaleString()}
+                {maxWaitlist?.toLocaleString() ?? " - "}
                 &nbsp;(
                 <span style={{ color: waitlistColor }}>
-                  {maxWaitlist === 0
-                    ? 0
-                    : Math.round(
-                        (waitlistedCount / maxWaitlist) * 100
-                      ).toLocaleString()}
+                  {waitlistedCount === undefined || maxWaitlist === undefined
+                    ? "N/A"
+                    : maxWaitlist === 0
+                      ? 0
+                      : Math.round(
+                          (waitlistedCount / maxWaitlist) * 100
+                        ).toLocaleString()}
                   %
                 </span>
                 )

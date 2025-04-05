@@ -15,7 +15,6 @@ export type ButtonProps<T extends ElementType> = Props<T> &
   Omit<ComponentPropsWithRef<T>, keyof Props<T>>;
 
 export function Button<T extends ElementType>({
-  children,
   className,
   disabled,
   variant = "outline",
@@ -31,8 +30,6 @@ export function Button<T extends ElementType>({
       disabled={disabled ? true : undefined}
       data-disabled={disabled ? true : undefined}
       className={classNames(styles.root, className)}
-    >
-      {children}
-    </Component>
+    />
   );
 }

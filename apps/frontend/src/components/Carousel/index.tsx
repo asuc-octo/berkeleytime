@@ -1,13 +1,23 @@
-import { ReactNode, UIEvent, useRef, useState } from "react";
+import {
+  ComponentPropsWithRef,
+  ReactNode,
+  UIEvent,
+  useRef,
+  useState,
+} from "react";
 
 import classNames from "classnames";
 import { ArrowRight, NavArrowLeft, NavArrowRight } from "iconoir-react";
 import { Link, To } from "react-router-dom";
 
-import { IconButton } from "@repo/theme";
+import { Box, Flex, IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
-import Class from "./Class";
+import Schedule from "./Schedule";
+
+function Item({ className, ...props }: ComponentPropsWithRef<"div">) {
+  return <div className={classNames(styles.item, className)} {...props} />;
+}
 
 interface RootProps {
   title: string;
@@ -47,6 +57,7 @@ function Root({ title, Icon, children, to }: RootProps) {
     }
     containerRef.current.scrollLeft -= containerRef.current.offsetWidth / 3;
   };
+
   const scrollRight = () => {
     // scroll to next card to the right
     if (!containerRef.current) return;
@@ -66,8 +77,8 @@ function Root({ title, Icon, children, to }: RootProps) {
   };
 
   return (
-    <div className={styles.root}>
-      <div className={styles.header}>
+    <Flex direction="column" gap="4">
+      <Flex gap="4" align="center">
         <div className={styles.title}>
           <div className={styles.icon}>{Icon}</div>
           {title}
@@ -78,30 +89,40 @@ function Root({ title, Icon, children, to }: RootProps) {
             <ArrowRight />
           </Link>
         )}
-        <IconButton onClick={scrollLeft}>
-          <NavArrowLeft />
-        </IconButton>
-        <IconButton onClick={scrollRight}>
-          <NavArrowRight />
-        </IconButton>
-      </div>
-      <div
+        <Flex gap="3">
+          <IconButton onClick={scrollLeft}>
+            <NavArrowLeft />
+          </IconButton>
+          <IconButton onClick={scrollRight}>
+            <NavArrowRight />
+          </IconButton>
+        </Flex>
+      </Flex>
+      <Box
+        mx="-5"
         className={classNames(styles.body, {
           [styles.start]: start,
           [styles.end]: end,
         })}
       >
-        <div className={styles.view} onScroll={handleScroll} ref={containerRef}>
+        <Flex
+          gap="4"
+          px="5"
+          className={styles.view}
+          onScroll={handleScroll}
+          ref={containerRef}
+        >
           {children}
-        </div>
-      </div>
-    </div>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }
 
 const Carousel = {
   Root,
-  Class,
+  Item,
+  Schedule,
 };
 
 export default Carousel;

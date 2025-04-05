@@ -1,14 +1,7 @@
-import {
-  Fragment,
-  HTMLAttributes,
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from "react";
+import { ComponentPropsWithRef, Fragment, useMemo } from "react";
 
-import * as Tooltip from "@radix-ui/react-tooltip";
 import classNames from "classnames";
+import { Tooltip } from "radix-ui";
 
 import styles from "./Time.module.scss";
 
@@ -40,18 +33,14 @@ interface TimeProps {
   tooltip?: false;
 }
 
-const Time = forwardRef<
-  HTMLElement,
-  TimeProps & HTMLAttributes<HTMLParagraphElement>
->(({ days, startTime, endTime, tooltip, className, ...props }, ref) => {
-  const rootRef = useRef<HTMLButtonElement>(null);
-
-  // Explicitly cast the ref to the correct type
-  useImperativeHandle(
-    ref,
-    () => rootRef.current as unknown as HTMLParagraphElement
-  );
-
+export default function Time({
+  days,
+  startTime,
+  endTime,
+  tooltip,
+  className,
+  ...props
+}: Omit<ComponentPropsWithRef<"p">, keyof TimeProps> & TimeProps) {
   // TODO: Use getY with a multiple instead
   const bottom = useMemo(() => {
     if (!endTime) return;
@@ -98,7 +87,7 @@ const Time = forwardRef<
 
   return value ? (
     <Tooltip.Root disableHoverableContent open={tooltip}>
-      <Tooltip.Trigger asChild ref={rootRef}>
+      <Tooltip.Trigger asChild>
         <p className={classNames(styles.trigger, className)} {...props}>
           {value}
         </p>
@@ -137,8 +126,4 @@ const Time = forwardRef<
       To be determined
     </p>
   );
-});
-
-Time.displayName = "Time";
-
-export default Time;
+}

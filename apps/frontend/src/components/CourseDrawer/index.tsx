@@ -33,9 +33,12 @@ export default function CourseDrawer({
   return (
     <Dialog.Root onOpenChange={onOpenChange} open={open}>
       {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
-      <Dialog.Content className={styles.content}>
-        <Course subject={subject} number={number} dialog />
-      </Dialog.Content>
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Drawer className={styles.drawer}>
+          <Course subject={subject} number={number} dialog />
+        </Dialog.Drawer>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 }

@@ -1,6 +1,6 @@
 import { Minus, Plus } from "iconoir-react";
 
-import { Container } from "@repo/theme";
+import { Container, Flex } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 
@@ -8,8 +8,8 @@ import styles from "./Organization.module.scss";
 
 export default function Organization() {
   return (
-    <div className={styles.root}>
-      <Container>
+    <Flex direction="column" className={styles.root} pt="9">
+      <Container size="1">
         <h3 className={styles.heading}>Get involved</h3>
         <div className={styles.accordion}>
           <details>
@@ -54,6 +54,6 @@ export default function Organization() {
         </div>
       </Container>
       <Footer invert />
-    </div>
+    </Flex>
   );
 }

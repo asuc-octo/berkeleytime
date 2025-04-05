@@ -1,3 +1,5 @@
+import { Container } from "@repo/theme";
+
 export default function About() {
-  return <></>;
+  return <Container>About</Container>;
 }

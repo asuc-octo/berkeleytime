@@ -9,8 +9,6 @@ import {
   YAxis,
 } from "recharts";
 
-import useClass from "@/hooks/useClass";
-
 import styles from "./Enrollment.module.scss";
 
 // import Reservations from "./Reservations";
@@ -61,8 +59,6 @@ const series = [
 ];
 
 export default function Enrollment() {
-  const { class: _class } = useClass();
-
   return (
     <div className={styles.root}>
       <div className={styles.legend}>

@@ -1,34 +1,25 @@
-import {
-  ReactNode,
-  Suspense,
-  lazy,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import { ReactNode, lazy, useCallback, useEffect, useMemo } from "react";
 
-import { DialogClose } from "@radix-ui/react-dialog";
-import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
 import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  Expand,
   OpenBook,
   OpenNewWindow,
-  Pin,
-  PinSolid,
   SidebarCollapse,
   SidebarExpand,
   Xmark,
 } from "iconoir-react";
+import { Dialog, Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
-  Boundary,
+  Box,
   Container,
+  Flex,
   IconButton,
-  LoadingIndicator,
   MenuItem,
   Tooltip,
 } from "@repo/theme";
@@ -42,11 +33,11 @@ import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import usePins from "@/hooks/usePins";
 import { IClass, Semester } from "@/lib/api";
-import { addRecentClass } from "@/lib/recent-classes";
+import { addRecentClass } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
+import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
 
 const Enrollment = lazy(() => import("./Enrollment"));
@@ -60,17 +51,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
-  return (
-    <Suspense
-      fallback={
-        <Boundary>
-          <LoadingIndicator size="lg" />
-        </Boundary>
-      }
-    >
-      <Container size="sm">{dialog ? children : <Outlet />}</Container>
-    </Suspense>
-  );
+  return dialog ? children : <Outlet />;
 }
 
 interface RootProps {
@@ -80,11 +61,11 @@ interface RootProps {
 
 function Root({ dialog, children }: RootProps) {
   return dialog ? (
-    <Tabs.Root defaultValue="overview" className={styles.root}>
+    <Tabs.Root asChild defaultValue="overview">
       {children}
     </Tabs.Root>
   ) : (
-    <div className={styles.root}>{children}</div>
+    children
   );
 }
 
@@ -136,7 +117,7 @@ export default function Class({
   onClose,
   dialog,
 }: ClassProps) {
-  const { pins, addPin, removePin } = usePins();
+  // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
 
   const { data: user, loading: userLoading } = useReadUser();
@@ -195,7 +176,7 @@ export default function Class({
     } as ClassPin;
   }, [_class]);
 
-  const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
+  // const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
   const bookmark = useCallback(async () => {
     if (!user || !_class) return;
@@ -258,30 +239,34 @@ export default function Class({
 
   return (
     <Root dialog={dialog}>
-      <div className={styles.header}>
-        <Container size="sm">
-          <div className={styles.row}>
-            <div className={styles.group}>
-              {!dialog && (
-                <Tooltip content={expanded ? "Expand" : "Collapse"}>
-                  <IconButton onClick={() => onExpandedChange(!expanded)}>
-                    {expanded ? <SidebarCollapse /> : <SidebarExpand />}
-                  </IconButton>
-                </Tooltip>
-              )}
-              {/* TODO: Reusable bookmark button */}
-              <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
-                <IconButton
-                  className={classNames(styles.bookmark, {
-                    [styles.active]: bookmarked,
-                  })}
-                  onClick={() => bookmark()}
-                  disabled={userLoading}
-                >
-                  {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                </IconButton>
-              </Tooltip>
-              {/* TODO: Reusable pin button */}
+      <Flex direction="column" flexGrow="1">
+        <Box className={styles.header} pt="5" px="5">
+          <Container size="3">
+            <Flex direction="column" gap="5">
+              <Flex justify="between">
+                <Flex gap="3">
+                  {!dialog && (
+                    <Tooltip content={expanded ? "Expand" : "Collapse"}>
+                      <IconButton onClick={() => onExpandedChange(!expanded)}>
+                        {expanded ? <SidebarCollapse /> : <SidebarExpand />}
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {/* TODO: Reusable bookmark button */}
+                  <Tooltip
+                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
+                  >
+                    <IconButton
+                      className={classNames(styles.bookmark, {
+                        [styles.active]: bookmarked,
+                      })}
+                      onClick={() => bookmark()}
+                      disabled={userLoading}
+                    >
+                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                    </IconButton>
+                  </Tooltip>
+                  {/* TODO: Reusable pin button
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
@@ -291,168 +276,195 @@ export default function Class({
                 >
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
-              </Tooltip>
-              <Tooltip content="Add to schedule">
-                <IconButton>
-                  <CalendarPlus />
-                </IconButton>
-              </Tooltip>
-            </div>
-            <div className={styles.group}>
-              {dialog ? (
-                <Tooltip content="View course">
-                  <IconButton
-                    as={Link}
-                    to={`/courses/${_class.subject}/${_class.courseNumber}`}
-                  >
-                    <OpenBook />
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <CourseDrawer
-                  subject={_class.subject}
-                  number={_class.courseNumber}
-                >
-                  <Tooltip content="View course">
+              </Tooltip> */}
+                  <Tooltip content="Add to schedule">
                     <IconButton>
-                      <OpenBook />
+                      <CalendarPlus />
                     </IconButton>
                   </Tooltip>
-                </CourseDrawer>
-              )}
-              <Tooltip content="Berkeley Academic Guide">
-                <IconButton
-                  as="a"
-                  href={getExternalLink(
-                    _class.year,
-                    _class.semester,
-                    _class.subject,
-                    _class.courseNumber,
-                    _class.primarySection.number,
-                    _class.primarySection.component
-                  )}
-                  target="_blank"
-                >
-                  <OpenNewWindow />
-                </IconButton>
-              </Tooltip>
-              {dialog && (
-                <Tooltip content="Expand">
-                  <DialogClose asChild>
-                    <IconButton
-                      as={Link}
-                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
+                </Flex>
+                <Flex gap="3">
+                  {dialog ? (
+                    <Tooltip content="View course">
+                      <IconButton
+                        as={Link}
+                        to={`/courses/${_class.subject}/${_class.courseNumber}`}
+                      >
+                        <OpenBook />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <CourseDrawer
+                      subject={_class.subject}
+                      number={_class.courseNumber}
                     >
-                      <Xmark />
+                      <Tooltip content="View course">
+                        <IconButton>
+                          <OpenBook />
+                        </IconButton>
+                      </Tooltip>
+                    </CourseDrawer>
+                  )}
+                  <Tooltip content="Berkeley Academic Guide">
+                    <IconButton
+                      as="a"
+                      href={getExternalLink(
+                        _class.year,
+                        _class.semester,
+                        _class.subject,
+                        _class.courseNumber,
+                        _class.primarySection.number,
+                        _class.primarySection.component
+                      )}
+                      target="_blank"
+                    >
+                      <OpenNewWindow />
                     </IconButton>
-                  </DialogClose>
-                </Tooltip>
+                  </Tooltip>
+                  {dialog && (
+                    <Tooltip content="Expand">
+                      <Dialog.Close asChild>
+                        <IconButton
+                          as={Link}
+                          to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
+                        >
+                          <Expand />
+                        </IconButton>
+                      </Dialog.Close>
+                    </Tooltip>
+                  )}
+                  <Tooltip content="Close">
+                    {dialog ? (
+                      <Dialog.Close asChild>
+                        <IconButton>
+                          <Xmark />
+                        </IconButton>
+                      </Dialog.Close>
+                    ) : (
+                      <IconButton
+                        as={Link}
+                        to={{
+                          ...location,
+                          pathname: `/catalog/${_class.year}/${_class.semester}`,
+                        }}
+                        onClick={() => onClose()}
+                      >
+                        <Xmark />
+                      </IconButton>
+                    )}
+                  </Tooltip>
+                </Flex>
+              </Flex>
+              <Flex direction="column" gap="4">
+                <Flex direction="column" gap="1">
+                  <h1 className={styles.heading}>
+                    {_class.subject} {_class.courseNumber} #{_class.number}
+                  </h1>
+                  <p className={styles.description}>
+                    {_class.title || _class.course.title}
+                  </p>
+                </Flex>
+                <Flex gap="3" align="center">
+                  <AverageGrade
+                    gradeDistribution={_class.course.gradeDistribution}
+                  />
+                  <Capacity
+                    enrolledCount={
+                      _class.primarySection.enrollment?.latest.enrolledCount
+                    }
+                    maxEnroll={
+                      _class.primarySection.enrollment?.latest.maxEnroll
+                    }
+                    waitlistedCount={
+                      _class.primarySection.enrollment?.latest.waitlistedCount
+                    }
+                    maxWaitlist={
+                      _class.primarySection.enrollment?.latest.maxWaitlist
+                    }
+                  />
+                  <Units
+                    unitsMax={_class.unitsMax}
+                    unitsMin={_class.unitsMin}
+                  />
+                  {_class && (
+                    <CCN sectionId={_class.primarySection.sectionId} />
+                  )}
+                </Flex>
+              </Flex>
+              {dialog ? (
+                <Tabs.List asChild defaultValue="overview">
+                  <Flex mx="-3" mb="3">
+                    <Tabs.Trigger value="overview" asChild>
+                      <MenuItem>Overview</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="sections" asChild>
+                      <MenuItem>Sections</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="enrollment" asChild>
+                      <MenuItem>Enrollment</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="grades" asChild>
+                      <MenuItem>Grades</MenuItem>
+                    </Tabs.Trigger>
+                  </Flex>
+                </Tabs.List>
+              ) : (
+                <Flex mx="-3" mb="3">
+                  <NavLink to={{ ...location, pathname: "." }} end>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Overview</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "sections" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Sections</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "grades" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Grades</MenuItem>
+                    )}
+                  </NavLink>
+                </Flex>
               )}
-              <Tooltip content="Close">
-                {dialog ? (
-                  <DialogClose asChild>
-                    <IconButton>
-                      <Xmark />
-                    </IconButton>
-                  </DialogClose>
-                ) : (
-                  <IconButton
-                    as={Link}
-                    to={{
-                      ...location,
-                      pathname: `/catalog/${_class.year}/${_class.semester}`,
-                    }}
-                    onClick={() => onClose()}
-                  >
-                    <Xmark />
-                  </IconButton>
-                )}
-              </Tooltip>
-            </div>
-          </div>
-          <h1 className={styles.heading}>
-            {_class.subject} {_class.courseNumber} #{_class.number}
-          </h1>
-          <p className={styles.description}>
-            {_class.title || _class.course.title}
-          </p>
-          <div className={styles.group}>
-            <AverageGrade gradeDistribution={_class.course.gradeDistribution} />
-            <Capacity
-              enrolledCount={
-                _class.primarySection.enrollment.latest.enrolledCount
-              }
-              maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
-              waitlistedCount={
-                _class.primarySection.enrollment.latest.waitlistedCount
-              }
-              maxWaitlist={_class.primarySection.enrollment.latest.maxWaitlist}
-            />
-            <Units unitsMax={_class.unitsMax} unitsMin={_class.unitsMin} />
-            {_class && <CCN sectionId={_class.primarySection.sectionId} />}
-          </div>
-          {dialog ? (
-            <Tabs.List className={styles.menu} defaultValue="overview">
-              <Tabs.Trigger value="overview" asChild>
-                <MenuItem>Overview</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="sections" asChild>
-                <MenuItem>Sections</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="enrollment" asChild>
-                <MenuItem>Enrollment</MenuItem>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="grades" asChild>
-                <MenuItem>Grades</MenuItem>
-              </Tabs.Trigger>
-            </Tabs.List>
-          ) : (
-            <div className={styles.menu}>
-              <NavLink to={{ ...location, pathname: "." }} end>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Overview</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "sections" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Sections</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "enrollment" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Enrollment</MenuItem>
-                )}
-              </NavLink>
-              <NavLink to={{ ...location, pathname: "grades" }}>
-                {({ isActive }) => (
-                  <MenuItem active={isActive}>Grades</MenuItem>
-                )}
-              </NavLink>
-            </div>
-          )}
-        </Container>
-      </div>
-      <ClassContext
-        value={{
-          class: _class,
-          course,
-        }}
-      >
-        <Body dialog={dialog}>
-          <Tabs.Content value="overview" asChild>
-            <Overview />
-          </Tabs.Content>
-          <Tabs.Content value="sections" asChild>
-            <Sections />
-          </Tabs.Content>
-          <Tabs.Content value="enrollment" asChild>
-            <Enrollment />
-          </Tabs.Content>
-          <Tabs.Content value="grades" asChild>
-            <Grades />
-          </Tabs.Content>
-        </Body>
-      </ClassContext>
+            </Flex>
+          </Container>
+        </Box>
+        <ClassContext
+          value={{
+            class: _class,
+            course,
+          }}
+        >
+          <Body dialog={dialog}>
+            <Tabs.Content value="overview" asChild>
+              <SuspenseBoundary>
+                <Overview />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="sections" asChild>
+              <SuspenseBoundary>
+                <Sections />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <SuspenseBoundary>
+                <Enrollment />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <SuspenseBoundary>
+                <Grades />
+              </SuspenseBoundary>
+            </Tabs.Content>
+          </Body>
+        </ClassContext>
+      </Flex>
     </Root>
   );
 }

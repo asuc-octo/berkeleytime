@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { IClass } from "../api";
+import { IClass, ISection } from "../api";
 import { ITerm, Semester } from "./terms";
 
 export type ScheduleIdentifier = string & {
@@ -9,18 +9,19 @@ export type ScheduleIdentifier = string & {
 
 export interface IScheduleClass {
   class: IClass;
-  selectedSections: string[];
+  selectedSections: ISection[];
 }
 
 export interface IScheduleClassInput {
   subject: string;
   courseNumber: string;
   number: string;
-  sections: string[];
+  sectionIds: string[];
 }
 
 export interface IScheduleEvent {
   startTime: string;
+  _id: string;
   endTime: string;
   title: string;
   location?: string;
@@ -32,6 +33,7 @@ export interface IScheduleInput {
   name: string;
   year: number;
   semester: Semester;
+  sessionId: any;
   classes?: IScheduleClassInput[];
   events?: IScheduleEvent[];
   public?: boolean;
@@ -40,12 +42,11 @@ export interface IScheduleInput {
 export interface ISchedule {
   __typename: "Schedule";
   _id: ScheduleIdentifier;
+  public: boolean;
   name: string;
   classes: IScheduleClass[];
   events: IScheduleEvent[];
   createdBy: string;
-  beginDate: string;
-  endDate: string;
   term: ITerm;
   year: number;
   semester: Semester;
@@ -65,9 +66,18 @@ export const READ_SCHEDULE = gql`
       createdBy
       year
       semester
+      sessionId
       term {
-        beginDate
+        startDate
         endDate
+      }
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
       }
       classes {
         class {
@@ -152,7 +162,9 @@ export const READ_SCHEDULE = gql`
             }
           }
         }
-        selectedSections
+        selectedSections {
+          sectionId
+        }
       }
     }
   }
@@ -175,6 +187,14 @@ export const UPDATE_SCHEDULE = gql`
         startDate
         endDate
       }
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+      }
       classes {
         class {
           subject
@@ -258,7 +278,9 @@ export const UPDATE_SCHEDULE = gql`
             }
           }
         }
-        selectedSections
+        selectedSections {
+          sectionId
+        }
       }
     }
   }
@@ -287,6 +309,14 @@ export const CREATE_SCHEDULE = gql`
       year
       createdBy
       semester
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+      }
       sessionId
       classes {
         class {
@@ -294,7 +324,7 @@ export const CREATE_SCHEDULE = gql`
           courseNumber
           number
         }
-        selectedSections
+        # selectedSections
       }
     }
   }
@@ -318,7 +348,7 @@ export const READ_SCHEDULES = gql`
           courseNumber
           number
         }
-        selectedSections
+        # selectedSections
       }
     }
   }

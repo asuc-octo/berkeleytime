@@ -1,7 +1,7 @@
 import { MouseEvent, useRef, useState } from "react";
 
-import * as Tooltip from "@radix-ui/react-tooltip";
 import { ClipboardCheck, Hashtag, PasteClipboard } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
 import styles from "./CCN.module.scss";
 

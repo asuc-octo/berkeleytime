@@ -30,6 +30,8 @@
     font-size: 14px;
     display: flex;
     flex-direction: column;
+    max-width: 90%;
+    color: var(--paragraph-color);
 
     .heading {
       color: var(--heading-color);
@@ -45,16 +47,16 @@
     }
 
     .description {
-      color: var(--paragraph-color);
       line-height: 1.5;
       flex-grow: 1;
     }
 
     .row {
-      display: flex;
-      gap: 12px;
       margin-top: 12px;
       align-items: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }

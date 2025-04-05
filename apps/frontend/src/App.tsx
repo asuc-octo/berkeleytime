@@ -11,11 +11,11 @@ import { ThemeProvider } from "@repo/theme";
 
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
-import PinsProvider from "@/components/PinsProvider";
+import SuspenseBoundary from "@/components/SuspenseBoundary";
+
+// import PinsProvider from "@/components/PinsProvider";
 
 const Profile = lazy(() => import("@/app/Profile"));
-
-// TODO: Experiment with server-side rendering for static pages and hydration for dynamic pages
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -36,56 +36,81 @@ const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
-const Discover = lazy(() => import("@/app/Discover"));
+// const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
 const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
-const Map = lazy(() => import("@/app/Map"));
+// const Map = lazy(() => import("@/app/Map"));
 const Plans = lazy(() => import("@/app/Plans"));
 
 const router = createBrowserRouter([
   {
     element: <Layout header={false} footer={false} />,
     children: [
-      {
-        element: <Discover />,
-        path: "discover",
-      },
+      // {
+      //   element: (
+      //       <SuspenseBoundary key="schedules/:scheduleId">
+      //         <Discover />
+      //       </SuspenseBoundary>
+      // ),
+      //   path: "discover",
+      // },
       {
         element: <Landing />,
         index: true,
       },
       {
-        element: <Schedule />,
+        element: (
+          <SuspenseBoundary key="schedules/:scheduleId">
+            <Schedule />
+          </SuspenseBoundary>
+        ),
         path: "schedules/:scheduleId",
         children: [
           {
-            element: <Manage />,
+            element: (
+              <SuspenseBoundary key="overview">
+                <Manage />
+              </SuspenseBoundary>
+            ),
             index: true,
           },
           {
-            element: <Compare />,
+            element: (
+              <SuspenseBoundary key="compare">
+                <Compare />
+              </SuspenseBoundary>
+            ),
             path: "compare/:comparisonId?",
           },
           {
             path: "*",
-            loader: () => redirect("."),
+            loader: ({ params: { scheduleId } }) =>
+              redirect(`/schedules/${scheduleId}`),
           },
         ],
       },
-      {
-        element: <Map />,
-        path: "map",
-      },
+      // {
+      //   element: (
+      //     <SuspenseBoundary key="map">
+      //       <Map />
+      //     </SuspenseBoundary>
+      //   ),
+      //   path: "map",
+      // },
     ],
   },
   {
     element: <Layout />,
     children: [
       {
-        element: <About />,
+        element: (
+          <SuspenseBoundary key="about">
+            <About />
+          </SuspenseBoundary>
+        ),
         path: "about",
       },
     ],
@@ -94,7 +119,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        element: <Profile />,
+        element: (
+          <SuspenseBoundary key="profile">
+            <Profile />
+          </SuspenseBoundary>
+        ),
         path: "profile",
       },
     ],
@@ -103,75 +132,139 @@ const router = createBrowserRouter([
     element: <Layout footer={false} />,
     children: [
       {
-        element: <GradeDistributions />,
+        element: (
+          <SuspenseBoundary key="grades">
+            <GradeDistributions />
+          </SuspenseBoundary>
+        ),
         path: "grades",
       },
       {
-        element: <Enrollment />,
+        element: (
+          <SuspenseBoundary key="enrollment">
+            <Enrollment />
+          </SuspenseBoundary>
+        ),
         path: "enrollment",
       },
       {
-        element: <Course.Root />,
+        element: (
+          <SuspenseBoundary key="courses/:subject/:number">
+            <Course.Root />
+          </SuspenseBoundary>
+        ),
         path: "courses/:subject/:number",
         children: [
           {
-            element: <Course.Overview />,
+            element: (
+              <SuspenseBoundary key="overview">
+                <Course.Overview />
+              </SuspenseBoundary>
+            ),
             index: true,
           },
           {
-            element: <Course.Classes />,
+            element: (
+              <SuspenseBoundary key="classes">
+                <Course.Classes />
+              </SuspenseBoundary>
+            ),
             path: "classes",
           },
           {
-            element: <Course.Enrollment />,
+            element: (
+              <SuspenseBoundary key="enrollment">
+                <Course.Enrollment />
+              </SuspenseBoundary>
+            ),
             path: "enrollment",
           },
           {
-            element: <Course.Grades />,
+            element: (
+              <SuspenseBoundary key="grades">
+                <Course.Grades />
+              </SuspenseBoundary>
+            ),
             path: "grades",
           },
           {
             path: "*",
-            loader: () => redirect("."),
+            loader: ({ params: { subject, number } }) =>
+              redirect(`/courses/${subject}/${number}`),
           },
         ],
       },
       {
-        element: <Catalog />,
+        element: (
+          <SuspenseBoundary key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?">
+            <Catalog />
+          </SuspenseBoundary>
+        ),
         path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?",
         children: [
           {
-            element: <Class.Overview />,
+            element: (
+              <SuspenseBoundary key="overview">
+                <Class.Overview />
+              </SuspenseBoundary>
+            ),
             index: true,
           },
           {
-            element: <Class.Sections />,
+            element: (
+              <SuspenseBoundary key="sections">
+                <Class.Sections />
+              </SuspenseBoundary>
+            ),
             path: "sections",
           },
           {
-            element: <Class.Enrollment />,
+            element: (
+              <SuspenseBoundary key="enrollment">
+                <Class.Enrollment />
+              </SuspenseBoundary>
+            ),
             path: "enrollment",
           },
           {
-            element: <Class.Grades />,
+            element: (
+              <SuspenseBoundary key="grades">
+                <Class.Grades />
+              </SuspenseBoundary>
+            ),
             path: "grades",
           },
           {
             path: "*",
-            loader: () => redirect("."),
+            loader: ({ params: { year, semester, subject, courseNumber } }) =>
+              redirect(
+                `/catalog/${year}/${semester}/${subject}/${courseNumber}`
+              ),
           },
         ],
       },
       {
-        element: <Schedules />,
+        element: (
+          <SuspenseBoundary key="schedules">
+            <Schedules />
+          </SuspenseBoundary>
+        ),
         path: "schedules",
       },
       {
-        element: <Plans />,
+        element: (
+          <SuspenseBoundary key="plans">
+            <Plans />
+          </SuspenseBoundary>
+        ),
         path: "plans",
       },
       {
-        element: <Plan />,
+        element: (
+          <SuspenseBoundary key="plans/:planId">
+            <Plan />
+          </SuspenseBoundary>
+        ),
         path: "plans/:planId",
       },
     ],
@@ -191,9 +284,9 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
-        <PinsProvider>
-          <RouterProvider router={router} />
-        </PinsProvider>
+        {/* <PinsProvider> */}
+        <RouterProvider router={router} />
+        {/* </PinsProvider> */}
       </ThemeProvider>
     </ApolloProvider>
   );

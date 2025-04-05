@@ -350,11 +350,6 @@
   --cancel-accent-color: var(--dark-cancel-accent-color);
 }
 
-.root {
-  display: flex;
-  flex-direction: column;
-}
-
 body[data-theme="dark"] {
   @include dark-theme;
 }
