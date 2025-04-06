@@ -36,8 +36,9 @@ spec:
                     "$prod_pod" -- rm /tmp/prod_backup.gz
 
                   # Upload production MongoDB backup
+                  backup_date=$(date +%Y%m%d)
                   echo "Uploading backup to s3 bucket..."
-                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/ \
+                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/prod_backup-$backup_date.gz \
                     --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com \
                     --checksum-algorithm CRC32
 
