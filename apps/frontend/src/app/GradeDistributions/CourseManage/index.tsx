@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
-
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import { Card, Flex } from "@repo/theme";
+import { Flex } from "@repo/theme";
 
-import { useReadCourse } from "@/hooks/api";
 import { GradeDistribution, ICourse, Semester } from "@/lib/api";
 
 import CourseAdd from "./CourseAdd";
