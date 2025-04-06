@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { ArrowDown, ArrowUp, Plus } from "iconoir-react";
+import { Plus } from "iconoir-react";
 import Select, { SingleValue } from "react-select";
 
-import { Button, Flex, IconButton } from "@repo/theme";
+import { Button, Flex } from "@repo/theme";
 
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
