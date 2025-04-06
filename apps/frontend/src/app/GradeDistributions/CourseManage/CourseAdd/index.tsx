@@ -3,8 +3,8 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Plus } from "iconoir-react";
 import { SingleValue } from "react-select";
-import { Select } from "@repo/theme";
 
+import { Select } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
 import { useReadCourseWithInstructor } from "@/hooks/api";
