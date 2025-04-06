@@ -2,15 +2,14 @@ import { useEffect, useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
-import CourseBrowser from "@/components/CourseBrowser";
-import CourseCard from "@/components/CourseCard";
-import DeleteContainer from "@/components/DeleteContainer";
-import Drawer from "@/components/Drawer";
 import { useReadCourse } from "@/hooks/api";
-import { ICourse, Semester } from "@/lib/api";
+import { GradeDistribution, ICourse, Semester } from "@/lib/api";
 
 import CourseAdd from "./CourseAdd";
 import styles from "./CourseManage.module.scss";
+import GradesCard from "./GradesCard";
+import { Card, Flex } from "@repo/theme";
+import classNames from "classnames";
 
 interface SelectedCourse {
   subject: string;
@@ -19,10 +18,15 @@ interface SelectedCourse {
   semester?: Semester;
   givenName?: string;
   familyName?: string;
+  gradeDistribution: GradeDistribution;
+  active: boolean;
+  hidden: boolean;
 }
 
 interface SideBarProps {
   selectedCourses: SelectedCourse[];
+  hideCourse: (i: number) => void;
+  setActive: (i: number) => void;
 }
 
 function courseTermProfToURL(
@@ -41,15 +45,9 @@ function courseTermProfToURL(
     return `${subject};${number};T;${year}:${semester};${givenName}:${familyName}`;
 }
 
-export default function CourseManage({ selectedCourses }: SideBarProps) {
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+export default function CourseManage({ selectedCourses, setActive, hideCourse }: SideBarProps) {
 
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const { data: activeCourse } = useReadCourse(
-    selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? ""
-  );
 
   function addCourse(course: ICourse, term: String, instructor: String) {
     const [lastName, firstName] =
@@ -89,26 +87,38 @@ export default function CourseManage({ selectedCourses }: SideBarProps) {
   return (
     <div className={styles.root}>
       <CourseAdd selectedCourses={selectedCourses} addCourse={addCourse} />
-      {selectedCourses.map((course, index) => {
-        const instructor =
-          course.familyName && course.givenName
-            ? `${course.givenName} ${course.familyName}`
-            : "All Instructors";
-        const semester =
-          course.semester && course.year
-            ? `${course.semester} ${course.year}`
-            : "All Semesters";
-        return (
-          <div className={styles.courseCard} key={index}>
-            {/* TODO: Better course card interface */}
-            <span>
-              {course.subject}
-              {course.courseNumber}
-              {`${instructor} • ${semester}`}
-            </span>
-          </div>
-        );
-      })}
+      <Flex direction="row" gap="4">
+        {Array.from({length: 4}, (_, index) => {
+          if (index >= selectedCourses.length) {
+            return <div className={classNames(styles.courseCard, styles.blank)} key={index}>
+            </div>
+          } 
+          const course = selectedCourses[index];
+          const instructor =
+            course.familyName && course.givenName
+              ? `${course.givenName} ${course.familyName}`
+              : "All Instructors";
+          const semester =
+            course.semester && course.year
+              ? `${course.semester} ${course.year}`
+              : "All Semesters";
+          return (
+            <div className={styles.courseCard} key={index}>
+              <GradesCard
+                subject={course.subject}
+                number={course.courseNumber}
+                description={`${instructor} • ${semester}`}
+                gradeDistribution={course.gradeDistribution}
+                hidden={course.hidden}
+                active={course.active}
+                onClick={() => { setActive(index) }}
+                onClickDelete={() => { deleteCourse(index) }}
+                onClickHide={() => { hideCourse(index) }}
+              />
+            </div>
+          );
+        })}
+      </Flex>
     </div>
   );
 }

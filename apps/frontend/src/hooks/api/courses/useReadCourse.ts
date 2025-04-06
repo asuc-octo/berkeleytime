@@ -3,6 +3,7 @@ import { QueryHookOptions, useQuery } from "@apollo/client";
 import {
   READ_COURSE,
   READ_COURSE_GRADE_DIST,
+  READ_COURSE_TITLE,
   READ_COURSE_WITH_INSTRUCTOR,
   ReadCourseResponse,
 } from "@/lib/api";
@@ -63,3 +64,23 @@ export const useReadCourseWithInstructor = (
     data: query.data?.course,
   };
 };
+
+export const useReadCourseTitle = (
+  subject: string,
+  number: string,
+  options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
+) => {
+  const query = useQuery<ReadCourseResponse>(READ_COURSE_TITLE, {
+    ...options,
+    variables: {
+      subject,
+      number,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.course,
+  };
+};
+
