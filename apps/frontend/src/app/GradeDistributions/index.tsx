@@ -25,6 +25,7 @@ import { colors } from "@/lib/section";
 
 import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
+
 // import HoverInfo from "./HoverInfo";
 
 // const data = [
@@ -260,9 +261,9 @@ export default function GradeDistributions() {
     return outputs?.filter((out) => !out.hidden).length ?? 0;
   }, [outputs]);
 
-  function udpateGraphHover(data: any) {
-    setHoveredLetter(data.letter);
-  }
+  // function udpateGraphHover(data: any) {
+  //   setHoveredLetter(data.letter);
+  // }
 
   return (
     <Box p="5">
@@ -340,7 +341,7 @@ export default function GradeDistributions() {
                         }
                         key={index}
                         name={`${output.input.subject} ${output.input.courseNumber}`}
-                        onMouseMove={udpateGraphHover}
+                        // onMouseMove={udpateGraphHover}
                         radius={[
                           10 / visibleOutputs,
                           10 / visibleOutputs,
