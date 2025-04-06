@@ -4,6 +4,7 @@ metadata:
   name: {{ .Release.Name }}-restore-prod-mongo
   namespace: bt
 spec:
+  ttlSecondsAfterFinished: 180
   template:
     spec:
       serviceAccountName: bt-k8s-role
