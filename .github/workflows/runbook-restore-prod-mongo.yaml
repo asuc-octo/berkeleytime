@@ -1,0 +1,25 @@
+name: Reset Dev Mongo
+
+on:
+  workflow_dispatch:
+    inputs:
+      restore_date:
+        description: "Date of backup to restore (YYYYMMDD)"
+        required: true
+        type: string
+
+jobs:
+  restore-mongo:
+    name: SSH and Reset Prod MongoDB State
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Reset MongoDB
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            echo "not implemented yet"
