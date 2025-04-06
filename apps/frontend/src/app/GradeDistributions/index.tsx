@@ -21,7 +21,6 @@ import {
   ReadGradeDistributionResponse,
   Semester,
 } from "@/lib/api";
-import { colors } from "@/lib/section";
 
 import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
@@ -77,7 +76,6 @@ interface Input {
 }
 
 interface Output {
-  color: string;
   gradeDistribution: GradeDistribution;
   input: Input;
   hidden: boolean;
@@ -198,7 +196,6 @@ export default function GradeDistributions() {
       (acc, response, index) =>
         response
           ? acc.concat({
-              color: colors[Math.floor(Math.random() * colors.length)],
               gradeDistribution: response!.data.grade,
               input: inputs[index],
               active:

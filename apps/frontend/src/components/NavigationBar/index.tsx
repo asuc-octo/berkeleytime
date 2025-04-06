@@ -53,6 +53,13 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
             </MenuItem>
           )}
         </NavLink>
+        <NavLink to="/enrollment">
+          {({ isActive }) => (
+            <MenuItem className={styles.item} active={isActive}>
+              Enrollment
+            </MenuItem>
+          )}
+        </NavLink>
         <NavLink to="/about">
           {({ isActive }) => (
             <MenuItem className={styles.item} active={isActive}>

@@ -36,14 +36,10 @@ interface CourseAddProps {
   addCourse: (course: ICourse, term: string, instructor: string) => void;
 }
 
-const DEFAULT_SELECTED_INSTRUCTOR = { value: "all", label: "All Instructors" };
+// called instructor in frontend but actually we're letting users select a diff class
+const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
 const DEFAULT_SELECTED_SEMESTER = { value: "all", label: "All Semesters" };
 const DEFAULT_BY_OPTION = { value: "instructor", label: "By Instructor" };
-
-const byOptions = [
-  { value: "instructor", label: "By Instructor" },
-  { value: "semester", label: "By Semester" },
-];
 
 export default function CourseAdd({
   selectedCourses,
@@ -69,61 +65,45 @@ export default function CourseAdd({
     });
   }, [data]);
 
-  const [byData, setByData] =
-    useState<SingleValue<OptionType>>(DEFAULT_BY_OPTION);
-  const [selectedInstructor, setSelectedInstructor] = useState<
+  const [selectedClass, setSelectedClass] = useState<
     SingleValue<OptionType>
-  >(DEFAULT_SELECTED_INSTRUCTOR);
+  >(DEFAULT_SELECTED_CLASS);
   const [selectedSemester, setSelectedSemester] = useState<
     SingleValue<OptionType>
   >(DEFAULT_SELECTED_SEMESTER);
 
   // some crazy cyclic dependencies here, averted by the fact that options changes
   // dpeend on the value of the "byData"
-  const instructorOptions: OptionType[] = useMemo(() => {
-    const list = [DEFAULT_SELECTED_INSTRUCTOR];
+  const classOptions: OptionType[] = useMemo(() => {
+    const list = [DEFAULT_SELECTED_CLASS];
     if (!courseData) return list;
 
     const mySet = new Set();
     courseData?.classes.forEach((c) => {
-      if (byData?.value === "semester") {
-        if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
-      }
+      if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
+      let allInstructors = "";
       c.primarySection.meetings.forEach((m) => {
         m.instructors.forEach((i) => {
-          mySet.add(`${i.familyName}, ${i.givenName}`);
+          allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
         });
       });
+      mySet.add(`${allInstructors} ${c.number}`)
     });
     const opts = [...mySet].map((v) => {
       return { value: v as string, label: v as string };
     });
-    if (opts.length === 1 && byData?.value === "semester") {
-      if (selectedInstructor !== opts[0]) setSelectedInstructor(opts[0]);
+    if (opts.length === 1) {
+      if (selectedClass !== opts[0]) setSelectedClass(opts[0]);
       return opts;
     }
     return [...list, ...opts];
-  }, [courseData, selectedSemester, byData]);
+  }, [courseData, selectedSemester]);
 
   const semesterOptions: OptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_SEMESTER];
     if (!courseData) return list;
-    const filteredClasses =
-      byData?.value === "semester"
-        ? courseData.classes
-        : selectedInstructor?.value === "all"
-          ? []
-          : courseData.classes.filter((c) =>
-              c.primarySection.meetings.find((m) =>
-                m.instructors.find(
-                  (i) =>
-                    selectedInstructor?.value ===
-                    `${i.familyName}, ${i.givenName}`
-                )
-              )
-            );
     const filteredOptions = Array.from(
-      new Set(filteredClasses.map((c) => `${c.semester} ${c.year}`))
+      new Set(courseData.classes.map((c) => `${c.semester} ${c.year}`))
     ).map((t) => {
       return {
         value: t,
@@ -136,7 +116,7 @@ export default function CourseAdd({
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
-  }, [courseData, selectedInstructor, byData]);
+  }, [courseData]);
 
   return (
     <Flex direction="row" gap="3">
@@ -151,66 +131,32 @@ export default function CourseAdd({
       </div>
       <div className={styles.selectCont}>
         <Select
-          options={byOptions}
-          value={byData}
+          options={semesterOptions}
+          value={selectedSemester}
           onChange={(s) => {
-            setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
-            setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
-            setByData(s);
-          }}
-          components={{
-            IndicatorSeparator: () => null,
+            setSelectedSemester(s);
           }}
         />
       </div>
       <div className={styles.selectCont}>
-        {byData?.value === "instructor" ? (
-          <Select
-            options={instructorOptions}
-            value={selectedInstructor}
-            onChange={(s) => {
-              setSelectedInstructor(s);
-            }}
-          />
-        ) : (
-          <Select
-            options={semesterOptions}
-            value={selectedSemester}
-            onChange={(s) => {
-              setSelectedSemester(s);
-            }}
-          />
-        )}
-      </div>
-      <div className={styles.selectCont}>
-        {byData?.value === "semester" ? (
-          <Select
-            options={instructorOptions}
-            value={selectedInstructor}
-            onChange={(s) => {
-              setSelectedInstructor(s);
-            }}
-          />
-        ) : (
-          <Select
-            options={semesterOptions}
-            value={selectedSemester}
-            onChange={(s) => {
-              setSelectedSemester(s);
-            }}
-          />
-        )}
+        <Select
+          options={classOptions}
+          value={selectedClass}
+          onChange={(s) => {
+            setSelectedClass(s);
+          }}
+        />
       </div>
       <Button
         className={styles.button}
         variant="solid"
         onClick={() => {
-          if (!selectedCourse || !selectedSemester || !selectedInstructor)
+          if (!selectedCourse || !selectedSemester || !selectedClass)
             return;
           addCourse(
             selectedCourse.value,
             selectedSemester.value,
-            selectedInstructor.value
+            selectedClass.value
           );
         }}
         disabled={selectedCourses.length >= 4}
