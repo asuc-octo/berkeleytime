@@ -10,6 +10,7 @@ import styles from "./CourseManage.module.scss";
 import GradesCard from "./GradesCard";
 
 interface SelectedCourse {
+  color: string;
   subject: string;
   courseNumber: string;
   year?: number;
@@ -110,6 +111,7 @@ export default function CourseManage({
           return (
             <div className={styles.courseCard} key={index}>
               <GradesCard
+                color={course.color}
                 subject={course.subject}
                 number={course.courseNumber}
                 description={`${instructor} • ${semester}`}

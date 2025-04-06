@@ -2,13 +2,14 @@ import { useRef } from "react";
 
 import { Eye, EyeClosed, Trash } from "iconoir-react";
 
-import { Card } from "@repo/theme";
+import { Card, ColorSquare } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import { useReadCourseTitle } from "@/hooks/api";
 import { GradeDistribution } from "@/lib/api";
 
 interface GradesCardProps {
+  color: string;
   subject: string;
   number: string;
   description: string;
@@ -21,6 +22,7 @@ interface GradesCardProps {
 }
 
 export default function GradesCard({
+  color,
   subject,
   number,
   description,
@@ -35,7 +37,6 @@ export default function GradesCard({
   const deleteRef = useRef<HTMLDivElement>(null);
 
   const { data: data } = useReadCourseTitle(subject, number);
-  console.log(data);
 
   return (
     <Card.Root
@@ -54,6 +55,7 @@ export default function GradesCard({
     >
       <Card.Body style={{ maxWidth: "calc(100% - 44px)" }}>
         <Card.Heading>
+          <ColorSquare color={color} size={12}/>
           {subject} {number}
         </Card.Heading>
         <Card.Description

@@ -1,16 +1,12 @@
 .info {
+  position: relative;
+  top: 100px;
   display: inline-block;
   width: 250px;
+  color: var(--paragraph-color);
 
   .heading {
-    margin-bottom: 5px;
-
-    .color {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      margin-right: 10px;
-    }
+    margin-bottom: 8px;
 
     .course {
       color: var(--heading-color);
@@ -18,11 +14,11 @@
     }
   }
   .label {
-    font-family: Inter, sans-serif;
-    font-weight: 700;
+    font-family: "Inter Variable", sans-serif;
+    font-weight: 600;
     color: var(--heading-color);
-    margin-top: 8px;
-    margin-bottom: 4px;
+    margin-top: 10px;
+    margin-bottom: 6px;
     font-size: 14px;
   }
 }

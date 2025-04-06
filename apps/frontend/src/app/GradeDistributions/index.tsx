@@ -25,6 +25,7 @@ import { colors } from "@/lib/section";
 
 import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
+import HoverInfo from "./HoverInfo";
 
 // import HoverInfo from "./HoverInfo";
 
@@ -124,7 +125,8 @@ export default function GradeDistributions() {
   const [loading, setLoading] = useState(false);
   const [outputs, setOutputs] = useState<Output[] | null>(null);
 
-  // const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
+  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
+  const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
 
   const inputs = useMemo(
     () =>
@@ -261,20 +263,22 @@ export default function GradeDistributions() {
     return outputs?.filter((out) => !out.hidden).length ?? 0;
   }, [outputs]);
 
-  // function udpateGraphHover(data: any) {
-  //   setHoveredLetter(data.letter);
-  // }
+  function updateGraphHover(data: any) {
+    setHoveredLetter(data.letter);
+    setHoveredSeries(data.tooltipPayload[0].dataKey)
+  }
 
   return (
     <Box p="5">
       <Flex direction="column">
         <CourseManage
           selectedCourses={
-            outputs?.map((out) => {
+            outputs?.map((out, i) => {
               return {
                 gradeDistribution: out.gradeDistribution,
                 hidden: out.hidden,
                 active: out.active,
+                color: COLOR_ORDER[i],
                 ...out.input,
               };
             }) ?? []
@@ -341,7 +345,7 @@ export default function GradeDistributions() {
                         }
                         key={index}
                         name={`${output.input.subject} ${output.input.courseNumber}`}
-                        // onMouseMove={udpateGraphHover}
+                        onMouseMove={updateGraphHover}
                         radius={[
                           10 / visibleOutputs,
                           10 / visibleOutputs,
@@ -363,9 +367,20 @@ export default function GradeDistributions() {
                 </div>
               )}
             </div>
-            {/* TODO: populate this so that update hover also figures out which series we're hovering over
-            <HoverInfo
-            /> */}
+            {/* TODO: populate this so that update hover also figures out which series we're hovering over */}
+            {(outputs && hoveredLetter && hoveredSeries !== null) ? <HoverInfo
+              color={COLOR_ORDER[hoveredSeries]}
+              subject={outputs[hoveredSeries].input.subject}
+              courseNumber={outputs[hoveredSeries].input.courseNumber}
+              gradeDistribution={outputs[hoveredSeries].gradeDistribution}
+              hoveredLetter={hoveredLetter}
+            /> : <HoverInfo
+            color={"#aaa"}
+            subject={"No Class"}
+            courseNumber={"Selected"}
+            gradeDistribution={undefined}
+            hoveredLetter={null}
+          />}
           </Flex>
         )}
       </Flex>
