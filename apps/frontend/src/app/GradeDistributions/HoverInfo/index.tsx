@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 
+import { ColorSquare } from "@repo/theme";
+
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
 import { useReadCourseGradeDist } from "@/hooks/api";
 import { GradeDistribution, Semester } from "@/lib/api";
 
 import styles from "./HoverInfo.module.scss";
-import { ColorSquare } from "@repo/theme";
 
 interface HoverInfoProps {
   color: string;
@@ -119,7 +120,7 @@ export default function HoverInfo({
     <div className={styles.info}>
       <div className={styles.heading}>
         <span className={styles.course}>
-          <ColorSquare color={color}/>
+          <ColorSquare color={color} />
           {subject} {courseNumber}
         </span>
       </div>
@@ -145,12 +146,15 @@ export default function HoverInfo({
       </div>
       <div className={styles.label}>Section Average</div>
       <div className={styles.value}>
-        { (gradeDistribution) && <AverageGrade
-          style={GRADE_STYLE}
-          gradeDistribution={gradeDistribution}
-          tooltip="for this instructor/semester combination"
-        /> }
-        ({gradeDistribution ? gradeDistribution.average?.toFixed(3) : "No data"})
+        {gradeDistribution && (
+          <AverageGrade
+            style={GRADE_STYLE}
+            gradeDistribution={gradeDistribution}
+            tooltip="for this instructor/semester combination"
+          />
+        )}
+        ({gradeDistribution ? gradeDistribution.average?.toFixed(3) : "No data"}
+        )
       </div>
       {hoveredLetter && (
         <div>

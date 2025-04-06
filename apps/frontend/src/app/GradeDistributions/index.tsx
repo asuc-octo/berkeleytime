@@ -265,7 +265,7 @@ export default function GradeDistributions() {
 
   function updateGraphHover(data: any) {
     setHoveredLetter(data.letter);
-    setHoveredSeries(data.tooltipPayload[0].dataKey)
+    setHoveredSeries(data.tooltipPayload[0].dataKey);
   }
 
   return (
@@ -368,19 +368,23 @@ export default function GradeDistributions() {
               )}
             </div>
             {/* TODO: populate this so that update hover also figures out which series we're hovering over */}
-            {(outputs && hoveredLetter && hoveredSeries !== null) ? <HoverInfo
-              color={COLOR_ORDER[hoveredSeries]}
-              subject={outputs[hoveredSeries].input.subject}
-              courseNumber={outputs[hoveredSeries].input.courseNumber}
-              gradeDistribution={outputs[hoveredSeries].gradeDistribution}
-              hoveredLetter={hoveredLetter}
-            /> : <HoverInfo
-            color={"#aaa"}
-            subject={"No Class"}
-            courseNumber={"Selected"}
-            gradeDistribution={undefined}
-            hoveredLetter={null}
-          />}
+            {outputs && hoveredLetter && hoveredSeries !== null ? (
+              <HoverInfo
+                color={COLOR_ORDER[hoveredSeries]}
+                subject={outputs[hoveredSeries].input.subject}
+                courseNumber={outputs[hoveredSeries].input.courseNumber}
+                gradeDistribution={outputs[hoveredSeries].gradeDistribution}
+                hoveredLetter={hoveredLetter}
+              />
+            ) : (
+              <HoverInfo
+                color={"#aaa"}
+                subject={"No Class"}
+                courseNumber={"Selected"}
+                gradeDistribution={undefined}
+                hoveredLetter={null}
+              />
+            )}
           </Flex>
         )}
       </Flex>

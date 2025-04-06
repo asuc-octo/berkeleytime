@@ -55,7 +55,7 @@ export default function GradesCard({
     >
       <Card.Body style={{ maxWidth: "calc(100% - 44px)" }}>
         <Card.Heading>
-          <ColorSquare color={color} size={12}/>
+          <ColorSquare color={color} size={12} />
           {subject} {number}
         </Card.Heading>
         <Card.Description
