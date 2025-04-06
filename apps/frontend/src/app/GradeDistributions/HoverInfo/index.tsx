@@ -153,7 +153,9 @@ export default function HoverInfo({
             tooltip="for this instructor/semester combination"
           />
         )}
-        {gradeDistribution ? `(${gradeDistribution.average?.toFixed(3)}` : "No data"}
+        {gradeDistribution
+          ? `(${gradeDistribution.average?.toFixed(3)}`
+          : "No data"}
       </div>
       {hoveredLetter && (
         <div>
