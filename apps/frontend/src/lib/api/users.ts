@@ -37,6 +37,24 @@ export const READ_USER = gql`
         year
         semester
         sessionId
+        unitsMin
+        unitsMax
+        course {
+          title
+        }
+        primarySection {
+          enrollment {
+            latest {
+              enrolledCount
+              maxEnroll
+              waitlistedCount
+              maxWaitlist
+            }
+          }
+        }
+        gradeDistribution {
+          average
+        }
       }
     }
   }
