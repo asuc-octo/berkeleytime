@@ -29,7 +29,7 @@ spec:
                   # Download production MongoDB backup
                   echo "Downloading backup from s3 bucket..."
                   restore_date=${RESTORE_DATE}
-                  aws s3 cp s3://$BUCKET_NAME/prod_backup-$restore_date.gz /tmp/prod_backup.gz \
+                  aws s3 cp s3://$BUCKET_NAME/daily/prod_backup-$restore_date.gz /tmp/prod_backup.gz \
                     --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
 
                   # Restore dump into production MongoDB
