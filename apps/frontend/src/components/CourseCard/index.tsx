@@ -1,9 +1,10 @@
 import { ArrowRight } from "iconoir-react";
 
+import { Card } from "@repo/theme";
+
 import { ICourse } from "@/lib/api";
 
 import { AverageGrade } from "../AverageGrade";
-import { Card } from "@repo/theme";
 
 interface CourseCardProps {
   course: ICourse;

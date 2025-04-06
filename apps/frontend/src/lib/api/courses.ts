@@ -53,7 +53,7 @@ export const READ_COURSE_TITLE = gql`
       title
     }
   }
-`
+`;
 
 export const READ_COURSE = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {

@@ -25,7 +25,7 @@ import { colors } from "@/lib/section";
 
 import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
-import HoverInfo from "./HoverInfo";
+// import HoverInfo from "./HoverInfo";
 
 // const data = [
 //   {
@@ -87,7 +87,7 @@ const toPercent = (decimal: number) => {
 };
 
 const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
-const DARK_COLOR_ORDER = ["#132a3e", "#1a3721", "#3b1621", "#3e3844"]
+const DARK_COLOR_ORDER = ["#132a3e", "#1a3721", "#3b1621", "#3e3844"];
 
 // const input = [
 //   {
@@ -123,7 +123,7 @@ export default function GradeDistributions() {
   const [loading, setLoading] = useState(false);
   const [outputs, setOutputs] = useState<Output[] | null>(null);
 
-  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
+  // const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
 
   const inputs = useMemo(
     () =>
@@ -196,8 +196,14 @@ export default function GradeDistributions() {
               color: colors[Math.floor(Math.random() * colors.length)],
               gradeDistribution: response!.data.grade,
               input: inputs[index],
-              active: (outputs && index < outputs.length) ? outputs[index].active : false,
-              hidden: (outputs && index < outputs.length) ? outputs[index].hidden : false,
+              active:
+                outputs && index < outputs.length
+                  ? outputs[index].active
+                  : false,
+              hidden:
+                outputs && index < outputs.length
+                  ? outputs[index].hidden
+                  : false,
             })
           : acc,
       [] as Output[]
@@ -213,7 +219,7 @@ export default function GradeDistributions() {
   }, [initialize]);
 
   const data = useMemo(
-    () => 
+    () =>
       outputs?.reduce(
         (acc, output, index) => {
           output.gradeDistribution.distribution.forEach((grade) => {
@@ -252,7 +258,7 @@ export default function GradeDistributions() {
   const visibleOutputs = useMemo(() => {
     if (outputs?.find((out) => out.active) !== undefined) return 1;
     return outputs?.filter((out) => !out.hidden).length ?? 0;
-  }, [outputs])
+  }, [outputs]);
 
   function udpateGraphHover(data: any) {
     setHoveredLetter(data.letter);
@@ -261,15 +267,17 @@ export default function GradeDistributions() {
   return (
     <Box p="5">
       <Flex direction="column">
-        <CourseManage 
-          selectedCourses={outputs?.map((out) => {
-            return {
-              gradeDistribution: out.gradeDistribution, 
-              hidden: out.hidden, 
-              active: out.active, 
-              ...(out.input)
-            } 
-            }) ?? []} 
+        <CourseManage
+          selectedCourses={
+            outputs?.map((out) => {
+              return {
+                gradeDistribution: out.gradeDistribution,
+                hidden: out.hidden,
+                active: out.active,
+                ...out.input,
+              };
+            }) ?? []
+          }
           hideCourse={(i) => {
             if (!outputs || outputs.length <= i) return;
             outputs[i].hidden = !outputs[i].hidden;
@@ -277,7 +285,8 @@ export default function GradeDistributions() {
           }}
           setActive={(ind) => {
             if (!outputs || outputs.length <= ind) return;
-            for (let i = 0; i < outputs.length; i++) outputs[i].active = (i == ind) ? !outputs[i].active : false;
+            for (let i = 0; i < outputs.length; i++)
+              outputs[i].active = i == ind ? !outputs[i].active : false;
             setOutputs(outputs.slice());
           }}
         />
@@ -319,16 +328,27 @@ export default function GradeDistributions() {
                   )}
                   {outputs?.map((output, index) => {
                     if (output.hidden) return;
-                    const activeExists = outputs?.find((out) => out.active) !== undefined;
+                    const activeExists =
+                      outputs?.find((out) => out.active) !== undefined;
                     return (
-                    <Bar
-                      dataKey={index}
-                      fill={(activeExists && !output.active) ? DARK_COLOR_ORDER[index] : COLOR_ORDER[index]}
-                      key={index}
-                      name={`${output.input.subject} ${output.input.courseNumber}`}
-                      onMouseMove={udpateGraphHover}
-                      radius={[10 / visibleOutputs, 10 / visibleOutputs, 0, 0]}
-                    />)
+                      <Bar
+                        dataKey={index}
+                        fill={
+                          activeExists && !output.active
+                            ? DARK_COLOR_ORDER[index]
+                            : COLOR_ORDER[index]
+                        }
+                        key={index}
+                        name={`${output.input.subject} ${output.input.courseNumber}`}
+                        onMouseMove={udpateGraphHover}
+                        radius={[
+                          10 / visibleOutputs,
+                          10 / visibleOutputs,
+                          0,
+                          0,
+                        ]}
+                      />
+                    );
                   })}
                 </BarChart>
               </ResponsiveContainer>

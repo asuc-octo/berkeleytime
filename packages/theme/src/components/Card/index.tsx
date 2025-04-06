@@ -1,8 +1,9 @@
 import { ComponentPropsWithRef } from "react";
 
-import styles from "./Card.module.scss";
-import classNames from "classnames";
 import { Flex } from "@radix-ui/themes";
+import classNames from "classnames";
+
+import styles from "./Card.module.scss";
 
 interface RootProps {
   active?: boolean;
@@ -16,57 +17,55 @@ function Root({
   ...props
 }: RootProps & ComponentPropsWithRef<"div">) {
   return (
-    <div className={classNames(styles.root,  {
-      [styles.active]: active,
-      [styles.hidden]: hidden,
-    })} {...props}>
-      { children }
+    <div
+      className={classNames(styles.root, {
+        [styles.active]: active,
+        [styles.hidden]: hidden,
+      })}
+      {...props}
+    >
+      {children}
     </div>
   );
 }
 
-function Body({
-  children,
-  ...props
-}: ComponentPropsWithRef<"div">) {
-  return <div className={styles.body} {...props}>
-      { children }
+function Body({ children, ...props }: ComponentPropsWithRef<"div">) {
+  return (
+    <div className={styles.body} {...props}>
+      {children}
     </div>
+  );
 }
 
-function Heading({
-  children,
-  ...props
-}: ComponentPropsWithRef<"p">) {
-  return <p className={styles.heading} {...props}>
-    { children }
-  </p>
+function Heading({ children, ...props }: ComponentPropsWithRef<"p">) {
+  return (
+    <p className={styles.heading} {...props}>
+      {children}
+    </p>
+  );
 }
-function Description({
-  children,
-  ...props
-}: ComponentPropsWithRef<"p">) {
-  return <p className={styles.description} {...props}>
-    { children }
-  </p>
+function Description({ children, ...props }: ComponentPropsWithRef<"p">) {
+  return (
+    <p className={styles.description} {...props}>
+      {children}
+    </p>
+  );
 }
 
-function Footer({
-  children,
-  ...props
-}: ComponentPropsWithRef<"div">) {
-  return <div className={styles.footer} {...props}>
-   { children }
-  </div>
+function Footer({ children, ...props }: ComponentPropsWithRef<"div">) {
+  return (
+    <div className={styles.footer} {...props}>
+      {children}
+    </div>
+  );
 }
 
-function Actions({
-  children,
-  ...props
-}: ComponentPropsWithRef<"div">) {
-  return <Flex className={styles.column} {...props} direction="row" gap="3">
-    { children }
-  </Flex>
+function Actions({ children, ...props }: ComponentPropsWithRef<"div">) {
+  return (
+    <Flex className={styles.column} {...props} direction="row" gap="3">
+      {children}
+    </Flex>
+  );
 }
 
 function ActionIcon({
@@ -74,9 +73,11 @@ function ActionIcon({
   onClick,
   ...props
 }: ComponentPropsWithRef<"div">) {
-  return <div className={styles.icon} onClick={onClick} {...props}>
-    { children }
-  </div>
+  return (
+    <div className={styles.icon} onClick={onClick} {...props}>
+      {children}
+    </div>
+  );
 }
 
 export const Card = {
@@ -86,5 +87,5 @@ export const Card = {
   Description,
   Footer,
   Actions,
-  ActionIcon
-}
+  ActionIcon,
+};

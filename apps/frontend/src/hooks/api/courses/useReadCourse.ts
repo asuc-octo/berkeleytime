@@ -83,4 +83,3 @@ export const useReadCourseTitle = (
     data: query.data?.course,
   };
 };
-

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
+import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
+
+import { Card, Flex } from "@repo/theme";
 
 import { useReadCourse } from "@/hooks/api";
 import { GradeDistribution, ICourse, Semester } from "@/lib/api";
@@ -8,8 +11,6 @@ import { GradeDistribution, ICourse, Semester } from "@/lib/api";
 import CourseAdd from "./CourseAdd";
 import styles from "./CourseManage.module.scss";
 import GradesCard from "./GradesCard";
-import { Card, Flex } from "@repo/theme";
-import classNames from "classnames";
 
 interface SelectedCourse {
   subject: string;
@@ -45,8 +46,11 @@ function courseTermProfToURL(
     return `${subject};${number};T;${year}:${semester};${givenName}:${familyName}`;
 }
 
-export default function CourseManage({ selectedCourses, setActive, hideCourse }: SideBarProps) {
-
+export default function CourseManage({
+  selectedCourses,
+  setActive,
+  hideCourse,
+}: SideBarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   function addCourse(course: ICourse, term: String, instructor: String) {
@@ -88,11 +92,15 @@ export default function CourseManage({ selectedCourses, setActive, hideCourse }:
     <div className={styles.root}>
       <CourseAdd selectedCourses={selectedCourses} addCourse={addCourse} />
       <Flex direction="row" gap="4">
-        {Array.from({length: 4}, (_, index) => {
+        {Array.from({ length: 4 }, (_, index) => {
           if (index >= selectedCourses.length) {
-            return <div className={classNames(styles.courseCard, styles.blank)} key={index}>
-            </div>
-          } 
+            return (
+              <div
+                className={classNames(styles.courseCard, styles.blank)}
+                key={index}
+              ></div>
+            );
+          }
           const course = selectedCourses[index];
           const instructor =
             course.familyName && course.givenName
@@ -111,9 +119,15 @@ export default function CourseManage({ selectedCourses, setActive, hideCourse }:
                 gradeDistribution={course.gradeDistribution}
                 hidden={course.hidden}
                 active={course.active}
-                onClick={() => { setActive(index) }}
-                onClickDelete={() => { deleteCourse(index) }}
-                onClickHide={() => { hideCourse(index) }}
+                onClick={() => {
+                  setActive(index);
+                }}
+                onClickDelete={() => {
+                  deleteCourse(index);
+                }}
+                onClickHide={() => {
+                  hideCourse(index);
+                }}
               />
             </div>
           );
