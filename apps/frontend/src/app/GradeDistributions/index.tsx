@@ -192,6 +192,8 @@ export default function GradeDistributions() {
       })
     );
 
+    if (inputs.length > 0) setHoveredSeries(0)
+
     const output = responses.reduce(
       (acc, response, index) =>
         response
@@ -368,7 +370,7 @@ export default function GradeDistributions() {
               )}
             </div>
             {/* TODO: populate this so that update hover also figures out which series we're hovering over */}
-            {outputs && hoveredLetter && hoveredSeries !== null ? (
+            {outputs &&  hoveredSeries !== null ? (
               <HoverInfo
                 color={COLOR_ORDER[hoveredSeries]}
                 subject={outputs[hoveredSeries].input.subject}
