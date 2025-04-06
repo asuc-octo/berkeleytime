@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import { Plus } from "iconoir-react";
-import Select, { SingleValue } from "react-select";
+import { SingleValue } from "react-select";
+import { Select } from "@repo/theme";
 
 import { Button, Flex } from "@repo/theme";
 
@@ -160,11 +161,15 @@ export default function CourseAdd({
             setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
             setByData(s);
           }}
+          components={{
+            IndicatorSeparator: () => null,
+          }}
         />
       </div>
       <div className={styles.selectCont}>
         {byData?.value === "instructor" ? (
           <Select
+            className={styles.testes}
             options={instructorOptions}
             value={selectedInstructor}
             onChange={(s) => {

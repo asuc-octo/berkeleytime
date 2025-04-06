@@ -271,7 +271,7 @@ export default function GradeDistributions() {
   }
 
   return (
-    <Box p="5">
+    <Box p="5" className={styles.root}>
       <Flex direction="column">
         <CourseManage
           selectedCourses={

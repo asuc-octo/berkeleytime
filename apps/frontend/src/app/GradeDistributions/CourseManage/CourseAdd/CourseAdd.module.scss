@@ -15,3 +15,12 @@
   justify-content: space-between;
   margin-bottom: 10px;
 }
+.test__control {
+  border: 1px solid red;
+  border-radius: 4px;
+}
+
+.test__option--is-focused {
+  background-color: orange;
+  color: green;
+}
