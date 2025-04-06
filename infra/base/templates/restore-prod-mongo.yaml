@@ -27,8 +27,8 @@ spec:
                   prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
 
                   # Download production MongoDB backup
-                  restore_date=${RESTORE_DATE}
                   echo "Downloading backup from s3 bucket..."
+                  restore_date=${RESTORE_DATE}
                   aws s3 cp s3://$BUCKET_NAME/prod_backup-$restore_date.gz /tmp/prod_backup.gz \
                     --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
 
