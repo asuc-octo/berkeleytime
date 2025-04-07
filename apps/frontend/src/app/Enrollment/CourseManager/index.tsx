@@ -1,12 +1,13 @@
+import { Dispatch, SetStateAction } from "react";
+
 import { useSearchParams } from "react-router-dom";
 
 import { Flex, Grid } from "@repo/theme";
 
+import { Output, getInputSearchParam } from "../types";
 import CourseInput from "./CourseInput";
 import styles from "./CourseManage.module.scss";
 import EnrollmentCard from "./EnrollmentCard";
-import { getInputSearchParam, Output } from "../types";
-import { Dispatch, SetStateAction } from "react";
 
 interface CourseManagerProps {
   outputs: Output[];
@@ -15,7 +16,7 @@ interface CourseManagerProps {
 
 export default function CourseManager({
   outputs,
-  setOutputs
+  setOutputs,
 }: CourseManagerProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -31,7 +32,7 @@ export default function CourseManager({
     }
 
     setSearchParams(searchParams);
-  }
+  };
 
   const updateActive = (index: number, active: boolean) => {
     setOutputs((outputs) =>

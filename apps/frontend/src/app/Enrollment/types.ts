@@ -17,7 +17,6 @@ export interface Output {
 }
 
 export const getInputSearchParam = (input: Input) => {
-
   if (!input.sectionNumber) {
     return `${input.subject};${input.courseNumber};T;${input.year}:${input.semester}`;
   }

@@ -2,16 +2,28 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 import { useApolloClient, useQuery } from "@apollo/client";
 import { Plus } from "iconoir-react";
+import { useSearchParams } from "react-router-dom";
 import { SingleValue } from "react-select";
 
 import { Select } from "@repo/theme";
 import { Box, Button, Flex } from "@repo/theme";
 
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { GET_COURSES, GetCoursesResponse, ICourse, READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
+import {
+  GET_COURSES,
+  GetCoursesResponse,
+  ICourse,
+  READ_ENROLLMENT,
+  ReadEnrollmentResponse,
+  Semester,
+} from "@/lib/api";
 
-import { getInputSearchParam, isInputEqual, LIGHT_COLORS, Output } from "../../types";
-import { useSearchParams } from "react-router-dom";
+import {
+  LIGHT_COLORS,
+  Output,
+  getInputSearchParam,
+  isInputEqual,
+} from "../../types";
 
 type CourseOptionType = {
   value: ICourse;
@@ -31,10 +43,7 @@ interface CourseInputProps {
 // called instructor in frontend but actually we're letting users select a class
 const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
 
-export default function CourseInput({
-  outputs,
-  setOutputs
-}: CourseInputProps) {
+export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -118,13 +127,7 @@ export default function CourseInput({
   }, [courseData, selectedSemester]);
 
   const add = async () => {
-
-    if (
-      !selectedClass ||
-      !selectedCourse ||
-      !selectedSemester
-    )
-      return;
+    if (!selectedClass || !selectedCourse || !selectedSemester) return;
 
     const [semester, year] = selectedSemester.value.split(" ");
 
@@ -133,7 +136,8 @@ export default function CourseInput({
       courseNumber: selectedCourse.value.number,
       year: parseInt(year),
       semester: semester as Semester,
-      sectionNumber: selectedClass.value === "all" ? undefined : selectedClass.value
+      sectionNumber:
+        selectedClass.value === "all" ? undefined : selectedClass.value,
     };
     // Do not fetch duplicates
     const existingOutput = outputs.find((output) =>
@@ -171,7 +175,7 @@ export default function CourseInput({
 
       return;
     }
-  }
+  };
 
   const disabled = useMemo(
     () => loading || coursesLoading || outputs.length === 4,
@@ -215,10 +219,7 @@ export default function CourseInput({
         variant="solid"
         onClick={() => add()}
         disabled={
-          disabled ||
-          !selectedCourse ||
-          !selectedClass ||
-          !selectedSemester
+          disabled || !selectedCourse || !selectedClass || !selectedSemester
         }
       >
         Add course

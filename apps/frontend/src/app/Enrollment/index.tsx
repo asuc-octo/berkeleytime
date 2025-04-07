@@ -16,16 +16,19 @@ import {
 import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
-import {
-  READ_ENROLLMENT,
-  ReadEnrollmentResponse,
-  Semester,
-} from "@/lib/api";
+import { READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
 
+import CourseManager from "./CourseManager";
 import styles from "./Enrollment.module.scss";
 import HoverInfo from "./HoverInfo";
-import { DARK_COLORS, getInputSearchParam, Input, isInputEqual, LIGHT_COLORS, Output } from "./types";
-import CourseManager from "./CourseManager";
+import {
+  DARK_COLORS,
+  Input,
+  LIGHT_COLORS,
+  Output,
+  getInputSearchParam,
+  isInputEqual,
+} from "./types";
 
 const toPercent = (decimal: number) => {
   return `${decimal.toFixed(0)}%`;
@@ -74,7 +77,6 @@ export default function Enrollment() {
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
 
   const initialize = useCallback(async () => {
-
     if (!loading) return;
 
     if (initialInputs.length === 0) {
@@ -110,7 +112,7 @@ export default function Enrollment() {
                 enrollmentHistory: response.data.enrollment,
                 input: initialInputs[index],
                 active: false,
-                hidden: false
+                hidden: false,
               })
             : acc,
         [] as Output[]
@@ -154,9 +156,10 @@ export default function Enrollment() {
                 (1000 * 3600 * 24)
             );
             const column = acc.find((item) => item.day === dayOffset);
-            const enrollValue = Math.round(
-              (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
-            ) / 10;
+            const enrollValue =
+              Math.round(
+                (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
+              ) / 10;
             if (!column) {
               acc.push({
                 day: dayOffset,
@@ -164,10 +167,7 @@ export default function Enrollment() {
               });
             } else {
               if (index in column) {
-                column[index] = Math.max(
-                  enrollValue,
-                  column[index]
-                );
+                column[index] = Math.max(enrollValue, column[index]);
               } else {
                 column[index] = enrollValue;
               }
@@ -199,7 +199,7 @@ export default function Enrollment() {
   return (
     <Box p="5" className={styles.root}>
       <Flex direction="column">
-        <CourseManager outputs={outputs} setOutputs={setOutputs}/>
+        <CourseManager outputs={outputs} setOutputs={setOutputs} />
         {loading ? (
           <Boundary>
             <LoadingIndicator size="lg" />
