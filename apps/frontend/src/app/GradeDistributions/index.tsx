@@ -16,124 +16,39 @@ import {
 import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import {
-  GradeDistribution,
   READ_GRADE_DISTRIBUTION,
   ReadGradeDistributionResponse,
   Semester,
 } from "@/lib/api";
-import { colors } from "@/lib/section";
 
-import CourseManage from "./CourseManage";
+import CourseManager from "./CourseManager";
 import styles from "./GradeDistributions.module.scss";
 import HoverInfo from "./HoverInfo";
-
-// import HoverInfo from "./HoverInfo";
-
-// const data = [
-//   {
-//     grade: "A",
-//     percentage: 20,
-//     average: 25,
-//   },
-//   {
-//     grade: "B",
-//     percentage: 15,
-//     average: 20,
-//   },
-//   {
-//     grade: "C",
-//     percentage: 10,
-//     average: 15,
-//   },
-//   {
-//     grade: "D",
-//     percentage: 5,
-//     average: 10,
-//   },
-//   {
-//     grade: "F",
-//     percentage: 2.5,
-//     average: 5,
-//   },
-//   {
-//     grade: "Pass",
-//     percentage: 35,
-//     average: 20,
-//   },
-//   {
-//     grade: "Not pass",
-//     percentage: 17.5,
-//     average: 5,
-//   },
-// ];
-
-interface Input {
-  subject: string;
-  courseNumber: string;
-  year?: number;
-  semester?: Semester;
-  givenName?: string;
-  familyName?: string;
-}
-
-interface Output {
-  color: string;
-  gradeDistribution: GradeDistribution;
-  input: Input;
-  hidden: boolean;
-  active: boolean;
-}
+import {
+  DARK_COLORS,
+  Input,
+  LIGHT_COLORS,
+  Output,
+  getInputSearchParam,
+  isInputEqual,
+} from "./types";
 
 const toPercent = (decimal: number) => {
   return `${decimal.toFixed(0)}%`;
 };
 
-const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
-const DARK_COLOR_ORDER = ["#132a3e", "#1a3721", "#3b1621", "#3e3844"];
-
-// const input = [
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//     year: 2024,
-//     semester: "Spring",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//     year: 2024,
-//     semester: "Spring",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61A",
-//     year: 2024,
-//     semester: "Spring",
-//     givenName: "John",
-//     familyName: "DeNero",
-//   },
-// ];
-
 export default function GradeDistributions() {
   const client = useApolloClient();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [loading, setLoading] = useState(false);
-  const [outputs, setOutputs] = useState<Output[] | null>(null);
-
-  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
-  const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
-
-  const inputs = useMemo(
-    () =>
-      searchParams.getAll("input").reduce((acc, input) => {
+  // Parse any initial input
+  const [initialInputs] = useState<Input[]>(() =>
+    searchParams
+      .getAll("input")
+      .reduce((acc, input) => {
         const output = input.split(";");
 
-        // Filter out invalid inputs
+        // Any input must include a subject and number
         if (output.length < 2) return acc;
 
         // COMPSCI;61B
@@ -146,7 +61,7 @@ export default function GradeDistributions() {
           return acc.concat(parsedInput);
         }
 
-        // Filter out invalid inputs
+        // Any input must specify a term or professor
         if (!["T", "P"].includes(output[2])) return acc;
 
         // COMPSCI;61B;T;2024:Spring;John:DeNero, COMPSCI;61B;T;2024:Spring
@@ -165,22 +80,37 @@ export default function GradeDistributions() {
         };
 
         return acc.concat(parsedInput);
-      }, [] as Input[]),
-    [searchParams]
+      }, [] as Input[])
+      // Filter out duplicates
+      .filter(
+        (input, index, inputs) =>
+          inputs.findIndex((i) => isInputEqual(input, i)) === index
+      )
   );
 
+  const [loading, setLoading] = useState(initialInputs.length > 0);
+  const [outputs, setOutputs] = useState<Output[]>([]);
+
+  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
+  const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
+
   const initialize = useCallback(async () => {
-    setLoading(true);
+    if (!loading) return;
 
-    // TODO: Fetch course data
+    if (initialInputs.length === 0) {
+      searchParams.delete("input");
+      setSearchParams(searchParams);
 
+      return;
+    }
+
+    // Fetch any valid initial input
     const responses = await Promise.all(
-      inputs.map(async (variables) => {
+      initialInputs.map(async (input) => {
         try {
           const response = await client.query<ReadGradeDistributionResponse>({
             query: READ_GRADE_DISTRIBUTION,
-            variables,
-            fetchPolicy: "no-cache",
+            variables: input,
           });
 
           return response;
@@ -192,44 +122,59 @@ export default function GradeDistributions() {
       })
     );
 
-    if (inputs.length > 0) setHoveredSeries(0);
+    const outputs = responses
+      // Filter out failed queries and set any initial state
+      .reduce(
+        (acc, response, index) =>
+          response
+            ? acc.concat({
+                color: LIGHT_COLORS[index],
+                gradeDistribution: response.data.grade,
+                input: initialInputs[index],
+                active: false,
+                hidden: false,
+              })
+            : acc,
+        [] as Output[]
+      )
+      // Limit to 4 outputs
+      .slice(0, 4);
 
-    const output = responses.reduce(
-      (acc, response, index) =>
-        response
-          ? acc.concat({
-              color: colors[Math.floor(Math.random() * colors.length)],
-              gradeDistribution: response!.data.grade,
-              input: inputs[index],
-              active:
-                outputs && index < outputs.length
-                  ? outputs[index].active
-                  : false,
-              hidden:
-                outputs && index < outputs.length
-                  ? outputs[index].hidden
-                  : false,
-            })
-          : acc,
-      [] as Output[]
-    );
+    setOutputs(outputs);
 
-    setOutputs(output);
+    searchParams.delete("input");
+
+    for (const output of outputs) {
+      searchParams.append("input", getInputSearchParam(output.input));
+    }
+
+    setSearchParams(searchParams);
 
     setLoading(false);
-  }, [client, inputs]);
+  }, [client, initialInputs, searchParams, setSearchParams, loading]);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
 
+  const activeOutput = useMemo(
+    () => outputs?.find((out) => out.active),
+    [outputs]
+  );
+
+  const filteredOutputs = useMemo(
+    () => outputs?.filter((output) => !output.hidden),
+    [outputs]
+  );
+
   const data = useMemo(
     () =>
-      outputs?.reduce(
+      filteredOutputs?.reduce(
         (acc, output, index) => {
           output.gradeDistribution.distribution.forEach((grade) => {
             const column = acc.find((item) => item.letter === grade.letter);
             if (!column) return;
+
             const percent = Math.round(grade.percentage * 100);
             column[index] = percent;
           });
@@ -257,13 +202,8 @@ export default function GradeDistributions() {
           [key: number]: number;
         }[]
       ),
-    [outputs]
+    [filteredOutputs]
   );
-
-  const visibleOutputs = useMemo(() => {
-    if (outputs?.find((out) => out.active) !== undefined) return 1;
-    return outputs?.filter((out) => !out.hidden).length ?? 0;
-  }, [outputs]);
 
   function updateGraphHover(data: any) {
     setHoveredLetter(data.letter);
@@ -271,32 +211,9 @@ export default function GradeDistributions() {
   }
 
   return (
-    <Box p="5" className={styles.root}>
+    <Box p="5">
       <Flex direction="column">
-        <CourseManage
-          selectedCourses={
-            outputs?.map((out, i) => {
-              return {
-                gradeDistribution: out.gradeDistribution,
-                hidden: out.hidden,
-                active: out.active,
-                color: COLOR_ORDER[i],
-                ...out.input,
-              };
-            }) ?? []
-          }
-          hideCourse={(i) => {
-            if (!outputs || outputs.length <= i) return;
-            outputs[i].hidden = !outputs[i].hidden;
-            setOutputs(outputs.slice());
-          }}
-          setActive={(ind) => {
-            if (!outputs || outputs.length <= ind) return;
-            for (let i = 0; i < outputs.length; i++)
-              outputs[i].active = i == ind ? !outputs[i].active : false;
-            setOutputs(outputs.slice());
-          }}
-        />
+        <CourseManager outputs={outputs} setOutputs={setOutputs} />
         {loading ? (
           <Boundary>
             <LoadingIndicator size="lg" />
@@ -322,7 +239,7 @@ export default function GradeDistributions() {
                     tickMargin={8}
                   />
                   <YAxis tickFormatter={toPercent} />
-                  {outputs?.length && (
+                  {filteredOutputs?.length && (
                     <Tooltip
                       labelStyle={{ color: "var(--heading-color)" }}
                       contentStyle={{
@@ -333,33 +250,28 @@ export default function GradeDistributions() {
                       formatter={toPercent}
                     />
                   )}
-                  {outputs?.map((output, index) => {
-                    if (output.hidden) return;
-                    const activeExists =
-                      outputs?.find((out) => out.active) !== undefined;
-                    return (
-                      <Bar
-                        dataKey={index}
-                        fill={
-                          activeExists && !output.active
-                            ? DARK_COLOR_ORDER[index]
-                            : COLOR_ORDER[index]
-                        }
-                        key={index}
-                        name={`${output.input.subject} ${output.input.courseNumber}`}
-                        onMouseMove={updateGraphHover}
-                        radius={[
-                          10 / visibleOutputs,
-                          10 / visibleOutputs,
-                          0,
-                          0,
-                        ]}
-                      />
-                    );
-                  })}
+                  {filteredOutputs?.map((output, index) => (
+                    <Bar
+                      dataKey={index}
+                      fill={
+                        activeOutput && !output.active
+                          ? DARK_COLORS[index]
+                          : output.color
+                      }
+                      key={index}
+                      name={`${output.input.subject} ${output.input.courseNumber}`}
+                      onMouseMove={updateGraphHover}
+                      radius={[
+                        10 / filteredOutputs.length,
+                        10 / filteredOutputs.length,
+                        0,
+                        0,
+                      ]}
+                    />
+                  ))}
                 </BarChart>
               </ResponsiveContainer>
-              {!outputs?.length && (
+              {!filteredOutputs?.length && (
                 <div className={styles.empty}>
                   <FrameAltEmpty height={24} width={24} />
                   <br />
@@ -372,10 +284,10 @@ export default function GradeDistributions() {
             {/* TODO: populate this so that update hover also figures out which series we're hovering over */}
             {outputs && hoveredSeries !== null ? (
               <HoverInfo
-                color={COLOR_ORDER[hoveredSeries]}
-                subject={outputs[hoveredSeries].input.subject}
-                courseNumber={outputs[hoveredSeries].input.courseNumber}
-                gradeDistribution={outputs[hoveredSeries].gradeDistribution}
+                color={LIGHT_COLORS[hoveredSeries]}
+                subject={outputs[hoveredSeries]?.input.subject}
+                courseNumber={outputs[hoveredSeries]?.input.courseNumber}
+                gradeDistribution={outputs[hoveredSeries]?.gradeDistribution}
                 hoveredLetter={hoveredLetter}
               />
             ) : (
