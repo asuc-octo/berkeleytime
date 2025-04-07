@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { Plus } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import { SingleValue } from "react-select";
@@ -10,8 +10,6 @@ import { Button, Flex } from "@repo/theme";
 
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import {
-  GET_COURSES,
-  GetCoursesResponse,
   ICourse,
   READ_GRADE_DISTRIBUTION,
   ReadGradeDistributionResponse,
@@ -26,6 +24,8 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "../../types";
+import CourseSearch from "@/components/CourseSearch";
+import { addRecentCourseGrade } from "@/lib/recent";
 
 type CourseOptionType = {
   value: ICourse;
@@ -58,9 +58,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data: courses, loading: coursesLoading } =
-    useQuery<GetCoursesResponse>(GET_COURSES);
-
   const [loading, setLoading] = useState(false);
 
   const [selectedCourse, setSelectedCourse] =
@@ -70,16 +67,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     selectedCourse?.value.subject ?? "",
     selectedCourse?.value.number ?? ""
   );
-
-  const coursesOptions = useMemo(() => {
-    if (!courses) return [];
-    return courses?.courses.map((c) => {
-      return {
-        value: c,
-        label: `${c.subject} ${c.number}`,
-      };
-    });
-  }, [courses]);
 
   const [selectedType, setSelectedType] =
     useState<SingleValue<OptionType>>(DEFAULT_BY_OPTION);
@@ -177,6 +164,12 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       !selectedType
     )
       return;
+
+    addRecentCourseGrade({
+      subject: selectedCourse.value.subject,
+      courseNumber: selectedCourse.value.number,
+      number: selectedCourse.value.number,
+    });
 
     // Course input
     if (
@@ -281,20 +274,40 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   };
 
   const disabled = useMemo(
-    () => loading || coursesLoading || outputs.length === 4,
-    [loading, coursesLoading, outputs]
+    () => loading || outputs.length === 4,
+    [loading, outputs]
   );
+
+  const handleCourseSelect = (course: ICourse) => {
+    setSelectedCourse({
+      value: course,
+      label: `${course.subject} ${course.number}`,
+    });
+
+    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
+    setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
+  };
+
+  const handleCourseClear = () => {
+    setSelectedCourse(null);
+    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
+    setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
+  };
 
   return (
     <Flex direction="row" gap="3">
       <Box flexGrow="1">
-        <Select
-          options={coursesOptions}
-          isDisabled={disabled}
-          value={selectedCourse}
-          onChange={(v) => {
-            setSelectedCourse(v);
-          }}
+        <CourseSearch
+          onSelect={handleCourseSelect}
+          onClear={handleCourseClear}
+          selectedCourse={
+            selectedCourse
+              ? {
+                  subject: selectedCourse.value.subject,
+                  courseNumber: selectedCourse.value.number,
+                }
+              : undefined
+          }
         />
       </Box>
       <Box flexGrow="1">

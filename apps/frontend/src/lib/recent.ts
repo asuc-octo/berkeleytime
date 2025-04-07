@@ -3,15 +3,18 @@ import { IScheduleClass, ScheduleIdentifier, Semester } from "@/lib/api";
 enum Recent {
   Classes,
   Schedules,
+  Grades,
 }
 
 const Key = {
   [Recent.Classes]: "recent-classes",
   [Recent.Schedules]: "recent-schedule",
+  [Recent.Grades]: "recent-grades",
 };
 const MaxLength = {
   [Recent.Classes]: 10,
   [Recent.Schedules]: 5,
+  [Recent.Grades]: 5,
 };
 
 interface RecentClassData {
@@ -28,6 +31,12 @@ interface RecentScheduleData {
   classes: IScheduleClass[];
   semester: Semester;
   year: number;
+}
+
+interface RecentCourseGrade {
+  subject: string;
+  courseNumber: string;
+  number: string;
 }
 
 function filterRecents(type: Recent, obj: any) {
@@ -89,8 +98,24 @@ export function addRecentClass({
   });
 }
 
+export function addRecentCourseGrade({
+  subject,
+  courseNumber,
+  number,
+}: RecentCourseGrade) {
+  addToRecent(Recent.Grades, {
+    subject: subject,
+    courseNumber: courseNumber,
+    number: number,
+  });
+}
+
 export function getRecentClasses() {
   return getRecent(Recent.Classes) as RecentClassData[];
+}
+
+export function getRecentGrades() {
+  return getRecent(Recent.Grades) as RecentCourseGrade[];
 }
 
 export function addRecentSchedule({
