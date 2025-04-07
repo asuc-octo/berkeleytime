@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
-import CourseBrowser from "@/components/CourseBrowser";
-import CourseCard from "@/components/CourseCard";
-import DeleteContainer from "@/components/DeleteContainer";
-import Drawer from "@/components/Drawer";
 import { useReadCourse } from "@/hooks/api";
 import { ICourse, Semester } from "@/lib/api";
 
@@ -42,11 +38,11 @@ function courseTermProfToURL(
 }
 
 export default function CourseManage({ selectedCourses }: SideBarProps) {
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [selectedCourse] = useState<ICourse | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data: activeCourse } = useReadCourse(
+  const {} = useReadCourse(
     selectedCourse?.subject ?? "",
     selectedCourse?.number ?? ""
   );
@@ -67,22 +63,6 @@ export default function CourseManage({ selectedCourses }: SideBarProps) {
         year ? Number.parseInt(year) : undefined
       )
     );
-    setSearchParams(searchParams);
-  }
-
-  function deleteCourse(index: number) {
-    // maintaining order is tricky when avoiding deleting all duplicates
-    const order = searchParams.getAll("input");
-    if (order.length == 1) searchParams.delete("input");
-    else {
-      order.forEach((inp, i) => {
-        if (i == 0) searchParams.set("input", inp);
-        else {
-          if (i == index) return;
-          searchParams.append("input", inp);
-        }
-      });
-    }
     setSearchParams(searchParams);
   }
 
