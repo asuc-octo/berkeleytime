@@ -214,7 +214,7 @@ export default function GradeDistributions() {
     if (outputs.length > 0) {
       if (!hoveredSeries) setHoveredSeries(0);
     } else setHoveredSeries(null);
-  }, [outputs])
+  }, [outputs]);
 
   return (
     <Box p="5">

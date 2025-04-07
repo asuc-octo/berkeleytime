@@ -6,9 +6,8 @@ import { Flex, Grid } from "@repo/theme";
 
 import { Output, getInputSearchParam } from "../types";
 import CourseInput from "./CourseInput";
-import GradesCard from "./GradesCard";
-
 import styles from "./CourseManage.module.scss";
+import GradesCard from "./GradesCard";
 
 interface CourseManagerProps {
   outputs: Output[];
@@ -79,7 +78,7 @@ export default function CourseManager({
             />
           );
         })}
-        {!outputs || !outputs.length && <div className={styles.blank}></div>}
+        {!outputs || (!outputs.length && <div className={styles.blank}></div>)}
       </Grid>
     </Flex>
   );
