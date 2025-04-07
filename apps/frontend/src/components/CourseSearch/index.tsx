@@ -2,10 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import { Search } from "iconoir-react";
-import { SingleValue } from "react-select";
 
-import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
-import { getRecentClasses, getRecentGrades } from "@/lib/recent";
+import { GET_COURSES, GetCoursesResponse, ICourse } from "@/lib/api";
+import { getRecentGrades } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
 
@@ -13,25 +12,6 @@ interface CourseSearchProps {
   onSelect?: (course: ICourse) => void;
   onClear?: () => void;
   selectedCourse?: { subject: string; courseNumber: string };
-}
-
-type CourseOptionType = {
-  value: ICourse;
-  label: string;
-};
-
-type OptionType = {
-  value: string;
-  label: string;
-};
-
-interface SelectedCourse {
-  subject: string;
-  courseNumber: string;
-  year?: number;
-  semester?: Semester;
-  givenName?: string;
-  familyName?: string;
 }
 
 export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {

@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { ArrowDown, ArrowUp, Plus } from "iconoir-react";
+import { Plus } from "iconoir-react";
 import Select, { SingleValue } from "react-select";
 
-import { Button, Flex, IconButton } from "@repo/theme";
+import { Button, Flex } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
@@ -50,7 +50,7 @@ export default function CourseAdd({
   selectedCourses,
   addCourse,
 }: CourseAddProps) {
-  const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
+  const {} = useQuery<GetCoursesResponse>(GET_COURSES);
 
   const [selectedCourse, setSelectedCourse] =
     useState<SingleValue<CourseOptionType>>(null);
@@ -59,16 +59,6 @@ export default function CourseAdd({
     selectedCourse?.value.subject ?? "",
     selectedCourse?.value.number ?? ""
   );
-
-  const coursesOptions = useMemo(() => {
-    if (!data) return [];
-    return data?.courses.map((c) => {
-      return {
-        value: c,
-        label: `${c.subject} ${c.number}`,
-      };
-    });
-  }, [data]);
 
   const [byData, setByData] =
     useState<SingleValue<OptionType>>(DEFAULT_BY_OPTION);
