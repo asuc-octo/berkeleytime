@@ -11,27 +11,9 @@ spec:
   tls:
     - hosts:
         - {{ .Values.host }}
-        - beta.berkeleytime.com
       secretName: bt-tls
   rules:
     - host: {{ .Values.host }}
-      http:
-        paths:
-          - path: {{ .Values.frontend.path }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ include "bt-app.frontendName" . }}-svc
-                port:
-                  number: {{ .Values.port }}
-          - path: {{ .Values.backend.path }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ include "bt-app.backendName" . }}-svc
-                port:
-                  number: {{ .Values.port }}
-    - host: beta.berkeleytime.com
       http:
         paths:
           - path: {{ .Values.frontend.path }}
