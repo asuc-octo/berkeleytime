@@ -32,6 +32,7 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "./types";
+import Footer from "@/components/Footer";
 
 const toPercent = (decimal: number) => {
   return `${decimal.toFixed(0)}%`;
@@ -307,6 +308,7 @@ export default function GradeDistributions() {
           </Flex>
         )}
       </Flex>
+      <Footer/>
     </Box>
   );
 }

@@ -124,12 +124,12 @@ export default function HoverInfo({
           {subject} {courseNumber}
         </span>
       </div>
-      <div className={styles.distType}>
+      { gradeDistribution && <div className={styles.distType}>
         {givenName && familyName
           ? `${givenName} ${familyName} `
           : "All Instructors "}
         •{semester && year ? ` ${semester} ${year}` : " All Semesters"}
-      </div>
+      </div> }
       <div className={styles.label}>Course Average</div>
       <div className={styles.value}>
         {courseGradeDist && gradeDistribution ? (

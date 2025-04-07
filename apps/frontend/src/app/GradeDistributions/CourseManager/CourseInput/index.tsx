@@ -98,8 +98,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
     if (!course) return list;
 
-    console.log(course.classes);
-
     const mySet = new Set();
     course?.classes.forEach((c) => {
       if (selectedType?.value === "semester") {

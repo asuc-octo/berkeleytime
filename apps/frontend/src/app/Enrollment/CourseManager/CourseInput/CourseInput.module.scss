@@ -1,0 +1,26 @@
+.button {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.select-cont {
+  margin-bottom: 10px;
+  width: 15%;
+}
+.course-select-cont {
+  display: inline-block;
+  width: 30%;
+}
+.course-select-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.test__control {
+  border: 1px solid red;
+  border-radius: 4px;
+}
+
+.test__option--is-focused {
+  background-color: orange;
+  color: green;
+}
