@@ -8,6 +8,8 @@ import { Output, getInputSearchParam } from "../types";
 import CourseInput from "./CourseInput";
 import GradesCard from "./GradesCard";
 
+import styles from "./CourseManage.module.scss";
+
 interface CourseManagerProps {
   outputs: Output[];
   setOutputs: Dispatch<SetStateAction<Output[]>>;
@@ -66,6 +68,7 @@ export default function CourseManager({
 
           return (
             <GradesCard
+              key={index}
               subject={input.subject}
               number={input.courseNumber}
               description={`${instructor} • ${semester}`}
@@ -76,6 +79,7 @@ export default function CourseManager({
             />
           );
         })}
+        {!outputs || !outputs.length && <div className={styles.blank}></div>}
       </Grid>
     </Flex>
   );

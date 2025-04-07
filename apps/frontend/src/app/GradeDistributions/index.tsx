@@ -210,6 +210,12 @@ export default function GradeDistributions() {
     setHoveredSeries(data.tooltipPayload[0].dataKey);
   }
 
+  useEffect(() => {
+    if (outputs.length > 0) {
+      if (!hoveredSeries) setHoveredSeries(0);
+    } else setHoveredSeries(null);
+  }, [outputs])
+
   return (
     <Box p="5">
       <Flex direction="column">
@@ -281,7 +287,6 @@ export default function GradeDistributions() {
                 </div>
               )}
             </div>
-            {/* TODO: populate this so that update hover also figures out which series we're hovering over */}
             {outputs && hoveredSeries !== null ? (
               <HoverInfo
                 color={LIGHT_COLORS[hoveredSeries]}
