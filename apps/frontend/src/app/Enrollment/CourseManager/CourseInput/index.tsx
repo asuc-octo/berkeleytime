@@ -10,7 +10,7 @@ import { Button, Flex } from "@repo/theme";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
 
-import styles from "./CourseAdd.module.scss";
+import styles from "./CourseInput.module.scss";
 
 type CourseOptionType = {
   value: ICourse;
