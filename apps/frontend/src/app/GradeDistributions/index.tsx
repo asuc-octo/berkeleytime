@@ -25,7 +25,6 @@ import { colors } from "@/lib/section";
 
 import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
-import HoverInfo from "./HoverInfo";
 
 // const data = [
 //   {
