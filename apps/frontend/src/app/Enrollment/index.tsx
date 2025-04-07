@@ -15,6 +15,7 @@ import {
 
 import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
+import Footer from "@/components/Footer";
 import {
   IEnrollment,
   READ_ENROLLMENT,
@@ -26,11 +27,7 @@ import { colors } from "@/lib/section";
 import CourseManage from "./CourseManager";
 import styles from "./Enrollment.module.scss";
 import HoverInfo from "./HoverInfo";
-import {
-  DARK_COLORS,
-  LIGHT_COLORS,
-} from "./types";
-import Footer from "@/components/Footer";
+import { DARK_COLORS, LIGHT_COLORS } from "./types";
 
 interface Input {
   subject: string;
@@ -81,7 +78,7 @@ export default function Enrollment() {
           courseNumber: output[1],
           year: parseInt(term?.[0]),
           semester: term?.[1] as Semester,
-          sectionNumber: output[4]
+          sectionNumber: output[4],
         };
 
         return acc.concat(parsedInput);
@@ -110,7 +107,7 @@ export default function Enrollment() {
 
     if (inputs.length > 0) setHoveredSeries(0);
 
-    console.log(responses)
+    console.log(responses);
 
     const output = responses.reduce(
       (acc, response, index) =>
@@ -141,21 +138,38 @@ export default function Enrollment() {
     initialize();
   }, [initialize]);
 
-  const data = useMemo(
-    () => {
-      return outputs?.reduce(
+  const data = useMemo(() => {
+    return outputs
+      ?.reduce(
         (acc, output, index) => {
-          const day0 = new Date(output.enrollmentHistory.history[0].time)
+          const day0 = new Date(output.enrollmentHistory.history[0].time);
           output.enrollmentHistory.history.forEach((enrollment) => {
-            const dayOffset = Math.ceil((new Date(enrollment.time).getTime() - day0.getTime()) / (1000 * 3600 * 24))
+            const dayOffset = Math.ceil(
+              (new Date(enrollment.time).getTime() - day0.getTime()) /
+                (1000 * 3600 * 24)
+            );
             const column = acc.find((item) => item.day === dayOffset);
             if (!column) {
-              acc.push({day: dayOffset, [index]: Math.round(enrollment.enrolledCount / enrollment.maxEnroll * 1000)/10})
+              acc.push({
+                day: dayOffset,
+                [index]:
+                  Math.round(
+                    (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
+                  ) / 10,
+              });
             } else {
               if (index in column) {
-                column[index] = Math.max(Math.round(enrollment.enrolledCount / enrollment.maxEnroll * 1000)/10, column[index]);
+                column[index] = Math.max(
+                  Math.round(
+                    (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
+                  ) / 10,
+                  column[index]
+                );
               } else {
-                column[index] = Math.round(enrollment.enrolledCount / enrollment.maxEnroll * 1000)/10
+                column[index] =
+                  Math.round(
+                    (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
+                  ) / 10;
               }
             }
           });
@@ -164,12 +178,11 @@ export default function Enrollment() {
         },
         [] as {
           [key: number]: number;
-          day: number
+          day: number;
         }[]
-      ).sort((a, b) => a.day - b.day)
-    },
-    [outputs]
-  );
+      )
+      .sort((a, b) => a.day - b.day);
+  }, [outputs]);
 
   function updateGraphHover(data: any) {
     if (!data.isTooltipActive) return;
@@ -298,7 +311,7 @@ export default function Enrollment() {
           </Flex>
         )}
       </Flex>
-      <Footer/>
+      <Footer />
     </Box>
   );
 }

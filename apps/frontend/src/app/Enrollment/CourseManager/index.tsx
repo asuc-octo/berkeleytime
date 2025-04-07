@@ -36,8 +36,7 @@ function courseTermClassToURL(
 ) {
   if (!sectionNumber && !semester) return `${subject};${number}`;
   else if (!sectionNumber) return `${subject};${number};T;${year}:${semester}`;
-  else
-    return `${subject};${number};T;${year}:${semester};${sectionNumber}`;
+  else return `${subject};${number};T;${year}:${semester};${sectionNumber}`;
 }
 
 export default function CourseManage({
@@ -55,7 +54,7 @@ export default function CourseManage({
       courseTermClassToURL(
         course.subject,
         course.number,
-        (sectionNumber === "all") ? undefined : sectionNumber,
+        sectionNumber === "all" ? undefined : sectionNumber,
         semester as Semester,
         year ? Number.parseInt(year) : undefined
       )
@@ -93,10 +92,9 @@ export default function CourseManage({
             );
           }
           const course = selectedCourses[index];
-          const instructor =
-            course.sectionNumber
-              ? `LEC ${course.sectionNumber}`
-              : "All Instructors";
+          const instructor = course.sectionNumber
+            ? `LEC ${course.sectionNumber}`
+            : "All Instructors";
           const semester =
             course.semester && course.year
               ? `${course.semester} ${course.year}`

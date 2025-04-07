@@ -63,9 +63,7 @@ export default function GradesCard({
         >
           {data?.title ?? "N/A"}
         </Card.Description>
-        <Card.Footer style={{ marginTop: "2px" }}>
-          {description}
-        </Card.Footer>
+        <Card.Footer style={{ marginTop: "2px" }}>{description}</Card.Footer>
       </Card.Body>
       <Card.Actions>
         <Card.ActionIcon onClick={onClickHide} ref={hideRef}>

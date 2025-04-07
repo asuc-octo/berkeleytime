@@ -2,10 +2,10 @@ import { useMemo } from "react";
 
 import { ColorSquare } from "@repo/theme";
 
+import { getEnrollmentColor } from "@/components/Capacity";
 import { IEnrollment, Semester } from "@/lib/api";
 
 import styles from "./HoverInfo.module.scss";
-import { getEnrollmentColor } from "@/components/Capacity";
 
 interface HoverInfoProps {
   color: string;
@@ -18,8 +18,12 @@ interface HoverInfoProps {
 }
 
 const DisplayCount = (count: number, capacity: number) => {
-  return <span style={{color: getEnrollmentColor(count, capacity)}}>{count}/{capacity} ({`${Math.round(count/capacity*100)}%`})</span>
-}
+  return (
+    <span style={{ color: getEnrollmentColor(count, capacity) }}>
+      {count}/{capacity} ({`${Math.round((count / capacity) * 100)}%`})
+    </span>
+  );
+};
 
 export default function HoverInfo({
   color,
@@ -30,14 +34,16 @@ export default function HoverInfo({
   year,
   hoveredDay,
 }: HoverInfoProps) {
-
   const enrollmentSingular = useMemo(() => {
     if (!enrollmentHistory) return undefined;
-    const day0 = new Date(enrollmentHistory?.history[0].time).getTime()
+    const day0 = new Date(enrollmentHistory?.history[0].time).getTime();
     return enrollmentHistory?.history.findLast((es) => {
-      return Math.ceil((new Date(es.time).getTime() - day0) / (1000 * 3600 * 24)) == hoveredDay
-    })
-  }, [hoveredDay, enrollmentHistory])
+      return (
+        Math.ceil((new Date(es.time).getTime() - day0) / (1000 * 3600 * 24)) ==
+        hoveredDay
+      );
+    });
+  }, [hoveredDay, enrollmentHistory]);
 
   return (
     <div className={styles.info}>
@@ -47,16 +53,35 @@ export default function HoverInfo({
           {subject} {courseNumber}
         </span>
       </div>
-      { enrollmentHistory ? <div className={styles.distType}>
-      {semester && year ? ` ${semester} ${year}` : " All Semesters"} • 
-      {` LEC ${enrollmentHistory?.sectionNumber}`}
-      </div> : <div className={styles.distType}>No data</div>}
-      <div className={styles.label}>{hoveredDay} Days After Enrollment Start</div>
-      {enrollmentSingular ? <div className={styles.value}>
-        Enrolled: {DisplayCount(enrollmentSingular.enrolledCount, enrollmentSingular.maxEnroll)}<br/>
-        Waitlisted: {DisplayCount(enrollmentSingular.waitlistedCount, enrollmentSingular.maxWaitlist)}<br/>
-      </div> : <div className={styles.value}>No data</div>}
-      
+      {enrollmentHistory ? (
+        <div className={styles.distType}>
+          {semester && year ? ` ${semester} ${year}` : " All Semesters"} •
+          {` LEC ${enrollmentHistory?.sectionNumber}`}
+        </div>
+      ) : (
+        <div className={styles.distType}>No data</div>
+      )}
+      <div className={styles.label}>
+        {hoveredDay} Days After Enrollment Start
+      </div>
+      {enrollmentSingular ? (
+        <div className={styles.value}>
+          Enrolled:{" "}
+          {DisplayCount(
+            enrollmentSingular.enrolledCount,
+            enrollmentSingular.maxEnroll
+          )}
+          <br />
+          Waitlisted:{" "}
+          {DisplayCount(
+            enrollmentSingular.waitlistedCount,
+            enrollmentSingular.maxWaitlist
+          )}
+          <br />
+        </div>
+      ) : (
+        <div className={styles.value}>No data</div>
+      )}
     </div>
   );
 }

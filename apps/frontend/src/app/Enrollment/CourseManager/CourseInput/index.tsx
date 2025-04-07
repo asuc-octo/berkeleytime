@@ -63,12 +63,11 @@ export default function CourseInput({
     });
   }, [data]);
 
-  const [selectedClass, setSelectedClass] = useState<
-    SingleValue<OptionType>
-  >(DEFAULT_SELECTED_CLASS);
-  const [selectedSemester, setSelectedSemester] = useState<
-    SingleValue<OptionType>
-  >();
+  const [selectedClass, setSelectedClass] = useState<SingleValue<OptionType>>(
+    DEFAULT_SELECTED_CLASS
+  );
+  const [selectedSemester, setSelectedSemester] =
+    useState<SingleValue<OptionType>>();
 
   // some crazy cyclic dependencies here, averted by the fact that options changes
   // dpeend on the value of the "byData"
@@ -86,8 +85,8 @@ export default function CourseInput({
           allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
         });
       });
-      classStrings.push(`${allInstructors} ${c.primarySection.number}`)
-      sectionNumbers.push(c.primarySection.number)
+      classStrings.push(`${allInstructors} ${c.primarySection.number}`);
+      sectionNumbers.push(c.primarySection.number);
     });
     const opts = classStrings.map((v, i) => {
       return { value: sectionNumbers[i], label: v };
@@ -151,8 +150,7 @@ export default function CourseInput({
         className={styles.button}
         variant="solid"
         onClick={() => {
-          if (!selectedCourse || !selectedSemester || !selectedClass)
-            return;
+          if (!selectedCourse || !selectedSemester || !selectedClass) return;
           addCourse(
             selectedCourse.value,
             selectedSemester.value,
