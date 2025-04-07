@@ -8,6 +8,7 @@ import { SingleValue } from "react-select";
 import { Select } from "@repo/theme";
 import { Box, Button, Flex } from "@repo/theme";
 
+import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import {
   GET_COURSES,
@@ -17,6 +18,7 @@ import {
   ReadEnrollmentResponse,
   Semester,
 } from "@/lib/api";
+import { addRecentCourseGrade } from "@/lib/recent";
 
 import {
   LIGHT_COLORS,
@@ -24,8 +26,6 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "../../types";
-import { addRecentCourseGrade } from "@/lib/recent";
-import CourseSearch from "@/components/CourseSearch";
 
 type CourseOptionType = {
   value: ICourse;
