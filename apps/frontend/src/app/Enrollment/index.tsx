@@ -4,9 +4,9 @@ import { useApolloClient } from "@apollo/client";
 import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
-  Bar,
-  BarChart,
   CartesianGrid,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -16,9 +16,9 @@ import {
 import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import {
-  GradeDistribution,
-  READ_GRADE_DISTRIBUTION,
-  ReadGradeDistributionResponse,
+  IEnrollment,
+  READ_ENROLLMENT,
+  ReadEnrollmentResponse,
   Semester,
 } from "@/lib/api";
 import { colors } from "@/lib/section";
@@ -26,6 +26,7 @@ import { colors } from "@/lib/section";
 import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
 import HoverInfo from "./HoverInfo";
+import Footer from "@/components/Footer";
 
 // import HoverInfo from "./HoverInfo";
 
@@ -70,15 +71,14 @@ import HoverInfo from "./HoverInfo";
 interface Input {
   subject: string;
   courseNumber: string;
-  year?: number;
-  semester?: Semester;
-  givenName?: string;
-  familyName?: string;
+  year: number;
+  semester: Semester;
+  sectionNumber?: string;
 }
 
 interface Output {
   color: string;
-  gradeDistribution: GradeDistribution;
+  enrollmentHistory: IEnrollment;
   input: Input;
   hidden: boolean;
   active: boolean;
@@ -91,41 +91,14 @@ const toPercent = (decimal: number) => {
 const COLOR_ORDER = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
 const DARK_COLOR_ORDER = ["#132a3e", "#1a3721", "#3b1621", "#3e3844"];
 
-// const input = [
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//     year: 2024,
-//     semester: "Spring",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61B",
-//     year: 2024,
-//     semester: "Spring",
-//   },
-//   {
-//     subject: "COMPSCI",
-//     courseNumber: "61A",
-//     year: 2024,
-//     semester: "Spring",
-//     givenName: "John",
-//     familyName: "DeNero",
-//   },
-// ];
-
-export default function GradeDistributions() {
+export default function Enrollment() {
   const client = useApolloClient();
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
   const [outputs, setOutputs] = useState<Output[] | null>(null);
 
-  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
+  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
 
   const inputs = useMemo(
@@ -134,34 +107,20 @@ export default function GradeDistributions() {
         const output = input.split(";");
 
         // Filter out invalid inputs
-        if (output.length < 2) return acc;
-
-        // COMPSCI;61B
-        if (output.length < 4) {
-          const parsedInput: Input = {
-            subject: output[0],
-            courseNumber: output[1],
-          };
-
-          return acc.concat(parsedInput);
-        }
+        if (output.length < 4) return acc;
 
         // Filter out invalid inputs
-        if (!["T", "P"].includes(output[2])) return acc;
+        if (output[2] !== "T") return acc;
 
-        // COMPSCI;61B;T;2024:Spring;John:DeNero, COMPSCI;61B;T;2024:Spring
-        const term = output[output[2] === "T" ? 3 : 4]?.split(":");
-
-        // COMPSCI;61B;P;John:DeNero;2024:Spring, COMPSCI;61B;P;John:DeNero
-        const professor = output[output[2] === "T" ? 4 : 3]?.split(":");
+        // COMPSCI;61B;T;2024:Spring;001, COMPSCI;61B;T;2024:Spring
+        const term = output[3]?.split(":");
 
         const parsedInput: Input = {
           subject: output[0],
           courseNumber: output[1],
           year: parseInt(term?.[0]),
           semester: term?.[1] as Semester,
-          familyName: professor?.[1],
-          givenName: professor?.[0],
+          sectionNumber: output[4]
         };
 
         return acc.concat(parsedInput);
@@ -172,21 +131,17 @@ export default function GradeDistributions() {
   const initialize = useCallback(async () => {
     setLoading(true);
 
-    // TODO: Fetch course data
-
     const responses = await Promise.all(
       inputs.map(async (variables) => {
         try {
-          const response = await client.query<ReadGradeDistributionResponse>({
-            query: READ_GRADE_DISTRIBUTION,
+          const response = await client.query<ReadEnrollmentResponse>({
+            query: READ_ENROLLMENT,
             variables,
             fetchPolicy: "no-cache",
           });
 
           return response;
         } catch {
-          // TODO: Handle errors
-
           return null;
         }
       })
@@ -194,12 +149,14 @@ export default function GradeDistributions() {
 
     if (inputs.length > 0) setHoveredSeries(0);
 
+    console.log(responses)
+
     const output = responses.reduce(
       (acc, response, index) =>
         response
           ? acc.concat({
               color: colors[Math.floor(Math.random() * colors.length)],
-              gradeDistribution: response!.data.grade,
+              enrollmentHistory: response!.data.enrollment,
               input: inputs[index],
               active:
                 outputs && index < outputs.length
@@ -224,50 +181,39 @@ export default function GradeDistributions() {
   }, [initialize]);
 
   const data = useMemo(
-    () =>
-      outputs?.reduce(
+    () => {
+      return outputs?.reduce(
         (acc, output, index) => {
-          output.gradeDistribution.distribution.forEach((grade) => {
-            const column = acc.find((item) => item.letter === grade.letter);
-            if (!column) return;
-            const percent = Math.round(grade.percentage * 100);
-            column[index] = percent;
+          const day0 = new Date(output.enrollmentHistory.history[0].time)
+          output.enrollmentHistory.history.forEach((enrollment) => {
+            const dayOffset = Math.ceil((new Date(enrollment.time).getTime() - day0.getTime()) / (1000 * 3600 * 24))
+            const column = acc.find((item) => item.day === dayOffset);
+            if (!column) {
+              acc.push({day: dayOffset, [index]: Math.round(enrollment.enrolledCount / enrollment.maxEnroll * 1000)/10})
+            } else {
+              if (index in column) {
+                column[index] = Math.max(Math.round(enrollment.enrolledCount / enrollment.maxEnroll * 1000)/10, column[index]);
+              } else {
+                column[index] = Math.round(enrollment.enrolledCount / enrollment.maxEnroll * 1000)/10
+              }
+            }
           });
 
           return acc;
         },
-        [
-          { letter: "A+" },
-          { letter: "A" },
-          { letter: "A-" },
-          { letter: "B+" },
-          { letter: "B" },
-          { letter: "B-" },
-          { letter: "C+" },
-          { letter: "C" },
-          { letter: "C-" },
-          { letter: "D+" },
-          { letter: "D" },
-          { letter: "D-" },
-          { letter: "F" },
-          { letter: "P" },
-          { letter: "NP" },
-        ] as {
-          letter: string;
+        [] as {
           [key: number]: number;
+          day: number
         }[]
-      ),
+      ).sort((a, b) => a.day - b.day)
+    },
     [outputs]
   );
 
-  const visibleOutputs = useMemo(() => {
-    if (outputs?.find((out) => out.active) !== undefined) return 1;
-    return outputs?.filter((out) => !out.hidden).length ?? 0;
-  }, [outputs]);
-
   function updateGraphHover(data: any) {
-    setHoveredLetter(data.letter);
-    setHoveredSeries(data.tooltipPayload[0].dataKey);
+    if (!data.isTooltipActive) return;
+    setHoveredDay(data.activeLabel);
+    setHoveredSeries(data.activePayload[0].dataKey);
   }
 
   return (
@@ -277,10 +223,11 @@ export default function GradeDistributions() {
           selectedCourses={
             outputs?.map((out, i) => {
               return {
-                gradeDistribution: out.gradeDistribution,
+                enrollmentHistory: out.enrollmentHistory,
                 hidden: out.hidden,
                 active: out.active,
                 color: COLOR_ORDER[i],
+                sectionNumber: out.enrollmentHistory.sectionNumber,
                 ...out.input,
               };
             }) ?? []
@@ -305,11 +252,12 @@ export default function GradeDistributions() {
           <Flex direction="row">
             <div className={styles.view}>
               <ResponsiveContainer width="100%" height={450}>
-                <BarChart
+                <LineChart
                   syncId="grade-distributions"
                   width={730}
                   height={200}
                   data={data}
+                  onMouseMove={updateGraphHover}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -317,14 +265,16 @@ export default function GradeDistributions() {
                     stroke="var(--border-color)"
                   />
                   <XAxis
-                    dataKey="letter"
+                    dataKey="day"
                     fill="var(--label-color)"
                     tickMargin={8}
+                    type="number"
                   />
                   <YAxis tickFormatter={toPercent} />
                   {outputs?.length && (
                     <Tooltip
                       labelStyle={{ color: "var(--heading-color)" }}
+                      labelFormatter={(label) => `Day ${label}`}
                       contentStyle={{
                         backgroundColor: "var(--backdrop-color)",
                         border: "none",
@@ -338,26 +288,23 @@ export default function GradeDistributions() {
                     const activeExists =
                       outputs?.find((out) => out.active) !== undefined;
                     return (
-                      <Bar
+                      <Line
                         dataKey={index}
-                        fill={
+                        stroke={
                           activeExists && !output.active
                             ? DARK_COLOR_ORDER[index]
                             : COLOR_ORDER[index]
                         }
                         key={index}
                         name={`${output.input.subject} ${output.input.courseNumber}`}
-                        onMouseMove={updateGraphHover}
-                        radius={[
-                          10 / visibleOutputs,
-                          10 / visibleOutputs,
-                          0,
-                          0,
-                        ]}
+                        dot={false}
+                        strokeWidth={3}
+                        type={"monotone"}
+                        connectNulls
                       />
                     );
                   })}
-                </BarChart>
+                </LineChart>
               </ResponsiveContainer>
               {!outputs?.length && (
                 <div className={styles.empty}>
@@ -369,27 +316,28 @@ export default function GradeDistributions() {
                 </div>
               )}
             </div>
-            {/* TODO: populate this so that update hover also figures out which series we're hovering over */}
             {outputs && hoveredSeries !== null ? (
               <HoverInfo
                 color={COLOR_ORDER[hoveredSeries]}
                 subject={outputs[hoveredSeries].input.subject}
                 courseNumber={outputs[hoveredSeries].input.courseNumber}
-                gradeDistribution={outputs[hoveredSeries].gradeDistribution}
-                hoveredLetter={hoveredLetter}
+                enrollmentHistory={outputs[hoveredSeries].enrollmentHistory}
+                hoveredDay={hoveredDay}
+                semester={outputs[hoveredSeries].input.semester}
+                year={outputs[hoveredSeries].input.year}
               />
             ) : (
               <HoverInfo
                 color={"#aaa"}
                 subject={"No Class"}
                 courseNumber={"Selected"}
-                gradeDistribution={undefined}
-                hoveredLetter={null}
+                hoveredDay={null}
               />
             )}
           </Flex>
         )}
       </Flex>
+      <Footer/>
     </Box>
   );
 }

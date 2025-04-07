@@ -38,8 +38,6 @@ interface CourseAddProps {
 
 // called instructor in frontend but actually we're letting users select a diff class
 const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
-const DEFAULT_SELECTED_SEMESTER = { value: "all", label: "All Semesters" };
-const DEFAULT_BY_OPTION = { value: "instructor", label: "By Instructor" };
 
 export default function CourseAdd({
   selectedCourses,
@@ -70,7 +68,7 @@ export default function CourseAdd({
   >(DEFAULT_SELECTED_CLASS);
   const [selectedSemester, setSelectedSemester] = useState<
     SingleValue<OptionType>
-  >(DEFAULT_SELECTED_SEMESTER);
+  >();
 
   // some crazy cyclic dependencies here, averted by the fact that options changes
   // dpeend on the value of the "byData"
@@ -78,7 +76,8 @@ export default function CourseAdd({
     const list = [DEFAULT_SELECTED_CLASS];
     if (!courseData) return list;
 
-    const mySet = new Set();
+    const classStrings: string[] = [];
+    const sectionNumbers: string[] = [];
     courseData?.classes.forEach((c) => {
       if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
       let allInstructors = "";
@@ -87,10 +86,11 @@ export default function CourseAdd({
           allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
         });
       });
-      mySet.add(`${allInstructors} ${c.number}`)
+      classStrings.push(`${allInstructors} ${c.primarySection.number}`)
+      sectionNumbers.push(c.primarySection.number)
     });
-    const opts = [...mySet].map((v) => {
-      return { value: v as string, label: v as string };
+    const opts = classStrings.map((v, i) => {
+      return { value: sectionNumbers[i], label: v };
     });
     if (opts.length === 1) {
       if (selectedClass !== opts[0]) setSelectedClass(opts[0]);
@@ -100,7 +100,7 @@ export default function CourseAdd({
   }, [courseData, selectedSemester]);
 
   const semesterOptions: OptionType[] = useMemo(() => {
-    const list = [DEFAULT_SELECTED_SEMESTER];
+    const list: OptionType[] = [];
     if (!courseData) return list;
     const filteredOptions = Array.from(
       new Set(courseData.classes.map((c) => `${c.semester} ${c.year}`))

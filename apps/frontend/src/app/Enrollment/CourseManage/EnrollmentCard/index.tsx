@@ -4,16 +4,13 @@ import { Eye, EyeClosed, Trash } from "iconoir-react";
 
 import { Card, ColorSquare } from "@repo/theme";
 
-import { AverageGrade } from "@/components/AverageGrade";
 import { useReadCourseTitle } from "@/hooks/api";
-import { GradeDistribution } from "@/lib/api";
 
 interface GradesCardProps {
   color: string;
   subject: string;
   number: string;
   description: string;
-  gradeDistribution: GradeDistribution;
   onClick: () => void;
   onClickDelete: () => void;
   onClickHide: () => void;
@@ -26,7 +23,6 @@ export default function GradesCard({
   subject,
   number,
   description,
-  gradeDistribution,
   onClick,
   onClickDelete,
   onClickHide,
@@ -68,7 +64,6 @@ export default function GradesCard({
           {data?.title ?? "N/A"}
         </Card.Description>
         <Card.Footer style={{ marginTop: "2px" }}>
-          <AverageGrade gradeDistribution={gradeDistribution} />
           {description}
         </Card.Footer>
       </Card.Body>

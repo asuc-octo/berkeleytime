@@ -134,6 +134,7 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
               givenName
             }
           }
+          number
         }
       }
     }

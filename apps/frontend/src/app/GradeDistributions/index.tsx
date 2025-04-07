@@ -25,6 +25,7 @@ import {
 import CourseManage from "./CourseManage";
 import styles from "./GradeDistributions.module.scss";
 import HoverInfo from "./HoverInfo";
+import Footer from "@/components/Footer";
 
 // import HoverInfo from "./HoverInfo";
 
@@ -387,6 +388,7 @@ export default function GradeDistributions() {
           </Flex>
         )}
       </Flex>
+      <Footer/>
     </Box>
   );
 }

@@ -3,11 +3,11 @@ import { useSearchParams } from "react-router-dom";
 
 import { Flex } from "@repo/theme";
 
-import { GradeDistribution, ICourse, Semester } from "@/lib/api";
+import { ICourse, IEnrollment, Semester } from "@/lib/api";
 
 import CourseAdd from "./CourseAdd";
 import styles from "./CourseManage.module.scss";
-import GradesCard from "./GradesCard";
+import GradesCard from "./EnrollmentCard";
 
 interface SelectedCourse {
   color: string;
@@ -15,9 +15,8 @@ interface SelectedCourse {
   courseNumber: string;
   year?: number;
   semester?: Semester;
-  givenName?: string;
-  familyName?: string;
-  gradeDistribution: GradeDistribution;
+  enrollmentHistory: IEnrollment;
+  sectionNumber: string;
   active: boolean;
   hidden: boolean;
 }
@@ -28,20 +27,17 @@ interface SideBarProps {
   setActive: (i: number) => void;
 }
 
-function courseTermProfToURL(
+function courseTermClassToURL(
   subject: string,
   number: string,
-  givenName: string | undefined,
-  familyName: string | undefined,
+  sectionNumber: string | undefined,
   semester: Semester | undefined,
   year: number | undefined
 ) {
-  if (!givenName && !semester) return `${subject};${number}`;
-  else if (!semester)
-    return `${subject};${number};P;${givenName}:${familyName}`;
-  else if (!givenName) return `${subject};${number};T;${year}:${semester}`;
+  if (!sectionNumber && !semester) return `${subject};${number}`;
+  else if (!sectionNumber) return `${subject};${number};T;${year}:${semester}`;
   else
-    return `${subject};${number};T;${year}:${semester};${givenName}:${familyName}`;
+    return `${subject};${number};T;${year}:${semester};${sectionNumber}`;
 }
 
 export default function CourseManage({
@@ -51,18 +47,15 @@ export default function CourseManage({
 }: SideBarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  function addCourse(course: ICourse, term: String, instructor: String) {
-    const [lastName, firstName] =
-      instructor === "all" ? [undefined, undefined] : instructor.split(", ");
+  function addCourse(course: ICourse, term: string, sectionNumber: string) {
     const [semester, year] =
       term === "all" ? [undefined, undefined] : term.split(" ");
     searchParams.append(
       "input",
-      courseTermProfToURL(
+      courseTermClassToURL(
         course.subject,
         course.number,
-        firstName,
-        lastName,
+        (sectionNumber === "all") ? undefined : sectionNumber,
         semester as Semester,
         year ? Number.parseInt(year) : undefined
       )
@@ -101,8 +94,8 @@ export default function CourseManage({
           }
           const course = selectedCourses[index];
           const instructor =
-            course.familyName && course.givenName
-              ? `${course.givenName} ${course.familyName}`
+            course.sectionNumber
+              ? `LEC ${course.sectionNumber}`
               : "All Instructors";
           const semester =
             course.semester && course.year
@@ -114,8 +107,7 @@ export default function CourseManage({
                 color={course.color}
                 subject={course.subject}
                 number={course.courseNumber}
-                description={`${instructor} • ${semester}`}
-                gradeDistribution={course.gradeDistribution}
+                description={`${semester} • ${instructor}`}
                 hidden={course.hidden}
                 active={course.active}
                 onClick={() => {
