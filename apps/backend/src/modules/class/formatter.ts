@@ -1,4 +1,4 @@
-import { IClassItem, ISectionItem } from "@repo/common";
+import { DecalType, IClassItem, IDecal, ISectionItem } from "@repo/common";
 
 import { ClassModule } from "./generated-types/module-types";
 
@@ -36,6 +36,7 @@ export const formatClass = (_class: IClassItem) => {
     primarySection: null,
     sections: null,
     gradeDistribution: null,
+    decal: null,
   } as IntermediateClass;
 
   return output;
@@ -68,4 +69,10 @@ export const formatSection = (section: ISectionItem) => {
   } as IntermediateSection;
 
   return output;
+};
+
+export const formatDecal = (decal: DecalType) => {
+  if (!decal) return null;
+
+  return decal as IDecal;
 };

@@ -28,6 +28,7 @@ export default function Class({
   primarySection: { enrollment },
   unitsMax,
   unitsMin,
+  decal,
   index,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
@@ -36,6 +37,7 @@ export default function Class({
       <div className={styles.text}>
         <p className={styles.heading}>
           {subject} {courseNumber} #{number}
+          {decal && <span className={styles.decalTag}>Decal</span>}
         </p>
         <p className={styles.description}>{title ?? courseTitle}</p>
         <div className={styles.row}>

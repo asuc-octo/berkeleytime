@@ -359,6 +359,9 @@ export default function Class({
                 <Flex direction="column" gap="1">
                   <h1 className={styles.heading}>
                     {_class.subject} {_class.courseNumber} #{_class.number}
+                    {_class.decal && (
+                      <span className={styles.decalTag}>Decal</span>
+                    )}
                   </h1>
                   <p className={styles.description}>
                     {_class.title || _class.course.title}

@@ -39,4 +39,25 @@
       font-weight: 400;
     }
   }
+
+  .decalContent {
+    font-size: 14px;
+  }
+
+  .decalLink {
+    color: #2a7be4;
+    text-decoration: underline;
+  }
+
+  .decalLabel {
+    margin-top: 24px;
+    color: var(--label-color);
+    line-height: 1;
+  }
+
+  .decalDescription {
+    color: var(--paragraph-color);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
 }

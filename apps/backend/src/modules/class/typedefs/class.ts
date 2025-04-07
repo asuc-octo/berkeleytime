@@ -22,6 +22,26 @@ export default gql`
     ): Section
   }
 
+  type Decal {
+    "Identifiers"
+    termId: TermIdentifier!
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+
+    "Attributes"
+    externalId: String!
+    title: String
+    description: String
+    category: String
+    units: String
+    website: String
+    application: String
+    enroll: String
+    date: String
+    contact: String
+  }
+
   type Class {
     "Identifiers"
     termId: TermIdentifier!
@@ -37,6 +57,7 @@ export default gql`
     primarySection: Section!
     sections: [Section!]!
     gradeDistribution: GradeDistribution!
+    decal: Decal
 
     "Attributes"
     year: Int!

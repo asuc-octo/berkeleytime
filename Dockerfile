@@ -15,12 +15,9 @@ COPY --from=datapuller-builder /datapuller/out/package-lock.json ./package-lock.
 RUN ["npm", "install"]
 
 COPY --from=datapuller-builder /datapuller/out/full/ .
-ENTRYPOINT ["turbo", "run", "main", "--filter=datapuller", "--"]
-CMD ["--puller=main"]
 
-FROM datapuller-dev AS datapuller-prod
-WORKDIR /datapuller
-ENTRYPOINT ["turbo", "run", "main", "--filter=datapuller", "--env-mode=loose", "--"]
+ENTRYPOINT ["turbo", "run", "main", "--filter=datapuller"]
+CMD ["--", "--puller=decals"]
 
 # backend
 FROM base AS backend-builder
