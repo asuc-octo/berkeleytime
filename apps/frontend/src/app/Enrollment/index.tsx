@@ -17,33 +17,15 @@ import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 import {
-  IEnrollment,
   READ_ENROLLMENT,
   ReadEnrollmentResponse,
   Semester,
 } from "@/lib/api";
-import { colors } from "@/lib/section";
 
-import CourseManage from "./CourseManager";
 import styles from "./Enrollment.module.scss";
 import HoverInfo from "./HoverInfo";
-import { DARK_COLORS, LIGHT_COLORS } from "./types";
-
-interface Input {
-  subject: string;
-  courseNumber: string;
-  year: number;
-  semester: Semester;
-  sectionNumber?: string;
-}
-
-interface Output {
-  color: string;
-  enrollmentHistory: IEnrollment;
-  input: Input;
-  hidden: boolean;
-  active: boolean;
-}
+import { DARK_COLORS, getInputSearchParam, Input, isInputEqual, LIGHT_COLORS, Output } from "./types";
+import CourseManager from "./CourseManager";
 
 const toPercent = (decimal: number) => {
   return `${decimal.toFixed(0)}%`;
@@ -51,17 +33,12 @@ const toPercent = (decimal: number) => {
 
 export default function Enrollment() {
   const client = useApolloClient();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [loading, setLoading] = useState(false);
-  const [outputs, setOutputs] = useState<Output[] | null>(null);
-
-  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
-  const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
-
-  const inputs = useMemo(
-    () =>
-      searchParams.getAll("input").reduce((acc, input) => {
+  const [initialInputs] = useState<Input[]>(() =>
+    searchParams
+      .getAll("input")
+      .reduce((acc, input) => {
         const output = input.split(";");
 
         // Filter out invalid inputs
@@ -82,19 +59,37 @@ export default function Enrollment() {
         };
 
         return acc.concat(parsedInput);
-      }, [] as Input[]),
-    [searchParams]
+      }, [] as Input[])
+      // Filter out duplicates
+      .filter(
+        (input, index, inputs) =>
+          inputs.findIndex((i) => isInputEqual(input, i)) === index
+      )
   );
 
+  const [loading, setLoading] = useState(initialInputs.length > 0);
+  const [outputs, setOutputs] = useState<Output[]>([]);
+
+  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+  const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
+
   const initialize = useCallback(async () => {
-    setLoading(true);
+
+    if (!loading) return;
+
+    if (initialInputs.length === 0) {
+      searchParams.delete("input");
+      setSearchParams(searchParams);
+
+      return;
+    }
 
     const responses = await Promise.all(
-      inputs.map(async (variables) => {
+      initialInputs.map(async (input) => {
         try {
           const response = await client.query<ReadEnrollmentResponse>({
             query: READ_ENROLLMENT,
-            variables,
+            variables: input,
             fetchPolicy: "no-cache",
           });
 
@@ -105,38 +100,48 @@ export default function Enrollment() {
       })
     );
 
-    if (inputs.length > 0) setHoveredSeries(0);
+    const outputs = responses
+      // Filter out failed queries and set any initial state
+      .reduce(
+        (acc, response, index) =>
+          response
+            ? acc.concat({
+                color: LIGHT_COLORS[index],
+                enrollmentHistory: response.data.enrollment,
+                input: initialInputs[index],
+                active: false,
+                hidden: false
+              })
+            : acc,
+        [] as Output[]
+      )
+      // Limit to 4 outputs
+      .slice(0, 4);
 
-    console.log(responses);
+    setOutputs(outputs);
 
-    const output = responses.reduce(
-      (acc, response, index) =>
-        response
-          ? acc.concat({
-              color: colors[Math.floor(Math.random() * colors.length)],
-              enrollmentHistory: response!.data.enrollment,
-              input: inputs[index],
-              active:
-                outputs && index < outputs.length
-                  ? outputs[index].active
-                  : false,
-              hidden:
-                outputs && index < outputs.length
-                  ? outputs[index].hidden
-                  : false,
-            })
-          : acc,
-      [] as Output[]
-    );
+    searchParams.delete("input");
 
-    setOutputs(output);
+    for (const output of outputs) {
+      searchParams.append("input", getInputSearchParam(output.input));
+    }
 
     setLoading(false);
-  }, [client, inputs]);
+  }, [client, initialInputs, searchParams, setSearchParams, loading]);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  const activeOutput = useMemo(
+    () => outputs?.find((out) => out.active),
+    [outputs]
+  );
+
+  const filteredOutputs = useMemo(
+    () => outputs?.filter((output) => !output.hidden),
+    [outputs]
+  );
 
   const data = useMemo(() => {
     return outputs
@@ -149,27 +154,22 @@ export default function Enrollment() {
                 (1000 * 3600 * 24)
             );
             const column = acc.find((item) => item.day === dayOffset);
+            const enrollValue = Math.round(
+              (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
+            ) / 10;
             if (!column) {
               acc.push({
                 day: dayOffset,
-                [index]:
-                  Math.round(
-                    (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
-                  ) / 10,
+                [index]: enrollValue,
               });
             } else {
               if (index in column) {
                 column[index] = Math.max(
-                  Math.round(
-                    (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
-                  ) / 10,
+                  enrollValue,
                   column[index]
                 );
               } else {
-                column[index] =
-                  Math.round(
-                    (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
-                  ) / 10;
+                column[index] = enrollValue;
               }
             }
           });
@@ -190,34 +190,16 @@ export default function Enrollment() {
     setHoveredSeries(data.activePayload[0].dataKey);
   }
 
+  useEffect(() => {
+    if (outputs.length > 0) {
+      if (!hoveredSeries) setHoveredSeries(0);
+    } else setHoveredSeries(null);
+  }, [outputs]);
+
   return (
     <Box p="5" className={styles.root}>
       <Flex direction="column">
-        <CourseManage
-          selectedCourses={
-            outputs?.map((out, i) => {
-              return {
-                enrollmentHistory: out.enrollmentHistory,
-                hidden: out.hidden,
-                active: out.active,
-                color: LIGHT_COLORS[i],
-                sectionNumber: out.enrollmentHistory.sectionNumber,
-                ...out.input,
-              };
-            }) ?? []
-          }
-          hideCourse={(i) => {
-            if (!outputs || outputs.length <= i) return;
-            outputs[i].hidden = !outputs[i].hidden;
-            setOutputs(outputs.slice());
-          }}
-          setActive={(ind) => {
-            if (!outputs || outputs.length <= ind) return;
-            for (let i = 0; i < outputs.length; i++)
-              outputs[i].active = i == ind ? !outputs[i].active : false;
-            setOutputs(outputs.slice());
-          }}
-        />
+        <CourseManager outputs={outputs} setOutputs={setOutputs}/>
         {loading ? (
           <Boundary>
             <LoadingIndicator size="lg" />
@@ -257,15 +239,12 @@ export default function Enrollment() {
                       formatter={toPercent}
                     />
                   )}
-                  {outputs?.map((output, index) => {
-                    if (output.hidden) return;
-                    const activeExists =
-                      outputs?.find((out) => out.active) !== undefined;
+                  {filteredOutputs?.map((output, index) => {
                     return (
                       <Line
                         dataKey={index}
                         stroke={
-                          activeExists && !output.active
+                          activeOutput && !output.active
                             ? DARK_COLORS[index]
                             : LIGHT_COLORS[index]
                         }

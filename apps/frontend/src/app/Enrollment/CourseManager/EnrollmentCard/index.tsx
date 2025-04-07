@@ -6,7 +6,7 @@ import { Card, ColorSquare } from "@repo/theme";
 
 import { useReadCourseTitle } from "@/hooks/api";
 
-interface GradesCardProps {
+interface EnrollmentCardProps {
   color: string;
   subject: string;
   number: string;
@@ -18,7 +18,7 @@ interface GradesCardProps {
   hidden: boolean;
 }
 
-export default function GradesCard({
+export default function EnrollmentCard({
   color,
   subject,
   number,
@@ -28,7 +28,7 @@ export default function GradesCard({
   onClickHide,
   active,
   hidden,
-}: GradesCardProps) {
+}: EnrollmentCardProps) {
   const hideRef = useRef<HTMLDivElement>(null);
   const deleteRef = useRef<HTMLDivElement>(null);
 

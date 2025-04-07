@@ -93,26 +93,30 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   >(DEFAULT_SELECTED_SEMESTER);
 
   // some crazy cyclic dependencies here, averted by the fact that options changes
-  // dpeend on the value of the "byData"
+  // depend on the value of the "byData"
   const instructorOptions: OptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
     if (!course) return list;
 
-    const mySet = new Set();
+    const instructorSet = new Set();
     course?.classes.forEach((c) => {
+      // get only current semester if getting by semester
       if (selectedType?.value === "semester") {
         if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
       }
       c.primarySection.meetings.forEach((m) => {
+        // instructor for current class lecture
         m.instructors.forEach((i) => {
-          mySet.add(`${i.familyName}, ${i.givenName}`);
+          instructorSet.add(`${i.familyName}, ${i.givenName}`);
         });
       });
     });
-    const opts = [...mySet].map((v) => {
+    const opts = [...instructorSet].map((v) => {
+      // create OptionTypes
       return { value: v as string, label: v as string };
     });
     if (opts.length === 1 && selectedType?.value === "semester") {
+      // If only one choice, select it
       if (selectedInstructor !== opts[0]) setSelectedInstructor(opts[0]);
       return opts;
     }
@@ -129,7 +133,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     if (!course) return list;
     const filteredClasses =
       selectedType?.value === "semester"
-        ? course.classes
+        ? course.classes // all if by semester
         : selectedInstructor?.value === "all"
           ? []
           : course.classes.filter((c) =>
@@ -149,8 +153,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         label: t,
       };
     });
-    console.log(filteredOptions);
     if (filteredOptions.length == 1) {
+      // if only one option, select it
       if (selectedSemester != filteredOptions[0])
         setSelectedSemester(filteredOptions[0]);
       return filteredOptions;
@@ -302,9 +306,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
             setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
             setSelectedType(s);
-          }}
-          components={{
-            IndicatorSeparator: () => null,
           }}
         />
       </Box>

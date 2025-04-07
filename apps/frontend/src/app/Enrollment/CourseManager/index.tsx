@@ -1,127 +1,78 @@
-import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import { Flex } from "@repo/theme";
-
-import { ICourse, IEnrollment, Semester } from "@/lib/api";
+import { Flex, Grid } from "@repo/theme";
 
 import CourseInput from "./CourseInput";
 import styles from "./CourseManage.module.scss";
-import GradesCard from "./EnrollmentCard";
+import EnrollmentCard from "./EnrollmentCard";
+import { getInputSearchParam, Output } from "../types";
+import { Dispatch, SetStateAction } from "react";
 
-interface SelectedCourse {
-  color: string;
-  subject: string;
-  courseNumber: string;
-  year?: number;
-  semester?: Semester;
-  enrollmentHistory: IEnrollment;
-  sectionNumber: string;
-  active: boolean;
-  hidden: boolean;
+interface CourseManagerProps {
+  outputs: Output[];
+  setOutputs: Dispatch<SetStateAction<Output[]>>;
 }
 
-interface SideBarProps {
-  selectedCourses: SelectedCourse[];
-  hideCourse: (i: number) => void;
-  setActive: (i: number) => void;
-}
-
-function courseTermClassToURL(
-  subject: string,
-  number: string,
-  sectionNumber: string | undefined,
-  semester: Semester | undefined,
-  year: number | undefined
-) {
-  if (!sectionNumber && !semester) return `${subject};${number}`;
-  else if (!sectionNumber) return `${subject};${number};T;${year}:${semester}`;
-  else return `${subject};${number};T;${year}:${semester};${sectionNumber}`;
-}
-
-export default function CourseManage({
-  selectedCourses,
-  setActive,
-  hideCourse,
-}: SideBarProps) {
+export default function CourseManager({
+  outputs,
+  setOutputs
+}: CourseManagerProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  function addCourse(course: ICourse, term: string, sectionNumber: string) {
-    const [semester, year] =
-      term === "all" ? [undefined, undefined] : term.split(" ");
-    searchParams.append(
-      "input",
-      courseTermClassToURL(
-        course.subject,
-        course.number,
-        sectionNumber === "all" ? undefined : sectionNumber,
-        semester as Semester,
-        year ? Number.parseInt(year) : undefined
+  const remove = (index: number) => {
+    const currentOutputs = [...outputs];
+    currentOutputs.splice(index, 1);
+    setOutputs(currentOutputs);
+
+    searchParams.delete("input");
+
+    for (const output of currentOutputs) {
+      searchParams.append("input", getInputSearchParam(output.input));
+    }
+
+    setSearchParams(searchParams);
+  }
+
+  const updateActive = (index: number, active: boolean) => {
+    setOutputs((outputs) =>
+      [...outputs].map((output, i) =>
+        i === index ? { ...output, active } : output
       )
     );
-    setSearchParams(searchParams);
-  }
+  };
 
-  function deleteCourse(index: number) {
-    // maintaining order is tricky when avoiding deleting all duplicates
-    const order = searchParams.getAll("input");
-    if (order.length == 1) searchParams.delete("input");
-    else {
-      order.forEach((inp, i) => {
-        if (i == 0) searchParams.set("input", inp);
-        else {
-          if (i == index) return;
-          searchParams.append("input", inp);
-        }
-      });
-    }
-    setSearchParams(searchParams);
-  }
+  const updateHidden = (index: number, hidden: boolean) => {
+    setOutputs((outputs) =>
+      [...outputs].map((output, i) =>
+        i === index ? { ...output, hidden } : output
+      )
+    );
+  };
 
   return (
-    <div className={styles.root}>
-      <CourseInput selectedCourses={selectedCourses} addCourse={addCourse} />
-      <Flex direction="row" gap="4">
-        {Array.from({ length: 4 }, (_, index) => {
-          if (index >= selectedCourses.length) {
-            return (
-              <div
-                className={classNames(styles.courseCard, styles.blank)}
-                key={index}
-              ></div>
-            );
-          }
-          const course = selectedCourses[index];
-          const instructor = course.sectionNumber
-            ? `LEC ${course.sectionNumber}`
+    <Flex direction="column" gap="4">
+      <CourseInput outputs={outputs} setOutputs={setOutputs} />
+      <Grid columns="4" gap="4">
+        {outputs.map(({ input, ...rest }, index) => {
+          const instructor = input.sectionNumber
+            ? `LEC ${input.sectionNumber}`
             : "All Instructors";
-          const semester =
-            course.semester && course.year
-              ? `${course.semester} ${course.year}`
-              : "All Semesters";
+          const semester = `${input.semester} ${input.year}`;
           return (
-            <div className={styles.courseCard} key={index}>
-              <GradesCard
-                color={course.color}
-                subject={course.subject}
-                number={course.courseNumber}
-                description={`${semester} • ${instructor}`}
-                hidden={course.hidden}
-                active={course.active}
-                onClick={() => {
-                  setActive(index);
-                }}
-                onClickDelete={() => {
-                  deleteCourse(index);
-                }}
-                onClickHide={() => {
-                  hideCourse(index);
-                }}
-              />
-            </div>
+            <EnrollmentCard
+              key={index}
+              subject={input.subject}
+              number={input.courseNumber}
+              description={`${semester} • ${instructor}`}
+              onClick={() => updateActive(index, !rest.active)}
+              onClickDelete={() => remove(index)}
+              onClickHide={() => updateHidden(index, !rest.hidden)}
+              {...rest}
+            />
           );
         })}
-      </Flex>
-    </div>
+        {!outputs || (!outputs.length && <div className={styles.blank}></div>)}
+      </Grid>
+    </Flex>
   );
 }

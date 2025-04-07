@@ -1,16 +1,17 @@
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { Plus } from "iconoir-react";
 import { SingleValue } from "react-select";
 
 import { Select } from "@repo/theme";
-import { Button, Flex } from "@repo/theme";
+import { Box, Button, Flex } from "@repo/theme";
 
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
+import { GET_COURSES, GetCoursesResponse, ICourse, READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
 
-import styles from "./CourseInput.module.scss";
+import { getInputSearchParam, isInputEqual, LIGHT_COLORS, Output } from "../../types";
+import { useSearchParams } from "react-router-dom";
 
 type CourseOptionType = {
   value: ICourse;
@@ -22,28 +23,25 @@ type OptionType = {
   label: string;
 };
 
-interface SelectedCourse {
-  subject: string;
-  courseNumber: string;
-  year?: number;
-  semester?: Semester;
-  givenName?: string;
-  familyName?: string;
+interface CourseInputProps {
+  outputs: Output[];
+  setOutputs: Dispatch<SetStateAction<Output[]>>;
 }
 
-interface CourseAddProps {
-  selectedCourses: SelectedCourse[];
-  addCourse: (course: ICourse, term: string, instructor: string) => void;
-}
-
-// called instructor in frontend but actually we're letting users select a diff class
+// called instructor in frontend but actually we're letting users select a class
 const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
 
 export default function CourseInput({
-  selectedCourses,
-  addCourse,
-}: CourseAddProps) {
-  const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
+  outputs,
+  setOutputs
+}: CourseInputProps) {
+  const client = useApolloClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { data: courses, loading: coursesLoading } =
+    useQuery<GetCoursesResponse>(GET_COURSES);
+
+  const [loading, setLoading] = useState(false);
 
   const [selectedCourse, setSelectedCourse] =
     useState<SingleValue<CourseOptionType>>(null);
@@ -54,14 +52,14 @@ export default function CourseInput({
   );
 
   const coursesOptions = useMemo(() => {
-    if (!data) return [];
-    return data?.courses.map((c) => {
+    if (!courses) return [];
+    return courses?.courses.map((c) => {
       return {
         value: c,
         label: `${c.subject} ${c.number}`,
       };
     });
-  }, [data]);
+  }, [courses]);
 
   const [selectedClass, setSelectedClass] = useState<SingleValue<OptionType>>(
     DEFAULT_SELECTED_CLASS
@@ -69,36 +67,8 @@ export default function CourseInput({
   const [selectedSemester, setSelectedSemester] =
     useState<SingleValue<OptionType>>();
 
-  // some crazy cyclic dependencies here, averted by the fact that options changes
-  // dpeend on the value of the "byData"
-  const classOptions: OptionType[] = useMemo(() => {
-    const list = [DEFAULT_SELECTED_CLASS];
-    if (!courseData) return list;
-
-    const classStrings: string[] = [];
-    const sectionNumbers: string[] = [];
-    courseData?.classes.forEach((c) => {
-      if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
-      let allInstructors = "";
-      c.primarySection.meetings.forEach((m) => {
-        m.instructors.forEach((i) => {
-          allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
-        });
-      });
-      classStrings.push(`${allInstructors} ${c.primarySection.number}`);
-      sectionNumbers.push(c.primarySection.number);
-    });
-    const opts = classStrings.map((v, i) => {
-      return { value: sectionNumbers[i], label: v };
-    });
-    if (opts.length === 1) {
-      if (selectedClass !== opts[0]) setSelectedClass(opts[0]);
-      return opts;
-    }
-    return [...list, ...opts];
-  }, [courseData, selectedSemester]);
-
   const semesterOptions: OptionType[] = useMemo(() => {
+    // get all semesters
     const list: OptionType[] = [];
     if (!courseData) return list;
     const filteredOptions = Array.from(
@@ -117,47 +87,139 @@ export default function CourseInput({
     return [...list, ...filteredOptions];
   }, [courseData]);
 
+  const classOptions: OptionType[] = useMemo(() => {
+    const list = [DEFAULT_SELECTED_CLASS];
+    if (!courseData) return list;
+
+    const classStrings: string[] = [];
+    const sectionNumbers: string[] = [];
+    courseData?.classes.forEach((c) => {
+      if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
+      // only classes from current sem displayed
+      let allInstructors = "";
+      c.primarySection.meetings.forEach((m) => {
+        m.instructors.forEach((i) => {
+          // construct label
+          allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
+        });
+      });
+      classStrings.push(`${allInstructors} ${c.primarySection.number}`);
+      sectionNumbers.push(c.primarySection.number);
+    });
+    const opts = classStrings.map((v, i) => {
+      return { value: sectionNumbers[i], label: v };
+    });
+    if (opts.length === 1) {
+      // if only one option, select it
+      if (selectedClass !== opts[0]) setSelectedClass(opts[0]);
+      return opts;
+    }
+    return [...list, ...opts];
+  }, [courseData, selectedSemester]);
+
+  const add = async () => {
+
+    if (
+      !selectedClass ||
+      !selectedCourse ||
+      !selectedSemester
+    )
+      return;
+
+    const [semester, year] = selectedSemester.value.split(" ");
+
+    const input = {
+      subject: selectedCourse.value.subject,
+      courseNumber: selectedCourse.value.number,
+      year: parseInt(year),
+      semester: semester as Semester,
+      sectionNumber: selectedClass.value === "all" ? undefined : selectedClass.value
+    };
+    // Do not fetch duplicates
+    const existingOutput = outputs.find((output) =>
+      isInputEqual(output.input, input)
+    );
+
+    if (existingOutput) return;
+
+    setLoading(true);
+
+    try {
+      const response = await client.query<ReadEnrollmentResponse>({
+        query: READ_ENROLLMENT,
+        variables: input,
+      });
+
+      const output: Output = {
+        hidden: false,
+        active: false,
+        color: LIGHT_COLORS[outputs.length],
+        enrollmentHistory: response.data.enrollment,
+        input,
+      };
+
+      setOutputs((outputs) => [...outputs, output]);
+
+      searchParams.append("input", getInputSearchParam(input));
+      setSearchParams(searchParams);
+
+      setLoading(false);
+    } catch {
+      // TODO: Error handling
+
+      setLoading(false);
+
+      return;
+    }
+  }
+
+  const disabled = useMemo(
+    () => loading || coursesLoading || outputs.length === 4,
+    [loading, coursesLoading, outputs]
+  );
+
   return (
     <Flex direction="row" gap="3">
-      <div className={styles.courseSelectCont}>
+      <Box flexGrow="1">
         <Select
           options={coursesOptions}
+          isDisabled={disabled}
           value={selectedCourse}
           onChange={(v) => {
             setSelectedCourse(v);
           }}
         />
-      </div>
-      <div className={styles.selectCont}>
+      </Box>
+      <Box flexGrow="1">
         <Select
           options={semesterOptions}
+          isDisabled={disabled}
           value={selectedSemester}
           onChange={(s) => {
+            setSelectedClass(DEFAULT_SELECTED_CLASS);
             setSelectedSemester(s);
           }}
         />
-      </div>
-      <div className={styles.selectCont}>
+      </Box>
+      <Box flexGrow="1">
         <Select
           options={classOptions}
+          isDisabled={disabled}
           value={selectedClass}
           onChange={(s) => {
             setSelectedClass(s);
           }}
         />
-      </div>
+      </Box>
       <Button
-        className={styles.button}
         variant="solid"
-        onClick={() => {
-          if (!selectedCourse || !selectedSemester || !selectedClass) return;
-          addCourse(
-            selectedCourse.value,
-            selectedSemester.value,
-            selectedClass.value
-          );
-        }}
-        disabled={selectedCourses.length >= 4}
+        onClick={() => add()}
+        disabled={
+          disabled ||
+          !selectedCourse ||
+          !selectedClass ||
+          !selectedSemester
+        }
       >
         Add course
         <Plus />
