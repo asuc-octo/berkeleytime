@@ -1,8 +1,6 @@
 import Fuse from "fuse.js";
 
-import {
-  ICourse,
-} from "@/lib/api";
+import { ICourse } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 export const initialize = (courses: ICourse[]) => {

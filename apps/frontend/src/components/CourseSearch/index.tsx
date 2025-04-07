@@ -39,7 +39,7 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
           .search(searchQuery.slice(0, 24))
           .map(({ refIndex }) => catalogCourses[refIndex])
       : catalogCourses;
-  }, [catalogCourses, index, searchQuery])
+  }, [catalogCourses, index, searchQuery]);
 
   const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
 
@@ -121,23 +121,22 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
           <section className={styles.section}>
             <h2>CATALOG</h2>
             <div className={styles.catalogList}>
-              {currentCourses
-                .map((course) => (
-                  <button
-                    key={`${course.subject}-${course.number}`}
-                    className={styles.catalogItem}
-                    onClick={() => {
-                      onSelect?.(course);
-                      setSelectedCourse(course);
-                      setSearchQuery("");
-                      setIsOpen(false);
-                    }}
-                  >
-                    <span>
-                      {course.subject} {course.number}
-                    </span>
-                  </button>
-                ))}
+              {currentCourses.map((course) => (
+                <button
+                  key={`${course.subject}-${course.number}`}
+                  className={styles.catalogItem}
+                  onClick={() => {
+                    onSelect?.(course);
+                    setSelectedCourse(course);
+                    setSearchQuery("");
+                    setIsOpen(false);
+                  }}
+                >
+                  <span>
+                    {course.subject} {course.number}
+                  </span>
+                </button>
+              ))}
             </div>
           </section>
         </div>
