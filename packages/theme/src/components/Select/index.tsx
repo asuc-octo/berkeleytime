@@ -15,15 +15,17 @@ export function Select<OptionType, IsMulti extends boolean = false>(
   const style: StylesConfig<OptionType, IsMulti> = {
     control: (provided) => ({
       ...provided,
+      height: "32px",
       border: "1px solid var(--border-color)",
       backgroundColor: "var(--foreground-color)",
       color: "var(--paragraph-color)",
       borderRadius: "4px",
       "&:hover": {
-        borderColor: "var(--heading-color)",
+        color: "var(--heading-color)",
       },
       "&:focus": {
-        borderColor: "var(--heading-color)",
+        borderColor: "var(--blue-500)",
+        outline: "4px solid var(--blue-200)",
       },
       fontSize: "14px",
     }),

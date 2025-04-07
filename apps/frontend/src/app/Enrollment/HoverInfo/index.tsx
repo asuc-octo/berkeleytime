@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 
-import { ColorSquare } from "@repo/theme";
-
 import { getEnrollmentColor } from "@/components/Capacity";
+import { ColoredSquare } from "@/components/ColoredSquare";
 import { IEnrollment, Semester } from "@/lib/api";
 
 import styles from "./HoverInfo.module.scss";
@@ -49,7 +48,7 @@ export default function HoverInfo({
     <div className={styles.info}>
       <div className={styles.heading}>
         <span className={styles.course}>
-          <ColorSquare color={color} />
+          <ColoredSquare color={color} />
           {subject} {courseNumber}
         </span>
       </div>

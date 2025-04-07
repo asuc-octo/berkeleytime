@@ -1,6 +1,12 @@
-import styles from "./ColorSquare.module.scss";
+import styles from "./ColoredSquare.module.scss";
 
-export function ColorSquare({ color, size }: { color: string; size?: number }) {
+export function ColoredSquare({
+  color,
+  size,
+}: {
+  color: string;
+  size?: number;
+}) {
   return (
     <span
       style={{

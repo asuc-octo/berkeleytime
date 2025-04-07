@@ -11,7 +11,6 @@ export * from "./Text";
 export * from "./Checkbox";
 export * from "./Input";
 export * from "./Card";
-export * from "./ColorSquare";
 export * from "./Select";
 
 // https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage

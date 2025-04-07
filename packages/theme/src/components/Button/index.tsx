@@ -27,8 +27,8 @@ export function Button<T extends ElementType>({
     <Component
       {...props}
       data-variant={variant}
-      disabled={disabled ? true : undefined}
-      data-disabled={disabled ? true : undefined}
+      disabled={disabled || undefined}
+      data-disabled={disabled || undefined}
       className={classNames(styles.root, className)}
     />
   );

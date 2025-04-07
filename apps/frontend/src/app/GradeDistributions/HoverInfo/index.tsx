@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 
-import { ColorSquare } from "@repo/theme";
-
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
+import { ColoredSquare } from "@/components/ColoredSquare";
 import { useReadCourseGradeDist } from "@/hooks/api";
 import { GradeDistribution, Semester } from "@/lib/api";
 
@@ -120,7 +119,7 @@ export default function HoverInfo({
     <div className={styles.info}>
       <div className={styles.heading}>
         <span className={styles.course}>
-          <ColorSquare color={color} />
+          <ColoredSquare color={color} />
           {subject} {courseNumber}
         </span>
       </div>

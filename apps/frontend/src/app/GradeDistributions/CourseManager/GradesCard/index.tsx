@@ -2,9 +2,10 @@ import { useRef } from "react";
 
 import { Eye, EyeClosed, Trash } from "iconoir-react";
 
-import { Card, ColorSquare } from "@repo/theme";
+import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
+import { ColoredSquare } from "@/components/ColoredSquare";
 import { useReadCourseTitle } from "@/hooks/api";
 import { GradeDistribution } from "@/lib/api";
 
@@ -55,7 +56,7 @@ export default function GradesCard({
     >
       <Card.Body style={{ maxWidth: "calc(100% - 44px)" }}>
         <Card.Heading>
-          <ColorSquare color={color} size={12} />
+          <ColoredSquare color={color} size={12} />
           {subject} {number}
         </Card.Heading>
         <Card.Description
