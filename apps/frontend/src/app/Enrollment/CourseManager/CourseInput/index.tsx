@@ -24,6 +24,8 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "../../types";
+import { addRecentCourseGrade } from "@/lib/recent";
+import CourseSearch from "@/components/CourseSearch";
 
 type CourseOptionType = {
   value: ICourse;
@@ -59,16 +61,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     selectedCourse?.value.subject ?? "",
     selectedCourse?.value.number ?? ""
   );
-
-  const coursesOptions = useMemo(() => {
-    if (!courses) return [];
-    return courses?.courses.map((c) => {
-      return {
-        value: c,
-        label: `${c.subject} ${c.number}`,
-      };
-    });
-  }, [courses]);
 
   const [selectedClass, setSelectedClass] = useState<SingleValue<OptionType>>(
     DEFAULT_SELECTED_CLASS
@@ -129,6 +121,12 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const add = async () => {
     if (!selectedClass || !selectedCourse || !selectedSemester) return;
 
+    addRecentCourseGrade({
+      subject: selectedCourse.value.subject,
+      courseNumber: selectedCourse.value.number,
+      number: selectedCourse.value.number,
+    });
+
     const [semester, year] = selectedSemester.value.split(" ");
 
     const input = {
@@ -182,16 +180,36 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     [loading, coursesLoading, outputs]
   );
 
+  const handleCourseSelect = (course: ICourse) => {
+    setSelectedCourse({
+      value: course,
+      label: `${course.subject} ${course.number}`,
+    });
+
+    setSelectedClass(DEFAULT_SELECTED_CLASS);
+    setSelectedSemester(null);
+  };
+
+  const handleCourseClear = () => {
+    setSelectedCourse(null);
+    setSelectedClass(DEFAULT_SELECTED_CLASS);
+    setSelectedSemester(null);
+  };
+
   return (
     <Flex direction="row" gap="3">
       <Box flexGrow="1">
-        <Select
-          options={coursesOptions}
-          isDisabled={disabled}
-          value={selectedCourse}
-          onChange={(v) => {
-            setSelectedCourse(v);
-          }}
+        <CourseSearch
+          onSelect={handleCourseSelect}
+          onClear={handleCourseClear}
+          selectedCourse={
+            selectedCourse
+              ? {
+                  subject: selectedCourse.value.subject,
+                  courseNumber: selectedCourse.value.number,
+                }
+              : undefined
+          }
         />
       </Box>
       <Box flexGrow="1">
