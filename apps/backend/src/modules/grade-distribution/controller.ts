@@ -95,7 +95,6 @@ export const getDistribution = (distributions: IGradeDistributionItem[]) => {
   );
 
   const total = Object.values(distribution).reduce((acc, count) => acc + count);
-  console.log(distribution);
 
   return Object.entries(distribution).map(
     ([field, count]) =>

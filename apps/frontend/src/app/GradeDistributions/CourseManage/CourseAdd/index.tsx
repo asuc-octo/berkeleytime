@@ -9,7 +9,7 @@ import { Button, Flex, IconButton } from "@repo/theme";
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
-import { getRecentClasses } from "@/lib/recent";
+import { addRecentCourseGrade } from "@/lib/recent";
 
 import styles from "./CourseAdd.module.scss";
 
@@ -22,9 +22,6 @@ type CourseOptionType = {
   value: ICourse;
   label: string;
 };
-
-const [selectedCourse, setSelectedCourse] =
-  useState<SingleValue<CourseOptionType>>(null);
 
 interface SelectedCourse {
   subject: string;
@@ -145,36 +142,43 @@ export default function CourseAdd({
     return [...list, ...filteredOptions];
   }, [courseData, selectedInstructor, byData]);
 
-  const handleCourseSelect = (course: {
-    subject: string;
-    courseNumber: string;
-  }) => {
-    const matchingCourse = data?.courses.find(
-      (c) => c.subject === course.subject && c.number === course.courseNumber
-    );
-
-    if (!matchingCourse) return;
-
+  const handleCourseSelect = (course: ICourse) => {
     setSelectedCourse({
-      value: matchingCourse,
-      label: `${matchingCourse.subject} ${matchingCourse.number}`,
+      value: course,
+      label: `${course.subject} ${course.number}`,
     });
 
     setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
     setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
   };
 
+  const handleCourseClear = () => {
+    setSelectedCourse(null);
+    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
+    setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
+  };
+
   return (
-    <Flex direction={{ base: "column", md: "row" }} gap="3">
-      <div className={styles.courseSelectCont}>
-        <CourseSearch onSelect={handleCourseSelect} />
-      </div>
+    <Flex direction="row" gap="3">
+      <CourseSearch
+        onSelect={handleCourseSelect}
+        onClear={handleCourseClear}
+        selectedCourse={
+          selectedCourse
+            ? {
+                subject: selectedCourse.value.subject,
+                courseNumber: selectedCourse.value.number,
+              }
+            : undefined
+        }
+      />
       <div className={styles.selectCont}>
         <Select
           classNamePrefix="react-select"
           options={byOptions}
           value={byData}
           onChange={(s) => {
+            setSelectedCourse(selectedCourse);
             setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
             setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
             setByData(s);
@@ -234,6 +238,11 @@ export default function CourseAdd({
             selectedSemester.value,
             selectedInstructor.value
           );
+          addRecentCourseGrade({
+            subject: selectedCourse.value.subject,
+            courseNumber: selectedCourse.value.number,
+            number: selectedCourse.value.number,
+          });
         }}
         disabled={selectedCourses.length >= 4}
       >

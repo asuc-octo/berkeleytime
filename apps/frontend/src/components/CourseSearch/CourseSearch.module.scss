@@ -1,6 +1,11 @@
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
 .searchInput {
   width: 100%;
-  padding: 0.625rem 1rem;
+  padding: 0.625rem 1rem 0.625rem 2.5rem; // left padding for icon space
   background-color: #1a1a1a;
   border: 1px solid #333;
   border-radius: 0.5rem;
@@ -17,6 +22,15 @@
   }
 }
 
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  color: #aaa;
+  pointer-events: none;
+}
+
 .section {
   padding: 0.5rem 0;
 
@@ -30,17 +44,38 @@
   }
 }
 
-.recentCourses,
+.recentCourses {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.25rem 1rem 0.5rem;
+  overflow-x: auto;
+}
+
+.courseButton {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
 .catalogList {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   padding: 0 0.5rem;
-  max-height: 200px;
-  overflow-y: auto;
 }
 
-.courseButton,
 .catalogItem {
   text-align: left;
   background: transparent;
@@ -74,4 +109,6 @@
   z-index: 10;
   position: absolute;
   width: 33%;
+  display: flex;
+  flex-direction: column;
 }

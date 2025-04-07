@@ -33,10 +33,8 @@ interface RecentScheduleData {
   year: number;
 }
 
-interface RecentGradeData {
+interface RecentCourseGrade {
   subject: string;
-  year: number;
-  semester: Semester;
   courseNumber: string;
   number: string;
 }
@@ -100,17 +98,13 @@ export function addRecentClass({
   });
 }
 
-export function addRecentGrade({
+export function addRecentCourseGrade({
   subject,
-  year,
-  semester,
   courseNumber,
   number,
-}: RecentGradeData) {
+}: RecentCourseGrade) {
   addToRecent(Recent.Grades, {
     subject: subject,
-    year: year,
-    semester: semester,
     courseNumber: courseNumber,
     number: number,
   });
@@ -121,7 +115,7 @@ export function getRecentClasses() {
 }
 
 export function getRecentGrades() {
-  return getRecent(Recent.Grades) as RecentGradeData[];
+  return getRecent(Recent.Grades) as RecentCourseGrade[];
 }
 
 export function addRecentSchedule({

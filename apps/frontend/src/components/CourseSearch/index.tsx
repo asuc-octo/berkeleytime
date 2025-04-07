@@ -1,41 +1,56 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client";
+import { Search } from "iconoir-react";
+import { SingleValue } from "react-select";
 
-import { GET_COURSES, GetCoursesResponse } from "@/lib/api";
+import { GET_COURSES, GetCoursesResponse, ICourse, Semester } from "@/lib/api";
 import { getRecentClasses, getRecentGrades } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
 
 interface CourseSearchProps {
-  onSelect?: (course: { subject: string; courseNumber: string }) => void;
+  onSelect?: (course: ICourse) => void;
+  onClear?: () => void;
+  selectedCourse?: { subject: string; courseNumber: string };
 }
 
-export default function CourseSearch({ onSelect }: CourseSearchProps) {
+type CourseOptionType = {
+  value: ICourse;
+  label: string;
+};
+
+type OptionType = {
+  value: string;
+  label: string;
+};
+
+interface SelectedCourse {
+  subject: string;
+  courseNumber: string;
+  year?: number;
+  semester?: Semester;
+  givenName?: string;
+  familyName?: string;
+}
+
+export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const recentGrades = useMemo(() => getRecentGrades(), []);
+  const [recentGrades, setRecentGrades] = useState<
+    ReturnType<typeof getRecentGrades>
+  >([]);
   const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];
-    return data.courses.map((course) => ({
-      subject: course.subject,
-      courseNumber: course.number,
-      title: course.title,
-    }));
+    return data.courses; // no transformation
   }, [data]);
 
-  const handleCourseClick = (subject: string, courseNumber: string) => {
-    if (onSelect) {
-      onSelect({ subject, courseNumber });
-    }
-    setIsOpen(false); // Close dropdown on selection
-  };
+  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -51,17 +66,34 @@ export default function CourseSearch({ onSelect }: CourseSearchProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      setRecentGrades(getRecentGrades());
+    }
+  }, [isOpen]);
   return (
-    <div ref={wrapperRef} className={styles.container}>
-      <input
-        type="text"
-        className={styles.searchInput}
-        placeholder="Search courses..."
-        value={searchQuery}
-        onFocus={() => setIsOpen(true)}
-        onClick={() => setIsOpen(true)}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
+    <div ref={wrapperRef} className={styles.searchContainer}>
+      <div className={styles.inputWrapper}>
+        <Search className={styles.searchIcon} />
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="Choose a class..."
+          value={
+            searchQuery ||
+            (selectedCourse
+              ? `${selectedCourse.subject} ${selectedCourse.number}`
+              : "")
+          }
+          onFocus={() => setIsOpen(true)}
+          onClick={() => setIsOpen(true)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setSelectedCourse(null);
+            if (onClear) onClear();
+          }}
+        />
+      </div>
 
       {isOpen && (
         <div className={styles.dropdownPanel}>
@@ -73,9 +105,19 @@ export default function CourseSearch({ onSelect }: CourseSearchProps) {
                   <button
                     key={`grades-${course.subject}-${course.courseNumber}-${index}`}
                     className={styles.courseButton}
-                    onClick={() =>
-                      handleCourseClick(course.subject, course.courseNumber)
-                    }
+                    onClick={() => {
+                      const full = data?.courses.find(
+                        (c) =>
+                          c.subject === course.subject &&
+                          c.number === course.courseNumber
+                      );
+                      if (full) {
+                        onSelect?.(full);
+                        setSelectedCourse(full);
+                        setSearchQuery("");
+                      }
+                      setIsOpen(false);
+                    }}
                   >
                     {course.subject} {course.courseNumber}
                   </button>
@@ -89,20 +131,23 @@ export default function CourseSearch({ onSelect }: CourseSearchProps) {
             <div className={styles.catalogList}>
               {catalogCourses
                 .filter((course) =>
-                  `${course.subject} ${course.courseNumber} ${course.title}`
+                  `${course.subject} ${course.number} ${course.title}`
                     .toLowerCase()
                     .includes(searchQuery.toLowerCase())
                 )
-                .map((course, index) => (
+                .map((course) => (
                   <button
-                    key={`${course.subject}-${course.courseNumber}-${index}`}
+                    key={`${course.subject}-${course.number}`}
                     className={styles.catalogItem}
-                    onClick={() =>
-                      handleCourseClick(course.subject, course.courseNumber)
-                    }
+                    onClick={() => {
+                      onSelect?.(course);
+                      setSelectedCourse(course);
+                      setSearchQuery("");
+                      setIsOpen(false);
+                    }}
                   >
                     <span>
-                      {course.subject} {course.courseNumber}
+                      {course.subject} {course.number}
                     </span>
                   </button>
                 ))}
