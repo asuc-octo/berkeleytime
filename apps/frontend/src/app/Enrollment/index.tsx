@@ -217,7 +217,7 @@ export default function Enrollment() {
             .map(([, value]) => value)
         );
         return m > acc ? m : acc;
-      }, 0) + 20
+      }, 0) * 1.2
     );
   }, [data]);
 
