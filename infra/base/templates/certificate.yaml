@@ -12,3 +12,4 @@ spec:
     - stanfurdtime.com
     - "*.stanfurdtime.com"
     - "*.dev.stanfurdtime.com"
+    - beta.berkeleytime.com
