@@ -16,7 +16,7 @@ import {
   ReadGradeDistributionResponse,
   Semester,
 } from "@/lib/api";
-import { addRecentCourseGrade } from "@/lib/recent";
+import { RecentType, addRecent } from "@/lib/recent";
 
 import {
   Input,
@@ -165,9 +165,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     )
       return;
 
-    addRecentCourseGrade({
+    addRecent(RecentType.Course, {
       subject: selectedCourse.value.subject,
-      courseNumber: selectedCourse.value.number,
       number: selectedCourse.value.number,
     });
 

@@ -16,7 +16,7 @@ import {
   ReadEnrollmentResponse,
   Semester,
 } from "@/lib/api";
-import { addRecentCourseGrade } from "@/lib/recent";
+import { RecentType, addRecent } from "@/lib/recent";
 
 import {
   LIGHT_COLORS,
@@ -81,7 +81,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
-  }, [courseData]);
+  }, [courseData, selectedSemester]);
 
   const classOptions: OptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_CLASS];
@@ -111,14 +111,13 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return opts;
     }
     return [...list, ...opts];
-  }, [courseData, selectedSemester]);
+  }, [courseData, selectedClass, selectedSemester]);
 
   const add = async () => {
     if (!selectedClass || !selectedCourse || !selectedSemester) return;
 
-    addRecentCourseGrade({
+    addRecent(RecentType.Course, {
       subject: selectedCourse.value.subject,
-      courseNumber: selectedCourse.value.number,
       number: selectedCourse.value.number,
     });
 

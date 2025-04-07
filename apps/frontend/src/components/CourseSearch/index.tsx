@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import { Search } from "iconoir-react";
 
 import { GET_COURSES, GetCoursesResponse, ICourse } from "@/lib/api";
-import { getRecentGrades } from "@/lib/recent";
+import { Recent, RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
 import { initialize } from "./browser";
@@ -20,9 +20,10 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [recentGrades, setRecentGrades] = useState<
-    ReturnType<typeof getRecentGrades>
-  >([]);
+  const [recentGrades, setRecentGrades] = useState<Recent<RecentType.Course>[]>(
+    []
+  );
+
   const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
 
   const catalogCourses = useMemo(() => {
@@ -59,10 +60,11 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      setRecentGrades(getRecentGrades());
-    }
+    if (!isOpen) return;
+
+    setRecentGrades(getRecents(RecentType.Course));
   }, [isOpen]);
+
   return (
     <div ref={wrapperRef} className={styles.searchContainer}>
       <div className={styles.inputWrapper}>
@@ -93,15 +95,15 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
             <h2>RECENT</h2>
             {recentGrades.length > 0 && (
               <div className={styles.recentCourses}>
-                {recentGrades.slice(0, 5).map((course, index) => (
+                {recentGrades.map((course, index) => (
                   <button
-                    key={`grades-${course.subject}-${course.courseNumber}-${index}`}
+                    key={`grades-${course.subject}-${course.number}-${index}`}
                     className={styles.courseButton}
                     onClick={() => {
                       const full = data?.courses.find(
                         (c) =>
                           c.subject === course.subject &&
-                          c.number === course.courseNumber
+                          c.number === course.number
                       );
                       if (full) {
                         onSelect?.(full);
@@ -111,7 +113,7 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
                       setIsOpen(false);
                     }}
                   >
-                    {course.subject} {course.courseNumber}
+                    {course.subject} {course.number}
                   </button>
                 ))}
               </div>
