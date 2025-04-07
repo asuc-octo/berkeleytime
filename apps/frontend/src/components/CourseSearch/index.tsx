@@ -7,6 +7,7 @@ import { GET_COURSES, GetCoursesResponse, ICourse } from "@/lib/api";
 import { getRecentGrades } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
+import { initialize } from "./browser";
 
 interface CourseSearchProps {
   onSelect?: (course: ICourse) => void;
@@ -28,6 +29,17 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
     if (!data?.courses) return [];
     return data.courses; // no transformation
   }, [data]);
+
+  const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
+  const currentCourses = useMemo(() => {
+    return searchQuery
+      ? index
+          // Limit query because Fuse performance decreases linearly by
+          // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
+          .search(searchQuery.slice(0, 24))
+          .map(({ refIndex }) => catalogCourses[refIndex])
+      : catalogCourses;
+  }, [catalogCourses, index, searchQuery])
 
   const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
 
@@ -109,12 +121,7 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
           <section className={styles.section}>
             <h2>CATALOG</h2>
             <div className={styles.catalogList}>
-              {catalogCourses
-                .filter((course) =>
-                  `${course.subject} ${course.number} ${course.title}`
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase())
-                )
+              {currentCourses
                 .map((course) => (
                   <button
                     key={`${course.subject}-${course.number}`}
