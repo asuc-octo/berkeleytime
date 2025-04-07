@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { Plus } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import { SingleValue } from "react-select";
@@ -11,8 +11,6 @@ import { Box, Button, Flex } from "@repo/theme";
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import {
-  GET_COURSES,
-  GetCoursesResponse,
   ICourse,
   READ_ENROLLMENT,
   ReadEnrollmentResponse,
@@ -48,9 +46,6 @@ const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const { data: courses, loading: coursesLoading } =
-    useQuery<GetCoursesResponse>(GET_COURSES);
 
   const [loading, setLoading] = useState(false);
 
@@ -176,8 +171,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   };
 
   const disabled = useMemo(
-    () => loading || coursesLoading || outputs.length === 4,
-    [loading, coursesLoading, outputs]
+    () => loading || outputs.length === 4,
+    [loading, outputs]
   );
 
   const handleCourseSelect = (course: ICourse) => {
