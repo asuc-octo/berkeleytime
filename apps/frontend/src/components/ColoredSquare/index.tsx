@@ -1,19 +1,17 @@
 import styles from "./ColoredSquare.module.scss";
 
-export function ColoredSquare({
-  color,
-  size,
-}: {
+interface ColoredSquareProps {
   color: string;
-  size?: number;
-}) {
+  size?: "sm" | "md";
+}
+
+export function ColoredSquare({ color, size = "md" }: ColoredSquareProps) {
   return (
     <span
       style={{
         backgroundColor: color,
-        width: size ? size : 12,
-        height: size ? size : 12,
       }}
+      data-size={size}
       className={styles.root}
     />
   );

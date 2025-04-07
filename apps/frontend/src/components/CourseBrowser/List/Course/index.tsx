@@ -10,7 +10,6 @@ import styles from "./Course.module.scss";
 interface Props {
   index: number;
   onClick: MouseEventHandler<HTMLDivElement>;
-  showGrades: boolean;
 }
 
 type CourseProps = Props & ICourse;

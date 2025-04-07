@@ -151,13 +151,12 @@ export const GET_COURSES = gql`
       subject
       number
       title
-      # TODO: Grade distribution not yet supported by backend
       gradeDistribution {
         average
-        # distribution {
-        #   letter
-        #   count
-        # }
+        distribution {
+          letter
+          count
+        }
       }
       academicCareer
       finalExam

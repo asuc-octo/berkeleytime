@@ -23,7 +23,6 @@ interface CourseBrowserProps {
   responsive?: boolean;
   persistent?: boolean;
   defaultSemesters?: Semester[];
-  showGrades?: boolean;
 }
 
 export default function CourseBrowser({
@@ -31,7 +30,6 @@ export default function CourseBrowser({
   responsive = true,
   persistent,
   defaultSemesters,
-  showGrades = false,
 }: CourseBrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
@@ -140,7 +138,6 @@ export default function CourseBrowser({
     if (currentSortBy) {
       // Clone the courses to avoid sorting in-place
       filteredClasses = structuredClone(filteredClasses).sort((a, b) => {
-        // TODO: grade distribution not yet supported
         if (currentSortBy === SortBy.AverageGrade) {
           return b.gradeDistribution.average === a.gradeDistribution.average
             ? 0
@@ -202,7 +199,6 @@ export default function CourseBrowser({
           currentQuery={currentQuery}
           // Update local filters
           setCurrentQuery={setLocalQuery}
-          showGrades={showGrades}
         />
       )}
     </div>
