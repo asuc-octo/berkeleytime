@@ -1,14 +1,15 @@
-import {postType} from "@repo/common";
+import {PostType} from "@repo/common";
 import { SuggestedClassesModule } from "./generated-types/module-types";
 
-export const formatPost = async (post: postType) => {
+export interface PostRelationships {
+    posts: SuggestedClassesModule.Post[];
+}
+export type IntermediatePost = PostRelationships;
+
+export const formatPost = async (post: PostType) => {
+    
     return {
-        semester: post.semester, 
-        year: post.year,
-        sessionId: post.sessionId, 
-        courseNumber: post.courseNumber, 
-        number: post.number,
-        subject: post.subject,
-        juliana: post.juliana,
+        ...post, 
     }
+
 };

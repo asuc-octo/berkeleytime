@@ -3,13 +3,13 @@ import {gql} from "graphql-tag";
 const typedef = gql`
 
     type Post {
-        semester: Semester!
+        semester: String!
         year: Int!
-        sessionId: SectionIdentifier!
+        sessionId: String!
         courseNumber: Int!
-        number: ClassNumber!
+        number: Int!
         subject: String!
-        JulianaInfo: JulianaInfo!
+        julianaInfo: JulianaInfo!
     }
 
     type JulianaInfo {
@@ -21,18 +21,25 @@ const typedef = gql`
         getAllPosts: [Post!]!
     }
 
+    input CreatePostInput {
+        semester: String!
+        year: Int!
+        sessionId: String!
+        courseNumber: Int!
+        number: Int!
+        subject: String!
+        julianaInfo: JulianaInfo!
+    }
+    
+    input UpdatePostInput {
+        courseNumber: Int!
+    }
+
     type Mutation {
-        addPost(
-            semester: Semester!
-            year: Int!
-            sessionId: SectionIdentifier!
-            courseNumber: Int!
-            number: ClassNumber!
-            subject: String!
-            image: String!
-            text: String!
-        ): Post!
-      }
+        addPost(post: CreatePostInput): Post
+        modifyPost(sost: UpdatePostInput!): Post
+        deletePost(courseNumber: Int!: Int
+    }   
 `;
 
 export default typedef;

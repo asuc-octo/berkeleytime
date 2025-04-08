@@ -1,7 +1,8 @@
-// import resolver from "./resolver";
-// import typeDef from "./typedefs/schedule";
+import resolver from "./resolver";
+import typeDef from "./typedefs/suggested-classes";
 
-// export default {
-//   resolver,
-//   typeDef,
-// };
+export default {
+  resolver,
+  typeDef,
+};
+
