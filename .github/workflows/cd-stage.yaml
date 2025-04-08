@@ -48,8 +48,8 @@ jobs:
           grades:
             image:
               tag: latest
-        host: $DEPLOYMENT_URL
+        host: ${{ env.DEPLOYMENT_URL }}
         mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
-      host: $DEPLOYMENT_URL
+      host: ${{ env.DEPLOYMENT_URL }}
     secrets: inherit

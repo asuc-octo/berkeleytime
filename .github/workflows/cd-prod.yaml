@@ -36,6 +36,6 @@ jobs:
       name: bt-prod-app
       version: "1.0.0"
       values: |
-        host: $DEPLOYMENT_URL
-      host: $DEPLOYMENT_URL
+        host: ${{ env.DEPLOYMENT_URL }}
+      host: ${{ env.DEPLOYMENT_URL }}
     secrets: inherit
