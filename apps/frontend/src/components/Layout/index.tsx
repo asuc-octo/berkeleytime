@@ -6,6 +6,7 @@ import NavigationBar from "@/components/NavigationBar";
 import Banner from "./Banner";
 import Feedback from "./Feedback";
 import styles from "./Layout.module.scss";
+import Notification from "./Notification";
 
 interface LayoutProps {
   header?: boolean;
@@ -17,6 +18,7 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
     <div className={styles.root}>
       <div className={styles.view}>
         <Banner />
+        <Notification />
         {header && <NavigationBar />}
         <Outlet />
       </div>

@@ -1,0 +1,29 @@
+.root {
+  min-height: 58px;
+  background-color: #f8f8f8;
+  color: #383838;
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (width <= 992px) {
+    display: none;
+  }
+
+  .group {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+
+  .close {
+    color: #383838;
+  }
+}
