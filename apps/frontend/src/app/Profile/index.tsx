@@ -1,27 +1,12 @@
 import { useState } from "react";
 
-import {
-  ArrowSeparateVertical,
-  BookmarkSolid,
-  Collapse,
-  Expand,
-  Search,
-} from "iconoir-react";
-
-
 import classNames from "classnames";
 import { HelpCircle, LogOut, ProfileCircle, Star } from "iconoir-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
-  Box,
-  Button,
-  Container,
   Flex,
-  Heading,
-  IconButton,
   Text,
-  Tooltip,
 } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
