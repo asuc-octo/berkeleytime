@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
+import { ColoredSquare } from "@/components/ColoredSquare";
 import { useReadCourseGradeDist } from "@/hooks/api";
 import { GradeDistribution, Semester } from "@/lib/api";
 
@@ -10,7 +11,7 @@ interface HoverInfoProps {
   color: string;
   subject: string;
   courseNumber: string;
-  gradeDistribution: GradeDistribution;
+  gradeDistribution?: GradeDistribution;
   givenName?: string;
   familyName?: string;
   semester?: Semester;
@@ -117,20 +118,22 @@ export default function HoverInfo({
   return (
     <div className={styles.info}>
       <div className={styles.heading}>
-        <span style={{ backgroundColor: color }} className={styles.color} />
         <span className={styles.course}>
+          <ColoredSquare color={color} size="sm" />
           {subject} {courseNumber}
         </span>
       </div>
-      <div className={styles.distType}>
-        {givenName && familyName
-          ? `${givenName} ${familyName} `
-          : "All Instructors "}
-        •{semester && year ? ` ${semester} ${year}` : " All Semesters"}
-      </div>
+      {gradeDistribution && (
+        <div className={styles.distType}>
+          {givenName && familyName
+            ? `${givenName} ${familyName} `
+            : "All Instructors "}
+          •{semester && year ? ` ${semester} ${year}` : " All Semesters"}
+        </div>
+      )}
       <div className={styles.label}>Course Average</div>
       <div className={styles.value}>
-        {courseGradeDist ? (
+        {courseGradeDist && gradeDistribution ? (
           <span>
             <AverageGrade
               style={GRADE_STYLE}
@@ -139,17 +142,21 @@ export default function HoverInfo({
             ({gradeDistribution.average?.toFixed(3)})
           </span>
         ) : (
-          "(...)"
+          "No data"
         )}
       </div>
       <div className={styles.label}>Section Average</div>
       <div className={styles.value}>
-        <AverageGrade
-          style={GRADE_STYLE}
-          gradeDistribution={gradeDistribution}
-          tooltip="for this instructor/semester combination"
-        />
-        ({gradeDistribution.average?.toFixed(3)})
+        {gradeDistribution && (
+          <AverageGrade
+            style={GRADE_STYLE}
+            gradeDistribution={gradeDistribution}
+            tooltip="for this instructor/semester combination"
+          />
+        )}
+        {gradeDistribution
+          ? `(${gradeDistribution.average?.toFixed(3)}`
+          : "No data"}
       </div>
       {hoveredLetter && (
         <div>

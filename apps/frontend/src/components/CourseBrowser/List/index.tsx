@@ -24,7 +24,6 @@ interface ListProps {
   setCurrentQuery: (query: string) => void;
   persistent?: boolean;
   loading: boolean;
-  showGrades: boolean;
 }
 
 export default function List({
@@ -38,7 +37,6 @@ export default function List({
   setCurrentQuery,
   persistent,
   loading,
-  showGrades,
 }: ListProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
@@ -113,7 +111,6 @@ export default function List({
                   key={key}
                   ref={virtualizer.measureElement}
                   onClick={() => onSelect(course)}
-                  showGrades={showGrades}
                 />
               );
             })}

@@ -44,6 +44,17 @@ export interface ReadCourseResponse {
   course: ICourse;
 }
 
+export const READ_COURSE_TITLE = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      courseId
+      subject
+      number
+      title
+    }
+  }
+`;
+
 export const READ_COURSE = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
@@ -123,6 +134,7 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
               givenName
             }
           }
+          number
         }
       }
     }
@@ -139,13 +151,12 @@ export const GET_COURSES = gql`
       subject
       number
       title
-      # TODO: Grade distribution not yet supported by backend
       gradeDistribution {
         average
-        # distribution {
-        #   letter
-        #   count
-        # }
+        distribution {
+          letter
+          count
+        }
       }
       academicCareer
       finalExam
