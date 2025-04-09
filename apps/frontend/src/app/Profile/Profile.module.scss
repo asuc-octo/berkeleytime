@@ -91,4 +91,18 @@
       color: var(--blue-600);
     }
   }
+
+  .classesPlaceholder {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--foreground-color);
+    height: 128px;
+  }
+
+  .schedulesPlaceholder {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--foreground-color);
+    height: 84px;
+  }
 }

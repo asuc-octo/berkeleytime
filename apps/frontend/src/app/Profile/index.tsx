@@ -1,5 +1,8 @@
 import { useMemo, useState } from "react";
 
+import { Calendar } from "iconoir-react";
+
+
 import classNames from "classnames";
 import { HelpCircle, LogOut, ProfileCircle, Star } from "iconoir-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -67,13 +70,13 @@ function YourAccount({ user }: { user: IUser | undefined }) {
       <h2>Bookmarked Classes</h2>  
       <div>
         <Carousel.CarouselNoTitle>
-          {/* TODO: Better placeholder states */}
+          {/* TODO: Update placeholder here alongside dashboard placeholder */}
           {user.bookmarkedClasses.length === 0 ? (
             <Carousel.Item>
               <Flex
                 align="center"
                 justify="center"
-                className={styles.placeholder}
+                className={styles.classesPlaceholder}
               >
                 <Text>No bookmarked classes</Text>
               </Flex>
@@ -94,31 +97,46 @@ function YourAccount({ user }: { user: IUser | undefined }) {
         { schedulesLoading ? <></> : (
           <div>
             <h2>Saved Schedules</h2>
-            {Object.keys(schedulesBySemester)
-              .sort((a, b) => {
-                return schedulesBySemester[a][0].year ==
-                  schedulesBySemester[b][0].year
-                  ? SEMESTER_ORDER.indexOf(schedulesBySemester[b][0].semester) -
-                      SEMESTER_ORDER.indexOf(schedulesBySemester[a][0].semester)
-                  : schedulesBySemester[b][0].year -
-                      schedulesBySemester[a][0].year;
-              })
-              .map((sem) => {
-                return (
-                  <Carousel.CarouselNoTitle>
-                    {schedulesBySemester[sem].map(({ _id, name, classes }, i) => {
-                      return (
-                        <Carousel.Schedule
-                          key={i}
-                          _id={_id}
-                          name={name}
-                          classes={classes}
-                        />
-                      );
-                    })}
-                  </Carousel.CarouselNoTitle>
-                );
-              })}
+            {/* TODO: Improve this placeholder also */}
+            {Object.keys(schedulesBySemester).length == 0 ? (
+              <Carousel.Item>
+                <Flex
+                  align="center"
+                  justify="center"
+                  className={styles.schedulesPlaceholder}
+                >
+                  <Text>No saved schedules</Text>
+                </Flex>
+              </Carousel.Item>
+            ) : (
+              <Flex direction="column" gap="5">
+                {Object.keys(schedulesBySemester)
+                  .sort((a, b) => {
+                    return schedulesBySemester[a][0].year ==
+                      schedulesBySemester[b][0].year
+                      ? SEMESTER_ORDER.indexOf(schedulesBySemester[b][0].semester) -
+                          SEMESTER_ORDER.indexOf(schedulesBySemester[a][0].semester)
+                      : schedulesBySemester[b][0].year -
+                          schedulesBySemester[a][0].year;
+                  })
+                  .map((sem) => {
+                    return (
+                      <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
+                        {schedulesBySemester[sem].map(({ _id, name, classes }, i) => {
+                          return (
+                            <Carousel.Schedule
+                              key={i}
+                              _id={_id}
+                              name={name}
+                              classes={classes}
+                            />
+                          );
+                        })}
+                      </Carousel.Root>
+                    );
+                  })}
+              </Flex>
+            )}
             <Link to={"/schedules"} className={styles.afterCarouselLink}>
               See all schedules
             </Link>
