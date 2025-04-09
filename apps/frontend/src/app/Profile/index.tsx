@@ -1,8 +1,32 @@
 import { useState } from "react";
 
+import {
+  ArrowSeparateVertical,
+  BookmarkSolid,
+  Collapse,
+  Expand,
+  Search,
+} from "iconoir-react";
+
+
 import classNames from "classnames";
 import { HelpCircle, LogOut, ProfileCircle, Star } from "iconoir-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+  Tooltip,
+} from "@repo/theme";
+
+import Carousel from "@/components/Carousel";
+import ClassCard from "@/components/ClassCard";
+import ClassDrawer from "@/components/ClassDrawer";
 
 import { useReadUser } from "@/hooks/api/users/useReadUser";
 import { signOut } from "@/lib/api";
@@ -32,12 +56,34 @@ function YourAccount({ user }: { user: IUser | undefined }) {
             {user.student ? "Yes" : "No"}
           </span>
         </div>
-        <div className={styles.infoItem}>
-          <label>Student Account</label>
-          <span className={styles.infoValue}>
-            {user.student ? "Yes" : "No"}
-          </span>
-        </div>
+      </div>
+      <h2>Bookmarked Classes</h2>  
+      <div>
+        <Carousel.CarouselNoTitle>
+            {/* TODO: Better placeholder states */}
+            {user.bookmarkedClasses.length === 0 ? (
+              <Carousel.Item>
+                <Flex
+                  align="center"
+                  justify="center"
+                  className={styles.placeholder}
+                >
+                  <Text>No bookmarked classes</Text>
+                </Flex>
+              </Carousel.Item>
+            ) : (
+              user.bookmarkedClasses.map((bookmarkedClass, index) => (
+                <Carousel.Item key={index}>
+                  <ClassDrawer {...bookmarkedClass}>
+                    <ClassCard class={bookmarkedClass} />
+                  </ClassDrawer>
+                </Carousel.Item>
+              ))
+            )}
+          </Carousel.CarouselNoTitle>
+          <Link to={"/catalog"} className={styles.afterCarouselLink}>
+            See all classes
+          </Link>
       </div>
     </div>
   );
