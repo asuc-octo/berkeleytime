@@ -44,6 +44,17 @@ export interface ReadCourseResponse {
   course: ICourse;
 }
 
+export const READ_COURSE_TITLE = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      courseId
+      subject
+      number
+      title
+    }
+  }
+`;
+
 export const READ_COURSE = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
@@ -71,6 +82,60 @@ export const READ_COURSE = gql`
         year
         semester
         number
+      }
+    }
+  }
+`;
+
+export const READ_COURSE_GRADE_DIST = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
+        }
+      }
+    }
+  }
+`;
+
+export const READ_COURSE_WITH_INSTRUCTOR = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      subject
+      number
+      title
+      description
+      academicCareer
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
+        }
+      }
+      gradingBasis
+      finalExam
+      requirements
+      requiredCourses {
+        subject
+        number
+      }
+      classes {
+        year
+        semester
+        number
+        primarySection {
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
+          }
+          number
+        }
       }
     }
   }

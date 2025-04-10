@@ -1,20 +1,18 @@
 import { IScheduleClass, ScheduleIdentifier, Semester } from "@/lib/api";
 
-enum Recent {
-  Classes,
-  Schedules,
+export enum RecentType {
+  Class = "recent-classes",
+  Schedule = "recent-schedules",
+  Course = "recent-courses",
 }
 
-const Key = {
-  [Recent.Classes]: "recent-classes",
-  [Recent.Schedules]: "recent-schedule",
-};
 const MaxLength = {
-  [Recent.Classes]: 10,
-  [Recent.Schedules]: 5,
+  [RecentType.Class]: 10,
+  [RecentType.Schedule]: 5,
+  [RecentType.Course]: 5,
 };
 
-interface RecentClassData {
+interface RecentClass {
   subject: string;
   year: number;
   semester: Semester;
@@ -22,7 +20,7 @@ interface RecentClassData {
   number: string;
 }
 
-interface RecentScheduleData {
+interface RecentSchedule {
   _id: ScheduleIdentifier;
   name: string;
   classes: IScheduleClass[];
@@ -30,101 +28,67 @@ interface RecentScheduleData {
   year: number;
 }
 
-function filterRecents(type: Recent, obj: any) {
-  let recents = getRecent(type);
-
-  recents = recents.filter((recent) => {
-    let allEqual = true;
-    for (let key of Object.keys(recent)) {
-      if (typeof recent[key] == "string" && key !== "name")
-        allEqual = allEqual && recent[key] === obj[key];
-    }
-    return !allEqual;
-  });
-
-  return recents;
+interface RecentCourse {
+  subject: string;
+  number: string;
 }
 
-function addToRecent(type: Recent, obj: any) {
-  let recents = filterRecents(type, obj);
+export type Recent<T extends RecentType> = T extends RecentType.Class
+  ? RecentClass
+  : T extends RecentType.Schedule
+    ? RecentSchedule
+    : RecentCourse;
 
-  recents.unshift(obj);
-
-  recents = recents.slice(0, MaxLength[type]);
-
-  const item = JSON.stringify(recents);
-  localStorage.setItem(Key[type], item);
-}
-
-function removeFromRecent(type: Recent, obj: any) {
-  const recents = filterRecents(type, obj);
-  const item = JSON.stringify(recents);
-  localStorage.setItem(Key[type], item);
-}
-
-function getRecent(type: Recent) {
+export const getRecents = <T extends RecentType>(
+  type: T,
+  value?: Recent<T>
+) => {
   try {
-    const item = localStorage.getItem(Key[type]);
+    const item = localStorage.getItem(type);
     if (!item) return [];
 
-    return JSON.parse(item) as any[];
+    const recents = JSON.parse(item) as Recent<T>[];
+    if (!value) return recents;
+
+    return recents.filter((recent) => {
+      let equal = true;
+
+      for (const key of Object.keys(recent)) {
+        if (
+          recent[key as keyof typeof recent] ===
+          value[key as keyof typeof value]
+        )
+          continue;
+
+        equal = false;
+
+        break;
+      }
+
+      return !equal;
+    });
   } catch {
     return [];
   }
-}
+};
 
-export function addRecentClass({
-  subject,
-  year,
-  semester,
-  courseNumber,
-  number,
-}: RecentClassData) {
-  addToRecent(Recent.Classes, {
-    subject: subject,
-    year: year,
-    semester: semester,
-    courseNumber: courseNumber,
-    number: number,
-  });
-}
+export const addRecent = <T extends RecentType>(
+  type: RecentType,
+  recent: Recent<T>
+) => {
+  const recents = getRecents(type, recent);
+  recents.unshift(recent);
 
-export function getRecentClasses() {
-  return getRecent(Recent.Classes) as RecentClassData[];
-}
+  const item = JSON.stringify(recents.slice(0, MaxLength[type]));
+  localStorage.setItem(type, item);
+};
 
-export function addRecentSchedule({
-  _id,
-  name,
-  classes,
-  semester,
-  year,
-}: RecentScheduleData) {
-  addToRecent(Recent.Schedules, {
-    _id: _id,
-    name: name,
-    classes: classes,
-    semester: semester,
-    year: year,
-  });
-}
+export const removeRecent = <T extends RecentType>(
+  type: RecentType,
+  recent: Recent<T>
+) => {
+  const recents = getRecents(type, recent);
 
-export function removeRecentSchedule({
-  _id,
-  name,
-  classes,
-  semester,
-  year,
-}: RecentScheduleData) {
-  removeFromRecent(Recent.Schedules, {
-    _id: _id,
-    name: name,
-    classes: classes,
-    semester: semester,
-    year: year,
-  });
-}
-
-export function getRecentSchedules() {
-  return getRecent(Recent.Schedules) as RecentScheduleData[];
-}
+  const item = JSON.stringify(recents);
+  localStorage.setItem(type, item);
+};

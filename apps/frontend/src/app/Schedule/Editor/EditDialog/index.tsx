@@ -15,7 +15,7 @@ import {
 
 import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-import { removeRecentSchedule } from "@/lib/recent";
+import { RecentType, removeRecent } from "@/lib/recent";
 
 interface EditDialogProps {
   children: ReactNode;
@@ -50,7 +50,7 @@ export default function EditDialog({ children }: EditDialogProps) {
 
   // TODO: Confirmation dialog
   const remove = async () => {
-    removeRecentSchedule(schedule);
+    removeRecent(RecentType.Schedule, schedule);
 
     await deleteSchedule(schedule._id);
 

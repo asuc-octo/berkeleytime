@@ -8,7 +8,7 @@ import Carousel from "@/components/Carousel";
 import Footer from "@/components/Footer";
 import { useReadSchedules, useReadUser } from "@/hooks/api";
 import { ISchedule, signIn } from "@/lib/api";
-import { getRecentSchedules } from "@/lib/recent";
+import { RecentType, getRecents } from "@/lib/recent";
 
 import CreateScheduleDialog from "./CreateScheduleDialog";
 import styles from "./Schedules.module.scss";
@@ -36,7 +36,7 @@ export default function Schedules() {
       : ({} as { [key: string]: ISchedule[] });
   }, [schedules]);
 
-  const recentSchedules = getRecentSchedules();
+  const recentSchedules = getRecents(RecentType.Schedule);
 
   if (userLoading || schedulesLoading) return <></>;
 

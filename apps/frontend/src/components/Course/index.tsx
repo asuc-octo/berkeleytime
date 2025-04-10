@@ -23,7 +23,7 @@ import {
   Tooltip,
 } from "@repo/theme";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";

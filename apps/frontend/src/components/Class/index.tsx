@@ -24,7 +24,7 @@ import {
   Tooltip,
 } from "@repo/theme";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import CourseDrawer from "@/components/CourseDrawer";
@@ -34,7 +34,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { IClass, Semester } from "@/lib/api";
-import { addRecentClass } from "@/lib/recent";
+import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -218,7 +218,7 @@ export default function Class({
   useEffect(() => {
     if (!_class) return;
 
-    addRecentClass({
+    addRecent(RecentType.Class, {
       subject: _class.subject,
       year: _class.year,
       semester: _class.semester,
