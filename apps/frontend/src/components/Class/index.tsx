@@ -53,6 +53,7 @@ const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
+const Comments = lazy(() => import("./Comments"));
 
 interface BodyProps {
   children: ReactNode;
@@ -60,6 +61,7 @@ interface BodyProps {
 }
 
 function Body({ children, dialog }: BodyProps) {
+  console.log(children);
   return (
     <Suspense
       fallback={
@@ -136,6 +138,7 @@ export default function Class({
   onClose,
   dialog,
 }: ClassProps) {
+  console.log("DIALOG", dialog);
   const { pins, addPin, removePin } = usePins();
   const location = useLocation();
 
@@ -405,6 +408,11 @@ export default function Class({
               <Tabs.Trigger value="grades" asChild>
                 <MenuItem>Grades</MenuItem>
               </Tabs.Trigger>
+
+              {/* Created a new Comments MenuItem */}
+              <Tabs.Trigger value="comments" asChild>
+                <MenuItem>Comments</MenuItem>
+              </Tabs.Trigger>
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
@@ -426,6 +434,12 @@ export default function Class({
               <NavLink to={{ ...location, pathname: "grades" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Grades</MenuItem>
+                )}
+              </NavLink>
+              {/* Make a link */}
+              <NavLink to={{ ...location, pathname: "comments" }}>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>Comments</MenuItem>
                 )}
               </NavLink>
             </div>
@@ -450,6 +464,10 @@ export default function Class({
           </Tabs.Content>
           <Tabs.Content value="grades" asChild>
             <Grades />
+          </Tabs.Content>
+          {/* Add Comments component to body */}
+          <Tabs.Content value="comments" asChild>
+            <Comments />
           </Tabs.Content>
         </Body>
       </ClassContext>
