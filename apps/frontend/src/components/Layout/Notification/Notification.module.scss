@@ -1,6 +1,6 @@
 .root {
   min-height: 58px;
-  background-color: #f8f8f8;
+  background-color: rgb(248, 250, 252);
   color: #383838;
   padding: 12px;
   display: flex;
@@ -16,7 +16,7 @@
     margin: auto;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
 
   .text {
@@ -24,6 +24,13 @@
   }
 
   .close {
-    color: #383838;
+    color: rgb(194, 194, 194);
+    border-radius: 4px; // or whatever level of roundness you want
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgb(234, 234, 234);
+      cursor: pointer;
+    }
   }
 }
