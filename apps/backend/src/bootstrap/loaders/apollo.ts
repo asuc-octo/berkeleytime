@@ -8,6 +8,7 @@ import {
 } from "@apollo/utils.keyvaluecache";
 import { ApolloArmor } from "@escape.tech/graphql-armor";
 import { RedisClientType } from "redis";
+import { gunzipSync, gzipSync } from "zlib";
 
 import { timeToNextPull } from "../../utils/cache";
 import { buildSchema } from "../graphql/buildSchema";
@@ -24,7 +25,10 @@ class RedisCache implements KeyValueCache {
   async get(key: string) {
     const value = await this.client.get(this.prefix + key);
 
-    return value ?? undefined;
+    if (!value) return undefined;
+
+    const buffer = Buffer.from(value, "base64");
+    return gunzipSync(buffer).toString("utf-8");
   }
 
   /**
@@ -39,9 +43,13 @@ class RedisCache implements KeyValueCache {
   ) {
     if (!value) return;
 
-    await this.client.set(this.prefix + key, value, {
-      EX: Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull()),
-    });
+    await this.client.set(
+      this.prefix + key,
+      gzipSync(value).toString("base64"),
+      {
+        EX: Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull()),
+      }
+    );
   }
 
   async delete(key: string) {
