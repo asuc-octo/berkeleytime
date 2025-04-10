@@ -82,8 +82,21 @@ export default function EventDialog({ children }: EventDialogProps) {
           updateSchedule: {
             ...schedule,
             events: schedule.events
-              ? [...schedule.events, { ...event, _id: temporaryIdentifier }]
-              : [{ ...event, _id: temporaryIdentifier }],
+              ? [
+                  ...schedule.events,
+                  {
+                    ...event,
+                    _id: temporaryIdentifier,
+                    __typename: "ScheduleEvent",
+                  },
+                ]
+              : [
+                  {
+                    ...event,
+                    _id: temporaryIdentifier,
+                    __typename: "ScheduleEvent",
+                  },
+                ],
           },
         },
       }

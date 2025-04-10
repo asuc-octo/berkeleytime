@@ -348,8 +348,18 @@ export default function Editor() {
           .filter((e) => e._id != event._id)
           .map((e) => {
             // TODO: Fix?
-            const { _id, __typename, ...rest } = (e as unknown) || {};
-            return rest;
+            const _e = structuredClone(e) as Omit<
+              IScheduleEvent,
+              "_id" | "__typename"
+            > & {
+              _id?: string;
+              __typename?: string;
+            };
+
+            delete _e._id;
+            delete _e.__typename;
+
+            return _e;
           }),
       },
       {
