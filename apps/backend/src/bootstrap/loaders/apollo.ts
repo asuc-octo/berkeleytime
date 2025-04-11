@@ -2,10 +2,15 @@ import { ApolloServer } from "@apollo/server";
 import responseCachePlugin from "@apollo/server-plugin-response-cache";
 import { ApolloServerPluginCacheControl } from "@apollo/server/plugin/cacheControl";
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
-import { KeyValueCache } from "@apollo/utils.keyvaluecache";
+import {
+  KeyValueCache,
+  KeyValueCacheSetOptions,
+} from "@apollo/utils.keyvaluecache";
 import { ApolloArmor } from "@escape.tech/graphql-armor";
 import { RedisClientType } from "redis";
+import { gunzipSync, gzipSync } from "zlib";
 
+import { timeToNextPull } from "../../utils/cache";
 import { buildSchema } from "../graphql/buildSchema";
 
 class RedisCache implements KeyValueCache {
@@ -20,13 +25,31 @@ class RedisCache implements KeyValueCache {
   async get(key: string) {
     const value = await this.client.get(this.prefix + key);
 
-    return value ?? undefined;
+    if (!value) return undefined;
+
+    const buffer = Buffer.from(value, "base64");
+    return gunzipSync(buffer).toString("utf-8");
   }
 
-  async set(key: string, value: string | null) {
+  /**
+   * Sets the value in the cache. Accepts a TTL. If no TTL is provided, the ApolloServerPluginCacheControl
+   * default maxAge is used, and we use the minimum of the default and the time
+   * until the next datapuller run (determined by timeToNextPull).
+   */
+  async set(
+    key: string,
+    value: string | null,
+    options?: KeyValueCacheSetOptions
+  ) {
     if (!value) return;
 
-    await this.client.set(this.prefix + key, value);
+    await this.client.set(
+      this.prefix + key,
+      gzipSync(value).toString("base64"),
+      {
+        EX: Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull()),
+      }
+    );
   }
 
   async delete(key: string) {
@@ -57,6 +80,7 @@ export default async (redis: RedisClientType) => {
       ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
       ApolloServerPluginCacheControl({
         calculateHttpHeaders: false,
+        defaultMaxAge: 24 * 60 * 60, // 24 hours
       }),
       responseCachePlugin(),
     ],
