@@ -145,6 +145,16 @@ export interface GetCoursesResponse {
   courses: ICourse[];
 }
 
+export const GET_COURSE_NAMES = gql`
+  query GetCourses {
+    courses {
+      subject
+      number
+      title
+    }
+  }
+`;
+
 export const GET_COURSES = gql`
   query GetCourses {
     courses {

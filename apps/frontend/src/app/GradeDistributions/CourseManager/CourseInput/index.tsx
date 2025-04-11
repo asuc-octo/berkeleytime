@@ -88,7 +88,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     const instructorSet = new Set();
     course?.classes.forEach((c) => {
       // get only current semester if getting by semester
-      if (selectedType?.value === "semester") {
+      if (selectedType?.value === InputType.Term) {
         if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
       }
       c.primarySection.meetings.forEach((m) => {
@@ -102,24 +102,20 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       // create OptionTypes
       return { value: v as string, label: v as string };
     });
-    if (opts.length === 1 && selectedType?.value === "semester") {
+    if (opts.length === 1 && selectedType?.value === InputType.Term) {
       // If only one choice, select it
       if (selectedInstructor !== opts[0]) setSelectedInstructor(opts[0]);
       return opts;
     }
     return [...list, ...opts];
-  }, [
-    course,
-    selectedType?.value,
-    selectedSemester?.value,
-    selectedInstructor,
-  ]);
+  }, [course, selectedType?.value, selectedSemester?.value]);
 
   const semesterOptions: OptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_SEMESTER];
     if (!course) return list;
+    console.log(selectedType);
     const filteredClasses =
-      selectedType?.value === "semester"
+      selectedType?.value === InputType.Term
         ? course.classes // all if by semester
         : selectedInstructor?.value === "all"
           ? []
@@ -147,12 +143,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
-  }, [
-    course,
-    selectedType?.value,
-    selectedInstructor?.value,
-    selectedSemester,
-  ]);
+  }, [course, selectedType?.value, selectedInstructor?.value]);
 
   const add = async () => {
     let input: Input;

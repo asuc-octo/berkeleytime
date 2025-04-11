@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Search } from "iconoir-react";
 
-import { GET_COURSES, GetCoursesResponse, ICourse } from "@/lib/api";
+import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
@@ -24,7 +24,7 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
     []
   );
 
-  const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
+  const { data } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];

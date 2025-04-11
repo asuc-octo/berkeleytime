@@ -111,7 +111,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return opts;
     }
     return [...list, ...opts];
-  }, [courseData, selectedClass, selectedSemester]);
+  }, [courseData, selectedSemester]);
 
   const add = async () => {
     if (!selectedClass || !selectedCourse || !selectedSemester) return;
