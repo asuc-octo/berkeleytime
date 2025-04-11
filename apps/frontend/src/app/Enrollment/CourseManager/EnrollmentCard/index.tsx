@@ -52,7 +52,11 @@ export default function EnrollmentCard({
     >
       <Card.Body style={{ maxWidth: "calc(100% - 44px)" }}>
         <Card.Heading>
-          <ColoredSquare color={color} />
+          <ColoredSquare
+            color={color}
+            size="sm"
+            style={{ marginRight: 4, position: "relative", top: 1 }}
+          />
           {subject} {number}
         </Card.Heading>
         <Card.Description

@@ -48,7 +48,11 @@ export default function HoverInfo({
     <div className={styles.info}>
       <div className={styles.heading}>
         <span className={styles.course}>
-          <ColoredSquare color={color} size="sm" />
+          <ColoredSquare
+            color={color}
+            size="md"
+            style={{ marginRight: 6, position: "relative", top: 2 }}
+          />
           {subject} {courseNumber}
         </span>
       </div>
