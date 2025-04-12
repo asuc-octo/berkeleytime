@@ -1,14 +1,9 @@
-import { Logger } from "tslog";
-
 import { loadConfig } from "./config";
+import mongooseLoader from "./mongoose";
 
-export default function setup() {
-  loadConfig();
-
-  const log = new Logger({
-    type: "pretty",
-    prettyLogTimeZone: "local",
-  });
-
-  return { log };
+export default async function setup() {
+  const config = loadConfig();
+  config.log.trace("Booting up mongo...");
+  await mongooseLoader(config);
+  return { config };
 }

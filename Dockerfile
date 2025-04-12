@@ -1,4 +1,4 @@
-FROM node:alpine AS base
+FROM node:slim AS base
 RUN ["npm", "install", "-g", "turbo@latest"]
 
 # datapuller
@@ -15,10 +15,12 @@ COPY --from=datapuller-builder /datapuller/out/package-lock.json ./package-lock.
 RUN ["npm", "install"]
 
 COPY --from=datapuller-builder /datapuller/out/full/ .
-ENTRYPOINT ["turbo", "run", "course", "--filter=datapuller"]
+ENTRYPOINT ["turbo", "run", "main", "--filter=datapuller", "--"]
+CMD ["--puller=main"]
 
 FROM datapuller-dev AS datapuller-prod
-ENTRYPOINT ["turbo", "run", "course", "--filter=datapuller", "--env-mode=loose"]
+WORKDIR /datapuller
+ENTRYPOINT ["turbo", "run", "main", "--filter=datapuller", "--env-mode=loose", "--"]
 
 # backend
 FROM base AS backend-builder

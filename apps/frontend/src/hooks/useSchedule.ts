@@ -6,9 +6,7 @@ const useSchedule = () => {
   const scheduleContext = useContext(ScheduleContext);
 
   if (!scheduleContext) {
-    throw new Error(
-      "useSchedule must be used within a ScheduleContext.Provider"
-    );
+    throw new Error("useSchedule must be used within a ScheduleContext");
   }
 
   return scheduleContext;

@@ -169,7 +169,7 @@ export default function GradeDistributions() {
           });
 
           return response;
-        } catch (error) {
+        } catch {
           // TODO: Handle errors
 
           return null;
@@ -192,7 +192,7 @@ export default function GradeDistributions() {
     setOutputs(output);
 
     setLoading(false);
-  }, [inputs]);
+  }, [client, inputs]);
 
   useEffect(() => {
     initialize();

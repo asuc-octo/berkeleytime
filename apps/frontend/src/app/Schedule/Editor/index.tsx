@@ -1,13 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
-import {
-  ArrowLeft,
-  Copy,
-  Settings,
-  ShareIos,
-  ViewColumns2,
-} from "iconoir-react";
+import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
 import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
@@ -15,17 +9,31 @@ import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
 import Week from "@/app/Schedule/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-import { ISection, READ_CLASS, ReadClassResponse } from "@/lib/api";
+import {
+  IClass,
+  IScheduleEvent,
+  ISection,
+  READ_CLASS,
+  ReadClassResponse,
+} from "@/lib/api";
+import { addRecentSchedule } from "@/lib/recent";
 
 import { getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
+import CloneDialog from "./CloneDialog";
+import EditDialog from "./EditDialog";
 import styles from "./Manage.module.scss";
 import Map from "./Map";
+import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
 
 export default function Editor() {
-  const { schedule } = useSchedule();
+  const { schedule, editing } = useSchedule();
+
+  useEffect(() => {
+    addRecentSchedule(schedule);
+  }, [schedule]);
 
   const apolloClient = useApolloClient();
   const [updateSchedule] = useUpdateSchedule();
@@ -69,21 +77,25 @@ export default function Editor() {
 
       if (!section) return;
 
-      setCurrentSection(null);
-
       // Filter out selected sections from the same component
       const selectedSections = selectedClass.selectedSections.filter(
         (selectedSection) => {
+          // return selectedSection.sectionId == section.sectionId
+
           const currentSection = selectedClass.class.sections.find(
-            (section) => section.ccn === selectedSection
+            (section) => section.sectionId === selectedSection.sectionId
           );
 
-          return !currentSection || currentSection !== section;
+          return (
+            !currentSection ||
+            currentSection.component !== section.component ||
+            currentSection.sectionId == section.sectionId
+          );
         }
       );
 
       // Add the selected section
-      selectedClass.selectedSections = [...selectedSections, section.ccn];
+      selectedClass.selectedSections = [...selectedSections, section];
 
       // Update the schedule
       updateSchedule(
@@ -97,7 +109,7 @@ export default function Editor() {
               subject,
               courseNumber,
               number,
-              sections: selectedSections,
+              sectionIds: selectedSections.map((s) => s.sectionId),
             })
           ),
         },
@@ -108,7 +120,7 @@ export default function Editor() {
         }
       );
     },
-    [setCurrentSection]
+    [setCurrentSection, schedule, updateSchedule]
   );
 
   const handleSectionMouseOver = useCallback(
@@ -157,11 +169,11 @@ export default function Editor() {
       );
 
       // Ignore selected sections
-      if (selectedSections.includes(section.ccn)) return;
+      if (selectedSections.includes(section)) return;
 
       setCurrentSection(section);
     },
-    [setCurrentSection, tab]
+    [schedule, tab]
   );
 
   const handleSortEnd = useCallback(
@@ -185,7 +197,7 @@ export default function Editor() {
               subject,
               courseNumber,
               number,
-              sections: selectedSections,
+              sectionIds: selectedSections.map((s) => s.sectionId),
             })
           ),
         },
@@ -196,7 +208,7 @@ export default function Editor() {
         }
       );
     },
-    [schedule]
+    [schedule, updateSchedule]
   );
 
   const handleClassSelect = useCallback(
@@ -213,8 +225,6 @@ export default function Editor() {
 
       // Move existing classes to the top rather than duplicating them
       if (existingClass) {
-        console.log("existingClass", existingClass);
-
         const index = _schedule.classes.findIndex(
           (selectedClass) =>
             selectedClass.class.subject === subject &&
@@ -245,7 +255,7 @@ export default function Editor() {
                 subject,
                 courseNumber,
                 number,
-                sections: selectedSections,
+                sectionIds: selectedSections.map((s) => s.sectionId),
               })
             ),
           },
@@ -276,7 +286,7 @@ export default function Editor() {
 
       const _class = data.class;
 
-      const selectedSections = [_class.primarySection.ccn];
+      const selectedSections = [_class.primarySection];
 
       const kinds = Array.from(
         new Set(_class.sections.map((section) => section.component))
@@ -288,7 +298,7 @@ export default function Editor() {
           .filter((section) => section.component === kind)
           .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        selectedSections.push(section.ccn);
+        selectedSections.push(section);
       }
 
       _schedule.classes.push({
@@ -308,7 +318,7 @@ export default function Editor() {
               subject,
               courseNumber,
               number,
-              sections: selectedSections,
+              sectionIds: selectedSections.map((s) => s.sectionId),
             })
           ),
         },
@@ -319,7 +329,7 @@ export default function Editor() {
         }
       );
     },
-    [apolloClient, setExpanded, schedule]
+    [apolloClient, setExpanded, schedule, updateSchedule]
   );
 
   const handleExpandedChange = (index: number, expanded: boolean) => {
@@ -328,6 +338,59 @@ export default function Editor() {
       _expandedClasses[index] = expanded;
       return _expandedClasses;
     });
+  };
+
+  const handleDeleteEvent = (event: IScheduleEvent) => {
+    updateSchedule(
+      schedule._id,
+      {
+        events: schedule.events
+          .filter((e) => e._id != event._id)
+          .map((e) => {
+            const { _id, __typename, ...rest } = (e as any) || {};
+            return rest;
+          }),
+      },
+      {
+        optimisticResponse: {
+          updateSchedule: {
+            ...schedule,
+            events: schedule.events.filter((e) => e._id != event._id),
+          },
+        },
+      }
+    );
+  };
+
+  const handleDeleteClass = (_class: IClass) => {
+    updateSchedule(
+      schedule._id,
+      {
+        classes: schedule.classes
+          .filter((c) => c.class.courseId != _class.courseId)
+          .map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sectionIds: selectedSections.map((s) => s.sectionId),
+            })
+          ),
+      },
+      {
+        optimisticResponse: {
+          updateSchedule: {
+            ...schedule,
+            classes: schedule.classes.filter(
+              (c) => c.class.courseId != _class.courseId
+            ),
+          },
+        },
+      }
+    );
   };
 
   return (
@@ -342,11 +405,15 @@ export default function Editor() {
             </Link>
           </Tooltip>
           <p className={styles.heading}>{schedule.name}</p>
-          <Tooltip content="Settings">
-            <IconButton>
-              <Settings />
-            </IconButton>
-          </Tooltip>
+          {editing && (
+            <EditDialog>
+              <Tooltip content="Edit">
+                <IconButton>
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+            </EditDialog>
+          )}
           <div className={styles.separator} />
         </div>
         <div className={styles.tabs}>
@@ -366,18 +433,23 @@ export default function Editor() {
             Compare
           </Button>
         </Link>
-        <Button>
-          <Copy />
-          Clone
-        </Button>
-        <Button variant="solid">
-          Share
-          <ShareIos />
-        </Button>
+        <CloneDialog>
+          <Button>
+            <Copy />
+            Clone
+          </Button>
+        </CloneDialog>
+        {editing && (
+          <ShareDialog>
+            <Button variant="solid">
+              Share
+              <ShareIos />
+            </Button>
+          </ShareDialog>
+        )}
       </div>
       <div className={styles.body}>
         <SideBar
-          schedule={schedule}
           expanded={expanded}
           onClassSelect={handleClassSelect}
           onSectionSelect={handleSectionSelect}
@@ -385,10 +457,13 @@ export default function Editor() {
           onSectionMouseOver={handleSectionMouseOver}
           onSectionMouseOut={() => setCurrentSection(null)}
           onSortEnd={handleSortEnd}
+          onDeleteClass={handleDeleteClass}
+          onDeleteEvent={handleDeleteEvent}
         />
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (
             <Week
+              events={schedule.events}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />

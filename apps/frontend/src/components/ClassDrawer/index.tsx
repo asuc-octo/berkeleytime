@@ -41,25 +41,23 @@ export default function ClassDrawer({
   year,
   open,
   onOpenChange,
-  ...props
 }: ClassDrawerProps) {
   return (
     <Dialog.Root onOpenChange={onOpenChange} open={open}>
-      {children && (
-        <Dialog.Trigger {...props} asChild>
-          {children}
-        </Dialog.Trigger>
-      )}
-      <Dialog.Content className={styles.content}>
-        <Class
-          subject={subject}
-          courseNumber={courseNumber}
-          number={number}
-          semester={semester}
-          year={year}
-          dialog
-        />
-      </Dialog.Content>
+      {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
+      <Dialog.Portal>
+        <Dialog.Overlay />
+        <Dialog.Drawer className={styles.drawer}>
+          <Class
+            subject={subject}
+            courseNumber={courseNumber}
+            number={number}
+            semester={semester}
+            year={year}
+            dialog
+          />
+        </Dialog.Drawer>
+      </Dialog.Portal>
     </Dialog.Root>
   );
 }

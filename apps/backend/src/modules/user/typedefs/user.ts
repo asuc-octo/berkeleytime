@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   type User {
+    _id: ID!
     email: String!
     student: Boolean!
     bookmarkedCourses: [Course!]!
@@ -22,6 +23,7 @@ const typedef = gql`
   input BookmarkedClassInput {
     year: Int!
     semester: Semester!
+    sessionId: SessionIdentifier
     subject: String!
     courseNumber: CourseNumber!
     number: ClassNumber!

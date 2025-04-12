@@ -281,6 +281,10 @@
 
   --light-tooltip-color: var(--neutral-900);
 
+  --light-cancel-color: var(--red-500);
+  --light-cancel-hover-color: var(--red-600);
+  --light-cancel-accent-color: white;
+
   --dark-foreground-color: var(--zinc-800);
   --dark-background-color: var(--zinc-900);
   --dark-backdrop-color: var(--zinc-950);
@@ -296,6 +300,10 @@
   --dark-button-active-color: var(--zinc-600);
 
   --dark-tooltip-color: var(--zinc-950);
+
+  --dark-cancel-color: var(--red-950);
+  --dark-cancel-hover-color: var(--red-900);
+  --dark-cancel-accent-color: var(--zinc-400);
 }
 
 @mixin light-theme {
@@ -314,6 +322,10 @@
   --button-active-color: var(--light-button-active-color);
 
   --tooltip-color: var(--light-tooltip-color);
+
+  --cancel-color: var(--light-cancel-color);
+  --cancel-hover-color: var(--light-cancel-hover-color);
+  --cancel-accent-color: var(--light-cancel-accent-color);
 }
 
 @mixin dark-theme {
@@ -332,11 +344,10 @@
   --button-active-color: var(--dark-button-active-color);
 
   --tooltip-color: var(--dark-tooltip-color);
-}
 
-.root {
-  display: flex;
-  flex-direction: column;
+  --cancel-color: var(--dark-cancel-color);
+  --cancel-hover-color: var(--dark-cancel-hover-color);
+  --cancel-accent-color: var(--dark-cancel-accent-color);
 }
 
 body[data-theme="dark"] {

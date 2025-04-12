@@ -1,0 +1,104 @@
+.radix-themes {
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 100%; 
+    }
+}
+.setup-container {
+    width: 420px !important;
+    position: absolute; /* Change to absolute for centering */
+    top: 50%; /* Push down by 50% of the viewport height */
+    left: 50%; /* Push right by 50% of the viewport width */
+    transform: translate(-50%, -50%); /* Offset by half the container's size */
+    display: flex; /* Ensure Flexbox alignment still applies */
+    flex-direction: column;
+    justify-content: center; /* Center content within the container vertically */
+    align-items: center; /* Center content horizontally */
+}
+
+
+body {
+    background-color: white;
+    display: flex; /* Enable Flexbox on the body */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height to center vertically */
+    margin: 0; /* Remove default margin from the body */
+}
+
+.setup {
+    color: var(--Primary-Text, #000);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 120% */
+    letter-spacing: -0.2px;
+}
+
+.enteryear {
+    color: var(--Secondary-Text, #8A8A8A);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px; /* 142.857% */
+    letter-spacing: -0.1px;
+}
+
+.gradYearbox {
+    display: flex; /* Use Flexbox */
+    justify-content: space-between; /* Push content to edges */
+    align-items: center; /* Vertically center text and icon */
+    background-color: white;
+    border: 1px solid var(--Gray-2, #C7C7C7);
+    color: black;
+    text-align: left;
+    padding: 8px 12px; /* Add padding for spacing */
+    width: 100%; /* Ensure full width if inside a container */
+    cursor: pointer; /* Make it look clickable */
+    
+}
+
+.yearOptions {
+    color: black;
+    width: 100%;
+}
+
+.yearOptions:hover {
+    background-color: #bfdbfe;
+    cursor: pointer;
+}
+.gradOptionsBox {
+    background-color: white;
+    width: 206px;
+    max-height: 5rem;
+    overflow-y: scroll;
+    padding: 0;
+    scrollbar-color: #cbd5e0 #f3f4f6;
+    scrollbar-width: thin;
+}
+
+.yearContainer {
+    width: 100%;
+    align-items: center;
+    text-align: left;
+}
+
+.next-btn {
+    width: 100% !important;
+    height: 44px
+}
+
+.summer-sem-check {
+    display: flex; /* Use Flexbox */
+    align-items: center; /* Vertically align checkbox and text */
+    justify-content: flex-start; /* Align content to the left */
+    width: 100%; /* Ensure it spans the container width */
+    text-align: left; /* Align text to the left */
+    padding-left: 0; /* Remove any left padding if present */
+    margin-left: 0; /* Remove left margin if necessary */
+}

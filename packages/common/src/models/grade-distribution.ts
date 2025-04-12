@@ -1,21 +1,63 @@
-import mongoose, { InferSchemaType, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const gradeDistributionSchema = new Schema(
+export interface IGradeDistributionItem {
+  // Identifiers
+  courseId: string;
+  subject: string;
+  courseNumber: string;
+  courseOfferingNumber: number;
+  termId: string;
+  sessionId: string;
+
+  // TODO: CCN?
+  sectionId: string;
+  sectionNumber: string;
+
+  // Grade distribution
+  count: number;
+  distinct: number;
+
+  countAPlus: number;
+  countA: number;
+  countAMinus: number;
+  countBPlus: number;
+  countB: number;
+  countBMinus: number;
+  countCPlus: number;
+  countC: number;
+  countCMinus: number;
+  countDPlus: number;
+  countD: number;
+  countDMinus: number;
+  countF: number;
+  countP: number;
+  countNP: number;
+  countS: number;
+  countU: number;
+  countCR: number;
+  countNC: number;
+  countHH: number;
+  countH: number;
+  countPC: number;
+}
+
+export interface IGradeDistributionItemDocument
+  extends IGradeDistributionItem,
+    Document {}
+
+const gradeDistributionSchema = new Schema<IGradeDistributionItem>(
   {
-    // Identifiers
     courseId: { type: String, required: true },
     subject: { type: String, required: true },
     courseNumber: { type: String, required: true },
     courseOfferingNumber: { type: Number, required: true },
 
     termId: { type: String, required: true },
-    session: { type: String, required: true },
+    sessionId: { type: String, required: true },
 
-    // TODO: CCN?
-    classNumber: { type: String, required: true },
+    sectionId: { type: String, required: true },
     sectionNumber: { type: String, required: true },
 
-    // Grade distribution
     count: { type: Number, required: true },
     distinct: { type: Number, required: true },
 
@@ -46,13 +88,16 @@ const gradeDistributionSchema = new Schema(
     timestamps: true,
   }
 );
+gradeDistributionSchema.index(
+  { termId: 1, classNumber: 1, sectionNumber: 1 },
+  { unique: true }
+);
+gradeDistributionSchema.index({
+  subject: 1,
+  courseNumber: 1,
+});
 
 export const GradeDistributionModel = mongoose.model(
-  "gradeDistribution",
-  gradeDistributionSchema,
-  "grade-distributions"
+  "gradeDistributions",
+  gradeDistributionSchema
 );
-
-export type GradeDistributionType = InferSchemaType<
-  typeof gradeDistributionSchema
->;

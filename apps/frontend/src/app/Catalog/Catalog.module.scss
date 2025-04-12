@@ -4,7 +4,6 @@
   min-height: 0;
 
   .view {
-    flex-grow: 1;
     overflow: auto;
   }
 
@@ -29,13 +28,13 @@
     }
 
     .body {
-      flex: 1 1 0;
+      flex-grow: 1;
       min-height: 0;
     }
   }
 
   @media (width > 992px) {
-    &:not(.expanded) .panel {
+    &.collapsed .panel {
       display: none;
     }
 

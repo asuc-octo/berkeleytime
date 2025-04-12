@@ -11,7 +11,7 @@ on:
         description: "Deployment time to live in hours"
         required: true
         type: number
-        default: 24
+        default: 1
 
 jobs:
   compute-sha:
@@ -32,30 +32,69 @@ jobs:
   build-push:
     name: Build and Push Images and Charts
     needs: [compute-sha]
-    uses: ./.github/workflows/cd.yaml
+    uses: ./.github/workflows/cd-build.yaml
     with:
       image_tag: ${{ needs.compute-sha.outputs.sha_short }}
-      chart_ver: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
+      chart_ver: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
     secrets: inherit
 
   deploy:
     name: SSH and Deploy
     needs: [compute-sha, build-push]
-    uses: ./.github/workflows/deploy.yaml
+    uses: ./.github/workflows/cd-deploy.yaml
     with:
       environment: development
       name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
-      version: 0.1.0-dev.${{ needs.compute-sha.outputs.sha_short }}
+      version: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
       values: |
         env: dev
         ttl: ${{ inputs.ttl }}
         frontend:
           image:
-            tag: ${{ needs.compute-sha.outputs.sha_short }}
+            tag: '${{ needs.compute-sha.outputs.sha_short }}'
         backend:
           image:
-            tag: ${{ needs.compute-sha.outputs.sha_short }}
+            tag: '${{ needs.compute-sha.outputs.sha_short }}'
+        datapuller:
+          suspend: true
+          image:
+            tag: '${{ needs.compute-sha.outputs.sha_short }}'
         host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
-        mongoUri: mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt
+        mongoUri: mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
+      host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
     secrets: inherit
+
+  limit-deploy:
+    name: SSH and Limit Deployments
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Check Deployments
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            # Get bt-dev-app- deployments sorted by creation timestamp
+            deployments=$(helm list \
+              --namespace=bt \
+              --date \
+              --short | grep '^bt-dev-app') || true
+            deployment_count=$(echo "$deployments" | wc -l)
+
+            # Check if deployment count > 8
+            if [ "$deployment_count" -gt 8 ]; then
+              echo "Too many deployments. Deleting the oldest deployment."
+
+              # Get oldest deployment from first line of deployments
+              oldest_deployment=$(echo "$deployments" | head -n 1)
+
+              # Uninstall deployment
+              helm uninstall "${oldest_deployment}"
+            else
+              echo "Deployment count is <= 8."
+            fi

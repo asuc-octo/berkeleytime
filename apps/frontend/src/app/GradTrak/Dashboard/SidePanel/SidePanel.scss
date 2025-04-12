@@ -1,0 +1,141 @@
+.sidepanel {
+    width: 314px; 
+    height: 100vh; 
+    padding-top: var(--S, 16px);
+    flex-direction: column;  
+    border-right: 1px solid #EAEAEA; 
+    background: var(--White, #FFF); 
+    position: relative; 
+    overflow-y: auto; 
+    box-sizing: border-box; 
+  }
+  
+  /* ----------------------*/
+  /* -- Container Styles --*/
+  /* ----------------------*/
+  
+  .sidepanel-container {
+      display: flex;
+      padding: var(--M, 24px);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--S, 16px);
+      align-self: stretch;
+  }
+  
+  .sidepanel-header-container {
+      display: flex;
+    flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      align-self: stretch;
+  }
+  
+  .user-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      flex-grow: 1;
+      max-width: calc(100% - 52px);
+  }
+  
+  .user-info-grid {
+      display: grid;
+      grid-template-columns: 2fr 3fr; 
+      gap: 12px 24px;
+  }
+  
+  .label {
+      color: var(--Secondary-Text, #8A8A8A);
+      font-size: 0.875em;
+      text-align: left;
+      align-self: start; 
+    }
+    
+    .value {
+      font-size: 0.875em;
+      text-align: left;
+      align-self: start;
+    }
+    
+    .value ul {
+      list-style: none; 
+      padding: 0;
+      margin: 0;
+    }
+  
+  /* -------------------*/
+  /* -- Button Styles --*/
+  /* ------------------ */
+  
+  button.primary {
+      display: flex;
+      width: 100%;
+      padding: 12px 16px;
+      justify-content: center;
+      align-items: center;
+      gap: 10px; 
+      border-radius: 4px;
+      background: var(--Blue, #2F80ED); /* Berkeleytime Blue */
+      font-size: 14px;
+      color: #FFF; 
+      transition: background-color 0.3s ease;
+  }
+  button.primary:hover {
+      background: var(--Hover-A, #0069D9);
+  }
+  
+  button.panel-secondary {
+      width: 55px;
+      padding: 6px 12px;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      border-radius: 4px;
+      border: 1px solid var(--Gray-2, #C7C7C7);
+      background: #FFF;
+      font-size: 14px;
+      color: var(--Blue, #2F80ED);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  button.panel-secondary:hover {
+      border: 1px solid var(--Gray-2, #C7C7C7);
+      background: var(--Hover-B, #F3F4F9);
+  }
+  
+  /* ----------------------*/
+  /* -------- MISC --------*/
+  /* ----------------------*/
+  
+  .truncate {
+      white-space: nowrap; 
+      overflow: hidden;
+      text-overflow: ellipsis; 
+      max-width: 100%;
+  }
+  
+  .requirement-header{
+    color: var(--Secondary-Text, #8A8A8A);
+    font-size: 0.75em;
+    font-weight: 580;
+    text-transform: uppercase;
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+    color: var(--Secondary-Text, #8A8A8A);
+  }
+  .icon.green{
+    width: 20px;
+    height: 10px;
+    color: var(--Green, #13B56B);
+  }
+  
+  .units-title {
+    color: var(--Secondary-Text, #8A8A8A);
+  }
+  
+  .units-comp {
+    color: var(--Red, #ED6363);
+  }

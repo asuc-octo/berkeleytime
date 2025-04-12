@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { ComponentPropsWithRef } from "react";
 
 import { Plus } from "iconoir-react";
 
@@ -18,33 +18,33 @@ interface TermProps {
   onClick: (course: ICourse) => void;
 }
 
-const Term = forwardRef<HTMLDivElement, TermProps>(
-  ({ semester, year, courses, onClick }, ref) => {
-    return (
-      <div className={styles.root}>
-        <div className={styles.header}>
-          <p className={styles.term}>
-            {semester} {year}
-          </p>
-          <Units unitsMin={12} unitsMax={20}>
-            {(units) => <p className={styles.units}>{units}</p>}
-          </Units>
-          <Catalog onClick={onClick} semester={semester} year={year}>
-            <IconButton>
-              <Plus />
-            </IconButton>
-          </Catalog>
-        </div>
-        <div className={styles.body} ref={ref}>
-          {courses.map((course) => (
-            <Course key={`${course.subject} ${course.number}`} {...course} />
-          ))}
-        </div>
+export default function Term({
+  semester,
+  year,
+  courses,
+  onClick,
+  ref,
+}: Omit<ComponentPropsWithRef<"div">, keyof TermProps> & TermProps) {
+  return (
+    <div className={styles.root}>
+      <div className={styles.header}>
+        <p className={styles.term}>
+          {semester} {year}
+        </p>
+        <Units unitsMin={12} unitsMax={20}>
+          {(units) => <p className={styles.units}>{units}</p>}
+        </Units>
+        <Catalog onClick={onClick} semester={semester} year={year}>
+          <IconButton>
+            <Plus />
+          </IconButton>
+        </Catalog>
       </div>
-    );
-  }
-);
-
-Term.displayName = "Semester";
-
-export default Term;
+      <div className={styles.body} ref={ref}>
+        {courses.map((course) => (
+          <Course key={`${course.subject} ${course.number}`} {...course} />
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,102 @@
+#root {
+    padding: 0;
+    margin: 0;
+}
+
+.degree-container {
+    width: 500px;
+    flex-direction: column;
+    gap: var(--L, 32px);
+    align-items: flex-start;
+    justify-content: center;
+    align-self: stretch;
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+}
+@media (max-width: 600px) {
+    .container {
+        width: 100%; 
+    }
+}
+
+/* -------------------*/
+/* -- Button Styles --*/
+/* ------------------ */
+
+.primary {
+    display: flex;
+    width: 100%;
+    padding: 12px var(--S, 16px);
+    justify-content: center;
+    align-items: center;
+    gap: 10px; 
+    border-radius: var(--XXS, 4px);
+    background: var(--Blue, #2F80ED); /* Berkeleytime Blue */
+    font-size: 14px;
+    color: #FFF; 
+    transition: background-color 0.3s ease;
+}
+.primary:hover {
+    background: var(--Hover-A, #0069D9);
+}
+
+.secondary {
+    display: flex;
+    width: 100%;
+    padding: 12px var(--S, 16px);
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: var(--XXS, 4px);
+    border: 1px solid var(--Gray-2, #C7C7C7);
+    background: #FFF;
+    font-size: 14px;
+    color: var(--Blue, #2F80ED);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.secondary:hover {
+    border: 1px solid var(--Gray-2, #C7C7C7);
+    background: var(--Hover-B, #F3F4F9);
+}
+
+.header-container {
+    flex-direction: column;
+    align-content: center;
+    gap: 16px;
+}
+
+/* ------------------*/
+/* ------ MISC ------*/
+/* ----------------- */
+
+.degree-select {
+    width: 100%;
+    text-align: start;
+}
+
+.degree-chip {
+    display: flex;
+    padding: 4px 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 4px;
+    background: rgba(47, 128, 237, 0.10);
+    color:var(--Blue, #2F80ED);
+    font-size: 14px;
+}
+
+.delete-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 16px;
+    color: var(--Blue, #2F80ED);
+}
+
+.selected-degree-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}

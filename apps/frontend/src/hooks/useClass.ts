@@ -6,7 +6,7 @@ const useClass = () => {
   const classContext = useContext(ClassContext);
 
   if (!classContext)
-    throw new Error("useClass must be used within a ClassContext.Provider");
+    throw new Error("useClass must be used within a ClassContext");
 
   return classContext;
 };

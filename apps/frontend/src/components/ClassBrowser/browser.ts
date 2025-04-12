@@ -57,7 +57,10 @@ export const getFilteredClasses = (
   return classes.reduce(
     (acc, _class) => {
       // Filter by open
-      if (currentOpen && !_class.primarySection.open) {
+      if (
+        currentOpen &&
+        _class.primarySection.enrollment?.latest.status !== "O"
+      ) {
         acc.excludedClasses.push(_class);
 
         return acc;
@@ -202,8 +205,6 @@ export const getIndex = (classes: IClass[]) => {
       },
       // { name: "subject", weight: 1.5 },
     ],
-    // TODO: Fuse types are wrong for sortFn
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // sortFn: (a: any, b: any) => {
     //   // First, sort by score
     //   if (a.score - b.score) return a.score - b.score;

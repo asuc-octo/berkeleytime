@@ -1,35 +1,30 @@
-import { ClassModel, CourseModel } from "@repo/common";
+import { ClassModel, CourseModel, IClassItem, ICourseItem } from "@repo/common";
 
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
 export const getCourse = async (subject: string, number: string) => {
-  const course = await CourseModel.findOne({
-    "subjectArea.code": subject,
-    "catalogNumber.formatted": number,
-  })
+  const course = await CourseModel.findOne({ subject, number })
     .sort({ fromDate: -1 })
     .lean();
 
   if (!course) return null;
 
-  return formatCourse(course);
+  return formatCourse(course as ICourseItem);
 };
 
-export const getClassesByCourse = async (
-  subjectArea: string,
-  courseNumber: string
-) => {
+export const getClassesByCourse = async (courseId: string) => {
   const classes = await ClassModel.find({
-    "course.subjectArea.code": subjectArea,
-    "course.catalogNumber.formatted": courseNumber,
+    courseId,
   }).lean();
 
-  return classes.map(formatClass);
+  return classes.map((_class) => formatClass(_class as IClassItem));
 };
 
-export const getAssociatedCourses = async (courses: string[]) => {
+export const getAssociatedCoursesBySubjectNumber = async (
+  courses: string[]
+) => {
   const queries = courses.map((course) => {
     const split = course.split(" ");
 
@@ -37,8 +32,8 @@ export const getAssociatedCourses = async (courses: string[]) => {
     const number = split[split.length - 1];
 
     return {
-      "subjectArea.code": subject,
-      "catalogNumber.formatted": number,
+      subject,
+      number,
     };
   });
 
@@ -55,13 +50,22 @@ export const getAssociatedCourses = async (courses: string[]) => {
         (course, index) =>
           associatedCourses.findIndex(
             (associatedCourse) =>
-              associatedCourse.subjectArea?.code === course.subjectArea?.code &&
-              course.catalogNumber?.formatted ===
-                associatedCourse.catalogNumber?.formatted
+              associatedCourse.subject === course.subject &&
+              course.number === associatedCourse.number
           ) === index
       )
-      .map(formatCourse)
+      .map((course) => formatCourse(course as ICourseItem))
   );
+};
+
+export const getAssociatedCoursesById = async (courseIds: string[]) => {
+  const associatedCourses = await CourseModel.find({
+    courseId: { $in: courseIds },
+  })
+    .sort({ fromDate: -1 })
+    .lean();
+
+  return associatedCourses.map((course) => formatCourse(course as ICourseItem));
 };
 
 // TODO: Grade distributions
@@ -70,26 +74,24 @@ export const getCourses = async () => {
     {
       $match: {
         printInCatalog: true,
-        "status.code": "ACTIVE",
-        "catalogNumber.prefix": "",
       },
     },
     {
       $sort: {
-        "classSubjectArea.code": 1,
-        "catalogNumber.formatted": 1,
+        subject: 1,
+        number: 1,
         fromDate: -1,
       },
     },
-    {
-      $group: {
-        _id: "$displayName",
-        document: { $first: "$$ROOT" },
-      },
-    },
-    {
-      $replaceRoot: { newRoot: "$document" },
-    },
+    // {
+    //   $group: {
+    //     _id: "$displayName",
+    //     document: { $first: "$$ROOT" },
+    //   },
+    // },
+    // {
+    //   $replaceRoot: { newRoot: "$document" },
+    // },
   ]);
 
   // /* Map grades to course keys for easy lookup */
@@ -126,9 +128,7 @@ export const getCourses = async () => {
 
   return courses.map((c) => ({
     ...formatCourse(c),
-    gradeDistribution: {
-      average: null,
-    },
+    gradeDistribution: null,
   })) as (Exclude<IntermediateCourse, "gradeDistribution"> & {
     gradeDistribution: CourseModule.Course["gradeDistribution"];
   })[];

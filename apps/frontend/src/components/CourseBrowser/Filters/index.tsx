@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
 
-import * as Checkbox from "@radix-ui/react-checkbox";
-import * as RadioGroup from "@radix-ui/react-radio-group";
 import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
+import { Checkbox, RadioGroup } from "radix-ui";
 import { useSearchParams } from "react-router-dom";
 
 import {
@@ -88,10 +87,11 @@ export default function Filters({
       } as Record<Level, number>
     );
   }, [
-    excludedCourses,
-    includedCourses,
-    currentInstructionMethods,
     currentLevels,
+    includedCourses,
+    excludedCourses,
+    currentInstructionMethods,
+    currentSemesters,
   ]);
 
   const filteredSemesters = useMemo(() => {
@@ -122,7 +122,13 @@ export default function Filters({
     }
 
     return filteredSemesters;
-  }, [excludedCourses, includedCourses, currentSemesters]);
+  }, [
+    currentSemesters,
+    includedCourses,
+    excludedCourses,
+    currentInstructionMethods,
+    currentLevels,
+  ]);
 
   const filteredInstructionMethods = useMemo(() => {
     const filteredInstructionMethods = Object.keys(instructionMethodMap).reduce(
@@ -151,10 +157,11 @@ export default function Filters({
 
     return filteredInstructionMethods;
   }, [
-    excludedCourses,
-    includedCourses,
     currentInstructionMethods,
+    includedCourses,
+    excludedCourses,
     currentLevels,
+    currentSemesters,
   ]);
 
   const update = <T,>(
@@ -212,7 +219,6 @@ export default function Filters({
         <Header
           onOpenChange={onOpenChange}
           open={true}
-          className={styles.header}
           currentCourses={currentCourses}
           currentQuery={currentQuery}
           overlay={overlay}

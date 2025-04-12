@@ -9,10 +9,9 @@ import {
   YAxis,
 } from "recharts";
 
-import useClass from "@/hooks/useClass";
-
 import styles from "./Enrollment.module.scss";
-import Reservations from "./Reservations";
+
+// import Reservations from "./Reservations";
 
 const series = [
   {
@@ -60,8 +59,6 @@ const series = [
 ];
 
 export default function Enrollment() {
-  const { class: _class } = useClass();
-
   return (
     <div className={styles.root}>
       <div className={styles.legend}>
@@ -126,11 +123,11 @@ export default function Enrollment() {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <Reservations
-        enrollCount={_class.primarySection.enrollCount}
-        enrollMax={_class.primarySection.enrollMax}
-        reservations={_class.primarySection.reservations}
-      />
+      {/* <Reservations
+        enrolledCount={_class.primarySection.enrollment.latest.enrolledCount}
+        maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
+        reservations={_class.primarySection.enrollment.latest.seatReservationCounts}
+      /> */}
     </div>
   );
 }
