@@ -16,6 +16,7 @@ import {
   ReadEnrollmentResponse,
   Semester,
 } from "@/lib/api";
+import { sortByTermDescending } from "@/lib/classes";
 import { RecentType, addRecent } from "@/lib/recent";
 
 import {
@@ -24,6 +25,7 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "../../types";
+import styles from "./CourseInput.module.scss";
 
 type CourseOptionType = {
   value: ICourse;
@@ -67,14 +69,22 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     // get all semesters
     const list: OptionType[] = [];
     if (!courseData) return list;
-    const filteredOptions = Array.from(
-      new Set(courseData.classes.map((c) => `${c.semester} ${c.year}`))
-    ).map((t) => {
-      return {
-        value: t,
-        label: t,
-      };
-    });
+    const filteredOptions = courseData.classes
+      .filter(
+        ({ year, semester }, index) =>
+          index ===
+          courseData.classes.findIndex(
+            (_class) => _class.semester === semester && _class.year === year
+          )
+      )
+      .toSorted(sortByTermDescending)
+      .map((t) => {
+        const str = `${t.semester} ${t.year}`;
+        return {
+          value: str,
+          label: str,
+        };
+      });
     if (filteredOptions.length == 1) {
       if (selectedSemester != filteredOptions[0])
         setSelectedSemester(filteredOptions[0]);
@@ -233,6 +243,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         disabled={
           disabled || !selectedCourse || !selectedClass || !selectedSemester
         }
+        className={styles.addButton}
       >
         Add course
         <Plus />

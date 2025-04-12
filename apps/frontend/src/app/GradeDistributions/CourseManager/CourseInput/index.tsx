@@ -16,6 +16,7 @@ import {
   ReadGradeDistributionResponse,
   Semester,
 } from "@/lib/api";
+import { sortByTermDescending } from "@/lib/classes";
 import { RecentType, addRecent } from "@/lib/recent";
 
 import {
@@ -26,6 +27,7 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "../../types";
+import styles from "./CourseInput.module.scss";
 
 type CourseOptionType = {
   value: ICourse;
@@ -113,7 +115,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const semesterOptions: OptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_SEMESTER];
     if (!course) return list;
-    console.log(selectedType);
     const filteredClasses =
       selectedType?.value === InputType.Term
         ? course.classes // all if by semester
@@ -128,14 +129,22 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
                 )
               )
             );
-    const filteredOptions = Array.from(
-      new Set(filteredClasses.map((c) => `${c.semester} ${c.year}`))
-    ).map((t) => {
-      return {
-        value: t,
-        label: t,
-      };
-    });
+    const filteredOptions = filteredClasses
+      .filter(
+        ({ year, semester }, index) =>
+          index ===
+          filteredClasses.findIndex(
+            (_class) => _class.semester === semester && _class.year === year
+          )
+      )
+      .toSorted(sortByTermDescending)
+      .map((t) => {
+        const str = `${t.semester} ${t.year}`;
+        return {
+          value: str,
+          label: str,
+        };
+      });
     if (filteredOptions.length == 1) {
       // if only one option, select it
       if (selectedSemester != filteredOptions[0])
@@ -349,6 +358,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           !selectedInstructor ||
           !selectedSemester
         }
+        className={styles.addButton}
       >
         Add course
         <Plus />
