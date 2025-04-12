@@ -82,7 +82,10 @@ export default async (redis: RedisClientType) => {
         calculateHttpHeaders: false,
         defaultMaxAge: 24 * 60 * 60, // 24 hours
       }),
-      responseCachePlugin(),
+      responseCachePlugin({
+        sessionId: async (req) =>
+          req.request.http?.headers.get("sessionId") || null,
+      }),
     ],
     // TODO(prod): introspection: config.isDev,
     introspection: true,
