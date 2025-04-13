@@ -100,7 +100,7 @@ export const getDistribution = (distributions: IGradeDistributionItem[]) => {
     ([field, count]) =>
       ({
         letter: letters[field],
-        percentage: count / total,
+        percentage: count > 0 ? count / total : 0,
         count,
       }) as Grade
   );
