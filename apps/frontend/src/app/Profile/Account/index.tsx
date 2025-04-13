@@ -1,20 +1,22 @@
-import { useReadSchedules } from "@/hooks/api";
-import { ISchedule } from "@/lib/api";
 import { useMemo } from "react";
 
-import styles from "./Account.module.scss";
-import Carousel from "@/components/Carousel";
+import { Calendar } from "iconoir-react";
+import { Link } from "react-router-dom";
+
 import { Flex, Text } from "@repo/theme";
+
+import Carousel from "@/components/Carousel";
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
-import { Link } from "react-router-dom";
-import { Calendar } from "iconoir-react";
+import { useReadSchedules } from "@/hooks/api";
 import useUser from "@/hooks/useUser";
+import { ISchedule } from "@/lib/api";
+
+import styles from "./Account.module.scss";
 
 const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
 
 export default function Account() {
-
   const { user } = useUser();
 
   const { data: schedules, loading: schedulesLoading } = useReadSchedules({
@@ -24,14 +26,14 @@ export default function Account() {
   const schedulesBySemester = useMemo(() => {
     return schedules
       ? schedules.reduce(
-        (acc, schedule) => {
-          const term = `${schedule.semester} ${schedule.year}`;
-          if (!acc[term]) acc[term] = [];
-          acc[term].push(schedule);
-          return acc;
-        },
-        {} as { [key: string]: ISchedule[] }
-      )
+          (acc, schedule) => {
+            const term = `${schedule.semester} ${schedule.year}`;
+            if (!acc[term]) acc[term] = [];
+            acc[term].push(schedule);
+            return acc;
+          },
+          {} as { [key: string]: ISchedule[] }
+        )
       : ({} as { [key: string]: ISchedule[] });
   }, [schedules]);
 
@@ -42,9 +44,7 @@ export default function Account() {
       <div>
         <div className={styles.infoItem}>
           <label>Full Name</label>
-          <span className={styles.infoValue}>
-            {user.name}
-          </span>
+          <span className={styles.infoValue}>{user.name}</span>
         </div>
         <div className={styles.infoItem}>
           <label>bConnected Email</label>
@@ -84,7 +84,9 @@ export default function Account() {
         <Link to={"/catalog"} className={styles.afterCarouselLink}>
           View Catalog
         </Link>
-        {schedulesLoading ? <></> : (
+        {schedulesLoading ? (
+          <></>
+        ) : (
           <div>
             <h2>Saved Schedules</h2>
             {/* TODO: Improve this placeholder also */}
@@ -104,24 +106,30 @@ export default function Account() {
                   .sort((a, b) => {
                     return schedulesBySemester[a][0].year ==
                       schedulesBySemester[b][0].year
-                      ? SEMESTER_ORDER.indexOf(schedulesBySemester[b][0].semester) -
-                      SEMESTER_ORDER.indexOf(schedulesBySemester[a][0].semester)
+                      ? SEMESTER_ORDER.indexOf(
+                          schedulesBySemester[b][0].semester
+                        ) -
+                          SEMESTER_ORDER.indexOf(
+                            schedulesBySemester[a][0].semester
+                          )
                       : schedulesBySemester[b][0].year -
-                      schedulesBySemester[a][0].year;
+                          schedulesBySemester[a][0].year;
                   })
                   .map((sem) => {
                     return (
                       <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
-                        {schedulesBySemester[sem].map(({ _id, name, classes }, i) => {
-                          return (
-                            <Carousel.Schedule
-                              key={i}
-                              _id={_id}
-                              name={name}
-                              classes={classes}
-                            />
-                          );
-                        })}
+                        {schedulesBySemester[sem].map(
+                          ({ _id, name, classes }, i) => {
+                            return (
+                              <Carousel.Schedule
+                                key={i}
+                                _id={_id}
+                                name={name}
+                                classes={classes}
+                              />
+                            );
+                          }
+                        )}
                       </Carousel.Root>
                     );
                   })}

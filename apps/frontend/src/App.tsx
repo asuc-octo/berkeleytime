@@ -19,7 +19,7 @@ const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
   Support: lazy(() => import("@/app/Profile/Support")),
-}
+};
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -136,17 +136,17 @@ const router = createBrowserRouter([
                 <Profile.Account />
               </SuspenseBoundary>
             ),
-            index: true
-          }, 
+            index: true,
+          },
           {
             element: (
               <SuspenseBoundary key="support">
                 <Profile.Support />
               </SuspenseBoundary>
             ),
-            path: "support"
-          }
-        ]
+            path: "support",
+          },
+        ],
       },
     ],
   },
