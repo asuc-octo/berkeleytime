@@ -69,13 +69,12 @@ export default function Dashboard({
       ),
     [term, user]
   );
-
   const [recentClasses, setRecentClasses] = useState<IClass[]>([]);
-
+    
   const initialize = useCallback(async () => {
     const recentClasses = getRecents(RecentType.Class);
 
-    const responses = await Promise.all(
+    const recentResponses = await Promise.all(
       recentClasses.map(async (recentClass) => {
         const { subject, year, semester, courseNumber, number } = recentClass;
 
@@ -100,7 +99,8 @@ export default function Dashboard({
       })
     );
 
-    setRecentClasses(responses.filter((response) => !!response));
+    setRecentClasses(recentResponses.filter((response) => !!response));
+
   }, [client]);
 
   useEffect(() => {

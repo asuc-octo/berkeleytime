@@ -180,7 +180,7 @@ export default function Course({
         optimisticResponse: {
           updateUser: {
             ...user,
-            bookmarkedCourses,
+            bookmarkedCourses: user.bookmarkedCourses,
           },
         },
       }

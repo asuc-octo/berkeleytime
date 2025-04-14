@@ -14,6 +14,7 @@ export const formatUser = (user: UserType) => {
   return {
     _id: user._id,
     email: user.email,
+    name: user.name,
     student: user.email.endsWith("@berkeley.edu"),
     bookmarkedCourses: user.bookmarkedCourses,
     bookmarkedClasses: user.bookmarkedClasses,

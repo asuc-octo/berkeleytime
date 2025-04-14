@@ -27,7 +27,7 @@ export default function ClassCard({
         <Card.Footer>
           <AverageGrade gradeDistribution={data.gradeDistribution} />
           <Capacity
-            enrolledCount={data.primarySection.enrollment?.latest.enrolledCount}
+            enrolledCount={data.primarySection.enrollment?.latest.enrolledCount} 
             maxEnroll={data.primarySection.enrollment?.latest.maxEnroll}
             waitlistedCount={
               data.primarySection.enrollment?.latest.waitlistedCount
