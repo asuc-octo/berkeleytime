@@ -2,8 +2,8 @@ import { ReactNode, useMemo, useState } from "react";
 
 import { ArrowRight, Xmark } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
-import ReactSelect from "react-select";
 
+import { Select } from "@repo/theme";
 import {
   Button,
   Dialog,
@@ -18,8 +18,6 @@ import {
 
 import { useCreateSchedule, useReadTerms } from "@/hooks/api";
 import { Semester } from "@/lib/api";
-
-import styles from "./styles";
 
 interface CreateScheduleDialogProps {
   defaultName: string;
@@ -137,7 +135,7 @@ export default function CreateScheduleDialog({
             </Flex>
             <Flex direction="column" gap="2">
               <Label>Semester</Label>
-              <ReactSelect
+              <Select
                 options={options}
                 placeholder="Select a semester"
                 isDisabled={loading || pending}
@@ -146,7 +144,6 @@ export default function CreateScheduleDialog({
                   // @ts-expect-error - ReactSelect does not have a type for the value
                   setLocalTerm(value?.value)
                 }
-                styles={styles}
               />
             </Flex>
             <Button
