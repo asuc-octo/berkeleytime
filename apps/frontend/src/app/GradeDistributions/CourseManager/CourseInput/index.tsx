@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
-import { Plus } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import { SingleValue } from "react-select";
 
@@ -361,7 +360,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         className={styles.addButton}
       >
         Add course
-        <Plus />
       </Button>
     </Flex>
   );

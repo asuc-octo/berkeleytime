@@ -400,12 +400,12 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    <Tabs.Trigger value="enrollment" asChild>
+                    {/* <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
-                    </Tabs.Trigger>
+                    </Tabs.Trigger> */}
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -420,7 +420,7 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
                     )}
@@ -429,7 +429,7 @@ export default function Class({
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
-                  </NavLink>
+                  </NavLink> */}
                 </Flex>
               )}
             </Flex>

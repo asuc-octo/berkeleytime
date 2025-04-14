@@ -19,6 +19,12 @@
     .icon:hover {
       color: var(--heading-color);
     }
+    .delete-icon {
+      color: var(--red-700);
+    }
+    .delete-icon:hover {
+      color: var(--red-600);
+    }
   }
 
   .body {

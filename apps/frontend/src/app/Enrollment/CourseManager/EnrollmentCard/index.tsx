@@ -74,7 +74,7 @@ export default function EnrollmentCard({
         <Card.ActionIcon onClick={onClickHide} ref={hideRef}>
           {!hidden ? <Eye /> : <EyeClosed />}
         </Card.ActionIcon>
-        <Card.ActionIcon onClick={onClickDelete} ref={deleteRef}>
+        <Card.ActionIcon onClick={onClickDelete} ref={deleteRef} isDelete>
           <Trash />
         </Card.ActionIcon>
       </Card.Actions>

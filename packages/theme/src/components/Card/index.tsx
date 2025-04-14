@@ -71,10 +71,15 @@ function Actions({ children, ...props }: ComponentPropsWithRef<"div">) {
 function ActionIcon({
   children,
   onClick,
+  isDelete,
   ...props
-}: ComponentPropsWithRef<"div">) {
+}: { isDelete?: true } & ComponentPropsWithRef<"div">) {
   return (
-    <div className={styles.icon} onClick={onClick} {...props}>
+    <div
+      className={isDelete ? styles.deleteIcon : styles.icon}
+      onClick={onClick}
+      {...props}
+    >
       {children}
     </div>
   );

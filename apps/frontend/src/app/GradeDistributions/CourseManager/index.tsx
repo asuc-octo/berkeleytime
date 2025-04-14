@@ -37,7 +37,11 @@ export default function CourseManager({
   const updateActive = (index: number, active: boolean) => {
     setOutputs((outputs) =>
       [...outputs].map((output, i) =>
-        i === index ? { ...output, active } : output
+        i === index
+          ? { ...output, active }
+          : active
+            ? { ...output, active: false }
+            : output
       )
     );
   };

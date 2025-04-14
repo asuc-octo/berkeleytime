@@ -28,3 +28,7 @@ bt_seed.sql.gz
 .turbo
 generated-types/
 stage_backup.gz
+apps/frontend/tsconfig.node.tsbuildinfo
+apps/frontend/tsconfig.tsbuildinfo
+apps/frontend/vite.config.d.ts
+apps/frontend/vite.config.js
