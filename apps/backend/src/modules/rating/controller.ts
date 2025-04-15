@@ -205,10 +205,10 @@ const deleteRatingOperations = async (
       { session }
     ),
     handleCategoryCountChange(
+      year,
+      semester,
       subject,
       courseNumber,
-      semester,
-      year,
       classNumber,
       metricName,
       rating.value,
