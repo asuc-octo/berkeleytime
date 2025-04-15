@@ -1,4 +1,9 @@
-import { IClassItem, ISectionItem, ClassGradingBasis, ClassFinalExam } from "@repo/common";
+import {
+  ClassFinalExam,
+  ClassGradingBasis,
+  IClassItem,
+  ISectionItem,
+} from "@repo/common";
 
 import { ClassModule } from "./generated-types/module-types";
 

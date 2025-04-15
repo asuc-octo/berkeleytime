@@ -5,7 +5,6 @@ import { AggregatedMetricsModel, RatingModel, RatingType } from "@repo/common";
 import { METRIC_MAPPINGS } from "@repo/shared";
 
 import { MetricName, Semester } from "../../generated-types/graphql";
-
 import {
   formatAggregatedRatings,
   formatSemesterRatings,
@@ -380,7 +379,11 @@ export const getSemestersWithRatings = async (
 
 // Helper functions
 
-const createNewRating = async (context: RequestContext, ratingData: RatingData, session: any) => {
+const createNewRating = async (
+  context: RequestContext,
+  ratingData: RatingData,
+  session: any
+) => {
   const {
     subject,
     courseNumber,

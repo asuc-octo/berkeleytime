@@ -3,8 +3,16 @@ import { GraphQLError } from "graphql";
 import { RatingModel, RatingType } from "@repo/common";
 import { USER_MAX_ALL_RATINGS, USER_MAX_SEMESTER_RATINGS } from "@repo/shared";
 
-import { MetricName, Semester, UserRatings } from "../../../generated-types/graphql";
-import { booleanScaleMetrics, numberScaleMetrics, RequestContext } from "../controller";
+import {
+  MetricName,
+  Semester,
+  UserRatings,
+} from "../../../generated-types/graphql";
+import {
+  RequestContext,
+  booleanScaleMetrics,
+  numberScaleMetrics,
+} from "../controller";
 
 export const checkRatingExists = async (
   context: RequestContext,
@@ -18,7 +26,7 @@ export const checkRatingExists = async (
     courseNumber,
     metricName,
   });
-  
+
   // null check and return null, otherwise cast into RatingType and return that
   return rating ? (rating as RatingType) : null;
 };
