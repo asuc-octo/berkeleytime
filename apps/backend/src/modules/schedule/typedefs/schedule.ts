@@ -29,6 +29,7 @@ const typedef = gql`
     events: [Event!]!
   }
 
+
   type Query {
     schedules: [Schedule] @auth
     schedule(id: ID!): Schedule

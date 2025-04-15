@@ -4,6 +4,8 @@ import { Component, IClass, Semester } from "@/lib/api";
 
 import { Day, Level, SortBy, Unit } from "./browser";
 
+import { ISchedule } from "@/lib/api";
+
 export interface BrowserContextType {
   responsive: boolean;
   expanded: boolean;
@@ -21,6 +23,8 @@ export interface BrowserContextType {
   online: boolean;
   sortBy: SortBy;
   open: boolean;
+  selectedSchedule: ISchedule | null;
+  allSchedules: ISchedule[];
   updateComponents: Dispatch<Component[]>;
   updateUnits: Dispatch<Unit[]>;
   updateLevels: Dispatch<Level[]>;
@@ -30,8 +34,10 @@ export interface BrowserContextType {
   updateOpen: Dispatch<boolean>;
   updateOnline: Dispatch<boolean>;
   loading: boolean;
+  updateSelectedSchedule: Dispatch<ISchedule | null>;
 }
 
 const BrowserContext = createContext<BrowserContextType | null>(null);
+
 
 export default BrowserContext;

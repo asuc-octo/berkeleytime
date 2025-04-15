@@ -6,12 +6,15 @@ import { AverageGrade } from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
+import { ConflictResult } from "@/components/ClassBrowser/browser";
+
 
 import styles from "./Class.module.scss";
 
 interface Props {
   index: number;
   onClick: MouseEventHandler<HTMLDivElement>;
+  conflict?: ConflictResult; 
 }
 
 type ClassProps = Props & IClass;
@@ -32,7 +35,10 @@ export default function Class({
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   return (
-    <div className={styles.root} data-index={index} {...props}>
+    <div className={`${styles.root} ${props.conflict?.hasConflict ? styles.conflict : ""}`}
+      data-index={index} 
+      {...props}
+      >
       <div className={styles.text}>
         <p className={styles.heading}>
           {subject} {courseNumber} #{number}

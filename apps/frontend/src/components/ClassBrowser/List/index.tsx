@@ -10,6 +10,7 @@ import Header from "../Header";
 import useBrowser from "../useBrowser";
 import Class from "./Class";
 import styles from "./List.module.scss";
+import { ClassWithConflict } from "../browser"
 
 interface ListProps {
   onSelect: (subject: string, courseNumber: string, number: string) => void;
@@ -78,6 +79,7 @@ export default function List({ onSelect }: ListProps) {
                   index={index}
                   key={key}
                   ref={virtualizer.measureElement}
+                  conflict={(_class as ClassWithConflict).conflict}
                   onClick={() =>
                     onSelect(
                       _class.course.subject,

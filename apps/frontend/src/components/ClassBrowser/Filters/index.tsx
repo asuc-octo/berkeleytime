@@ -3,8 +3,10 @@ import { Dispatch, useMemo } from "react";
 import classNames from "classnames";
 import { Check } from "iconoir-react";
 import { Checkbox, RadioGroup } from "radix-ui";
+import { useQuery } from "@apollo/client";
+import { READ_USER, ReadUserResponse } from "@/lib/api/users";
 
-import { Component, componentMap } from "@/lib/api";
+import { Component, componentMap,  } from "@/lib/api"; 
 
 import Header from "../Header";
 import {
@@ -37,6 +39,9 @@ export default function Filters() {
     sortBy,
     updateSortBy,
     responsive,
+    selectedSchedule,
+    updateSelectedSchedule,
+    allSchedules
   } = useBrowser();
 
   const filteredLevels = useMemo(() => {
@@ -50,7 +55,8 @@ export default function Filters() {
             [],
             days,
             open,
-            online
+            online,
+            selectedSchedule
           ).includedClasses;
 
     return classes.reduce(
@@ -80,7 +86,12 @@ export default function Filters() {
     days,
     open,
     online,
+    selectedSchedule
   ]);
+  
+  const { data: userData } = useQuery<ReadUserResponse>(READ_USER);
+  const user = userData?.user;
+  const isLoggedIn = !!user;
 
   const filteredComponents = useMemo(() => {
     const filteredComponents = Object.keys(componentMap).reduce(
@@ -101,7 +112,8 @@ export default function Filters() {
             levels,
             days,
             open,
-            online
+            online,
+            selectedSchedule
           ).includedClasses;
 
     for (const _class of classes) {
@@ -120,6 +132,7 @@ export default function Filters() {
     days,
     open,
     online,
+    selectedSchedule
   ]);
 
   const filteredDays = useMemo(() => {
@@ -141,7 +154,8 @@ export default function Filters() {
             levels,
             [],
             open,
-            online
+            online,
+            selectedSchedule
           ).includedClasses;
 
     for (const _class of classes) {
@@ -164,6 +178,7 @@ export default function Filters() {
     days,
     open,
     online,
+    selectedSchedule
   ]);
 
   const filteredUnits = useMemo(() => {
@@ -185,7 +200,8 @@ export default function Filters() {
             levels,
             days,
             open,
-            online
+            online,
+            selectedSchedule
           ).includedClasses;
 
     for (const _class of classes) {
@@ -211,6 +227,7 @@ export default function Filters() {
     days,
     open,
     online,
+    selectedSchedule
   ]);
 
   const amountOpen = useMemo(
@@ -437,6 +454,33 @@ export default function Filters() {
             </div>
           );
         })}
+        
+        <p className={styles.label}>Schedule</p>
+        <div className={styles.filterVertical}>
+          <select
+            id="schedule"
+            className={styles.select}
+            value={selectedSchedule?._id ?? ""}
+            onMouseDown={(e) => {
+              if (!isLoggedIn) {
+                e.preventDefault();
+                alert("Please log in to use this feature");
+              }
+            }}
+            onChange={(e) => {
+              const id = e.target.value;
+              const schedule = allSchedules.find((s) => s._id === id) ?? null;
+              updateSelectedSchedule(schedule);
+            }}
+          >
+            <option value="">None</option>
+            {allSchedules.map((schedule) => (
+              <option key={schedule._id} value={schedule._id}>
+                {schedule.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
