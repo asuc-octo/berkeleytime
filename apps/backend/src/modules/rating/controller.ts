@@ -139,10 +139,10 @@ export const createRating = async (
       ) {
         await deleteRating(
           context,
+          Number(existingRating.year),
+          existingRating.semester as Semester,
           existingRating.subject,
           existingRating.courseNumber,
-          existingRating.semester as Semester,
-          existingRating.year,
           existingRating.classNumber,
           existingRating.metricName as MetricName,
           session
@@ -274,10 +274,10 @@ export const deleteRating = async (
 
 export const getUserClassRatings = async (
   context: RequestContext,
+  year: number,
+  semester: Semester,
   subject: string,
   courseNumber: string,
-  semester: Semester,
-  year: number,
   classNumber: string
 ) => {
   if (!context.user._id) {
@@ -323,10 +323,10 @@ export const getUserRatings = async (context: RequestContext) => {
 };
 
 export const getClassAggregatedRatings = async (
+  year: number,
+  semester: Semester,
   subject: string,
   courseNumber: string,
-  semester: Semester,
-  year: number,
   classNumber: string
 ) => {
   const aggregated = await ratingAggregator({
@@ -402,10 +402,10 @@ const createNewRating = async (context: RequestContext, ratingData: RatingData, 
       { session }
     ),
     handleCategoryCountChange(
+      year,
+      semester,
       subject,
       courseNumber,
-      semester,
-      year,
       classNumber,
       metricName,
       value,
@@ -431,10 +431,10 @@ const handleExistingRating = async (
 
   await Promise.all([
     handleCategoryCountChange(
+      Number(existingRating.year),
+      existingRating.semester as Semester,
       existingRating.subject,
       existingRating.courseNumber,
-      existingRating.semester as Semester,
-      existingRating.year,
       existingRating.classNumber,
       existingRating.metricName as MetricName,
       oldValue,
@@ -442,10 +442,10 @@ const handleExistingRating = async (
       session
     ),
     handleCategoryCountChange(
+      Number(existingRating.year),
+      existingRating.semester as Semester,
       existingRating.subject,
       existingRating.courseNumber,
-      existingRating.semester as Semester,
-      existingRating.year,
       existingRating.classNumber,
       existingRating.metricName as MetricName,
       newValue,
@@ -456,10 +456,10 @@ const handleExistingRating = async (
 };
 
 const handleCategoryCountChange = async (
+  year: number,
+  semester: Semester,
   subject: string,
   courseNumber: string,
-  semester: Semester,
-  year: number,
   classNumber: string,
   metricName: MetricName,
   categoryValue: Number,

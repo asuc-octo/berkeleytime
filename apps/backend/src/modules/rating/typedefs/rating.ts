@@ -15,11 +15,11 @@ const typedef = gql`
   """
   type AggregatedRatings {
     "Class identifier"
+    year: Int
+    semester: Semester
     subject: String!
     courseNumber: String!
     classNumber: String
-    semester: Semester
-    year: Int
 
     metrics: [Metric!]!
   }
@@ -44,10 +44,10 @@ const typedef = gql`
   }
   type UserClass {
     "Class Identifiers"
+    year: Int!
+    semester: Semester!
     subject: String!
     courseNumber: String!
-    semester: Semester!
-    year: Int!
     classNumber: String!
 
     metrics: [UserMetric!]!
@@ -59,8 +59,8 @@ const typedef = gql`
   }
 
   type SemesterRatings {
-    semester: Semester!
     year: Int!
+    semester: Semester!
     maxMetricCount: Int!
   }
 
@@ -69,20 +69,20 @@ const typedef = gql`
   """
   type Query {
     aggregatedRatings(
+      year: Int!
+      semester: Semester!
       subject: String!
       courseNumber: String!
-      semester: Semester!
-      year: Int!
       classNumber: String!
     ): AggregatedRatings!
 
     userRatings: UserRatings! @auth
 
     userClassRatings(
+      year: Int!
+      semester: Semester!
       subject: String!
       courseNumber: String!
-      semester: Semester!
-      year: Int!
       classNumber: String!
     ): UserClass! @auth
 
@@ -98,10 +98,10 @@ const typedef = gql`
   type Mutation {
     createRating(
       "Class Identifiers"
+      year: Int!
+      semester: Semester!
       subject: String!
       courseNumber: String!
-      semester: Semester!
-      year: Int!
       classNumber: String!
 
       metricName: MetricName!
@@ -110,10 +110,10 @@ const typedef = gql`
 
     deleteRating(
       "Class Identifiers"
+      year: Int!
+      semester: Semester!
       subject: String!
       courseNumber: String!
-      semester: Semester!
-      year: Int!
       classNumber: String!
       metricName: MetricName!
     ): Boolean! @auth

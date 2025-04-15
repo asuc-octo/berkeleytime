@@ -14,15 +14,15 @@ const resolvers: RatingModule.Resolvers = {
   Query: {
     aggregatedRatings: async (
       _,
-      { subject, courseNumber, semester, year, classNumber },
+      { year, semester, subject, courseNumber, classNumber },
       __
     ) => {
       try {
         const aggregatedRatings = await getClassAggregatedRatings(
+          Number(year),
+          semester,
           subject,
           courseNumber,
-          semester,
-          year,
           classNumber
         );
         return aggregatedRatings as unknown as RatingModule.AggregatedRatings;
@@ -66,16 +66,16 @@ const resolvers: RatingModule.Resolvers = {
 
     userClassRatings: async (
       _,
-      { subject, courseNumber, semester, year, classNumber },
+      { year, semester, subject, courseNumber, classNumber },
       context
     ) => {
       try {
         const userClassRatings = await getUserClassRatings(
           context,
+          Number(year),
+          semester,
           subject,
           courseNumber,
-          semester,
-          year,
           classNumber
         );
         return userClassRatings as unknown as RatingModule.UserClass;
@@ -123,16 +123,16 @@ const resolvers: RatingModule.Resolvers = {
   Mutation: {
     createRating: async (
       _,
-      { subject, courseNumber, semester, year, classNumber, metricName, value },
+      { year, semester, subject, courseNumber, classNumber, metricName, value },
       context
     ) => {
       try {
         return await createRating(
           context,
+          Number(year),
+          semester,
           subject,
           courseNumber,
-          semester,
-          year,
           classNumber,
           metricName,
           value
@@ -156,16 +156,16 @@ const resolvers: RatingModule.Resolvers = {
 
     deleteRating: async (
       _,
-      { subject, courseNumber, semester, year, classNumber, metricName },
+      { year, semester, subject, courseNumber, classNumber, metricName },
       context
     ) => {
       try {
         return await deleteRating(
           context,
+          Number(year),
+          semester,
           subject,
           courseNumber,
-          semester,
-          year,
           classNumber,
           metricName
         );
