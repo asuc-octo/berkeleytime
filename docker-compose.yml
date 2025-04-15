@@ -3,19 +3,6 @@ networks:
   bt:
     name: bt
 services:
-  datapuller:
-    build:
-      context: .
-      target: datapuller-dev
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    networks:
-      - bt
-    restart: always
-    volumes:
-      - ./apps/datapuller/src:/datapuller/apps/datapuller/src
-      - ./.env:/datapuller/apps/datapuller/.env
   backend:
     build:
       context: .
