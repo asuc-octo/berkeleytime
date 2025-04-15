@@ -3,13 +3,15 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
+import { ISchedule } from "@/lib/api";
+
 
 import {
   Component,
   GET_CATALOG,
   GetCatalogResponse,
   IClass,
-  Semester,
+  Semester
 } from "@/lib/api";
 
 import styles from "./ClassBrowser.module.scss";
@@ -31,6 +33,7 @@ interface ClassBrowserProps {
   semester: Semester;
   year: number;
   persistent?: boolean;
+  allSchedules: ISchedule[];
 }
 
 export default function ClassBrowser({
@@ -39,6 +42,7 @@ export default function ClassBrowser({
   semester: currentSemester,
   year: currentYear,
   persistent,
+  allSchedules,
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -51,6 +55,7 @@ export default function ClassBrowser({
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<ISchedule | null>(null);
 
   const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
     variables: {
@@ -146,9 +151,10 @@ export default function ClassBrowser({
         levels,
         days,
         open,
-        online
+        online,
+        selectedSchedule
       ),
-    [classes, components, units, levels, days, open, online]
+    [classes, components, units, levels, days, open, online, selectedSchedule]
   );
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
@@ -272,6 +278,28 @@ export default function ClassBrowser({
     setLocalQuery(query);
   };
 
+  const selectedScheduleMemo = useMemo(() => {
+    if (persistent) {
+      const id = searchParams.get("selectedSchedule");
+      return allSchedules.find((s) => s._id === id) ?? null;
+    }
+  
+    return selectedSchedule;
+  }, [searchParams, selectedSchedule, persistent, allSchedules]);
+
+  const updateSelectedSchedule = (schedule: ISchedule | null) => {
+    if (persistent) {
+      if (schedule) {
+        searchParams.set("selectedSchedule", schedule._id);
+      } else {
+        searchParams.delete("selectedSchedule");
+      }
+      setSearchParams(searchParams);
+    }
+    setSelectedSchedule(schedule);
+  };
+  
+
   return (
     <BrowserContext
       value={{
@@ -290,6 +318,8 @@ export default function ClassBrowser({
         days,
         online,
         open,
+        selectedSchedule: selectedScheduleMemo,
+        allSchedules,
         updateQuery,
         updateComponents: (components) =>
           updateArray("components", setLocalComponents, components),
@@ -302,6 +332,7 @@ export default function ClassBrowser({
           updateBoolean("online", setLocalOnline, online),
         setExpanded,
         loading,
+        updateSelectedSchedule
       }}
     >
       <div

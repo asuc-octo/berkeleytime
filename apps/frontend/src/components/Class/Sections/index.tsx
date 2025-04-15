@@ -11,11 +11,12 @@ import Details from "@/components/Details";
 import useClass from "@/hooks/useClass";
 import { Component, componentMap } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
+import { ClassWithConflict } from "@/components/ClassBrowser/browser";
 
 import styles from "./Sections.module.scss";
 
 export default function Sections() {
-  const { class: _class } = useClass();
+  const { class: _class } = useClass() as { class: ClassWithConflict };
 
   const viewRef = useRef<HTMLDivElement>(null);
   const [group, setGroup] = useState<Component | null>(null);
@@ -85,6 +86,7 @@ export default function Sections() {
     viewRef.current?.children[index].scrollIntoView({ behavior: "smooth" });
   };
 
+
   return _class.sections.length === 0 ? (
     <div className={styles.placeholder}>
       <FrameAltEmpty width={32} height={32} />
@@ -117,7 +119,8 @@ export default function Sections() {
         {Object.values(groups).map((sections) => (
           <div className={styles.group}>
             {sections.map((section) => (
-              <div className={styles.section} key={section.sectionId}>
+              <div className={classNames(styles.section, {[styles.conflict]: _class.conflict?.conflictingSectionIds.includes(section.sectionId),})}
+                key={section.sectionId}>
                 <div className={styles.header}>
                   <div className={styles.text}>
                     <p className={styles.heading}>

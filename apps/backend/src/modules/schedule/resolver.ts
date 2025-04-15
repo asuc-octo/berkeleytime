@@ -6,7 +6,7 @@ import {
   getClasses,
   getSchedule,
   getSchedules,
-  updateSchedule,
+  updateSchedule
 } from "./controller";
 import { IntermediateSchedule } from "./formatter";
 import { ScheduleModule } from "./generated-types/module-types";
@@ -24,6 +24,8 @@ const resolvers: ScheduleModule.Resolvers = {
 
       return schedule as unknown as ScheduleModule.Schedule;
     },
+
+    
   },
 
   Schedule: {

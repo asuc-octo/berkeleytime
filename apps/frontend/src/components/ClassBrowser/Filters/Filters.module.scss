@@ -36,6 +36,46 @@
       }
     }
 
+    .filterVertical {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    
+      .text {
+        font-size: 14px;
+        color: var(--label-color);
+        line-height: 1;
+        font-weight: 500;
+    
+        .value {
+          color: var(--paragraph-color);
+        }
+      }
+    
+      .select {
+        font-size: 14px;
+        color: var(--paragraph-color);
+        font-weight: 500;
+        border: 2px solid var(--paragraph-color);
+        border-radius: 4px;
+        padding: 4px 8px;
+        background-color: white;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='8'%20height='5'%3E%3Cpath%20fill='black'%20d='M0,0L4,5L8,0'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 8px 5px;
+    
+        &:focus {
+          outline: none;
+          border-color: var(--blue-500);
+        }
+      }
+    }
+    
+    
+
     .filter {
       display: flex;
       align-items: center;

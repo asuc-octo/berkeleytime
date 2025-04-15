@@ -1,6 +1,6 @@
 import Fuse from "fuse.js";
 
-import { AcademicCareer, Component, IClass, academicCareers } from "@/lib/api";
+import { AcademicCareer, Component, IClass, academicCareers, ISchedule } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 export enum SortBy {
@@ -45,6 +45,8 @@ export const getLevel = (academicCareer: AcademicCareer, number: string) => {
     : (academicCareers[academicCareer] as Level);
 };
 
+export type ClassWithConflict = IClass & { conflict?: ConflictResult };
+
 export const getFilteredClasses = (
   classes: IClass[],
   currentComponents: Component[],
@@ -52,7 +54,8 @@ export const getFilteredClasses = (
   currentLevels: Level[],
   currentDays: Day[],
   currentOpen: boolean,
-  currentOnline: boolean
+  currentOnline: boolean,
+  selectedSchedule: ISchedule | null
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -133,16 +136,129 @@ export const getFilteredClasses = (
         }
       }
 
+      //Filter by existing schedule 
+      if (selectedSchedule) {
+        const timeSlots = extractTimeSlotsFromSchedule(selectedSchedule);
+        const conflict = hasTimeConflict(_class, timeSlots);
+        acc.includedClasses.push({
+          ..._class,
+          conflict,
+        });
+      }
+
+
       acc.includedClasses.push(_class);
 
       return acc;
     },
     { includedClasses: [], excludedClasses: [] } as {
-      includedClasses: IClass[];
+      includedClasses: ClassWithConflict[];
       excludedClasses: IClass[];
     }
   );
 };
+
+interface TimeSlot {
+  day: number;   
+  start: number;  
+  end: number;    
+}
+
+export interface ConflictResult {
+  hasConflict: boolean;
+  conflictingSectionIds: string[];
+}
+
+function timeToMinutes(time: string): number {
+  const [hour, minute] = time.split(":").map(Number);
+  return hour * 60 + minute;
+}
+
+function extractTimeSlotsFromSchedule(schedule: ISchedule): TimeSlot[] {
+  const timeSlots: TimeSlot[] = [];
+
+  for (const { class: _class, selectedSections } of schedule.classes) {
+    const allSections = [
+      _class.primarySection,
+      ..._class.sections.filter((section) =>
+        selectedSections.some(sel => sel.sectionId === section.sectionId)
+      ),
+    ];
+
+    for (const section of allSections) {
+      const meetings = section.meetings || [];
+
+      for (const meeting of meetings) {
+        const { startTime, endTime, days } = meeting;
+        const start = timeToMinutes(startTime);
+        const end = timeToMinutes(endTime);
+
+        days.forEach((hasClass, dayIndex) => {
+          if (hasClass) {
+            timeSlots.push({
+              day: dayIndex,
+              start,
+              end,
+            });
+          }
+        });
+      }
+    }
+  }
+
+  for (const event of schedule.events || []) {
+    const start = timeToMinutes(event.startTime);
+    const end = timeToMinutes(event.endTime);
+
+    event.days.forEach((hasEvent, dayIndex) => {
+      if (hasEvent) {
+        timeSlots.push({
+          day: dayIndex,
+          start,
+          end,
+        });
+      }
+    });
+  }
+
+  return timeSlots;
+}
+
+function hasTimeConflict(
+  _class: IClass,
+  timeSlots: TimeSlot[]
+): ConflictResult {
+  const conflictingSectionIds: string[] = [];
+  const allSections = [_class.primarySection, ..._class.sections];
+
+  for (const section of allSections) {
+    for (const meeting of section.meetings ?? []) {
+      const start = timeToMinutes(meeting.startTime);
+      const end = timeToMinutes(meeting.endTime);
+
+      for (let dayIndex = 0; dayIndex < meeting.days.length; dayIndex++) {
+        if (!meeting.days[dayIndex]) continue;
+
+        for (const slot of timeSlots) {
+          if (slot.day !== dayIndex) continue;
+          if (Math.max(start, slot.start) < Math.min(end, slot.end)) {
+            if (section.sectionId) {
+              conflictingSectionIds.push(section.sectionId);
+            }
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    hasConflict: conflictingSectionIds.length > 0,
+    conflictingSectionIds,
+  };
+}
+
+
 
 export const getIndex = (classes: IClass[]) => {
   const list = classes.map((_class) => {
