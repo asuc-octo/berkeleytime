@@ -1,5 +1,16 @@
 import { Document, Model, Schema, model } from "mongoose";
 
+export enum ClassGradingBasis {
+  GRADED = "Graded",
+  PASSED_NOT_PASSED = "Passed/Not Passed",
+  SATISFACTORY_UNSATISFACTORY = "Satisfactory/Unsatisfactory",
+}
+
+export enum ClassFinalExam {
+  NONE = "None",
+  EXAM = "Exam",
+}
+
 export interface IClassItem {
   // course.identifiers[cs-course-id]
   courseId: string;

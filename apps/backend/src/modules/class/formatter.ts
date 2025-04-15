@@ -1,18 +1,6 @@
-import { IClassItem, ISectionItem } from "@repo/common";
+import { IClassItem, ISectionItem, ClassGradingBasis, ClassFinalExam } from "@repo/common";
 
 import { ClassModule } from "./generated-types/module-types";
-
-// Add enum types that were missing
-enum ClassGradingBasis {
-  GRADED = "Graded",
-  PASSED_NOT_PASSED = "Passed/Not Passed",
-  SATISFACTORY_UNSATISFACTORY = "Satisfactory/Unsatisfactory",
-}
-
-enum ClassFinalExam {
-  NONE = "None",
-  EXAM = "Exam",
-}
 
 interface ClassRelationships {
   term: null;
