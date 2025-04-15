@@ -163,10 +163,10 @@ const resolvers: ClassModule.Resolvers = {
       parent: IntermediateClass | ClassModule.Class
     ) => {
       const aggregatedRatings = await getClassAggregatedRatings(
+        parent.year,
+        parent.semester,
         parent.subject,
         parent.courseNumber,
-        parent.semester,
-        parent.year,
         parent.number
       );
 
