@@ -3,11 +3,11 @@ import { GraphQLError } from "graphql";
 import { RatingModel, RatingType } from "@repo/common";
 import { USER_MAX_ALL_RATINGS, USER_MAX_SEMESTER_RATINGS } from "@repo/shared";
 
-import { MetricName, UserRatings } from "../../../generated-types/graphql";
-import { booleanScaleMetrics, numberScaleMetrics } from "../controller";
+import { MetricName, Semester, UserRatings } from "../../../generated-types/graphql";
+import { booleanScaleMetrics, numberScaleMetrics, RequestContext } from "../controller";
 
 export const checkRatingExists = async (
-  context: any,
+  context: RequestContext,
   subject: string,
   courseNumber: string,
   metricName: MetricName
@@ -26,12 +26,12 @@ export const checkRatingExists = async (
 {
   /* // TODO: [CROWD-SOURCED-DATA] create pipline for showing error on frontend */
 }
-export const checkUserMaxRatingsContraint = async (
+export const checkUserMaxRatingsConstraint = async (
   userRatings: UserRatings,
+  year: number,
+  semester: Semester,
   subject: string,
-  courseNumber: string,
-  semester: string,
-  year: number
+  courseNumber: string
 ) => {
   const filteredClasses = userRatings.classes.filter(
     (userClass) =>

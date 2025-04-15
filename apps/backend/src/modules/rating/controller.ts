@@ -21,11 +21,11 @@ import {
 } from "./helper/aggregator";
 import {
   checkRatingExists,
-  checkUserMaxRatingsContraint,
+  checkUserMaxRatingsConstraint,
   checkValueConstraint,
 } from "./helper/checkConstraints";
 
-interface RequestContext {
+export interface RequestContext {
   user: {
     _id: string;
   };
@@ -96,12 +96,12 @@ export const createRating = async (
 
   // Get current user ratings before making any changes
   const userRatings = await getUserRatings(context);
-  checkUserMaxRatingsContraint(
+  checkUserMaxRatingsConstraint(
     userRatings,
+    year,
+    semester as Semester,
     subject,
-    courseNumber,
-    semester,
-    year
+    courseNumber
   );
 
   // check for user ratings count total + for this semester instance.
