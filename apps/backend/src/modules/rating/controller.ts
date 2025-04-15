@@ -1,10 +1,11 @@
 import { GraphQLError } from "graphql";
 import { connection } from "mongoose";
 
-import { AggregatedMetricsModel, RatingModel } from "@repo/common";
+import { AggregatedMetricsModel, RatingModel, RatingType } from "@repo/common";
 import { METRIC_MAPPINGS } from "@repo/shared";
 
 import { MetricName, Semester } from "../../generated-types/graphql";
+
 import {
   formatAggregatedRatings,
   formatSemesterRatings,
@@ -23,6 +24,16 @@ import {
   checkUserMaxRatingsContraint,
   checkValueConstraint,
 } from "./helper/checkConstraints";
+
+interface RatingData {
+  subject: string;
+  courseNumber: string;
+  semester: Semester;
+  year: number;
+  classNumber: string;
+  metricName: MetricName;
+  value: number;
+}
 
 export const numberScaleMetrics = Object.entries(METRIC_MAPPINGS)
   .filter(([_, config]) => config.isRating)
@@ -363,7 +374,7 @@ export const getSemestersWithRatings = async (
 
 // Helper functions
 
-const createNewRating = async (context: any, ratingData: any, session: any) => {
+const createNewRating = async (context: any, ratingData: RatingData, session: any) => {
   const {
     subject,
     courseNumber,
@@ -399,24 +410,27 @@ const createNewRating = async (context: any, ratingData: any, session: any) => {
 };
 
 const handleExistingRating = async (
-  existingRating: any,
+  existingRating: RatingType,
   newValue: number,
   session: any
 ) => {
   const oldValue = existingRating.value;
   if (oldValue === newValue) return;
 
-  existingRating.value = newValue;
-  await existingRating.save({ session });
+  await RatingModel.updateOne(
+    { _id: existingRating._id },
+    { value: newValue },
+    { session }
+  );
 
   await Promise.all([
     handleCategoryCountChange(
       existingRating.subject,
       existingRating.courseNumber,
-      existingRating.semester,
+      existingRating.semester as Semester,
       existingRating.year,
       existingRating.classNumber,
-      existingRating.metricName,
+      existingRating.metricName as MetricName,
       oldValue,
       false,
       session
@@ -424,10 +438,10 @@ const handleExistingRating = async (
     handleCategoryCountChange(
       existingRating.subject,
       existingRating.courseNumber,
-      existingRating.semester,
+      existingRating.semester as Semester,
       existingRating.year,
       existingRating.classNumber,
-      existingRating.metricName,
+      existingRating.metricName as MetricName,
       newValue,
       true,
       session
