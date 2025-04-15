@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { RatingModel } from "@repo/common";
+import { RatingModel, RatingType } from "@repo/common";
 import { USER_MAX_ALL_RATINGS, USER_MAX_SEMESTER_RATINGS } from "@repo/shared";
 
 import { MetricName, UserRatings } from "../../../generated-types/graphql";
@@ -11,13 +11,16 @@ export const checkRatingExists = async (
   subject: string,
   courseNumber: string,
   metricName: MetricName
-) => {
-  return RatingModel.findOne({
+): Promise<RatingType | null> => {
+  const rating = await RatingModel.findOne({
     createdBy: context.user._id,
     subject,
     courseNumber,
     metricName,
   });
+  
+  // null check and return null, otherwise cast into RatingType and return that
+  return rating ? (rating as RatingType) : null;
 };
 
 {
