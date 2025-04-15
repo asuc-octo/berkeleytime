@@ -51,10 +51,8 @@ export const formatClass = (_class: IClassItem) => {
     gradeDistribution: null,
     aggregatedRatings: null,
 
-    description: _class.description,
     gradingBasis: _class.gradingBasis as ClassGradingBasis,
     finalExam: _class.finalExam as ClassFinalExam,
-    title: _class.title,
   };
   return output as unknown as IntermediateClass;
 };
