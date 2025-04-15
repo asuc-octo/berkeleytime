@@ -25,11 +25,17 @@ import {
   checkValueConstraint,
 } from "./helper/checkConstraints";
 
+interface RequestContext {
+  user: {
+    _id: string;
+  };
+}
+
 interface RatingData {
+  year: number;
+  semester: Semester;
   subject: string;
   courseNumber: string;
-  semester: Semester;
-  year: number;
   classNumber: string;
   metricName: MetricName;
   value: number;
@@ -72,11 +78,11 @@ export const booleanScaleMetrics = Object.entries(METRIC_MAPPINGS)
 // };
 
 export const createRating = async (
-  context: any,
+  context: RequestContext,
+  year: number,
+  semester: Semester,
   subject: string,
   courseNumber: string,
-  semester: Semester,
-  year: number,
   classNumber: string,
   metricName: MetricName,
   value: number
@@ -113,10 +119,10 @@ export const createRating = async (
         await createNewRating(
           context,
           {
+            year,
+            semester,
             subject,
             courseNumber,
-            semester,
-            year,
             classNumber,
             metricName,
             value,
@@ -144,10 +150,10 @@ export const createRating = async (
         await createNewRating(
           context,
           {
+            year,
+            semester,
             subject,
             courseNumber,
-            semester,
-            year,
             classNumber,
             metricName,
             value,
@@ -166,11 +172,11 @@ export const createRating = async (
 };
 
 const deleteRatingOperations = async (
-  context: any,
+  context: RequestContext,
+  year: number,
+  semester: Semester,
   subject: string,
   courseNumber: string,
-  semester: Semester,
-  year: number,
   classNumber: string,
   metricName: MetricName,
   session: any
@@ -215,11 +221,11 @@ const deleteRatingOperations = async (
 };
 
 export const deleteRating = async (
-  context: any,
+  context: RequestContext,
+  year: number,
+  semester: Semester,
   subject: string,
   courseNumber: string,
-  semester: Semester,
-  year: number,
   classNumber: string,
   metricName: MetricName,
   existingSession?: any // for nested transactions only
@@ -234,10 +240,10 @@ export const deleteRating = async (
     // Just run the operations without starting a new transaction
     await deleteRatingOperations(
       context,
+      year,
+      semester,
       subject,
       courseNumber,
-      semester,
-      year,
       classNumber,
       metricName,
       existingSession
@@ -249,10 +255,10 @@ export const deleteRating = async (
       await session.withTransaction(async () => {
         await deleteRatingOperations(
           context,
+          year,
+          semester,
           subject,
           courseNumber,
-          semester,
-          year,
           classNumber,
           metricName,
           session
@@ -267,7 +273,7 @@ export const deleteRating = async (
 };
 
 export const getUserClassRatings = async (
-  context: any,
+  context: RequestContext,
   subject: string,
   courseNumber: string,
   semester: Semester,
@@ -299,7 +305,7 @@ export const getUserClassRatings = async (
   return formatUserClassRatings(userRatings[0]);
 };
 
-export const getUserRatings = async (context: any) => {
+export const getUserRatings = async (context: RequestContext) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -374,7 +380,7 @@ export const getSemestersWithRatings = async (
 
 // Helper functions
 
-const createNewRating = async (context: any, ratingData: RatingData, session: any) => {
+const createNewRating = async (context: RequestContext, ratingData: RatingData, session: any) => {
   const {
     subject,
     courseNumber,
