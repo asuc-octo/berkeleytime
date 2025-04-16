@@ -128,6 +128,11 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         semester
         number
         primarySection {
+          enrollment {
+            latest {
+              enrolledCount
+            }
+          }
           meetings {
             instructors {
               familyName
@@ -135,6 +140,9 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
             }
           }
           number
+        }
+        gradeDistribution {
+          average
         }
       }
     }

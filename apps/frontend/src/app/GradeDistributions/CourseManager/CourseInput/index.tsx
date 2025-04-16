@@ -89,6 +89,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     const instructorSet = new Set();
     course?.classes.forEach((c) => {
       // get only current semester if getting by semester
+      if (!c.gradeDistribution.average) return;
       if (selectedType?.value === InputType.Term) {
         if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
       }
@@ -129,6 +130,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
               )
             );
     const filteredOptions = filteredClasses
+      .filter(({ gradeDistribution }) => gradeDistribution.average)
       .filter(
         ({ year, semester }, index) =>
           index ===

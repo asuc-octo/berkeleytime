@@ -69,6 +69,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     const list: OptionType[] = [];
     if (!courseData) return list;
     const filteredOptions = courseData.classes
+      .filter(({ primarySection: { enrollment } }) => enrollment?.latest)
       .filter(
         ({ year, semester }, index) =>
           index ===
@@ -90,7 +91,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
-  }, [courseData, selectedSemester]);
+  }, [courseData]);
 
   const classOptions: OptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_CLASS];
@@ -99,6 +100,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     const classStrings: string[] = [];
     const sectionNumbers: string[] = [];
     courseData?.classes.forEach((c) => {
+      if (!c.primarySection.enrollment?.latest) return;
       if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
       // only classes from current sem displayed
       let allInstructors = "";
