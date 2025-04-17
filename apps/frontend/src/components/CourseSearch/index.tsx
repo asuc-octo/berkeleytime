@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Search } from "iconoir-react";
 
+import { LoadingIndicator } from "@repo/theme";
+
 import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
 
@@ -24,7 +26,7 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
     []
   );
 
-  const { data } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
+  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];
@@ -91,56 +93,62 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
 
       {isOpen && (
         <div className={styles.dropdownPanel}>
-          <section className={styles.section}>
-            <h2>RECENT</h2>
-            {recentGrades.length > 0 && (
-              <div className={styles.recentCourses}>
-                {recentGrades.map((course, index) => (
-                  <button
-                    key={`grades-${course.subject}-${course.number}-${index}`}
-                    className={styles.courseButton}
-                    onClick={() => {
-                      const full = data?.courses.find(
-                        (c) =>
-                          c.subject === course.subject &&
-                          c.number === course.number
-                      );
-                      if (full) {
-                        onSelect?.(full);
-                        setSelectedCourse(full);
-                        setSearchQuery("");
-                      }
-                      setIsOpen(false);
-                    }}
-                  >
-                    {course.subject} {course.number}
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
+          {loading ? (
+            <LoadingIndicator className={styles.loading} size="md" />
+          ) : (
+            <div>
+              <section className={styles.section}>
+                <h2>RECENT</h2>
+                {recentGrades.length > 0 && (
+                  <div className={styles.recentCourses}>
+                    {recentGrades.map((course, index) => (
+                      <button
+                        key={`grades-${course.subject}-${course.number}-${index}`}
+                        className={styles.courseButton}
+                        onClick={() => {
+                          const full = data?.courses.find(
+                            (c) =>
+                              c.subject === course.subject &&
+                              c.number === course.number
+                          );
+                          if (full) {
+                            onSelect?.(full);
+                            setSelectedCourse(full);
+                            setSearchQuery("");
+                          }
+                          setIsOpen(false);
+                        }}
+                      >
+                        {course.subject} {course.number}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </section>
 
-          <section className={styles.section}>
-            <h2>CATALOG</h2>
-            <div className={styles.catalogList}>
-              {currentCourses.map((course) => (
-                <button
-                  key={`${course.subject}-${course.number}`}
-                  className={styles.catalogItem}
-                  onClick={() => {
-                    onSelect?.(course);
-                    setSelectedCourse(course);
-                    setSearchQuery("");
-                    setIsOpen(false);
-                  }}
-                >
-                  <span>
-                    {course.subject} {course.number}
-                  </span>
-                </button>
-              ))}
+              <section className={styles.section}>
+                <h2>CATALOG</h2>
+                <div className={styles.catalogList}>
+                  {currentCourses.map((course) => (
+                    <button
+                      key={`${course.subject}-${course.number}`}
+                      className={styles.catalogItem}
+                      onClick={() => {
+                        onSelect?.(course);
+                        setSelectedCourse(course);
+                        setSearchQuery("");
+                        setIsOpen(false);
+                      }}
+                    >
+                      <span>
+                        {course.subject} {course.number}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </section>
             </div>
-          </section>
+          )}
         </div>
       )}
     </div>
