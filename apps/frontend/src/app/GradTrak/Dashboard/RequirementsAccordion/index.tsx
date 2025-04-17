@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Check, NavArrowDown, NavArrowRight } from 'iconoir-react';
-import { Uni_Reqs, College_Reqs } from '@/lib/api';
-import "./RequirementsAccordion.css";
+import { UniReqs, LnSReqs, CoEReqs, HaasReqs } from '@/lib/course';
+import "./RequirementsAccordion.scss";
 
-type RequirementEnum = Uni_Reqs | College_Reqs ;
+type RequirementEnum = UniReqs | LnSReqs | CoEReqs | HaasReqs ;
 
 interface RequirementsAccordionProps {
     title: string;
@@ -18,7 +18,6 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
     };
 
     // TODO: Add functionality
-    // TODO: Clean up code
     return (
         <div className="accordion">
             {/* Accordion header */}

@@ -17,9 +17,13 @@ type AddDegreeProps = {
     selectedList: DegreeOption[];
   };
 
-export default function AddDegree({ isMajor }: AddDegreeProps) {
+export default function AddDegree({
+    isMajor,
+    onNext,
+    selectedList,
+}: AddDegreeProps) {
     const location = useLocation();
-    const { startYear, gradYear, summerCheck } = location.state || {};
+    const {startYear, gradYear, summerCheck} = location.state || {};
     const optionType = isMajor ? "Major" : "Minor";
     const [selectedDegree, setSelectedDegree] = useState<DegreeOption | null>(null);
     const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>([]);

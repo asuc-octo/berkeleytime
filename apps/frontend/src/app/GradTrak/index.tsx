@@ -1,6 +1,7 @@
 import { Box, Container } from "@repo/theme";
 import { Outlet } from "react-router-dom";
 
+import NavigationBar from "@/components/NavigationBar";
 import { useReadSchedules, useReadUser } from "@/hooks/api";
 import { signIn } from "@/lib/api";
 
@@ -22,10 +23,8 @@ export default function GradTrak() {
   }
 
   return (
-    <Box p="5">
-      <Container size="3">
-        <Outlet />  
-      </Container>
-    </Box>
+    <div className={styles.header}>
+      <Outlet />  
+    </div>
   );
 }

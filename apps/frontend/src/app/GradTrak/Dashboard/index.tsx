@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import SemesterBlock from "../../components/SemesterBlock"
+import SemesterBlock from "./SemesterBlock"
 import { Flex } from '@radix-ui/themes';
-import SidePanel from "../../components/SidePanel/SidePanel" 
-import "./SemesterHome.css"
+import SidePanel from "./SidePanel" 
+import "./Dashboard.scss"
 
 type DegreeOption = {
   label: string;
@@ -27,8 +27,10 @@ function SemesterHome() {
   };
   
   const { startYear, gradYear, summerCheck, selectedDegreeList, selectedMinorList } = state;
-  const selectedDegreeStrings: string[] = selectedDegreeList.map((degree) => degree.value);
-  const selectedMinorStrings: string[] = selectedMinorList.map((minor) => minor.value);
+  // const selectedDegreeStrings: string[] = selectedDegreeList.map((degree) => degree.value);
+  // const selectedMinorStrings: string[] = selectedMinorList.map((minor) => minor.value);
+  const selectedDegreeStrings: string[] = ['Computer Science'];
+  const selectedMinorStrings: string[] = ['Data Science']
 
   // Pretend this is the queried data
   const user = {

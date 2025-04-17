@@ -1,34 +1,19 @@
-.radix-themes {
-    margin-left: auto;
-    margin-right: auto;
-
+.setup-container {
+    width: 500px;
+    flex-direction: column;
+    gap: var(--L, 32px);
+    align-items: flex-start;
+    justify-content: center;
+    align-self: stretch;
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
 }
-
 @media (max-width: 600px) {
     .container {
         width: 100%; 
     }
-}
-.setup-container {
-    width: 420px !important;
-    position: absolute; /* Change to absolute for centering */
-    top: 50%; /* Push down by 50% of the viewport height */
-    left: 50%; /* Push right by 50% of the viewport width */
-    transform: translate(-50%, -50%); /* Offset by half the container's size */
-    display: flex; /* Ensure Flexbox alignment still applies */
-    flex-direction: column;
-    justify-content: center; /* Center content within the container vertically */
-    align-items: center; /* Center content horizontally */
-}
-
-
-body {
-    background-color: white;
-    display: flex; /* Enable Flexbox on the body */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    height: 100vh; /* Full viewport height to center vertically */
-    margin: 0; /* Remove default margin from the body */
 }
 
 .setup {

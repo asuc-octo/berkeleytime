@@ -1,5 +1,6 @@
 import SuspenseBoundary from '@/components/SuspenseBoundary';
 import { lazy, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type DegreeOption = {
   label: string;
@@ -14,6 +15,8 @@ export default function GradTrakOnboarding() {
   const [startYear, setStartYear] = useState('');
   const [gradYear, setGradYear] = useState('');
   const [summerCheck, setSummerCheck] = useState(false);
+
+  const navigate = useNavigate();
   
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
   const [selectedMinors, setSelectedMinors] = useState<DegreeOption[]>([]);
@@ -32,8 +35,8 @@ export default function GradTrakOnboarding() {
 
   const handleMinorsComplete = (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
-    console.log({ startYear, gradYear, summerCheck, majors: selectedMajors, minors });
-    // TODO: update user info in backend
+    console.log({ startYear, gradYear, summerCheck, majors: selectedMajors, minors }); // TODO: update user info in backend 
+    navigate(`/gradtrak/dashboard`)
   };
 
   return (
@@ -63,3 +66,4 @@ export default function GradTrakOnboarding() {
     </SuspenseBoundary>
   );
 }
+

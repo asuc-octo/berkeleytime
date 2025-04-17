@@ -45,6 +45,7 @@ export default function Profile() {
   const [activeView, changeActiveView] = useState(0);
 
   const navigate = useNavigate();
+  
 
   if (!userLoading && !user) {
     navigate("..");

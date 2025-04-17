@@ -1,10 +1,10 @@
 import { Separator } from "@radix-ui/themes";
-import RequirementsAccordion from "../RequirementsAccordion/RequirementsAccordion";
-import "./SidePanel.css";
-import { Uni_Reqs, College_Reqs } from '@/lib/api';
+import RequirementsAccordion from "../RequirementsAccordion";
+import "./SidePanel.scss";
+import { UniReqs, LnSReqs, CoEReqs, HaasReqs } from '@/lib/course';
 
 // TODO: function checkRequirementFulfilled()
-// TODO: Implement proper requirements enum...
+// TODO: Implement proper handling of reqs based on user's college...
   
 interface SidePanelProps {
     name: string;
@@ -128,25 +128,25 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
             {MinorRequirements}  
             <RequirementsAccordion title={"University of California"}
                 requirements={[
-                    Uni_Reqs.AC,
-                    Uni_Reqs.AH,
-                    Uni_Reqs.AI,
-                    Uni_Reqs.CW,
-                    Uni_Reqs.QR,
-                    Uni_Reqs.RCA,
-                    Uni_Reqs.RCB,
-                    Uni_Reqs.FL,
+                    UniReqs.AC,
+                    UniReqs.AH,
+                    UniReqs.AI,
+                    UniReqs.CW,
+                    UniReqs.QR,
+                    UniReqs.RCA,
+                    UniReqs.RCB,
+                    UniReqs.FL,
                 ]}/>
             <Separator size="4" />     
             <RequirementsAccordion title={"Breadth Requirements"}    
                 requirements={[
-                    College_Reqs.LnS_AL,
-                    College_Reqs.LnS_BS,
-                    College_Reqs.LnS_HS,
-                    College_Reqs.LnS_IS,
-                    College_Reqs.LnS_PV,
-                    College_Reqs.LnS_PS,
-                    College_Reqs.LnS_SBS,
+                    LnSReqs.LnS_AL,
+                    LnSReqs.LnS_BS,
+                    LnSReqs.LnS_HS,
+                    LnSReqs.LnS_IS,
+                    LnSReqs.LnS_PV,
+                    LnSReqs.LnS_PS,
+                    LnSReqs.LnS_SBS,
                 ]}/>
             <Separator size="4" />    
         </div>

@@ -35,10 +35,12 @@ export default function OnboardingSetup({
   };
 
   return (
-    <Flex className="setup-container" direction="column" gap="32px" width="100%" align="center">
-      <Flex direction="column" gap="8px" width="100%" align="center">
-        <Text className="setup">Set Up</Text>
-        <Text className="enteryear">Enter your start year and graduation year</Text>
+    <Flex className="setup-container">
+      <Flex className="header-container" align="center">
+          <h1>Set Up</h1>
+          <p className="secondary-text">
+            Enter your start year and graduation year
+          </p>
       </Flex>
 
       <Flex className="yearContainer" direction="row" gap="16px" align="center">
