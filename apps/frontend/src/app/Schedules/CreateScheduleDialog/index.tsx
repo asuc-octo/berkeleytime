@@ -18,6 +18,7 @@ import {
 
 import { useCreateSchedule, useReadTerms } from "@/hooks/api";
 import { Semester } from "@/lib/api";
+import { sortByTermDescending } from "@/lib/classes";
 
 interface CreateScheduleDialogProps {
   defaultName: string;
@@ -50,6 +51,7 @@ export default function CreateScheduleDialog({
   const options = useMemo(
     () =>
       terms
+        ?.toSorted(sortByTermDescending)
         ?.filter(
           (t, index) =>
             index ===

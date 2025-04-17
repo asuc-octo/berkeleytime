@@ -35,7 +35,7 @@ import {
 } from "./types";
 
 const toPercent = (decimal: number) => {
-  return `${decimal.toFixed(0)}%`;
+  return `${decimal.toFixed(1)}%`;
 };
 
 export default function GradeDistributions() {
@@ -176,7 +176,7 @@ export default function GradeDistributions() {
             const column = acc.find((item) => item.letter === grade.letter);
             if (!column) return;
 
-            const percent = Math.round(grade.percentage * 100);
+            const percent = Math.round(grade.percentage * 1000) / 10;
             column[index] = percent;
           });
 

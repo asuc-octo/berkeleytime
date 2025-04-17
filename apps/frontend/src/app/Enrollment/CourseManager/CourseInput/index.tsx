@@ -68,12 +68,14 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     // get all semesters
     const list: OptionType[] = [];
     if (!courseData) return list;
-    const filteredOptions = courseData.classes
-      .filter(({ primarySection: { enrollment } }) => enrollment?.latest)
+    const filterHasData = courseData.classes.filter(
+      ({ primarySection: { enrollment } }) => enrollment?.latest
+    );
+    const filteredOptions = filterHasData
       .filter(
         ({ year, semester }, index) =>
           index ===
-          courseData.classes.findIndex(
+          filterHasData.findIndex(
             (_class) => _class.semester === semester && _class.year === year
           )
       )
