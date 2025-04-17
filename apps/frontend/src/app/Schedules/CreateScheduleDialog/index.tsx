@@ -51,7 +51,6 @@ export default function CreateScheduleDialog({
   const options = useMemo(
     () =>
       terms
-        ?.toSorted(sortByTermDescending)
         ?.filter(
           (t, index) =>
             index ===
@@ -59,6 +58,7 @@ export default function CreateScheduleDialog({
               (term) => term.year === t.year && term.semester === t.semester
             )
         )
+        .toSorted(sortByTermDescending)
         .map((term) => {
           const value = `${term.semester} ${term.year}`;
 
