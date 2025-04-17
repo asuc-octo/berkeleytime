@@ -27,13 +27,14 @@ export interface IScheduleEvent {
   location?: string;
   description?: string;
   days: boolean[];
+  __typename: string;
 }
 
 export interface IScheduleInput {
   name: string;
   year: number;
   semester: Semester;
-  sessionId: any;
+  sessionId: string;
   classes?: IScheduleClassInput[];
   events?: IScheduleEvent[];
   public?: boolean;

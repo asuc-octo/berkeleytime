@@ -1,3 +1,6 @@
+// import { IClass } from "@/lib/api";
+import { useMemo } from "react";
+
 import {
   CartesianGrid,
   Line,
@@ -13,70 +16,44 @@ import styles from "./Enrollment.module.scss";
 
 // import Reservations from "./Reservations";
 
-const series = [
-  {
-    name: "Page A",
-    uv: 0,
-    pv: 0,
-    amt: 1,
-  },
-  {
-    name: "Page B",
-    uv: 2000,
-    pv: 2500,
-    amt: 2,
-  },
-  {
-    name: "Page C",
-    uv: 2500,
-    pv: 2700,
-    amt: 3,
-  },
-  {
-    name: "Page D",
-    uv: 2800,
-    pv: 2850,
-    amt: 4,
-  },
-  {
-    name: "Page E",
-    uv: 2900,
-    pv: 3000,
-    amt: 5,
-  },
-  {
-    name: "Page F",
-    uv: 3000,
-    pv: 3000,
-    amt: 6,
-  },
-  {
-    name: "Page G",
-    uv: 3010,
-    pv: 3010,
-    amt: 7,
-  },
-];
+// import Reservations from "./Reservations";
 
 export default function Enrollment() {
+  const { class: _class } = useClass();
+
+  const data = useMemo(() => {
+    if (!_class.primarySection.enrollment) return [];
+    console.log(_class.primarySection.enrollment);
+    const day0 = new Date(_class.primarySection.enrollment?.history[0].time);
+    return _class.primarySection.enrollment?.history
+      .reduce(
+        (acc, enrollment) => {
+          const dayOffset = Math.ceil(
+            (new Date(enrollment.time).getTime() - day0.getTime()) /
+              (1000 * 3600 * 24)
+          );
+          acc.push({
+            day: dayOffset,
+            enrollment: enrollment.enrolledCount,
+          });
+          return acc;
+        },
+        [] as {
+          enrollment: number;
+          day: number;
+        }[]
+      )
+      .sort((a, b) => a.day - b.day);
+  }, [_class.primarySection.enrollment]);
+
   return (
     <div className={styles.root}>
-      <div className={styles.legend}>
-        <div className={styles.label}>
-          <div className={styles.icon} />
-          Fall 2024
-        </div>
-        <div className={styles.label}>
-          <div className={styles.icon} />
-          Average
-        </div>
-      </div>
       <div className={styles.chart}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             width={500}
             height={300}
-            data={series}
+            data={data}
             margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
           >
             <CartesianGrid
@@ -86,13 +63,8 @@ export default function Enrollment() {
             />
             <Tooltip />
             <ReferenceLine
-              x={3}
-              stroke="var(--label-color)"
-              label="Max PV PAGE"
-            />
-            <ReferenceLine
-              y={2900}
-              label="Fall 2024 enrollment limit"
+              y={_class.primarySection.enrollment?.latest.maxEnroll}
+              label={`${_class.semester} ${_class.year} enrollment limit`}
               stroke="var(--label-color)"
             />
             <XAxis
@@ -109,25 +81,29 @@ export default function Enrollment() {
             />
             <Line
               type="monotone"
-              dataKey="uv"
-              stroke="var(--paragraph-color)"
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="pv"
+              dataKey="enrollment"
               stroke="var(--blue-500)"
-              activeDot={{ r: 8 }}
               dot={false}
+              strokeWidth={3}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {/* <Reservations
+      <div className={styles.legend}>
+        <div className={styles.label}>
+          <div className={styles.icon} />
+          {_class?.semester} {_class?.year}
+        </div>
+        <div className={styles.label}>
+          <div className={styles.icon} />
+          Average
+        </div>
+      </div>
+      {/* { _class.primarySection.enrollment && <Reservations
         enrolledCount={_class.primarySection.enrollment.latest.enrolledCount}
         maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
-        reservations={_class.primarySection.enrollment.latest.seatReservationCounts}
-      /> */}
+        reservations={_class.primarySection.enrollment.seatReservationTypes}
+      /> } */}
     </div>
   );
 }

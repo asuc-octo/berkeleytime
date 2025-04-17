@@ -2,12 +2,12 @@ import { ComponentPropsWithRef } from "react";
 
 import { ArrowRight } from "iconoir-react";
 
-import AverageGrade from "@/components/AverageGrade";
+import { Card } from "@repo/theme";
+
+import { AverageGrade } from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
-
-import styles from "./ClassCard.module.scss";
 
 interface ClassProps {
   class: IClass;
@@ -18,16 +18,16 @@ export default function ClassCard({
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   return (
-    <div className={styles.root} {...props}>
-      <div className={styles.body}>
-        <p className={styles.heading}>
+    <Card.Root {...props}>
+      <Card.Body>
+        <Card.Heading>
           {data.subject} {data.courseNumber} #{data.number}
-        </p>
-        <p className={styles.description}>{data.title ?? data.course.title}</p>
-        <div className={styles.footer}>
+        </Card.Heading>
+        <Card.Description>{data.title ?? data.course.title}</Card.Description>
+        <Card.Footer>
           <AverageGrade gradeDistribution={data.gradeDistribution} />
           <Capacity
-            enrolledCount={data.primarySection.enrollment?.latest.enrolledCount}
+            enrolledCount={data.primarySection.enrollment?.latest.enrolledCount} 
             maxEnroll={data.primarySection.enrollment?.latest.maxEnroll}
             waitlistedCount={
               data.primarySection.enrollment?.latest.waitlistedCount
@@ -35,13 +35,13 @@ export default function ClassCard({
             maxWaitlist={data.primarySection.enrollment?.latest.maxWaitlist}
           />
           <Units unitsMin={data.unitsMin} unitsMax={data.unitsMax} />
-        </div>
-      </div>
-      <div className={styles.column}>
-        <div className={styles.icon}>
+        </Card.Footer>
+      </Card.Body>
+      <Card.Actions>
+        <Card.ActionIcon>
           <ArrowRight />
-        </div>
-      </div>
-    </div>
+        </Card.ActionIcon>
+      </Card.Actions>
+    </Card.Root>
   );
 }

@@ -100,7 +100,7 @@ export const getDistribution = (distributions: IGradeDistributionItem[]) => {
     ([field, count]) =>
       ({
         letter: letters[field],
-        percentage: count / total,
+        percentage: count > 0 ? count / total : 0,
         count,
       }) as Grade
   );
@@ -311,8 +311,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
     sectionId: { $in: sectionIds },
   });
 
-  // if (distributions.length === 0)
-  //   throw new Error("No grade distributions found");
+  if (distributions.length === 0) throw new Error("No grades found");
 
   const distribution = getDistribution(distributions);
 

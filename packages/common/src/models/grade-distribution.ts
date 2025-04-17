@@ -89,7 +89,7 @@ const gradeDistributionSchema = new Schema<IGradeDistributionItem>(
   }
 );
 gradeDistributionSchema.index(
-  { termId: 1, classNumber: 1, sectionNumber: 1 },
+  { termId: 1, sessionId: 1, sectionId: 1 },
   { unique: true }
 );
 gradeDistributionSchema.index({

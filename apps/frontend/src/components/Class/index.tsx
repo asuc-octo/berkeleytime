@@ -24,7 +24,7 @@ import {
   Tooltip,
 } from "@repo/theme";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import CourseDrawer from "@/components/CourseDrawer";
@@ -34,7 +34,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { IClass, Semester } from "@/lib/api";
-import { addRecentClass } from "@/lib/recent";
+import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -208,7 +208,7 @@ export default function Class({
         optimisticResponse: {
           updateUser: {
             ...user,
-            bookmarkedClasses,
+            bookmarkedClasses: user.bookmarkedClasses,
           },
         },
       }
@@ -218,7 +218,7 @@ export default function Class({
   useEffect(() => {
     if (!_class) return;
 
-    addRecentClass({
+    addRecent(RecentType.Class, {
       subject: _class.subject,
       year: _class.year,
       semester: _class.semester,
@@ -400,12 +400,12 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    <Tabs.Trigger value="enrollment" asChild>
+                    {/* <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
-                    </Tabs.Trigger>
+                    </Tabs.Trigger> */}
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -420,7 +420,7 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
                     )}
@@ -429,7 +429,7 @@ export default function Class({
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
-                  </NavLink>
+                  </NavLink> */}
                 </Flex>
               )}
             </Flex>

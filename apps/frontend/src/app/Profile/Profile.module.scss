@@ -10,7 +10,7 @@
 
   .sidebar {
     position: absolute;
-    top: 0;
+    top: 80px;
     left: -182px;
     width: 150px;
     color: var(--label-color);
@@ -49,28 +49,9 @@
 
   h2 {
     font-size: 24px;
+    margin-top: 40px;
     margin-bottom: 24px;
   }
 
-  .infoItem {
-    display: flex;
-    height: 50px;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--paragraph-color);
-    align-items: center;
-  }
-
-  .infoItem label {
-    color: var(--text-gray);
-    margin-bottom: 8px;
-    width: 250px;
-    max-width: 30%;
-    flex: 0 0 auto;
-    display: inline-block;
-    margin: 0;
-  }
-
-  .infoValue {
-    font-size: 16px;
-  }
+  
 }

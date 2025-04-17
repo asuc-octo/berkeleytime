@@ -36,7 +36,7 @@ import ClassDrawer from "@/components/ClassDrawer";
 import { useReadUser } from "@/hooks/api";
 import { IClass, ITerm, READ_CLASS, ReadClassResponse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
-import { getRecentClasses } from "@/lib/recent";
+import { RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./Dashboard.module.scss";
 
@@ -69,13 +69,12 @@ export default function Dashboard({
       ),
     [term, user]
   );
-
   const [recentClasses, setRecentClasses] = useState<IClass[]>([]);
-
+    
   const initialize = useCallback(async () => {
-    const recentClasses = getRecentClasses();
+    const recentClasses = getRecents(RecentType.Class);
 
-    const responses = await Promise.all(
+    const recentResponses = await Promise.all(
       recentClasses.map(async (recentClass) => {
         const { subject, year, semester, courseNumber, number } = recentClass;
 
@@ -100,7 +99,8 @@ export default function Dashboard({
       })
     );
 
-    setRecentClasses(responses.filter((response) => !!response));
+    setRecentClasses(recentResponses.filter((response) => !!response));
+
   }, [client]);
 
   useEffect(() => {

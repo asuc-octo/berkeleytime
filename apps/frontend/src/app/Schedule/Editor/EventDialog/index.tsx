@@ -82,8 +82,21 @@ export default function EventDialog({ children }: EventDialogProps) {
           updateSchedule: {
             ...schedule,
             events: schedule.events
-              ? [...schedule.events, { ...event, _id: temporaryIdentifier }]
-              : [{ ...event, _id: temporaryIdentifier }],
+              ? [
+                  ...schedule.events,
+                  {
+                    ...event,
+                    _id: temporaryIdentifier,
+                    __typename: "ScheduleEvent",
+                  },
+                ]
+              : [
+                  {
+                    ...event,
+                    _id: temporaryIdentifier,
+                    __typename: "ScheduleEvent",
+                  },
+                ],
           },
         },
       }
@@ -124,10 +137,32 @@ export default function EventDialog({ children }: EventDialogProps) {
               />
             </Flex>
             <Flex direction="column" gap="2">
-              <Label>Days</Label>
+              <Label>Time</Label>
+              <p className={styles.time}>
+                Time
+                <span className={styles.timeSelect}>
+                  <input
+                    type="time"
+                    value={startTime}
+                    min="00:00"
+                    max="23:59"
+                    onChange={(e) => setStartTime(e.target.value)}
+                  />
+                  →
+                  <input
+                    type="time"
+                    value={endTime}
+                    min="00:00"
+                    max="23:59"
+                    onChange={(e) => setEndTime(e.target.value)}
+                  />
+                </span>
+              </p>
+            </Flex>
+            <Flex direction="column" gap="2">
+              <Label>Repeat</Label>
               <div className={styles.daySelect}>
-                <p>
-                  Su
+                <label>
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -135,9 +170,9 @@ export default function EventDialog({ children }: EventDialogProps) {
                       setDays(days);
                     }}
                   />
-                </p>
-                <p>
-                  M
+                  <span>Su</span>
+                </label>
+                <label>
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -145,9 +180,9 @@ export default function EventDialog({ children }: EventDialogProps) {
                       setDays(days);
                     }}
                   />
-                </p>
-                <p>
-                  Tu
+                  <span>M</span>
+                </label>
+                <label>
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -155,9 +190,9 @@ export default function EventDialog({ children }: EventDialogProps) {
                       setDays(days);
                     }}
                   />
-                </p>
-                <p>
-                  W
+                  <span>Tu</span>
+                </label>
+                <label>
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -165,9 +200,9 @@ export default function EventDialog({ children }: EventDialogProps) {
                       setDays(days);
                     }}
                   />
-                </p>
-                <p>
-                  Th
+                  <span>W</span>
+                </label>
+                <label>
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -175,9 +210,9 @@ export default function EventDialog({ children }: EventDialogProps) {
                       setDays(days);
                     }}
                   />
-                </p>
-                <p>
-                  F
+                  <span>Th</span>
+                </label>
+                <label>
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -185,9 +220,9 @@ export default function EventDialog({ children }: EventDialogProps) {
                       setDays(days);
                     }}
                   />
-                </p>
-                <p>
-                  Sa
+                  <span>F</span>
+                </label>
+                <label>
                   <input
                     type="checkbox"
                     onChange={(e) => {
@@ -195,31 +230,9 @@ export default function EventDialog({ children }: EventDialogProps) {
                       setDays(days);
                     }}
                   />
-                </p>
+                  <span>Sa</span>
+                </label>
               </div>
-            </Flex>
-            <Flex direction="column" gap="2">
-              <Label>Time</Label>
-              <p className={styles.time}>
-                Start time
-                <input
-                  type="time"
-                  value={startTime}
-                  min="00:00"
-                  max="23:59"
-                  onChange={(e) => setStartTime(e.target.value)}
-                />
-              </p>
-              <p className={styles.time}>
-                End time{" "}
-                <input
-                  type="time"
-                  value={endTime}
-                  min="00:00"
-                  max="23:59"
-                  onChange={(e) => setEndTime(e.target.value)}
-                />
-              </p>
             </Flex>
             <Flex direction="column" gap="2">
               <Label>Description</Label>
