@@ -1,6 +1,7 @@
 .body {
     display: flex !important;
     justify-content: start !important;
+    background-color: var(--foreground-color);
 }
 .content {
     display: flex;

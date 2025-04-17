@@ -33,9 +33,9 @@
     align-items: center;
     gap: 10px; 
     border-radius: var(--XXS, 4px);
-    background: var(--Blue, #2F80ED); /* Berkeleytime Blue */
+    background: var(--blue-500); /* Berkeleytime Blue */
     font-size: 14px;
-    color: #FFF; 
+    color: var(--heading-color); 
     transition: background-color 0.3s ease;
 }
 .primary:hover {

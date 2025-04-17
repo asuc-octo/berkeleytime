@@ -3,8 +3,8 @@
     height: 100vh; 
     padding-top: var(--S, 16px);
     flex-direction: column;  
-    border-right: 1px solid #EAEAEA; 
-    background: var(--White, #FFF); 
+    border-right: 1px var(--border-color); 
+    background: var(--foreground-color); 
     position: relative; 
     overflow-y: auto; 
     box-sizing: border-box; 
@@ -46,7 +46,7 @@
   }
   
   .label {
-      color: var(--Secondary-Text, #8A8A8A);
+      color: var(--paragraph-color);
       font-size: 0.875em;
       text-align: left;
       align-self: start; 
@@ -78,7 +78,6 @@
       border-radius: 4px;
       background: var(--Blue, #2F80ED); /* Berkeleytime Blue */
       font-size: 14px;
-      color: #FFF; 
       transition: background-color 0.3s ease;
   }
   button.primary:hover {
@@ -92,8 +91,8 @@
       align-items: center;
       gap: 10px;
       border-radius: 4px;
-      border: 1px solid var(--Gray-2, #C7C7C7);
-      background: #FFF;
+      border: 1px solid var(--border-color);
+      background: var(--foreground-color);
       font-size: 14px;
       color: var(--Blue, #2F80ED);
       transition: background-color 0.3s ease, border-color 0.3s ease;
