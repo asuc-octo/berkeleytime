@@ -20,6 +20,11 @@ export const userSchema = new Schema(
       trim: true,
       required: true,
     },
+    majors: {
+      type: [String],
+      required: false,
+      default: [],
+    },
     bookmarkedClasses: {
       required: false,
       default: [],

@@ -20,3 +20,7 @@ bt_seed.sql.gz
 generated-types/
 generated-types
 stage_backup.gz
+apps/frontend/tsconfig.node.tsbuildinfo
+apps/frontend/tsconfig.tsbuildinfo
+apps/frontend/vite.config.d.ts
+apps/frontend/vite.config.js

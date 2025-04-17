@@ -15,7 +15,11 @@ import SuspenseBoundary from "@/components/SuspenseBoundary";
 
 // import PinsProvider from "@/components/PinsProvider";
 
-const Profile = lazy(() => import("@/app/Profile"));
+const Profile = {
+  Root: lazy(() => import("@/app/Profile")),
+  Account: lazy(() => import("@/app/Profile/Account")),
+  Support: lazy(() => import("@/app/Profile/Support")),
+};
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -122,10 +126,28 @@ const router = createBrowserRouter([
       {
         element: (
           <SuspenseBoundary key="profile">
-            <Profile />
+            <Profile.Root />
           </SuspenseBoundary>
         ),
         path: "profile",
+        children: [
+          {
+            element: (
+              <SuspenseBoundary key="account">
+                <Profile.Account />
+              </SuspenseBoundary>
+            ),
+            index: true,
+          },
+          {
+            element: (
+              <SuspenseBoundary key="support">
+                <Profile.Support />
+              </SuspenseBoundary>
+            ),
+            path: "support",
+          },
+        ],
       },
     ],
   },

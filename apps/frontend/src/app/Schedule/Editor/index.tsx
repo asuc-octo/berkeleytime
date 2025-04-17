@@ -16,7 +16,7 @@ import {
   READ_CLASS,
   ReadClassResponse,
 } from "@/lib/api";
-import { addRecentSchedule } from "@/lib/recent";
+import { RecentType, addRecent } from "@/lib/recent";
 
 import { getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
@@ -32,7 +32,7 @@ export default function Editor() {
   const { schedule, editing } = useSchedule();
 
   useEffect(() => {
-    addRecentSchedule(schedule);
+    addRecent(RecentType.Schedule, schedule);
   }, [schedule]);
 
   const apolloClient = useApolloClient();
@@ -120,7 +120,7 @@ export default function Editor() {
         }
       );
     },
-    [setCurrentSection, schedule, updateSchedule]
+    [schedule, updateSchedule]
   );
 
   const handleSectionMouseOver = useCallback(
@@ -347,8 +347,19 @@ export default function Editor() {
         events: schedule.events
           .filter((e) => e._id != event._id)
           .map((e) => {
-            const { _id, __typename, ...rest } = (e as any) || {};
-            return rest;
+            // TODO: Fix?
+            const _e = structuredClone(e) as Omit<
+              IScheduleEvent,
+              "_id" | "__typename"
+            > & {
+              _id?: string;
+              __typename?: string;
+            };
+
+            delete _e._id;
+            delete _e.__typename;
+
+            return _e;
           }),
       },
       {

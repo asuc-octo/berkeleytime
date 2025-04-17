@@ -290,6 +290,13 @@ export const READ_CLASS = gql`
             requirementGroup
             fromDate
           }
+          history {
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
         }
         meetings {
           days

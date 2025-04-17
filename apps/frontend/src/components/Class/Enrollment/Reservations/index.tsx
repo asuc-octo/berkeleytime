@@ -2,7 +2,7 @@ import { Fragment, useMemo, useState } from "react";
 
 import classNames from "classnames";
 
-import { IReservation } from "@/lib/api";
+import { ISeatReservationCount } from "@/lib/api";
 
 import styles from "./Reservations.module.scss";
 
@@ -17,15 +17,15 @@ const getColor = (count: number, capacity: number) => {
 };
 
 interface ReservationsProps {
-  reservations: IReservation[];
-  enrollMax: number;
-  enrollCount: number;
+  reservations: ISeatReservationCount[];
+  maxEnroll: number;
+  enrolledCount: number;
 }
 
 export default function Reservations({
   reservations,
-  enrollMax,
-  enrollCount,
+  maxEnroll,
+  enrolledCount,
 }: ReservationsProps) {
   const [currentReservation, setCurrentReservation] = useState<number | null>(
     null
@@ -35,31 +35,31 @@ export default function Reservations({
     const _reservations = structuredClone(reservations);
 
     const [totalEnrollCount, totalEnrollMax] = reservations.reduce(
-      ([totalEnrollCount, totalEnrollMax], { enrollCount, enrollMax }) => [
-        totalEnrollCount + enrollCount,
-        totalEnrollMax + enrollMax,
+      ([totalEnrollCount, totalEnrollMax], { enrolledCount, maxEnroll }) => [
+        totalEnrollCount + enrolledCount,
+        totalEnrollMax + maxEnroll,
       ],
       [0, 0]
     );
 
-    if (totalEnrollMax !== enrollMax) {
+    if (totalEnrollMax !== maxEnroll) {
       _reservations.push({
-        group: "All students",
-        enrollCount: enrollCount - totalEnrollCount,
-        enrollMax: enrollMax - totalEnrollMax,
+        number: 0,
+        enrolledCount: enrolledCount - totalEnrollCount,
+        maxEnroll: maxEnroll - totalEnrollMax,
       });
     }
 
-    return _reservations.sort((a, b) => b.enrollMax - a.enrollMax);
-  }, [enrollCount, enrollMax, reservations]);
+    return _reservations.sort((a, b) => b.maxEnroll - a.maxEnroll);
+  }, [enrolledCount, maxEnroll, reservations]);
 
   return (
     <div className={styles.root}>
       <p className={styles.label}>Reservations</p>
       <div className={styles.chart}>
-        {parsedReservations.map(({ enrollCount, enrollMax }, index) => {
+        {parsedReservations.map(({ enrolledCount, maxEnroll }, index) => {
           const identifier = index + 1;
-          const backgroundColor = getColor(enrollCount, enrollMax);
+          const backgroundColor = getColor(enrolledCount, maxEnroll);
 
           const opacity =
             !currentReservation || identifier === currentReservation ? 1 : 0.25;
@@ -72,14 +72,14 @@ export default function Reservations({
               onMouseOut={() => setCurrentReservation(null)}
               style={{
                 opacity,
-                flex: enrollMax,
+                flex: maxEnroll,
               }}
             >
               <div
                 className={styles.progress}
                 style={{
                   backgroundColor,
-                  width: `${(enrollCount / enrollMax) * 100}%`,
+                  width: `${(enrolledCount / maxEnroll) * 100}%`,
                 }}
               />
             </div>
@@ -87,35 +87,39 @@ export default function Reservations({
         })}
       </div>
       <div className={styles.groups}>
-        {parsedReservations.map(({ group, enrollCount, enrollMax }, index) => {
-          const identifier = index + 1;
-          const color = getColor(enrollCount, enrollMax);
+        {parsedReservations.map(
+          ({ number, enrolledCount, maxEnroll }, index) => {
+            const identifier = index + 1;
+            const color = getColor(enrolledCount, maxEnroll);
 
-          const opacity =
-            !currentReservation || identifier === currentReservation ? 1 : 0.25;
+            const opacity =
+              !currentReservation || identifier === currentReservation
+                ? 1
+                : 0.25;
 
-          return (
-            <Fragment key={group}>
-              {index !== 0 && <div className={styles.divider} />}
-              <div
-                className={styles.group}
-                onMouseOver={() => setCurrentReservation(identifier)}
-                onMouseOut={() => setCurrentReservation(null)}
-              >
-                <p
-                  className={classNames(styles.title, {
-                    [styles.active]: identifier === currentReservation,
-                  })}
+            return (
+              <Fragment key={number}>
+                {index !== 0 && <div className={styles.divider} />}
+                <div
+                  className={styles.group}
+                  onMouseOver={() => setCurrentReservation(identifier)}
+                  onMouseOut={() => setCurrentReservation(null)}
                 >
-                  {group}
-                </p>
-                <p className={styles.description} style={{ opacity }}>
-                  <span style={{ color }}>{enrollCount}</span> / {enrollMax}
-                </p>
-              </div>
-            </Fragment>
-          );
-        })}
+                  <p
+                    className={classNames(styles.title, {
+                      [styles.active]: identifier === currentReservation,
+                    })}
+                  >
+                    {number}
+                  </p>
+                  <p className={styles.description} style={{ opacity }}>
+                    <span style={{ color }}>{enrolledCount}</span> / {maxEnroll}
+                  </p>
+                </div>
+              </Fragment>
+            );
+          }
+        )}
       </div>
     </div>
   );

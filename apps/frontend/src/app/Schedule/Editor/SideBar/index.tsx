@@ -7,7 +7,7 @@ import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
 import useSchedule from "@/hooks/useSchedule";
-import { IClass, IScheduleEvent, Semester } from "@/lib/api";
+import { IClass, IScheduleEvent } from "@/lib/api";
 
 import { getUnits } from "../../schedule";
 import EventDialog from "../EventDialog";
@@ -90,7 +90,9 @@ export default function SideBar({
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.context}>
-          <div className={styles.data}>Fall 2024</div>
+          <div className={styles.data}>
+            {schedule.semester} {schedule.year}
+          </div>
           <div className={styles.data}>
             {schedule.classes.length === 1
               ? "1 class"
@@ -104,8 +106,8 @@ export default function SideBar({
         {editing && (
           <Catalog
             onClassSelect={onClassSelect}
-            semester={Semester.Fall}
-            year={2024}
+            semester={schedule.semester}
+            year={schedule.year}
           >
             <Button className={styles.button} variant="solid">
               Add class
