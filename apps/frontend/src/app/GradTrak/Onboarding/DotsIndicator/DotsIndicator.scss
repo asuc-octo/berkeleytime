@@ -14,11 +14,11 @@
 .dot {
     width: 8px;
     height: 8px;
-    background-color: lightgray;
+    background-color: var(--Gray-2, #C7C7C7);;
     border-radius: 50%;
     transition: background-color 0.3s ease;
 }
 
 .dot.active {
-    background-color: black; /* Highlight the active dot */
+    background-color: var(--button-active-color); /* Highlight the active dot */
 }

@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import {useLocation} from 'react-router-dom';
-import Select from 'react-select'
-import { Separator, Flex } from "@radix-ui/themes";
+
+import { Separator } from "@radix-ui/themes";
+import { 
+    Flex, 
+    Select,
+    Box,
+    Container,
+    Button
+ } from "@repo/theme"
+
 import MAJORS from './majors.json';
-import "./AddDegree.scss";
 import DotsIndicator from '../DotsIndicator';
+
+import styles from "./AddDegree.module.scss"
 
 type DegreeOption = {
     label: string;
@@ -64,7 +73,7 @@ export default function AddDegree({
 
     const DegreeSelect = () => (
         <Select 
-            className="degree-select" 
+            className={styles.degreeSelect}
             options={degreeOptions} 
             isSearchable={true} 
             isClearable={true}
@@ -75,51 +84,60 @@ export default function AddDegree({
       )
 
     return (
-        <div>
-            <Flex className="degree-container">
-                <Flex className="header-container" align="center">
+        <Box p="5">
+        <Container style={{ marginTop: "0px" }}>
+        <div className={styles.hero}>
+            <Flex direction="column" gap="2rem">
+                
+                <Flex direction="column" align="center" gap="16px">
                     <h1>Add {optionType}s</h1>
-                    <p className="secondary-text">
-                        Search for your {optionType.toLowerCase()} and add it to Gradtrak to list specific requirements.
-                    </p>
+                    <p>Search for your {optionType.toLowerCase()} and add it to Gradtrak to list specific requirements.</p>
                 </Flex>
+
                 <Flex direction="column" align="start" gap="16px" width="100%">
                     <DegreeSelect/>
                     <a>Don't see your {optionType.toLowerCase()}?</a>
                     {isMajor && 
-                    <button className="secondary" onClick={handleAddDegree}>Add</button>}
+                    <Button className={styles.addButton} variant="outline" onClick={handleAddDegree}>Add</Button>}
                     {!isMajor && 
-                    <button className="secondary" onClick={handleAddMinor}>Add</button>}
+                    <Button className={styles.addButton} variant="outline"  onClick={handleAddMinor}>Add</Button>}
                 </Flex>
+
                 <Separator size="4"/>
+
                 <Flex direction="column" align="start" gap="16px"  width="100%">
                     <h2>Selected {optionType}s</h2>
                     {(selectedDegreeList.length === 0 && isMajor) || (selectedMinorList.length === 0 && !isMajor) ? (
-                        <p className="secondary-text">None Selected</p>
+                        <p>None Selected</p>
                     ) : (
-                        <div className="selected-degree-list" id={`${optionType.toLowerCase()}s-list`}>
+                        <div className={styles.selectedDegreeList} id={`${optionType.toLowerCase()}s-list`}>
                             {isMajor && selectedDegreeList.map((degree) => (
-                                <div key={degree.value} className="degree-chip">
+                                <div key={degree.value} className={styles.degreeChip}>
                                     {degree.label}
-                                    <span className="delete-icon" onClick={() => handleRemoveDegree(degree)}>✕</span>
+                                    <span className={styles.deleteIcon} onClick={() => handleRemoveDegree(degree)}>✕</span>
                                 </div>
                             ))}
                             {!isMajor && selectedMinorList.map((degree) => (
-                                <div key={degree.value} className="degree-chip">
+                                <div key={degree.value} className={styles.degreeChip}>
                                     {degree.label}
-                                    <span className="delete-icon" onClick={() => handleRemoveMinor(degree)}>✕</span>
+                                    <span className={styles.deleteIcon} onClick={() => handleRemoveMinor(degree)}>✕</span>
                                 </div>
                             ))}
                         </div>
                     )}
                 </Flex>
-                <Flex gap="10px" width="100%">
-                    <button className="secondary">Skip</button>
-                    <button className="primary"  onClick={handleConfirmClick}>Confirm</button>
+
+                <Flex gap="10px">
+                    <Button className={styles.secondary} variant="outline">Skip</Button>
+                    <Button className={styles.primary} variant="solid" onClick={handleConfirmClick}>Confirm</Button>
                 </Flex>
+
                 {isMajor && <DotsIndicator currentPage={1} totalPages={3} />}
                 {!isMajor && <DotsIndicator currentPage={2} totalPages={3} />}
+            
             </Flex>
         </div>
+        </Container>
+        </Box>
     );
 }

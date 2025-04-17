@@ -23,7 +23,7 @@ export default function GradTrak() {
   }
 
   return (
-    <div className={styles.header}>
+    <div className={styles.root}>
       <Outlet />  
     </div>
   );

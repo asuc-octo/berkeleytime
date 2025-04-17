@@ -1,8 +1,17 @@
 import React from 'react';
-import "./OnboardingSetUp.scss";
-import { Flex, Text, Checkbox } from "@radix-ui/themes";
+
+import { Check } from "iconoir-react";
+import { Checkbox } from "radix-ui";
+import { 
+  Flex, 
+  Container, 
+  Box, 
+  Select,
+  Button
+} from "@repo/theme"
+
 import DotsIndicator from '../DotsIndicator';
-import YearDropdown from '../YearDropdown';
+import styles from "./OnboardingSetUp.module.scss";
 
 type OnboardingSetupProps = {
   onNext: (startYear: string, gradYear: string, summerCheck: boolean) => void;
@@ -19,55 +28,133 @@ export default function OnboardingSetup({
 }: OnboardingSetupProps) {
   const [localStartYear, setLocalStartYear] = React.useState(startYear);
   const [localGradYear, setLocalGradYear] = React.useState(gradYear);
+
   const [localSummerCheck, setLocalSummerCheck] = React.useState(summerCheck);
 
-  const handleSelectYear = (id: string, year: string) => {
-    if (id === 'startYear') setLocalStartYear(year);
-    else if (id === 'gradYear') setLocalGradYear(year);
-  };
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const gradYearStart = parseInt(localStartYear) || currentYear;
+ 
+  const startYearOptions = Array.from(
+    { length: 11 },
+    (_, i) => {
+      const year = (currentYear - 5 + i).toString();
+      return { label: year, value: year };
+    }
+  );
+  
+  const gradYearOptions = Array.from(
+    { length: 11 },
+    (_, i) => {
+      const year = (gradYearStart + i).toString();
+      return { label: year, value: year };
+    }
+  );
 
-  const handleNextClick = () => {
-    onNext(localStartYear, localGradYear, localSummerCheck);
+  const handleSelectYear = (id: string, year: string) => {
+    if (id === 'startYear') {
+      setLocalStartYear(year);
+      
+      if (parseInt(year) > parseInt(localGradYear)) {
+        setLocalGradYear('');
+      }
+    } else if (id === 'gradYear') {
+      setLocalGradYear(year);
+    }
   };
 
   const handleSummerCheck = (checked: boolean) => {
     setLocalSummerCheck(checked);
   };
 
+  const handleNextClick = () => {
+    if (localStartYear && localGradYear) {
+      onNext(localStartYear, localGradYear, localSummerCheck);
+    } else {
+      alert("Please select both start and graduation years."); // Not sure
+    }
+  };
+
   return (
-    <Flex className="setup-container">
-      <Flex className="header-container" align="center">
-          <h1>Set Up</h1>
-          <p className="secondary-text">
-            Enter your start year and graduation year
-          </p>
-      </Flex>
+    <Box p="5">
+      <Container style={{ marginTop: "80px" }}>
+        <div className={styles.hero}>
+          <Flex direction="column" gap="2rem">
 
-      <Flex className="yearContainer" direction="row" gap="16px" align="center">
-        <Flex direction="column" width="50%">
-          <Text>Start Year</Text>
-          <YearDropdown id="startYear" onSelectYear={handleSelectYear} />
-        </Flex>
+            {/* Header */}
+            <Flex direction="column" align="center" gap="0.5rem">
+                <h1>Set Up</h1>
+                <p className="secondary-text">
+                  Enter your start year and graduation year
+                </p>
+            </Flex>
 
-        <Flex direction="column" width="50%">
-          <Text>Graduation Year</Text>
-          <YearDropdown id="gradYear" onSelectYear={handleSelectYear} />
-        </Flex>
-      </Flex>
+            {/* Year selection */}
+            <Flex direction="column" gap="1rem">
+              <Flex direction="row" align="center" gap="0.5rem">
 
-      <Text as="label" size="2" className='summer-sem-check'>
-        <Flex gap="2">
-          <Checkbox
-            defaultChecked
-            checked={localSummerCheck}
-            onCheckedChange={handleSummerCheck}
-          />
-          Include Summer Semesters?
-        </Flex>
-      </Text>
+                <Flex direction="column" width="100%" align="start" gap="0.25rem">
+                  <p>Start Year</p>
+                  <Box flexGrow="1" width="100%">
+                    <Select
+                    className={styles.yearSelect}
+                      id="startYear"
+                      options={startYearOptions}
+                      isSearchable={true}
+                      value={startYearOptions.find(option => option.value === localStartYear)}
+                      placeholder={"Start year"}
+                      onChange={(option) => {
+                        if (option) handleSelectYear("startYear", option.value);
+                      }}
+                    />
+                  </Box>
+                </Flex>
 
-      <button className="primary" onClick={handleNextClick}>Next</button>
-      <DotsIndicator currentPage={0} totalPages={3} />
-    </Flex>
+                <Flex direction="column" width="100%" align="start" gap="0.25rem">
+                  <p>Graduation Year</p>
+                  <Box flexGrow="1" width="100%">
+                    <Select
+                      className={styles.yearSelect}
+                      id="gradYear"
+                      options={gradYearOptions}
+                      isSearchable={true}
+                      value={gradYearOptions.find(option => option.value === localGradYear)}
+                      placeholder={"Expected graduation year"}
+                      onChange={(option) => {
+                        if (option) handleSelectYear("gradYear", option.value);
+                      }}
+                    />
+                  </Box>
+                </Flex>
+              </Flex>
+
+              <Flex className={styles.filter}>
+                <Checkbox.Root
+                  className={styles.checkbox}
+                  id="summer"
+                  checked={localSummerCheck}
+                  onCheckedChange={(checked) => setLocalSummerCheck(!!checked)}
+                >
+                  <Checkbox.Indicator asChild>
+                    <Check width={12} height={12} />
+                  </Checkbox.Indicator>
+                </Checkbox.Root>
+
+                <label htmlFor="summer" className={styles.text}>
+                  <span className={styles.value}>Include Summer Semesters?</span>
+                </label>
+              </Flex>
+            </Flex>
+
+            {/* Next Button */}
+            <Button className={styles.primary} variant="solid" onClick={handleNextClick}>
+              Next
+            </Button>
+            
+            <DotsIndicator currentPage={0} totalPages={3} />
+          </Flex>
+        </div>
+      </Container>
+    </Box>
   );
 }
