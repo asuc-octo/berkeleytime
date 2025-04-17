@@ -2,7 +2,6 @@ import SuspenseBoundary from '@/components/SuspenseBoundary';
 import { lazy, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Flex } from "@repo/theme";
-import styles from "./Onboarding.module.scss"
 
 type DegreeOption = {
   label: string;
@@ -42,32 +41,30 @@ export default function GradTrakOnboarding() {
   };
 
   return (
-    <div className={styles.root}>
-      <SuspenseBoundary>
-        {step === 0 && (
-          <OnboardingSetup
-            onNext={handleSetupComplete}
-            startYear={startYear}
-            gradYear={gradYear}
-            summerCheck={summerCheck}
-          />
-        )}
-        {step === 1 && (
-          <AddDegree
-            isMajor={true}
-            onNext={handleMajorsComplete}
-            selectedList={selectedMajors}
-          />
-        )}
-        {step === 2 && (
-          <AddDegree
-            isMajor={false}
-            onNext={handleMinorsComplete}
-            selectedList={selectedMinors}
-          />
-        )}
-      </SuspenseBoundary>
-    </div>
+    <SuspenseBoundary>
+      {step === 0 && (
+        <OnboardingSetup
+          onNext={handleSetupComplete}
+          startYear={startYear}
+          gradYear={gradYear}
+          summerCheck={summerCheck}
+        />
+      )}
+      {step === 1 && (
+        <AddDegree
+          isMajor={true}
+          onNext={handleMajorsComplete}
+          selectedList={selectedMajors}
+        />
+      )}
+      {step === 2 && (
+        <AddDegree
+          isMajor={false}
+          onNext={handleMinorsComplete}
+          selectedList={selectedMinors}
+        />
+      )}
+    </SuspenseBoundary>
   );
 }
 
