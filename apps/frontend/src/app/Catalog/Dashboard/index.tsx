@@ -70,7 +70,7 @@ export default function Dashboard({
     [term, user]
   );
   const [recentClasses, setRecentClasses] = useState<IClass[]>([]);
-    
+
   const initialize = useCallback(async () => {
     const recentClasses = getRecents(RecentType.Class);
 
@@ -100,7 +100,6 @@ export default function Dashboard({
     );
 
     setRecentClasses(recentResponses.filter((response) => !!response));
-
   }, [client]);
 
   useEffect(() => {

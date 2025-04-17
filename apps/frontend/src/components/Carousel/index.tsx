@@ -13,8 +13,8 @@ import { Link, To } from "react-router-dom";
 import { Box, Flex, IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
-import Schedule from "./Schedule";
 import CarouselNoTitle from "./CarouselNoTitle";
+import Schedule from "./Schedule";
 
 function Item({ className, ...props }: ComponentPropsWithRef<"div">) {
   return <div className={classNames(styles.item, className)} {...props} />;

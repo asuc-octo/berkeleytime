@@ -410,7 +410,7 @@ export default function Class({
                     */}
                     <Tabs.Trigger value="ratings" asChild>
                       <MenuItem>Ratings</MenuItem>
-                    </Tabs.Trigger> 
+                    </Tabs.Trigger>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -440,7 +440,7 @@ export default function Class({
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Ratings</MenuItem>
                     )}
-                  </NavLink> 
+                  </NavLink>
                 </Flex>
               )}
             </Flex>
