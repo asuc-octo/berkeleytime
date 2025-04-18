@@ -1,10 +1,11 @@
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import { useSearchParams } from "react-router-dom";
-import { SingleValue } from "react-select";
+import { SelectInstance, SingleValue } from "react-select";
 
-import { Select } from "@repo/theme";
+import { createSelectStyles } from "@repo/theme";
+import Select from "react-select";
 import { Box, Button, Flex } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
@@ -52,7 +53,11 @@ const DEFAULT_SELECTED_CLASS = { value: null, label: "All Instructors" };
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
+
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const semesterSelectRef = useRef<SelectInstance<OptionType, false>>(null);
+  const classSelectRef = useRef<SelectInstance<ClassOptionType, false>>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -207,6 +212,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     setSelectedClass(DEFAULT_SELECTED_CLASS);
     setSelectedSemester(null);
+    semesterSelectRef.current?.focus();
+    semesterSelectRef.current?.openMenu("first");
   };
 
   const handleCourseClear = () => {
@@ -233,22 +240,36 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       </Box>
       <Box flexGrow="1">
         <Select
+          ref={semesterSelectRef}
+          styles={createSelectStyles<OptionType, false>()}
           options={semesterOptions}
           isDisabled={disabled}
           value={selectedSemester}
           onChange={(s) => {
             setSelectedClass(DEFAULT_SELECTED_CLASS);
             setSelectedSemester(s);
+            if (classOptions.length > 1) {
+              classSelectRef.current?.focus();
+              classSelectRef.current?.openMenu("first");
+            }
+          }}
+          components={{
+            IndicatorSeparator: () => null,
           }}
         />
       </Box>
       <Box flexGrow="1">
         <Select
+          ref={classSelectRef}
+          styles={createSelectStyles<ClassOptionType, false>()}
           options={classOptions}
           isDisabled={disabled}
           value={selectedClass}
           onChange={(s) => {
             setSelectedClass(s);
+          }}
+          components={{
+            IndicatorSeparator: () => null
           }}
         />
       </Box>
