@@ -6,6 +6,7 @@ export interface Input {
   year: number;
   semester: Semester;
   sectionNumber?: string;
+  sessionId?: string;
 }
 
 export interface Output {

@@ -127,6 +127,7 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         year
         semester
         number
+        sessionId
         primarySection {
           enrollment {
             latest {

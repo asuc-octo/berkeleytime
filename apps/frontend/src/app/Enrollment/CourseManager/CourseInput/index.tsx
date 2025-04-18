@@ -10,6 +10,7 @@ import { Box, Button, Flex } from "@repo/theme";
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import {
+  IClass,
   ICourse,
   READ_ENROLLMENT,
   ReadEnrollmentResponse,
@@ -31,6 +32,11 @@ type CourseOptionType = {
   label: string;
 };
 
+type ClassOptionType = {
+  value: IClass | null;
+  label: string;
+};
+
 type OptionType = {
   value: string;
   label: string;
@@ -42,7 +48,7 @@ interface CourseInputProps {
 }
 
 // called instructor in frontend but actually we're letting users select a class
-const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
+const DEFAULT_SELECTED_CLASS = { value: null, label: "All Instructors" };
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
@@ -58,9 +64,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     selectedCourse?.value.number ?? ""
   );
 
-  const [selectedClass, setSelectedClass] = useState<SingleValue<OptionType>>(
-    DEFAULT_SELECTED_CLASS
-  );
+  const [selectedClass, setSelectedClass] = useState<
+    SingleValue<ClassOptionType>
+  >(DEFAULT_SELECTED_CLASS);
   const [selectedSemester, setSelectedSemester] =
     useState<SingleValue<OptionType>>();
 
@@ -95,12 +101,12 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     return [...list, ...filteredOptions];
   }, [courseData]);
 
-  const classOptions: OptionType[] = useMemo(() => {
+  const classOptions: ClassOptionType[] = useMemo(() => {
     const list = [DEFAULT_SELECTED_CLASS];
     if (!courseData) return list;
 
     const classStrings: string[] = [];
-    const sectionNumbers: string[] = [];
+    const classes: IClass[] = [];
     courseData?.classes.forEach((c) => {
       if (!c.primarySection.enrollment?.latest) return;
       if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
@@ -113,10 +119,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         });
       });
       classStrings.push(`${allInstructors} ${c.primarySection.number}`);
-      sectionNumbers.push(c.primarySection.number);
+      classes.push(c);
     });
     const opts = classStrings.map((v, i) => {
-      return { value: sectionNumbers[i], label: v };
+      return { value: classes[i], label: v };
     });
     if (opts.length === 1) {
       // if only one option, select it
@@ -142,7 +148,13 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       year: parseInt(year),
       semester: semester as Semester,
       sectionNumber:
-        selectedClass.value === "all" ? undefined : selectedClass.value,
+        selectedClass.value === null
+          ? undefined
+          : selectedClass.value.primarySection.number,
+      sessionId:
+        selectedClass.value?.semester === "Summer"
+          ? selectedClass.value.sessionId
+          : undefined,
     };
     // Do not fetch duplicates
     const existingOutput = outputs.find((output) =>
