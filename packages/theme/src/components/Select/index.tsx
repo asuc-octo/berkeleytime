@@ -7,7 +7,7 @@ import ReactSelect, {
 
 export const createSelectStyles = <
   OptionType,
-  IsMulti extends boolean = false
+  IsMulti extends boolean = false,
 >(): StylesConfig<OptionType, IsMulti> => ({
   control: (provided) => ({
     ...provided,
@@ -34,9 +34,7 @@ export const createSelectStyles = <
     backgroundColor: state.isFocused
       ? "var(--border-color)"
       : "var(--foreground-color)",
-    color: state.isFocused
-      ? "var(--heading-color)"
-      : "var(--paragraph-color)",
+    color: state.isFocused ? "var(--heading-color)" : "var(--paragraph-color)",
     cursor: "pointer",
   }),
   menu: (provided) => ({

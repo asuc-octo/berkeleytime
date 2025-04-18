@@ -360,7 +360,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             value={selectedInstructor}
             onChange={(s) => {
               setSelectedInstructor(s);
-              if (selectedType?.value === InputType.Instructor && semesterOptions.length > 1) {
+              if (
+                selectedType?.value === InputType.Instructor &&
+                semesterOptions.length > 1
+              ) {
                 semesterSelectRef.current?.focus();
                 semesterSelectRef.current?.openMenu("first");
               }
@@ -379,7 +382,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             value={selectedSemester}
             onChange={(s) => {
               setSelectedSemester(s);
-              if (selectedType?.value === InputType.Term && instructorOptions.length > 1) {
+              if (
+                selectedType?.value === InputType.Term &&
+                instructorOptions.length > 1
+              ) {
                 instructorSelectRef.current?.focus();
                 instructorSelectRef.current?.openMenu("first");
               }

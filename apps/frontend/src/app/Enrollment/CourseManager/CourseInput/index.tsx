@@ -3,9 +3,9 @@ import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useApolloClient } from "@apollo/client";
 import { useSearchParams } from "react-router-dom";
 import { SelectInstance, SingleValue } from "react-select";
+import Select from "react-select";
 
 import { createSelectStyles } from "@repo/theme";
-import Select from "react-select";
 import { Box, Button, Flex } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
@@ -269,7 +269,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             setSelectedClass(s);
           }}
           components={{
-            IndicatorSeparator: () => null
+            IndicatorSeparator: () => null,
           }}
         />
       </Box>
