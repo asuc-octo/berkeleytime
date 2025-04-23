@@ -19,12 +19,16 @@ const router = createBrowserRouter([
     element: <Landing />,
   },
   {
-    path: "*",
-    loader: () => redirect("/"),
-  },
-  {
     path: "/add-post",
     element: <AddPost />,
+  },
+  {
+    path: "/posts/:postId", //be able to query with postid
+    element: <AddPost />, // will need to fill out form with existing data for postId
+  },
+  {
+    path: "*",
+    loader: () => redirect("/"),
   },
 ]);
 
