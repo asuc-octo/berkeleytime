@@ -281,6 +281,8 @@ export const ratingSubmit = async (
   currentClass: any,
   setModalOpen: Dispatch<SetStateAction<boolean>>,
   currentRatings?: {
+    semester: string,
+    year: number,
     metrics: Array<{ metricName: string; value: number }>;
   } | null
 ) => {
@@ -333,11 +335,13 @@ export const ratingSubmit = async (
             return Promise.resolve();
           }
           // Check if the current rating value is different from the new value
-          const currentMetric = currentRatings?.metrics.find(
-            (m) => m.metricName === metric
-          );
-          if (currentMetric?.value === value) {
-            return Promise.resolve();
+          if (currentRatings?.semester === termInfo.semester && currentRatings?.year === termInfo.year) {
+            const currentMetric = currentRatings?.metrics.find(
+              (m) => m.metricName === metric
+            );
+            if (currentMetric?.value === value) {
+              return Promise.resolve();
+            }
           }
           return createRating({
             variables: {

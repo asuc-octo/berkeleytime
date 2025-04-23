@@ -20,12 +20,15 @@
   "dependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "patch-package": "^8.0.0",
-    "react-select": "^5.10.0",
     "prettier": "^3.5.3",
+    "react-select": "^5.10.0",
     "turbo": "^2.4.4"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "latest"
+    "@rollup/rollup-linux-x64-gnu": "^4.40.0"
   },
-  "name": "berkeleytime"
+  "name": "berkeleytime",
+  "devDependencies": {
+    "rollup": "^4.40.0"
+  }
 }

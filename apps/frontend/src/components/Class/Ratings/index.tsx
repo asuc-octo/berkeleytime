@@ -19,7 +19,6 @@ import {
   GET_COURSE_RATINGS,
   GET_SEMESTERS_WITH_RATINGS,
   GET_USER_RATINGS,
-  READ_COURSE,
 } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
 
@@ -75,7 +74,7 @@ interface Term {
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { class: currentClass } = useClass();
+  const { class: currentClass, course: currentCourse } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
   const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(
     null
@@ -83,13 +82,6 @@ export function RatingsContainer() {
   const { data: user } = useReadUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
-
-  const { data: courseData, loading: courseLoading } = useQuery(READ_COURSE, {
-    variables: {
-      subject: currentClass.subject,
-      number: currentClass.courseNumber,
-    },
-  });
 
   // Get user's existing ratings
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS, {
@@ -192,9 +184,9 @@ export function RatingsContainer() {
   });
 
   const availableTerms = useMemo(() => {
-    if (!courseData?.course?.classes) return [];
+    if (!currentCourse.classes) return [];
 
-    return _.chain(courseData.course.classes)
+    return _.chain(currentCourse.classes)
       .map((ClassData: any) => ({
         value: `${ClassData.semester} ${ClassData.year}`,
         label: `${ClassData.semester} ${ClassData.year}`,
@@ -215,10 +207,10 @@ export function RatingsContainer() {
             return semesterOrder[term.semester as Semester];
           },
         ],
-        ["desc", "asc"]
+        ["desc", "desc"]
       )
       .value();
-  }, [courseData]);
+  }, [currentClass]);
 
   const userRatings = useMemo(() => {
     if (!userRatingsData?.userRatings?.classes) return null;
@@ -294,9 +286,6 @@ export function RatingsContainer() {
   //   [ratingsData]
   // );
 
-  if (courseLoading) {
-    return <div>Loading course data...</div>;
-  }
   return (
     <div className={styles.root}>
       <Container size="2">

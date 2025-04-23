@@ -145,10 +145,9 @@ export function UserFeedbackModal({
       },
       {}
     );
-
     return availableTerms.filter((term) => {
       const position = termPositions[term.value];
-      return position === TemporalPosition.Past;
+      return position === TemporalPosition.Past || !position;
     });
   }, [availableTerms, termsData]);
 
