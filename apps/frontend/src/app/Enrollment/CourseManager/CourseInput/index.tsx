@@ -112,20 +112,30 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     const classStrings: string[] = [];
     const classes: IClass[] = [];
-    courseData?.classes.forEach((c) => {
-      if (!c.primarySection.enrollment?.latest) return;
-      if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
-      // only classes from current sem displayed
-      let allInstructors = "";
-      c.primarySection.meetings.forEach((m) => {
-        m.instructors.forEach((i) => {
-          // construct label
-          allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
+    courseData?.classes
+      .filter(
+        (c) =>
+          `${c.semester} ${c.year}` === selectedSemester?.value &&
+          c ===
+            courseData?.classes.find(
+              (c2) =>
+                `${c.semester} ${c.year} ${c.number}` ===
+                `${c2.semester} ${c2.year} ${c2.number}`
+            )
+      )
+      .forEach((c) => {
+        if (!c.primarySection.enrollment?.latest) return;
+        // only classes from current sem displayed
+        let allInstructors = "";
+        c.primarySection.meetings.forEach((m) => {
+          m.instructors.forEach((i) => {
+            // construct label
+            allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
+          });
         });
+        classStrings.push(`${allInstructors} ${c.primarySection.number}`);
+        classes.push(c);
       });
-      classStrings.push(`${allInstructors} ${c.primarySection.number}`);
-      classes.push(c);
-    });
     const opts = classStrings.map((v, i) => {
       return { value: classes[i], label: v };
     });
