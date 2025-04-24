@@ -37,7 +37,15 @@ export default function GradTrakOnboarding() {
   const handleMinorsComplete = (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
     console.log({ startYear, gradYear, summerCheck, majors: selectedMajors, minors }); // TODO: update user info in backend 
-    navigate(`/gradtrak/dashboard`)
+    navigate(`/gradtrak/dashboard`, {
+      state: {
+        startYear,
+        gradYear,
+        summerCheck,
+        selectedDegreeList: selectedMajors, // Pass the final collected majors
+        selectedMinorList: minors,          // Pass the final collected minors (from this step's parameter)
+      }
+    })
   };
 
   return (

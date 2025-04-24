@@ -114,47 +114,32 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
+        path: "gradtrak", 
         element: (
-          <SuspenseBoundary key="gradtrak">
+          <SuspenseBoundary key="gradtrak-landing"> 
             <GradTrak />
           </SuspenseBoundary>
         ),
-        path: "gradtrak",
-        children: [
-          {
-            path: "onboarding",
-            element: (
-              <SuspenseBoundary key="onboarding">
-                <GradTrakOnboarding />
-              </SuspenseBoundary>
-            ),
-          },
-          {
-            index: true,
-            element: (
-              <SuspenseBoundary key="dashboard">
-                <GradTrakDashboard />
-              </SuspenseBoundary>
-            ),
-          },
-          {
-            path: "*",
-            loader: () => redirect("/gradtrak"),
-          },
-        ],
       },
-    ],
-  },
-  {
-    element: <Layout />,
-    children: [
       {
+        path: "gradtrak/onboarding", 
         element: (
-          <SuspenseBoundary key="about">
-            <About />
+          <SuspenseBoundary key="gradtrak-onboarding"> 
+            <GradTrakOnboarding />
           </SuspenseBoundary>
         ),
-        path: "about",
+      },
+      {
+        path: "gradtrak/dashboard",
+        element: (
+          <SuspenseBoundary key="gradtrak-dashboard">
+            <GradTrakDashboard />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "*",
+        loader: () => redirect("/gradtrak"),
       },
     ],
   },
