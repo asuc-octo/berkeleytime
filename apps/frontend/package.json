@@ -12,6 +12,7 @@
     "@apollo/client": "3.13.4",
     "@floating-ui/dom": "^1.6.13",
     "@mapbox/mapbox-gl-directions": "^4.3.1",
+    "@repo/shared": "*",
     "@repo/theme": "*",
     "@shopify/draggable": "^1.1.4",
     "@tanstack/react-virtual": "^3.13.4",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
+    "@types/lodash": "^4.17.16",
     "@types/mapbox-gl": "^3.4.1",
     "@types/node": "^22.13.10",
     "@types/react": "^19.0.12",
@@ -40,6 +42,6 @@
     "eslint": "^9.22.0",
     "serve": "^14.2.4",
     "typescript": "^5.8.2",
-    "vite": "6.2.2"
+    "vite": "^5.2.6"
   }
 }

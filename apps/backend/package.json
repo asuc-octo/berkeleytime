@@ -41,6 +41,7 @@
     "@keyv/redis": "^4.3.2",
     "@repo/common": "*",
     "@repo/sis-api": "*",
+    "@repo/shared": "*",
     "compression": "^1.8.0",
     "connect-redis": "^8.0.2",
     "cors": "^2.8.5",

@@ -1,16 +1,19 @@
 .content {
   border-radius: 4px;
-  height: 32px;
-  padding: 0 12px;
+  min-height: 32px;
+  padding: 8px 12px;
   background-color: var(--tooltip-color);
   animation: fadeIn 100ms ease-in;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.8;
   color: white;
   display: flex;
   align-items: center;
   z-index: 998;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 250px;
 
   .arrow {
     fill: var(--tooltip-color);

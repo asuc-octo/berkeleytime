@@ -44,6 +44,7 @@ const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
+const Ratings = lazy(() => import("./Ratings"));
 
 interface BodyProps {
   children: ReactNode;
@@ -405,7 +406,11 @@ export default function Class({
                     </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
-                    </Tabs.Trigger> */}
+                    </Tabs.Trigger>
+                    */}
+                    <Tabs.Trigger value="ratings" asChild>
+                      <MenuItem>Ratings</MenuItem>
+                    </Tabs.Trigger>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -429,7 +434,13 @@ export default function Class({
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
-                  </NavLink> */}
+                  </NavLink>
+                  */}
+                  <NavLink to={{ ...location, pathname: "ratings" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Ratings</MenuItem>
+                    )}
+                  </NavLink>
                 </Flex>
               )}
             </Flex>
@@ -460,6 +471,11 @@ export default function Class({
             <Tabs.Content value="grades" asChild>
               <SuspenseBoundary>
                 <Grades />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="ratings" asChild>
+              <SuspenseBoundary>
+                <Ratings />
               </SuspenseBoundary>
             </Tabs.Content>
           </Body>

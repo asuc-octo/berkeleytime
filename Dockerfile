@@ -1,4 +1,4 @@
-FROM node:alpine AS base
+FROM node:22-alpine AS base
 RUN ["npm", "install", "-g", "turbo@latest"]
 
 # datapuller
@@ -58,8 +58,6 @@ COPY --from=frontend-builder /frontend/out/full/ .
 ENTRYPOINT ["turbo", "run", "dev", "--filter=frontend"]
 
 FROM frontend-dev AS frontend-prod
-WORKDIR /frontend
-
 RUN ["turbo", "run", "build", "--filter=frontend", "--env-mode=loose"]
 
 ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]
