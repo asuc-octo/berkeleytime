@@ -8,7 +8,7 @@
   
   .dialog-content {
     z-index: 1010;
-    background-color: white;
+    //background-color: white;
     border-radius: 8px;
     display: flex;
     width: 400px;
@@ -39,7 +39,7 @@
     justify-content: space-between;
     align-items: center;
     /* align-self: stretch; */
-    border-bottom: 1px solid #EAEAEA;
+    border-bottom: 1px var(--border-color);
     background: var(--Hover-Primary, #F8F8F8);
     padding: var(--M, 24px);
     box-sizing: border-box;

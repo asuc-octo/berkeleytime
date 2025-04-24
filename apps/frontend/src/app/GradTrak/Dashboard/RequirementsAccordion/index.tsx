@@ -32,7 +32,7 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
 
             {/* Conditionally rendered accordion contents */}
             {isExpanded && (
-                <div className="accordion-contents">
+                <div className="accordion sidepanel-accordion">
                     {Object.values(requirements).map((requirement, index) => {
                         const isFulfilled = false; // TODO: Replace with `checkRequirementFulfilled` logic
                         return (

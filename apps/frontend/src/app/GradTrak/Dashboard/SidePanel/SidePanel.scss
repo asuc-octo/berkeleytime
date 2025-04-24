@@ -3,11 +3,17 @@
     height: 100vh; 
     padding-top: var(--S, 16px);
     flex-direction: column;  
-    border-right: 1px var(--border-color); 
+    border-right: 1px solid var(--border-color); 
     background: var(--foreground-color); 
     position: relative; 
     overflow-y: auto; 
     box-sizing: border-box; 
+  }
+
+  .separator {
+    background-color: var(--border-color);
+    height: 1px;
+    width: 100%;
   }
   
   /* ----------------------*/
@@ -16,11 +22,11 @@
   
   .sidepanel-container {
       display: flex;
-      padding: var(--M, 24px);
       flex-direction: column;
       align-items: flex-start;
       gap: var(--S, 16px);
       align-self: stretch;
+      padding: 1rem;
   }
   
   .sidepanel-header-container {
@@ -37,6 +43,20 @@
       align-items: flex-start;
       flex-grow: 1;
       max-width: calc(100% - 52px);
+  }
+
+  .user-name {
+    font-size: 16px; 
+    font-weight: 600;
+    color: var(--heading-color);
+    line-height: 22px;
+  }
+  
+  .graduation-plan {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--paragraph-color);
+    line-height: 22px;
   }
   
   .user-info-grid {
@@ -56,6 +76,7 @@
       font-size: 0.875em;
       text-align: left;
       align-self: start;
+      color: var(--heading-color);
     }
     
     .value ul {
@@ -111,10 +132,11 @@
       overflow: hidden;
       text-overflow: ellipsis; 
       max-width: 100%;
+      color: var(--heading-color);
   }
   
   .requirement-header{
-    color: var(--Secondary-Text, #8A8A8A);
+    color: var(--paragraph-color);
     font-size: 0.75em;
     font-weight: 580;
     text-transform: uppercase;
@@ -123,18 +145,19 @@
   .icon {
     width: 20px;
     height: 20px;
-    color: var(--Secondary-Text, #8A8A8A);
+    color: var(--paragraph-color);
   }
   .icon.green{
     width: 20px;
     height: 10px;
-    color: var(--Green, #13B56B);
+    color: var(--emerald-500, #10b981);
   }
   
   .units-title {
-    color: var(--Secondary-Text, #8A8A8A);
+    font-size: 14px;
+    color: var(--paragraph-color);
   }
   
   .units-comp {
-    color: var(--Red, #ED6363);
+    color: var(--rose-600, #e11d48);
   }

@@ -79,7 +79,7 @@ function SemesterHome() {
 
         {/* Page body */}
         <Flex direction="column" gap="32px" className='semester-blocks'>
-          <h3 className='semester-title'>Semesters</h3>
+          <h1 className='semester-title'>Semesters</h1>
           <Flex direction="row" gap="12px" className='semester-layout'>
             <SemesterBlock 
               semesterId="miscellaneous" 

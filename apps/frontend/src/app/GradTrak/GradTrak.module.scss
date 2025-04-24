@@ -1,7 +1,24 @@
 .root {
-  background-color: var(--background-color);
-
   h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 46px;
+  }
+
+  h2 {
+    font-size: 16px;
+    font-weight: 500;
+    //margin-top: 40px;
+    //margin-bottom: 24px;
+  }
+}
+
+.header {
+    padding: 5rem 1rem;
+    text-align: center;
+    margin-left: 25%;
+    max-width: 50%;
+    position: static;
     color: var(--heading-color);
     font-size: 32px;
   }
@@ -13,10 +30,6 @@
 
   p {
     color: var(--paragraph-color);
-  }
-
-  a {
-    color: #2F80ED;
+    text-align: center;
   }
   
-}

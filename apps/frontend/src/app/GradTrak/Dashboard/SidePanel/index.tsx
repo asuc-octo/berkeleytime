@@ -21,8 +21,8 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
         <div className="sidepanel-container">
             <div className="sidepanel-header-container">
                 <div className="user-header">
-                    <h2 className="truncate">{name}</h2>
-                    <h2 className="secondary-text">Graduation Plan</h2>
+                    <h2 className="user-name truncate">{name}</h2>
+                    <p className="graduation-plan">Graduation Plan</p>
                 </div>
                 <button className="panel-secondary">Edit</button>
             </div>
@@ -83,7 +83,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                     </div>
                     </div>
                 </div>
-                <Separator size="4" />     
+                <div className="separator" />   
               </>
             ))}
         </div>
@@ -114,7 +114,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                     </div>
                     </div>
                 </div>
-                <Separator size="4" />     
+                <div className="separator" />     
               </>  
             ))}
         </div>
@@ -123,7 +123,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
     return (
         <div className='sidepanel'>
             {UserInfo}
-            <Separator size="4" /> 
+            <div className="separator" /> 
             {MajorRequirements}
             {MinorRequirements}  
             <RequirementsAccordion title={"University of California"}
@@ -137,7 +137,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                     UniReqs.RCB,
                     UniReqs.FL,
                 ]}/>
-            <Separator size="4" />     
+            <div className="separator" />     
             <RequirementsAccordion title={"Breadth Requirements"}    
                 requirements={[
                     LnSReqs.LnS_AL,
@@ -148,7 +148,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                     LnSReqs.LnS_PS,
                     LnSReqs.LnS_SBS,
                 ]}/>
-            <Separator size="4" />    
+            <div className="separator" />    
         </div>
    )
 }

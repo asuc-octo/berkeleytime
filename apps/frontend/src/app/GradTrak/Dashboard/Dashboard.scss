@@ -1,7 +1,6 @@
 .body {
     display: flex !important;
     justify-content: start !important;
-    background-color: var(--foreground-color);
 }
 .content {
     display: flex;
@@ -49,8 +48,8 @@ position: fixed; /* Fix the position */
   padding-left: 32px;
   z-index: 100; /* Ensure it appears above other elements */
   /* width: calc(100% - 240px); Take up the remaining width after the side panel */
-  color: var(--Primary-Text, #000); /* Ensure consistent text styling */
-  background-color: white;
+  color: var(--heading-color); /* Ensure consistent text styling */
+  background-color: var(--foreground-color);
   width: 100%;
   font-size: 28px;
   font-style: normal;

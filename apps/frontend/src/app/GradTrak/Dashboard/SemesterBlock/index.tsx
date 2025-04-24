@@ -269,7 +269,7 @@ function SemesterBlock({ selectedYear,
       onDrop={handleDrop}>
       <div className="container">
         <div className="semesterCount">
-          <h2 className="title">{selectedSemester} {selectedYear} </h2>
+          <div className="title">{selectedSemester} {selectedYear} </div>
           <p className="counter">{totalUnits}</p>
         </div>
 

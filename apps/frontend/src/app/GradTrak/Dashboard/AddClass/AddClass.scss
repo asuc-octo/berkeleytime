@@ -5,7 +5,7 @@
 }
 
 body {
-    background-color: white;
+    background-color: var(--foreground-color);
 }
 
   .dropDownBtn {
@@ -15,8 +15,8 @@ body {
 
 
 .searchBar {
-    background-color: white;
-    color: black;
+    background-color: var(--foreground-color);
+    color: var(--paragraph-color);
     position: relative;
     margin-top: 0.5rem;
     padding: 0.5rem;
@@ -38,7 +38,8 @@ body {
     padding: 0;
     scrollbar-color: #cbd5e0 #f3f4f6;
     scrollbar-width: thin;
-    background-color: white;
+    background-color: var(--foreground-color);
+    border-radius: 4px;
 }
 
 .suggestions-list::-webkit-scrollbar-thumb {
@@ -56,7 +57,7 @@ body {
     padding: 0.5rem;
     text-align: left;
     overflow: hidden;
-    color: var(--Black-1, rgba(0, 0, 0, 0.80));
+    color: var(--heading-color);
     text-overflow: ellipsis;
     font-family: "Inter Variable";
     font-size: 14px;
@@ -67,7 +68,7 @@ body {
 }
 
 .suggestion-item:hover {
-    background-color: #bfdbfe; /* Light blue for hover */
+    background-color: var(--button-hover-color); /* Light blue for hover */
   }
 
 .add-custom-btn {
