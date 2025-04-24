@@ -50,7 +50,6 @@ export interface SelectProps<OptionType, IsMulti extends boolean = false>
 export function Select<OptionType, IsMulti extends boolean = false>(
   props: SelectProps<OptionType, IsMulti>
 ) {
-
   return (
     <ReactSelect<OptionType, IsMulti>
       {...props}
