@@ -474,7 +474,7 @@ export default function Filters() {
             }}
           >
             <option value="">None</option>
-            {allSchedules.map((schedule) => (
+            {allSchedules?.map((schedule) => (
               <option key={schedule._id} value={schedule._id}>
                 {schedule.name}
               </option>

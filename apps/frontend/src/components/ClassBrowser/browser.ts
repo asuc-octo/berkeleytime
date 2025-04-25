@@ -170,11 +170,17 @@ export interface ConflictResult {
 }
 
 function timeToMinutes(time: string): number {
+  if (!time || typeof time !== "string" || !time.includes(":")) {
+    // console.warn("Invalid time:", time);
+    return -1;
+  }
+
   const [hour, minute] = time.split(":").map(Number);
   return hour * 60 + minute;
 }
 
 function extractTimeSlotsFromSchedule(schedule: ISchedule): TimeSlot[] {
+  console.log(schedule);
   const timeSlots: TimeSlot[] = [];
 
   for (const { class: _class, selectedSections } of schedule.classes) {
@@ -221,6 +227,8 @@ function extractTimeSlotsFromSchedule(schedule: ISchedule): TimeSlot[] {
     });
   }
 
+  // console.log(timeSlots);
+
   return timeSlots;
 }
 
@@ -229,8 +237,8 @@ function hasTimeConflict(
   timeSlots: TimeSlot[]
 ): ConflictResult {
   const conflictingSectionIds: string[] = [];
-  const allSections = [_class.primarySection, ..._class.sections];
-
+  const allSections = [_class.primarySection, ...(_class.sections ?? [])];
+  // console.log(allSections);
   for (const section of allSections) {
     for (const meeting of section.meetings ?? []) {
       const start = timeToMinutes(meeting.startTime);
@@ -252,6 +260,10 @@ function hasTimeConflict(
     }
   }
 
+  // console.log({
+  //   hasConflict: conflictingSectionIds.length > 0,
+  //   conflictingSectionIds,
+  // });
   return {
     hasConflict: conflictingSectionIds.length > 0,
     conflictingSectionIds,
