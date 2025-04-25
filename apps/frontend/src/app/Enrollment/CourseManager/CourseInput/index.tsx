@@ -1,10 +1,11 @@
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import { useSearchParams } from "react-router-dom";
-import { SingleValue } from "react-select";
+import { SelectInstance, SingleValue } from "react-select";
+import Select from "react-select";
 
-import { Select } from "@repo/theme";
+import { createSelectStyles } from "@repo/theme";
 import { Box, Button, Flex } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
@@ -52,7 +53,11 @@ const DEFAULT_SELECTED_CLASS = { value: null, label: "All Instructors" };
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
+
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const semesterSelectRef = useRef<SelectInstance<OptionType, false>>(null);
+  const classSelectRef = useRef<SelectInstance<ClassOptionType, false>>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -107,20 +112,30 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     const classStrings: string[] = [];
     const classes: IClass[] = [];
-    courseData?.classes.forEach((c) => {
-      if (!c.primarySection.enrollment?.latest) return;
-      if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
-      // only classes from current sem displayed
-      let allInstructors = "";
-      c.primarySection.meetings.forEach((m) => {
-        m.instructors.forEach((i) => {
-          // construct label
-          allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
+    courseData?.classes
+      .filter(
+        (c) =>
+          `${c.semester} ${c.year}` === selectedSemester?.value &&
+          c ===
+            courseData?.classes.find(
+              (c2) =>
+                `${c.semester} ${c.year} ${c.number}` ===
+                `${c2.semester} ${c2.year} ${c2.number}`
+            )
+      )
+      .forEach((c) => {
+        if (!c.primarySection.enrollment?.latest) return;
+        // only classes from current sem displayed
+        let allInstructors = "";
+        c.primarySection.meetings.forEach((m) => {
+          m.instructors.forEach((i) => {
+            // construct label
+            allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
+          });
         });
+        classStrings.push(`${allInstructors} ${c.primarySection.number}`);
+        classes.push(c);
       });
-      classStrings.push(`${allInstructors} ${c.primarySection.number}`);
-      classes.push(c);
-    });
     const opts = classStrings.map((v, i) => {
       return { value: classes[i], label: v };
     });
@@ -207,6 +222,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     setSelectedClass(DEFAULT_SELECTED_CLASS);
     setSelectedSemester(null);
+    semesterSelectRef.current?.focus();
+    semesterSelectRef.current?.openMenu("first");
   };
 
   const handleCourseClear = () => {
@@ -233,22 +250,36 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       </Box>
       <Box flexGrow="1">
         <Select
+          ref={semesterSelectRef}
+          styles={createSelectStyles<OptionType, false>()}
           options={semesterOptions}
           isDisabled={disabled}
           value={selectedSemester}
           onChange={(s) => {
             setSelectedClass(DEFAULT_SELECTED_CLASS);
             setSelectedSemester(s);
+            if (classOptions.length > 1) {
+              classSelectRef.current?.focus();
+              classSelectRef.current?.openMenu("first");
+            }
+          }}
+          components={{
+            IndicatorSeparator: () => null,
           }}
         />
       </Box>
       <Box flexGrow="1">
         <Select
+          ref={classSelectRef}
+          styles={createSelectStyles<ClassOptionType, false>()}
           options={classOptions}
           isDisabled={disabled}
           value={selectedClass}
           onChange={(s) => {
             setSelectedClass(s);
+          }}
+          components={{
+            IndicatorSeparator: () => null,
           }}
         />
       </Box>

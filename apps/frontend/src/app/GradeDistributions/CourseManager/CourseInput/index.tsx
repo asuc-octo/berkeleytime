@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import { useSearchParams } from "react-router-dom";
-import { SingleValue } from "react-select";
+import Select, { SelectInstance, SingleValue } from "react-select";
 
-import { Box, Select } from "@repo/theme";
+import { Box, createSelectStyles } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
@@ -57,7 +57,11 @@ const TYPE_OPTIONS = [
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
+
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const semesterSelectRef = useRef<SelectInstance<OptionType, false>>(null);
+  const instructorSelectRef = useRef<SelectInstance<OptionType, false>>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -286,6 +290,13 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
     setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
+    if (selectedType?.value === InputType.Instructor) {
+      instructorSelectRef.current?.focus();
+      instructorSelectRef.current?.openMenu("first");
+    } else {
+      semesterSelectRef.current?.focus();
+      semesterSelectRef.current?.openMenu("first");
+    }
   };
 
   const handleCourseClear = () => {
@@ -312,6 +323,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       </Box>
       <Box flexGrow="1">
         <Select
+          styles={createSelectStyles<OptionType, false>()}
           options={TYPE_OPTIONS}
           isDisabled={disabled}
           value={selectedType}
@@ -319,6 +331,16 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
             setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
             setSelectedType(s);
+            if (s?.value === InputType.Instructor) {
+              instructorSelectRef.current?.focus();
+              instructorSelectRef.current?.openMenu("first");
+            } else {
+              semesterSelectRef.current?.focus();
+              semesterSelectRef.current?.openMenu("first");
+            }
+          }}
+          components={{
+            IndicatorSeparator: () => null,
           }}
         />
       </Box>
@@ -331,21 +353,45 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       >
         <Box flexGrow="1">
           <Select
+            styles={createSelectStyles<OptionType, false>()}
+            ref={instructorSelectRef}
             options={instructorOptions}
             isDisabled={disabled}
             value={selectedInstructor}
             onChange={(s) => {
               setSelectedInstructor(s);
+              if (
+                selectedType?.value === InputType.Instructor &&
+                semesterOptions.length > 1
+              ) {
+                semesterSelectRef.current?.focus();
+                semesterSelectRef.current?.openMenu("first");
+              }
+            }}
+            components={{
+              IndicatorSeparator: () => null,
             }}
           />
         </Box>
         <Box flexGrow="1">
           <Select
+            styles={createSelectStyles<OptionType, false>()}
+            ref={semesterSelectRef}
             options={semesterOptions}
             isDisabled={disabled}
             value={selectedSemester}
             onChange={(s) => {
               setSelectedSemester(s);
+              if (
+                selectedType?.value === InputType.Term &&
+                instructorOptions.length > 1
+              ) {
+                instructorSelectRef.current?.focus();
+                instructorSelectRef.current?.openMenu("first");
+              }
+            }}
+            components={{
+              IndicatorSeparator: () => null,
             }}
           />
         </Box>
