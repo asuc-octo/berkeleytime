@@ -153,10 +153,8 @@ export default function Enrollment() {
         (acc, output, index) => {
           const day0 = new Date(output.enrollmentHistory.history[0].time);
           output.enrollmentHistory.history.forEach((enrollment) => {
-            const dayOffset = Math.ceil(
-              (new Date(enrollment.time).getTime() - day0.getTime()) /
-                (1000 * 3600 * 24)
-            );
+            const dayOffset = Math.round(100 * (new Date(enrollment.time).getTime() - day0.getTime()) /
+                (1000 * 3600 * 24)) / 100
             const column = acc.find((item) => item.day === dayOffset);
             const enrollValue =
               Math.round(
@@ -255,7 +253,7 @@ export default function Enrollment() {
                   {outputs?.length && (
                     <Tooltip
                       labelStyle={{ color: "var(--heading-color)" }}
-                      labelFormatter={(label) => `Day ${label}`}
+                      labelFormatter={(label) => `Day ${Math.ceil(label)}`}
                       contentStyle={{
                         backgroundColor: "var(--backdrop-color)",
                         border: "none",
@@ -300,7 +298,7 @@ export default function Enrollment() {
                 subject={outputs[hoveredSeries].input.subject}
                 courseNumber={outputs[hoveredSeries].input.courseNumber}
                 enrollmentHistory={outputs[hoveredSeries].enrollmentHistory}
-                hoveredDay={hoveredDay}
+                hoveredDay={hoveredDay ? Math.ceil(hoveredDay) : null}
                 semester={outputs[hoveredSeries].input.semester}
                 year={outputs[hoveredSeries].input.year}
               />
