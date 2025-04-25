@@ -1,43 +1,219 @@
-
 .accordion {
 	display: flex;
-    padding: var(--S, 16px); 
-    gap: var(--XS, 4px);
+    // Adjust padding or let container handle it
+    // padding: var(--S, 16px);
+    gap: var(--XS, 8px); // Add some vertical gap
 	flex-direction: column;
 	align-items: flex-start;
 	align-self: stretch;
+    border-bottom: 1px solid var(--border-color); // Add separator line at the bottom
+    padding-bottom: var(--S, 16px); // Add padding below separator
+    padding-top: var(--S, 16px); // Add padding above
+
 }
+
+.sidepanel-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; // Align items vertically
+    align-self: stretch; // Take full width
+    // cursor: pointer; // Indicate clickable header - Removed, button handles click
+    padding: 0 var(--S, 16px); // Add padding to the header for click area
+}
+
+.requirement-header{
+    color: var(--Secondary-Text, #8A8A8A);
+    font-size: 0.75em;
+    font-weight: 580;
+    line-height: 14px; /* 116.667% */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex-grow: 1; // Allow header text to take available space
+    text-align: left; // Ensure left alignment
+}
+
+.accordion-toggle-button {
+  background: none;
+  border: none;
+  padding: 0; /* Remove default button padding */
+  margin: 0; /* Remove default button margin */
+  display: flex; /* Center icon within button */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 20px; // Fixed size for click area
+  height: 20px; // Fixed size for click area
+  flex-shrink: 0; // Prevent button from shrinking
+}
+
+
+.icon {
+    width: 20px;
+    height: 20px;
+    color: var(--Secondary-Text, #8A8A8A);
+    transition: transform 0.3s ease; // Keep transition for arrow rotation
+    flex-shrink: 0; // Prevent icon from shrinking
+}
+/* Note: Specific .icon.expanded / .collapsed classes for rotation might be needed depending on initial icon orientation */
+
 
 .accordion-contents {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--XXS, 4px);
-    transition: max-height 0.3s ease, opacity 0.3s ease;
-}  
+    gap: var(--XXS, 4px); // Gap between items
+    // No explicit transition for height/opacity here, controlled by React rendering
+    width: 100%; // Take full width
+    padding: 0 var(--S, 16px); // Add horizontal padding, matches header padding
+}
 
 .accordion-item {
     display: flex;
-    align-items: flex-start;
-    gap: var(--XS, 8px);
-    align-self: stretch;
+    flex-direction: column; // Stack item-wrapper and potential popover
+    align-items: flex-start; // Align content within the item
+    width: 100%;
+    // Removed explicit gap here, use gap in item-wrapper
+    // Removed fixed padding, handle padding within item-start/item-wrapper
+
+    // Position context for absolute popover
+    position: relative;
+    // Add some padding or margin for spacing
+    padding: var(--XXS, 4px) 0; // Add vertical padding
+    // Add a subtle hover effect to the item
+    &:hover {
+        background-color: var(--Gray-0, #F8F8F8); // Light background on hover
+        border-radius: var(--XXS, 4px); // Rounded corners on hover
+    }
+
+    &.fulfilled .checkmark-icon {
+        color: var(--Green, #13B56B); // Green checkmark for fulfilled
+    }
+    // Optional: style for pending items if needed
+    &.pending .checkmark-icon {
+        // color: var(--Secondary-Text, #8A8A8A); // Default color
+    }
 }
 
-.sidepanel-accordion .accordion-item p {
-    color: var(--heading-color);
-    font-size: 14px;
-    font-weight: 400;
-  }  
-  
-.icon {
-    width: 20px;
-    height: 20px;
+.item-wrapper {
+    display: flex;
+    justify-content: space-between; // Push start and ellipsis to ends
+    align-items: center; // Align items vertically
+    width: 100%; // Take full width of parent (accordion-item)
+    gap: var(--XS, 8px); // Gap between text/checkmark and ellipsis
+}
+
+.item-start {
+    display: flex;
+    align-items: center; // Align checkmark space and text vertically
+    gap: var(--XS, 8px); // Gap between checkmark space and text
+    flex-grow: 1; // Allow text area to grow
+}
+
+// --- FIX APPLIED HERE: Fixed-width container for the checkmark ---
+.checkmark-space {
+    width: 20px; /* Fixed width for the checkmark area */
+    height: 20px; /* Fixed height */
+    display: flex; /* Use flex to center the checkmark icon inside */
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0; /* Prevent this container from shrinking */
+    // margin-right handled by gap in .item-start
+    // background-color: rgba(255, 0, 0, 0.1); /* Optional: visualize the space */
+}
+// --- END FIX ---
+
+.checkmark-icon {
+    width: 16px; // Adjust icon size to fit within the space
+    height: 16px; // Adjust icon size
+    flex-shrink: 0; // Prevent checkmark from shrinking
+    // Default color when not fulfilled
     color: var(--Secondary-Text, #8A8A8A);
-    transition: transform 0.3s ease;
 }
-.icon.expanded {
-    transform: rotate(0deg);
+
+.requirement-text {
+    font-size: 0.875em; // Match user info font size (14px if parent is 16px)
+    color: var(--Primary-Text, #000);
+    margin: 0; // Remove default paragraph margin
+    word-break: break-word; // Prevent long text from overflowing
+    text-align: left; // Ensure text aligns left
 }
-.icon.collapsed {
-    transform: rotate(90deg);
+
+.ellipsis-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--Secondary-Text, #8A8A8A);
+    display: flex; // Use flex to center icon
+    align-items: center;
+    justify-content: center;
+    width: 20px; // Fixed width for click area and icon
+    height: 20px; // Fixed height for click area and icon
+    opacity: 0; // Hidden by default
+    transition: opacity 0.2s ease; // Smooth transition on hover
+    flex-shrink: 0; // Prevent button from shrinking
+
+    &:hover {
+        color: var(--Primary-Text, #000); // Darker color on hover
+    }
+
+    &.visible {
+        opacity: 1; // Visible when hovered or menu is active
+    }
+
+    .iconoir-more-horiz { /* Target the specific iconoir icon class */
+         width: 20px; // Ensure the icon itself fills the button space if needed
+         height: 20px;
+    }
+}
+
+.accordion-item:hover .ellipsis-button {
+    opacity: 1; // Show ellipsis on item hover
+}
+
+.requirement-menu-popover {
+    position: absolute;
+    // Positioning relative to the item-wrapper or accordion-item
+    // Adjust top/right based on desired appearance relative to ellipsis button
+    top: calc(100% + 4px); // Position slightly below the item-wrapper
+    right: 0; // Align to the right
+    z-index: 100; // Ensure it's above other content
+    background: var(--White, #FFF);
+    border-radius: var(--XXS, 4px);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); // Subtle shadow
+    display: flex;
+    flex-direction: column;
+    padding: var(--XXS, 4px); // Padding inside the menu box
+    min-width: 180px; // Minimum width for the menu to fit text
+
+    // Add a triangle/caret if desired (more complex CSS)
+}
+
+.requirement-menu-popover .menu-item {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: var(--XXS, 4px) var(--XS, 8px); // Padding for menu items
+    cursor: pointer;
+    font-size: 0.875em; // Match text size
+    color: var(--Primary-Text, #000);
+    transition: background-color 0.1s ease;
+    width: 100%; // Make button fill menu width
+    border-radius: var(--XXS, 4px); // Rounded corners for hover effect
+    white-space: nowrap; /* Prevent text wrapping */
+
+    &:hover {
+        background-color: var(--Gray-0, #F8F8F8); // Light background on hover
+    }
+}
+
+// Style for the "No requirements listed" message
+.no-requirements-message {
+    font-size: 0.875em;
+    color: var(--Secondary-Text, #8A8A8A);
+    font-style: italic;
+    padding: var(--XXS, 4px) 0; // Match item padding
+    margin: 0; // Remove default margin
+    text-align: left; // Ensure left alignment
+    width: 100%; // Ensure it takes full width if alone
 }

@@ -65,7 +65,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                 <div className="sidepanel-container accordion">
                     <div className="sidepanel-header-container">
                         <div className="user-header">
-                            <h2 className="truncate" key={index}>{major}</h2>
+                            <h2 className="user-name truncate" key={index}>{major}</h2>
                         </div>
                     </div>
                     <div className="accordion-contents">
@@ -96,7 +96,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
               <div className="sidepanel-container accordion">
                     <div className="sidepanel-header-container">
                         <div className="user-header">
-                            <h2 className="truncate" key={index}>{minor}</h2>
+                            <h2 className="user-name truncate" key={index}>{minor}</h2>
                         </div>
                     </div>
                     <div className="accordion-contents">

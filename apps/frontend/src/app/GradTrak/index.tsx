@@ -1,114 +1,106 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react"; 
+import { useNavigate } from "react-router-dom"; 
+import React from "react"; 
 
-import { Calendar, Plus, Search } from "iconoir-react";
+import { Plus } from "iconoir-react"; 
 
-import { Box, Button, Container, Flex } from "@repo/theme";
+// Keep basic layout components from @repo/theme
+import { Box, Button, Container } from "@repo/theme";
 
-import Carousel from "@/components/Carousel";
+const useReadGradTraks = (options: { skip: boolean }) => {
+    const [data, setData] = React.useState<IGradTrak[] | null>(null);
+    const [loading, setLoading] = React.useState(!options.skip); 
+
+    useEffect(() => {
+        if (!options.skip) {
+            setLoading(true); 
+            const timer = setTimeout(() => {
+                setData([]);
+
+                setLoading(false);
+            }, 500); 
+            return () => clearTimeout(timer);
+        } else {
+             setLoading(false); 
+             setData(null); 
+        }
+    }, [options.skip]); 
+
+    return { data, loading };
+};
+
+// Mock IGradTrak type 
+interface IGradTrak {
+    _id: string;
+    name: string;
+    year: number;
+    semester: 'Fall' | 'Spring' | 'Summer';
+    semesters: { [key: string]: any[] };
+}
+
+import { useReadUser } from "@/hooks/api"; 
+import { signIn } from "@/lib/api"; 
+
 import Footer from "@/components/Footer";
-import { useReadSchedules, useReadUser } from "@/hooks/api";
-import { ISchedule, signIn } from "@/lib/api";
-import { RecentType, getRecents } from "@/lib/recent";
 
-import styles from "./GradTrak.module.scss";
-import { useNavigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import styles from "./GradTrak.module.scss"; 
 
-const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
-
-export default function GradTrak() {
+export default function GradTrakIndex() {
   const { data: user, loading: userLoading } = useReadUser();
 
-  const { data: schedules, loading: schedulesLoading } = useReadSchedules({
-    skip: !user,
+  const { data: gradTraks, loading: gradTraksLoading } = useReadGradTraks({
+    skip: !user, 
   });
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate(); // Get navigate function
 
-  const schedulesBySemester = useMemo(() => {
-    return schedules
-      ? schedules.reduce(
-          (acc, schedule) => {
-            const term = `${schedule.semester} ${schedule.year}`;
-            if (!acc[term]) acc[term] = [];
-            acc[term].push(schedule);
-            return acc;
-          },
-          {} as { [key: string]: ISchedule[] }
-        )
-      : ({} as { [key: string]: ISchedule[] });
-  }, [schedules]);
+  const hasGradTraks = useMemo(() => {
+      return !gradTraksLoading && gradTraks !== null && gradTraks !== undefined && gradTraks.length > 0;
+  }, [gradTraks, gradTraksLoading]);
 
-  const recentSchedules = getRecents(RecentType.Schedule);
+  useEffect(() => {
+      if (user && !userLoading && !gradTraksLoading && hasGradTraks) {
+          console.log("User has existing GradTraks, redirecting to dashboard.");
+          const latestGradTrakId = gradTraks?.[0]?._id; 
 
-  if (userLoading || schedulesLoading) return <></>;
+          if (latestGradTrakId) {
+              navigate(`/gradtrak/dashboard/${latestGradTrakId}`, { replace: true }); 
+          } else {
+             console.error("hasGradTraks was true but no GradTrak ID found in data.");
+             navigate('/gradtrak/onboarding', { replace: true });
+          }
+      }
+  }, [user, userLoading, gradTraksLoading, hasGradTraks, gradTraks, navigate]);
 
-  if (!user) signIn();
+  if (userLoading || gradTraksLoading) {
+    return <p>Loading GradTrak data...</p>; 
+  }
 
-  if (!schedules) {
-    return <></>;
+  if (!user) {
+     signIn();
+     return <></>; 
+  }
+
+  if (hasGradTraks) {
+    return <p>Loading your GradTrak...</p>; 
   }
 
   return (
     <Box p="5">
-      <Container style={{ marginBottom: "80px" }}>
+      <Container style={{ marginBottom: "80px" }}> 
         <div className={styles.header}>
           <div className={styles.title}>
-            Welcome to Berkeleytime&apos;s GradTrak
+            Welcome to Berkeleytime's GradTrak
           </div>
           <div className={styles.prompt}>
-            Use our GradTrak to build your ideal 4-year plan. 
-            insert more text here LOL.
+            Use our GradTrak to build your ideal 4-year plan.
+            Find courses, track requirements, and visualize your academic journey.
           </div>
             <Button variant="solid" onClick={() => navigate('/gradtrak/onboarding')}>
               <Plus />
               Create a GradTrak
             </Button>
         </div>
-        <Flex direction="column" gap="5">
-          {recentSchedules.length !== 0 && (
-            <Carousel.Root title="Recently viewed" Icon={<Search />}>
-              {recentSchedules.map(
-                ({ _id, name, classes, year, semester }, i) => {
-                  return (
-                    <Carousel.Schedule
-                      key={i}
-                      _id={_id}
-                      name={name}
-                      classes={classes}
-                      semester={`${semester} ${year}`}
-                    />
-                  );
-                }
-              )}
-            </Carousel.Root>
-          )}
-          {Object.keys(schedulesBySemester)
-            .sort((a, b) => {
-              return schedulesBySemester[a][0].year ==
-                schedulesBySemester[b][0].year
-                ? SEMESTER_ORDER.indexOf(schedulesBySemester[b][0].semester) -
-                    SEMESTER_ORDER.indexOf(schedulesBySemester[a][0].semester)
-                : schedulesBySemester[b][0].year -
-                    schedulesBySemester[a][0].year;
-            })
-            .map((sem) => {
-              return (
-                <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
-                  {schedulesBySemester[sem].map(({ _id, name, classes }, i) => {
-                    return (
-                      <Carousel.Schedule
-                        key={i}
-                        _id={_id}
-                        name={name}
-                        classes={classes}
-                      />
-                    );
-                  })}
-                </Carousel.Root>
-              );
-            })}
-        </Flex>
       </Container>
       <Footer />
     </Box>
