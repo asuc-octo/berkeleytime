@@ -4,7 +4,6 @@ import React from "react";
 
 import { Plus } from "iconoir-react"; 
 
-// Keep basic layout components from @repo/theme
 import { Box, Button, Container } from "@repo/theme";
 
 const useReadGradTraks = (options: { skip: boolean }) => {
@@ -52,7 +51,7 @@ export default function GradTrakIndex() {
     skip: !user, 
   });
 
-  const navigate = useNavigate(); // Get navigate function
+  const navigate = useNavigate(); 
 
   const hasGradTraks = useMemo(() => {
       return !gradTraksLoading && gradTraks !== null && gradTraks !== undefined && gradTraks.length > 0;
