@@ -153,8 +153,11 @@ export default function Enrollment() {
         (acc, output, index) => {
           const day0 = new Date(output.enrollmentHistory.history[0].time);
           output.enrollmentHistory.history.forEach((enrollment) => {
-            const dayOffset = Math.round(100 * (new Date(enrollment.time).getTime() - day0.getTime()) /
-                (1000 * 3600 * 24)) / 100
+            const dayOffset =
+              Math.round(
+                (100 * (new Date(enrollment.time).getTime() - day0.getTime())) /
+                  (1000 * 3600 * 24)
+              ) / 100;
             const column = acc.find((item) => item.day === dayOffset);
             const enrollValue =
               Math.round(
