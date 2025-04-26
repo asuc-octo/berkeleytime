@@ -37,7 +37,8 @@ helm push ./bt-redis-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
 # ==========
 
 helm install bt-prod-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
-    --version=1.0.0
+    --version=1.0.0 \
+    --set mongodb.resourcesPreset=large
 
 helm install bt-prod-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
     --version=1.0.0
