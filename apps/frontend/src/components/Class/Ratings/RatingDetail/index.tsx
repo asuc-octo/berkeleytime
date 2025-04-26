@@ -1,8 +1,11 @@
-import { MetricName } from "@repo/shared";
 import { CSSProperties, useEffect, useState } from "react";
-import { getMetricTooltip } from "../metricsUtil";
+
 import { InfoCircle, NavArrowDown } from "iconoir-react";
+
+import { MetricName } from "@repo/shared";
 import { Badge, Tooltip } from "@repo/theme";
+
+import { getMetricTooltip } from "../metricsUtil";
 import styles from "./RatingDetail.module.scss";
 
 export interface RatingDetailProps {
@@ -48,10 +51,7 @@ export function RatingDetailView({
 
   return (
     <div className={styles.root}>
-      <div
-        className={styles.header}
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
+      <div className={styles.header} onClick={() => setIsExpanded(!isExpanded)}>
         <div className={styles.titleAndStatusSection}>
           <div className={styles.titleSection}>
             <h3 className={styles.title}>{metric}</h3>
@@ -61,7 +61,7 @@ export function RatingDetailView({
               </span>
             </Tooltip>
           </div>
-          <Badge color={statusColor} label={status}/>
+          <Badge color={statusColor} label={status} />
           <span className={styles.metricAverage}>
             {`${weightedAverage.toFixed(1)} / 5.0`}
           </span>
@@ -82,9 +82,9 @@ export function RatingDetailView({
             >
               <span className={styles.metric}>{stat.rating}</span>
               <Tooltip
-                  content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
-                >
-              <div className= {styles.barContainer}>
+                content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
+              >
+                <div className={styles.barContainer}>
                   <div
                     className={styles.bar}
                     style={{

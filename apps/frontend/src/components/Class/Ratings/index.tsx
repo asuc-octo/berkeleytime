@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import _ from "lodash";
@@ -20,8 +27,12 @@ import {
   GET_USER_RATINGS,
 } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
+import { sortByTermDescending } from "@/lib/classes";
 
+import { RatingButton } from "./RatingButton";
+import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
 import styles from "./Ratings.module.scss";
+import UserRatingSummary from "./UserRatingSummary";
 import {
   MetricData,
   UserRating,
@@ -30,10 +41,6 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./metricsUtil";
-import { sortByTermDescending } from "@/lib/classes";
-import UserRatingSummary from "./UserRatingSummary";
-import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
-import { RatingButton } from "./RatingButton";
 
 {
   /* // TODO: [CROWD-SOURCED-DATA] edge case: first semester a class is offered - user cannot submit a rating */
@@ -181,10 +188,7 @@ export function RatingsContainer() {
   const availableTerms = useMemo(() => {
     if (!currentCourse.classes) return [];
 
-    return _.chain(
-        currentCourse.classes
-        .toSorted(sortByTermDescending)
-      )
+    return _.chain(currentCourse.classes.toSorted(sortByTermDescending))
       .map((ClassData: any) => ({
         value: `${ClassData.semester} ${ClassData.year}`,
         label: `${ClassData.semester} ${ClassData.year}`,
@@ -285,7 +289,8 @@ export function RatingsContainer() {
     try {
       const populatedMetrics = Object.keys(MetricName).filter(
         (metric) =>
-          metricValues[MetricName[metric as keyof typeof MetricName]] !== null &&
+          metricValues[MetricName[metric as keyof typeof MetricName]] !==
+            null &&
           metricValues[MetricName[metric as keyof typeof MetricName]] !==
             undefined
       );
@@ -363,13 +368,13 @@ export function RatingsContainer() {
           }
         )
       );
-  
+
       setModalOpen(false);
     } catch (error) {
       console.error("Error submitting ratings:", error);
     }
   };
-  
+
   const ratingDelete = async (
     userRating: UserRating,
     currentClass: any,

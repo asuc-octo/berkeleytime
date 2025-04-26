@@ -1,11 +1,14 @@
 import { memo } from "react";
-import { checkConstraint } from "../metricsUtil";
-import { Button } from "@repo/theme";
-import { signIn } from "@/lib/api";
+
+import classNames from "classnames";
 import { ArrowRight } from "iconoir-react";
 
+import { Button } from "@repo/theme";
+
+import { signIn } from "@/lib/api";
+
+import { checkConstraint } from "../metricsUtil";
 import styles from "./RatingButton.module.scss";
-import classNames from "classnames";
 
 export const RatingButton = memo(
   ({
@@ -21,12 +24,14 @@ export const RatingButton = memo(
   }) => {
     if (user) {
       const canRate = checkConstraint(userRatingData, currentClass);
-      return <Button
-          className={classNames(styles.button, {canRate: styles.invalid})}
+      return (
+        <Button
+          className={classNames(styles.button, { canRate: styles.invalid })}
           onClick={() => onOpenModal(true)}
         >
-          { canRate ? "Add a rating" : "Max Ratings Reached" }
+          {canRate ? "Add a rating" : "Max Ratings Reached"}
         </Button>
+      );
     } else {
       const redirectPath = `${window.location.pathname}${checkConstraint(userRatingData, currentClass) ? "?feedbackModal=true" : ""}`;
       return (

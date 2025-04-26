@@ -1,4 +1,7 @@
+import { EditPencil, Trash } from "iconoir-react";
+
 import { METRIC_ORDER, MetricName } from "@repo/shared";
+import { Badge, Flex, IconButton, Tooltip } from "@repo/theme";
 
 import {
   UserRating,
@@ -7,9 +10,7 @@ import {
   getStatusColor,
   isMetricRating,
 } from "../metricsUtil";
-import { Badge, Flex, IconButton, Tooltip } from "@repo/theme";
 import styles from "./UserRatingSummary.module.scss";
-import { EditPencil, Trash } from "iconoir-react";
 
 export default function UserRatingSummary({
   userRatings,
@@ -49,23 +50,23 @@ export default function UserRatingSummary({
       </div>
       <div className={styles.body}>
         <div>
-        {sortedMetrics.map((metric) => (
-          <div key={metric.metricName} className={styles.section}>
-            <div className={styles.metrics}>
-              <div className={styles.titleSection}>
-                <h3 className={styles.metric}>{metric.metricName}</h3>
+          {sortedMetrics.map((metric) => (
+            <div key={metric.metricName} className={styles.section}>
+              <div className={styles.metrics}>
+                <div className={styles.titleSection}>
+                  <h3 className={styles.metric}>{metric.metricName}</h3>
+                </div>
+                <Badge
+                  color={getStatusColor(metric.metricName, metric.value)}
+                  label={getMetricStatus(metric.metricName, metric.value)}
+                />
+                <span
+                  className={styles.metricAverage}
+                >{`${metric.value}.0 / 5.0`}</span>
               </div>
-              <Badge
-                color={getStatusColor(metric.metricName, metric.value)}
-                label={getMetricStatus(metric.metricName, metric.value)}
-              />
-              <span
-                className={styles.metricAverage}
-              >{`${metric.value}.0 / 5.0`}</span>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       </div>
     </div>
   );

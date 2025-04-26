@@ -15,6 +15,7 @@ import {
 import { Dialog, Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { MetricName } from "@repo/shared";
 import {
   Box,
   Container,
@@ -39,7 +40,6 @@ import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
-import { MetricName } from "@repo/shared";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -185,15 +185,15 @@ export default function Class({
 
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
-        (bookmarkedClass) =>
-          !(
-            bookmarkedClass.subject === _class?.subject &&
-            bookmarkedClass.courseNumber === _class?.courseNumber &&
-            bookmarkedClass.number === _class?.number &&
-            bookmarkedClass.year === _class?.year &&
-            bookmarkedClass.semester === _class?.semester
-          )
-      )
+          (bookmarkedClass) =>
+            !(
+              bookmarkedClass.subject === _class?.subject &&
+              bookmarkedClass.courseNumber === _class?.courseNumber &&
+              bookmarkedClass.number === _class?.number &&
+              bookmarkedClass.year === _class?.year &&
+              bookmarkedClass.semester === _class?.semester
+            )
+        )
       : user.bookmarkedClasses.concat(_class);
     await updateUser(
       {
@@ -230,11 +230,23 @@ export default function Class({
   }, [_class]);
 
   const ratingsCount = useMemo(() => {
-    return course && course.aggregatedRatings && Math.max(...Object.values(course.aggregatedRatings.metrics.reduce((acc, v) => {
-      acc[v.metricName as MetricName] = (acc[v.metricName as MetricName] || 0) + 1;
-      return acc;
-    }, {} as Record<MetricName, number>)))
-  }, [course])
+    return (
+      course &&
+      course.aggregatedRatings &&
+      Math.max(
+        ...Object.values(
+          course.aggregatedRatings.metrics.reduce(
+            (acc, v) => {
+              acc[v.metricName as MetricName] =
+                (acc[v.metricName as MetricName] || 0) + 1;
+              return acc;
+            },
+            {} as Record<MetricName, number>
+          )
+        )
+      )
+    );
+  }, [course]);
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -416,8 +428,15 @@ export default function Class({
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
                     */}
-                    <NavLink to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}>
-                      <MenuItem>Ratings { ratingsCount && <div className={styles.badge}>{ratingsCount}</div> }</MenuItem>
+                    <NavLink
+                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                    >
+                      <MenuItem>
+                        Ratings{" "}
+                        {ratingsCount && (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        )}
+                      </MenuItem>
                     </NavLink>
                   </Flex>
                 </Tabs.List>
@@ -446,7 +465,12 @@ export default function Class({
                   */}
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
-                      <MenuItem active={isActive}>Ratings { ratingsCount && <div className={styles.badge}>{ratingsCount}</div> }</MenuItem>
+                      <MenuItem active={isActive}>
+                        Ratings{" "}
+                        {ratingsCount && (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        )}
+                      </MenuItem>
                     )}
                   </NavLink>
                 </Flex>
