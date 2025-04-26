@@ -4,14 +4,13 @@ import * as Dialog from "@radix-ui/react-dialog";
 import ReactSelect from "react-select";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { Button } from "@repo/theme";
+import { Button, createSelectStyles } from "@repo/theme";
 
 import { useReadTerms } from "@/hooks/api";
 import { Semester, TemporalPosition } from "@/lib/api";
 
 import ratingStyles from "../Ratings.module.scss";
-import { MetricData, UserRating, toMetricData } from "../helper/metricsUtil";
-import { termSelectStyle } from "../helper/termSelectStyle";
+import { MetricData, UserRating, toMetricData } from "../metricsUtil";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
 import { SubmitRatingPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
@@ -217,7 +216,7 @@ export function UserFeedbackModal({
                           isClearable={true}
                           classNamePrefix="select"
                           className={ratingStyles.termSelect}
-                          styles={termSelectStyle}
+                          styles={createSelectStyles()}
                         />
                       </div>
                     </div>

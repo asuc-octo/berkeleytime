@@ -1,12 +1,18 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
-import ReactSelect from "react-select";
 
-import { METRIC_ORDER } from "@repo/shared";
-import { Container } from "@repo/theme";
+import { METRIC_ORDER, MetricName, REQUIRED_METRICS } from "@repo/shared";
+import { Container, Select } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/FeedbackPopups";
@@ -21,24 +27,20 @@ import {
   GET_USER_RATINGS,
 } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
+import { sortByTermDescending } from "@/lib/classes";
 
+import { RatingButton } from "./RatingButton";
+import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
 import styles from "./Ratings.module.scss";
+import UserRatingSummary from "./UserRatingSummary";
 import {
-  RatingButton,
-  RatingDetailProps,
-  RatingDetailView,
-  RatingUserSummary,
-  ratingDelete,
-  ratingSubmit,
-} from "./helper/RatingsContainerHelper";
-import {
+  MetricData,
   UserRating,
   checkConstraint,
   getMetricStatus,
   getStatusColor,
   isMetricRating,
-} from "./helper/metricsUtil";
-import { termSelectStyle } from "./helper/termSelectStyle";
+} from "./metricsUtil";
 
 {
   /* // TODO: [CROWD-SOURCED-DATA] edge case: first semester a class is offered - user cannot submit a rating */
@@ -186,7 +188,7 @@ export function RatingsContainer() {
   const availableTerms = useMemo(() => {
     if (!currentCourse.classes) return [];
 
-    return _.chain(currentCourse.classes)
+    return _.chain(currentCourse.classes.toSorted(sortByTermDescending))
       .map((ClassData: any) => ({
         value: `${ClassData.semester} ${ClassData.year}`,
         label: `${ClassData.semester} ${ClassData.year}`,
@@ -194,21 +196,6 @@ export function RatingsContainer() {
         year: ClassData.year,
       }))
       .uniqBy((term: any) => `${term.semester}-${term.year}`)
-      .orderBy(
-        [
-          "year",
-          (term: any) => {
-            const semesterOrder = {
-              [Semester.Spring]: 0,
-              [Semester.Summer]: 1,
-              [Semester.Fall]: 2,
-              [Semester.Winter]: 3,
-            };
-            return semesterOrder[term.semester as Semester];
-          },
-        ],
-        ["desc", "desc"]
-      )
       .value();
   }, [currentClass]);
 
@@ -282,15 +269,144 @@ export function RatingsContainer() {
   }, [aggregatedRatings]);
 
   // const ratingsCount = useMemo(
-  //   () => (ratingsData ? getRatingsCount(ratingsData) : 0),
+  //   () => (ratingsData ? ratingsData.reduce((acc, v) => acc + v.reviewCount, 0) : 0),
   //   [ratingsData]
   // );
+
+  const ratingSubmit = async (
+    metricValues: MetricData,
+    termInfo: { semester: Semester; year: number },
+    createRating: any,
+    deleteRating: any,
+    currentClass: any,
+    setModalOpen: Dispatch<SetStateAction<boolean>>,
+    currentRatings?: {
+      semester: string;
+      year: number;
+      metrics: Array<{ metricName: string; value: number }>;
+    } | null
+  ) => {
+    try {
+      const populatedMetrics = Object.keys(MetricName).filter(
+        (metric) =>
+          metricValues[MetricName[metric as keyof typeof MetricName]] !==
+            null &&
+          metricValues[MetricName[metric as keyof typeof MetricName]] !==
+            undefined
+      );
+      if (populatedMetrics.length === 0) {
+        throw new Error(`No populated metrics`);
+      }
+      const missingRequiredMetrics = REQUIRED_METRICS.filter(
+        (metric) => !populatedMetrics.includes(metric)
+      );
+      if (missingRequiredMetrics.length > 0) {
+        throw new Error(
+          `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
+        );
+      }
+      await Promise.all(
+        (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
+          (metric) => {
+            const value = metricValues[MetricName[metric]];
+            // If metric is not in populated metrics but was in current ratings, delete
+            if (!populatedMetrics.includes(metric)) {
+              const metricExists = currentRatings?.metrics?.some(
+                (m) => m.metricName === metric
+              );
+              if (metricExists) {
+                return deleteRating({
+                  variables: {
+                    subject: currentClass.subject,
+                    courseNumber: currentClass.courseNumber,
+                    semester: termInfo.semester,
+                    year: termInfo.year,
+                    classNumber: currentClass.number,
+                    metricName: metric,
+                  },
+                  refetchQueries: [
+                    "GetClass",
+                    "GetUserRatings",
+                    "GetCourseRatings",
+                    "GetSemestersWithRatings",
+                  ],
+                });
+              }
+              // Skip if metric doesn't exist in current ratings
+              return Promise.resolve();
+            }
+            // Check if the current rating value is different from the new value
+            if (
+              currentRatings?.semester === termInfo.semester &&
+              currentRatings?.year === termInfo.year
+            ) {
+              const currentMetric = currentRatings?.metrics.find(
+                (m) => m.metricName === metric
+              );
+              if (currentMetric?.value === value) {
+                return Promise.resolve();
+              }
+            }
+            return createRating({
+              variables: {
+                subject: currentClass.subject,
+                courseNumber: currentClass.courseNumber,
+                semester: termInfo.semester,
+                year: termInfo.year,
+                classNumber: currentClass.number,
+                metricName: metric,
+                value,
+              },
+              refetchQueries: [
+                "GetClass",
+                "GetUserRatings",
+                "GetCourseRatings",
+                "GetSemestersWithRatings",
+              ],
+              awaitRefetchQueries: true,
+            });
+          }
+        )
+      );
+
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error submitting ratings:", error);
+    }
+  };
+
+  const ratingDelete = async (
+    userRating: UserRating,
+    currentClass: any,
+    deleteRating: any
+  ) => {
+    const deletePromises = userRating.metrics.map((metric) =>
+      deleteRating({
+        variables: {
+          subject: currentClass.subject,
+          courseNumber: currentClass.courseNumber,
+          semester: userRating.semester,
+          year: userRating.year,
+          classNumber: currentClass.number,
+          metricName: metric.metricName,
+        },
+        refetchQueries: [
+          "GetClass",
+          "GetUserRatings",
+          "GetCourseRatings",
+          "GetSemestersWithRatings",
+        ],
+        awaitRefetchQueries: true,
+      })
+    );
+    await Promise.all(deletePromises);
+  };
 
   return (
     <div className={styles.root}>
       <Container size="2">
         {userRatings ? (
-          <RatingUserSummary
+          <UserRatingSummary
             userRatings={userRatings}
             onOpenModal={handleModalStateChange}
             ratingDelete={() => setIsDeleteModalOpen(true)}
@@ -310,7 +426,7 @@ export function RatingsContainer() {
             )}
             <div className={styles.termSelectWrapper}>
               {hasRatings && (
-                <ReactSelect
+                <Select
                   options={[
                     { value: "all", label: "Overall Ratings" },
                     ...availableTerms.filter((term: Term) => {
@@ -361,11 +477,8 @@ export function RatingsContainer() {
                       });
                     }
                   }}
-                  isClearable={true}
                   placeholder="Select term"
                   classNamePrefix="select"
-                  className={styles.termSelect}
-                  styles={termSelectStyle}
                 />
               )}
             </div>
@@ -373,7 +486,7 @@ export function RatingsContainer() {
         </div>
 
         <div
-          className={styles.ratingsContainer}
+          className={styles.ratingsBody}
           style={{
             backgroundColor: !hasRatings
               ? "transparent"
@@ -383,7 +496,7 @@ export function RatingsContainer() {
           }}
         >
           {!hasRatings ? (
-            <div className={styles.emptyRatings}>
+            <div className={styles.empty}>
               <p>This course doesn't have any reviews yet.</p>
               <p>Be the first to share your experience!</p>
               <RatingButton
@@ -411,7 +524,7 @@ export function RatingsContainer() {
 
         {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
         {/* <div>
-          {hasRatings && ratingsData && selectedTerm !== "all" && (
+          {hasRatings && ratingsData && (
             <div className={styles.ratingsCountContainer}>
               This semester has been rated by {ratingsCount} user
               {ratingsCount !== 1 ? "s" : ""}

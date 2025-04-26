@@ -33,7 +33,7 @@ export const METRIC_MAPPINGS = {
         : avg >= 3.5
           ? "Useful"
           : avg >= 2.7
-            ? "Moderately Useful"
+            ? "Fairly Useful"
             : avg >= 1.9
               ? "Barely Useful"
               : "Not Useful",
@@ -49,7 +49,7 @@ export const METRIC_MAPPINGS = {
         : avg >= 3.5
           ? "Difficult"
           : avg >= 2.7
-            ? "Moderately Difficult"
+            ? "Fairly Difficult"
             : avg >= 1.9
               ? "Easy"
               : "Very Easy",

@@ -28,23 +28,19 @@ export function getStatusColor(
   // For usefulness (not inverse relationship), high numbers should be green
   // For difficulty and workload (inverse relationship), high numbers should be red
   if (weightedAverage >= 4.3) {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "statusVeryLow"
-      : "statusVeryHigh";
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "red" : "green";
   } else if (weightedAverage >= 3.5) {
     return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "statusLow"
-      : "statusHigh";
+      ? "orange"
+      : "lime";
   } else if (weightedAverage >= 2.7) {
-    return "statusMedium";
+    return "yellow";
   } else if (weightedAverage >= 1.9) {
     return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "statusHigh"
-      : "statusLow";
+      ? "lime"
+      : "orange";
   } else {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "statusVeryHigh"
-      : "statusVeryLow";
+    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "green" : "red";
   }
 }
 

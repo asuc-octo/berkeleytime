@@ -15,6 +15,7 @@ import {
 import { Dialog, Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { MetricName } from "@repo/shared";
 import {
   Box,
   Container,
@@ -228,6 +229,26 @@ export default function Class({
     });
   }, [_class]);
 
+  const ratingsCount = useMemo(() => {
+    return (
+      course &&
+      course.aggregatedRatings &&
+      course.aggregatedRatings.metrics.length > 0 &&
+      Math.max(
+        ...Object.values(
+          course.aggregatedRatings.metrics.reduce(
+            (acc, v) => {
+              acc[v.metricName as MetricName] =
+                (acc[v.metricName as MetricName] || 0) + 1;
+              return acc;
+            },
+            {} as Record<MetricName, number>
+          )
+        )
+      )
+    );
+  }, [course]);
+
   // TODO: Loading state
   if (loading || courseLoading) {
     return <></>;
@@ -408,9 +429,16 @@ export default function Class({
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
                     */}
-                    <Tabs.Trigger value="ratings" asChild>
-                      <MenuItem>Ratings</MenuItem>
-                    </Tabs.Trigger>
+                    <NavLink
+                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                    >
+                      <MenuItem>
+                        Ratings{" "}
+                        {ratingsCount && (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        )}
+                      </MenuItem>
+                    </NavLink>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -438,7 +466,12 @@ export default function Class({
                   */}
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
-                      <MenuItem active={isActive}>Ratings</MenuItem>
+                      <MenuItem active={isActive}>
+                        Ratings{" "}
+                        {ratingsCount && (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        )}
+                      </MenuItem>
                     )}
                   </NavLink>
                 </Flex>
