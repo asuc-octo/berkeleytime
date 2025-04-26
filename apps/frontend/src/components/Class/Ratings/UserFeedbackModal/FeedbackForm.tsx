@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 import { MetricName } from "@repo/shared";
 
-import { MetricData } from "../helper/metricsUtil";
+import { MetricData } from "../metricsUtil";
 import styles from "./UserFeedbackModal.module.scss";
 
 interface BooleanInputProps {
