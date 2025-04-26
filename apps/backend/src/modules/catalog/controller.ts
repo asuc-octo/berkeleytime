@@ -7,8 +7,10 @@ import {
   GradeDistributionModel,
   IClassItem,
   ICourseItem,
+  IEnrollmentHistoryItem,
   IGradeDistributionItem,
   ISectionItem,
+  NewEnrollmentHistoryModel,
   SectionModel,
   TermModel,
 } from "@repo/common";
@@ -17,6 +19,8 @@ import { getFields } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
+import { formatEnrollment } from "../enrollment/formatter";
+import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import {
   getAverageGrade,
   getDistribution,
@@ -363,11 +367,15 @@ export const getCatalog = async (
   info: GraphQLResolveInfo,
   query?: string | null
 ) => {
+  performance.mark("TermModel.findOne-start");
+
   const term = await TermModel.findOne({
     name: `${year} ${semester}`,
   })
     .select({ _id: 1 })
     .lean();
+
+  performance.mark("TermModel.findOne-end");
 
   if (!term) throw new Error("Invalid term");
 
@@ -383,6 +391,8 @@ export const getCatalog = async (
    * in-memory filtering for fields from courses and sections
    */
 
+  performance.mark("ClassModel.find-start");
+
   // Fetch available classes for the term
   const classes = await ClassModel.find({
     year,
@@ -390,14 +400,22 @@ export const getCatalog = async (
     anyPrintInScheduleOfClasses: true,
   }).lean();
 
+  performance.mark("ClassModel.find-end");
+
   // Filtering by identifiers reduces the amount of data returned for courses and sections
   const courseIds = classes.map((_class) => _class.courseId);
+
+  performance.mark("CourseModel.find-start");
 
   // Fetch available courses for the term
   const courses = await CourseModel.find({
     courseId: { $in: courseIds },
     printInCatalog: true,
   }).lean();
+
+  performance.mark("CourseModel.find-end");
+
+  performance.mark("SectionModel.find-start");
 
   // Fetch available sections for the term
   const sections = await SectionModel.find({
@@ -407,6 +425,12 @@ export const getCatalog = async (
     printInScheduleOfClasses: true,
   }).lean();
 
+  const sectionIds = sections.map((section) => section.sectionId);
+
+  performance.mark("SectionModel.find-end");
+
+  performance.mark("GradeDistributionModel.find-start");
+
   const parsedGradeDistributions = {} as Record<
     string,
     GradeDistributionModule.GradeDistribution
@@ -414,10 +438,9 @@ export const getCatalog = async (
 
   const children = getFields(info.fieldNodes);
   const includesGradeDistribution = children.includes("gradeDistribution");
+  const includesEnrollment = children.includes("enrollment");
 
   if (includesGradeDistribution) {
-    const sectionIds = sections.map((section) => section.sectionId);
-
     const gradeDistributions = await GradeDistributionModel.find({
       // The bottleneck seems to be the amount of data we are fetching and not the query itself
       sectionId: { $in: sectionIds },
@@ -452,6 +475,22 @@ export const getCatalog = async (
     }
   }
 
+  performance.mark("GradeDistributionModel.find-end");
+
+  performance.mark("NewEnrollmentHistoryModel.find-start");
+
+  const enrollments = includesEnrollment
+    ? await NewEnrollmentHistoryModel.find({
+        year,
+        semester,
+        sectionId: { $in: sectionIds },
+      }).lean()
+    : ([] as IEnrollmentHistoryItem[]);
+
+  performance.mark("NewEnrollmentHistoryModel.find-end");
+
+  performance.mark("Reductions-start");
+
   // Turn courses into a map to decrease time complexity for filtering
   const reducedCourses = courses.reduce(
     (accumulator, course) => {
@@ -476,6 +515,20 @@ export const getCatalog = async (
       return accumulator;
     },
     {} as Record<string, ISectionItem[]>
+  );
+
+  // Turn enrollments into a map to decrease time complexity for filtering
+  const reducedEnrollments = enrollments.reduce(
+    (accumulator, enrollment) => {
+      const termId = enrollment.termId;
+      const sessionId = enrollment.sessionId;
+      const sectionId = enrollment.sectionId;
+      const id = `${termId}-${sessionId}-${sectionId}`;
+      accumulator[id] = enrollment as IEnrollmentHistoryItem;
+
+      return accumulator;
+    },
+    {} as Record<string, IEnrollmentHistoryItem>
   );
 
   const reducedClasses = classes.reduce((accumulator, _class) => {
@@ -509,11 +562,20 @@ export const getCatalog = async (
       };
     }
 
+    const enrollment =
+      reducedEnrollments[
+        `${_class.termId}-${_class.sessionId}-${formattedPrimarySection.sectionId}`
+      ];
+    const formattedEnrollment = enrollment
+      ? (formatEnrollment(enrollment) as unknown as EnrollmentModule.Enrollment)
+      : null;
+
     const formattedClass = {
       ...formatClass(_class as IClassItem),
       primarySection: formattedPrimarySection,
       sections: formattedSections,
       course: formattedCourse,
+      enrollment: formattedEnrollment,
     } as unknown as ClassModule.Class;
 
     // Add grade distribution to class
@@ -532,6 +594,48 @@ export const getCatalog = async (
     accumulator.push(formattedClass);
     return accumulator;
   }, [] as ClassModule.Class[]);
+
+  performance.mark("Reductions-end");
+
+  const measures = [
+    performance.measure(
+      "TermModel.findOne",
+      "TermModel.findOne-start",
+      "TermModel.findOne-end"
+    ),
+    performance.measure(
+      "ClassModel.find",
+      "ClassModel.find-start",
+      "ClassModel.find-end"
+    ),
+    performance.measure(
+      "CourseModel.find",
+      "CourseModel.find-start",
+      "CourseModel.find-end"
+    ),
+    performance.measure(
+      "SectionModel.find",
+      "SectionModel.find-start",
+      "SectionModel.find-end"
+    ),
+    performance.measure(
+      "GradeDistributionModel.find",
+      "GradeDistributionModel.find-start",
+      "GradeDistributionModel.find-end"
+    ),
+    performance.measure(
+      "NewEnrollmentHistoryModel.find",
+      "NewEnrollmentHistoryModel.find-start",
+      "NewEnrollmentHistoryModel.find-end"
+    ),
+    performance.measure("Reductions", "Reductions-start", "Reductions-end"),
+    performance.measure("Total", "TermModel.findOne-start", "Reductions-end"),
+  ];
+
+  measures.forEach((measure) => {
+    const { name, duration } = measure;
+    console.log(`${name}: ${duration}ms`);
+  });
 
   query = query?.trim();
 
