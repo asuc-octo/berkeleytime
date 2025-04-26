@@ -233,6 +233,7 @@ export default function Class({
     return (
       course &&
       course.aggregatedRatings &&
+      course.aggregatedRatings.metrics.length > 0 &&
       Math.max(
         ...Object.values(
           course.aggregatedRatings.metrics.reduce(
