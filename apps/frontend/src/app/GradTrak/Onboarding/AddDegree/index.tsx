@@ -38,7 +38,6 @@ export default function AddDegree({
     const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>([]);
     const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>([]);
 
-    // Hardcoded majors for now
 	const degreeOptions = MAJORS.map((degree) => ({
 		label: degree,
 		value: degree
@@ -69,6 +68,10 @@ export default function AddDegree({
     const handleConfirmClick = () => {
         onNext(isMajor ? selectedDegreeList : selectedMinorList);
       };
+
+    const handleSkipClick = () => {
+        onNext(isMajor ? selectedDegreeList : selectedMinorList);
+    };
       
 
     const DegreeSelect = () => (
@@ -128,8 +131,21 @@ export default function AddDegree({
                 </Flex>
 
                 <Flex gap="10px">
-                    <Button className={styles.secondary} variant="outline">Skip</Button>
-                    <Button className={styles.primary} variant="solid" onClick={handleConfirmClick}>Confirm</Button>
+                    <Button 
+                        className={styles.secondary} 
+                        variant="outline"
+                        onclick={handleSkipClick}
+                    >
+                        Skip
+                    </Button>
+                    <Button
+                        className={styles.primary}
+                        variant="solid"
+                        onClick={handleConfirmClick}
+                        disabled={(isMajor && selectedDegreeList.length === 0) || (!isMajor && selectedMinorList.length === 0)}
+                    >
+                        Confirm
+                    </Button>
                 </Flex>
 
                 {isMajor && <DotsIndicator currentPage={1} totalPages={3} />}

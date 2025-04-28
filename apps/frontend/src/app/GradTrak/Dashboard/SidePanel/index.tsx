@@ -1,7 +1,8 @@
 import { Separator } from "@radix-ui/themes";
 import RequirementsAccordion from "../RequirementsAccordion";
-import "./SidePanel.scss";
 import { UniReqs, LnSReqs, CoEReqs, HaasReqs } from '@/lib/course';
+
+import style from "./SidePanel.module.scss";
 
 // TODO: function checkRequirementFulfilled()
 // TODO: Implement proper handling of reqs based on user's college...
@@ -18,7 +19,7 @@ interface SidePanelProps {
 export default function SidePanel({ name, majors, minors, totalUnits, transferUnits, pnpTotal}: SidePanelProps) {
 
     const UserInfo = (
-        <div className="sidepanel-container">
+        <div className={style.root}>
             <div className="sidepanel-header-container">
                 <div className="user-header">
                     <h2 className="user-name truncate">{name}</h2>

@@ -1,18 +1,17 @@
 import { useMemo } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import { Calendar, Plus, Search } from "iconoir-react";
 
 import { Box, Button, Container, Flex } from "@repo/theme";
-
-import Carousel from "@/components/Carousel";
-import Footer from "@/components/Footer";
 import { useReadSchedules, useReadUser } from "@/hooks/api";
 import { ISchedule, signIn } from "@/lib/api";
 import { RecentType, getRecents } from "@/lib/recent";
 
+import Carousel from "@/components/Carousel";
+import Footer from "@/components/Footer";
+
 import styles from "./GradTrak.module.scss";
-import { useNavigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
 
 const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
 

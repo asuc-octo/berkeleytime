@@ -63,10 +63,6 @@ export default function OnboardingSetup({
     }
   };
 
-  const handleSummerCheck = (checked: boolean) => {
-    setLocalSummerCheck(checked);
-  };
-
   const handleNextClick = () => {
     if (localStartYear && localGradYear) {
       onNext(localStartYear, localGradYear, localSummerCheck);
@@ -84,9 +80,7 @@ export default function OnboardingSetup({
             {/* Header */}
             <Flex direction="column" align="center" gap="0.5rem">
                 <h1>Set Up</h1>
-                <p className="secondary-text">
-                  Enter your start year and graduation year
-                </p>
+                <p>Enter your start year and graduation year</p>
             </Flex>
 
             {/* Year selection */}
@@ -150,7 +144,7 @@ export default function OnboardingSetup({
             <Button className={styles.primary} variant="solid" onClick={handleNextClick}>
               Next
             </Button>
-            
+
             <DotsIndicator currentPage={0} totalPages={3} />
           </Flex>
         </div>

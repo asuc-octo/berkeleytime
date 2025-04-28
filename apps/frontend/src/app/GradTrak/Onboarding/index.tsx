@@ -1,7 +1,7 @@
-import SuspenseBoundary from '@/components/SuspenseBoundary';
 import { lazy, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Flex } from "@repo/theme";
+
+import SuspenseBoundary from '@/components/SuspenseBoundary';
 
 type DegreeOption = {
   label: string;

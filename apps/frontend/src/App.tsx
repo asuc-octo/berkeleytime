@@ -111,7 +111,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <Layout />,
+    element: <Layout footer={false} />,
     children: [
       {
         path: "gradtrak", 

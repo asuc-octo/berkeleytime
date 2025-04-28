@@ -1,7 +1,7 @@
 import SemesterBlock from "./SemesterBlock"
 import { Flex } from '@repo/theme';
 import SidePanel from "./SidePanel" 
-import "./Dashboard.scss"
+import styles from "./Dashboard.module.scss"
 
 import { useReadUser } from '@/hooks/api';
 import { useState, useMemo, useEffect } from 'react'; 
@@ -178,6 +178,68 @@ function SemesterHome() {
       </Flex>
     </>
   );
+
+  // return (
+  //   <>
+  //     <Flex direction="row" height="100vh" className='semester-home'>
+  //       {/* Side panel */}
+  //       <SidePanel 
+  //         name={user.name} 
+  //         majors={user.majors} 
+  //         minors={user.minors}
+  //         totalUnits={totalUnits}
+  //         transferUnits={0}
+  //         pnpTotal={0}
+  //       />
+
+  //       {/* Page body */}
+  //       <Flex direction="column" gap="32px" className='semester-blocks'>
+  //         <h3 className='semester-title'>Semesters</h3>
+  //         <Flex direction="row" gap="12px" className='semester-layout'>
+  //           <SemesterBlock 
+  //             semesterId="miscellaneous" 
+  //             selectedSemester={"Miscellaneous"} 
+  //             selectedYear={""} 
+  //             onTotalUnitsChange={(newTotal) => updateTotalUnits("Miscellaneous", newTotal)}
+  //             allSemesters={allSemesters}
+  //             updateAllSemesters={updateAllSemesters}
+  //           />
+            
+  //           {years.map((year) => (
+  //             <Flex key={year} className="year-element" direction="row" gap="12px">
+  //               <SemesterBlock 
+  //                 semesterId={`fall-${year}`}
+  //                 selectedSemester={"Fall"} 
+  //                 selectedYear={year} 
+  //                 onTotalUnitsChange={(newTotal) => updateTotalUnits(`Fall-${year}`, newTotal)}
+  //                 allSemesters={allSemesters}
+  //                 updateAllSemesters={updateAllSemesters}
+  //               />
+  //               <SemesterBlock 
+  //                 semesterId={`spring-${year}`}
+  //                 selectedSemester={"Spring"} 
+  //                 selectedYear={year} 
+  //                 onTotalUnitsChange={(newTotal) => updateTotalUnits(`Spring-${year}`, newTotal)}
+  //                 allSemesters={allSemesters}
+  //                 updateAllSemesters={updateAllSemesters}
+  //               />
+  //               {summerCheck &&
+  //                 <SemesterBlock 
+  //                   semesterId={`summer-${year}`}
+  //                   selectedSemester={"Summer"} 
+  //                   selectedYear={year} 
+  //                   onTotalUnitsChange={(newTotal) => updateTotalUnits(`Summer-${year}`, newTotal)}
+  //                   allSemesters={allSemesters}
+  //                   updateAllSemesters={updateAllSemesters}
+  //                 />
+  //               }
+  //             </Flex>
+  //           ))}
+  //         </Flex>
+  //       </Flex>
+  //     </Flex>
+  //   </>
+  // );
 }
 
 export default SemesterHome;
