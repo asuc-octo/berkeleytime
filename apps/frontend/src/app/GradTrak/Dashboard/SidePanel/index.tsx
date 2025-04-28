@@ -19,7 +19,7 @@ interface SidePanelProps {
 export default function SidePanel({ name, majors, minors, totalUnits, transferUnits, pnpTotal}: SidePanelProps) {
 
     const UserInfo = (
-        <div className={style.root}>
+        <div>
             <div className="sidepanel-header-container">
                 <div className="user-header">
                     <h2 className="user-name truncate">{name}</h2>
@@ -66,7 +66,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                 <div className="sidepanel-container accordion">
                     <div className="sidepanel-header-container">
                         <div className="user-header">
-                            <h2 className="truncate" key={index}>{major}</h2>
+                            <h2 className="user-name truncate" key={index}>{major}</h2>
                         </div>
                     </div>
                     <div className="accordion-contents">
@@ -97,7 +97,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
               <div className="sidepanel-container accordion">
                     <div className="sidepanel-header-container">
                         <div className="user-header">
-                            <h2 className="truncate" key={index}>{minor}</h2>
+                            <h2 className="user-name truncate" key={index}>{minor}</h2>
                         </div>
                     </div>
                     <div className="accordion-contents">
@@ -122,7 +122,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
     )
 
     return (
-        <div className='sidepanel'>
+        <div className={style.root}>
             {UserInfo}
             <div className="separator" /> 
             {MajorRequirements}
