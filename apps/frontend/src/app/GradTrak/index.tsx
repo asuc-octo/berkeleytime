@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from "react"; 
-import { Outlet, useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom"; 
 import React from "react"; 
 
 import { Plus } from "iconoir-react"; 
@@ -84,25 +84,23 @@ export default function GradTrakIndex() {
   }
 
   return (
-    <div className={styles.root}>
-      <Box p="5">
-        <Container style={{ marginBottom: "80px" }}> 
-          <div className={styles.header}>
-            <div className={styles.title}>
-              Welcome to Berkeleytime's GradTrak
-            </div>
-            <div className={styles.prompt}>
-              Use our GradTrak to build your ideal 4-year plan.
-              Find courses, track requirements, and visualize your academic journey.
-            </div>
-              <Button variant="solid" onClick={() => navigate('/gradtrak/onboarding')}>
-                <Plus />
-                Create a GradTrak
-              </Button>
+    <Box p="5">
+      <Container style={{ marginBottom: "80px" }}> 
+        <div className={styles.header}>
+          <div className={styles.title}>
+            Welcome to Berkeleytime's GradTrak
           </div>
-        </Container>
-        <Footer />
-      </Box>
-    </div>
+          <div className={styles.prompt}>
+            Use our GradTrak to build your ideal 4-year plan.
+            Find courses, track requirements, and visualize your academic journey.
+          </div>
+            <Button variant="solid" onClick={() => navigate('/gradtrak/onboarding')}>
+              <Plus />
+              Create a GradTrak
+            </Button>
+        </div>
+      </Container>
+      <Footer />
+    </Box>
   );
 }

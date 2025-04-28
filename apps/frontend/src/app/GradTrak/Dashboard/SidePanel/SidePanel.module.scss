@@ -5,27 +5,107 @@
     flex-direction: column;  
     border-right: 1px var(--border-color); 
     background: var(--foreground-color); 
-  
-    @media (width <= 992px) {
-      &:not(.expanded) > :first-child {
-        display: none;
-      }
-  
-      &.expanded > :last-child {
-        display: none;
-      }
+    color: var(--heading-color);
+    
+    h2 {
+      font-size: 1rem;
+      font-weight: 580;
+      line-height: 1.5rem;
     }
-  
-    @media (width <= 1400px) {
-      &:not(.expanded).responsive > :first-child {
-        display: none;
+    p {
+      font-size: 0.875rem;
+      font-size: 400;
+    }
+
+    .header-container {
+      padding: 24px 16px 16px 16px;
+
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        align-self: stretch;
+
+        .title {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          flex-grow: 1;
+          max-width: calc(100% - 52px);
+        }
+
+        .subtitle {
+          color: var(--paragraph-color)
+        }
       }
-  
-      &.expanded.responsive > :last-child {
-        display: none;
+
+      .truncate {
+        white-space: nowrap; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        max-width: 100%;
+      }
+
+      .grid {
+        display: grid;
+        padding: 16px 0 0 0;
+        grid-template-columns: 2fr 3fr; 
+        gap: 12px 24px;
       }
     }
 
+    .accordion {
+      display: flex;
+      padding: 16px;
+      gap: 12px;
+      flex-direction: column;
+      align-items: flex-start;
+      align-self: stretch;
+
+      .body {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--XXS, 4px);
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+
+        .item{
+          display: flex;
+          align-items: flex-start;
+          gap: var(--XS, 8px);
+          align-self: stretch;
+        }
+      }
+    }
+
+    .label {
+      color: var(--paragraph-color);
+      font-size: 0.875em;
+      text-align: left;
+      align-self: start; 
+      }
+      
+    .value {
+      font-size: 0.875em;
+      text-align: left;
+      align-self: start;
+
+      ul {
+        list-style: none; 
+        padding: 0;
+        margin: 0;
+        }
+      }
+    
+    .units {
+      color: var(--red-400); 
+    }
+    
+    .separator {
+      background-color: var(--border-color);
+      height: 1px;
+      width: 100%;
+      }
 
   }
-  
