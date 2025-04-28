@@ -21,6 +21,8 @@ export type ScheduleEvent = SectionEvent | CustomEvent;
 
 const defaultUnits = [0, 0];
 
+// motify the function to give boundaries
+// need to fix bug --> if time out of bounds, webpage should jump out alarm
 export const getY = (time: string) => {
   const [hour, minute] = time.split(":");
   const hour1 = parseInt(hour, 10);
@@ -30,7 +32,6 @@ export const getY = (time: string) => {
     console.warn("Invalid time string:", time);
     return -1;
   } 
-  // need to fix bug --> if time out of bounds, webpage should jump out alarm
   const offset = (hour1 - 6) * 60 + minute1;
 
   return Math.max(0, Math.min(1079, offset));

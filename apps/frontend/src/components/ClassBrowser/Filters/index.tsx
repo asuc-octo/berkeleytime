@@ -38,9 +38,9 @@ export default function Filters() {
     updateOnline,
     sortBy,
     updateSortBy,
-    responsive,
     selectedSchedule,
     updateSelectedSchedule,
+    responsive,
     allSchedules
   } = useBrowser();
 
@@ -56,7 +56,6 @@ export default function Filters() {
             days,
             open,
             online,
-            selectedSchedule
           ).includedClasses;
 
     return classes.reduce(
@@ -86,7 +85,6 @@ export default function Filters() {
     days,
     open,
     online,
-    selectedSchedule
   ]);
   
   const { data: userData } = useQuery<ReadUserResponse>(READ_USER);
@@ -113,7 +111,6 @@ export default function Filters() {
             days,
             open,
             online,
-            selectedSchedule
           ).includedClasses;
 
     for (const _class of classes) {
@@ -132,7 +129,6 @@ export default function Filters() {
     days,
     open,
     online,
-    selectedSchedule
   ]);
 
   const filteredDays = useMemo(() => {
@@ -155,7 +151,6 @@ export default function Filters() {
             [],
             open,
             online,
-            selectedSchedule
           ).includedClasses;
 
     for (const _class of classes) {
@@ -178,7 +173,6 @@ export default function Filters() {
     days,
     open,
     online,
-    selectedSchedule
   ]);
 
   const filteredUnits = useMemo(() => {
@@ -201,7 +195,6 @@ export default function Filters() {
             days,
             open,
             online,
-            selectedSchedule
           ).includedClasses;
 
     for (const _class of classes) {
@@ -227,7 +220,6 @@ export default function Filters() {
     days,
     open,
     online,
-    selectedSchedule
   ]);
 
   const amountOpen = useMemo(

@@ -11,7 +11,9 @@ import {
   GET_CATALOG,
   GetCatalogResponse,
   IClass,
-  Semester
+  Semester,
+  READ_SCHEDULE,
+  ReadScheduleResponse
 } from "@/lib/api";
 
 import styles from "./ClassBrowser.module.scss";
@@ -142,6 +144,35 @@ export default function ClassBrowser({
     [searchParams, localOnline, persistent]
   );
 
+  const scheduleId = searchParams.get("selectedSchedule");
+
+// 2. 用 Apollo 去拉取那张完整的 schedule
+  const { data: scheduleData } = useQuery<ReadScheduleResponse>(
+    READ_SCHEDULE,
+    {
+      variables: { id: scheduleId! },
+      skip: !scheduleId,
+    }
+  );
+
+  const selectedScheduleMemo = useMemo<ISchedule | null>(
+    () => scheduleData?.schedule ?? null,
+    [scheduleData]
+  );
+
+
+  const updateSelectedSchedule = (schedule: ISchedule | null) => {
+    if (persistent) {
+      if (schedule) {
+        searchParams.set("selectedSchedule", schedule._id);
+      } else {
+        searchParams.delete("selectedSchedule");
+      }
+      setSearchParams(searchParams);
+    }
+    setSelectedSchedule(schedule);
+  };
+
   const { includedClasses, excludedClasses } = useMemo(
     () =>
       getFilteredClasses(
@@ -152,9 +183,8 @@ export default function ClassBrowser({
         days,
         open,
         online,
-        selectedSchedule
       ),
-    [classes, components, units, levels, days, open, online, selectedSchedule]
+    [classes, components, units, levels, days, open, online, ]
   );
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
@@ -278,30 +308,9 @@ export default function ClassBrowser({
     setLocalQuery(query);
   };
 
-  const selectedScheduleMemo = useMemo(() => {
-    if (persistent) {
-      const id = searchParams.get("selectedSchedule");
-      return allSchedules.find((s) => s._id === id) ?? null;
-    }
-  
-    return selectedSchedule;
-  }, [searchParams, selectedSchedule, persistent, allSchedules]);
-
-  const updateSelectedSchedule = (schedule: ISchedule | null) => {
-    if (persistent) {
-      if (schedule) {
-        searchParams.set("selectedSchedule", schedule._id);
-      } else {
-        searchParams.delete("selectedSchedule");
-      }
-      setSearchParams(searchParams);
-    }
-    setSelectedSchedule(schedule);
-  };
-  
 
   return (
-    <BrowserContext
+    <BrowserContext.Provider
       value={{
         expanded,
         responsive,
@@ -344,6 +353,6 @@ export default function ClassBrowser({
         <Filters />
         <List onSelect={onSelect} />
       </div>
-    </BrowserContext>
+    </BrowserContext.Provider>
   );
 }

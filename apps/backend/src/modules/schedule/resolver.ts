@@ -55,6 +55,7 @@ const resolvers: ScheduleModule.Resolvers = {
     },
   },
 
+
   Mutation: {
     deleteSchedule: async (_, { id }, context) => {
       return await deleteSchedule(context, id);

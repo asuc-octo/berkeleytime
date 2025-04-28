@@ -1,7 +1,8 @@
 import Fuse from "fuse.js";
 
-import { AcademicCareer, Component, IClass, academicCareers, ISchedule } from "@/lib/api";
+import { AcademicCareer, Component, IClass, academicCareers, ISchedule, ISection } from "@/lib/api";
 import { subjects } from "@/lib/course";
+
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -45,7 +46,6 @@ export const getLevel = (academicCareer: AcademicCareer, number: string) => {
     : (academicCareers[academicCareer] as Level);
 };
 
-export type ClassWithConflict = IClass & { conflict?: ConflictResult };
 
 export const getFilteredClasses = (
   classes: IClass[],
@@ -55,7 +55,6 @@ export const getFilteredClasses = (
   currentDays: Day[],
   currentOpen: boolean,
   currentOnline: boolean,
-  selectedSchedule: ISchedule | null
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -136,30 +135,17 @@ export const getFilteredClasses = (
         }
       }
 
-      //Filter by existing schedule 
-      if (selectedSchedule) {
-        const timeSlots = extractTimeSlotsFromSchedule(selectedSchedule);
-        const conflict = hasTimeConflict(_class, timeSlots);
-        acc.includedClasses.push({
-          ..._class,
-          conflict,
-        });
-      }
-
-
       acc.includedClasses.push(_class);
 
       return acc;
     },
-    { includedClasses: [], excludedClasses: [] } as {
-      includedClasses: ClassWithConflict[];
-      excludedClasses: IClass[];
-    }
+    { includedClasses: [] as IClass[], excludedClasses: [] as IClass[]} 
   );
 };
 
-interface TimeSlot {
-  day: number;   
+
+export interface TimeSlot {
+  day: number[];   
   start: number;  
   end: number;    
 }
@@ -169,104 +155,44 @@ export interface ConflictResult {
   conflictingSectionIds: string[];
 }
 
+
 function timeToMinutes(time: string): number {
-  if (!time || typeof time !== "string" || !time.includes(":")) {
-    // console.warn("Invalid time:", time);
-    return -1;
-  }
-
-  const [hour, minute] = time.split(":").map(Number);
-  return hour * 60 + minute;
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
 }
 
-function extractTimeSlotsFromSchedule(schedule: ISchedule): TimeSlot[] {
-  console.log(schedule);
-  const timeSlots: TimeSlot[] = [];
-
-  for (const { class: _class, selectedSections } of schedule.classes) {
-    const allSections = [
-      _class.primarySection,
-      ..._class.sections.filter((section) =>
-        selectedSections.some(sel => sel.sectionId === section.sectionId)
-      ),
-    ];
-
-    for (const section of allSections) {
-      const meetings = section.meetings || [];
-
-      for (const meeting of meetings) {
-        const { startTime, endTime, days } = meeting;
-        const start = timeToMinutes(startTime);
-        const end = timeToMinutes(endTime);
-
-        days.forEach((hasClass, dayIndex) => {
-          if (hasClass) {
-            timeSlots.push({
-              day: dayIndex,
-              start,
-              end,
-            });
-          }
-        });
-      }
-    }
-  }
-
-  for (const event of schedule.events || []) {
-    const start = timeToMinutes(event.startTime);
-    const end = timeToMinutes(event.endTime);
-
-    event.days.forEach((hasEvent, dayIndex) => {
-      if (hasEvent) {
-        timeSlots.push({
-          day: dayIndex,
-          start,
-          end,
-        });
-      }
-    });
-  }
-
-  // console.log(timeSlots);
-
-  return timeSlots;
-}
-
-function hasTimeConflict(
-  _class: IClass,
+export function hasTimeConflict(
+  cls: IClass | ISection,
   timeSlots: TimeSlot[]
 ): ConflictResult {
-  const conflictingSectionIds: string[] = [];
-  const allSections = [_class.primarySection, ...(_class.sections ?? [])];
-  // console.log(allSections);
-  for (const section of allSections) {
-    for (const meeting of section.meetings ?? []) {
-      const start = timeToMinutes(meeting.startTime);
-      const end = timeToMinutes(meeting.endTime);
+  const conflictingIds = new Set<string>();
+  const sec = "primarySection" in cls ? cls.primarySection : cls;
+  // console.log("new1:", timeSlots);
 
-      for (let dayIndex = 0; dayIndex < meeting.days.length; dayIndex++) {
-        if (!meeting.days[dayIndex]) continue;
+  for (const meeting of sec.meetings ?? []) {
+    const mStart = timeToMinutes(meeting.startTime);
+    const mEnd   = timeToMinutes(meeting.endTime);
 
-        for (const slot of timeSlots) {
-          if (slot.day !== dayIndex) continue;
-          if (Math.max(start, slot.start) < Math.min(end, slot.end)) {
-            if (section.sectionId) {
-              conflictingSectionIds.push(section.sectionId);
-            }
-            break;
-          }
-        }
+    const meetingDays = meeting.days
+      .map((has, idx) => has ? idx : -1)
+      .filter(d => d > 0);
+    // console.log("new2:", sec.sectionId, meetingDays);
+    for (const slot of timeSlots) {
+
+      const common = meetingDays.filter(d => slot.day.includes(d));
+      if (common.length === 0) continue;
+      // console.log("new5:", sec.sectionId, common);
+
+      if (Math.max(mStart, slot.start) < Math.min(mEnd, slot.end)) {
+        conflictingIds.add(sec.sectionId);
+        break;
       }
     }
   }
 
-  // console.log({
-  //   hasConflict: conflictingSectionIds.length > 0,
-  //   conflictingSectionIds,
-  // });
   return {
-    hasConflict: conflictingSectionIds.length > 0,
-    conflictingSectionIds,
+    hasConflict: conflictingIds.size > 0,
+    conflictingSectionIds: Array.from(conflictingIds),
   };
 }
 

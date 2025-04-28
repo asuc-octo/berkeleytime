@@ -4,6 +4,7 @@ import { Component, IClass, Semester } from "@/lib/api";
 
 import { Day, Level, SortBy, Unit } from "./browser";
 
+
 import { ISchedule } from "@/lib/api";
 
 export interface BrowserContextType {
