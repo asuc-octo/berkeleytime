@@ -7,7 +7,6 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useReadUser } from '@/hooks/api';
-import { Flex } from '@repo/theme';
 
 import SidePanel from "./SidePanel" 
 import SemesterBlock from "./SemesterBlock"

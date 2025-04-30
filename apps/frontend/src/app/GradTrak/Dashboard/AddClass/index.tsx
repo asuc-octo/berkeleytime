@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SearchBar from "./SearchBar";
-import "./AddClass.scss"
+
+import styles from "./AddClass.module.scss"
 
 // Stub for now.
 // TODO: Replace with actual code.

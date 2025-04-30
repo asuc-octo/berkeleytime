@@ -133,6 +133,7 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
                                                     <Check className={styles.icon}/>
                                                     {isFulfilled ? 'Mark as Unfulfilled' : 'Mark as Fulfilled'}
                                                 </div>
+                                                <p className={styles.icon}>M</p>
                                             </button>
                                         </div>
                                     )}

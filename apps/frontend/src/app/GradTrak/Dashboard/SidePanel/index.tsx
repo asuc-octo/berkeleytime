@@ -56,7 +56,6 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                     <div className={styles.value}>{pnpTotal}</div>
                 </div>       
             </div>
-            <div className={styles.separator}/>   
         </>
     );
 
@@ -64,6 +63,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
         <div>
             {majors.map((major, index) => (
               <>
+              <div className={styles.separator}/>   
                 <div className={styles.accordion}>
                     <h2 key={index}>{major}</h2>
                     <div className={styles.body}>
@@ -81,7 +81,6 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                         </div>
                     </div>
                 </div>
-                <div className={styles.separator}/>   
               </>
             ))}
         </div>
@@ -91,6 +90,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
         <div>
             {minors.map((minor, index) => (
             <>
+                <div className={styles.separator}/>   
                 <div className={styles.accordion}>
                     <h2 key={index}>{minor}</h2>
                     <div className={styles.body}>
@@ -108,9 +108,9 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                         </div>
                     </div>
                 </div>
-                <div className={styles.separator}/>   
             </>  
             ))}
+            <div className={styles.separator}/>   
         </div>
     )
 
@@ -118,7 +118,7 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
         <div className={styles.root}>
             {UserInfo}
             {MajorRequirements}
-            {MinorRequirements}  
+            {MinorRequirements}   
             <RequirementsAccordion title={"University of California"}
                 requirements={[
                     UniReqs.AC,

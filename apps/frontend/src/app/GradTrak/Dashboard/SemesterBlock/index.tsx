@@ -115,7 +115,7 @@ function SemesterBlock({ selectedYear,
     const mouseY = e.clientY;
 
     // get all class elements in this container
-    const classElements = containerRef.current.querySelectorAll('.classContainer');
+    const classElements = containerRef.current.querySelectorAll('[data-class-container]');
 
     // if no classes, insert at the beginning
     if (classElements.length === 0) {
@@ -272,6 +272,7 @@ function SemesterBlock({ selectedYear,
             )}
             <div
               key={index}
+              data-class-container
               className={styles.classContainer}
               draggable={true}
               onDragStart={(e) => handleDragStart(e, index)}
@@ -316,7 +317,7 @@ function SemesterBlock({ selectedYear,
           </React.Fragment>
         ))}
 
-        {/* show placeholder at the end if needed */}
+        {/* Dragging placeholder */}
         {placeholderIndex === selectedClasses.length && (
           <div className={styles.placeholder}/>
         )}

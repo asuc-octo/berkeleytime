@@ -122,6 +122,8 @@ body:not([data-theme]) {
                     opacity: 0; 
                     transition: opacity 0.2s ease;
                     flex-shrink: 0; 
+                    transition: all 0.2s ease;
+
         
                     &:hover {
                         color: var(--heading-color); 
@@ -144,7 +146,7 @@ body:not([data-theme]) {
                     align-items: flex-start;
                     width: 10.5rem;
                     border-radius: var(--XXS, 4px);
-                    background: var(--White, #FFF);
+                    background: var(--foreground-color);
                     box-shadow: 0px 8px 12px 0px rgba(60, 66, 87, 0.15), 0px 0px 1px 0px rgba(0, 0, 0, 0.30);
                     position: absolute;
 
