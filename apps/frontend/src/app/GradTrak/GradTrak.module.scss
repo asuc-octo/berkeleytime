@@ -1,3 +1,15 @@
+:root {
+  --light-semesterblock-color: var(--slate-100);
+  --dark-semesterblock-color: var(--zinc-950);
+}
+
+@mixin light-theme {
+  --semesterblock-color: var(--light-semesterblock-color);
+}
+@mixin dark-theme {
+  --semesterblock-color: var(--dark-semesterblock-color);
+} 
+
 .header {
   padding: 5rem 1rem;
   text-align: center;

@@ -1,10 +1,19 @@
 import { useState, useEffect, useRef } from 'react'; 
+import { 
+    Check, 
+    NavArrowDown, 
+    NavArrowRight, 
+    MoreHoriz 
+} from 'iconoir-react'; 
 
-import { Check, NavArrowDown, NavArrowRight, MoreHoriz } from 'iconoir-react'; 
+import { 
+    UniReqs, 
+    LnSReqs, 
+    CoEReqs, 
+    HaasReqs 
+} from '@/lib/course'; 
 
-import { UniReqs, LnSReqs, CoEReqs, HaasReqs } from '@/lib/course'; 
-
-import "./RequirementsAccordion.scss"; 
+import styles from "./RequirementsAccordion.module.scss"; 
 
 type RequirementEnum = UniReqs | LnSReqs | CoEReqs | HaasReqs;
 
@@ -77,16 +86,16 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
 
 
     return (
-        <div className="accordion">
-            <div className="sidepanel-header-container">
-                <div className="requirement-header">{title}</div>
-                 <button className="accordion-toggle-button" onClick={toggleAccordion} aria-expanded={isExpanded}>
-                   {isExpanded ? <NavArrowDown className="icon" /> : <NavArrowRight className="icon" /> }
+        <div className={styles.accordion}>
+            <div className={styles.header}>
+                <div className={styles.title}>{title}</div>
+                 <button className={styles.toggle} onClick={toggleAccordion} aria-expanded={isExpanded}>
+                   {isExpanded ? <NavArrowDown className={styles.icon}/> : <NavArrowRight className={styles.icon}/>}
                  </button>
             </div>
 
             {isExpanded && (
-                <div className="accordion-contents">
+                <div className={styles.body}>
                     {requirements && requirements.length > 0 ? (
                         requirements.map((requirement, index) => {
                             const isFulfilled = fulfilledRequirements.has(requirement);
@@ -94,34 +103,36 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
                             return (
                                 <div
                                     key={requirement} 
-                                    className={`accordion-item ${isFulfilled ? "fulfilled" : "pending"}`}
+                                    className={`${styles.item} ${isFulfilled ? styles.fulfilled : styles.pending}`}
                                     onMouseEnter={() => handleMouseEnter(requirement)}
                                     onMouseLeave={handleMouseLeave}
-                                    style={{ position: 'relative' }}
                                 >
-                                    <div className="item-wrapper">
-                                        <div className="item-start">
-                                            <div className="checkmark-space">
-                                                {isFulfilled && <Check className="checkmark-icon" />}
+                                    <div className={styles.element}>
+                                        <div className={styles.start}>
+                                            <div className={styles.checkmarkSpace}>
+                                                {isFulfilled && <Check className={styles.checkmarkIcon}/>}
                                             </div>
-                                            <p className="requirement-text">{requirement}</p>
+                                            <p>{requirement}</p>
                                         </div>
                                         <button
-                                            className={`ellipsis-button ${hoveredRequirement === requirement || activeMenuRequirement === requirement ? 'visible' : ''}`}
+                                            className={`${styles.ellipsis} ${hoveredRequirement === requirement || activeMenuRequirement === requirement ? styles.visible : ''}`}
                                             onClick={(e) => {
                                                  e.stopPropagation(); 
                                                  openMenu(requirement);
                                             }}
                                             aria-label={`Options for ${requirement}`} 
                                         >
-                                            <MoreHoriz /> 
+                                            <MoreHoriz className={styles.moreHoriz}/> 
                                         </button>
                                     </div>
 
                                     {activeMenuRequirement === requirement && (
-                                        <div className="requirement-menu-popover" ref={menuRef}>
-                                            <button className="menu-item" onClick={() => { isFulfilled ? markAsUnfulfilled(requirement) : markAsFulfilled(requirement); }}>
-                                                {isFulfilled ? 'Mark as Unfulfilled' : 'Mark as Fulfilled'}
+                                        <div className={styles.popover} ref={menuRef}>
+                                            <button className={styles.item} onClick={() => { isFulfilled ? markAsUnfulfilled(requirement) : markAsFulfilled(requirement) }}>
+                                                <div className={styles.start}>
+                                                    <Check className={styles.icon}/>
+                                                    {isFulfilled ? 'Mark as Unfulfilled' : 'Mark as Fulfilled'}
+                                                </div>
                                             </button>
                                         </div>
                                     )}
@@ -129,7 +140,7 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
                             );
                         })
                     ) : (
-                        <p className="no-requirements-message">No requirements listed for this category.</p>
+                        <p>No requirements listed for this category.</p>
                     )}
                 </div>
             )}

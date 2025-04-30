@@ -1,4 +1,9 @@
-import { useState, useMemo, useEffect } from 'react'; 
+import { 
+  useState, 
+  useMemo, 
+  useEffect,
+  useCallback
+} from 'react'; 
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useReadUser } from '@/hooks/api';
@@ -8,7 +13,6 @@ import SidePanel from "./SidePanel"
 import SemesterBlock from "./SemesterBlock"
 
 import styles from "./Dashboard.module.scss"
-
 
 type DegreeOption = {
   label: string;
@@ -53,10 +57,10 @@ function Dashboard() {
     }
   }, [isStateValid, userLoading, navigate]);
 
-  if (userLoading || !isStateValid) {
-    // Don't try to destructure state here, as it might be null/invalid
-    return <p>Loading user data or missing setup information...</p>; // Show loading/informative message
-  }
+  // if (userLoading || !isStateValid) {
+  //   // Don't try to destructure state here, as it might be null/invalid
+  //   return <p>Loading user data or missing setup information...</p>; // Show loading/informative message
+  // }
   
   const { startYear, gradYear, summerCheck, selectedDegreeList, selectedMinorList } = state!;
   const selectedDegreeStrings: string[] = selectedDegreeList.map((degree) => degree.value);
@@ -94,14 +98,15 @@ function Dashboard() {
   // Create the allSemesters state to track classes in each semester
   const [allSemesters, setAllSemesters] = useState<{ [key: string]: ClassType[] }>({});
 
-  const updateTotalUnits = (semesterKey: string, newTotal: number) => {
+  const updateTotalUnits = useCallback((semesterKey: string, newTotal: number) => {
     setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
-  };
-
+  }, []);
+  
+  
   // Function to update all semesters data
-  const updateAllSemesters = (semesters: { [key: string]: ClassType[] }) => {
+  const updateAllSemesters = useCallback((semesters: { [key: string]: ClassType[] }) => {
     setAllSemesters(semesters);
-  };
+  }, []);
 
   const totalUnits = Object.values(semesterTotals).reduce((sum, units) => sum + units, 0);
 

@@ -91,7 +91,7 @@ export default function OnboardingSetup({
                   <p>Start Year</p>
                   <Box flexGrow="1" width="100%">
                     <Select
-                    className={styles.yearSelect}
+                      className={styles.yearSelect}
                       id="startYear"
                       options={startYearOptions}
                       isSearchable={true}

@@ -9,16 +9,17 @@
     
     h2 {
       font-size: 1rem;
-      font-weight: 580;
       line-height: 1.5rem;
     }
     p {
       font-size: 0.875rem;
-      font-size: 400;
     }
 
     .header-container {
-      padding: 24px 16px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      gap: 1rem;
 
       .header {
         display: flex;
@@ -49,25 +50,24 @@
 
       .grid {
         display: grid;
-        padding: 16px 0 0 0;
         grid-template-columns: 2fr 3fr; 
-        gap: 12px 24px;
+        gap: 0.75rem 1.5rem;
       }
     }
 
     .accordion {
       display: flex;
-      padding: 16px;
-      gap: 12px;
       flex-direction: column;
       align-items: flex-start;
       align-self: stretch;
+      padding: 1rem;
+      gap: 0.5rem;
 
       .body {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--XXS, 4px);
+        gap: 0.25rem;
         transition: max-height 0.3s ease, opacity 0.3s ease;
 
         .item{

@@ -2,6 +2,7 @@
   flex: 1 1 0;
   display: flex;
   min-height: 0;
+  color: var(--heading-color);
 
   .view {
     overflow: auto;
@@ -11,7 +12,7 @@
     display: flex;
     flex-direction: column;
     overflow: scroll;
-    width: 25%;
+    width: 27%;
 
     .header {
       padding: 12px;
@@ -35,7 +36,7 @@
     }
   }
 
-  @media (width > 992px) {
+  @media (width > 600px) {
     &.collapsed .panel {
       display: none;
     }
@@ -53,7 +54,7 @@
     }
   }
 
-  @media (width <= 992px) {
+  @media (width <= 600px) {
     .panel {
       flex-grow: 1;
     }
@@ -68,24 +69,23 @@
   }
 }
 
-.semesterBlocks {
+.semester-blocks {
+  display: flex;
+  flex-direction: column;
   overflow-x: auto;
-  gap: 12px;
   width: 100vw;
-  height: calc(100vh - 80px);
-  box-sizing: border-box;
-  position: relative;
-  top: 50px;
+  height: 100%;
+  margin: 2rem;
+  gap: 2rem;
 }
 
-.semesterLayout {
-  margin: 32px;
+.semester-layout {
   display: flex;
-  gap: 12px;
-}
+  gap: 0.75rem;
 
-.yearElement {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
+  .year-element {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+  }
 }

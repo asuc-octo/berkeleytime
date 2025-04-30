@@ -8,6 +8,10 @@
 
 .year-select {
   text-align: start;
+
+  input {
+    color: var(--paragraph-color) !important
+  }
 }
 
 .filter {
@@ -21,32 +25,27 @@
     height: 16px;
     display: grid;
     place-items: center;
-    border: 2px solid var(--paragraph-color);
+    border: 2px solid var(--label-color);
+    color: var(--heading-color);
     border-radius: 4px;
     transition: all 0.2s ease;
     cursor: pointer;
-  }
 
-  .checkbox[data-state="checked"] {
-    background-color: var(--blue-500);
-    border-color: var(--blue-500);
-  }
+    & + .text .value {
+      color: var(--label-color);
+    }
 
-  .text {
-    font-size: 0.875rem;
-    color: var(--label-color);
-    line-height: 1.25rem; 
+    &[data-state="checked"] {
+      background-color: var(--blue-500);
+      border-color: var(--blue-500);
+      color: white;
 
-    .value {
-      font-weight: 400;
-      color: var(--paragraph-color);
+      & + .text .value {
+        color: var(--heading-color);
+        }
+      }
     }
   }
-
-  .checkbox[data-state="checked"] + .text .value {
-    color: var(--heading-color);
-  }
-}
 
 .primary {
   width: 100%;

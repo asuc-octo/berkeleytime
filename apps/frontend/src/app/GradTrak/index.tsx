@@ -1,9 +1,19 @@
-import { useMemo, useEffect } from "react"; 
+import React, { useMemo, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom"; 
-import React from "react"; 
-
 import { Plus } from "iconoir-react"; 
-import { Box, Button, Container } from "@repo/theme";
+
+import { 
+  Box, 
+  Boundary,
+  Button, 
+  Container,
+  LoadingIndicator
+} from "@repo/theme";
+import { useReadUser } from "@/hooks/api"; 
+import { signIn } from "@/lib/api"; 
+import Footer from "@/components/Footer";
+
+import styles from "./GradTrak.module.scss"; 
 
 const useReadGradTraks = (options: { skip: boolean }) => {
     const [data, setData] = React.useState<IGradTrak[] | null>(null);
@@ -36,13 +46,6 @@ interface IGradTrak {
     semesters: { [key: string]: any[] };
 }
 
-import { useReadUser } from "@/hooks/api"; 
-import { signIn } from "@/lib/api"; 
-
-import Footer from "@/components/Footer";
-
-import styles from "./GradTrak.module.scss"; 
-
 export default function GradTrakIndex() {
   const { data: user, loading: userLoading } = useReadUser();
 
@@ -71,7 +74,12 @@ export default function GradTrakIndex() {
   }, [user, userLoading, gradTraksLoading, hasGradTraks, gradTraks, navigate]);
 
   if (userLoading || gradTraksLoading) {
-    return <p>Loading GradTrak data...</p>; 
+    console.log("Loading GradTrak data")
+    return (
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
+    ); 
   }
 
   if (!user) {
@@ -80,9 +88,15 @@ export default function GradTrakIndex() {
   }
 
   if (hasGradTraks) {
-    return <p>Loading your GradTrak...</p>; 
+    console.log("Loading user's GradTrak")
+    return (
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
+    ); 
   }
 
+  
   return (
     <Box p="5">
       <Container style={{ marginBottom: "80px" }}> 

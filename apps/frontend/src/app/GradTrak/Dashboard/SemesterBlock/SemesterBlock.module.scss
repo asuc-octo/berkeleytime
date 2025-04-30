@@ -1,0 +1,194 @@
+@import '../../GradTrak.module.scss';
+
+body[data-theme='dark'] {
+    @include dark-theme;
+}
+  
+body[data-theme='light'] {
+    @include light-theme;
+}
+
+body:not([data-theme]) {
+    @include light-theme;
+
+    @media (prefers-color-scheme: dark) {
+        @include dark-theme;
+    }
+}
+
+.root {
+    color: var(--heading-color);
+
+    h2 {
+        color: var(--heading-color);
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    h3 {
+        color: var(--heading-color);
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    p {
+        color: var(--paragraph-color);
+        font-size: 0.75rem;
+    }
+
+    .body {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: start;
+        background-color: var(--semesterblock-color);
+        border-radius: 0.5rem;
+        width: 14.125rem;
+        padding: 1rem 0.5rem;
+        gap: 0.5rem;
+        flex-shrink: 0;
+
+        @media (max-width: 600px) {
+            width: 100%;
+        }
+
+        .semester-counter {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+
+            .counter {
+                background-color: var(--button-active-color);
+                color: var(--heading-color);
+                text-align: center;
+                font-size: 0.75rem;
+                font-weight: 500;
+                padding: 4px 6px;
+                border-radius: 4px;
+            }
+        }
+
+        .placeholder {
+            width: 100%;
+            height: 92px;
+            background-color: var(--background-color);
+            border-radius: 0.5rem;
+        }
+
+        .class-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-height: 92px;
+            align-items: flex-start;
+            align-self: stretch;
+            text-align: left;
+            padding: 1rem;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            border-radius: 0.5rem;
+            background-color: var(--foreground-color);
+            box-shadow: 0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.10)), 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.10));
+            transition: all 0.2s ease;
+
+            &:hover {
+                background-color: var(--button-hover-color);
+
+                .dropdown .trigger {
+                    opacity: 1;
+                  }
+            }
+            
+            .start {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .title {
+                margin: 0;
+                padding-bottom: 0.125rem;
+            }
+
+            .dropdown {
+                .trigger {
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    color: var(--paragraph-color);
+                    display: flex; 
+                    align-items: center;
+                    justify-content: center;
+                    width: 1.25rem;
+                    height: 0.5rem;
+                    opacity: 0; 
+                    transition: opacity 0.2s ease;
+                    flex-shrink: 0; 
+        
+                    &:hover {
+                        color: var(--heading-color); 
+                        opacity: 1;
+                    }
+    
+                    &[data-state='open'] {
+                        opacity: 1;
+                      }
+        
+                    .more-horiz { 
+                        width: 1.25rem; 
+                        height: 1.25rem;
+                    }
+                }
+
+                .content {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    width: 10.5rem;
+                    border-radius: var(--XXS, 4px);
+                    background: var(--White, #FFF);
+                    box-shadow: 0px 8px 12px 0px rgba(60, 66, 87, 0.15), 0px 0px 1px 0px rgba(0, 0, 0, 0.30);
+                    position: absolute;
+
+                    .menu-item {
+                        display: flex;
+                        flex-direction: row;
+                        width: 100%;
+                        gap: 0.5rem;
+                        font-size: 0.875rem;
+                        padding: 0.5rem;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+            
+                        &:hover {
+                            background-color: var(--button-hover-color);
+                        }
+
+                        .cancel {
+                            display: flex;
+                            flex-direction: row;
+                            width: 100%;
+                            gap: 0.5rem;
+                            color: var(--cancel-color)
+                        }
+                    }
+                }
+            }
+
+            
+        
+        }
+
+        .add-button {
+            align-items: center;
+            border: 0;
+            padding: 0;
+            font-size: 0.875rem;
+            color: var(--paragraph-color);
+            transition: all 0.2s ease;
+
+            &:hover {
+                background-color: var(--semesterblock-color);
+                color: var(--heading-color);
+            }
+        }
+    }
+}

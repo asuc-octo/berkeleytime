@@ -4,6 +4,7 @@
     margin-left: 25%;
     max-width: 50%;
     position: static;
+    color: var(--paragraph-color);
   }  
 
 .primary {
@@ -34,6 +35,11 @@
 .degree-select {
     width: 100%;
     text-align: start;
+    color: var(--paragraph-color);
+
+    input {
+      color: var(--paragraph-color) !important
+    }
 }
 
 .degree-chip {

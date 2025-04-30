@@ -1,17 +1,20 @@
-import React from 'react';
-import { useState, useEffect, useRef } from 'react';
-import { Button } from "@radix-ui/themes";
-import AddClass from "../AddClass";
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import EditClassDetails from "../EditClassDetails";
+import React, { 
+  useState, 
+  useEffect, 
+  useRef 
+} from 'react';
 import {
   Trash,
   BookStack,
   MoreHoriz
 } from "iconoir-react";
-import "./SemesterBlock.scss"
-// import CustomClass from "../CustomClass/custom-class";
-// import AddClassDetails from "./AddClassDetails.tsx";
+
+import { Button } from "@repo/theme";
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+
+import AddClass from "../AddClass";
+import EditClassDetails from "../EditClassDetails";
+import styles from "./SemesterBlock.module.scss"
 
 
 interface SemesterYearProps {
@@ -140,9 +143,6 @@ function SemesterBlock({ selectedYear,
       )
     );
 
-    
-
-
     // Recalculate total units
     const newTotalUnits = selectedClasses.reduce((total, cls) => {
       if (cls.id === updatedClass.id) {
@@ -202,15 +202,6 @@ function SemesterBlock({ selectedYear,
     setPlaceholderIndex(null);
   }
 
-  // const addClass = (cls: ClassType) => {
-  //   setSelectedClasses((prevClasses) => [...prevClasses, cls]);
-  //   const newTotalUnits = totalUnits + cls.units;
-  //   // setTotalUnits((prevTotal) => prevTotal + cls.units);
-  //   setTotalUnits(newTotalUnits);
-  //   onTotalUnitsChange(newTotalUnits);
-
-  // };
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDropTarget(false);
@@ -263,69 +254,72 @@ function SemesterBlock({ selectedYear,
 
   return (
     <div ref={containerRef}
-      className={`semesters ${isDropTarget ? 'drop-target' : ''}`}
+      className={`${styles.root} ${isDropTarget ? 'drop-target' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}>
-      <div className="container">
-        <div className="semesterCount">
-          <div className="title">{selectedSemester} {selectedYear} </div>
-          <p className="counter">{totalUnits}</p>
+      <div className={styles.body}>
+        <div className={styles.semesterCounter}>
+          <h2>{selectedSemester} {selectedYear} </h2>
+          <p className={styles.counter}>{totalUnits}</p>
         </div>
 
         {/* Display selected classes outside the dialog */}
-        {/* <div className="classContainer"> */}
         {selectedClasses.map((cls, index) => (
           <React.Fragment key={`class-group-${index}`}>
             {placeholderIndex === index && (
-              <div className="class-placeholder" />
+              <div className={styles.placeholder}/>
             )}
             <div
               key={index}
-              className="classContainer"
+              className={styles.classContainer}
               draggable={true}
               onDragStart={(e) => handleDragStart(e, index)}
               onDragEnd={handleDragEnd}
             >
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button className="dropDownBtn">
-                    <MoreHoriz className="three-dot-icon" />
-                  </Button>
-                </DropdownMenu.Trigger>
-
-                {/* dropdown menu content */}
-                <DropdownMenu.Content
-                  className="three-dot-menu"
-                  sideOffset={5}
-                  align="end"
-                >
-                  <DropdownMenu.Item
-                    className="menu-item"
-                    onClick={() => handleEditClass(index)}
-                  >
-                    <BookStack /> Edit Course Details
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="menu-item"
-                    onClick={() => handleDeleteClass(index)}
-                  >
-                    <Trash /> Delete Class
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-              <h3 className="classTitle">{cls.name}</h3>
-              <p className="units">{cls.units} Units</p>
+              <div className={styles.start}>
+                <div>
+                  <h3 className={styles.title}>{cls.name}</h3>
+                  <p >{cls.units} Units</p>
+                </div>
+                <div className={styles.dropdown}>
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <Button className={styles.trigger}>
+                          <MoreHoriz className={styles.moreHoriz}/> 
+                      </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content
+                      className={styles.content}
+                      sideOffset={5}
+                      align="end"
+                    >
+                      <DropdownMenu.Item
+                        className={styles.menuItem}
+                        onClick={() => handleEditClass(index)}
+                      >
+                        <BookStack /> Edit Course Details
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        className={styles.menuItem}
+                        onClick={() => handleDeleteClass(index)}
+                      >
+                        <div className={styles.cancel}>
+                          <Trash /> Delete Class
+                        </div>
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                </div>
+              </div>
             </div>
           </React.Fragment>
         ))}
 
         {/* show placeholder at the end if needed */}
         {placeholderIndex === selectedClasses.length && (
-          <div className="class-placeholder" />
+          <div className={styles.placeholder}/>
         )}
-
-        {/* </div> */}
 
         {/* Dialog Component */}
         <AddClass isOpen={isAddClassOpen} setIsOpen={setIsAddClassOpen} addClass={addClass} handleOnConfirm={(cls) => { addClass(cls); }} />
@@ -340,7 +334,7 @@ function SemesterBlock({ selectedYear,
           />
         )}
 
-        <Button onClick={() => setIsAddClassOpen(true)} className="add-button">
+        <Button onClick={() => setIsAddClassOpen(true)} className={styles.addButton}>
           + Add Class
         </Button>
       </div>
