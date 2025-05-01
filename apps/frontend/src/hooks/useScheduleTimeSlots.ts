@@ -11,7 +11,6 @@ export interface TimeSlot {
 }
 
 export function covertTimeSlots(days: boolean[], startTime: string, endTime: string): TimeSlot {
-
   const [startHour, startMinute] = startTime.split(":").map(Number);
   const [endHour, endMinute] = endTime.split(":").map(Number);
   const start = startHour * 60 + startMinute;
