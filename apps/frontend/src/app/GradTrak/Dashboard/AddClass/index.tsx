@@ -1,19 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import SearchBar from "./SearchBar";
 
-import styles from "./AddClass.module.scss"
-
-// Stub for now.
-// TODO: Replace with actual code.
-const classesData = [
-    { "id": 1, "name": "COLWRIT R4B", "units": 4 },
-    { "id": 2, "name": "HISTORY 7A", "units": 4 },
-    { "id": 3, "name": "CS 61A", "units": 4 },
-    { "id": 4, "name": "MATH 51", "units": 4 },
-    { "id": 5, "name": "MATH 53", "units": 4 },
-    { "id": 6, "name": "MATH 54", "units": 4 },
-    { "id": 7, "name": "MATH 1A", "units": 4 }
-  ]
+import { gql, useQuery } from "@apollo/client";
+// import styles from "./AddClass.module.scss"
 
 interface AddClassProps  {
     // name: string;
@@ -28,11 +17,61 @@ interface AddClassProps  {
 type ClassType = {
     id: number;
     name: string;
+    title: string;
     units: number;
   };
-  
+
+const GET_CLASSES = gql`
+  query GetCatalog(
+    $year: Int!
+    $semester: Semester!
+  ) {
+    catalog(
+      year: $year
+      semester: $semester
+    ) {
+      courseNumber
+      title
+      unitsMax
+      unitsMin
+      subject
+    }
+  }`
+
+interface GetClassesResponse {
+  catalog: IGradTrakClass[];
+}
+
+interface IGradTrakClass {
+  subject: string;
+  courseNumber: string;
+  title: string | null;
+  unitsMax: number;
+  unitsMin: number;
+}
 
 function AddClass({ isOpen, setIsOpen, addClass, handleOnConfirm }: AddClassProps) {
+    const { data, loading, error } = useQuery<GetClassesResponse>(GET_CLASSES, {
+      variables: {
+        year: 2025,
+        semester: "Spring"
+      },
+    });
+
+    const classes = useMemo(() => {
+      if (!data?.catalog) {
+        console.log("NO DATA RETRIEVED")
+        return []
+      };
+      return data.catalog.map((cls, index) => ({
+        id: index + 1,
+        name: `${cls.subject} ${cls.courseNumber}`,
+        title: cls.title ?? "",
+        units: cls.unitsMin, 
+      }));
+    }, [data]);
+d
+    console.log(data);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredClasses, setFilteredClasses] = useState<ClassType[]>([]);
@@ -40,7 +79,7 @@ function AddClass({ isOpen, setIsOpen, addClass, handleOnConfirm }: AddClassProp
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const term = event.target.value;
         setSearchTerm(term);
-        const filtered = classesData.filter((cls) =>
+        const filtered = classes.filter((cls) =>
           cls.name.toLowerCase().includes(term.toLowerCase())
         );
         setFilteredClasses(filtered);

@@ -18,14 +18,16 @@ type ClassType = {
     units: number;
 };
 
-interface EditClassDetailsProps {
+interface ClassDetailsProps {
+    isCreateCustomClass: boolean;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     classData: ClassType;
     onUpdate: (updatedClass: ClassType) => void;
 }
 
-const EditClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: EditClassDetailsProps) => {
+const ClassDetails = ({ isCreateCustomClass, isOpen, setIsOpen, classData, onUpdate }: ClassDetailsProps) => {
+    // TODO: Change this with actual data
     const [className, setClassName] = useState(classData.name);
     const [description, setDescription] = useState("Multivariable Calculus");
     const [units, setUnits] = useState(classData.units);
@@ -210,4 +212,4 @@ const EditClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: EditClassD
     );
 };
 
-export default EditClassDetails;
+export default ClassDetails;

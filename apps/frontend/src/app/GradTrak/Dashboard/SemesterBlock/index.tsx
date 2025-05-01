@@ -13,7 +13,7 @@ import { Button } from "@repo/theme";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import AddClass from "../AddClass";
-import EditClassDetails from "../EditClassDetails";
+import ClassDetails from "../ClassDetails";
 import styles from "./SemesterBlock.module.scss"
 
 
@@ -44,7 +44,7 @@ function SemesterBlock({ selectedYear,
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(allSemesters[semesterId] || []);
   const [totalUnits, setTotalUnits] = useState(0);
-  const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
+  // const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,10 +62,10 @@ function SemesterBlock({ selectedYear,
     }
   }, [allSemesters, semesterId]);
 
-  const openCustomClass = () => setIsCustomClassOpen(true);
-  const closeCustomClass = () => {
-    setIsCustomClassOpen(false);
-  };
+  // const openCustomClass = () => setIsCustomClassOpen(true);
+  // const closeCustomClass = () => {
+  //   setIsCustomClassOpen(false);
+  // };
 
   const handleDeleteClass = (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter((_, index) => index !== indexToDelete);
@@ -111,7 +111,7 @@ function SemesterBlock({ selectedYear,
   const findInsertPosition = (e: React.DragEvent) => {
     if (!containerRef.current) return 0;
 
-    const containerRect = containerRef.current.getBoundingClientRect();
+    // const containerRect = containerRef.current.getBoundingClientRect();
     const mouseY = e.clientY;
 
     // get all class elements in this container
@@ -138,7 +138,7 @@ function SemesterBlock({ selectedYear,
 
   const handleUpdateClass = (updatedClass: ClassType) => {
     setSelectedClasses((prevClasses) =>
-      prevClasses.map((cls, idx) =>
+      prevClasses.map((cls, ) =>
         cls.id === updatedClass.id ? updatedClass : cls
       )
     );
@@ -327,7 +327,8 @@ function SemesterBlock({ selectedYear,
 
         {/* Edit Class Details Dialog */}
         {classToEdit && (
-          <EditClassDetails
+          <ClassDetails
+            isCreateCustomClass={false}
             isOpen={isEditClassOpen}
             setIsOpen={setIsEditClassOpen}
             classData={classToEdit}

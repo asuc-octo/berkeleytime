@@ -9,6 +9,12 @@
 .year-select {
   text-align: start;
 
+  &:focus-within {
+    input {
+      color: var(--heading-color)
+    }
+  }
+
   input {
     color: var(--paragraph-color) !important
   }

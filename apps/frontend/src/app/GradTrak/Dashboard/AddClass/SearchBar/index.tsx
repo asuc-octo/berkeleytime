@@ -1,6 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import React, { useState } from 'react';
 import { Button } from "@radix-ui/themes";
+
 import CustomClass from '../../CustomClass';
 
 import styles from '../AddClass.module.scss'
@@ -19,11 +20,14 @@ interface SearchBarProps  {
 type ClassType = {
     id: number;
     name: string;
+    title: string;
     units: number;
   };
 
 function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses, handleSelectClass, handleOnConfirm}: SearchBarProps) {
     const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
+
+    console.log("Filtered classes:", filteredClasses);
 
     const openCustomClass = () => setIsCustomClassOpen(true);
     const closeCustomClass = () => {
@@ -65,11 +69,18 @@ function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses
                     </div>
                 </div>
             </Dialog.Content>
-            <CustomClass 
-                open={isCustomClassOpen} 
-                onClose={closeCustomClass} 
-                onConfirm={handleOnConfirm}>
-                        </CustomClass>
+                {/* <ClassDetails
+                    isCreateCustomClass={true}
+                    isOpen={isCustomClassOpen}
+                    setIsOpen={setIsEditClassOpen}
+                    classData={classToEdit}
+                    onUpdate={handleUpdateClass}
+                /> */}
+                {/* <CustomClass 
+                    open={isCustomClassOpen} 
+                    onClose={closeCustomClass} 
+                    onConfirm={handleOnConfirm}>
+                </CustomClass> */}
             </Dialog.Root>
     )
 }
