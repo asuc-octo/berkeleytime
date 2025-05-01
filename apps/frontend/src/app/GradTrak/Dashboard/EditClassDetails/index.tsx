@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
+import { Button } from '@repo/theme';
 import {
     Xmark,
     Calendar,
-    Check
+    Barcode,
+    MultiplePages,
+    Hashtag,
+    TaskList
 } from 'iconoir-react'
-import './EditClassDetails.scss';
+import styles from './ClassDetails.module.scss';
+
 
 type ClassType = {
     id: number;
@@ -49,153 +54,156 @@ const EditClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: EditClassD
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Portal>
-                <Dialog.Overlay className="dialog-overlay" />
-                <Dialog.Content className="edit-dialog-content">
-                    <div className="edit-dialog-header">
-                        <Dialog.Title className="edit-dialog-title">Edit Course Details</Dialog.Title>
+                <Dialog.Overlay className={styles.overlay}/>
+                <Dialog.Content className={styles.content}>
+                    <div className={styles.header}>
+                        <Dialog.Title className={styles.title}>Edit Course Details</Dialog.Title>
                         <Dialog.Close asChild>
-                            <button className="close-button" aria-label="Close">
-                                <Xmark />
-                            </button>
+                            <Button className={styles.closeButton} aria-label="Close">
+                                <Xmark className={styles.icon} />
+                            </Button>
                         </Dialog.Close>
                     </div>
 
-                    <div className="edit-dialog-body">
-                        <section className="section">
-                            <h3 className="section-title">INFO</h3>
-                            <div className="field-container">
-                                <div className="icon-container">
-                                    <span className="field-icon">📋</span>
+                    <div className={styles.body}>
+                        <section className={styles.section}>
+                            <h3>Info</h3>
+                            <div className={styles.container}>
+                                <div className={styles.icon}>
+                                    <Barcode />
                                 </div>
                                 <input
                                     type="text"
                                     value={className}
                                     onChange={(e) => setClassName(e.target.value)}
-                                    className="field-input"
                                 />
                             </div>
-                            <div className="field-container">
-                                <div className="icon-container">
-                                    <span className="field-icon">📄</span>
+                            <div className={styles.container}>
+                                <div className={styles.icon}>
+                                    <MultiplePages />
                                 </div>
                                 <input
                                     type="text"
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="field-input"
                                 />
                             </div>
                         </section>
 
-                        <section className="section">
-                            <h3 className="section-title">UNITS</h3>
-                            <div className="units-container">
-                                <span className="units-hash">#</span>
+                        <section className={styles.section}>
+                            <h3>Units</h3>
+                            <div className={styles.container}>
+                                <div className={styles.icon}>
+                                    <Hashtag />
+                                </div>
                                 <input
                                     type="number"
                                     value={units}
                                     onChange={(e) => setUnits(Number(e.target.value))}
                                     min="1"
                                     max="12"
-                                    className="units-input"
                                 />
                             </div>
                         </section>
 
-                        <section className="section">
-                            <h3 className="section-title">SEMESTER</h3>
-                            <div className="field-container">
-                                <div className="icon-container">
-                                    <Calendar className="field-icon" />
+                        <section className={styles.section}>
+                            <h3>Requirements Fulfilled</h3>
+                            <div className={styles.container}>
+                                <div className={styles.icon}>
+                                    <TaskList/>
                                 </div>
                                 <input
                                     type="text"
                                     value={semester}
                                     readOnly
-                                    className="field-input"
                                 />
                             </div>
                         </section>
 
-                        <section className="section">
-                            <h3 className="section-title">GRADING</h3>
-                            <div className="radio-group">
-                                <label className="radio-option">
+                        <section className={styles.section}>
+                            <h3>Course tags</h3>
+                            <div className={styles.container}>
+                                <div className={styles.icon}>
+                                    <Calendar/>
+                                </div>
+                                <input
+                                    type="text"
+                                    value={semester}
+                                    readOnly
+                                />
+                            </div>
+                        </section>
+
+                        <section className={styles.section}>
+                            <h3>Grading</h3>
+                            <div className={styles.radio}>
+                                <label className={styles.option}>
                                     <input
                                         type="radio"
                                         name="grading"
                                         checked={grading === "Graded"}
                                         onChange={() => setGrading("Graded")}
-                                        className="radio-input"
+                                        className={styles.input}
                                     />
-                                    <div className="radio-circle">
-                                        {grading === "Graded" && <div className="radio-dot"></div>}
+                                    <div className={styles.circle}>
+                                        {grading === "Graded" && <div className={styles.dot}></div>}
                                     </div>
-                                    <span className="radio-label">Graded</span>
+                                    <p>Graded</p>
                                 </label>
-                                <label className="radio-option">
+                                <label className={styles.option}>
                                     <input
                                         type="radio"
                                         name="grading"
                                         checked={grading === "P/NP"}
                                         onChange={() => setGrading("P/NP")}
-                                        className="radio-input"
+                                        className={styles.input}
                                     />
-                                    <div className="radio-circle">
-                                        {grading === "P/NP" && <div className="radio-dot"></div>}
+                                    <div className={styles.circle}>
+                                        {grading === "P/NP" && <div className={styles.dot}></div>}
                                     </div>
-                                    <span className="radio-label">P/NP</span>
+                                    <p>P/NP</p>
                                 </label>
                             </div>
                         </section>
 
-                        <section className="section">
-                            <h3 className="section-title">CREDIT</h3>
-                            <div className="radio-group">
-                                <label className="radio-option">
+                        <section className={styles.section}>
+                            <h3>Credit</h3>
+                            <div className={styles.radio}>
+                                <label className={styles.option}>
                                     <input
                                         type="radio"
                                         name="credit"
                                         checked={credit === "UC Berkeley"}
                                         onChange={() => setCredit("UC Berkeley")}
-                                        className="radio-input"
-                                    />
-                                    <div className="radio-circle">
-                                        {credit === "UC Berkeley" && <div className="radio-dot"></div>}
+                                        className={styles.input}
+                                        />
+                                        <div className={styles.circle}>
+                                        {credit === "UC Berkeley" && <div className={styles.dot}></div>}
                                     </div>
-                                    <span className="radio-label">UC Berkeley</span>
+                                    <p>UC Berkeley</p>
                                 </label>
-                                <label className="radio-option">
+                                <label className={styles.option}>
                                     <input
                                         type="radio"
                                         name="credit"
                                         checked={credit === "Transfer"}
                                         onChange={() => setCredit("Transfer")}
-                                        className="radio-input"
-                                    />
-                                    <div className="radio-circle">
-                                        {credit === "Transfer" && <div className="radio-dot"></div>}
+                                        className={styles.input}
+                                        />
+                                        <div className={styles.circle}>
+                                        {credit === "Transfer" && <div className={styles.dot}></div>}
                                     </div>
-                                    <span className="radio-label">Transfer</span>
+                                    <p>Transfer</p>
                                 </label>
-                            </div>
-                        </section>
-
-                        <section className="section">
-                            <h3 className="section-title">REQUIREMENTS FULFILLED</h3>
-                            <div className="search-container">
-                                <input
-                                    type="text"
-                                    placeholder="Search for a requirement..."
-                                    className="search-input"
-                                />
                             </div>
                         </section>
                     </div>
 
-                    <button className="confirm-button" onClick={handleSubmit}>
-                        Confirm
-                    </button>
+                    <div className={styles.footer}>
+                        <Button variant="solid" className={styles.confirmButton} onClick={handleSubmit}>
+                            Confirm
+                        </Button>
+                    </div>
                 </Dialog.Content>
             </Dialog.Portal>
         </Dialog.Root>
