@@ -43,7 +43,6 @@ interface IGradTrak {
     name: string;
     year: number;
     semester: 'Fall' | 'Spring' | 'Summer';
-    semesters: { [key: string]: any[] };
 }
 
 export default function GradTrakIndex() {

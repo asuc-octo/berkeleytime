@@ -1,5 +1,6 @@
 import RequirementsAccordion from "./RequirementsAccordion";
-import { UniReqs, LnSReqs, CoEReqs, HaasReqs } from '@/lib/course';
+// TODO: also import in CoEReqs, HaasReqs
+import { UniReqs, LnSReqs } from '@/lib/course';
 import { Button } from "@repo/theme"
 
 import styles from "./SidePanel.module.scss";

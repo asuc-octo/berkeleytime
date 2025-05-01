@@ -13,34 +13,9 @@
     flex-direction: column;
     overflow: scroll;
     width: 27%;
-
-    .header {
-      padding: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      background-color: var(--foreground-color);
-
-      .title {
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--heading-color);
-        line-height: 1;
-      }
     }
-
-    .body {
-      flex-grow: 1;
-      min-height: 0;
-    }
-  }
 
   @media (width > 600px) {
-    &.collapsed .panel {
-      display: none;
-    }
-
     .panel {
       border-right: 1px solid var(--border-color);
     }
@@ -57,14 +32,6 @@
   @media (width <= 600px) {
     .panel {
       flex-grow: 1;
-    }
-
-    &.open .panel {
-      display: none;
-    }
-
-    &:not(.open) .view {
-      display: none;
     }
   }
 }
