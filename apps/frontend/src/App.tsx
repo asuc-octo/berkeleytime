@@ -39,7 +39,7 @@ const Course = {
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
-const About = lazy(() => import("@/app/About"));
+// const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));

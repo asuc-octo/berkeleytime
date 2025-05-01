@@ -12,6 +12,8 @@ import {
   YAxis,
 } from "recharts";
 
+import useClass from "@/hooks/useClass";
+
 import styles from "./Enrollment.module.scss";
 
 // import Reservations from "./Reservations";

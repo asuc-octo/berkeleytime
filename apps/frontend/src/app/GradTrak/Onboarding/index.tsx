@@ -22,7 +22,7 @@ export default function GradTrakOnboarding() {
   const navigate = useNavigate();
   
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
-  const [selectedMinors, setSelectedMinors] = useState<DegreeOption[]>([]);
+  const [, setSelectedMinors] = useState<DegreeOption[]>([]);
   
   const handleSetupComplete = (start: string, grad: string, summer: boolean) => {
     setStartYear(start);
@@ -65,14 +65,12 @@ export default function GradTrakOnboarding() {
           <AddDegree
             isMajor={true}
             onNext={handleMajorsComplete}
-            selectedList={selectedMajors}
           />
         )}
         {step === 2 && (
           <AddDegree
             isMajor={false}
             onNext={handleMinorsComplete}
-            selectedList={selectedMinors}
           />
         )}
       </SuspenseBoundary>
