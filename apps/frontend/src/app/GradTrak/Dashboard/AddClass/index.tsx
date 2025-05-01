@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
 import SearchBar from "./SearchBar";
 
-import styles from "./AddClass.module.scss"
-
 // Stub for now.
 // TODO: Replace with actual code.
 const classesData = [
+    { "id": 1, "name": "COLWRIT R4A", "units": 4 },
     { "id": 1, "name": "COLWRIT R4B", "units": 4 },
     { "id": 2, "name": "HISTORY 7A", "units": 4 },
+    { "id": 3, "name": "DATA 8", "units": 4 },
+    { "id": 1, "name": "DATA C100", "units": 4 },
     { "id": 3, "name": "CS 61A", "units": 4 },
+    { "id": 1, "name": "CS 61B", "units": 4 },
+    { "id": 1, "name": "CS 61C", "units": 4 },
+    { "id": 1, "name": "CS 70", "units": 4 },
     { "id": 4, "name": "MATH 51", "units": 4 },
     { "id": 5, "name": "MATH 53", "units": 4 },
     { "id": 6, "name": "MATH 54", "units": 4 },
-    { "id": 7, "name": "MATH 1A", "units": 4 }
+    { "id": 7, "name": "MATH 1A", "units": 4 },
+    { "id": 7, "name": "MATH 1B", "units": 4 },
+    { "id": 7, "name": "MATH 16A", "units": 4 },
+    { "id": 7, "name": "MATH 16B", "units": 4 }
   ]
 
 interface AddClassProps  {

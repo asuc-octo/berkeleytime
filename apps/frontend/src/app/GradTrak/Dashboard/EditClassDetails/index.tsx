@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Button } from '@repo/theme';
 import {
@@ -29,10 +29,10 @@ const EditClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: EditClassD
     const [className, setClassName] = useState(classData.name);
     const [description, setDescription] = useState("Multivariable Calculus");
     const [units, setUnits] = useState(classData.units);
-    const [semester, setSemester] = useState("Fall 2021");
+    const [semester, ] = useState("Fall 2021");
     const [grading, setGrading] = useState("Graded");
     const [credit, setCredit] = useState("UC Berkeley");
-    const [requirements, setRequirements] = useState<string[]>([]);
+    // const [requirements, setRequirements] = useState<string[]>([]);
 
     // Update state when classData changes
     useEffect(() => {

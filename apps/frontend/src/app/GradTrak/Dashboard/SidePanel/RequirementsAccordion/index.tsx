@@ -97,7 +97,7 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
             {isExpanded && (
                 <div className={styles.body}>
                     {requirements && requirements.length > 0 ? (
-                        requirements.map((requirement, index) => {
+                        requirements.map((requirement, ) => {
                             const isFulfilled = fulfilledRequirements.has(requirement);
 
                             return (
@@ -128,7 +128,16 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
 
                                     {activeMenuRequirement === requirement && (
                                         <div className={styles.popover} ref={menuRef}>
-                                            <button className={styles.item} onClick={() => { isFulfilled ? markAsUnfulfilled(requirement) : markAsFulfilled(requirement) }}>
+                                            <button 
+                                                className={styles.item} 
+                                                onClick={() => {
+                                                    if (isFulfilled) {
+                                                        markAsUnfulfilled(requirement);
+                                                    } else {
+                                                        markAsFulfilled(requirement);
+                                                    }
+                                                }}
+                                            >
                                                 <div className={styles.start}>
                                                     <Check className={styles.icon}/>
                                                     {isFulfilled ? 'Mark as Unfulfilled' : 'Mark as Fulfilled'}

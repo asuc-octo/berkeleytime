@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType, Model, Schema, model } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 
 import { schemaOptions } from "../lib/common";
 import { descriptor } from "../lib/sis";

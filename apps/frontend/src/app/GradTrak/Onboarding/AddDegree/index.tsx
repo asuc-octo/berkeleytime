@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import {useLocation} from 'react-router-dom';
 
 import { Separator } from "@radix-ui/themes";
 import { 
@@ -23,16 +22,12 @@ type DegreeOption = {
 type AddDegreeProps = {
     isMajor: boolean;
     onNext: (selected: DegreeOption[]) => void;
-    selectedList: DegreeOption[];
   };
 
 export default function AddDegree({
     isMajor,
     onNext,
-    selectedList,
 }: AddDegreeProps) {
-    const location = useLocation();
-    const {startYear, gradYear, summerCheck} = location.state || {};
     const optionType = isMajor ? "Major" : "Minor";
     const [selectedDegree, setSelectedDegree] = useState<DegreeOption | null>(null);
     const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>([]);
