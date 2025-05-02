@@ -19,8 +19,9 @@ type DegreeOption = {
 };
 
 type ClassType = {
-  id: number;
+  id: string;
   name: string;
+  title: string;
   units: number;
   grading?: 'Graded' | 'P/NP';
   credit?: 'UC Berkeley' | 'Transfer';

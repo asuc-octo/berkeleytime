@@ -11,23 +11,23 @@ import {
 } from 'iconoir-react'
 import styles from './ClassDetails.module.scss';
 
-
 type ClassType = {
-    id: number;
+    id: string;
     name: string;
+    title: string;
     units: number;
 };
 
-interface EditClassDetailsProps {
+interface ClassDetailsProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     classData: ClassType;
     onUpdate: (updatedClass: ClassType) => void;
 }
 
-const EditClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: EditClassDetailsProps) => {
+const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: ClassDetailsProps) => {
     const [className, setClassName] = useState(classData.name);
-    const [description, setDescription] = useState("Multivariable Calculus");
+    const [description, setDescription] = useState(classData.title);
     const [units, setUnits] = useState(classData.units);
     const [semester, ] = useState("Fall 2021");
     const [grading, setGrading] = useState("Graded");
@@ -210,4 +210,4 @@ const EditClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: EditClassD
     );
 };
 
-export default EditClassDetails;
+export default ClassDetails;

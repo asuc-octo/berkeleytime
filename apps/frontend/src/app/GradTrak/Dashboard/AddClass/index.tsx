@@ -1,26 +1,8 @@
-import React, { useState } from 'react';
-import SearchBar from "./SearchBar";
+import React, { useState, useMemo } from 'react';
+import { GET_COURSE_NAMES, GetCoursesResponse } from "@/lib/api";
+import { useQuery } from '@apollo/client';
 
-// Stub for now.
-// TODO: Replace with actual code.
-const classesData = [
-    { "id": 1, "name": "COLWRIT R4A", "units": 4 },
-    { "id": 1, "name": "COLWRIT R4B", "units": 4 },
-    { "id": 2, "name": "HISTORY 7A", "units": 4 },
-    { "id": 3, "name": "DATA 8", "units": 4 },
-    { "id": 1, "name": "DATA C100", "units": 4 },
-    { "id": 3, "name": "CS 61A", "units": 4 },
-    { "id": 1, "name": "CS 61B", "units": 4 },
-    { "id": 1, "name": "CS 61C", "units": 4 },
-    { "id": 1, "name": "CS 70", "units": 4 },
-    { "id": 4, "name": "MATH 51", "units": 4 },
-    { "id": 5, "name": "MATH 53", "units": 4 },
-    { "id": 6, "name": "MATH 54", "units": 4 },
-    { "id": 7, "name": "MATH 1A", "units": 4 },
-    { "id": 7, "name": "MATH 1B", "units": 4 },
-    { "id": 7, "name": "MATH 16A", "units": 4 },
-    { "id": 7, "name": "MATH 16B", "units": 4 }
-  ]
+import SearchBar from "./SearchBar";
 
 interface AddClassProps  {
     // name: string;
@@ -33,38 +15,64 @@ interface AddClassProps  {
 };
 
 type ClassType = {
-    id: number;
-    name: string;
-    units: number;
-  };
-  
+  id: string;
+  name: string;
+  title: string;
+  units: number;
+};
 
 function AddClass({ isOpen, setIsOpen, addClass, handleOnConfirm }: AddClassProps) {
-
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredClasses, setFilteredClasses] = useState<ClassType[]>([]);
+    const [allClasses, setAllClasses] = useState<ClassType[]>([]);
+ 
+    const { data } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {skip: !isOpen});
+
+    const courses = useMemo(() => {
+      if (!data?.courses) return [];
+      return data.courses;
+    }, [data]);
+
+    useMemo(() => {
+        console.log('Courses count:', courses?.length);
+        if (data?.courses) {
+            const formattedClasses = data.courses.map(course => ({
+                id: `${course.subject}_${course.number}`,
+                name: `${course.subject} ${course.number}`,
+                title: course.title,
+                units: 4,
+            }));
+            setAllClasses(formattedClasses);
+        }
+    }, [data]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const term = event.target.value;
-        setSearchTerm(term);
-        const filtered = classesData.filter((cls) =>
+      const term = event.target.value;
+      setSearchTerm(term);
+      const filtered = allClasses.filter((cls) =>
           cls.name.toLowerCase().includes(term.toLowerCase())
-        );
-        setFilteredClasses(filtered);
-      };
+      );
+      setFilteredClasses(filtered);
+    };
 
-      const handleSelectClass = (cls: ClassType) => {
-        addClass(cls); // Update parent state
-        setFilteredClasses([]); // Hide suggestions
-        setSearchTerm(''); // Clear search field
-        setIsOpen(false); // Close dialog after selection
-      };
+    const handleSelectClass = (cls: ClassType) => {
+      addClass(cls);
+      setFilteredClasses([]);
+      setSearchTerm('');
+      setIsOpen(false);
+    };
 
     return (
         <div>
-            <SearchBar isOpen={isOpen} setIsOpen={setIsOpen} searchTerm={searchTerm} 
-            handleSearch={handleSearch} filteredClasses={filteredClasses}
-            handleSelectClass={handleSelectClass} handleOnConfirm={handleOnConfirm}></SearchBar>
+            <SearchBar 
+              isOpen={isOpen} 
+              setIsOpen={setIsOpen} 
+              searchTerm={searchTerm} 
+              handleSearch={handleSearch} 
+              filteredClasses={filteredClasses}
+              handleSelectClass={handleSelectClass} 
+              handleOnConfirm={handleOnConfirm}
+            />
         </div>
     )
 }

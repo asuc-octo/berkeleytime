@@ -1,7 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from "@radix-ui/themes";
-import CustomClass from '../../CustomClass';
 
 import styles from '../AddClass.module.scss'
 
@@ -13,24 +12,16 @@ interface SearchBarProps  {
     filteredClasses: ClassType[];
     handleSelectClass: (cls: ClassType) => void;
     handleOnConfirm: (cls: ClassType) => void;
-
 };
 
 type ClassType = {
-    id: number;
+    id: string;
     name: string;
+    title: string;
     units: number;
-  };
+};  
 
 function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses, handleSelectClass, handleOnConfirm}: SearchBarProps) {
-    const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
-
-    const openCustomClass = () => setIsCustomClassOpen(true);
-    const closeCustomClass = () => {
-      setIsOpen(false)  
-      setIsCustomClassOpen(false)
-    };
-
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Content>
@@ -49,27 +40,27 @@ function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses
                     <ul className={`${styles.list} ${filteredClasses.length > 0 ? styles.hasItems : ''}`}>
                     {filteredClasses.map((cls) => (
                         <li
-                        key={cls.id}
                         onClick={() => handleSelectClass(cls)}
                         className={styles.item}
                         >
-                        {cls.name} - {cls.units} units
+                            {cls.name} - {cls.units} units
                         </li>
                     ))}
                     </ul>
                 )}
                     <div className={styles.footer}>
-                        <Button className={styles.createCustomClassButton} onClick={openCustomClass}>
+                        <Button className={styles.createCustomClassButton}>
                             + Create custom class
                         </Button>
                     </div>
                 </div>
             </Dialog.Content>
-            <CustomClass 
+            
+            {/* <CustomClass 
                 open={isCustomClassOpen} 
                 onClose={closeCustomClass} 
                 onConfirm={handleOnConfirm}>
-                        </CustomClass>
+            </CustomClass> */}
             </Dialog.Root>
     )
 }

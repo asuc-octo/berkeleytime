@@ -16,8 +16,15 @@ import Select from 'react-select'
 type CustomClassProps = {
     open: boolean;
     onClose: () => void;
-    onConfirm: (cls: { id: number; name: string; units: number }) => void;
+    onConfirm: () => void;
   };
+
+type ClassType = {
+    id: string;
+    name: string;
+    title: string;
+    units: number;
+};
 
 // TODO: Make sure UI aligns with the design.
 function CustomClass({open, onClose, onConfirm}: CustomClassProps) {
@@ -27,7 +34,7 @@ function CustomClass({open, onClose, onConfirm}: CustomClassProps) {
 
     const handleConfirm = () => {
         if (className && Number(classUnits) > 0) {
-          onConfirm({ id: Number(classId), name: className, units: Number(classUnits) });
+          onConfirm({ id: classId, name: className, units: Number(classUnits) });
           setClassId('');
           setClassName('');
           setClassUnits('');

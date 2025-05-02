@@ -13,7 +13,7 @@ import { Button } from "@repo/theme";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import AddClass from "../AddClass";
-// import EditClassDetails from "../EditClassDetails";
+import ClassDetails from "../ClassDetails";
 import styles from "./SemesterBlock.module.scss"
 
 
@@ -27,8 +27,9 @@ interface SemesterYearProps {
 };
 
 type ClassType = {
-  id: number;
+  id: string;
   name: string;
+  title: string;
   units: number;
 };
 
@@ -39,8 +40,8 @@ function SemesterBlock({ selectedYear,
   allSemesters,
   updateAllSemesters
 }: SemesterYearProps) {
-  const [, setIsEditClassOpen] = useState(false);
-  const [, setClassToEdit] = useState<ClassType | null>(null);
+  const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
+  const [classToEdit, setClassToEdit] = useState<ClassType | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(allSemesters[semesterId] || []);
   const [totalUnits, setTotalUnits] = useState(0);
@@ -89,9 +90,9 @@ function SemesterBlock({ selectedYear,
     // setTotalUnits((prevTotalUnits) => prevTotalUnits - deletedClassUnits);
   };
 
-  const handleEditClass = (index: number) => {
+  const handleClassDetails= (index: number) => {
     setClassToEdit(selectedClasses[index]);
-    setIsEditClassOpen(true);
+    setIsClassDetailsOpen(true);
   };
 
   const addClass = (cls: ClassType) => {
@@ -134,27 +135,27 @@ function SemesterBlock({ selectedYear,
     return classElements.length;
   };
 
-  // const handleUpdateClass = (updatedClass: ClassType) => {
-  //   setSelectedClasses((prevClasses) =>
-  //     prevClasses.map((cls, ) =>
-  //       cls.id === updatedClass.id ? updatedClass : cls
-  //     )
-  //   );
+  const handleUpdateClass = (updatedClass: ClassType) => {
+    setSelectedClasses((prevClasses) =>
+      prevClasses.map((cls, ) =>
+        cls.id === updatedClass.id ? updatedClass : cls
+      )
+    );
 
-  //   // Recalculate total units
-  //   const newTotalUnits = selectedClasses.reduce((total, cls) => {
-  //     if (cls.id === updatedClass.id) {
-  //       return total + updatedClass.units;
-  //     }
-  //     return total + cls.units;
-  //   }, 0);
+    // Recalculate total units
+    const newTotalUnits = selectedClasses.reduce((total, cls) => {
+      if (cls.id === updatedClass.id) {
+        return total + updatedClass.units;
+      }
+      return total + cls.units;
+    }, 0);
 
 
-  //   setTotalUnits(newTotalUnits);
-  //   onTotalUnitsChange(newTotalUnits);
-  //   setIsEditClassOpen(false);
-  //   setClassToEdit(null);
-  // };
+    setTotalUnits(newTotalUnits);
+    onTotalUnitsChange(newTotalUnits);
+    setIsClassDetailsOpen(false);
+    setClassToEdit(null);
+  };
 
   const handleDragLeave = (e: React.DragEvent) => {
     // only reset if leaving the entire container (not just moving between children)
@@ -295,7 +296,7 @@ function SemesterBlock({ selectedYear,
                     >
                       <DropdownMenu.Item
                         className={styles.menuItem}
-                        onClick={() => handleEditClass(index)}
+                        onClick={() => handleClassDetails(index)}
                       >
                         <BookStack /> Edit Course Details
                       </DropdownMenu.Item>
@@ -324,14 +325,14 @@ function SemesterBlock({ selectedYear,
         <AddClass isOpen={isAddClassOpen} setIsOpen={setIsAddClassOpen} addClass={addClass} handleOnConfirm={(cls) => { addClass(cls); }} />
 
         {/* Edit Class Details Dialog */}
-        {/* {classToEdit && (
-          <EditClassDetails
-            isOpen={isEditClassOpen}
-            setIsOpen={setIsEditClassOpen}
+        {classToEdit && (
+          <ClassDetails
+            isOpen={isClassDetailsOpen}
+            setIsOpen={setIsClassDetailsOpen}
             classData={classToEdit}
             onUpdate={handleUpdateClass}
           />
-        )} */}
+        )}
 
         <Button onClick={() => setIsAddClassOpen(true)} className={styles.addButton}>
           + Add Class
