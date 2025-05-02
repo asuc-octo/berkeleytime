@@ -12,25 +12,18 @@ import {
 import { Button } from "@repo/theme";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
+import { ClassType } from "../types"
 import AddClass from "../AddClass";
 import ClassDetails from "../ClassDetails";
 import styles from "./SemesterBlock.module.scss"
 
-
-interface SemesterYearProps {
+interface SemesterBlockProps {
   selectedYear: number | string;
   selectedSemester: string;
-  semesterId: string; // id for every semester
-  allSemesters: { [key: string]: ClassType[] }; // every semester and their classes
+  semesterId: string; 
+  allSemesters: { [key: string]: ClassType[] }; 
   onTotalUnitsChange: (newTotal: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ClassType[] }) => void;
-};
-
-type ClassType = {
-  id: string;
-  name: string;
-  title: string;
-  units: number;
 };
 
 function SemesterBlock({ selectedYear,
@@ -39,7 +32,7 @@ function SemesterBlock({ selectedYear,
   semesterId,
   allSemesters,
   updateAllSemesters
-}: SemesterYearProps) {
+}: SemesterBlockProps) {
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
   const [classToEdit, setClassToEdit] = useState<ClassType | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
@@ -322,7 +315,12 @@ function SemesterBlock({ selectedYear,
         )}
 
         {/* Dialog Component */}
-        <AddClass isOpen={isAddClassOpen} setIsOpen={setIsAddClassOpen} addClass={addClass} handleOnConfirm={(cls) => { addClass(cls); }} />
+        <AddClass 
+          isOpen={isAddClassOpen} 
+          setIsOpen={setIsAddClassOpen} 
+          addClass={addClass} 
+          handleOnConfirm={(cls) => { addClass(cls); }} 
+        />
 
         {/* Edit Class Details Dialog */}
         {classToEdit && (

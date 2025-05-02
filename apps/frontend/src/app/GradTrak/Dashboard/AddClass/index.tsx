@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { GET_COURSE_NAMES, GetCoursesResponse } from "@/lib/api";
 import { useQuery } from '@apollo/client';
 
+import { ClassType } from "../types"
 import SearchBar from "./SearchBar";
 
 interface AddClassProps  {
@@ -12,13 +13,6 @@ interface AddClassProps  {
     setIsOpen: (isOpen: boolean) => void;
     addClass: (cls: ClassType) => void;
     handleOnConfirm: (cls: ClassType) => void;
-};
-
-type ClassType = {
-  id: string;
-  name: string;
-  title: string;
-  units: number;
 };
 
 function AddClass({ isOpen, setIsOpen, addClass, handleOnConfirm }: AddClassProps) {

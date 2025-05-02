@@ -8,24 +8,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useReadUser } from '@/hooks/api';
 
-import SidePanel from "./SidePanel" 
-import SemesterBlock from "./SemesterBlock"
+import { ClassType } from "./types";
+import SidePanel from "./SidePanel" ;
+import SemesterBlock from "./SemesterBlock";
 
-import styles from "./Dashboard.module.scss"
+import styles from "./Dashboard.module.scss";
 
 type DegreeOption = {
   label: string;
   value: string;
-};
-
-type ClassType = {
-  id: string;
-  name: string;
-  title: string;
-  units: number;
-  grading?: 'Graded' | 'P/NP';
-  credit?: 'UC Berkeley' | 'Transfer';
-  requirements?: string[];
 };
 
 function Dashboard() {

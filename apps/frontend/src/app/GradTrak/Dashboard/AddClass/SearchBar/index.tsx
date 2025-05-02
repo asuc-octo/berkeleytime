@@ -1,8 +1,10 @@
+import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
-import React from 'react';
 import { Button } from "@radix-ui/themes";
 
+import { ClassType } from "../../types"
 import styles from '../AddClass.module.scss'
+import ClassDetails from '../../ClassDetails';
 
 interface SearchBarProps  {
     isOpen: boolean;
@@ -14,14 +16,9 @@ interface SearchBarProps  {
     handleOnConfirm: (cls: ClassType) => void;
 };
 
-type ClassType = {
-    id: string;
-    name: string;
-    title: string;
-    units: number;
-};  
-
 function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses, handleSelectClass, handleOnConfirm}: SearchBarProps) {
+    const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
+    
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Content>
@@ -49,18 +46,21 @@ function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses
                     </ul>
                 )}
                     <div className={styles.footer}>
-                        <Button className={styles.createCustomClassButton}>
+                        <Button 
+                            className={styles.createCustomClassButton}
+                            onClick={() => setIsCustomClassOpen(true)}
+                        >
                             + Create custom class
                         </Button>
                     </div>
                 </div>
             </Dialog.Content>
-            
-            {/* <CustomClass 
-                open={isCustomClassOpen} 
-                onClose={closeCustomClass} 
-                onConfirm={handleOnConfirm}>
-            </CustomClass> */}
+
+            <ClassDetails
+                isOpen={isCustomClassOpen}
+                setIsOpen={setIsCustomClassOpen}
+                onConfirm={handleOnConfirm}
+            />      
             </Dialog.Root>
     )
 }

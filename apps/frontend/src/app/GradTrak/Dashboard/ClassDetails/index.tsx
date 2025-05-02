@@ -9,26 +9,25 @@ import {
     Hashtag,
     TaskList
 } from 'iconoir-react'
-import styles from './ClassDetails.module.scss';
 
-type ClassType = {
-    id: string;
-    name: string;
-    title: string;
-    units: number;
-};
+import { ClassType } from "../types"
+import styles from './ClassDetails.module.scss';
 
 interface ClassDetailsProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
-    classData: ClassType;
-    onUpdate: (updatedClass: ClassType) => void;
+    classData?: ClassType; 
+    onUpdate?: (updatedClass: ClassType) => void;
+    onConfirm?: (newClass: ClassType) => void;
 }
 
-const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: ClassDetailsProps) => {
-    const [className, setClassName] = useState(classData.name);
-    const [description, setDescription] = useState(classData.title);
-    const [units, setUnits] = useState(classData.units);
+const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate, onConfirm }: ClassDetailsProps) => {
+    const isEditMode = !!classData;
+    
+    const [classId, setClassId] = useState(classData?.id || '');
+    const [className, setClassName] = useState(classData?.name || '');
+    const [classTitle, setClassTitle] = useState(classData?.title || '');
+    const [units, setUnits] = useState(classData?.units || 0);
     const [semester, ] = useState("Fall 2021");
     const [grading, setGrading] = useState("Graded");
     const [credit, setCredit] = useState("UC Berkeley");
@@ -36,19 +35,33 @@ const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: ClassDetailsPr
 
     // Update state when classData changes
     useEffect(() => {
-        if (classData) {
-            setClassName(classData.name);
-            setUnits(classData.units);
+        if (isEditMode) {
+            setClassId(classData!.id);
+            setClassName(classData!.name);
+            setClassTitle(classData!.title);
+            setUnits(classData!.units);
+        } else {
+            setClassId('');
+            setClassName('');
+            setClassTitle('');
+            setUnits(0);
         }
-    }, [classData]);
+    }, [classData, isEditMode]);
 
     const handleSubmit = () => {
         const updatedClass = {
-            ...classData,
+            id: classId,
             name: className,
+            title: classTitle,
             units: units,
         };
-        onUpdate(updatedClass);
+
+        if (isEditMode && onUpdate) {
+            onUpdate(updatedClass);
+        } else if (!isEditMode && onConfirm) {
+            onConfirm(updatedClass);
+        }
+        setIsOpen(false);
     };
 
     return (
@@ -57,7 +70,9 @@ const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: ClassDetailsPr
                 <Dialog.Overlay className={styles.overlay}/>
                 <Dialog.Content className={styles.content}>
                     <div className={styles.header}>
-                        <Dialog.Title className={styles.title}>Edit Course Details</Dialog.Title>
+                        <Dialog.Title className={styles.title}>
+                            {isEditMode ? 'Edit Course Details' : 'Create Custom Class'}
+                        </Dialog.Title>
                         <Dialog.Close asChild>
                             <Button className={styles.closeButton} aria-label="Close">
                                 <Xmark className={styles.icon} />
@@ -84,8 +99,8 @@ const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate }: ClassDetailsPr
                                 </div>
                                 <input
                                     type="text"
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
+                                    value={classTitle}
+                                    onChange={(e) => setClassTitle(e.target.value)}
                                 />
                             </div>
                         </section>
