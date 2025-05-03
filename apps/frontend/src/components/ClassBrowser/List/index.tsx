@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo} from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
@@ -10,6 +10,8 @@ import Header from "../Header";
 import useBrowser from "../useBrowser";
 import Class from "./Class";
 import styles from "./List.module.scss";
+import { hasTimeConflict } from "../browser"
+import useScheduleTimeSlots from "@/hooks/useScheduleTimeSlots";
 
 interface ListProps {
   onSelect: (subject: string, courseNumber: string, number: string) => void;
@@ -37,6 +39,7 @@ export default function List({ onSelect }: ListProps) {
   }, [searchParams]);
 
   const items = virtualizer.getVirtualItems();
+  const timeSlots = useScheduleTimeSlots();
 
   return (
     <div ref={rootRef} className={styles.root}>
@@ -71,6 +74,7 @@ export default function List({ onSelect }: ListProps) {
           >
             {items.map(({ key, index }) => {
               const _class = classes[index];
+              const conflict = hasTimeConflict(_class, timeSlots);
 
               return (
                 <Class
@@ -78,6 +82,7 @@ export default function List({ onSelect }: ListProps) {
                   index={index}
                   key={key}
                   ref={virtualizer.measureElement}
+                  conflict={conflict}
                   onClick={() =>
                     onSelect(
                       _class.course.subject,

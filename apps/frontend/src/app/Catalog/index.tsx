@@ -12,6 +12,7 @@ import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { Semester, TemporalPosition } from "@/lib/api";
+import { useReadSchedules } from "@/hooks/api";
 
 import styles from "./Catalog.module.scss";
 import Dashboard from "./Dashboard";
@@ -96,6 +97,8 @@ export default function Catalog() {
     [navigate, location, term]
   );
 
+  const { data: schedules = [] } = useReadSchedules();
+
   // TODO: Loading state
   if (termsLoading) {
     return <></>;
@@ -129,6 +132,7 @@ export default function Catalog() {
             semester={term.semester}
             year={term.year}
             persistent
+            allSchedules={schedules}
           />
         </div>
       </div>

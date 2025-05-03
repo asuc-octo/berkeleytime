@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
+import { ISchedule } from "@/lib/api";
+
 
 import {
   Component,
@@ -10,6 +12,8 @@ import {
   GetCatalogResponse,
   IClass,
   Semester,
+  READ_SCHEDULE,
+  ReadScheduleResponse
 } from "@/lib/api";
 
 import styles from "./ClassBrowser.module.scss";
@@ -31,6 +35,7 @@ interface ClassBrowserProps {
   semester: Semester;
   year: number;
   persistent?: boolean;
+  allSchedules: ISchedule[];
 }
 
 export default function ClassBrowser({
@@ -39,6 +44,7 @@ export default function ClassBrowser({
   semester: currentSemester,
   year: currentYear,
   persistent,
+  allSchedules,
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -51,6 +57,7 @@ export default function ClassBrowser({
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<ISchedule | null>(null);
 
   const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
     variables: {
@@ -137,6 +144,35 @@ export default function ClassBrowser({
     [searchParams, localOnline, persistent]
   );
 
+  const scheduleId = searchParams.get("selectedSchedule");
+
+// 2. 用 Apollo 去拉取那张完整的 schedule
+  const { data: scheduleData } = useQuery<ReadScheduleResponse>(
+    READ_SCHEDULE,
+    {
+      variables: { id: scheduleId! },
+      skip: !scheduleId,
+    }
+  );
+
+  const selectedScheduleMemo = useMemo<ISchedule | null>(
+    () => scheduleData?.schedule ?? null,
+    [scheduleData]
+  );
+
+
+  const updateSelectedSchedule = (schedule: ISchedule | null) => {
+    if (persistent) {
+      if (schedule) {
+        searchParams.set("selectedSchedule", schedule._id);
+      } else {
+        searchParams.delete("selectedSchedule");
+      }
+      setSearchParams(searchParams);
+    }
+    setSelectedSchedule(schedule);
+  };
+
   const { includedClasses, excludedClasses } = useMemo(
     () =>
       getFilteredClasses(
@@ -146,9 +182,9 @@ export default function ClassBrowser({
         levels,
         days,
         open,
-        online
+        online,
       ),
-    [classes, components, units, levels, days, open, online]
+    [classes, components, units, levels, days, open, online, ]
   );
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
@@ -272,8 +308,9 @@ export default function ClassBrowser({
     setLocalQuery(query);
   };
 
+
   return (
-    <BrowserContext
+    <BrowserContext.Provider
       value={{
         expanded,
         responsive,
@@ -290,6 +327,8 @@ export default function ClassBrowser({
         days,
         online,
         open,
+        selectedSchedule: selectedScheduleMemo,
+        allSchedules,
         updateQuery,
         updateComponents: (components) =>
           updateArray("components", setLocalComponents, components),
@@ -302,6 +341,7 @@ export default function ClassBrowser({
           updateBoolean("online", setLocalOnline, online),
         setExpanded,
         loading,
+        updateSelectedSchedule
       }}
     >
       <div
@@ -313,6 +353,6 @@ export default function ClassBrowser({
         <Filters />
         <List onSelect={onSelect} />
       </div>
-    </BrowserContext>
+    </BrowserContext.Provider>
   );
 }

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client";
 
-import { READ_SCHEDULES, ReadSchedulesResponse, Semester } from "@/lib/api";
+import { READ_SCHEDULE, READ_SCHEDULES, ReadSchedulesResponse, Semester } from "@/lib/api";
 
 interface ScheduleProps {
   year: number;
@@ -22,7 +22,7 @@ export default function Schedule({
   const { data } = useQuery<ReadSchedulesResponse>(READ_SCHEDULES);
 
   const schedules = useMemo(() => data?.schedules ?? [], [data]);
-
+ 
   const filteredSchedules = useMemo(
     () =>
       schedules.filter(

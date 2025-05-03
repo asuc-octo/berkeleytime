@@ -54,6 +54,7 @@ function rotateRight<T>(arr: T[]): T[] {
   return [arr[arr.length - 1], ...arr.slice(0, arr.length - 1)];
 }
 
+// Need to add alarm when users dont choose days
 export default function Week({
   selectedSections,
   currentSection,
@@ -83,9 +84,15 @@ export default function Week({
         const positions: Record<string, [number, number]> = {};
         const minutes: string[][] = [...Array(60 * 18)].map(() => []);
 
-        const relevantEvents = events
+        const relevantEvents = (events ?? [])
           // Filter events for the current day
-          .filter((event) => event.days[day])
+          .filter((event) => {
+            if (!Array.isArray(event.days)) {
+              console.warn("Invalid event.days:", event);
+              return false;
+            }
+            return event.days[day];
+          })
           .map(
             (event) =>
               ({

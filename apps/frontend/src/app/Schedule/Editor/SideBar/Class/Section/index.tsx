@@ -5,6 +5,7 @@ import Time from "@/components/Time";
 import { ISection } from "@/lib/api";
 
 import styles from "./Section.module.scss";
+import useSchedule from "@/hooks/useSchedule";
 
 interface SectionProps {
   onSectionSelect?: () => void;
@@ -22,6 +23,7 @@ export default function Section({
   number,
   meetings: [{ startTime, endTime, days }],
 }: SectionProps & ISection) {
+
   return (
     <div
       className={classNames(styles.root, {

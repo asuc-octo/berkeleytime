@@ -12,6 +12,7 @@ export const useCreateSchedule = () => {
   const mutation = useMutation<CreateScheduleResponse>(CREATE_SCHEDULE, {
     update(cache, { data }) {
       const schedule = data?.createSchedule;
+      
 
       if (!schedule) return;
 
