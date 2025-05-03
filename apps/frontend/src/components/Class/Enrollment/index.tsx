@@ -25,7 +25,6 @@ export default function Enrollment() {
 
   const data = useMemo(() => {
     if (!_class.primarySection.enrollment) return [];
-    console.log(_class.primarySection.enrollment);
     const day0 = new Date(_class.primarySection.enrollment?.history[0].time);
     return _class.primarySection.enrollment?.history
       .reduce(

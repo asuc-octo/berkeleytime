@@ -1,6 +1,7 @@
 .root {
   background-color: var(--background-color);
   padding: 24px 0;
+  height: 100%;
 
   .header {
     margin-bottom: 16px;
@@ -18,29 +19,7 @@
     border: 1px solid var(--border-color);
     min-width: 450px;
 
-    .empty {
-      text-align: center;
-      padding: 48px 0;
-      color: var(--slate-400);
-      // Web UI (Desktop)/Title/Title Medium
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 20px; // 142.857%
-      letter-spacing: -0.1px;
-      border-radius: 0;
-      box-shadow: 0;
     
-      p + p {
-        margin-top: 8px;
-      }
-    
-      button {
-        margin-top: 32px;
-        background-color: var(--foreground-color);
-        font-weight: 400;
-      }
-    }
     .ratingSection {
       padding: 24px 0;
       border-bottom: 1px solid var(--border-color);
@@ -156,3 +135,37 @@
   padding-top: 8px;
 }
 
+.empty {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--paragraph-color);
+  // Web UI (Desktop)/Title/Title Medium
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.1px;
+  border-radius: 0;
+  box-shadow: 0;
+
+  h4 {
+    margin-bottom: 12px;
+    margin-top: 20px;
+    color: var(--heading-color);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  p + p {
+    margin-top: 8px;
+  }
+
+  button {
+    margin-top: 32px;
+    background-color: var(--foreground-color);
+    font-weight: 400;
+  }
+}

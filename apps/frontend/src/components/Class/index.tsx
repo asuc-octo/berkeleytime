@@ -15,7 +15,6 @@ import {
 import { Dialog, Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
-import { MetricName } from "@repo/shared";
 import {
   Box,
   Container,
@@ -235,16 +234,7 @@ export default function Class({
       course.aggregatedRatings &&
       course.aggregatedRatings.metrics.length > 0 &&
       Math.max(
-        ...Object.values(
-          course.aggregatedRatings.metrics.reduce(
-            (acc, v) => {
-              acc[v.metricName as MetricName] =
-                (acc[v.metricName as MetricName] || 0) + 1;
-              return acc;
-            },
-            {} as Record<MetricName, number>
-          )
-        )
+        ...Object.values(course.aggregatedRatings.metrics.map((v) => v.count))
       )
     );
   }, [course]);
@@ -432,10 +422,12 @@ export default function Class({
                     <NavLink
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                     >
-                      <MenuItem>
-                        Ratings{" "}
-                        {ratingsCount && (
+                      <MenuItem styl>
+                        Ratings
+                        {ratingsCount ? (
                           <div className={styles.badge}>{ratingsCount}</div>
+                        ) : (
+                          <div className={styles.dot}></div>
                         )}
                       </MenuItem>
                     </NavLink>
@@ -467,9 +459,11 @@ export default function Class({
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>
-                        Ratings{" "}
-                        {ratingsCount && (
+                        Ratings
+                        {ratingsCount ? (
                           <div className={styles.badge}>{ratingsCount}</div>
+                        ) : (
+                          <div className={styles.dot}></div>
                         )}
                       </MenuItem>
                     )}

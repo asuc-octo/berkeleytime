@@ -27,7 +27,7 @@
   }
 
   .badge {
-    position: absolute;
+    position: relative;
     display: inline;
     padding: 2px 6px;
     border-radius: 10px;
@@ -35,9 +35,17 @@
     color: white;
     font-size: 11px;
     line-height: 1.4;
-    top: 6.5px;
-    right: -10px;
+    right: -5px;
     z-index: 999;
   }
-  
+  .dot {
+    position: relative;
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    right: -6px;
+    top: 1px;
+    background-color: var(--blue-500);
+  }
 }

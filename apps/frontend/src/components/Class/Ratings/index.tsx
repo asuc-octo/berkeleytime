@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 
@@ -404,110 +405,112 @@ export function RatingsContainer() {
 
   return (
     <div className={styles.root}>
-      <Container size="2">
-        {userRatings ? (
-          <UserRatingSummary
-            userRatings={userRatings}
+      {!hasRatings ? (
+        <div className={styles.empty}>
+          <UserStar width={32} height={32} strokeWidth={1.5} />
+          <h4>No Course Ratings</h4>
+          <p>This course doesn't have any reviews yet.</p>
+          <p>Be the first to share your experience!</p>
+          <RatingButton
+            user={user}
             onOpenModal={handleModalStateChange}
-            ratingDelete={() => setIsDeleteModalOpen(true)}
+            userRatingData={userRatingsData}
+            currentClass={currentClass}
           />
-        ) : (
-          <div></div>
-        )}
-        <div className={styles.header}>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {hasRatings && !userRatings && (
-              <RatingButton
-                user={user}
-                onOpenModal={handleModalStateChange}
-                userRatingData={userRatingsData}
-                currentClass={currentClass}
-              />
-            )}
-            <div className={styles.termSelectWrapper}>
-              {hasRatings && (
-                <Select
-                  options={[
-                    { value: "all", label: "Overall Ratings" },
-                    ...availableTerms.filter((term: Term) => {
-                      // Filter for past terms
-                      const termPosition = termsData?.find(
-                        (t) =>
-                          t.semester === term.semester && t.year === term.year
-                      )?.temporalPosition;
-                      const isValidTerm =
-                        termPosition === TemporalPosition.Past ||
-                        termPosition === TemporalPosition.Current;
-
-                      // Filter for terms with ratings
-                      const hasRatingsForTerm =
-                        semestersWithRatings?.semestersWithRatings?.some(
-                          (s: { semester: Semester; year: number }) =>
-                            s.semester === term.semester && s.year === term.year
-                        );
-
-                      return isValidTerm && hasRatingsForTerm;
-                    }),
-                  ]}
-                  value={
-                    availableTerms.find(
-                      (term) => term.value === selectedTerm
-                    ) || {
-                      value: "all",
-                      label: "Overall Ratings",
-                    }
-                  }
-                  onChange={(option) => {
-                    // Handle both single option and multi-value cases
-                    const selectedValue =
-                      option && "value" in option ? option.value : "all";
-                    setSelectedTerm(selectedValue);
-                    if (selectedValue === "all") {
-                      setTermRatings(null);
-                    } else if (isSemester(selectedValue)) {
-                      const [semester, year] = selectedValue.split(" ");
-                      getAggregatedRatings({
-                        variables: {
-                          subject: currentClass.subject,
-                          courseNumber: currentClass.courseNumber,
-                          semester: semester,
-                          year: parseInt(year),
-                          classNumber: currentClass.number,
-                        },
-                      });
-                    }
-                  }}
-                  placeholder="Select term"
-                  classNamePrefix="select"
+        </div>
+      ) : (
+        <Container size="2">
+          {userRatings ? (
+            <UserRatingSummary
+              userRatings={userRatings}
+              onOpenModal={handleModalStateChange}
+              ratingDelete={() => setIsDeleteModalOpen(true)}
+            />
+          ) : (
+            <div></div>
+          )}
+          <div className={styles.header}>
+            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+              {hasRatings && !userRatings && (
+                <RatingButton
+                  user={user}
+                  onOpenModal={handleModalStateChange}
+                  userRatingData={userRatingsData}
+                  currentClass={currentClass}
                 />
               )}
+              <div className={styles.termSelectWrapper}>
+                {hasRatings && (
+                  <Select
+                    options={[
+                      { value: "all", label: "Overall Ratings" },
+                      ...availableTerms.filter((term: Term) => {
+                        // Filter for past terms
+                        const termPosition = termsData?.find(
+                          (t) =>
+                            t.semester === term.semester && t.year === term.year
+                        )?.temporalPosition;
+                        const isValidTerm =
+                          termPosition === TemporalPosition.Past ||
+                          termPosition === TemporalPosition.Current;
+
+                        // Filter for terms with ratings
+                        const hasRatingsForTerm =
+                          semestersWithRatings?.semestersWithRatings?.some(
+                            (s: { semester: Semester; year: number }) =>
+                              s.semester === term.semester &&
+                              s.year === term.year
+                          );
+
+                        return isValidTerm && hasRatingsForTerm;
+                      }),
+                    ]}
+                    value={
+                      availableTerms.find(
+                        (term) => term.value === selectedTerm
+                      ) || {
+                        value: "all",
+                        label: "Overall Ratings",
+                      }
+                    }
+                    onChange={(option) => {
+                      // Handle both single option and multi-value cases
+                      const selectedValue =
+                        option && "value" in option ? option.value : "all";
+                      setSelectedTerm(selectedValue);
+                      if (selectedValue === "all") {
+                        setTermRatings(null);
+                      } else if (isSemester(selectedValue)) {
+                        const [semester, year] = selectedValue.split(" ");
+                        getAggregatedRatings({
+                          variables: {
+                            subject: currentClass.subject,
+                            courseNumber: currentClass.courseNumber,
+                            semester: semester,
+                            year: parseInt(year),
+                            classNumber: currentClass.number,
+                          },
+                        });
+                      }
+                    }}
+                    placeholder="Select term"
+                    classNamePrefix="select"
+                  />
+                )}
+              </div>
             </div>
           </div>
-        </div>
-
-        <div
-          className={styles.ratingsBody}
-          style={{
-            backgroundColor: !hasRatings
-              ? "transparent"
-              : "var(--foreground-color)",
-            boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
-            border: !hasRatings ? "none" : "1px solid var(--border-color)",
-          }}
-        >
-          {!hasRatings ? (
-            <div className={styles.empty}>
-              <p>This course doesn't have any reviews yet.</p>
-              <p>Be the first to share your experience!</p>
-              <RatingButton
-                user={user}
-                onOpenModal={handleModalStateChange}
-                userRatingData={userRatingsData}
-                currentClass={currentClass}
-              />
-            </div>
-          ) : (
-            ratingsData
+          <div
+            className={styles.ratingsBody}
+            style={{
+              backgroundColor: !hasRatings
+                ? "transparent"
+                : "var(--foreground-color)",
+              boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
+              border: !hasRatings ? "none" : "1px solid var(--border-color)",
+            }}
+          >
+            {ratingsData
               ?.filter((ratingData) => isMetricRating(ratingData.metric))
               .sort((a, b) => {
                 const indexA = METRIC_ORDER.indexOf(a.metric);
@@ -518,12 +521,11 @@ export function RatingsContainer() {
                 <div className={styles.ratingSection} key={ratingData.metric}>
                   <RatingDetailView {...ratingData} />
                 </div>
-              ))
-          )}
-        </div>
+              ))}
+          </div>
 
-        {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
-        {/* <div>
+          {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
+          {/* <div>
           {hasRatings && ratingsData && (
             <div className={styles.ratingsCountContainer}>
               This semester has been rated by {ratingsCount} user
@@ -531,43 +533,43 @@ export function RatingsContainer() {
             </div>
           )}
         </div> */}
+        </Container>
+      )}
+      <UserFeedbackModal
+        isOpen={isModalOpen}
+        onClose={() => handleModalStateChange(false)}
+        title={userRatings ? "Edit Rating" : "Rate Course"}
+        currentClass={currentClass}
+        availableTerms={availableTerms}
+        onSubmit={async (metricValues, termInfo) => {
+          try {
+            await ratingSubmit(
+              metricValues,
+              termInfo,
+              createRating,
+              deleteRating,
+              currentClass,
+              setIsModalOpen,
+              userRatings
+            );
+          } catch (error) {
+            console.error("Error submitting rating:", error);
+          }
+        }}
+        initialUserClass={userRatings}
+      />
 
-        <UserFeedbackModal
-          isOpen={isModalOpen}
-          onClose={() => handleModalStateChange(false)}
-          title={userRatings ? "Edit Rating" : "Rate Course"}
-          currentClass={currentClass}
-          availableTerms={availableTerms}
-          onSubmit={async (metricValues, termInfo) => {
-            try {
-              await ratingSubmit(
-                metricValues,
-                termInfo,
-                createRating,
-                deleteRating,
-                currentClass,
-                setIsModalOpen,
-                userRatings
-              );
-            } catch (error) {
-              console.error("Error submitting rating:", error);
-            }
-          }}
-          initialUserClass={userRatings}
-        />
-
-        <DeleteRatingPopup
-          isOpen={isDeleteModalOpen}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-          }}
-          onConfirmDelete={async () => {
-            if (userRatings) {
-              await ratingDelete(userRatings, currentClass, deleteRating);
-            }
-          }}
-        />
-      </Container>
+      <DeleteRatingPopup
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+        }}
+        onConfirmDelete={async () => {
+          if (userRatings) {
+            await ratingDelete(userRatings, currentClass, deleteRating);
+          }
+        }}
+      />
     </div>
   );
 }
