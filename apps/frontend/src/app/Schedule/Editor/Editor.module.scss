@@ -52,6 +52,7 @@
       flex-direction: column;
       width: 0;
       overflow: auto;
+      scrollbar-color: var(--foreground-color) var(--background-color);
     }
   }
 }
