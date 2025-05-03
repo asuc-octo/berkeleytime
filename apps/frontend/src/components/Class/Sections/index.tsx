@@ -11,10 +11,14 @@ import Details from "@/components/Details";
 import useClass from "@/hooks/useClass";
 import { Component, componentMap } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
+import useScheduleTimeSlots from "@/hooks/useScheduleTimeSlots";
+import { hasTimeConflict } from "@/components/ClassBrowser/browser";
 
 import styles from "./Sections.module.scss";
 
 export default function Sections() {
+  const timeSlots = useScheduleTimeSlots();
+
   const { class: _class } = useClass();
 
   const viewRef = useRef<HTMLDivElement>(null);
@@ -85,8 +89,9 @@ export default function Sections() {
     viewRef.current?.children[index].scrollIntoView({ behavior: "smooth" });
   };
 
-  return _class.sections.length === 0 ? (
-    <div className={styles.placeholder}>
+  if (_class.sections.length === 0) {
+    return (
+      <div className={styles.placeholder}>
       <FrameAltEmpty width={32} height={32} />
       <p className={styles.heading}>No associated sections</p>
       <p className={styles.paragraph}>
@@ -94,7 +99,11 @@ export default function Sections() {
         information regarding class attendance requirements.
       </p>
     </div>
-  ) : (
+    );
+  }
+
+
+  return (
     <div className={styles.root}>
       <div className={styles.menu}>
         {Object.keys(groups).map((component, index) => (
@@ -116,48 +125,54 @@ export default function Sections() {
       <div className={styles.view} ref={viewRef}>
         {Object.values(groups).map((sections) => (
           <div className={styles.group}>
-            {sections.map((section) => (
-              <div className={styles.section} key={section.sectionId}>
-                <div className={styles.header}>
-                  <div className={styles.text}>
-                    <p className={styles.heading}>
-                      {componentMap[section.component]} {section.number}
-                    </p>
-                    <CCN sectionId={section.sectionId} />
+            {sections.map((section) => {
+              const { conflictingSectionIds } = hasTimeConflict(section, timeSlots);
+              console.log("14", conflictingSectionIds.includes(section.sectionId));
+              return (
+                <div className={classNames(styles.section, {[styles.conflict]: conflictingSectionIds.includes(section.sectionId),})}
+                  key={section.sectionId}>
+                  <div className={styles.header}>
+                    <div className={styles.text}>
+                      <p className={styles.heading}>
+                        {componentMap[section.component]} {section.number}
+                      </p>
+                      <CCN sectionId={section.sectionId} />
+                    </div>
+                    <Capacity
+                      enrolledCount={section.enrollment?.latest.enrolledCount}
+                      maxEnroll={section.enrollment?.latest.maxEnroll}
+                      waitlistedCount={section.enrollment?.latest.waitlistedCount}
+                      maxWaitlist={section.enrollment?.latest.maxWaitlist}
+                    />
+                    <Tooltip content="Berkeley Academic Guide">
+                      <a
+                        href={getExternalLink(
+                          _class.year,
+                          _class.semester,
+                          _class.courseNumber,
+                          _class.number,
+                          section.number,
+                          section.component
+                        )}
+                        target="_blank"
+                      >
+                        <IconButton>
+                          <OpenNewWindow />
+                        </IconButton>
+                      </a>
+                    </Tooltip>
                   </div>
-                  <Capacity
-                    enrolledCount={section.enrollment?.latest.enrolledCount}
-                    maxEnroll={section.enrollment?.latest.maxEnroll}
-                    waitlistedCount={section.enrollment?.latest.waitlistedCount}
-                    maxWaitlist={section.enrollment?.latest.maxWaitlist}
+                  <Details
+                    days={section.meetings[0].days}
+                    startTime={section.meetings[0].startTime}
+                    endTime={section.meetings[0].endTime}
+                    location={section.meetings[0].location}
+                    instructors={section.meetings[0].instructors}
                   />
-                  <Tooltip content="Berkeley Academic Guide">
-                    <a
-                      href={getExternalLink(
-                        _class.year,
-                        _class.semester,
-                        _class.courseNumber,
-                        _class.number,
-                        section.number,
-                        section.component
-                      )}
-                      target="_blank"
-                    >
-                      <IconButton>
-                        <OpenNewWindow />
-                      </IconButton>
-                    </a>
-                  </Tooltip>
                 </div>
-                <Details
-                  days={section.meetings[0].days}
-                  startTime={section.meetings[0].startTime}
-                  endTime={section.meetings[0].endTime}
-                  location={section.meetings[0].location}
-                  instructors={section.meetings[0].instructors}
-                />
-              </div>
-            ))}
+              );
+             
+            })}
           </div>
         ))}
       </div>

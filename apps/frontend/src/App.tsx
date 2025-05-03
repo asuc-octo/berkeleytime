@@ -311,9 +311,7 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
-        {/* <PinsProvider> */}
-        <RouterProvider router={router} />
-        {/* </PinsProvider> */}
+          <RouterProvider router={router} />
       </ThemeProvider>
     </ApolloProvider>
   );

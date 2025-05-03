@@ -26,6 +26,10 @@
     }
   }
 
+  &.conflict {
+    border: 2px solid var(--red-500); 
+  }
+
   .text {
     flex-grow: 1;
     font-size: 14px;

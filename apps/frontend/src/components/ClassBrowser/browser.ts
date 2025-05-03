@@ -1,7 +1,8 @@
 import Fuse from "fuse.js";
 
-import { AcademicCareer, Component, IClass, academicCareers } from "@/lib/api";
+import { AcademicCareer, Component, IClass, academicCareers, ISchedule, ISection } from "@/lib/api";
 import { subjects } from "@/lib/course";
+
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -45,6 +46,7 @@ export const getLevel = (academicCareer: AcademicCareer, number: string) => {
     : (academicCareers[academicCareer] as Level);
 };
 
+
 export const getFilteredClasses = (
   classes: IClass[],
   currentComponents: Component[],
@@ -52,7 +54,7 @@ export const getFilteredClasses = (
   currentLevels: Level[],
   currentDays: Day[],
   currentOpen: boolean,
-  currentOnline: boolean
+  currentOnline: boolean,
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -137,12 +139,64 @@ export const getFilteredClasses = (
 
       return acc;
     },
-    { includedClasses: [], excludedClasses: [] } as {
-      includedClasses: IClass[];
-      excludedClasses: IClass[];
-    }
+    { includedClasses: [] as IClass[], excludedClasses: [] as IClass[]} 
   );
 };
+
+
+export interface TimeSlot {
+  day: number[];   
+  start: number;  
+  end: number;    
+}
+
+export interface ConflictResult {
+  hasConflict: boolean;
+  conflictingSectionIds: string[];
+}
+
+
+function timeToMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+export function hasTimeConflict(
+  cls: IClass | ISection,
+  timeSlots: TimeSlot[]
+): ConflictResult {
+  const conflictingIds = new Set<string>();
+  const sec = "primarySection" in cls ? cls.primarySection : cls;
+  // console.log("new1:", timeSlots);
+
+  for (const meeting of sec.meetings ?? []) {
+    const mStart = timeToMinutes(meeting.startTime);
+    const mEnd   = timeToMinutes(meeting.endTime);
+
+    const meetingDays = meeting.days
+      .map((has, idx) => has ? idx : -1)
+      .filter(d => d > 0);
+    // console.log("new2:", sec.sectionId, meetingDays);
+    for (const slot of timeSlots) {
+
+      const common = meetingDays.filter(d => slot.day.includes(d));
+      if (common.length === 0) continue;
+      // console.log("new5:", sec.sectionId, common);
+
+      if (Math.max(mStart, slot.start) < Math.min(mEnd, slot.end)) {
+        conflictingIds.add(sec.sectionId);
+        break;
+      }
+    }
+  }
+
+  return {
+    hasConflict: conflictingIds.size > 0,
+    conflictingSectionIds: Array.from(conflictingIds),
+  };
+}
+
+
 
 export const getIndex = (classes: IClass[]) => {
   const list = classes.map((_class) => {

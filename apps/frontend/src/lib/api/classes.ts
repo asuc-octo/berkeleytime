@@ -375,6 +375,7 @@ export const GET_CATALOG = gql`
       finalExam
       gradingBasis
       primarySection {
+        sectionId
         component
         online
         instructionMode
@@ -391,6 +392,8 @@ export const GET_CATALOG = gql`
         }
         meetings {
           days
+          startTime
+          endTime
         }
       }
       course {

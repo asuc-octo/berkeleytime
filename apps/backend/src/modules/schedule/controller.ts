@@ -3,7 +3,7 @@ import {
   IClassItem,
   ScheduleModel,
   SectionModel,
-  TermModel,
+  TermModel
 } from "@repo/common";
 
 import {
@@ -12,6 +12,8 @@ import {
   Semester,
   UpdateScheduleInput,
 } from "../../generated-types/graphql";
+
+import {getSecondarySections} from "../class/controller"
 import { formatClass } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
 import { formatSchedule } from "./formatter";
@@ -139,3 +141,5 @@ export const getClasses = async (
 
   return classes;
 };
+
+
