@@ -123,7 +123,6 @@ body:not([data-theme]) {
                     transition: opacity 0.2s ease;
                     flex-shrink: 0; 
                     transition: all 0.2s ease;
-
         
                     &:hover {
                         color: var(--heading-color); 
@@ -144,16 +143,18 @@ body:not([data-theme]) {
                     display: flex;
                     flex-direction: column;
                     align-items: flex-start;
-                    width: 10.5rem;
-                    border-radius: var(--XXS, 4px);
+                    width: 11rem;
+                    border-radius: 4px;
                     background: var(--foreground-color);
                     box-shadow: 0px 8px 12px 0px rgba(60, 66, 87, 0.15), 0px 0px 1px 0px rgba(0, 0, 0, 0.30);
                     position: absolute;
+                    padding: 0.25rem; 
 
                     .menu-item {
                         display: flex;
                         flex-direction: row;
                         width: 100%;
+                        border-radius: 4px;
                         gap: 0.5rem;
                         font-size: 0.875rem;
                         padding: 0.5rem;

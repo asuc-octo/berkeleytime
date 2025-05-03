@@ -21,7 +21,7 @@ function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses
     
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-            <Dialog.Content>
+            <Dialog.Content className={styles.content}>
                 <div className={styles.searchBar}>
                     <input
                         type="text"
@@ -30,30 +30,31 @@ function SearchBar({isOpen, setIsOpen, searchTerm, handleSearch, filteredClasses
                         placeholder="Type a class ID / name..."
                     />
                 </div>
-                
-                {/* Dropdown for suggestions */}
-                <div className={styles.suggestionPopover}>
-                {(
-                    <ul className={`${styles.list} ${filteredClasses.length > 0 ? styles.hasItems : ''}`}>
-                    {filteredClasses.map((cls) => (
-                        <li
-                        onClick={() => handleSelectClass(cls)}
-                        className={styles.item}
-                        >
-                            {cls.name} - {cls.units} units
-                        </li>
-                    ))}
-                    </ul>
-                )}
-                    <div className={styles.footer}>
-                        <Button 
-                            className={styles.createCustomClassButton}
-                            onClick={() => setIsCustomClassOpen(true)}
-                        >
-                            + Create custom class
-                        </Button>
+
+                {searchTerm.trim().length > 0 && (
+                    <div className={styles.suggestionPopover}>
+                    {(
+                        <ul className={`${styles.list} ${filteredClasses.length > 0 ? styles.hasItems : ''}`}>
+                        {filteredClasses.map((cls) => (
+                            <li
+                            onClick={() => handleSelectClass(cls)}
+                            className={styles.item}
+                            >
+                                {cls.name} - {cls.units} units
+                            </li>
+                        ))}
+                        </ul>
+                    )}
+                        <div className={styles.footer}>
+                            <Button 
+                                className={styles.createCustomClassButton}
+                                onClick={() => setIsCustomClassOpen(true)}
+                            >
+                                + Create custom class
+                            </Button>
+                        </div>
                     </div>
-                </div>
+                )}
             </Dialog.Content>
 
             <ClassDetails

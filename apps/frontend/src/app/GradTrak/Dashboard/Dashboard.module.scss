@@ -5,7 +5,26 @@
   color: var(--heading-color);
 
   .view {
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;  
+    overflow: hidden;
+    max-width: 78%;
+    scrollbar-color: var(--paragraph-color) var(--border-color, rgba(0, 0, 0, 0.10));
+
+    .header {
+      display: flex;
+      flex-shrink: 0;
+      justify-content: space-between;
+      align-items: center;
+      align-self: stretch;
+      padding: 2rem 2rem 0 2rem;
+
+      .buttons-group {
+        display: flex;
+        gap: 0.625rem;
+      }
+    }
   }
 
   .panel {
@@ -35,11 +54,11 @@
 
 .semester-blocks {
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   overflow-x: auto;
-  width: 100vw;
-  height: 100%;
-  margin: 2rem;
+  overflow-y: hidden;
+  padding: 2rem;
   gap: 2rem;
 }
 

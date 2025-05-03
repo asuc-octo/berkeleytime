@@ -58,15 +58,15 @@ function AddClass({ isOpen, setIsOpen, addClass, handleOnConfirm }: AddClassProp
 
     return (
         <div>
-            <SearchBar 
-              isOpen={isOpen} 
-              setIsOpen={setIsOpen} 
-              searchTerm={searchTerm} 
-              handleSearch={handleSearch} 
-              filteredClasses={filteredClasses}
-              handleSelectClass={handleSelectClass} 
-              handleOnConfirm={handleOnConfirm}
-            />
+          <SearchBar 
+            isOpen={isOpen} 
+            setIsOpen={setIsOpen} 
+            searchTerm={searchTerm} 
+            handleSearch={handleSearch} 
+            filteredClasses={filteredClasses}
+            handleSelectClass={handleSelectClass} 
+            handleOnConfirm={handleOnConfirm}
+          />
         </div>
     )
 }

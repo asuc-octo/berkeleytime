@@ -9,7 +9,7 @@ import {
     Button
  } from "@repo/theme"
 
-import MAJORS from './majors.json';
+import DEGREES from './degree-programs-types.json'
 import DotsIndicator from '../DotsIndicator';
 
 import styles from "./AddDegree.module.scss"
@@ -33,7 +33,12 @@ export default function AddDegree({
     const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>([]);
     const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>([]);
 
-	const degreeOptions = MAJORS.map((degree) => ({
+	const majorOptions = DEGREES.majors.map((degree) => ({
+		label: degree,
+		value: degree
+	}));
+
+	const minorOptions = DEGREES.minors.map((degree) => ({
 		label: degree,
 		value: degree
 	}));
@@ -72,7 +77,7 @@ export default function AddDegree({
     const DegreeSelect = () => (
         <Select 
             className={styles.degreeSelect}
-            options={degreeOptions} 
+            options={isMajor ? majorOptions : minorOptions} 
             isSearchable={true} 
             isClearable={true}
             placeholder={`Search for a ${optionType.toLowerCase()}...`}

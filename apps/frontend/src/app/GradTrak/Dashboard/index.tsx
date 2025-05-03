@@ -13,6 +13,7 @@ import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
 
 import styles from "./Dashboard.module.scss";
+import { Button } from '@repo/theme';
 
 type DegreeOption = {
   label: string;
@@ -119,9 +120,15 @@ function Dashboard() {
       </div>
 
     <div className={styles.view}>
-      <div className={styles.semesterBlocks}>
+      <div className={styles.header}>
         <h1>Semesters</h1>
 
+        <div className={styles.buttonsGroup}>
+          <Button variant="outline">Add Semester</Button>
+          <Button variant="outline">Display</Button>
+        </div>
+      </div>
+      <div className={styles.semesterBlocks}>
         <div className={styles.semesterLayout}>
           <SemesterBlock 
             semesterId="miscellaneous" 
