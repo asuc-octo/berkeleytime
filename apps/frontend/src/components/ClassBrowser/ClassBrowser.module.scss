@@ -2,7 +2,6 @@
   position: relative;
   height: 100%;
   display: flex;
-  scrollbar-color: var(--foreground-color) var(--background-color);
 
   @media (width <= 992px) {
     &:not(.expanded) > :first-child {

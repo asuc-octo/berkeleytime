@@ -42,7 +42,7 @@ export default function GradesCard({
   return (
     <Card.Root
       active={active}
-      hidden={hidden}
+      disabled={hidden}
       onClick={(event) => {
         if (
           hideRef.current &&

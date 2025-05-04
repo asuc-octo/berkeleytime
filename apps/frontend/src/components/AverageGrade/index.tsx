@@ -44,7 +44,7 @@ export function AverageGrade({
   const text = useMemo(
     () =>
       !average
-        ? "N/A"
+        ? ""
         : average > 4
           ? "A+"
           : average > 3.7

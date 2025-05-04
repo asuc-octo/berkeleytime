@@ -4,14 +4,21 @@
   flex-shrink: 0;
   background-color: var(--foreground-color);
   position: relative;
-  padding: 16px;
   display: flex;
-  gap: 8px;
   align-items: flex-start;
   cursor: pointer;
   height: 100%;
 
+  .border {
+    width: 8px;
+    background-color: var(--purple-500);
+    border-radius: 8px 0 0 8px;
+    align-self: stretch;
+  }
+
   .column {
+    padding: 16px;
+    padding-left: 0;
     .icon {
       color: var(--paragraph-color);
       transition: all 100ms ease-in-out;
@@ -34,6 +41,8 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 16px;
+    padding-right: 0;
 
     .heading {
       color: var(--heading-color);
@@ -61,11 +70,15 @@
       color: var(--paragraph-color)
     }
   }
+  .hover-color-change:hover {
+    background-color: var(--background-color);
   }
+}
   
 .active {
   border: 1px solid var(--heading-color);
 }
-.hidden {
-  filter: brightness(50%);
+.disabled {
+  filter: grayscale(100%);
+  background-color: var(--background-color);
 }

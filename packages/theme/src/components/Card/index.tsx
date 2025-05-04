@@ -7,20 +7,23 @@ import styles from "./Card.module.scss";
 
 interface RootProps {
   active?: boolean;
-  hidden?: boolean;
+  disabled?: boolean;
+  hoverColorChange?: boolean;
 }
 
 function Root({
   children,
   active,
-  hidden,
+  disabled,
+  hoverColorChange = true,
   ...props
 }: RootProps & ComponentPropsWithRef<"div">) {
   return (
     <div
       className={classNames(styles.root, {
         [styles.active]: active,
-        [styles.hidden]: hidden,
+        [styles.disabled]: disabled,
+        [styles.hoverColorChange]: hoverColorChange,
       })}
       {...props}
     >
@@ -34,6 +37,18 @@ function Body({ children, ...props }: ComponentPropsWithRef<"div">) {
     <div className={styles.body} {...props}>
       {children}
     </div>
+  );
+}
+
+function LeftBorder({ color, ...props }: ComponentPropsWithRef<"div">) {
+  return (
+    <div
+      className={styles.border}
+      style={{
+        backgroundColor: color,
+      }}
+      {...props}
+    />
   );
 }
 
@@ -88,6 +103,7 @@ function ActionIcon({
 export const Card = {
   Root,
   Body,
+  LeftBorder,
   Heading,
   Description,
   Footer,

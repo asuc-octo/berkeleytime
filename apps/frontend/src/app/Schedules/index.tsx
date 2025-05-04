@@ -6,6 +6,7 @@ import { Box, Button, Container, Flex } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
 import Footer from "@/components/Footer";
+import ScheduleCard from "@/components/ScheduleCard";
 import { useReadSchedules, useReadUser } from "@/hooks/api";
 import { ISchedule, signIn } from "@/lib/api";
 
@@ -99,16 +100,16 @@ export default function Schedules() {
             .map((sem) => {
               return (
                 <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
-                  {schedulesBySemester[sem].map(({ _id, name, classes }, i) => {
-                    return (
-                      <Carousel.Schedule
+                  {schedulesBySemester[sem].map(({ _id, name, classes }, i) => (
+                    <Carousel.Item key={i}>
+                      <ScheduleCard
                         key={i}
                         _id={_id}
                         name={name}
                         classes={classes}
                       />
-                    );
-                  })}
+                    </Carousel.Item>
+                  ))}
                 </Carousel.Root>
               );
             })}

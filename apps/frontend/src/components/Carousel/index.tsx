@@ -14,7 +14,6 @@ import { Box, Flex, IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
 import CarouselNoTitle from "./CarouselNoTitle";
-import Schedule from "./Schedule";
 
 function Item({ className, ...props }: ComponentPropsWithRef<"div">) {
   return <div className={classNames(styles.item, className)} {...props} />;
@@ -123,7 +122,6 @@ function Root({ title, Icon, children, to }: RootProps) {
 const Carousel = {
   Root,
   Item,
-  Schedule,
   CarouselNoTitle,
 };
 
