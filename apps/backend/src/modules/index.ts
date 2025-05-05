@@ -4,6 +4,7 @@ import Catalog from "./catalog";
 import Class from "./class";
 import Common from "./common";
 import Course from "./course";
+import Decal from "./decal";
 import Enrollment from "./enrollment";
 import GradeDistribution from "./grade-distribution";
 import Schedule from "./schedule";
@@ -20,6 +21,7 @@ const modules = [
   Course,
   Class,
   Enrollment,
+  Decal
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));
