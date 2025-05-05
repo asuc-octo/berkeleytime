@@ -21,7 +21,7 @@ const modules = [
   Course,
   Class,
   Enrollment,
-  Decal
+  Decal,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));
