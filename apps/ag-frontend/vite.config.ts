@@ -7,6 +7,13 @@ export default defineConfig({
     host: true,
     port: 3001,
     allowedHosts: ["ag-frontend"],
+    proxy: {
+      "/api/graphql": {
+        target: "http://localhost:8080", // your backend port
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   resolve: {
     alias: {

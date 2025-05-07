@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import { useReadTerms } from "@hooks/api";
+
 // Adjust the import path
 
 import {
@@ -13,7 +13,6 @@ import {
 } from "@radix-ui/themes";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { usePosts } from "../Landing";
 import { Post } from "../Landing";
 import styles from "./AddPost.module.scss";
 
@@ -31,7 +30,6 @@ interface Class {
 export default function AddPost() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setPosts } = usePosts();
   const [terms, setTerms] = useState<Term[]>([]);
   const [classes, setClasses] = useState<Class[]>([]);
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
@@ -70,7 +68,7 @@ export default function AddPost() {
       status: "Draft",
     };
 
-    setPosts((prevPosts: Post[]) => [...prevPosts, newPost]);
+    setPosts((prevPosts: Post[]) => [...prevPosts, newPost]); // replace with add post mutation
     console.log("New Post:", newPost);
     navigate("/");
   };
@@ -86,7 +84,7 @@ export default function AddPost() {
       status: "Posted",
     };
 
-    setPosts((prevPosts: Post[]) => [...prevPosts, newPost]);
+    setPosts((prevPosts: Post[]) => [...prevPosts, newPost]); // replace with add post mutation
     console.log("New Post:", newPost);
     navigate("/");
   };
