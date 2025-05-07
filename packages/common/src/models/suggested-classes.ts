@@ -1,11 +1,10 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
-
-const julianaSchema = new Schema({
-  image: { type: String, required: true },
-  text: { type: String, required: true },
-});
+const { v4: uuidv4 } = require('uuid');
 
 const postSchema = new Schema({
+  postId: {
+    type: uuidv4, required: true
+  },
   semester: 
     {type: String, required: true}, 
   year: 
@@ -18,8 +17,12 @@ const postSchema = new Schema({
     { type: Number, required: true },
   subject: 
     { type: String, required: true },
-  juliana: 
-      { type: julianaSchema, required: true },
+  image: {
+    type: String, required: true
+  }, 
+  text: {
+    image: {type: String, required: true}
+  }, 
 });
 
 export const postModel = mongoose.model("Post", postSchema);

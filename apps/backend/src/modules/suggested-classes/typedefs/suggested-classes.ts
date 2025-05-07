@@ -2,43 +2,47 @@ import {gql} from "graphql-tag";
 
 const typedef = gql`
 
+    scalar UUID
+    scalar Semester
+    scalar CourseNumber
+
     type Post {
-        semester: String!
+        id: UUID!
+        semester: Semester!
         year: Int!
         sessionId: String!
-        courseNumber: Int!
+        courseNumber: CourseNumber!
         number: Int!
         subject: String!
-        julianaInfo: JulianaInfo!
-    }
-
-    type JulianaInfo {
         image: String!
         text: String!
     }
 
     type Query {
         getAllPosts: [Post!]!
+        getPost(postId: UUID!): Post
     }
 
     input CreatePostInput {
-        semester: String!
+        id: UUID!
+        semester: Semester!
         year: Int!
         sessionId: String!
-        courseNumber: Int!
+        courseNumber: CourseNumber!
         number: Int!
         subject: String!
-        julianaInfo: JulianaInfo!
+        image: String!
+        text: String!
     }
     
     input UpdatePostInput {
-        courseNumber: Int!
+        courseNumber: CourseNumber!
     }
 
     type Mutation {
-        addPost(post: CreatePostInput): Post
-        modifyPost(sost: UpdatePostInput!): Post
-        deletePost(courseNumber: Int!: Int
+        addPost(post: CreatePostInput!): Post
+        modifyPost(post: UpdatePostInput!): Post
+        deletePost(courseNumber: CourseNumber!): Int
     }   
 `;
 

@@ -18,6 +18,16 @@ export const getPosts = async (context: any) => {
     return await Promise.all(posts.map(formatPost));
 }
 
+export const getPostById = async (context: any, id: string) => {
+    if (!context.user._id) throw new Error("Unathorized");
+    const post = await postModel.findOne({
+        _id: id,
+        $or: [{ public: true }, { createdBy: context.user._id }],
+    })
+    if (!post) throw new Error ("not found");
+    return await formatPost(post);
+}
+
 export const updatePost = async (context: any, num: number, input: UpdatePostInput) => {
     if (!context.user._id) throw new Error("Unauthorized");
 
