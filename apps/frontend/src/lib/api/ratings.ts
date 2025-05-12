@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { Semester } from "./terms";
+
 export interface IMetric {
   categories: {
     count: number;
@@ -41,6 +43,14 @@ export const GET_AGGREGATED_RATINGS = gql`
     }
   }
 `;
+
+export interface SemestersWithRatingsResponse {
+  semestersWithRatings: {
+    semester: Semester;
+    year: number;
+    maxMetricCount: number;
+  }[];
+}
 
 export const GET_SEMESTERS_WITH_RATINGS = gql`
   query GetSemestersWithRatings($subject: String!, $courseNumber: String!) {

@@ -26,6 +26,7 @@ import {
   GET_COURSE_RATINGS,
   GET_SEMESTERS_WITH_RATINGS,
   GET_USER_RATINGS,
+  SemestersWithRatingsResponse,
 } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
 import { sortByTermDescending } from "@/lib/classes";
@@ -175,16 +176,24 @@ export function RatingsContainer() {
   });
 
   // Get semesters with ratings
-  const { data: semestersWithRatings } = useQuery(GET_SEMESTERS_WITH_RATINGS, {
-    variables:
-      currentClass?.subject && currentClass?.courseNumber
-        ? {
-            subject: currentClass.subject,
-            courseNumber: currentClass.courseNumber,
-          }
-        : undefined,
-    skip: !currentClass?.subject || !currentClass?.courseNumber,
-  });
+  const { data: semestersWithRatingsData } =
+    useQuery<SemestersWithRatingsResponse>(GET_SEMESTERS_WITH_RATINGS, {
+      variables:
+        currentClass?.subject && currentClass?.courseNumber
+          ? {
+              subject: currentClass.subject,
+              courseNumber: currentClass.courseNumber,
+            }
+          : undefined,
+      skip: !currentClass?.subject || !currentClass?.courseNumber,
+    });
+
+  const semestersWithRatings = useMemo(() => {
+    if (!semestersWithRatingsData) return [];
+    return semestersWithRatingsData.semestersWithRatings.filter(
+      (sem) => sem.maxMetricCount > 0
+    );
+  }, [semestersWithRatingsData]);
 
   const availableTerms = useMemo(() => {
     if (!currentCourse.classes) return [];
@@ -451,32 +460,24 @@ export function RatingsContainer() {
                             t.semester === term.semester && t.year === term.year
                         )?.temporalPosition;
                         const isValidTerm =
+                          !termPosition ||
                           termPosition === TemporalPosition.Past ||
                           termPosition === TemporalPosition.Current;
 
                         // Filter for terms with ratings
-                        const hasRatingsForTerm =
-                          semestersWithRatings?.semestersWithRatings?.some(
-                            (s: { semester: Semester; year: number }) =>
-                              s.semester === term.semester &&
-                              s.year === term.year
-                          );
+                        const hasRatingsForTerm = semestersWithRatings?.some(
+                          (s: { semester: Semester; year: number }) =>
+                            s.semester === term.semester && s.year === term.year
+                        );
 
                         return isValidTerm && hasRatingsForTerm;
                       }),
                     ]}
-                    value={
-                      availableTerms.find(
-                        (term) => term.value === selectedTerm
-                      ) || {
-                        value: "all",
-                        label: "Overall Ratings",
-                      }
-                    }
-                    onChange={(option) => {
-                      // Handle both single option and multi-value cases
-                      const selectedValue =
-                        option && "value" in option ? option.value : "all";
+                    value={selectedTerm}
+                    variant="foreground"
+                    onChange={(selectedValue) => {
+                      if (Array.isArray(selectedValue) || !selectedValue)
+                        return; // ensure it is string
                       setSelectedTerm(selectedValue);
                       if (selectedValue === "all") {
                         setTermRatings(null);
@@ -494,7 +495,6 @@ export function RatingsContainer() {
                       }
                     }}
                     placeholder="Select term"
-                    classNamePrefix="select"
                   />
                 )}
               </div>

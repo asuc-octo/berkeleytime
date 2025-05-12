@@ -1,0 +1,37 @@
+.trigger {
+  border: solid 1px var(--border-color);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--paragraph-color);
+
+  &.foreground {
+    background-color: var(--foreground-color);
+  }
+
+  &:focus {
+    border-color: var(--blue-500);
+    width: 100%;
+  }
+
+  &.selected {
+    color: var(--heading-color);
+  }
+
+  &.disabled {
+    color: var(--paragraph-color);
+    border-color: var(--border-color);
+  }
+
+}
+
+
+
+.content {
+  background-color: var(--foreground-color);
+  border: solid 1px var(--border-color);
+  border-radius: 4px;
+  max-height: 148px;
+  overflow-y: scroll;
+  scrollbar-color: var(--label-color) var(--foreground-color);
+}

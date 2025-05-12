@@ -1,16 +1,19 @@
 import { ComponentPropsWithRef } from "react";
 
+import { Flex } from "@radix-ui/themes";
+
 import styles from "./Badge.module.scss";
 
 interface Props {
   label: string;
   color: string;
+  icon?: React.ReactNode;
 }
 
 export type BadgeProps = Props &
   Omit<ComponentPropsWithRef<"span">, keyof Props>;
 
-export function Badge({ label, color, ...props }: BadgeProps) {
+export function Badge({ label, color, icon, ...props }: BadgeProps) {
   return (
     <span
       className={styles.root}
@@ -20,7 +23,10 @@ export function Badge({ label, color, ...props }: BadgeProps) {
       }}
       {...props}
     >
-      {label}
+      <Flex direction="row" gap="4px">
+        {label}
+        {icon && icon}
+      </Flex>
     </span>
   );
 }

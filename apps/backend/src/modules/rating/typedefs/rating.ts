@@ -58,7 +58,7 @@ const typedef = gql`
     value: Int!
   }
 
-  type SemesterRatings {
+  type SemesterRatings @cacheControl(maxAge: 1) {
     year: Int!
     semester: Semester!
     maxMetricCount: Int!

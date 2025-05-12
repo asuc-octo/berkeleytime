@@ -140,11 +140,11 @@ export default function CreateScheduleDialog({
               <Select
                 options={options}
                 placeholder="Select a semester"
-                isDisabled={loading || pending}
-                value={options?.find(({ value }) => value == term)}
+                disabled={loading || pending}
+                value={options?.find(({ value }) => value == term)?.value}
                 onChange={(value) =>
                   // @ts-expect-error - ReactSelect does not have a type for the value
-                  setLocalTerm(value?.value)
+                  setLocalTerm(value)
                 }
               />
             </Flex>
