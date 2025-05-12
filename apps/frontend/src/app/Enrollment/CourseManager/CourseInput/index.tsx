@@ -224,6 +224,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
           selectedCourse={selectedCourse}
+          inputStyle={{
+            height: 44,
+          }}
         />
       </Box>
       <Box flexGrow="1">

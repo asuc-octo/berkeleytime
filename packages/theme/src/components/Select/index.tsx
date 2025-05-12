@@ -149,41 +149,44 @@ export function Select<T>({
           </Flex>
         </Flex>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content
-        className={styles.content}
-        style={{ width: triggerWidth }}
-        sideOffset={5}
-      >
-        {options.map((opt, i) => {
-          return (
-            <DropdownMenu.Item
-              key={i}
-              onSelect={(e) => {
-                if (multi) {
-                  e.preventDefault();
-                  let newValues: T[];
-                  if (Array.isArray(value)) newValues = structuredClone(value);
-                  else newValues = [];
-                  if (!newValues.includes(opt.value)) {
-                    newValues.push(opt.value);
-                    onChange(newValues);
-                  } else onChange(newValues.filter((v) => v !== opt.value));
-                } else onChange(opt.value);
-              }}
-            >
-              <SelectItem
-                label={opt.label}
-                multi={multi}
-                selected={
-                  Array.isArray(value)
-                    ? value.includes(opt.value)
-                    : value === opt.value
-                }
-              />
-            </DropdownMenu.Item>
-          );
-        })}
-      </DropdownMenu.Content>
+      {!disabled && (
+        <DropdownMenu.Content
+          className={styles.content}
+          style={{ width: triggerWidth, zIndex: 999 }}
+          sideOffset={5}
+        >
+          {options.map((opt, i) => {
+            return (
+              <DropdownMenu.Item
+                key={i}
+                onSelect={(e) => {
+                  if (multi) {
+                    e.preventDefault();
+                    let newValues: T[];
+                    if (Array.isArray(value))
+                      newValues = structuredClone(value);
+                    else newValues = [];
+                    if (!newValues.includes(opt.value)) {
+                      newValues.push(opt.value);
+                      onChange(newValues);
+                    } else onChange(newValues.filter((v) => v !== opt.value));
+                  } else onChange(opt.value);
+                }}
+              >
+                <SelectItem
+                  label={opt.label}
+                  multi={multi}
+                  selected={
+                    Array.isArray(value)
+                      ? value.includes(opt.value)
+                      : value === opt.value
+                  }
+                />
+              </DropdownMenu.Item>
+            );
+          })}
+        </DropdownMenu.Content>
+      )}
     </DropdownMenu.Root>
   );
 }
