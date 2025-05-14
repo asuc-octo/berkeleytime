@@ -8,6 +8,7 @@
   align-items: flex-start;
   cursor: pointer;
   height: 100%;
+  overflow: hidden;
 
   .border {
     width: 8px;
@@ -43,6 +44,7 @@
     height: 100%;
     padding: 16px;
     padding-right: 0;
+    min-width: 0;
 
     .heading {
       color: var(--heading-color);
@@ -76,7 +78,7 @@
 }
   
 .active {
-  border: 1px solid var(--heading-color);
+  border: 1px solid var(--blue-500);
 }
 .disabled {
   filter: grayscale(100%);
