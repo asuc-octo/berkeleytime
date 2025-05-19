@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Search } from "iconoir-react";
 
 import { useUserRatings } from "@/hooks/api/ratings";
+import { METRIC_MAPPINGS, MetricName, METRIC_ORDER } from "@repo/shared";
 import styles from "./Ratings.module.scss";
 
 export default function Ratings() {
@@ -18,6 +19,22 @@ export default function Ratings() {
       return searchableText.includes(query);
     });
   }, [ratings, searchQuery]);
+
+  const getRatingMetrics = (metrics: Array<{ metricName: string; value: number }>) => {
+    const ratingMetrics = metrics.filter(
+      (metric) => {
+        const metricConfig = METRIC_MAPPINGS[metric.metricName as MetricName];
+        return metricConfig && metricConfig.isRating === true;
+      }
+    );
+
+    // Sort metrics according to METRIC_ORDER
+    return ratingMetrics.sort((a, b) => {
+      const aIndex = METRIC_ORDER.indexOf(a.metricName as MetricName);
+      const bIndex = METRIC_ORDER.indexOf(b.metricName as MetricName);
+      return aIndex - bIndex;
+    });
+  };
 
   return (
     <div>
@@ -44,24 +61,35 @@ export default function Ratings() {
           <p>No ratings found matching "{searchQuery}"</p>
         )}
         {filteredRatings.length > 0 && (
-          <div>
+          <div className={styles.ratingsGrid}>
             {filteredRatings.map((rating) => (
               <div 
                 key={`${rating.subject}-${rating.courseNumber}-${rating.lastUpdated}`} 
-                style={{ marginBottom: '20px', padding: '10px', border: '1px solid var(--border-color)' }}
+                className={styles.ratingCard}
               >
-                <h3>{rating.subject} {rating.courseNumber}</h3>
-                <p>Semester: {rating.semester} {rating.year}</p>
-                <p>Class Number: {rating.classNumber}</p>
-                <div>
-                  <p>Ratings:</p>
-                  {rating.metrics.map((metric) => (
-                    <div key={metric.metricName}>
-                      {metric.metricName}: {metric.value}
-                    </div>
-                  ))}
+                <div className={styles.courseHeader}>
+                  <div className={styles.courseInfo}>
+                    <span className={styles.courseName}>{rating.subject} {rating.courseNumber}</span>
+                    <span className={styles.semester}>{rating.semester} {rating.year}</span>
+                  </div>
+                  <a href="#" className={styles.viewButton}>View {'->'}</a>
                 </div>
-                <p>Last updated: {new Date(rating.lastUpdated).toLocaleDateString()}</p>
+
+                <div className={styles.metricsBlock}>
+                  {getRatingMetrics(rating.metrics).map((metric) => {
+                    const metricConfig = METRIC_MAPPINGS[metric.metricName as MetricName];
+                    return (
+                      <div key={metric.metricName} className={styles.metricRow}>
+                        <span className={styles.metricName}>{metric.metricName}</span>
+                        <span className={styles.metricValue}>
+                          {metricConfig.getStatus(metric.value)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <p className={styles.lastUpdated}>Last updated on {new Date(rating.lastUpdated).toLocaleDateString()}</p>
               </div>
             ))}
           </div>
