@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { Semester } from "./terms";
+
 export interface IMetric {
   categories: {
     count: number;
@@ -12,6 +14,27 @@ export interface IMetric {
 
 export interface IAggregatedRatings {
   metrics: IMetric[];
+}
+
+export interface UserRatingMetric {
+  metricName: string;
+  value: number;
+}
+
+export interface UserRatingClass {
+  subject: string;
+  courseNumber: string;
+  semester: Semester;
+  year: number;
+  classNumber: string;
+  metrics: UserRatingMetric[];
+  lastUpdated: string;
+}
+
+export interface UserRatingsResponse {
+  userRatings: {
+    classes: UserRatingClass[];
+  };
 }
 
 export const GET_AGGREGATED_RATINGS = gql`
