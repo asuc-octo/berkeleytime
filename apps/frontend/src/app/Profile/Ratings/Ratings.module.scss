@@ -121,14 +121,8 @@
     .metricName {
       font-size: 14px;
       font-weight: 500;
-      color: var(--paragraph-color);
+      color: var(--label-color);
       min-width: 120px;
-    }
-
-    .metricValue {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
     }
   }
 } 

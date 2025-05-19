@@ -3,6 +3,8 @@ import { Search } from "iconoir-react";
 
 import { useUserRatings } from "@/hooks/api/ratings";
 import { METRIC_MAPPINGS, MetricName, METRIC_ORDER } from "@repo/shared";
+import { Badge } from "@repo/theme";
+import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
 import styles from "./Ratings.module.scss";
 
 export default function Ratings() {
@@ -78,12 +80,12 @@ export default function Ratings() {
                 <div className={styles.metricsBlock}>
                   {getRatingMetrics(rating.metrics).map((metric) => {
                     const metricConfig = METRIC_MAPPINGS[metric.metricName as MetricName];
+                    const status = metricConfig.getStatus(metric.value);
+                    const statusColor = getStatusColor(metric.metricName as MetricName, metric.value);
                     return (
                       <div key={metric.metricName} className={styles.metricRow}>
                         <span className={styles.metricName}>{metric.metricName}</span>
-                        <span className={styles.metricValue}>
-                          {metricConfig.getStatus(metric.value)}
-                        </span>
+                        <Badge color={statusColor} label={status} />
                       </div>
                     );
                   })}
