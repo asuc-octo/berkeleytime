@@ -21,6 +21,9 @@ export function CourseTitleDisplay({
     color: "var(--paragraph-color)",
     width: "100%",
     display: "block",
+    overflow: "hidden",
+    whiteSpace: "nowrap" as const,
+    textOverflow: "ellipsis",
   };
 
   return <span style={courseTitleStyle}>{displayTitle}</span>;
