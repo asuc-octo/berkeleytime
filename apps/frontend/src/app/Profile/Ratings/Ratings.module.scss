@@ -68,26 +68,40 @@
 .courseHeader {
   width: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
+
+  .courseTopRow {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  }
 
   .courseInfo {
     flex: 1;
     display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
 
-  .courseName {
-    font-size: 14px;
-    font-weight: 660;
-    color: var(--text-primary);
-  }
+    .courseTopInfo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .semester {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--label-color);
+    .courseName {
+      font-size: 14px;
+      font-weight: 660;
+      color: var(--text-primary);
+    }
+
+    .semester {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--label-color);
+    }
   }
 
   .viewButton {
@@ -121,7 +135,7 @@
     .metricName {
       font-size: 14px;
       font-weight: 500;
-      color: var(--label-color);
+      color: var(--paragraph-color);
       min-width: 120px;
     }
   }

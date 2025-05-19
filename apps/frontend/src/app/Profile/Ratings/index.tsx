@@ -6,6 +6,7 @@ import { METRIC_MAPPINGS, MetricName, METRIC_ORDER } from "@repo/shared";
 import { Badge } from "@repo/theme";
 import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
 import styles from "./Ratings.module.scss";
+import { CourseTitleDisplay } from "./CourseTitleDisplay";
 
 export default function Ratings() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -70,11 +71,23 @@ export default function Ratings() {
                 className={styles.ratingCard}
               >
                 <div className={styles.courseHeader}>
-                  <div className={styles.courseInfo}>
-                    <span className={styles.courseName}>{rating.subject} {rating.courseNumber}</span>
-                    <span className={styles.semester}>{rating.semester} {rating.year}</span>
+                  <div className={styles.courseTopRow}>
+                    <div className={styles.courseInfo}>
+                      <div className={styles.courseTopInfo}>
+                        <span className={styles.courseName}>
+                          {rating.subject} {rating.courseNumber}
+                        </span>
+                        <span className={styles.semester}>{rating.semester} {rating.year}</span>
+                      </div>
+                    </div>
+                    <a 
+                      href={`/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}/ratings`} 
+                      className={styles.viewButton}
+                    >
+                      View {'->'}
+                    </a>
                   </div>
-                  <a href="#" className={styles.viewButton}>View {'->'}</a>
+                  <CourseTitleDisplay subject={rating.subject} courseNumber={rating.courseNumber} />
                 </div>
 
                 <div className={styles.metricsBlock}>
