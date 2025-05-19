@@ -5,9 +5,12 @@ import { useQuery } from "@apollo/client";
 import { GET_USER_RATINGS, UserRatingsResponse } from "@/lib/api/ratings";
 
 export const useUserRatings = () => {
-  const { data, loading, error } = useQuery<UserRatingsResponse>(GET_USER_RATINGS, {
-    fetchPolicy: "cache-and-network",
-  });
+  const { data, loading, error } = useQuery<UserRatingsResponse>(
+    GET_USER_RATINGS,
+    {
+      fetchPolicy: "cache-and-network",
+    }
+  );
 
   const ratings = useMemo(() => {
     if (!data?.userRatings?.classes) return [];
@@ -23,4 +26,4 @@ export const useUserRatings = () => {
     loading,
     error,
   };
-}; 
+};

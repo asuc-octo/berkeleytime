@@ -1,16 +1,37 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
 import { Search } from "iconoir-react";
 
-import { useUserRatings } from "@/hooks/api/ratings";
-import { METRIC_MAPPINGS, MetricName, METRIC_ORDER } from "@repo/shared";
+import { METRIC_MAPPINGS, METRIC_ORDER, MetricName } from "@repo/shared";
 import { Badge } from "@repo/theme";
+
 import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
-import styles from "./Ratings.module.scss";
+import { useUserRatings } from "@/hooks/api/ratings";
+
 import { CourseTitleDisplay } from "./CourseTitleDisplay";
+import styles from "./Ratings.module.scss";
 
 export default function Ratings() {
   const [searchQuery, setSearchQuery] = useState("");
   const { ratings, loading, error } = useUserRatings();
+
+  // Preload rating links when ratings are available
+  useEffect(() => {
+    if (!ratings?.length) return;
+
+    ratings.forEach((rating) => {
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = `/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}/ratings`;
+      document.head.appendChild(link);
+    });
+
+    // Cleanup function to remove prefetch links
+    return () => {
+      const links = document.head.querySelectorAll('link[rel="prefetch"]');
+      links.forEach((link) => link.remove());
+    };
+  }, [ratings]);
 
   const filteredRatings = useMemo(() => {
     if (!ratings) return [];
@@ -18,18 +39,19 @@ export default function Ratings() {
 
     const query = searchQuery.toLowerCase().trim();
     return ratings.filter((rating) => {
-      const searchableText = `${rating.subject} ${rating.courseNumber} ${rating.semester} ${rating.year}`.toLowerCase();
+      const searchableText =
+        `${rating.subject} ${rating.courseNumber} ${rating.semester} ${rating.year}`.toLowerCase();
       return searchableText.includes(query);
     });
   }, [ratings, searchQuery]);
 
-  const getRatingMetrics = (metrics: Array<{ metricName: string; value: number }>) => {
-    const ratingMetrics = metrics.filter(
-      (metric) => {
-        const metricConfig = METRIC_MAPPINGS[metric.metricName as MetricName];
-        return metricConfig && metricConfig.isRating === true;
-      }
-    );
+  const getRatingMetrics = (
+    metrics: Array<{ metricName: string; value: number }>
+  ) => {
+    const ratingMetrics = metrics.filter((metric) => {
+      const metricConfig = METRIC_MAPPINGS[metric.metricName as MetricName];
+      return metricConfig && metricConfig.isRating === true;
+    });
 
     // Sort metrics according to METRIC_ORDER
     return ratingMetrics.sort((a, b) => {
@@ -66,8 +88,8 @@ export default function Ratings() {
         {filteredRatings.length > 0 && (
           <div className={styles.ratingsGrid}>
             {filteredRatings.map((rating) => (
-              <div 
-                key={`${rating.subject}-${rating.courseNumber}-${rating.lastUpdated}`} 
+              <div
+                key={`${rating.subject}-${rating.courseNumber}-${rating.lastUpdated}`}
                 className={styles.ratingCard}
               >
                 <div className={styles.courseHeader}>
@@ -77,34 +99,48 @@ export default function Ratings() {
                         <span className={styles.courseName}>
                           {rating.subject} {rating.courseNumber}
                         </span>
-                        <span className={styles.semester}>{rating.semester} {rating.year}</span>
+                        <span className={styles.semester}>
+                          {rating.semester} {rating.year}
+                        </span>
                       </div>
                     </div>
-                    <a 
-                      href={`/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}/ratings`} 
+                    <a
+                      href={`/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}/ratings`}
                       className={styles.viewButton}
                     >
-                      View {'->'}
+                      View {"->"}
                     </a>
                   </div>
-                  <CourseTitleDisplay subject={rating.subject} courseNumber={rating.courseNumber} />
+                  <CourseTitleDisplay
+                    subject={rating.subject}
+                    courseNumber={rating.courseNumber}
+                  />
                 </div>
 
                 <div className={styles.metricsBlock}>
                   {getRatingMetrics(rating.metrics).map((metric) => {
-                    const metricConfig = METRIC_MAPPINGS[metric.metricName as MetricName];
+                    const metricConfig =
+                      METRIC_MAPPINGS[metric.metricName as MetricName];
                     const status = metricConfig.getStatus(metric.value);
-                    const statusColor = getStatusColor(metric.metricName as MetricName, metric.value);
+                    const statusColor = getStatusColor(
+                      metric.metricName as MetricName,
+                      metric.value
+                    );
                     return (
                       <div key={metric.metricName} className={styles.metricRow}>
-                        <span className={styles.metricName}>{metric.metricName}</span>
+                        <span className={styles.metricName}>
+                          {metric.metricName}
+                        </span>
                         <Badge color={statusColor} label={status} />
                       </div>
                     );
                   })}
                 </div>
 
-                <p className={styles.lastUpdated}>Last updated on {new Date(rating.lastUpdated).toLocaleDateString()}</p>
+                <p className={styles.lastUpdated}>
+                  Last updated on{" "}
+                  {new Date(rating.lastUpdated).toLocaleDateString()}
+                </p>
               </div>
             ))}
           </div>
@@ -113,4 +149,3 @@ export default function Ratings() {
     </div>
   );
 }
-  
