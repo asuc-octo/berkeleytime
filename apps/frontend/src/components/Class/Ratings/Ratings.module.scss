@@ -1,6 +1,6 @@
 .root {
   background-color: var(--background-color);
-  padding: 20px;
+  padding: 24px 0 0;
   height: 100%;
 
   .header {
@@ -135,36 +135,34 @@
   padding-top: 8px;
 }
 
-.empty {
-  text-align: center;
-  height: 100%;
+.placeholder {
   display: flex;
-  align-items: center;
   flex-direction: column;
-  justify-content: center;
-  color: var(--paragraph-color);
-  // Web UI (Desktop)/Title/Title Medium
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  letter-spacing: -0.1px;
-  border-radius: 0;
-  box-shadow: 0;
+  align-items: center;
+  color: var(--label-color);
+  height: 100%;
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 24px 0;
+  text-align: center;
+  justify-content: flex-start;
+  padding-top: 150px;
 
-  h4 {
-    margin-bottom: 12px;
-    margin-top: 20px;
+  .heading {
     color: var(--heading-color);
-    font-size: 16px;
     font-weight: 500;
+    margin-top: 24px;
+    margin-bottom: 0;
   }
 
-  p + p {
+  .paragraph {
+    color: var(--paragraph-color);
     margin-top: 8px;
+    max-width: 448px;
   }
 
   button {
-    margin-top: 32px;
+    margin-top: 24px;
     background-color: var(--foreground-color);
     font-weight: 400;
   }
