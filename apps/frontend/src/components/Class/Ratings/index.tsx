@@ -419,7 +419,7 @@ export function RatingsContainer() {
           />
         </div>
       ) : (
-        <Container size="2">
+        <Container size="3">
           {userRatings ? (
             <UserRatingSummary
               userRatings={userRatings}
