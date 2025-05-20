@@ -410,7 +410,8 @@ export function RatingsContainer() {
           <UserStar width={32} height={32} strokeWidth={1.5} />
           <p className={styles.heading}>No Course Ratings</p>
           <p className={styles.paragraph}>
-            This course doesn't have any reviews yet.<br />
+            This course doesn't have any reviews yet.
+            <br />
             Be the first to share your experience!
           </p>
           <RatingButton
@@ -433,7 +434,9 @@ export function RatingsContainer() {
               <div></div>
             )}
             <div className={styles.header}>
-              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+              <div
+                style={{ display: "flex", gap: "12px", alignItems: "center" }}
+              >
                 {hasRatings && !userRatings && (
                   <RatingButton
                     user={user}
@@ -451,7 +454,8 @@ export function RatingsContainer() {
                           // Filter for past terms
                           const termPosition = termsData?.find(
                             (t) =>
-                              t.semester === term.semester && t.year === term.year
+                              t.semester === term.semester &&
+                              t.year === term.year
                           )?.temporalPosition;
                           const isValidTerm =
                             termPosition === TemporalPosition.Past ||
@@ -539,7 +543,7 @@ export function RatingsContainer() {
           </Container>
         </div>
       )}
-      
+
       <UserFeedbackModal
         isOpen={isModalOpen}
         onClose={() => handleModalStateChange(false)}
