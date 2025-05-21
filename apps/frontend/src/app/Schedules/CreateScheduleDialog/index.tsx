@@ -150,11 +150,7 @@ export default function CreateScheduleDialog({
             </Flex>
           </Dialog.Body>
           <Dialog.Footer>
-            <Button
-              disabled={loading || pending}
-              variant="solid"
-              onClick={() => handleClick()}
-            >
+            <Button disabled={loading || pending} onClick={() => handleClick()}>
               Create
               <LoadingIndicator loading={loading}>
                 <ArrowRight />

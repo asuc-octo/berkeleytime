@@ -244,7 +244,7 @@ export default function EventDialog({ children }: EventDialogProps) {
             </Flex>
           </Dialog.Body>
           <Dialog.Footer>
-            <Button variant="solid" onClick={() => save()}>
+            <Button onClick={() => save()}>
               Add
               <ArrowRight />
             </Button>

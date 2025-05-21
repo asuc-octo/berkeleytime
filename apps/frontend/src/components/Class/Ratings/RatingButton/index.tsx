@@ -26,6 +26,7 @@ export const RatingButton = memo(
       const canRate = checkConstraint(userRatingData, currentClass);
       return (
         <Button
+          variant="secondary"
           className={classNames(styles.button, { canRate: styles.invalid })}
           onClick={() => onOpenModal(true)}
         >
@@ -36,6 +37,7 @@ export const RatingButton = memo(
       const redirectPath = `${window.location.pathname}${checkConstraint(userRatingData, currentClass) ? "?feedbackModal=true" : ""}`;
       return (
         <Button
+          variant="secondary"
           onClick={() => signIn(redirectPath)}
           className={styles.ratingButton}
         >

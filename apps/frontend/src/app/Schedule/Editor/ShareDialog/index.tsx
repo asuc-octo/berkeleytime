@@ -94,15 +94,12 @@ export default function ShareDialog({ children }: ShareDialogProps) {
                 value={window.location.origin + window.location.pathname}
               />
               {canShare ? (
-                <Button
-                  variant="solid"
-                  onClick={() => navigator.share(content)}
-                >
+                <Button onClick={() => navigator.share(content)}>
                   Share
                   <ShareIos />
                 </Button>
               ) : (
-                <Button variant="solid" onClick={() => copy()}>
+                <Button onClick={() => copy()}>
                   {copied ? <ClipboardCheck /> : <PasteClipboard />}
                   {copied ? "Copied" : "Copy link"}
                 </Button>

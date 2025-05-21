@@ -114,7 +114,7 @@ export default function Hero() {
                 autoFocus
                 placeholder="Search for courses..."
               />
-              <Button variant="solid">
+              <Button>
                 Go
                 <ArrowRight />
               </Button>

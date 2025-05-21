@@ -63,7 +63,7 @@ export default function Schedules() {
           <CreateScheduleDialog
             defaultName={`Schedule ${schedules.length + 1}`}
           >
-            <Button variant="solid">
+            <Button>
               <Plus />
               Create a schedule
             </Button>

@@ -23,7 +23,7 @@ export default function PinsDrawer({ children }: PinsDrawerProps) {
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Drawer className={styles.drawer}>
           <div className={styles.header}>
-            <Button>
+            <Button variant="secondary">
               <XmarkCircle />
               Clear
             </Button>

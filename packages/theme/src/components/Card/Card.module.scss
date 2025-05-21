@@ -72,9 +72,9 @@
       color: var(--paragraph-color)
     }
   }
-  .hover-color-change:hover {
-    background-color: var(--background-color);
-  }
+}
+.hover-color-change:hover {
+  background-color: var(--background-color);
 }
   
 .active {

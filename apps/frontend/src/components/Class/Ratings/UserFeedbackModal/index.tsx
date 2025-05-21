@@ -227,12 +227,16 @@ export function UserFeedbackModal({
 
               <div className={styles.modalFooter}>
                 <Dialog.Close asChild>
-                  <Button className={styles.cancelButton} type="button">
+                  <Button
+                    className={styles.cancelButton}
+                    type="button"
+                    variant="secondary"
+                  >
                     Cancel
                   </Button>
                 </Dialog.Close>
                 <Button
-                  className={`${styles.submitButton} ${isFormValid ? styles.valid : styles.invalid}`}
+                  disabled={!isFormValid}
                   type="submit"
                   onClick={(e: any) => {
                     e.preventDefault();

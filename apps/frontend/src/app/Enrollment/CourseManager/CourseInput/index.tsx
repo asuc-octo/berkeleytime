@@ -261,7 +261,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         />
       </Box>
       <Button
-        variant="solid"
         onClick={() => add()}
         disabled={
           disabled || !selectedCourse || !selectedClass || !selectedSemester

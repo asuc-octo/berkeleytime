@@ -79,7 +79,11 @@ export default function EditDialog({ children }: EditDialogProps) {
               </Dialog.Description>
             </Flex>
             <Flex gap="3">
-              <Button onClick={() => remove()} disabled={loading || pending}>
+              <Button
+                onClick={() => remove()}
+                disabled={loading || pending}
+                variant="secondary"
+              >
                 <Trash />
                 Delete
               </Button>
@@ -100,7 +104,6 @@ export default function EditDialog({ children }: EditDialogProps) {
           </Dialog.Body>
           <Dialog.Footer>
             <Button
-              variant="solid"
               disabled={saved || loading || pending}
               onClick={() => save()}
             >

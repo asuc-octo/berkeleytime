@@ -36,7 +36,7 @@ export function SubmitRatingPopup({ isOpen, onClose }: SubmitRatingPopupProps) {
             </div>
           </Dialog.Body>
           <Dialog.Footer>
-            <Button onClick={onClose} variant="solid">
+            <Button onClick={onClose}>
               Done
               <ArrowRight />
             </Button>
@@ -82,13 +82,11 @@ export function DeleteRatingPopup({
           </Dialog.Body>
           <Dialog.Footer>
             {!isDeleting && (
-              <Button onClick={onClose}>No, keep my rating</Button>
+              <Button onClick={onClose} variant="tertiary" isDelete>
+                No, keep my rating
+              </Button>
             )}
-            <Button
-              onClick={handleDelete}
-              disabled={isDeleting}
-              variant="solid"
-            >
+            <Button onClick={handleDelete} disabled={isDeleting} isDelete>
               {isDeleting ? "Deleting..." : "Yes, delete"}
             </Button>
           </Dialog.Footer>

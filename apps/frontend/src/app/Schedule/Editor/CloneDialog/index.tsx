@@ -115,11 +115,7 @@ export default function CloneDialog({ children }: CloneDialogProps) {
             </Flex>
           </Dialog.Body>
           <Dialog.Footer>
-            <Button
-              onClick={() => confirm()}
-              variant="solid"
-              disabled={loading}
-            >
+            <Button onClick={() => confirm()} disabled={loading}>
               Confirm
               <LoadingIndicator loading={loading}>
                 <ArrowRight />

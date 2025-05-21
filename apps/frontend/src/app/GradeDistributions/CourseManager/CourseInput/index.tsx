@@ -398,7 +398,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         </Box>
       </Flex>
       <Button
-        variant="solid"
         onClick={() => add()}
         disabled={
           disabled ||
