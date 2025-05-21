@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 
-import { Theme } from "@radix-ui/themes";
+import { FlexProps, Theme } from "@radix-ui/themes";
 import classNames from "classnames";
 import { Dialog as Primitive } from "radix-ui";
+
+import { Flex } from "@repo/theme";
 
 import { StackContext } from "../../contexts/StackContext";
 import { useStack } from "../../hooks/useStack";
@@ -67,10 +69,44 @@ function Drawer({
   );
 }
 
+function Header({ children, ...props }: FlexProps) {
+  return (
+    <Flex p="4" align="start" gap="4" className={styles.header} {...props}>
+      {children}
+    </Flex>
+  );
+}
+
+function Body({ children, ...props }: FlexProps) {
+  return (
+    <Flex p="4" align="start" direction="column" {...props}>
+      {children}
+    </Flex>
+  );
+}
+
+function Footer({ children, ...props }: FlexProps) {
+  return (
+    <Flex
+      p="4"
+      justify="end"
+      direction="row"
+      gap="4"
+      className={styles.footer}
+      {...props}
+    >
+      {children}
+    </Flex>
+  );
+}
+
 export const Dialog = {
   ...Primitive,
   Overlay,
   Content,
   Card,
   Drawer,
+  Header,
+  Body,
+  Footer,
 };

@@ -9,8 +9,8 @@ import { useReadTerms } from "@/hooks/api";
 import { Semester, TemporalPosition } from "@/lib/api";
 
 import { MetricData, UserRating, toMetricData } from "../metricsUtil";
+import { SubmitRatingPopup } from "./ConfirmationPopups";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
-import { SubmitRatingPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;

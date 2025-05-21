@@ -111,22 +111,22 @@ export default function EventDialog({ children }: EventDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="4" direction="column" gap="4">
-            <Flex align="start" gap="4">
-              <Flex direction="column" gap="1" flexGrow="1">
-                <Dialog.Title asChild>
-                  <Heading>Add a custom event</Heading>
-                </Dialog.Title>
-                <Dialog.Description asChild>
-                  <Text>Insert a custom event in your schedule</Text>
-                </Dialog.Description>
-              </Flex>
-              <Dialog.Close asChild>
-                <IconButton>
-                  <Xmark />
-                </IconButton>
-              </Dialog.Close>
+          <Dialog.Header>
+            <Flex direction="column" gap="1" flexGrow="1">
+              <Dialog.Title asChild>
+                <Heading>Add a custom event</Heading>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <Text>Insert a custom event in your schedule</Text>
+              </Dialog.Description>
             </Flex>
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </Dialog.Header>
+          <Dialog.Body gap="3">
             <Flex direction="column" gap="2">
               <Label>Name</Label>
               <Input
@@ -139,7 +139,6 @@ export default function EventDialog({ children }: EventDialogProps) {
             <Flex direction="column" gap="2">
               <Label>Time</Label>
               <p className={styles.time}>
-                Time
                 <span className={styles.timeSelect}>
                   <input
                     type="time"
@@ -243,11 +242,13 @@ export default function EventDialog({ children }: EventDialogProps) {
                 onChange={(event) => setDescription(event.target.value)}
               />
             </Flex>
+          </Dialog.Body>
+          <Dialog.Footer>
             <Button variant="solid" onClick={() => save()}>
               Add
               <ArrowRight />
             </Button>
-          </Flex>
+          </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

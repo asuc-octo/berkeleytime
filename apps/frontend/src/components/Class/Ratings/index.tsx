@@ -16,7 +16,7 @@ import { METRIC_ORDER, MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { Container, Select } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
-import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/FeedbackPopups";
+import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
 import { useReadTerms, useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {

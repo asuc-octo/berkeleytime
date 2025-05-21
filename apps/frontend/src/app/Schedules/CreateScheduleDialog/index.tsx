@@ -110,22 +110,22 @@ export default function CreateScheduleDialog({
       <Dialog.Overlay />
       <Dialog.Portal>
         <Dialog.Card>
-          <Flex direction="column" gap="4" p="4">
-            <Flex gap="4">
-              <Flex direction="column" gap="1" flexGrow="1">
-                <Dialog.Title asChild>
-                  <Heading>Create a schedule</Heading>
-                </Dialog.Title>
-                <Dialog.Description asChild>
-                  <Text>Select the semester and enter a name</Text>
-                </Dialog.Description>
-              </Flex>
-              <Dialog.Close asChild>
-                <IconButton disabled={loading}>
-                  <Xmark />
-                </IconButton>
-              </Dialog.Close>
+          <Dialog.Header>
+            <Flex direction="column" gap="1" flexGrow="1">
+              <Dialog.Title asChild>
+                <Heading>Create a schedule</Heading>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <Text>Select the semester and enter a name</Text>
+              </Dialog.Description>
             </Flex>
+            <Dialog.Close asChild>
+              <IconButton disabled={loading}>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </Dialog.Header>
+          <Dialog.Body gap="4">
             <Flex direction="column" gap="2">
               <Label>Name</Label>
               <Input
@@ -148,6 +148,8 @@ export default function CreateScheduleDialog({
                 }
               />
             </Flex>
+          </Dialog.Body>
+          <Dialog.Footer>
             <Button
               disabled={loading || pending}
               variant="solid"
@@ -158,7 +160,7 @@ export default function CreateScheduleDialog({
                 <ArrowRight />
               </LoadingIndicator>
             </Button>
-          </Flex>
+          </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

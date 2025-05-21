@@ -71,56 +71,54 @@ export default function ShareDialog({ children }: ShareDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="4" direction="column" gap="4">
-            <Flex align="start" gap="4">
-              <Flex direction="column" gap="1" flexGrow="1">
-                <Dialog.Title asChild>
-                  <Heading>Share schedule</Heading>
-                </Dialog.Title>
-                <Dialog.Description asChild>
-                  <Text>Manage who can view your schedule</Text>
-                </Dialog.Description>
-              </Flex>
-              <Dialog.Close asChild>
-                <IconButton>
-                  <Xmark />
-                </IconButton>
-              </Dialog.Close>
+          <Dialog.Header>
+            <Flex direction="column" gap="1" flexGrow="1">
+              <Dialog.Title asChild>
+                <Heading>Share schedule</Heading>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <Text>Manage who can view your schedule</Text>
+              </Dialog.Description>
             </Flex>
-            <Flex direction="column" gap="3">
-              <Flex gap="3">
-                <Input
-                  readOnly
-                  type="url"
-                  value={window.location.origin + window.location.pathname}
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </Dialog.Header>
+          <Dialog.Body gap="3">
+            <Flex gap="3">
+              <Input
+                readOnly
+                type="url"
+                value={window.location.origin + window.location.pathname}
+              />
+              {canShare ? (
+                <Button
+                  variant="solid"
+                  onClick={() => navigator.share(content)}
+                >
+                  Share
+                  <ShareIos />
+                </Button>
+              ) : (
+                <Button variant="solid" onClick={() => copy()}>
+                  {copied ? <ClipboardCheck /> : <PasteClipboard />}
+                  {copied ? "Copied" : "Copy link"}
+                </Button>
+              )}
+            </Flex>
+            <label>
+              <Flex align="center" gap="3">
+                <Checkbox
+                  checked={schedule.public}
+                  onCheckedChange={handleCheckedChange}
+                  disabled={loading}
                 />
-                {canShare ? (
-                  <Button
-                    variant="solid"
-                    onClick={() => navigator.share(content)}
-                  >
-                    Share
-                    <ShareIos />
-                  </Button>
-                ) : (
-                  <Button variant="solid" onClick={() => copy()}>
-                    {copied ? <ClipboardCheck /> : <PasteClipboard />}
-                    {copied ? "Copied" : "Copy link"}
-                  </Button>
-                )}
+                <Text as="span">Anyone with the link can view</Text>
               </Flex>
-              <label>
-                <Flex align="center" gap="3">
-                  <Checkbox
-                    checked={schedule.public}
-                    onCheckedChange={handleCheckedChange}
-                    disabled={loading}
-                  />
-                  <Text as="span">Anyone with the link can view</Text>
-                </Flex>
-              </label>
-            </Flex>
-          </Flex>
+            </label>
+          </Dialog.Body>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

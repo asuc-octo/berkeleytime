@@ -1,0 +1,46 @@
+.body {
+  align-items: center;
+  color: var(--heading-color);
+}
+.icon {
+  margin-top: 40px;
+  width: 70px;
+  height: 70px;
+  color: var(--blue-500);
+}
+
+.modalHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.title {
+  margin-top: 28px;
+  margin-bottom: 14px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0px 20px;
+  color: var(--paragraph-color);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.modalFooter {
+  margin-left: -25px;
+  margin-right: -25px;
+  padding: 0px 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 24px;
+  align-items: center;
+  min-height: fit-content;
+}
