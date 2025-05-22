@@ -1,11 +1,12 @@
 .overlay {
-  background-color: rgb(0 0 0 / 40%);
+  background-color: var(--background-color);
+  opacity: 0.9;
   position: fixed;
   inset: 0;
   animation: overlayShow 100ms cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 50;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* backdrop-filter: blur(12px); */
+  /* -webkit-backdrop-filter: blur(12px); */
 }
 
 .modal {
