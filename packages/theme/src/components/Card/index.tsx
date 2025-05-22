@@ -115,6 +115,7 @@ function ColumnHeader({ children, style, ...props }: FlexProps) {
         width: "100%",
         overflow: "hidden",
         flexShrink: "0",
+        height: "100%",
         ...style,
       }}
       {...props}
