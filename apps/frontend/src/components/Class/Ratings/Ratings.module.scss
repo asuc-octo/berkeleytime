@@ -1,6 +1,6 @@
 .root {
   background-color: var(--background-color);
-  padding: 24px 0 0;
+  padding: 24px 0;
   height: 100%;
 
   .header {
@@ -8,7 +8,7 @@
 
     .termSelectWrapper {
       margin-left: auto;
-      width: 170px;
+      max-width: 300px;
     }
   }
 
@@ -17,8 +17,7 @@
     border-radius: 8px;
     padding: 0 24px;
     border: 1px solid var(--border-color);
-    min-width: 100%;
-    width: 100%;
+    min-width: 450px;
     
     .ratingSection {
       padding: 24px 0;
@@ -155,7 +154,7 @@
     margin-bottom: 0;
   }
 
-  .paragraph {
+  p + p {
     color: var(--paragraph-color);
     margin-top: 8px;
     max-width: 448px;

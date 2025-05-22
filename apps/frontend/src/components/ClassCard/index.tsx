@@ -53,54 +53,56 @@ export default function ClassCard({
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   return (
-    <Card.Root {...props}>
+    <Card.RootColumn {...props}>
       {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
-      <Card.Body>
-        <Card.Heading>
-          {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
-        </Card.Heading>
-        <Card.Description>{title ?? courseTitle}</Card.Description>
-        <Card.Footer>
-          <Capacity
-            enrolledCount={enrollment?.latest.enrolledCount}
-            maxEnroll={enrollment?.latest.maxEnroll}
-            waitlistedCount={enrollment?.latest.waitlistedCount}
-            maxWaitlist={enrollment?.latest.maxWaitlist}
+      <Card.ColumnHeader>
+        <Card.Body>
+          <Card.Heading>
+            {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
+          </Card.Heading>
+          <Card.Description>{title ?? courseTitle}</Card.Description>
+          <Card.Footer>
+            <Capacity
+              enrolledCount={enrollment?.latest.enrolledCount}
+              maxEnroll={enrollment?.latest.maxEnroll}
+              waitlistedCount={enrollment?.latest.waitlistedCount}
+              maxWaitlist={enrollment?.latest.maxWaitlist}
+            />
+            <Units unitsMin={unitsMin} unitsMax={unitsMax} />
+            {expandable && onExpandedChange !== undefined && (
+              <Card.ActionIcon
+                onClick={() => {
+                  onExpandedChange(!expanded);
+                }}
+                style={{ position: "absolute", right: 16 }}
+              >
+                {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
+              </Card.ActionIcon>
+            )}
+          </Card.Footer>
+        </Card.Body>
+        <Card.Actions>
+          <AverageGrade
+            gradeDistribution={gradeDistribution}
+            style={{ marginTop: 0.5, fontSize: 15 }}
           />
-          <Units unitsMin={unitsMin} unitsMax={unitsMax} />
-          {expandable && onExpandedChange !== undefined && (
-            <Card.ActionIcon
-              onClick={() => {
-                onExpandedChange(!expanded);
-              }}
-              style={{ position: "absolute", right: 16 }}
-            >
-              {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
+          {bookmarked && bookmarkToggle && (
+            <Card.ActionIcon onClick={bookmarkToggle}>
+              {bookmarked ? (
+                <BookmarkSolid width={16} height={16} />
+              ) : (
+                <Bookmark width={16} height={16} />
+              )}
             </Card.ActionIcon>
           )}
-        </Card.Footer>
-        {expanded && children}
-      </Card.Body>
-      <Card.Actions>
-        <AverageGrade
-          gradeDistribution={gradeDistribution}
-          style={{ marginTop: 0.5, fontSize: 15 }}
-        />
-        {bookmarked && bookmarkToggle && (
-          <Card.ActionIcon onClick={bookmarkToggle}>
-            {bookmarked ? (
-              <BookmarkSolid width={16} height={16} />
-            ) : (
-              <Bookmark width={16} height={16} />
-            )}
-          </Card.ActionIcon>
-        )}
-        {onDelete && (
-          <Card.ActionIcon isDelete onClick={onDelete}>
-            <Trash />
-          </Card.ActionIcon>
-        )}
-      </Card.Actions>
-    </Card.Root>
+          {onDelete && (
+            <Card.ActionIcon isDelete onClick={onDelete}>
+              <Trash />
+            </Card.ActionIcon>
+          )}
+        </Card.Actions>
+      </Card.ColumnHeader>
+      {expanded && <Card.ColumnBody>{children}</Card.ColumnBody>}
+    </Card.RootColumn>
   );
 }
