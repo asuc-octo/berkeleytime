@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import classNames from "classnames";
 import {
   ArrowRight,
   CheckCircleSolid,
@@ -71,8 +72,7 @@ export function DeleteRatingPopup({
         <Dialog.Card>
           <Dialog.Body className={styles.body}>
             <WarningTriangleSolid
-              className={styles.icon}
-              color="var(--red-500) !important"
+              className={classNames(styles.icon, styles.red)}
             />
             <div className={styles.title}>Delete Rating</div>
             <div className={styles.subtitle}>
