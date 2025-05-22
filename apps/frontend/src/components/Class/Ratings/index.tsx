@@ -443,7 +443,9 @@ export function RatingsContainer() {
               <div></div>
             )}
             <div className={styles.header}>
-              <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+              <div
+                style={{ display: "flex", gap: "12px", alignItems: "center" }}
+              >
                 {hasRatings && !userRatings && (
                   <RatingButton
                     user={user}
@@ -461,7 +463,8 @@ export function RatingsContainer() {
                           // Filter for past terms
                           const termPosition = termsData?.find(
                             (t) =>
-                              t.semester === term.semester && t.year === term.year
+                              t.semester === term.semester &&
+                              t.year === term.year
                           )?.temporalPosition;
                           const isValidTerm =
                             !termPosition ||
@@ -471,7 +474,8 @@ export function RatingsContainer() {
                           // Filter for terms with ratings
                           const hasRatingsForTerm = semestersWithRatings?.some(
                             (s: { semester: Semester; year: number }) =>
-                              s.semester === term.semester && s.year === term.year
+                              s.semester === term.semester &&
+                              s.year === term.year
                           );
 
                           return isValidTerm && hasRatingsForTerm;
