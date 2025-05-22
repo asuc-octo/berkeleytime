@@ -154,3 +154,11 @@
     opacity: 0;
   }
 }
+
+.header {
+  border-bottom: solid 1px var(--border-color);
+  align-items: center;
+}
+.footer {
+  border-top: solid 1px var(--border-color);
+}

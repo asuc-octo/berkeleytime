@@ -445,20 +445,20 @@ export default function Editor() {
           </MenuItem> */}
         </div>
         <Link to="compare">
-          <Button>
+          <Button variant="secondary">
             <ViewColumns2 />
             Compare
           </Button>
         </Link>
         <CloneDialog>
-          <Button>
+          <Button variant="secondary">
             <Copy />
             Clone
           </Button>
         </CloneDialog>
         {editing && (
           <ShareDialog>
-            <Button variant="solid">
+            <Button>
               Share
               <ShareIos />
             </Button>

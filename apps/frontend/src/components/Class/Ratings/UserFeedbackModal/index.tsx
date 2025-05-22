@@ -1,18 +1,16 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import ReactSelect from "react-select";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { Button, createSelectStyles } from "@repo/theme";
+import { Button, Select } from "@repo/theme";
 
 import { useReadTerms } from "@/hooks/api";
 import { Semester, TemporalPosition } from "@/lib/api";
 
-import ratingStyles from "../Ratings.module.scss";
 import { MetricData, UserRating, toMetricData } from "../metricsUtil";
+import { SubmitRatingPopup } from "./ConfirmationPopups";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
-import { SubmitRatingPopup } from "./FeedbackPopups";
 import styles from "./UserFeedbackModal.module.scss";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
@@ -200,27 +198,17 @@ export function UserFeedbackModal({
                           marginLeft: "18px",
                         }}
                       >
-                        <ReactSelect
-                          id="term-selection"
+                        <Select
                           options={pastTerms.map((term) => ({
                             value: term.value,
                             label: term.label,
                           }))}
-                          value={
-                            selectedTerm
-                              ? pastTerms.find(
-                                  (term) => term.value === selectedTerm
-                                )
-                              : null
-                          }
+                          value={selectedTerm}
                           onChange={(selectedOption: any) =>
-                            setSelectedTerm(selectedOption?.value || null)
+                            setSelectedTerm(selectedOption || null)
                           }
                           placeholder="Select semester"
-                          isClearable={true}
-                          classNamePrefix="select"
-                          className={ratingStyles.termSelect}
-                          styles={createSelectStyles()}
+                          clearable={true}
                         />
                       </div>
                     </div>
@@ -239,12 +227,16 @@ export function UserFeedbackModal({
 
               <div className={styles.modalFooter}>
                 <Dialog.Close asChild>
-                  <Button className={styles.cancelButton} type="button">
+                  <Button
+                    className={styles.cancelButton}
+                    type="button"
+                    variant="secondary"
+                  >
                     Cancel
                   </Button>
                 </Dialog.Close>
                 <Button
-                  className={`${styles.submitButton} ${isFormValid ? styles.valid : styles.invalid}`}
+                  disabled={!isFormValid}
                   type="submit"
                   onClick={(e: any) => {
                     e.preventDefault();

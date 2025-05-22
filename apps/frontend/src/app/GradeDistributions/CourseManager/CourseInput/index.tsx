@@ -2,9 +2,8 @@ import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import { useSearchParams } from "react-router-dom";
-import Select, { SelectInstance, SingleValue } from "react-select";
 
-import { Box, createSelectStyles } from "@repo/theme";
+import { Box, Select, SelectHandle } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
@@ -28,16 +27,6 @@ import {
 } from "../../types";
 import styles from "./CourseInput.module.scss";
 
-type CourseOptionType = {
-  value: ICourse;
-  label: string;
-};
-
-type OptionType = {
-  value: string;
-  label: string;
-};
-
 interface CourseInputProps {
   outputs: Output[];
   setOutputs: Dispatch<SetStateAction<Output[]>>;
@@ -60,42 +49,47 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const semesterSelectRef = useRef<SelectInstance<OptionType, false>>(null);
-  const instructorSelectRef = useRef<SelectInstance<OptionType, false>>(null);
+  const semesterSelectRef = useRef<SelectHandle>(null);
+  const instructorSelectRef = useRef<SelectHandle>(null);
 
   const [loading, setLoading] = useState(false);
 
-  const [selectedCourse, setSelectedCourse] =
-    useState<SingleValue<CourseOptionType>>(null);
+  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
 
   const { data: course } = useReadCourseWithInstructor(
-    selectedCourse?.value.subject ?? "",
-    selectedCourse?.value.number ?? ""
+    selectedCourse?.subject ?? "",
+    selectedCourse?.number ?? ""
   );
 
-  const [selectedType, setSelectedType] =
-    useState<SingleValue<OptionType>>(DEFAULT_BY_OPTION);
+  const [selectedType, setSelectedType] = useState<string | null>(
+    DEFAULT_BY_OPTION.value
+  );
 
-  const [selectedInstructor, setSelectedInstructor] = useState<
-    SingleValue<OptionType>
-  >(DEFAULT_SELECTED_INSTRUCTOR);
+  const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
+    DEFAULT_SELECTED_INSTRUCTOR.value
+  );
 
-  const [selectedSemester, setSelectedSemester] = useState<
-    SingleValue<OptionType>
-  >(DEFAULT_SELECTED_SEMESTER);
+  const [selectedSemester, setSelectedSemester] = useState<string | null>(
+    DEFAULT_SELECTED_SEMESTER.value
+  );
 
   // some crazy cyclic dependencies here, averted by the fact that options changes
   // depend on the value of the "byData"
-  const instructorOptions: OptionType[] = useMemo(() => {
+  const getInstructorOptions = (
+    semester: string | null = null,
+    shouldSetSelectedInstructor = true
+  ) => {
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
     if (!course) return list;
+
+    const localSelectedSemester = semester ? semester : selectedSemester;
 
     const instructorSet = new Set();
     course?.classes.forEach((c) => {
       // get only current semester if getting by semester
       if (!c.gradeDistribution.average) return;
-      if (selectedType?.value === InputType.Term) {
-        if (`${c.semester} ${c.year}` !== selectedSemester?.value) return;
+      if (selectedType === InputType.Term) {
+        if (`${c.semester} ${c.year}` !== localSelectedSemester) return;
       }
       c.primarySection.meetings.forEach((m) => {
         // instructor for current class lecture
@@ -108,27 +102,40 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       // create OptionTypes
       return { value: v as string, label: v as string };
     });
-    if (opts.length === 1 && selectedType?.value === InputType.Term) {
+    if (opts.length === 1 && selectedType === InputType.Term) {
       // If only one choice, select it
-      if (selectedInstructor !== opts[0]) setSelectedInstructor(opts[0]);
+      if (selectedInstructor !== opts[0].value && shouldSetSelectedInstructor)
+        setSelectedInstructor(opts[0].value);
       return opts;
     }
     return [...list, ...opts];
-  }, [course, selectedType?.value, selectedSemester?.value]);
+  };
 
-  const semesterOptions: OptionType[] = useMemo(() => {
+  const instructorOptions = useMemo(getInstructorOptions, [
+    course,
+    selectedType,
+    selectedSemester,
+  ]);
+
+  const getSemesterOptions = (
+    instructor: string | null = null,
+    shouldSetSelectedSemester = true
+  ) => {
     const list = [DEFAULT_SELECTED_SEMESTER];
     if (!course) return list;
+    const localSelectedInstructor = instructor
+      ? instructor
+      : selectedInstructor;
     const filteredClasses =
-      selectedType?.value === InputType.Term
+      selectedType === InputType.Term
         ? course.classes // all if by semester
-        : selectedInstructor?.value === "all"
+        : localSelectedInstructor === "all"
           ? []
           : course.classes.filter((c) =>
               c.primarySection.meetings.find((m) =>
                 m.instructors.find(
                   (i) =>
-                    selectedInstructor?.value ===
+                    localSelectedInstructor ===
                     `${i.familyName}, ${i.givenName}`
                 )
               )
@@ -152,12 +159,21 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       });
     if (filteredOptions.length == 1) {
       // if only one option, select it
-      if (selectedSemester != filteredOptions[0])
-        setSelectedSemester(filteredOptions[0]);
+      if (
+        selectedSemester != filteredOptions[0].value &&
+        shouldSetSelectedSemester
+      )
+        setSelectedSemester(filteredOptions[0].value);
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
-  }, [course, selectedType?.value, selectedInstructor?.value]);
+  };
+
+  const semesterOptions = useMemo(getSemesterOptions, [
+    course,
+    selectedType,
+    selectedInstructor,
+  ]);
 
   const add = async () => {
     let input: Input;
@@ -171,38 +187,35 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return;
 
     addRecent(RecentType.Course, {
-      subject: selectedCourse.value.subject,
-      number: selectedCourse.value.number,
+      subject: selectedCourse.subject,
+      number: selectedCourse.number,
     });
 
     // Course input
-    if (
-      selectedInstructor.value === "all" &&
-      selectedSemester.value === "all"
-    ) {
+    if (selectedInstructor === "all" && selectedSemester === "all") {
       input = {
-        subject: selectedCourse.value.subject,
-        courseNumber: selectedCourse.value.number,
+        subject: selectedCourse.subject,
+        courseNumber: selectedCourse.number,
       };
     }
     // Term input
-    else if (selectedType.value === InputType.Term) {
-      const [semester, year] = selectedSemester.value.split(" ");
+    else if (selectedType === InputType.Term) {
+      const [semester, year] = selectedSemester.split(" ");
 
-      if (selectedInstructor.value === "all") {
+      if (selectedInstructor === "all") {
         input = {
-          subject: selectedCourse.value.subject,
-          courseNumber: selectedCourse.value.number,
+          subject: selectedCourse.subject,
+          courseNumber: selectedCourse.number,
           type: InputType.Term,
           year: parseInt(year),
           semester: semester as Semester,
         };
       } else {
-        const [familyName, givenName] = selectedInstructor.value.split(", ");
+        const [familyName, givenName] = selectedInstructor.split(", ");
 
         input = {
-          subject: selectedCourse.value.subject,
-          courseNumber: selectedCourse.value.number,
+          subject: selectedCourse.subject,
+          courseNumber: selectedCourse.number,
           type: InputType.Term,
           year: parseInt(year),
           semester: semester as Semester,
@@ -214,22 +227,22 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     // Instructor input
     else {
-      const [familyName, givenName] = selectedInstructor.value.split(", ");
+      const [familyName, givenName] = selectedInstructor.split(", ");
 
-      if (selectedSemester.value === "all") {
+      if (selectedSemester === "all") {
         input = {
-          subject: selectedCourse.value.subject,
-          courseNumber: selectedCourse.value.number,
+          subject: selectedCourse.subject,
+          courseNumber: selectedCourse.number,
           type: InputType.Instructor,
           familyName,
           givenName,
         };
       } else {
-        const [semester, year] = selectedSemester.value.split(" ");
+        const [semester, year] = selectedSemester.split(" ");
 
         input = {
-          subject: selectedCourse.value.subject,
-          courseNumber: selectedCourse.value.number,
+          subject: selectedCourse.subject,
+          courseNumber: selectedCourse.number,
           type: InputType.Instructor,
           year: parseInt(year),
           semester: semester as Semester,
@@ -283,26 +296,23 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   );
 
   const handleCourseSelect = (course: ICourse) => {
-    setSelectedCourse({
-      value: course,
-      label: `${course.subject} ${course.number}`,
-    });
+    setSelectedCourse(course);
 
-    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
-    setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
-    if (selectedType?.value === InputType.Instructor) {
+    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
+    setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);
+    if (selectedType === InputType.Instructor) {
       instructorSelectRef.current?.focus();
-      instructorSelectRef.current?.openMenu("first");
+      instructorSelectRef.current?.openMenu();
     } else {
       semesterSelectRef.current?.focus();
-      semesterSelectRef.current?.openMenu("first");
+      semesterSelectRef.current?.openMenu();
     }
   };
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
-    setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
+    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
+    setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);
   };
 
   return (
@@ -311,93 +321,83 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         <CourseSearch
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
-          selectedCourse={
-            selectedCourse
-              ? {
-                  subject: selectedCourse.value.subject,
-                  courseNumber: selectedCourse.value.number,
-                }
-              : undefined
-          }
+          selectedCourse={selectedCourse}
+          inputStyle={{
+            height: 44,
+          }}
         />
       </Box>
       <Box flexGrow="1">
         <Select
-          styles={createSelectStyles<OptionType, false>()}
           options={TYPE_OPTIONS}
-          isDisabled={disabled}
+          disabled={disabled || !selectedCourse}
           value={selectedType}
           onChange={(s) => {
-            setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR);
-            setSelectedSemester(DEFAULT_SELECTED_SEMESTER);
-            setSelectedType(s);
-            if (s?.value === InputType.Instructor) {
+            setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
+            setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);
+            if (!Array.isArray(s)) setSelectedType(s);
+            if (s === InputType.Instructor) {
               instructorSelectRef.current?.focus();
-              instructorSelectRef.current?.openMenu("first");
+              instructorSelectRef.current?.openMenu();
             } else {
               semesterSelectRef.current?.focus();
-              semesterSelectRef.current?.openMenu("first");
+              semesterSelectRef.current?.openMenu();
             }
           }}
-          components={{
-            IndicatorSeparator: () => null,
-          }}
+          variant="foreground"
         />
       </Box>
       <Flex
         direction={
-          selectedType?.value === InputType.Instructor ? "row" : "row-reverse"
+          selectedType === InputType.Instructor ? "row" : "row-reverse"
         }
         flexGrow="1"
         gap="4"
       >
         <Box flexGrow="1">
           <Select
-            styles={createSelectStyles<OptionType, false>()}
             ref={instructorSelectRef}
             options={instructorOptions}
-            isDisabled={disabled}
+            disabled={disabled || !selectedCourse}
             value={selectedInstructor}
             onChange={(s) => {
+              if (Array.isArray(s) || !s) return;
               setSelectedInstructor(s);
+              const localSemesterOptions = getSemesterOptions(s, false);
               if (
-                selectedType?.value === InputType.Instructor &&
-                semesterOptions.length > 1
+                selectedType === InputType.Instructor &&
+                localSemesterOptions.length > 1
               ) {
                 semesterSelectRef.current?.focus();
-                semesterSelectRef.current?.openMenu("first");
+                semesterSelectRef.current?.openMenu();
               }
             }}
-            components={{
-              IndicatorSeparator: () => null,
-            }}
+            variant="foreground"
           />
         </Box>
         <Box flexGrow="1">
           <Select
-            styles={createSelectStyles<OptionType, false>()}
             ref={semesterSelectRef}
             options={semesterOptions}
-            isDisabled={disabled}
+            disabled={disabled || !selectedCourse}
             value={selectedSemester}
             onChange={(s) => {
+              if (Array.isArray(s)) return;
               setSelectedSemester(s);
+              const localInstructorOptions = getInstructorOptions(s, false);
               if (
-                selectedType?.value === InputType.Term &&
-                instructorOptions.length > 1
+                selectedType === InputType.Term &&
+                localInstructorOptions.length > 1
               ) {
                 instructorSelectRef.current?.focus();
-                instructorSelectRef.current?.openMenu("first");
+                instructorSelectRef.current?.openMenu();
               }
             }}
-            components={{
-              IndicatorSeparator: () => null,
-            }}
+            variant="foreground"
           />
         </Box>
       </Flex>
       <Button
-        variant="solid"
         onClick={() => add()}
         disabled={
           disabled ||

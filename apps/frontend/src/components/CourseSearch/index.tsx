@@ -14,10 +14,16 @@ import { initialize } from "./browser";
 interface CourseSearchProps {
   onSelect?: (course: ICourse) => void;
   onClear?: () => void;
-  selectedCourse?: { subject: string; courseNumber: string };
+  selectedCourse: ICourse | null;
+  inputStyle?: React.CSSProperties;
 }
 
-export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
+export default function CourseSearch({
+  onSelect,
+  onClear,
+  selectedCourse,
+  inputStyle,
+}: CourseSearchProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,8 +49,6 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
           .map(({ refIndex }) => catalogCourses[refIndex])
       : catalogCourses;
   }, [catalogCourses, index, searchQuery]);
-
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -85,9 +89,9 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
           onClick={() => setIsOpen(true)}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            setSelectedCourse(null);
             if (onClear) onClear();
           }}
+          style={inputStyle}
         />
       </div>
 
@@ -113,7 +117,6 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
                           );
                           if (full) {
                             onSelect?.(full);
-                            setSelectedCourse(full);
                             setSearchQuery("");
                           }
                           setIsOpen(false);
@@ -135,7 +138,6 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
                       className={styles.catalogItem}
                       onClick={() => {
                         onSelect?.(course);
-                        setSelectedCourse(course);
                         setSearchQuery("");
                         setIsOpen(false);
                       }}

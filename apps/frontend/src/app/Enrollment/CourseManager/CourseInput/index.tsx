@@ -2,11 +2,8 @@ import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import { useSearchParams } from "react-router-dom";
-import { SelectInstance, SingleValue } from "react-select";
-import Select from "react-select";
 
-import { createSelectStyles } from "@repo/theme";
-import { Box, Button, Flex } from "@repo/theme";
+import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
@@ -28,21 +25,6 @@ import {
 } from "../../types";
 import styles from "./CourseInput.module.scss";
 
-type CourseOptionType = {
-  value: ICourse;
-  label: string;
-};
-
-type ClassOptionType = {
-  value: IClass | null;
-  label: string;
-};
-
-type OptionType = {
-  value: string;
-  label: string;
-};
-
 interface CourseInputProps {
   outputs: Output[];
   setOutputs: Dispatch<SetStateAction<Output[]>>;
@@ -56,28 +38,26 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const semesterSelectRef = useRef<SelectInstance<OptionType, false>>(null);
-  const classSelectRef = useRef<SelectInstance<ClassOptionType, false>>(null);
+  const semesterSelectRef = useRef<SelectHandle>(null);
+  const classSelectRef = useRef<SelectHandle>(null);
 
   const [loading, setLoading] = useState(false);
 
-  const [selectedCourse, setSelectedCourse] =
-    useState<SingleValue<CourseOptionType>>(null);
+  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
 
   const { data: courseData } = useReadCourseWithInstructor(
-    selectedCourse?.value.subject ?? "",
-    selectedCourse?.value.number ?? ""
+    selectedCourse?.subject ?? "",
+    selectedCourse?.number ?? ""
   );
 
-  const [selectedClass, setSelectedClass] = useState<
-    SingleValue<ClassOptionType>
-  >(DEFAULT_SELECTED_CLASS);
-  const [selectedSemester, setSelectedSemester] =
-    useState<SingleValue<OptionType>>();
+  const [selectedClass, setSelectedClass] = useState<IClass | null>(
+    DEFAULT_SELECTED_CLASS.value
+  );
+  const [selectedSemester, setSelectedSemester] = useState<string | null>();
 
-  const semesterOptions: OptionType[] = useMemo(() => {
+  const semesterOptions = useMemo(() => {
     // get all semesters
-    const list: OptionType[] = [];
+    const list: { value: string; label: string }[] = [];
     if (!courseData) return list;
     const filterHasData = courseData.classes.filter(
       ({ primarySection: { enrollment } }) => enrollment?.latest
@@ -99,23 +79,28 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         };
       });
     if (filteredOptions.length == 1) {
-      if (selectedSemester != filteredOptions[0])
-        setSelectedSemester(filteredOptions[0]);
+      if (selectedSemester != filteredOptions[0].value)
+        setSelectedSemester(filteredOptions[0].value);
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
   }, [courseData]);
 
-  const classOptions: ClassOptionType[] = useMemo(() => {
+  const getClassOptions = (
+    semester: string | null = null,
+    shouldSetSelectedClass = true
+  ) => {
     const list = [DEFAULT_SELECTED_CLASS];
     if (!courseData) return list;
+
+    const localSelectedSemester = semester ? semester : selectedSemester;
 
     const classStrings: string[] = [];
     const classes: IClass[] = [];
     courseData?.classes
       .filter(
         (c) =>
-          `${c.semester} ${c.year}` === selectedSemester?.value &&
+          `${c.semester} ${c.year}` === localSelectedSemester &&
           c ===
             courseData?.classes.find(
               (c2) =>
@@ -141,34 +126,37 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     });
     if (opts.length === 1) {
       // if only one option, select it
-      if (selectedClass !== opts[0]) setSelectedClass(opts[0]);
+      if (selectedClass !== opts[0].value && shouldSetSelectedClass)
+        setSelectedClass(opts[0].value);
       return opts;
     }
     return [...list, ...opts];
-  }, [courseData, selectedSemester]);
+  };
+
+  const classOptions = useMemo(getClassOptions, [courseData, selectedSemester]);
 
   const add = async () => {
     if (!selectedClass || !selectedCourse || !selectedSemester) return;
 
     addRecent(RecentType.Course, {
-      subject: selectedCourse.value.subject,
-      number: selectedCourse.value.number,
+      subject: selectedCourse.subject,
+      number: selectedCourse.number,
     });
 
-    const [semester, year] = selectedSemester.value.split(" ");
+    const [semester, year] = selectedSemester.split(" ");
 
     const input = {
-      subject: selectedCourse.value.subject,
-      courseNumber: selectedCourse.value.number,
+      subject: selectedCourse.subject,
+      courseNumber: selectedCourse.number,
       year: parseInt(year),
       semester: semester as Semester,
       sectionNumber:
-        selectedClass.value === null
+        selectedClass === null
           ? undefined
-          : selectedClass.value.primarySection.number,
+          : selectedClass.primarySection.number,
       sessionId:
-        selectedClass.value?.semester === "Summer"
-          ? selectedClass.value.sessionId
+        selectedClass?.semester === "Summer"
+          ? selectedClass.sessionId
           : undefined,
     };
     // Do not fetch duplicates
@@ -215,20 +203,17 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   );
 
   const handleCourseSelect = (course: ICourse) => {
-    setSelectedCourse({
-      value: course,
-      label: `${course.subject} ${course.number}`,
-    });
+    setSelectedCourse(course);
 
-    setSelectedClass(DEFAULT_SELECTED_CLASS);
+    setSelectedClass(DEFAULT_SELECTED_CLASS.value);
     setSelectedSemester(null);
     semesterSelectRef.current?.focus();
-    semesterSelectRef.current?.openMenu("first");
+    semesterSelectRef.current?.openMenu();
   };
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedClass(DEFAULT_SELECTED_CLASS);
+    setSelectedClass(DEFAULT_SELECTED_CLASS.value);
     setSelectedSemester(null);
   };
 
@@ -238,53 +223,44 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         <CourseSearch
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
-          selectedCourse={
-            selectedCourse
-              ? {
-                  subject: selectedCourse.value.subject,
-                  courseNumber: selectedCourse.value.number,
-                }
-              : undefined
-          }
+          selectedCourse={selectedCourse}
+          inputStyle={{
+            height: 44,
+          }}
         />
       </Box>
       <Box flexGrow="1">
         <Select
           ref={semesterSelectRef}
-          styles={createSelectStyles<OptionType, false>()}
           options={semesterOptions}
-          isDisabled={disabled}
+          disabled={disabled}
           value={selectedSemester}
           onChange={(s) => {
-            setSelectedClass(DEFAULT_SELECTED_CLASS);
+            if (Array.isArray(s)) return;
+            setSelectedClass(DEFAULT_SELECTED_CLASS.value);
             setSelectedSemester(s);
-            if (classOptions.length > 1) {
+            if (getClassOptions(s, false).length > 1) {
               classSelectRef.current?.focus();
-              classSelectRef.current?.openMenu("first");
+              classSelectRef.current?.openMenu();
             }
           }}
-          components={{
-            IndicatorSeparator: () => null,
-          }}
+          variant="foreground"
         />
       </Box>
       <Box flexGrow="1">
         <Select
           ref={classSelectRef}
-          styles={createSelectStyles<ClassOptionType, false>()}
           options={classOptions}
-          isDisabled={disabled}
+          disabled={disabled}
           value={selectedClass}
           onChange={(s) => {
+            if (Array.isArray(s)) return;
             setSelectedClass(s);
           }}
-          components={{
-            IndicatorSeparator: () => null,
-          }}
+          variant="foreground"
         />
       </Box>
       <Button
-        variant="solid"
         onClick={() => add()}
         disabled={
           disabled || !selectedCourse || !selectedClass || !selectedSemester

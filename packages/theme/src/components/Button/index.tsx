@@ -7,7 +7,8 @@ import styles from "./Button.module.scss";
 interface Props<T> {
   active?: boolean;
   disabled?: boolean;
-  variant?: "outline" | "solid";
+  isDelete?: boolean;
+  variant?: "primary" | "secondary" | "tertiary";
   as?: T;
 }
 
@@ -17,7 +18,8 @@ export type ButtonProps<T extends ElementType> = Props<T> &
 export function Button<T extends ElementType>({
   className,
   disabled,
-  variant = "outline",
+  isDelete,
+  variant = "primary",
   as,
   ...props
 }: ButtonProps<T>) {
@@ -27,6 +29,7 @@ export function Button<T extends ElementType>({
     <Component
       {...props}
       data-variant={variant}
+      data-delete={isDelete}
       disabled={disabled || undefined}
       data-disabled={disabled || undefined}
       className={classNames(styles.root, className)}
