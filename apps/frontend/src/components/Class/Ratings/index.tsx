@@ -413,13 +413,16 @@ export function RatingsContainer() {
   };
 
   return (
-    <div className={styles.root}>
+    <>
       {!hasRatings ? (
-        <div className={styles.empty}>
+        <div className={styles.placeholder}>
           <UserStar width={32} height={32} strokeWidth={1.5} />
-          <h4>No Course Ratings</h4>
-          <p>This course doesn't have any reviews yet.</p>
-          <p>Be the first to share your experience!</p>
+          <p className={styles.heading}>No Course Ratings</p>
+          <p className={styles.paragraph}>
+            This course doesn't have any reviews yet.
+            <br />
+            Be the first to share your experience!
+          </p>
           <RatingButton
             user={user}
             onOpenModal={handleModalStateChange}
@@ -428,113 +431,119 @@ export function RatingsContainer() {
           />
         </div>
       ) : (
-        <Container size="2">
-          {userRatings ? (
-            <UserRatingSummary
-              userRatings={userRatings}
-              onOpenModal={handleModalStateChange}
-              ratingDelete={() => setIsDeleteModalOpen(true)}
-            />
-          ) : (
-            <div></div>
-          )}
-          <div className={styles.header}>
-            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-              {hasRatings && !userRatings && (
-                <RatingButton
-                  user={user}
-                  onOpenModal={handleModalStateChange}
-                  userRatingData={userRatingsData}
-                  currentClass={currentClass}
-                />
-              )}
-              <div className={styles.termSelectWrapper}>
-                {hasRatings && (
-                  <Select
-                    options={[
-                      { value: "all", label: "Overall Ratings" },
-                      ...availableTerms.filter((term: Term) => {
-                        // Filter for past terms
-                        const termPosition = termsData?.find(
-                          (t) =>
-                            t.semester === term.semester && t.year === term.year
-                        )?.temporalPosition;
-                        const isValidTerm =
-                          !termPosition ||
-                          termPosition === TemporalPosition.Past ||
-                          termPosition === TemporalPosition.Current;
-
-                        // Filter for terms with ratings
-                        const hasRatingsForTerm = semestersWithRatings?.some(
-                          (s: { semester: Semester; year: number }) =>
-                            s.semester === term.semester && s.year === term.year
-                        );
-
-                        return isValidTerm && hasRatingsForTerm;
-                      }),
-                    ]}
-                    value={selectedTerm}
-                    variant="foreground"
-                    onChange={(selectedValue) => {
-                      if (Array.isArray(selectedValue) || !selectedValue)
-                        return; // ensure it is string
-                      setSelectedTerm(selectedValue);
-                      if (selectedValue === "all") {
-                        setTermRatings(null);
-                      } else if (isSemester(selectedValue)) {
-                        const [semester, year] = selectedValue.split(" ");
-                        getAggregatedRatings({
-                          variables: {
-                            subject: currentClass.subject,
-                            courseNumber: currentClass.courseNumber,
-                            semester: semester,
-                            year: parseInt(year),
-                            classNumber: currentClass.number,
-                          },
-                        });
-                      }
-                    }}
-                    placeholder="Select term"
+        <div className={styles.root}>
+          <Container size="2">
+            {userRatings ? (
+              <UserRatingSummary
+                userRatings={userRatings}
+                onOpenModal={handleModalStateChange}
+                ratingDelete={() => setIsDeleteModalOpen(true)}
+              />
+            ) : (
+              <div></div>
+            )}
+            <div className={styles.header}>
+              <div
+                style={{ display: "flex", gap: "12px", alignItems: "center" }}
+              >
+                {hasRatings && !userRatings && (
+                  <RatingButton
+                    user={user}
+                    onOpenModal={handleModalStateChange}
+                    userRatingData={userRatingsData}
+                    currentClass={currentClass}
                   />
                 )}
+                <div className={styles.termSelectWrapper}>
+                  {hasRatings && (
+                    <Select
+                      options={[
+                        { value: "all", label: "Overall Ratings" },
+                        ...availableTerms.filter((term: Term) => {
+                          // Filter for past terms
+                          const termPosition = termsData?.find(
+                            (t) =>
+                              t.semester === term.semester &&
+                              t.year === term.year
+                          )?.temporalPosition;
+                          const isValidTerm =
+                            !termPosition ||
+                            termPosition === TemporalPosition.Past ||
+                            termPosition === TemporalPosition.Current;
+
+                          // Filter for terms with ratings
+                          const hasRatingsForTerm = semestersWithRatings?.some(
+                            (s: { semester: Semester; year: number }) =>
+                              s.semester === term.semester &&
+                              s.year === term.year
+                          );
+
+                          return isValidTerm && hasRatingsForTerm;
+                        }),
+                      ]}
+                      value={selectedTerm}
+                      variant="foreground"
+                      onChange={(selectedValue) => {
+                        if (Array.isArray(selectedValue) || !selectedValue)
+                          return; // ensure it is string
+                        setSelectedTerm(selectedValue);
+                        if (selectedValue === "all") {
+                          setTermRatings(null);
+                        } else if (isSemester(selectedValue)) {
+                          const [semester, year] = selectedValue.split(" ");
+                          getAggregatedRatings({
+                            variables: {
+                              subject: currentClass.subject,
+                              courseNumber: currentClass.courseNumber,
+                              semester: semester,
+                              year: parseInt(year),
+                              classNumber: currentClass.number,
+                            },
+                          });
+                        }
+                      }}
+                      placeholder="Select term"
+                    />
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            className={styles.ratingsBody}
-            style={{
-              backgroundColor: !hasRatings
-                ? "transparent"
-                : "var(--foreground-color)",
-              boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
-              border: !hasRatings ? "none" : "1px solid var(--border-color)",
-            }}
-          >
-            {ratingsData
-              ?.filter((ratingData) => isMetricRating(ratingData.metric))
-              .sort((a, b) => {
-                const indexA = METRIC_ORDER.indexOf(a.metric);
-                const indexB = METRIC_ORDER.indexOf(b.metric);
-                return indexA - indexB;
-              })
-              .map((ratingData) => (
-                <div className={styles.ratingSection} key={ratingData.metric}>
-                  <RatingDetailView {...ratingData} />
-                </div>
-              ))}
-          </div>
-
-          {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
-          {/* <div>
-          {hasRatings && ratingsData && (
-            <div className={styles.ratingsCountContainer}>
-              This semester has been rated by {ratingsCount} user
-              {ratingsCount !== 1 ? "s" : ""}
+            <div
+              className={styles.ratingsBody}
+              style={{
+                backgroundColor: !hasRatings
+                  ? "transparent"
+                  : "var(--foreground-color)",
+                boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
+                border: !hasRatings ? "none" : "1px solid var(--border-color)",
+              }}
+            >
+              {ratingsData
+                ?.filter((ratingData) => isMetricRating(ratingData.metric))
+                .sort((a, b) => {
+                  const indexA = METRIC_ORDER.indexOf(a.metric);
+                  const indexB = METRIC_ORDER.indexOf(b.metric);
+                  return indexA - indexB;
+                })
+                .map((ratingData) => (
+                  <div className={styles.ratingSection} key={ratingData.metric}>
+                    <RatingDetailView {...ratingData} />
+                  </div>
+                ))}
             </div>
-          )}
-        </div> */}
-        </Container>
+            {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
+            {/* <div>
+              {hasRatings && ratingsData && (
+                <div className={styles.ratingsCountContainer}>
+                  This semester has been rated by {ratingsCount} user
+                  {ratingsCount !== 1 ? "s" : ""}
+                </div>
+              )}
+            </div> */}
+          </Container>
+        </div>
       )}
+
       <UserFeedbackModal
         isOpen={isModalOpen}
         onClose={() => handleModalStateChange(false)}
@@ -570,7 +579,7 @@ export function RatingsContainer() {
           }
         }}
       />
-    </div>
+    </>
   );
 }
 

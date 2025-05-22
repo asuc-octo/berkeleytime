@@ -1,6 +1,6 @@
 import { ComponentPropsWithRef } from "react";
 
-import { Flex } from "@radix-ui/themes";
+import { Box, BoxProps, Flex, FlexProps } from "@radix-ui/themes";
 import classNames from "classnames";
 
 import styles from "./Card.module.scss";
@@ -100,8 +100,37 @@ function ActionIcon({
   );
 }
 
+function RootColumn({
+  style,
+  ...props
+}: RootProps & ComponentPropsWithRef<"div">) {
+  return <Root style={{ flexDirection: "column", ...style }} {...props} />;
+}
+
+function ColumnHeader({ children, style, ...props }: FlexProps) {
+  return (
+    <Flex
+      direction="row"
+      style={{
+        width: "100%",
+        overflow: "hidden",
+        flexShrink: "0",
+        ...style,
+      }}
+      {...props}
+    >
+      {children}
+    </Flex>
+  );
+}
+
+function ColumnBody({ ...props }: BoxProps) {
+  return <Box p="4" width="100%" {...props} />;
+}
+
 export const Card = {
   Root,
+  RootColumn,
   Body,
   LeftBorder,
   Heading,
@@ -109,4 +138,6 @@ export const Card = {
   Footer,
   Actions,
   ActionIcon,
+  ColumnHeader,
+  ColumnBody,
 };

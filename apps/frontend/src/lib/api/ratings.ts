@@ -16,6 +16,27 @@ export interface IAggregatedRatings {
   metrics: IMetric[];
 }
 
+export interface UserRatingMetric {
+  metricName: string;
+  value: number;
+}
+
+export interface UserRatingClass {
+  subject: string;
+  courseNumber: string;
+  semester: Semester;
+  year: number;
+  classNumber: string;
+  metrics: UserRatingMetric[];
+  lastUpdated: string;
+}
+
+export interface UserRatingsResponse {
+  userRatings: {
+    classes: UserRatingClass[];
+  };
+}
+
 export const GET_AGGREGATED_RATINGS = gql`
   query GetAggregatedRatings(
     $subject: String!
