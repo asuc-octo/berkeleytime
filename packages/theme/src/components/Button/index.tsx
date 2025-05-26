@@ -8,7 +8,7 @@ interface Props<T> {
   active?: boolean;
   disabled?: boolean;
   isDelete?: boolean;
-  variant?: "primary" | "secondary" | "tertiary";
+  variant?: "primary" | "secondary" | "tertiary" | "quaternary";
   as?: T;
 }
 

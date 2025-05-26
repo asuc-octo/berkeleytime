@@ -114,7 +114,7 @@ export function Select<T>({
                     color="blue"
                     icon={
                       <Xmark
-                        style={{ zIndex: 999 }}
+                        style={{ zIndex: 100 }}
                         onPointerDown={(e) => {
                           e.stopPropagation();
                           if (!Array.isArray(value)) return;
