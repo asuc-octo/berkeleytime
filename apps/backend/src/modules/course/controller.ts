@@ -14,6 +14,10 @@ export const getCourse = async (subject: string, number: string) => {
   return formatCourse(course as ICourseItem);
 };
 
+// TODO: Query courses by embedded search
+//       Get topK subject and number back from Weaviate
+//       Query and return courses from MongoDB
+
 export const getClassesByCourse = async (courseId: string) => {
   const classes = await ClassModel.find({
     courseId,

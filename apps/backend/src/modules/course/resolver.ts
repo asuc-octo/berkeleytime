@@ -48,6 +48,8 @@ const resolvers: CourseModule.Resolvers = {
       return course as unknown as CourseModule.Course;
     },
 
+    // TODO: Add semantic search query resolver
+
     courses: async (_, _arguments, _context, _info) => {
       const courses = getCourses();
 

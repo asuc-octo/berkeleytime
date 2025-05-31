@@ -29,6 +29,28 @@ services:
       - ./apps/frontend/src:/frontend/apps/frontend/src
       - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/frontend/public:/frontend/apps/frontend/public
+  weaviate:
+    command:
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8080'
+    - --scheme
+    - http
+    image: cr.weaviate.io/semitechnologies/weaviate:1.27.2
+    ports:
+    - 8081:8080
+    - 50051:50051
+    volumes:
+    - weaviate_data:/var/lib/weaviate
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_API_BASED_MODULES: 'true'
+      CLUSTER_HOSTNAME: 'node1'
   mongodb:
     image: mongo:7.0.5
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
@@ -65,3 +87,5 @@ services:
     networks:
       - bt
     restart: always
+volumes:
+  weaviate_data:
