@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
+import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 import { READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
@@ -254,14 +254,24 @@ export default function Enrollment() {
                   <YAxis domain={[0, dataMax]} tickFormatter={toPercent} />
                   {outputs?.length && (
                     <Tooltip
-                      labelStyle={{ color: "var(--heading-color)" }}
-                      labelFormatter={(label) => `Day ${label}`}
-                      contentStyle={{
-                        backgroundColor: "var(--backdrop-color)",
-                        border: "none",
+                      content={(props) => {
+                        return (
+                          <HoverCard
+                            content={`Day ${props.label}`}
+                            data={props.payload?.map((v) => {
+                              const name = v.name?.valueOf();
+                              return {
+                                label: name ? name.toString() : "N/A",
+                                value:
+                                  typeof v.value === "number"
+                                    ? toPercent(v.value)
+                                    : "N/A",
+                                color: v.stroke,
+                              };
+                            })}
+                          />
+                        );
                       }}
-                      cursor={{ fill: "var(--foreground-color)" }}
-                      formatter={toPercent}
                     />
                   )}
                   {filteredOutputs?.map((output, index) => {

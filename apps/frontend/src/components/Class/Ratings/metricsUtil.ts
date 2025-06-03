@@ -88,6 +88,7 @@ export interface UserRating {
   lastUpdated: string;
   semester: string;
   year: number;
+  classNumber: string;
   metrics: [
     {
       metricName: MetricName;

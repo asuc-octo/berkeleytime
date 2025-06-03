@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from "react";
+import React, { ComponentPropsWithRef } from "react";
 
 import { Flex } from "@radix-ui/themes";
 
@@ -13,13 +13,14 @@ interface Props {
 export type BadgeProps = Props &
   Omit<ComponentPropsWithRef<"span">, keyof Props>;
 
-export function Badge({ label, color, icon, ...props }: BadgeProps) {
+export function Badge({ label, color, icon, style, ...props }: BadgeProps) {
   return (
     <span
       className={styles.root}
       style={{
         color: `var(--${color}-badge)`,
         backgroundColor: `var(--${color}-500-20)`,
+        ...style,
       }}
       {...props}
     >

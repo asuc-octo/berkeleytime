@@ -1,9 +1,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
-import * as Dialog from "@radix-ui/react-dialog";
-
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { Button, Select } from "@repo/theme";
+import { Button, Dialog, Flex, Select } from "@repo/theme";
 
 import { useReadTerms } from "@/hooks/api";
 import { Semester, TemporalPosition } from "@/lib/api";
@@ -78,8 +76,14 @@ export function UserFeedbackModal({
   const hasAutoSelected = useRef(false);
 
   useEffect(() => {
-    if (initialUserClass?.semester && initialUserClass?.year)
-      setSelectedTerm(`${initialUserClass.semester} ${initialUserClass.year}`);
+    if (
+      initialUserClass?.semester &&
+      initialUserClass?.year &&
+      initialUserClass?.classNumber
+    )
+      setSelectedTerm(
+        `${initialUserClass.semester} ${initialUserClass.year} ${initialUserClass.classNumber}`
+      );
     if (initialUserClass?.metrics)
       setMetricData(toMetricData(initialUserClass.metrics));
   }, [initialUserClass]);
@@ -172,88 +176,82 @@ export function UserFeedbackModal({
     <>
       <Dialog.Root open={isOpen} onOpenChange={handleClose}>
         <Dialog.Portal>
-          <Dialog.Overlay className={styles.overlay} />
-          <Dialog.Content className={styles.modal}>
-            <Dialog.Close className={styles.closeButton}>✕</Dialog.Close>
-            <div className={styles.modalHeader}>
-              <Dialog.Title className={styles.modalTitle}>{title}</Dialog.Title>
-              <div className={styles.subtitleRow}>
-                <Dialog.Description className={styles.modalSubtitle}>
-                  {currentClass.subject} {currentClass.courseNumber}
-                </Dialog.Description>
-              </div>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className={styles.modalContent}>
-                <div className={styles.combinedForm}>
-                  <div className={styles.ratingSection}>
-                    <div className={styles.formGroup}>
-                      <h3>
-                        1. What semester did you take this course?{" "}
-                        <RequiredAsterisk />
-                      </h3>
-                      <div
-                        style={{
-                          width: "230px",
-                          marginLeft: "18px",
-                        }}
-                      >
-                        <Select
-                          options={pastTerms.map((term) => ({
-                            value: term.value,
-                            label: term.label,
-                          }))}
-                          value={selectedTerm}
-                          onChange={(selectedOption: any) =>
-                            setSelectedTerm(selectedOption || null)
-                          }
-                          placeholder="Select semester"
-                          clearable={true}
-                        />
-                      </div>
-                    </div>
-
-                    <RatingsForm
-                      metricData={metricData}
-                      setMetricData={setMetricData}
-                    />
-                    <AttendanceForm
-                      metricData={metricData}
-                      setMetricData={setMetricData}
+          <Dialog.Overlay />
+          <Dialog.Card style={{ width: "auto" }}>
+            <Dialog.Header
+              title={title}
+              subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
+              hasCloseButton
+            />
+            <Dialog.Body className={styles.modalBody}>
+              <Flex direction="column">
+                <div className={styles.formGroup}>
+                  <h3>
+                    1. What semester did you take this course?{" "}
+                    <RequiredAsterisk />
+                  </h3>
+                  <div
+                    style={{
+                      maxWidth: 350,
+                      marginLeft: "18px",
+                    }}
+                  >
+                    <Select
+                      options={pastTerms.map((term) => ({
+                        value: term.value,
+                        label: term.label,
+                      }))}
+                      value={selectedTerm}
+                      onChange={(selectedOption) => {
+                        if (Array.isArray(selectedOption))
+                          setSelectedTerm(null);
+                        else setSelectedTerm(selectedOption || null);
+                      }}
+                      placeholder="Select semester"
+                      clearable={true}
                     />
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.modalFooter}>
-                <Dialog.Close asChild>
-                  <Button
-                    className={styles.cancelButton}
-                    type="button"
-                    variant="secondary"
-                  >
-                    Cancel
-                  </Button>
-                </Dialog.Close>
+                <RatingsForm
+                  metricData={metricData}
+                  setMetricData={setMetricData}
+                />
+                <AttendanceForm
+                  metricData={metricData}
+                  setMetricData={setMetricData}
+                />
+              </Flex>
+            </Dialog.Body>
+
+            <Dialog.Footer>
+              <Dialog.Close asChild>
                 <Button
-                  disabled={!isFormValid}
-                  type="submit"
-                  onClick={(e: any) => {
-                    e.preventDefault();
-                    if (isFormValid) {
-                      handleSubmit(e);
-                    }
-                  }}
+                  className={styles.cancelButton}
+                  type="button"
+                  variant="secondary"
                 >
-                  {isSubmitting
-                    ? "Submitting..."
-                    : initialUserClass
-                      ? "Submit Edit"
-                      : "Submit Rating"}
+                  Cancel
                 </Button>
-              </div>
-            </form>
-          </Dialog.Content>
+              </Dialog.Close>
+              <Button
+                disabled={!isFormValid}
+                type="submit"
+                onClick={(e: any) => {
+                  e.preventDefault();
+                  if (isFormValid) {
+                    handleSubmit(e);
+                  }
+                }}
+              >
+                {isSubmitting
+                  ? "Submitting..."
+                  : initialUserClass
+                    ? "Submit Edit"
+                    : "Submit Rating"}
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Card>
         </Dialog.Portal>
       </Dialog.Root>
       <SubmitRatingPopup

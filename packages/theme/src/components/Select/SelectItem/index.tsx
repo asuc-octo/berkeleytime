@@ -11,12 +11,14 @@ export interface SelectItemProps {
   selected?: boolean;
   icon?: React.ReactNode;
   multi?: boolean;
+  disabled?: boolean;
 }
 
 export default function SelectItem({
   label,
   selected = false,
   icon,
+  disabled,
   // multi = false
 }: SelectItemProps) {
   return (
@@ -25,6 +27,7 @@ export default function SelectItem({
         direction="row"
         justify="between"
         className={classNames(styles.root, { [styles.selected]: selected })}
+        data-disabled={disabled}
       >
         <Flex direction="row" gap="12px">
           {icon && icon}

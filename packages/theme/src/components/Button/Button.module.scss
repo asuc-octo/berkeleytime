@@ -59,6 +59,11 @@
       background-color: var(--button-active-color);
     }
   }
+  &[data-variant="secondary"][data-disabled] {
+    opacity: 1;
+    background-color: var(--button-hover-color);
+    color: var(--paragraph-color-50);
+  }
 
   &[data-variant="tertiary"] {
     border: 1px solid var(--border-color);
@@ -86,21 +91,13 @@
     }
   }
   &[data-variant="tertiary"][data-disabled] {
-    color: var(--paragraph-color);
+    opacity: 1;
+    background-color: var(--button-hover-color);
+    color: var(--paragraph-color-50);
   }
 
-  &[data-variant="quaternary"] {
+  &[data-nofill] {
     border: none;
-    color: var(--blue-500);
-
-    &:hover {
-      background-color: none;
-      color: var(--blue-600);
-    }
-
-    &:active {
-      background-color: none;
-      color: var(--blue-700);
-    }
+    background-color: transparent !important;
   }
 }

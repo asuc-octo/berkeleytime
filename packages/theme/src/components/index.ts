@@ -15,6 +15,8 @@ export * from "./Select";
 export * from "./Badge";
 export * from "./Accordion";
 export * from "./DaySelect";
+export * from "./ColoredSquare";
+export * from "./HoverCard";
 
 // https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage
 export { Box, Flex, Grid, Section, Container } from "@radix-ui/themes";

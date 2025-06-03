@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Search } from "iconoir-react";
 
-import { LoadingIndicator } from "@repo/theme";
+import { Badge, LoadingIndicator } from "@repo/theme";
 
 import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
@@ -28,9 +28,9 @@ export default function CourseSearch({
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [recentGrades, setRecentGrades] = useState<Recent<RecentType.Course>[]>(
-    []
-  );
+  const [recentCourses, setRecentCourses] = useState<
+    Recent<RecentType.Course>[]
+  >([]);
 
   const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
 
@@ -68,7 +68,7 @@ export default function CourseSearch({
   useEffect(() => {
     if (!isOpen) return;
 
-    setRecentGrades(getRecents(RecentType.Course));
+    setRecentCourses(getRecents(RecentType.Course));
   }, [isOpen]);
 
   return (
@@ -103,12 +103,11 @@ export default function CourseSearch({
             <div>
               <section className={styles.section}>
                 <h2>RECENT</h2>
-                {recentGrades.length > 0 && (
+                {recentCourses.length > 0 && (
                   <div className={styles.recentCourses}>
-                    {recentGrades.map((course, index) => (
-                      <button
+                    {recentCourses.map((course, index) => (
+                      <Badge
                         key={`grades-${course.subject}-${course.number}-${index}`}
-                        className={styles.courseButton}
                         onClick={() => {
                           const full = data?.courses.find(
                             (c) =>
@@ -121,9 +120,12 @@ export default function CourseSearch({
                           }
                           setIsOpen(false);
                         }}
-                      >
-                        {course.subject} {course.number}
-                      </button>
+                        label={`${course.subject} ${course.number}`}
+                        color="zinc"
+                        style={{
+                          cursor: "pointer",
+                        }}
+                      />
                     ))}
                   </div>
                 )}

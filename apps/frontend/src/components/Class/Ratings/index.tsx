@@ -45,10 +45,10 @@ import {
 } from "./metricsUtil";
 
 {
-  /* // TODO: [CROWD-SOURCED-DATA] edge case: first semester a class is offered - user cannot submit a rating */
+  /* // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend */
 }
 {
-  /* // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend */
+  /* // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor */
 }
 
 interface AggregatedRatings {
@@ -199,13 +199,27 @@ export function RatingsContainer() {
     if (!currentCourse.classes) return [];
 
     return _.chain(currentCourse.classes.toSorted(sortByTermDescending))
-      .map((ClassData: any) => ({
-        value: `${ClassData.semester} ${ClassData.year}`,
-        label: `${ClassData.semester} ${ClassData.year}`,
-        semester: ClassData.semester as Semester,
-        year: ClassData.year,
-      }))
-      .uniqBy((term: any) => `${term.semester}-${term.year}`)
+      .map((c) => {
+        let allInstructors = "";
+        if (c.primarySection) {
+          c.primarySection.meetings.forEach((m) => {
+            m.instructors.forEach((i) => {
+              if (!i.familyName || !i.givenName) return;
+              allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName.charAt(0)};`;
+            });
+          });
+          if (allInstructors.length === 0) allInstructors = "(No instructor)";
+          else
+            allInstructors = `(${allInstructors.substring(1, allInstructors.length - 1)})`;
+        }
+        return {
+          value: `${c.semester} ${c.year} ${c.number}`,
+          label: `${c.semester} ${c.year} ${allInstructors}`,
+          semester: c.semester as Semester,
+          year: c.year,
+        };
+      })
+      .uniqBy((term: any) => `${term.label}`)
       .value();
   }, [currentClass]);
 
@@ -277,6 +291,37 @@ export function RatingsContainer() {
       ) ?? 0;
     return totalRatings > 0;
   }, [aggregatedRatings]);
+
+  const termSelectOptions = useMemo(() => {
+    const withDuplicates = availableTerms
+      .filter((term: Term) => {
+        // Filter for past terms
+        const termPosition = termsData?.find(
+          (t) => t.semester === term.semester && t.year === term.year
+        )?.temporalPosition;
+        const isValidTerm =
+          !termPosition ||
+          termPosition === TemporalPosition.Past ||
+          termPosition === TemporalPosition.Current;
+
+        // Filter for terms with ratings
+        const hasRatingsForTerm = semestersWithRatings?.some(
+          (s: { semester: Semester; year: number }) =>
+            s.semester === term.semester && s.year === term.year
+        );
+
+        console.log(term.semester, term.year, hasRatingsForTerm, isValidTerm);
+
+        return isValidTerm && hasRatingsForTerm;
+      })
+      .map((t) => ({
+        value: `${t.semester} ${t.year}`,
+        label: `${t.semester} ${t.year}`,
+      }));
+    return withDuplicates.filter(
+      (v) => withDuplicates.find((v2) => v2.value === v.value) === v
+    );
+  }, [availableTerms, semestersWithRatings]);
 
   // const ratingsCount = useMemo(
   //   () => (ratingsData ? ratingsData.reduce((acc, v) => acc + v.reviewCount, 0) : 0),
@@ -459,27 +504,7 @@ export function RatingsContainer() {
                     <Select
                       options={[
                         { value: "all", label: "Overall Ratings" },
-                        ...availableTerms.filter((term: Term) => {
-                          // Filter for past terms
-                          const termPosition = termsData?.find(
-                            (t) =>
-                              t.semester === term.semester &&
-                              t.year === term.year
-                          )?.temporalPosition;
-                          const isValidTerm =
-                            !termPosition ||
-                            termPosition === TemporalPosition.Past ||
-                            termPosition === TemporalPosition.Current;
-
-                          // Filter for terms with ratings
-                          const hasRatingsForTerm = semestersWithRatings?.some(
-                            (s: { semester: Semester; year: number }) =>
-                              s.semester === term.semester &&
-                              s.year === term.year
-                          );
-
-                          return isValidTerm && hasRatingsForTerm;
-                        }),
+                        ...termSelectOptions,
                       ]}
                       value={selectedTerm}
                       variant="foreground"
@@ -497,7 +522,6 @@ export function RatingsContainer() {
                               courseNumber: currentClass.courseNumber,
                               semester: semester,
                               year: parseInt(year),
-                              classNumber: currentClass.number,
                             },
                           });
                         }

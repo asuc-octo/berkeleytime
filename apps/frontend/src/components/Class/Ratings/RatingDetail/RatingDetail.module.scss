@@ -108,6 +108,9 @@
           transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
           will-change: width;
         }
+        .inactive-bar {
+          background-color: var(--slate-400);
+        }
       }
     
       .count {
@@ -131,6 +134,9 @@
           background-color: var(--zinc-600);
           .bar {
             background-color: var(--zinc-200);
+          }
+          .inactive-bar {
+            background-color: var(--zinc-500);
           }
         }
       }
