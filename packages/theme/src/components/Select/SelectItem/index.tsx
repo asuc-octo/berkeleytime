@@ -33,7 +33,9 @@ export default function SelectItem({
       >
         <Flex direction="row" gap="12px">
           {icon && icon}
-          <span>{label} {meta && <span className={styles.meta}>({meta})</span>}</span>
+          <span>
+            {label} {meta && <span className={styles.meta}>({meta})</span>}
+          </span>
         </Flex>
         {selected && <Check />}
       </Flex>

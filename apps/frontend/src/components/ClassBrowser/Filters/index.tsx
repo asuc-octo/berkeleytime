@@ -22,6 +22,8 @@ import styles from "./Filters.module.scss";
 
 // TODO: Add Mode of Instruction
 
+// TODO: Add requirements from relevant sources
+
 export default function Filters() {
   const {
     includedClasses,
@@ -288,7 +290,11 @@ export default function Filters() {
             if (Array.isArray(v)) updateLevels(v);
           }}
           options={Object.values(Level).map((level) => {
-            return { value: level, label: level, meta: filteredLevels[level].toString() };
+            return {
+              value: level,
+              label: level,
+              meta: filteredLevels[level].toString(),
+            };
           })}
         />
         <p className={styles.label}>UNITS</p>
@@ -299,7 +305,11 @@ export default function Filters() {
             if (Array.isArray(v)) updateUnits(v);
           }}
           options={Object.values(Unit).map((unit) => {
-            return { value: unit, label: unit, meta: filteredUnits[unit].toString() };
+            return {
+              value: unit,
+              label: unit,
+              meta: filteredUnits[unit].toString(),
+            };
           })}
         />
         <p className={styles.label}>DAY</p>

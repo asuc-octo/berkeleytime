@@ -17,7 +17,7 @@ import SelectItem from "./SelectItem";
 
 export * from "./SelectItem";
 
-export type Option<T> = { value: T; label: string, meta?: string };
+export type Option<T> = { value: T; label: string; meta?: string };
 
 export interface SelectHandle {
   focus: () => void;
