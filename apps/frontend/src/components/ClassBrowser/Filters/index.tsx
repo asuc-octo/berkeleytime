@@ -2,7 +2,7 @@ import { Dispatch, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
-import { Checkbox, RadioGroup } from "radix-ui";
+import { Checkbox } from "radix-ui";
 
 import { Button, DaySelect, Select } from "@repo/theme";
 
@@ -20,6 +20,8 @@ import {
 import useBrowser from "../useBrowser";
 import styles from "./Filters.module.scss";
 
+// TODO: Add Mode of Instruction
+
 export default function Filters() {
   const {
     includedClasses,
@@ -33,9 +35,9 @@ export default function Filters() {
     days,
     updateDays,
     open,
-    updateOpen,
+    // updateOpen,
     online,
-    updateOnline,
+    // updateOnline,
     sortBy,
     updateSortBy,
     responsive,
@@ -52,15 +54,12 @@ export default function Filters() {
     false,
     false,
   ]);
-  console.log(daysArray);
 
   useEffect(() => {
-    console.log(daysArray);
     const newDays = daysArray.reduce((acc, v, i) => {
       if (v) acc.push(i.toString() as Day);
       return acc;
     }, [] as Day[]);
-    console.log(newDays);
     updateDays(newDays);
   }, [daysArray]);
 
@@ -147,49 +146,49 @@ export default function Filters() {
     online,
   ]);
 
-  const filteredDays = useMemo(() => {
-    const filteredDays = Object.values(Day).reduce(
-      (acc, day) => {
-        acc[day] = 0;
-        return acc;
-      },
-      {} as Record<Day, number>
-    );
+  // const filteredDays = useMemo(() => {
+  //   const filteredDays = Object.values(Day).reduce(
+  //     (acc, day) => {
+  //       acc[day] = 0;
+  //       return acc;
+  //     },
+  //     {} as Record<Day, number>
+  //   );
 
-    const classes =
-      days.length === 0
-        ? includedClasses
-        : getFilteredClasses(
-            excludedClasses,
-            components,
-            units,
-            levels,
-            [],
-            open,
-            online
-          ).includedClasses;
+  //   const classes =
+  //     days.length === 0
+  //       ? includedClasses
+  //       : getFilteredClasses(
+  //           excludedClasses,
+  //           components,
+  //           units,
+  //           levels,
+  //           [],
+  //           open,
+  //           online
+  //         ).includedClasses;
 
-    for (const _class of classes) {
-      const days = _class.primarySection.meetings?.[0]?.days;
+  //   for (const _class of classes) {
+  //     const days = _class.primarySection.meetings?.[0]?.days;
 
-      for (const index in days) {
-        if (!days[index]) continue;
+  //     for (const index in days) {
+  //       if (!days[index]) continue;
 
-        filteredDays[index as Day] += 1;
-      }
-    }
+  //       filteredDays[index as Day] += 1;
+  //     }
+  //   }
 
-    return filteredDays;
-  }, [
-    excludedClasses,
-    includedClasses,
-    components,
-    units,
-    levels,
-    days,
-    open,
-    online,
-  ]);
+  //   return filteredDays;
+  // }, [
+  //   excludedClasses,
+  //   includedClasses,
+  //   components,
+  //   units,
+  //   levels,
+  //   days,
+  //   open,
+  //   online,
+  // ]);
 
   const filteredUnits = useMemo(() => {
     const filteredUnits = Object.values(Unit).reduce(
@@ -238,19 +237,19 @@ export default function Filters() {
     online,
   ]);
 
-  const amountOpen = useMemo(
-    () =>
-      includedClasses.filter(
-        (_class) => _class.primarySection.enrollment?.latest.status === "O"
-      ).length,
-    [includedClasses]
-  );
+  // const amountOpen = useMemo(
+  //   () =>
+  //     includedClasses.filter(
+  //       (_class) => _class.primarySection.enrollment?.latest.status === "O"
+  //     ).length,
+  //   [includedClasses]
+  // );
 
-  const amountOnline = useMemo(
-    () =>
-      includedClasses.filter((_class) => _class.primarySection.online).length,
-    [includedClasses]
-  );
+  // const amountOnline = useMemo(
+  //   () =>
+  //     includedClasses.filter((_class) => _class.primarySection.online).length,
+  //   [includedClasses]
+  // );
 
   const updateArray = <T,>(
     state: T[],
@@ -289,7 +288,7 @@ export default function Filters() {
             if (Array.isArray(v)) updateLevels(v);
           }}
           options={Object.values(Level).map((level) => {
-            return { value: level, label: level };
+            return { value: level, label: level, meta: filteredLevels[level].toString() };
           })}
         />
         <p className={styles.label}>UNITS</p>
@@ -300,7 +299,7 @@ export default function Filters() {
             if (Array.isArray(v)) updateUnits(v);
           }}
           options={Object.values(Unit).map((unit) => {
-            return { value: unit, label: unit };
+            return { value: unit, label: unit, meta: filteredUnits[unit].toString() };
           })}
         />
         <p className={styles.label}>DAY</p>
@@ -349,7 +348,8 @@ export default function Filters() {
             );
           })}
         <Button
-          variant="quaternary"
+          variant="tertiary"
+          noFill
           onClick={() => setExpanded(!expanded)}
           as="button"
           style={{ marginTop: 15 }}
