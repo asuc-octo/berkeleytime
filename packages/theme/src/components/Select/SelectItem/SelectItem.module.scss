@@ -7,9 +7,14 @@
   &:hover {
     background-color: var(--button-hover-color);
   }
-  &:active {
+  &:active, &:focus-visible {
     background-color: var(--blue-500);
     color: white;
+  }
+  &[data-disabled] {
+    color: var(--paragraph-color-50);
+    background-color: var(--button-hover-color);
+    cursor: default;
   }
 }
 .selected {

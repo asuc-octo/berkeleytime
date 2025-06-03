@@ -1,5 +1,6 @@
 import { CSSProperties, useEffect, useState } from "react";
 
+import classNames from "classnames";
 import { InfoCircle, NavArrowDown } from "iconoir-react";
 
 import { MetricName } from "@repo/shared";
@@ -33,6 +34,8 @@ export function RatingDetailView({
 }: RatingDetailProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -82,11 +85,28 @@ export function RatingDetailView({
             >
               <span className={styles.metric}>{stat.rating}</span>
               <Tooltip
-                content={`${Math.round((stat.count * 100) / reviewCount)}% of users left this rating`}
+                content={
+                  <>
+                    <span
+                      style={{ color: "var(--blue-500)" }}
+                    >{`${Math.round((stat.count * 100) / reviewCount)}%`}</span>
+                    {` of users left this rating`}
+                  </>
+                }
+                hasArrow={false}
+                onMouseEnter={() => {
+                  setHoveredIndex(index);
+                }}
+                onMouseLeave={() => {
+                  setHoveredIndex(null);
+                }}
               >
                 <div className={styles.barContainer}>
                   <div
-                    className={styles.bar}
+                    className={classNames(styles.bar, {
+                      [styles.inactiveBar]:
+                        hoveredIndex !== null && hoveredIndex !== index,
+                    })}
                     style={{
                       width: shouldAnimate ? `${stat.barPercentage}%` : "0%",
                       transitionDelay: `${index * 60}ms`,

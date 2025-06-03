@@ -43,7 +43,7 @@ export const GET_AGGREGATED_RATINGS = gql`
     $courseNumber: String!
     $semester: Semester!
     $year: Int!
-    $classNumber: String!
+    $classNumber: String
   ) {
     aggregatedRatings(
       subject: $subject

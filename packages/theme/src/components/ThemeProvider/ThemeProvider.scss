@@ -8,6 +8,7 @@
   --slate-400: #94a3b8;
   --slate-500: #64748b;
   --slate-500-20: #64748b33;
+  --slate-500-50: #64748b80;
   --slate-600: #475569;
   --slate-700: #334155;
   --slate-800: #1e293b;
@@ -32,6 +33,7 @@
   --zinc-200: #e4e4e7;
   --zinc-300: #d4d4d8;
   --zinc-400: #a1a1aa;
+  --zinc-400-50: #a1a1aa80;
   --zinc-500: #71717a;
   --zinc-500-20: #71717a33;
   --zinc-600: #52525b;
@@ -296,13 +298,14 @@
 
   --light-heading-color: var(--slate-900);
   --light-paragraph-color: var(--slate-500);
+  --light-paragraph-color-50: var(--slate-500-50);
   --light-label-color: var(--slate-400);
 
   // --light-button-color: white;
   --light-button-hover-color: var(--slate-100);
   --light-button-active-color: var(--slate-200);
 
-  --light-tooltip-color: var(--neutral-900);
+  --light-tooltip-color: white;
 
   --light-cancel-color: var(--red-500);
   --light-cancel-hover-color: var(--red-600);
@@ -316,6 +319,7 @@
 
   --dark-heading-color: white;
   --dark-paragraph-color: var(--zinc-400);
+  --dark-paragraph-color-50: var(--zinc-400-50);
   --dark-label-color: var(--zinc-500);
 
   // --dark-button-color: var(--zinc-800);
@@ -338,6 +342,7 @@
 
   --heading-color: var(--light-heading-color);
   --paragraph-color: var(--light-paragraph-color);
+  --paragraph-color-50: var(--light-paragraph-color-50);
   --label-color: var(--light-label-color);
 
   // --button-color: var(--light-button-color);
@@ -384,6 +389,7 @@
 
   --heading-color: var(--dark-heading-color);
   --paragraph-color: var(--dark-paragraph-color);
+  --paragraph-color-50: var(--dark-paragraph-color-50);
   --label-color: var(--dark-label-color);
 
   // --button-color: var(--dark-button-color);

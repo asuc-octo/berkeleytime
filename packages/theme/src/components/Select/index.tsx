@@ -159,6 +159,7 @@ export function Select<T>({
             return (
               <DropdownMenu.Item
                 key={i}
+                className={styles.radixMenuItem}
                 onSelect={(e) => {
                   if (multi) {
                     e.preventDefault();

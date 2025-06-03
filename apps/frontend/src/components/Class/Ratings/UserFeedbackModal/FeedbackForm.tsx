@@ -47,7 +47,7 @@ export function AttendanceForm({
   };
 
   return (
-    <div className={styles.formGroup}>
+    <div>
       {/* Question 5 */}
       <div className={styles.formGroup}>
         <h3>5. Is lecture attendance required?</h3>
@@ -84,7 +84,7 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
   };
 
   return (
-    <div className={styles.formGroup}>
+    <div>
       <RatingScale
         type={MetricName.Usefulness}
         question="2. How would you rate the usefulness of this course?"

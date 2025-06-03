@@ -64,6 +64,12 @@ const typedef = gql`
     maxMetricCount: Int!
   }
 
+  input ClassWithoutCourseInput {
+    year: Int!
+    semester: Int!
+    classNumber: String!
+  }
+
   """
   Get data
   """
@@ -73,7 +79,13 @@ const typedef = gql`
       semester: Semester!
       subject: String!
       courseNumber: String!
-      classNumber: String!
+      classNumber: String
+    ): AggregatedRatings!
+
+    multipleClassAggregatedRatings(
+      subject: String!
+      courseNumber: String!
+      classes: [ClassWithoutCourseInput!]!
     ): AggregatedRatings!
 
     userRatings: UserRatings! @auth

@@ -84,6 +84,14 @@ export const READ_COURSE = gql`
         year
         semester
         number
+        primarySection {
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
+          }
+        }
       }
       aggregatedRatings {
         metrics {

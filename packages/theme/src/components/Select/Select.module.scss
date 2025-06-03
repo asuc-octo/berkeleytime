@@ -5,6 +5,7 @@
   font-size: 14px;
   color: var(--paragraph-color);
   cursor: pointer;
+  outline: none;
 
   &.foreground {
     background-color: var(--foreground-color);
@@ -20,8 +21,10 @@
   }
 
   &.disabled {
-    color: var(--paragraph-color);
+    color: var(--paragraph-color-50);
     border-color: var(--border-color);
+    background-color: var(--button-hover-color);
+    cursor: default;
   }
 
 }
@@ -35,4 +38,8 @@
   max-height: 148px;
   overflow-y: scroll;
   scrollbar-color: var(--label-color) var(--foreground-color);
+}
+
+.radix-menu-item {
+  outline: none !important;
 }

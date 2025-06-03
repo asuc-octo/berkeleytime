@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
+import { ColoredSquare } from "@repo/theme";
+
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
-import { ColoredSquare } from "@/components/ColoredSquare";
 import { useReadCourseGradeDist } from "@/hooks/api";
 import { GradeDistribution, Semester } from "@/lib/api";
 

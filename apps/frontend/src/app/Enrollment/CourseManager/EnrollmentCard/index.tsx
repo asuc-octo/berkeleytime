@@ -3,9 +3,9 @@ import { useRef } from "react";
 import { Eye, EyeClosed, Trash } from "iconoir-react";
 
 import { Card } from "@repo/theme";
+import { ColoredSquare } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import { ColoredSquare } from "@/components/ColoredSquare";
 import { useReadCourse } from "@/hooks/api";
 
 interface EnrollmentCardProps {
