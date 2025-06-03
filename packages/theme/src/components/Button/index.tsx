@@ -9,6 +9,7 @@ interface Props<T> {
   disabled?: boolean;
   isDelete?: boolean;
   variant?: "primary" | "secondary" | "tertiary";
+  noFill?: boolean;
   as?: T;
 }
 
@@ -20,6 +21,7 @@ export function Button<T extends ElementType>({
   disabled,
   isDelete,
   variant = "primary",
+  noFill,
   as,
   ...props
 }: ButtonProps<T>) {
@@ -29,6 +31,7 @@ export function Button<T extends ElementType>({
     <Component
       {...props}
       data-variant={variant}
+      data-nofill={noFill || undefined}
       data-delete={isDelete}
       disabled={disabled || undefined}
       data-disabled={disabled || undefined}

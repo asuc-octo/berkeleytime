@@ -95,4 +95,9 @@
     background-color: var(--button-hover-color);
     color: var(--paragraph-color-50);
   }
+
+  &[data-nofill] {
+    border: none;
+    background-color: transparent !important;
+  }
 }
