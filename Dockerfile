@@ -5,6 +5,7 @@ RUN ["npm", "install", "-g", "turbo@latest"]
 FROM base AS datapuller-builder
 WORKDIR /datapuller
 COPY . .
+
 RUN ["turbo", "prune", "datapuller", "--docker"]
 
 FROM base AS datapuller-dev
@@ -15,6 +16,8 @@ COPY --from=datapuller-builder /datapuller/out/package-lock.json ./package-lock.
 RUN ["npm", "install"]
 
 COPY --from=datapuller-builder /datapuller/out/full/ .
+
+RUN ["turbo", "run", "build", "--filter=datapuller"]
 ENTRYPOINT ["turbo", "run", "main", "--filter=datapuller", "--"]
 CMD ["--puller=main"]
 
