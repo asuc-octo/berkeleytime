@@ -100,7 +100,7 @@ export default function Footer({ invert }: FooterProps) {
             Enrollment
           </Link>
         </div>
-        <div className={styles.column}>
+        {/* <div className={styles.column}>
           <p className={styles.label}>Organization</p>
           <Link to="/about" className={styles.link}>
             About us
@@ -120,7 +120,7 @@ export default function Footer({ invert }: FooterProps) {
           <Link to="/scheduler" className={styles.link}>
             Privacy policy
           </Link>
-        </div>
+        </div> */}
       </div>
     </Container>
   );
