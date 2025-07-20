@@ -15,7 +15,9 @@ import { Badge } from "../Badge";
 import styles from "./Select.module.scss";
 import SelectItem from "./SelectItem";
 
-export type Option<T> = { value: T; label: string };
+export * from "./SelectItem";
+
+export type Option<T> = { value: T; label: string; meta?: string };
 
 export interface SelectHandle {
   focus: () => void;
@@ -114,7 +116,7 @@ export function Select<T>({
                     color="blue"
                     icon={
                       <Xmark
-                        style={{ zIndex: 999 }}
+                        style={{ zIndex: 100 }}
                         onPointerDown={(e) => {
                           e.stopPropagation();
                           if (!Array.isArray(value)) return;
@@ -176,6 +178,7 @@ export function Select<T>({
               >
                 <SelectItem
                   label={opt.label}
+                  meta={opt.meta}
                   multi={multi}
                   selected={
                     Array.isArray(value)

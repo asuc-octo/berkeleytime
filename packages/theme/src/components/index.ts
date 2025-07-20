@@ -14,6 +14,7 @@ export * from "./Card";
 export * from "./Select";
 export * from "./Badge";
 export * from "./Accordion";
+export * from "./DaySelect";
 export * from "./ColoredSquare";
 export * from "./HoverCard";
 
