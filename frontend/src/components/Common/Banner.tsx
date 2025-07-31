@@ -16,10 +16,10 @@ export default function Banner() {
 		<div className="banner">
 			<div className="content">
 				<p>
-				We are looking to improve our features to redesign the enrollment experience!
+				Check out the beta version of the new Berkeleytime!
 				</p>
-				<Link to="https://bit.ly/berkeleytime-enrollment">
-					<Button size="sm">Fill out our Survey</Button>
+				<Link to="https://beta.berkeleytime.com">
+					<Button size="sm">Open Beta</Button>
 				</Link>
 			</div>
 			<img src={close} alt="close" onClick={() => closeBanner()} />
