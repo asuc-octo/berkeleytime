@@ -12,7 +12,7 @@
     "node": ">=21.0.0",
     "npm": ">=10.0.0"
   },
-  "packageManager": "npm@11.2.0",
+  "packageManager": "npm@11.5.2",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -20,15 +20,15 @@
   "dependencies": {
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "patch-package": "8.0.0",
-    "prettier": "3.5.3",
-    "turbo": "2.4.4"
+    "prettier": "3.6.2",
+    "turbo": "2.5.5"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.41.1"
+    "@rollup/rollup-linux-x64-gnu": "4.46.2"
   },
   "name": "berkeleytime",
   "devDependencies": {
     "@types/papaparse": "^5.3.16",
-    "rollup": "4.41.1"
+    "rollup": "4.46.2"
   }
 }
