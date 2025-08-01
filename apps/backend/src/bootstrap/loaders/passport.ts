@@ -33,7 +33,7 @@ export default async (app: Application, redis: RedisClientType) => {
       cookie: {
         secure: !config.isDev,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60, // 1 hour
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
         sameSite: "lax",
       },
       store: new RedisStore({
