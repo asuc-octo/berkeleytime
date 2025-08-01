@@ -4,6 +4,7 @@ import classesPuller from "./pullers/classes";
 import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
+import enrollmentPeriodsPuller from "./pullers/enrollment-periods";
 import sectionsPuller from "./pullers/sections";
 import termsPuller from "./pullers/terms";
 import setup from "./shared";
@@ -28,6 +29,7 @@ const pullerMap: {
   enrollments: enrollmentHistoriesPuller.updateEnrollmentHistories,
   "terms-all": termsPuller.allTerms,
   "terms-nearby": termsPuller.nearbyTerms,
+  "enrollment-periods": enrollmentPeriodsPuller.updateEnrollmentPeriods,
 } as const;
 
 const runPuller = async () => {
