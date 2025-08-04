@@ -17,6 +17,7 @@ const fields = {
     name: 1,
     beginDate: 1,
     endDate: 1,
+    timePeriods: 1,
   },
 };
 

@@ -15,12 +15,18 @@ export enum TemporalPosition {
   Past = "Past",
 }
 
+export interface ITimePeriod {
+  periodDescription: string;
+  endDate: string;
+}
+
 export interface ISession {
   id: SessionIdentifier;
   name: string;
   startDate?: string;
   endDate?: string;
   temporalPosition: TemporalPosition;
+  timePeriods?: ITimePeriod[];
 }
 
 export interface ITerm {
@@ -48,6 +54,10 @@ export const READ_TERMS = gql`
         startDate
         endDate
         temporalPosition
+        timePeriods {
+          periodDescription
+          endDate
+        }
       }
       startDate
       endDate
@@ -70,6 +80,10 @@ export const READ_TERM = gql`
         startDate
         endDate
         temporalPosition
+        timePeriods {
+          periodDescription
+          endDate
+        }
       }
       startDate
       endDate

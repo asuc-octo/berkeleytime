@@ -19,7 +19,7 @@ export interface IEnrollmentMarker {
 }
 
 // Only include events whose summary begins with 'FA25'
-const TERM_PREFIX_REGEX = /^FA25\b/i;
+const TERM_PREFIX_REGEX = /^SP25\b/i;
 
 /**
  * Fetches the raw ICS text and returns VEVENT entries for the specified term prefix as structured objects.

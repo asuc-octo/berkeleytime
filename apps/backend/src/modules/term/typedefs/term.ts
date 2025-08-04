@@ -37,6 +37,14 @@ const typedef = gql`
   scalar SessionIdentifier
 
   """
+  Time period for enrollment phases
+  """
+  type TimePeriod {
+    periodDescription: String!
+    endDate: String!
+  }
+
+  """
   Session, for example Summer Session A
   """
   type Session {
@@ -48,6 +56,7 @@ const typedef = gql`
     name: String!
     startDate: String!
     endDate: String!
+    timePeriods: [TimePeriod!]
   }
 
   "Unique term identifier. Maps to term.id"

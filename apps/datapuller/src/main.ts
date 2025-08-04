@@ -26,7 +26,7 @@ const pullerMap: {
   "classes-last-five-years": classesPuller.lastFiveYearsTerms,
   "grades-recent": gradeDistributionsPuller.recentPastTerms,
   "grades-last-five-years": gradeDistributionsPuller.lastFiveYearsTerms,
-  enrollments: enrollmentHistoriesPuller.updateEnrollmentHistories,
+  "enrollments": enrollmentHistoriesPuller.updateEnrollmentHistories,
   "terms-all": termsPuller.allTerms,
   "terms-nearby": termsPuller.nearbyTerms,
   "enrollment-periods": enrollmentPeriodsPuller.updateEnrollmentPeriods,

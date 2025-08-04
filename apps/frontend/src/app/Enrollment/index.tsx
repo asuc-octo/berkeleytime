@@ -5,8 +5,10 @@ import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
   CartesianGrid,
+  Label,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -17,6 +19,7 @@ import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 import { READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
+import { READ_TERM, ReadTermResponse } from "@/lib/api/terms";
 
 import CourseManager from "./CourseManager";
 import styles from "./Enrollment.module.scss";
@@ -74,9 +77,34 @@ export default function Enrollment() {
 
   const [loading, setLoading] = useState(initialInputs.length > 0);
   const [outputs, setOutputs] = useState<Output[]>([]);
+  const [termData, setTermData] = useState<ReadTermResponse | null>(null);
 
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
+
+  // Fetch term data for enrollment periods
+  const fetchTermData = useCallback(async () => {
+    if (outputs.length === 0) return;
+
+    const firstOutput = outputs[0];
+    try {
+      const response = await client.query<ReadTermResponse>({
+        query: READ_TERM,
+        variables: {
+          year: firstOutput.input.year,
+          semester: firstOutput.input.semester,
+        },
+        fetchPolicy: "no-cache",
+      });
+      setTermData(response.data);
+    } catch (error) {
+      console.error("Failed to fetch term data:", error);
+    }
+  }, [client, outputs]);
+
+  useEffect(() => {
+    fetchTermData();
+  }, [fetchTermData]);
 
   const initialize = useCallback(async () => {
     if (!loading) return;
@@ -186,6 +214,39 @@ export default function Enrollment() {
       .sort((a, b) => a.day - b.day);
   }, [outputs]);
 
+  // Calculate enrollment period lines
+  const enrollmentPeriodLines = useMemo(() => {
+    if (!termData?.term || !outputs.length) return [];
+
+    const firstOutput = outputs[0];
+    const day0 = new Date(firstOutput.enrollmentHistory.history[0].time);
+
+    return (
+      termData.term.sessions?.[0]?.timePeriods
+        ?.filter((period) => {
+          const description = period.periodDescription.toLowerCase();
+          return (
+            (description.includes("phase") ||
+              description.includes("adjustment")) &&
+            description.includes("begin")
+          );
+        })
+        ?.map((period) => {
+          const periodDate = new Date(period.endDate);
+          const dayOffset = Math.ceil(
+            (periodDate.getTime() - day0.getTime()) / (1000 * 3600 * 24)
+          );
+
+          return {
+            day: dayOffset,
+            label: period.periodDescription,
+            stroke: "#666",
+            strokeDasharray: "5 5",
+          };
+        }) || []
+    );
+  }, [termData, outputs]);
+
   function updateGraphHover(data: any) {
     if (!data.isTooltipActive) return;
     setHoveredDay(data.activeLabel);
@@ -252,6 +313,26 @@ export default function Enrollment() {
                     type="number"
                   />
                   <YAxis domain={[0, dataMax]} tickFormatter={toPercent} />
+
+                  {enrollmentPeriodLines.map((line, index) => (
+                    <ReferenceLine
+                      key={index}
+                      x={line.day}
+                      stroke="#666"
+                      strokeDasharray="5 5"
+                    >
+                      {/* “top” → put it above the line;  dy < 0 → nudge upward */}
+                      <Label
+                        value={line.label}
+                        angle={-90}
+                        dx={-10} // vertical offset (-10 px up)
+                        textAnchor="middle" // center horizontally on the X
+                        fill="var(--label-color)"
+                        fontSize={12}
+                      />
+                    </ReferenceLine>
+                  ))}
+
                   {outputs?.length && (
                     <Tooltip
                       content={(props) => {
