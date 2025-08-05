@@ -119,7 +119,7 @@ export const getSections = async (
 ) => {
   const classesAPI = new ClassesAPI();
 
-  const sections = await fetchPaginatedData<ISectionItem, ClassSection>(
+  const sections = await fetchPaginatedData(
     logger,
     classesAPI.v1,
     termIds || null,
@@ -128,7 +128,7 @@ export const getSections = async (
       app_id: id,
       app_key: key,
     },
-    (data) => data.apiResponse.response.classSections || [],
+    (data) => data.apiResponse?.response.classSections || [],
     filterSection,
     formatSection
   );

@@ -6,10 +6,9 @@ import { Course, CoursesAPI } from "@repo/sis-api/courses";
 import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automically generated type
-type CombinedCourse = Course;
-// type CombinedCourse = Course & {
-//   gradeReplacement: ClassCourse["gradeReplacement"];
-// };
+type CombinedCourse = Course & {
+  gradeReplacement?: ICourseItem["gradeReplacement"];
+};
 
 const filterCourse = (input: CombinedCourse): boolean => {
   return input.status?.code === "ACTIVE";
@@ -73,13 +72,11 @@ const formatCourse = (input: CombinedCourse) => {
         (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
       ),
     },
-    // gradeReplacement: {
-    //   text: input.gradeReplacement?.gradeReplacementText,
-    //   group: input.gradeReplacement?.gradeReplacementGroup,
-    //   courses: input.gradeReplacement?.gradeReplacementCourses?.map(
-    //     (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
-    //   ),
-    // },
+    gradeReplacement: {
+      text: input.gradeReplacement?.text,
+      group: input.gradeReplacement?.group,
+      courses: input.gradeReplacement?.courses,
+    },
     crossListing: input.crossListing?.courses,
     formatsOffered: {
       description: input.formatsOffered?.description,
@@ -144,7 +141,7 @@ export const getCourses = async (
 ) => {
   const coursesAPI = new CoursesAPI();
 
-  const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
+  const courses = await fetchPaginatedData(
     logger,
     coursesAPI.v5,
     null,
@@ -153,11 +150,7 @@ export const getCourses = async (
       app_id: id,
       app_key: key,
     },
-    (
-      data: Awaited<
-        ReturnType<typeof coursesAPI.v5.findCourseCollectionUsingGet>
-      >["data"]
-    ) => data.apiResponse?.response.courses || [],
+    (data) => data.apiResponse?.response.courses || [],
     filterCourse,
     formatCourse
   );
