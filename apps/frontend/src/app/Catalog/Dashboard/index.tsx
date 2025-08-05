@@ -18,7 +18,16 @@ import {
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Container, IconButton, Tooltip } from "@repo/theme";
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+  Tooltip,
+} from "@repo/theme";
 import { DropdownMenu } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
@@ -27,7 +36,7 @@ import ClassDrawer from "@/components/ClassDrawer";
 import { useReadUser } from "@/hooks/api";
 import { IClass, ITerm, READ_CLASS, ReadClassResponse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
-import { getRecentClasses } from "@/lib/recent-classes";
+import { RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./Dashboard.module.scss";
 
@@ -60,13 +69,12 @@ export default function Dashboard({
       ),
     [term, user]
   );
-
   const [recentClasses, setRecentClasses] = useState<IClass[]>([]);
 
   const initialize = useCallback(async () => {
-    const recentClasses = getRecentClasses();
+    const recentClasses = getRecents(RecentType.Class);
 
-    const responses = await Promise.all(
+    const recentResponses = await Promise.all(
       recentClasses.map(async (recentClass) => {
         const { subject, year, semester, courseNumber, number } = recentClass;
 
@@ -91,7 +99,7 @@ export default function Dashboard({
       })
     );
 
-    setRecentClasses(responses.filter((response) => !!response));
+    setRecentClasses(recentResponses.filter((response) => !!response));
   }, [client]);
 
   useEffect(() => {
@@ -99,95 +107,112 @@ export default function Dashboard({
   }, [initialize]);
 
   return (
-    <div className={styles.root}>
+    <Box p="5">
       <Container size="3">
-        <div className={styles.header}>
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <Button>
-                <ArrowSeparateVertical />
-                Switch terms
+        <Flex direction="column" gap="6">
+          <Flex justify="between" align="center">
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <Button variant="secondary">
+                  <ArrowSeparateVertical />
+                  Switch terms
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content sideOffset={5} style={{ maxHeight: 200 }}>
+                {terms
+                  .filter(
+                    ({ year, semester }, index) =>
+                      index ===
+                      terms.findIndex(
+                        (term) =>
+                          term.semester === semester && term.year === year
+                      )
+                  )
+                  .toSorted(sortByTermDescending)
+                  .map(({ year, semester }) => {
+                    return (
+                      <DropdownMenu.Item
+                        key={`${semester} ${year}`}
+                        onClick={() => navigate(`/catalog/${year}/${semester}`)}
+                      >
+                        {semester} {year}
+                      </DropdownMenu.Item>
+                    );
+                  })}
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+            <div className={styles.toggle}>
+              <Button onClick={() => setOpen(false)}>
+                Search
+                <Search />
               </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content sideOffset={5} style={{ maxHeight: 200 }}>
-              {terms
-                .filter(
-                  ({ year, semester }, index) =>
-                    index ===
-                    terms.findIndex(
-                      (term) => term.semester === semester && term.year === year
-                    )
-                )
-                .toSorted(sortByTermDescending)
-                .map(({ year, semester }) => {
-                  return (
-                    <DropdownMenu.Item
-                      key={`${semester} ${year}`}
-                      onClick={() => navigate(`/catalog/${year}/${semester}`)}
-                    >
-                      {semester} {year}
-                    </DropdownMenu.Item>
-                  );
-                })}
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-          <div className={styles.toggle}>
-            <Button variant="solid" onClick={() => setOpen(false)}>
-              Search
-              <Search />
-            </Button>
-            <Tooltip content={expanded ? "Expand" : "Collapse"}>
-              <IconButton onClick={() => setExpanded(!expanded)}>
-                {expanded ? <Expand /> : <Collapse />}
-              </IconButton>
-            </Tooltip>
-          </div>
-        </div>
-        <p className={styles.heading}>
-          {term.semester} {term.year}
-        </p>
-        {term.startDate && term.endDate && (
-          <p className={styles.paragraph}>
-            {moment(term.startDate).format("MMMM Do")} through{" "}
-            {moment(term.endDate).format("MMMM Do")}
-          </p>
-        )}
-        <Carousel.Root
-          title="Bookmarked"
-          Icon={<BookmarkSolid />}
-          to="/account"
-        >
-          {/* TODO: Better placeholder states */}
-          {!bookmarkedClasses ? (
-            <div className={styles.card}>
-              <div className={styles.error}>Sign in to bookmark classes</div>
+              <Tooltip content={expanded ? "Expand" : "Collapse"}>
+                <IconButton onClick={() => setExpanded(!expanded)}>
+                  {expanded ? <Expand /> : <Collapse />}
+                </IconButton>
+              </Tooltip>
             </div>
-          ) : bookmarkedClasses.length === 0 ? (
-            <div className={styles.card}>
-              <div className={styles.error}>No bookmarked classes</div>
-            </div>
-          ) : (
-            bookmarkedClasses.map((bookmarkedClass, index) => (
-              <ClassDrawer {...bookmarkedClass}>
+          </Flex>
+          <Flex direction="column" gap="2">
+            <Heading size="6">
+              {term.semester} {term.year}
+            </Heading>
+            {term.startDate && term.endDate && (
+              <Text size="3">
+                {moment(term.startDate).format("MMMM Do")} through{" "}
+                {moment(term.endDate).format("MMMM Do")}
+              </Text>
+            )}
+          </Flex>
+          <Carousel.Root
+            title="Bookmarked"
+            Icon={<BookmarkSolid />}
+            to="/account"
+          >
+            {/* TODO: Better placeholder states */}
+            {!bookmarkedClasses ? (
+              <Carousel.Item>
+                <Flex
+                  align="center"
+                  justify="center"
+                  className={styles.placeholder}
+                >
+                  <Text>Sign in to bookmark classes</Text>
+                </Flex>
+              </Carousel.Item>
+            ) : bookmarkedClasses.length === 0 ? (
+              <Carousel.Item>
+                <Flex
+                  align="center"
+                  justify="center"
+                  className={styles.placeholder}
+                >
+                  <Text>No bookmarked classes</Text>
+                </Flex>
+              </Carousel.Item>
+            ) : (
+              bookmarkedClasses.map((bookmarkedClass, index) => (
                 <Carousel.Item key={index}>
-                  <ClassCard class={bookmarkedClass} />
+                  <ClassDrawer {...bookmarkedClass}>
+                    <ClassCard class={bookmarkedClass} />
+                  </ClassDrawer>
                 </Carousel.Item>
-              </ClassDrawer>
-            ))
-          )}
-        </Carousel.Root>
-        {recentClasses.length > 0 && (
-          <Carousel.Root title="Recently viewed" Icon={<Search />}>
-            {recentClasses.map((recentClass, index) => (
-              <ClassDrawer {...recentClass}>
-                <Carousel.Item key={index}>
-                  <ClassCard class={recentClass} />
-                </Carousel.Item>
-              </ClassDrawer>
-            ))}
+              ))
+            )}
           </Carousel.Root>
-        )}
+          {recentClasses.length > 0 && (
+            <Carousel.Root title="Recently viewed" Icon={<Search />}>
+              {recentClasses.map((recentClass, index) => (
+                <Carousel.Item key={index}>
+                  <ClassDrawer {...recentClass}>
+                    <ClassCard class={recentClass} />
+                  </ClassDrawer>
+                </Carousel.Item>
+              ))}
+            </Carousel.Root>
+          )}
+        </Flex>
       </Container>
-    </div>
+    </Box>
   );
 }

@@ -23,7 +23,7 @@ import {
   Tooltip,
 } from "@repo/theme";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
@@ -180,7 +180,7 @@ export default function Course({
         optimisticResponse: {
           updateUser: {
             ...user,
-            bookmarkedCourses,
+            bookmarkedCourses: user.bookmarkedCourses,
           },
         },
       }
@@ -312,12 +312,12 @@ export default function Course({
                     <Tabs.Trigger value="classes" asChild>
                       <MenuItem>Classes</MenuItem>
                     </Tabs.Trigger>
-                    <Tabs.Trigger value="enrollment" asChild>
+                    {/* <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
-                    </Tabs.Trigger>
+                    </Tabs.Trigger> */}
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -332,7 +332,7 @@ export default function Course({
                       <MenuItem active={isActive}>Classes</MenuItem>
                     )}
                   </NavLink>
-                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
                     )}
@@ -341,7 +341,7 @@ export default function Course({
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
-                  </NavLink>
+                  </NavLink> */}
                 </Flex>
               )}
             </Flex>

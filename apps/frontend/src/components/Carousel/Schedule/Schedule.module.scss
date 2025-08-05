@@ -3,11 +3,10 @@
   border-radius: 8px;
   flex-shrink: 0;
   background-color: var(--foreground-color);
-  position: relative;
   padding: 16px;
   display: flex;
+  width: 320px;
   gap: 16px;
-  align-items: flex-start;
   cursor: pointer;
 
   &:hover .column .icon {
@@ -29,6 +28,10 @@
   .text {
     flex-grow: 1;
     font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    max-width: 90%;
+    color: var(--paragraph-color);
 
     .heading {
       color: var(--heading-color);
@@ -44,15 +47,16 @@
     }
 
     .description {
-      color: var(--paragraph-color);
       line-height: 1.5;
+      flex-grow: 1;
     }
 
     .row {
-      display: flex;
-      gap: 12px;
       margin-top: 12px;
       align-items: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }

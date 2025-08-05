@@ -24,7 +24,7 @@ import {
   Tooltip,
 } from "@repo/theme";
 
-import AverageGrade from "@/components/AverageGrade";
+import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import CourseDrawer from "@/components/CourseDrawer";
@@ -34,7 +34,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { IClass, Semester } from "@/lib/api";
-import { addRecentClass } from "@/lib/recent-classes";
+import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -44,6 +44,7 @@ const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
+const Ratings = lazy(() => import("./Ratings"));
 
 interface BodyProps {
   children: ReactNode;
@@ -208,7 +209,7 @@ export default function Class({
         optimisticResponse: {
           updateUser: {
             ...user,
-            bookmarkedClasses,
+            bookmarkedClasses: user.bookmarkedClasses,
           },
         },
       }
@@ -218,7 +219,7 @@ export default function Class({
   useEffect(() => {
     if (!_class) return;
 
-    addRecentClass({
+    addRecent(RecentType.Class, {
       subject: _class.subject,
       year: _class.year,
       semester: _class.semester,
@@ -226,6 +227,17 @@ export default function Class({
       number: _class.number,
     });
   }, [_class]);
+
+  const ratingsCount = useMemo(() => {
+    return (
+      course &&
+      course.aggregatedRatings &&
+      course.aggregatedRatings.metrics.length > 0 &&
+      Math.max(
+        ...Object.values(course.aggregatedRatings.metrics.map((v) => v.count))
+      )
+    );
+  }, [course]);
 
   // TODO: Loading state
   if (loading || courseLoading) {
@@ -400,12 +412,25 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    <Tabs.Trigger value="enrollment" asChild>
+                    {/* <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
+                    */}
+                    <NavLink
+                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                    >
+                      <MenuItem styl>
+                        Ratings
+                        {ratingsCount ? (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        ) : (
+                          <div className={styles.dot}></div>
+                        )}
+                      </MenuItem>
+                    </NavLink>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -420,7 +445,7 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
                     )}
@@ -428,6 +453,19 @@ export default function Class({
                   <NavLink to={{ ...location, pathname: "grades" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
+                    )}
+                  </NavLink>
+                  */}
+                  <NavLink to={{ ...location, pathname: "ratings" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>
+                        Ratings
+                        {ratingsCount ? (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        ) : (
+                          <div className={styles.dot}></div>
+                        )}
+                      </MenuItem>
                     )}
                   </NavLink>
                 </Flex>
@@ -460,6 +498,11 @@ export default function Class({
             <Tabs.Content value="grades" asChild>
               <SuspenseBoundary>
                 <Grades />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="ratings" asChild>
+              <SuspenseBoundary>
+                <Ratings />
               </SuspenseBoundary>
             </Tabs.Content>
           </Body>

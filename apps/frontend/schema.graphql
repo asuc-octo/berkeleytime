@@ -179,7 +179,7 @@ input SelectedClassInput {
   subject: String!
   courseNumber: CourseNumber!
   number: ClassNumber!
-  sections: [SectionIdentifier!]!
+  sectionIds: [SectionIdentifier!]!
 }
 
 input UpdateScheduleInput {

@@ -1,19 +1,34 @@
-.content {
+.card {
   border-radius: 4px;
-  height: 32px;
-  padding: 0 12px;
+  min-height: 32px;
   background-color: var(--tooltip-color);
   animation: fadeIn 100ms ease-in;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-  color: white;
   display: flex;
   align-items: center;
   z-index: 998;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 250px;
+  box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.2);
 
   .arrow {
     fill: var(--tooltip-color);
+  }
+  .content {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.8;
+    color: var(--heading-color);
+  }
+  .description {
+    width: 100%;
+    border-top: 1px solid var(--border-color);
+    color: var(--paragraph-color);
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
   }
 }
 

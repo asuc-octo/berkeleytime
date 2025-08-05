@@ -3,5 +3,6 @@ export * from "./users";
 export * from "./courses";
 export * from "./terms";
 export * from "./schedules";
+export * from "./ratings";
 export * from "./grade-distributions";
 export * from "./enrollment";

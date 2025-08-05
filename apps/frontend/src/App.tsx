@@ -15,13 +15,19 @@ import SuspenseBoundary from "@/components/SuspenseBoundary";
 
 // import PinsProvider from "@/components/PinsProvider";
 
-const Profile = lazy(() => import("@/app/Profile"));
+const Profile = {
+  Root: lazy(() => import("@/app/Profile")),
+  Account: lazy(() => import("@/app/Profile/Account")),
+  Support: lazy(() => import("@/app/Profile/Support")),
+  Ratings: lazy(() => import("@/app/Profile/Ratings")),
+};
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
   Grades: lazy(() => import("@/components/Class/Grades")),
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
+  Ratings: lazy(() => import("@/components/Class/Ratings")),
 };
 
 const Course = {
@@ -121,10 +127,36 @@ const router = createBrowserRouter([
       {
         element: (
           <SuspenseBoundary key="profile">
-            <Profile />
+            <Profile.Root />
           </SuspenseBoundary>
         ),
         path: "profile",
+        children: [
+          {
+            element: (
+              <SuspenseBoundary key="account">
+                <Profile.Account />
+              </SuspenseBoundary>
+            ),
+            index: true,
+          },
+          {
+            element: (
+              <SuspenseBoundary key="support">
+                <Profile.Support />
+              </SuspenseBoundary>
+            ),
+            path: "support",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="ratings">
+                <Profile.Ratings />
+              </SuspenseBoundary>
+            ),
+            path: "ratings",
+          },
+        ],
       },
     ],
   },
@@ -233,6 +265,10 @@ const router = createBrowserRouter([
               </SuspenseBoundary>
             ),
             path: "grades",
+          },
+          {
+            element: <Class.Ratings />,
+            path: "ratings",
           },
           {
             path: "*",

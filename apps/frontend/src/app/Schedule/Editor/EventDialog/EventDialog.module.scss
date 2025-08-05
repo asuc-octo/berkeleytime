@@ -1,0 +1,54 @@
+.day-select {
+
+  input[type="checkbox"] {
+    display: none;
+  }
+  label {
+    display: inline-block;
+    margin: 0.5rem;
+    cursor: pointer;
+  }
+
+  label span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;            
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--button-color);
+    color: var(--paragraph-color);
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  label span:hover {
+    background-color: var(--button-hover-color);
+  }
+
+  input[type="checkbox"]:checked + span {
+    background-color: var(--button-active-color); 
+    color: var(--heading-color);
+  }
+}
+
+.time {
+  color: var(--paragraph-color);
+  display: flex;
+  justify-content: space-between;
+
+  .time-select {
+    width: 180px;
+    input {
+      width: 70px;
+      margin-left: 10px;
+      display: inline;
+      color: var(--paragraph-color);
+    }
+    input[type="time"]::-webkit-calendar-picker-indicator {
+      display: none;
+    }
+  }
+
+}

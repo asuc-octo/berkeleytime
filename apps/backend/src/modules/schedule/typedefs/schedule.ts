@@ -10,12 +10,13 @@ const typedef = gql`
     startTime: String!
     endTime: String!
     days: [Boolean!]!
+    _id: ID!
     location: String
     title: String!
     description: String
   }
 
-  type Schedule {
+  type Schedule @cacheControl(maxAge: 1) {
     _id: ID!
     name: String!
     createdBy: String!

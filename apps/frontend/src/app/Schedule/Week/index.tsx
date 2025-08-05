@@ -1,14 +1,14 @@
 import { MouseEvent, useMemo, useRef, useState } from "react";
 
-import { ISection } from "@/lib/api";
+import { IScheduleEvent, ISection } from "@/lib/api";
 
-import { getY } from "../schedule";
+import { ScheduleEvent, getY } from "../schedule";
 import Event from "./Event";
 import styles from "./Week.module.scss";
 
 // You have to trust me on this math
 const adjustAttachedEvents = (
-  relevantSections: ISection[],
+  relevantEventsAndSections: ScheduleEvent[],
   attachedSections: string[],
   minutes: string[][],
   positions: Record<string, [number, number]>
@@ -22,13 +22,12 @@ const adjustAttachedEvents = (
 
     positions[id][1]++;
 
-    const section = relevantSections.find(
-      (section) => id === section.sectionId
-    );
-    if (!section) return;
+    const event = relevantEventsAndSections.find((event) => id === event.id);
 
-    const top = getY(section.meetings[0].startTime);
-    const height = getY(section.meetings[0].endTime) - top;
+    if (!event) return;
+
+    const top = getY(event.startTime);
+    const height = getY(event.endTime) - top;
 
     for (let i = top; i < top + height; i++) {
       for (const id of minutes[i]) {
@@ -45,13 +44,20 @@ const adjustAttachedEvents = (
 interface WeekProps {
   selectedSections: ISection[];
   currentSection?: ISection | null;
+  events: IScheduleEvent[];
   y?: number | null;
   updateY?: (y: number | null) => void;
+}
+
+function rotateRight<T>(arr: T[]): T[] {
+  if (arr.length === 0) return arr;
+  return [arr[arr.length - 1], ...arr.slice(0, arr.length - 1)];
 }
 
 export default function Week({
   selectedSections,
   currentSection,
+  events,
   y: remoteY,
   updateY: updateRemoteY,
 }: WeekProps) {
@@ -77,6 +83,21 @@ export default function Week({
         const positions: Record<string, [number, number]> = {};
         const minutes: string[][] = [...Array(60 * 18)].map(() => []);
 
+        const relevantEvents = events
+          // Filter events for the current day
+          .filter((event) => event.days[day])
+          .map(
+            (event) =>
+              ({
+                event,
+                startTime: event.startTime,
+                endTime: event.endTime,
+                days: event.days,
+                id: event._id,
+                type: "custom",
+              }) as ScheduleEvent
+          );
+
         const relevantSections = sections
           // Filter sections for the current day which have a time specified
           .filter(
@@ -85,16 +106,31 @@ export default function Week({
               section.meetings[0].startTime &&
               getY(section.meetings[0].startTime) > 0
           )
-          // Sort sections by when they start
-          .sort(
-            (a, b) =>
-              getY(a.meetings[0].startTime) - getY(b.meetings[0].startTime)
+          .map(
+            (section) =>
+              ({
+                section,
+                startTime: section.meetings[0].startTime,
+                endTime: section.meetings[0].endTime,
+                days: section.meetings[0].days,
+                id: section.sectionId,
+                type: "section",
+              }) as ScheduleEvent
           );
 
+        const relevantEventsAndSections = [
+          ...relevantEvents,
+          ...relevantSections,
+        ].sort(
+          (a, b) =>
+            getY(a.startTime) - getY(b.startTime) ||
+            getY(a.endTime) - getY(b.endTime)
+        );
+
         // Maintain an array of sections that are attached to each minute
-        for (const section of relevantSections) {
-          const top = getY(section.meetings[0].startTime);
-          const height = getY(section.meetings[0].endTime) - top;
+        for (const event of relevantEventsAndSections) {
+          const top = getY(event.startTime);
+          const height = getY(event.endTime) - top;
 
           const attachedSections = minutes[top];
 
@@ -116,14 +152,14 @@ export default function Week({
             ) === position
           ) {
             adjustAttachedEvents(
-              relevantSections,
+              relevantEventsAndSections,
               attachedSections,
               minutes,
               positions
             );
           }
 
-          positions[section.sectionId] = [
+          positions[event.id] = [
             position,
             attachedSections.length === 0
               ? 1
@@ -131,22 +167,22 @@ export default function Week({
           ];
 
           for (let i = top; i < top + height; i++) {
-            minutes[i].push(section.sectionId);
+            minutes[i].push(event.id);
           }
         }
 
-        return relevantSections.map((section) => {
-          const [position, columns] = positions[section.sectionId];
+        return relevantEventsAndSections.map((event) => {
+          const [position, columns] = positions[event.id];
 
           return {
-            ...section,
+            ...event,
             position,
-            active: section.sectionId !== currentSection?.sectionId,
+            active: event.id !== currentSection?.sectionId,
             columns,
           };
         });
       }),
-    [sections, currentSection]
+    [sections, currentSection, events]
   );
 
   const currentTime = useMemo(() => {
@@ -208,13 +244,13 @@ export default function Week({
           ))}
         </div>
         <div className={styles.week}>
-          {days.map((events, day) => (
+          {rotateRight(days).map((events, day) => (
             <div key={day} className={styles.day}>
               {[...Array(18)].map((_, hour) => (
                 <div key={hour} className={styles.hour}></div>
               ))}
               {events.map((event) => (
-                <Event key={event.sectionId} {...event} />
+                <Event key={event.id} {...event} />
               ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}
             </div>

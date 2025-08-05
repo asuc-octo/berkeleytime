@@ -1,9 +1,21 @@
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
 
-import { Container } from "@repo/theme";
+import { Calendar, Plus } from "iconoir-react";
 
-import { useCreateSchedule, useReadSchedules, useReadUser } from "@/hooks/api";
-import { Semester } from "@/lib/api";
+import { Box, Button, Container, Flex } from "@repo/theme";
+
+import Carousel from "@/components/Carousel";
+import Footer from "@/components/Footer";
+import ScheduleCard from "@/components/ScheduleCard";
+import { useReadSchedules, useReadUser } from "@/hooks/api";
+import { ISchedule, signIn } from "@/lib/api";
+
+// import { RecentType, getRecents } from "@/lib/recent";
+
+import CreateScheduleDialog from "./CreateScheduleDialog";
+import styles from "./Schedules.module.scss";
+
+const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
 
 export default function Schedules() {
   const { data: user, loading: userLoading } = useReadUser();
@@ -12,34 +24,98 @@ export default function Schedules() {
     skip: !user,
   });
 
-  const [createSchedule] = useCreateSchedule();
+  const schedulesBySemester = useMemo(() => {
+    return schedules
+      ? schedules.reduce(
+          (acc, schedule) => {
+            const term = `${schedule.semester} ${schedule.year}`;
+            if (!acc[term]) acc[term] = [];
+            acc[term].push(schedule);
+            return acc;
+          },
+          {} as { [key: string]: ISchedule[] }
+        )
+      : ({} as { [key: string]: ISchedule[] });
+  }, [schedules]);
+
+  // const recentSchedules = getRecents(RecentType.Schedule);
 
   if (userLoading || schedulesLoading) return <></>;
 
-  if (!user) return <></>;
+  if (!user) signIn();
 
   if (!schedules) {
     return <></>;
   }
 
   return (
-    <Container>
-      <button
-        onClick={() =>
-          createSchedule({
-            name: "Test",
-            year: 2024,
-            semester: Semester.Fall,
-          })
-        }
-      >
-        Create Schedule
-      </button>
-      {schedules?.map((schedule) => (
-        <div key={schedule._id}>
-          <Link to={schedule._id}>{schedule.name}</Link>
+    <Box p="5">
+      <Container style={{ marginBottom: "80px" }}>
+        <div className={styles.header}>
+          <div className={styles.title}>
+            Welcome to Berkeleytime&apos;s Scheduler
+          </div>
+          <div className={styles.prompt}>
+            Use our scheduler to build your ideal schedule. Search our catalog
+            to add new classes or select from saved ones, and add your own time
+            preferences.
+          </div>
+          <CreateScheduleDialog
+            defaultName={`Schedule ${schedules.length + 1}`}
+          >
+            <Button>
+              <Plus />
+              Create a schedule
+            </Button>
+          </CreateScheduleDialog>
         </div>
-      ))}
-    </Container>
+        <Flex direction="column" gap="5">
+          {/* TODO: Removed recent schedules. Delete doesn't work and # a user would have is too small to justify this?
+          {recentSchedules.length !== 0 && (
+            <Carousel.Root title="Recently viewed" Icon={<Search />}>
+              {recentSchedules.map(
+                ({ _id, name, classes, year, semester }, i) => {
+                  return (
+                    <Carousel.Schedule
+                      key={i}
+                      _id={_id}
+                      name={name}
+                      classes={classes}
+                      semester={`${semester} ${year}`}
+                    />
+                  );
+                }
+              )}
+            </Carousel.Root>
+          )} */}
+          {Object.keys(schedulesBySemester)
+            .sort((a, b) => {
+              return schedulesBySemester[a][0].year ==
+                schedulesBySemester[b][0].year
+                ? SEMESTER_ORDER.indexOf(schedulesBySemester[b][0].semester) -
+                    SEMESTER_ORDER.indexOf(schedulesBySemester[a][0].semester)
+                : schedulesBySemester[b][0].year -
+                    schedulesBySemester[a][0].year;
+            })
+            .map((sem) => {
+              return (
+                <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
+                  {schedulesBySemester[sem].map(({ _id, name, classes }, i) => (
+                    <Carousel.Item key={i}>
+                      <ScheduleCard
+                        key={i}
+                        _id={_id}
+                        name={name}
+                        classes={classes}
+                      />
+                    </Carousel.Item>
+                  ))}
+                </Carousel.Root>
+              );
+            })}
+        </Flex>
+      </Container>
+      <Footer />
+    </Box>
   );
 }

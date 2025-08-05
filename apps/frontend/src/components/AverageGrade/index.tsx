@@ -6,17 +6,45 @@ import { GradeDistribution } from "@/lib/api";
 
 import styles from "./AverageGrade.module.scss";
 
-interface AverageGradeProps {
-  gradeDistribution: GradeDistribution;
+interface ColoredGradeProps {
+  grade: string;
+  style?: React.CSSProperties;
 }
 
-export default function AverageGrade({
+interface AverageGradeProps {
+  gradeDistribution: GradeDistribution;
+  style?: React.CSSProperties;
+  tooltip?: string;
+}
+
+export function ColoredGrade({ grade, style }: ColoredGradeProps) {
+  const color = useMemo(
+    () =>
+      grade === "N/A"
+        ? "var(--paragraph-color)"
+        : grade === "A+" || grade === "A" || grade === "A-"
+          ? "var(--emerald-500)"
+          : grade === "B+" || grade === "B" || grade === "B-"
+            ? "var(--amber-500)"
+            : "var(--rose-500)",
+    [grade]
+  );
+  return (
+    <div className={styles.trigger} style={{ color, ...style }}>
+      {grade}
+    </div>
+  );
+}
+
+export function AverageGrade({
   gradeDistribution: { average },
+  style,
+  tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
   const text = useMemo(
     () =>
       !average
-        ? "N/A"
+        ? ""
         : average > 4
           ? "A+"
           : average > 3.7
@@ -60,9 +88,7 @@ export default function AverageGrade({
   return (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
-        <div className={styles.trigger} style={{ color }}>
-          {text}
-        </div>
+        <ColoredGrade style={style} grade={text} />
       </Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
@@ -81,8 +107,7 @@ export default function AverageGrade({
                 <span style={{ color }}>
                   {text} ({average.toLocaleString()})
                 </span>{" "}
-                in this course on average across all semesters this course has
-                been offered.
+                in this course on average {tooltip}.
               </p>
             ) : (
               <p className={styles.description}>

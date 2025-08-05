@@ -4,36 +4,47 @@
   flex-shrink: 0;
   background-color: var(--foreground-color);
   position: relative;
-  padding: 16px;
   display: flex;
-  gap: 16px;
   align-items: flex-start;
   cursor: pointer;
   height: 100%;
+  overflow: hidden;
 
-  &:hover .column .icon {
-    color: var(--heading-color);
+  .border {
+    width: 8px;
+    background-color: var(--purple-500);
+    border-radius: 8px 0 0 8px;
+    align-self: stretch;
   }
 
   .column {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex-shrink: 0;
-
+    padding: 16px;
+    padding-left: 0;
     .icon {
       color: var(--paragraph-color);
       transition: all 100ms ease-in-out;
     }
+    .icon:hover {
+      color: var(--heading-color);
+    }
+    .delete-icon {
+      color: var(--red-700);
+    }
+    .delete-icon:hover {
+      color: var(--red-600);
+    }
   }
 
   .body {
-    flex-grow: 1;
+    flex: 1 1 auto;
     font-size: 14px;
     justify-content: space-between;
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 16px;
+    padding-right: 0;
+    min-width: 0;
 
     .heading {
       color: var(--heading-color);
@@ -58,6 +69,18 @@
       gap: 12px;
       margin-top: 12px;
       align-items: center;
+      color: var(--paragraph-color)
     }
   }
+}
+.hover-color-change:hover {
+  background-color: var(--background-color);
+}
+  
+.active {
+  border: 1px solid var(--blue-500);
+}
+.disabled {
+  filter: grayscale(100%);
+  background-color: var(--background-color);
 }

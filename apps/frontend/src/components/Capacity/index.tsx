@@ -5,7 +5,7 @@ import { Tooltip } from "radix-ui";
 
 import styles from "./Capacity.module.scss";
 
-const getColor = (count?: number, capacity?: number) => {
+export const getEnrollmentColor = (count?: number, capacity?: number) => {
   if (typeof count !== "number" || typeof capacity !== "number")
     return "var(--paragraph-color)";
 
@@ -32,12 +32,12 @@ export default function Capacity({
   maxWaitlist,
 }: CapacityProps) {
   const color = useMemo(
-    () => getColor(enrolledCount, maxEnroll),
+    () => getEnrollmentColor(enrolledCount, maxEnroll),
     [enrolledCount, maxEnroll]
   );
 
   const waitlistColor = useMemo(
-    () => getColor(waitlistedCount, maxWaitlist),
+    () => getEnrollmentColor(waitlistedCount, maxWaitlist),
     [waitlistedCount, maxWaitlist]
   );
 

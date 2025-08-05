@@ -1,0 +1,17 @@
+.root {
+  display: inline-block;
+  border-radius: 2px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+
+  &[data-size="sm"] {
+    width: 12px;
+  }
+
+  &[data-size="md"] {
+    width: 16px;
+  }
+  &[data-size="lg"] {
+    width: 20px;
+  }
+}

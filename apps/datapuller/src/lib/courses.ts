@@ -20,7 +20,7 @@ const formatCourse = (input: CombinedCourse) => {
     (i) => i.type === "cs-course-id"
   )?.id;
 
-  const number = input.catalogNumber?.formatted;
+  const number = input.catalogNumber;
   const subject = input.subjectArea?.code?.replaceAll(" ", "");
 
   const essentialFields = {
@@ -56,7 +56,7 @@ const formatCourse = (input: CombinedCourse) => {
     instructorDropConsentRequired: input.instructorDropConsentRequired,
     allowMultipleEnrollments: input.allowMultipleEnrollments,
     spansMultipleTerms: input.spansMultipleTerms,
-    multipleTermNumber: input.multipleTermNumber,
+    // multipleTermNumber: input.multipleTermNumber,
     anyFeesExist: input.anyFeesExist,
     repeatability: {
       repeatable: input.repeatability?.repeatable,
@@ -120,15 +120,17 @@ const formatCourse = (input: CombinedCourse) => {
         discrete: input.credit?.value?.discrete?.units,
         fixed: input.credit?.value?.fixed?.units,
         range: {
-          minUnits: input.credit?.value?.range?.minUnits,
-          maxUnits: input.credit?.value?.range?.maxUnits,
+          // minUnits: input.credit?.value?.range?.minUnits,
+          minUnits: input.credit?.value?.variable?.minUnits,
+          // maxUnits: input.credit?.value?.range?.maxUnits,
+          maxUnits: input.credit?.value?.variable?.maxUnits,
         },
       },
     },
     workloadHours: input.workloadHours,
     contactHours: input.contactHours,
     formerDisplayName: input.formerDisplayName,
-    createdDate: input.createdDate,
+    // createdDate: input.createdDate,
     updatedDate: input.updatedDate,
   };
 

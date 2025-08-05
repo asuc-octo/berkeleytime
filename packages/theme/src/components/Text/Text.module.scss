@@ -1,0 +1,63 @@
+$sizes: (
+  1: 12px,
+  2: 14px,
+  3: 16px,
+  4: 18px,
+  5: 20px,
+  6: 24px,
+  7: 28px,
+  8: 35px,
+  9: 60px,
+);
+
+$weights: (
+  regular: 400,
+  medium: 500,
+  bold: 700,
+);
+
+$alignments: (
+  left: left,
+  center: center,
+  right: right,
+);
+
+.text {
+  color: var(--paragraph-color);
+  line-height: 1.25;
+
+  @each $size, $value in $sizes {
+    &.size-#{$size} {
+      font-size: $value;
+    }
+  }
+
+  @each $weight, $value in $weights {
+    &.weight-#{$weight} {
+      font-weight: $value;
+    }
+  }
+
+  @each $alignment, $value in $alignments {
+    &.align-#{$alignment} {
+      text-align: $value;
+    }
+  }
+
+  &.variant-feature {
+    font-feature-settings:
+      "ss07" on,
+      "cv05" on,
+      "cv06" on,
+      "cv12" on,
+      "cv13" on;
+  }
+}
+
+.heading {
+  color: var(--heading-color);
+}
+
+.label {
+  color: var(--label-color);
+}

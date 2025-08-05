@@ -1,12 +1,12 @@
 import { gql } from "graphql-tag";
 
 export default gql`
-  type GradeDistribution @cacheControl(maxAge: 1) {
+  type GradeDistribution {
     average: Float
     distribution: [Grade!]
   }
 
-  type Grade @cacheControl(maxAge: 1) {
+  type Grade {
     letter: String!
     percentage: Float!
     count: Int!

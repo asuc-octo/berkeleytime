@@ -1,8 +1,11 @@
 import { useMemo } from "react";
 
-import { Theme } from "@radix-ui/themes";
+import { FlexProps, Heading, Text, Theme } from "@radix-ui/themes";
 import classNames from "classnames";
+import { Trash, Xmark } from "iconoir-react";
 import { Dialog as Primitive } from "radix-ui";
+
+import { Button, Flex, IconButton } from "@repo/theme";
 
 import { StackContext } from "../../contexts/StackContext";
 import { useStack } from "../../hooks/useStack";
@@ -67,10 +70,84 @@ function Drawer({
   );
 }
 
+interface HeaderProps {
+  title?: string;
+  subtitle?: string;
+  hasCloseButton?: boolean;
+  onDelete?: () => void;
+}
+
+function Header({
+  children,
+  title,
+  subtitle,
+  hasCloseButton,
+  onDelete,
+  ...props
+}: FlexProps & HeaderProps) {
+  return (
+    <Flex p="4" align="start" gap="4" className={styles.header} {...props}>
+      {title ? (
+        <>
+          <Flex direction="column" gap="2" flexGrow="1">
+            <Dialog.Title asChild>
+              <Heading className={styles.headerTitle}>{title}</Heading>
+            </Dialog.Title>
+            <Dialog.Description asChild>
+              <Text className={styles.headerSubtitle}>{subtitle}</Text>
+            </Dialog.Description>
+          </Flex>
+          {onDelete && (
+            <Button as="button" onClick={onDelete} variant="secondary">
+              Delete
+              <Trash />
+            </Button>
+          )}
+          {hasCloseButton && (
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          )}
+        </>
+      ) : (
+        children
+      )}
+    </Flex>
+  );
+}
+
+function Body({ children, ...props }: FlexProps) {
+  return (
+    <Flex p="4" align="start" direction="column" {...props}>
+      {children}
+    </Flex>
+  );
+}
+
+function Footer({ children, ...props }: FlexProps) {
+  return (
+    <Flex
+      p="4"
+      justify="end"
+      direction="row"
+      gap="4"
+      className={styles.footer}
+      {...props}
+    >
+      {children}
+    </Flex>
+  );
+}
+
 export const Dialog = {
   ...Primitive,
   Overlay,
   Content,
   Card,
   Drawer,
+  Header,
+  Body,
+  Footer,
 };
