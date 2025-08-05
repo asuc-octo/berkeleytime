@@ -1,15 +1,15 @@
 import { Logger } from "tslog";
 
 import { ICourseItem } from "@repo/common";
-import { Course as ClassCourse } from "@repo/sis-api/classes";
 import { Course, CoursesAPI } from "@repo/sis-api/courses";
 
 import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automically generated type
-type CombinedCourse = Course & {
-  gradeReplacement: ClassCourse["gradeReplacement"];
-};
+type CombinedCourse = Course;
+// type CombinedCourse = Course & {
+//   gradeReplacement: ClassCourse["gradeReplacement"];
+// };
 
 const filterCourse = (input: CombinedCourse): boolean => {
   return input.status?.code === "ACTIVE";
@@ -73,13 +73,13 @@ const formatCourse = (input: CombinedCourse) => {
         (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
       ),
     },
-    gradeReplacement: {
-      text: input.gradeReplacement?.gradeReplacementText,
-      group: input.gradeReplacement?.gradeReplacementGroup,
-      courses: input.gradeReplacement?.gradeReplacementCourses?.map(
-        (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
-      ),
-    },
+    // gradeReplacement: {
+    //   text: input.gradeReplacement?.gradeReplacementText,
+    //   group: input.gradeReplacement?.gradeReplacementGroup,
+    //   courses: input.gradeReplacement?.gradeReplacementCourses?.map(
+    //     (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
+    //   ),
+    // },
     crossListing: input.crossListing?.courses,
     formatsOffered: {
       description: input.formatsOffered?.description,
@@ -146,14 +146,18 @@ export const getCourses = async (
 
   const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
     logger,
-    coursesAPI.v4,
+    coursesAPI.v5,
     null,
     "findCourseCollectionUsingGet",
     {
       app_id: id,
       app_key: key,
     },
-    (data) => data.apiResponse.response.courses || [],
+    (
+      data: Awaited<
+        ReturnType<typeof coursesAPI.v5.findCourseCollectionUsingGet>
+      >["data"]
+    ) => data.apiResponse?.response.courses || [],
     filterCourse,
     formatCourse
   );

@@ -16,6 +16,7 @@ data/
 mdb.archive
 bt_seed.sql
 bt_seed.sql.gz
+bt-app-*.tgz
 .turbo
 generated-types/
 generated-types
