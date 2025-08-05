@@ -73,7 +73,7 @@ COPY . .
 RUN ["turbo", "prune", "ag-frontend", "--docker"]
 
 FROM base AS ag-frontend-dev
-WORKDIR /frontend
+WORKDIR /ag-frontend
 
 COPY --from=ag-frontend-builder /ag-frontend/out/json/ .
 COPY --from=ag-frontend-builder /ag-frontend/out/package-lock.json ./package-lock.json

@@ -4,31 +4,31 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint src/",
     "start": "serve -s dist -p 3001"
   },
   "dependencies": {
-    "@apollo/client": "3.13.1",
+    "@apollo/client": "3.13.9",
     "@radix-ui/themes": "^3.2.1",
     "classnames": "^2.5.1",
-    "graphql": "^16.10.0",
-    "iconoir-react": "^7.10.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.2.0"
+    "graphql": "^16.11.0",
+    "iconoir-react": "^7.11.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.7.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
-    "@types/node": "^22.13.8",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
-    "babel-plugin-react-compiler": "^19.0.0-beta-e1e972c-20250221",
-    "eslint": "^9.21.0",
+    "@types/node": "^24.2.0",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "eslint": "^9.32.0",
     "serve": "^14.2.4",
-    "typescript": "^5.8.2",
-    "vite": "6.2.0"
+    "typescript": "^5.9.2",
+    "vite": "7.0.6"
   }
 }

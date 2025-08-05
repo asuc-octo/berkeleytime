@@ -16,11 +16,7 @@ data/
 mdb.archive
 bt_seed.sql
 bt_seed.sql.gz
+bt-app-*.tgz
 .turbo
 generated-types/
-generated-types
 stage_backup.gz
-apps/frontend/tsconfig.node.tsbuildinfo
-apps/frontend/tsconfig.tsbuildinfo
-apps/frontend/vite.config.d.ts
-apps/frontend/vite.config.js

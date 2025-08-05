@@ -26,7 +26,8 @@
     "turbo": "2.5.5"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.46.2"
+    "@rollup/rollup-linux-x64-gnu": "4.46.2",
+    "@rollup/rollup-linux-x64-musl": "4.46.2"
   },
   "name": "berkeleytime",
   "devDependencies": {

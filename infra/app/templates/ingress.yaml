@@ -11,6 +11,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.host }}
+        - {{ .Values.agFrontend.host }}
       secretName: bt-tls
   rules:
     - host: {{ .Values.host }}
@@ -28,5 +29,15 @@ spec:
             backend:
               service:
                 name: {{ include "bt-app.backendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}
+    - host: {{ .Values.agFrontend.host }}
+      http:
+        paths:
+          - path: {{ .Values.agFrontend.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bt-app.agFrontendName" . }}-svc
                 port:
                   number: {{ .Values.port }}
