@@ -97,3 +97,113 @@ export async function fetchPaginatedData<
 
   return results;
 }
+
+export async function fetchPaginatedDataWithCallback<
+  T,
+  R,
+  API extends Record<string, (...args: any[]) => Promise<HttpResponse<any>>>,
+  Method extends keyof API,
+>(
+  logger: Logger<unknown>,
+  api: API,
+  termIds: string[] | null,
+  method: Method,
+  headers: Record<string, string>,
+  responseProcessor: (data: Awaited<ReturnType<API[Method]>>["data"]) => R[],
+  itemFilter: (item: R) => boolean,
+  itemProcessor: (item: R) => T,
+  batchCallback: (batch: T[]) => Promise<void>,
+  batchSize: number = 5000
+): Promise<void> {
+  const queryBatchSize = 50;
+  let page = 1;
+  let totalErrorCount = 0;
+  let currentBatch: T[] = [];
+
+  const processAndAddToBatch = async (items: T[]) => {
+    currentBatch.push(...items);
+    
+    if (currentBatch.length >= batchSize) {
+      const batchToProcess = currentBatch.splice(0, batchSize);
+      await batchCallback(batchToProcess);
+    }
+  };
+
+  const fetchBatch = async (termId?: string) => {
+    const promises = [];
+    let errorCount = 0;
+
+    for (let i = 0; i < queryBatchSize; i++) {
+      const params: Record<string, any> = {
+        "page-number": (page + i).toString(),
+        "page-size": "50",
+      };
+      if (termId) {
+        params["term-id"] = termId;
+      }
+
+      promises.push(
+        api[method](params, { headers })
+          .then((response: any) => response.json())
+          .then((data: any) => responseProcessor(data))
+          .catch((error: any) => {
+            logger.warn(`Error fetching page ${page + i}: ${error.message}`);
+            errorCount++;
+            return [];
+          })
+      );
+    }
+
+    const batchResults = await Promise.all(promises);
+    const flattenedResults = batchResults.flat();
+
+    return [flattenedResults, errorCount] as const;
+  };
+
+  const processBatch = async (termId?: string) => {
+    const [batchData, errorCount] = await fetchBatch(termId);
+    if (batchData.length === 0) return false;
+
+    const transformedData = batchData.reduce((acc, item, index) => {
+      try {
+        if (itemFilter(item)) {
+          const processedItem = itemProcessor(item);
+          acc.push(processedItem);
+        }
+      } catch (error: any) {
+        totalErrorCount++;
+        logger.error(`Error processing item at index ${index}:`, error);
+        logger.error("Problematic item:", JSON.stringify(item, null, 2));
+      }
+      return acc;
+    }, [] as T[]);
+
+    await processAndAddToBatch(transformedData);
+    page += queryBatchSize;
+
+    return errorCount < queryBatchSize / 10; // allow 10% error rate
+  };
+
+  if (termIds && termIds.length > 0) {
+    for (const termId of termIds) {
+      logger.info(`Fetching for term ${termId}`);
+      let hasMoreData = true;
+      while (hasMoreData) {
+        hasMoreData = await processBatch(termId);
+      }
+      page = 1;
+    }
+  } else {
+    let hasMoreData = true;
+    while (hasMoreData) {
+      hasMoreData = await processBatch();
+    }
+  }
+
+  // Process any remaining items in the current batch
+  if (currentBatch.length > 0) {
+    await batchCallback(currentBatch);
+  }
+
+  logger.warn(`Total errors encountered: ${totalErrorCount}`);
+}

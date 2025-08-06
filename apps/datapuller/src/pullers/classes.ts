@@ -1,6 +1,6 @@
-import { ClassModel } from "@repo/common";
+import { ClassModel, IClassItem } from "@repo/common";
 
-import { getClasses } from "../lib/classes";
+import { getClassesWithCallback } from "../lib/classes";
 import { Config } from "../shared/config";
 import {
   type TermSelector,
@@ -9,6 +9,14 @@ import {
 } from "../shared/term-selectors";
 
 const TERMS_PER_API_BATCH = 4;
+
+const processClassBatch = async (batch: IClassItem[]) => {
+  const { insertedCount } = await ClassModel.insertMany(batch, {
+    ordered: false,
+    rawResult: true,
+  });
+  return insertedCount;
+};
 
 const updateClasses = async (
   { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
@@ -37,20 +45,6 @@ const updateClasses = async (
       `Fetching classes for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
     );
 
-    const classes = await getClasses(
-      log,
-      CLASS_APP_ID,
-      CLASS_APP_KEY,
-      termsBatchIds
-    );
-
-    log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
-    if (!classes) {
-      log.warn(`No classes found, skipping update.`);
-      return;
-    }
-    totalClasses += classes.length;
-
     log.trace("Deleting classes to be replaced...");
 
     const { deletedCount } = await ClassModel.deleteMany({
@@ -59,19 +53,20 @@ const updateClasses = async (
 
     log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
 
-    // Insert classes in batches of 5000
-    const insertBatchSize = 5000;
-    for (let i = 0; i < classes.length; i += insertBatchSize) {
-      const batch = classes.slice(i, i + insertBatchSize);
-
-      log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
-
-      const { insertedCount } = await ClassModel.insertMany(batch, {
-        ordered: false,
-        rawResult: true,
-      });
-      totalInserted += insertedCount;
-    }
+    // Use streaming approach with callback
+    await getClassesWithCallback(
+      log,
+      CLASS_APP_ID,
+      CLASS_APP_KEY,
+      termsBatchIds,
+      async (batch) => {
+        totalClasses += batch.length;
+        log.trace(`Processing batch of ${batch.length} classes...`);
+        
+        const insertedCount = await processClassBatch(batch);
+        totalInserted += insertedCount;
+      }
+    );
   }
 
   log.info(
