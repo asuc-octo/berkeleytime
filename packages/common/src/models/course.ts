@@ -206,14 +206,15 @@ const courseSchema = new Schema<ICourseItem>({
   // createdDate: { type: String },
   updatedDate: { type: String },
 });
+
+// Keep courseId as the true unique identifier
 courseSchema.index({ courseId: 1 }, { unique: true });
-courseSchema.index(
-  {
-    subject: 1,
-    number: 1,
-  },
-  { unique: true }
-);
+
+// Multiple courses can share same subject + number + academicCareer (regular vs transfer credit courses)
+// Non-unique indexes for query performance
+courseSchema.index({ subject: 1, number: 1 });
+courseSchema.index({ academicCareer: 1 });
+courseSchema.index({ subject: 1, number: 1, academicCareer: 1 });
 
 export const CourseModel: Model<ICourseItem> = model<ICourseItem>(
   "courses",
