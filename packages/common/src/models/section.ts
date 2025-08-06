@@ -114,17 +114,11 @@ sectionSchema.index(
   { termId: 1, sessionId: 1, sectionId: 1 },
   { unique: true }
 );
-sectionSchema.index(
-  {
-    year: 1,
-    semester: 1,
-    sessionId: 1,
-    subject: 1,
-    courseNumber: 1,
-    number: 1,
-  },
-  { unique: true }
-);
+// Non-unique indexes for query performance
+sectionSchema.index({ year: 1, semester: 1 });
+sectionSchema.index({ subject: 1, courseNumber: 1 });
+sectionSchema.index({ courseId: 1 });
+sectionSchema.index({ year: 1, semester: 1, sessionId: 1, subject: 1, courseNumber: 1 });
 
 export const SectionModel: Model<ISectionItem> = model<ISectionItem>(
   "sections",
