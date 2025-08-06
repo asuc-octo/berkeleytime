@@ -1,6 +1,6 @@
 import { CourseModel, ICourseItem } from "@repo/common";
 
-import { getCourses } from "../lib/courses";
+import { getCoursesWithCallback } from "../lib/courses";
 import { Config } from "../shared/config";
 
 /**
@@ -34,17 +34,45 @@ const getLatestUniqueCourses = (courses: ICourseItem[]) => {
   return Array.from(latestUniqueCoursesById.values());
 };
 
+const processCourseBatch = async (batch: ICourseItem[]) => {
+  const result = await CourseModel.bulkWrite(
+    batch.map((course) => ({
+      updateOne: {
+        filter: { courseId: course.courseId },
+        update: { $set: course },
+        upsert: true,
+      },
+    }))
+  );
+  return result.insertedCount + result.modifiedCount + result.upsertedCount;
+};
+
 const updateCourses = async ({
   sis: { COURSE_APP_ID, COURSE_APP_KEY },
   log,
 }: Config) => {
   log.trace(`Fetching courses...`);
 
-  const allCourses = await getCourses(log, COURSE_APP_ID, COURSE_APP_KEY);
+  // For courses, we need to collect all data first for deduplication logic
+  // and to know which courses to delete
+  const allCourses: ICourseItem[] = [];
+  let totalFetched = 0;
+
+  await getCoursesWithCallback(
+    log,
+    COURSE_APP_ID,
+    COURSE_APP_KEY,
+    async (batch) => {
+      totalFetched += batch.length;
+      log.trace(`Fetched batch of ${batch.length} courses (total: ${totalFetched})...`);
+      allCourses.push(...batch);
+    }
+  );
+
   const courses = getLatestUniqueCourses(allCourses);
 
-  log.info(`Fetched ${courses.length.toLocaleString()} courses.`);
-  if (!courses) {
+  log.info(`Fetched ${totalFetched.toLocaleString()} total courses, ${courses.length.toLocaleString()} unique courses after deduplication.`);
+  if (!courses || courses.length === 0) {
     log.warn("No courses found, skipping update.");
     return;
   }
@@ -57,26 +85,20 @@ const updateCourses = async ({
 
   log.info(`Deleted ${deletedCount.toLocaleString()} courses.`);
 
-  // Insert courses in batches of 5000
+  // Process courses in batches of 5000
+  let totalProcessed = 0;
   const insertBatchSize = 5000;
   for (let i = 0; i < courses.length; i += insertBatchSize) {
     const batch = courses.slice(i, i + insertBatchSize);
 
-    log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.trace(`Processing batch ${Math.floor(i / insertBatchSize) + 1}...`);
 
-    await CourseModel.bulkWrite(
-      batch.map((course) => ({
-        updateOne: {
-          filter: { courseId: course.courseId },
-          update: { $set: course },
-          upsert: true,
-        },
-      }))
-    );
+    const processedCount = await processCourseBatch(batch);
+    totalProcessed += processedCount;
   }
 
   log.info(
-    `Completed updating database with ${courses.length.toLocaleString()} courses.`
+    `Completed updating database with ${courses.length.toLocaleString()} courses, processed ${totalProcessed.toLocaleString()} documents.`
   );
 };
 

@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import { IEnrollmentSingularItem } from "@repo/common";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
-import { fetchPaginatedData } from "./api/sis-api";
+import { fetchPaginatedData, fetchPaginatedDataWithCallback } from "./api/sis-api";
 import { filterSection } from "./sections";
 
 const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
@@ -101,4 +101,29 @@ export const getEnrollmentSingulars = async (
   );
 
   return sections;
+};
+
+export const getEnrollmentSingularsWithCallback = async (
+  logger: Logger<unknown>,
+  id: string,
+  key: string,
+  termIds: string[] | undefined,
+  batchCallback: (batch: IEnrollmentSingularItem[]) => Promise<void>
+) => {
+  const classesAPI = new ClassesAPI();
+
+  await fetchPaginatedDataWithCallback(
+    logger,
+    classesAPI.v1,
+    termIds || null,
+    "getClassSectionsUsingGet",
+    {
+      app_id: id,
+      app_key: key,
+    },
+    (data) => data.apiResponse?.response.classSections || [],
+    filterSection,
+    (input) => formatEnrollmentSingular(input, new Date()),
+    batchCallback
+  );
 };

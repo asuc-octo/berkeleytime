@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import { ICourseItem } from "@repo/common";
 import { Course, CoursesAPI } from "@repo/sis-api/courses";
 
-import { fetchPaginatedData } from "./api/sis-api";
+import { fetchPaginatedData, fetchPaginatedDataWithCallback } from "./api/sis-api";
 
 // Include relevant fields missing from the automically generated type
 type CombinedCourse = Course & {
@@ -156,4 +156,28 @@ export const getCourses = async (
   );
 
   return courses;
+};
+
+export const getCoursesWithCallback = async (
+  logger: Logger<unknown>,
+  id: string,
+  key: string,
+  batchCallback: (batch: ICourseItem[]) => Promise<void>
+) => {
+  const coursesAPI = new CoursesAPI();
+
+  await fetchPaginatedDataWithCallback(
+    logger,
+    coursesAPI.v5,
+    null,
+    "findCourseCollectionUsingGet",
+    {
+      app_id: id,
+      app_key: key,
+    },
+    (data) => data.apiResponse?.response.courses || [],
+    filterCourse,
+    formatCourse,
+    batchCallback
+  );
 };

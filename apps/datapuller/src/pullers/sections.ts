@@ -1,6 +1,6 @@
-import { SectionModel } from "@repo/common";
+import { SectionModel, ISectionItem } from "@repo/common";
 
-import { getSections } from "../lib/sections";
+import { getSectionsWithCallback } from "../lib/sections";
 import { Config } from "../shared/config";
 import {
   type TermSelector,
@@ -9,6 +9,14 @@ import {
 } from "../shared/term-selectors";
 
 const TERMS_PER_API_BATCH = 4;
+
+const processSectionBatch = async (batch: ISectionItem[]) => {
+  const { insertedCount } = await SectionModel.insertMany(batch, {
+    ordered: false,
+    rawResult: true,
+  });
+  return insertedCount;
+};
 
 const updateSections = async (
   { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
@@ -37,20 +45,6 @@ const updateSections = async (
       `Fetching sections for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
     );
 
-    const sections = await getSections(
-      log,
-      CLASS_APP_ID,
-      CLASS_APP_KEY,
-      termsBatchIds
-    );
-
-    log.info(`Fetched ${sections.length.toLocaleString()} sections.`);
-    if (!sections) {
-      log.warn(`No sections found, skipping update.`);
-      return;
-    }
-    totalSections += sections.length;
-
     log.trace("Deleting sections to be replaced...");
 
     const { deletedCount } = await SectionModel.deleteMany({
@@ -59,19 +53,20 @@ const updateSections = async (
 
     log.info(`Deleted ${deletedCount.toLocaleString()} sections.`);
 
-    // Insert sections in batches of 5000
-    const insertBatchSize = 5000;
-    for (let i = 0; i < sections.length; i += insertBatchSize) {
-      const batch = sections.slice(i, i + insertBatchSize);
-
-      log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
-
-      const { insertedCount } = await SectionModel.insertMany(batch, {
-        ordered: false,
-        rawResult: true,
-      });
-      totalInserted += insertedCount;
-    }
+    // Use streaming approach with callback
+    await getSectionsWithCallback(
+      log,
+      CLASS_APP_ID,
+      CLASS_APP_KEY,
+      termsBatchIds,
+      async (batch) => {
+        totalSections += batch.length;
+        log.trace(`Processing batch of ${batch.length} sections...`);
+        
+        const insertedCount = await processSectionBatch(batch);
+        totalInserted += insertedCount;
+      }
+    );
   }
 
   log.info(

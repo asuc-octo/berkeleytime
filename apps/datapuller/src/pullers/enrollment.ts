@@ -3,7 +3,7 @@ import {
   NewEnrollmentHistoryModel,
 } from "@repo/common";
 
-import { getEnrollmentSingulars } from "../lib/enrollment";
+import { getEnrollmentSingularsWithCallback } from "../lib/enrollment";
 import { Config } from "../shared/config";
 import { getActiveTerms } from "../shared/term-selectors";
 
@@ -58,6 +58,88 @@ const enrollmentSingularsEqual = (
   return true;
 };
 
+const processEnrollmentBatch = async (
+  batch: IEnrollmentSingularItem[]
+) => {
+  let batchUpdated = 0;
+
+  for (const enrollmentSingular of batch) {
+    const session = await NewEnrollmentHistoryModel.startSession();
+
+    await session.withTransaction(async () => {
+      // find existing history
+      const doc = await NewEnrollmentHistoryModel.findOne(
+        {
+          termId: enrollmentSingular.termId,
+          sessionId: enrollmentSingular.sessionId,
+          sectionId: enrollmentSingular.sectionId,
+        },
+        null,
+        { session }
+      ).lean();
+
+      // migration (02/20/2025): add missing identifier fields
+      if (
+        doc &&
+        (!doc.year ||
+          !doc.semester ||
+          !doc.subject ||
+          !doc.courseNumber ||
+          !doc.sectionNumber)
+      ) {
+        await NewEnrollmentHistoryModel.updateOne(
+          {
+            termId: enrollmentSingular.termId,
+            sessionId: enrollmentSingular.sessionId,
+            sectionId: enrollmentSingular.sectionId,
+          },
+          {
+            $set: {
+              year: enrollmentSingular.year,
+              semester: enrollmentSingular.semester,
+              subject: enrollmentSingular.subject,
+              courseNumber: enrollmentSingular.courseNumber,
+              sectionNumber: enrollmentSingular.sectionNumber,
+            },
+          },
+          { session }
+        );
+      }
+
+      // skip if no change
+      if (doc && doc.history.length > 0) {
+        const lastHistory = doc.history[doc.history.length - 1];
+        if (enrollmentSingularsEqual(lastHistory, enrollmentSingular.data)) {
+          return;
+        }
+      }
+
+      // append to history array, upsert if needed
+      const op = await NewEnrollmentHistoryModel.updateOne(
+        {
+          termId: enrollmentSingular.termId,
+          sessionId: enrollmentSingular.sessionId,
+          sectionId: enrollmentSingular.sectionId,
+        },
+        {
+          $set: {
+            seatReservationTypes: enrollmentSingular.seatReservationTypes,
+          },
+          $push: {
+            history: enrollmentSingular.data,
+          },
+        },
+        { upsert: true, session }
+      );
+      batchUpdated += op.modifiedCount + op.upsertedCount;
+    });
+
+    session.endSession();
+  }
+
+  return batchUpdated;
+};
+
 const updateEnrollmentHistories = async ({
   log,
   sis: { CLASS_APP_ID, CLASS_APP_KEY },
@@ -100,95 +182,20 @@ const updateEnrollmentHistories = async ({
       `Fetching enrollments for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
     );
 
-    const enrollmentSingulars = await getEnrollmentSingulars(
+    // Use streaming approach with callback
+    await getEnrollmentSingularsWithCallback(
       log,
       CLASS_APP_ID,
       CLASS_APP_KEY,
-      termsBatchIds
+      termsBatchIds,
+      async (batch) => {
+        totalEnrollmentSingulars += batch.length;
+        log.trace(`Processing batch of ${batch.length} enrollment records...`);
+        
+        const batchUpdated = await processEnrollmentBatch(batch);
+        totalUpdated += batchUpdated;
+      }
     );
-
-    log.info(
-      `Fetched ${enrollmentSingulars.length.toLocaleString()} enrollments.`
-    );
-    if (!enrollmentSingulars) {
-      log.warn(`No enrollments found, skipping update.`);
-      return;
-    }
-    totalEnrollmentSingulars += enrollmentSingulars.length;
-
-    for (const enrollmentSingular of enrollmentSingulars) {
-      const session = await NewEnrollmentHistoryModel.startSession();
-
-      await session.withTransaction(async () => {
-        // find existing history
-        const doc = await NewEnrollmentHistoryModel.findOne(
-          {
-            termId: enrollmentSingular.termId,
-            sessionId: enrollmentSingular.sessionId,
-            sectionId: enrollmentSingular.sectionId,
-          },
-          null,
-          { session }
-        ).lean();
-
-        // migration (02/20/2025): add missing identifier fields
-        if (
-          doc &&
-          (!doc.year ||
-            !doc.semester ||
-            !doc.subject ||
-            !doc.courseNumber ||
-            !doc.sectionNumber)
-        ) {
-          await NewEnrollmentHistoryModel.updateOne(
-            {
-              termId: enrollmentSingular.termId,
-              sessionId: enrollmentSingular.sessionId,
-              sectionId: enrollmentSingular.sectionId,
-            },
-            {
-              $set: {
-                year: enrollmentSingular.year,
-                semester: enrollmentSingular.semester,
-                subject: enrollmentSingular.subject,
-                courseNumber: enrollmentSingular.courseNumber,
-                sectionNumber: enrollmentSingular.sectionNumber,
-              },
-            },
-            { session }
-          );
-        }
-
-        // skip if no change
-        if (doc && doc.history.length > 0) {
-          const lastHistory = doc.history[doc.history.length - 1];
-          if (enrollmentSingularsEqual(lastHistory, enrollmentSingular.data)) {
-            return;
-          }
-        }
-
-        // append to history array, upsert if needed
-        const op = await NewEnrollmentHistoryModel.updateOne(
-          {
-            termId: enrollmentSingular.termId,
-            sessionId: enrollmentSingular.sessionId,
-            sectionId: enrollmentSingular.sectionId,
-          },
-          {
-            $set: {
-              seatReservationTypes: enrollmentSingular.seatReservationTypes,
-            },
-            $push: {
-              history: enrollmentSingular.data,
-            },
-          },
-          { upsert: true, session }
-        );
-        totalUpdated += op.modifiedCount + op.upsertedCount;
-      });
-
-      session.endSession();
-    }
   }
 
   log.info(

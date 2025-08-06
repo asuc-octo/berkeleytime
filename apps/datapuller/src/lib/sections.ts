@@ -3,7 +3,7 @@ import { Logger } from "tslog";
 import { ISectionItem } from "@repo/common";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
-import { fetchPaginatedData } from "./api/sis-api";
+import { fetchPaginatedData, fetchPaginatedDataWithCallback } from "./api/sis-api";
 
 export const filterSection = (input: ClassSection): boolean => {
   return input.status?.code === "A";
@@ -134,4 +134,29 @@ export const getSections = async (
   );
 
   return sections;
+};
+
+export const getSectionsWithCallback = async (
+  logger: Logger<unknown>,
+  id: string,
+  key: string,
+  termIds: string[] | undefined,
+  batchCallback: (batch: ISectionItem[]) => Promise<void>
+) => {
+  const classesAPI = new ClassesAPI();
+
+  await fetchPaginatedDataWithCallback(
+    logger,
+    classesAPI.v1,
+    termIds || null,
+    "getClassSectionsUsingGet",
+    {
+      app_id: id,
+      app_key: key,
+    },
+    (data) => data.apiResponse?.response.classSections || [],
+    filterSection,
+    formatSection,
+    batchCallback
+  );
 };
