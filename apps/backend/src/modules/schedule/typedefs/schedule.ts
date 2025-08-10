@@ -16,7 +16,7 @@ const typedef = gql`
     description: String
   }
 
-  type Schedule {
+  type Schedule @cacheControl(maxAge: 1) {
     _id: ID!
     name: String!
     createdBy: String!

@@ -1,8 +1,9 @@
 .root {
   width: 288px;
   flex-shrink: 0;
-  overflow: auto;
+  overflow-y: auto;
   background-color: var(--foreground-color);
+  scrollbar-color: var(--label-color) var(--foreground-color);
 
   .body {
     display: flex;

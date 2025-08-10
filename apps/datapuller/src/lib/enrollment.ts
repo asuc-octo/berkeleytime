@@ -86,10 +86,7 @@ export const getEnrollmentSingulars = async (
 ) => {
   const classesAPI = new ClassesAPI();
 
-  const sections = await fetchPaginatedData<
-    IEnrollmentSingularItem,
-    ClassSection
-  >(
+  const sections = await fetchPaginatedData(
     logger,
     classesAPI.v1,
     termIds || null,
@@ -98,7 +95,7 @@ export const getEnrollmentSingulars = async (
       app_id: id,
       app_key: key,
     },
-    (data) => data.apiResponse.response.classSections || [],
+    (data) => data.apiResponse?.response.classSections || [],
     filterSection,
     (input) => formatEnrollmentSingular(input, new Date())
   );

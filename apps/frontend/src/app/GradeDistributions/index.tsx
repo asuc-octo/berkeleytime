@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
+import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 import {
@@ -248,13 +248,24 @@ export default function GradeDistributions() {
                   <YAxis tickFormatter={toPercent} />
                   {filteredOutputs?.length && (
                     <Tooltip
-                      labelStyle={{ color: "var(--heading-color)" }}
-                      contentStyle={{
-                        backgroundColor: "var(--backdrop-color)",
-                        border: "none",
+                      content={(props) => {
+                        return (
+                          <HoverCard
+                            content={props.label}
+                            data={props.payload?.map((v) => {
+                              const name = v.name?.valueOf();
+                              return {
+                                label: name ? name.toString() : "N/A",
+                                value:
+                                  typeof v.value === "number"
+                                    ? toPercent(v.value)
+                                    : "N/A",
+                                color: v.fill,
+                              };
+                            })}
+                          />
+                        );
                       }}
-                      cursor={{ fill: "var(--foreground-color)" }}
-                      formatter={toPercent}
                     />
                   )}
                   {filteredOutputs?.map((output, index) => (

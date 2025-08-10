@@ -4,6 +4,7 @@ import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
+import { getClassAggregatedRatings } from "../rating/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
@@ -156,6 +157,20 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return gradeDistribution;
+    },
+
+    aggregatedRatings: async (
+      parent: IntermediateClass | ClassModule.Class
+    ) => {
+      const aggregatedRatings = await getClassAggregatedRatings(
+        parent.year,
+        parent.semester,
+        parent.subject,
+        parent.courseNumber,
+        parent.number
+      );
+
+      return aggregatedRatings;
     },
   },
 

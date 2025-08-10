@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
+import { ColoredSquare } from "@repo/theme";
+
 import { getEnrollmentColor } from "@/components/Capacity";
-import { ColoredSquare } from "@/components/ColoredSquare";
 import { IEnrollment, Semester } from "@/lib/api";
 
 import styles from "./HoverInfo.module.scss";

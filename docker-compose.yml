@@ -8,8 +8,10 @@ services:
       context: .
       target: backend-dev
     depends_on:
-      - redis
-      - mongodb
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - bt
     restart: always

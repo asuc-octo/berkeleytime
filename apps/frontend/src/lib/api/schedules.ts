@@ -89,6 +89,13 @@ export const READ_SCHEDULE = gql`
           unitsMin
           course {
             title
+            gradeDistribution {
+              average
+              distribution {
+                letter
+                count
+              }
+            }
           }
           primarySection {
             sectionId
@@ -184,6 +191,7 @@ export const UPDATE_SCHEDULE = gql`
       createdBy
       year
       semester
+      sessionId
       term {
         startDate
         endDate
@@ -205,6 +213,13 @@ export const UPDATE_SCHEDULE = gql`
           unitsMin
           course {
             title
+            gradeDistribution {
+              average
+              distribution {
+                letter
+                count
+              }
+            }
           }
           primarySection {
             sectionId

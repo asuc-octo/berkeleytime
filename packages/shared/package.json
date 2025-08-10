@@ -1,0 +1,9 @@
+{
+  "name": "@repo/shared",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.ts",
+  "dependencies": {
+    "@repo/typescript-config": "*"
+  }
+}
