@@ -1,4 +1,4 @@
-name: Restore Prod Mongo
+name: Reset Dev Mongo
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   restore-mongo:
-    name: SSH and Restore Prod MongoDB State
+    name: SSH and Reset Prod MongoDB State
     runs-on: ubuntu-latest
     steps:
       - name: SSH and Reset MongoDB
@@ -22,15 +22,4 @@ jobs:
           script: |
             set -e  # Exit immediately if a command fails
 
-            # Create Mongo job from mongo-restore
-            restore_date="${{ github.event.inputs.restore_date }}"
-            kubectl create job --from=cronjob/bt-base-restore-prod-mongo bt-base-restore-prod-mongo-ga-manual \
-              --dry-run=client -o json \
-              | jq ".spec.template.spec.containers[0].env += [{\"name\": \"RESTORE_DATE\", \"value\": \"$restore_date\"}]" \
-              | kubectl apply -f -
-            echo "MongoDB restore from $restore_date scheduled."
-
-            # Wait for job_pod log output
-            job_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-base-restore-prod-mongo-ga-manual')
-            kubectl wait --for=condition=ready pod/$job_pod -n bt --timeout=30s
-            kubectl logs -f $job_pod -n bt
+            echo "not implemented yet"

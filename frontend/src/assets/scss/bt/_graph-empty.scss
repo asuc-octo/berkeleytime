@@ -1,0 +1,108 @@
+.graph-empty {
+	// min-height: inherit;
+
+	.opaque {
+		opacity: 1 !important;
+	}
+
+	.graph-empty-content {
+		height: 0px;
+		position: relative;
+		@include responsive(bottom, 250px, 300px);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		min-height: inherit;
+
+		.graph-empty-image {
+			max-width: 4%;
+		}
+
+		.graph-empty-heading {
+			color: $bt-light-text;
+			display: inline-block;
+			//font-size: 16px;
+			@include font-size-responsive-larger(16px);
+			font-weight: 500;
+			margin-top: 15px;
+			text-align: center;
+		}
+	}
+
+	.grades-info {
+		display: flex;
+		flex-direction: column;
+
+		@include mobile {
+			text-align: left;
+			//border: 1px solid $bt-border-grey;
+			border-radius: 8px;
+			padding: 20px 20px 20px 20px;
+		}
+
+		.info-icon {
+			padding-left: 5px;
+			width: 25px;
+		}
+
+		.info-text {
+			line-height: 1.6;
+			font-weight: lighter;
+		}
+
+		.date {
+			font-weight: bold;
+		}
+
+		.header {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
+			margin-bottom: 5px;
+
+			.square {
+				background-color: $bt-border-grey;
+				width: 16px;
+				height: 16px;
+				border-radius: 3px;
+				margin-right: 8px;
+				margin-bottom: 4px;
+			}
+
+			.course {
+				font-weight: bold;
+				color: $bt-base-text;
+				//font-size: 18px;
+				@include font-size-responsive-larger(18px);
+			}
+		}
+
+		.title,
+		.info {
+			//font-size: 16px;
+			@include font-size-responsive-larger(16px);
+			color: $bt-border-grey;
+		}
+
+		.title {
+			margin-bottom: 5px;
+		}
+
+		.info {
+			margin-bottom: 30px;
+		}
+
+		span {
+			margin-right: 5px;
+		}
+
+		.course-average,
+		.section-average,
+		.percentile {
+			margin-bottom: 10px;
+			color: $bt-border-grey;
+		}
+	}
+}

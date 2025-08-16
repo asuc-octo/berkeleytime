@@ -1,24 +1,17 @@
-name: Deploy to Development
-
-concurrency:
-  group: dev-${{ github.ref }}
-  cancel-in-progress: true
+name: Deploy to Dev
 
 on:
   workflow_dispatch:
     inputs:
       ttl:
-        description: "Deployment time to live in hours"
+        description: "Deployment time to live in seconds"
         required: true
         type: number
-        default: 1
+        default: 86400
 
 jobs:
-  compute-sha:
-    name: Compute sha_short
+  deploy:
     runs-on: ubuntu-latest
-    outputs:
-      sha_short: ${{ steps.vars.outputs.sha_short }}
 
     steps:
       - name: Checkout Repository
@@ -26,75 +19,39 @@ jobs:
 
       - name: Set vars
         id: vars
+        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Images with Tags
         run: |
-          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+          docker build --target backend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
+          docker build --target frontend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
 
-  build-push:
-    name: Build and Push Images and Charts
-    needs: [compute-sha]
-    uses: ./.github/workflows/cd-build.yaml
-    with:
-      image_tag: ${{ needs.compute-sha.outputs.sha_short }}
-      chart_ver: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
-    secrets: inherit
+      - name: Push Images to Docker Hub
+        run: |
+          docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}"
+          docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}"
 
-  deploy:
-    name: SSH and Deploy
-    needs: [compute-sha, build-push]
-    uses: ./.github/workflows/cd-deploy.yaml
-    with:
-      environment: development
-      name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
-      version: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
-      values: |
-        env: dev
-        ttl: ${{ inputs.ttl }}
-        frontend:
-          image:
-            tag: '${{ needs.compute-sha.outputs.sha_short }}'
-        backend:
-          image:
-            tag: '${{ needs.compute-sha.outputs.sha_short }}'
-        datapuller:
-          suspend: true
-          image:
-            tag: '${{ needs.compute-sha.outputs.sha_short }}'
-        host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
-        mongoUri: mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
-        redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
-      host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
-    secrets: inherit
-
-  limit-deploy:
-    name: SSH and Limit Deployments
-    needs: [deploy]
-    runs-on: ubuntu-latest
-    steps:
-      - name: SSH and Check Deployments
-        uses: appleboy/ssh-action@v1.2.0
+      - name: SSH and Helm Install
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
+          username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
-            set -e  # Exit immediately if a command fails
-
-            # Get bt-dev-app- deployments sorted by creation timestamp
-            deployments=$(helm list \
-              --namespace=bt \
-              --date \
-              --short | grep '^bt-dev-app') || true
-            deployment_count=$(echo "$deployments" | wc -l)
-
-            # Check if deployment count > 8
-            if [ "$deployment_count" -gt 8 ]; then
-              echo "Too many deployments. Deleting the oldest deployment."
-
-              # Get oldest deployment from first line of deployments
-              oldest_deployment=$(echo "$deployments" | head -n 1)
-
-              # Uninstall deployment
-              helm uninstall "${oldest_deployment}"
-            else
-              echo "Deployment count is <= 8."
-            fi
+            cd ./infra
+            helm uninstall bt-dev-app-${{ env.sha_short }} || true
+            helm install bt-dev-app-${{ env.sha_short }} ./app --namespace=bt \
+              --set env=dev \
+              --set ttl=${{ inputs.ttl }} \
+              --set frontend.image.tag=${{ env.sha_short }} \
+              --set backend.image.tag=${{ env.sha_short }} \
+              --set host=${{ env.sha_short }}.stanfurdtime.com \
+              --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+              --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
+              --set nodeEnv=development
