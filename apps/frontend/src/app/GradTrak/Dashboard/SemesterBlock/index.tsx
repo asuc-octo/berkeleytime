@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import {
   Trash,
+  Book,
   BookStack,
   MoreHoriz
 } from "iconoir-react";
@@ -38,7 +39,6 @@ function SemesterBlock({ selectedYear,
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(allSemesters[semesterId] || []);
   const [totalUnits, setTotalUnits] = useState(0);
-  // const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,11 +55,6 @@ function SemesterBlock({ selectedYear,
       setSelectedClasses(allSemesters[semesterId]);
     }
   }, [allSemesters, semesterId]);
-
-  // const openCustomClass = () => setIsCustomClassOpen(true);
-  // const closeCustomClass = () => {
-  //   setIsCustomClassOpen(false);
-  // };
 
   const handleDeleteClass = (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter((_, index) => index !== indexToDelete);
@@ -80,7 +75,6 @@ function SemesterBlock({ selectedYear,
     );
     setTotalUnits(newTotalUnits);
     onTotalUnitsChange(newTotalUnits);
-    // setTotalUnits((prevTotalUnits) => prevTotalUnits - deletedClassUnits);
   };
 
   const handleClassDetails= (index: number) => {
@@ -305,6 +299,11 @@ function SemesterBlock({ selectedYear,
                   </DropdownMenu.Root>
                 </div>
               </div>
+
+              {/* <div className={styles.tag}>
+                <Book className={styles.icon}/>
+                Major
+              </div> */}
             </div>
           </React.Fragment>
         ))}

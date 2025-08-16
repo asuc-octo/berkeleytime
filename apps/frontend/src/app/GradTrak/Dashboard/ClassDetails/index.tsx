@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Button } from '@repo/theme';
+import { UniReqs, LnSReqs } from '@/lib/course';
+import { Button, Select } from '@repo/theme';
 import {
     Xmark,
     Calendar,
@@ -64,6 +65,18 @@ const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate, onConfirm }: Cla
         setIsOpen(false);
     };
 
+    const RequirementSelect = () => (
+        <Select 
+            className={styles.select}
+            options={requirementOptions} 
+            isSearchable={true} 
+            isClearable={true}
+            placeholder={`Search for a ${optionType.toLowerCase()}...`}
+            value={selectedDegree}
+            onChange={(option) => setSelectedDegree(option as DegreeOption | null)} 
+        />
+      )
+
     return (
         <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
             <Dialog.Portal>
@@ -90,6 +103,7 @@ const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate, onConfirm }: Cla
                                 <input
                                     type="text"
                                     value={className}
+                                    placeholder='Add Class ID'
                                     onChange={(e) => setClassName(e.target.value)}
                                 />
                             </div>
@@ -100,6 +114,7 @@ const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate, onConfirm }: Cla
                                 <input
                                     type="text"
                                     value={classTitle}
+                                    placeholder='Add Class Title'
                                     onChange={(e) => setClassTitle(e.target.value)}
                                 />
                             </div>

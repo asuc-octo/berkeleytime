@@ -3,6 +3,8 @@ import RequirementsAccordion from "./RequirementsAccordion";
 import { UniReqs, LnSReqs } from '@/lib/course';
 import { Button } from "@repo/theme"
 
+import { WarningCircle } from "iconoir-react"
+
 import styles from "./SidePanel.module.scss";
 
 // TODO: Implement proper handling of reqs based on user's college...
@@ -55,7 +57,13 @@ export default function SidePanel({ name, majors, minors, totalUnits, transferUn
                     {/* P/NP Total */}
                     <div className={styles.label}>P/NP Total</div>
                     <div className={styles.value}>{pnpTotal}</div>
-                </div>       
+                </div> 
+                <div className={styles.disclaimer}>
+                    <WarningCircle className={styles.icon}/>
+                    <div className={styles.text}>
+                        Future courses may not to be offered each semester. Remember to check! 
+                    </div>
+                </div>      
             </div>
         </>
     );
