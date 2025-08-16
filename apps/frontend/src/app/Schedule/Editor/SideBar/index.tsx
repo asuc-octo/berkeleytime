@@ -109,7 +109,7 @@ export default function SideBar({
             semester={schedule.semester}
             year={schedule.year}
           >
-            <Button className={styles.button} variant="solid">
+            <Button className={styles.button}>
               Add class
               <Plus />
             </Button>
@@ -117,7 +117,7 @@ export default function SideBar({
         )}
         {editing && (
           <EventDialog>
-            <Button className={styles.button} variant="solid">
+            <Button className={styles.button}>
               Add event
               <Plus />
             </Button>

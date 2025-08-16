@@ -70,7 +70,7 @@ export default function Dashboard({
     [term, user]
   );
   const [recentClasses, setRecentClasses] = useState<IClass[]>([]);
-    
+
   const initialize = useCallback(async () => {
     const recentClasses = getRecents(RecentType.Class);
 
@@ -100,7 +100,6 @@ export default function Dashboard({
     );
 
     setRecentClasses(recentResponses.filter((response) => !!response));
-
   }, [client]);
 
   useEffect(() => {
@@ -114,7 +113,7 @@ export default function Dashboard({
           <Flex justify="between" align="center">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Button>
+                <Button variant="secondary">
                   <ArrowSeparateVertical />
                   Switch terms
                 </Button>
@@ -143,7 +142,7 @@ export default function Dashboard({
               </DropdownMenu.Content>
             </DropdownMenu.Root>
             <div className={styles.toggle}>
-              <Button variant="solid" onClick={() => setOpen(false)}>
+              <Button onClick={() => setOpen(false)}>
                 Search
                 <Search />
               </Button>

@@ -1,14 +1,13 @@
 import { Logger } from "tslog";
 
 import { ICourseItem } from "@repo/common";
-import { Course as ClassCourse } from "@repo/sis-api/classes";
 import { Course, CoursesAPI } from "@repo/sis-api/courses";
 
 import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automically generated type
 type CombinedCourse = Course & {
-  gradeReplacement: ClassCourse["gradeReplacement"];
+  gradeReplacement?: ICourseItem["gradeReplacement"];
 };
 
 const filterCourse = (input: CombinedCourse): boolean => {
@@ -20,7 +19,7 @@ const formatCourse = (input: CombinedCourse) => {
     (i) => i.type === "cs-course-id"
   )?.id;
 
-  const number = input.catalogNumber?.formatted;
+  const number = input.catalogNumber;
   const subject = input.subjectArea?.code?.replaceAll(" ", "");
 
   const essentialFields = {
@@ -56,7 +55,7 @@ const formatCourse = (input: CombinedCourse) => {
     instructorDropConsentRequired: input.instructorDropConsentRequired,
     allowMultipleEnrollments: input.allowMultipleEnrollments,
     spansMultipleTerms: input.spansMultipleTerms,
-    multipleTermNumber: input.multipleTermNumber,
+    // multipleTermNumber: input.multipleTermNumber,
     anyFeesExist: input.anyFeesExist,
     repeatability: {
       repeatable: input.repeatability?.repeatable,
@@ -74,11 +73,9 @@ const formatCourse = (input: CombinedCourse) => {
       ),
     },
     gradeReplacement: {
-      text: input.gradeReplacement?.gradeReplacementText,
-      group: input.gradeReplacement?.gradeReplacementGroup,
-      courses: input.gradeReplacement?.gradeReplacementCourses?.map(
-        (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
-      ),
+      text: input.gradeReplacement?.text,
+      group: input.gradeReplacement?.group,
+      courses: input.gradeReplacement?.courses,
     },
     crossListing: input.crossListing?.courses,
     formatsOffered: {
@@ -120,15 +117,17 @@ const formatCourse = (input: CombinedCourse) => {
         discrete: input.credit?.value?.discrete?.units,
         fixed: input.credit?.value?.fixed?.units,
         range: {
-          minUnits: input.credit?.value?.range?.minUnits,
-          maxUnits: input.credit?.value?.range?.maxUnits,
+          // minUnits: input.credit?.value?.range?.minUnits,
+          minUnits: input.credit?.value?.variable?.minUnits,
+          // maxUnits: input.credit?.value?.range?.maxUnits,
+          maxUnits: input.credit?.value?.variable?.maxUnits,
         },
       },
     },
     workloadHours: input.workloadHours,
     contactHours: input.contactHours,
     formerDisplayName: input.formerDisplayName,
-    createdDate: input.createdDate,
+    // createdDate: input.createdDate,
     updatedDate: input.updatedDate,
   };
 
@@ -142,16 +141,16 @@ export const getCourses = async (
 ) => {
   const coursesAPI = new CoursesAPI();
 
-  const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
+  const courses = await fetchPaginatedData(
     logger,
-    coursesAPI.v4,
+    coursesAPI.v5,
     null,
     "findCourseCollectionUsingGet",
     {
       app_id: id,
       app_key: key,
     },
-    (data) => data.apiResponse.response.courses || [],
+    (data) => data.apiResponse?.response.courses || [],
     filterCourse,
     formatCourse
   );

@@ -69,42 +69,48 @@ export default function EditDialog({ children }: EditDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="4" direction="column" gap="4">
-            <Flex align="start" gap="4">
-              <Flex direction="column" gap="1" flexGrow="1">
-                <Dialog.Title asChild>
-                  <Heading>Edit schedule</Heading>
-                </Dialog.Title>
-                <Dialog.Description asChild>
-                  <Text>Update or delete the schedule</Text>
-                </Dialog.Description>
-              </Flex>
-              <Flex gap="3">
-                <Button onClick={() => remove()} disabled={loading || pending}>
-                  <Trash />
-                  Delete
-                </Button>
-                <Dialog.Close asChild>
-                  <IconButton disabled={loading || pending}>
-                    <Xmark />
-                  </IconButton>
-                </Dialog.Close>
-              </Flex>
+          <Dialog.Header>
+            <Flex direction="column" gap="1" flexGrow="1">
+              <Dialog.Title asChild>
+                <Heading>Edit schedule</Heading>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <Text>Update or delete the schedule</Text>
+              </Dialog.Description>
             </Flex>
+            <Flex gap="3">
+              <Button
+                onClick={() => remove()}
+                disabled={loading || pending}
+                variant="secondary"
+              >
+                <Trash />
+                Delete
+              </Button>
+              <Dialog.Close asChild>
+                <IconButton disabled={loading || pending}>
+                  <Xmark />
+                </IconButton>
+              </Dialog.Close>
+            </Flex>
+          </Dialog.Header>
+          <Dialog.Body gap="2">
+            <Text>New Name</Text>
             <Input
               disabled={loading || pending}
               value={name}
               onChange={(event) => setName(event.target.value)}
             />
+          </Dialog.Body>
+          <Dialog.Footer>
             <Button
-              variant="solid"
               disabled={saved || loading || pending}
               onClick={() => save()}
             >
               Save
               <ArrowRight />
             </Button>
-          </Flex>
+          </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

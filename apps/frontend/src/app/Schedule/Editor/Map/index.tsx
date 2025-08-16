@@ -108,8 +108,6 @@ export default function Map({ selectedSections }: MapProps) {
 
       // @ts-expect-error - MapboxDirections does not provide types
       directions.on("route", ({ route }) => {
-        console.log(route);
-
         for (let index = 0; index < route[0].legs.length; index++) {
           const { steps } = route[0].legs[index];
 
@@ -267,7 +265,7 @@ export default function Map({ selectedSections }: MapProps) {
   return (
     <div className={styles.root}>
       <div className={styles.toolBar}>
-        <Button>
+        <Button variant="secondary">
           <ArrowSeparateVertical />
           Monday
         </Button>

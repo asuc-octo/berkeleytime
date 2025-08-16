@@ -35,7 +35,7 @@ const steps = [
   },
   {
     gradient: ["var(--blue-500)", "var(--sky-500)"],
-    colors: ["#3b82f6", "#0ea5e9"],
+    colors: ["var(--blue-500)", "#0ea5e9"],
     image: afternoon,
   },
   {
@@ -114,7 +114,7 @@ export default function Hero() {
                 autoFocus
                 placeholder="Search for courses..."
               />
-              <Button variant="solid">
+              <Button>
                 Go
                 <ArrowRight />
               </Button>

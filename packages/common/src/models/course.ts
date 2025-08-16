@@ -109,7 +109,7 @@ export interface ICourseItem {
   contactHours?: number;
   // NOTE: Replace with cs-course-id of former course
   formerDisplayName?: string;
-  createdDate?: string;
+  // createdDate?: string;
   updatedDate?: string;
 }
 
@@ -203,7 +203,7 @@ const courseSchema = new Schema<ICourseItem>({
   workloadHours: { type: Number },
   contactHours: { type: Number },
   formerDisplayName: { type: String },
-  createdDate: { type: String },
+  // createdDate: { type: String },
   updatedDate: { type: String },
 });
 courseSchema.index({ courseId: 1 }, { unique: true });

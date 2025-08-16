@@ -13,7 +13,6 @@ import { Link, To } from "react-router-dom";
 import { Box, Flex, IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
-import Schedule from "./Schedule";
 import CarouselNoTitle from "./CarouselNoTitle";
 
 function Item({ className, ...props }: ComponentPropsWithRef<"div">) {
@@ -123,7 +122,6 @@ function Root({ title, Icon, children, to }: RootProps) {
 const Carousel = {
   Root,
   Item,
-  Schedule,
   CarouselNoTitle,
 };
 

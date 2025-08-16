@@ -51,7 +51,6 @@ export default function CreateScheduleDialog({
   const options = useMemo(
     () =>
       terms
-        ?.toSorted(sortByTermDescending)
         ?.filter(
           (t, index) =>
             index ===
@@ -59,6 +58,7 @@ export default function CreateScheduleDialog({
               (term) => term.year === t.year && term.semester === t.semester
             )
         )
+        .toSorted(sortByTermDescending)
         .map((term) => {
           const value = `${term.semester} ${term.year}`;
 
@@ -110,22 +110,22 @@ export default function CreateScheduleDialog({
       <Dialog.Overlay />
       <Dialog.Portal>
         <Dialog.Card>
-          <Flex direction="column" gap="4" p="4">
-            <Flex gap="4">
-              <Flex direction="column" gap="1" flexGrow="1">
-                <Dialog.Title asChild>
-                  <Heading>Create a schedule</Heading>
-                </Dialog.Title>
-                <Dialog.Description asChild>
-                  <Text>Select the semester and enter a name</Text>
-                </Dialog.Description>
-              </Flex>
-              <Dialog.Close asChild>
-                <IconButton disabled={loading}>
-                  <Xmark />
-                </IconButton>
-              </Dialog.Close>
+          <Dialog.Header>
+            <Flex direction="column" gap="1" flexGrow="1">
+              <Dialog.Title asChild>
+                <Heading>Create a schedule</Heading>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <Text>Select the semester and enter a name</Text>
+              </Dialog.Description>
             </Flex>
+            <Dialog.Close asChild>
+              <IconButton disabled={loading}>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </Dialog.Header>
+          <Dialog.Body gap="4">
             <Flex direction="column" gap="2">
               <Label>Name</Label>
               <Input
@@ -140,25 +140,23 @@ export default function CreateScheduleDialog({
               <Select
                 options={options}
                 placeholder="Select a semester"
-                isDisabled={loading || pending}
-                value={options?.find(({ value }) => value == term)}
+                disabled={loading || pending}
+                value={options?.find(({ value }) => value == term)?.value}
                 onChange={(value) =>
                   // @ts-expect-error - ReactSelect does not have a type for the value
-                  setLocalTerm(value?.value)
+                  setLocalTerm(value)
                 }
               />
             </Flex>
-            <Button
-              disabled={loading || pending}
-              variant="solid"
-              onClick={() => handleClick()}
-            >
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button disabled={loading || pending} onClick={() => handleClick()}>
               Create
               <LoadingIndicator loading={loading}>
                 <ArrowRight />
               </LoadingIndicator>
             </Button>
-          </Flex>
+          </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>
