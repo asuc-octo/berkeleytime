@@ -26,7 +26,7 @@ app.kubernetes.io/name: frontend
 {{- end -}}
 
 {{- define "bt-app.agFrontendLabels" -}}
-app.kubernetes.io/name: agFrontend
+app.kubernetes.io/name: ag-frontend
 {{ include "bt-app.labels" . }}
 {{- end -}}
 
@@ -49,7 +49,7 @@ app.kubernetes.io/name: cleanup
 {{- end -}}
 
 {{- define "bt-app.agFrontendName" -}}
-{{ .Release.Name }}-agFrontend
+{{ .Release.Name }}-ag-frontend
 {{- end -}}
 
 {{- define "bt-app.cleanupName" -}}

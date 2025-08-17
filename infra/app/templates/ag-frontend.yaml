@@ -15,7 +15,7 @@ spec:
         {{- include "bt-app.agFrontendLabels" . | nindent 8 }}
     spec:
       containers:
-        - name: agFrontend
+        - name: ag-frontend
           image: {{ printf "%s/%s:%s" .Values.agFrontend.image.registry .Values.agFrontend.image.repository ( toString .Values.agFrontend.image.tag ) }}
           imagePullPolicy: Always
           ports:

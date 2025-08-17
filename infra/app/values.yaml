@@ -33,9 +33,6 @@ agFrontend:
     repository: octoberkeleytime/bt-ag-frontend
     tag: prod
 
-  fullnameOverride: ag-frontend
-  nameOverride: ag-frontend
-
 backend:
   replicas: 2
 
