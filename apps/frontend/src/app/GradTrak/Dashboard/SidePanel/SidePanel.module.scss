@@ -21,33 +21,6 @@
       padding: 1.5rem 1rem;
       gap: 1rem;
 
-      .header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-        align-self: stretch;
-
-        .title {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          flex-grow: 1;
-          max-width: calc(100% - 52px);
-        }
-
-        .subtitle {
-          color: var(--paragraph-color)
-        }
-      }
-
-      .truncate {
-        white-space: nowrap; 
-        overflow: hidden;
-        text-overflow: ellipsis; 
-        max-width: 100%;
-      }
-
       .grid {
         display: grid;
         grid-template-columns: 2fr 3fr; 

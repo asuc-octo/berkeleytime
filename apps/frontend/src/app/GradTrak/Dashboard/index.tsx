@@ -7,13 +7,19 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useReadUser } from '@/hooks/api';
+import { 
+  Plus,
+  Filter,
+  Sort,
+  NavArrowDown,
+} from "iconoir-react"
 
 import { ClassType } from "./types";
 import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
 
 import styles from "./Dashboard.module.scss";
-import { Button } from '@repo/theme';
+import { Button, Tooltip, IconButton } from '@repo/theme';
 
 type DegreeOption = {
   label: string;
@@ -49,22 +55,14 @@ function Dashboard() {
     }
   }, [isStateValid, userLoading, navigate]);
 
-  // if (userLoading || !isStateValid) {
-  //   // Don't try to destructure state here, as it might be null/invalid
-  //   return <p>Loading user data or missing setup information...</p>; // Show loading/informative message
-  // }
-  
   const { startYear, gradYear, summerCheck, selectedDegreeList, selectedMinorList } = state!;
   const selectedDegreeStrings: string[] = selectedDegreeList.map((degree) => degree.value);
   const selectedMinorStrings: string[] = selectedMinorList.map((minor) => minor.value);
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[]; } | null => {
-       // The `if (userLoading || !isStateValid)` block above ensures `user` is loaded and state is valid here.
-       // We add a defensive check for `user` just in case, though it shouldn't be hit.
        if (!user) {
            console.error("User data unexpectedly null in currentUserInfo memo after loading check.");
-            // Return null if user is somehow null
            return null;
        }
       return {
@@ -103,18 +101,17 @@ function Dashboard() {
   const totalUnits = Object.values(semesterTotals).reduce((sum, units) => sum + units, 0);
 
   if (!currentUserInfo) {
-    return <p>Error displaying user information.</p>;
+    return <p>Error displaying user information.</p>; // TODO: Cleaner error page
   }
 
   return (
     <div className={styles.root}>
       <div className={styles.panel}>
         <SidePanel 
-            name={currentUserInfo.name} 
             majors={currentUserInfo.majors} 
             minors={currentUserInfo.minors}
             totalUnits={totalUnits}
-            transferUnits={0}
+            transferUnits={0} 
             pnpTotal={0}
           />
       </div>
@@ -124,8 +121,27 @@ function Dashboard() {
         <h1>Semesters</h1>
 
         <div className={styles.buttonsGroup}>
-          <Button variant="outline">Add Semester</Button>
-          <Button variant="outline">Display</Button>
+          <Tooltip content="Filter">
+              <IconButton>
+                <Filter />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Sort">
+              <IconButton>
+                <Sort />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Add new block">
+              <IconButton>
+                <Plus />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Display settings">
+              <Button variant="secondary">
+                Display
+                <NavArrowDown />
+              </Button>
+            </Tooltip>
         </div>
       </div>
       <div className={styles.semesterBlocks}>

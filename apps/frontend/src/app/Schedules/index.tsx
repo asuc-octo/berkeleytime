@@ -1,14 +1,16 @@
 import { useMemo } from "react";
 
-import { Calendar, Plus, Search } from "iconoir-react";
+import { Calendar, Plus } from "iconoir-react";
 
 import { Box, Button, Container, Flex } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
 import Footer from "@/components/Footer";
+import ScheduleCard from "@/components/ScheduleCard";
 import { useReadSchedules, useReadUser } from "@/hooks/api";
 import { ISchedule, signIn } from "@/lib/api";
-import { RecentType, getRecents } from "@/lib/recent";
+
+// import { RecentType, getRecents } from "@/lib/recent";
 
 import CreateScheduleDialog from "./CreateScheduleDialog";
 import styles from "./Schedules.module.scss";
@@ -36,7 +38,7 @@ export default function Schedules() {
       : ({} as { [key: string]: ISchedule[] });
   }, [schedules]);
 
-  const recentSchedules = getRecents(RecentType.Schedule);
+  // const recentSchedules = getRecents(RecentType.Schedule);
 
   if (userLoading || schedulesLoading) return <></>;
 
@@ -61,13 +63,14 @@ export default function Schedules() {
           <CreateScheduleDialog
             defaultName={`Schedule ${schedules.length + 1}`}
           >
-            <Button variant="solid">
+            <Button>
               <Plus />
               Create a schedule
             </Button>
           </CreateScheduleDialog>
         </div>
         <Flex direction="column" gap="5">
+          {/* TODO: Removed recent schedules. Delete doesn't work and # a user would have is too small to justify this?
           {recentSchedules.length !== 0 && (
             <Carousel.Root title="Recently viewed" Icon={<Search />}>
               {recentSchedules.map(
@@ -84,7 +87,7 @@ export default function Schedules() {
                 }
               )}
             </Carousel.Root>
-          )}
+          )} */}
           {Object.keys(schedulesBySemester)
             .sort((a, b) => {
               return schedulesBySemester[a][0].year ==
@@ -97,16 +100,16 @@ export default function Schedules() {
             .map((sem) => {
               return (
                 <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
-                  {schedulesBySemester[sem].map(({ _id, name, classes }, i) => {
-                    return (
-                      <Carousel.Schedule
+                  {schedulesBySemester[sem].map(({ _id, name, classes }, i) => (
+                    <Carousel.Item key={i}>
+                      <ScheduleCard
                         key={i}
                         _id={_id}
                         name={name}
                         classes={classes}
                       />
-                    );
-                  })}
+                    </Carousel.Item>
+                  ))}
                 </Carousel.Root>
               );
             })}

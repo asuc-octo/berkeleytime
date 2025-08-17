@@ -107,7 +107,7 @@ export default function GradTrakIndex() {
             Use our GradTrak to build your ideal 4-year plan.
             Find courses, track requirements, and visualize your academic journey.
           </div>
-            <Button variant="solid" onClick={() => navigate('/gradtrak/onboarding')}>
+            <Button variant="primary" onClick={() => navigate('/gradtrak/onboarding')}>
               <Plus />
               Create a GradTrak
             </Button>

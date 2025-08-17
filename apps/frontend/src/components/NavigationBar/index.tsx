@@ -76,21 +76,12 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
         </NavLink> */}
       </div>
       {user ? (
-        <Button
-          as={Link}
-          to={"/profile"}
-          variant="solid"
-          className={styles.button}
-        >
+        <Button as={Link} to={"/profile"} className={styles.button}>
           {user.email}
           <User />
         </Button>
       ) : (
-        <Button
-          onClick={() => signIn()}
-          variant="solid"
-          className={styles.button}
-        >
+        <Button onClick={() => signIn()} className={styles.button}>
           Sign in
           <ArrowRight />
         </Button>

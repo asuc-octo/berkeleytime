@@ -4,10 +4,10 @@ import Details from "@/components/Details";
 import useClass from "@/hooks/useClass";
 
 import styles from "./Overview.module.scss";
+import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
   const { class: _class } = useClass();
-
   return (
     <Box p="5">
       <Container size="3">
@@ -25,6 +25,7 @@ export default function Overview() {
               <p className={styles.description}>{_class.course.requirements}</p>
             </Flex>
           )}
+          <UserSubmittedData />
         </Flex>
       </Container>
     </Box>

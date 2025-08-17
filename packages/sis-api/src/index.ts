@@ -12,7 +12,7 @@ for (const spec of specs) {
   const name = spec.split(".")[0];
 
   generateApi({
-    name: `${name}.ts`,
+    fileName: `${name}.ts`,
     output: path.resolve(process.cwd(), "./dist"),
     input: path.resolve(process.cwd(), "./specs", spec),
     singleHttpClient: false,

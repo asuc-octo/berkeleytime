@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import Select from 'react-select'; // TODO: Integrate later w/ repo's select
 
 import { Separator } from "@radix-ui/themes";
 import { 
     Flex, 
-    Select,
     Box,
     Container,
     Button
@@ -101,9 +101,9 @@ export default function AddDegree({
                     <DegreeSelect/>
                     <a>Don't see your {optionType.toLowerCase()}?</a>
                     {isMajor && 
-                    <Button className={styles.addButton} variant="outline" onClick={handleAddDegree}>Add</Button>}
+                    <Button className={styles.addButton} variant="tertiary" onClick={handleAddDegree}>Add</Button>}
                     {!isMajor && 
-                    <Button className={styles.addButton} variant="outline"  onClick={handleAddMinor}>Add</Button>}
+                    <Button className={styles.addButton} variant="tertiary"  onClick={handleAddMinor}>Add</Button>}
                 </Flex>
 
                 <Separator size="4"/>
@@ -133,14 +133,14 @@ export default function AddDegree({
                 <Flex gap="10px">
                     <Button 
                         className={styles.secondary} 
-                        variant="outline"
+                        variant="tertiary"
                         onclick={handleSkipClick}
                     >
                         Skip
                     </Button>
                     <Button
                         className={styles.primary}
-                        variant="solid"
+                        variant="primary"
                         onClick={handleConfirmClick}
                         disabled={(isMajor && selectedDegreeList.length === 0) || (!isMajor && selectedMinorList.length === 0)}
                     >

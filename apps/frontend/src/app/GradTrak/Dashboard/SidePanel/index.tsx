@@ -1,7 +1,6 @@
 import RequirementsAccordion from "./RequirementsAccordion";
 // TODO: also import in CoEReqs, HaasReqs
 import { UniReqs, LnSReqs } from '@/lib/course';
-import { Button } from "@repo/theme"
 
 import { WarningCircle } from "iconoir-react"
 
@@ -9,7 +8,6 @@ import styles from "./SidePanel.module.scss";
 
 // TODO: Implement proper handling of reqs based on user's college...
 interface SidePanelProps {
-    name: string;
     majors: string[];
     minors: string[];
     totalUnits: number;
@@ -17,18 +15,11 @@ interface SidePanelProps {
     pnpTotal: number;
 }
 
-export default function SidePanel({ name, majors, minors, totalUnits, transferUnits, pnpTotal}: SidePanelProps) {
+export default function SidePanel({ majors, minors, totalUnits, transferUnits, pnpTotal}: SidePanelProps) {
 
     const UserInfo = (
         <>
             <div className={styles.headerContainer}>
-                <div className={styles.header}>
-                    <div className={styles.title}>
-                        <h2 className={styles.truncate}>{name}</h2>
-                        <p className={styles.subtitle}>Graduation Plan</p>
-                    </div>
-                    <Button variant="outline">Edit</Button>
-                </div>
                 <div className={styles.grid}>
                     {/* Majors */}
                     <div className={styles.label}>Major(s)</div>

@@ -1,6 +1,7 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
+import { getCourseAggregatedRatings } from "../rating/controller";
 import {
   getAssociatedCoursesById,
   getAssociatedCoursesBySubjectNumber,
@@ -108,6 +109,17 @@ const resolvers: CourseModule.Resolvers = {
       );
 
       return gradeDistribution;
+    },
+
+    aggregatedRatings: async (
+      parent: IntermediateCourse | CourseModule.Course
+    ) => {
+      const aggregatedRatings = await getCourseAggregatedRatings(
+        parent.subject,
+        parent.number
+      );
+
+      return aggregatedRatings;
     },
   },
 

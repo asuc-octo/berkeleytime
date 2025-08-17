@@ -23,7 +23,7 @@ import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
 import CloneDialog from "./CloneDialog";
 import EditDialog from "./EditDialog";
-import styles from "./Manage.module.scss";
+import styles from "./Editor.module.scss";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
@@ -378,7 +378,11 @@ export default function Editor() {
       schedule._id,
       {
         classes: schedule.classes
-          .filter((c) => c.class.courseId != _class.courseId)
+          .filter(
+            (c) =>
+              c.class.primarySection.sectionId !=
+              _class.primarySection.sectionId
+          )
           .map(
             ({
               selectedSections,
@@ -396,7 +400,9 @@ export default function Editor() {
           updateSchedule: {
             ...schedule,
             classes: schedule.classes.filter(
-              (c) => c.class.courseId != _class.courseId
+              (c) =>
+                c.class.primarySection.sectionId !=
+                _class.primarySection.sectionId
             ),
           },
         },
@@ -439,20 +445,20 @@ export default function Editor() {
           </MenuItem> */}
         </div>
         <Link to="compare">
-          <Button>
+          <Button variant="secondary">
             <ViewColumns2 />
             Compare
           </Button>
         </Link>
         <CloneDialog>
-          <Button>
+          <Button variant="secondary">
             <Copy />
             Clone
           </Button>
         </CloneDialog>
         {editing && (
           <ShareDialog>
-            <Button variant="solid">
+            <Button>
               Share
               <ShareIos />
             </Button>

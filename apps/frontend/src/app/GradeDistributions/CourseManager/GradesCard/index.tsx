@@ -3,9 +3,9 @@ import { useRef } from "react";
 import { Eye, EyeClosed, Trash } from "iconoir-react";
 
 import { Card } from "@repo/theme";
+import { ColoredSquare } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import { ColoredSquare } from "@/components/ColoredSquare";
 import { useReadCourseTitle } from "@/hooks/api";
 import { GradeDistribution } from "@/lib/api";
 
@@ -42,7 +42,7 @@ export default function GradesCard({
   return (
     <Card.Root
       active={active}
-      hidden={hidden}
+      disabled={hidden}
       onClick={(event) => {
         if (
           hideRef.current &&
@@ -72,12 +72,10 @@ export default function GradesCard({
         >
           {data?.title ?? "N/A"}
         </Card.Description>
-        <Card.Footer style={{ marginTop: "2px" }}>
-          <AverageGrade gradeDistribution={gradeDistribution} />
-          {description}
-        </Card.Footer>
+        <Card.Footer style={{ marginTop: "2px" }}>{description}</Card.Footer>
       </Card.Body>
       <Card.Actions>
+        <AverageGrade gradeDistribution={gradeDistribution} />
         <Card.ActionIcon onClick={onClickHide} ref={hideRef}>
           {!hidden ? <Eye /> : <EyeClosed />}
         </Card.ActionIcon>

@@ -8,6 +8,7 @@ import { Flex, Text } from "@repo/theme";
 import Carousel from "@/components/Carousel";
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
+import ScheduleCard from "@/components/ScheduleCard";
 import { useReadSchedules } from "@/hooks/api";
 import useUser from "@/hooks/useUser";
 import { ISchedule } from "@/lib/api";
@@ -121,12 +122,14 @@ export default function Account() {
                         {schedulesBySemester[sem].map(
                           ({ _id, name, classes }, i) => {
                             return (
-                              <Carousel.Schedule
-                                key={i}
-                                _id={_id}
-                                name={name}
-                                classes={classes}
-                              />
+                              <Carousel.Item>
+                                <ScheduleCard
+                                  key={i}
+                                  _id={_id}
+                                  name={name}
+                                  classes={classes}
+                                />
+                              </Carousel.Item>
                             );
                           }
                         )}

@@ -5,9 +5,9 @@ import { Checkbox } from "radix-ui";
 import { 
   Flex, 
   Container, 
-  Box, 
+  Box,
+  Button,
   Select,
-  Button
 } from "@repo/theme"
 
 import DotsIndicator from '../DotsIndicator';
@@ -51,18 +51,23 @@ export default function OnboardingSetup({
     }
   );
 
-  const handleSelectYear = (id: string, year: string) => {
-    if (id === 'startYear') {
+  const handleStartYearChange = (year: string | string[] | null) => {
+    if (typeof year === 'string') {
       setLocalStartYear(year);
       
+      // Reset graduation year if start year is later than current grad year
       if (parseInt(year) > parseInt(localGradYear)) {
         setLocalGradYear('');
       }
-    } else if (id === 'gradYear') {
-      setLocalGradYear(year);
     }
   };
 
+  const handleGradYearChange = (year: string | string[] | null) => {
+    if (typeof year === 'string') {
+      setLocalGradYear(year);
+    }
+  };
+  
   const handleNextClick = () => {
     if (localStartYear && localGradYear) {
       onNext(localStartYear, localGradYear, localSummerCheck);
@@ -91,15 +96,10 @@ export default function OnboardingSetup({
                   <p>Start Year</p>
                   <Box flexGrow="1" width="100%">
                     <Select
-                      className={styles.yearSelect}
-                      id="startYear"
                       options={startYearOptions}
-                      isSearchable={true}
-                      value={startYearOptions.find(option => option.value === localStartYear)}
-                      placeholder={"Start year"}
-                      onChange={(option) => {
-                        if (option) handleSelectYear("startYear", option.value);
-                      }}
+                      value={localStartYear || null}
+                      placeholder="Start year"
+                      onChange={handleStartYearChange}
                     />
                   </Box>
                 </Flex>
@@ -108,15 +108,10 @@ export default function OnboardingSetup({
                   <p>Graduation Year</p>
                   <Box flexGrow="1" width="100%">
                     <Select
-                      className={styles.yearSelect}
-                      id="gradYear"
                       options={gradYearOptions}
-                      isSearchable={true}
-                      value={gradYearOptions.find(option => option.value === localGradYear)}
-                      placeholder={"Expected graduation year"}
-                      onChange={(option) => {
-                        if (option) handleSelectYear("gradYear", option.value);
-                      }}
+                      value={localGradYear || null}
+                      placeholder="Expected graduation year"
+                      onChange={handleGradYearChange}
                     />
                   </Box>
                 </Flex>
@@ -141,7 +136,7 @@ export default function OnboardingSetup({
             </Flex>
 
             {/* Next Button */}
-            <Button className={styles.primary} variant="solid" onClick={handleNextClick}>
+            <Button className={styles.primary} variant="primary" onClick={handleNextClick}>
               Next
             </Button>
 

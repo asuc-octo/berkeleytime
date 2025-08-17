@@ -19,6 +19,7 @@ const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
   Support: lazy(() => import("@/app/Profile/Support")),
+  Ratings: lazy(() => import("@/app/Profile/Ratings")),
 };
 
 const Class = {
@@ -26,6 +27,7 @@ const Class = {
   Grades: lazy(() => import("@/components/Class/Grades")),
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
+  Ratings: lazy(() => import("@/components/Class/Ratings")),
 };
 
 const Course = {
@@ -170,6 +172,14 @@ const router = createBrowserRouter([
             ),
             path: "support",
           },
+          {
+            element: (
+              <SuspenseBoundary key="ratings">
+                <Profile.Ratings />
+              </SuspenseBoundary>
+            ),
+            path: "ratings",
+          },
         ],
       },
     ],
@@ -279,6 +289,10 @@ const router = createBrowserRouter([
               </SuspenseBoundary>
             ),
             path: "grades",
+          },
+          {
+            element: <Class.Ratings />,
+            path: "ratings",
           },
           {
             path: "*",

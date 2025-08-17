@@ -36,6 +36,8 @@
     width: 100%;
     text-align: start;
     color: var(--paragraph-color);
+    background-color: var(--foreground-color);
+    border-color: var(--border-color)
 
     input {
       color: var(--paragraph-color) !important

@@ -230,7 +230,7 @@ const ClassDetails = ({ isOpen, setIsOpen, classData, onUpdate, onConfirm }: Cla
                     </div>
 
                     <div className={styles.footer}>
-                        <Button variant="solid" className={styles.confirmButton} onClick={handleSubmit}>
+                        <Button variant="primary" className={styles.confirmButton} onClick={handleSubmit}>
                             Confirm
                         </Button>
                     </div>
