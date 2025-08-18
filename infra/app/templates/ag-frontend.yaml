@@ -20,13 +20,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.agFrontend.port }}
-          readinessProbe:
-            httpGet:
-              path: /
-              port: {{ .Values.agFrontend.port }}
-            initialDelaySeconds: 5
-            periodSeconds: 3
-
+# TODO: Add readiness probe and implementation
 ---
 
 apiVersion: v1
