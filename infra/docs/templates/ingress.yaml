@@ -11,7 +11,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.host }}
-      secretName: bt-tls
+      secretName: {{ .Release.Name }}-tls
   rules:
     - host: {{ .Values.host }}
       http:
