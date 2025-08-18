@@ -13,3 +13,4 @@ spec:
     - "*.stanfurdtime.com"
     - "*.dev.stanfurdtime.com"
     - beta.berkeleytime.com
+    - ag.berkeleytime.com # for suggested courses
