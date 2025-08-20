@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bt-cert
+spec:
+  secretName: bt-cert
+  issuerRef:
+    name: {{ .Values.issuerName }}
+    kind: Issuer
+  dnsNames:
+    - berkeleytime.com
+    - "*.berkeleytime.com"
+    - "*.dev.berkeleytime.com"
+    - stanfurdtime.com
+    - "*.stanfurdtime.com"
+    - "*.dev.stanfurdtime.com"
