@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
   labels:
-    {{- include "bt-app.labels" . | nindent 4 }}
+    {{- include "bt-ag.labels" . | nindent 4 }}
   annotations:
     cert-manager.io/issuer: {{ .Values.issuer }}
 spec:
@@ -11,8 +11,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.host }}
-        - {{ .Values.agFrontend.host }}
-      secretName: bt-tls
+      secretName: bt-cert
   rules:
     - host: {{ .Values.host }}
       http:
@@ -21,13 +20,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "bt-app.frontendName" . }}-svc
-                port:
-                  number: {{ .Values.port }}
-          - path: {{ .Values.backend.path }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ include "bt-app.backendName" . }}-svc
+                name: {{ include "bt-ag.frontendName" . }}-svc
                 port:
                   number: {{ .Values.port }}

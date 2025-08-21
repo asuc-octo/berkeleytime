@@ -21,18 +21,6 @@ frontend:
     repository: octoberkeleytime/bt-frontend
     tag: prod
 
-agFrontend:
-  replicas: 1
-
-  host: ag.berkeleytime.com
-  port: 3000
-  path: /
-
-  image:
-    registry: docker.io
-    repository: octoberkeleytime/bt-ag-frontend
-    tag: prod
-
 backend:
   replicas: 2
 
