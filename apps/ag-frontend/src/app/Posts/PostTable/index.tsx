@@ -1,6 +1,6 @@
 import { Badge, Table } from "@radix-ui/themes";
 
-import { Post } from "../Landing";
+import { Post } from "../../Landing";
 import styles from "./PostTable.module.scss";
 
 // adjust if type is moved

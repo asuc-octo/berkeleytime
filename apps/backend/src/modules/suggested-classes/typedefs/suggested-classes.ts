@@ -4,9 +4,11 @@ const typedef = gql`
   type Post {
     id: ID!
 
+    class: Class!
+
     semester: Semester!
     year: Int!
-    sessionId: SessionIdentifier
+    sessionId: SessionIdentifier!
     courseNumber: CourseNumber!
     number: ClassNumber!
     subject: String!

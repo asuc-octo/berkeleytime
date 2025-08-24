@@ -27,8 +27,7 @@ export default async (
         config.url,
         "http://localhost:8080",
         "http://localhost:5173",
-        // TODO: Remove
-        "https://gn980r4n-8080.usw3.devtunnels.ms",
+        "http://localhost:8081",
       ],
       credentials: true,
     })

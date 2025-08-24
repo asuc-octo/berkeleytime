@@ -10,7 +10,7 @@ import {
   redirect,
 } from "react-router-dom";
 
-import AddPost from "@/app/AddPost";
+import AddPost from "@/app/New";
 import Layout from "@/app/Layout";
 import Post from "@/app/Post";
 import Posts from "@/app/Posts";
@@ -50,6 +50,7 @@ const client = new ApolloClient({
     uri: import.meta.env.DEV
       ? "http://localhost:8080/api/graphql"
       : "https://berkeleytime.com/api/graphql",
+    credentials: "include",
   }),
   cache: new InMemoryCache(),
 });

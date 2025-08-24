@@ -1,3 +1,4 @@
+import { getClass } from "../class/controller";
 import {
   createPost,
   deletePost,
@@ -5,6 +6,7 @@ import {
   getPosts,
   updatePost,
 } from "./controller";
+import { IntermediatePost } from "./formatter";
 import { SuggestedClassesModule } from "./generated-types/module-types";
 
 const resolvers: SuggestedClassesModule.Resolvers = {
@@ -16,6 +18,24 @@ const resolvers: SuggestedClassesModule.Resolvers = {
     post: async (_, { id }) => {
       const post = await getPost(id);
       return post as unknown as SuggestedClassesModule.Post;
+    },
+  },
+
+  Post: {
+    class: async (parent: SuggestedClassesModule.Post | IntermediatePost) => {
+      if (parent.class && (parent.class as SuggestedClassesModule.Class).title)
+        return parent.class as SuggestedClassesModule.Class;
+
+      const _class = await getClass(
+        parent.year,
+        parent.semester,
+        parent.sessionId,
+        parent.subject,
+        parent.courseNumber,
+        parent.number
+      );
+
+      return _class as unknown as SuggestedClassesModule.Class;
     },
   },
 

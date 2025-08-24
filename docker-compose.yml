@@ -37,8 +37,8 @@ services:
       - bt
     restart: always
     volumes:
-      - ./apps/ag-frontend/src:/frontend/apps/ag-frontend/src
-      - ./apps/ag-frontend/public:/frontend/apps/ag-frontend/public
+      - ./apps/ag-frontend/src:/ag-frontend/apps/ag-frontend/src
+      - ./apps/ag-frontend/public:/ag-frontend/apps/ag-frontend/public
   mongodb:
     image: mongo:7.0.5
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]

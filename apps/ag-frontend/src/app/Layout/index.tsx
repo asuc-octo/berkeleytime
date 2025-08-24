@@ -12,28 +12,15 @@ import {
 import { Outlet } from "react-router-dom";
 
 import { useReadUser } from "@/hooks/api";
+import { BASE, signIn, signOut } from "@/lib/api";
 
 import styles from "./Layout.module.scss";
 
-const signIn = (redirectURI?: string) => {
-  redirectURI =
-    redirectURI ?? window.location.pathname + window.location.search;
-
-  window.location.href = `${window.location.origin}/api/login?redirect_uri=${redirectURI}`;
-};
-
-const signOut = async (redirectURI?: string) => {
-  redirectURI =
-    redirectURI ?? window.location.pathname + window.location.search;
-
-  window.location.href = `${window.location.origin}/api/logout?redirect_uri=${redirectURI}`;
-};
-
 function Content() {
-  const { data, loading, error } = useReadUser();
+  const { data, loading } = useReadUser();
 
   useEffect(() => {
-    if (loading || error || data?.staff) return;
+    if (loading || data?.staff) return;
 
     if (!data) {
       signIn();
@@ -41,13 +28,11 @@ function Content() {
       return;
     }
 
-    window.location.href = import.meta.env.DEV
-      ? "http://localhost:8080"
-      : "https://berkeleytime.com";
-  }, [data, error, loading]);
+    window.location.href = BASE;
+  }, [data, loading]);
 
   // Include redirect for invalid authentication
-  if (loading || (!error && !data?.staff)) {
+  if (loading || !data) {
     return (
       <Flex align="center" justify="center" flexGrow="1">
         <Spinner size="3" />
@@ -55,34 +40,20 @@ function Content() {
     );
   }
 
-  if (data) {
-    return (
-      <Flex direction="column" flexGrow="1">
-        <Box px="3">
-          <Container>
-            <Flex>
-              <Heading>Academic Guide</Heading>
-              <Button
-                onClick={() =>
-                  signOut(
-                    import.meta.env.DEV
-                      ? "http://localhost:8080"
-                      : "https://berkeleytime.com"
-                  )
-                }
-              >
-                Sign out
-              </Button>
-            </Flex>
-          </Container>
-        </Box>
-        <Separator />
-        <Outlet />
-      </Flex>
-    );
-  }
-
-  return null;
+  return (
+    <Flex direction="column" flexGrow="1">
+      <Box px="3">
+        <Container>
+          <Flex>
+            <Heading>Academic Guide</Heading>
+            <Button onClick={() => signOut(BASE)}>Sign out</Button>
+          </Flex>
+        </Container>
+      </Box>
+      <Separator />
+      <Outlet />
+    </Flex>
+  );
 }
 
 export default function Layout() {

@@ -313,7 +313,10 @@ const router = createBrowserRouter([
 ]);
 
 const client = new ApolloClient({
-  link: new HttpLink({ uri: "/api/graphql" }),
+  link: new HttpLink({
+    uri: "/api/graphql",
+    credentials: "include",
+  }),
   cache: new InMemoryCache(),
 });
 
