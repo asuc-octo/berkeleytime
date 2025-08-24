@@ -9,7 +9,6 @@ spec:
   tls:
     - hosts:
         - {{ .Values.host }}
-        - {{ .Values.agFrontend.host }}
       secretName: bt-cert
   rules:
     - host: {{ .Values.host }}
