@@ -36,6 +36,15 @@ export default gql`
   }
 
   enum CourseGradingBasis {
+    BMT
+    CNC
+    GRD
+    IOP
+    LAW
+    OPT
+    PNP
+    SUS
+    TRN
     completedNotation
     passFail
     letter
