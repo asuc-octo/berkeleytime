@@ -1,12 +1,12 @@
-import { QueryHookOptions, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 import { READ_TERMS, ReadTermsResponse } from "@/lib/api";
 
 export const useReadTerms = (
-  options?: Omit<QueryHookOptions<ReadTermsResponse>, "variables">
+  options?: Omit<useQuery.Options<ReadTermsResponse>, "variables">
 ) => {
   const query = useQuery<ReadTermsResponse>(READ_TERMS, options);
-  console.log(query);
+
   return {
     ...query,
     data: query.data?.terms,

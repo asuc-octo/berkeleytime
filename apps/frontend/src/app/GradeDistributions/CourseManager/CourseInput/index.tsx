@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { useSearchParams } from "react-router-dom";
 
 import { Box, Select, SelectHandle } from "@repo/theme";
@@ -113,8 +113,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const instructorOptions = useMemo(getInstructorOptions, [
     course,
-    selectedType,
     selectedSemester,
+    selectedType,
+    selectedInstructor,
   ]);
 
   const getSemesterOptions = (
@@ -171,8 +172,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const semesterOptions = useMemo(getSemesterOptions, [
     course,
-    selectedType,
     selectedInstructor,
+    selectedType,
+    selectedSemester,
   ]);
 
   const add = async () => {
@@ -266,6 +268,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         query: READ_GRADE_DISTRIBUTION,
         variables: input,
       });
+
+      if (!response.data) {
+        throw response.error;
+      }
 
       const output: Output = {
         hidden: false,

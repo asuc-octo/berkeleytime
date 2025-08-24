@@ -1,4 +1,6 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { HttpLink } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import { IconoirProvider } from "iconoir-react";
@@ -8,32 +10,47 @@ import {
   redirect,
 } from "react-router-dom";
 
-import Landing from "@/app/Landing";
+import AddPost from "@/app/AddPost";
+import Layout from "@/app/Layout";
+import Post from "@/app/Post";
+import Posts from "@/app/Posts";
 
-import AddPost from "./app/AddPost";
 import "./reset.css";
 
 const router = createBrowserRouter([
   {
-    index: true,
-    element: <Landing />,
-  },
-  {
-    path: "/add-post",
-    element: <AddPost />,
-  },
-  {
-    path: "/posts/:postId", //be able to query with postid
-    element: <AddPost />, // will need to fill out form with existing data for postId
-  },
-  {
-    path: "*",
-    loader: () => redirect("/"),
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        loader: () => redirect("/posts"),
+      },
+      {
+        path: "/posts",
+        element: <Posts />,
+      },
+      {
+        path: "/posts/new",
+        element: <AddPost />,
+      },
+      {
+        path: "/posts/:postId",
+        element: <Post />,
+      },
+      {
+        path: "*",
+        loader: () => redirect("/"),
+      },
+    ],
   },
 ]);
 
 const client = new ApolloClient({
-  uri: "/api/graphql",
+  link: new HttpLink({
+    uri: import.meta.env.DEV
+      ? "http://localhost:8080/api/graphql"
+      : "https://berkeleytime.com/api/graphql",
+  }),
   cache: new InMemoryCache(),
 });
 

@@ -1,4 +1,4 @@
-import { QueryHookOptions, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 import {
   READ_COURSE,
@@ -11,7 +11,7 @@ import {
 export const useReadCourse = (
   subject: string,
   number: string,
-  options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
+  options?: Omit<useQuery.Options<ReadCourseResponse>, "variables">
 ) => {
   const query = useQuery<ReadCourseResponse>(READ_COURSE, {
     ...options,
@@ -30,7 +30,7 @@ export const useReadCourse = (
 export const useReadCourseGradeDist = (
   subject: string,
   number: string,
-  options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
+  options?: Omit<useQuery.Options<ReadCourseResponse>, "variables">
 ) => {
   const query = useQuery<ReadCourseResponse>(READ_COURSE_GRADE_DIST, {
     ...options,
@@ -49,7 +49,7 @@ export const useReadCourseGradeDist = (
 export const useReadCourseWithInstructor = (
   subject: string,
   number: string,
-  options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
+  options?: Omit<useQuery.Options<ReadCourseResponse>, "variables">
 ) => {
   const query = useQuery<ReadCourseResponse>(READ_COURSE_WITH_INSTRUCTOR, {
     ...options,
@@ -68,7 +68,7 @@ export const useReadCourseWithInstructor = (
 export const useReadCourseTitle = (
   subject: string,
   number: string,
-  options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
+  options?: Omit<useQuery.Options<ReadCourseResponse>, "variables">
 ) => {
   const query = useQuery<ReadCourseResponse>(READ_COURSE_TITLE, {
     ...options,

@@ -38,7 +38,6 @@ services:
     restart: always
     volumes:
       - ./apps/ag-frontend/src:/frontend/apps/ag-frontend/src
-      - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/ag-frontend/public:/frontend/apps/ag-frontend/public
   mongodb:
     image: mongo:7.0.5

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -127,7 +127,7 @@ export default function GradeDistributions() {
       // Filter out failed queries and set any initial state
       .reduce(
         (acc, response, index) =>
-          response
+          response?.data
             ? acc.concat({
                 color: LIGHT_COLORS[index],
                 gradeDistribution: response.data.grade,

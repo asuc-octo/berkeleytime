@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
@@ -90,9 +90,6 @@ export function RatingsContainer() {
   // Get user's existing ratings
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS, {
     skip: !user,
-    onError: (error) => {
-      console.error("GET_USER_RATINGS error:", error);
-    },
   });
 
   const handleModalStateChange = useCallback(
@@ -144,9 +141,6 @@ export function RatingsContainer() {
           }
         : undefined,
     skip: !currentClass?.subject || !currentClass?.courseNumber,
-    onError: (error) => {
-      console.error("GET_COURSE_RATINGS error:", error);
-    },
   });
 
   // Create rating mutation
@@ -166,14 +160,7 @@ export function RatingsContainer() {
     ],
   });
 
-  const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS, {
-    onCompleted: (data) => {
-      setTermRatings(data.aggregatedRatings);
-    },
-    onError: (error) => {
-      console.error("GET_AGGREGATED_RATINGS error:", error);
-    },
-  });
+  const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS);
 
   // Get semesters with ratings
   const { data: semestersWithRatingsData } =
@@ -508,7 +495,7 @@ export function RatingsContainer() {
                       ]}
                       value={selectedTerm}
                       variant="foreground"
-                      onChange={(selectedValue) => {
+                      onChange={async (selectedValue) => {
                         if (Array.isArray(selectedValue) || !selectedValue)
                           return; // ensure it is string
                         setSelectedTerm(selectedValue);
@@ -516,7 +503,7 @@ export function RatingsContainer() {
                           setTermRatings(null);
                         } else if (isSemester(selectedValue)) {
                           const [semester, year] = selectedValue.split(" ");
-                          getAggregatedRatings({
+                          const { data } = await getAggregatedRatings({
                             variables: {
                               subject: currentClass.subject,
                               courseNumber: currentClass.courseNumber,
@@ -524,6 +511,7 @@ export function RatingsContainer() {
                               year: parseInt(year),
                             },
                           });
+                          setTermRatings(data?.aggregatedRatings);
                         }
                       }}
                       placeholder="Select term"

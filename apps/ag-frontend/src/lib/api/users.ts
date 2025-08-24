@@ -5,6 +5,9 @@ import { ICourse } from "./courses";
 import { Semester } from "./terms";
 
 export interface IUser {
+  _id: string;
+  name: string;
+  staff: boolean;
   email: string;
   student: boolean;
   bookmarkedCourses: ICourse[];
@@ -18,7 +21,9 @@ export interface ReadUserResponse {
 export const READ_USER = gql`
   query GetUser {
     user {
+      _id
       email
+      name
       student
       bookmarkedCourses {
         title
@@ -33,6 +38,24 @@ export const READ_USER = gql`
         year
         semester
         sessionId
+        unitsMin
+        unitsMax
+        course {
+          title
+        }
+        primarySection {
+          enrollment {
+            latest {
+              enrolledCount
+              maxEnroll
+              waitlistedCount
+              maxWaitlist
+            }
+          }
+        }
+        gradeDistribution {
+          average
+        }
       }
     }
   }
@@ -64,6 +87,7 @@ export interface UpdateUserResponse {
 export const UPDATE_USER = gql`
   mutation UpdateUser($user: UpdateUserInput!) {
     updateUser(user: $user) {
+      name
       email
       student
       bookmarkedCourses {

@@ -11,9 +11,15 @@ export default function Schedule() {
   const navigate = useNavigate();
   const { data: user } = useReadUser();
 
-  const { data: schedule } = useReadSchedule(scheduleId as ScheduleIdentifier, {
-    onError: () => navigate("/schedules"),
-  });
+  const { data: schedule, loading } = useReadSchedule(
+    scheduleId as ScheduleIdentifier
+  );
+
+  useMemo(() => {
+    if (loading || schedule) return;
+
+    navigate("/schedules", { replace: true });
+  }, [loading, navigate, schedule]);
 
   const editing = useMemo(
     () => schedule?.createdBy === user?._id,

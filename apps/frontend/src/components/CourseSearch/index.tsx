@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Search } from "iconoir-react";
 
 import { Badge, LoadingIndicator } from "@repo/theme";

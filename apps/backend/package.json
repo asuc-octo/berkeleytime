@@ -10,8 +10,8 @@
     "update:grades": "tsx --env-file=.env ./src/scripts/update-grade-distributions.ts"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
+    "@babel/core": "^7.28.3",
+    "@babel/preset-env": "^7.28.3",
     "@babel/preset-typescript": "^7.27.1",
     "@graphql-codegen/cli": "5.0.7",
     "@graphql-codegen/graphql-modules-preset": "^4.0.17",
@@ -23,23 +23,23 @@
     "@types/cors": "^2.8.19",
     "@types/express-session": "^1.18.2",
     "@types/lodash": "^4.17.20",
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.3.0",
     "@types/papaparse": "^5.3.16",
     "@types/passport-google-oauth20": "^2.0.16",
-    "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "@apollo/server": "^5.0.0",
     "@apollo/server-plugin-response-cache": "^5.0.0",
     "@apollo/utils.keyvadapter": "^4.0.1",
     "@as-integrations/express5": "^1.1.2",
-    "@aws-sdk/client-athena": "^3.857.0",
-    "@aws-sdk/client-s3": "^3.857.0",
-    "@escape.tech/graphql-armor": "^3.1.6",
+    "@aws-sdk/client-athena": "^3.873.0",
+    "@aws-sdk/client-s3": "^3.873.0",
+    "@escape.tech/graphql-armor": "^3.1.7",
     "@graphql-tools/schema": "^10.0.25",
     "@graphql-tools/utils": "^10.9.1",
-    "@keyv/redis": "^5.0.0",
+    "@keyv/redis": "^5.1.1",
     "@repo/common": "*",
     "@repo/shared": "*",
     "@repo/sis-api": "*",
@@ -54,13 +54,13 @@
     "graphql-modules": "^3.0.0",
     "graphql-type-json": "^0.3.2",
     "helmet": "^8.1.0",
-    "keyv": "^5.4.0",
+    "keyv": "^5.5.0",
     "lodash": "^4.17.21",
     "mongodb": "^6.18.0",
-    "mongoose": "^8.17.0",
+    "mongoose": "^8.18.0",
     "papaparse": "^5.5.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "redis": "^5.6.1"
+    "redis": "^5.8.2"
   }
 }

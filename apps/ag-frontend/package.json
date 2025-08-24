@@ -9,26 +9,27 @@
     "start": "serve -s dist -p 3001"
   },
   "dependencies": {
-    "@apollo/client": "3.13.9",
+    "@apollo/client": "4.0.0",
     "@radix-ui/themes": "^3.2.1",
     "classnames": "^2.5.1",
     "graphql": "^16.11.0",
     "iconoir-react": "^7.11.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.7.1"
+    "react-router-dom": "^7.8.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
-    "@types/node": "^24.2.0",
-    "@types/react": "^19.1.9",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^5.0.1",
     "babel-plugin-react-compiler": "^19.1.0-rc.2",
-    "eslint": "^9.32.0",
+    "eslint": "^9.34.0",
     "serve": "^14.2.4",
     "typescript": "^5.9.2",
-    "vite": "7.0.6"
+    "vite": "7.1.3"
   }
 }

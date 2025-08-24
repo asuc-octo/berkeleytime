@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { useSearchParams } from "react-router-dom";
 
 import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
@@ -84,7 +84,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
-  }, [courseData]);
+  }, [courseData, selectedSemester]);
 
   const getClassOptions = (
     semester: string | null = null,
@@ -133,7 +133,11 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     return [...list, ...opts];
   };
 
-  const classOptions = useMemo(getClassOptions, [courseData, selectedSemester]);
+  const classOptions = useMemo(getClassOptions, [
+    courseData,
+    selectedClass,
+    selectedSemester,
+  ]);
 
   const add = async () => {
     if (!selectedClass || !selectedCourse || !selectedSemester) return;
@@ -173,6 +177,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         query: READ_ENROLLMENT,
         variables: input,
       });
+
+      if (!response.data) {
+        throw response.error;
+      }
 
       const output: Output = {
         hidden: false,

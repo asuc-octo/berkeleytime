@@ -1,49 +1,47 @@
-import {gql} from "graphql-tag";
+import { gql } from "graphql-tag";
 
 const typedef = gql`
+  type Post {
+    id: ID!
 
-    scalar UUID
-    scalar Semester
-    scalar CourseNumber
+    semester: Semester!
+    year: Int!
+    sessionId: SessionIdentifier
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+    subject: String!
 
-    type Post {
-        id: UUID!
-        semester: Semester!
-        year: Int!
-        sessionId: String!
-        courseNumber: CourseNumber!
-        number: Int!
-        subject: String!
-        image: String!
-        text: String!
-    }
+    image: String!
+    text: String!
+  }
 
-    type Query {
-        getAllPosts: [Post!]!
-        getPost(postId: UUID!): Post
-    }
+  type Query {
+    posts: [Post!]!
+    post(id: ID!): Post
+  }
 
-    input CreatePostInput {
-        id: UUID!
-        semester: Semester!
-        year: Int!
-        sessionId: String!
-        courseNumber: CourseNumber!
-        number: Int!
-        subject: String!
-        image: String!
-        text: String!
-    }
-    
-    input UpdatePostInput {
-        courseNumber: CourseNumber!
-    }
+  input CreatePostInput {
+    semester: Semester!
+    year: Int!
+    sessionId: SessionIdentifier
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+    subject: String!
 
-    type Mutation {
-        addPost(post: CreatePostInput!): Post
-        modifyPost(post: UpdatePostInput!): Post
-        deletePost(courseNumber: CourseNumber!): Int
-    }   
+    image: String!
+    text: String!
+  }
+
+  input UpdatePostInput {
+    image: String
+    text: String
+  }
+
+  type Mutation {
+    createPost(post: CreatePostInput!): Post
+    updatePost(id: ID!, post: UpdatePostInput!): Post
+    deletePost(id: ID!): Boolean
+  }
 `;
 
 export default typedef;

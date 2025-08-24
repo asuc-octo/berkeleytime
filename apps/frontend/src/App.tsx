@@ -1,6 +1,7 @@
 import { lazy } from "react";
 
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import {
   RouterProvider,
   createBrowserRouter,
@@ -312,7 +313,7 @@ const router = createBrowserRouter([
 ]);
 
 const client = new ApolloClient({
-  uri: "/api/graphql",
+  link: new HttpLink({ uri: "/api/graphql" }),
   cache: new InMemoryCache(),
 });
 
