@@ -43,6 +43,9 @@ const updateCourses = async ({
   const allCourses = await getCourses(log, COURSE_APP_ID, COURSE_APP_KEY);
   const courses = getLatestUniqueCourses(allCourses);
 
+  // TODO: Add embeddings for courses to Weaviate alongside any metadata necessary to query courses
+  //       Use the best model from https://github.com/asuc-octo/semantic-search-fall-2024
+
   log.info(`Fetched ${courses.length.toLocaleString()} courses.`);
   if (!courses) {
     log.warn("No courses found, skipping update.");
