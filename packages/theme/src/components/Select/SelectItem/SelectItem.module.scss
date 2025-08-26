@@ -16,6 +16,11 @@
     background-color: var(--button-hover-color);
     cursor: default;
   }
+
+  .meta {
+    font-size: 12px;
+    color: var(--label-color);
+  }
 }
 .selected {
   color: var(--heading-color);
