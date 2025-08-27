@@ -18,7 +18,7 @@ export default function Banner() {
 				<p>
 				Love using Berkeleytime? Join the team! No experience required. Developers, designers, researchers, marketers and more welcome.
 				</p>
-				<Link to="https://berkeleytime.com/apply">
+				<Link to="/apply">
 					<Button size="sm">Apply</Button>
 				</Link>
 			</div>
