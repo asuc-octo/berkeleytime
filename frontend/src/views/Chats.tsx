@@ -1,4 +1,4 @@
 export function Component() {
-	window.location.replace('https://airtable.com/app2bWXkmbsJyY5Jn/shrZi87O5UxJ3GkjV');
+	window.location.replace('https://airtable.com/appLBtO52VOJBy6Mf/shrW4DKqjbvk15uXq');
 	return null;
 }
