@@ -67,6 +67,9 @@ export default gql`
 
     "Written final exam conducted during the scheduled final exam period"
     Y
+
+    "Last class meeting"
+    L
   }
 
   enum AcademicCareer {
@@ -78,6 +81,9 @@ export default gql`
 
     "UC Extension"
     UCBX
+
+    "Law"
+    LAW
   }
 
   enum InstructionMethod {
@@ -146,5 +152,11 @@ export default gql`
 
     "Seminar"
     SEM
+
+    "Clinic"
+    CLN
+
+    "Practicum"
+    PRA
   }
 `;
