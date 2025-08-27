@@ -8,6 +8,7 @@ import styles from "./SelectItem.module.scss";
 
 export interface SelectItemProps {
   label: string;
+  meta?: string;
   selected?: boolean;
   icon?: React.ReactNode;
   multi?: boolean;
@@ -16,6 +17,7 @@ export interface SelectItemProps {
 
 export default function SelectItem({
   label,
+  meta,
   selected = false,
   icon,
   disabled,
@@ -31,7 +33,9 @@ export default function SelectItem({
       >
         <Flex direction="row" gap="12px">
           {icon && icon}
-          <span>{label}</span>
+          <span>
+            {label} {meta && <span className={styles.meta}>({meta})</span>}
+          </span>
         </Flex>
         {selected && <Check />}
       </Flex>

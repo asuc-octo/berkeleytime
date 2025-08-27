@@ -1,8 +1,10 @@
-import { Dispatch, useMemo } from "react";
+import { Dispatch, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
-import { Check } from "iconoir-react";
-import { Checkbox, RadioGroup } from "radix-ui";
+import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
+import { Checkbox } from "radix-ui";
+
+import { Button, DaySelect, Select } from "@repo/theme";
 
 import { Component, componentMap } from "@/lib/api";
 
@@ -18,6 +20,10 @@ import {
 import useBrowser from "../useBrowser";
 import styles from "./Filters.module.scss";
 
+// TODO: Add Mode of Instruction
+
+// TODO: Add requirements from relevant sources
+
 export default function Filters() {
   const {
     includedClasses,
@@ -31,13 +37,33 @@ export default function Filters() {
     days,
     updateDays,
     open,
-    updateOpen,
+    // updateOpen,
     online,
-    updateOnline,
+    // updateOnline,
     sortBy,
     updateSortBy,
     responsive,
   } = useBrowser();
+
+  const [expanded, setExpanded] = useState(false);
+
+  const [daysArray, setDaysArray] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  useEffect(() => {
+    const newDays = daysArray.reduce((acc, v, i) => {
+      if (v) acc.push(i.toString() as Day);
+      return acc;
+    }, [] as Day[]);
+    updateDays(newDays);
+  }, [daysArray]);
 
   const filteredLevels = useMemo(() => {
     const classes =
@@ -122,49 +148,49 @@ export default function Filters() {
     online,
   ]);
 
-  const filteredDays = useMemo(() => {
-    const filteredDays = Object.values(Day).reduce(
-      (acc, day) => {
-        acc[day] = 0;
-        return acc;
-      },
-      {} as Record<Day, number>
-    );
+  // const filteredDays = useMemo(() => {
+  //   const filteredDays = Object.values(Day).reduce(
+  //     (acc, day) => {
+  //       acc[day] = 0;
+  //       return acc;
+  //     },
+  //     {} as Record<Day, number>
+  //   );
 
-    const classes =
-      days.length === 0
-        ? includedClasses
-        : getFilteredClasses(
-            excludedClasses,
-            components,
-            units,
-            levels,
-            [],
-            open,
-            online
-          ).includedClasses;
+  //   const classes =
+  //     days.length === 0
+  //       ? includedClasses
+  //       : getFilteredClasses(
+  //           excludedClasses,
+  //           components,
+  //           units,
+  //           levels,
+  //           [],
+  //           open,
+  //           online
+  //         ).includedClasses;
 
-    for (const _class of classes) {
-      const days = _class.primarySection.meetings?.[0]?.days;
+  //   for (const _class of classes) {
+  //     const days = _class.primarySection.meetings?.[0]?.days;
 
-      for (const index in days) {
-        if (!days[index]) continue;
+  //     for (const index in days) {
+  //       if (!days[index]) continue;
 
-        filteredDays[index as Day] += 1;
-      }
-    }
+  //       filteredDays[index as Day] += 1;
+  //     }
+  //   }
 
-    return filteredDays;
-  }, [
-    excludedClasses,
-    includedClasses,
-    components,
-    units,
-    levels,
-    days,
-    open,
-    online,
-  ]);
+  //   return filteredDays;
+  // }, [
+  //   excludedClasses,
+  //   includedClasses,
+  //   components,
+  //   units,
+  //   levels,
+  //   days,
+  //   open,
+  //   online,
+  // ]);
 
   const filteredUnits = useMemo(() => {
     const filteredUnits = Object.values(Unit).reduce(
@@ -213,19 +239,19 @@ export default function Filters() {
     online,
   ]);
 
-  const amountOpen = useMemo(
-    () =>
-      includedClasses.filter(
-        (_class) => _class.primarySection.enrollment?.latest.status === "O"
-      ).length,
-    [includedClasses]
-  );
+  // const amountOpen = useMemo(
+  //   () =>
+  //     includedClasses.filter(
+  //       (_class) => _class.primarySection.enrollment?.latest.status === "O"
+  //     ).length,
+  //   [includedClasses]
+  // );
 
-  const amountOnline = useMemo(
-    () =>
-      includedClasses.filter((_class) => _class.primarySection.online).length,
-    [includedClasses]
-  );
+  // const amountOnline = useMemo(
+  //   () =>
+  //     includedClasses.filter((_class) => _class.primarySection.online).length,
+  //   [includedClasses]
+  // );
 
   const updateArray = <T,>(
     state: T[],
@@ -248,130 +274,55 @@ export default function Filters() {
     >
       <Header />
       <div className={styles.body}>
-        <p className={styles.label}>Quick filters</p>
-        <div className={styles.filter}>
-          <Checkbox.Root
-            className={styles.checkbox}
-            onCheckedChange={(value) => updateOpen(value as boolean)}
-            id="open"
-          >
-            <Checkbox.Indicator asChild>
-              <Check width={12} height={12} />
-            </Checkbox.Indicator>
-          </Checkbox.Root>
-          <label className={styles.text} htmlFor="open">
-            <span className={styles.value}>Open</span>
-            {!open && ` (${amountOpen.toLocaleString()})`}
-          </label>
-        </div>
-        <div className={styles.filter}>
-          <Checkbox.Root
-            id="online"
-            className={styles.checkbox}
-            onCheckedChange={(value) => updateOnline(value as boolean)}
-          >
-            <Checkbox.Indicator asChild>
-              <Check width={12} height={12} />
-            </Checkbox.Indicator>
-          </Checkbox.Root>
-          <label className={styles.text} htmlFor="online">
-            <span className={styles.value}>Online</span>
-            {!online && ` (${amountOnline.toLocaleString()})`}
-          </label>
-        </div>
-        <div className={styles.filter}>
-          <Checkbox.Root className={styles.checkbox}>
-            <Checkbox.Indicator asChild>
-              <Check width={12} height={12} />
-            </Checkbox.Indicator>
-          </Checkbox.Root>
-          <label className={styles.text}>
-            <span className={styles.value}>Bookmarked</span>
-          </label>
-        </div>
-        <p className={styles.label}>Sort by</p>
-        <RadioGroup.Root
-          onValueChange={(value) => updateSortBy(value as SortBy)}
+        <p className={styles.label}>SORT BY</p>
+        <Select
           value={sortBy}
-        >
-          {Object.values(SortBy).map((sortBy) => {
-            const key = `sortBy-${sortBy}`;
-
-            return (
-              <div className={styles.filter} key={key}>
-                <RadioGroup.Item
-                  className={styles.radio}
-                  id={key}
-                  value={sortBy}
-                >
-                  <RadioGroup.Indicator />
-                </RadioGroup.Item>
-                <label className={styles.text} htmlFor={key}>
-                  <span className={styles.value}>{sortBy}</span>
-                </label>
-              </div>
-            );
+          onChange={(value) => updateSortBy(value as SortBy)}
+          options={Object.values(SortBy).map((sortBy) => {
+            return { value: sortBy, label: sortBy };
           })}
-        </RadioGroup.Root>
-        <p className={styles.label}>Level</p>
-        {Object.values(Level).map((level) => {
-          const active = levels.includes(level as Level);
-
-          const key = `level-${level}`;
-
-          return (
-            <div className={styles.filter} key={key}>
-              <Checkbox.Root
-                className={styles.checkbox}
-                checked={active}
-                id={key}
-                onCheckedChange={(checked) =>
-                  updateArray(levels, updateLevels, level, checked as boolean)
-                }
-              >
-                <Checkbox.Indicator asChild>
-                  <Check width={12} height={12} />
-                </Checkbox.Indicator>
-              </Checkbox.Root>
-              <label className={styles.text} htmlFor={key}>
-                <span className={styles.value}>{level}</span>
-                {!active && ` (${filteredLevels[level].toLocaleString()})`}
-              </label>
-            </div>
-          );
-        })}
-        <p className={styles.label}>Units</p>
-        {Object.values(Unit).map((unit) => {
-          const active = units.includes(unit);
-
-          const key = `units-${unit}`;
-
-          return (
-            <div className={styles.filter} key={key}>
-              <Checkbox.Root
-                className={styles.checkbox}
-                checked={active}
-                id={key}
-                onCheckedChange={(checked) =>
-                  updateArray(units, updateUnits, unit, checked as boolean)
-                }
-              >
-                <Checkbox.Indicator asChild>
-                  <Check width={12} height={12} />
-                </Checkbox.Indicator>
-              </Checkbox.Root>
-              <label className={styles.text} htmlFor={key}>
-                <span className={styles.value}>
-                  {unit} {unit === Unit.One ? "unit" : "units"}
-                </span>
-                {!active && ` (${filteredUnits[unit].toLocaleString()})`}
-              </label>
-            </div>
-          );
-        })}
-        <p className={styles.label}>Kind</p>
+        />
+        <p className={styles.label}>LEVEL</p>
+        <Select
+          multi
+          value={levels}
+          onChange={(v) => {
+            if (Array.isArray(v)) updateLevels(v);
+          }}
+          options={Object.values(Level).map((level) => {
+            return {
+              value: level,
+              label: level,
+              meta: filteredLevels[level].toString(),
+            };
+          })}
+        />
+        <p className={styles.label}>UNITS</p>
+        <Select
+          multi
+          value={units}
+          onChange={(v) => {
+            if (Array.isArray(v)) updateUnits(v);
+          }}
+          options={Object.values(Unit).map((unit) => {
+            return {
+              value: unit,
+              label: unit,
+              meta: filteredUnits[unit].toString(),
+            };
+          })}
+        />
+        <p className={styles.label}>DAY</p>
+        <DaySelect
+          days={daysArray}
+          updateDays={(v) => {
+            setDaysArray([...v]);
+          }}
+          size="sm"
+        />
+        <p className={styles.label}>KIND</p>
         {Object.keys(filteredComponents)
-          // .slice(0, expanded ? undefined : 5)
+          .slice(0, expanded ? undefined : 5)
           .map((component) => {
             const active = components.includes(component as Component);
 
@@ -406,37 +357,16 @@ export default function Filters() {
               </div>
             );
           })}
-        {/*<div className={styles.button} onClick={() => setExpanded(!expanded)}>
+        <Button
+          variant="tertiary"
+          noFill
+          onClick={() => setExpanded(!expanded)}
+          as="button"
+          style={{ marginTop: 15 }}
+        >
+          {expanded ? "Show less" : "Show more"}
           {expanded ? <NavArrowUp /> : <NavArrowDown />}
-          {expanded ? "View less" : "View more"}
-        </div>*/}
-        <p className={styles.label}>Day</p>
-        {Object.entries(Day).map(([property, day]) => {
-          const active = days.includes(day);
-
-          const key = `day-${day}`;
-
-          return (
-            <div className={styles.filter} key={key}>
-              <Checkbox.Root
-                className={styles.checkbox}
-                checked={active}
-                id={key}
-                onCheckedChange={(checked) =>
-                  updateArray(days, updateDays, day, checked as boolean)
-                }
-              >
-                <Checkbox.Indicator asChild>
-                  <Check width={12} height={12} />
-                </Checkbox.Indicator>
-              </Checkbox.Root>
-              <label className={styles.text} htmlFor={key}>
-                <span className={styles.value}>{property}</span>
-                {!active && ` (${filteredDays[day].toLocaleString()})`}
-              </label>
-            </div>
-          );
-        })}
+        </Button>
       </div>
     </div>
   );
