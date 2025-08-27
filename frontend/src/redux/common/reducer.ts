@@ -23,7 +23,7 @@ export function commonReducer(state = initialState, action: CommonAction): Commo
 				banner: true
 			};
 		case CLOSE_BANNER:
-			const bannerType = 'enrollment-survey';
+			const bannerType = 'fa25recruitment';
 			localStorage.setItem('bt-hide-banner', bannerType);
 			return {
 				...state,
