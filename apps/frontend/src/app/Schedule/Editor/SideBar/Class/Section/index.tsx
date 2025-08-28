@@ -20,8 +20,9 @@ export default function Section({
   active,
   sectionId,
   number,
-  meetings: [{ startTime, endTime, days }],
+  meetings,
 }: SectionProps & ISection) {
+  const meeting = meetings.length > 0 ? meetings[0] : null;
   return (
     <div
       className={classNames(styles.root, {
@@ -36,9 +37,9 @@ export default function Section({
       <p className={styles.title}>{number}</p>
       <CCN sectionId={sectionId} tooltip={false} />
       <Time
-        endTime={endTime}
-        startTime={startTime}
-        days={days}
+        endTime={meeting?.endTime ?? null}
+        startTime={meeting?.startTime ?? null}
+        days={meeting?.days ?? null}
         tooltip={false}
         className={styles.time}
       />

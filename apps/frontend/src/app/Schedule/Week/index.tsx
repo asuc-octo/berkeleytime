@@ -102,6 +102,7 @@ export default function Week({
           // Filter sections for the current day which have a time specified
           .filter(
             (section) =>
+              section.meetings.length > 0 &&
               section.meetings[0].days[day] &&
               section.meetings[0].startTime &&
               getY(section.meetings[0].startTime) > 0
