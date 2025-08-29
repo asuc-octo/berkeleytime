@@ -7,6 +7,9 @@ Welcome to the Berkeleytime Docs! This is the primary documentation source for d
 
 ## Getting Started
 
+> [!NOTE]
+> The following are instructions to set up the documentation locally. To set up the Berkeleytime app locally, go to the [Local Development](./getting-started/local-development.md) section.
+
 ### Developing and Building Locally
 
 There are two options: with and without containerization (ie. Docker).
