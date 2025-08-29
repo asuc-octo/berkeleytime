@@ -25,12 +25,12 @@ const Berkeleytime = () => {
 		// Fetch enrollment context early on for catalog and enrollment page.
 		dispatch(fetchEnrollContext());
 
-		const bannerType = 'fa25recruitment'; // should match value in ./redux/common/reducer.ts
+		const bannerType = 'enrollment-survey'; // should match value in ./redux/common/reducer.ts
 		if (localStorage.getItem('bt-hide-banner') !== bannerType) {
 			dispatch(openBanner());
 		}
 
-		const modalType = 'sp22scheduler'; // should match value in ./redux/common/reducer.ts
+		const modalType = 'fa25recruitment'; // should match value in ./redux/common/reducer.ts
 		if (localStorage.getItem('bt-hide-landing-modal') !== modalType) {
 			dispatch(openLandingModal());
 		}
