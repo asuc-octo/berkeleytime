@@ -10,7 +10,7 @@ import { closeLandingModal } from '../../redux/common/actions';
 const modal_info = {
 	subtitle: '',
 	title: 'Join the Berkeleytime Team!',
-	message: 'Love using Berkeleytime? Join the team! No experience required. Developers, designers, researchers, marketers and more welcome.',
+	message: 'Love using Berkeleytime? Join the team! No experience required. Developers, designers, researchers, marketers and more are all welcome.',
 	button: 'Apply',
 	link: '/apply',
 	img: null
