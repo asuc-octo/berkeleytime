@@ -5,21 +5,21 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function Banner() {
-	const [open, setOpen] = useState(() => localStorage.getItem('fa25recruitment') !== '1');
+	const [open, setOpen] = useState(() => localStorage.getItem('enrollment-survey') !== '1');
 
 	const closeBanner = () => {
 		setOpen(false);
-		localStorage.setItem('fa25recruitment', '1');
+		localStorage.setItem('enrollment-survey', '1');
 	};
 
 	return open ? (
 		<div className="banner">
 			<div className="content">
 				<p>
-				Love using Berkeleytime? Join the team! No experience required. Developers, designers, researchers, marketers and more welcome.
+				Check out the beta version of the new Berkeleytime!
 				</p>
-				<Link to="/apply">
-					<Button size="sm">Apply</Button>
+				<Link to="https://beta.berkeleytime.com">
+					<Button size="sm">Open Beta</Button>
 				</Link>
 			</div>
 			<img src={close} alt="close" onClick={() => closeBanner()} />
