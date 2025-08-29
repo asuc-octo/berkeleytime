@@ -59,10 +59,10 @@ jobs:
           suspend: true
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
-        host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
+        host: ${{ needs.compute-sha.outputs.sha_short }}.dev.berkeleytime.com
         mongoUri: mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
-      host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
+      host: ${{ needs.compute-sha.outputs.sha_short }}.dev.berkeleytime.com
     secrets: inherit
 
   limit-deploy:

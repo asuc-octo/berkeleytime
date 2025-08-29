@@ -21,7 +21,7 @@ on:
         type: string
       values:
         description: "Helm chart override values (yaml)"
-        required: true
+        default: ""
         type: string
 
 jobs:

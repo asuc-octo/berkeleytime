@@ -37,8 +37,8 @@ jobs:
         datapuller:
           image:
             tag: latest
-        host: staging.stanfurdtime.com
+        host: staging.berkeleytime.com
         mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
-      host: staging.stanfurdtime.com
+      host: staging.berkeleytime.com
     secrets: inherit

@@ -32,7 +32,5 @@ jobs:
       environment: production
       name: bt-prod-app
       version: "1.0.0"
-      values: |
-        host: beta.berkeleytime.com
-      host: beta.berkeleytime.com
+      host: berkeleytime.com
     secrets: inherit
