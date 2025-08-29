@@ -30,7 +30,7 @@ const Berkeleytime = () => {
 			dispatch(openBanner());
 		}
 
-		const modalType = 'sp22scheduler'; // should match value in ./redux/common/reducer.ts
+		const modalType = 'fa25recruitment'; // should match value in ./redux/common/reducer.ts
 		if (localStorage.getItem('bt-hide-landing-modal') !== modalType) {
 			dispatch(openLandingModal());
 		}
