@@ -1,4 +1,4 @@
 export function Component() {
-	window.location.replace('https://berkeley.zoom.us/j/98571384504');
+	window.location.replace('https://berkeley.zoom.us/j/92398809763');
 	return null;
 }
