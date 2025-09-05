@@ -100,23 +100,25 @@ export default function Week({
 
         const relevantSections = sections
           // Filter sections for the current day which have a time specified
-          .filter(
-            (section) =>
-              section.meetings.length > 0 &&
-              section.meetings[0].days[day] &&
-              section.meetings[0].startTime &&
-              getY(section.meetings[0].startTime) > 0
-          )
-          .map(
-            (section) =>
-              ({
-                section,
-                startTime: section.meetings[0].startTime,
-                endTime: section.meetings[0].endTime,
-                days: section.meetings[0].days,
-                id: section.sectionId,
-                type: "section",
-              }) as ScheduleEvent
+          .flatMap((section) =>
+            section.meetings
+              .filter(
+                (meeting) =>
+                  meeting.days[day] &&
+                  meeting.startTime &&
+                  getY(meeting.startTime) > 0
+              )
+              .map(
+                (meeting) =>
+                  ({
+                    section,
+                    startTime: meeting.startTime,
+                    endTime: meeting.endTime,
+                    days: meeting.days,
+                    id: section.sectionId,
+                    type: "section",
+                  }) as ScheduleEvent
+              )
           );
 
         const relevantEventsAndSections = [
