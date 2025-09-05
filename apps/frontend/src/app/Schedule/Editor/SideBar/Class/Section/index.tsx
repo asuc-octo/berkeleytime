@@ -22,8 +22,8 @@ export default function Section({
   number,
   meetings,
 }: SectionProps & ISection) {
-  const meeting = meetings.length > 0 ? meetings[0] : null;
-  return (
+  const meetingsAdjusted = meetings.length > 0 ? meetings : [null];
+  return meetingsAdjusted.map((meeting) => (
     <div
       className={classNames(styles.root, {
         [styles.active]: active,
@@ -44,5 +44,5 @@ export default function Section({
         className={styles.time}
       />
     </div>
-  );
+  ));
 }

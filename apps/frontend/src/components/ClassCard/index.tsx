@@ -82,10 +82,12 @@ export default function ClassCard({
           </Card.Footer>
         </Card.Body>
         <Card.Actions>
-          <AverageGrade
-            gradeDistribution={gradeDistribution}
-            style={{ marginTop: 0.5, fontSize: 15 }}
-          />
+          {gradeDistribution && (
+            <AverageGrade
+              gradeDistribution={gradeDistribution}
+              style={{ marginTop: 0.5, fontSize: 15 }}
+            />
+          )}
           {bookmarked && bookmarkToggle && (
             <Card.ActionIcon onClick={bookmarkToggle}>
               {bookmarked ? (
