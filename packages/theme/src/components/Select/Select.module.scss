@@ -29,8 +29,6 @@
 
 }
 
-
-
 .content {
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);
@@ -38,8 +36,4 @@
   max-height: 148px;
   overflow-y: scroll;
   scrollbar-color: var(--label-color) var(--foreground-color);
-}
-
-.radix-menu-item {
-  outline: none !important;
 }

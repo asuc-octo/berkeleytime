@@ -25,3 +25,6 @@ apps/frontend/tsconfig.node.tsbuildinfo
 apps/frontend/tsconfig.tsbuildinfo
 apps/frontend/vite.config.d.ts
 apps/frontend/vite.config.js
+*storybook.log
+storybook-static
+vitest.config.js

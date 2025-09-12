@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Search } from "iconoir-react";
 
-import { Badge, LoadingIndicator } from "@repo/theme";
+import { Badge, Color, LoadingIndicator } from "@repo/theme";
 
 import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
@@ -121,7 +121,7 @@ export default function CourseSearch({
                           setIsOpen(false);
                         }}
                         label={`${course.subject} ${course.number}`}
-                        color="zinc"
+                        color={Color.zinc}
                         style={{
                           cursor: "pointer",
                         }}

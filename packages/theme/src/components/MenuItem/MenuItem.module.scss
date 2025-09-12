@@ -30,6 +30,10 @@
     opacity: 1;
   }
 
+  &:focus-visible {
+    outline: none;
+  }
+
   &::before {
     content: "";
     position: absolute;

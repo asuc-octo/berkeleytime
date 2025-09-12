@@ -22,7 +22,7 @@
     color: var(--heading-color);
   }
   .description {
-    width: 100%;
+    width: calc(100% - 24px);
     border-top: 1px solid var(--border-color);
     color: var(--paragraph-color);
     padding: 8px 12px;

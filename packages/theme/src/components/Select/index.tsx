@@ -12,6 +12,7 @@ import { NavArrowDown, Xmark } from "iconoir-react";
 import { DropdownMenu } from "radix-ui";
 
 import { Badge } from "../Badge";
+import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
 import SelectItem from "./SelectItem";
 
@@ -113,7 +114,7 @@ export function Select<T>({
                 {activeLabel.map((l) => (
                   <Badge
                     label={l}
-                    color="blue"
+                    color={Color.blue}
                     icon={
                       <Xmark
                         style={{ zIndex: 100 }}
@@ -161,7 +162,7 @@ export function Select<T>({
             return (
               <DropdownMenu.Item
                 key={i}
-                className={styles.radixMenuItem}
+                style={{ outline: "none" }}
                 onSelect={(e) => {
                   if (multi) {
                     e.preventDefault();

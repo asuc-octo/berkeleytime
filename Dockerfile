@@ -64,3 +64,17 @@ FROM frontend-dev AS frontend-prod
 RUN ["turbo", "run", "build", "--filter=frontend", "--env-mode=loose"]
 
 ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]
+
+# storybook
+FROM base AS storybook-dev
+WORKDIR /storybook
+
+COPY --from=frontend-builder /frontend/out/json/ .
+COPY --from=frontend-builder /frontend/out/package-lock.json ./package-lock.json
+RUN ["npm", "install"]
+
+COPY --from=frontend-builder /frontend/out/full/ .
+ENTRYPOINT ["npm", "run", "storybook", "--", "--no-open"]
+
+FROM storybook-dev AS storybook-prod
+ENTRYPOINT ["npm", "run", "build-storybook"]
