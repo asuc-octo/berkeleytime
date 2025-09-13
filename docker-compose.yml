@@ -65,3 +65,17 @@ services:
     networks:
       - bt
     restart: always
+  storybook:
+    build:
+      context: .
+      target: storybook-dev
+    ports:
+      - 6006:6006
+    networks:
+      - bt
+    restart: always
+    volumes:
+      - ./packages/theme/src:/storybook/packages/theme/src
+      - ./apps/frontend/src:/storybook/apps/frontend/src
+      - ./.storybook:/storybook/.storybook
+

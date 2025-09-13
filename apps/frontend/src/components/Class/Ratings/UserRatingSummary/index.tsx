@@ -1,7 +1,7 @@
 import { EditPencil, Trash } from "iconoir-react";
 
 import { METRIC_ORDER, MetricName } from "@repo/shared";
-import { Badge, Flex, IconButton, Tooltip } from "@repo/theme";
+import { Badge, Color, Flex, IconButton, Tooltip } from "@repo/theme";
 
 import {
   UserRating,
@@ -57,7 +57,9 @@ export default function UserRatingSummary({
                   <h3 className={styles.metric}>{metric.metricName}</h3>
                 </div>
                 <Badge
-                  color={getStatusColor(metric.metricName, metric.value)}
+                  color={
+                    getStatusColor(metric.metricName, metric.value) as Color
+                  }
                   label={getMetricStatus(metric.metricName, metric.value)}
                 />
                 <span

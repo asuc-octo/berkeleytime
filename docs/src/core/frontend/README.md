@@ -149,6 +149,14 @@ body:not([data-theme]) {
 }
 ```
 
+### Berkeleytime-specific Components
+
+A number of the Radix primitives and other commonly-used components have since also been adapted to specifically fit Berkeleytime's needs by the design team. These components should be used whenever possible. A full list of components can be found in `packages/theme/src/components`. 
+
+#### Storybook
+
+To view some of these components and common applications, you can go to our Storybook. When running with `docker compose`, this will automatically be hosted at `localhost:6006`. 
+
 ### Application
 
 I'm sure you've seen a [Vite, React, and TypeScript app](https://vite.dev/guide/#scaffolding-your-first-vite-project) in the wild before, and we tend to follow most common practices, which includes using [React Router](https://reactrouter.com/home).
