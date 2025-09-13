@@ -138,13 +138,13 @@ export default function HoverInfo({
       )}
       <div className={styles.label}>Course Average</div>
       <div className={styles.value}>
-        {courseGradeDist && gradeDistribution ? (
+        {courseGradeDist ? (
           <span>
             <AverageGrade
               style={GRADE_STYLE}
               gradeDistribution={courseGradeDist}
             />
-            ({gradeDistribution.average?.toFixed(3)})
+            ({courseGradeDist.average?.toFixed(3)})
           </span>
         ) : (
           "No data"
