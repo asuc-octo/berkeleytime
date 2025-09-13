@@ -18,7 +18,7 @@ jobs:
       chart_ver: 0.1.0-stage
     secrets: inherit
 
-  deploy_bt:
+  deploy:
     name: SSH and Deploy
     needs: [build-push]
     uses: ./.github/workflows/cd-deploy.yaml
@@ -41,21 +41,4 @@ jobs:
         mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
       host: staging.stanfurdtime.com
-    secrets: inherit
-
-  deploy_storybook:
-    name: SSH and Deploy Storybook
-    needs: [build-push]
-    uses: ./.github/workflows/cd-deploy.yaml
-    with:
-      environment: staging
-      name: bt-stage-storybook
-      version: 0.1.0-stage
-      values: |
-        env: stage
-        storybook:
-          image:
-            tag: latest
-        host: storybook.stanfurdtime.com
-      host: storybook.stanfurdtime.com
     secrets: inherit
