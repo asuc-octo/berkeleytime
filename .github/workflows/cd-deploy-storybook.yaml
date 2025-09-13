@@ -57,7 +57,7 @@ jobs:
             # Upgrade helm chart, or install if not exists
             helm upgrade bt-prod-storybook oci://registry-1.docker.io/octoberkeleytime/bt-storybook \
               --install \
-              --version=1.0.0 \
+              --version=prod \
               --namespace=bt \
               --set host=storybook.stanfurdtime.com
 
