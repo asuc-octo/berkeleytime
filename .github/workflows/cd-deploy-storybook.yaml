@@ -59,7 +59,7 @@ jobs:
 
   deploy:
     name: SSH and Deploy
-    needs: [build-push]
+    needs: [build-push-image, build-push-chart]
     runs-on: ubuntu-latest
     environment:
       name: storybook
