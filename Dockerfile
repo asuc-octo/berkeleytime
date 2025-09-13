@@ -69,6 +69,7 @@ ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]
 FROM base AS storybook-dev
 WORKDIR /storybook
 
+COPY .storybook .
 COPY --from=frontend-builder /frontend/out/json/ .
 COPY --from=frontend-builder /frontend/out/package-lock.json ./package-lock.json
 RUN ["npm", "install"]
