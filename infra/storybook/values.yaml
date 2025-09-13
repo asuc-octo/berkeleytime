@@ -13,5 +13,5 @@ frontend:
 
   image:
     registry: docker.io
-    repository: octoberkeleytime/bt-storybook-frontend
+    repository: octoberkeleytime/bt-storybook
     tag: prod
