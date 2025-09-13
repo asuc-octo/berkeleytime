@@ -34,7 +34,7 @@ jobs:
           push: true
 
   build-push-chart:
-    name: Build and Push STorybook Helm Chart
+    name: Build and Push Storybook Helm Chart
     runs-on: ubuntu-latest
 
     steps:
@@ -81,7 +81,7 @@ jobs:
             # Upgrade helm chart, or install if not exists
             helm upgrade bt-prod-storybook oci://registry-1.docker.io/octoberkeleytime/bt-storybook \
               --install \
-              --version=0.1.0-stage \
+              --version=0.1.0 \
               --namespace=bt \
               --set host=storybook.stanfurdtime.com
 
