@@ -10,6 +10,7 @@ import Rating from "./rating";
 import Schedule from "./schedule";
 import Term from "./term";
 import User from "./user";
+import discussion from "./discussion";
 
 const modules = [
   User,
@@ -22,6 +23,7 @@ const modules = [
   Class,
   Enrollment,
   Rating,
+  discussion,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));

@@ -1,78 +1,28 @@
 import mongoose, { InferSchemaType, Schema } from "mongoose";
 
-const commentSchema = new Schema(
+const discussionSchema = new Schema(
   {
     _id: { type: Schema.Types.ObjectId, auto: true },
-    subject: {
+
+    createdBy: {
       type: String,
+      trim: true,
       required: true,
     },
-    courseNumber: {
-      type: String,
-      required: true,
-    },
-    semester: {
-      type: String,
-      required: true,
-    },
-    year: {
-      type: Number,
-      required: true,
-    },
-    classNumber: {
-      type: String,
-      required: true,
-    },
+    subject: { type: String, required: true, index: true },
+    courseNumber: { type: String, required: true, index: true },
+    semester: { type: String, required: true, index: true },
+    year: { type: Number, required: true, index: true },
+    classNumber: { type: String, required: true, index: true },
     value: {
       type: String,
       required: true,
     },
   },
   {
-    timestamps: true,
+    timestamps: true, 
   }
 );
 
-export const CommentModel = mongoose.model("comment", commentSchema);
-export type CommentType = InferSchemaType<typeof commentSchema>;
-/*
-const aggregatedCommentSchema = new Schema({
-  _id: { type: Schema.Types.ObjectId, auto: true },
-  subject: {
-    type: String,
-    required: true,
-  },
-  courseNumber: {
-    type: String,
-    required: true,
-  },
-  semester: {
-    type: String,
-    required: true,
-  },
-  year: {
-    type: Number,
-    required: true,
-  },
-  classNumber: {
-    type: String,
-    required: true,
-  },
-  categoryValue: {
-    type: Number,
-    required: true,
-  },
-  categoryCount: {
-    type: Number,
-    required: true,
-  },
-});
-
-export const AggregatedMetricsModel = mongoose.model(
-  "aggregatedMetrics",
-  aggregatedMetricsSchema
-);
-export type AggregatedMetricsSchema = InferSchemaType<
-  typeof aggregatedMetricsSchema
->;
-*/
+export const DiscussionModel = mongoose.model("discussion", discussionSchema);
+export type DiscussionType = InferSchemaType<typeof discussionSchema>;
