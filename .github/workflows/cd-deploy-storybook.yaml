@@ -3,7 +3,7 @@ name: Deploy Storybook
 on:
   push:
     branches: [master, gql]
-    paths: ["packages/common/src/**", ".storybook/**", "Dockerfile", "docker-compose.yml"]
+    paths: ["packages/common/src/**", ".storybook/**", "Dockerfile", "docker-compose.yml", ".github/workflows/cd-deploy-storybook.yaml"]
 
 jobs:
   build-push:
@@ -26,7 +26,6 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          context: storybook
           target: storybook-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod-cache
