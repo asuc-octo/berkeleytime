@@ -3,7 +3,7 @@ name: Deploy Storybook
 on:
   push:
     branches: [master, gql]
-    paths: ["packages/common/src/**", ".storybook/**", "Dockerfile", "docker-compose.yml", ".github/workflows/cd-deploy-storybook.yaml"]
+    paths: ["packages/common/src/**", ".storybook/**", "Dockerfile", "docker-compose.yml", ".github/workflows/cd-deploy-storybook.yaml", "infra/storybook/**"]
 
 jobs:
   build-push:
