@@ -23,7 +23,7 @@ const updateTerms = async (
   log.trace("Deleting terms to be replaced...");
 
   const { deletedCount } = await TermModel.deleteMany({
-    id: { $nin: termIds },
+    id: { $in: termIds },
   });
 
   log.info(`Deleted ${deletedCount.toLocaleString()} terms.`);
