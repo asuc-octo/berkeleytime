@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bt-storybook.frontendName" . }}
+  labels:
+    {{- include "bt-storybook.frontendLabels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      {{- include "bt-storybook.frontendLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bt-storybook.frontendLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: frontend
+          image: {{ printf "%s/%s:%s" .Values.frontend.image.registry .Values.frontend.image.repository ( toString .Values.frontend.iamge.tag ) }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.frontend.port }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bt-storybook.frontendName" . }}-svc
+  labels:
+    {{- include "bt-storybook.frontendLabels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "bt-storybook.frontendLabels" . | nindent 4 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.port }}
+      targetPort: {{ .Values.frontend.port }}

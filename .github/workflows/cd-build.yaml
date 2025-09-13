@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [backend, frontend, datapuller]
+        image: [backend, frontend, datapuller, storybook]
 
     steps:
       - name: Login to Docker Hub
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chart: [app, base]
+        chart: [app, base, storybook]
 
     steps:
       - name: Checkout Repository
