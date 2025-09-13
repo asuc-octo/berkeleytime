@@ -78,7 +78,6 @@ COPY --from=frontend-builder /frontend/out/full/ .
 ENTRYPOINT ["npm", "run", "storybook", "--", "--no-open"]
 
 FROM storybook-dev AS storybook-prod
-ENTRYPOINT ["npm", "run", "build-storybook", "--", "--no-open"]
+ENTRYPOINT ["npm", "run", "build-storybook", "-o", "/var/www/html", "--", "--no-open"]
 COPY .storybook/nginx.conf /etc/nginx/conf.d/default.conf
-COPY /storybook-static /var/www/html
 EXPOSE 80
