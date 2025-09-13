@@ -69,13 +69,14 @@ ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]
 FROM base AS storybook-dev
 WORKDIR /storybook
 
-COPY .storybook .
 COPY --from=frontend-builder /frontend/out/json/ .
 COPY --from=frontend-builder /frontend/out/package-lock.json ./package-lock.json
 RUN ["npm", "install"]
 
 COPY --from=frontend-builder /frontend/out/full/ .
 ENTRYPOINT ["npm", "run", "storybook", "--", "--no-open"]
+
+COPY .storybook .
 
 FROM storybook-dev AS storybook-prod
 COPY .storybook/nginx.conf /etc/nginx/conf.d/default.conf
