@@ -1,0 +1,67 @@
+.discussionContainer {
+  display: flex;
+  height: 100%;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 2rem;
+}
+
+.commentBox {
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.user {
+  font-weight: bold;
+  color: var(--blue-500);
+}
+
+.timestamp {
+  font-size: 0.9em;
+  color: var(--paragraph-color);
+}
+
+.commentText {
+  margin-top: 0.5rem;
+  color: var(--paragraph-color);
+}
+
+.chatbox {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  background: var(--foreground-color);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--foreground-color);
+  color: var(--paragraph-color);
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background: var(--blue-500);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
