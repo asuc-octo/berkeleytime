@@ -27,15 +27,9 @@ const discussionSchema = new Schema<IDiscussionItem>({
   createdBy: { type: String, required: true }
 } , {timestamps: true});
 
-// discussionSchema.index(
-//   { courseNumber: 1 , subject: 1 },
-//   // { unique: true }
-// );
-
-// discussionSchema.index(
-//   { courseNumber: 1 , subject: 1, createdBy: 1, createdAt: 1 },
-//   { unique: true }
-// );
+discussionSchema.index(
+  { courseNumber: 1 , subject: 1 }
+);
 
 export const NewDiscussionModel: Model<IDiscussionItem> =
   model<IDiscussionItem>("discussions", discussionSchema);
