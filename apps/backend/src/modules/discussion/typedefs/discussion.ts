@@ -5,7 +5,7 @@ export default gql`
     discussion(
       subject: String!
       courseNumber: CourseNumber!
-    ): Discussion
+    ): [Discussion!]
   }
 
   type Mutation {

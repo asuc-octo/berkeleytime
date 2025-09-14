@@ -1,4 +1,4 @@
-import { NewDiscussionModel } from "@repo/common";
+import { IDiscussionItem, NewDiscussionModel } from "@repo/common";
 
 import { formatDiscussion } from "./formatter";
 import { GraphQLError } from "graphql";
@@ -7,14 +7,14 @@ export const getDiscussion = async (
   subject: string,
   courseNumber: string,
 ) => {
-  const discussion = await NewDiscussionModel.findOne({
+  const comments = await NewDiscussionModel.find({
     subject,
     courseNumber
   }).lean();
 
-  if (!discussion) return null;
+  if (!comments) return null;
 
-  return formatDiscussion(discussion);
+  return comments.map((_comment) => formatDiscussion(_comment as IDiscussionItem));
 };
 
 export const createComment = async (
