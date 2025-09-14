@@ -12,6 +12,7 @@ import { ThemeProvider } from "@repo/theme";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+import Discussions from "@/components/Class/Discussions";
 
 // import PinsProvider from "@/components/PinsProvider";
 
@@ -28,6 +29,7 @@ const Class = {
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
   Ratings: lazy(() => import("@/components/Class/Ratings")),
+  Discussions: lazy(() => import("@/components/Class/Discussions")),
 };
 
 const Course = {
@@ -243,6 +245,14 @@ const router = createBrowserRouter([
             index: true,
           },
           {
+            path: "discussions",
+            element: (
+              <SuspenseBoundary>
+                <Discussions />
+              </SuspenseBoundary>
+            ),
+          },
+          {
             element: (
               <SuspenseBoundary key="sections">
                 <Class.Sections />
@@ -314,6 +324,14 @@ const router = createBrowserRouter([
 const client = new ApolloClient({
   uri: "/api/graphql",
   cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      errorPolicy: 'all',
+    },
+    query: {
+      errorPolicy: 'all',
+    },
+  },
 });
 
 export default function App() {

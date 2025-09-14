@@ -10,9 +10,10 @@ import Rating from "./rating";
 import Schedule from "./schedule";
 import Term from "./term";
 import User from "./user";
-
+import Discussion from "./discussion";
 const modules = [
   User,
+  Discussion,
   GradeDistribution,
   Catalog,
   Common,

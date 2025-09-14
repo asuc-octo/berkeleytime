@@ -1,0 +1,144 @@
+.container {
+  width: 100%;
+  color: var(--heading-color);
+}
+
+.heading {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--heading-color);
+}
+
+.subheading {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: var(--heading-color);
+}
+
+.listHeading {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 24px 0 16px;
+  color: var(--heading-color);
+}
+
+.formCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  background-color: var(--foreground-color);
+  color: var(--heading-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: var(--paragraph-color);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 3px var(--blue-500-20);
+  }
+
+  &:disabled {
+    background-color: var(--background-color);
+    color: var(--paragraph-color);
+    cursor: not-allowed;
+  }
+}
+
+.emptyCard {
+  text-align: center;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 48px 24px;
+  color: var(--paragraph-color);
+}
+
+.commentCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgb(0 0 0 / 10%);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.authorName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--blue-500);
+}
+
+.commentMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.commentDate {
+  font-size: 12px;
+  color: var(--paragraph-color);
+}
+
+.commentContent {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--heading-color);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.deleteButton {
+  padding: 4px;
+  border: none;
+  background: none;
+  color: var(--red-500);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--red-50);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--red-500-20);
+  }
+}
+  

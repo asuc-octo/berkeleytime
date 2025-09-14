@@ -7,3 +7,5 @@ export * from "./section";
 export * from "./rating";
 export * from "./grade-distribution";
 export * from "./enrollment-history";
+export { default as Discussion } from "./Discussion";
+export type { DiscussionDoc } from "./Discussion";
