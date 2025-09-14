@@ -122,24 +122,6 @@ export default function Class({
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
 
-  console.log("Class component props:", {
-    year,
-    semester,
-    subject,
-    courseNumber,
-    number,
-    providedClass: providedClass
-      ? {
-          year: providedClass.year,
-          semester: providedClass.semester,
-          subject: providedClass.subject,
-          courseNumber: providedClass.courseNumber,
-          number: providedClass.number,
-        }
-      : null,
-    dialog,
-  });
-
   const { data: user, loading: userLoading } = useReadUser();
 
   const [updateUser] = useUpdateUser();
@@ -162,23 +144,7 @@ export default function Class({
     }
   );
 
-  const _class = useMemo(() => {
-    const result = providedClass ?? data;
-    console.log("_class computed:", {
-      fromProvidedClass: !!providedClass,
-      fromData: !!data,
-      result: result
-        ? {
-            year: result.year,
-            semester: result.semester,
-            subject: result.subject,
-            courseNumber: result.courseNumber,
-            number: result.number,
-          }
-        : null,
-    });
-    return result;
-  }, [data, providedClass]);
+  const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
 
   const bookmarked = useMemo(
     () =>

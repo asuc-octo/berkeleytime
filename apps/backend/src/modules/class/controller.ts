@@ -24,9 +24,9 @@ export const getClass = async (
     number,
   }).lean();
 
-  if (!_class) {
-    return null;
-  }
+  console.log(await ClassModel.countDocuments({}));
+
+  if (!_class) return null;
 
   return formatClass(_class as IClassItem);
 };
