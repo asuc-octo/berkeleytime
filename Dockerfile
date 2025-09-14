@@ -75,7 +75,7 @@ RUN ["npm", "install"]
 
 COPY --from=frontend-builder /frontend/out/full/ .
 
-COPY .storybook .
+COPY .storybook .storybook
 
 ENTRYPOINT ["npm", "run", "storybook", "--", "--no-open"]
 
@@ -88,7 +88,7 @@ RUN ["npm", "install"]
 
 COPY --from=frontend-builder /frontend/out/full/ .
 
-COPY .storybook .
+COPY .storybook .storybook
 COPY .storybook/nginx.conf /etc/nginx/conf.d/default.conf
 RUN ["npm", "run", "build-storybook", "-o", "/var/www/html"]
 EXPOSE 80
