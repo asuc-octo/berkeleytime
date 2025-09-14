@@ -28,6 +28,8 @@ const Class = {
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
   Ratings: lazy(() => import("@/components/Class/Ratings")),
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
+  
 };
 
 const Course = {
@@ -36,6 +38,7 @@ const Course = {
   Grades: lazy(() => import("@/components/Course/Grades")),
   Overview: lazy(() => import("@/components/Course/Overview")),
   Classes: lazy(() => import("@/components/Course/Classes")),
+  
 };
 
 const Catalog = lazy(() => import("@/app/Catalog"));
@@ -277,6 +280,14 @@ const router = createBrowserRouter([
                 `/catalog/${year}/${semester}/${subject}/${courseNumber}`
               ),
           },
+          {
+            element: (
+              <SuspenseBoundary key="discussion">
+                <Class.Discussion />
+              </SuspenseBoundary>
+            ),
+            path: "discussion",
+          }
         ],
       },
       {

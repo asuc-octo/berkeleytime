@@ -1,0 +1,75 @@
+.root {
+  padding: 24px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.commentForm {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 32px;
+}
+
+.textArea {
+  min-height: 100px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--foreground-color); // Uses theme color
+  color: var(--paragraph-color);
+  font-size: 16px;
+  resize: vertical;
+  margin-bottom: 12px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-500);
+  }
+}
+
+.submitButton {
+  align-self: flex-end;
+  padding: 10px 20px;
+  background-color: var(--blue-500);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 150ms ease-in-out;
+
+  &:hover {
+    background-color: var(--blue-600);
+  }
+}
+
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.commentItem {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--foreground-color); // Uses theme color
+  border: 1px solid var(--border-color);
+
+  p {
+    margin: 0 0 8px;
+    color: var(--paragraph-color);
+  }
+
+  small {
+    color: var(--label-color);
+  }
+}
+
+.noComments {
+  text-align: center;
+  color: var(--label-color);
+  padding: 32px;
+}

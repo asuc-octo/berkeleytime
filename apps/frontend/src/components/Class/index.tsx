@@ -45,6 +45,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Discussion = lazy(() => import("./Discussion"));
 
 interface BodyProps {
   children: ReactNode;
@@ -419,6 +420,9 @@ export default function Class({
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
                     */}
+                    <Tabs.Trigger value="discussion" asChild>
+                      <MenuItem>Discussion</MenuItem>
+                    </Tabs.Trigger>
                     <NavLink
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                     >
@@ -468,6 +472,11 @@ export default function Class({
                       </MenuItem>
                     )}
                   </NavLink>
+                  <NavLink to={{ ...location, pathname: "discussion" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Discussion</MenuItem>
+                    )}
+                  </NavLink>
                 </Flex>
               )}
             </Flex>
@@ -503,6 +512,11 @@ export default function Class({
             <Tabs.Content value="ratings" asChild>
               <SuspenseBoundary>
                 <Ratings />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="discussion" asChild>
+              <SuspenseBoundary>
+                <Discussion />
               </SuspenseBoundary>
             </Tabs.Content>
           </Body>
