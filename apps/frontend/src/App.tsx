@@ -28,6 +28,7 @@ const Class = {
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
   Ratings: lazy(() => import("@/components/Class/Ratings")),
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
 };
 
 const Course = {
@@ -271,6 +272,14 @@ const router = createBrowserRouter([
             path: "ratings",
           },
           {
+            element: (
+              <SuspenseBoundary key="discussion">
+                <Class.Discussion />
+              </SuspenseBoundary>
+            ),
+            path: "discussion",
+          },
+          {
             path: "*",
             loader: ({ params: { year, semester, subject, courseNumber } }) =>
               redirect(
@@ -313,7 +322,21 @@ const router = createBrowserRouter([
 
 const client = new ApolloClient({
   uri: "/api/graphql",
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    addTypename: false,
+  }),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "network-only",
+      errorPolicy: "all",
+      notifyOnNetworkStatusChange: true,
+    },
+    query: {
+      fetchPolicy: "network-only",
+      errorPolicy: "all",
+      notifyOnNetworkStatusChange: true,
+    },
+  },
 });
 
 export default function App() {

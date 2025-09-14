@@ -8,6 +8,7 @@ export const useReadClass = (
   subject: string,
   courseNumber: string,
   number: string,
+  sessionId?: string,
   options?: Omit<QueryHookOptions<ReadClassResponse>, "variables">
 ) => {
   const query = useQuery<ReadClassResponse>(READ_CLASS, {
@@ -15,6 +16,7 @@ export const useReadClass = (
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,

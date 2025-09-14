@@ -28,3 +28,4 @@ apps/frontend/vite.config.js
 *storybook.log
 storybook-static
 vitest.config.js
+CLAUDE.md

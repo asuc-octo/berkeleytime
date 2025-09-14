@@ -228,6 +228,7 @@ export const READ_CLASS = gql`
     ) {
       year
       semester
+      sessionId
       subject
       courseNumber
       number

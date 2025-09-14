@@ -77,6 +77,7 @@ export default function Catalog() {
     subject as string,
     courseNumber as string,
     number as string,
+    "1", // Default sessionId to "1"
     {
       skip: !subject || !courseNumber || !number || !term,
     }

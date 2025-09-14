@@ -45,6 +45,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Discussion = lazy(() => import("./Discussion"));
 
 interface BodyProps {
   children: ReactNode;
@@ -121,6 +122,24 @@ export default function Class({
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
 
+  console.log("Class component props:", {
+    year,
+    semester,
+    subject,
+    courseNumber,
+    number,
+    providedClass: providedClass
+      ? {
+          year: providedClass.year,
+          semester: providedClass.semester,
+          subject: providedClass.subject,
+          courseNumber: providedClass.courseNumber,
+          number: providedClass.number,
+        }
+      : null,
+    dialog,
+  });
+
   const { data: user, loading: userLoading } = useReadUser();
 
   const [updateUser] = useUpdateUser();
@@ -136,13 +155,30 @@ export default function Class({
     subject as string,
     courseNumber as string,
     number as string,
+    "1", // Default sessionId to "1"
     {
       // Allow class to be provided
       skip: !!providedClass,
     }
   );
 
-  const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+  const _class = useMemo(() => {
+    const result = providedClass ?? data;
+    console.log("_class computed:", {
+      fromProvidedClass: !!providedClass,
+      fromData: !!data,
+      result: result
+        ? {
+            year: result.year,
+            semester: result.semester,
+            subject: result.subject,
+            courseNumber: result.courseNumber,
+            number: result.number,
+          }
+        : null,
+    });
+    return result;
+  }, [data, providedClass]);
 
   const bookmarked = useMemo(
     () =>
@@ -431,6 +467,9 @@ export default function Class({
                         )}
                       </MenuItem>
                     </NavLink>
+                    <Tabs.Trigger value="discussion" asChild>
+                      <MenuItem>Discussion</MenuItem>
+                    </Tabs.Trigger>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -468,12 +507,17 @@ export default function Class({
                       </MenuItem>
                     )}
                   </NavLink>
+                  <NavLink to={{ ...location, pathname: "discussion" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Discussion</MenuItem>
+                    )}
+                  </NavLink>
                 </Flex>
               )}
             </Flex>
           </Container>
         </Box>
-        <ClassContext
+        <ClassContext.Provider
           value={{
             class: _class,
             course,
@@ -505,8 +549,15 @@ export default function Class({
                 <Ratings />
               </SuspenseBoundary>
             </Tabs.Content>
+            <Tabs.Content value="discussion" asChild>
+              <SuspenseBoundary>
+                <Discussion
+                  key={`${_class.year}-${_class.semester}-${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                />
+              </SuspenseBoundary>
+            </Tabs.Content>
           </Body>
-        </ClassContext>
+        </ClassContext.Provider>
       </Flex>
     </Root>
   );
