@@ -16,16 +16,12 @@ export default gql`
     ): Boolean! @auth
   } 
 
-  type Discussion @cacheControl(maxAge: 300) {
+  type Discussion {
     "Identifiers"
     subject: String!
     courseNumber: CourseNumber!
 
     "Attributes"
-    comments: [DiscussionComment!]!
-  }
-
-  type DiscussionComment {
     comment: String!
     createdBy: String!
   }
