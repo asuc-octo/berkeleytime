@@ -4,6 +4,7 @@ import Catalog from "./catalog";
 import Class from "./class";
 import Common from "./common";
 import Course from "./course";
+import Discussion from "./discussion";
 import Enrollment from "./enrollment";
 import GradeDistribution from "./grade-distribution";
 import Rating from "./rating";
@@ -20,6 +21,7 @@ const modules = [
   Term,
   Course,
   Class,
+  Discussion,
   Enrollment,
   Rating,
 ];

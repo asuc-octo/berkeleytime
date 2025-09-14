@@ -1,0 +1,112 @@
+.commentForm {
+  padding: 20px;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.label {
+  color: var(--foreground-color);
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.commentInput {
+  min-height: 80px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.submitButton {
+  background-color: var(--blue-500);
+  color: var(--foreground-color);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--blue-600);
+  }
+
+  &:disabled {
+    background-color: var(--gray-400);
+    cursor: not-allowed;
+  }
+}
+
+.commentsSection {
+  margin-top: 20px;
+}
+
+.commentsTitle {
+  color: var(--heading-color);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.noComments {
+  color: var(--paragraph-color);
+  font-style: italic;
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.comment {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--blue-300);
+  }
+}
+
+.commentContent {
+  color: var(--paragraph-color);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.commentMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--paragraph-color);
+}
+
+.commentUser {
+  font-weight: 500;
+}
+
+.commentDate {
+  opacity: 0.8;
+}
+
+.loading {
+  color: var(--paragraph-color);
+  text-align: center;
+  padding: 40px 20px;
+  font-style: italic;
+}
+
+.error {
+  color: var(--red-500);
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--red-50);
+  border: 1px solid var(--red-200);
+  border-radius: 8px;
+}

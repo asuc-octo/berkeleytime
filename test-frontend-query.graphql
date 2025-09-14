@@ -1,0 +1,14 @@
+query GetDiscussionComments(
+  $filter: DiscussionCommentFilter
+  $limit: Int
+  $offset: Int
+) {
+  discussionComments(filter: $filter, limit: $limit, offset: $offset) {
+    id
+    subject
+    userId
+    content
+    createdAt
+    updatedAt
+  }
+}

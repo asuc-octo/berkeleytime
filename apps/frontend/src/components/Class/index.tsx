@@ -45,6 +45,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Discussion = lazy(() => import("./Discussion"));
 
 interface BodyProps {
   children: ReactNode;
@@ -412,6 +413,9 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
+                    <Tabs.Trigger value="discussion" asChild>
+                      <MenuItem>Discussion</MenuItem>
+                    </Tabs.Trigger>
                     {/* <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
@@ -443,6 +447,11 @@ export default function Class({
                   <NavLink to={{ ...location, pathname: "sections" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Sections</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "discussion" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Discussion</MenuItem>
                     )}
                   </NavLink>
                   {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
@@ -488,6 +497,11 @@ export default function Class({
             <Tabs.Content value="sections" asChild>
               <SuspenseBoundary>
                 <Sections />
+              </SuspenseBoundary>
+            </Tabs.Content>
+            <Tabs.Content value="discussion" asChild>
+              <SuspenseBoundary>
+                <Discussion />
               </SuspenseBoundary>
             </Tabs.Content>
             <Tabs.Content value="enrollment" asChild>

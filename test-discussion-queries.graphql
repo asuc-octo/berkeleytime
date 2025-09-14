@@ -1,0 +1,113 @@
+# Test Queries for Discussion Comments
+
+# 1. Create a new discussion comment
+mutation CreateComment {
+  createDiscussionComment(
+    input: {
+      subject: "CS 61A"
+      content: "This course is really challenging but the professors are great!"
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+    updatedAt
+  }
+}
+
+# 2. Create multiple comments for testing
+mutation CreateMultipleComments {
+  comment1: createDiscussionComment(
+    input: {
+      subject: "CS 61A"
+      content: "The midterm was tough but fair. Study the practice exams!"
+    }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+  
+  comment2: createDiscussionComment(
+    input: {
+      subject: "CS 61B"
+      content: "Data structures course is well organized. Lab sections are very helpful."
+    }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+  
+  comment3: createDiscussionComment(
+    input: {
+      subject: "CS 61A"
+      content: "Office hours are super helpful. Go early in the semester!"
+    }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+}
+
+# 3. Query all discussion comments
+query GetAllComments {
+  discussionComments {
+    id
+    subject
+    content
+    createdAt
+    updatedAt
+  }
+}
+
+# 4. Query comments with filtering by subject
+query GetCommentsBySubject {
+  discussionComments(
+    filter: { subject: "CS 61A" }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+}
+
+# 5. Query comments with pagination
+query GetCommentsWithPagination {
+  discussionComments(
+    limit: 2
+    offset: 0
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+}
+
+# 6. Query comments by specific user (assuming you have a userId)
+query GetCommentsByUser {
+  discussionComments(
+    filter: { userId: "your-user-id-here" }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+}
+
+# 7. Original query from the user
+query ExampleQuery {
+  discussionComments {
+    id
+    content
+  }
+}

@@ -99,6 +99,7 @@ export default function Sections() {
       <div className={styles.menu}>
         {Object.keys(groups).map((component, index) => (
           <div
+            key={component}
             className={classNames(styles.item, {
               [styles.active]: group === component,
             })}
@@ -114,8 +115,8 @@ export default function Sections() {
         ))}
       </div>
       <div className={styles.view} ref={viewRef}>
-        {Object.values(groups).map((sections) => (
-          <div className={styles.group}>
+        {Object.values(groups).map((sections, index) => (
+          <div key={index} className={styles.group}>
             {sections.map((section) => (
               <div className={styles.section} key={section.sectionId}>
                 <div className={styles.header}>

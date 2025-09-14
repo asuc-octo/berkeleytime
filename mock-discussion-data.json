@@ -1,0 +1,126 @@
+{
+  "data": {
+    "discussionComments": [
+      {
+        "id": "507f1f77bcf86cd799439011",
+        "subject": "CS 61A",
+        "userId": "user_12345",
+        "content": "This is a test comment for CS 61A. The course covers fundamental programming concepts and is a great introduction to computer science!",
+        "createdAt": "2024-01-15T10:30:00.000Z",
+        "updatedAt": "2024-01-15T10:30:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439012",
+        "subject": "CS 61B",
+        "userId": "user_67890",
+        "content": "This is a test comment for CS 61B. Data structures and algorithms are covered in depth here. Make sure to practice coding regularly!",
+        "createdAt": "2024-01-14T14:20:00.000Z",
+        "updatedAt": "2024-01-14T14:20:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439013",
+        "subject": "CS 61A",
+        "userId": "user_11111",
+        "content": "Has anyone found the homework assignments challenging? I'm struggling with the recursion problems in week 3.",
+        "createdAt": "2024-01-13T16:45:00.000Z",
+        "updatedAt": "2024-01-13T16:45:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439014",
+        "subject": "MATH 1A",
+        "userId": "user_22222",
+        "content": "Calculus can be tough but the professors here are really helpful. Office hours are definitely worth attending!",
+        "createdAt": "2024-01-12T09:15:00.000Z",
+        "updatedAt": "2024-01-12T09:15:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439015",
+        "subject": "CS 70",
+        "userId": "user_33333",
+        "content": "Discrete mathematics and probability theory are core to this course. The proofs can be tricky but very rewarding once you understand them.",
+        "createdAt": "2024-01-11T20:30:00.000Z",
+        "updatedAt": "2024-01-11T20:30:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439016",
+        "subject": "CS 61B",
+        "userId": "user_44444",
+        "content": "The project assignments are really well-designed. They help you understand how to apply the data structures in real scenarios.",
+        "createdAt": "2024-01-10T13:20:00.000Z",
+        "updatedAt": "2024-01-10T13:20:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439017",
+        "subject": "PHYSICS 7A",
+        "userId": "user_55555",
+        "content": "Mechanics and thermodynamics are covered in this course. The lab sessions are really helpful for understanding the concepts.",
+        "createdAt": "2024-01-09T11:45:00.000Z",
+        "updatedAt": "2024-01-09T11:45:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439018",
+        "subject": "CS 61A",
+        "userId": "user_66666",
+        "content": "The Python programming language is really intuitive once you get the hang of it. Don't be afraid to experiment with the code!",
+        "createdAt": "2024-01-08T15:10:00.000Z",
+        "updatedAt": "2024-01-08T15:10:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439019",
+        "subject": "ECON 1",
+        "userId": "user_77777",
+        "content": "Introduction to economics covers both micro and macro concepts. The supply and demand graphs can be confusing at first but make sense with practice.",
+        "createdAt": "2024-01-07T12:30:00.000Z",
+        "updatedAt": "2024-01-07T12:30:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439020",
+        "subject": "CS 70",
+        "userId": "user_88888",
+        "content": "The midterm was challenging but fair. Make sure to review all the proof techniques and practice problems from the textbook.",
+        "createdAt": "2024-01-06T18:00:00.000Z",
+        "updatedAt": "2024-01-06T18:00:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439021",
+        "subject": "MATH 1B",
+        "userId": "user_99999",
+        "content": "Integration techniques and series are the main focus. The integration by parts method is particularly useful for many problems.",
+        "createdAt": "2024-01-05T14:15:00.000Z",
+        "updatedAt": "2024-01-05T14:15:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439022",
+        "subject": "CS 61B",
+        "userId": "user_10101",
+        "content": "The Git version control system is essential for the projects. Make sure to commit your work regularly and write meaningful commit messages.",
+        "createdAt": "2024-01-04T16:40:00.000Z",
+        "updatedAt": "2024-01-04T16:40:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439023",
+        "subject": "CHEM 1A",
+        "userId": "user_20202",
+        "content": "General chemistry covers atomic structure, bonding, and stoichiometry. The periodic table becomes your best friend in this course!",
+        "createdAt": "2024-01-03T10:25:00.000Z",
+        "updatedAt": "2024-01-03T10:25:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439024",
+        "subject": "CS 61A",
+        "userId": "user_30303",
+        "content": "The discussion sections are really valuable. Don't skip them - the TAs provide great insights and help with debugging your code.",
+        "createdAt": "2024-01-02T19:50:00.000Z",
+        "updatedAt": "2024-01-02T19:50:00.000Z"
+      },
+      {
+        "id": "507f1f77bcf86cd799439025",
+        "subject": "STAT 2",
+        "userId": "user_40404",
+        "content": "Introduction to statistics covers probability distributions, hypothesis testing, and regression analysis. R programming is used for data analysis.",
+        "createdAt": "2024-01-01T08:30:00.000Z",
+        "updatedAt": "2024-01-01T08:30:00.000Z"
+      }
+    ]
+  }
+}

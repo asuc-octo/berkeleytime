@@ -27,6 +27,7 @@ const Class = {
   Grades: lazy(() => import("@/components/Class/Grades")),
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
   Ratings: lazy(() => import("@/components/Class/Ratings")),
 };
 
@@ -267,6 +268,14 @@ const router = createBrowserRouter([
             path: "grades",
           },
           {
+            element: (
+              <SuspenseBoundary key="discussion">
+                <Class.Discussion />
+              </SuspenseBoundary>
+            ),
+            path: "discussion",
+          },
+          {
             element: <Class.Ratings />,
             path: "ratings",
           },
@@ -312,8 +321,9 @@ const router = createBrowserRouter([
 ]);
 
 const client = new ApolloClient({
-  uri: "/api/graphql",
+  uri: "http://localhost:8080/api/graphql", // Connect directly to Docker backend through nginx
   cache: new InMemoryCache(),
+  credentials: "include", // Include cookies for authentication
 });
 
 export default function App() {

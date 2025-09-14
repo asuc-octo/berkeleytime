@@ -6,3 +6,4 @@ export * from "./schedules";
 export * from "./ratings";
 export * from "./grade-distributions";
 export * from "./enrollment";
+export * from "./discussions";

@@ -1,0 +1,293 @@
+# GraphQL Queries for http://localhost:8080/api/graphql
+
+# 1. Test endpoint connectivity
+query TestConnection {
+  __schema {
+    types {
+      name
+    }
+  }
+}
+
+# 2. Create a comment (requires authentication)
+mutation CreateComment {
+  createDiscussionComment(
+    input: {
+      subject: "CS 61A"
+      content: "This course is really challenging but the professors are great! The SICP textbook is excellent."
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+    updatedAt
+  }
+}
+
+# 3. Create 5 synthetic discussion comment samples
+mutation CreateSyntheticSamples {
+  sample1: createDiscussionComment(
+    input: {
+      subject: "CS 61A"
+      content: "The midterm was tough but fair. Study the practice exams! The recursion concepts really clicked after doing the homework problems."
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+  
+  sample2: createDiscussionComment(
+    input: {
+      subject: "MATH 1A"
+      content: "Calculus course with excellent explanations. Professor makes derivatives and integrals much clearer. Practice problems are essential for success."
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+  
+  sample3: createDiscussionComment(
+    input: {
+      subject: "CS 61B"
+      content: "Data structures course is well organized. Lab sections are very helpful for understanding hash tables and binary trees. The projects are challenging but rewarding."
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+  
+  sample4: createDiscussionComment(
+    input: {
+      subject: "PHYSICS 7A"
+      content: "Great introduction to mechanics! The lab sections really help visualize the concepts. Make sure to attend discussion sections for problem-solving help."
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+  
+  sample5: createDiscussionComment(
+    input: {
+      subject: "CS 61A"
+      content: "Office hours are super helpful. Go early in the semester! The TAs are really knowledgeable and patient with questions about Scheme and Python."
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+}
+
+# 4. Query all comments (your original query)
+query ExampleQuery {
+  discussionComments {
+    id
+    content
+  }
+}
+
+# 5. Query all comments with full details
+query GetAllComments {
+  discussionComments {
+    id
+    subject
+    userId
+    content
+    createdAt
+    updatedAt
+  }
+}
+
+# 6. Filter comments by different subjects (from synthetic samples)
+query GetCommentsBySubject {
+  cs61aComments: discussionComments(
+    filter: { subject: "CS 61A" }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+  
+  math1aComments: discussionComments(
+    filter: { subject: "MATH 1A" }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+  
+  cs61bComments: discussionComments(
+    filter: { subject: "CS 61B" }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+  
+  physics7aComments: discussionComments(
+    filter: { subject: "PHYSICS 7A" }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+}
+
+# 7. Filter comments by user ID
+query GetCommentsByUser {
+  discussionComments(
+    filter: { userId: "507f1f77bcf86cd799439011" }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+}
+
+# 8. Test pagination
+query GetCommentsWithPagination {
+  discussionComments(
+    limit: 2
+    offset: 0
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+}
+
+# 9. Test with variables (for programmatic use)
+mutation CreateCommentWithVariables($input: CreateDiscussionCommentInput!) {
+  createDiscussionComment(input: $input) {
+    id
+    subject
+    userId
+    content
+    createdAt
+    updatedAt
+  }
+}
+
+# Variables for the above mutation (example):
+# {
+#   "input": {
+#     "subject": "MATH 1A",
+#     "content": "Calculus course with good explanations. Practice problems are essential for success."
+#   }
+# }
+
+# Additional sample variables for testing:
+# Sample 1: CS 61A
+# {
+#   "input": {
+#     "subject": "CS 61A",
+#     "content": "The midterm was tough but fair. Study the practice exams! The recursion concepts really clicked after doing the homework problems."
+#   }
+# }
+
+# Sample 2: MATH 1A  
+# {
+#   "input": {
+#     "subject": "MATH 1A",
+#     "content": "Calculus course with excellent explanations. Professor makes derivatives and integrals much clearer. Practice problems are essential for success."
+#   }
+# }
+
+# Sample 3: CS 61B
+# {
+#   "input": {
+#     "subject": "CS 61B", 
+#     "content": "Data structures course is well organized. Lab sections are very helpful for understanding hash tables and binary trees. The projects are challenging but rewarding."
+#   }
+# }
+
+# Sample 4: PHYSICS 7A
+# {
+#   "input": {
+#     "subject": "PHYSICS 7A",
+#     "content": "Great introduction to mechanics! The lab sections really help visualize the concepts. Make sure to attend discussion sections for problem-solving help."
+#   }
+# }
+
+# Sample 5: CS 61A (different comment)
+# {
+#   "input": {
+#     "subject": "CS 61A",
+#     "content": "Office hours are super helpful. Go early in the semester! The TAs are really knowledgeable and patient with questions about Scheme and Python."
+#   }
+# }
+
+# 10. Additional user ID examples for testing
+query GetCommentsByDifferentUsers {
+  # User 1 comments
+  user1Comments: discussionComments(
+    filter: { userId: "507f1f77bcf86cd799439011" }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+  
+  # User 2 comments  
+  user2Comments: discussionComments(
+    filter: { userId: "507f1f77bcf86cd799439012" }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+  
+  # User 3 comments
+  user3Comments: discussionComments(
+    filter: { userId: "507f1f77bcf86cd799439013" }
+  ) {
+    id
+    subject
+    content
+    createdAt
+  }
+}
+
+# 11. Test filtering by both subject and user
+query GetUserCommentsForSubject {
+  discussionComments(
+    filter: { 
+      subject: "CS 61A"
+      userId: "507f1f77bcf86cd799439011"
+    }
+  ) {
+    id
+    subject
+    userId
+    content
+    createdAt
+  }
+}
