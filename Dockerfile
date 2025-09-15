@@ -77,12 +77,12 @@ COPY --from=frontend-builder /frontend/out/full/ .
 
 COPY .storybook .storybook
 
-RUN ["npm", "run", "build-storybook", "-o", "/storybook/out"]
+RUN ["npm", "run", "build-storybook"]
 
 FROM storybook-builder AS storybook-dev
 ENTRYPOINT ["npm", "run", "storybook", "--", "--no-open"]
 
 FROM nginx:alpine AS storybook-prod
 COPY .storybook/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=storybook-builder /storybook/out /var/www/html
+COPY --from=storybook-builder /storybook/storybook-static /var/www/html
 EXPOSE 80
