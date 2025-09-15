@@ -66,7 +66,7 @@ RUN ["turbo", "run", "build", "--filter=frontend", "--env-mode=loose"]
 ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]
 
 # storybook
-FROM base AS storybook-dev
+FROM base AS storybook-builder
 WORKDIR /storybook
 
 COPY --from=frontend-builder /frontend/out/json/ .
@@ -77,18 +77,12 @@ COPY --from=frontend-builder /frontend/out/full/ .
 
 COPY .storybook .storybook
 
+RUN ["npm", "run", "build-storybook", "-o", "/storybook/out"]
+
+FROM storybook-builder AS storybook-dev
 ENTRYPOINT ["npm", "run", "storybook", "--", "--no-open"]
 
 FROM nginx:alpine AS storybook-prod
-WORKDIR /storybook
-
-COPY --from=frontend-builder /frontend/out/json/ .
-COPY --from=frontend-builder /frontend/out/package-lock.json ./package-lock.json
-RUN ["npm", "install"]
-
-COPY --from=frontend-builder /frontend/out/full/ .
-
-COPY .storybook .storybook
 COPY .storybook/nginx.conf /etc/nginx/conf.d/default.conf
-RUN ["npm", "run", "build-storybook", "-o", "/var/www/html"]
+COPY --from=storybook-builder /storybook/out /var/www/html
 EXPOSE 80
