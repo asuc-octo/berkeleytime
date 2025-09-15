@@ -79,7 +79,7 @@ COPY .storybook .storybook
 
 ENTRYPOINT ["npm", "run", "storybook", "--", "--no-open"]
 
-FROM storybook-dev AS storybook-prod
+FROM nginx:alpine AS storybook-prod
 WORKDIR /storybook
 
 COPY --from=frontend-builder /frontend/out/json/ .
