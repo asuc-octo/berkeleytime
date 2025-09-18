@@ -285,11 +285,6 @@ export const READ_CLASS = gql`
             waitlistedCount
             maxWaitlist
           }
-          seatReservationTypes {
-            number
-            requirementGroup
-            fromDate
-          }
           history {
             status
             enrolledCount
@@ -332,11 +327,6 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
-          }
-          seatReservationTypes {
-            number
-            requirementGroup
-            fromDate
           }
         }
         meetings {
