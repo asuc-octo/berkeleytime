@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bt-learning.learningName" . }}
+  labels:
+    {{- include "bt-learning.learningLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "bt-learning.learningLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bt-learning.learningLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: learning
+          image: {{ printf "%s/%s:%s" .Values.learning.image.registry .Values.learning.image.repository ( toString .Values.learning.image.tag ) }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.learning.port }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bt-learning.learningName" . }}-svc
+  labels:
+    {{- include "bt-learning.learningLabels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "bt-learning.learningLabels" . | nindent 4 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.port }}
+      targetPort: {{ .Values.learning.port }}

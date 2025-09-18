@@ -1,0 +1,13 @@
+issuer: letsencrypt-prod
+
+host: learning.stanfurdtime.com
+port: 80
+
+learning:
+  port: 80
+  path: /
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-learning
+    tag: latest

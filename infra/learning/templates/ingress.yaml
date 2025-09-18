@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  labels:
+    {{- include "bt-learning.labels" . | nindent 4 }}
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .Values.host }}
+      secretName: bt-cert
+  rules:
+    - host: {{ .Values.host }}
+      http:
+        paths:
+          - path: {{ .Values.learning.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bt-learning.learningName" . }}-svc
+                port:
+                  number: {{ .Values.port }}
