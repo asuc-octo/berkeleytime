@@ -24,30 +24,20 @@ export default gql`
     sectionNumber: SectionNumber!
 
     "Attributes"
-    seatReservationTypes: [SeatReservationType!]
     history: [EnrollmentSingular!]!
     latest: EnrollmentSingular
-  }
-
-  type SeatReservationType {
-    number: Int!
-    requirementGroup: String!
-    fromDate: String!
   }
 
   type EnrollmentSingular {
     time: String!
     status: EnrollmentStatus
     enrolledCount: Int!
-    reservedCount: Int
     waitlistedCount: Int!
     minEnroll: Int
     maxEnroll: Int!
     maxWaitlist: Int!
-    openReserved: Int
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
-    seatReservationCounts: [SeatReservationCount!]
   }
 
   enum EnrollmentStatus {
@@ -56,11 +46,5 @@ export default gql`
 
     "Open"
     O
-  }
-
-  type SeatReservationCount {
-    number: Int!
-    maxEnroll: Int!
-    enrolledCount: Int!
   }
 `;

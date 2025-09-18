@@ -163,12 +163,6 @@ export interface ISection {
   lecturesRecorded: boolean;
 }
 
-export interface IReservation {
-  enrollCount: number;
-  enrollMax: number;
-  group: string;
-}
-
 export interface IMeeting {
   days: boolean[];
   endTime: string;
