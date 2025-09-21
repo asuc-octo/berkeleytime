@@ -41,8 +41,6 @@ export const createComment = async (
   input: commentCreator
 ) => {
 
-  console.log(context)
-
   await DiscussionModel.create({
     createdBy: context.user._id,
     subject: input.subject,

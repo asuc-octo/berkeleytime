@@ -3,7 +3,7 @@ import { Semester } from "../../generated-types/graphql";
 export type Comment = {
   subject: string;
   courseNumber: string;
-  classNumber?: string | null;
+  classNumber: string;
   year: number;
   semester: Semester;
   value: string;
