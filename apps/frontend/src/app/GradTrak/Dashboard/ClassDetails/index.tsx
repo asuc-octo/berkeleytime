@@ -10,7 +10,7 @@ import {
   Xmark,
 } from "iconoir-react";
 
-import { Button, Select } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import { ClassType } from "../types";
 import styles from "./ClassDetails.module.scss";
@@ -67,7 +67,7 @@ const ClassDetails = ({
       title: classTitle,
       units: units,
       grading: grading,
-      credit: credit
+      credit: credit,
     };
 
     if (isEditMode && onUpdate) {

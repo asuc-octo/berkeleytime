@@ -1,58 +1,63 @@
-import React, { 
-  useState, 
-  useEffect, 
-  useRef 
-} from 'react';
-import {
-  Trash,
-  Book,
-  BookStack,
-  MoreHoriz
-} from "iconoir-react";
+import React, { useEffect, useRef, useState } from "react";
+
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
 import { Button } from "@repo/theme";
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
-import { ClassType } from "../types"
 import AddClass from "../AddClass";
 import ClassDetails from "../ClassDetails";
-import styles from "./SemesterBlock.module.scss"
+import { ClassType } from "../types";
+import styles from "./SemesterBlock.module.scss";
 
 interface SemesterBlockProps {
   selectedYear: number | string;
   selectedSemester: string;
-  semesterId: string; 
-  allSemesters: { [key: string]: ClassType[] }; 
-  onTotalUnitsChange: (newTotal: number, pnpUnits: number, transferUnits: number) => void;
+  semesterId: string;
+  allSemesters: { [key: string]: ClassType[] };
+  onTotalUnitsChange: (
+    newTotal: number,
+    pnpUnits: number,
+    transferUnits: number
+  ) => void;
   updateAllSemesters: (semesters: { [key: string]: ClassType[] }) => void;
-};
+}
 
-function SemesterBlock({ selectedYear,
+function SemesterBlock({
+  selectedYear,
   selectedSemester,
   onTotalUnitsChange,
   semesterId,
   allSemesters,
-  updateAllSemesters
+  updateAllSemesters,
 }: SemesterBlockProps) {
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
   const [classToEdit, setClassToEdit] = useState<ClassType | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
-  const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(allSemesters[semesterId] || []);
+  const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(
+    allSemesters[semesterId] || []
+  );
   const [totalUnits, setTotalUnits] = useState(0);
-  const [pnpUnits, setPnpUnits] = useState(0);
-  const [transferUnits, setTransferUnits] = useState(0);
+  const [_pnpUnits, setPnpUnits] = useState(0);
+  const [_transferUnits, setTransferUnits] = useState(0);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  const total = selectedClasses.reduce((sum, cls) => sum + cls.units, 0);
-  setTotalUnits(total);
-  const pnp = selectedClasses.reduce((sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0), 0);
-  setPnpUnits(pnp);
-  const transfer = selectedClasses.reduce((sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0), 0);
-  setTransferUnits(transfer);
-  onTotalUnitsChange(total, pnp, transfer);
+    const total = selectedClasses.reduce((sum, cls) => sum + cls.units, 0);
+    setTotalUnits(total);
+    const pnp = selectedClasses.reduce(
+      (sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0),
+      0
+    );
+    setPnpUnits(pnp);
+    const transfer = selectedClasses.reduce(
+      (sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0),
+      0
+    );
+    setTransferUnits(transfer);
+    onTotalUnitsChange(total, pnp, transfer);
   }, [selectedClasses, onTotalUnitsChange]);
 
   // update local state when allSemesters changes
@@ -63,7 +68,9 @@ function SemesterBlock({ selectedYear,
   }, [allSemesters, semesterId]);
 
   const handleDeleteClass = (indexToDelete: number) => {
-    const updatedClasses = selectedClasses.filter((_, index) => index !== indexToDelete);
+    const updatedClasses = selectedClasses.filter(
+      (_, index) => index !== indexToDelete
+    );
 
     // update local state
     setSelectedClasses(updatedClasses);
@@ -71,23 +78,30 @@ function SemesterBlock({ selectedYear,
     // update global state
     const updatedSemesters = {
       ...allSemesters,
-      [semesterId]: updatedClasses
+      [semesterId]: updatedClasses,
     };
-    updateAllSemesters(updatedSemesters); updateAllSemesters(updatedSemesters);
+    updateAllSemesters(updatedSemesters);
+    updateAllSemesters(updatedSemesters);
     const deletedClassUnits = selectedClasses[indexToDelete].units;
     const newTotalUnits = totalUnits - deletedClassUnits;
     setSelectedClasses((prevClasses) =>
       prevClasses.filter((_, index) => index !== indexToDelete)
     );
-  setTotalUnits(newTotalUnits);
-  const newPnpUnits = updatedClasses.reduce((sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0), 0);
-  setPnpUnits(newPnpUnits);
-  const newTransferUnits = updatedClasses.reduce((sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0), 0);
-  setTransferUnits(newTransferUnits);
-  onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
+    setTotalUnits(newTotalUnits);
+    const newPnpUnits = updatedClasses.reduce(
+      (sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0),
+      0
+    );
+    setPnpUnits(newPnpUnits);
+    const newTransferUnits = updatedClasses.reduce(
+      (sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0),
+      0
+    );
+    setTransferUnits(newTransferUnits);
+    onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
   };
 
-  const handleClassDetails= (index: number) => {
+  const handleClassDetails = (index: number) => {
     setClassToEdit(selectedClasses[index]);
     setIsClassDetailsOpen(true);
   };
@@ -101,17 +115,19 @@ function SemesterBlock({ selectedYear,
     // update global state
     const updatedSemesters = {
       ...allSemesters,
-      [semesterId]: updatedClasses
+      [semesterId]: updatedClasses,
     };
     updateAllSemesters(updatedSemesters);
-  }
+  };
 
   const findInsertPosition = (e: React.DragEvent) => {
     if (!containerRef.current) return 0;
     const mouseY = e.clientY;
 
     // get all class elements in this container
-    const classElements = containerRef.current.querySelectorAll('[data-class-container]');
+    const classElements = containerRef.current.querySelectorAll(
+      "[data-class-container]"
+    );
 
     // if no classes, insert at the beginning
     if (classElements.length === 0) {
@@ -121,7 +137,7 @@ function SemesterBlock({ selectedYear,
     // loop through class elements to find the insertion point
     for (let i = 0; i < classElements.length; i++) {
       const classRect = classElements[i].getBoundingClientRect();
-      const classMidY = classRect.top + (classRect.height / 2);
+      const classMidY = classRect.top + classRect.height / 2;
 
       if (mouseY < classMidY) {
         return i;
@@ -134,7 +150,7 @@ function SemesterBlock({ selectedYear,
 
   const handleUpdateClass = (updatedClass: ClassType) => {
     setSelectedClasses((prevClasses) =>
-      prevClasses.map((cls, ) =>
+      prevClasses.map((cls) =>
         cls.id === updatedClass.id ? updatedClass : cls
       )
     );
@@ -147,14 +163,19 @@ function SemesterBlock({ selectedYear,
       return total + cls.units;
     }, 0);
 
-
     setTotalUnits(newTotalUnits);
     const updatedClassList = selectedClasses.map((cls) =>
       cls.id === updatedClass.id ? updatedClass : cls
     );
-    const newPnpUnits = updatedClassList.reduce((sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0), 0);
+    const newPnpUnits = updatedClassList.reduce(
+      (sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0),
+      0
+    );
     setPnpUnits(newPnpUnits);
-    const newTransferUnits = updatedClassList.reduce((sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0), 0);
+    const newTransferUnits = updatedClassList.reduce(
+      (sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0),
+      0
+    );
     setTransferUnits(newTransferUnits);
     onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
@@ -163,11 +184,14 @@ function SemesterBlock({ selectedYear,
 
   const handleDragLeave = (e: React.DragEvent) => {
     // only reset if leaving the entire container (not just moving between children)
-    if (containerRef.current && !containerRef.current.contains(e.relatedTarget as Node)) {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(e.relatedTarget as Node)
+    ) {
       setIsDropTarget(false);
       setPlaceholderIndex(null);
     }
-  }
+  };
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault(); // allow drop
     setIsDropTarget(true);
@@ -179,31 +203,34 @@ function SemesterBlock({ selectedYear,
     } catch (error) {
       console.error("Error in dragover:", error);
     }
-  }
+  };
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.classList.add('dragging');
+      e.currentTarget.classList.add("dragging");
     }
 
     // store the semester ID and class index in the drag data
-    e.dataTransfer.setData("application/json", JSON.stringify({
-      sourceSemesterId: semesterId,
-      classIndex: classIndex,
-      class: selectedClasses[classIndex]
-    }));
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({
+        sourceSemesterId: semesterId,
+        classIndex: classIndex,
+        class: selectedClasses[classIndex],
+      })
+    );
     e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.classList.remove('dragging');
+      e.currentTarget.classList.remove("dragging");
     }
 
     setPlaceholderIndex(null);
-  }
+  };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -249,21 +276,26 @@ function SemesterBlock({ selectedYear,
       }
 
       // update the global state
-      updateAllSemesters(updatedSemesters); updateAllSemesters(updatedSemesters);
+      updateAllSemesters(updatedSemesters);
+      updateAllSemesters(updatedSemesters);
     } catch (error) {
       console.error("Error handling drop:", error);
     }
-  }
+  };
 
   return (
-    <div ref={containerRef}
-      className={`${styles.root} ${isDropTarget ? 'drop-target' : ''}`}
+    <div
+      ref={containerRef}
+      className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      onDrop={handleDrop}>
+      onDrop={handleDrop}
+    >
       <div className={styles.body}>
         <div className={styles.semesterCounter}>
-          <h2>{selectedSemester} {selectedYear} </h2>
+          <h2>
+            {selectedSemester} {selectedYear}{" "}
+          </h2>
           <p className={styles.counter}>{totalUnits}</p>
         </div>
 
@@ -271,7 +303,7 @@ function SemesterBlock({ selectedYear,
         {selectedClasses.map((cls, index) => (
           <React.Fragment key={`class-group-${index}`}>
             {placeholderIndex === index && (
-              <div className={styles.placeholder}/>
+              <div className={styles.placeholder} />
             )}
             <div
               key={index}
@@ -284,13 +316,13 @@ function SemesterBlock({ selectedYear,
               <div className={styles.start}>
                 <div>
                   <h3 className={styles.title}>{cls.name}</h3>
-                  <p >{cls.units} Units</p>
+                  <p>{cls.units} Units</p>
                 </div>
                 <div className={styles.dropdown}>
                   <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
                       <Button className={styles.trigger}>
-                          <MoreHoriz className={styles.moreHoriz}/> 
+                        <MoreHoriz className={styles.moreHoriz} />
                       </Button>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content
@@ -327,15 +359,17 @@ function SemesterBlock({ selectedYear,
 
         {/* Dragging placeholder */}
         {placeholderIndex === selectedClasses.length && (
-          <div className={styles.placeholder}/>
+          <div className={styles.placeholder} />
         )}
 
         {/* Dialog Component */}
-        <AddClass 
-          isOpen={isAddClassOpen} 
-          setIsOpen={setIsAddClassOpen} 
-          addClass={addClass} 
-          handleOnConfirm={(cls) => { addClass(cls); }} 
+        <AddClass
+          isOpen={isAddClassOpen}
+          setIsOpen={setIsAddClassOpen}
+          addClass={addClass}
+          handleOnConfirm={(cls) => {
+            addClass(cls);
+          }}
         />
 
         {/* Edit Class Details Dialog */}
@@ -348,13 +382,15 @@ function SemesterBlock({ selectedYear,
           />
         )}
 
-        <Button onClick={() => setIsAddClassOpen(true)} className={styles.addButton}>
+        <Button
+          onClick={() => setIsAddClassOpen(true)}
+          className={styles.addButton}
+        >
           + Add Class
         </Button>
       </div>
     </div>
-
-  )
+  );
 }
 
 export default SemesterBlock;
