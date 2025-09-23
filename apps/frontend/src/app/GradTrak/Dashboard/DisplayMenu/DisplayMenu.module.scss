@@ -1,0 +1,185 @@
+.displayMenu {
+  width: 318px;
+  background-color: var(--foreground-color);
+  position: absolute;
+  right: 30px;
+  top: 80px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  border-radius: 8px;
+
+  .section {
+    border-bottom: 1px solid var(--border-color);
+    padding: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--heading-color);
+    
+    &:last-child {
+      margin-bottom: 0;
+      border: none;
+    }
+
+    .sectionBubble {
+      padding: 10px;
+      border-radius: 6px;
+
+      .sectionTitle {
+        margin-bottom: 12px;
+      }
+    }
+      
+    .sectionBubbleButton {
+      padding: 12px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      &:hover {
+        background-color: var(--background-color);
+
+      }
+    }
+  }
+}
+
+.arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--text-color-secondary);
+}
+
+// Layout Options
+.layoutOptions {
+  display: flex;
+  gap: 8px;
+}
+
+.layoutOption {
+  width: 60px;
+  height: 40px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: var(--button-active-color);
+  }
+  
+  &.selected {
+    border-color: var(--blue-500);
+    background-color: var(--button-active-color)
+  }
+}
+
+.chartIcon {
+  display: flex;
+  align-items: start;
+  gap: 2px;
+  height: 20px;
+}
+
+.bar {
+  width: 8px;
+  background: var(--paragraph-color);
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.gridIcon {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gridRow {
+  display: flex;
+  gap: 2px;
+}
+
+.gridItem {
+  width: 14px;
+  height: 6px;
+  background: var(--paragraph-color);
+  border-radius: 1px;
+}
+
+// Toggle Switches
+.toggleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.toggleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .toggleItemText {
+    color: var(--heading-color);
+  }
+}
+
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  
+  &.toggleOff {
+    background: var(--border-color);
+  }
+  
+  &.toggleOn {
+    background: var(--primary-color);
+  }
+}
+
+.toggleCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 2px;
+  transition: all 0.2s ease;
+  
+  .toggleOff & {
+    left: 2px;
+  }
+  
+  .toggleOn & {
+    left: 22px;
+  }
+}
+
+// Labels
+.labelsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.addLabel {
+  width: 27px;
+  height: 27px;
+  font-size: 12px;
+}
+.eye {
+  color: var(--paragraph-color);
+  padding: 4px;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  &:hover {
+    background-color: var(--button-hover-color);
+    color: var(--label-color);
+  }
+}
