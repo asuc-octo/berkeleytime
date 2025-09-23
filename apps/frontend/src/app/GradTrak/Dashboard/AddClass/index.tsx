@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { GET_COURSE_NAMES, GetCoursesResponse } from "@/lib/api";
-import { useQuery } from '@apollo/client';
+import React from 'react';
+import { ICourse } from "@/lib/api";
+import { useCourseSearch } from "@/hooks/useCourseSearch";
 
 import { ClassType } from "../types"
 import SearchBar from "./SearchBar";
@@ -16,44 +16,32 @@ interface AddClassProps  {
 };
 
 function AddClass({ isOpen, setIsOpen, addClass, handleOnConfirm }: AddClassProps) {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredClasses, setFilteredClasses] = useState<ClassType[]>([]);
-    const [allClasses, setAllClasses] = useState<ClassType[]>([]);
- 
-    const { data } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {skip: !isOpen});
+    // Transform ICourse to ClassType
+    const transformCourse = (course: ICourse): ClassType => ({
+        id: `${course.subject}_${course.number}`,
+        name: `${course.subject} ${course.number}`,
+        title: course.title,
+        units: 4, // Default units, could be made configurable
+    });
 
-    const courses = useMemo(() => {
-      if (!data?.courses) return [];
-      return data.courses;
-    }, [data]);
-
-    useMemo(() => {
-        console.log('Courses count:', courses?.length);
-        if (data?.courses) {
-            const formattedClasses = data.courses.map(course => ({
-                id: `${course.subject}_${course.number}`,
-                name: `${course.subject} ${course.number}`,
-                title: course.title,
-                units: 4,
-            }));
-            setAllClasses(formattedClasses);
-        }
-    }, [data]);
+    const { 
+        filteredCourses: filteredClasses, 
+        searchQuery: searchTerm, 
+        setSearchQuery: setSearchTerm 
+    } = useCourseSearch({
+        skip: !isOpen,
+        transform: transformCourse,
+        useFuzzySearch: false,  // TODO(Daniel): Add fuzzy search
+    });
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const term = event.target.value;
-      setSearchTerm(term);
-      const filtered = allClasses.filter((cls) =>
-          cls.name.toLowerCase().includes(term.toLowerCase())
-      );
-      setFilteredClasses(filtered);
+        setSearchTerm(event.target.value);
     };
 
     const handleSelectClass = (cls: ClassType) => {
-      addClass(cls);
-      setFilteredClasses([]);
-      setSearchTerm('');
-      setIsOpen(false);
+        addClass(cls);
+        setSearchTerm('');
+        setIsOpen(false);
     };
 
     return (

@@ -1,15 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client";
 import { Search } from "iconoir-react";
 
 import { Badge, Color, LoadingIndicator } from "@repo/theme";
 
-import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
+import { ICourse } from "@/lib/api";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
+import { useCourseSearch } from "@/hooks/useCourseSearch";
 
 import styles from "./CourseSearch.module.scss";
-import { initialize } from "./browser";
 
 interface CourseSearchProps {
   onSelect?: (course: ICourse) => void;
@@ -26,29 +25,20 @@ export default function CourseSearch({
 }: CourseSearchProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const [recentCourses, setRecentCourses] = useState<
     Recent<RecentType.Course>[]
   >([]);
 
-  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
-
-  const catalogCourses = useMemo(() => {
-    if (!data?.courses) return [];
-    return data.courses; // no transformation
-  }, [data]);
-
-  const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
-  const currentCourses = useMemo(() => {
-    return searchQuery
-      ? index
-          // Limit query because Fuse performance decreases linearly by
-          // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-          .search(searchQuery.slice(0, 24))
-          .map(({ refIndex }) => catalogCourses[refIndex])
-      : catalogCourses;
-  }, [catalogCourses, index, searchQuery]);
+  const { 
+    courses: catalogCourses, 
+    filteredCourses: currentCourses, 
+    searchQuery, 
+    setSearchQuery, 
+    loading 
+  } = useCourseSearch({
+    useFuzzySearch: true,
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -109,8 +99,8 @@ export default function CourseSearch({
                       <Badge
                         key={`grades-${course.subject}-${course.number}-${index}`}
                         onClick={() => {
-                          const full = data?.courses.find(
-                            (c) =>
+                          const full = catalogCourses.find(
+                            (c: ICourse) =>
                               c.subject === course.subject &&
                               c.number === course.number
                           );
@@ -134,7 +124,7 @@ export default function CourseSearch({
               <section className={styles.section}>
                 <h2>CATALOG</h2>
                 <div className={styles.catalogList}>
-                  {currentCourses.map((course) => (
+                  {currentCourses.map((course: ICourse) => (
                     <button
                       key={`${course.subject}-${course.number}`}
                       className={styles.catalogItem}
