@@ -84,12 +84,21 @@ function Dashboard() {
 
   // State for semester totals and classes
   const [semesterTotals, setSemesterTotals] = useState<Record<string, number>>({});
+  const [semesterPnpTotals, setSemesterPnpTotals] = useState<Record<string, number>>({});
+  const [semesterTransferTotals, setSemesterTransferTotals] = useState<Record<string, number>>({});
 
   // Create the allSemesters state to track classes in each semester
   const [allSemesters, setAllSemesters] = useState<{ [key: string]: ClassType[] }>({});
 
   const updateTotalUnits = useCallback((semesterKey: string, newTotal: number) => {
+    // newTotal: total units, pnpUnits: pass/no pass units
     setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
+  }, []);
+
+  const updateSemesterUnits = useCallback((semesterKey: string, newTotal: number, pnpUnits: number, transferUnits: number) => {
+    setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
+    setSemesterPnpTotals((prev) => ({ ...prev, [semesterKey]: pnpUnits }));
+    setSemesterTransferTotals((prev) => ({ ...prev, [semesterKey]: transferUnits }));
   }, []);
   
   
@@ -98,7 +107,12 @@ function Dashboard() {
     setAllSemesters(semesters);
   }, []);
 
+
   const totalUnits = Object.values(semesterTotals).reduce((sum, units) => sum + units, 0);
+
+  // Calculate P/NP total units by summing semester blocks
+  const pnpTotal = Object.values(semesterPnpTotals).reduce((sum, units) => sum + units, 0);
+  const transferUnits = Object.values(semesterTransferTotals).reduce((sum, units) => sum + units, 0);
 
   if (!currentUserInfo) {
     return <p>Error displaying user information.</p>; // TODO: Cleaner error page
@@ -111,8 +125,8 @@ function Dashboard() {
             majors={currentUserInfo.majors} 
             minors={currentUserInfo.minors}
             totalUnits={totalUnits}
-            transferUnits={0} 
-            pnpTotal={0}
+            transferUnits={transferUnits} 
+            pnpTotal={pnpTotal}
           />
       </div>
 
@@ -150,7 +164,7 @@ function Dashboard() {
             semesterId="miscellaneous" 
             selectedSemester={"Miscellaneous"} 
             selectedYear={""}
-            onTotalUnitsChange={(newTotal) => updateTotalUnits("Miscellaneous", newTotal)}
+            onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) => updateSemesterUnits("Miscellaneous", newTotal, pnpUnits, transferUnits)}
             allSemesters={allSemesters}
             updateAllSemesters={updateAllSemesters}
           />
@@ -161,7 +175,7 @@ function Dashboard() {
                 semesterId={`fall-${year}`}
                 selectedSemester={"Fall"}
                 selectedYear={year}
-                onTotalUnitsChange={(newTotal) => updateTotalUnits(`Fall-${year}`, newTotal)}
+                onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) => updateSemesterUnits(`Fall-${year}`, newTotal, pnpUnits, transferUnits)}
                 allSemesters={allSemesters}
                 updateAllSemesters={updateAllSemesters}
               />
@@ -169,7 +183,7 @@ function Dashboard() {
                 semesterId={`spring-${year}`}
                 selectedSemester={"Spring"}
                 selectedYear={year}
-                onTotalUnitsChange={(newTotal) => updateTotalUnits(`Spring-${year}`, newTotal)}
+                onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) => updateSemesterUnits(`Spring-${year}`, newTotal, pnpUnits, transferUnits)}
                 allSemesters={allSemesters}
                 updateAllSemesters={updateAllSemesters}
               />
@@ -178,7 +192,7 @@ function Dashboard() {
                   semesterId={`summer-${year}`}
                   selectedSemester={"Summer"}
                   selectedYear={year}
-                  onTotalUnitsChange={(newTotal) => updateTotalUnits(`Summer-${year}`, newTotal)}
+                  onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) => updateSemesterUnits(`Summer-${year}`, newTotal, pnpUnits, transferUnits)}
                   allSemesters={allSemesters}
                   updateAllSemesters={updateAllSemesters}
                 />

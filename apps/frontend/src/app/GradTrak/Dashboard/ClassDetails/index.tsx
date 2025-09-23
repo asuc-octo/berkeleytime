@@ -37,8 +37,8 @@ const ClassDetails = ({
   const [classTitle, setClassTitle] = useState(classData?.title || "");
   const [units, setUnits] = useState(classData?.units || 0);
   const [semester] = useState("Fall 2021");
-  const [grading, setGrading] = useState("Graded");
-  const [credit, setCredit] = useState("UC Berkeley");
+  const [grading, setGrading] = useState(classData?.grading || "Graded");
+  const [credit, setCredit] = useState(classData?.credit || "UC Berkeley");
   // const [requirements, setRequirements] = useState<string[]>([]);
 
   // Update state when classData changes
@@ -48,11 +48,15 @@ const ClassDetails = ({
       setClassName(classData!.name);
       setClassTitle(classData!.title);
       setUnits(classData!.units);
+      setGrading(classData!.grading || "Graded");
+      setCredit(classData!.credit || "UC Berkeley");
     } else {
       setClassId("");
       setClassName("");
       setClassTitle("");
       setUnits(0);
+      setGrading("Graded");
+      setCredit("UC Berkeley");
     }
   }, [classData, isEditMode]);
 
@@ -62,6 +66,8 @@ const ClassDetails = ({
       name: className,
       title: classTitle,
       units: units,
+      grading: grading,
+      credit: credit
     };
 
     if (isEditMode && onUpdate) {

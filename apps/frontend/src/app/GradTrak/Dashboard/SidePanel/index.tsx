@@ -37,6 +37,7 @@ export default function SidePanel({ majors, minors, totalUnits, transferUnits, p
                         </>
                     )}
 
+
                     {/* Total Units */}
                     <div className={styles.label}>Total Units</div>
                     <div className={styles.value}>{totalUnits}</div>

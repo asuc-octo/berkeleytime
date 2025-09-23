@@ -3,6 +3,6 @@ export interface ClassType {
     name: string;
     title: string;
     units: number;
-    grading?: string;
-    credit?: string;
-};
+    grading: string;
+    credit: string;
+}

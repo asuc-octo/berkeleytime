@@ -35,6 +35,8 @@ function AddClass({ isOpen, setIsOpen, addClass, handleOnConfirm }: AddClassProp
                 name: `${course.subject} ${course.number}`,
                 title: course.title,
                 units: 4,
+                grading: "Graded",
+                credit: "UC Berkeley"
             }));
             setAllClasses(formattedClasses);
         }

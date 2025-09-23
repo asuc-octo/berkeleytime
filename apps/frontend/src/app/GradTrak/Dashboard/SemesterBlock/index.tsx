@@ -23,7 +23,7 @@ interface SemesterBlockProps {
   selectedSemester: string;
   semesterId: string; 
   allSemesters: { [key: string]: ClassType[] }; 
-  onTotalUnitsChange: (newTotal: number) => void;
+  onTotalUnitsChange: (newTotal: number, pnpUnits: number, transferUnits: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ClassType[] }) => void;
 };
 
@@ -39,14 +39,20 @@ function SemesterBlock({ selectedYear,
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(allSemesters[semesterId] || []);
   const [totalUnits, setTotalUnits] = useState(0);
+  const [pnpUnits, setPnpUnits] = useState(0);
+  const [transferUnits, setTransferUnits] = useState(0);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const total = selectedClasses.reduce((sum, cls) => sum + cls.units, 0);
-    setTotalUnits(total);
-    onTotalUnitsChange(total);
+  const total = selectedClasses.reduce((sum, cls) => sum + cls.units, 0);
+  setTotalUnits(total);
+  const pnp = selectedClasses.reduce((sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0), 0);
+  setPnpUnits(pnp);
+  const transfer = selectedClasses.reduce((sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0), 0);
+  setTransferUnits(transfer);
+  onTotalUnitsChange(total, pnp, transfer);
   }, [selectedClasses, onTotalUnitsChange]);
 
   // update local state when allSemesters changes
@@ -73,8 +79,12 @@ function SemesterBlock({ selectedYear,
     setSelectedClasses((prevClasses) =>
       prevClasses.filter((_, index) => index !== indexToDelete)
     );
-    setTotalUnits(newTotalUnits);
-    onTotalUnitsChange(newTotalUnits);
+  setTotalUnits(newTotalUnits);
+  const newPnpUnits = updatedClasses.reduce((sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0), 0);
+  setPnpUnits(newPnpUnits);
+  const newTransferUnits = updatedClasses.reduce((sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0), 0);
+  setTransferUnits(newTransferUnits);
+  onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
   };
 
   const handleClassDetails= (index: number) => {
@@ -139,7 +149,14 @@ function SemesterBlock({ selectedYear,
 
 
     setTotalUnits(newTotalUnits);
-    onTotalUnitsChange(newTotalUnits);
+    const updatedClassList = selectedClasses.map((cls) =>
+      cls.id === updatedClass.id ? updatedClass : cls
+    );
+    const newPnpUnits = updatedClassList.reduce((sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0), 0);
+    setPnpUnits(newPnpUnits);
+    const newTransferUnits = updatedClassList.reduce((sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0), 0);
+    setTransferUnits(newTransferUnits);
+    onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
     setClassToEdit(null);
   };
