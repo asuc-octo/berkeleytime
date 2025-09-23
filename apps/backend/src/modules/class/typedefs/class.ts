@@ -113,6 +113,7 @@ export default gql`
     course: Course!
     class: Class!
     enrollment: Enrollment
+    reservations: [Reservation!]
 
     "Attributes"
     year: Int!
