@@ -20,9 +20,10 @@ export default function Section({
   active,
   sectionId,
   number,
-  meetings: [{ startTime, endTime, days }],
+  meetings,
 }: SectionProps & ISection) {
-  return (
+  const meetingsAdjusted = meetings.length > 0 ? meetings : [null];
+  return meetingsAdjusted.map((meeting) => (
     <div
       className={classNames(styles.root, {
         [styles.active]: active,
@@ -36,12 +37,12 @@ export default function Section({
       <p className={styles.title}>{number}</p>
       <CCN sectionId={sectionId} tooltip={false} />
       <Time
-        endTime={endTime}
-        startTime={startTime}
-        days={days}
+        endTime={meeting?.endTime ?? null}
+        startTime={meeting?.startTime ?? null}
+        days={meeting?.days ?? null}
         tooltip={false}
         className={styles.time}
       />
     </div>
-  );
+  ));
 }

@@ -1,15 +1,16 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: bt-tls
+  name: bt-cert
 spec:
-  secretName: bt-tls
+  secretName: bt-cert
   issuerRef:
-    name: letsencrypt-prod
+    name: {{ .Values.issuerName }}
     kind: Issuer
-  commonName: stanfurdtime.com
   dnsNames:
+    - berkeleytime.com
+    - "*.berkeleytime.com"
+    - "*.dev.berkeleytime.com"
     - stanfurdtime.com
     - "*.stanfurdtime.com"
     - "*.dev.stanfurdtime.com"
-    - beta.berkeleytime.com

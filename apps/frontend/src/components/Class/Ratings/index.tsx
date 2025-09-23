@@ -13,7 +13,7 @@ import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 
 import { METRIC_ORDER, MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { Container, Select } from "@repo/theme";
+import { Color, Container, Select } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
@@ -276,7 +276,10 @@ export function RatingsContainer() {
         metric: metric.metricName,
         stats: allCategories,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
-        statusColor: getStatusColor(metric.metricName, metric.weightedAverage),
+        statusColor: getStatusColor(
+          metric.metricName,
+          metric.weightedAverage
+        ) as Color,
         reviewCount: metric.count,
         weightedAverage: metric.weightedAverage,
       };

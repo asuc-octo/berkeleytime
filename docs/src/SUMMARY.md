@@ -26,6 +26,7 @@
 - [Infrastructure](./core/infrastructure/README.md)
   - [Onboarding](./core/infrastructure/onboarding.md)
   - [CI/CD Workflow](./core/infrastructure/cicd-workflow.md)
+  - [DNS & Certificates](./core/infrastructure/dns-certificates.md)
   - [Runbooks](./core/infrastructure/runbooks.md)
 
 ---

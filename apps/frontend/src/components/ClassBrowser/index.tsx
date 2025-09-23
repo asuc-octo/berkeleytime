@@ -264,7 +264,7 @@ export default function ClassBrowser({
     if (persistent) {
       if (query) searchParams.set("query", query);
       else searchParams.delete("query");
-      setSearchParams(searchParams);
+      setSearchParams(searchParams, { replace: true });
 
       return;
     }

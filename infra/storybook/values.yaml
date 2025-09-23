@@ -1,0 +1,17 @@
+env: prod
+
+host: storybook.stanfurdtime.com
+port: 80
+
+issuer: letsencrypt-prod
+
+frontend:
+  replicas: 1
+
+  port: 80
+  path: /
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-storybook
+    tag: prod

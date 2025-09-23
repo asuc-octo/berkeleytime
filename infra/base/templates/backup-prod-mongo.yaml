@@ -39,14 +39,14 @@ spec:
                   echo "Uploading backup to s3 bucket..."
                   backup_date=$(date +%Y%m%d)
                   aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/daily/prod_backup-$backup_date.gz \
-                    --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com \
+                    --endpoint-url=$ENDPOINT_URL \
                     --checksum-algorithm CRC32
 
-                  month_day=$(date +%m%d)
-                  if [ "$month_day" = "0101" ] || [ "$month_day" = "0601" ]; then
+                  date_day=$(date +%d)
+                  if [ "$date_day" = "01" ]; then
                     echo "Also uploading to persistent storage"
                     aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/persistent/prod_backup-$backup_date.gz \
-                      --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com \
+                      --endpoint-url=$ENDPOINT_URL \
                       --checksum-algorithm CRC32
                   fi
 
@@ -54,8 +54,8 @@ spec:
                   rm /tmp/prod_backup.gz
                   echo "MongoDB backup completed successfully!"
               env:
-                - name: ACCOUNT_ID
-                  value: ff660bd2dac18c00551ed509d24ef4d7
+                - name: ENDPOINT_URL
+                  value: https://ff660bd2dac18c00551ed509d24ef4d7.r2.cloudflarestorage.com
                 - name: BUCKET_NAME
                   value: prod-mongo-backups
               envFrom:

@@ -12,7 +12,9 @@ export default function Overview() {
     <Box p="5">
       <Container size="3">
         <Flex direction="column" gap="5">
-          <Details {..._class.primarySection.meetings[0]} />
+          {_class.primarySection.meetings.map((meeting, i) => (
+            <Details {...meeting} key={i} />
+          ))}
           <Flex direction="column" gap="2">
             <p className={styles.label}>Description</p>
             <p className={styles.description}>

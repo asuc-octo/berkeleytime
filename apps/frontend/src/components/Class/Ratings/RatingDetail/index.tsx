@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { InfoCircle, NavArrowDown } from "iconoir-react";
 
 import { MetricName } from "@repo/shared";
-import { Badge, Tooltip } from "@repo/theme";
+import { Badge, Color, Tooltip } from "@repo/theme";
 
 import { getMetricTooltip } from "../metricsUtil";
 import styles from "./RatingDetail.module.scss";
@@ -17,7 +17,7 @@ export interface RatingDetailProps {
     count: number;
   }[];
   status: string;
-  statusColor: string;
+  statusColor: Color;
   reviewCount: number;
   weightedAverage: number;
 }
