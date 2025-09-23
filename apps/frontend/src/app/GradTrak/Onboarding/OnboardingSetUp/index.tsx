@@ -1,16 +1,11 @@
-import React from 'react';
+import { useState } from "react";
 
 import { Check } from "iconoir-react";
 import { Checkbox } from "radix-ui";
-import { 
-  Flex, 
-  Container, 
-  Box,
-  Button,
-  Select,
-} from "@repo/theme"
 
-import DotsIndicator from '../DotsIndicator';
+import { Box, Button, Container, Flex, Select } from "@repo/theme";
+
+import DotsIndicator from "../DotsIndicator";
 import styles from "./OnboardingSetUp.module.scss";
 
 type OnboardingSetupProps = {
@@ -26,48 +21,42 @@ export default function OnboardingSetup({
   gradYear,
   summerCheck,
 }: OnboardingSetupProps) {
-  const [localStartYear, setLocalStartYear] = React.useState(startYear);
-  const [localGradYear, setLocalGradYear] = React.useState(gradYear);
+  const [localStartYear, setLocalStartYear] = useState(startYear);
+  const [localGradYear, setLocalGradYear] = useState(gradYear);
 
-  const [localSummerCheck, setLocalSummerCheck] = React.useState(summerCheck);
+  const [localSummerCheck, setLocalSummerCheck] = useState(summerCheck);
 
   const now = new Date();
   const currentYear = now.getFullYear();
   const gradYearStart = parseInt(localStartYear) || currentYear;
- 
-  const startYearOptions = Array.from(
-    { length: 11 },
-    (_, i) => {
-      const year = (currentYear - 5 + i).toString();
-      return { label: year, value: year };
-    }
-  );
-  
-  const gradYearOptions = Array.from(
-    { length: 11 },
-    (_, i) => {
-      const year = (gradYearStart + i).toString();
-      return { label: year, value: year };
-    }
-  );
+
+  const startYearOptions = Array.from({ length: 11 }, (_, i) => {
+    const year = (currentYear - 5 + i).toString();
+    return { label: year, value: year };
+  });
+
+  const gradYearOptions = Array.from({ length: 11 }, (_, i) => {
+    const year = (gradYearStart + i).toString();
+    return { label: year, value: year };
+  });
 
   const handleStartYearChange = (year: string | string[] | null) => {
-    if (typeof year === 'string') {
+    if (typeof year === "string") {
       setLocalStartYear(year);
-      
+
       // Reset graduation year if start year is later than current grad year
       if (parseInt(year) > parseInt(localGradYear)) {
-        setLocalGradYear('');
+        setLocalGradYear("");
       }
     }
   };
 
   const handleGradYearChange = (year: string | string[] | null) => {
-    if (typeof year === 'string') {
+    if (typeof year === "string") {
       setLocalGradYear(year);
     }
   };
-  
+
   const handleNextClick = () => {
     if (localStartYear && localGradYear) {
       onNext(localStartYear, localGradYear, localSummerCheck);
@@ -81,18 +70,21 @@ export default function OnboardingSetup({
       <Container style={{ marginTop: "80px" }}>
         <div className={styles.hero}>
           <Flex direction="column" gap="2rem">
-
             {/* Header */}
             <Flex direction="column" align="center" gap="0.5rem">
-                <h1>Set Up</h1>
-                <p>Enter your start year and graduation year</p>
+              <h1>Set Up</h1>
+              <p>Enter your start year and graduation year</p>
             </Flex>
 
             {/* Year selection */}
             <Flex direction="column" gap="1rem">
               <Flex direction="row" align="center" gap="0.5rem">
-
-                <Flex direction="column" width="100%" align="start" gap="0.25rem">
+                <Flex
+                  direction="column"
+                  width="100%"
+                  align="start"
+                  gap="0.25rem"
+                >
                   <p>Start Year</p>
                   <Box flexGrow="1" width="100%">
                     <Select
@@ -104,7 +96,12 @@ export default function OnboardingSetup({
                   </Box>
                 </Flex>
 
-                <Flex direction="column" width="100%" align="start" gap="0.25rem">
+                <Flex
+                  direction="column"
+                  width="100%"
+                  align="start"
+                  gap="0.25rem"
+                >
                   <p>Graduation Year</p>
                   <Box flexGrow="1" width="100%">
                     <Select
@@ -130,13 +127,19 @@ export default function OnboardingSetup({
                 </Checkbox.Root>
 
                 <label htmlFor="summer" className={styles.text}>
-                  <span className={styles.value}>Include Summer Semesters?</span>
+                  <span className={styles.value}>
+                    Include Summer Semesters?
+                  </span>
                 </label>
               </Flex>
             </Flex>
 
             {/* Next Button */}
-            <Button className={styles.primary} variant="primary" onClick={handleNextClick}>
+            <Button
+              className={styles.primary}
+              variant="primary"
+              onClick={handleNextClick}
+            >
               Next
             </Button>
 

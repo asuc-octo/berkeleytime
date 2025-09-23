@@ -1,30 +1,34 @@
-import { lazy, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
 
-import SuspenseBoundary from '@/components/SuspenseBoundary';
+import { useNavigate } from "react-router-dom";
 
-import styles from './Onboarding.module.scss'
+import SuspenseBoundary from "@/components/SuspenseBoundary";
+
+import AddDegree from "./AddDegree";
+import styles from "./Onboarding.module.scss";
+import OnboardingSetup from "./OnboardingSetUp";
 
 type DegreeOption = {
   label: string;
   value: string;
 };
 
-const OnboardingSetup = lazy(() => import("./OnboardingSetUp"));
-const AddDegree = lazy(() => import("./AddDegree"));
-
 export default function GradTrakOnboarding() {
   const [step, setStep] = useState(0);
-  const [startYear, setStartYear] = useState('');
-  const [gradYear, setGradYear] = useState('');
+  const [startYear, setStartYear] = useState("");
+  const [gradYear, setGradYear] = useState("");
   const [summerCheck, setSummerCheck] = useState(false);
 
   const navigate = useNavigate();
-  
+
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
   const [, setSelectedMinors] = useState<DegreeOption[]>([]);
-  
-  const handleSetupComplete = (start: string, grad: string, summer: boolean) => {
+
+  const handleSetupComplete = (
+    start: string,
+    grad: string,
+    summer: boolean
+  ) => {
     setStartYear(start);
     setGradYear(grad);
     setSummerCheck(summer);
@@ -38,16 +42,22 @@ export default function GradTrakOnboarding() {
 
   const handleMinorsComplete = (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
-    console.log({ startYear, gradYear, summerCheck, majors: selectedMajors, minors }); // TODO: update user info in backend 
+    console.log({
+      startYear,
+      gradYear,
+      summerCheck,
+      majors: selectedMajors,
+      minors,
+    }); // TODO: update user info in backend
     navigate(`/gradtrak/dashboard`, {
       state: {
         startYear,
         gradYear,
         summerCheck,
         selectedDegreeList: selectedMajors, // Pass the final collected majors
-        selectedMinorList: minors,          // Pass the final collected minors (from this step's parameter)
-      }
-    })
+        selectedMinorList: minors, // Pass the final collected minors (from this step's parameter)
+      },
+    });
   };
 
   return (
@@ -62,19 +72,12 @@ export default function GradTrakOnboarding() {
           />
         )}
         {step === 1 && (
-          <AddDegree
-            isMajor={true}
-            onNext={handleMajorsComplete}
-          />
+          <AddDegree isMajor={true} onNext={handleMajorsComplete} />
         )}
         {step === 2 && (
-          <AddDegree
-            isMajor={false}
-            onNext={handleMinorsComplete}
-          />
+          <AddDegree isMajor={false} onNext={handleMinorsComplete} />
         )}
       </SuspenseBoundary>
     </div>
   );
 }
-
