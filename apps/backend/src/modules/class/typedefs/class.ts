@@ -88,6 +88,15 @@ export default gql`
 
     "Instructor Option"
     IOP
+
+    "Clinic"
+    CNC
+
+    "Law"
+    LAW
+
+    ""
+    LW1
   }
 
   scalar SectionNumber
@@ -193,6 +202,9 @@ export default gql`
 
     "Demonstration"
     DEM
+
+    "Conversation"
+    CON
   }
 
   type Reservation {

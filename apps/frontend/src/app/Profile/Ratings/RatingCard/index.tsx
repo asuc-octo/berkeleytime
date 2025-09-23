@@ -2,7 +2,7 @@ import { ArrowRight } from "iconoir-react";
 import { Link } from "react-router-dom";
 
 import { METRIC_MAPPINGS, METRIC_ORDER, MetricName } from "@repo/shared";
-import { Badge, Button, Card } from "@repo/theme";
+import { Badge, Button, Card, Color } from "@repo/theme";
 
 import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
 import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
@@ -71,7 +71,7 @@ export function RatingCard({ rating }: RatingCardProps) {
             const statusColor = getStatusColor(
               metric.metricName as MetricName,
               metric.value
-            );
+            ) as Color;
             return (
               <div key={metric.metricName} className={styles.metricRow}>
                 <span className={styles.metricName}>{metric.metricName}</span>

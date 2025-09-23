@@ -2,11 +2,12 @@ import React, { ComponentPropsWithRef } from "react";
 
 import { Flex } from "@radix-ui/themes";
 
+import { Color } from "../ThemeProvider";
 import styles from "./Badge.module.scss";
 
 interface Props {
   label: string;
-  color: string;
+  color: Color;
   icon?: React.ReactNode;
 }
 
