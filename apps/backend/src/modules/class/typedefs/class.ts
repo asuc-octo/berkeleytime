@@ -113,7 +113,6 @@ export default gql`
     course: Course!
     class: Class!
     enrollment: Enrollment
-    reservations: [Reservation!]
 
     "Attributes"
     year: Int!
@@ -206,12 +205,6 @@ export default gql`
 
     "Conversation"
     CON
-  }
-
-  type Reservation {
-    enrollCount: Int!
-    enrollMax: Int!
-    group: String!
   }
 
   type Meeting {

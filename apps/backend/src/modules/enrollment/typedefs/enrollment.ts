@@ -33,6 +33,9 @@ export default gql`
     number: Int!
     requirementGroup: String
     fromDate: String!
+    enrolledCount: Int
+    maxEnroll: Int
+    openReserved: Int
   }
 
   type EnrollmentSingular {

@@ -217,28 +217,6 @@ const resolvers: ClassModule.Resolvers = {
 
       return enrollmentHistory;
     },
-
-    reservations: async (parent: IntermediateSection | ClassModule.Section) => {
-      const enrollment = parent.enrollment && typeof parent.enrollment !== 'string'
-        ? parent.enrollment
-        : await getEnrollmentBySectionId(parent.termId, parent.sessionId, parent.sectionId);
-
-      if (!enrollment?.seatReservationTypes?.length) {
-        return [];
-      }
-
-      const latestCounts = enrollment.latest?.seatReservationCounts || [];
-
-      // Map reservation types with their current counts
-      return enrollment.seatReservationTypes.map((type: any) => {
-        const count = latestCounts.find((c: any) => c.number === type.number);
-        return {
-          group: type.requirementGroup || "",
-          enrollCount: count?.enrolledCount || 0,
-          enrollMax: count?.maxEnroll || 0,
-        };
-      });
-    },
   },
 
   // Session: {
