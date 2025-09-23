@@ -50,9 +50,9 @@ const resolvers: PlanModule.Resolvers = {
     },
     createNewPlan(
       _parent, 
-      args: { college: Colleges }, 
+      args: { college: Colleges; majors: string[]; minors: string[] }, 
       context) {
-      return createPlan(args.college, context);
+      return createPlan(args.college, args.majors, args.minors, context);
     }, 
     editPlan(
       _parent,

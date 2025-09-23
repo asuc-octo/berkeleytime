@@ -112,6 +112,14 @@ export const planSchema = new Schema(
       type: planTermSchema,
       required: true,
     },
+    majors: {
+      type: [String!],
+      required: true,
+    },
+    minors: {
+      type: [String!],
+      required: true,
+    },
     uniReqs: {
       type: [String!],
       required: true,
@@ -152,6 +160,8 @@ export interface PlanType extends Document {
   userEmail: string;
   planTerms: PlanTermType[];
   miscellaneous: PlanTermType;
+  majors: string[];
+  minors: string[];
   uniReqs: string[];
   collegeReqs: string[];
   majorReqs: MajorReqType[];

@@ -15,6 +15,8 @@ export function formatPlan(
     userEmail: plan.userEmail,
     planTerms: plan.planTerms.map(formatPlanTerm),
     miscellaneous: formatPlanTerm(plan.miscellaneous),
+    majors: plan.majors,
+    minors: plan.minors,
     uniReqs: plan.uniReqs,
     collegeReqs: plan.collegeReqs,
     majorReqs: plan.majorReqs.map(formatMajorReq),

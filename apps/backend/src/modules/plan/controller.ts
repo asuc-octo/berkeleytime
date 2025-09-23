@@ -178,6 +178,8 @@ export async function setClasses(
 // create a new plan
 export async function createPlan(
   college: Colleges,
+  majors: string[],
+  minors: string[],
   context: any
 ): Promise<Plan> {
   if (!context.user.email) throw new Error("Unauthorized");
@@ -212,6 +214,8 @@ export async function createPlan(
     userEmail: context.user.email,
     planTerms: [],
     miscellaneous: miscellaneous,
+    majors: majors,
+    minors: minors,
     collegeReqs: collegeReqs,
     uniReqs: UniReqs,
     majorReqs: [],

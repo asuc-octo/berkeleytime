@@ -84,6 +84,8 @@ const typeDef = gql`
     userEmail: String!
     planTerms: [PlanTerm!]
     miscellaneous: PlanTerm!
+    majors: [String!]
+    minors: [String!]
     uniReqs: [String!]
     collegeReqs: [String!]
     majorReqs: [MajorReq!]
@@ -143,6 +145,8 @@ const typeDef = gql`
 
   input PlanInput {
     college: Colleges!
+    majors: [String!]!
+    minors: [String!]!
     majorReqs: [MajorReqInput!]!
   }
 
@@ -163,9 +167,9 @@ const typeDef = gql`
 
   type Mutation {
     """
-    Takes in user's email and a college, creates a new Plan record in the database, and returns the Plan
+    Takes in user's email, a college, majors, and minors, creates a new Plan record in the database, and returns the Plan
     """
-    createNewPlan(college: Colleges!): Plan @auth
+    createNewPlan(college: Colleges!, majors: [String!]!, minors: [String!]!): Plan @auth
 
     """
     Edits Plan college and majorReqs
