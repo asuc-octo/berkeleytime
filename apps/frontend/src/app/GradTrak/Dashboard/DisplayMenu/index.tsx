@@ -217,7 +217,7 @@ export default function DisplayMenu({
                   return (
                     <div className={styles.toggleItem}>
                       <Flex align="center" gap="12px">
-                        <Hashtag />
+                        {d.icon}
                         <Text className={styles.toggleItemText}>{d.label}</Text>
                       </Flex>
                       {v[1] ? (
