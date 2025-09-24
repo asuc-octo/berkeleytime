@@ -1,9 +1,10 @@
 import {
-  PlanCustomEventType,
+  PlanCustomCourseType,
   PlanTermType,
   SelectedCourseType,
   PlanType,
   MajorReqType,
+  LabelType,
 } from "@repo/common";
 
 import { PlanModule } from "./generated-types/module-types";
@@ -15,14 +16,16 @@ export function formatPlan(
     _id: plan._id as string,
     userEmail: plan.userEmail,
     planTerms: plan.planTerms.map(formatPlanTerm),
-    miscellaneous: formatPlanTerm(plan.miscellaneous),
     majors: plan.majors,
     minors: plan.minors,
-    uniReqs: plan.uniReqs,
-    collegeReqs: plan.collegeReqs,
+    college: plan.college,
     majorReqs: plan.majorReqs.map(formatMajorReq),
     created: plan.createdAt.toISOString(),
     revised: plan.updatedAt.toISOString(),
+    gridLayout: !!plan.gridLayout,
+    labels: plan.labels.map(formatLabel),
+    uniReqsSatisfied: plan.uniReqsSatisfied,
+    collegeReqsSatisfied: plan.collegeReqsSatisfied
   };
 }
 
@@ -36,9 +39,12 @@ export function formatPlanTerm(
     courses: planTerm.courses.map(formatCourse),
     year: planTerm.year,
     term: planTerm.term,
-    customEvents: planTerm.customEvents
-      ? planTerm.customEvents.map(formatCustomEvents)
-      : undefined,
+    customCourses: planTerm.customCourses
+      ? planTerm.customCourses.map(formatCustomEvents)
+      : [],
+    hidden: planTerm.hidden,
+    status: planTerm.status,
+    pinned: planTerm.pinned
   };
 }
 
@@ -49,19 +55,22 @@ export function formatMajorReq(
     name: majorReq.name,
     major: majorReq.major,
     numCoursesRequired: majorReq.numCoursesRequired,
-    satisfyingCourseIds: majorReq.satisfyingCourseIds,
+    satisfyingCourseIds: majorReq.satisfyingCourseIds ? majorReq.satisfyingCourseIds : [],
     isMinor: majorReq.isMinor ? majorReq.isMinor : false
   }
 }
 
 function formatCustomEvents(
-  customEvent: PlanCustomEventType
-): PlanModule.CustomEvent {
+  customCourse: PlanCustomCourseType
+): PlanModule.CustomCourse {
   return {
-    title: customEvent.title,
-    description: customEvent.description,
-    collegeReqs: customEvent.collegeReqs,
-    uniReqs: customEvent.uniReqs
+    title: customCourse.title,
+    description: customCourse.description,
+    collegeReqs: customCourse.collegeReqs,
+    uniReqs: customCourse.uniReqs,
+    labels: customCourse.labels,
+    pnp: customCourse.pnp,
+    transfer: customCourse.transfer
   };
 }
 
@@ -69,8 +78,20 @@ function formatCourse(
   course: SelectedCourseType
 ): PlanModule.SelectedCourse {
   return {
-    classID: course.classID,
+    courseID: course.courseID,
     collegeReqs: course.collegeReqs,
-    uniReqs: course.uniReqs
+    uniReqs: course.uniReqs,
+    labels: course.labels,
+    pnp: course.pnp,
+    transfer: course.transfer
+  };
+}
+
+function formatLabel(
+  label: LabelType
+): PlanModule.Label {
+  return {
+    name: label.name,
+    color: label.color
   };
 }

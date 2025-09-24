@@ -2,6 +2,12 @@
 import { gql } from "graphql-tag";
 
 const typeDef = gql`
+  enum Terms {
+    Fall
+    Spring
+    Summer
+  }
+
   enum Colleges {
     "College of Letters and Sciences"
     LnS
@@ -14,6 +20,13 @@ const typeDef = gql`
 
     "Other"
     OTHER
+  }
+
+  enum Status {
+    Complete
+    InProgress
+    Incomplete
+    None
   }
 
   enum UniReqs {
@@ -72,55 +85,77 @@ const typeDef = gql`
     HAAS_SBS
   }
 
+  """
+  Not in use atm
+  """
   type MajorReq {
     name: String!
     major: String!
     numCoursesRequired: Int!
-    satisfyingCourseIds: [String!]
+    satisfyingCourseIds: [String!]!
     isMinor: Boolean!
   }
 
+  type Label {
+    name: String!
+    color: String!
+  }
+
   type Plan {
-    _id: ID
+    _id: ID!
     userEmail: String!
-    planTerms: [PlanTerm!]
-    miscellaneous: PlanTerm!
-    majors: [String!]
-    minors: [String!]
-    uniReqs: [String!]
-    collegeReqs: [String!]
-    majorReqs: [MajorReq!]
+    planTerms: [PlanTerm!]!
+    majorReqs: [MajorReq!]!
+    majors: [String!]!
+    minors: [String!]!
     created: String!
     revised: String!
+    gridLayout: Boolean!
+    college: String!
+    labels: [Label!]!
+    """
+    Requirements manually satisfied
+    """
+    uniReqsSatisfied: [String!]!
+    collegeReqsSatisfied: [String!]!
   }
 
   type PlanTerm {
-    _id: ID
-    name: String
+    _id: ID!
+    name: String!
     userEmail: String!
     year: Int!
     term: String!
-    courses: [SelectedCourse!]
-    customEvents: [CustomEvent!]
+    courses: [SelectedCourse!]!
+    customCourses: [CustomCourse!]!
+    hidden: Boolean!
+    status: String!
+    pinned: Boolean!
   }
 
   type SelectedCourse {
     """
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
-    classID: String!
+    courseID: String!
     """
     Requirements satisfied by class
     """
-    uniReqs: [String!]
-    collegeReqs: [String!]
+    uniReqs: [String!]!
+    collegeReqs: [String!]!
+    pnp: Boolean!
+    transfer: Boolean!
+    labels: [Label!]!
   }
 
-  type CustomEvent {
-    title: String
-    description: String
-    uniReqs: [String!]
-    collegeReqs: [String!]
+  type CustomCourse {
+    title: String!
+    description: String!
+    uniReqs: [String!]!
+    collegeReqs: [String!]!
+    pnp: Boolean!
+    transfer: Boolean!
+    labels: [Label!]!
   }
 
   input MajorReqInput {
@@ -131,32 +166,61 @@ const typeDef = gql`
     isMinor: Boolean! 
   }
 
-  input CustomEventInput {
+  input LabelInput {
+    name: String!
+    color: String!
+  }
+
+  input CustomCourseInput {
     title: String!
     description: String!
     uniReqs: [UniReqs!]!
     collegeReqs: [CollegeReqs!]!
+    pnp: Boolean!
+    transfer: Boolean!
+    labels: [LabelInput!]!
   }
 
   input SelectedCourseInput {
-    classID: String!
+    courseID: String!
     uniReqs: [UniReqs!]!
     collegeReqs: [CollegeReqs!]!
+    pnp: Boolean!
+    transfer: Boolean!
+    labels: [LabelInput!]!
   }
 
   input PlanInput {
-    college: Colleges!
-    majors: [String!]!
-    minors: [String!]!
-    majorReqs: [MajorReqInput!]!
+    college: Colleges
+    majors: [String!]
+    minors: [String!]
+    majorReqs: [MajorReqInput!]
+    gridLayout: Boolean
+    labels: [LabelInput!]
+    uniReqsSatisfied: [UniReqs!]
+    collegeReqsSatisfied: [CollegeReqs!]
   }
 
   input PlanTermInput {
     name: String!
     year: Int!
-    term: String!
+    term: Terms!
     courses: [SelectedCourseInput!]!
-    customEvents: [CustomEventInput!]!
+    customCourses: [CustomCourseInput!]!
+    hidden: Boolean!
+    status: Status!
+    pinned: Boolean!
+  }
+
+  input EditPlanTermInput {
+    name: String
+    year: Int
+    term: Terms
+    courses: [SelectedCourseInput!]
+    customCourses: [CustomCourseInput!]
+    hidden: Boolean
+    status: Status
+    pinned: Boolean
   }
 
   type Query {
@@ -170,7 +234,7 @@ const typeDef = gql`
     """
     Takes in user's email, a college, majors, and minors, creates a new Plan record in the database, and returns the Plan
     """
-    createNewPlan(college: Colleges!, majors: [String!]!, minors: [String!]!): Plan @auth
+    createNewPlan(college: Colleges!, startYear: Int!, endYear: Int!, majors: [String!]!, minors: [String!]!): Plan @auth
 
     """
     Edits Plan college and majorReqs
@@ -191,13 +255,13 @@ const typeDef = gql`
     Takes in planTerm fields, find the planTerm record in the database corresponding to the provided term, 
     updates the record, and returns the updated planTerm
     """
-    editPlanTerm(id: ID!, planTerm: PlanTermInput!): PlanTerm @auth
+    editPlanTerm(id: ID!, planTerm: EditPlanTermInput!): PlanTerm @auth
     
     """
     For the planTerm specified by the term, modifies the courses field, and returns the updated 
     planTerm.
     """
-    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!, customEvents: [CustomEventInput!]!): PlanTerm @auth
+    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!, customCourses: [CustomCourseInput!]!): PlanTerm @auth
 
     """
     Deletes plan, for testing purposes
