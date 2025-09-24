@@ -1,9 +1,8 @@
 import { omitBy } from "lodash";
 
-import { PlanTermModel, LabelModel, PlanModel, SelectedCourseModel, CustomCourseModel, MajorReqModel } from "@repo/common";
+import { PlanTermModel, LabelModel, PlanModel, SelectedCourseModel, MajorReqModel } from "@repo/common";
 
 import {
-  CustomCourseInput,
   PlanTerm,
   Plan,
   EditPlanTermInput,
@@ -47,23 +46,12 @@ export async function removePlanTerm(planTermID: string, context: any): Promise<
   return planTermID;
 }
 
-function removeNullEventVals(customCourse: CustomCourseInput) {
-  for (const key in customCourse) {
-    if (customCourse[key as keyof CustomCourseInput] === null) {
-      delete customCourse[key as keyof CustomCourseInput];
-    }
-  }
-}
-
 // create a new planTerm
 export async function createPlanTerm(
   mainPlanTerm: PlanTermInput,
   context: any
 ): Promise<PlanTerm> {
   if (!context.user.email) throw new Error("Unauthorized");
-  if (mainPlanTerm.customCourses) {
-    mainPlanTerm.customCourses.forEach(removeNullEventVals);
-  }
   const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
   nonNullPlanTerm.userEmail = context.user.email;
   const newPlanTerm = new PlanTermModel({
@@ -121,9 +109,6 @@ export async function editPlanTerm(
   if (mainPlanTerm.courses != null) {
     termToUpdate.courses = mainPlanTerm.courses.map(courseInput => new SelectedCourseModel(courseInput));
   }
-  if (mainPlanTerm.customCourses != null) {
-    termToUpdate.customCourses = mainPlanTerm.customCourses.map(customCourseInput => new CustomCourseModel(customCourseInput));
-  }
 
   await gt.save();
   return formatPlanTerm(termToUpdate);
@@ -133,7 +118,6 @@ export async function editPlanTerm(
 export async function setClasses(
   planTermID: string,
   courses: SelectedCourseInput[],
-  customCourses: CustomCourseInput[],
   context: any
 ): Promise<PlanTerm> {
   if (!context.user.email) throw new Error("Unauthorized");
@@ -146,7 +130,6 @@ export async function setClasses(
     throw new Error("PlanTerm does not exist in user's plan");
   }
   gt.planTerms[planTermIndex].courses = courses.map(courseInput => new SelectedCourseModel(courseInput));
-  gt.planTerms[planTermIndex].customCourses = customCourses.map(customCourseInput => new CustomCourseModel(customCourseInput));
   await gt.save();
   return formatPlanTerm(gt.planTerms[planTermIndex]);
 }
@@ -169,7 +152,6 @@ export async function createPlan(
   const miscellaneous = new PlanTermModel({
     name: "Miscellaneous",
     courses: [],
-    customCourses: [],
     userEmail: context.user.email,
     year: -1,
     term: "Misc",
@@ -183,7 +165,6 @@ export async function createPlan(
   planTerms.push(new PlanTermModel({
     name: "Fall " + startYear,
     courses: [],
-    customCourses: [],
     userEmail: context.user.email,
     year: startYear,
     term: "Fall",
@@ -195,7 +176,6 @@ export async function createPlan(
     planTerms.push(new PlanTermModel({
       name: "Spring " + i,
       courses: [],
-      customCourses: [],
       userEmail: context.user.email,
       year: i,
       term: "Spring",
@@ -206,7 +186,6 @@ export async function createPlan(
     planTerms.push(new PlanTermModel({
       name: "Fall " + i,
       courses: [],
-      customCourses: [],
       userEmail: context.user.email,
       year: i,
       term: "Fall",
@@ -218,7 +197,6 @@ export async function createPlan(
   planTerms.push(new PlanTermModel({
     name: "Spring " + endYear,
     courses: [],
-    customCourses: [],
     userEmail: context.user.email,
     year: endYear,
     term: "Spring",
@@ -234,7 +212,6 @@ export async function createPlan(
     minors: minors,
     majorReqs: [],
     college: college,
-    gridLayout: false,
     labels: [],
     uniReqsSatisfied: [],
     collegeReqsSatisfied: [],
@@ -263,9 +240,6 @@ export async function editPlan(
   }
   if (plan.majorReqs != null) {
     gt.majorReqs = plan.majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
-  }
-  if (plan.gridLayout != null) {
-    gt.gridLayout = plan.gridLayout;
   }
   if (plan.labels != null) {
     gt.labels = plan.labels.map(labelInput => new LabelModel(labelInput));

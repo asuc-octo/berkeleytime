@@ -30,7 +30,6 @@ export const useCreatePlan = () => {
       //             college
       //             created
       //             revised
-      //             gridLayout
       //             labels {
       //               name
       //               color

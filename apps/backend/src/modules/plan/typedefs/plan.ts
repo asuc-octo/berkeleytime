@@ -110,7 +110,6 @@ const typeDef = gql`
     minors: [String!]!
     created: String!
     revised: String!
-    gridLayout: Boolean!
     college: String!
     labels: [Label!]!
     """
@@ -127,7 +126,6 @@ const typeDef = gql`
     year: Int!
     term: String!
     courses: [SelectedCourse!]!
-    customCourses: [CustomCourse!]!
     hidden: Boolean!
     status: String!
     pinned: Boolean!
@@ -138,19 +136,9 @@ const typeDef = gql`
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
     courseID: String!
-    """
-    Requirements satisfied by class
-    """
-    uniReqs: [String!]!
-    collegeReqs: [String!]!
-    pnp: Boolean!
-    transfer: Boolean!
-    labels: [Label!]!
-  }
-
-  type CustomCourse {
-    title: String!
-    description: String!
+    courseName: String!
+    courseTitle: String!
+    courseUnits: Int!
     uniReqs: [String!]!
     collegeReqs: [String!]!
     pnp: Boolean!
@@ -171,18 +159,11 @@ const typeDef = gql`
     color: String!
   }
 
-  input CustomCourseInput {
-    title: String!
-    description: String!
-    uniReqs: [UniReqs!]!
-    collegeReqs: [CollegeReqs!]!
-    pnp: Boolean!
-    transfer: Boolean!
-    labels: [LabelInput!]!
-  }
-
   input SelectedCourseInput {
     courseID: String!
+    courseName: String!
+    courseTitle: String!
+    courseUnits: Int!
     uniReqs: [UniReqs!]!
     collegeReqs: [CollegeReqs!]!
     pnp: Boolean!
@@ -195,7 +176,6 @@ const typeDef = gql`
     majors: [String!]
     minors: [String!]
     majorReqs: [MajorReqInput!]
-    gridLayout: Boolean
     labels: [LabelInput!]
     uniReqsSatisfied: [UniReqs!]
     collegeReqsSatisfied: [CollegeReqs!]
@@ -206,7 +186,6 @@ const typeDef = gql`
     year: Int!
     term: Terms!
     courses: [SelectedCourseInput!]!
-    customCourses: [CustomCourseInput!]!
     hidden: Boolean!
     status: Status!
     pinned: Boolean!
@@ -217,7 +196,6 @@ const typeDef = gql`
     year: Int
     term: Terms
     courses: [SelectedCourseInput!]
-    customCourses: [CustomCourseInput!]
     hidden: Boolean
     status: Status
     pinned: Boolean
@@ -261,7 +239,7 @@ const typeDef = gql`
     For the planTerm specified by the term, modifies the courses field, and returns the updated 
     planTerm.
     """
-    setSelectedCourses(id: ID!, courses: [SelectedCourseInput!]!, customCourses: [CustomCourseInput!]!): PlanTerm @auth
+    setSelectedCourses(id: ID!, courses: [SelectedCourseInput!]!): PlanTerm @auth
 
     """
     Deletes plan, for testing purposes

@@ -1,7 +1,6 @@
 import {
   PlanTermInput,
   SelectedCourseInput,
-  CustomCourseInput,
   PlanInput,
   Colleges,
   EditPlanTermInput
@@ -44,10 +43,10 @@ const resolvers: PlanModule.Resolvers = {
     },
     setSelectedCourses(
       _parent,
-      args: { id: string; courses: SelectedCourseInput[], customCourses: CustomCourseInput[] },
+      args: { id: string; courses: SelectedCourseInput[] },
       context
     ) {
-      return setClasses(args.id, args.courses, args.customCourses, context);
+      return setClasses(args.id, args.courses, context);
     },
     createNewPlan(
       _parent, 

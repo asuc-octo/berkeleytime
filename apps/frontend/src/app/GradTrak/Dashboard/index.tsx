@@ -17,7 +17,7 @@ import {
 import { ClassType } from "./types";
 import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
-import { ICustomCourse, IPlanTerm, ISelectedCourse } from '@/lib/api/plans';
+import { IPlanTerm, ISelectedCourse } from '@/lib/api/plans';
 
 import styles from "./Dashboard.module.scss";
 import { Button, Tooltip, IconButton } from '@repo/theme';
@@ -100,27 +100,22 @@ function Dashboard() {
       
       const classes: ClassType[] = [];
       
+      /* TODO(Daniel):
+        - Implement adding classes
+        - Implement moving classes
+        - Implement editing classes
+        - Implement deleting classes
+      */
+
       // Convert selected courses to ClassType
       planTerm.courses.forEach((course: ISelectedCourse) => {
         classes.push({
           id: course.courseID,
-          name: course.courseID, // TODO(Daniel): Fix
-          title: course.courseID, // TODO(Daniel): Fix
-          units: 4, // TODO(Daniel): Fix
+          name: course.courseName,
+          title: course.courseTitle,
+          units: course.courseUnits,
           grading: course.pnp ? 'P/NP' : 'Letter',
           credit: course.transfer ? 'Transfer' : 'Regular'
-        });
-      });
-      
-      // Convert custom courses to ClassType
-      planTerm.customCourses.forEach((customCourse: ICustomCourse) => {
-        classes.push({
-          id: `custom-${customCourse.title}`, // Generate unique ID for custom courses
-          name: customCourse.title || 'Custom Course',
-          title: customCourse.title || 'Custom Course',
-          units: 4, // TODO(Daniel): Fix
-          grading: customCourse.pnp ? 'P/NP' : 'Letter',
-          credit: customCourse.transfer ? 'Transfer' : 'Custom'
         });
       });
       

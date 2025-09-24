@@ -13,44 +13,24 @@ export const labelSchema = new Schema({
   }
 });
 
-export const PlanCustomCourseSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-    alias: "name",
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  uniReqs: {
-    type: [String],
-    required: true,
-    trim: true,
-  },
-  collegeReqs: {
-    type: [String],
-    required: true,
-    trim: true,
-  },
-  pnp: {
-    type: Boolean,
-    required: true,
-  },
-  transfer: {
-    type: Boolean,
-    required: true,
-  },
-  labels: {
-    type: [labelSchema],
-    required: true,
-  }
-});
-
 export const selectedCourseSchema = new Schema({
   courseID: {
     type: String,
     trim: true,
+    required: true,
+  },
+  courseName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  courseTitle: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  courseUnits: {
+    type: Number,
     required: true,
   },
   uniReqs: {
@@ -99,10 +79,6 @@ export const planTermSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-    },
-    customCourses: {
-      type: [PlanCustomCourseSchema],
-      required: true,
     },
     hidden: {
       type: Boolean,
@@ -175,10 +151,6 @@ export const planSchema = new Schema(
       type: [majorReqSchema],
       required: true,
     },
-    gridLayout: {
-      type: Boolean,
-      required: true,
-    },
     labels: {
       type: [labelSchema],
       required: true,
@@ -197,10 +169,6 @@ export const planSchema = new Schema(
   { timestamps: true }
 );
 
-export type PlanCustomCourseType = Document &
-  InferSchemaType<typeof PlanCustomCourseSchema>;
-export const CustomCourseModel = mongoose.model<PlanCustomCourseType>('customCourse', PlanCustomCourseSchema);
-
 export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> & Document;
 export const SelectedCourseModel = mongoose.model<SelectedCourseType>('course', selectedCourseSchema);
 
@@ -216,7 +184,6 @@ export interface PlanTermType extends Document {
   userEmail: string;
   year: number;
   term: string;
-  customCourses: PlanCustomCourseType[];
   hidden: boolean;
   status: string;
   pinned: boolean;
@@ -231,7 +198,6 @@ export interface PlanType extends Document {
   majorReqs: MajorReqType[];
   createdAt: Date;
   updatedAt: Date;
-  gridLayout: boolean;
   college: string;
   labels: LabelType[];
   uniReqsSatisfied: string[];

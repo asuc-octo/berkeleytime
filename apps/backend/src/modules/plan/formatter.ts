@@ -1,5 +1,4 @@
 import {
-  PlanCustomCourseType,
   PlanTermType,
   SelectedCourseType,
   PlanType,
@@ -22,7 +21,6 @@ export function formatPlan(
     majorReqs: plan.majorReqs.map(formatMajorReq),
     created: plan.createdAt.toISOString(),
     revised: plan.updatedAt.toISOString(),
-    gridLayout: !!plan.gridLayout,
     labels: plan.labels.map(formatLabel),
     uniReqsSatisfied: plan.uniReqsSatisfied,
     collegeReqsSatisfied: plan.collegeReqsSatisfied
@@ -39,9 +37,6 @@ export function formatPlanTerm(
     courses: planTerm.courses.map(formatCourse),
     year: planTerm.year,
     term: planTerm.term,
-    customCourses: planTerm.customCourses
-      ? planTerm.customCourses.map(formatCustomEvents)
-      : [],
     hidden: planTerm.hidden,
     status: planTerm.status,
     pinned: planTerm.pinned
@@ -60,25 +55,14 @@ export function formatMajorReq(
   }
 }
 
-function formatCustomEvents(
-  customCourse: PlanCustomCourseType
-): PlanModule.CustomCourse {
-  return {
-    title: customCourse.title,
-    description: customCourse.description,
-    collegeReqs: customCourse.collegeReqs,
-    uniReqs: customCourse.uniReqs,
-    labels: customCourse.labels,
-    pnp: customCourse.pnp,
-    transfer: customCourse.transfer
-  };
-}
-
 function formatCourse(
   course: SelectedCourseType
 ): PlanModule.SelectedCourse {
   return {
     courseID: course.courseID,
+    courseName: course.courseName,
+    courseTitle: course.courseTitle,
+    courseUnits: course.courseUnits,
     collegeReqs: course.collegeReqs,
     uniReqs: course.uniReqs,
     labels: course.labels,
