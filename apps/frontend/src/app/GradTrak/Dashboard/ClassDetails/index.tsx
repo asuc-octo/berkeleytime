@@ -68,7 +68,6 @@ const ClassDetails = ({
       transfer: false,
       labels: [],
     };
-    // TODO(Daniel): Update class database
 
     if (isEditMode && onUpdate) {
       onUpdate(updatedClass);

@@ -76,9 +76,8 @@ function Dashboard() {
       const classes: ISelectedCourse[] = [];
       
       /* TODO(Daniel):
-        - Implement editing classes
-        - Implement deleting classes
         - Implement moving classes
+        - Implement P/NP and Transfer
       */
       planTerm.courses.forEach((course: ISelectedCourse) => {
         // Remove __typename from course object
@@ -115,7 +114,6 @@ function Dashboard() {
     if (planTerms && planTerms.length > 0) {
       const convertedSemesters = convertPlanTermsToSemesters(planTerms);
       setAllSemesters(convertedSemesters);
-      console.log(convertedSemesters);
     }
   }, [planTerms, convertPlanTermsToSemesters]);
 

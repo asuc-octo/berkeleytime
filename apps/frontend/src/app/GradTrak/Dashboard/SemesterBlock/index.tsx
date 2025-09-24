@@ -59,7 +59,7 @@ function SemesterBlock({
     }
   }, [allSemesters, semesterId]);
 
-  const handleDeleteClass = (indexToDelete: number) => {
+  const handleDeleteClass = async (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter((_, index) => index !== indexToDelete);
 
     // update local state
@@ -73,10 +73,17 @@ function SemesterBlock({
     updateAllSemesters(updatedSemesters); updateAllSemesters(updatedSemesters);
     const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
-    setSelectedCourses((prevClasses) =>
-      prevClasses.filter((_, index) => index !== indexToDelete)
-    );
-    // TODO(Daniel): add delete class to database
+    
+    const oldClasses = [...selectedClasses];
+    const newClasses = selectedClasses.filter((_, index) => index !== indexToDelete);
+    setSelectedCourses(newClasses);
+    try {
+      await setCourses(semesterId, newClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error('Failed to save class:', error);
+    }
+    
     setTotalUnits(newTotalUnits);
     onTotalUnitsChange(newTotalUnits);
   };
@@ -100,13 +107,16 @@ function SemesterBlock({
       labels: cls.labels || [],
     };
     
+    const oldClasses = [...selectedClasses];
     const updatedClasses = [...selectedClasses, courseToAdd];
-
-    // update local state
-    console.log(semesterId, updatedClasses)
-    const { data } = await setCourses(semesterId, updatedClasses);
-    console.log("Data:", data);
     setSelectedCourses(updatedClasses);
+
+    try {
+      await setCourses(semesterId, updatedClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error('Failed to save class:', error);
+    }
     console.log("Updated classes:", updatedClasses)
 
     // update global state
@@ -143,12 +153,19 @@ function SemesterBlock({
     return classElements.length;
   };
 
-  const handleUpdateClass = (updatedClass: ISelectedCourse) => {
-    setSelectedCourses((prevClasses) =>
-      prevClasses.map((cls, ) =>
-        cls.courseID === updatedClass.courseID ? updatedClass : cls
-      )
+  const handleUpdateClass = async (updatedClass: ISelectedCourse) => {
+    console.log("Updating class:", updatedClass);
+    const oldClasses = [...selectedClasses];
+    const newClasses = selectedClasses.map((cls, ) =>
+      cls.courseID === updatedClass.courseID ? updatedClass : cls
     );
+    setSelectedCourses(newClasses);
+    try {
+      await setCourses(semesterId, newClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error('Failed to save class:', error);
+    }
 
     // Recalculate total units
     const newTotalUnits = selectedClasses.reduce((total, cls) => {
