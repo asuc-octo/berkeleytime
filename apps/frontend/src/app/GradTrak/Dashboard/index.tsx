@@ -17,7 +17,7 @@ import {
 import { ClassType } from "./types";
 import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
-import { IPlanTerm } from '@/lib/api/plans';
+import { ICustomCourse, IPlanTerm, ISelectedCourse } from '@/lib/api/plans';
 
 import styles from "./Dashboard.module.scss";
 import { Button, Tooltip, IconButton } from '@repo/theme';
@@ -50,7 +50,14 @@ function Dashboard() {
   useEffect(() => {
     if (!isStateValid && !userLoading) {
         console.warn("GradTrak state is invalid or missing after user loaded. Redirecting to setup.");
-        console.log(state);
+        console.log(
+          state,
+          state !== null, 
+          state !== undefined,
+          typeof state?.summerCheck === 'boolean',
+          Array.isArray(state?.selectedDegreeList),
+          Array.isArray(state?.selectedMinorList),
+          Array.isArray(state?.planTerms));
         navigate('/gradtrak/onboarding', { replace: true }); // Redirect
     }
   }, [isStateValid, userLoading, navigate]);
@@ -84,11 +91,59 @@ function Dashboard() {
     setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
   }, []);
   
-  
+  const convertPlanTermsToSemesters = useCallback((planTerms: IPlanTerm[]): { [key: string]: ClassType[] } => {
+    const semesters: { [key: string]: ClassType[] } = {};
+    
+    planTerms.forEach((planTerm) => {
+      // Create semester key based on term and year
+      const semesterKey = planTerm._id;
+      
+      const classes: ClassType[] = [];
+      
+      // Convert selected courses to ClassType
+      planTerm.courses.forEach((course: ISelectedCourse) => {
+        classes.push({
+          id: course.courseID,
+          name: course.courseID, // TODO(Daniel): Fix
+          title: course.courseID, // TODO(Daniel): Fix
+          units: 4, // TODO(Daniel): Fix
+          grading: course.pnp ? 'P/NP' : 'Letter',
+          credit: course.transfer ? 'Transfer' : 'Regular'
+        });
+      });
+      
+      // Convert custom courses to ClassType
+      planTerm.customCourses.forEach((customCourse: ICustomCourse) => {
+        classes.push({
+          id: `custom-${customCourse.title}`, // Generate unique ID for custom courses
+          name: customCourse.title || 'Custom Course',
+          title: customCourse.title || 'Custom Course',
+          units: 4, // TODO(Daniel): Fix
+          grading: customCourse.pnp ? 'P/NP' : 'Letter',
+          credit: customCourse.transfer ? 'Transfer' : 'Custom'
+        });
+      });
+      
+      if (semesterKey) {
+        semesters[semesterKey] = classes;
+      }
+    });
+    return semesters;
+  }, []);
+
   // Function to update all semesters data
   const updateAllSemesters = useCallback((semesters: { [key: string]: ClassType[] }) => {
     setAllSemesters(semesters);
   }, []);
+
+  useEffect(() => {
+    if (state?.planTerms && state.planTerms.length > 0) {
+      const convertedSemesters = convertPlanTermsToSemesters(state.planTerms);
+      setAllSemesters(convertedSemesters);
+      console.log(convertedSemesters);
+    }
+  }, [state?.planTerms, convertPlanTermsToSemesters]);
+
 
   const totalUnits = Object.values(semesterTotals).reduce((sum, units) => sum + units, 0);
 
@@ -140,9 +195,7 @@ function Dashboard() {
         <div className={styles.semesterLayout}>
           {planTerms && planTerms.map((term) => (
             <SemesterBlock 
-              semesterId={term.name ? term.name : ""}
-              selectedSemester={term.term ? term.term : ""}
-              selectedYear={term.year ? term.year > 0 ? term.year : "" : ""}
+              planTerm={term}
               onTotalUnitsChange={(newTotal) => updateTotalUnits(term.name ? term.name : "", newTotal)}
               allSemesters={allSemesters}
               updateAllSemesters={updateAllSemesters}

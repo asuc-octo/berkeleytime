@@ -16,27 +16,27 @@ import { ClassType } from "../types"
 import AddClass from "../AddClass";
 import ClassDetails from "../ClassDetails";
 import styles from "./SemesterBlock.module.scss"
+import { IPlanTerm } from '@/lib/api/plans';
 
 interface SemesterBlockProps {
-  selectedYear: number | string;
-  selectedSemester: string;
-  semesterId: string; 
+  planTerm: IPlanTerm;
   allSemesters: { [key: string]: ClassType[] }; 
   onTotalUnitsChange: (newTotal: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ClassType[] }) => void;
 };
 
-function SemesterBlock({ selectedYear,
-  selectedSemester,
+function SemesterBlock({
+  planTerm,
   onTotalUnitsChange,
-  semesterId,
   allSemesters,
   updateAllSemesters
 }: SemesterBlockProps) {
+  const semesterId = planTerm._id ? planTerm._id : "";
+
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
   const [classToEdit, setClassToEdit] = useState<ClassType | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
-  const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(allSemesters[semesterId] || []);
+  const [selectedClasses, setSelectedCourses] = useState<ClassType[]>(allSemesters[semesterId] || []);
   const [totalUnits, setTotalUnits] = useState(0);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
@@ -51,7 +51,7 @@ function SemesterBlock({ selectedYear,
   // update local state when allSemesters changes
   useEffect(() => {
     if (allSemesters[semesterId]) {
-      setSelectedClasses(allSemesters[semesterId]);
+      setSelectedCourses(allSemesters[semesterId]);
     }
   }, [allSemesters, semesterId]);
 
@@ -59,7 +59,7 @@ function SemesterBlock({ selectedYear,
     const updatedClasses = selectedClasses.filter((_, index) => index !== indexToDelete);
 
     // update local state
-    setSelectedClasses(updatedClasses);
+    setSelectedCourses(updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -69,7 +69,7 @@ function SemesterBlock({ selectedYear,
     updateAllSemesters(updatedSemesters); updateAllSemesters(updatedSemesters);
     const deletedClassUnits = selectedClasses[indexToDelete].units;
     const newTotalUnits = totalUnits - deletedClassUnits;
-    setSelectedClasses((prevClasses) =>
+    setSelectedCourses((prevClasses) =>
       prevClasses.filter((_, index) => index !== indexToDelete)
     );
     setTotalUnits(newTotalUnits);
@@ -85,7 +85,7 @@ function SemesterBlock({ selectedYear,
     const updatedClasses = [...selectedClasses, cls];
 
     // update local state
-    setSelectedClasses(updatedClasses);
+    setSelectedCourses(updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -122,7 +122,7 @@ function SemesterBlock({ selectedYear,
   };
 
   const handleUpdateClass = (updatedClass: ClassType) => {
-    setSelectedClasses((prevClasses) =>
+    setSelectedCourses((prevClasses) =>
       prevClasses.map((cls, ) =>
         cls.id === updatedClass.id ? updatedClass : cls
       )
@@ -245,7 +245,7 @@ function SemesterBlock({ selectedYear,
       onDrop={handleDrop}>
       <div className={styles.body}>
         <div className={styles.semesterCounter}>
-          <h2>{selectedSemester} {selectedYear} </h2>
+          <h2>{planTerm.name} </h2>
           <p className={styles.counter}>{totalUnits}</p>
         </div>
 

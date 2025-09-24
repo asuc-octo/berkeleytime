@@ -40,19 +40,11 @@ export default function GradTrakOnboarding() {
 
   const handleMinorsComplete = async (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
-    console.log({
-      startYear,
-      gradYear,
-      summerCheck,
-      majors: selectedMajors,
-      minors,
-    });
     const { data } = await createPlan(Colleges.LnS, selectedMajors.map((m) => m.value), minors.map((m) => m.value), parseInt(startYear, 10), parseInt(gradYear, 10));
     console.log(data)
     navigate(`/gradtrak/dashboard`, {
       state: {
-        startYear,
-        gradYear,
+        planTerms: data ? data.createNewPlan.planTerms : [],
         summerCheck,
         selectedDegreeList: selectedMajors, // Pass the final collected majors
         selectedMinorList: minors, // Pass the final collected minors (from this step's parameter)

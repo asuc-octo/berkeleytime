@@ -37,7 +37,7 @@ export default function GradTrakIndex() {
 
           if (latestGradTrak) {
             navigate(`/gradtrak/dashboard`, {
-              state: {  // TODO(Daniel): modify this to use the stored info, not just start and end dates
+              state: { 
                 summerCheck: false,
                 selectedDegreeList: latestGradTrak.majors.map((major): DegreeOption => ({ label: major, value: major })),
                 selectedMinorList: latestGradTrak.minors.map((minor): DegreeOption => ({ label: minor, value: minor })),

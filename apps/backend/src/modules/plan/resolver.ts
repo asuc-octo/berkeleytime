@@ -42,7 +42,7 @@ const resolvers: PlanModule.Resolvers = {
     ) {
       return editPlanTerm(args.id, args.planTerm, context);
     },
-    setSelectedClasses(
+    setSelectedCourses(
       _parent,
       args: { id: string; courses: SelectedCourseInput[], customCourses: CustomCourseInput[] },
       context

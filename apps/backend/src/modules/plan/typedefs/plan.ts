@@ -261,7 +261,7 @@ const typeDef = gql`
     For the planTerm specified by the term, modifies the courses field, and returns the updated 
     planTerm.
     """
-    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!, customCourses: [CustomCourseInput!]!): PlanTerm @auth
+    setSelectedCourses(id: ID!, courses: [SelectedCourseInput!]!, customCourses: [CustomCourseInput!]!): PlanTerm @auth
 
     """
     Deletes plan, for testing purposes
