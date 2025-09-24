@@ -76,13 +76,27 @@ function Dashboard() {
       const classes: ISelectedCourse[] = [];
       
       /* TODO(Daniel):
-        - Implement adding classes
-        - Implement moving classes
         - Implement editing classes
         - Implement deleting classes
+        - Implement moving classes
       */
       planTerm.courses.forEach((course: ISelectedCourse) => {
-        classes.push(course);
+        // Remove __typename from course object
+        const cleanCourse = {
+          courseID: course.courseID,
+          courseName: course.courseName,
+          courseTitle: course.courseTitle,
+          courseUnits: course.courseUnits,
+          uniReqs: course.uniReqs,
+          collegeReqs: course.collegeReqs,
+          pnp: course.pnp,
+          transfer: course.transfer,
+          labels: course.labels?.map(label => ({
+            name: label.name,
+            color: label.color
+          })) || []
+        };
+        classes.push(cleanCourse);
       });
       
       if (semesterKey) {

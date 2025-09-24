@@ -87,7 +87,20 @@ function SemesterBlock({
   };
 
   const addClass = async (cls: ISelectedCourse) => {
-    const updatedClasses = [...selectedClasses, cls];
+    // Ensure all required fields are present
+    const courseToAdd: ISelectedCourse = {
+      courseID: cls.courseID || "custom-" + cls.courseName,
+      courseName: cls.courseName || cls.courseID,
+      courseTitle: cls.courseTitle || cls.courseName || cls.courseID,
+      courseUnits: cls.courseUnits || 0,
+      uniReqs: cls.uniReqs || [],
+      collegeReqs: cls.collegeReqs || [],
+      pnp: cls.pnp || false,
+      transfer: cls.transfer || false,
+      labels: cls.labels || [],
+    };
+    
+    const updatedClasses = [...selectedClasses, courseToAdd];
 
     // update local state
     console.log(semesterId, updatedClasses)
