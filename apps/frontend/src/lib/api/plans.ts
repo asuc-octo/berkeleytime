@@ -44,7 +44,7 @@ export interface IPlanTerm {
 }
 
 export interface ISelectedCourse {
-  classID: string;
+  courseID: string;
   uniReqs: string[];
   collegeReqs: string[];
   pnp: boolean;

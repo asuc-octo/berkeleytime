@@ -5,7 +5,6 @@ import React, {
 } from 'react';
 import {
   Trash,
-  Book,
   BookStack,
   MoreHoriz
 } from "iconoir-react";

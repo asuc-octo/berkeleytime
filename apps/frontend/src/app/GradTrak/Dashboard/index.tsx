@@ -17,6 +17,7 @@ import {
 import { ClassType } from "./types";
 import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
+import { IPlanTerm } from '@/lib/api/plans';
 
 import styles from "./Dashboard.module.scss";
 import { Button, Tooltip, IconButton } from '@repo/theme';
@@ -32,20 +33,18 @@ function Dashboard() {
 
   const location = useLocation();
   const state = location.state as {
-    startYear: string;
-    gradYear: string;
     summerCheck: boolean;
     selectedDegreeList: DegreeOption[];
     selectedMinorList: DegreeOption[];
+    planTerms: IPlanTerm[];
   } | undefined | null;
 
   const isStateValid = useMemo(() => {
     return state !== null && state !== undefined &&
-      typeof state.startYear === 'string' && state.startYear.length > 0 &&
-      typeof state.gradYear === 'string' && state.gradYear.length > 0 &&
       typeof state.summerCheck === 'boolean' &&
       Array.isArray(state.selectedDegreeList) &&
-      Array.isArray(state.selectedMinorList);
+      Array.isArray(state.selectedMinorList) && 
+      Array.isArray(state.planTerms)
   }, [state]);
 
   useEffect(() => {
@@ -56,7 +55,7 @@ function Dashboard() {
     }
   }, [isStateValid, userLoading, navigate]);
 
-  const { startYear, gradYear, summerCheck, selectedDegreeList, selectedMinorList } = state!;
+  const { selectedDegreeList, selectedMinorList, planTerms } = state!;
   const selectedDegreeStrings: string[] = selectedDegreeList.map((degree) => degree.value);
   const selectedMinorStrings: string[] = selectedMinorList.map((minor) => minor.value);
 
@@ -73,14 +72,6 @@ function Dashboard() {
       };
     },
     [user, selectedDegreeStrings, selectedMinorStrings] // Re-calculate if user or selected lists change
-  );
-
-  const numStartYear = parseInt(startYear, 10);
-  const numGradYear = parseInt(gradYear, 10);
-  const yearCount = numGradYear - numStartYear + 1;
-  const years = Array.from(
-    { length: yearCount }, 
-    (_, i) => numStartYear + i
   );
 
   // State for semester totals and classes
@@ -147,44 +138,15 @@ function Dashboard() {
       </div>
       <div className={styles.semesterBlocks}>
         <div className={styles.semesterLayout}>
-          <SemesterBlock 
-            semesterId="miscellaneous" 
-            selectedSemester={"Miscellaneous"} 
-            selectedYear={""}
-            onTotalUnitsChange={(newTotal) => updateTotalUnits("Miscellaneous", newTotal)}
-            allSemesters={allSemesters}
-            updateAllSemesters={updateAllSemesters}
-          />
-
-          {years.map((year) => (
-            <div key={year} className={styles.yearElement}>
-              <SemesterBlock 
-                semesterId={`fall-${year}`}
-                selectedSemester={"Fall"}
-                selectedYear={year}
-                onTotalUnitsChange={(newTotal) => updateTotalUnits(`Fall-${year}`, newTotal)}
-                allSemesters={allSemesters}
-                updateAllSemesters={updateAllSemesters}
-              />
-              <SemesterBlock 
-                semesterId={`spring-${year}`}
-                selectedSemester={"Spring"}
-                selectedYear={year}
-                onTotalUnitsChange={(newTotal) => updateTotalUnits(`Spring-${year}`, newTotal)}
-                allSemesters={allSemesters}
-                updateAllSemesters={updateAllSemesters}
-              />
-              {summerCheck && (
-                <SemesterBlock 
-                  semesterId={`summer-${year}`}
-                  selectedSemester={"Summer"}
-                  selectedYear={year}
-                  onTotalUnitsChange={(newTotal) => updateTotalUnits(`Summer-${year}`, newTotal)}
-                  allSemesters={allSemesters}
-                  updateAllSemesters={updateAllSemesters}
-                />
-              )}
-            </div>
+          {planTerms && planTerms.map((term) => (
+            <SemesterBlock 
+              semesterId={term.name ? term.name : ""}
+              selectedSemester={term.term ? term.term : ""}
+              selectedYear={term.year ? term.year > 0 ? term.year : "" : ""}
+              onTotalUnitsChange={(newTotal) => updateTotalUnits(term.name ? term.name : "", newTotal)}
+              allSemesters={allSemesters}
+              updateAllSemesters={updateAllSemesters}
+            />
           ))}
         </div>
       </div>
