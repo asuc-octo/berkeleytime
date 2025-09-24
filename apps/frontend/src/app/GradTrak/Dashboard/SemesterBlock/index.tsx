@@ -12,17 +12,19 @@ import {
 import { Button } from "@repo/theme";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
-import { ClassType } from "../types"
+import { ISelectedCourse } from '@/lib/api';
 import AddClass from "../AddClass";
 import ClassDetails from "../ClassDetails";
 import styles from "./SemesterBlock.module.scss"
 import { IPlanTerm } from '@/lib/api/plans';
 
+import { useSetSelectedCourses } from "@/hooks/api";
+
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
-  allSemesters: { [key: string]: ClassType[] }; 
+  allSemesters: { [key: string]: ISelectedCourse[] }; 
   onTotalUnitsChange: (newTotal: number) => void;
-  updateAllSemesters: (semesters: { [key: string]: ClassType[] }) => void;
+  updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
 };
 
 function SemesterBlock({
@@ -31,19 +33,21 @@ function SemesterBlock({
   allSemesters,
   updateAllSemesters
 }: SemesterBlockProps) {
-  const semesterId = planTerm._id ? planTerm._id : "";
+  const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
-  const [classToEdit, setClassToEdit] = useState<ClassType | null>(null);
+  const [classToEdit, setClassToEdit] = useState<ISelectedCourse | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
-  const [selectedClasses, setSelectedCourses] = useState<ClassType[]>(allSemesters[semesterId] || []);
+  const [selectedClasses, setSelectedCourses] = useState<ISelectedCourse[]>(allSemesters[semesterId] || []);
   const [totalUnits, setTotalUnits] = useState(0);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const [setCourses] = useSetSelectedCourses();
+
   useEffect(() => {
-    const total = selectedClasses.reduce((sum, cls) => sum + cls.units, 0);
+    const total = selectedClasses.reduce((sum, cls) => sum + cls.courseUnits, 0);
     setTotalUnits(total);
     onTotalUnitsChange(total);
   }, [selectedClasses, onTotalUnitsChange]);
@@ -67,11 +71,12 @@ function SemesterBlock({
       [semesterId]: updatedClasses
     };
     updateAllSemesters(updatedSemesters); updateAllSemesters(updatedSemesters);
-    const deletedClassUnits = selectedClasses[indexToDelete].units;
+    const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
     setSelectedCourses((prevClasses) =>
       prevClasses.filter((_, index) => index !== indexToDelete)
     );
+    // TODO(Daniel): add delete class to database
     setTotalUnits(newTotalUnits);
     onTotalUnitsChange(newTotalUnits);
   };
@@ -81,11 +86,15 @@ function SemesterBlock({
     setIsClassDetailsOpen(true);
   };
 
-  const addClass = (cls: ClassType) => {
+  const addClass = async (cls: ISelectedCourse) => {
     const updatedClasses = [...selectedClasses, cls];
 
     // update local state
+    console.log(semesterId, updatedClasses)
+    const { data } = await setCourses(semesterId, updatedClasses);
+    console.log("Data:", data);
     setSelectedCourses(updatedClasses);
+    console.log("Updated classes:", updatedClasses)
 
     // update global state
     const updatedSemesters = {
@@ -121,19 +130,19 @@ function SemesterBlock({
     return classElements.length;
   };
 
-  const handleUpdateClass = (updatedClass: ClassType) => {
+  const handleUpdateClass = (updatedClass: ISelectedCourse) => {
     setSelectedCourses((prevClasses) =>
       prevClasses.map((cls, ) =>
-        cls.id === updatedClass.id ? updatedClass : cls
+        cls.courseID === updatedClass.courseID ? updatedClass : cls
       )
     );
 
     // Recalculate total units
     const newTotalUnits = selectedClasses.reduce((total, cls) => {
-      if (cls.id === updatedClass.id) {
-        return total + updatedClass.units;
+      if (cls.courseID === updatedClass.courseID) {
+        return total + updatedClass.courseUnits;
       }
-      return total + cls.units;
+      return total + cls.courseUnits;
     }, 0);
 
 
@@ -265,8 +274,8 @@ function SemesterBlock({
             >
               <div className={styles.start}>
                 <div>
-                  <h3 className={styles.title}>{cls.name}</h3>
-                  <p >{cls.units} Units</p>
+                  <h3 className={styles.title}>{cls.courseName}</h3>
+                  <p >{cls.courseUnits} Units</p>
                 </div>
                 <div className={styles.dropdown}>
                   <DropdownMenu.Root>

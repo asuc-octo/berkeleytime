@@ -7,6 +7,7 @@ import {
 } from "@repo/common";
 
 import { PlanModule } from "./generated-types/module-types";
+import { Colleges, UniReqs, CollegeReqs, Terms, Status } from "../../generated-types/graphql";
 
 export function formatPlan(
   plan: PlanType
@@ -17,13 +18,13 @@ export function formatPlan(
     planTerms: plan.planTerms.map(formatPlanTerm),
     majors: plan.majors,
     minors: plan.minors,
-    college: plan.college,
+    college: plan.college as Colleges,
     majorReqs: plan.majorReqs.map(formatMajorReq),
     created: plan.createdAt.toISOString(),
     revised: plan.updatedAt.toISOString(),
     labels: plan.labels.map(formatLabel),
-    uniReqsSatisfied: plan.uniReqsSatisfied,
-    collegeReqsSatisfied: plan.collegeReqsSatisfied
+    uniReqsSatisfied: plan.uniReqsSatisfied as UniReqs[],
+    collegeReqsSatisfied: plan.collegeReqsSatisfied as CollegeReqs[]
   };
 }
 
@@ -36,9 +37,9 @@ export function formatPlanTerm(
     userEmail: planTerm.userEmail,
     courses: planTerm.courses.map(formatCourse),
     year: planTerm.year,
-    term: planTerm.term,
+    term: planTerm.term as Terms,
     hidden: planTerm.hidden,
-    status: planTerm.status,
+    status: planTerm.status as Status,
     pinned: planTerm.pinned
   };
 }
@@ -63,8 +64,8 @@ function formatCourse(
     courseName: course.courseName,
     courseTitle: course.courseTitle,
     courseUnits: course.courseUnits,
-    collegeReqs: course.collegeReqs,
-    uniReqs: course.uniReqs,
+    collegeReqs: course.collegeReqs as CollegeReqs[],
+    uniReqs: course.uniReqs as UniReqs[],
     labels: course.labels,
     pnp: course.pnp,
     transfer: course.transfer

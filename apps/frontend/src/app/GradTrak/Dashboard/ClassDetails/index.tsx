@@ -12,15 +12,15 @@ import {
 
 import { Button } from "@repo/theme";
 
-import { ClassType } from "../types";
+import { ISelectedCourse } from '@/lib/api';
 import styles from "./ClassDetails.module.scss";
 
 interface ClassDetailsProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  classData?: ClassType;
-  onUpdate?: (updatedClass: ClassType) => void;
-  onConfirm?: (newClass: ClassType) => void;
+  classData?: ISelectedCourse;
+  onUpdate?: (updatedClass: ISelectedCourse) => void;
+  onConfirm?: (newClass: ISelectedCourse) => void;
 }
 
 const ClassDetails = ({
@@ -32,10 +32,10 @@ const ClassDetails = ({
 }: ClassDetailsProps) => {
   const isEditMode = !!classData;
 
-  const [classId, setClassId] = useState(classData?.id || "");
-  const [className, setClassName] = useState(classData?.name || "");
-  const [classTitle, setClassTitle] = useState(classData?.title || "");
-  const [units, setUnits] = useState(classData?.units || 0);
+  const [classId, setClassId] = useState(classData?.courseID || "");
+  const [className, setClassName] = useState(classData?.courseName || "");
+  const [classTitle, setClassTitle] = useState(classData?.courseTitle || "");
+  const [units, setUnits] = useState(classData?.courseUnits || 0);
   const [semester] = useState("Coming Soon");
   const [grading, setGrading] = useState("Graded");
   const [credit, setCredit] = useState("UC Berkeley");
@@ -44,10 +44,10 @@ const ClassDetails = ({
   // Update state when classData changes
   useEffect(() => {
     if (isEditMode) {
-      setClassId(classData!.id);
-      setClassName(classData!.name);
-      setClassTitle(classData!.title);
-      setUnits(classData!.units);
+      setClassId(classData!.courseID);
+      setClassName(classData!.courseName);
+      setClassTitle(classData!.courseTitle);
+      setUnits(classData!.courseUnits);
     } else {
       setClassId("");
       setClassName("");
@@ -58,11 +58,17 @@ const ClassDetails = ({
 
   const handleSubmit = () => {
     const updatedClass = {
-      id: classId,
-      name: className,
-      title: classTitle,
-      units: units,
+      courseID: classId,
+      courseName: className,
+      courseTitle: classTitle,
+      courseUnits: units,
+      uniReqs: [],
+      collegeReqs: [],
+      pnp: false,
+      transfer: false,
+      labels: [],
     };
+    // TODO(Daniel): Update class database
 
     if (isEditMode && onUpdate) {
       onUpdate(updatedClass);

@@ -6,6 +6,7 @@ const typeDef = gql`
     Fall
     Spring
     Summer
+    Misc
   }
 
   enum Colleges {
@@ -88,7 +89,7 @@ const typeDef = gql`
   """
   Not in use atm
   """
-  type MajorReq {
+  type MajorReq @cacheControl(maxAge: 0) {
     name: String!
     major: String!
     numCoursesRequired: Int!
@@ -96,12 +97,12 @@ const typeDef = gql`
     isMinor: Boolean!
   }
 
-  type Label {
+  type Label @cacheControl(maxAge: 0) {
     name: String!
     color: String!
   }
 
-  type Plan {
+  type Plan @cacheControl(maxAge: 0) {
     _id: ID!
     userEmail: String!
     planTerms: [PlanTerm!]!
@@ -110,28 +111,28 @@ const typeDef = gql`
     minors: [String!]!
     created: String!
     revised: String!
-    college: String!
+    college: Colleges!
     labels: [Label!]!
     """
     Requirements manually satisfied
     """
-    uniReqsSatisfied: [String!]!
-    collegeReqsSatisfied: [String!]!
+    uniReqsSatisfied: [UniReqs!]!
+    collegeReqsSatisfied: [CollegeReqs!]!
   }
 
-  type PlanTerm {
+  type PlanTerm @cacheControl(maxAge: 0) {
     _id: ID!
     name: String!
     userEmail: String!
     year: Int!
-    term: String!
+    term: Terms!
     courses: [SelectedCourse!]!
     hidden: Boolean!
-    status: String!
+    status: Status!
     pinned: Boolean!
   }
 
-  type SelectedCourse {
+  type SelectedCourse @cacheControl(maxAge: 0){
     """
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
@@ -139,8 +140,8 @@ const typeDef = gql`
     courseName: String!
     courseTitle: String!
     courseUnits: Int!
-    uniReqs: [String!]!
-    collegeReqs: [String!]!
+    uniReqs: [UniReqs!]!
+    collegeReqs: [CollegeReqs!]!
     pnp: Boolean!
     transfer: Boolean!
     labels: [Label!]!

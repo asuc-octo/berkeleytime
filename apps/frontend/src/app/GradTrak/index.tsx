@@ -22,7 +22,7 @@ export default function GradTrakIndex() {
     skip: !user, 
   });
 
-  console.log(gradTraks);
+  console.log("Gradtrak:", gradTraks);
 
   const navigate = useNavigate(); 
 

@@ -6,7 +6,7 @@ import {
 } from 'react'; 
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useReadUser } from '@/hooks/api';
+import { useReadUser, useReadPlans } from '@/hooks/api';
 import { 
   Plus,
   Filter,
@@ -14,10 +14,9 @@ import {
   NavArrowDown,
 } from "iconoir-react"
 
-import { ClassType } from "./types";
 import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
-import { IPlanTerm, ISelectedCourse } from '@/lib/api/plans';
+import { IPlanTerm, ISelectedCourse } from '@/lib/api';
 
 import styles from "./Dashboard.module.scss";
 import { Button, Tooltip, IconButton } from '@repo/theme';
@@ -32,6 +31,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const location = useLocation();
+
   const state = location.state as {
     summerCheck: boolean;
     selectedDegreeList: DegreeOption[];
@@ -85,20 +85,20 @@ function Dashboard() {
   const [semesterTotals, setSemesterTotals] = useState<Record<string, number>>({});
 
   // Create the allSemesters state to track classes in each semester
-  const [allSemesters, setAllSemesters] = useState<{ [key: string]: ClassType[] }>({});
+  const [allSemesters, setAllSemesters] = useState<{ [key: string]: ISelectedCourse[] }>({});
 
   const updateTotalUnits = useCallback((semesterKey: string, newTotal: number) => {
     setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
   }, []);
   
-  const convertPlanTermsToSemesters = useCallback((planTerms: IPlanTerm[]): { [key: string]: ClassType[] } => {
-    const semesters: { [key: string]: ClassType[] } = {};
+  const convertPlanTermsToSemesters = useCallback((planTerms: IPlanTerm[]): { [key: string]: ISelectedCourse[] } => {
+    const semesters: { [key: string]: ISelectedCourse[] } = {};
     
     planTerms.forEach((planTerm) => {
       // Create semester key based on term and year
       const semesterKey = planTerm._id;
       
-      const classes: ClassType[] = [];
+      const classes: ISelectedCourse[] = [];
       
       /* TODO(Daniel):
         - Implement adding classes
@@ -106,17 +106,8 @@ function Dashboard() {
         - Implement editing classes
         - Implement deleting classes
       */
-
-      // Convert selected courses to ClassType
       planTerm.courses.forEach((course: ISelectedCourse) => {
-        classes.push({
-          id: course.courseID,
-          name: course.courseName,
-          title: course.courseTitle,
-          units: course.courseUnits,
-          grading: course.pnp ? 'P/NP' : 'Letter',
-          credit: course.transfer ? 'Transfer' : 'Regular'
-        });
+        classes.push(course);
       });
       
       if (semesterKey) {
@@ -127,7 +118,7 @@ function Dashboard() {
   }, []);
 
   // Function to update all semesters data
-  const updateAllSemesters = useCallback((semesters: { [key: string]: ClassType[] }) => {
+  const updateAllSemesters = useCallback((semesters: { [key: string]: ISelectedCourse[] }) => {
     setAllSemesters(semesters);
   }, []);
 
@@ -143,15 +134,15 @@ function Dashboard() {
   const totalUnits = Object.values(semesterTotals).reduce((sum, units) => sum + units, 0);
 
   if (!currentUserInfo) {
-    return <p>Error displaying user information.</p>; // TODO: Cleaner error page
+    navigate('/gradtrak', { replace: true });
   }
 
   return (
     <div className={styles.root}>
       <div className={styles.panel}>
         <SidePanel 
-            majors={currentUserInfo.majors} 
-            minors={currentUserInfo.minors}
+            majors={currentUserInfo ? currentUserInfo.majors : []} 
+            minors={currentUserInfo ? currentUserInfo.minors : []}
             totalUnits={totalUnits}
             transferUnits={0} 
             pnpTotal={0}
