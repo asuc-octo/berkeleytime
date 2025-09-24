@@ -10,7 +10,7 @@ import {
   LoadingIndicator
 } from "@repo/theme";
 import { useReadPlans, useReadUser } from "@/hooks/api"; 
-import { signIn, DegreeOption } from "@/lib/api"; 
+import { signIn } from "@/lib/api"; 
 import Footer from "@/components/Footer";
 
 import styles from "./GradTrak.module.scss"; 
@@ -36,14 +36,7 @@ export default function GradTrakIndex() {
           const latestGradTrak = gradTraks?.[0]; 
 
           if (latestGradTrak) {
-            navigate(`/gradtrak/dashboard`, {
-              state: { 
-                summerCheck: false,
-                selectedDegreeList: latestGradTrak.majors.map((major): DegreeOption => ({ label: major, value: major })),
-                selectedMinorList: latestGradTrak.minors.map((minor): DegreeOption => ({ label: minor, value: minor })),
-                planTerms: latestGradTrak.planTerms,
-              },
-            }); 
+            navigate(`/gradtrak/dashboard`); 
           } else {
              console.error("hasGradTraks was true but no GradTrak ID found in data.");
              navigate('/gradtrak/onboarding', { replace: true });

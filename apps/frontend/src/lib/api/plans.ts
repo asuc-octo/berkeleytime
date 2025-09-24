@@ -100,6 +100,10 @@ export interface ReadPlanResponse {
   planByUser: IPlan[];
 }
 
+export interface ReadPlansResponse {
+  planByUser: string[];
+}
+
 export const CREATE_NEW_PLAN = gql`
   mutation CreateNewPlan(
     $college: Colleges!
@@ -188,6 +192,14 @@ export const READ_PLAN = gql`
       }
       uniReqsSatisfied
       collegeReqsSatisfied
+    }
+  }
+`;
+
+export const READ_PLANS = gql`
+  query GetPlan {
+    planByUser {
+      _id
     }
   }
 `;

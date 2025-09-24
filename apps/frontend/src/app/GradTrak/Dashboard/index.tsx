@@ -4,9 +4,9 @@ import {
   useEffect,
   useCallback
 } from 'react'; 
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { useReadUser, useReadPlans } from '@/hooks/api';
+import { useReadUser, useReadPlan } from '@/hooks/api';
 import { 
   Plus,
   Filter,
@@ -21,50 +21,25 @@ import { IPlanTerm, ISelectedCourse } from '@/lib/api';
 import styles from "./Dashboard.module.scss";
 import { Button, Tooltip, IconButton } from '@repo/theme';
 
-type DegreeOption = {
-  label: string;
-  value: string;
-};
-
 function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
 
-  const location = useLocation();
+  const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
+    skip: !user, 
+  });
 
-  const state = location.state as {
-    summerCheck: boolean;
-    selectedDegreeList: DegreeOption[];
-    selectedMinorList: DegreeOption[];
-    planTerms: IPlanTerm[];
-  } | undefined | null;
+  const selectedDegreeStrings = useMemo(() => {
+    return gradTrak?.majors || [];
+  }, [gradTrak?.majors]);
 
-  const isStateValid = useMemo(() => {
-    return state !== null && state !== undefined &&
-      typeof state.summerCheck === 'boolean' &&
-      Array.isArray(state.selectedDegreeList) &&
-      Array.isArray(state.selectedMinorList) && 
-      Array.isArray(state.planTerms)
-  }, [state]);
+  const selectedMinorStrings = useMemo(() => {
+    return gradTrak?.minors || [];
+  }, [gradTrak?.minors]);
 
-  useEffect(() => {
-    if (!isStateValid && !userLoading) {
-        console.warn("GradTrak state is invalid or missing after user loaded. Redirecting to setup.");
-        console.log(
-          state,
-          state !== null, 
-          state !== undefined,
-          typeof state?.summerCheck === 'boolean',
-          Array.isArray(state?.selectedDegreeList),
-          Array.isArray(state?.selectedMinorList),
-          Array.isArray(state?.planTerms));
-        navigate('/gradtrak/onboarding', { replace: true }); // Redirect
-    }
-  }, [isStateValid, userLoading, navigate]);
-
-  const { selectedDegreeList, selectedMinorList, planTerms } = state!;
-  const selectedDegreeStrings: string[] = selectedDegreeList.map((degree) => degree.value);
-  const selectedMinorStrings: string[] = selectedMinorList.map((minor) => minor.value);
+  const planTerms = useMemo(() => {
+    return gradTrak?.planTerms || [];
+  }, [gradTrak?.planTerms]);
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[]; } | null => {
@@ -123,18 +98,28 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (state?.planTerms && state.planTerms.length > 0) {
-      const convertedSemesters = convertPlanTermsToSemesters(state.planTerms);
+    if (planTerms && planTerms.length > 0) {
+      const convertedSemesters = convertPlanTermsToSemesters(planTerms);
       setAllSemesters(convertedSemesters);
       console.log(convertedSemesters);
     }
-  }, [state?.planTerms, convertPlanTermsToSemesters]);
+  }, [planTerms, convertPlanTermsToSemesters]);
 
 
   const totalUnits = Object.values(semesterTotals).reduce((sum, units) => sum + units, 0);
 
-  if (!currentUserInfo) {
-    navigate('/gradtrak', { replace: true });
+  useEffect(() => {
+    if (!currentUserInfo && !userLoading && !gradTrakLoading) {
+      navigate('/gradtrak', { replace: true });
+    }
+  }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
+
+  if (userLoading || gradTrakLoading) {
+    return (
+      <div className={styles.root}>
+        <div>Loading your GradTrak...</div>
+      </div>
+    );
   }
 
   return (
