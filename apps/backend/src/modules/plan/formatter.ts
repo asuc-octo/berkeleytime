@@ -12,6 +12,7 @@ export function formatPlan(
   plan: PlanType
 ): PlanModule.Plan {
   return {
+    _id: plan._id as string,
     userEmail: plan.userEmail,
     planTerms: plan.planTerms.map(formatPlanTerm),
     miscellaneous: formatPlanTerm(plan.miscellaneous),

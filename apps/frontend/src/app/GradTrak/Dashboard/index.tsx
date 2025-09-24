@@ -51,6 +51,7 @@ function Dashboard() {
   useEffect(() => {
     if (!isStateValid && !userLoading) {
         console.warn("GradTrak state is invalid or missing after user loaded. Redirecting to setup.");
+        console.log(state);
         navigate('/gradtrak/onboarding', { replace: true }); // Redirect
     }
   }, [isStateValid, userLoading, navigate]);

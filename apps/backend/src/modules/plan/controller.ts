@@ -49,14 +49,15 @@ const HaasReqs = [
 // get plan for a user
 export async function getPlanByUser(
   context: any
-): Promise<Plan | null> {
+): Promise<Plan[]> {
   if (!context.user.email) throw new Error("Unauthorized");
 
   const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  return formatPlan(gt);
+  const tmp = formatPlan(gt);
+  return tmp ? [tmp] : [];
 }
 
 // delete a planTerm specified by ObjectID

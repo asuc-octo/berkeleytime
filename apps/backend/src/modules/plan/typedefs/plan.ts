@@ -81,6 +81,7 @@ const typeDef = gql`
   }
 
   type Plan {
+    _id: ID
     userEmail: String!
     planTerms: [PlanTerm!]
     miscellaneous: PlanTerm!
@@ -162,7 +163,7 @@ const typeDef = gql`
     """
     Takes in user's email and returns their entire plan
     """
-    planByUser: Plan @auth
+    planByUser: [Plan!]! @auth
   }
 
   type Mutation {

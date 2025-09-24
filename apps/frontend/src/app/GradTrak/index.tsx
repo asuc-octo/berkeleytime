@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react"; 
+import { useMemo, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom"; 
 import { Plus } from "iconoir-react"; 
 
@@ -9,48 +9,20 @@ import {
   Container,
   LoadingIndicator
 } from "@repo/theme";
-import { useReadUser } from "@/hooks/api"; 
-import { signIn } from "@/lib/api"; 
+import { useReadPlans, useReadUser } from "@/hooks/api"; 
+import { signIn, DegreeOption } from "@/lib/api"; 
 import Footer from "@/components/Footer";
 
 import styles from "./GradTrak.module.scss"; 
 
-const useReadGradTraks = (options: { skip: boolean }) => {
-    const [data, setData] = React.useState<IGradTrak[] | null>(null);
-    const [loading, setLoading] = React.useState(!options.skip); 
-
-    useEffect(() => {
-        if (!options.skip) {
-            setLoading(true); 
-            const timer = setTimeout(() => {
-                setData([]);
-
-                setLoading(false);
-            }, 500); 
-            return () => clearTimeout(timer);
-        } else {
-             setLoading(false); 
-             setData(null); 
-        }
-    }, [options.skip]); 
-
-    return { data, loading };
-};
-
-// Mock IGradTrak type 
-interface IGradTrak {
-    _id: string;
-    name: string;
-    year: number;
-    semester: 'Fall' | 'Spring' | 'Summer';
-}
-
 export default function GradTrakIndex() {
   const { data: user, loading: userLoading } = useReadUser();
 
-  const { data: gradTraks, loading: gradTraksLoading } = useReadGradTraks({
+  const { data: gradTraks, loading: gradTraksLoading } = useReadPlans({
     skip: !user, 
   });
+
+  console.log(gradTraks);
 
   const navigate = useNavigate(); 
 
@@ -61,10 +33,19 @@ export default function GradTrakIndex() {
   useEffect(() => {
       if (user && !userLoading && !gradTraksLoading && hasGradTraks) {
           console.log("User has existing GradTraks, redirecting to dashboard.");
-          const latestGradTrakId = gradTraks?.[0]?._id; 
+          const latestGradTrak = gradTraks?.[0]; 
 
-          if (latestGradTrakId) {
-              navigate(`/gradtrak/dashboard/${latestGradTrakId}`, { replace: true }); 
+          if (latestGradTrak) {
+              // navigate(`/gradtrak/dashboard/${latestGradTrakId}`, { replace: true });
+              navigate(`/gradtrak/dashboard`, {
+                state: {  // TODO(Daniel): modify this to use the stored info, not just start and end dates
+                  startYear: '0',
+                  gradYear: '0',
+                  summerCheck: false,
+                  selectedDegreeList: latestGradTrak.majors.map((major): DegreeOption => ({ label: major, value: major })),
+                  selectedMinorList: latestGradTrak.minors.map((minor): DegreeOption => ({ label: minor, value: minor })),
+                },
+              }); 
           } else {
              console.error("hasGradTraks was true but no GradTrak ID found in data.");
              navigate('/gradtrak/onboarding', { replace: true });
