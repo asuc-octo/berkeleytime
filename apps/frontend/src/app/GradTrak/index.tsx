@@ -36,16 +36,15 @@ export default function GradTrakIndex() {
           const latestGradTrak = gradTraks?.[0]; 
 
           if (latestGradTrak) {
-              // navigate(`/gradtrak/dashboard/${latestGradTrakId}`, { replace: true });
-              navigate(`/gradtrak/dashboard`, {
-                state: {  // TODO(Daniel): modify this to use the stored info, not just start and end dates
-                  startYear: '0',
-                  gradYear: '0',
-                  summerCheck: false,
-                  selectedDegreeList: latestGradTrak.majors.map((major): DegreeOption => ({ label: major, value: major })),
-                  selectedMinorList: latestGradTrak.minors.map((minor): DegreeOption => ({ label: minor, value: minor })),
-                },
-              }); 
+            navigate(`/gradtrak/dashboard`, {
+              state: {  // TODO(Daniel): modify this to use the stored info, not just start and end dates
+                startYear: '0',
+                gradYear: '0',
+                summerCheck: false,
+                selectedDegreeList: latestGradTrak.majors.map((major): DegreeOption => ({ label: major, value: major })),
+                selectedMinorList: latestGradTrak.minors.map((minor): DegreeOption => ({ label: minor, value: minor })),
+              },
+            }); 
           } else {
              console.error("hasGradTraks was true but no GradTrak ID found in data.");
              navigate('/gradtrak/onboarding', { replace: true });

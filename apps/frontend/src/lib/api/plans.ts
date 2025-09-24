@@ -12,11 +12,15 @@ export type DegreeOption = {
   value: string;
 };
 
+export interface ILabel {
+  name: string;
+  color: string;
+}
+
 export interface IPlan {
   _id?: string;
   userEmail: string;
   planTerms: IPlanTerm[];
-  miscellaneous: IPlanTerm;
   majors: string[];
   minors: string[];
   uniReqs: string[];
@@ -24,6 +28,9 @@ export interface IPlan {
   majorReqs: IMajorReq[];
   created: string;
   revised: string;
+  gridLayout: boolean;
+  college: string;
+  labels: ILabel[];
 }
 
 export interface IPlanTerm {
@@ -33,20 +40,26 @@ export interface IPlanTerm {
   year: number;
   term: string;
   courses: ISelectedCourse[];
-  customEvents: ICustomEvent[];
+  customCourses: ICustomCourse[];
 }
 
 export interface ISelectedCourse {
   classID: string;
   uniReqs: string[];
   collegeReqs: string[];
+  pnp: boolean;
+  transfer: boolean;
+  labels: ILabel[];
 }
 
-export interface ICustomEvent {
+export interface ICustomCourse {
   title?: string;
   description?: string;
   uniReqs: string[];
   collegeReqs: string[];
+  pnp: boolean;
+  transfer: boolean;
+  labels: ILabel[];
 }
 
 export interface IMajorReq {
@@ -66,41 +79,66 @@ export interface ReadPlanResponse {
 }
 
 export const CREATE_NEW_PLAN = gql`
-  mutation CreateNewPlan($college: Colleges!, $majors: [String!]!, $minors: [String!]!) {
-    createNewPlan(college: $college, majors: $majors, minors: $minors) {
+  mutation CreateNewPlan(
+    $college: Colleges!
+    $startYear: Int!
+    $endYear: Int!
+    $majors: [String!]!
+    $minors: [String!]!
+  ) {
+    createNewPlan(
+      college: $college
+      startYear: $startYear
+      endYear: $endYear
+      majors: $majors
+      minors: $minors
+    ) {
       _id
       userEmail
+      majors
+      minors
+      college
+      created
+      revised
+      gridLayout
+      labels {
+        name
+        color
+      }
+      uniReqsSatisfied
+      collegeReqsSatisfied
       planTerms {
         _id
         name
-        userEmail
         year
         term
+        hidden
+        status
+        pinned
         courses {
-          classID
+          courseID
           uniReqs
           collegeReqs
+          pnp
+          transfer
+          labels {
+            name
+            color
+          }
         }
-        customEvents {
+        customCourses {
           title
           description
           uniReqs
           collegeReqs
+          pnp
+          transfer
+          labels {
+            name
+            color
+          }
         }
       }
-      majors
-      minors
-      uniReqs
-      collegeReqs
-      majorReqs {
-        name
-        major
-        numCoursesRequired
-        satisfyingCourseIds
-        isMinor
-      }
-      created
-      revised
     }
   }
 `;
@@ -110,37 +148,50 @@ export const READ_PLAN = gql`
     planByUser {
       _id
       userEmail
+      majors
+      minors
+      college
+      created
+      revised
+      gridLayout
+      labels {
+        name
+        color
+      }
+      uniReqsSatisfied
+      collegeReqsSatisfied
       planTerms {
         _id
         name
-        userEmail
         year
         term
+        hidden
+        status
+        pinned
         courses {
-          classID
+          courseID
           uniReqs
           collegeReqs
+          pnp
+          transfer
+          labels {
+            name
+            color
+          }
         }
-        customEvents {
+        customCourses {
           title
           description
           uniReqs
           collegeReqs
+          pnp
+          transfer
+          labels {
+            name
+            color
+          }
         }
       }
-      majors
-      minors
-      uniReqs
-      collegeReqs
-      majorReqs {
-        name
-        major
-        numCoursesRequired
-        satisfyingCourseIds
-        isMinor
-      }
-      created
-      revised
     }
   }
 `;

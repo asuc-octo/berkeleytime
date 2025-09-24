@@ -22,38 +22,52 @@ export const useCreatePlan = () => {
               data: plan,
               fragment: gql`
                 fragment CreatedPlan on Plan {
+                  _id
                   userEmail
+                  majors
+                  minors
+                  college
+                  created
+                  revised
+                  gridLayout
+                  labels {
+                    name
+                    color
+                  }
+                  uniReqsSatisfied
+                  collegeReqsSatisfied
                   planTerms {
                     _id
                     name
-                    userEmail
                     year
                     term
+                    hidden
+                    status
+                    pinned
                     courses {
-                      classID
+                      courseID
                       uniReqs
                       collegeReqs
+                      pnp
+                      transfer
+                      labels {
+                        name
+                        color
+                      }
                     }
-                    customEvents {
+                    customCourses {
                       title
                       description
                       uniReqs
                       collegeReqs
+                      pnp
+                      transfer
+                      labels {
+                        name
+                        color
+                      }
                     }
                   }
-                  majors
-                  minors
-                  uniReqs
-                  collegeReqs
-                  majorReqs {
-                    name
-                    major
-                    numCoursesRequired
-                    satisfyingCourseIds
-                    isMinor
-                  }
-                  created
-                  revised
                 }
               `,
             });
@@ -66,14 +80,16 @@ export const useCreatePlan = () => {
   });
 
   const createPlan = useCallback(
-    async (college: Colleges, majors: string[], minors: string[]) => {
+    async (college: Colleges, majors: string[], minors: string[], startYear: number, endYear: number) => {
       const mutate = mutation[0];
 
       return await mutate({ 
         variables: { 
           college: college,
           majors: majors,
-          minors: minors
+          minors: minors,
+          startYear: startYear,
+          endYear: endYear,
         } 
       });
     },

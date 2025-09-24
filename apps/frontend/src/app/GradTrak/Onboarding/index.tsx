@@ -46,8 +46,8 @@ export default function GradTrakOnboarding() {
       summerCheck,
       majors: selectedMajors,
       minors,
-    }); // TODO(Daniel): modify this as well as the queries to accept years
-    const { data } = await createPlan(Colleges.LnS, selectedMajors.map((m) => m.value), minors.map((m) => m.value));
+    });
+    const { data } = await createPlan(Colleges.LnS, selectedMajors.map((m) => m.value), minors.map((m) => m.value), parseInt(startYear, 10), parseInt(gradYear, 10));
     console.log(data)
     navigate(`/gradtrak/dashboard`, {
       state: {
