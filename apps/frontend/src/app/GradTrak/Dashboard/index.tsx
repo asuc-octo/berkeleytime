@@ -75,10 +75,6 @@ function Dashboard() {
       
       const classes: ISelectedCourse[] = [];
       
-      /* TODO(Daniel):
-        - Implement moving classes
-        - Implement P/NP and Transfer
-      */
       planTerm.courses.forEach((course: ISelectedCourse) => {
         // Remove __typename from course object
         const cleanCourse = {

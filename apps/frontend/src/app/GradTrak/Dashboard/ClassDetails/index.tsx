@@ -37,8 +37,8 @@ const ClassDetails = ({
   const [classTitle, setClassTitle] = useState(classData?.courseTitle || "");
   const [units, setUnits] = useState(classData?.courseUnits || 0);
   const [semester] = useState("Coming Soon");
-  const [grading, setGrading] = useState("Graded");
-  const [credit, setCredit] = useState("UC Berkeley");
+  const [grading, setGrading] = useState(classData?.pnp ? "P/NP" : "Graded");
+  const [credit, setCredit] = useState(classData?.transfer ? "Transfer" : "UC Berkeley");
   // const [requirements, setRequirements] = useState<string[]>([]);
 
   // Update state when classData changes
@@ -64,10 +64,11 @@ const ClassDetails = ({
       courseUnits: units,
       uniReqs: [],
       collegeReqs: [],
-      pnp: false,
-      transfer: false,
+      pnp: grading === "P/NP",
+      transfer: credit === "Transfer",
       labels: [],
-    };
+    };``
+    console.log(updatedClass);
 
     if (isEditMode && onUpdate) {
       onUpdate(updatedClass);
