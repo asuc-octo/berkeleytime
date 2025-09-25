@@ -393,6 +393,15 @@ export default function Class({
                     maxWaitlist={
                       _class.primarySection.enrollment?.latest.maxWaitlist
                     }
+                    reservedCount={
+                      _class.primarySection.enrollment?.latest.reservedCount
+                    }
+                    openReserved={
+                      _class.primarySection.enrollment?.latest.openReserved
+                    }
+                    seatReservationTypes={
+                      _class.primarySection.enrollment?.seatReservationTypes
+                    }
                   />
                   <Units
                     unitsMax={_class.unitsMax}

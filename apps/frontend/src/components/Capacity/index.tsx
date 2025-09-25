@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 
-import { User } from "iconoir-react";
+import { Lock, User } from "iconoir-react";
 import { Tooltip } from "radix-ui";
+
+import { ISeatReservationType } from "@/lib/api";
 
 import styles from "./Capacity.module.scss";
 
@@ -18,11 +20,27 @@ export const getEnrollmentColor = (count?: number, capacity?: number) => {
       : "var(--emerald-500)";
 };
 
+const getProgressClass = (current?: number, total?: number) => {
+  if (typeof current !== "number" || typeof total !== "number" || total === 0) {
+    return "low";
+  }
+
+  const percentage = current / total;
+
+  if (percentage >= 0.9) return "high";
+  if (percentage >= 0.75) return "medium";
+  return "low";
+};
+
+
 interface CapacityProps {
   enrolledCount?: number;
   maxEnroll?: number;
   waitlistedCount?: number;
   maxWaitlist?: number;
+  reservedCount?: number;
+  openReserved?: number;
+  seatReservationTypes?: ISeatReservationType[];
 }
 
 export default function Capacity({
@@ -30,6 +48,9 @@ export default function Capacity({
   maxEnroll,
   waitlistedCount,
   maxWaitlist,
+  reservedCount,
+  openReserved,
+  seatReservationTypes,
 }: CapacityProps) {
   const color = useMemo(
     () => getEnrollmentColor(enrolledCount, maxEnroll),
@@ -39,6 +60,16 @@ export default function Capacity({
   const waitlistColor = useMemo(
     () => getEnrollmentColor(waitlistedCount, maxWaitlist),
     [waitlistedCount, maxWaitlist]
+  );
+
+  const hasReservations = useMemo(
+    () => seatReservationTypes && seatReservationTypes.length > 0,
+    [seatReservationTypes]
+  );
+
+  const reservationCount = useMemo(
+    () => seatReservationTypes?.length ?? 0,
+    [seatReservationTypes]
   );
 
   return (
@@ -53,6 +84,19 @@ export default function Capacity({
             &nbsp;/&nbsp;
             {maxEnroll?.toLocaleString() ?? " - "}
           </p>
+          {hasReservations && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '12px',
+              color: 'var(--neutral-500)',
+              fontWeight: 600
+            }}>
+              <Lock style={{ width: 12, height: 12 }} />
+              <span>{reservationCount}</span>
+            </div>
+          )}
         </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>
@@ -64,53 +108,108 @@ export default function Capacity({
         >
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
-            <div className={styles.row}>
-              <p className={styles.key}>Enrolled</p>
-              <p>
-                <span style={{ color }}>
-                  {enrolledCount?.toLocaleString() ?? " - "}
-                </span>
-                &nbsp;/&nbsp;
+
+            {/* Enrollment Progress */}
+            <div className={styles.progressSection}>
+              <div className={styles.progressHeader}>
+                <span className={styles.label}>Enrollment</span>
                 <span className={styles.value}>
-                  {maxEnroll?.toLocaleString() ?? " - "}
-                </span>
-                &nbsp;(
-                <span style={{ color }}>
-                  {enrolledCount === undefined || maxEnroll === undefined
+                  {enrolledCount?.toLocaleString() ?? "—"}
+                  &nbsp;/&nbsp;
+                  {maxEnroll?.toLocaleString() ?? "—"}
+                  &nbsp;
+                  ({enrolledCount === undefined || maxEnroll === undefined
                     ? "N/A"
                     : maxEnroll === 0
-                      ? 0
-                      : Math.round(
-                          (enrolledCount / maxEnroll) * 100
-                        ).toLocaleString()}
-                  %
+                      ? "0"
+                      : Math.round((enrolledCount / maxEnroll) * 100).toLocaleString()}%)
                 </span>
-                )
-              </p>
+              </div>
+              <div className={styles.progressBar}>
+                <div
+                  className={`${styles.progressFill} ${styles[getProgressClass(enrolledCount, maxEnroll)]}`}
+                  style={{
+                    width: enrolledCount && maxEnroll && maxEnroll > 0
+                      ? `${Math.min((enrolledCount / maxEnroll) * 100, 100)}%`
+                      : '0%'
+                  }}
+                />
+              </div>
             </div>
-            <div className={styles.divider} />
-            <div className={styles.row}>
-              <p className={styles.key}>Waitlisted</p>
-              <p>
-                <span style={{ color: waitlistColor }}>
-                  {waitlistedCount?.toLocaleString() ?? " - "}
-                </span>
-                &nbsp;/&nbsp;
-                {maxWaitlist?.toLocaleString() ?? " - "}
-                &nbsp;(
-                <span style={{ color: waitlistColor }}>
-                  {waitlistedCount === undefined || maxWaitlist === undefined
+
+            {/* Waitlist Progress */}
+            <div className={styles.progressSection}>
+              <div className={styles.progressHeader}>
+                <span className={styles.label}>Waitlist</span>
+                <span className={styles.value}>
+                  {waitlistedCount?.toLocaleString() ?? "—"}
+                  &nbsp;/&nbsp;
+                  {maxWaitlist?.toLocaleString() ?? "—"}
+                  &nbsp;
+                  ({waitlistedCount === undefined || maxWaitlist === undefined
                     ? "N/A"
                     : maxWaitlist === 0
-                      ? 0
-                      : Math.round(
-                          (waitlistedCount / maxWaitlist) * 100
-                        ).toLocaleString()}
-                  %
+                      ? "0"
+                      : Math.round((waitlistedCount / maxWaitlist) * 100).toLocaleString()}%)
                 </span>
-                )
-              </p>
+              </div>
+              <div className={styles.progressBar}>
+                <div
+                  className={`${styles.progressFill} ${styles[getProgressClass(waitlistedCount, maxWaitlist)]}`}
+                  style={{
+                    width: waitlistedCount && maxWaitlist && maxWaitlist > 0
+                      ? `${Math.min((waitlistedCount / maxWaitlist) * 100, 100)}%`
+                      : '0%'
+                  }}
+                />
+              </div>
             </div>
+            {hasReservations && (
+              <>
+                <div className={styles.divider} />
+                <div style={{ marginBottom: '8px' }}>
+                  <div className={styles.key} style={{
+                    fontSize: '13px',
+                    marginBottom: '10px'
+                  }}>
+                    Reserved Groups ({reservationCount})
+                  </div>
+                  {seatReservationTypes?.map((reservation) => {
+                    // Simple abbreviation for the super long EECS name
+                    let shortName = reservation.requirementGroup;
+                    if (shortName.includes("Electrical Engineering and Computer Sciences")) {
+                      shortName = "EECS/CS Majors";
+                    }
+                    // Keep other names as-is for now
+
+                    return (
+                      <div key={reservation.number} className={styles.row} style={{
+                        alignItems: 'flex-start',
+                        marginBottom: '4px',
+                        fontSize: '12px',
+                        gap: '8px'
+                      }}>
+                        <span style={{
+                          fontWeight: 400,
+                          flex: '1',
+                          minWidth: 0,
+                          lineHeight: '1.3'
+                        }}>
+                          • {shortName}
+                        </span>
+                        <span style={{
+                          fontWeight: 600,
+                          flexShrink: 0,
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {reservation.openReserved} / {reservation.maxEnroll}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </Tooltip.Content>
       </Tooltip.Portal>
