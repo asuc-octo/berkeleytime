@@ -1,7 +1,7 @@
 import RequirementsAccordion from "./RequirementsAccordion";
 // TODO: also import in CoEReqs, HaasReqs
-import { UniReqs, LnSReqs } from '@/lib/course';
-
+import { UniReqs, LnSReqs, CoEReqs, HaasReqs, RequirementEnum } from '@/lib/course';
+import { useState } from 'react'; 
 import { WarningCircle } from "iconoir-react"
 
 import styles from "./SidePanel.module.scss";
@@ -13,10 +13,20 @@ interface SidePanelProps {
     totalUnits: number;
     transferUnits: number;
     pnpTotal: number;
+    uniReqsFulfilled: RequirementEnum[];
+    collegeReqsFulfilled: RequirementEnum[];
 }
 
-export default function SidePanel({ majors, minors, totalUnits, transferUnits, pnpTotal}: SidePanelProps) {
-
+export default function SidePanel({ majors, minors, totalUnits, transferUnits, pnpTotal, uniReqsFulfilled, collegeReqsFulfilled}: SidePanelProps) {
+    const [collegeReqs, setCollegeReqs] = useState<RequirementEnum[]>([
+        LnSReqs.LnS_AL,
+        LnSReqs.LnS_BS,
+        LnSReqs.LnS_HS,
+        LnSReqs.LnS_IS,
+        LnSReqs.LnS_PV,
+        LnSReqs.LnS_PS,
+        LnSReqs.LnS_SBS,
+    ]);
     const UserInfo = (
         <>
             <div className={styles.headerContainer}>
@@ -120,6 +130,7 @@ export default function SidePanel({ majors, minors, totalUnits, transferUnits, p
             {MajorRequirements}
             {MinorRequirements}   
             <RequirementsAccordion title={"University of California"}
+                uni={true}
                 requirements={[
                     UniReqs.AC,
                     UniReqs.AH,
@@ -129,17 +140,14 @@ export default function SidePanel({ majors, minors, totalUnits, transferUnits, p
                     UniReqs.RCA,
                     UniReqs.RCB,
                     UniReqs.FL,
-                ]}/>     
+                ]}
+                finishedRequirements={uniReqsFulfilled}
+            />     
             <RequirementsAccordion title={"Breadth Requirements"}    
-                requirements={[
-                    LnSReqs.LnS_AL,
-                    LnSReqs.LnS_BS,
-                    LnSReqs.LnS_HS,
-                    LnSReqs.LnS_IS,
-                    LnSReqs.LnS_PV,
-                    LnSReqs.LnS_PS,
-                    LnSReqs.LnS_SBS,
-                ]}/>
+                uni={false}
+                requirements={collegeReqs}
+                finishedRequirements={collegeReqsFulfilled}
+            />
         </div>
    )
 }

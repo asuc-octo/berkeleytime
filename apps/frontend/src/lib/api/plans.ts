@@ -204,6 +204,34 @@ export const READ_PLANS = gql`
   }
 `;
 
+export interface PlanInput {
+  college?: Colleges;
+  uniReqsSatisfied?: UniReqs[];
+  collegeReqsSatisfied?: CollegeReqs[];
+  labels?: LabelInput[];
+  majors?: string[];
+  minors?: string[];
+  majorReqs?: IMajorReq[];
+}
+
+export interface EditPlanResponse {
+  editPlan: IPlan;
+}
+
+export const EDIT_PLAN = gql`
+  mutation EditPlan($plan: PlanInput!) {
+    editPlan(plan: $plan) {
+        uniReqsSatisfied
+        collegeReqsSatisfied
+        majors
+        minors
+        labels {
+          name
+          color
+        }
+    }
+  }
+`;
 
 export interface SelectedCourseInput {
   courseID: string;

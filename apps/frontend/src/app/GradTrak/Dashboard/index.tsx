@@ -14,6 +14,8 @@ import {
   NavArrowDown,
 } from "iconoir-react"
 
+import { convertStringsToRequirementEnum } from '@/lib/course';
+
 import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
 import { IPlanTerm, ISelectedCourse } from '@/lib/api';
@@ -139,6 +141,8 @@ function Dashboard() {
             totalUnits={totalUnits}
             transferUnits={0} 
             pnpTotal={0}
+            uniReqsFulfilled={convertStringsToRequirementEnum(gradTrak?.uniReqsSatisfied ? gradTrak?.uniReqsSatisfied : [])}
+            collegeReqsFulfilled={convertStringsToRequirementEnum(gradTrak?.collegeReqsSatisfied ? gradTrak?.collegeReqsSatisfied : [])}
           />
       </div>
 
