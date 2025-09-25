@@ -226,7 +226,7 @@ function SemesterBlock({
     setPlaceholderIndex(null);
   }
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDropTarget(false);
     setPlaceholderIndex(null);
@@ -241,6 +241,7 @@ function SemesterBlock({
 
       // create updated semesters object
       const updatedSemesters = { ...allSemesters };
+      const semestersToUpdate: string[] = [];
 
       // handle dragging within the same semester
       if (sourceSemesterId === semesterId) {
@@ -255,6 +256,7 @@ function SemesterBlock({
         // insert at new position
         updatedClasses.splice(adjustedPos, 0, draggedClass);
         updatedSemesters[semesterId] = updatedClasses;
+        semestersToUpdate.push(semesterId);
       }
       // handle dragging between different semesters
       else {
@@ -262,15 +264,27 @@ function SemesterBlock({
         const sourceSemesterClasses = [...allSemesters[sourceSemesterId]];
         sourceSemesterClasses.splice(classIndex, 1);
         updatedSemesters[sourceSemesterId] = sourceSemesterClasses;
+        semestersToUpdate.push(sourceSemesterId);
 
         // add class to target semester at the right position
         const targetSemesterClasses = [...selectedClasses];
         targetSemesterClasses.splice(insertPos, 0, draggedClass);
         updatedSemesters[semesterId] = targetSemesterClasses;
+        semestersToUpdate.push(semesterId);
       }
 
+      
       // update the global state
+      const oldSemesters = {...allSemesters};
       updateAllSemesters(updatedSemesters); updateAllSemesters(updatedSemesters);
+      try {
+        for (const semesterId of semestersToUpdate) {
+          await setCourses(semesterId, updatedSemesters[semesterId], {fetchPolicy: 'no-cache'});
+        }
+      } catch (error) {
+        updateAllSemesters(oldSemesters);
+        console.error("Error handling drop:", error);
+      }
     } catch (error) {
       console.error("Error handling drop:", error);
     }

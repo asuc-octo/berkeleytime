@@ -337,7 +337,19 @@ const router = createBrowserRouter([
 
 const client = new ApolloClient({
   uri: "/api/graphql",
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      PlanTerm: {
+        fields: {
+          courses: {
+            merge(_, incoming) {
+              return incoming;
+            }
+          }
+        }
+      }
+    }
+  }),
 });
 
 export default function App() {
