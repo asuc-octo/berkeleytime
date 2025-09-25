@@ -28,18 +28,21 @@ const resolvers: EnrollmentModule.Resolvers = {
       const latestCounts = latest?.seatReservationCounts || [];
 
       // Enrich each seat reservation type with count data on demand
-      return parent.seatReservationTypes.map(type => {
+      return parent.seatReservationTypes.map((type) => {
         const count = latestCounts.find((c: any) => c.number === type.number);
 
         return {
           ...type,
           enrolledCount: count?.enrolledCount || 0,
           maxEnroll: count?.maxEnroll || 0,
-          openReserved: Math.max(0, (count?.maxEnroll || 0) - (count?.enrolledCount || 0))
+          openReserved: Math.max(
+            0,
+            (count?.maxEnroll || 0) - (count?.enrolledCount || 0)
+          ),
         };
       });
-    }
-  }
+    },
+  },
 };
 
 export default resolvers;

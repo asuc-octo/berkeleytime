@@ -37,12 +37,12 @@ const typedef = gql`
   """
   Ratings by user
   """
-  type UserRatings @cacheControl(maxAge: 1){
+  type UserRatings @cacheControl(maxAge: 1) {
     createdBy: String!
     count: Int!
     classes: [UserClass!]!
   }
-  type UserClass @cacheControl(maxAge: 1){
+  type UserClass @cacheControl(maxAge: 1) {
     "Class Identifiers"
     year: Int!
     semester: Semester!
@@ -58,7 +58,7 @@ const typedef = gql`
     value: Int!
   }
 
-  type SemesterRatings @cacheControl(maxAge: 1){
+  type SemesterRatings @cacheControl(maxAge: 1) {
     year: Int!
     semester: Semester!
     maxMetricCount: Int!

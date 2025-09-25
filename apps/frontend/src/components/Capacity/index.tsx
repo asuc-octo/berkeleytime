@@ -32,7 +32,6 @@ const getProgressClass = (current?: number, total?: number) => {
   return "low";
 };
 
-
 interface CapacityProps {
   enrolledCount?: number;
   maxEnroll?: number;
@@ -48,18 +47,11 @@ export default function Capacity({
   maxEnroll,
   waitlistedCount,
   maxWaitlist,
-  reservedCount,
-  openReserved,
   seatReservationTypes,
 }: CapacityProps) {
   const color = useMemo(
     () => getEnrollmentColor(enrolledCount, maxEnroll),
     [enrolledCount, maxEnroll]
-  );
-
-  const waitlistColor = useMemo(
-    () => getEnrollmentColor(waitlistedCount, maxWaitlist),
-    [waitlistedCount, maxWaitlist]
   );
 
   const hasReservations = useMemo(
@@ -85,14 +77,16 @@ export default function Capacity({
             {maxEnroll?.toLocaleString() ?? " - "}
           </p>
           {hasReservations && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              fontSize: '12px',
-              color: 'var(--neutral-500)',
-              fontWeight: 600
-            }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                fontSize: "12px",
+                color: "var(--neutral-500)",
+                fontWeight: 600,
+              }}
+            >
               <Lock style={{ width: 12, height: 12 }} />
               <span>{reservationCount}</span>
             </div>
@@ -117,21 +111,25 @@ export default function Capacity({
                   {enrolledCount?.toLocaleString() ?? "—"}
                   &nbsp;/&nbsp;
                   {maxEnroll?.toLocaleString() ?? "—"}
-                  &nbsp;
-                  ({enrolledCount === undefined || maxEnroll === undefined
+                  &nbsp; (
+                  {enrolledCount === undefined || maxEnroll === undefined
                     ? "N/A"
                     : maxEnroll === 0
                       ? "0"
-                      : Math.round((enrolledCount / maxEnroll) * 100).toLocaleString()}%)
+                      : Math.round(
+                          (enrolledCount / maxEnroll) * 100
+                        ).toLocaleString()}
+                  %)
                 </span>
               </div>
               <div className={styles.progressBar}>
                 <div
                   className={`${styles.progressFill} ${styles[getProgressClass(enrolledCount, maxEnroll)]}`}
                   style={{
-                    width: enrolledCount && maxEnroll && maxEnroll > 0
-                      ? `${Math.min((enrolledCount / maxEnroll) * 100, 100)}%`
-                      : '0%'
+                    width:
+                      enrolledCount && maxEnroll && maxEnroll > 0
+                        ? `${Math.min((enrolledCount / maxEnroll) * 100, 100)}%`
+                        : "0%",
                   }}
                 />
               </div>
@@ -145,21 +143,25 @@ export default function Capacity({
                   {waitlistedCount?.toLocaleString() ?? "—"}
                   &nbsp;/&nbsp;
                   {maxWaitlist?.toLocaleString() ?? "—"}
-                  &nbsp;
-                  ({waitlistedCount === undefined || maxWaitlist === undefined
+                  &nbsp; (
+                  {waitlistedCount === undefined || maxWaitlist === undefined
                     ? "N/A"
                     : maxWaitlist === 0
                       ? "0"
-                      : Math.round((waitlistedCount / maxWaitlist) * 100).toLocaleString()}%)
+                      : Math.round(
+                          (waitlistedCount / maxWaitlist) * 100
+                        ).toLocaleString()}
+                  %)
                 </span>
               </div>
               <div className={styles.progressBar}>
                 <div
                   className={`${styles.progressFill} ${styles[getProgressClass(waitlistedCount, maxWaitlist)]}`}
                   style={{
-                    width: waitlistedCount && maxWaitlist && maxWaitlist > 0
-                      ? `${Math.min((waitlistedCount / maxWaitlist) * 100, 100)}%`
-                      : '0%'
+                    width:
+                      waitlistedCount && maxWaitlist && maxWaitlist > 0
+                        ? `${Math.min((waitlistedCount / maxWaitlist) * 100, 100)}%`
+                        : "0%",
                   }}
                 />
               </div>
@@ -167,41 +169,56 @@ export default function Capacity({
             {hasReservations && (
               <>
                 <div className={styles.divider} />
-                <div style={{ marginBottom: '8px' }}>
-                  <div className={styles.key} style={{
-                    fontSize: '13px',
-                    marginBottom: '10px'
-                  }}>
+                <div style={{ marginBottom: "8px" }}>
+                  <div
+                    className={styles.key}
+                    style={{
+                      fontSize: "13px",
+                      marginBottom: "10px",
+                    }}
+                  >
                     Reserved Groups ({reservationCount})
                   </div>
                   {seatReservationTypes?.map((reservation) => {
                     // Simple abbreviation for the super long EECS name
                     let shortName = reservation.requirementGroup;
-                    if (shortName.includes("Electrical Engineering and Computer Sciences")) {
+                    if (
+                      shortName.includes(
+                        "Electrical Engineering and Computer Sciences"
+                      )
+                    ) {
                       shortName = "EECS/CS Majors";
                     }
                     // Keep other names as-is for now
 
                     return (
-                      <div key={reservation.number} className={styles.row} style={{
-                        alignItems: 'flex-start',
-                        marginBottom: '4px',
-                        fontSize: '12px',
-                        gap: '8px'
-                      }}>
-                        <span style={{
-                          fontWeight: 400,
-                          flex: '1',
-                          minWidth: 0,
-                          lineHeight: '1.3'
-                        }}>
+                      <div
+                        key={reservation.number}
+                        className={styles.row}
+                        style={{
+                          alignItems: "flex-start",
+                          marginBottom: "4px",
+                          fontSize: "12px",
+                          gap: "8px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontWeight: 400,
+                            flex: "1",
+                            minWidth: 0,
+                            lineHeight: "1.3",
+                          }}
+                        >
                           • {shortName}
                         </span>
-                        <span style={{
-                          fontWeight: 600,
-                          flexShrink: 0,
-                          whiteSpace: 'nowrap'
-                        }}>
+                        <span
+                          style={{
+                            fontWeight: 600,
+                            flexShrink: 0,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
                           {reservation.openReserved} / {reservation.maxEnroll}
                         </span>
                       </div>
