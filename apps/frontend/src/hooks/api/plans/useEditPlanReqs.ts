@@ -2,15 +2,11 @@ import { useCallback } from "react";
 
 import { MutationHookOptions, useMutation } from "@apollo/client";
 
-import {
-    EDIT_PLAN,
-    PlanInput,
-    EditPlanResponse
-} from "@/lib/api";
+import { EDIT_PLAN, EditPlanResponse, PlanInput } from "@/lib/api";
 
 export const useEditPlanReqs = () => {
   const mutation = useMutation<EditPlanResponse>(EDIT_PLAN, {
-    update(cache, { data }) {
+    update(_, { data }) {
       const plan = data?.editPlan;
 
       if (!plan) return;

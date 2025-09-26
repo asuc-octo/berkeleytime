@@ -1,41 +1,61 @@
-import RequirementsAccordion from "./RequirementsAccordion";
 // TODO: also import in CoEReqs, HaasReqs
-import { UniReqs, LnSReqs, CoEReqs, HaasReqs, RequirementEnum } from '@/lib/course';
-import { useState } from 'react'; 
-import { WarningCircle } from "iconoir-react"
+import { useState } from "react";
 
+import { WarningCircle } from "iconoir-react";
+
+import {
+  // CoEReqs,
+  // HaasReqs,
+  LnSReqs,
+  RequirementEnum,
+  UniReqs,
+} from "@/lib/course";
+
+import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
 
 // TODO: Implement proper handling of reqs based on user's college...
 interface SidePanelProps {
-    majors: string[];
-    minors: string[];
-    totalUnits: number;
-    transferUnits: number;
-    pnpTotal: number;
-    uniReqsFulfilled: RequirementEnum[];
-    collegeReqsFulfilled: RequirementEnum[];
+  majors: string[];
+  minors: string[];
+  totalUnits: number;
+  transferUnits: number;
+  pnpTotal: number;
+  uniReqsFulfilled: RequirementEnum[];
+  collegeReqsFulfilled: RequirementEnum[];
 }
 
-export default function SidePanel({ majors, minors, totalUnits, transferUnits, pnpTotal, uniReqsFulfilled, collegeReqsFulfilled}: SidePanelProps) {
-    const [collegeReqs, setCollegeReqs] = useState<RequirementEnum[]>([
-        LnSReqs.LnS_AL,
-        LnSReqs.LnS_BS,
-        LnSReqs.LnS_HS,
-        LnSReqs.LnS_IS,
-        LnSReqs.LnS_PV,
-        LnSReqs.LnS_PS,
-        LnSReqs.LnS_SBS,
-    ]);
-    const UserInfo = (
-        <>
-            <div className={styles.headerContainer}>
-                <div className={styles.grid}>
-                    {/* Majors */}
-                    <div className={styles.label}>Major(s)</div>
-                    <div className={styles.value}>
-                        <ul>{majors.map((major, index) => (<li key={index}>{major}</li>))}</ul>
-                    </div>
+export default function SidePanel({
+  majors,
+  minors,
+  totalUnits,
+  transferUnits,
+  pnpTotal,
+  uniReqsFulfilled,
+  collegeReqsFulfilled,
+}: SidePanelProps) {
+  const [collegeReqs] = useState<RequirementEnum[]>([
+    LnSReqs.LnS_AL,
+    LnSReqs.LnS_BS,
+    LnSReqs.LnS_HS,
+    LnSReqs.LnS_IS,
+    LnSReqs.LnS_PV,
+    LnSReqs.LnS_PS,
+    LnSReqs.LnS_SBS,
+  ]);
+  const UserInfo = (
+    <>
+      <div className={styles.headerContainer}>
+        <div className={styles.grid}>
+          {/* Majors */}
+          <div className={styles.label}>Major(s)</div>
+          <div className={styles.value}>
+            <ul>
+              {majors.map((major, index) => (
+                <li key={index}>{major}</li>
+              ))}
+            </ul>
+          </div>
 
           {/* Minors */}
           {minors.length > 0 && (
@@ -129,30 +149,32 @@ export default function SidePanel({ majors, minors, totalUnits, transferUnits, p
     </div>
   );
 
-    return (
-        <div className={styles.root}>
-            {UserInfo}
-            {MajorRequirements}
-            {MinorRequirements}   
-            <RequirementsAccordion title={"University of California"}
-                uni={true}
-                requirements={[
-                    UniReqs.AC,
-                    UniReqs.AH,
-                    UniReqs.AI,
-                    UniReqs.CW,
-                    UniReqs.QR,
-                    UniReqs.RCA,
-                    UniReqs.RCB,
-                    UniReqs.FL,
-                ]}
-                finishedRequirements={uniReqsFulfilled}
-            />     
-            <RequirementsAccordion title={"Breadth Requirements"}    
-                uni={false}
-                requirements={collegeReqs}
-                finishedRequirements={collegeReqsFulfilled}
-            />
-        </div>
-   )
+  return (
+    <div className={styles.root}>
+      {UserInfo}
+      {MajorRequirements}
+      {MinorRequirements}
+      <RequirementsAccordion
+        title={"University of California"}
+        uni={true}
+        requirements={[
+          UniReqs.AC,
+          UniReqs.AH,
+          UniReqs.AI,
+          UniReqs.CW,
+          UniReqs.QR,
+          UniReqs.RCA,
+          UniReqs.RCB,
+          UniReqs.FL,
+        ]}
+        finishedRequirements={uniReqsFulfilled}
+      />
+      <RequirementsAccordion
+        title={"Breadth Requirements"}
+        uni={false}
+        requirements={collegeReqs}
+        finishedRequirements={collegeReqsFulfilled}
+      />
+    </div>
+  );
 }

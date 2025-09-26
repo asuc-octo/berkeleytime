@@ -1,24 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useReadUser, useReadPlan } from '@/hooks/api';
-import { 
-  Plus,
-  Filter,
-  Sort,
-  NavArrowDown,
-} from "iconoir-react"
-
-import { convertStringsToRequirementEnum } from '@/lib/course';
-
-import SidePanel from "./SidePanel" ;
-import SemesterBlock from "./SemesterBlock";
-import { IPlanTerm, ISelectedCourse } from '@/lib/api';
+import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import { Button, IconButton, Tooltip } from "@repo/theme";
 
+import { useReadPlan, useReadUser } from "@/hooks/api";
+import { IPlanTerm, ISelectedCourse } from "@/lib/api";
+import { convertStringsToRequirementEnum } from "@/lib/course";
+
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
+import SemesterBlock from "./SemesterBlock";
+import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
 
 export default function Dashboard() {
@@ -26,7 +20,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
-    skip: !user, 
+    skip: !user,
   });
 
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
@@ -67,51 +61,63 @@ export default function Dashboard() {
   );
 
   // Create the allSemesters state to track classes in each semester
-  const [allSemesters, setAllSemesters] = useState<{ [key: string]: ISelectedCourse[] }>({});
+  const [allSemesters, setAllSemesters] = useState<{
+    [key: string]: ISelectedCourse[];
+  }>({});
 
-  const updateTotalUnits = useCallback((semesterKey: string, newTotal: number) => {
-    setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
-  }, []);
-  
-  const convertPlanTermsToSemesters = useCallback((planTerms: IPlanTerm[]): { [key: string]: ISelectedCourse[] } => {
-    const semesters: { [key: string]: ISelectedCourse[] } = {};
-    
-    planTerms.forEach((planTerm) => {
-      // Create semester key based on term and year
-      const semesterKey = planTerm._id;
-      
-      const classes: ISelectedCourse[] = [];
-      
-      planTerm.courses.forEach((course: ISelectedCourse) => {
-        // Remove __typename from course object
-        const cleanCourse = {
-          courseID: course.courseID,
-          courseName: course.courseName,
-          courseTitle: course.courseTitle,
-          courseUnits: course.courseUnits,
-          uniReqs: course.uniReqs,
-          collegeReqs: course.collegeReqs,
-          pnp: course.pnp,
-          transfer: course.transfer,
-          labels: course.labels?.map(label => ({
-            name: label.name,
-            color: label.color
-          })) || []
-        };
-        classes.push(cleanCourse);
+  const updateTotalUnits = useCallback(
+    (semesterKey: string, newTotal: number) => {
+      setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
+    },
+    []
+  );
+
+  const convertPlanTermsToSemesters = useCallback(
+    (planTerms: IPlanTerm[]): { [key: string]: ISelectedCourse[] } => {
+      const semesters: { [key: string]: ISelectedCourse[] } = {};
+
+      planTerms.forEach((planTerm) => {
+        // Create semester key based on term and year
+        const semesterKey = planTerm._id;
+
+        const classes: ISelectedCourse[] = [];
+
+        planTerm.courses.forEach((course: ISelectedCourse) => {
+          // Remove __typename from course object
+          const cleanCourse = {
+            courseID: course.courseID,
+            courseName: course.courseName,
+            courseTitle: course.courseTitle,
+            courseUnits: course.courseUnits,
+            uniReqs: course.uniReqs,
+            collegeReqs: course.collegeReqs,
+            pnp: course.pnp,
+            transfer: course.transfer,
+            labels:
+              course.labels?.map((label) => ({
+                name: label.name,
+                color: label.color,
+              })) || [],
+          };
+          classes.push(cleanCourse);
+        });
+
+        if (semesterKey) {
+          semesters[semesterKey] = classes;
+        }
       });
-      
-      if (semesterKey) {
-        semesters[semesterKey] = classes;
-      }
-    });
-    return semesters;
-  }, []);
+      return semesters;
+    },
+    []
+  );
 
   // Function to update all semesters data
-  const updateAllSemesters = useCallback((semesters: { [key: string]: ISelectedCourse[] }) => {
-    setAllSemesters(semesters);
-  }, []);
+  const updateAllSemesters = useCallback(
+    (semesters: { [key: string]: ISelectedCourse[] }) => {
+      setAllSemesters(semesters);
+    },
+    []
+  );
 
   useEffect(() => {
     if (planTerms && planTerms.length > 0) {
@@ -120,7 +126,6 @@ export default function Dashboard() {
     }
   }, [planTerms, convertPlanTermsToSemesters]);
 
-
   const totalUnits = Object.values(semesterTotals).reduce(
     (sum, units) => sum + units,
     0
@@ -128,7 +133,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!currentUserInfo && !userLoading && !gradTrakLoading) {
-      navigate('/gradtrak', { replace: true });
+      navigate("/gradtrak", { replace: true });
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
 
@@ -143,15 +148,19 @@ export default function Dashboard() {
   return (
     <div className={styles.root}>
       <div className={styles.panel}>
-        <SidePanel 
-            majors={currentUserInfo ? currentUserInfo.majors : []} 
-            minors={currentUserInfo ? currentUserInfo.minors : []}
-            totalUnits={totalUnits}
-            transferUnits={0} 
-            pnpTotal={0}
-            uniReqsFulfilled={convertStringsToRequirementEnum(gradTrak?.uniReqsSatisfied ? gradTrak?.uniReqsSatisfied : [])}
-            collegeReqsFulfilled={convertStringsToRequirementEnum(gradTrak?.collegeReqsSatisfied ? gradTrak?.collegeReqsSatisfied : [])}
-          />
+        <SidePanel
+          majors={currentUserInfo ? currentUserInfo.majors : []}
+          minors={currentUserInfo ? currentUserInfo.minors : []}
+          totalUnits={totalUnits}
+          transferUnits={0}
+          pnpTotal={0}
+          uniReqsFulfilled={convertStringsToRequirementEnum(
+            gradTrak?.uniReqsSatisfied ? gradTrak?.uniReqsSatisfied : []
+          )}
+          collegeReqsFulfilled={convertStringsToRequirementEnum(
+            gradTrak?.collegeReqsSatisfied ? gradTrak?.collegeReqsSatisfied : []
+          )}
+        />
       </div>
 
       <div className={styles.view}>
@@ -185,29 +194,32 @@ export default function Dashboard() {
                 <NavArrowDown />
               </Button>
             </Tooltip>
+          </div>
         </div>
-      </div>
-      {showDisplayMenu && (
+        {showDisplayMenu && (
           <DisplayMenu
             onClose={() => setShowDisplayMenu(false)}
             settings={settings}
             onChangeSettings={(patch) => updateSettings(patch)}
           />
         )}
-      <div className={styles.semesterBlocks}>
-        <div className={styles.semesterLayout}>
-        {planTerms && planTerms.map((term) => (
-            <SemesterBlock
-              planTerm={term}
-              onTotalUnitsChange={(newTotal) => updateTotalUnits(term.name ? term.name : "", newTotal)}
-              allSemesters={allSemesters}
-              updateAllSemesters={updateAllSemesters}
-              settings={settings}
-            />
-          ))}
+        <div className={styles.semesterBlocks}>
+          <div className={styles.semesterLayout} data-layout={settings.layout}>
+            {planTerms &&
+              planTerms.map((term) => (
+                <SemesterBlock
+                  planTerm={term}
+                  onTotalUnitsChange={(newTotal) =>
+                    updateTotalUnits(term.name ? term.name : "", newTotal)
+                  }
+                  allSemesters={allSemesters}
+                  updateAllSemesters={updateAllSemesters}
+                  settings={settings}
+                />
+              ))}
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 }

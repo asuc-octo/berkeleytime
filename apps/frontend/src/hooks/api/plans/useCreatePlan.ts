@@ -1,16 +1,12 @@
 import { useCallback } from "react";
 
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 
-import {
-  CREATE_NEW_PLAN,
-  Colleges,
-  CreatePlanResponse
-} from "@/lib/api";
+import { CREATE_NEW_PLAN, Colleges, CreatePlanResponse } from "@/lib/api";
 
 export const useCreatePlan = () => {
   const mutation = useMutation<CreatePlanResponse>(CREATE_NEW_PLAN, {
-    update(cache, { data }) {
+    update(_, { data }) {
       const plan = data?.createNewPlan;
 
       if (!plan) return;
@@ -80,17 +76,23 @@ export const useCreatePlan = () => {
   });
 
   const createPlan = useCallback(
-    async (college: Colleges, majors: string[], minors: string[], startYear: number, endYear: number) => {
+    async (
+      college: Colleges,
+      majors: string[],
+      minors: string[],
+      startYear: number,
+      endYear: number
+    ) => {
       const mutate = mutation[0];
 
-      return await mutate({ 
-        variables: { 
+      return await mutate({
+        variables: {
           college: college,
           majors: majors,
           minors: minors,
           startYear: startYear,
           endYear: endYear,
-        } 
+        },
       });
     },
     [mutation]
