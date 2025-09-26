@@ -7,11 +7,8 @@ import SuspenseBoundary from "@/components/SuspenseBoundary";
 import AddDegree from "./AddDegree";
 import styles from "./Onboarding.module.scss";
 import OnboardingSetup from "./OnboardingSetUp";
-
-type DegreeOption = {
-  label: string;
-  value: string;
-};
+import { useCreatePlan } from "@/hooks/api";
+import { Colleges, DegreeOption } from "@/lib/api";
 
 export default function GradTrakOnboarding() {
   const [step, setStep] = useState(0);
@@ -20,6 +17,7 @@ export default function GradTrakOnboarding() {
   const [summerCheck, setSummerCheck] = useState(false);
 
   const navigate = useNavigate();
+  const [createPlan] = useCreatePlan();
 
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
   const [, setSelectedMinors] = useState<DegreeOption[]>([]);
@@ -40,19 +38,13 @@ export default function GradTrakOnboarding() {
     setStep(2);
   };
 
-  const handleMinorsComplete = (minors: DegreeOption[]) => {
+  const handleMinorsComplete = async (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
-    console.log({
-      startYear,
-      gradYear,
-      summerCheck,
-      majors: selectedMajors,
-      minors,
-    }); // TODO: update user info in backend
+    const { data } = await createPlan(Colleges.LnS, selectedMajors.map((m) => m.value), minors.map((m) => m.value), parseInt(startYear, 10), parseInt(gradYear, 10));
+    console.log(data)
     navigate(`/gradtrak/dashboard`, {
       state: {
-        startYear,
-        gradYear,
+        planTerms: data ? data.createNewPlan.planTerms : [],
         summerCheck,
         selectedDegreeList: selectedMajors, // Pass the final collected majors
         selectedMinorList: minors, // Pass the final collected minors (from this step's parameter)

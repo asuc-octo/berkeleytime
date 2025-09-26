@@ -1,11 +1,11 @@
 import { omitBy } from "lodash";
 
-import { PlanTermModel, PlanModel, SelectedCourseModel, CustomEventModel, MajorReqModel } from "@repo/common";
+import { PlanTermModel, LabelModel, PlanModel, SelectedCourseModel, MajorReqModel } from "@repo/common";
 
 import {
-  CustomEventInput,
   PlanTerm,
   Plan,
+  EditPlanTermInput,
   PlanTermInput,
   SelectedCourseInput,
   PlanInput,
@@ -13,50 +13,18 @@ import {
 } from "../../generated-types/graphql";
 import { formatPlanTerm, formatPlan } from "./formatter";
 
-// General University Requirements
-const UniReqs = [
-  "AC",
-  "AH",
-  "AI",
-  "CW",
-  "QR",
-  "RCA",
-  "RCB"
-];
-// Different College Requirements
-const LnSReqs = [
-    "LnS_AL",
-    "LnS_BS",
-    "LnS_HS",
-    "LnS_IS",
-    "LnS_PV",
-    "LnS_PS",
-    "LnS_SBS"
-];
-const CoEReqs = [
-  "CoE_HSS"
-];
-const HaasReqs = [
-  "HAAS_AL",
-  "HAAS_BS",
-  "HAAS_HS",
-  "HAAS_IS",
-  "HAAS_PV",
-  "HAAS_PS",
-  "HAAS_SBS"
-];
-
 // get plan for a user
 export async function getPlanByUser(
   context: any
-): Promise<Plan | null> {
+): Promise<Plan[]> {
   if (!context.user.email) throw new Error("Unauthorized");
 
   const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  return formatPlan(gt);
+  const tmp = formatPlan(gt);
+  return tmp ? [tmp] : [];
 }
 
 // delete a planTerm specified by ObjectID
@@ -78,23 +46,12 @@ export async function removePlanTerm(planTermID: string, context: any): Promise<
   return planTermID;
 }
 
-function removeNullEventVals(customEvent: CustomEventInput) {
-  for (const key in customEvent) {
-    if (customEvent[key as keyof CustomEventInput] === null) {
-      delete customEvent[key as keyof CustomEventInput];
-    }
-  }
-}
-
 // create a new planTerm
 export async function createPlanTerm(
   mainPlanTerm: PlanTermInput,
   context: any
 ): Promise<PlanTerm> {
   if (!context.user.email) throw new Error("Unauthorized");
-  if (mainPlanTerm.customEvents) {
-    mainPlanTerm.customEvents.forEach(removeNullEventVals);
-  }
   const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
   nonNullPlanTerm.userEmail = context.user.email;
   const newPlanTerm = new PlanTermModel({
@@ -115,7 +72,7 @@ export async function createPlanTerm(
 // update an existing planTerm
 export async function editPlanTerm(
   planTermID: string,
-  mainPlanTerm: PlanTermInput,
+  mainPlanTerm: EditPlanTermInput,
   context: any
 ): Promise<PlanTerm> {
   if (!context.user.email) throw new Error("Unauthorized");
@@ -123,34 +80,44 @@ export async function editPlanTerm(
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  if (mainPlanTerm.customEvents) {
-    mainPlanTerm.customEvents.forEach(removeNullEventVals);
-  }
-  const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
-  nonNullPlanTerm.userEmail = context.user.email;
-  const updatedPlanTerm = new PlanTermModel({
-    ...nonNullPlanTerm
-  });
+
   const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
   if (planTermIndex === -1) {
-    // update miscellanous
-    if (gt.miscellaneous._id == planTermID) {
-      gt.miscellaneous = updatedPlanTerm;
-      await gt.save();
-      return formatPlanTerm(updatedPlanTerm);
-    }
     throw new Error("PlanTerm does not exist in user's plan");
   }
-  gt.planTerms[planTermIndex] = updatedPlanTerm; 
+
+  const termToUpdate = gt.planTerms[planTermIndex];
+
+  if (mainPlanTerm.name != null) {
+    termToUpdate.name = mainPlanTerm.name;
+  }
+  if (mainPlanTerm.year != null) {
+    termToUpdate.year = mainPlanTerm.year;
+  }
+  if (mainPlanTerm.term != null) {
+    termToUpdate.term = mainPlanTerm.term;
+  }
+  if (mainPlanTerm.hidden != null) {
+    termToUpdate.hidden = mainPlanTerm.hidden;
+  }
+  if (mainPlanTerm.status != null) {
+    termToUpdate.status = mainPlanTerm.status;
+  }
+  if (mainPlanTerm.pinned != null) {
+    termToUpdate.pinned = mainPlanTerm.pinned;
+  }
+  if (mainPlanTerm.courses != null) {
+    termToUpdate.courses = mainPlanTerm.courses.map(courseInput => new SelectedCourseModel(courseInput));
+  }
+
   await gt.save();
-  return formatPlanTerm(updatedPlanTerm);
+  return formatPlanTerm(termToUpdate);
 }
 
 // update class selection in an existing planTerm
 export async function setClasses(
   planTermID: string,
   courses: SelectedCourseInput[],
-  customEvents: CustomEventInput[],
   context: any
 ): Promise<PlanTerm> {
   if (!context.user.email) throw new Error("Unauthorized");
@@ -160,17 +127,9 @@ export async function setClasses(
   }
   const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
   if (planTermIndex === -1) {
-    // update miscellaneous
-    if (gt.miscellaneous._id == planTermID) {
-      gt.miscellaneous.courses = courses.map(courseInput => new SelectedCourseModel(courseInput));
-      gt.miscellaneous.customEvents = customEvents.map(customEventInput => new CustomEventModel(customEventInput));
-      await gt.save();
-      return formatPlanTerm(gt.miscellaneous);
-    }
     throw new Error("PlanTerm does not exist in user's plan");
   }
   gt.planTerms[planTermIndex].courses = courses.map(courseInput => new SelectedCourseModel(courseInput));
-  gt.planTerms[planTermIndex].customEvents = customEvents.map(customEventInput => new CustomEventModel(customEventInput));
   await gt.save();
   return formatPlanTerm(gt.planTerms[planTermIndex]);
 }
@@ -178,6 +137,10 @@ export async function setClasses(
 // create a new plan
 export async function createPlan(
   college: Colleges,
+  majors: string[],
+  minors: string[],
+  startYear: number,
+  endYear: number,
   context: any
 ): Promise<Plan> {
   if (!context.user.email) throw new Error("Unauthorized");
@@ -189,32 +152,69 @@ export async function createPlan(
   const miscellaneous = new PlanTermModel({
     name: "Miscellaneous",
     courses: [],
-    customEvents: [],
     userEmail: context.user.email,
     year: -1,
     term: "Misc",
+    hidden: false,
+    status: "None",
+    pinned: false,
   });
-
-  let collegeReqs = [""];
   
-  // set college
-  if (college as String == "LnS") {
-    collegeReqs = LnSReqs;
-  } else if (college as String == "CoE") {
-    collegeReqs = CoEReqs;
-  } else if (college as String == "HAAS") {
-    collegeReqs = HaasReqs;
-  } else {
-    collegeReqs = [];
+  // Create all the plan terms
+  const planTerms = [miscellaneous];
+  planTerms.push(new PlanTermModel({
+    name: "Fall " + startYear,
+    courses: [],
+    userEmail: context.user.email,
+    year: startYear,
+    term: "Fall",
+    hidden: false,
+    status: "None",
+    pinned: false,
+  }));
+  for (let i = startYear + 1; i < endYear; i++) {
+    planTerms.push(new PlanTermModel({
+      name: "Spring " + i,
+      courses: [],
+      userEmail: context.user.email,
+      year: i,
+      term: "Spring",
+      hidden: false,
+      status: "None",
+      pinned: false,
+    }));
+    planTerms.push(new PlanTermModel({
+      name: "Fall " + i,
+      courses: [],
+      userEmail: context.user.email,
+      year: i,
+      term: "Fall",
+      hidden: false,
+      status: "None",
+      pinned: false,
+    }));
   }
+  planTerms.push(new PlanTermModel({
+    name: "Spring " + endYear,
+    courses: [],
+    userEmail: context.user.email,
+    year: endYear,
+    term: "Spring",
+    hidden: false,
+    status: "None",
+    pinned: false,
+  }));
 
   const newPlan = await PlanModel.create({
     userEmail: context.user.email,
-    planTerms: [],
-    miscellaneous: miscellaneous,
-    collegeReqs: collegeReqs,
-    uniReqs: UniReqs,
+    planTerms: planTerms,
+    majors: majors,
+    minors: minors,
     majorReqs: [],
+    college: college,
+    labels: [],
+    uniReqsSatisfied: [],
+    collegeReqsSatisfied: [],
   });
   return formatPlan(newPlan);
 }
@@ -228,18 +228,28 @@ export async function editPlan(
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  // set college
-  if (plan.college as String == "LnS") {
-    gt.collegeReqs = LnSReqs;
-  } else if (plan.college as String == "CoE") {
-    gt.collegeReqs = CoEReqs;
-  } else if (plan.college as String == "HAAS") {
-    gt.collegeReqs = HaasReqs;
-  } else {
-    gt.collegeReqs = [];
+
+  if (plan.college != null) {
+    gt.college = plan.college;
   }
-  // set major reqs
-  gt.majorReqs = plan.majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
+  if (plan.majors != null) {
+    gt.majors = plan.majors;
+  }
+  if (plan.minors != null) {
+    gt.minors = plan.minors;
+  }
+  if (plan.majorReqs != null) {
+    gt.majorReqs = plan.majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
+  }
+  if (plan.labels != null) {
+    gt.labels = plan.labels.map(labelInput => new LabelModel(labelInput));
+  }
+  if (plan.uniReqsSatisfied != null) {
+    gt.uniReqsSatisfied = plan.uniReqsSatisfied;
+  }
+  if (plan.collegeReqsSatisfied != null) {
+    gt.collegeReqsSatisfied = plan.collegeReqsSatisfied;
+  }
 
   await gt.save();
   return formatPlan(gt);

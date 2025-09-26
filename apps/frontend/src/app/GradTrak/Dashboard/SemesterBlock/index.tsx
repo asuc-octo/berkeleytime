@@ -4,36 +4,37 @@ import { MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 
 import { Button, Flex } from "@repo/theme";
 
+import { useSetSelectedCourses } from "@/hooks/api";
+import { ISelectedCourse } from "@/lib/api";
+import { IPlanTerm } from "@/lib/api/plans";
+
 import ClassDetails from "../ClassDetails";
 import { GradTrakSettings } from "../settings";
-import { ClassType } from "../types";
 import AddClass from "./AddClass";
 import Class from "./Class";
 import styles from "./SemesterBlock.module.scss";
 
 interface SemesterBlockProps {
-  selectedYear: number | string;
-  selectedSemester: string;
-  semesterId: string;
-  allSemesters: { [key: string]: ClassType[] };
+  planTerm: IPlanTerm;
+  allSemesters: { [key: string]: ISelectedCourse[] };
   onTotalUnitsChange: (newTotal: number) => void;
-  updateAllSemesters: (semesters: { [key: string]: ClassType[] }) => void;
+  updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
   settings: GradTrakSettings;
 }
 
 function SemesterBlock({
-  selectedYear,
-  selectedSemester,
+  planTerm,
   onTotalUnitsChange,
-  semesterId,
   allSemesters,
   updateAllSemesters,
   settings,
 }: SemesterBlockProps) {
+  const semesterId = planTerm._id ? planTerm._id.trim() : "";
+
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
-  const [classToEdit, setClassToEdit] = useState<ClassType | null>(null);
+  const [classToEdit, setClassToEdit] = useState<ISelectedCourse | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
-  const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(
+  const [selectedClasses, setSelectedCourses] = useState<ISelectedCourse[]>(
     allSemesters[semesterId] || []
   );
   const [totalUnits, setTotalUnits] = useState(0);
@@ -42,8 +43,13 @@ function SemesterBlock({
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
 
+  const [setCourses] = useSetSelectedCourses();
+
   useEffect(() => {
-    const total = selectedClasses.reduce((sum, cls) => sum + cls.units, 0);
+    const total = selectedClasses.reduce(
+      (sum, cls) => sum + cls.courseUnits,
+      0
+    );
     setTotalUnits(total);
     onTotalUnitsChange(total);
   }, [selectedClasses]);
@@ -51,17 +57,17 @@ function SemesterBlock({
   // update local state when allSemesters changes
   useEffect(() => {
     if (allSemesters[semesterId]) {
-      setSelectedClasses(allSemesters[semesterId]);
+      setSelectedCourses(allSemesters[semesterId]);
     }
   }, [allSemesters, semesterId]);
 
-  const handleDeleteClass = (indexToDelete: number) => {
+  const handleDeleteClass = async (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter(
       (_, index) => index !== indexToDelete
     );
 
     // update local state
-    setSelectedClasses(updatedClasses);
+    setSelectedCourses(updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -70,11 +76,21 @@ function SemesterBlock({
     };
     updateAllSemesters(updatedSemesters);
     updateAllSemesters(updatedSemesters);
-    const deletedClassUnits = selectedClasses[indexToDelete].units;
+    const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
-    setSelectedClasses((prevClasses) =>
-      prevClasses.filter((_, index) => index !== indexToDelete)
+
+    const oldClasses = [...selectedClasses];
+    const newClasses = selectedClasses.filter(
+      (_, index) => index !== indexToDelete
     );
+    setSelectedCourses(newClasses);
+    try {
+      await setCourses(semesterId, newClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error("Failed to save class:", error);
+    }
+
     setTotalUnits(newTotalUnits);
     onTotalUnitsChange(newTotalUnits);
   };
@@ -84,11 +100,31 @@ function SemesterBlock({
     setIsClassDetailsOpen(true);
   };
 
-  const addClass = (cls: ClassType) => {
-    const updatedClasses = [...selectedClasses, cls];
+  const addClass = async (cls: ISelectedCourse) => {
+    // Ensure all required fields are present
+    const courseToAdd: ISelectedCourse = {
+      courseID: cls.courseID || "custom-" + cls.courseName,
+      courseName: cls.courseName || cls.courseID,
+      courseTitle: cls.courseTitle || cls.courseName || cls.courseID,
+      courseUnits: cls.courseUnits || 0,
+      uniReqs: cls.uniReqs || [],
+      collegeReqs: cls.collegeReqs || [],
+      pnp: cls.pnp || false,
+      transfer: cls.transfer || false,
+      labels: cls.labels || [],
+    };
 
-    // update local state
-    setSelectedClasses(updatedClasses);
+    const oldClasses = [...selectedClasses];
+    const updatedClasses = [...selectedClasses, courseToAdd];
+    setSelectedCourses(updatedClasses);
+
+    try {
+      await setCourses(semesterId, updatedClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error("Failed to save class:", error);
+    }
+    console.log("Updated classes:", updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -126,19 +162,26 @@ function SemesterBlock({
     return classElements.length;
   };
 
-  const handleUpdateClass = (updatedClass: ClassType) => {
-    setSelectedClasses((prevClasses) =>
-      prevClasses.map((cls) =>
-        cls.id === updatedClass.id ? updatedClass : cls
-      )
+  const handleUpdateClass = async (updatedClass: ISelectedCourse) => {
+    console.log("Updating class:", updatedClass);
+    const oldClasses = [...selectedClasses];
+    const newClasses = selectedClasses.map((cls) =>
+      cls.courseID === updatedClass.courseID ? updatedClass : cls
     );
+    setSelectedCourses(newClasses);
+    try {
+      await setCourses(semesterId, newClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error("Failed to save class:", error);
+    }
 
     // Recalculate total units
     const newTotalUnits = selectedClasses.reduce((total, cls) => {
-      if (cls.id === updatedClass.id) {
-        return total + updatedClass.units;
+      if (cls.courseID === updatedClass.courseID) {
+        return total + updatedClass.courseUnits;
       }
-      return total + cls.units;
+      return total + cls.courseUnits;
     }, 0);
 
     setTotalUnits(newTotalUnits);
@@ -197,7 +240,7 @@ function SemesterBlock({
     setPlaceholderIndex(null);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDropTarget(false);
     setPlaceholderIndex(null);
@@ -212,6 +255,7 @@ function SemesterBlock({
 
       // create updated semesters object
       const updatedSemesters = { ...allSemesters };
+      const semestersToUpdate: string[] = [];
 
       // handle dragging within the same semester
       if (sourceSemesterId === semesterId) {
@@ -226,6 +270,7 @@ function SemesterBlock({
         // insert at new position
         updatedClasses.splice(adjustedPos, 0, draggedClass);
         updatedSemesters[semesterId] = updatedClasses;
+        semestersToUpdate.push(semesterId);
       }
       // handle dragging between different semesters
       else {
@@ -233,16 +278,29 @@ function SemesterBlock({
         const sourceSemesterClasses = [...allSemesters[sourceSemesterId]];
         sourceSemesterClasses.splice(classIndex, 1);
         updatedSemesters[sourceSemesterId] = sourceSemesterClasses;
+        semestersToUpdate.push(sourceSemesterId);
 
         // add class to target semester at the right position
         const targetSemesterClasses = [...selectedClasses];
         targetSemesterClasses.splice(insertPos, 0, draggedClass);
         updatedSemesters[semesterId] = targetSemesterClasses;
+        semestersToUpdate.push(semesterId);
       }
 
       // update the global state
+      const oldSemesters = { ...allSemesters };
       updateAllSemesters(updatedSemesters);
       updateAllSemesters(updatedSemesters);
+      try {
+        for (const semesterId of semestersToUpdate) {
+          await setCourses(semesterId, updatedSemesters[semesterId], {
+            fetchPolicy: "no-cache",
+          });
+        }
+      } catch (error) {
+        updateAllSemesters(oldSemesters);
+        console.error("Error handling drop:", error);
+      }
     } catch (error) {
       console.error("Error handling drop:", error);
     }
@@ -259,9 +317,7 @@ function SemesterBlock({
       <div className={styles.body} data-layout={settings.layout}>
         <Flex direction="row" justify="between" width="100%">
           <div className={styles.semesterCounter}>
-            <h2>
-              {selectedSemester} {selectedYear}{" "}
-            </h2>
+            <h2>{planTerm.name}</h2>
             <p className={styles.counter}>{totalUnits}</p>
           </div>
           <Flex direction="row" gap="6px">

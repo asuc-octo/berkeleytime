@@ -1,7 +1,15 @@
+// TODO: also import in CoEReqs, HaasReqs
+import { useState } from "react";
+
 import { WarningCircle } from "iconoir-react";
 
-// TODO: also import in CoEReqs, HaasReqs
-import { LnSReqs, UniReqs } from "@/lib/course";
+import {
+  // CoEReqs,
+  // HaasReqs,
+  LnSReqs,
+  RequirementEnum,
+  UniReqs,
+} from "@/lib/course";
 
 import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
@@ -13,6 +21,8 @@ interface SidePanelProps {
   totalUnits: number;
   transferUnits: number;
   pnpTotal: number;
+  uniReqsFulfilled: RequirementEnum[];
+  collegeReqsFulfilled: RequirementEnum[];
 }
 
 export default function SidePanel({
@@ -21,7 +31,18 @@ export default function SidePanel({
   totalUnits,
   transferUnits,
   pnpTotal,
+  uniReqsFulfilled,
+  collegeReqsFulfilled,
 }: SidePanelProps) {
+  const [collegeReqs] = useState<RequirementEnum[]>([
+    LnSReqs.LnS_AL,
+    LnSReqs.LnS_BS,
+    LnSReqs.LnS_HS,
+    LnSReqs.LnS_IS,
+    LnSReqs.LnS_PV,
+    LnSReqs.LnS_PS,
+    LnSReqs.LnS_SBS,
+  ]);
   const UserInfo = (
     <>
       <div className={styles.headerContainer}>
@@ -135,6 +156,7 @@ export default function SidePanel({
       {MinorRequirements}
       <RequirementsAccordion
         title={"University of California"}
+        uni={true}
         requirements={[
           UniReqs.AC,
           UniReqs.AH,
@@ -145,18 +167,13 @@ export default function SidePanel({
           UniReqs.RCB,
           UniReqs.FL,
         ]}
+        finishedRequirements={uniReqsFulfilled}
       />
       <RequirementsAccordion
         title={"Breadth Requirements"}
-        requirements={[
-          LnSReqs.LnS_AL,
-          LnSReqs.LnS_BS,
-          LnSReqs.LnS_HS,
-          LnSReqs.LnS_IS,
-          LnSReqs.LnS_PV,
-          LnSReqs.LnS_PS,
-          LnSReqs.LnS_SBS,
-        ]}
+        uni={false}
+        requirements={collegeReqs}
+        finishedRequirements={collegeReqsFulfilled}
       />
     </div>
   );

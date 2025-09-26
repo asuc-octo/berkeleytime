@@ -2,11 +2,12 @@ import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
 import { Button, DropdownMenu, Flex } from "@repo/theme";
 
-import { ClassType } from "../../types";
 import styles from "./Class.module.scss";
 
+import { ISelectedCourse } from '@/lib/api';
+
 interface ClassProps {
-  cls: ClassType;
+  cls: ISelectedCourse;
   index: number;
   handleDragEnd: (e: React.DragEvent) => void;
   handleDragStart: (e: React.DragEvent, classIndex: number) => void;
@@ -39,8 +40,8 @@ export default function Class({
           justify="between"
           width="100%"
         >
-          <h3 className={styles.title}>{cls.name}</h3>
-          <p>{cls.units} Units</p>
+          <h3 className={styles.title}>{cls.courseName}</h3>
+          <p>{cls.courseUnits} Units</p>
         </Flex>
         <div className={styles.dropdown}>
           <DropdownMenu.Root>

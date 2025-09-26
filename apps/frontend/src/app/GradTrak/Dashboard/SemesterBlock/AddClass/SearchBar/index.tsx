@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@radix-ui/themes";
 
+import { ISelectedCourse } from "@/lib/api";
+
 import ClassDetails from "../../../ClassDetails";
-import { ClassType } from "../../../types";
 import styles from "../AddClass.module.scss";
 
 interface SearchBarProps {
@@ -12,9 +13,9 @@ interface SearchBarProps {
   setIsOpen: (isOpen: boolean) => void;
   searchTerm: string;
   handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  filteredClasses: ClassType[];
-  handleSelectClass: (cls: ClassType) => void;
-  handleOnConfirm: (cls: ClassType) => void;
+  filteredClasses: ISelectedCourse[];
+  handleSelectClass: (cls: ISelectedCourse) => void;
+  handleOnConfirm: (cls: ISelectedCourse) => void;
 }
 
 function SearchBar({
@@ -51,7 +52,7 @@ function SearchBar({
                     onClick={() => handleSelectClass(cls)}
                     className={styles.item}
                   >
-                    {cls.name} - {cls.units} units
+                    {cls.courseName} - {cls.courseUnits} units
                   </li>
                 ))}
               </ul>

@@ -297,3 +297,62 @@ export enum HaasReqs {
   HAAS_PS = "HAAS Physical Science",
   HAAS_SBS = "HAAS Social and Behavioral Sciences",
 };
+
+export type RequirementEnum = UniReqs | LnSReqs | CoEReqs | HaasReqs;
+
+// Convert an array of strings to an array of RequirementEnum
+// The entered strings must be the EnumKey (ex: "AC", "LnS_BS", "CoE_HSS", etc.)
+export function convertStringsToRequirementEnum(strings: string[]): RequirementEnum[] {
+  const result: RequirementEnum[] = [];
+  
+  const stringToEnum = new Map<string, RequirementEnum>();
+  
+  Object.entries(UniReqs).forEach(([key, _]) => {
+    stringToEnum.set(key, UniReqs[key as keyof typeof UniReqs]);
+  });
+  Object.entries(LnSReqs).forEach(([key, _]) => {
+    stringToEnum.set(key, LnSReqs[key as keyof typeof LnSReqs]);
+  });
+  Object.entries(CoEReqs).forEach(([key, _]) => {
+    stringToEnum.set(key, CoEReqs[key as keyof typeof CoEReqs]);
+  });
+  Object.entries(HaasReqs).forEach(([key, _]) => {
+    stringToEnum.set(key, HaasReqs[key as keyof typeof HaasReqs]);
+  });
+
+  for (const str of strings) {
+    const enumValue = stringToEnum.get(str);
+    if (enumValue) {
+      result.push(enumValue);
+    }
+  }
+  
+  return result;
+}
+
+export function convertRequirementEnumToStrings(requirements: RequirementEnum[]): string[] {
+  const result: string[] = [];
+  
+  const enumToString = new Map<RequirementEnum, string>();
+  Object.entries(UniReqs).forEach(([key, value]) => {
+    enumToString.set(value as RequirementEnum, key);
+  });
+  Object.entries(LnSReqs).forEach(([key, value]) => {
+    enumToString.set(value as RequirementEnum, key);
+  });
+  Object.entries(CoEReqs).forEach(([key, value]) => {
+    enumToString.set(value as RequirementEnum, key);
+  });
+  Object.entries(HaasReqs).forEach(([key, value]) => {
+    enumToString.set(value as RequirementEnum, key);
+  });
+
+  for (const requirement of requirements) {
+    const stringKey = enumToString.get(requirement);
+    if (stringKey) {
+      result.push(stringKey);
+    }
+  }
+  
+  return result;
+}

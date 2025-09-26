@@ -7,26 +7,47 @@ import {
 } from 'iconoir-react'; 
 
 import { 
-    UniReqs, 
-    LnSReqs, 
-    CoEReqs, 
-    HaasReqs 
+    RequirementEnum,
+    convertRequirementEnumToStrings
 } from '@/lib/course'; 
+
+import { useEditPlanReqs } from '@/hooks/api';
+import { UniReqs, CollegeReqs, PlanInput } from '@/lib/api/plans';
 
 import styles from "./RequirementsAccordion.module.scss"; 
 
-type RequirementEnum = UniReqs | LnSReqs | CoEReqs | HaasReqs;
-
 interface RequirementsAccordionProps {
+    uni: boolean;  // college or uni reqs
     title: string;
     requirements?: RequirementEnum[];
+    finishedRequirements?: RequirementEnum[];
 }
 
-export default function RequirementsAccordion({ title, requirements }: RequirementsAccordionProps) {
+export default function RequirementsAccordion({ uni, title, requirements, finishedRequirements }: RequirementsAccordionProps) {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [fulfilledRequirements, setFulfilledRequirements] = useState<Set<RequirementEnum>>(new Set());
+    const [fulfilledRequirements, setFulfilledRequirements] = useState<Set<RequirementEnum>>(new Set(finishedRequirements));
     const [hoveredRequirement, setHoveredRequirement] = useState<RequirementEnum | null>(null);
     const [activeMenuRequirement, setActiveMenuRequirement] = useState<RequirementEnum | null>(null);
+
+    const [editPlanReqs] = useEditPlanReqs();
+
+    const updateRequirements = (reqs: Set<RequirementEnum>) => {
+        const oldReqs = fulfilledRequirements;
+        setFulfilledRequirements(reqs);
+        try {
+            const tmp = convertRequirementEnumToStrings(Array.from(reqs));
+            const plan: PlanInput = {};
+            if (uni) {
+                plan["uniReqsSatisfied"] = tmp.map((req) => req as UniReqs);
+            } else {
+                plan["collegeReqsSatisfied"] = tmp.map((req) => req as CollegeReqs);
+            }
+            editPlanReqs(plan);
+        } catch (error) {
+            console.error('Failed to save requirements:', error);
+            setFulfilledRequirements(oldReqs);
+        }
+    };
 
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -54,14 +75,14 @@ export default function RequirementsAccordion({ title, requirements }: Requireme
     const markAsFulfilled = (requirement: RequirementEnum) => {
         const newFulfilledRequirements = new Set(fulfilledRequirements);
         newFulfilledRequirements.add(requirement);
-        setFulfilledRequirements(newFulfilledRequirements);
+        updateRequirements(newFulfilledRequirements);
         closeMenu();
     };
 
     const markAsUnfulfilled = (requirement: RequirementEnum) => {
         const newFulfilledRequirements = new Set(fulfilledRequirements);
         newFulfilledRequirements.delete(requirement);
-        setFulfilledRequirements(newFulfilledRequirements);
+        updateRequirements(newFulfilledRequirements);
         closeMenu();
     };
 

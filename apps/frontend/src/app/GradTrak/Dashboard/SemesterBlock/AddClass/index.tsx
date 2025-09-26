@@ -3,18 +3,15 @@ import React, { useMemo, useState } from "react";
 import { useQuery } from "@apollo/client";
 
 import { GET_COURSE_NAMES, GetCoursesResponse } from "@/lib/api";
+import { ISelectedCourse } from "@/lib/api";
 
-import { ClassType } from "../../types";
 import SearchBar from "./SearchBar";
 
 interface AddClassProps {
-  // name: string;
-  // onEdit: () => void;
-  // onDelete: (name: string) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  addClass: (cls: ClassType) => void;
-  handleOnConfirm: (cls: ClassType) => void;
+  addClass: (cls: ISelectedCourse) => void;
+  handleOnConfirm: (cls: ISelectedCourse) => void;
 }
 
 function AddClass({
@@ -24,8 +21,8 @@ function AddClass({
   handleOnConfirm,
 }: AddClassProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredClasses, setFilteredClasses] = useState<ClassType[]>([]);
-  const [allClasses, setAllClasses] = useState<ClassType[]>([]);
+  const [filteredClasses, setFilteredClasses] = useState<ISelectedCourse[]>([]);
+  const [allClasses, setAllClasses] = useState<ISelectedCourse[]>([]);
 
   const { data } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
     skip: !isOpen,
@@ -40,10 +37,15 @@ function AddClass({
     console.log("Courses count:", courses?.length);
     if (data?.courses) {
       const formattedClasses = data.courses.map((course) => ({
-        id: `${course.subject}_${course.number}`,
-        name: `${course.subject} ${course.number}`,
-        title: course.title,
-        units: 4,
+        courseID: `${course.subject}_${course.number}`,
+        courseName: `${course.subject} ${course.number}`,
+        courseTitle: course.title,
+        courseUnits: 4, // TODO(Daniel): Fetch units (Look in ICourse)
+        uniReqs: [], // TODO(Daniel): Fetch reqs
+        collegeReqs: [], // TODO(Daniel): Fetch reqs
+        pnp: false,
+        transfer: false,
+        labels: [],
       }));
       setAllClasses(formattedClasses);
     }
@@ -53,12 +55,12 @@ function AddClass({
     const term = event.target.value;
     setSearchTerm(term);
     const filtered = allClasses.filter((cls) =>
-      cls.name.toLowerCase().includes(term.toLowerCase())
+      cls.courseName.toLowerCase().includes(term.toLowerCase())
     );
     setFilteredClasses(filtered);
   };
 
-  const handleSelectClass = (cls: ClassType) => {
+  const handleSelectClass = (cls: ISelectedCourse) => {
     addClass(cls);
     setFilteredClasses([]);
     setSearchTerm("");
