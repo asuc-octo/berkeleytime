@@ -6,9 +6,6 @@ import { ISelectedCourse } from '@/lib/api';
 import SearchBar from "./SearchBar";
 
 interface AddClassProps  {
-    // name: string;
-    // onEdit: () => void;
-    // onDelete: (name: string) => void;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     addClass: (cls: ISelectedCourse) => void;

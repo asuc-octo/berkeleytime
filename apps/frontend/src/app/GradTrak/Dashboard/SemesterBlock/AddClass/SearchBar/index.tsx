@@ -4,7 +4,7 @@ import { Button } from "@radix-ui/themes";
 
 import { ISelectedCourse } from '@/lib/api';
 import styles from '../AddClass.module.scss'
-import ClassDetails from '../../ClassDetails';
+import ClassDetails from '../../../ClassDetails';
 
 interface SearchBarProps  {
     isOpen: boolean;

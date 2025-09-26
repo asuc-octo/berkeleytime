@@ -5,6 +5,7 @@
   color: var(--heading-color);
 
   .view {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex-grow: 1;  
@@ -66,9 +67,10 @@
   display: flex;
   gap: 0.75rem;
 
-  .year-element {
-    display: flex;
-    flex-direction: row;
-    gap: 0.75rem;
+  &[data-layout="grid"] {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* exactly 2 columns */
+    grid-auto-flow: row;                   /* fill rows first */
+    gap: 10px;   
   }
 }

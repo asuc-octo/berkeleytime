@@ -21,17 +21,17 @@ body:not([data-theme]) {
 
     h2 {
         color: var(--heading-color);
-        font-size: 0.875rem;
+        font-size: 14px;
         font-weight: 500;
     }
     h3 {
         color: var(--heading-color);
-        font-size: 0.75rem;
+        font-size: 12px;
         font-weight: 500;
     }
     p {
         color: var(--paragraph-color);
-        font-size: 0.75rem;
+        font-size: 12px;
     }
 
       .panel {
@@ -99,19 +99,27 @@ body:not([data-theme]) {
         justify-content: start;
         background-color: var(--semesterblock-color);
         border-radius: 0.5rem;
-        width: 14.125rem;
-        padding: 1rem 0.5rem;
-        gap: 0.5rem;
+        width: 226px;
+        padding: 16px 8px;
+        gap: 8px;
         flex-shrink: 0;
+
+        &[data-layout="grid"] {
+          width: 30vw;
+        }
 
         @media (max-width: 600px) {
             width: 100%;
         }
 
+        .action-button {
+          cursor: pointer;
+        }
+
         .semester-counter {
             display: flex;
             align-items: baseline;
-            gap: 0.5rem;
+            gap: 8px;
 
             .counter {
                 background-color: var(--button-active-color);
@@ -124,151 +132,20 @@ body:not([data-theme]) {
             }
         }
 
-        .placeholder {
+            .placeholder {
             width: 100%;
             height: 92px;
             background-color: var(--background-color);
             border-radius: 0.5rem;
         }
 
-        .class-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            min-height: 92px;
-            align-items: flex-start;
-            align-self: stretch;
-            justify-content: space-between;
-            text-align: left;
-            padding: 1rem;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-            border-radius: 0.5rem;
-            background-color: var(--foreground-color);
-            box-shadow: 0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.10)), 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.10));
-            transition: all 0.2s ease;
-
-            &:hover {
-                background-color: var(--button-hover-color);
-                cursor: grab;
-
-                .dropdown .trigger {
-                    opacity: 1;
-                  }
-            }
-
-            &:active {
-                cursor: grabbing;
-            }
-            
-            .start {
-                display: flex;
-                justify-content: space-between;
-                width: 100%;
-            }
-
-            // .tag {
-            //     display: flex;
-            //     padding: 0.0625rem 0.375rem;
-            //     align-items: center;
-            //     gap: 0.125rem;
-            //     border-radius: 0.25rem;
-            //     background-color: var(--button-hover-color);
-            //     color: var(--heading-color);
-            //     font-size: 0.75rem;
-            //     line-height: 1rem;
-
-            //     .icon {
-            //         width: 0.75rem;
-            //         height: 0.75rem;
-            //         color: var(--green-500)
-            //     }
-            // }
-
-            .title {
-                margin: 0;
-                padding-bottom: 0.125rem;
-            }
-
-            .dropdown {
-                .trigger {
-                    background: none;
-                    border: none;
-                    padding: 0;
-                    color: var(--paragraph-color);
-                    display: flex; 
-                    align-items: center;
-                    justify-content: center;
-                    width: 1.25rem;
-                    height: 0.5rem;
-                    opacity: 0; 
-                    transition: opacity 0.2s ease;
-                    flex-shrink: 0; 
-                    transition: all 0.2s ease;
-        
-                    &:hover {
-                        color: var(--heading-color); 
-                        opacity: 1;
-                    }
-    
-                    &[data-state='open'] {
-                        opacity: 1;
-                      }
-        
-                    .more-horiz { 
-                        width: 1.25rem; 
-                        height: 1.25rem;
-                    }
-                }
-
-                .content {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    width: 11rem;
-                    border-radius: 4px;
-                    background: var(--foreground-color);
-                    box-shadow: 0px 8px 12px 0px rgba(60, 66, 87, 0.15), 0px 0px 1px 0px rgba(0, 0, 0, 0.30);
-                    position: absolute;
-                    padding: 0.25rem; 
-
-                    .menu-item {
-                        display: flex;
-                        flex-direction: row;
-                        width: 100%;
-                        border-radius: 4px;
-                        gap: 0.5rem;
-                        font-size: 0.875rem;
-                        padding: 0.5rem;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-            
-                        &:hover {
-                            background-color: var(--button-hover-color);
-                        }
-
-                        .cancel {
-                            display: flex;
-                            flex-direction: row;
-                            width: 100%;
-                            gap: 0.5rem;
-                            color: var(--rose-500)
-                        }
-                    }
-                }
-            }
-
-            
-        
-        }
-
         .add-button {
             align-items: center;
             border: 0;
             padding: 0;
-            font-size: 0.875rem;
+            font-size: 14px;
             color: var(--paragraph-color);
-            background-color: var(--semesterblock-color);
+            background-color: var(--backdrop-color);
             transition: all 0.2s ease;
 
             &:hover {

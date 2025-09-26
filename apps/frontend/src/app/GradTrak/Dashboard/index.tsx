@@ -1,10 +1,4 @@
-import { 
-  useState, 
-  useMemo, 
-  useEffect,
-  useCallback
-} from 'react'; 
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useReadUser, useReadPlan } from '@/hooks/api';
 import { 
@@ -19,17 +13,24 @@ import { convertStringsToRequirementEnum } from '@/lib/course';
 import SidePanel from "./SidePanel" ;
 import SemesterBlock from "./SemesterBlock";
 import { IPlanTerm, ISelectedCourse } from '@/lib/api';
+import { useNavigate } from "react-router-dom";
+
+import { Button, IconButton, Tooltip } from "@repo/theme";
 
 import styles from "./Dashboard.module.scss";
-import { Button, Tooltip, IconButton } from '@repo/theme';
+import DisplayMenu from "./DisplayMenu";
+import { useGradTrakSettings } from "./settings";
 
-function Dashboard() {
+export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
 
   const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
     skip: !user, 
   });
+
+  const [showDisplayMenu, setShowDisplayMenu] = useState(false);
+  const [settings, updateSettings] = useGradTrakSettings();
 
   const selectedDegreeStrings = useMemo(() => {
     return gradTrak?.majors || [];
@@ -44,22 +45,26 @@ function Dashboard() {
   }, [gradTrak?.planTerms]);
 
   const currentUserInfo = useMemo(
-    (): { name: string; majors: string[]; minors: string[]; } | null => {
-       if (!user) {
-           console.error("User data unexpectedly null in currentUserInfo memo after loading check.");
-           return null;
-       }
+    (): { name: string; majors: string[]; minors: string[] } | null => {
+      if (!user) {
+        console.error(
+          "User data unexpectedly null in currentUserInfo memo after loading check."
+        );
+        return null;
+      }
       return {
-          name: user.name, // Use the actual user's username
-          majors: selectedDegreeStrings, // Use the majors from state
-          minors: selectedMinorStrings, // Use the minors from state
+        name: user.name, // Use the actual user's username
+        majors: selectedDegreeStrings, // Use the majors from state
+        minors: selectedMinorStrings, // Use the minors from state
       };
     },
     [user, selectedDegreeStrings, selectedMinorStrings] // Re-calculate if user or selected lists change
   );
 
   // State for semester totals and classes
-  const [semesterTotals, setSemesterTotals] = useState<Record<string, number>>({});
+  const [semesterTotals, setSemesterTotals] = useState<Record<string, number>>(
+    {}
+  );
 
   // Create the allSemesters state to track classes in each semester
   const [allSemesters, setAllSemesters] = useState<{ [key: string]: ISelectedCourse[] }>({});
@@ -116,7 +121,10 @@ function Dashboard() {
   }, [planTerms, convertPlanTermsToSemesters]);
 
 
-  const totalUnits = Object.values(semesterTotals).reduce((sum, units) => sum + units, 0);
+  const totalUnits = Object.values(semesterTotals).reduce(
+    (sum, units) => sum + units,
+    0
+  );
 
   useEffect(() => {
     if (!currentUserInfo && !userLoading && !gradTrakLoading) {
@@ -146,12 +154,12 @@ function Dashboard() {
           />
       </div>
 
-    <div className={styles.view}>
-      <div className={styles.header}>
-        <h1>Semesters</h1>
+      <div className={styles.view}>
+        <div className={styles.header}>
+          <h1>Semesters</h1>
 
-        <div className={styles.buttonsGroup}>
-          <Tooltip content="Filter">
+          <div className={styles.buttonsGroup}>
+            <Tooltip content="Filter">
               <IconButton>
                 <Filter />
               </IconButton>
@@ -167,21 +175,34 @@ function Dashboard() {
               </IconButton>
             </Tooltip>
             <Tooltip content="Display settings">
-              <Button variant="secondary">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setShowDisplayMenu(!showDisplayMenu);
+                }}
+              >
                 Display
                 <NavArrowDown />
               </Button>
             </Tooltip>
         </div>
       </div>
+      {showDisplayMenu && (
+          <DisplayMenu
+            onClose={() => setShowDisplayMenu(false)}
+            settings={settings}
+            onChangeSettings={(patch) => updateSettings(patch)}
+          />
+        )}
       <div className={styles.semesterBlocks}>
         <div className={styles.semesterLayout}>
-          {planTerms && planTerms.map((term) => (
-            <SemesterBlock 
+        {planTerms && planTerms.map((term) => (
+            <SemesterBlock
               planTerm={term}
               onTotalUnitsChange={(newTotal) => updateTotalUnits(term.name ? term.name : "", newTotal)}
               allSemesters={allSemesters}
               updateAllSemesters={updateAllSemesters}
+              settings={settings}
             />
           ))}
         </div>
@@ -190,5 +211,3 @@ function Dashboard() {
   </div>
   );
 }
-
-export default Dashboard;

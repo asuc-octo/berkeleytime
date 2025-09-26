@@ -1,21 +1,18 @@
+import { MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 import React, { 
   useState, 
   useEffect, 
   useRef 
 } from 'react';
-import {
-  Trash,
-  BookStack,
-  MoreHoriz
-} from "iconoir-react";
-
-import { Button } from "@repo/theme";
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import { ISelectedCourse } from '@/lib/api';
-import AddClass from "../AddClass";
+import AddClass from "./AddClass";
+import { Button, Flex } from "@repo/theme";
+
 import ClassDetails from "../ClassDetails";
-import styles from "./SemesterBlock.module.scss"
+import { GradTrakSettings } from "../settings";
+import Class from "./Class";
+import styles from "./SemesterBlock.module.scss";
 import { IPlanTerm } from '@/lib/api/plans';
 
 import { useSetSelectedCourses } from "@/hooks/api";
@@ -25,13 +22,15 @@ interface SemesterBlockProps {
   allSemesters: { [key: string]: ISelectedCourse[] }; 
   onTotalUnitsChange: (newTotal: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
-};
+  settings: GradTrakSettings;
+}
 
 function SemesterBlock({
   planTerm,
   onTotalUnitsChange,
   allSemesters,
-  updateAllSemesters
+  updateAllSemesters,
+  settings,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -45,12 +44,13 @@ function SemesterBlock({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [setCourses] = useSetSelectedCourses();
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     const total = selectedClasses.reduce((sum, cls) => sum + cls.courseUnits, 0);
     setTotalUnits(total);
     onTotalUnitsChange(total);
-  }, [selectedClasses, onTotalUnitsChange]);
+  }, [selectedClasses]);
 
   // update local state when allSemesters changes
   useEffect(() => {
@@ -60,7 +60,9 @@ function SemesterBlock({
   }, [allSemesters, semesterId]);
 
   const handleDeleteClass = async (indexToDelete: number) => {
-    const updatedClasses = selectedClasses.filter((_, index) => index !== indexToDelete);
+    const updatedClasses = selectedClasses.filter(
+      (_, index) => index !== indexToDelete
+    );
 
     // update local state
     setSelectedCourses(updatedClasses);
@@ -68,9 +70,10 @@ function SemesterBlock({
     // update global state
     const updatedSemesters = {
       ...allSemesters,
-      [semesterId]: updatedClasses
+      [semesterId]: updatedClasses,
     };
-    updateAllSemesters(updatedSemesters); updateAllSemesters(updatedSemesters);
+    updateAllSemesters(updatedSemesters);
+    updateAllSemesters(updatedSemesters);
     const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
     
@@ -88,7 +91,7 @@ function SemesterBlock({
     onTotalUnitsChange(newTotalUnits);
   };
 
-  const handleClassDetails= (index: number) => {
+  const handleClassDetails = (index: number) => {
     setClassToEdit(selectedClasses[index]);
     setIsClassDetailsOpen(true);
   };
@@ -122,17 +125,19 @@ function SemesterBlock({
     // update global state
     const updatedSemesters = {
       ...allSemesters,
-      [semesterId]: updatedClasses
+      [semesterId]: updatedClasses,
     };
     updateAllSemesters(updatedSemesters);
-  }
+  };
 
   const findInsertPosition = (e: React.DragEvent) => {
     if (!containerRef.current) return 0;
     const mouseY = e.clientY;
 
     // get all class elements in this container
-    const classElements = containerRef.current.querySelectorAll('[data-class-container]');
+    const classElements = containerRef.current.querySelectorAll(
+      "[data-class-container]"
+    );
 
     // if no classes, insert at the beginning
     if (classElements.length === 0) {
@@ -142,7 +147,7 @@ function SemesterBlock({
     // loop through class elements to find the insertion point
     for (let i = 0; i < classElements.length; i++) {
       const classRect = classElements[i].getBoundingClientRect();
-      const classMidY = classRect.top + (classRect.height / 2);
+      const classMidY = classRect.top + classRect.height / 2;
 
       if (mouseY < classMidY) {
         return i;
@@ -175,7 +180,6 @@ function SemesterBlock({
       return total + cls.courseUnits;
     }, 0);
 
-
     setTotalUnits(newTotalUnits);
     onTotalUnitsChange(newTotalUnits);
     setIsClassDetailsOpen(false);
@@ -184,11 +188,14 @@ function SemesterBlock({
 
   const handleDragLeave = (e: React.DragEvent) => {
     // only reset if leaving the entire container (not just moving between children)
-    if (containerRef.current && !containerRef.current.contains(e.relatedTarget as Node)) {
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(e.relatedTarget as Node)
+    ) {
       setIsDropTarget(false);
       setPlaceholderIndex(null);
     }
-  }
+  };
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault(); // allow drop
     setIsDropTarget(true);
@@ -200,31 +207,34 @@ function SemesterBlock({
     } catch (error) {
       console.error("Error in dragover:", error);
     }
-  }
+  };
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.classList.add('dragging');
+      e.currentTarget.classList.add("dragging");
     }
 
     // store the semester ID and class index in the drag data
-    e.dataTransfer.setData("application/json", JSON.stringify({
-      sourceSemesterId: semesterId,
-      classIndex: classIndex,
-      class: selectedClasses[classIndex]
-    }));
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({
+        sourceSemesterId: semesterId,
+        classIndex: classIndex,
+        class: selectedClasses[classIndex],
+      })
+    );
     e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.classList.remove('dragging');
+      e.currentTarget.classList.remove("dragging");
     }
 
     setPlaceholderIndex(null);
-  }
+  };
 
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
@@ -288,108 +298,99 @@ function SemesterBlock({
     } catch (error) {
       console.error("Error handling drop:", error);
     }
-  }
+  };
 
   return (
-    <div ref={containerRef}
-      className={`${styles.root} ${isDropTarget ? 'drop-target' : ''}`}
+    <div
+      ref={containerRef}
+      className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      onDrop={handleDrop}>
-      <div className={styles.body}>
-        <div className={styles.semesterCounter}>
-          <h2>{planTerm.name} </h2>
-          <p className={styles.counter}>{totalUnits}</p>
-        </div>
-
-        {/* Display selected classes outside the dialog */}
-        {selectedClasses.map((cls, index) => (
-          <React.Fragment key={`class-group-${index}`}>
-            {placeholderIndex === index && (
-              <div className={styles.placeholder}/>
+      onDrop={handleDrop}
+    >
+      <div className={styles.body} data-layout={settings.layout}>
+        <Flex direction="row" justify="between" width="100%">
+          <div className={styles.semesterCounter}>
+            <h2>
+              {planTerm.name}
+            </h2>
+            <p className={styles.counter}>{totalUnits}</p>
+          </div>
+          <Flex direction="row" gap="6px">
+            <MoreHoriz className={styles.actionButton} />
+            {open ? (
+              <NavArrowDown
+                className={styles.actionButton}
+                onClick={() => {
+                  setOpen(false);
+                }}
+              />
+            ) : (
+              <NavArrowRight
+                className={styles.actionButton}
+                onClick={() => {
+                  setOpen(true);
+                }}
+              />
             )}
-            <div
-              key={index}
-              data-class-container
-              className={styles.classContainer}
-              draggable={true}
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnd={handleDragEnd}
+          </Flex>
+        </Flex>
+
+        {open && (
+          <>
+            {selectedClasses.map((cls, index) => (
+              <React.Fragment key={`class-group-${index}`}>
+                {placeholderIndex === index && (
+                  <div className={styles.placeholder} />
+                )}
+                <Class
+                  cls={cls}
+                  index={index}
+                  handleDragEnd={handleDragEnd}
+                  handleDragStart={handleDragStart}
+                  handleDetails={handleClassDetails}
+                  handleDelete={handleDeleteClass}
+                  layout={settings.layout}
+                />
+              </React.Fragment>
+            ))}
+
+            {/* Dragging placeholder */}
+            {placeholderIndex === selectedClasses.length && (
+              <div className={styles.placeholder} />
+            )}
+
+            {/* Dialog Component */}
+            <AddClass
+              isOpen={isAddClassOpen}
+              setIsOpen={setIsAddClassOpen}
+              addClass={addClass}
+              handleOnConfirm={(cls) => {
+                addClass(cls);
+              }}
+            />
+
+            {/* Edit Class Details Dialog */}
+            {classToEdit && (
+              <ClassDetails
+                isOpen={isClassDetailsOpen}
+                setIsOpen={setIsClassDetailsOpen}
+                classData={classToEdit}
+                onUpdate={handleUpdateClass}
+              />
+            )}
+
+            <Button
+              onClick={() => setIsAddClassOpen(true)}
+              className={styles.addButton}
             >
-              <div className={styles.start}>
-                <div>
-                  <h3 className={styles.title}>{cls.courseName}</h3>
-                  <p >{cls.courseUnits} Units</p>
-                </div>
-                <div className={styles.dropdown}>
-                  <DropdownMenu.Root>
-                    <DropdownMenu.Trigger asChild>
-                      <Button className={styles.trigger}>
-                          <MoreHoriz className={styles.moreHoriz}/> 
-                      </Button>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Content
-                      className={styles.content}
-                      sideOffset={5}
-                      align="end"
-                    >
-                      <DropdownMenu.Item
-                        className={styles.menuItem}
-                        onClick={() => handleClassDetails(index)}
-                      >
-                        <BookStack /> Edit Course Details
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        className={styles.menuItem}
-                        onClick={() => handleDeleteClass(index)}
-                      >
-                        <div className={styles.cancel}>
-                          <Trash /> Delete Class
-                        </div>
-                      </DropdownMenu.Item>
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Root>
-                </div>
-              </div>
-
-              {/* <div className={styles.tag}>
-                <Book className={styles.icon}/>
-                Major
-              </div> */}
-            </div>
-          </React.Fragment>
-        ))}
-
-        {/* Dragging placeholder */}
-        {placeholderIndex === selectedClasses.length && (
-          <div className={styles.placeholder}/>
+              + Add Class
+            </Button>
+          </>
         )}
-
-        {/* Dialog Component */}
-        <AddClass 
-          isOpen={isAddClassOpen} 
-          setIsOpen={setIsAddClassOpen} 
-          addClass={addClass} 
-          handleOnConfirm={(cls) => { addClass(cls); }} 
-        />
-
-        {/* Edit Class Details Dialog */}
-        {classToEdit && (
-          <ClassDetails
-            isOpen={isClassDetailsOpen}
-            setIsOpen={setIsClassDetailsOpen}
-            classData={classToEdit}
-            onUpdate={handleUpdateClass}
-          />
-        )}
-
-        <Button onClick={() => setIsAddClassOpen(true)} className={styles.addButton}>
-          + Add Class
-        </Button>
       </div>
     </div>
-
-  )
+  );
 }
 
 export default SemesterBlock;
