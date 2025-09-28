@@ -1,6 +1,17 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
+  type classPref {
+    class: Class!
+    thresholds: [Float]!
+  }
+
+  enum NotificationType {
+    Email
+    Mobile
+    Off
+  }
+    
   type User @cacheControl(scope: PRIVATE) {
     _id: ID!
     email: String!
@@ -8,6 +19,8 @@ const typedef = gql`
     student: Boolean!
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!
+    classPreferences: [classPref]
+		notificationType: NotificationType!
   }
 
   type Query {
