@@ -4,7 +4,7 @@ import { MutationHookOptions, useMutation } from "@apollo/client";
 
 import { EDIT_PLAN, EditPlanResponse, PlanInput } from "@/lib/api";
 
-export const useEditPlanReqs = () => {
+export const useEditPlan = () => {
   const mutation = useMutation<EditPlanResponse>(EDIT_PLAN, {
     update(_, { data }) {
       const plan = data?.editPlan;
@@ -32,7 +32,7 @@ export const useEditPlanReqs = () => {
     },
   });
 
-  const updateSchedule = useCallback(
+  const updatedPlan = useCallback(
     async (
       plan: PlanInput,
       options?: Omit<MutationHookOptions<EditPlanResponse>, "variables">
@@ -47,8 +47,8 @@ export const useEditPlanReqs = () => {
     [mutation]
   );
 
-  return [updateSchedule, mutation[1]] as [
-    mutate: typeof updateSchedule,
+  return [updatedPlan, mutation[1]] as [
+    mutate: typeof updatedPlan,
     result: (typeof mutation)[1],
   ];
 };

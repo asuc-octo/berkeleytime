@@ -6,12 +6,12 @@ import { Button, Flex } from "@repo/theme";
 
 import { useSetSelectedCourses } from "@/hooks/api";
 import { ISelectedCourse } from "@/lib/api";
-import { IPlanTerm } from "@/lib/api/plans";
+import { ILabel, IPlanTerm } from "@/lib/api/plans";
 
-import ClassDetails from "../ClassDetails";
 import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
 import Class from "./Class";
+import ClassDetails from "./ClassDetails";
 import styles from "./SemesterBlock.module.scss";
 
 interface SemesterBlockProps {
@@ -20,6 +20,8 @@ interface SemesterBlockProps {
   onTotalUnitsChange: (newTotal: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
   settings: GradTrakSettings;
+  labels: ILabel[];
+  setShowLabelMenu: (v: boolean) => void;
 }
 
 function SemesterBlock({
@@ -28,6 +30,8 @@ function SemesterBlock({
   allSemesters,
   updateAllSemesters,
   settings,
+  labels,
+  setShowLabelMenu,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -354,7 +358,7 @@ function SemesterBlock({
                   handleDragStart={handleDragStart}
                   handleDetails={handleClassDetails}
                   handleDelete={handleDeleteClass}
-                  layout={settings.layout}
+                  settings={settings}
                 />
               </React.Fragment>
             ))}
@@ -372,6 +376,8 @@ function SemesterBlock({
               handleOnConfirm={(cls) => {
                 addClass(cls);
               }}
+              labels={labels}
+              setShowLabelMenu={setShowLabelMenu}
             />
 
             {/* Edit Class Details Dialog */}
@@ -381,6 +387,8 @@ function SemesterBlock({
                 setIsOpen={setIsClassDetailsOpen}
                 classData={classToEdit}
                 onUpdate={handleUpdateClass}
+                allLabels={labels}
+                setShowLabelMenu={setShowLabelMenu}
               />
             )}
 

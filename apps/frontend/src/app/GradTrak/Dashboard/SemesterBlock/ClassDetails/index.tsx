@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   Barcode,
-  Calendar,
   Hashtag,
   MultiplePages,
   TaskList,
   Xmark,
 } from "iconoir-react";
 
-import { Button } from "@repo/theme";
+import { Box, Button, Color, Select } from "@repo/theme";
 
-import { ISelectedCourse } from '@/lib/api';
+import { ILabel, ISelectedCourse } from "@/lib/api";
+
 import styles from "./ClassDetails.module.scss";
 
 interface ClassDetailsProps {
@@ -21,6 +21,8 @@ interface ClassDetailsProps {
   classData?: ISelectedCourse;
   onUpdate?: (updatedClass: ISelectedCourse) => void;
   onConfirm?: (newClass: ISelectedCourse) => void;
+  allLabels: ILabel[];
+  setShowLabelMenu: (v: boolean) => void;
 }
 
 const ClassDetails = ({
@@ -29,6 +31,8 @@ const ClassDetails = ({
   classData,
   onUpdate,
   onConfirm,
+  allLabels,
+  setShowLabelMenu,
 }: ClassDetailsProps) => {
   const isEditMode = !!classData;
 
@@ -38,16 +42,27 @@ const ClassDetails = ({
   const [units, setUnits] = useState(classData?.courseUnits || 0);
   const [semester] = useState("Coming Soon");
   const [grading, setGrading] = useState(classData?.pnp ? "P/NP" : "Graded");
-  const [credit, setCredit] = useState(classData?.transfer ? "Transfer" : "UC Berkeley");
+  const [credit, setCredit] = useState(
+    classData?.transfer ? "Transfer" : "UC Berkeley"
+  );
   // const [requirements, setRequirements] = useState<string[]>([]);
+  const [labels, setLabels] = useState(
+    classData?.labels.map((l) => {
+      return {
+        name: l.name,
+        color: l.color,
+      };
+    }) ?? []
+  );
 
   // Update state when classData changes
   useEffect(() => {
-    if (isEditMode) {
+    if (classData && isEditMode) {
       setClassId(classData!.courseID);
       setClassName(classData!.courseName);
       setClassTitle(classData!.courseTitle);
       setUnits(classData!.courseUnits);
+      setLabels(classData!.labels);
     } else {
       setClassId("");
       setClassName("");
@@ -66,10 +81,13 @@ const ClassDetails = ({
       collegeReqs: [],
       pnp: grading === "P/NP",
       transfer: credit === "Transfer",
-      labels: [],
-    };``
-    console.log(updatedClass);
-
+      labels: labels.map((l) => {
+        return {
+          name: l.name,
+          color: l.color,
+        };
+      }),
+    };
     if (isEditMode && onUpdate) {
       onUpdate(updatedClass);
     } else if (!isEditMode && onConfirm) {
@@ -149,12 +167,33 @@ const ClassDetails = ({
 
             <section className={styles.section}>
               <h3>Course tags</h3>
-              <div className={styles.container}>
-                <div className={styles.icon}>
-                  <Calendar />
-                </div>
-                <input type="text" value={semester} readOnly />
-              </div>
+              <Box style={{ minWidth: "100%" }}>
+                <Select
+                  multi
+                  checkboxMulti
+                  addOption={{
+                    text: "Create New Label",
+                    onClick: () => {
+                      setShowLabelMenu(true);
+                    },
+                  }}
+                  value={labels}
+                  onChange={(vs) => {
+                    if (!vs) setLabels([]);
+                    if (Array.isArray(vs)) setLabels(vs);
+                  }}
+                  options={allLabels.map((l) => {
+                    return {
+                      value: {
+                        name: l.name,
+                        color: l.color,
+                      },
+                      label: l.name,
+                      color: l.color as Color,
+                    };
+                  })}
+                />
+              </Box>
             </section>
 
             <section className={styles.section}>

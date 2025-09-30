@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 
-import { GET_COURSE_NAMES, GetCoursesResponse } from "@/lib/api";
+import { GET_COURSE_NAMES, GetCoursesResponse, ILabel } from "@/lib/api";
 import { ISelectedCourse } from "@/lib/api";
 
 import SearchBar from "./SearchBar";
@@ -12,6 +12,8 @@ interface AddClassProps {
   setIsOpen: (isOpen: boolean) => void;
   addClass: (cls: ISelectedCourse) => void;
   handleOnConfirm: (cls: ISelectedCourse) => void;
+  labels: ILabel[];
+  setShowLabelMenu: (v: boolean) => void;
 }
 
 function AddClass({
@@ -19,6 +21,8 @@ function AddClass({
   setIsOpen,
   addClass,
   handleOnConfirm,
+  labels,
+  setShowLabelMenu,
 }: AddClassProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredClasses, setFilteredClasses] = useState<ISelectedCourse[]>([]);
@@ -77,6 +81,8 @@ function AddClass({
         filteredClasses={filteredClasses}
         handleSelectClass={handleSelectClass}
         handleOnConfirm={handleOnConfirm}
+        labels={labels}
+        setShowLabelMenu={setShowLabelMenu}
       />
     </div>
   );
