@@ -15,6 +15,9 @@ export interface IEnrollmentSingular {
   maxWaitlist: number;
   instructorAddConsentRequired: boolean;
   instructorDropConsentRequired: boolean;
+  
+  // lowkey dont need reservation count for entire class if we have individual seat reservations
+  seatReservationCounts: ISeatReservationCounts[];
 }
 
 export interface IEnrollment {
@@ -28,6 +31,19 @@ export interface IEnrollment {
   sectionNumber: string;
   history: IEnrollmentSingular[];
   latest: IEnrollmentSingular;
+  seatReservationTypes: IReservationType[];
+}
+
+export interface ISeatReservationCounts {
+  number: number;
+  maxEnroll: number;
+  enrolledCount: number;
+}
+
+export interface IReservationType {
+  number: number;
+  requirementGroup: string;
+  fromDate: string;
 }
 
 export interface ReadEnrollmentResponse {
@@ -58,15 +74,47 @@ export const READ_ENROLLMENT = gql`
       subject
       courseNumber
       sectionNumber
+      seatReservationTypes {
+        number
+        requirementGroup
+        fromDate
+      }
       history {
         time
         status
         enrolledCount
         waitlistedCount
+        reservedCount
         minEnroll
         maxEnroll
         maxWaitlist
+        maxReserve
+        seatReservationCounts {
+            number
+            maxEnroll
+            enrolledCount
+        }
       }
     }
   }
 `;
+
+export const READ_RESERVED = gql`
+    query Enrollment($year: Int!, $semester: Semester!, $subject: String!, $courseNumber: CourseNumber!, $sectionNumber: SectionNumber!) {
+    enrollment(year: $year, semester: $semester, subject: $subject, courseNumber: $courseNumber, sectionNumber: $sectionNumber) {
+        latest {
+        seatReservationCounts {
+            enrolledCount
+            maxEnroll
+            number
+        }
+        }
+        seatReservationTypes {
+        fromDate
+        number
+        requirementGroup
+        }
+    }
+    }
+`;
+
