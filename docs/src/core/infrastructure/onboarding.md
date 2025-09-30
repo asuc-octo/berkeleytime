@@ -87,6 +87,8 @@ This guide assumes basic experience with SSH.
 
 [Helm](https://helm.sh/) is a package manager for Kubernetes that provides an abstraction over the Kubernetes interface for deploying groups of components called "charts". In addition, it allows us to install pre-made charts, useful for deploying services that we don't develop.
 
+[Here](https://www.figma.com/board/5EQJarZPbO1kFdMBcviZWr/Berkeleytime-Kubernetes-Cluster?node-id=0-1&t=8uTqITuoiyk1e1cq-1) is a diagram outlining (in some detail) the structure of the Kubernetes cluster.
+
 ### Useful Commands
 
 This is an uncomprehensive list of commands that can be executed in `hozer-51`, useful for debugging.
