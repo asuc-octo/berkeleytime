@@ -15,6 +15,7 @@ import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
+import AddBlockMenu from "./AddBlockMenu";
 
 export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
@@ -26,6 +27,7 @@ export default function Dashboard() {
 
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
   const [showLabelMenu, setShowLabelMenu] = useState(false);
+  const [showAddBlockMenu, setShowAddBlockMenu] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -56,7 +58,6 @@ export default function Dashboard() {
       setLocalLabels(gradTrak.labels);
     }
   }, [gradTrak?.labels]);
-  console.log(gradTrak, localLabels);
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {
@@ -199,7 +200,10 @@ export default function Dashboard() {
               </IconButton>
             </Tooltip>
             <Tooltip content="Add new block">
-              <IconButton>
+              <IconButton
+                onClick={() => {
+                  setShowAddBlockMenu(!showAddBlockMenu);
+                }}>
                 <Plus />
               </IconButton>
             </Tooltip>
@@ -233,6 +237,9 @@ export default function Dashboard() {
           labels={localLabels}
           onLabelsChange={updateLabels}
         />
+        {showAddBlockMenu && (
+          <AddBlockMenu onClose={() => setShowAddBlockMenu(false)} />
+        )}
         <div className={styles.semesterBlocks}>
           <div className={styles.semesterLayout} data-layout={settings.layout}>
             {planTerms &&
