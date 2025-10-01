@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, IconButton, Tooltip } from "@repo/theme";
+import { Boundary, Button, IconButton, LoadingIndicator, Tooltip } from "@repo/theme";
 
 import { useReadPlan, useReadUser } from "@/hooks/api";
 import { IPlanTerm, ISelectedCourse, GET_COURSE_NAMES, GetCoursesResponse } from "@/lib/api";
@@ -176,9 +176,9 @@ export default function Dashboard() {
 
   if (userLoading || gradTrakLoading || courseLoading) {
     return (
-      <div className={styles.root}>
-        <div>Loading your GradTrak...</div>
-      </div>
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
     );
   }
 
