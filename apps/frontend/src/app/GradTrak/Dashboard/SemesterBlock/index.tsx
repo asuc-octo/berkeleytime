@@ -4,8 +4,9 @@ import { MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 
 import { Button, Flex } from "@repo/theme";
 
-import { useSetSelectedCourses } from "@/hooks/api";
+import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { ISelectedCourse } from "@/lib/api";
+import { SelectedCourse } from "../index";
 import { IPlanTerm } from "@/lib/api/plans";
 
 import ClassDetails from "../ClassDetails";
@@ -21,7 +22,7 @@ interface SemesterBlockProps {
   onTotalUnitsChange: (newTotal: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
   settings: GradTrakSettings;
-  catalogCourses: ISelectedCourse[];
+  catalogCourses: SelectedCourse[];
   index: Fuse<{title: string; name: string; alternateNames: string[]}> | null;
 }
 
@@ -49,6 +50,7 @@ function SemesterBlock({
   const [open, setOpen] = useState(true);
 
   const [setCourses] = useSetSelectedCourses();
+  const [getCourseUnits] = useReadCourseUnits();
 
   useEffect(() => {
     const total = selectedClasses.reduce(
@@ -105,8 +107,12 @@ function SemesterBlock({
     setIsClassDetailsOpen(true);
   };
 
-  const addClass = async (cls: ISelectedCourse) => {
-    // const { data: courseUnits } = useReadCourseUnits(cls.courseID); TODO(Daniel)
+  const addClass = async (cls: SelectedCourse | ISelectedCourse) => {
+    // if missing units, get them
+    if (cls.courseUnits <= 0 && 'courseSubject' in cls && 'courseNumber' in cls) {
+      const data = await getCourseUnits(cls.courseSubject, cls.courseNumber);
+      cls.courseUnits = data;
+    }
     // Ensure all required fields are present
     const courseToAdd: ISelectedCourse = {
       courseID: cls.courseID || "custom-" + cls.courseName,

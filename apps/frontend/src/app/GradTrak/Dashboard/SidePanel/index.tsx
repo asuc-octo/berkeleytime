@@ -14,7 +14,7 @@ import {
 import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
 
-// TODO: Implement proper handling of reqs based on user's college...
+// TODO(Daniel): Implement proper handling of reqs based on user's college...
 interface SidePanelProps {
   majors: string[];
   minors: string[];

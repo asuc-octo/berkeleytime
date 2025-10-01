@@ -4,14 +4,15 @@ import { ISelectedCourse } from "@/lib/api";
 import Fuse from "fuse.js";
 
 import SearchBar from "./SearchBar";
+import { SelectedCourse } from "../../index";
 
 interface AddClassProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  addClass: (cls: ISelectedCourse) => void;
+  addClass: (cls: SelectedCourse) => void;
   handleOnConfirm: (cls: ISelectedCourse) => void;
   index: Fuse<{ title: string; name: string; alternateNames: string[] }> | null;
-  catalogCourses: ISelectedCourse[];
+  catalogCourses: SelectedCourse[];
 }
 
 function AddClass({
@@ -23,7 +24,7 @@ function AddClass({
   catalogCourses,
 }: AddClassProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredClasses, setFilteredClasses] = useState<ISelectedCourse[]>([]);
+  const [filteredClasses, setFilteredClasses] = useState<SelectedCourse[]>([]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value;
@@ -36,7 +37,7 @@ function AddClass({
     setFilteredClasses(filtered);
   };
 
-  const handleSelectClass = (cls: ISelectedCourse) => {
+  const handleSelectClass = (cls: SelectedCourse) => {
     addClass(cls);
     setFilteredClasses([]);
     setSearchTerm("");

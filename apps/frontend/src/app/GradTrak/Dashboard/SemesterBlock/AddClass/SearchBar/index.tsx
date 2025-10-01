@@ -7,14 +7,15 @@ import { ISelectedCourse } from "@/lib/api";
 
 import ClassDetails from "../../../ClassDetails";
 import styles from "../AddClass.module.scss";
+import { SelectedCourse } from "../../../index";
 
 interface SearchBarProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   searchTerm: string;
   handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  filteredClasses: ISelectedCourse[];
-  handleSelectClass: (cls: ISelectedCourse) => void;
+  filteredClasses: SelectedCourse[];
+  handleSelectClass: (cls: SelectedCourse) => void;
   handleOnConfirm: (cls: ISelectedCourse) => void;
 }
 
