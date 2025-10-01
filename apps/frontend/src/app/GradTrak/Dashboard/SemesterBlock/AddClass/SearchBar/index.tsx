@@ -32,6 +32,7 @@ function SearchBar({
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Content className={styles.content}>
+        <Dialog.Title>Add Class</Dialog.Title>
         <div className={styles.searchBar}>
           <input
             type="text"
@@ -49,10 +50,11 @@ function SearchBar({
               >
                 {filteredClasses.map((cls) => (
                   <li
+                    key={cls.courseID}
                     onClick={() => handleSelectClass(cls)}
                     className={styles.item}
                   >
-                    {cls.courseName} - {cls.courseUnits} units
+                    {cls.courseName}{cls.courseUnits > 0 ? ` - ${cls.courseUnits} units` : ""}
                   </li>
                 ))}
               </ul>

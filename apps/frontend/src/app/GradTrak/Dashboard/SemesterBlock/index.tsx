@@ -13,6 +13,7 @@ import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
 import Class from "./Class";
 import styles from "./SemesterBlock.module.scss";
+import Fuse from "fuse.js";
 
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
@@ -20,6 +21,8 @@ interface SemesterBlockProps {
   onTotalUnitsChange: (newTotal: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
   settings: GradTrakSettings;
+  catalogCourses: ISelectedCourse[];
+  index: Fuse<{title: string; name: string; alternateNames: string[]}> | null;
 }
 
 function SemesterBlock({
@@ -28,6 +31,8 @@ function SemesterBlock({
   allSemesters,
   updateAllSemesters,
   settings,
+  catalogCourses,
+  index,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -101,6 +106,7 @@ function SemesterBlock({
   };
 
   const addClass = async (cls: ISelectedCourse) => {
+    // const { data: courseUnits } = useReadCourseUnits(cls.courseID); TODO(Daniel)
     // Ensure all required fields are present
     const courseToAdd: ISelectedCourse = {
       courseID: cls.courseID || "custom-" + cls.courseName,
@@ -372,6 +378,8 @@ function SemesterBlock({
               handleOnConfirm={(cls) => {
                 addClass(cls);
               }}
+              catalogCourses={catalogCourses}
+              index={index}
             />
 
             {/* Edit Class Details Dialog */}

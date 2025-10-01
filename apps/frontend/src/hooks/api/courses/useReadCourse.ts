@@ -6,6 +6,7 @@ import {
   READ_COURSE_TITLE,
   READ_COURSE_WITH_INSTRUCTOR,
   ReadCourseResponse,
+  READ_COURSE_UNITS,
 } from "@/lib/api";
 
 export const useReadCourse = (
@@ -71,6 +72,25 @@ export const useReadCourseTitle = (
   options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
 ) => {
   const query = useQuery<ReadCourseResponse>(READ_COURSE_TITLE, {
+    ...options,
+    variables: {
+      subject,
+      number,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.course,
+  };
+};
+
+export const useReadCourseUnits = (
+  subject: string,
+  number: string,
+  options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
+) => {
+  const query = useQuery<ReadCourseResponse>(READ_COURSE_UNITS, {
     ...options,
     variables: {
       subject,
