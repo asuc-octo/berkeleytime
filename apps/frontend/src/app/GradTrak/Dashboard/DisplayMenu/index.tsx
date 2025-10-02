@@ -13,7 +13,7 @@ import {
 } from "iconoir-react";
 
 import {
-  Badge,
+  BadgeLabel,
   Color,
   Flex,
   IconButton,
@@ -22,6 +22,8 @@ import {
   Tooltip,
 } from "@repo/theme";
 
+import { ILabel } from "@/lib/api";
+
 import { GradTrakSettings, ShowSetting } from "../settings";
 import styles from "./DisplayMenu.module.scss";
 
@@ -29,6 +31,9 @@ type DisplayMenuProps = {
   onClose: () => void;
   settings: GradTrakSettings;
   onChangeSettings: (patch: Partial<GradTrakSettings>) => void;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+  labels: ILabel[];
+  setShowLabelMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const SETTING_KEY_TO_DETAILS = {
@@ -50,6 +55,9 @@ export default function DisplayMenu({
   onClose,
   settings,
   onChangeSettings,
+  triggerRef,
+  labels,
+  setShowLabelMenu,
 }: DisplayMenuProps) {
   const [selectedLayout, setSelectedLayout] = useState<"chart" | "grid">(
     settings?.layout ?? "chart"
@@ -60,7 +68,18 @@ export default function DisplayMenu({
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
       const el = containerRef.current;
+      const triggerEl = triggerRef.current;
       if (!el) return;
+
+      // Ignore clicks on the trigger button
+      if (
+        triggerEl &&
+        e.target instanceof Node &&
+        triggerEl.contains(e.target)
+      ) {
+        return;
+      }
+
       if (e.target instanceof Node && !el.contains(e.target)) {
         onClose?.();
       }
@@ -74,13 +93,7 @@ export default function DisplayMenu({
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose]);
-
-  const labels = [
-    { name: "University of California", color: "blue" },
-    { name: "Breadths", color: "purple" },
-    { name: "Decal", color: "teal" },
-  ];
+  }, [onClose, triggerRef]);
 
   return (
     <div ref={containerRef} className={styles.displayMenu}>
@@ -185,10 +198,17 @@ export default function DisplayMenu({
             <div className={styles.sectionBubble}>
               <div className={styles.sectionTitle}>Labels</div>
               <div className={styles.labelsContainer}>
-                {labels.map((label) => (
-                  <Badge label={label.name} color={Color.amber} />
+                {labels.map((label, index) => (
+                  <BadgeLabel
+                    key={index}
+                    label={label.name}
+                    color={label.color as Color}
+                  />
                 ))}
-                <IconButton className={{ [styles.addLabel]: true }}>
+                <IconButton
+                  className={{ [styles.addLabel]: true }}
+                  onClick={() => setShowLabelMenu(true)}
+                >
                   <Plus />
                 </IconButton>
               </div>

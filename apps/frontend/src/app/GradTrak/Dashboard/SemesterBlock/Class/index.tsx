@@ -1,10 +1,11 @@
 import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
-import { Button, DropdownMenu, Flex } from "@repo/theme";
+import { BadgeLabel, Button, Color, DropdownMenu, Flex } from "@repo/theme";
 
+import { ISelectedCourse } from "@/lib/api";
+
+import { GradTrakSettings, ShowSetting } from "../../settings";
 import styles from "./Class.module.scss";
-
-import { ISelectedCourse } from '@/lib/api';
 
 interface ClassProps {
   cls: ISelectedCourse;
@@ -13,7 +14,7 @@ interface ClassProps {
   handleDragStart: (e: React.DragEvent, classIndex: number) => void;
   handleDetails: (index: number) => void;
   handleDelete: (index: number) => void;
-  layout: string;
+  settings: GradTrakSettings;
 }
 
 export default function Class({
@@ -23,7 +24,7 @@ export default function Class({
   handleDragStart,
   handleDetails,
   handleDelete,
-  layout,
+  settings,
 }: ClassProps) {
   return (
     <div
@@ -36,12 +37,22 @@ export default function Class({
     >
       <div className={styles.start}>
         <Flex
-          direction={layout === "chart" ? "column" : "row"}
+          direction={settings.layout === "chart" ? "column" : "row"}
           justify="between"
           width="100%"
         >
           <h3 className={styles.title}>{cls.courseName}</h3>
-          <p>{cls.courseUnits} Units</p>
+          {settings.show[ShowSetting.units] && <p>{cls.courseUnits} Units</p>}
+          {settings.show[ShowSetting.labels] && (
+            <div
+              className={styles.labelsContainer}
+              style={{ marginTop: settings.layout === "grid" ? "0" : "8px" }}
+            >
+              {cls.labels.map((l, idx) => (
+                <BadgeLabel key={idx} label={l.name} color={l.color as Color} />
+              ))}
+            </div>
+          )}
         </Flex>
         <div className={styles.dropdown}>
           <DropdownMenu.Root>

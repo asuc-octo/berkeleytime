@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button, VisuallyHidden } from "@radix-ui/themes";
 
-import { ISelectedCourse } from "@/lib/api";
+import { ILabel, ISelectedCourse } from "@/lib/api";
 
-import ClassDetails from "../../../ClassDetails";
 import { SelectedCourse } from "../../../index";
+import ClassDetails from "../../ClassDetails";
 import styles from "../AddClass.module.scss";
 
 interface SearchBarProps {
@@ -17,6 +17,8 @@ interface SearchBarProps {
   filteredClasses: SelectedCourse[];
   handleSelectClass: (cls: SelectedCourse) => void;
   handleOnConfirm: (cls: ISelectedCourse) => void;
+  labels: ILabel[];
+  setShowLabelMenu: (v: boolean) => void;
 }
 
 function SearchBar({
@@ -27,6 +29,8 @@ function SearchBar({
   filteredClasses,
   handleSelectClass,
   handleOnConfirm,
+  labels,
+  setShowLabelMenu,
 }: SearchBarProps) {
   const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
 
@@ -79,6 +83,8 @@ function SearchBar({
         isOpen={isCustomClassOpen}
         setIsOpen={setIsCustomClassOpen}
         onConfirm={handleOnConfirm}
+        allLabels={labels}
+        setShowLabelMenu={setShowLabelMenu}
       />
     </Dialog.Root>
   );

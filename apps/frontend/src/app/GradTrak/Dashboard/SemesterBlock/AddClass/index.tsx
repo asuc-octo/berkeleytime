@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 
-import { ISelectedCourse } from "@/lib/api";
 import Fuse from "fuse.js";
 
-import SearchBar from "./SearchBar";
+import { ILabel, ISelectedCourse } from "@/lib/api";
+
 import { SelectedCourse } from "../../index";
+import SearchBar from "./SearchBar";
 
 interface AddClassProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   addClass: (cls: SelectedCourse) => void;
   handleOnConfirm: (cls: ISelectedCourse) => void;
+  labels: ILabel[];
+  setShowLabelMenu: (v: boolean) => void;
   index: Fuse<{ title: string; name: string; alternateNames: string[] }> | null;
   catalogCourses: SelectedCourse[];
 }
@@ -20,6 +23,8 @@ function AddClass({
   setIsOpen,
   addClass,
   handleOnConfirm,
+  labels,
+  setShowLabelMenu,
   index,
   catalogCourses,
 }: AddClassProps) {
@@ -30,9 +35,12 @@ function AddClass({
     const term = event.target.value;
     setSearchTerm(term);
 
-    const filtered = term && index
-      ? index.search(term.slice(0, 24)).map(({ refIndex }) => catalogCourses[refIndex])
-      : catalogCourses;
+    const filtered =
+      term && index
+        ? index
+            .search(term.slice(0, 24))
+            .map(({ refIndex }) => catalogCourses[refIndex])
+        : catalogCourses;
 
     setFilteredClasses(filtered);
   };
@@ -54,6 +62,8 @@ function AddClass({
         filteredClasses={filteredClasses}
         handleSelectClass={handleSelectClass}
         handleOnConfirm={handleOnConfirm}
+        labels={labels}
+        setShowLabelMenu={setShowLabelMenu}
       />
     </div>
   );
