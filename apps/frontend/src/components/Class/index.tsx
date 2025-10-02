@@ -249,7 +249,18 @@ export default function Class({
     return reservationMap;
   }, [_class]);
 
+  const seatReservationMaxEnroll = useMemo(() => {
+    const maxEnroll = _class?.primarySection.enrollment?.history[0].seatReservationCounts ?? [];
+    const maxEnrollMap = new Map<number, number>();
+
+    for (const type of maxEnroll) {
+        maxEnrollMap.set(type.number, type.maxEnroll);
+    }
+    return maxEnrollMap;
+  }, [_class]);
+
   const seatReservationCounts = _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
+  
 
   if (loading || courseLoading) {
     return <></>;
@@ -408,7 +419,7 @@ export default function Class({
                   <p>
                     {_class.primarySection.enrollment?.latest?.seatReservationCounts?.map((count) => (
                         <li>
-                        Class {seatReservationTypeMap.get(count.number)}: {Math.max(count.enrolledCount, count.maxEnroll)}
+                        Class {seatReservationTypeMap.get(count.number)}: {Math.max(count.enrolledCount, count.maxEnroll)} / {seatReservationMaxEnroll.get(count.number)}
                         </li>
                     ))}
                   </p>
