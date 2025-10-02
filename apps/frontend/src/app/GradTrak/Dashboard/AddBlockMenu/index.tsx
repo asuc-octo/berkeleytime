@@ -7,13 +7,16 @@ import {
   LongArrowDownLeft,
 } from "iconoir-react";
 import { Button, Select } from "@repo/theme";
+import { PlanTermInput, Status, Terms } from "@/lib/api";
 
 type AddBlockMenuProps = {
   onClose: () => void;
+  createNewPlanTerm: (planTerm: PlanTermInput) => void;
 };
 
 export default function AddBlockMenu({
-  onClose
+  onClose,
+  createNewPlanTerm,  
 }: AddBlockMenuProps) {
   const [activeMenu, setActiveMenu] = useState<"main" | "semester" | "custom">("main");
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
@@ -51,18 +54,34 @@ export default function AddBlockMenu({
 
   const handleSubmitSemester = () => {
     console.log(selectedTerm, selectedYear);
+    createNewPlanTerm({
+      name: `${selectedTerm} ${selectedYear}`,
+      year: selectedYear ? selectedYear : currentYear,
+      term: selectedTerm ? selectedTerm as Terms : Terms.Fall,
+      hidden: false,
+      status: Status.InProgress,
+      pinned: false,
+      courses: [],
+    });
     setSelectedTerm(null);
     setSelectedYear(null);
     setActiveMenu("main");
-    // TODO(Daniel): add backend call
     onClose?.();
   };
 
   const handleSubmitCustom = () => {
     console.log(customName);
+    createNewPlanTerm({
+      name: customName,
+      year: -1,
+      term: Terms.Misc,
+      hidden: false,
+      status: Status.InProgress,
+      pinned: false,
+      courses: [],
+    });
     setCustomName("");
     setActiveMenu("main");
-    // TODO(Daniel): add backend call
     onClose?.();
   };
 

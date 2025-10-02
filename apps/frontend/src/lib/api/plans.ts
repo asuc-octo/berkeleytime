@@ -7,6 +7,20 @@ export enum Colleges {
   OTHER = "OTHER",
 }
 
+export enum Terms {
+  Fall = "Fall",
+  Spring = "Spring",
+  Summer = "Summer",
+  Misc = "Misc",
+}
+
+export enum Status {
+  Complete = "Complete",
+  InProgress = "InProgress",
+  Incomplete = "Incomplete",
+  None = "None",
+}
+
 export enum CollegeReqs {
   LnS_AL = "LnS_AL",
   LnS_BS = "LnS_BS",
@@ -214,6 +228,16 @@ export interface PlanInput {
   majorReqs?: IMajorReq[];
 }
 
+export interface PlanTermInput {
+  courses: SelectedCourseInput[];
+  hidden: boolean;
+  name: string;
+  pinned: boolean;
+  term: Terms;
+  year: number;
+  status: Status;
+}
+
 export interface EditPlanResponse {
   editPlan: IPlan;
 }
@@ -258,27 +282,31 @@ export const SET_SELECTED_COURSES = gql`
   mutation SetSelectedCourses($id: ID!, $courses: [SelectedCourseInput!]!) {
     setSelectedCourses(id: $id, courses: $courses) {
       _id
+    }
+  }
+`;
+
+export interface CreateNewPlanTermResponse {
+  createNewPlanTerm: IPlanTerm;
+}
+
+export const CREATE_NEW_PLAN_TERM = gql`
+  mutation CreateNewPlanTerm($planTerm: PlanTermInput!) {
+    createNewPlanTerm(planTerm: $planTerm) {
+      _id
       name
       userEmail
       year
       term
-      courses {
-        courseID
-        courseName
-        courseTitle
-        courseUnits
-        uniReqs
-        collegeReqs
-        pnp
-        transfer
-        labels {
-          name
-          color
-        }
-      }
       hidden
       status
       pinned
     }
+  }
+`;
+
+export const REMOVE_PLAN_TERM_BY_ID = gql`
+  mutation RemovePlanTermByID($removePlanTermByIdId: ID!) {
+    removePlanTermByID(id: $removePlanTermByIdId)
   }
 `;

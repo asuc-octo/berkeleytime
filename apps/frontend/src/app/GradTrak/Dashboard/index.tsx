@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import { Button, IconButton, Tooltip } from "@repo/theme";
 
-import { useEditPlan, useReadPlan, useReadUser } from "@/hooks/api";
-import { ILabel, IPlanTerm, ISelectedCourse, PlanInput } from "@/lib/api";
+import { useEditPlan, useCreateNewPlanTerm, useReadPlan, useReadUser } from "@/hooks/api";
+import { ILabel, IPlanTerm, ISelectedCourse, PlanInput, PlanTermInput } from "@/lib/api";
 import { convertStringsToRequirementEnum } from "@/lib/course";
 
 import styles from "./Dashboard.module.scss";
@@ -25,11 +25,17 @@ export default function Dashboard() {
     skip: !user,
   });
 
+  if (!gradTrakLoading && !gradTrak) {
+    console.log("GradTrak not found");
+    navigate("/gradtrak");
+  }
+  
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
   const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [showAddBlockMenu, setShowAddBlockMenu] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
+  const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const [editPlan] = useEditPlan();
@@ -42,9 +48,43 @@ export default function Dashboard() {
     return gradTrak?.minors || [];
   }, [gradTrak?.minors]);
 
-  const planTerms = useMemo(() => {
-    return gradTrak?.planTerms || [];
+  useEffect(() => {
+    if (gradTrak?.planTerms) {
+      setLocalPlanTerms(gradTrak.planTerms);
+    }
   }, [gradTrak?.planTerms]);
+
+  const planTerms = useMemo(() => {
+    return localPlanTerms;
+  }, [localPlanTerms]);
+
+  const [createNewPlanTerm] = useCreateNewPlanTerm();
+  const handleNewPlanTerm = async (planTerm: PlanTermInput) => {
+    const tmp : IPlanTerm = {
+      _id: "",
+      userEmail: gradTrak ? gradTrak.userEmail : "",
+      name: planTerm.name,
+      year: planTerm.year,
+      term: planTerm.term,
+      hidden: planTerm.hidden,
+      status: planTerm.status,
+      pinned: planTerm.pinned,
+      courses: [],
+    }
+    const oldPlanTerms = [...localPlanTerms];
+    setLocalPlanTerms([...localPlanTerms, tmp]);
+    try {
+      const result = await createNewPlanTerm(planTerm);
+      if (result.data?.createNewPlanTerm?._id) {
+        tmp._id = result.data?.createNewPlanTerm?._id;
+      } else {
+        throw new Error("Cannot find id");
+      }
+    } catch (error) {
+      console.error("Error creating new plan term:", error);
+      setLocalPlanTerms(oldPlanTerms);
+    }
+  };
 
   const updateLabels = (labels: ILabel[]) => {
     setLocalLabels(labels);
@@ -238,7 +278,7 @@ export default function Dashboard() {
           onLabelsChange={updateLabels}
         />
         {showAddBlockMenu && (
-          <AddBlockMenu onClose={() => setShowAddBlockMenu(false)} />
+          <AddBlockMenu onClose={() => setShowAddBlockMenu(false)} createNewPlanTerm={handleNewPlanTerm} />
         )}
         <div className={styles.semesterBlocks}>
           <div className={styles.semesterLayout} data-layout={settings.layout}>
