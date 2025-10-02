@@ -1,4 +1,4 @@
-import { QueryHookOptions, useQuery } from "@apollo/client";
+import { QueryHookOptions, useLazyQuery, useQuery } from "@apollo/client";
 
 import {
   READ_COURSE,
@@ -6,7 +6,9 @@ import {
   READ_COURSE_TITLE,
   READ_COURSE_WITH_INSTRUCTOR,
   ReadCourseResponse,
+  READ_COURSE_UNITS,
 } from "@/lib/api";
+import { useCallback } from "react";
 
 export const useReadCourse = (
   subject: string,
@@ -82,4 +84,29 @@ export const useReadCourseTitle = (
     ...query,
     data: query.data?.course,
   };
+};
+
+export const useReadCourseUnits = () => {
+  const [getCourseUnitsQuery, { loading, error }] = useLazyQuery<ReadCourseResponse>(READ_COURSE_UNITS);
+
+  const getCourseUnits = useCallback(
+    async (
+      subject: string,
+      number: string,
+      options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
+    ) => {
+      const result = await getCourseUnitsQuery({
+        ...options,
+        variables: { subject, number },
+      });
+
+      return result.data?.course?.classes?.[0]?.unitsMax || 0;
+    },
+    [getCourseUnitsQuery]
+  );
+
+  return [getCourseUnits, { loading, error }] as [
+    getCourseUnits: typeof getCourseUnits,
+    result: { loading: boolean; error: any }
+  ];
 };

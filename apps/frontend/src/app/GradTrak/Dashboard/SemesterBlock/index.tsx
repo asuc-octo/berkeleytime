@@ -4,8 +4,9 @@ import { MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 
 import { Button, Flex } from "@repo/theme";
 
-import { useSetSelectedCourses } from "@/hooks/api";
+import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { ISelectedCourse } from "@/lib/api";
+import { SelectedCourse } from "../index";
 import { IPlanTerm } from "@/lib/api/plans";
 
 import ClassDetails from "../ClassDetails";
@@ -13,6 +14,7 @@ import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
 import Class from "./Class";
 import styles from "./SemesterBlock.module.scss";
+import Fuse from "fuse.js";
 
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
@@ -20,6 +22,8 @@ interface SemesterBlockProps {
   onTotalUnitsChange: (newTotal: number) => void;
   updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
   settings: GradTrakSettings;
+  catalogCourses: SelectedCourse[];
+  index: Fuse<{title: string; name: string; alternateNames: string[]}> | null;
 }
 
 function SemesterBlock({
@@ -28,6 +32,8 @@ function SemesterBlock({
   allSemesters,
   updateAllSemesters,
   settings,
+  catalogCourses,
+  index,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -44,6 +50,7 @@ function SemesterBlock({
   const [open, setOpen] = useState(true);
 
   const [setCourses] = useSetSelectedCourses();
+  const [getCourseUnits] = useReadCourseUnits();
 
   useEffect(() => {
     const total = selectedClasses.reduce(
@@ -100,7 +107,12 @@ function SemesterBlock({
     setIsClassDetailsOpen(true);
   };
 
-  const addClass = async (cls: ISelectedCourse) => {
+  const addClass = async (cls: SelectedCourse | ISelectedCourse) => {
+    // if missing units, get them
+    if (cls.courseUnits <= 0 && 'courseSubject' in cls && 'courseNumber' in cls) {
+      const data = await getCourseUnits(cls.courseSubject, cls.courseNumber);
+      cls.courseUnits = data;
+    }
     // Ensure all required fields are present
     const courseToAdd: ISelectedCourse = {
       courseID: cls.courseID || "custom-" + cls.courseName,
@@ -372,6 +384,8 @@ function SemesterBlock({
               handleOnConfirm={(cls) => {
                 addClass(cls);
               }}
+              catalogCourses={catalogCourses}
+              index={index}
             />
 
             {/* Edit Class Details Dialog */}
