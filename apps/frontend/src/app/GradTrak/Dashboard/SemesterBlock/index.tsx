@@ -128,7 +128,6 @@ function SemesterBlock({
       setSelectedCourses(oldClasses);
       console.error("Failed to save class:", error);
     }
-    console.log("Updated classes:", updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -167,7 +166,6 @@ function SemesterBlock({
   };
 
   const handleUpdateClass = async (updatedClass: ISelectedCourse) => {
-    console.log("Updating class:", updatedClass);
     const oldClasses = [...selectedClasses];
     const newClasses = selectedClasses.map((cls) =>
       cls.courseID === updatedClass.courseID ? updatedClass : cls

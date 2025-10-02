@@ -81,12 +81,18 @@ const ClassDetails = ({
       collegeReqs: [],
       pnp: grading === "P/NP",
       transfer: credit === "Transfer",
-      labels: labels.map((l) => {
-        return {
-          name: l.name,
-          color: l.color,
-        };
-      }),
+      labels: labels
+        .filter((l) => 
+          allLabels.some(availableLabel => 
+            availableLabel.name === l.name && availableLabel.color === l.color
+          )
+        )
+        .map((l) => {
+          return {
+            name: l.name,
+            color: l.color,
+          };
+        }),
     };
     if (isEditMode && onUpdate) {
       onUpdate(updatedClass);
@@ -177,7 +183,14 @@ const ClassDetails = ({
                       setShowLabelMenu(true);
                     },
                   }}
-                  value={labels}
+                  value={(() => {
+                    const filteredLabels = labels.filter((l) => 
+                      allLabels.some(availableLabel => 
+                        availableLabel.name === l.name && availableLabel.color === l.color
+                      )
+                    );
+                    return filteredLabels.length > 0 ? filteredLabels : null;
+                  })()}
                   onChange={(vs) => {
                     if (!vs) setLabels([]);
                     if (Array.isArray(vs)) setLabels(vs);

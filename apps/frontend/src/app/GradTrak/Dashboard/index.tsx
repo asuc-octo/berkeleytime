@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
+  const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const [editPlan] = useEditPlan();
@@ -40,9 +41,34 @@ export default function Dashboard() {
     return gradTrak?.minors || [];
   }, [gradTrak?.minors]);
 
+  useEffect(() => {
+    if (gradTrak?.labels) {
+      setLocalLabels(gradTrak.labels);
+    }
+  }, [gradTrak?.labels]);
+
+  useEffect(() => {
+    if (gradTrak?.planTerms) {
+      const cleanedPlanTerms = gradTrak.planTerms.map(term => ({
+        ...term,
+        courses: term.courses.map(course => ({
+          ...course,
+          labels: course.labels.filter(label => 
+            localLabels.some(validLabel => 
+              validLabel.name === label.name && validLabel.color === label.color
+            )
+          )
+        }))
+      }));
+      setLocalPlanTerms(cleanedPlanTerms);
+    } else {
+      setLocalPlanTerms([]);
+    }
+  }, [gradTrak?.planTerms, localLabels]);
+
   const planTerms = useMemo(() => {
-    return gradTrak?.planTerms || [];
-  }, [gradTrak?.planTerms]);
+    return localPlanTerms;
+  }, [localPlanTerms]);
 
   const updateLabels = (labels: ILabel[]) => {
     setLocalLabels(labels);
@@ -50,13 +76,6 @@ export default function Dashboard() {
     plan.labels = labels;
     editPlan(plan);
   };
-
-  useEffect(() => {
-    if (gradTrak?.labels) {
-      setLocalLabels(gradTrak.labels);
-    }
-  }, [gradTrak?.labels]);
-  console.log(gradTrak, localLabels);
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {
