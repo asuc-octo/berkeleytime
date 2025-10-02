@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
-import styles from "./AddBlockMenu.module.scss";
-import {
-  ArrowLeft,
-  NavArrowRight,
-  LongArrowDownLeft,
-} from "iconoir-react";
-import { Button, Select } from "@repo/theme";
+import { ArrowLeft, LongArrowDownLeft, NavArrowRight } from "iconoir-react";
+
+import { Button, Input, Select } from "@repo/theme";
+
 import { PlanTermInput, Status, Terms } from "@/lib/api";
+
+import styles from "./AddBlockMenu.module.scss";
 
 type AddBlockMenuProps = {
   onClose: () => void;
@@ -16,25 +15,30 @@ type AddBlockMenuProps = {
 
 export default function AddBlockMenu({
   onClose,
-  createNewPlanTerm,  
+  createNewPlanTerm,
 }: AddBlockMenuProps) {
-  const [activeMenu, setActiveMenu] = useState<"main" | "semester" | "custom">("main");
+  const [activeMenu, setActiveMenu] = useState<"main" | "semester" | "custom">(
+    "main"
+  );
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [customName, setCustomName] = useState("");
 
   const currentYear = new Date().getFullYear();
-  const yearOptions = Array.from({ length: (currentYear + 5) - 2020 + 1 }, (_, i) => ({
-    label: (2020 + i).toString(),
-    value: 2020 + i,
-  }));
+  const yearOptions = Array.from(
+    { length: currentYear + 5 - 2020 + 1 },
+    (_, i) => ({
+      label: (2020 + i).toString(),
+      value: 2020 + i,
+    })
+  );
 
   const semesterOptions = [
     { label: "Fall", value: "Fall" },
     { label: "Spring", value: "Spring" },
     { label: "Summer", value: "Summer" },
-  ]
+  ];
 
   const handleSemesterSelect = (value: string | string[] | null) => {
     if (value === null || Array.isArray(value)) {
@@ -53,11 +57,10 @@ export default function AddBlockMenu({
   };
 
   const handleSubmitSemester = () => {
-    console.log(selectedTerm, selectedYear);
     createNewPlanTerm({
       name: `${selectedTerm} ${selectedYear}`,
       year: selectedYear ? selectedYear : currentYear,
-      term: selectedTerm ? selectedTerm as Terms : Terms.Fall,
+      term: selectedTerm ? (selectedTerm as Terms) : Terms.Fall,
       hidden: false,
       status: Status.InProgress,
       pinned: false,
@@ -70,7 +73,6 @@ export default function AddBlockMenu({
   };
 
   const handleSubmitCustom = () => {
-    console.log(customName);
     createNewPlanTerm({
       name: customName,
       year: -1,
@@ -106,8 +108,7 @@ export default function AddBlockMenu({
 
   return (
     <div ref={containerRef} className={styles.addBlockMenu}>
-      {activeMenu == "main" ? 
-        (
+      {activeMenu == "main" ? (
         <div>
           <div className={styles.section}>
             <div
@@ -132,84 +133,80 @@ export default function AddBlockMenu({
             </div>
           </div>
         </div>
-        ) : 
-        (activeMenu == "semester" ? 
-          (
-            <div className={styles.section}>
-              <div className={styles.sectionBubble}>
-                <div
-                  className={styles.sectionTitle}
-                  style={{ display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <ArrowLeft
-                    onClick={() => setActiveMenu("main")}
-                    style={{ cursor: "pointer" }}
-                  />
-                  New Semester Block
-                </div>
-                <div className={styles.inputGroup}>
-                  <Select
-                    options={semesterOptions}
-                    value={selectedTerm}
-                    onChange={handleSemesterSelect}
-                    placeholder="Select a semester..."
-                    multi={false}
-                  />
-                  <Select
-                    options={yearOptions}
-                    value={selectedYear}
-                    onChange={handleYearSelect}
-                    placeholder="Select a year..."
-                    multi={false}
-                  />
-                  <Button
-                    variant="primary"
-                    className={styles.confirmButton}
-                    onClick={handleSubmitSemester}
-                    disabled={!selectedTerm || !selectedYear}
-                  >
-                    Done
-                  </Button>
-                </div>
-              </div>
+      ) : activeMenu == "semester" ? (
+        <div className={styles.section}>
+          <div className={styles.sectionBubble}>
+            <div
+              className={styles.sectionTitle}
+              style={{ display: "flex", alignItems: "center", gap: 8 }}
+            >
+              <ArrowLeft
+                onClick={() => setActiveMenu("main")}
+                style={{ cursor: "pointer" }}
+              />
+              New Semester Block
             </div>
-          ) : 
-          (
-            <div className={styles.section}>
-              <div className={styles.sectionBubble}>
-                <div
-                  className={styles.sectionTitle}
-                  style={{ display: "flex", alignItems: "center", gap: 8 }}
-                >
-                  <ArrowLeft
-                    onClick={() => setActiveMenu("main")}
-                    style={{ cursor: "pointer" }}
-                  />
-                  Create custom block
-                </div>
-                <div className={styles.inputContainer}>
-                  <div className={styles.container}>
-                    <input
-                      type="text"
-                      value={customName}
-                      placeholder="New block..."
-                      onChange={(e) => setCustomName(e.target.value)}
-                    />
-                  </div>
-                  <Button
-                    variant="primary"
-                    className={styles.confirmButton}
-                    onClick={handleSubmitCustom}
-                    disabled={!customName}
-                  >
-                    Done
-                    <LongArrowDownLeft />
-                  </Button>
-                </div>
-              </div>
+            <div className={styles.inputGroup}>
+              <Select
+                options={semesterOptions}
+                value={selectedTerm}
+                onChange={handleSemesterSelect}
+                placeholder="Select a semester..."
+                multi={false}
+              />
+              <Select
+                options={yearOptions}
+                value={selectedYear}
+                onChange={handleYearSelect}
+                placeholder="Select a year..."
+                multi={false}
+              />
+              <Button
+                variant="primary"
+                className={styles.confirmButton}
+                onClick={handleSubmitSemester}
+                disabled={!selectedTerm || !selectedYear}
+              >
+                Done
+              </Button>
             </div>
-          ))
-      }
+          </div>
+        </div>
+      ) : (
+        <div className={styles.section}>
+          <div className={styles.sectionBubble}>
+            <div
+              className={styles.sectionTitle}
+              style={{ display: "flex", alignItems: "center", gap: 8 }}
+            >
+              <ArrowLeft
+                onClick={() => setActiveMenu("main")}
+                style={{ cursor: "pointer" }}
+              />
+              New custom block
+            </div>
+            <div className={styles.inputContainer}>
+              <div className={styles.container}>
+                <Input
+                  type="text"
+                  value={customName}
+                  placeholder="New block..."
+                  onChange={(e) => setCustomName(e.target.value)}
+                />
+              </div>
+              <Button
+                variant="primary"
+                className={styles.confirmButton}
+                onClick={handleSubmitCustom}
+                disabled={!customName}
+              >
+                Done
+                <LongArrowDownLeft />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
