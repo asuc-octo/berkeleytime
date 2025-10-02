@@ -58,6 +58,34 @@ export default function Dashboard() {
     return localPlanTerms;
   }, [localPlanTerms]);
 
+  // helper functions for adding new block in right order
+  const getTermOrder = (term: string) => {
+    switch (term) {
+      case 'Spring': return 1;
+      case 'Summer': return 2;
+      case 'Fall': return 3;
+      default: return 0;
+    }
+  };
+  const insertPlanTerm = (planTerms: IPlanTerm[], newTerm: IPlanTerm) => {
+    const insertIndex = findInsertionIndex(planTerms, newTerm);
+    const newArray = [...planTerms];
+    newArray.splice(insertIndex, 0, newTerm);
+    setLocalPlanTerms(newArray);
+  };
+  const findInsertionIndex = (planTerms: IPlanTerm[], newTerm: IPlanTerm): number => {
+    for (let i = 0; i < planTerms.length; i++) {
+      const currentTerm = planTerms[i];
+      if (newTerm.year < currentTerm.year) {
+        return i;
+      }
+      if (newTerm.year === currentTerm.year && getTermOrder(newTerm.term) < getTermOrder(currentTerm.term)) {
+        return i;
+      }
+    }
+    return planTerms.length;
+  };
+
   const [createNewPlanTerm] = useCreateNewPlanTerm();
   const handleNewPlanTerm = async (planTerm: PlanTermInput) => {
     const tmp : IPlanTerm = {
@@ -72,7 +100,7 @@ export default function Dashboard() {
       courses: [],
     }
     const oldPlanTerms = [...localPlanTerms];
-    setLocalPlanTerms([...localPlanTerms, tmp]);
+    insertPlanTerm(oldPlanTerms, tmp);
     try {
       const result = await createNewPlanTerm(planTerm);
       if (result.data?.createNewPlanTerm?._id) {
@@ -278,7 +306,10 @@ export default function Dashboard() {
           onLabelsChange={updateLabels}
         />
         {showAddBlockMenu && (
-          <AddBlockMenu onClose={() => setShowAddBlockMenu(false)} createNewPlanTerm={handleNewPlanTerm} />
+          <
+            AddBlockMenu onClose={() => setShowAddBlockMenu(false)} 
+            createNewPlanTerm={handleNewPlanTerm} 
+          />
         )}
         <div className={styles.semesterBlocks}>
           <div className={styles.semesterLayout} data-layout={settings.layout}>
