@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
+import { BookStack, Edit, Eye, List, Menu, MoreHoriz, NavArrowDown, NavArrowRight, Pin, ShareIos, Trash } from "iconoir-react";
 
-import { Button, Flex } from "@repo/theme";
+import { Button, DropdownMenu, Flex } from "@repo/theme";
 
 import { useSetSelectedCourses } from "@/hooks/api";
 import { ISelectedCourse } from "@/lib/api";
@@ -321,7 +321,53 @@ function SemesterBlock({
             <p className={styles.counter}>{totalUnits}</p>
           </div>
           <Flex direction="row" gap="6px">
-            <MoreHoriz className={styles.actionButton} />
+            <div className={styles.dropdown}>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <MoreHoriz className={styles.actionButton} />
+                </DropdownMenu.Trigger>
+                {/* <DropdownMenu.Content sideOffset={5} align="end" style={{width: "190px"}}> For scheduler feature */}
+                <DropdownMenu.Content sideOffset={5} align="end">
+                  <DropdownMenu.Item onClick={() => {}}>
+                    <Edit className={styles.menuIcon} /> Rename
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Sub>
+                    <DropdownMenu.SubTrigger>
+                      <List className={styles.menuIcon} /> Status
+                      <NavArrowRight className={styles.rightAlignedIcon} />
+                    </DropdownMenu.SubTrigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
+                        <DropdownMenu.Item>
+                          <span className={styles.menuStatusColor} style={{backgroundColor: "var(--emerald-500)"}}/>Complete
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <span className={styles.menuStatusColor} style={{backgroundColor: "var(--yellow-500)"}}/>In Progress
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          <span className={styles.menuStatusColor} style={{backgroundColor: "var(--gray-500)"}}/>Incomplete
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item>
+                          None
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.Item onClick={() => {}}>
+                    <Pin className={styles.menuIcon} /> Pin
+                  </DropdownMenu.Item>
+                  {/* <DropdownMenu.Item onClick={() => {}}>
+                    <ShareIos className={styles.menuIcon} /> Export to Scheduler
+                  </DropdownMenu.Item> */}
+                  {/* <DropdownMenu.Item onClick={() => {}}>
+                    <Eye className={styles.menuIcon} /> Hide
+                  </DropdownMenu.Item> */}
+                  <DropdownMenu.Item onClick={() => {}} isDelete>
+                    <Trash className={styles.menuIcon} /> Delete Class
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            </div>
             {open ? (
               <NavArrowDown
                 className={styles.actionButton}
