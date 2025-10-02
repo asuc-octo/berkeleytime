@@ -249,6 +249,7 @@ type Course {
   Attributes
   """
   requirements: String
+  requirementsFulfilled: [String!]
   description: String!
   fromDate: String!
   gradeDistribution: GradeDistribution!

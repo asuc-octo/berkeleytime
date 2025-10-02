@@ -24,6 +24,7 @@ export default gql`
 
     "Attributes"
     requirements: String
+    requirementsFulfilled: [String!]
     description: String!
     fromDate: String!
     gradingBasis: CourseGradingBasis!
