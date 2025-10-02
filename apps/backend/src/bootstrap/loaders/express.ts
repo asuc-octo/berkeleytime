@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../config";
+import { withRequestStore } from "../../utils/requestContext";
 import passportLoader from "./passport";
 
 export default async (
@@ -55,6 +56,9 @@ export default async (
       },
     })
   );
+
+  // Initialize per-request store for diagnostics (e.g., cache hit/miss)
+  app.use(withRequestStore);
 
   // load authentication
   passportLoader(app, redis);

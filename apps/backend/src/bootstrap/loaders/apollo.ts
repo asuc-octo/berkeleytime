@@ -11,6 +11,7 @@ import { RedisClientType } from "redis";
 import { gunzipSync, gzipSync } from "zlib";
 
 import { timeToNextPull } from "../../utils/cache";
+import { isResponseCacheHit, markResponseCacheHit } from "../../utils/requestContext";
 import { buildSchema } from "../graphql/buildSchema";
 
 class RedisCache implements KeyValueCache {
@@ -28,6 +29,10 @@ class RedisCache implements KeyValueCache {
     if (!value) return undefined;
 
     const buffer = Buffer.from(value, "base64");
+    // mark cache hit for diagnostics
+    try {
+      markResponseCacheHit();
+    } catch {}
     return gunzipSync(buffer).toString("utf-8");
   }
 
@@ -86,6 +91,16 @@ export default async (redis: RedisClientType) => {
         sessionId: async (req) =>
           req.request.http?.headers.get("sessionId") || null,
       }),
+      {
+        async requestDidStart() {
+          return {
+            async willSendResponse({ response }) {
+              const status = isResponseCacheHit() ? "HIT" : "MISS";
+              response.http?.headers.set("X-Response-Cache", status);
+            },
+          };
+        },
+      },
     ],
     // TODO(prod): introspection: config.isDev,
     introspection: true,
