@@ -82,9 +82,10 @@ const ClassDetails = ({
       pnp: grading === "P/NP",
       transfer: credit === "Transfer",
       labels: labels
-        .filter((l) => 
-          allLabels.some(availableLabel => 
-            availableLabel.name === l.name && availableLabel.color === l.color
+        .filter((l) =>
+          allLabels.some(
+            (availableLabel) =>
+              availableLabel.name === l.name && availableLabel.color === l.color
           )
         )
         .map((l) => {
@@ -184,9 +185,11 @@ const ClassDetails = ({
                     },
                   }}
                   value={(() => {
-                    const filteredLabels = labels.filter((l) => 
-                      allLabels.some(availableLabel => 
-                        availableLabel.name === l.name && availableLabel.color === l.color
+                    const filteredLabels = labels.filter((l) =>
+                      allLabels.some(
+                        (availableLabel) =>
+                          availableLabel.name === l.name &&
+                          availableLabel.color === l.color
                       )
                     );
                     return filteredLabels.length > 0 ? filteredLabels : null;
