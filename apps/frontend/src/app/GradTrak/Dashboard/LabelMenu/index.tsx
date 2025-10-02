@@ -2,7 +2,15 @@ import { ChangeEventHandler, useEffect, useState } from "react";
 
 import { NavArrowDown, Trash } from "iconoir-react";
 
-import { Button, Color, Dialog, Flex, IconButton, Input } from "@repo/theme";
+import {
+  Box,
+  Button,
+  Color,
+  Dialog,
+  Flex,
+  IconButton,
+  Input,
+} from "@repo/theme";
 
 import { ILabel } from "@/lib/api";
 
@@ -33,7 +41,8 @@ const LabelRow = (
   label?: ILabel,
   showColorPicker?: boolean,
   onColorSelectClick?: () => void,
-  onColorSelect?: (color: Color) => void
+  onColorSelect?: (color: Color) => void,
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 ) => {
   return (
     <Flex
@@ -60,13 +69,18 @@ const LabelRow = (
         <Input
           value={label ? label.name : ""}
           onChange={onTextChange}
+          onKeyDown={onKeyDown}
           placeholder={"Enter label's name..."}
           className={styles.labelInput}
           style={{ flex: 1 }}
         />
-        <IconButton onClick={onDelete} style={{ border: "none" }}>
-          <Trash />
-        </IconButton>
+        {onDelete ? (
+          <IconButton onClick={onDelete} style={{ border: "none" }}>
+            <Trash />
+          </IconButton>
+        ) : (
+          <Box width="32px" />
+        )}
       </Flex>
       {showColorPicker && (
         <div className={styles.colorPicker}>
@@ -98,6 +112,11 @@ export default function LabelMenu({
 }: LabelMenuProps) {
   const [editingLabels, setEditingLabels] = useState<ILabel[]>(labels);
   const [showColorPicker, setShowColorPicker] = useState<number | null>(null);
+  const [tmpLabel, setTmpLabel] = useState<ILabel>({
+    name: "",
+    color: Color.gray,
+  });
+  const [duplicateError, setDuplicateError] = useState<boolean>(false);
 
   useEffect(() => {
     setEditingLabels(labels);
@@ -120,10 +139,6 @@ export default function LabelMenu({
   const handleCancel = () => {
     setEditingLabels(labels);
     onOpenChange(false);
-  };
-
-  const addLabel = () => {
-    setEditingLabels([...editingLabels, { name: "", color: Color.gray }]);
   };
 
   const handleColorSelect = (labelIndex: number, color: Color) => {
@@ -157,7 +172,7 @@ export default function LabelMenu({
         <Dialog.Header title="Labels" hasCloseButton />
 
         <Dialog.Body className={styles.body}>
-          <Flex direction="column">
+          <Flex direction="column" width="100%">
             {editingLabels.map((label, i) =>
               LabelRow(
                 (e) => {
@@ -177,13 +192,55 @@ export default function LabelMenu({
                 label,
                 showColorPicker === i,
                 () => setShowColorPicker(showColorPicker === i ? null : i),
-                (color) => handleColorSelect(i, color)
+                (color) => handleColorSelect(i, color),
+                (e: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }
               )
+            )}
+            {LabelRow(
+              (e) => {
+                const tmp = { ...tmpLabel, name: e.target.value };
+                setTmpLabel(tmp);
+                setDuplicateError(false); // Clear error when typing
+              },
+              undefined,
+              tmpLabel,
+              showColorPicker === -1,
+              () => setShowColorPicker(showColorPicker === -1 ? null : -1),
+              (color) => {
+                const tmp = { ...tmpLabel, color };
+                setTmpLabel(tmp);
+                setShowColorPicker(null);
+              },
+              (e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Enter" && tmpLabel.name.trim()) {
+                  const labelExists = editingLabels.some(
+                    (label) =>
+                      label.name === tmpLabel.name &&
+                      label.color === tmpLabel.color
+                  );
+
+                  if (!labelExists) {
+                    setEditingLabels((prev) => [...prev, tmpLabel]);
+                    setTmpLabel({ name: "", color: Color.gray });
+                    setDuplicateError(false);
+                  } else {
+                    setDuplicateError(true);
+                  }
+                }
+              }
+            )}
+            {duplicateError && (
+              <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+                A label with that name and color already exists.
+              </div>
             )}
           </Flex>
         </Dialog.Body>
-        <Dialog.Footer justify="between">
-          <Button onClick={addLabel}>Add Label</Button>
+        <Dialog.Footer justify="end">
           <Flex direction="row" gap="2">
             <Button variant="secondary" onClick={handleCancel}>
               Cancel

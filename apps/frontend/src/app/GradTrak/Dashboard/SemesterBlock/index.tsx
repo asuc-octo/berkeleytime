@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import Fuse from "fuse.js";
 import { MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 
 import { Button, Flex } from "@repo/theme";
 
-import { useSetSelectedCourses } from "@/hooks/api";
+import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { ISelectedCourse } from "@/lib/api";
 import { ILabel, IPlanTerm } from "@/lib/api/plans";
 
+import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
 import Class from "./Class";
@@ -22,6 +24,8 @@ interface SemesterBlockProps {
   settings: GradTrakSettings;
   labels: ILabel[];
   setShowLabelMenu: (v: boolean) => void;
+  catalogCourses: SelectedCourse[];
+  index: Fuse<{ title: string; name: string; alternateNames: string[] }> | null;
 }
 
 function SemesterBlock({
@@ -32,6 +36,8 @@ function SemesterBlock({
   settings,
   labels,
   setShowLabelMenu,
+  catalogCourses,
+  index,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -48,6 +54,7 @@ function SemesterBlock({
   const [open, setOpen] = useState(true);
 
   const [setCourses] = useSetSelectedCourses();
+  const [getCourseUnits] = useReadCourseUnits();
 
   useEffect(() => {
     const total = selectedClasses.reduce(
@@ -104,7 +111,16 @@ function SemesterBlock({
     setIsClassDetailsOpen(true);
   };
 
-  const addClass = async (cls: ISelectedCourse) => {
+  const addClass = async (cls: SelectedCourse | ISelectedCourse) => {
+    // if missing units, get them
+    if (
+      cls.courseUnits <= 0 &&
+      "courseSubject" in cls &&
+      "courseNumber" in cls
+    ) {
+      const data = await getCourseUnits(cls.courseSubject, cls.courseNumber);
+      cls.courseUnits = data;
+    }
     // Ensure all required fields are present
     const courseToAdd: ISelectedCourse = {
       courseID: cls.courseID || "custom-" + cls.courseName,
@@ -128,7 +144,6 @@ function SemesterBlock({
       setSelectedCourses(oldClasses);
       console.error("Failed to save class:", error);
     }
-    console.log("Updated classes:", updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -167,7 +182,6 @@ function SemesterBlock({
   };
 
   const handleUpdateClass = async (updatedClass: ISelectedCourse) => {
-    console.log("Updating class:", updatedClass);
     const oldClasses = [...selectedClasses];
     const newClasses = selectedClasses.map((cls) =>
       cls.courseID === updatedClass.courseID ? updatedClass : cls
@@ -378,6 +392,8 @@ function SemesterBlock({
               }}
               labels={labels}
               setShowLabelMenu={setShowLabelMenu}
+              catalogCourses={catalogCourses}
+              index={index}
             />
 
             {/* Edit Class Details Dialog */}

@@ -1,21 +1,47 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useQuery } from "@apollo/client";
 import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, IconButton, Tooltip } from "@repo/theme";
+import {
+  Boundary,
+  Button,
+  IconButton,
+  LoadingIndicator,
+  Tooltip,
+} from "@repo/theme";
 
-import { useEditPlan, useCreateNewPlanTerm, useReadPlan, useReadUser } from "@/hooks/api";
-import { ILabel, IPlanTerm, ISelectedCourse, PlanInput, PlanTermInput } from "@/lib/api";
+import { initialize } from "@/components/CourseSearch/browser";
+import {
+  useCreateNewPlanTerm,
+  useEditPlan,
+  useReadPlan,
+  useReadUser,
+} from "@/hooks/api";
+import {
+  GET_COURSE_NAMES,
+  GetCoursesResponse,
+  ILabel,
+  IPlanTerm,
+  ISelectedCourse,
+  PlanInput,
+  PlanTermInput,
+} from "@/lib/api";
 import { convertStringsToRequirementEnum } from "@/lib/course";
 
+import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
 import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
-import AddBlockMenu from "./AddBlockMenu";
+
+export interface SelectedCourse extends ISelectedCourse {
+  courseSubject: string;
+  courseNumber: string;
+}
 
 export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
@@ -29,10 +55,41 @@ export default function Dashboard() {
     console.log("GradTrak not found");
     navigate("/gradtrak");
   }
-  
+
+  const hasLoadedRef = useRef(false);
+  const { data: courses, loading: courseLoading } =
+    useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
+      skip: hasLoadedRef.current,
+      onCompleted: () => {
+        hasLoadedRef.current = true;
+      },
+    });
+  const catalogCoursesRef = useRef<SelectedCourse[]>([]);
+  const indexRef = useRef<ReturnType<typeof initialize> | null>(null);
+
+  if (courses?.courses && catalogCoursesRef.current.length === 0) {
+    const formattedClasses = courses.courses.map((course) => ({
+      courseID: `${course.subject}_${course.number}`,
+      courseName: `${course.subject} ${course.number}`,
+      courseTitle: course.title,
+      courseUnits: -1, // TODO(Daniel): fetch when adding
+      uniReqs: [], // TODO(Daniel): Fetch reqs
+      collegeReqs: [], // TODO(Daniel): Fetch reqs
+      pnp: false,
+      transfer: false,
+      labels: [],
+      courseSubject: course.subject,
+      courseNumber: course.number,
+    }));
+    catalogCoursesRef.current = formattedClasses;
+    indexRef.current = initialize(courses.courses);
+  }
+  const catalogCourses = catalogCoursesRef.current;
+  const index = indexRef.current;
+
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
-  const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [showAddBlockMenu, setShowAddBlockMenu] = useState(false);
+  const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
   const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
@@ -49,22 +106,43 @@ export default function Dashboard() {
   }, [gradTrak?.minors]);
 
   useEffect(() => {
-    if (gradTrak?.planTerms) {
-      setLocalPlanTerms(gradTrak.planTerms);
+    if (gradTrak?.labels) {
+      setLocalLabels(gradTrak.labels);
     }
-  }, [gradTrak?.planTerms]);
+  }, [gradTrak?.labels]);
 
-  const planTerms = useMemo(() => {
-    return localPlanTerms;
-  }, [localPlanTerms]);
+  useEffect(() => {
+    if (gradTrak?.planTerms) {
+      const cleanedPlanTerms = gradTrak.planTerms.map((term) => ({
+        ...term,
+        courses: term.courses.map((course) => ({
+          ...course,
+          labels: course.labels.filter((label) =>
+            localLabels.some(
+              (validLabel) =>
+                validLabel.name === label.name &&
+                validLabel.color === label.color
+            )
+          ),
+        })),
+      }));
+      setLocalPlanTerms(cleanedPlanTerms);
+    } else {
+      setLocalPlanTerms([]);
+    }
+  }, [gradTrak?.planTerms, localLabels]);
 
   // helper functions for adding new block in right order
   const getTermOrder = (term: string) => {
     switch (term) {
-      case 'Spring': return 1;
-      case 'Summer': return 2;
-      case 'Fall': return 3;
-      default: return 0;
+      case "Spring":
+        return 1;
+      case "Summer":
+        return 2;
+      case "Fall":
+        return 3;
+      default:
+        return 0;
     }
   };
   const insertPlanTerm = (planTerms: IPlanTerm[], newTerm: IPlanTerm) => {
@@ -73,18 +151,20 @@ export default function Dashboard() {
     newArray.splice(insertIndex, 0, newTerm);
     setLocalPlanTerms(newArray);
   };
-  const findInsertionIndex = (planTerms: IPlanTerm[], newTerm: IPlanTerm): number => {
+  const findInsertionIndex = (
+    planTerms: IPlanTerm[],
+    newTerm: IPlanTerm
+  ): number => {
     for (let i = 0; i < planTerms.length; i++) {
       const currentTerm = planTerms[i];
       if (newTerm.year < currentTerm.year) {
         return i;
       }
       if (newTerm.year === currentTerm.year) {
-        if (getTermOrder(newTerm.term) < getTermOrder(currentTerm.term) || 
-          (
-            getTermOrder(newTerm.term) === getTermOrder(currentTerm.term) 
-            && newTerm.name < currentTerm.name
-          )
+        if (
+          getTermOrder(newTerm.term) < getTermOrder(currentTerm.term) ||
+          (getTermOrder(newTerm.term) === getTermOrder(currentTerm.term) &&
+            newTerm.name < currentTerm.name)
         ) {
           return i;
         }
@@ -95,7 +175,7 @@ export default function Dashboard() {
 
   const [createNewPlanTerm] = useCreateNewPlanTerm();
   const handleNewPlanTerm = async (planTerm: PlanTermInput) => {
-    const tmp : IPlanTerm = {
+    const tmp: IPlanTerm = {
       _id: "",
       userEmail: gradTrak ? gradTrak.userEmail : "",
       name: planTerm.name,
@@ -105,7 +185,7 @@ export default function Dashboard() {
       status: planTerm.status,
       pinned: planTerm.pinned,
       courses: [],
-    }
+    };
     const oldPlanTerms = [...localPlanTerms];
     insertPlanTerm(oldPlanTerms, tmp);
     try {
@@ -120,6 +200,10 @@ export default function Dashboard() {
       setLocalPlanTerms(oldPlanTerms);
     }
   };
+
+  const planTerms = useMemo(() => {
+    return localPlanTerms;
+  }, [localPlanTerms]);
 
   const updateLabels = (labels: ILabel[]) => {
     setLocalLabels(labels);
@@ -233,11 +317,11 @@ export default function Dashboard() {
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
 
-  if (userLoading || gradTrakLoading) {
+  if (userLoading || gradTrakLoading || courseLoading) {
     return (
-      <div className={styles.root}>
-        <div>Loading your GradTrak...</div>
-      </div>
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
     );
   }
 
@@ -278,7 +362,8 @@ export default function Dashboard() {
               <IconButton
                 onClick={() => {
                   setShowAddBlockMenu(!showAddBlockMenu);
-                }}>
+                }}
+              >
                 <Plus />
               </IconButton>
             </Tooltip>
@@ -313,9 +398,9 @@ export default function Dashboard() {
           onLabelsChange={updateLabels}
         />
         {showAddBlockMenu && (
-          <
-            AddBlockMenu onClose={() => setShowAddBlockMenu(false)} 
-            createNewPlanTerm={handleNewPlanTerm} 
+          <AddBlockMenu
+            onClose={() => setShowAddBlockMenu(false)}
+            createNewPlanTerm={handleNewPlanTerm}
           />
         )}
         <div className={styles.semesterBlocks}>
@@ -323,6 +408,7 @@ export default function Dashboard() {
             {planTerms &&
               planTerms.map((term) => (
                 <SemesterBlock
+                  key={term._id}
                   planTerm={term}
                   onTotalUnitsChange={(newTotal) =>
                     updateTotalUnits(term.name ? term.name : "", newTotal)
@@ -332,6 +418,8 @@ export default function Dashboard() {
                   settings={settings}
                   labels={localLabels}
                   setShowLabelMenu={setShowLabelMenu}
+                  catalogCourses={catalogCourses}
+                  index={index}
                 />
               ))}
           </div>
