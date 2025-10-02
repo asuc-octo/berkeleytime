@@ -2,9 +2,9 @@ import { gql } from "@apollo/client";
 
 export enum Colleges {
   LnS = "LnS",
-  CoE = "CoE", 
+  CoE = "CoE",
   HAAS = "HAAS",
-  OTHER = "OTHER"
+  OTHER = "OTHER",
 }
 
 export enum CollegeReqs {
@@ -22,7 +22,7 @@ export enum CollegeReqs {
   HAAS_IS = "HAAS_IS",
   HAAS_PV = "HAAS_PV",
   HAAS_PS = "HAAS_PS",
-  HAAS_SBS = "HAAS_SBS"
+  HAAS_SBS = "HAAS_SBS",
 }
 
 export enum UniReqs {
@@ -32,7 +32,7 @@ export enum UniReqs {
   CW = "CW",
   QR = "QR",
   RCA = "RCA",
-  RCB = "RCB"
+  RCB = "RCB",
 }
 
 export type DegreeOption = {
@@ -221,14 +221,14 @@ export interface EditPlanResponse {
 export const EDIT_PLAN = gql`
   mutation EditPlan($plan: PlanInput!) {
     editPlan(plan: $plan) {
-        uniReqsSatisfied
-        collegeReqsSatisfied
-        majors
-        minors
-        labels {
-          name
-          color
-        }
+      uniReqsSatisfied
+      collegeReqsSatisfied
+      majors
+      minors
+      labels {
+        name
+        color
+      }
     }
   }
 `;
@@ -282,4 +282,3 @@ export const SET_SELECTED_COURSES = gql`
     }
   }
 `;
-

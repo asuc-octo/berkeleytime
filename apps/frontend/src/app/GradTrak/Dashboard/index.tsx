@@ -1,19 +1,40 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useQuery } from "@apollo/client";
 import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, IconButton, Tooltip } from "@repo/theme";
+import {
+  Boundary,
+  Button,
+  IconButton,
+  LoadingIndicator,
+  Tooltip,
+} from "@repo/theme";
 
-import { useReadPlan, useReadUser } from "@/hooks/api";
-import { IPlanTerm, ISelectedCourse } from "@/lib/api";
+import { initialize } from "@/components/CourseSearch/browser";
+import { useEditPlan, useReadPlan, useReadUser } from "@/hooks/api";
+import {
+  GET_COURSE_NAMES,
+  GetCoursesResponse,
+  ILabel,
+  IPlanTerm,
+  ISelectedCourse,
+  PlanInput,
+} from "@/lib/api";
 import { convertStringsToRequirementEnum } from "@/lib/course";
 
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
+import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
+
+export interface SelectedCourse extends ISelectedCourse {
+  courseSubject: string;
+  courseNumber: string;
+}
 
 export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
@@ -23,8 +44,45 @@ export default function Dashboard() {
     skip: !user,
   });
 
+  const hasLoadedRef = useRef(false);
+  const { data: courses, loading: courseLoading } =
+    useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
+      skip: hasLoadedRef.current,
+      onCompleted: () => {
+        hasLoadedRef.current = true;
+      },
+    });
+  const catalogCoursesRef = useRef<SelectedCourse[]>([]);
+  const indexRef = useRef<ReturnType<typeof initialize> | null>(null);
+
+  if (courses?.courses && catalogCoursesRef.current.length === 0) {
+    const formattedClasses = courses.courses.map((course) => ({
+      courseID: `${course.subject}_${course.number}`,
+      courseName: `${course.subject} ${course.number}`,
+      courseTitle: course.title,
+      courseUnits: -1, // TODO(Daniel): fetch when adding
+      uniReqs: [], // TODO(Daniel): Fetch reqs
+      collegeReqs: [], // TODO(Daniel): Fetch reqs
+      pnp: false,
+      transfer: false,
+      labels: [],
+      courseSubject: course.subject,
+      courseNumber: course.number,
+    }));
+    catalogCoursesRef.current = formattedClasses;
+    indexRef.current = initialize(courses.courses);
+  }
+  const catalogCourses = catalogCoursesRef.current;
+  const index = indexRef.current;
+
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
+  const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
+  const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
+  const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
+  const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const [editPlan] = useEditPlan();
 
   const selectedDegreeStrings = useMemo(() => {
     return gradTrak?.majors || [];
@@ -34,9 +92,43 @@ export default function Dashboard() {
     return gradTrak?.minors || [];
   }, [gradTrak?.minors]);
 
+  useEffect(() => {
+    if (gradTrak?.labels) {
+      setLocalLabels(gradTrak.labels);
+    }
+  }, [gradTrak?.labels]);
+
+  useEffect(() => {
+    if (gradTrak?.planTerms) {
+      const cleanedPlanTerms = gradTrak.planTerms.map((term) => ({
+        ...term,
+        courses: term.courses.map((course) => ({
+          ...course,
+          labels: course.labels.filter((label) =>
+            localLabels.some(
+              (validLabel) =>
+                validLabel.name === label.name &&
+                validLabel.color === label.color
+            )
+          ),
+        })),
+      }));
+      setLocalPlanTerms(cleanedPlanTerms);
+    } else {
+      setLocalPlanTerms([]);
+    }
+  }, [gradTrak?.planTerms, localLabels]);
+
   const planTerms = useMemo(() => {
-    return gradTrak?.planTerms || [];
-  }, [gradTrak?.planTerms]);
+    return localPlanTerms;
+  }, [localPlanTerms]);
+
+  const updateLabels = (labels: ILabel[]) => {
+    setLocalLabels(labels);
+    const plan: PlanInput = {};
+    plan.labels = labels;
+    editPlan(plan);
+  };
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {
@@ -137,11 +229,11 @@ export default function Dashboard() {
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
 
-  if (userLoading || gradTrakLoading) {
+  if (userLoading || gradTrakLoading || courseLoading) {
     return (
-      <div className={styles.root}>
-        <div>Loading your GradTrak...</div>
-      </div>
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
     );
   }
 
@@ -185,6 +277,7 @@ export default function Dashboard() {
             </Tooltip>
             <Tooltip content="Display settings">
               <Button
+                ref={displayMenuTriggerRef}
                 variant="secondary"
                 onClick={() => {
                   setShowDisplayMenu(!showDisplayMenu);
@@ -201,13 +294,23 @@ export default function Dashboard() {
             onClose={() => setShowDisplayMenu(false)}
             settings={settings}
             onChangeSettings={(patch) => updateSettings(patch)}
+            triggerRef={displayMenuTriggerRef}
+            labels={localLabels}
+            setShowLabelMenu={setShowLabelMenu}
           />
         )}
+        <LabelMenu
+          open={showLabelMenu}
+          onOpenChange={setShowLabelMenu}
+          labels={localLabels}
+          onLabelsChange={updateLabels}
+        />
         <div className={styles.semesterBlocks}>
           <div className={styles.semesterLayout} data-layout={settings.layout}>
             {planTerms &&
               planTerms.map((term) => (
                 <SemesterBlock
+                  key={term._id}
                   planTerm={term}
                   onTotalUnitsChange={(newTotal) =>
                     updateTotalUnits(term.name ? term.name : "", newTotal)
@@ -215,6 +318,10 @@ export default function Dashboard() {
                   allSemesters={allSemesters}
                   updateAllSemesters={updateAllSemesters}
                   settings={settings}
+                  labels={localLabels}
+                  setShowLabelMenu={setShowLabelMenu}
+                  catalogCourses={catalogCourses}
+                  index={index}
                 />
               ))}
           </div>
