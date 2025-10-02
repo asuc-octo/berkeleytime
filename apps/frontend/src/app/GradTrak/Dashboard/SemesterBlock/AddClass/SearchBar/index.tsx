@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { Button } from "@radix-ui/themes";
+import { Button, VisuallyHidden } from "@radix-ui/themes";
 
 import { ISelectedCourse } from "@/lib/api";
 
 import ClassDetails from "../../../ClassDetails";
-import styles from "../AddClass.module.scss";
 import { SelectedCourse } from "../../../index";
+import styles from "../AddClass.module.scss";
 
 interface SearchBarProps {
   isOpen: boolean;
@@ -33,7 +33,9 @@ function SearchBar({
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Content className={styles.content}>
-        <Dialog.Title>Add Class</Dialog.Title>
+        <VisuallyHidden>
+          <Dialog.Title>Add Class</Dialog.Title>
+        </VisuallyHidden>
         <div className={styles.searchBar}>
           <input
             type="text"
@@ -55,7 +57,8 @@ function SearchBar({
                     onClick={() => handleSelectClass(cls)}
                     className={styles.item}
                   >
-                    {cls.courseName}{cls.courseUnits > 0 ? ` - ${cls.courseUnits} units` : ""}
+                    {cls.courseName}
+                    {cls.courseUnits > 0 ? ` - ${cls.courseUnits} units` : ""}
                   </li>
                 ))}
               </ul>

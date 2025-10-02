@@ -97,10 +97,10 @@ export default function SidePanel({
   const MajorRequirements = (
     <div>
       {majors.map((major, index) => (
-        <>
-          <div key={index} className={styles.separator} />
+        <div key={index}>
+          <div className={styles.separator} />
           <div className={styles.accordion}>
-            <h2 key={index}>{major}</h2>
+            <h2>{major}</h2>
             <div className={styles.body}>
               <div className={styles.item}>
                 <p className={styles.label}>Upper Division Units: </p>
@@ -116,7 +116,7 @@ export default function SidePanel({
               </div>
             </div>
           </div>
-        </>
+        </div>
       ))}
     </div>
   );
@@ -124,10 +124,10 @@ export default function SidePanel({
   const MinorRequirements = (
     <div>
       {minors.map((minor, index) => (
-        <>
-          <div key={index} className={styles.separator} />
+        <div key={index}>
+          <div className={styles.separator} />
           <div className={styles.accordion}>
-            <h2 key={index}>{minor}</h2>
+            <h2>{minor}</h2>
             <div className={styles.body}>
               <div className={styles.item}>
                 <p className={styles.label}>Upper Division Units: </p>
@@ -143,7 +143,7 @@ export default function SidePanel({
               </div>
             </div>
           </div>
-        </>
+        </div>
       ))}
       <div className={styles.separator} />
     </div>
