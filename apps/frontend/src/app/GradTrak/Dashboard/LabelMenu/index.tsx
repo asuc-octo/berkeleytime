@@ -2,7 +2,15 @@ import { ChangeEventHandler, useEffect, useState } from "react";
 
 import { NavArrowDown, Trash } from "iconoir-react";
 
-import { Button, Color, Dialog, Flex, IconButton, Input } from "@repo/theme";
+import {
+  Box,
+  Button,
+  Color,
+  Dialog,
+  Flex,
+  IconButton,
+  Input,
+} from "@repo/theme";
 
 import { ILabel } from "@/lib/api";
 
@@ -66,10 +74,12 @@ const LabelRow = (
           className={styles.labelInput}
           style={{ flex: 1 }}
         />
-        {onDelete && (
+        {onDelete ? (
           <IconButton onClick={onDelete} style={{ border: "none" }}>
             <Trash />
           </IconButton>
+        ) : (
+          <Box width="32px" />
         )}
       </Flex>
       {showColorPicker && (
@@ -162,7 +172,7 @@ export default function LabelMenu({
         <Dialog.Header title="Labels" hasCloseButton />
 
         <Dialog.Body className={styles.body}>
-          <Flex direction="column">
+          <Flex direction="column" width="100%">
             {editingLabels.map((label, i) =>
               LabelRow(
                 (e) => {
@@ -184,47 +194,47 @@ export default function LabelMenu({
                 () => setShowColorPicker(showColorPicker === i ? null : i),
                 (color) => handleColorSelect(i, color),
                 (e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     e.currentTarget.blur();
                   }
                 }
               )
             )}
-            {
-              LabelRow(
-                (e) => {
-                  const tmp = {...tmpLabel, name: e.target.value};
-                  setTmpLabel(tmp);
-                  setDuplicateError(false); // Clear error when typing
-                },
-                undefined,
-                tmpLabel,
-                showColorPicker === -1,
-                () => setShowColorPicker(showColorPicker === -1 ? null : -1),
-                (color) => {
-                  const tmp = {...tmpLabel, color};
-                  setTmpLabel(tmp);
-                  setShowColorPicker(null);
-                },
-                (e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key === 'Enter' && tmpLabel.name.trim()) {
-                    const labelExists = editingLabels.some(label => 
-                      label.name === tmpLabel.name && label.color === tmpLabel.color
-                    );
-                    
-                    if (!labelExists) {
-                      setEditingLabels(prev => [...prev, tmpLabel]);
-                      setTmpLabel({ name: "", color: Color.gray });
-                      setDuplicateError(false);
-                    } else {
-                      setDuplicateError(true);
-                    }
+            {LabelRow(
+              (e) => {
+                const tmp = { ...tmpLabel, name: e.target.value };
+                setTmpLabel(tmp);
+                setDuplicateError(false); // Clear error when typing
+              },
+              undefined,
+              tmpLabel,
+              showColorPicker === -1,
+              () => setShowColorPicker(showColorPicker === -1 ? null : -1),
+              (color) => {
+                const tmp = { ...tmpLabel, color };
+                setTmpLabel(tmp);
+                setShowColorPicker(null);
+              },
+              (e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === "Enter" && tmpLabel.name.trim()) {
+                  const labelExists = editingLabels.some(
+                    (label) =>
+                      label.name === tmpLabel.name &&
+                      label.color === tmpLabel.color
+                  );
+
+                  if (!labelExists) {
+                    setEditingLabels((prev) => [...prev, tmpLabel]);
+                    setTmpLabel({ name: "", color: Color.gray });
+                    setDuplicateError(false);
+                  } else {
+                    setDuplicateError(true);
                   }
                 }
-              )
-            }
+              }
+            )}
             {duplicateError && (
-              <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
+              <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
                 A label with that name and color already exists.
               </div>
             )}
