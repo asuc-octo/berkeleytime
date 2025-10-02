@@ -79,8 +79,15 @@ export default function Dashboard() {
       if (newTerm.year < currentTerm.year) {
         return i;
       }
-      if (newTerm.year === currentTerm.year && getTermOrder(newTerm.term) < getTermOrder(currentTerm.term)) {
-        return i;
+      if (newTerm.year === currentTerm.year) {
+        if (getTermOrder(newTerm.term) < getTermOrder(currentTerm.term) || 
+          (
+            getTermOrder(newTerm.term) === getTermOrder(currentTerm.term) 
+            && newTerm.name < currentTerm.name
+          )
+        ) {
+          return i;
+        }
       }
     }
     return planTerms.length;
