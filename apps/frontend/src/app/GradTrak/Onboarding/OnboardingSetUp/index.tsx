@@ -1,30 +1,23 @@
 import { useState } from "react";
 
-import { Check } from "iconoir-react";
-import { Checkbox } from "radix-ui";
-
 import { Box, Button, Container, Flex, Select } from "@repo/theme";
 
 import DotsIndicator from "../DotsIndicator";
 import styles from "./OnboardingSetUp.module.scss";
 
 type OnboardingSetupProps = {
-  onNext: (startYear: string, gradYear: string, summerCheck: boolean) => void;
+  onNext: (startYear: string, gradYear: string) => void;
   startYear: string;
   gradYear: string;
-  summerCheck: boolean;
 };
 
 export default function OnboardingSetup({
   onNext,
   startYear,
   gradYear,
-  summerCheck,
 }: OnboardingSetupProps) {
   const [localStartYear, setLocalStartYear] = useState(startYear);
   const [localGradYear, setLocalGradYear] = useState(gradYear);
-
-  const [localSummerCheck, setLocalSummerCheck] = useState(summerCheck);
 
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -59,7 +52,7 @@ export default function OnboardingSetup({
 
   const handleNextClick = () => {
     if (localStartYear && localGradYear) {
-      onNext(localStartYear, localGradYear, localSummerCheck);
+      onNext(localStartYear, localGradYear);
     } else {
       alert("Please select both start and graduation years."); // Not sure
     }
@@ -115,22 +108,6 @@ export default function OnboardingSetup({
               </Flex>
 
               <Flex className={styles.filter}>
-                <Checkbox.Root
-                  className={styles.checkbox}
-                  id="summer"
-                  checked={localSummerCheck}
-                  onCheckedChange={(checked) => setLocalSummerCheck(!!checked)}
-                >
-                  <Checkbox.Indicator asChild>
-                    <Check width={12} height={12} />
-                  </Checkbox.Indicator>
-                </Checkbox.Root>
-
-                <label htmlFor="summer" className={styles.text}>
-                  <span className={styles.value}>
-                    Include Summer Semesters?
-                  </span>
-                </label>
               </Flex>
             </Flex>
 

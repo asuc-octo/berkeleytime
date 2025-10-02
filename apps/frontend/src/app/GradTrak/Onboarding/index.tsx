@@ -14,7 +14,6 @@ export default function GradTrakOnboarding() {
   const [step, setStep] = useState(0);
   const [startYear, setStartYear] = useState("");
   const [gradYear, setGradYear] = useState("");
-  const [summerCheck, setSummerCheck] = useState(false);
 
   const navigate = useNavigate();
   const [createPlan] = useCreatePlan();
@@ -25,11 +24,9 @@ export default function GradTrakOnboarding() {
   const handleSetupComplete = (
     start: string,
     grad: string,
-    summer: boolean
   ) => {
     setStartYear(start);
     setGradYear(grad);
-    setSummerCheck(summer);
     setStep(1);
   };
 
@@ -45,7 +42,6 @@ export default function GradTrakOnboarding() {
     navigate(`/gradtrak/dashboard`, {
       state: {
         planTerms: data ? data.createNewPlan.planTerms : [],
-        summerCheck,
         selectedDegreeList: selectedMajors, // Pass the final collected majors
         selectedMinorList: minors, // Pass the final collected minors (from this step's parameter)
       },
@@ -60,7 +56,6 @@ export default function GradTrakOnboarding() {
             onNext={handleSetupComplete}
             startYear={startYear}
             gradYear={gradYear}
-            summerCheck={summerCheck}
           />
         )}
         {step === 1 && (
