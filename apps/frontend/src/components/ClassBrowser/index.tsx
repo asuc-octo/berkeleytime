@@ -88,6 +88,7 @@ export default function ClassBrowser({
 
     return base.map((baseClass, index) => {
       const detail = details[index];
+
       if (!detail) {
         return baseClass as IClass;
       }
