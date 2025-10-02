@@ -43,7 +43,9 @@ export default function ClassBrowser({
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [localQuery, setLocalQuery] = useState<string>("");
+  const [localQuery, setLocalQuery] = useState<string>(() =>
+    persistent ? (searchParams.get("query") ?? "") : ""
+  );
   const [localComponents, setLocalComponents] = useState<Component[]>([]);
   const [localUnits, setLocalUnits] = useState<Unit[]>([]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
@@ -61,10 +63,7 @@ export default function ClassBrowser({
 
   const classes = useMemo(() => data?.catalog ?? [], [data]);
 
-  const query = useMemo(
-    () => (persistent ? (searchParams.get("query") ?? "") : localQuery),
-    [searchParams, localQuery, persistent]
-  );
+  const query = localQuery;
 
   const components = useMemo(
     () =>
@@ -261,14 +260,6 @@ export default function ClassBrowser({
   };
 
   const updateQuery = (query: string) => {
-    if (persistent) {
-      if (query) searchParams.set("query", query);
-      else searchParams.delete("query");
-      setSearchParams(searchParams, { replace: true });
-
-      return;
-    }
-
     setLocalQuery(query);
   };
 
