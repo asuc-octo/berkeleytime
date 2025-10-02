@@ -11,7 +11,10 @@ import { RedisClientType } from "redis";
 import { gunzipSync, gzipSync } from "zlib";
 
 import { timeToNextPull } from "../../utils/cache";
-import { isResponseCacheHit, markResponseCacheHit } from "../../utils/requestContext";
+import {
+  isResponseCacheHit,
+  markResponseCacheHit,
+} from "../../utils/requestContext";
 import { buildSchema } from "../graphql/buildSchema";
 
 class RedisCache implements KeyValueCache {

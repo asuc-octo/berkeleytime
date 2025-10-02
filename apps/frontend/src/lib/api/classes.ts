@@ -397,9 +397,6 @@ export const GET_CATALOG = gql`
         subject
         number
         title
-        gradeDistribution {
-          average
-        }
         academicCareer
       }
     }

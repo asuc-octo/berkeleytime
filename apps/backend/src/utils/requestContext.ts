@@ -18,5 +18,3 @@ export const markResponseCacheHit = () => {
 export const isResponseCacheHit = () => {
   return !!asyncLocalStore.getStore()?.responseCacheHit;
 };
-
-
