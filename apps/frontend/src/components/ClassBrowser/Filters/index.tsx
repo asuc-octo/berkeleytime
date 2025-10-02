@@ -131,7 +131,8 @@ export default function Filters() {
           ).includedClasses;
 
     for (const _class of classes) {
-      const { component } = _class.primarySection;
+      const component = _class.primarySection?.component;
+      if (!component) continue;
 
       filteredComponents[component] += 1;
     }

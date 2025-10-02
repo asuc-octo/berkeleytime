@@ -365,21 +365,51 @@ export interface GetCatalogResponse {
   catalog: IClass[];
 }
 
-export const GET_CATALOG = gql`
-  query GetCatalog($year: Int!, $semester: Semester!) {
+export interface GetCatalogKeysResponse {
+  catalog: IClass[];
+}
+
+export interface GetCatalogDetailsResponse {
+  catalog: IClass[];
+}
+export const GET_CATALOG_KEYS = gql`
+  query GetCatalogKeys($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
       number
-      title
-      unitsMax
-      unitsMin
-      finalExam
-      gradingBasis
+      course {
+        subject
+        number
+        title
+        academicCareer
+      }
       primarySection {
         component
         online
-        instructionMode
-        attendanceRequired
-        lecturesRecorded
+      }
+    }
+  }
+`;
+export const GET_CATALOG_DETAILS = gql`
+  query GetCatalogDetails($year: Int!, $semester: Semester!) {
+    catalog(year: $year, semester: $semester) {
+      number
+      unitsMax
+      unitsMin
+      course {
+        subject
+        number
+        gradeDistribution {
+          average
+          distribution {
+            letter
+            count
+          }
+        }
+      }
+      primarySection {
+        meetings {
+          days
+        }
         enrollment {
           latest {
             status
@@ -389,18 +419,13 @@ export const GET_CATALOG = gql`
             maxWaitlist
           }
         }
-        meetings {
-          days
-        }
       }
-      course {
-        subject
-        number
-        title
-        gradeDistribution {
-          average
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
         }
-        academicCareer
       }
     }
   }

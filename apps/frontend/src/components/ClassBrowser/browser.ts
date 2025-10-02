@@ -57,17 +57,17 @@ export const getFilteredClasses = (
   return classes.reduce(
     (acc, _class) => {
       // Filter by open
-      if (
-        currentOpen &&
-        _class.primarySection.enrollment?.latest.status !== "O"
-      ) {
-        acc.excludedClasses.push(_class);
+      if (currentOpen) {
+        const status = _class.primarySection?.enrollment?.latest?.status;
+        if (status !== "O") {
+          acc.excludedClasses.push(_class);
 
-        return acc;
+          return acc;
+        }
       }
 
       // Filter by online
-      if (currentOnline && !_class.primarySection.online) {
+      if (currentOnline && _class.primarySection?.online !== true) {
         acc.excludedClasses.push(_class);
 
         return acc;
@@ -75,9 +75,9 @@ export const getFilteredClasses = (
 
       // Filter by component
       if (currentComponents.length > 0) {
-        const { component } = _class.primarySection;
+        const component = _class.primarySection?.component;
 
-        if (!currentComponents.includes(component)) {
+        if (!component || !currentComponents.includes(component)) {
           acc.excludedClasses.push(_class);
 
           return acc;
@@ -86,10 +86,16 @@ export const getFilteredClasses = (
 
       // Filter by level
       if (currentLevels.length > 0) {
-        const level = getLevel(
-          _class.course.academicCareer,
-          _class.course.number
-        );
+        const academicCareer = _class.course?.academicCareer as
+          | AcademicCareer
+          | undefined;
+        const courseNumber = _class.course?.number;
+        if (!academicCareer || !courseNumber) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
+        const level = getLevel(academicCareer, courseNumber);
 
         if (!currentLevels.includes(level)) {
           acc.excludedClasses.push(_class);
@@ -100,6 +106,14 @@ export const getFilteredClasses = (
 
       // Filter by units
       if (currentUnits.length > 0) {
+        if (
+          typeof _class.unitsMin !== "number" ||
+          typeof _class.unitsMax !== "number"
+        ) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
         const unitsMin = Math.floor(_class.unitsMin);
         const unitsMax = Math.floor(_class.unitsMax);
 
@@ -123,7 +137,8 @@ export const getFilteredClasses = (
       // Filter by days
       if (currentDays.length > 0) {
         const includesDays = currentDays.some(
-          (day) => _class.primarySection.meetings?.[0]?.days[parseInt(day)]
+          (day) =>
+            _class.primarySection?.meetings?.[0]?.days?.[parseInt(day)] === true
         );
 
         if (!includesDays) {

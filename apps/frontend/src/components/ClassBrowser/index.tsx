@@ -6,8 +6,10 @@ import { useSearchParams } from "react-router-dom";
 
 import {
   Component,
-  GET_CATALOG,
-  GetCatalogResponse,
+  GET_CATALOG_DETAILS,
+  GET_CATALOG_KEYS,
+  GetCatalogDetailsResponse,
+  GetCatalogKeysResponse,
   IClass,
   Semester,
 } from "@/lib/api";
@@ -43,8 +45,8 @@ export default function ClassBrowser({
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [localQuery, setLocalQuery] = useState<string>(
-    () => (persistent ? (searchParams.get("query") ?? "") : "")
+  const [localQuery, setLocalQuery] = useState<string>(() =>
+    persistent ? (searchParams.get("query") ?? "") : ""
   );
   const [localComponents, setLocalComponents] = useState<Component[]>([]);
   const [localUnits, setLocalUnits] = useState<Unit[]>([]);
@@ -54,14 +56,70 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
-    variables: {
-      semester: currentSemester,
-      year: currentYear,
-    },
-  });
+  const { data: lightData, loading: lightLoading } =
+    useQuery<GetCatalogKeysResponse>(GET_CATALOG_KEYS, {
+      variables: {
+        semester: currentSemester,
+        year: currentYear,
+      },
+    });
 
-  const classes = useMemo(() => data?.catalog ?? [], [data]);
+  const { data: detailsData } = useQuery<GetCatalogDetailsResponse>(
+    GET_CATALOG_DETAILS,
+    {
+      variables: {
+        semester: currentSemester,
+        year: currentYear,
+      },
+      skip: !lightData, // Don't fetch until we have the lightweight data
+    }
+  );
+
+  // Merge lightweight and detailed data progressively
+  const classes = useMemo(() => {
+    const base = lightData?.catalog ?? [];
+
+    // If no details yet, just return the base data
+    if (!detailsData?.catalog) {
+      return base as IClass[];
+    }
+
+    // Build a lookup map for efficient merging
+    const detailMap = new Map<string, IClass>();
+    for (const detail of detailsData.catalog) {
+      const key = `${detail.course.subject}-${detail.course.number}-${detail.number}`;
+      detailMap.set(key, detail as IClass);
+    }
+
+    // Merge details into base data
+    return base.map((baseClass) => {
+      const key = `${baseClass.course.subject}-${baseClass.course.number}-${baseClass.number}`;
+      const detail = detailMap.get(key);
+
+      if (!detail) {
+        return baseClass as IClass;
+      }
+
+      // Merge the detailed fields into the base class
+      return {
+        ...baseClass,
+        unitsMax: detail.unitsMax,
+        unitsMin: detail.unitsMin,
+        gradeDistribution: detail.gradeDistribution,
+        course: {
+          ...baseClass.course,
+          gradeDistribution: detail.course?.gradeDistribution,
+        },
+        primarySection: {
+          ...baseClass.primarySection,
+          meetings: detail.primarySection?.meetings,
+          enrollment: detail.primarySection?.enrollment,
+        },
+      } as IClass;
+    });
+  }, [lightData, detailsData]);
+
+  const loading = lightLoading;
 
   const query = localQuery;
 
@@ -181,23 +239,25 @@ export default function ClassBrowser({
         }
 
         if (sortBy === SortBy.OpenSeats) {
-          const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-            enrollment
+          const getOpenSeats = ({ primarySection }: IClass) => {
+            const enrollment = primarySection?.enrollment;
+            return enrollment
               ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
               : 0;
+          };
 
           return getOpenSeats(b) - getOpenSeats(a);
         }
 
         if (sortBy === SortBy.PercentOpenSeats) {
-          const getPercentOpenSeats = ({
-            primarySection: { enrollment },
-          }: IClass) =>
-            enrollment?.latest.maxEnroll
+          const getPercentOpenSeats = ({ primarySection }: IClass) => {
+            const enrollment = primarySection?.enrollment;
+            return enrollment?.latest.maxEnroll
               ? (enrollment.latest.maxEnroll -
                   enrollment.latest.enrolledCount) /
-                enrollment.latest.maxEnroll
+                  enrollment.latest.maxEnroll
               : 0;
+          };
 
           return getPercentOpenSeats(b) - getPercentOpenSeats(a);
         }
