@@ -84,15 +84,20 @@ export default function ClassBrowser({
       return base as IClass[];
     }
 
-    const details = detailsData.catalog;
+    const detailMap = new Map<string, IClass>();
+    for (const detail of detailsData.catalog) {
+      const key = `${detail.course.subject}-${detail.course.number}-${detail.number}`;
+      detailMap.set(key, detail as IClass);
+    }
 
-    return base.map((baseClass, index) => {
-      const detail = details[index];
+    return base.map((baseClass) => {
+      const key = `${baseClass.course.subject}-${baseClass.course.number}-${baseClass.number}`;
+      const detail = detailMap.get(key);
+
       if (!detail) {
         return baseClass as IClass;
       }
 
-      // Merge the detailed fields into the base class
       return {
         ...baseClass,
         unitsMax: detail.unitsMax,
