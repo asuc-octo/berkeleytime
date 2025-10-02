@@ -74,7 +74,9 @@ export function UserSubmittedData() {
               {responses.Attendance === Consensus.Yes && (
                 <>
                   <User className={styles.icon} />
-                  <span className={styles.description}>Attendance Required</span>
+                  <span className={styles.description}>
+                    Attendance Required
+                  </span>
                 </>
               )}
               {responses.Attendance === Consensus.No && (

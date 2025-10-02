@@ -59,7 +59,14 @@ export default function ClassCard({
       {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
       <Card.ColumnHeader>
         <Card.Body>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 8,
+            }}
+          >
             <Card.Heading style={{ marginBottom: 0 }}>
               {subject ?? courseSubject} {courseNumber ?? courseNumber2}{" "}
               <span className={styles.sectionNumber}>#{number}</span>
@@ -84,7 +91,11 @@ export default function ClassCard({
                     onExpandedChange(!expanded);
                   }}
                 >
-                  {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
+                  {expanded ? (
+                    <ArrowUnionVertical />
+                  ) : (
+                    <ArrowSeparateVertical />
+                  )}
                 </Card.ActionIcon>
               )}
               {bookmarked && bookmarkToggle && (
