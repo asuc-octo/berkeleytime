@@ -5,7 +5,7 @@ import { Separator } from "@radix-ui/themes";
 import { Box, Button, Container, Flex, Select } from "@repo/theme";
 
 import DotsIndicator from "../DotsIndicator";
-import styles from "./AddDegree.module.scss";
+import styles from "./AddCollege.module.scss";
 import { Colleges } from "@/lib/api";
 import colleges from "./colleges.json";
 
@@ -72,7 +72,7 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
   };
 
   const CollegeSelect = () => (
-    <div className={styles.degreeSelect}>
+    <div className={styles.collegeSelect}>
       <Select
         options={collegeOptions}
         clearable={true}
@@ -116,11 +116,11 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
                 <p>None Selected</p>
               ) : (
                 <div
-                  className={styles.selectedDegreeList}
+                  className={styles.selectedCollegeList}
                   id={`colleges-list`}
                 >
                   {selectedCollegeList.map((college) => (
-                      <div key={college.value} className={styles.degreeChip}>
+                      <div key={college.value} className={styles.collegeChip}>
                         {college.label}
                         <span
                           className={styles.deleteIcon}

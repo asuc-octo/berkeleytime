@@ -32,7 +32,7 @@
 /* ------ MISC ------*/
 /* ----------------- */
 
-.degree-select {
+.college-select {
     width: 100%;
     text-align: start;
     color: var(--paragraph-color);
@@ -44,7 +44,7 @@
     }
 }
 
-.degree-chip {
+.college-chip {
     display: flex;
     padding: 4px 8px;
     justify-content: center;
@@ -62,7 +62,7 @@
     color: var(--Blue, #2F80ED);
 }
 
-.selected-degree-list {
+.selected-college-list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
