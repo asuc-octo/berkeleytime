@@ -64,35 +64,34 @@
   }
 
   .dropdown {
-      .trigger {
-          background: none;
-          border: none;
-          padding: 0;
-          color: var(--paragraph-color);
-          display: flex; 
-          align-items: center;
-          justify-content: center;
-          width: 20px;
-          height: 8px;
-          opacity: 0; 
-          transition: opacity 0.2s ease;
-          flex-shrink: 0; 
-          transition: all 0.2s ease;
+    .trigger {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--paragraph-color);
+      display: flex; 
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 8px;
+      opacity: 0; 
+      transition: opacity 0.2s ease;
+      flex-shrink: 0; 
+      transition: all 0.2s ease;
 
-          &:hover {
-              color: var(--heading-color); 
-              opacity: 1;
-          }
-
-          &[data-state='open'] {
-              opacity: 1;
-            }
-
-          .more-horiz { 
-              width: 20px; 
-              height: 20px;
-          }
+      &:hover {
+        color: var(--heading-color); 
+        opacity: 1;
       }
+
+      &[data-state='open'] {
+        opacity: 1;
+      }
+
+      .more-horiz { 
+        cursor: pointer;
+      }
+    }
   }
 
   
@@ -100,7 +99,7 @@
 }
 
 .menu-icon {
-    width: 12px;
-    height: 12px;
-    margin-right: 6px;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
 }

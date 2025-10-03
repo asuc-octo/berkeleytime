@@ -16,6 +16,7 @@ import { initialize } from "@/components/CourseSearch/browser";
 import {
   useCreateNewPlanTerm,
   useEditPlan,
+  useEditPlanTerm,
   useReadPlan,
   useReadUser,
 } from "@/hooks/api";
@@ -27,6 +28,7 @@ import {
   ISelectedCourse,
   PlanInput,
   PlanTermInput,
+  Status,
   Colleges
 } from "@/lib/api";
 
@@ -99,6 +101,7 @@ export default function Dashboard() {
   const [colleges, setColleges] = useState<Colleges[]>([]);
 
   const [editPlan] = useEditPlan();
+  const [editPlanTerm] = useEditPlanTerm();
 
   const selectedDegreeStrings = useMemo(() => {
     return gradTrak?.majors || [];
@@ -197,9 +200,58 @@ export default function Dashboard() {
     }
   };
 
-  const planTerms = useMemo(() => {
-    return localPlanTerms;
-  }, [localPlanTerms]);
+  // Helper functions to update both local state and backend
+  const handleUpdateTermName = async (termId: string, name: string) => {
+    const updatedPlanTerms = [...localPlanTerms];
+    const termIndex = updatedPlanTerms.findIndex((term) => term._id === termId);
+    if (termIndex !== -1) {
+      updatedPlanTerms[termIndex].name = name;
+      setLocalPlanTerms(updatedPlanTerms);
+
+      try {
+        await editPlanTerm(termId, { name });
+      } catch (error) {
+        console.error("Error updating term name:", error);
+        // Revert local state on error
+        setLocalPlanTerms(localPlanTerms);
+      }
+    }
+  };
+
+  const handleTogglePin = async (termId: string) => {
+    const updatedPlanTerms = [...localPlanTerms];
+    const termIndex = updatedPlanTerms.findIndex((term) => term._id === termId);
+    if (termIndex !== -1) {
+      const newPinned = !updatedPlanTerms[termIndex].pinned;
+      updatedPlanTerms[termIndex].pinned = newPinned;
+      setLocalPlanTerms(updatedPlanTerms);
+
+      try {
+        await editPlanTerm(termId, { pinned: newPinned });
+      } catch (error) {
+        console.error("Error toggling pin:", error);
+        // Revert local state on error
+        setLocalPlanTerms(localPlanTerms);
+      }
+    }
+  };
+
+  const handleSetStatus = async (termId: string, status: Status) => {
+    const updatedPlanTerms = [...localPlanTerms];
+    const termIndex = updatedPlanTerms.findIndex((term) => term._id === termId);
+    if (termIndex !== -1) {
+      updatedPlanTerms[termIndex].status = status;
+      setLocalPlanTerms(updatedPlanTerms);
+
+      try {
+        await editPlanTerm(termId, { status });
+      } catch (error) {
+        console.error("Error setting status:", error);
+        // Revert local state on error
+        setLocalPlanTerms(localPlanTerms);
+      }
+    }
+  };
 
   const updateLabels = (labels: ILabel[]) => {
     setLocalLabels(labels);
@@ -312,11 +364,11 @@ export default function Dashboard() {
   );
 
   useEffect(() => {
-    if (planTerms && planTerms.length > 0) {
-      const convertedSemesters = convertPlanTermsToSemesters(planTerms);
+    if (localPlanTerms && localPlanTerms.length > 0) {
+      const convertedSemesters = convertPlanTermsToSemesters(localPlanTerms);
       setAllSemesters(convertedSemesters);
     }
-  }, [planTerms, convertPlanTermsToSemesters]);
+  }, [localPlanTerms, convertPlanTermsToSemesters]);
 
   const totalUnits = Object.values(semesterTotals).reduce(
     (sum, units) => sum + units,
@@ -428,28 +480,42 @@ export default function Dashboard() {
         )}
         <div className={styles.semesterBlocks}>
           <div className={styles.semesterLayout} data-layout={settings.layout}>
-            {planTerms &&
-              planTerms.map((term) => (
-                <SemesterBlock
-                  key={term._id}
-                  planTerm={term}
-                  onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
-                    updateTotalUnits(
-                      term.name ? term.name : "",
-                      newTotal,
-                      pnpUnits,
-                      transferUnits
-                    )
-                  }
-                  allSemesters={allSemesters}
-                  updateAllSemesters={updateAllSemesters}
-                  settings={settings}
-                  labels={localLabels}
-                  setShowLabelMenu={setShowLabelMenu}
-                  catalogCourses={catalogCourses}
-                  index={index}
-                />
-              ))}
+            {localPlanTerms &&
+              [...localPlanTerms]
+                .sort((a, b) => {
+                  // Pinned terms first, then by existing order
+                  if (a.pinned && !b.pinned) return -1;
+                  if (!a.pinned && b.pinned) return 1;
+                  return 0;
+                })
+                .map((term) => (
+                  <SemesterBlock
+                    key={term._id}
+                    planTerm={term}
+                    onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
+                      updateTotalUnits(
+                        term.name ? term.name : "",
+                        newTotal,
+                        pnpUnits,
+                        transferUnits
+                      )
+                    }
+                    allSemesters={allSemesters}
+                    updateAllSemesters={updateAllSemesters}
+                    settings={settings}
+                    labels={localLabels}
+                    setShowLabelMenu={setShowLabelMenu}
+                    catalogCourses={catalogCourses}
+                    index={index}
+                    handleUpdateTermName={(name) =>
+                      handleUpdateTermName(term._id, name)
+                    }
+                    handleTogglePin={() => handleTogglePin(term._id)}
+                    handleSetStatus={(status: Status) =>
+                      handleSetStatus(term._id, status)
+                    }
+                  />
+                ))}
           </div>
         </div>
       </div>

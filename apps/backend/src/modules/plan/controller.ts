@@ -22,10 +22,14 @@ import { formatPlan, formatPlanTerm } from "./formatter";
 // Helper functions for chronological insertion
 function getTermOrder(term: string): number {
   switch (term) {
-    case 'Spring': return 1;
-    case 'Summer': return 2;
-    case 'Fall': return 3;
-    default: return 0;
+    case "Spring":
+      return 1;
+    case "Summer":
+      return 2;
+    case "Fall":
+      return 3;
+    default:
+      return 0;
   }
 }
 
@@ -39,7 +43,10 @@ function findInsertionIndex(planTerms: any[], newTerm: any): number {
       if (getTermOrder(newTerm.term) < getTermOrder(currentTerm.term)) {
         return i;
       }
-      if (getTermOrder(newTerm.term) === getTermOrder(currentTerm.term) && newTerm.name < currentTerm.name) {
+      if (
+        getTermOrder(newTerm.term) === getTermOrder(currentTerm.term) &&
+        newTerm.name < currentTerm.name
+      ) {
         return i;
       }
     }
@@ -78,6 +85,7 @@ export async function removePlanTerm(
     throw new Error("PlanTerm does not exist in user's plan");
   }
   gt.planTerms.splice(planTermIndex, 1);
+  console.log(planTermIndex, gt.planTerms);
   await gt.save();
 
   return planTermID;

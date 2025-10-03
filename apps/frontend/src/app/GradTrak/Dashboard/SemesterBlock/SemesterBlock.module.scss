@@ -121,6 +121,20 @@ body:not([data-theme]) {
             align-items: baseline;
             gap: 8px;
 
+            .pin {
+              position: relative;
+              top: 2px;
+              cursor: pointer;
+            }
+
+            .status {
+              display: inline-block;
+              width: 7px;
+              height: 7px;
+              border-radius: 7px;
+              background-color: var(--green-500);
+            }
+
             .counter {
                 background-color: var(--button-active-color);
                 color: var(--heading-color);
@@ -154,4 +168,27 @@ body:not([data-theme]) {
             }
         }
     }
+}
+
+.dropdown-content {
+  width: 500px;
+}
+.menu-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+}
+.right-aligned-icon {
+  position: relative;
+  left: 60px;
+}
+.menuStatusColor {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 6px;
+  margin-right: 8px;
+}
+.status-selected {
+  color: var(--blue-500);
 }

@@ -238,6 +238,16 @@ export interface PlanTermInput {
   status: Status;
 }
 
+export interface EditPlanTermInput {
+  name?: string;
+  year?: number;
+  term?: Terms;
+  courses?: SelectedCourseInput[];
+  hidden?: boolean;
+  status?: Status;
+  pinned?: boolean;
+}
+
 export interface EditPlanResponse {
   editPlan: IPlan;
 }
@@ -308,5 +318,38 @@ export const CREATE_NEW_PLAN_TERM = gql`
 export const REMOVE_PLAN_TERM_BY_ID = gql`
   mutation RemovePlanTermByID($removePlanTermByIdId: ID!) {
     removePlanTermByID(id: $removePlanTermByIdId)
+  }
+`;
+
+export interface EditPlanTermResponse {
+  editPlanTerm: IPlanTerm;
+}
+
+export const EDIT_PLAN_TERM = gql`
+  mutation EditPlanTerm($id: ID!, $planTerm: EditPlanTermInput!) {
+    editPlanTerm(id: $id, planTerm: $planTerm) {
+      _id
+      name
+      userEmail
+      year
+      term
+      courses {
+        courseID
+        courseName
+        courseTitle
+        courseUnits
+        uniReqs
+        collegeReqs
+        pnp
+        transfer
+        labels {
+          name
+          color
+        }
+      }
+      hidden
+      status
+      pinned
+    }
   }
 `;

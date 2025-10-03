@@ -107,8 +107,7 @@ export default function OnboardingSetup({
                 </Flex>
               </Flex>
 
-              <Flex className={styles.filter}>
-              </Flex>
+              <Flex className={styles.filter}></Flex>
             </Flex>
 
             {/* Next Button */}
