@@ -3,15 +3,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SuspenseBoundary from "@/components/SuspenseBoundary";
-import { useCreatePlan } from "@/hooks/api";
-import { Colleges, DegreeOption } from "@/lib/api";
+import { useCreatePlan, useReadUser } from "@/hooks/api";
+import { Colleges, DegreeOption, signIn } from "@/lib/api";
 
-import AddDegree from "./AddDegree";
 import AddColleges from "./AddColleges";
+import AddDegree from "./AddDegree";
 import styles from "./Onboarding.module.scss";
 import OnboardingSetup from "./OnboardingSetUp";
 
 export default function GradTrakOnboarding() {
+  const { data: user, loading: userLoading } = useReadUser();
+
   const [step, setStep] = useState(0);
   const [startYear, setStartYear] = useState("");
   const [gradYear, setGradYear] = useState("");
@@ -23,10 +25,12 @@ export default function GradTrakOnboarding() {
   const [selectedColleges, setSelectedColleges] = useState<Colleges[]>([]);
   const [, setSelectedMinors] = useState<DegreeOption[]>([]);
 
-  const handleSetupComplete = (
-    start: string,
-    grad: string,
-  ) => {
+  if (!user && !userLoading) {
+    signIn();
+    return <></>;
+  }
+
+  const handleSetupComplete = (start: string, grad: string) => {
     setStartYear(start);
     setGradYear(grad);
     setStep(1);
@@ -71,9 +75,7 @@ export default function GradTrakOnboarding() {
             gradYear={gradYear}
           />
         )}
-        {step === 1 && (
-          <AddColleges onNext={handleCollegesComplete} />
-        )}
+        {step === 1 && <AddColleges onNext={handleCollegesComplete} />}
         {step === 2 && (
           <AddDegree isMajor={true} onNext={handleMajorsComplete} />
         )}
