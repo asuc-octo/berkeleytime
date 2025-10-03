@@ -193,8 +193,8 @@ export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
               </Button>
             </Flex>
 
-            {isMajor && <DotsIndicator currentPage={1} totalPages={3} />}
-            {!isMajor && <DotsIndicator currentPage={2} totalPages={3} />}
+            {isMajor && <DotsIndicator currentPage={2} totalPages={4} />}
+            {!isMajor && <DotsIndicator currentPage={3} totalPages={4} />}
           </Flex>
         </div>
       </Container>

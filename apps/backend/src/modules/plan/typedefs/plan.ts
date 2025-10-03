@@ -111,7 +111,7 @@ const typeDef = gql`
     minors: [String!]!
     created: String!
     revised: String!
-    college: Colleges!
+    colleges: [Colleges!]!
     labels: [Label!]!
     """
     Requirements manually satisfied
@@ -173,7 +173,7 @@ const typeDef = gql`
   }
 
   input PlanInput {
-    college: Colleges
+    colleges: [Colleges!]
     majors: [String!]
     minors: [String!]
     majorReqs: [MajorReqInput!]
@@ -214,7 +214,7 @@ const typeDef = gql`
     Takes in user's email, a college, majors, and minors, creates a new Plan record in the database, and returns the Plan
     """
     createNewPlan(
-      college: Colleges!
+      colleges: [Colleges!]!
       startYear: Int!
       endYear: Int!
       majors: [String!]!

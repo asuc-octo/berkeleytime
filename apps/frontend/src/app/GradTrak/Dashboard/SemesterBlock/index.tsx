@@ -603,6 +603,7 @@ function SemesterBlock({
                   handleDetails={handleClassDetails}
                   handleDelete={handleDeleteClass}
                   settings={settings}
+                  labels={labels}
                 />
               </React.Fragment>
             ))}

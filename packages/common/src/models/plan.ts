@@ -140,10 +140,9 @@ export const planSchema = new Schema(
       type: [String!],
       required: true,
     },
-    college: {
-      type: String,
+    colleges: {
+      type: [String!],
       required: true,
-      trim: true,
     },
     majorReqs: {
       type: [majorReqSchema],
@@ -206,7 +205,7 @@ export interface PlanType extends Document {
   majorReqs: MajorReqType[];
   createdAt: Date;
   updatedAt: Date;
-  college: string;
+  colleges: string[];
   labels: LabelType[];
   uniReqsSatisfied: string[];
   collegeReqsSatisfied: string[];

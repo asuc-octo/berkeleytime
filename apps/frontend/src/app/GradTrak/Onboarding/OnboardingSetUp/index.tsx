@@ -119,7 +119,7 @@ export default function OnboardingSetup({
               Next
             </Button>
 
-            <DotsIndicator currentPage={0} totalPages={3} />
+            <DotsIndicator currentPage={0} totalPages={4} />
           </Flex>
         </div>
       </Container>

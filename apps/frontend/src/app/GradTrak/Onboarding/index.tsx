@@ -3,14 +3,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SuspenseBoundary from "@/components/SuspenseBoundary";
-import { useCreatePlan } from "@/hooks/api";
-import { Colleges, DegreeOption } from "@/lib/api";
+import { useCreatePlan, useReadUser } from "@/hooks/api";
+import { Colleges, DegreeOption, signIn } from "@/lib/api";
 
+import AddColleges from "./AddColleges";
 import AddDegree from "./AddDegree";
 import styles from "./Onboarding.module.scss";
 import OnboardingSetup from "./OnboardingSetUp";
 
 export default function GradTrakOnboarding() {
+  const { data: user, loading: userLoading } = useReadUser();
+
   const [step, setStep] = useState(0);
   const [startYear, setStartYear] = useState("");
   const [gradYear, setGradYear] = useState("");
@@ -19,7 +22,13 @@ export default function GradTrakOnboarding() {
   const [createPlan] = useCreatePlan();
 
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
+  const [selectedColleges, setSelectedColleges] = useState<Colleges[]>([]);
   const [, setSelectedMinors] = useState<DegreeOption[]>([]);
+
+  if (!user && !userLoading) {
+    signIn();
+    return <></>;
+  }
 
   const handleSetupComplete = (start: string, grad: string) => {
     setStartYear(start);
@@ -27,15 +36,20 @@ export default function GradTrakOnboarding() {
     setStep(1);
   };
 
+  const handleCollegesComplete = (colleges: Colleges[]) => {
+    setSelectedColleges(colleges);
+    setStep(2);
+  };
+
   const handleMajorsComplete = (majors: DegreeOption[]) => {
     setSelectedMajors(majors);
-    setStep(2);
+    setStep(3);
   };
 
   const handleMinorsComplete = async (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
     const { data } = await createPlan(
-      Colleges.LnS,
+      selectedColleges,
       selectedMajors.map((m) => m.value),
       minors.map((m) => m.value),
       parseInt(startYear, 10),
@@ -61,10 +75,11 @@ export default function GradTrakOnboarding() {
             gradYear={gradYear}
           />
         )}
-        {step === 1 && (
+        {step === 1 && <AddColleges onNext={handleCollegesComplete} />}
+        {step === 2 && (
           <AddDegree isMajor={true} onNext={handleMajorsComplete} />
         )}
-        {step === 2 && (
+        {step === 3 && (
           <AddDegree isMajor={false} onNext={handleMinorsComplete} />
         )}
       </SuspenseBoundary>

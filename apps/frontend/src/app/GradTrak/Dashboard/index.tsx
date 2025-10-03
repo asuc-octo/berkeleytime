@@ -29,7 +29,9 @@ import {
   PlanInput,
   PlanTermInput,
   Status,
+  Colleges
 } from "@/lib/api";
+
 import { convertStringsToRequirementEnum } from "@/lib/course";
 
 import AddBlockMenu from "./AddBlockMenu";
@@ -96,6 +98,7 @@ export default function Dashboard() {
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
   const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const [colleges, setColleges] = useState<Colleges[]>([]);
 
   const [editPlan] = useEditPlan();
   const [editPlanTerm] = useEditPlanTerm();
@@ -109,6 +112,12 @@ export default function Dashboard() {
   }, [gradTrak?.minors]);
 
   useEffect(() => {
+    if (gradTrak?.colleges) {
+      setColleges(gradTrak.colleges.map((college) => college as Colleges));
+    }
+  }, [gradTrak?.colleges]);
+  
+  useEffect(() => {
     if (gradTrak?.labels) {
       setLocalLabels(gradTrak.labels);
     }
@@ -116,24 +125,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (gradTrak?.planTerms) {
-      const cleanedPlanTerms = gradTrak.planTerms.map((term) => ({
-        ...term,
-        courses: term.courses.map((course) => ({
-          ...course,
-          labels: course.labels.filter((label) =>
-            localLabels.some(
-              (validLabel) =>
-                validLabel.name === label.name &&
-                validLabel.color === label.color
-            )
-          ),
-        })),
-      }));
-      setLocalPlanTerms(cleanedPlanTerms);
+      setLocalPlanTerms(gradTrak.planTerms);
     } else {
       setLocalPlanTerms([]);
     }
-  }, [gradTrak?.planTerms, localLabels]);
+  }, [gradTrak?.planTerms]);
 
   // helper functions for adding new block in right order
   const getTermOrder = (term: string) => {
@@ -407,6 +403,7 @@ export default function Dashboard() {
     <div className={styles.root}>
       <div className={styles.panel}>
         <SidePanel
+          colleges={colleges}
           majors={currentUserInfo ? currentUserInfo.majors : []}
           minors={currentUserInfo ? currentUserInfo.minors : []}
           totalUnits={totalUnits}

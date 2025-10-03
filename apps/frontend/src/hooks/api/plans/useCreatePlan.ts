@@ -77,7 +77,7 @@ export const useCreatePlan = () => {
 
   const createPlan = useCallback(
     async (
-      college: Colleges,
+      colleges: Colleges[],
       majors: string[],
       minors: string[],
       startYear: number,
@@ -87,7 +87,7 @@ export const useCreatePlan = () => {
 
       return await mutate({
         variables: {
-          college: college,
+          colleges: colleges,
           majors: majors,
           minors: minors,
           startYear: startYear,

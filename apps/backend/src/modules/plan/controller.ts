@@ -190,7 +190,7 @@ export async function setClasses(
 
 // create a new plan
 export async function createPlan(
-  college: Colleges,
+  colleges: Colleges[],
   majors: string[],
   minors: string[],
   startYear: number,
@@ -273,7 +273,7 @@ export async function createPlan(
     majors: majors,
     minors: minors,
     majorReqs: [],
-    college: college,
+    colleges: colleges,
     labels: [],
     uniReqsSatisfied: [],
     collegeReqsSatisfied: [],
@@ -288,8 +288,8 @@ export async function editPlan(plan: PlanInput, context: any): Promise<Plan> {
     throw new Error("No Plan found for this user");
   }
 
-  if (plan.college != null) {
-    gt.college = plan.college;
+  if (plan.colleges != null) {
+    gt.colleges = plan.colleges;
   }
   if (plan.majors != null) {
     gt.majors = plan.majors;
