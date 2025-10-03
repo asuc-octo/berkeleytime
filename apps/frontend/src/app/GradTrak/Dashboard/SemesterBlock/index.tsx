@@ -1,13 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import Fuse from "fuse.js";
-import { BookStack, Edit, Eye, List, Menu, MoreHoriz, NavArrowDown, NavArrowRight, Pin, ShareIos, Trash } from "iconoir-react";
+import {
+  Check,
+  Edit,
+  List,
+  MoreHoriz,
+  NavArrowDown,
+  NavArrowRight,
+  Pin,
+  PinSolid,
+  Trash,
+} from "iconoir-react";
 
-import { Button, DropdownMenu, Flex } from "@repo/theme";
+import { Box, Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
+import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
 import { ISelectedCourse } from "@/lib/api";
-import { ILabel, IPlanTerm } from "@/lib/api/plans";
+import { ILabel, IPlanTerm, Status, Terms } from "@/lib/api/plans";
 
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
@@ -26,6 +37,9 @@ interface SemesterBlockProps {
   setShowLabelMenu: (v: boolean) => void;
   catalogCourses: SelectedCourse[];
   index: Fuse<{ title: string; name: string; alternateNames: string[] }> | null;
+  handleUpdateTermName: (name: string) => void;
+  handleTogglePin: () => void;
+  handleSetStatus: (status: Status) => void;
 }
 
 function SemesterBlock({
@@ -38,6 +52,9 @@ function SemesterBlock({
   setShowLabelMenu,
   catalogCourses,
   index,
+  handleUpdateTermName,
+  handleTogglePin,
+  handleSetStatus,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -55,6 +72,8 @@ function SemesterBlock({
 
   const [setCourses] = useSetSelectedCourses();
   const [getCourseUnits] = useReadCourseUnits();
+
+  const [rename, setRename] = useState(planTerm.name);
 
   useEffect(() => {
     const total = selectedClasses.reduce(
@@ -324,6 +343,8 @@ function SemesterBlock({
     }
   };
 
+  const [removePlanTermByID] = useRemovePlanTermByID();
+
   return (
     <div
       ref={containerRef}
@@ -335,8 +356,24 @@ function SemesterBlock({
       <div className={styles.body} data-layout={settings.layout}>
         <Flex direction="row" justify="between" width="100%">
           <div className={styles.semesterCounter}>
+            {planTerm.pinned && (
+              <PinSolid className={styles.pin} onClick={handleTogglePin} />
+            )}
             <h2>{planTerm.name}</h2>
             <p className={styles.counter}>{totalUnits}</p>
+            {planTerm.status !== Status.None && (
+              <span
+                className={styles.status}
+                style={{
+                  backgroundColor:
+                    planTerm.status === Status.Complete
+                      ? "var(--emerald-500)"
+                      : planTerm.status == Status.InProgress
+                        ? "var(--yellow-500)"
+                        : "var(--gray-500)",
+                }}
+              />
+            )}
           </div>
           <Flex direction="row" gap="6px">
             <div className={styles.dropdown}>
@@ -344,35 +381,132 @@ function SemesterBlock({
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
                 </DropdownMenu.Trigger>
-                {/* <DropdownMenu.Content sideOffset={5} align="end" style={{width: "190px"}}> For scheduler feature */}
-                <DropdownMenu.Content sideOffset={5} align="end">
-                  <DropdownMenu.Item onClick={() => {}}>
-                    <Edit className={styles.menuIcon} /> Rename
-                  </DropdownMenu.Item>
+                <DropdownMenu.Content
+                  sideOffset={5}
+                  align="end"
+                  style={{ width: "160px" }}
+                >
+                  {planTerm.term === Terms.Misc && (
+                    <DropdownMenu.Sub>
+                      <DropdownMenu.SubTrigger onClick={() => {}}>
+                        <Edit className={styles.menuIcon} /> Rename
+                        <NavArrowRight
+                          className={styles.rightAlignedIcon}
+                          style={{ left: "48px" }}
+                        />
+                      </DropdownMenu.SubTrigger>
+                      <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
+                        <Box width="200px" height="70px">
+                          <Flex
+                            direction="column"
+                            justify="between"
+                            height="100%"
+                          >
+                            <Input
+                              placeholder={"Name your column..."}
+                              value={rename}
+                              onChange={(v) => setRename(v.target.value)}
+                            />
+                            <Flex
+                              direction="row"
+                              justify="end"
+                              gap="5px"
+                              width="100%"
+                            >
+                              <Button
+                                onClick={() => {
+                                  handleUpdateTermName(rename);
+                                }}
+                              >
+                                Save
+                              </Button>
+                            </Flex>
+                          </Flex>
+                        </Box>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Sub>
+                  )}
                   <DropdownMenu.Sub>
                     <DropdownMenu.SubTrigger>
                       <List className={styles.menuIcon} /> Status
                       <NavArrowRight className={styles.rightAlignedIcon} />
                     </DropdownMenu.SubTrigger>
-                    <DropdownMenu.Portal>
-                      <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
-                        <DropdownMenu.Item>
-                          <span className={styles.menuStatusColor} style={{backgroundColor: "var(--emerald-500)"}}/>Complete
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <span className={styles.menuStatusColor} style={{backgroundColor: "var(--yellow-500)"}}/>In Progress
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item>
-                          <span className={styles.menuStatusColor} style={{backgroundColor: "var(--gray-500)"}}/>Incomplete
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item>
+                    <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
+                      <DropdownMenu.Item
+                        onClick={() => {
+                          handleSetStatus(Status.Complete);
+                        }}
+                      >
+                        <Flex direction="row" justify="between" width="100%">
+                          <span>
+                            <span
+                              className={styles.menuStatusColor}
+                              style={{ backgroundColor: "var(--emerald-500)" }}
+                            />
+                            Complete
+                          </span>
+                          {planTerm.status === Status.Complete && (
+                            <Check className={styles.statusSelected} />
+                          )}
+                        </Flex>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        onClick={() => {
+                          handleSetStatus(Status.InProgress);
+                        }}
+                      >
+                        <Flex direction="row" justify="between" width="100%">
+                          <span>
+                            <span
+                              className={styles.menuStatusColor}
+                              style={{ backgroundColor: "var(--yellow-500)" }}
+                            />
+                            In Progress
+                          </span>
+                          {planTerm.status === Status.InProgress && (
+                            <Check className={styles.statusSelected} />
+                          )}
+                        </Flex>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        onClick={() => {
+                          handleSetStatus(Status.Incomplete);
+                        }}
+                      >
+                        <Flex direction="row" justify="between" width="100%">
+                          <span>
+                            <span
+                              className={styles.menuStatusColor}
+                              style={{ backgroundColor: "var(--gray-500)" }}
+                            />
+                            Incomplete
+                          </span>
+                          {planTerm.status === Status.Incomplete && (
+                            <Check className={styles.statusSelected} />
+                          )}
+                        </Flex>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        onClick={() => {
+                          handleSetStatus(Status.None);
+                        }}
+                      >
+                        <Flex direction="row" justify="between" width="100%">
                           None
-                        </DropdownMenu.Item>
-                      </DropdownMenu.SubContent>
-                    </DropdownMenu.Portal>
+                          {planTerm.status === Status.None && (
+                            <Check className={styles.statusSelected} />
+                          )}
+                        </Flex>
+                      </DropdownMenu.Item>
+                    </DropdownMenu.SubContent>
                   </DropdownMenu.Sub>
-                  <DropdownMenu.Item onClick={() => {}}>
-                    <Pin className={styles.menuIcon} /> Pin
+                  <DropdownMenu.Item onClick={handleTogglePin}>
+                    {planTerm.pinned ? (
+                      <PinSolid className={styles.menuIcon} />
+                    ) : (
+                      <Pin className={styles.menuIcon} />
+                    )}{" "}
+                    Pin
                   </DropdownMenu.Item>
                   {/* <DropdownMenu.Item onClick={() => {}}>
                     <ShareIos className={styles.menuIcon} /> Export to Scheduler
@@ -380,8 +514,13 @@ function SemesterBlock({
                   {/* <DropdownMenu.Item onClick={() => {}}>
                     <Eye className={styles.menuIcon} /> Hide
                   </DropdownMenu.Item> */}
-                  <DropdownMenu.Item onClick={() => {}} isDelete>
-                    <Trash className={styles.menuIcon} /> Delete Class
+                  <DropdownMenu.Item
+                    onClick={() => {
+                      removePlanTermByID(planTerm._id);
+                    }}
+                    isDelete
+                  >
+                    <Trash className={styles.menuIcon} /> Delete Column
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>

@@ -3,12 +3,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+import { useCreatePlan } from "@/hooks/api";
+import { Colleges, DegreeOption } from "@/lib/api";
 
 import AddDegree from "./AddDegree";
 import styles from "./Onboarding.module.scss";
 import OnboardingSetup from "./OnboardingSetUp";
-import { useCreatePlan } from "@/hooks/api";
-import { Colleges, DegreeOption } from "@/lib/api";
 
 export default function GradTrakOnboarding() {
   const [step, setStep] = useState(0);
@@ -21,10 +21,7 @@ export default function GradTrakOnboarding() {
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
   const [, setSelectedMinors] = useState<DegreeOption[]>([]);
 
-  const handleSetupComplete = (
-    start: string,
-    grad: string,
-  ) => {
+  const handleSetupComplete = (start: string, grad: string) => {
     setStartYear(start);
     setGradYear(grad);
     setStep(1);
@@ -37,8 +34,14 @@ export default function GradTrakOnboarding() {
 
   const handleMinorsComplete = async (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
-    const { data } = await createPlan(Colleges.LnS, selectedMajors.map((m) => m.value), minors.map((m) => m.value), parseInt(startYear, 10), parseInt(gradYear, 10));
-    console.log(data)
+    const { data } = await createPlan(
+      Colleges.LnS,
+      selectedMajors.map((m) => m.value),
+      minors.map((m) => m.value),
+      parseInt(startYear, 10),
+      parseInt(gradYear, 10)
+    );
+    console.log(data);
     navigate(`/gradtrak/dashboard`, {
       state: {
         planTerms: data ? data.createNewPlan.planTerms : [],
