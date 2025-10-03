@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Check, MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 
-import { useEditPlanReqs } from "@/hooks/api";
+import { useEditPlan } from "@/hooks/api";
 import { CollegeReqs, PlanInput, UniReqs } from "@/lib/api/plans";
 import { RequirementEnum, convertRequirementEnumToStrings } from "@/lib/course";
 
@@ -30,7 +30,7 @@ export default function RequirementsAccordion({
   const [activeMenuRequirement, setActiveMenuRequirement] =
     useState<RequirementEnum | null>(null);
 
-  const [editPlanReqs] = useEditPlanReqs();
+  const [editPlan] = useEditPlan();
 
   const updateRequirements = (reqs: Set<RequirementEnum>) => {
     const oldReqs = fulfilledRequirements;
@@ -43,7 +43,7 @@ export default function RequirementsAccordion({
       } else {
         plan["collegeReqsSatisfied"] = tmp.map((req) => req as CollegeReqs);
       }
-      editPlanReqs(plan);
+      editPlan(plan);
     } catch (error) {
       console.error("Failed to save requirements:", error);
       setFulfilledRequirements(oldReqs);

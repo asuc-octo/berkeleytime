@@ -3,16 +3,15 @@ import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   Barcode,
-  Calendar,
   Hashtag,
   MultiplePages,
   TaskList,
   Xmark,
 } from "iconoir-react";
 
-import { Button } from "@repo/theme";
+import { Box, Button, Color, Select } from "@repo/theme";
 
-import { ISelectedCourse } from "@/lib/api";
+import { ILabel, ISelectedCourse } from "@/lib/api";
 
 import styles from "./ClassDetails.module.scss";
 
@@ -22,6 +21,8 @@ interface ClassDetailsProps {
   classData?: ISelectedCourse;
   onUpdate?: (updatedClass: ISelectedCourse) => void;
   onConfirm?: (newClass: ISelectedCourse) => void;
+  allLabels: ILabel[];
+  setShowLabelMenu: (v: boolean) => void;
 }
 
 const ClassDetails = ({
@@ -30,6 +31,8 @@ const ClassDetails = ({
   classData,
   onUpdate,
   onConfirm,
+  allLabels,
+  setShowLabelMenu,
 }: ClassDetailsProps) => {
   const isEditMode = !!classData;
 
@@ -38,15 +41,20 @@ const ClassDetails = ({
   const [classTitle, setClassTitle] = useState(classData?.courseTitle || "");
   const [units, setUnits] = useState(classData?.courseUnits || 0);
   const [semester] = useState("Coming Soon");
-  const [pnp, setPnp] = useState(classData ? classData.pnp : false);
-  const [transfer, setTransfer] = useState(
-    classData ? classData.transfer : false
+  const [pnp, setPnp] = useState(classData?.pnp || false);
+  const [transfer, setTransfer] = useState(classData?.transfer || false);
+  const [labels, setLabels] = useState(
+    classData?.labels.map((l) => {
+      return {
+        name: l.name,
+        color: l.color,
+      };
+    }) ?? []
   );
-  // const [requirements, setRequirements] = useState<string[]>([]);
 
   // Update state when classData changes
   useEffect(() => {
-    if (isEditMode) {
+    if (classData && isEditMode) {
       setClassId(classData!.courseID);
       setClassName(classData!.courseName);
       setClassTitle(classData!.courseTitle);
@@ -73,11 +81,20 @@ const ClassDetails = ({
       collegeReqs: [],
       pnp: pnp,
       transfer: transfer,
-      labels: [],
+      labels: labels
+        .filter((l) =>
+          allLabels.some(
+            (availableLabel) =>
+              availableLabel.name === l.name && availableLabel.color === l.color
+          )
+        )
+        .map((l) => {
+          return {
+            name: l.name,
+            color: l.color,
+          };
+        }),
     };
-    ``;
-    console.log(updatedClass);
-
     if (isEditMode && onUpdate) {
       onUpdate(updatedClass);
     } else if (!isEditMode && onConfirm) {
@@ -157,12 +174,42 @@ const ClassDetails = ({
 
             <section className={styles.section}>
               <h3>Course tags</h3>
-              <div className={styles.container}>
-                <div className={styles.icon}>
-                  <Calendar />
-                </div>
-                <input type="text" value={semester} readOnly />
-              </div>
+              <Box style={{ minWidth: "100%" }}>
+                <Select
+                  multi
+                  checkboxMulti
+                  addOption={{
+                    text: "Create New Label",
+                    onClick: () => {
+                      setShowLabelMenu(true);
+                    },
+                  }}
+                  value={(() => {
+                    const filteredLabels = labels.filter((l) =>
+                      allLabels.some(
+                        (availableLabel) =>
+                          availableLabel.name === l.name &&
+                          availableLabel.color === l.color
+                      )
+                    );
+                    return filteredLabels.length > 0 ? filteredLabels : null;
+                  })()}
+                  onChange={(vs) => {
+                    if (!vs) setLabels([]);
+                    if (Array.isArray(vs)) setLabels(vs);
+                  }}
+                  options={allLabels.map((l) => {
+                    return {
+                      value: {
+                        name: l.name,
+                        color: l.color,
+                      },
+                      label: l.name,
+                      color: l.color as Color,
+                    };
+                  })}
+                />
+              </Box>
             </section>
 
             <section className={styles.section}>
