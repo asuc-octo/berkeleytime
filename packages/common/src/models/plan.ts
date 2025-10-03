@@ -10,7 +10,7 @@ export const labelSchema = new Schema({
     type: String,
     required: true,
     trim: true,
-  }
+  },
 });
 
 export const selectedCourseSchema = new Schema({
@@ -54,47 +54,45 @@ export const selectedCourseSchema = new Schema({
   labels: {
     type: [labelSchema],
     required: true,
-  }
+  },
 });
 
-export const planTermSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    courses: {
-      type: [selectedCourseSchema],
-      required: true,
-    },
-    userEmail: {
-      type: String,
-      required: true,
-    },
-    year: {
-      type: Number,
-      required: true,
-    },
-    term: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    hidden: {
-      type: Boolean,
-      required: true,
-    },
-    status: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    pinned: {
-      type: Boolean,
-      required: true,
-    },
-  }
-);
+export const planTermSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  courses: {
+    type: [selectedCourseSchema],
+    required: true,
+  },
+  userEmail: {
+    type: String,
+    required: true,
+  },
+  year: {
+    type: Number,
+    required: true,
+  },
+  term: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  hidden: {
+    type: Boolean,
+    required: true,
+  },
+  status: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  pinned: {
+    type: Boolean,
+    required: true,
+  },
+});
 
 export const majorReqSchema = new Schema({
   name: {
@@ -118,8 +116,8 @@ export const majorReqSchema = new Schema({
   },
   isMinor: {
     type: Boolean,
-    required: false
-  }
+    required: false,
+  },
 });
 
 export const planSchema = new Schema(
@@ -164,19 +162,26 @@ export const planSchema = new Schema(
       type: [String],
       required: true,
       trim: true,
-    }
+    },
   },
   { timestamps: true }
 );
 
-export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> & Document;
-export const SelectedCourseModel = mongoose.model<SelectedCourseType>('course', selectedCourseSchema);
+export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> &
+  Document;
+export const SelectedCourseModel = mongoose.model<SelectedCourseType>(
+  "course",
+  selectedCourseSchema
+);
 
 export type MajorReqType = Document & InferSchemaType<typeof majorReqSchema>;
-export const MajorReqModel = mongoose.model<MajorReqType>('majorReq', majorReqSchema);
+export const MajorReqModel = mongoose.model<MajorReqType>(
+  "majorReq",
+  majorReqSchema
+);
 
 export type LabelType = InferSchemaType<typeof labelSchema> & Document;
-export const LabelModel = mongoose.model<LabelType>('label', labelSchema);
+export const LabelModel = mongoose.model<LabelType>("label", labelSchema);
 
 export interface PlanTermType extends Document {
   name: string;
@@ -188,7 +193,10 @@ export interface PlanTermType extends Document {
   status: string;
   pinned: boolean;
 }
-export const PlanTermModel = mongoose.model<PlanTermType>('planTerm', planTermSchema);
+export const PlanTermModel = mongoose.model<PlanTermType>(
+  "planTerm",
+  planTermSchema
+);
 
 export interface PlanType extends Document {
   userEmail: string;
@@ -203,4 +211,4 @@ export interface PlanType extends Document {
   uniReqsSatisfied: string[];
   collegeReqsSatisfied: string[];
 }
-export const PlanModel = mongoose.model<PlanType>('plan', planSchema);
+export const PlanModel = mongoose.model<PlanType>("plan", planSchema);

@@ -291,6 +291,12 @@ export default function Dashboard() {
   const [semesterTotals, setSemesterTotals] = useState<Record<string, number>>(
     {}
   );
+  const [semesterPnpTotals, setSemesterPnpTotals] = useState<
+    Record<string, number>
+  >({});
+  const [semesterTransferTotals, setSemesterTransferTotals] = useState<
+    Record<string, number>
+  >({});
 
   // Create the allSemesters state to track classes in each semester
   const [allSemesters, setAllSemesters] = useState<{
@@ -298,8 +304,18 @@ export default function Dashboard() {
   }>({});
 
   const updateTotalUnits = useCallback(
-    (semesterKey: string, newTotal: number) => {
+    (
+      semesterKey: string,
+      newTotal: number,
+      pnpUnits: number,
+      transferUnits: number
+    ) => {
       setSemesterTotals((prev) => ({ ...prev, [semesterKey]: newTotal }));
+      setSemesterPnpTotals((prev) => ({ ...prev, [semesterKey]: pnpUnits }));
+      setSemesterTransferTotals((prev) => ({
+        ...prev,
+        [semesterKey]: transferUnits,
+      }));
     },
     []
   );
@@ -363,6 +379,16 @@ export default function Dashboard() {
     0
   );
 
+  // Calculate P/NP total units by summing semester blocks
+  const pnpTotal = Object.values(semesterPnpTotals).reduce(
+    (sum, units) => sum + units,
+    0
+  );
+  const transferUnits = Object.values(semesterTransferTotals).reduce(
+    (sum, units) => sum + units,
+    0
+  );
+
   useEffect(() => {
     if (!currentUserInfo && !userLoading && !gradTrakLoading) {
       navigate("/gradtrak", { replace: true });
@@ -384,8 +410,8 @@ export default function Dashboard() {
           majors={currentUserInfo ? currentUserInfo.majors : []}
           minors={currentUserInfo ? currentUserInfo.minors : []}
           totalUnits={totalUnits}
-          transferUnits={0}
-          pnpTotal={0}
+          transferUnits={transferUnits}
+          pnpTotal={pnpTotal}
           uniReqsFulfilled={convertStringsToRequirementEnum(
             gradTrak?.uniReqsSatisfied ? gradTrak?.uniReqsSatisfied : []
           )}
@@ -469,8 +495,13 @@ export default function Dashboard() {
                   <SemesterBlock
                     key={term._id}
                     planTerm={term}
-                    onTotalUnitsChange={(newTotal) =>
-                      updateTotalUnits(term.name ? term.name : "", newTotal)
+                    onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
+                      updateTotalUnits(
+                        term.name ? term.name : "",
+                        newTotal,
+                        pnpUnits,
+                        transferUnits
+                      )
                     }
                     allSemesters={allSemesters}
                     updateAllSemesters={updateAllSemesters}

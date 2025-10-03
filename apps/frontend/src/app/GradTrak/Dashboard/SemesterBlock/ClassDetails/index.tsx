@@ -41,11 +41,8 @@ const ClassDetails = ({
   const [classTitle, setClassTitle] = useState(classData?.courseTitle || "");
   const [units, setUnits] = useState(classData?.courseUnits || 0);
   const [semester] = useState("Coming Soon");
-  const [grading, setGrading] = useState(classData?.pnp ? "P/NP" : "Graded");
-  const [credit, setCredit] = useState(
-    classData?.transfer ? "Transfer" : "UC Berkeley"
-  );
-  // const [requirements, setRequirements] = useState<string[]>([]);
+  const [pnp, setPnp] = useState(classData?.pnp || false);
+  const [transfer, setTransfer] = useState(classData?.transfer || false);
   const [labels, setLabels] = useState(
     classData?.labels.map((l) => {
       return {
@@ -62,12 +59,15 @@ const ClassDetails = ({
       setClassName(classData!.courseName);
       setClassTitle(classData!.courseTitle);
       setUnits(classData!.courseUnits);
-      setLabels(classData!.labels);
+      setPnp(classData!.pnp);
+      setTransfer(classData!.transfer);
     } else {
       setClassId("");
       setClassName("");
       setClassTitle("");
       setUnits(0);
+      setPnp(false);
+      setTransfer(false);
     }
   }, [classData, isEditMode]);
 
@@ -79,8 +79,8 @@ const ClassDetails = ({
       courseUnits: units,
       uniReqs: [],
       collegeReqs: [],
-      pnp: grading === "P/NP",
-      transfer: credit === "Transfer",
+      pnp: pnp,
+      transfer: transfer,
       labels: labels
         .filter((l) =>
           allLabels.some(
@@ -219,12 +219,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="grading"
-                    checked={grading === "Graded"}
-                    onChange={() => setGrading("Graded")}
+                    checked={!pnp}
+                    onChange={() => setPnp(false)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {grading === "Graded" && <div className={styles.dot}></div>}
+                    {!pnp && <div className={styles.dot}></div>}
                   </div>
                   <p>Graded</p>
                 </label>
@@ -232,12 +232,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="grading"
-                    checked={grading === "P/NP"}
-                    onChange={() => setGrading("P/NP")}
+                    checked={pnp}
+                    onChange={() => setPnp(true)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {grading === "P/NP" && <div className={styles.dot}></div>}
+                    {pnp && <div className={styles.dot}></div>}
                   </div>
                   <p>P/NP</p>
                 </label>
@@ -251,14 +251,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="credit"
-                    checked={credit === "UC Berkeley"}
-                    onChange={() => setCredit("UC Berkeley")}
+                    checked={!transfer}
+                    onChange={() => setTransfer(false)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {credit === "UC Berkeley" && (
-                      <div className={styles.dot}></div>
-                    )}
+                    {!transfer && <div className={styles.dot}></div>}
                   </div>
                   <p>UC Berkeley</p>
                 </label>
@@ -266,14 +264,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="credit"
-                    checked={credit === "Transfer"}
-                    onChange={() => setCredit("Transfer")}
+                    checked={transfer}
+                    onChange={() => setTransfer(true)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {credit === "Transfer" && (
-                      <div className={styles.dot}></div>
-                    )}
+                    {transfer && <div className={styles.dot}></div>}
                   </div>
                   <p>Transfer</p>
                 </label>

@@ -1,17 +1,21 @@
 import {
-  PlanTermType,
-  SelectedCourseType,
-  PlanType,
-  MajorReqType,
   LabelType,
+  MajorReqType,
+  PlanTermType,
+  PlanType,
+  SelectedCourseType,
 } from "@repo/common";
 
+import {
+  CollegeReqs,
+  Colleges,
+  Status,
+  Terms,
+  UniReqs,
+} from "../../generated-types/graphql";
 import { PlanModule } from "./generated-types/module-types";
-import { Colleges, UniReqs, CollegeReqs, Terms, Status } from "../../generated-types/graphql";
 
-export function formatPlan(
-  plan: PlanType
-): PlanModule.Plan {
+export function formatPlan(plan: PlanType): PlanModule.Plan {
   return {
     _id: plan._id as string,
     userEmail: plan.userEmail,
@@ -24,13 +28,11 @@ export function formatPlan(
     revised: plan.updatedAt.toISOString(),
     labels: plan.labels.map(formatLabel),
     uniReqsSatisfied: plan.uniReqsSatisfied as UniReqs[],
-    collegeReqsSatisfied: plan.collegeReqsSatisfied as CollegeReqs[]
+    collegeReqsSatisfied: plan.collegeReqsSatisfied as CollegeReqs[],
   };
 }
 
-export function formatPlanTerm(
-  planTerm: PlanTermType
-): PlanModule.PlanTerm {
+export function formatPlanTerm(planTerm: PlanTermType): PlanModule.PlanTerm {
   return {
     _id: planTerm._id as string,
     name: planTerm.name,
@@ -40,25 +42,23 @@ export function formatPlanTerm(
     term: planTerm.term as Terms,
     hidden: planTerm.hidden,
     status: planTerm.status as Status,
-    pinned: planTerm.pinned
+    pinned: planTerm.pinned,
   };
 }
 
-export function formatMajorReq(
-  majorReq: MajorReqType
-): PlanModule.MajorReq {
+export function formatMajorReq(majorReq: MajorReqType): PlanModule.MajorReq {
   return {
     name: majorReq.name,
     major: majorReq.major,
     numCoursesRequired: majorReq.numCoursesRequired,
-    satisfyingCourseIds: majorReq.satisfyingCourseIds ? majorReq.satisfyingCourseIds : [],
-    isMinor: majorReq.isMinor ? majorReq.isMinor : false
-  }
+    satisfyingCourseIds: majorReq.satisfyingCourseIds
+      ? majorReq.satisfyingCourseIds
+      : [],
+    isMinor: majorReq.isMinor ? majorReq.isMinor : false,
+  };
 }
 
-function formatCourse(
-  course: SelectedCourseType
-): PlanModule.SelectedCourse {
+function formatCourse(course: SelectedCourseType): PlanModule.SelectedCourse {
   return {
     courseID: course.courseID,
     courseName: course.courseName,
@@ -68,15 +68,13 @@ function formatCourse(
     uniReqs: course.uniReqs as UniReqs[],
     labels: course.labels,
     pnp: course.pnp,
-    transfer: course.transfer
+    transfer: course.transfer,
   };
 }
 
-function formatLabel(
-  label: LabelType
-): PlanModule.Label {
+function formatLabel(label: LabelType): PlanModule.Label {
   return {
     name: label.name,
-    color: label.color
+    color: label.color,
   };
 }

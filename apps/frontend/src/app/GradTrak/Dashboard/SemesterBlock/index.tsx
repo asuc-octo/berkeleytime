@@ -30,7 +30,11 @@ import styles from "./SemesterBlock.module.scss";
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
   allSemesters: { [key: string]: ISelectedCourse[] };
-  onTotalUnitsChange: (newTotal: number) => void;
+  onTotalUnitsChange: (
+    newTotal: number,
+    pnpUnits: number,
+    transferUnits: number
+  ) => void;
   updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
   settings: GradTrakSettings;
   labels: ILabel[];
@@ -65,6 +69,8 @@ function SemesterBlock({
     allSemesters[semesterId] || []
   );
   const [totalUnits, setTotalUnits] = useState(0);
+  const [_pnpUnits, setPnpUnits] = useState(0);
+  const [_transferUnits, setTransferUnits] = useState(0);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -82,7 +88,17 @@ function SemesterBlock({
       0
     );
     setTotalUnits(total);
-    onTotalUnitsChange(total);
+    const pnp = selectedClasses.reduce(
+      (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
+      0
+    );
+    setPnpUnits(pnp);
+    const transfer = selectedClasses.reduce(
+      (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
+      0
+    );
+    setTransferUnits(transfer);
+    onTotalUnitsChange(total, pnp, transfer);
   }, [selectedClasses]);
 
   // update local state when allSemesters changes
@@ -123,7 +139,17 @@ function SemesterBlock({
     }
 
     setTotalUnits(newTotalUnits);
-    onTotalUnitsChange(newTotalUnits);
+    const newPnpUnits = updatedClasses.reduce(
+      (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
+      0
+    );
+    setPnpUnits(newPnpUnits);
+    const newTransferUnits = updatedClasses.reduce(
+      (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
+      0
+    );
+    setTransferUnits(newTransferUnits);
+    onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
   };
 
   const handleClassDetails = (index: number) => {
@@ -223,7 +249,20 @@ function SemesterBlock({
     }, 0);
 
     setTotalUnits(newTotalUnits);
-    onTotalUnitsChange(newTotalUnits);
+    const updatedClassList = selectedClasses.map((cls) =>
+      cls.courseID === updatedClass.courseID ? updatedClass : cls
+    );
+    const newPnpUnits = updatedClassList.reduce(
+      (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
+      0
+    );
+    setPnpUnits(newPnpUnits);
+    const newTransferUnits = updatedClassList.reduce(
+      (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
+      0
+    );
+    setTransferUnits(newTransferUnits);
+    onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
     setClassToEdit(null);
   };
