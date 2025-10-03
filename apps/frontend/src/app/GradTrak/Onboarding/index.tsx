@@ -7,6 +7,7 @@ import { useCreatePlan } from "@/hooks/api";
 import { Colleges, DegreeOption } from "@/lib/api";
 
 import AddDegree from "./AddDegree";
+import AddColleges from "./AddColleges";
 import styles from "./Onboarding.module.scss";
 import OnboardingSetup from "./OnboardingSetUp";
 
@@ -19,6 +20,7 @@ export default function GradTrakOnboarding() {
   const [createPlan] = useCreatePlan();
 
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
+  const [selectedColleges, setSelectedColleges] = useState<Colleges[]>([]);
   const [, setSelectedMinors] = useState<DegreeOption[]>([]);
 
   const handleSetupComplete = (
@@ -30,15 +32,20 @@ export default function GradTrakOnboarding() {
     setStep(1);
   };
 
+  const handleCollegesComplete = (colleges: Colleges[]) => {
+    setSelectedColleges(colleges);
+    setStep(2);
+  };
+
   const handleMajorsComplete = (majors: DegreeOption[]) => {
     setSelectedMajors(majors);
-    setStep(2);
+    setStep(3);
   };
 
   const handleMinorsComplete = async (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
     const { data } = await createPlan(
-      [Colleges.LnS],
+      selectedColleges,
       selectedMajors.map((m) => m.value),
       minors.map((m) => m.value),
       parseInt(startYear, 10),
@@ -65,9 +72,12 @@ export default function GradTrakOnboarding() {
           />
         )}
         {step === 1 && (
-          <AddDegree isMajor={true} onNext={handleMajorsComplete} />
+          <AddColleges onNext={handleCollegesComplete} />
         )}
         {step === 2 && (
+          <AddDegree isMajor={true} onNext={handleMajorsComplete} />
+        )}
+        {step === 3 && (
           <AddDegree isMajor={false} onNext={handleMinorsComplete} />
         )}
       </SuspenseBoundary>
