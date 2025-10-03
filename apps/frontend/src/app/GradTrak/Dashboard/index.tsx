@@ -458,29 +458,36 @@ export default function Dashboard() {
         <div className={styles.semesterBlocks}>
           <div className={styles.semesterLayout} data-layout={settings.layout}>
             {localPlanTerms &&
-              localPlanTerms.map((term) => (
-                <SemesterBlock
-                  key={term._id}
-                  planTerm={term}
-                  onTotalUnitsChange={(newTotal) =>
-                    updateTotalUnits(term.name ? term.name : "", newTotal)
-                  }
-                  allSemesters={allSemesters}
-                  updateAllSemesters={updateAllSemesters}
-                  settings={settings}
-                  labels={localLabels}
-                  setShowLabelMenu={setShowLabelMenu}
-                  catalogCourses={catalogCourses}
-                  index={index}
-                  handleUpdateTermName={(name) =>
-                    handleUpdateTermName(term._id, name)
-                  }
-                  handleTogglePin={() => handleTogglePin(term._id)}
-                  handleSetStatus={(status: Status) =>
-                    handleSetStatus(term._id, status)
-                  }
-                />
-              ))}
+              [...localPlanTerms]
+                .sort((a, b) => {
+                  // Pinned terms first, then by existing order
+                  if (a.pinned && !b.pinned) return -1;
+                  if (!a.pinned && b.pinned) return 1;
+                  return 0;
+                })
+                .map((term) => (
+                  <SemesterBlock
+                    key={term._id}
+                    planTerm={term}
+                    onTotalUnitsChange={(newTotal) =>
+                      updateTotalUnits(term.name ? term.name : "", newTotal)
+                    }
+                    allSemesters={allSemesters}
+                    updateAllSemesters={updateAllSemesters}
+                    settings={settings}
+                    labels={localLabels}
+                    setShowLabelMenu={setShowLabelMenu}
+                    catalogCourses={catalogCourses}
+                    index={index}
+                    handleUpdateTermName={(name) =>
+                      handleUpdateTermName(term._id, name)
+                    }
+                    handleTogglePin={() => handleTogglePin(term._id)}
+                    handleSetStatus={(status: Status) =>
+                      handleSetStatus(term._id, status)
+                    }
+                  />
+                ))}
           </div>
         </div>
       </div>
