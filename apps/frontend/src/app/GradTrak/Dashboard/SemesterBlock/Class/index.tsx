@@ -2,7 +2,7 @@ import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
 import { BadgeLabel, Button, Color, DropdownMenu, Flex } from "@repo/theme";
 
-import { ISelectedCourse } from "@/lib/api";
+import { ISelectedCourse, ILabel } from "@/lib/api";
 
 import { GradTrakSettings, ShowSetting } from "../../settings";
 import styles from "./Class.module.scss";
@@ -15,6 +15,7 @@ interface ClassProps {
   handleDetails: (index: number) => void;
   handleDelete: (index: number) => void;
   settings: GradTrakSettings;
+  labels: ILabel[];
 }
 
 export default function Class({
@@ -25,6 +26,7 @@ export default function Class({
   handleDetails,
   handleDelete,
   settings,
+  labels,
 }: ClassProps) {
   return (
     <div
@@ -48,7 +50,7 @@ export default function Class({
               className={styles.labelsContainer}
               style={{ marginTop: settings.layout === "grid" ? "0" : "8px" }}
             >
-              {cls.labels.map((l, idx) => (
+              {cls.labels.filter((l) => labels.some((label) => label.name === l.name && label.color === l.color)).map((l, idx) => (
                 <BadgeLabel key={idx} label={l.name} color={l.color as Color} />
               ))}
             </div>
