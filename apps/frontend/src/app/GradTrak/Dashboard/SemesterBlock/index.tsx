@@ -1,40 +1,44 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { BookStack, MoreHoriz, Trash } from "iconoir-react";
+import { MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 
-import { Button } from "@repo/theme";
+import { Button, Flex } from "@repo/theme";
 
-import AddClass from "../AddClass";
+import { useSetSelectedCourses } from "@/hooks/api";
+import { ISelectedCourse } from "@/lib/api";
+import { IPlanTerm } from "@/lib/api/plans";
+
 import ClassDetails from "../ClassDetails";
-import { ClassType } from "../types";
+import { GradTrakSettings } from "../settings";
+import AddClass from "./AddClass";
+import Class from "./Class";
 import styles from "./SemesterBlock.module.scss";
 
 interface SemesterBlockProps {
-  selectedYear: number | string;
-  selectedSemester: string;
-  semesterId: string;
-  allSemesters: { [key: string]: ClassType[] };
+  planTerm: IPlanTerm;
+  allSemesters: { [key: string]: ISelectedCourse[] };
   onTotalUnitsChange: (
     newTotal: number,
     pnpUnits: number,
     transferUnits: number
   ) => void;
-  updateAllSemesters: (semesters: { [key: string]: ClassType[] }) => void;
+  updateAllSemesters: (semesters: { [key: string]: ISelectedCourse[] }) => void;
+  settings: GradTrakSettings;
 }
 
 function SemesterBlock({
-  selectedYear,
-  selectedSemester,
+  planTerm,
   onTotalUnitsChange,
-  semesterId,
   allSemesters,
   updateAllSemesters,
+  settings,
 }: SemesterBlockProps) {
+  const semesterId = planTerm._id ? planTerm._id.trim() : "";
+
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
-  const [classToEdit, setClassToEdit] = useState<ClassType | null>(null);
+  const [classToEdit, setClassToEdit] = useState<ISelectedCourse | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
-  const [selectedClasses, setSelectedClasses] = useState<ClassType[]>(
+  const [selectedClasses, setSelectedCourses] = useState<ISelectedCourse[]>(
     allSemesters[semesterId] || []
   );
   const [totalUnits, setTotalUnits] = useState(0);
@@ -43,37 +47,43 @@ function SemesterBlock({
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(true);
+
+  const [setCourses] = useSetSelectedCourses();
 
   useEffect(() => {
-    const total = selectedClasses.reduce((sum, cls) => sum + cls.units, 0);
+    const total = selectedClasses.reduce(
+      (sum, cls) => sum + cls.courseUnits,
+      0
+    );
     setTotalUnits(total);
     const pnp = selectedClasses.reduce(
-      (sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0),
+      (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
       0
     );
     setPnpUnits(pnp);
     const transfer = selectedClasses.reduce(
-      (sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0),
+      (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
       0
     );
     setTransferUnits(transfer);
     onTotalUnitsChange(total, pnp, transfer);
-  }, [selectedClasses, onTotalUnitsChange]);
+  }, [selectedClasses]);
 
   // update local state when allSemesters changes
   useEffect(() => {
     if (allSemesters[semesterId]) {
-      setSelectedClasses(allSemesters[semesterId]);
+      setSelectedCourses(allSemesters[semesterId]);
     }
   }, [allSemesters, semesterId]);
 
-  const handleDeleteClass = (indexToDelete: number) => {
+  const handleDeleteClass = async (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter(
       (_, index) => index !== indexToDelete
     );
 
     // update local state
-    setSelectedClasses(updatedClasses);
+    setSelectedCourses(updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -82,19 +92,29 @@ function SemesterBlock({
     };
     updateAllSemesters(updatedSemesters);
     updateAllSemesters(updatedSemesters);
-    const deletedClassUnits = selectedClasses[indexToDelete].units;
+    const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
-    setSelectedClasses((prevClasses) =>
-      prevClasses.filter((_, index) => index !== indexToDelete)
+
+    const oldClasses = [...selectedClasses];
+    const newClasses = selectedClasses.filter(
+      (_, index) => index !== indexToDelete
     );
+    setSelectedCourses(newClasses);
+    try {
+      await setCourses(semesterId, newClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error("Failed to save class:", error);
+    }
+
     setTotalUnits(newTotalUnits);
     const newPnpUnits = updatedClasses.reduce(
-      (sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0),
+      (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
       0
     );
     setPnpUnits(newPnpUnits);
     const newTransferUnits = updatedClasses.reduce(
-      (sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0),
+      (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
       0
     );
     setTransferUnits(newTransferUnits);
@@ -106,11 +126,31 @@ function SemesterBlock({
     setIsClassDetailsOpen(true);
   };
 
-  const addClass = (cls: ClassType) => {
-    const updatedClasses = [...selectedClasses, cls];
+  const addClass = async (cls: ISelectedCourse) => {
+    // Ensure all required fields are present
+    const courseToAdd: ISelectedCourse = {
+      courseID: cls.courseID || "custom-" + cls.courseName,
+      courseName: cls.courseName || cls.courseID,
+      courseTitle: cls.courseTitle || cls.courseName || cls.courseID,
+      courseUnits: cls.courseUnits || 0,
+      uniReqs: cls.uniReqs || [],
+      collegeReqs: cls.collegeReqs || [],
+      pnp: cls.pnp || false,
+      transfer: cls.transfer || false,
+      labels: cls.labels || [],
+    };
 
-    // update local state
-    setSelectedClasses(updatedClasses);
+    const oldClasses = [...selectedClasses];
+    const updatedClasses = [...selectedClasses, courseToAdd];
+    setSelectedCourses(updatedClasses);
+
+    try {
+      await setCourses(semesterId, updatedClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error("Failed to save class:", error);
+    }
+    console.log("Updated classes:", updatedClasses);
 
     // update global state
     const updatedSemesters = {
@@ -148,32 +188,39 @@ function SemesterBlock({
     return classElements.length;
   };
 
-  const handleUpdateClass = (updatedClass: ClassType) => {
-    setSelectedClasses((prevClasses) =>
-      prevClasses.map((cls) =>
-        cls.id === updatedClass.id ? updatedClass : cls
-      )
+  const handleUpdateClass = async (updatedClass: ISelectedCourse) => {
+    console.log("Updating class:", updatedClass);
+    const oldClasses = [...selectedClasses];
+    const newClasses = selectedClasses.map((cls) =>
+      cls.courseID === updatedClass.courseID ? updatedClass : cls
     );
+    setSelectedCourses(newClasses);
+    try {
+      await setCourses(semesterId, newClasses);
+    } catch (error) {
+      setSelectedCourses(oldClasses);
+      console.error("Failed to save class:", error);
+    }
 
     // Recalculate total units
     const newTotalUnits = selectedClasses.reduce((total, cls) => {
-      if (cls.id === updatedClass.id) {
-        return total + updatedClass.units;
+      if (cls.courseID === updatedClass.courseID) {
+        return total + updatedClass.courseUnits;
       }
-      return total + cls.units;
+      return total + cls.courseUnits;
     }, 0);
 
     setTotalUnits(newTotalUnits);
     const updatedClassList = selectedClasses.map((cls) =>
-      cls.id === updatedClass.id ? updatedClass : cls
+      cls.courseID === updatedClass.courseID ? updatedClass : cls
     );
     const newPnpUnits = updatedClassList.reduce(
-      (sum, cls) => sum + (cls.grading === "P/NP" ? cls.units : 0),
+      (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
       0
     );
     setPnpUnits(newPnpUnits);
     const newTransferUnits = updatedClassList.reduce(
-      (sum, cls) => sum + (cls.credit === "Transfer" ? cls.units : 0),
+      (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
       0
     );
     setTransferUnits(newTransferUnits);
@@ -232,7 +279,7 @@ function SemesterBlock({
     setPlaceholderIndex(null);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDropTarget(false);
     setPlaceholderIndex(null);
@@ -247,6 +294,7 @@ function SemesterBlock({
 
       // create updated semesters object
       const updatedSemesters = { ...allSemesters };
+      const semestersToUpdate: string[] = [];
 
       // handle dragging within the same semester
       if (sourceSemesterId === semesterId) {
@@ -261,6 +309,7 @@ function SemesterBlock({
         // insert at new position
         updatedClasses.splice(adjustedPos, 0, draggedClass);
         updatedSemesters[semesterId] = updatedClasses;
+        semestersToUpdate.push(semesterId);
       }
       // handle dragging between different semesters
       else {
@@ -268,16 +317,29 @@ function SemesterBlock({
         const sourceSemesterClasses = [...allSemesters[sourceSemesterId]];
         sourceSemesterClasses.splice(classIndex, 1);
         updatedSemesters[sourceSemesterId] = sourceSemesterClasses;
+        semestersToUpdate.push(sourceSemesterId);
 
         // add class to target semester at the right position
         const targetSemesterClasses = [...selectedClasses];
         targetSemesterClasses.splice(insertPos, 0, draggedClass);
         updatedSemesters[semesterId] = targetSemesterClasses;
+        semestersToUpdate.push(semesterId);
       }
 
       // update the global state
+      const oldSemesters = { ...allSemesters };
       updateAllSemesters(updatedSemesters);
       updateAllSemesters(updatedSemesters);
+      try {
+        for (const semesterId of semestersToUpdate) {
+          await setCourses(semesterId, updatedSemesters[semesterId], {
+            fetchPolicy: "no-cache",
+          });
+        }
+      } catch (error) {
+        updateAllSemesters(oldSemesters);
+        console.error("Error handling drop:", error);
+      }
     } catch (error) {
       console.error("Error handling drop:", error);
     }
@@ -291,103 +353,84 @@ function SemesterBlock({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <div className={styles.body}>
-        <div className={styles.semesterCounter}>
-          <h2>
-            {selectedSemester} {selectedYear}{" "}
-          </h2>
-          <p className={styles.counter}>{totalUnits}</p>
-        </div>
+      <div className={styles.body} data-layout={settings.layout}>
+        <Flex direction="row" justify="between" width="100%">
+          <div className={styles.semesterCounter}>
+            <h2>{planTerm.name}</h2>
+            <p className={styles.counter}>{totalUnits}</p>
+          </div>
+          <Flex direction="row" gap="6px">
+            <MoreHoriz className={styles.actionButton} />
+            {open ? (
+              <NavArrowDown
+                className={styles.actionButton}
+                onClick={() => {
+                  setOpen(false);
+                }}
+              />
+            ) : (
+              <NavArrowRight
+                className={styles.actionButton}
+                onClick={() => {
+                  setOpen(true);
+                }}
+              />
+            )}
+          </Flex>
+        </Flex>
 
-        {/* Display selected classes outside the dialog */}
-        {selectedClasses.map((cls, index) => (
-          <React.Fragment key={`class-group-${index}`}>
-            {placeholderIndex === index && (
+        {open && (
+          <>
+            {selectedClasses.map((cls, index) => (
+              <React.Fragment key={`class-group-${index}`}>
+                {placeholderIndex === index && (
+                  <div className={styles.placeholder} />
+                )}
+                <Class
+                  cls={cls}
+                  index={index}
+                  handleDragEnd={handleDragEnd}
+                  handleDragStart={handleDragStart}
+                  handleDetails={handleClassDetails}
+                  handleDelete={handleDeleteClass}
+                  layout={settings.layout}
+                />
+              </React.Fragment>
+            ))}
+
+            {/* Dragging placeholder */}
+            {placeholderIndex === selectedClasses.length && (
               <div className={styles.placeholder} />
             )}
-            <div
-              key={index}
-              data-class-container
-              className={styles.classContainer}
-              draggable={true}
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragEnd={handleDragEnd}
+
+            {/* Dialog Component */}
+            <AddClass
+              isOpen={isAddClassOpen}
+              setIsOpen={setIsAddClassOpen}
+              addClass={addClass}
+              handleOnConfirm={(cls) => {
+                addClass(cls);
+              }}
+            />
+
+            {/* Edit Class Details Dialog */}
+            {classToEdit && (
+              <ClassDetails
+                isOpen={isClassDetailsOpen}
+                setIsOpen={setIsClassDetailsOpen}
+                classData={classToEdit}
+                onUpdate={handleUpdateClass}
+              />
+            )}
+
+            <Button
+              onClick={() => setIsAddClassOpen(true)}
+              className={styles.addButton}
             >
-              <div className={styles.start}>
-                <div>
-                  <h3 className={styles.title}>{cls.name}</h3>
-                  <p>{cls.units} Units</p>
-                </div>
-                <div className={styles.dropdown}>
-                  <DropdownMenu.Root>
-                    <DropdownMenu.Trigger asChild>
-                      <Button className={styles.trigger}>
-                        <MoreHoriz className={styles.moreHoriz} />
-                      </Button>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Content
-                      className={styles.content}
-                      sideOffset={5}
-                      align="end"
-                    >
-                      <DropdownMenu.Item
-                        className={styles.menuItem}
-                        onClick={() => handleClassDetails(index)}
-                      >
-                        <BookStack /> Edit Course Details
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        className={styles.menuItem}
-                        onClick={() => handleDeleteClass(index)}
-                      >
-                        <div className={styles.cancel}>
-                          <Trash /> Delete Class
-                        </div>
-                      </DropdownMenu.Item>
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Root>
-                </div>
-              </div>
-
-              {/* <div className={styles.tag}>
-                <Book className={styles.icon}/>
-                Major
-              </div> */}
-            </div>
-          </React.Fragment>
-        ))}
-
-        {/* Dragging placeholder */}
-        {placeholderIndex === selectedClasses.length && (
-          <div className={styles.placeholder} />
+              + Add Class
+            </Button>
+          </>
         )}
-
-        {/* Dialog Component */}
-        <AddClass
-          isOpen={isAddClassOpen}
-          setIsOpen={setIsAddClassOpen}
-          addClass={addClass}
-          handleOnConfirm={(cls) => {
-            addClass(cls);
-          }}
-        />
-
-        {/* Edit Class Details Dialog */}
-        {classToEdit && (
-          <ClassDetails
-            isOpen={isClassDetailsOpen}
-            setIsOpen={setIsClassDetailsOpen}
-            classData={classToEdit}
-            onUpdate={handleUpdateClass}
-          />
-        )}
-
-        <Button
-          onClick={() => setIsAddClassOpen(true)}
-          className={styles.addButton}
-        >
-          + Add Class
-        </Button>
       </div>
     </div>
   );

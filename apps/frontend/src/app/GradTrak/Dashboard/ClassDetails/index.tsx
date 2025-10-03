@@ -12,15 +12,16 @@ import {
 
 import { Button } from "@repo/theme";
 
-import { ClassType } from "../types";
+import { ISelectedCourse } from "@/lib/api";
+
 import styles from "./ClassDetails.module.scss";
 
 interface ClassDetailsProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  classData?: ClassType;
-  onUpdate?: (updatedClass: ClassType) => void;
-  onConfirm?: (newClass: ClassType) => void;
+  classData?: ISelectedCourse;
+  onUpdate?: (updatedClass: ISelectedCourse) => void;
+  onConfirm?: (newClass: ISelectedCourse) => void;
 }
 
 const ClassDetails = ({
@@ -32,43 +33,50 @@ const ClassDetails = ({
 }: ClassDetailsProps) => {
   const isEditMode = !!classData;
 
-  const [classId, setClassId] = useState(classData?.id || "");
-  const [className, setClassName] = useState(classData?.name || "");
-  const [classTitle, setClassTitle] = useState(classData?.title || "");
-  const [units, setUnits] = useState(classData?.units || 0);
-  const [semester] = useState("Fall 2021");
-  const [grading, setGrading] = useState(classData?.grading || "Graded");
-  const [credit, setCredit] = useState(classData?.credit || "UC Berkeley");
+  const [classId, setClassId] = useState(classData?.courseID || "");
+  const [className, setClassName] = useState(classData?.courseName || "");
+  const [classTitle, setClassTitle] = useState(classData?.courseTitle || "");
+  const [units, setUnits] = useState(classData?.courseUnits || 0);
+  const [semester] = useState("Coming Soon");
+  const [pnp, setPnp] = useState(classData ? classData.pnp : false);
+  const [transfer, setTransfer] = useState(
+    classData ? classData.transfer : false
+  );
   // const [requirements, setRequirements] = useState<string[]>([]);
 
   // Update state when classData changes
   useEffect(() => {
     if (isEditMode) {
-      setClassId(classData!.id);
-      setClassName(classData!.name);
-      setClassTitle(classData!.title);
-      setUnits(classData!.units);
-      setGrading(classData!.grading || "Graded");
-      setCredit(classData!.credit || "UC Berkeley");
+      setClassId(classData!.courseID);
+      setClassName(classData!.courseName);
+      setClassTitle(classData!.courseTitle);
+      setUnits(classData!.courseUnits);
+      setPnp(classData!.pnp);
+      setTransfer(classData!.transfer);
     } else {
       setClassId("");
       setClassName("");
       setClassTitle("");
       setUnits(0);
-      setGrading("Graded");
-      setCredit("UC Berkeley");
+      setPnp(false);
+      setTransfer(false);
     }
   }, [classData, isEditMode]);
 
   const handleSubmit = () => {
     const updatedClass = {
-      id: classId,
-      name: className,
-      title: classTitle,
-      units: units,
-      grading: grading,
-      credit: credit,
+      courseID: classId,
+      courseName: className,
+      courseTitle: classTitle,
+      courseUnits: units,
+      uniReqs: [],
+      collegeReqs: [],
+      pnp: pnp,
+      transfer: transfer,
+      labels: [],
     };
+    ``;
+    console.log(updatedClass);
 
     if (isEditMode && onUpdate) {
       onUpdate(updatedClass);
@@ -164,12 +172,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="grading"
-                    checked={grading === "Graded"}
-                    onChange={() => setGrading("Graded")}
+                    checked={!pnp}
+                    onChange={() => setPnp(false)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {grading === "Graded" && <div className={styles.dot}></div>}
+                    {!pnp && <div className={styles.dot}></div>}
                   </div>
                   <p>Graded</p>
                 </label>
@@ -177,12 +185,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="grading"
-                    checked={grading === "P/NP"}
-                    onChange={() => setGrading("P/NP")}
+                    checked={pnp}
+                    onChange={() => setPnp(true)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {grading === "P/NP" && <div className={styles.dot}></div>}
+                    {pnp && <div className={styles.dot}></div>}
                   </div>
                   <p>P/NP</p>
                 </label>
@@ -196,14 +204,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="credit"
-                    checked={credit === "UC Berkeley"}
-                    onChange={() => setCredit("UC Berkeley")}
+                    checked={!transfer}
+                    onChange={() => setTransfer(false)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {credit === "UC Berkeley" && (
-                      <div className={styles.dot}></div>
-                    )}
+                    {!transfer && <div className={styles.dot}></div>}
                   </div>
                   <p>UC Berkeley</p>
                 </label>
@@ -211,14 +217,12 @@ const ClassDetails = ({
                   <input
                     type="radio"
                     name="credit"
-                    checked={credit === "Transfer"}
-                    onChange={() => setCredit("Transfer")}
+                    checked={transfer}
+                    onChange={() => setTransfer(true)}
                     className={styles.input}
                   />
                   <div className={styles.circle}>
-                    {credit === "Transfer" && (
-                      <div className={styles.dot}></div>
-                    )}
+                    {transfer && <div className={styles.dot}></div>}
                   </div>
                   <p>Transfer</p>
                 </label>

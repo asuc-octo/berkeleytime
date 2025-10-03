@@ -53,7 +53,7 @@ const Plans = lazy(() => import("@/app/Plans"));
 
 const GradTrak = lazy(() => import("@/app/GradTrak"));
 const GradTrakOnboarding = lazy(() => import("@/app/GradTrak/Onboarding"));
-const GradTrakDashboard= lazy(() => import("@/app/GradTrak/Dashboard"));
+const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 
 const router = createBrowserRouter([
   {
@@ -116,17 +116,17 @@ const router = createBrowserRouter([
     element: <Layout footer={false} />,
     children: [
       {
-        path: "gradtrak", 
+        path: "gradtrak",
         element: (
-          <SuspenseBoundary key="gradtrak-landing"> 
+          <SuspenseBoundary key="gradtrak-landing">
             <GradTrak />
           </SuspenseBoundary>
         ),
       },
       {
-        path: "gradtrak/onboarding", 
+        path: "gradtrak/onboarding",
         element: (
-          <SuspenseBoundary key="gradtrak-onboarding"> 
+          <SuspenseBoundary key="gradtrak-onboarding">
             <GradTrakOnboarding />
           </SuspenseBoundary>
         ),
@@ -337,7 +337,19 @@ const router = createBrowserRouter([
 
 const client = new ApolloClient({
   uri: "/api/graphql",
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      PlanTerm: {
+        fields: {
+          courses: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
+    },
+  }),
 });
 
 export default function App() {

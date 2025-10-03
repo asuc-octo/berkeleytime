@@ -1,74 +1,42 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button, IconButton, Tooltip } from "@repo/theme";
 
-import { useReadUser } from "@/hooks/api";
+import { useReadPlan, useReadUser } from "@/hooks/api";
+import { IPlanTerm, ISelectedCourse } from "@/lib/api";
+import { convertStringsToRequirementEnum } from "@/lib/course";
 
 import styles from "./Dashboard.module.scss";
+import DisplayMenu from "./DisplayMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
-import { ClassType } from "./types";
+import { useGradTrakSettings } from "./settings";
 
-type DegreeOption = {
-  label: string;
-  value: string;
-};
-
-function Dashboard() {
+export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
 
-  const location = useLocation();
-  const state = location.state as
-    | {
-        startYear: string;
-        gradYear: string;
-        summerCheck: boolean;
-        selectedDegreeList: DegreeOption[];
-        selectedMinorList: DegreeOption[];
-      }
-    | undefined
-    | null;
+  const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
+    skip: !user,
+  });
 
-  const isStateValid = useMemo(() => {
-    return (
-      state !== null &&
-      state !== undefined &&
-      typeof state.startYear === "string" &&
-      state.startYear.length > 0 &&
-      typeof state.gradYear === "string" &&
-      state.gradYear.length > 0 &&
-      typeof state.summerCheck === "boolean" &&
-      Array.isArray(state.selectedDegreeList) &&
-      Array.isArray(state.selectedMinorList)
-    );
-  }, [state]);
+  const [showDisplayMenu, setShowDisplayMenu] = useState(false);
+  const [settings, updateSettings] = useGradTrakSettings();
 
-  useEffect(() => {
-    if (!isStateValid && !userLoading) {
-      console.warn(
-        "GradTrak state is invalid or missing after user loaded. Redirecting to setup."
-      );
-      navigate("/gradtrak/onboarding", { replace: true }); // Redirect
-    }
-  }, [isStateValid, userLoading, navigate]);
+  const selectedDegreeStrings = useMemo(() => {
+    return gradTrak?.majors || [];
+  }, [gradTrak?.majors]);
 
-  const {
-    startYear,
-    gradYear,
-    summerCheck,
-    selectedDegreeList,
-    selectedMinorList,
-  } = state!;
-  const selectedDegreeStrings: string[] = selectedDegreeList.map(
-    (degree) => degree.value
-  );
-  const selectedMinorStrings: string[] = selectedMinorList.map(
-    (minor) => minor.value
-  );
+  const selectedMinorStrings = useMemo(() => {
+    return gradTrak?.minors || [];
+  }, [gradTrak?.minors]);
+
+  const planTerms = useMemo(() => {
+    return gradTrak?.planTerms || [];
+  }, [gradTrak?.planTerms]);
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {
@@ -87,11 +55,6 @@ function Dashboard() {
     [user, selectedDegreeStrings, selectedMinorStrings] // Re-calculate if user or selected lists change
   );
 
-  const numStartYear = parseInt(startYear, 10);
-  const numGradYear = parseInt(gradYear, 10);
-  const yearCount = numGradYear - numStartYear + 1;
-  const years = Array.from({ length: yearCount }, (_, i) => numStartYear + i);
-
   // State for semester totals and classes
   const [semesterTotals, setSemesterTotals] = useState<Record<string, number>>(
     {}
@@ -105,10 +68,10 @@ function Dashboard() {
 
   // Create the allSemesters state to track classes in each semester
   const [allSemesters, setAllSemesters] = useState<{
-    [key: string]: ClassType[];
+    [key: string]: ISelectedCourse[];
   }>({});
 
-  const updateSemesterUnits = useCallback(
+  const updateTotalUnits = useCallback(
     (
       semesterKey: string,
       newTotal: number,
@@ -125,13 +88,59 @@ function Dashboard() {
     []
   );
 
+  const convertPlanTermsToSemesters = useCallback(
+    (planTerms: IPlanTerm[]): { [key: string]: ISelectedCourse[] } => {
+      const semesters: { [key: string]: ISelectedCourse[] } = {};
+
+      planTerms.forEach((planTerm) => {
+        // Create semester key based on term and year
+        const semesterKey = planTerm._id;
+
+        const classes: ISelectedCourse[] = [];
+
+        planTerm.courses.forEach((course: ISelectedCourse) => {
+          // Remove __typename from course object
+          const cleanCourse = {
+            courseID: course.courseID,
+            courseName: course.courseName,
+            courseTitle: course.courseTitle,
+            courseUnits: course.courseUnits,
+            uniReqs: course.uniReqs,
+            collegeReqs: course.collegeReqs,
+            pnp: course.pnp,
+            transfer: course.transfer,
+            labels:
+              course.labels?.map((label) => ({
+                name: label.name,
+                color: label.color,
+              })) || [],
+          };
+          classes.push(cleanCourse);
+        });
+
+        if (semesterKey) {
+          semesters[semesterKey] = classes;
+        }
+      });
+      return semesters;
+    },
+    []
+  );
+
   // Function to update all semesters data
   const updateAllSemesters = useCallback(
-    (semesters: { [key: string]: ClassType[] }) => {
+    (semesters: { [key: string]: ISelectedCourse[] }) => {
       setAllSemesters(semesters);
     },
     []
   );
+
+  useEffect(() => {
+    if (planTerms && planTerms.length > 0) {
+      const convertedSemesters = convertPlanTermsToSemesters(planTerms);
+      setAllSemesters(convertedSemesters);
+    }
+  }, [planTerms, convertPlanTermsToSemesters]);
 
   const totalUnits = Object.values(semesterTotals).reduce(
     (sum, units) => sum + units,
@@ -148,19 +157,35 @@ function Dashboard() {
     0
   );
 
-  if (!currentUserInfo) {
-    return <p>Error displaying user information.</p>; // TODO: Cleaner error page
+  useEffect(() => {
+    if (!currentUserInfo && !userLoading && !gradTrakLoading) {
+      navigate("/gradtrak", { replace: true });
+    }
+  }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
+
+  if (userLoading || gradTrakLoading) {
+    return (
+      <div className={styles.root}>
+        <div>Loading your GradTrak...</div>
+      </div>
+    );
   }
 
   return (
     <div className={styles.root}>
       <div className={styles.panel}>
         <SidePanel
-          majors={currentUserInfo.majors}
-          minors={currentUserInfo.minors}
+          majors={currentUserInfo ? currentUserInfo.majors : []}
+          minors={currentUserInfo ? currentUserInfo.minors : []}
           totalUnits={totalUnits}
           transferUnits={transferUnits}
           pnpTotal={pnpTotal}
+          uniReqsFulfilled={convertStringsToRequirementEnum(
+            gradTrak?.uniReqsSatisfied ? gradTrak?.uniReqsSatisfied : []
+          )}
+          collegeReqsFulfilled={convertStringsToRequirementEnum(
+            gradTrak?.collegeReqsSatisfied ? gradTrak?.collegeReqsSatisfied : []
+          )}
         />
       </div>
 
@@ -185,40 +210,34 @@ function Dashboard() {
               </IconButton>
             </Tooltip>
             <Tooltip content="Display settings">
-              <Button variant="secondary">
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setShowDisplayMenu(!showDisplayMenu);
+                }}
+              >
                 Display
                 <NavArrowDown />
               </Button>
             </Tooltip>
           </div>
         </div>
+        {showDisplayMenu && (
+          <DisplayMenu
+            onClose={() => setShowDisplayMenu(false)}
+            settings={settings}
+            onChangeSettings={(patch) => updateSettings(patch)}
+          />
+        )}
         <div className={styles.semesterBlocks}>
-          <div className={styles.semesterLayout}>
-            <SemesterBlock
-              semesterId="miscellaneous"
-              selectedSemester={"Miscellaneous"}
-              selectedYear={""}
-              onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
-                updateSemesterUnits(
-                  "Miscellaneous",
-                  newTotal,
-                  pnpUnits,
-                  transferUnits
-                )
-              }
-              allSemesters={allSemesters}
-              updateAllSemesters={updateAllSemesters}
-            />
-
-            {years.map((year) => (
-              <div key={year} className={styles.yearElement}>
+          <div className={styles.semesterLayout} data-layout={settings.layout}>
+            {planTerms &&
+              planTerms.map((term) => (
                 <SemesterBlock
-                  semesterId={`fall-${year}`}
-                  selectedSemester={"Fall"}
-                  selectedYear={year}
+                  planTerm={term}
                   onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
-                    updateSemesterUnits(
-                      `Fall-${year}`,
+                    updateTotalUnits(
+                      term.name ? term.name : "",
                       newTotal,
                       pnpUnits,
                       transferUnits
@@ -226,46 +245,12 @@ function Dashboard() {
                   }
                   allSemesters={allSemesters}
                   updateAllSemesters={updateAllSemesters}
+                  settings={settings}
                 />
-                <SemesterBlock
-                  semesterId={`spring-${year}`}
-                  selectedSemester={"Spring"}
-                  selectedYear={year}
-                  onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
-                    updateSemesterUnits(
-                      `Spring-${year}`,
-                      newTotal,
-                      pnpUnits,
-                      transferUnits
-                    )
-                  }
-                  allSemesters={allSemesters}
-                  updateAllSemesters={updateAllSemesters}
-                />
-                {summerCheck && (
-                  <SemesterBlock
-                    semesterId={`summer-${year}`}
-                    selectedSemester={"Summer"}
-                    selectedYear={year}
-                    onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
-                      updateSemesterUnits(
-                        `Summer-${year}`,
-                        newTotal,
-                        pnpUnits,
-                        transferUnits
-                      )
-                    }
-                    allSemesters={allSemesters}
-                    updateAllSemesters={updateAllSemesters}
-                  />
-                )}
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-export default Dashboard;

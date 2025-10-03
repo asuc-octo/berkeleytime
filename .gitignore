@@ -28,3 +28,5 @@ apps/frontend/vite.config.js
 *storybook.log
 storybook-static
 vitest.config.js
+apps/backend/src/scripts
+prod-backup.gz

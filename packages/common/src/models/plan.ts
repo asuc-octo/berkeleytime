@@ -1,74 +1,98 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
-export const PlanCustomEventSchema = new Schema({
-  title: {
+export const labelSchema = new Schema({
+  name: {
     type: String,
-    required: false,
-    alias: "name",
-  },
-  description: {
-    type: String,
-    required: false,
-  },
-  uniReqs: {
-    type: [String],
-    required: false,
+    required: true,
     trim: true,
   },
-  collegeReqs: {
-    type: [String],
-    required: false,
+  color: {
+    type: String,
+    required: true,
     trim: true,
-  }
+  },
 });
 
 export const selectedCourseSchema = new Schema({
-  classID: {
+  courseID: {
     type: String,
     trim: true,
     required: true,
   },
+  courseName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  courseTitle: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  courseUnits: {
+    type: Number,
+    required: true,
+  },
   uniReqs: {
     type: [String],
-    required: false,
+    required: true,
     trim: true,
   },
   collegeReqs: {
     type: [String],
-    required: false,
+    required: true,
     trim: true,
-  }
+  },
+  pnp: {
+    type: Boolean,
+    required: true,
+  },
+  transfer: {
+    type: Boolean,
+    required: true,
+  },
+  labels: {
+    type: [labelSchema],
+    required: true,
+  },
 });
 
-export const planTermSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: false,
-    },
-    courses: {
-      type: [selectedCourseSchema],
-      required: true,
-    },
-    userEmail: {
-      type: String,
-      required: true,
-    },
-    year: {
-      type: Number,
-      required: true,
-    },
-    term: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    customEvents: {
-      type: [PlanCustomEventSchema],
-      required: false,
-    },
-  }
-);
+export const planTermSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  courses: {
+    type: [selectedCourseSchema],
+    required: true,
+  },
+  userEmail: {
+    type: String,
+    required: true,
+  },
+  year: {
+    type: Number,
+    required: true,
+  },
+  term: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  hidden: {
+    type: Boolean,
+    required: true,
+  },
+  status: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  pinned: {
+    type: Boolean,
+    required: true,
+  },
+});
 
 export const majorReqSchema = new Schema({
   name: {
@@ -92,8 +116,8 @@ export const majorReqSchema = new Schema({
   },
   isMinor: {
     type: Boolean,
-    required: false
-  }
+    required: false,
+  },
 });
 
 export const planSchema = new Schema(
@@ -108,54 +132,83 @@ export const planSchema = new Schema(
       type: [planTermSchema],
       required: true,
     },
-    miscellaneous: {
-      type: planTermSchema,
-      required: true,
-    },
-    uniReqs: {
+    majors: {
       type: [String!],
       required: true,
     },
-    collegeReqs: {
+    minors: {
       type: [String!],
       required: true,
+    },
+    college: {
+      type: String,
+      required: true,
+      trim: true,
     },
     majorReqs: {
       type: [majorReqSchema],
       required: true,
-    }
+    },
+    labels: {
+      type: [labelSchema],
+      required: true,
+    },
+    uniReqsSatisfied: {
+      type: [String],
+      required: true,
+      trim: true,
+    },
+    collegeReqsSatisfied: {
+      type: [String],
+      required: true,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
-export type PlanCustomEventType = Document &
-  InferSchemaType<typeof PlanCustomEventSchema>;
-export const CustomEventModel = mongoose.model<PlanCustomEventType>('customEvent', PlanCustomEventSchema);
-
-export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> & Document;
-export const SelectedCourseModel = mongoose.model<SelectedCourseType>('course', selectedCourseSchema);
+export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> &
+  Document;
+export const SelectedCourseModel = mongoose.model<SelectedCourseType>(
+  "course",
+  selectedCourseSchema
+);
 
 export type MajorReqType = Document & InferSchemaType<typeof majorReqSchema>;
-export const MajorReqModel = mongoose.model<MajorReqType>('majorReq', majorReqSchema);
+export const MajorReqModel = mongoose.model<MajorReqType>(
+  "majorReq",
+  majorReqSchema
+);
+
+export type LabelType = InferSchemaType<typeof labelSchema> & Document;
+export const LabelModel = mongoose.model<LabelType>("label", labelSchema);
 
 export interface PlanTermType extends Document {
-  name?: string;
+  name: string;
   courses: SelectedCourseType[];
   userEmail: string;
   year: number;
   term: string;
-  customEvents?: PlanCustomEventType[];
+  hidden: boolean;
+  status: string;
+  pinned: boolean;
 }
-export const PlanTermModel = mongoose.model<PlanTermType>('planTerm', planTermSchema);
+export const PlanTermModel = mongoose.model<PlanTermType>(
+  "planTerm",
+  planTermSchema
+);
 
 export interface PlanType extends Document {
   userEmail: string;
   planTerms: PlanTermType[];
-  miscellaneous: PlanTermType;
-  uniReqs: string[];
-  collegeReqs: string[];
+  majors: string[];
+  minors: string[];
   majorReqs: MajorReqType[];
   createdAt: Date;
   updatedAt: Date;
+  college: string;
+  labels: LabelType[];
+  uniReqsSatisfied: string[];
+  collegeReqsSatisfied: string[];
 }
-export const PlanModel = mongoose.model<PlanType>('plan', planSchema);
+export const PlanModel = mongoose.model<PlanType>("plan", planSchema);
