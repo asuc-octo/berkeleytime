@@ -122,24 +122,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (gradTrak?.planTerms) {
-      const cleanedPlanTerms = gradTrak.planTerms.map((term) => ({
-        ...term,
-        courses: term.courses.map((course) => ({
-          ...course,
-          labels: course.labels.filter((label) =>
-            localLabels.some(
-              (validLabel) =>
-                validLabel.name === label.name &&
-                validLabel.color === label.color
-            )
-          ),
-        })),
-      }));
-      setLocalPlanTerms(cleanedPlanTerms);
+      setLocalPlanTerms(gradTrak.planTerms);
     } else {
       setLocalPlanTerms([]);
     }
-  }, [gradTrak?.planTerms, localLabels]);
+  }, [gradTrak?.planTerms]);
 
   // helper functions for adding new block in right order
   const getTermOrder = (term: string) => {
