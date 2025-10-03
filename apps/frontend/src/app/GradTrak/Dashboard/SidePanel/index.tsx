@@ -1,5 +1,5 @@
 // TODO: also import in CoEReqs, HaasReqs
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { WarningCircle } from "iconoir-react";
 
@@ -11,11 +11,14 @@ import {
   UniReqs,
 } from "@/lib/course";
 
+import { Colleges } from "@/lib/api";
+
 import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
 
 // TODO(Daniel): Implement proper handling of reqs based on user's college...
 interface SidePanelProps {
+  colleges: Colleges[];
   majors: string[];
   minors: string[];
   totalUnits: number;
@@ -26,6 +29,7 @@ interface SidePanelProps {
 }
 
 export default function SidePanel({
+  colleges,
   majors,
   minors,
   totalUnits,
@@ -34,15 +38,27 @@ export default function SidePanel({
   uniReqsFulfilled,
   collegeReqsFulfilled,
 }: SidePanelProps) {
-  const [collegeReqs] = useState<RequirementEnum[]>([
-    LnSReqs.LnS_AL,
-    LnSReqs.LnS_BS,
-    LnSReqs.LnS_HS,
-    LnSReqs.LnS_IS,
-    LnSReqs.LnS_PV,
-    LnSReqs.LnS_PS,
-    LnSReqs.LnS_SBS,
-  ]);
+  const [collegeReqs, setCollegeReqs] = useState<RequirementEnum[]>([]);
+
+  useEffect(() => {
+    const reqs: RequirementEnum[] = [];
+    colleges.forEach((college) => {
+      if (college == Colleges.HAAS) {
+        reqs.push(...Object.values(HaasReqs));
+      } else if (college == Colleges.CoE) {
+        reqs.push(...Object.values(CoEReqs));
+      } else if (college == Colleges.LnS) {
+        reqs.push(...Object.values(LnSReqs));
+      } else {
+        // assuming the OTHER colleges also have the same requirements as LnS
+        if (!colleges.includes(Colleges.LnS)) {  // avoids duplication
+          reqs.push(...Object.values(LnSReqs));
+        }
+      }
+    });    
+    setCollegeReqs(reqs);
+  }, [colleges]);
+
   const UserInfo = (
     <>
       <div className={styles.headerContainer}>
