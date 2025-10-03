@@ -88,7 +88,7 @@ export const READ_ENROLLMENT = gql`
         minEnroll
         maxEnroll
         maxWaitlist
-        maxReserve
+        openReserved
         seatReservationCounts {
             number
             maxEnroll
@@ -98,23 +98,3 @@ export const READ_ENROLLMENT = gql`
     }
   }
 `;
-
-export const READ_RESERVED = gql`
-    query Enrollment($year: Int!, $semester: Semester!, $subject: String!, $courseNumber: CourseNumber!, $sectionNumber: SectionNumber!) {
-    enrollment(year: $year, semester: $semester, subject: $subject, courseNumber: $courseNumber, sectionNumber: $sectionNumber) {
-        latest {
-        seatReservationCounts {
-            enrolledCount
-            maxEnroll
-            number
-        }
-        }
-        seatReservationTypes {
-        fromDate
-        number
-        requirementGroup
-        }
-    }
-    }
-`;
-
