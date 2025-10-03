@@ -22,7 +22,7 @@ export function formatPlan(plan: PlanType): PlanModule.Plan {
     planTerms: plan.planTerms.map(formatPlanTerm),
     majors: plan.majors,
     minors: plan.minors,
-    college: plan.college as Colleges,
+    colleges: plan.colleges.map((college) => college as Colleges),
     majorReqs: plan.majorReqs.map(formatMajorReq),
     created: plan.createdAt.toISOString(),
     revised: plan.updatedAt.toISOString(),

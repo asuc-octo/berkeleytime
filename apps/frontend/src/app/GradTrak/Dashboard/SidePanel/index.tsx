@@ -4,8 +4,8 @@ import { useState } from "react";
 import { WarningCircle } from "iconoir-react";
 
 import {
-  // CoEReqs,
-  // HaasReqs,
+  CoEReqs,
+  HaasReqs,
   LnSReqs,
   RequirementEnum,
   UniReqs,
@@ -170,7 +170,7 @@ export default function SidePanel({
         finishedRequirements={uniReqsFulfilled}
       />
       <RequirementsAccordion
-        title={"Breadth Requirements"}
+        title={"College Requirements"}
         uni={false}
         requirements={collegeReqs}
         finishedRequirements={collegeReqsFulfilled}

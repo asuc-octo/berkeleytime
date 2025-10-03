@@ -38,7 +38,7 @@ export default function GradTrakOnboarding() {
   const handleMinorsComplete = async (minors: DegreeOption[]) => {
     setSelectedMinors(minors);
     const { data } = await createPlan(
-      Colleges.LnS,
+      [Colleges.LnS],
       selectedMajors.map((m) => m.value),
       minors.map((m) => m.value),
       parseInt(startYear, 10),

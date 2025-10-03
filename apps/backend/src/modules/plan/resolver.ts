@@ -47,7 +47,7 @@ const resolvers: PlanModule.Resolvers = {
     createNewPlan(
       _parent,
       args: {
-        college: Colleges;
+        colleges: Colleges[];
         majors: string[];
         minors: string[];
         startYear: number;
@@ -56,7 +56,7 @@ const resolvers: PlanModule.Resolvers = {
       context
     ) {
       return createPlan(
-        args.college,
+        args.colleges,
         args.majors,
         args.minors,
         args.startYear,
