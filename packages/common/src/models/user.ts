@@ -98,9 +98,14 @@ export const userSchema = new Schema(
               required: true,
             },
           },
-          thresholds: [Float]
+          thresholds: [Number]
         },
       ],
+    },
+    notificationType: {
+      type: String,
+      enum: ["Email", "Mobile", "Off"],
+      required: true,
     },
     refresh_token: {
       type: String,

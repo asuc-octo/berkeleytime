@@ -5,6 +5,7 @@ import { UserModule } from "./generated-types/module-types";
 interface UserRelationships {
   bookmarkedCourses: UserModule.BookmarkedCourseInput[];
   bookmarkedClasses: UserModule.BookmarkedClassInput[];
+  monitoredClasses: UserModule.MonitoredClassInput[];
 }
 
 export type IntermediateUser = Omit<UserModule.User, keyof UserRelationships> &

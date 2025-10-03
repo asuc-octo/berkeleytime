@@ -41,10 +41,15 @@ const typedef = gql`
     number: ClassNumber!
   }
 
+  input MonitoredClassInput {
+    class: BookmarkedClassInput!
+    thresholds: [Float!]!
+  }
+
   input UpdateUserInput {
     bookmarkedClasses: [BookmarkedClassInput!]
     bookmarkedCourses: [BookmarkedCourseInput!]
-    monitoredClasses: [MonitoredClass!]
+    monitoredClasses: [MonitoredClassInput!]
     notificationType: NotificationType!
   }
 
