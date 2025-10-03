@@ -68,7 +68,7 @@ export interface IPlan {
   minors: string[];
   created: string;
   revised: string;
-  college: string;
+  colleges: string[];
   labels: ILabel[];
   uniReqsSatisfied: string[];
   collegeReqsSatisfied: string[];
@@ -120,14 +120,14 @@ export interface ReadPlansResponse {
 
 export const CREATE_NEW_PLAN = gql`
   mutation CreateNewPlan(
-    $college: Colleges!
+    $colleges: [Colleges!]!
     $startYear: Int!
     $endYear: Int!
     $majors: [String!]!
     $minors: [String!]!
   ) {
     createNewPlan(
-      college: $college
+      colleges: $colleges
       startYear: $startYear
       endYear: $endYear
       majors: $majors
@@ -159,7 +159,7 @@ export const CREATE_NEW_PLAN = gql`
       }
       majors
       minors
-      college
+      colleges
       labels {
         name
         color
@@ -199,7 +199,7 @@ export const READ_PLAN = gql`
       }
       majors
       minors
-      college
+      colleges
       labels {
         name
         color
@@ -219,7 +219,7 @@ export const READ_PLANS = gql`
 `;
 
 export interface PlanInput {
-  college?: Colleges;
+  colleges?: Colleges[];
   uniReqsSatisfied?: UniReqs[];
   collegeReqsSatisfied?: CollegeReqs[];
   labels?: LabelInput[];

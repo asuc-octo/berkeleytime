@@ -27,7 +27,9 @@ import {
   ISelectedCourse,
   PlanInput,
   PlanTermInput,
+  Colleges
 } from "@/lib/api";
+
 import { convertStringsToRequirementEnum } from "@/lib/course";
 
 import AddBlockMenu from "./AddBlockMenu";
@@ -94,6 +96,7 @@ export default function Dashboard() {
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
   const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const [colleges, setColleges] = useState<Colleges[]>([]);
 
   const [editPlan] = useEditPlan();
 
@@ -105,6 +108,12 @@ export default function Dashboard() {
     return gradTrak?.minors || [];
   }, [gradTrak?.minors]);
 
+  useEffect(() => {
+    if (gradTrak?.colleges) {
+      setColleges(gradTrak.colleges.map((college) => college as Colleges));
+    }
+  }, [gradTrak?.colleges]);
+  
   useEffect(() => {
     if (gradTrak?.labels) {
       setLocalLabels(gradTrak.labels);
@@ -355,6 +364,7 @@ export default function Dashboard() {
     <div className={styles.root}>
       <div className={styles.panel}>
         <SidePanel
+          colleges={colleges}
           majors={currentUserInfo ? currentUserInfo.majors : []}
           minors={currentUserInfo ? currentUserInfo.minors : []}
           totalUnits={totalUnits}
