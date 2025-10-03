@@ -62,7 +62,7 @@ export default function AddBlockMenu({
       year: selectedYear ? selectedYear : currentYear,
       term: selectedTerm ? (selectedTerm as Terms) : Terms.Fall,
       hidden: false,
-      status: Status.InProgress,
+      status: Status.None,
       pinned: false,
       courses: [],
     });
@@ -78,7 +78,7 @@ export default function AddBlockMenu({
       year: -1,
       term: Terms.Misc,
       hidden: false,
-      status: Status.InProgress,
+      status: Status.None,
       pinned: false,
       courses: [],
     });

@@ -74,6 +74,7 @@ function SemesterBlock({
   const [getCourseUnits] = useReadCourseUnits();
 
   const [rename, setRename] = useState(planTerm.name);
+  const [renameDropdownOpen, setRenameDropdownOpen] = useState(false);
 
   useEffect(() => {
     const total = selectedClasses.reduce(
@@ -377,7 +378,10 @@ function SemesterBlock({
           </div>
           <Flex direction="row" gap="6px">
             <div className={styles.dropdown}>
-              <DropdownMenu.Root>
+              <DropdownMenu.Root
+                open={renameDropdownOpen}
+                onOpenChange={setRenameDropdownOpen}
+              >
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
                 </DropdownMenu.Trigger>
@@ -416,7 +420,9 @@ function SemesterBlock({
                               <Button
                                 onClick={() => {
                                   handleUpdateTermName(rename);
+                                  setRenameDropdownOpen(false);
                                 }}
+                                disabled={!rename || rename === planTerm.name}
                               >
                                 Save
                               </Button>
