@@ -1,7 +1,7 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-  type classPref {
+  type MonitoredClass {
     class: Class!
     thresholds: [Float]!
   }
@@ -19,7 +19,7 @@ const typedef = gql`
     student: Boolean!
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!
-    classPreferences: [classPref]
+    monitoredClasses: [MonitoredClass!]!
 		notificationType: NotificationType!
   }
 
@@ -44,6 +44,8 @@ const typedef = gql`
   input UpdateUserInput {
     bookmarkedClasses: [BookmarkedClassInput!]
     bookmarkedCourses: [BookmarkedCourseInput!]
+    monitoredClasses: [MonitoredClass!]
+    notificationType: NotificationType!
   }
 
   type Mutation {

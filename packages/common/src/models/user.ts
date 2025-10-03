@@ -70,6 +70,38 @@ export const userSchema = new Schema(
         },
       ],
     },
+    monitoredClasses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          class: {
+            year: {
+              type: Number,
+              required: true,
+            },
+            semester: {
+              type: String,
+              enum: ["Spring", "Summer", "Fall", "Winter"],
+              required: true,
+            },
+            subject: {
+              type: String,
+              required: true,
+            },
+            courseNumber: {
+              type: String,
+              required: true,
+            },
+            number: {
+              type: String,
+              required: true,
+            },
+          },
+          thresholds: [Float]
+        },
+      ],
+    },
     refresh_token: {
       type: String,
       trim: true,
