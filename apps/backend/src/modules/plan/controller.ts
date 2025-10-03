@@ -1,17 +1,23 @@
 import { omitBy } from "lodash";
 
-import { PlanTermModel, LabelModel, PlanModel, SelectedCourseModel, MajorReqModel } from "@repo/common";
+import {
+  LabelModel,
+  MajorReqModel,
+  PlanModel,
+  PlanTermModel,
+  SelectedCourseModel,
+} from "@repo/common";
 
 import {
-  PlanTerm,
-  Plan,
+  Colleges,
   EditPlanTermInput,
+  Plan,
+  PlanInput,
+  PlanTerm,
   PlanTermInput,
   SelectedCourseInput,
-  PlanInput,
-  Colleges
 } from "../../generated-types/graphql";
-import { formatPlanTerm, formatPlan } from "./formatter";
+import { formatPlan, formatPlanTerm } from "./formatter";
 
 // Helper functions for chronological insertion
 function getTermOrder(term: string): number {
@@ -42,9 +48,7 @@ function findInsertionIndex(planTerms: any[], newTerm: any): number {
 }
 
 // get plan for a user
-export async function getPlanByUser(
-  context: any
-): Promise<Plan[]> {
+export async function getPlanByUser(context: any): Promise<Plan[]> {
   if (!context.user.email) throw new Error("Unauthorized");
 
   const gt = await PlanModel.findOne({ userEmail: context.user.email });
@@ -56,7 +60,10 @@ export async function getPlanByUser(
 }
 
 // delete a planTerm specified by ObjectID
-export async function removePlanTerm(planTermID: string, context: any): Promise<string> {
+export async function removePlanTerm(
+  planTermID: string,
+  context: any
+): Promise<string> {
   if (!context.user.email) throw new Error("Unauthorized");
 
   // check if planTerm belongs to plan
@@ -64,7 +71,9 @@ export async function removePlanTerm(planTermID: string, context: any): Promise<
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
+  const planTermIndex = gt.planTerms.findIndex(
+    (sem) => (sem._id as string) == planTermID
+  );
   if (planTermIndex === -1) {
     throw new Error("PlanTerm does not exist in user's plan");
   }
@@ -83,7 +92,7 @@ export async function createPlanTerm(
   const nonNullPlanTerm = omitBy(mainPlanTerm, (value) => value == null);
   nonNullPlanTerm.userEmail = context.user.email;
   const newPlanTerm = new PlanTermModel({
-    ...nonNullPlanTerm
+    ...nonNullPlanTerm,
   });
 
   // add to plan in chronological order
@@ -110,7 +119,9 @@ export async function editPlanTerm(
     throw new Error("No Plan found for this user");
   }
 
-  const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
+  const planTermIndex = gt.planTerms.findIndex(
+    (sem) => (sem._id as string) == planTermID
+  );
   if (planTermIndex === -1) {
     throw new Error("PlanTerm does not exist in user's plan");
   }
@@ -136,7 +147,9 @@ export async function editPlanTerm(
     termToUpdate.pinned = mainPlanTerm.pinned;
   }
   if (mainPlanTerm.courses != null) {
-    termToUpdate.courses = mainPlanTerm.courses.map(courseInput => new SelectedCourseModel(courseInput));
+    termToUpdate.courses = mainPlanTerm.courses.map(
+      (courseInput) => new SelectedCourseModel(courseInput)
+    );
   }
 
   await gt.save();
@@ -154,11 +167,15 @@ export async function setClasses(
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  const planTermIndex = gt.planTerms.findIndex((sem) => sem._id as string == planTermID);
+  const planTermIndex = gt.planTerms.findIndex(
+    (sem) => (sem._id as string) == planTermID
+  );
   if (planTermIndex === -1) {
     throw new Error("PlanTerm does not exist in user's plan");
   }
-  gt.planTerms[planTermIndex].courses = courses.map(courseInput => new SelectedCourseModel(courseInput));
+  gt.planTerms[planTermIndex].courses = courses.map(
+    (courseInput) => new SelectedCourseModel(courseInput)
+  );
   await gt.save();
   return formatPlanTerm(gt.planTerms[planTermIndex]);
 }
@@ -188,51 +205,59 @@ export async function createPlan(
     status: "None",
     pinned: false,
   });
-  
+
   // Create all the plan terms
   const planTerms = [miscellaneous];
-  planTerms.push(new PlanTermModel({
-    name: "Fall " + startYear,
-    courses: [],
-    userEmail: context.user.email,
-    year: startYear,
-    term: "Fall",
-    hidden: false,
-    status: "None",
-    pinned: false,
-  }));
-  for (let i = startYear + 1; i < endYear; i++) {
-    planTerms.push(new PlanTermModel({
-      name: "Spring " + i,
+  planTerms.push(
+    new PlanTermModel({
+      name: "Fall " + startYear,
       courses: [],
       userEmail: context.user.email,
-      year: i,
-      term: "Spring",
-      hidden: false,
-      status: "None",
-      pinned: false,
-    }));
-    planTerms.push(new PlanTermModel({
-      name: "Fall " + i,
-      courses: [],
-      userEmail: context.user.email,
-      year: i,
+      year: startYear,
       term: "Fall",
       hidden: false,
       status: "None",
       pinned: false,
-    }));
+    })
+  );
+  for (let i = startYear + 1; i < endYear; i++) {
+    planTerms.push(
+      new PlanTermModel({
+        name: "Spring " + i,
+        courses: [],
+        userEmail: context.user.email,
+        year: i,
+        term: "Spring",
+        hidden: false,
+        status: "None",
+        pinned: false,
+      })
+    );
+    planTerms.push(
+      new PlanTermModel({
+        name: "Fall " + i,
+        courses: [],
+        userEmail: context.user.email,
+        year: i,
+        term: "Fall",
+        hidden: false,
+        status: "None",
+        pinned: false,
+      })
+    );
   }
-  planTerms.push(new PlanTermModel({
-    name: "Spring " + endYear,
-    courses: [],
-    userEmail: context.user.email,
-    year: endYear,
-    term: "Spring",
-    hidden: false,
-    status: "None",
-    pinned: false,
-  }));
+  planTerms.push(
+    new PlanTermModel({
+      name: "Spring " + endYear,
+      courses: [],
+      userEmail: context.user.email,
+      year: endYear,
+      term: "Spring",
+      hidden: false,
+      status: "None",
+      pinned: false,
+    })
+  );
 
   const newPlan = await PlanModel.create({
     userEmail: context.user.email,
@@ -248,10 +273,7 @@ export async function createPlan(
   return formatPlan(newPlan);
 }
 
-export async function editPlan(
-  plan: PlanInput,
-  context: any
-): Promise<Plan> {
+export async function editPlan(plan: PlanInput, context: any): Promise<Plan> {
   if (!context.user.email) throw new Error("Unauthorized");
   const gt = await PlanModel.findOne({ userEmail: context.user.email });
   if (!gt) {
@@ -268,10 +290,12 @@ export async function editPlan(
     gt.minors = plan.minors;
   }
   if (plan.majorReqs != null) {
-    gt.majorReqs = plan.majorReqs.map(majorReqInput => new MajorReqModel(majorReqInput));
+    gt.majorReqs = plan.majorReqs.map(
+      (majorReqInput) => new MajorReqModel(majorReqInput)
+    );
   }
   if (plan.labels != null) {
-    gt.labels = plan.labels.map(labelInput => new LabelModel(labelInput));
+    gt.labels = plan.labels.map((labelInput) => new LabelModel(labelInput));
   }
   if (plan.uniReqsSatisfied != null) {
     gt.uniReqsSatisfied = plan.uniReqsSatisfied;
@@ -284,13 +308,10 @@ export async function editPlan(
   return formatPlan(gt);
 }
 
-export async function deletePlan(
-  context: any
-): Promise<string> {
+export async function deletePlan(context: any): Promise<string> {
   if (!context.user.email) throw new Error("Unauthorized");
   console.log(context.user);
-  await PlanModel.deleteOne({ userEmail: context.user.email })
-  .catch(err => {
+  await PlanModel.deleteOne({ userEmail: context.user.email }).catch((err) => {
     return err;
   });
   return context.user.email;

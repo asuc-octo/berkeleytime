@@ -261,7 +261,7 @@ export enum Colleges {
   CoE = "College of Engineering",
   HAAS = "Haas School of Business",
   OTHER = "Other",
-};
+}
 
 export enum UniReqs {
   AC = "American Cultures",
@@ -272,7 +272,7 @@ export enum UniReqs {
   RCA = "R&C Part A",
   RCB = "R&C Part B",
   FL = "Foreign Language",
-};
+}
 
 export enum LnSReqs {
   LnS_AL = "Arts and Literature",
@@ -282,11 +282,11 @@ export enum LnSReqs {
   LnS_PV = "Philosophy and Values",
   LnS_PS = "Physical Science",
   LnS_SBS = "Social and Behavioral Sciences",
-};
+}
 
 export enum CoEReqs {
   CoE_HSS = "Humanities and Social Sciences",
-};
+}
 
 export enum HaasReqs {
   HAAS_AL = "HAAS Arts and Literature",
@@ -296,17 +296,19 @@ export enum HaasReqs {
   HAAS_PV = "HAAS Philosophy and Values",
   HAAS_PS = "HAAS Physical Science",
   HAAS_SBS = "HAAS Social and Behavioral Sciences",
-};
+}
 
 export type RequirementEnum = UniReqs | LnSReqs | CoEReqs | HaasReqs;
 
 // Convert an array of strings to an array of RequirementEnum
 // The entered strings must be the EnumKey (ex: "AC", "LnS_BS", "CoE_HSS", etc.)
-export function convertStringsToRequirementEnum(strings: string[]): RequirementEnum[] {
+export function convertStringsToRequirementEnum(
+  strings: string[]
+): RequirementEnum[] {
   const result: RequirementEnum[] = [];
-  
+
   const stringToEnum = new Map<string, RequirementEnum>();
-  
+
   Object.entries(UniReqs).forEach(([key, _]) => {
     stringToEnum.set(key, UniReqs[key as keyof typeof UniReqs]);
   });
@@ -326,13 +328,15 @@ export function convertStringsToRequirementEnum(strings: string[]): RequirementE
       result.push(enumValue);
     }
   }
-  
+
   return result;
 }
 
-export function convertRequirementEnumToStrings(requirements: RequirementEnum[]): string[] {
+export function convertRequirementEnumToStrings(
+  requirements: RequirementEnum[]
+): string[] {
   const result: string[] = [];
-  
+
   const enumToString = new Map<RequirementEnum, string>();
   Object.entries(UniReqs).forEach(([key, value]) => {
     enumToString.set(value as RequirementEnum, key);
@@ -353,6 +357,6 @@ export function convertRequirementEnumToStrings(requirements: RequirementEnum[])
       result.push(stringKey);
     }
   }
-  
+
   return result;
 }

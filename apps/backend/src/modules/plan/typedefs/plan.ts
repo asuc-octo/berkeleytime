@@ -60,10 +60,10 @@ const typeDef = gql`
 
     "Social and Behavioral Sciences"
     LnS_SBS
-    
+
     "Humanities and Social Sciences"
     CoE_HSS
-    
+
     "HAAS Arts and Literature"
     HAAS_AL
 
@@ -81,7 +81,7 @@ const typeDef = gql`
 
     "HAAS Physical Science"
     HAAS_PS
-    
+
     "HAAS Social and Behavioral Sciences"
     HAAS_SBS
   }
@@ -132,7 +132,7 @@ const typeDef = gql`
     pinned: Boolean!
   }
 
-  type SelectedCourse @cacheControl(maxAge: 0){
+  type SelectedCourse @cacheControl(maxAge: 0) {
     """
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
@@ -152,7 +152,7 @@ const typeDef = gql`
     major: String!
     numCoursesRequired: Int!
     satisfyingCourseIds: [String!]!
-    isMinor: Boolean! 
+    isMinor: Boolean!
   }
 
   input LabelInput {
@@ -213,7 +213,13 @@ const typeDef = gql`
     """
     Takes in user's email, a college, majors, and minors, creates a new Plan record in the database, and returns the Plan
     """
-    createNewPlan(college: Colleges!, startYear: Int!, endYear: Int!, majors: [String!]!, minors: [String!]!): Plan @auth
+    createNewPlan(
+      college: Colleges!
+      startYear: Int!
+      endYear: Int!
+      majors: [String!]!
+      minors: [String!]!
+    ): Plan @auth
 
     """
     Edits Plan college and majorReqs
@@ -229,18 +235,19 @@ const typeDef = gql`
     Takes in a PlanTerm's ObjectID, deletes the PlanTerm with that ID, and returns the ID.
     """
     removePlanTermByID(id: ID!): ID @auth
-    
+
     """
-    Takes in planTerm fields, find the planTerm record in the database corresponding to the provided term, 
+    Takes in planTerm fields, find the planTerm record in the database corresponding to the provided term,
     updates the record, and returns the updated planTerm
     """
     editPlanTerm(id: ID!, planTerm: EditPlanTermInput!): PlanTerm @auth
-    
+
     """
-    For the planTerm specified by the term, modifies the courses field, and returns the updated 
+    For the planTerm specified by the term, modifies the courses field, and returns the updated
     planTerm.
     """
-    setSelectedCourses(id: ID!, courses: [SelectedCourseInput!]!): PlanTerm @auth
+    setSelectedCourses(id: ID!, courses: [SelectedCourseInput!]!): PlanTerm
+      @auth
 
     """
     Deletes plan, for testing purposes
