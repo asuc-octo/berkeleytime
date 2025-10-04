@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
+import { Filter, MoreHoriz, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -10,6 +10,12 @@ import {
   IconButton,
   LoadingIndicator,
   Tooltip,
+  DropdownMenu,
+  Flex, 
+  Input, 
+  Box,
+  Checkbox,
+  Text
 } from "@repo/theme";
 
 import { initialize } from "@/components/CourseSearch/browser";
@@ -99,6 +105,13 @@ export default function Dashboard() {
   const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [colleges, setColleges] = useState<Colleges[]>([]);
+
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+  const [filterOptions, setFilterOptions] = useState({
+    completed: false,
+    inProgress: false,
+    incomplete: false,
+  });
 
   const [editPlan] = useEditPlan();
   const [editPlanTerm] = useEditPlanTerm();
@@ -258,6 +271,13 @@ export default function Dashboard() {
     const plan: PlanInput = {};
     plan.labels = labels;
     editPlan(plan);
+  };
+
+  const handleFilterOptionChange = (option: keyof typeof filterOptions) => {
+    setFilterOptions(prev => ({
+      ...prev,
+      [option]: !prev[option]
+    }));
   };
 
   useEffect(() => {
@@ -423,11 +443,72 @@ export default function Dashboard() {
           <h1>Semesters</h1>
 
           <div className={styles.buttonsGroup}>
-            <Tooltip content="Filter">
-              <IconButton>
-                <Filter />
-              </IconButton>
-            </Tooltip>
+            <DropdownMenu.Root
+              open={filterMenuOpen}
+              onOpenChange={setFilterMenuOpen}
+            >
+              <DropdownMenu.Trigger asChild>
+                <Tooltip content="Filter">
+                  <IconButton
+                    style={{
+                      backgroundColor: filterMenuOpen ? '#52525B' : undefined
+                    }}
+                  >
+                    <Filter />
+                  </IconButton>
+                </Tooltip>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content
+                sideOffset={5}
+                align="end"
+                style={{ width: "250px", padding: "12px" }}
+              >
+                <Box>
+                  <Flex direction="column" gap="8px">
+                    <Text style={{ fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
+                      Status
+                    </Text>
+                    <Flex 
+                      align="center" 
+                      gap="8px" 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleFilterOptionChange('completed')}
+                    >
+                      <Checkbox
+                        checked={filterOptions.completed}
+                        onCheckedChange={() => handleFilterOptionChange('completed')}
+                      />
+                      <Text>Show Completed</Text>
+                    </Flex>
+                    <Flex 
+                      align="center" 
+                      gap="8px" 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleFilterOptionChange('inProgress')}
+                    >
+                      <Checkbox
+                        checked={filterOptions.inProgress}
+                        onCheckedChange={() => handleFilterOptionChange('inProgress')}
+                      />
+                      <Text>Show In Progress</Text>
+                    </Flex>
+                    <Flex 
+                      align="center" 
+                      gap="8px" 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleFilterOptionChange('incomplete')}
+                    >
+                      <Checkbox
+                        checked={filterOptions.incomplete}
+                        onCheckedChange={() => handleFilterOptionChange('incomplete')}
+                      />
+                      <Text>Show Incomplete</Text>
+                    </Flex>
+                  </Flex>
+                </Box>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+            
             <Tooltip content="Sort">
               <IconButton>
                 <Sort />
