@@ -12,7 +12,6 @@ import {
   Tooltip,
   DropdownMenu,
   Flex, 
-  Input, 
   Box,
   Checkbox,
   Text
@@ -107,7 +106,12 @@ export default function Dashboard() {
   const [colleges, setColleges] = useState<Colleges[]>([]);
 
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
-  const [filterOptions, setFilterOptions] = useState({
+  const [filterOptions, setFilterOptions] = useState<{
+    completed: boolean;
+    inProgress: boolean;
+    incomplete: boolean;
+    [key: string]: boolean;
+  }>({
     completed: false,
     inProgress: false,
     incomplete: false,
@@ -143,6 +147,33 @@ export default function Dashboard() {
       setLocalPlanTerms([]);
     }
   }, [gradTrak?.planTerms]);
+
+  // Update filter options when labels change
+  useEffect(() => {
+    setFilterOptions(prev => {
+      const newOptions = { ...prev };
+      
+      // Add new label filters
+      localLabels.forEach(label => {
+        const labelKey = `label_${label.name}`;
+        if (!(labelKey in newOptions)) {
+          newOptions[labelKey] = false;
+        }
+      });
+      
+      // Remove label filters that no longer exist
+      Object.keys(newOptions).forEach(key => {
+        if (key.startsWith('label_')) {
+          const labelName = key.replace('label_', '');
+          if (!localLabels.some(label => label.name === labelName)) {
+            delete newOptions[key];
+          }
+        }
+      });
+      
+      return newOptions;
+    });
+  }, [localLabels]);
 
   // helper functions for adding new block in right order
   const getTermOrder = (term: string) => {
@@ -279,6 +310,8 @@ export default function Dashboard() {
       [option]: !prev[option]
     }));
   };
+
+  const activeFiltersCount = Object.values(filterOptions).filter(Boolean).length;
 
   useEffect(() => {
     if (gradTrak?.labels) {
@@ -449,19 +482,48 @@ export default function Dashboard() {
             >
               <DropdownMenu.Trigger asChild>
                 <Tooltip content="Filter">
-                  <IconButton
-                    style={{
-                      backgroundColor: filterMenuOpen ? '#52525B' : undefined
-                    }}
-                  >
-                    <Filter />
-                  </IconButton>
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <IconButton
+                      style={{
+                        backgroundColor: filterMenuOpen ? '#52525B' : undefined
+                      }}
+                    >
+                      <Filter />
+                    </IconButton>
+                    {activeFiltersCount > 0 && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '-6px',
+                          right: '-6px',
+                          backgroundColor: '#3B82F6',
+                          color: 'white',
+                          borderRadius: '12px',
+                          minWidth: '20px',
+                          height: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          padding: '0 6px',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        {activeFiltersCount}
+                      </div>
+                    )}
+                  </div>
                 </Tooltip>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content
                 sideOffset={5}
                 align="end"
-                style={{ width: "250px", padding: "12px" }}
+                style={{ 
+                  width: "250px", 
+                  padding: "12px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
+                }}
               >
                 <Box>
                   <Flex direction="column" gap="8px">
@@ -504,6 +566,34 @@ export default function Dashboard() {
                       />
                       <Text>Show Incomplete</Text>
                     </Flex>
+                    
+                    {localLabels.length > 0 && (
+                      <>
+                        <Text style={{ fontSize: '14px', fontWeight: '500', marginTop: '12px' }}>
+                          Custom Labels
+                        </Text>
+                        {localLabels.map(label => {
+                          const labelKey = `label_${label.name}`;
+                          return (
+                            <Flex 
+                              key={labelKey}
+                              align="center" 
+                              gap="8px" 
+                              style={{ cursor: 'pointer' }}
+                              onClick={() => handleFilterOptionChange(labelKey)}
+                            >
+                              <Checkbox
+                                checked={filterOptions[labelKey] || false}
+                                onCheckedChange={() => handleFilterOptionChange(labelKey)}
+                              />
+                              <Text style={{ color: label.color }}>
+                                {label.name}
+                              </Text>
+                            </Flex>
+                          );
+                        })}
+                      </>
+                    )}
                   </Flex>
                 </Box>
               </DropdownMenu.Content>
