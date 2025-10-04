@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { Filter, MoreHoriz, NavArrowDown, Plus, Sort } from "iconoir-react";
+import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -352,6 +352,29 @@ export default function Dashboard() {
     [key: string]: ISelectedCourse[];
   }>({});
 
+  // Calculate label counts when dropdown is opened
+  const calculateLabelCounts = () => {
+    const counts: Record<string, number> = {};
+    
+    localLabels.forEach(label => {
+      counts[label.name] = 0;
+    });
+    
+    Object.values(allSemesters).forEach(courses => {
+      courses.forEach(course => {
+        if (course.labels) {
+          course.labels.forEach(courseLabel => {
+            if (counts[courseLabel.name] !== undefined) {
+              counts[courseLabel.name]++;
+            }
+          });
+        }
+      });
+    });
+    
+    return counts;
+  };
+
   const updateTotalUnits = useCallback(
     (
       semesterKey: string,
@@ -574,6 +597,7 @@ export default function Dashboard() {
                         </Text>
                         {localLabels.map(label => {
                           const labelKey = `label_${label.name}`;
+                          const labelCounts = calculateLabelCounts();
                           return (
                             <Flex 
                               key={labelKey}
@@ -587,7 +611,7 @@ export default function Dashboard() {
                                 onCheckedChange={() => handleFilterOptionChange(labelKey)}
                               />
                               <Text style={{ color: label.color }}>
-                                {label.name}
+                                {label.name} ({labelCounts[label.name] || 0})
                               </Text>
                             </Flex>
                           );

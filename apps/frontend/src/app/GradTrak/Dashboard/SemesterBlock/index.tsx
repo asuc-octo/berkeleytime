@@ -265,6 +265,13 @@ function SemesterBlock({
     onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
     setClassToEdit(null);
+    
+    // update global state
+    const updatedSemesters = {
+      ...allSemesters,
+      [semesterId]: newClasses,
+    };
+    updateAllSemesters(updatedSemesters);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
