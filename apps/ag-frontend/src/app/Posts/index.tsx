@@ -8,7 +8,6 @@ import { useReadTerms } from "@/hooks/api";
 
 import PostTable from "../Posts/PostTable";
 import styles from "./Landing.module.scss";
-import { Post } from "../Landing";
 
 export default function Posts() {
   const navigate = useNavigate();
