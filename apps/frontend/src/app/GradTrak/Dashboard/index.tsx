@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
+import { Filter, NavArrowDown, Plus, Sort, Trash } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -116,6 +116,11 @@ export default function Dashboard() {
     inProgress: false,
     incomplete: false,
   });
+
+  const [sortMenuOpen, setSortMenuOpen] = useState(false);
+  const [sortPage, setSortPage] = useState<'Semester' | 'Course'>('Semester');
+  const [sortOption, setSortOption] = useState<
+  'Oldest' | 'Newest' | 'Unsorted' | 'A-Z' | 'Z-A'>('Oldest');
 
   const [editPlan] = useEditPlan();
   const [editPlanTerm] = useEditPlanTerm();
@@ -309,6 +314,15 @@ export default function Dashboard() {
       ...prev,
       [option]: !prev[option]
     }));
+  };
+
+  const handleChangeSortPage = (page: 'Semester' | 'Course') => {
+    setSortPage(page);
+  };
+
+  const handleSortOptionChange = (option: 'Oldest' | 'Newest' | 'Unsorted' | 'A-Z' | 'Z-A') => {
+    setSortOption(option);
+    setSortMenuOpen(false);
   };
 
   const activeFiltersCount = Object.values(filterOptions).filter(Boolean).length;
@@ -594,8 +608,9 @@ export default function Dashboard() {
                 sideOffset={5}
                 align="end"
                 style={{ 
-                  width: "250px", 
-                  padding: "12px",
+                  width: "max-content",
+                  padding: "16px",
+                  paddingTop: "0px",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
                 }}
               >
@@ -618,7 +633,7 @@ export default function Dashboard() {
                               checked={filterOptions.completed}
                               onCheckedChange={() => handleFilterOptionChange('completed')}
                             />
-                            <Text>Completed ({statusCounts.completed})</Text>
+                            <Text style={{ color: filterOptions.completed ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Completed ({statusCounts.completed})</Text>
                           </Flex>
                           <Flex 
                             align="center" 
@@ -630,7 +645,7 @@ export default function Dashboard() {
                               checked={filterOptions.inProgress}
                               onCheckedChange={() => handleFilterOptionChange('inProgress')}
                             />
-                            <Text>In Progress ({statusCounts.inProgress})</Text>
+                            <Text style={{ color: filterOptions.inProgress ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>In Progress ({statusCounts.inProgress})</Text>
                           </Flex>
                           <Flex 
                             align="center" 
@@ -642,7 +657,7 @@ export default function Dashboard() {
                               checked={filterOptions.incomplete}
                               onCheckedChange={() => handleFilterOptionChange('incomplete')}
                             />
-                            <Text>Incomplete ({statusCounts.incomplete})</Text>
+                            <Text style={{ color: filterOptions.incomplete ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Incomplete ({statusCounts.incomplete})</Text>
                           </Flex>
                         </>
                       );
@@ -680,12 +695,93 @@ export default function Dashboard() {
                 </Box>
               </DropdownMenu.Content>
             </DropdownMenu.Root>
-            
-            <Tooltip content="Sort">
-              <IconButton>
-                <Sort />
-              </IconButton>
-            </Tooltip>
+
+            <DropdownMenu.Root
+              open={sortMenuOpen}
+              onOpenChange={setSortMenuOpen}
+            >
+              <DropdownMenu.Trigger asChild>
+                <Tooltip content="Sort">
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <IconButton
+                      style={{
+                        backgroundColor: sortMenuOpen ? '#52525B' : undefined
+                      }}
+                    >
+                      <Sort />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content
+                sideOffset={5}
+                align="end"
+                style={{ 
+                  width: "max-content",
+                  padding: "16px",
+                  paddingTop: "0px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
+                }}
+              >
+                <Box>
+                  <Flex direction="column" gap="8px">
+                    <Text style={{ fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
+                      Status
+                    </Text>
+                    <Flex 
+                      align="center" 
+                      gap="8px" 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleFilterOptionChange('completed')}
+                      className={styles.option}
+                    >
+                      <label className={styles.option}>
+                        <input
+                          type="radio"
+                          name="sortType"
+                          checked={sortPage === 'Semester'}
+                          onChange={() => handleChangeSortPage('Semester')}
+                          className={styles.input}
+                        />
+                        <div className={styles.circle} style={{ borderColor: sortPage === 'Semester' ? 'var(--blue-500)' : '#C7C7C7' }}>
+                          {sortPage === 'Semester' && <div className={styles.dot}></div>}
+                        </div>
+                        <Text style={{ color: sortPage === 'Semester' ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Semester Block</Text>
+                      </label>
+                    </Flex>
+                    <Flex 
+                      align="center" 
+                      gap="8px" 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleFilterOptionChange('completed')}
+                      className={styles.option}
+                    >
+                      <label className={styles.option}>
+                        <input
+                          type="radio"
+                          name="sortType"
+                          checked={sortPage === 'Course'}
+                          onChange={() => handleChangeSortPage('Course')}
+                          className={styles.input}
+                        />
+                        <div className={styles.circle} style={{ borderColor: sortPage === 'Course' ? 'var(--blue-500)' : '#C7C7C7' }}>
+                          {sortPage === 'Course' && <div className={styles.dot}></div>}
+                        </div>
+                        <Text style={{ color: sortPage === 'Course' ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Class</Text>
+                      </label>
+                    </Flex>
+                    
+                    <div style={{ 
+                      height: '1px', 
+                      backgroundColor: 'var(--border-color)', 
+                      margin: '8px -16px'
+                    }} />
+
+                  </Flex>
+                </Box>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+
             <Tooltip content="Add new block">
               <IconButton
                 onClick={() => {
@@ -695,6 +791,7 @@ export default function Dashboard() {
                 <Plus />
               </IconButton>
             </Tooltip>
+
             <Tooltip content="Display settings">
               <Button
                 ref={displayMenuTriggerRef}
