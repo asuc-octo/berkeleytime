@@ -75,7 +75,7 @@ export default function Time({
         .reduce(
           (time, day, index) =>
             day
-              ? [...time, ["Su", "M", "Tu", "W", "Th", "F", "Sa"][index]]
+              ? [...time, ["M", "Tu", "W", "Th", "F", "Sa", "Su"][index]]
               : time,
           [] as string[]
         )

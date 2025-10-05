@@ -1,4 +1,4 @@
-import { ArrowSeparateVertical, Xmark } from "iconoir-react";
+import { Xmark } from "iconoir-react";
 
 import { IconButton } from "@repo/theme";
 
@@ -12,15 +12,16 @@ interface EventProps {
 }
 
 export default function Event({ event, onDelete }: EventProps) {
+  // TODO: Add edit functionality on expand
   return (
     <div className={styles.root} data-draggable>
       <div className={styles.border} />
       <div className={styles.body}>
         <div className={styles.header}>
           <div className={styles.row}>
-            <div className={styles.icon}>
+            {/* <div className={styles.icon}>
               <ArrowSeparateVertical />
-            </div>
+            </div> */}
             <div className={styles.text}>
               <p className={styles.heading}>{event.title}</p>
               <p className={styles.description}>{event.description}</p>

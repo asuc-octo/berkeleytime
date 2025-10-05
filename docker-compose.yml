@@ -17,7 +17,8 @@ services:
     restart: always
     volumes:
       - ./.env:/backend/apps/backend/.env
-      - ./apps/backend/src:/backend/apps/backend/src
+      - ./apps/backend:/backend/apps/backend
+      - ./packages:/frontend/packages
   frontend:
     build:
       context: .
@@ -27,7 +28,6 @@ services:
     restart: always
     volumes:
       - ./apps/frontend/src:/frontend/apps/frontend/src
-      - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/frontend/public:/frontend/apps/frontend/public
   ag-frontend:
     build:
@@ -39,6 +39,7 @@ services:
     volumes:
       - ./apps/ag-frontend/src:/ag-frontend/apps/ag-frontend/src
       - ./apps/ag-frontend/public:/ag-frontend/apps/ag-frontend/public
+      - ./packages:/frontend/packages
   mongodb:
     image: mongo:7.0.5
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
@@ -77,3 +78,17 @@ services:
     networks:
       - bt
     restart: always
+  storybook:
+    build:
+      context: .
+      target: storybook-dev
+    ports:
+      - 6006:6006
+    networks:
+      - bt
+    restart: always
+    volumes:
+      - ./packages/theme/src:/storybook/packages/theme/src
+      - ./apps/frontend/src:/storybook/apps/frontend/src
+      - ./.storybook:/storybook/.storybook
+

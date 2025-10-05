@@ -5,9 +5,7 @@
     "start": "tsx src/main.ts",
     "dev": "tsx watch src/main.ts",
     "build": "tsc --noEmit",
-    "generate": "graphql-codegen --config codegen.ts",
-    "update:catalog": "tsx ./src/scripts/update-catalog.ts",
-    "update:grades": "tsx --env-file=.env ./src/scripts/update-grade-distributions.ts"
+    "generate": "graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",

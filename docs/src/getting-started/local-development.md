@@ -53,9 +53,15 @@ A seeded database is required for some pages on the frontend.
 docker compose up -d
 
 # Download the data
-curl -O https://storage.googleapis.com/berkeleytime/public/stage_backup.gz
+curl -f -o "prod-backup.gz" "https://backups.stanfurdtime.com/persistent/prod_backup-$(date +%Y%m01).gz"
 
 # Copy the data and restore
-docker cp ./stage_backup.gz berkeleytime-mongodb-1:/tmp/stage_backup.gz
-docker exec berkeleytime-mongodb-1 mongorestore --drop --gzip --archive=/tmp/stage_backup.gz
+docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz
+docker exec berkeleytime-mongodb-1 mongorestore --drop --gzip --archive=/tmp/prod-backup.gz
 ```
+
+> [!TIP]
+> For the latest available snapshot of the production database, use:
+> ```sh
+> curl -f -o "prod-backup.gz" "https://backups.stanfurdtime.com/daily/prod_backup-$(date +%Y%m%d).gz"
+> ```

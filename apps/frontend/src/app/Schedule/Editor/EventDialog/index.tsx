@@ -4,6 +4,7 @@ import { ArrowRight, Xmark } from "iconoir-react";
 
 import {
   Button,
+  DaySelect,
   Dialog,
   Flex,
   Heading,
@@ -160,78 +161,7 @@ export default function EventDialog({ children }: EventDialogProps) {
             </Flex>
             <Flex direction="column" gap="2">
               <Label>Repeat</Label>
-              <div className={styles.daySelect}>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[6] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Su</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[0] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>M</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[1] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Tu</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[2] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>W</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[3] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Th</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[4] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>F</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[5] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Sa</span>
-                </label>
-              </div>
+              <DaySelect days={days} updateDays={setDays} />
             </Flex>
             <Flex direction="column" gap="2">
               <Label>Description</Label>
