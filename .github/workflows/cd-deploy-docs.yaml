@@ -8,12 +8,6 @@ on:
   push:
     branches: [master, gql]
     paths: ["docs/**", "infra/docs/**"]
-  workflow_call:
-    inputs:
-      chart_ver:
-        description: "Chart build tag"
-        required: true
-        type: string
 
 jobs:
   build-push:
@@ -64,8 +58,8 @@ jobs:
         run: |
           cd ./infra
           helm registry login registry-1.docker.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          helm package docs --version ${{ inputs.chart_ver }} --dependency-update
-          helm push bt-docs-${{ inputs.chart_ver }}.tgz oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}
+          helm package docs --version 1.0.0 --dependency-update
+          helm push bt-docs-1.0.0.tgz oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}
 
   deploy:
     name: SSH and Deploy
