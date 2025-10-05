@@ -281,19 +281,19 @@ export default function Dashboard() {
   };
 
   const handleSetStatus = async (termId: string, status: Status) => {
-    const updatedPlanTerms = [...localPlanTerms];
-    const termIndex = updatedPlanTerms.findIndex((term) => term._id === termId);
-    if (termIndex !== -1) {
-      updatedPlanTerms[termIndex].status = status;
-      setLocalPlanTerms(updatedPlanTerms);
+    const updatedPlanTerms = localPlanTerms.map((term) => 
+      term._id === termId 
+        ? { ...term, status } 
+        : term
+    );
+    setLocalPlanTerms(updatedPlanTerms);
 
-      try {
-        await editPlanTerm(termId, { status });
-      } catch (error) {
-        console.error("Error setting status:", error);
-        // Revert local state on error
-        setLocalPlanTerms(localPlanTerms);
-      }
+    try {
+      await editPlanTerm(termId, { status });
+    } catch (error) {
+      console.error("Error setting status:", error);
+      // Revert local state on error
+      setLocalPlanTerms(localPlanTerms);
     }
   };
 
@@ -351,6 +351,36 @@ export default function Dashboard() {
   const [allSemesters, setAllSemesters] = useState<{
     [key: string]: ISelectedCourse[];
   }>({});
+  const [filteredAllSemesters, setFilteredAllSemesters] = useState<{
+    [key: string]: ISelectedCourse[];
+  }>({});
+
+  useEffect(() => {
+    // if none of the label filters are selected, return all semesters
+    const hasActiveLabelFilters = Object.keys(filterOptions).some(key => key.startsWith('label_') && filterOptions[key]);
+    
+    if (!hasActiveLabelFilters) {
+      setFilteredAllSemesters(allSemesters);
+      return;
+    }
+
+    // iterate through each semester
+    const filteredSemesters: { [key: string]: ISelectedCourse[] } = {};
+    Object.entries(allSemesters).forEach(([key, value]) => {
+      const filteredClasses = value.filter((course) => {
+        for (const label of course.labels) {
+          if (filterOptions['label_' + label.name]) {
+            return true;
+          }
+        }
+        return false;
+      });
+      filteredSemesters[key] = filteredClasses;
+    });
+
+    setFilteredAllSemesters(filteredSemesters);
+    console.log(filteredSemesters);
+  }, [allSemesters, filterOptions]);
 
   // Calculate label counts when dropdown is opened
   const calculateLabelCounts = () => {
@@ -370,6 +400,27 @@ export default function Dashboard() {
           });
         }
       });
+    });
+    
+    return counts;
+  };
+
+  // Calculate status counts when dropdown is opened
+  const calculateStatusCounts = () => {
+    const counts = {
+      completed: 0,
+      inProgress: 0,
+      incomplete: 0,
+    };
+    
+    localPlanTerms.forEach(planTerm => {
+      if (planTerm.status === 'Complete') {
+        counts.completed++;
+      } else if (planTerm.status === 'InProgress') {
+        counts.inProgress++;
+      } else if (planTerm.status === 'Incomplete') {
+        counts.incomplete++;
+      }
     });
     
     return counts;
@@ -553,42 +604,49 @@ export default function Dashboard() {
                     <Text style={{ fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
                       Status
                     </Text>
-                    <Flex 
-                      align="center" 
-                      gap="8px" 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleFilterOptionChange('completed')}
-                    >
-                      <Checkbox
-                        checked={filterOptions.completed}
-                        onCheckedChange={() => handleFilterOptionChange('completed')}
-                      />
-                      <Text>Show Completed</Text>
-                    </Flex>
-                    <Flex 
-                      align="center" 
-                      gap="8px" 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleFilterOptionChange('inProgress')}
-                    >
-                      <Checkbox
-                        checked={filterOptions.inProgress}
-                        onCheckedChange={() => handleFilterOptionChange('inProgress')}
-                      />
-                      <Text>Show In Progress</Text>
-                    </Flex>
-                    <Flex 
-                      align="center" 
-                      gap="8px" 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleFilterOptionChange('incomplete')}
-                    >
-                      <Checkbox
-                        checked={filterOptions.incomplete}
-                        onCheckedChange={() => handleFilterOptionChange('incomplete')}
-                      />
-                      <Text>Show Incomplete</Text>
-                    </Flex>
+                    {(() => {
+                      const statusCounts = calculateStatusCounts();
+                      return (
+                        <>
+                          <Flex 
+                            align="center" 
+                            gap="8px" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => handleFilterOptionChange('completed')}
+                          >
+                            <Checkbox
+                              checked={filterOptions.completed}
+                              onCheckedChange={() => handleFilterOptionChange('completed')}
+                            />
+                            <Text>Completed ({statusCounts.completed})</Text>
+                          </Flex>
+                          <Flex 
+                            align="center" 
+                            gap="8px" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => handleFilterOptionChange('inProgress')}
+                          >
+                            <Checkbox
+                              checked={filterOptions.inProgress}
+                              onCheckedChange={() => handleFilterOptionChange('inProgress')}
+                            />
+                            <Text>In Progress ({statusCounts.inProgress})</Text>
+                          </Flex>
+                          <Flex 
+                            align="center" 
+                            gap="8px" 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => handleFilterOptionChange('incomplete')}
+                          >
+                            <Checkbox
+                              checked={filterOptions.incomplete}
+                              onCheckedChange={() => handleFilterOptionChange('incomplete')}
+                            />
+                            <Text>Incomplete ({statusCounts.incomplete})</Text>
+                          </Flex>
+                        </>
+                      );
+                    })()}
                     
                     {localLabels.length > 0 && (
                       <>
@@ -677,6 +735,19 @@ export default function Dashboard() {
           <div className={styles.semesterLayout} data-layout={settings.layout}>
             {localPlanTerms &&
               [...localPlanTerms]
+                .filter((term) => {
+                  if (!(filterOptions.completed || filterOptions.inProgress || filterOptions.incomplete)) return true;
+
+                  if (filterOptions.completed && term.status === 'Complete') return true;
+                  if (filterOptions.inProgress && term.status === 'InProgress') return true;
+                  if (filterOptions.incomplete && term.status === 'Incomplete') return true;
+                  
+                  return false;
+                })
+                .filter((term) => {
+                  if (!Object.keys(filterOptions).some(key => key.startsWith('label_') && filterOptions[key])) return true;
+                  return filteredAllSemesters[term._id].length > 0;
+                })
                 .sort((a, b) => {
                   // Pinned terms first, then by existing order
                   if (a.pinned && !b.pinned) return -1;
@@ -695,7 +766,7 @@ export default function Dashboard() {
                         transferUnits
                       )
                     }
-                    allSemesters={allSemesters}
+                    allSemesters={filteredAllSemesters}
                     updateAllSemesters={updateAllSemesters}
                     settings={settings}
                     labels={localLabels}

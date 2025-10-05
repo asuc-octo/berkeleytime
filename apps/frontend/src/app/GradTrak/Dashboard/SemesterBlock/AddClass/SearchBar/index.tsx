@@ -62,7 +62,6 @@ function SearchBar({
                     className={styles.item}
                   >
                     {cls.courseName}
-                    {cls.courseUnits > 0 ? ` - ${cls.courseUnits} units` : ""}
                   </li>
                 ))}
               </ul>
