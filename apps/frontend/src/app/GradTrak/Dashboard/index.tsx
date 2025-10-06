@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { Filter, NavArrowDown, Plus, Sort, Trash } from "iconoir-react";
+import { ArrowDown, ArrowUp, Minus, Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -81,7 +81,7 @@ export default function Dashboard() {
       courseID: `${course.subject}_${course.number}`,
       courseName: `${course.subject} ${course.number}`,
       courseTitle: course.title,
-      courseUnits: -1, // TODO(Daniel): fetch when adding
+      courseUnits: -1,
       uniReqs: [], // TODO(Daniel): Fetch reqs
       collegeReqs: [], // TODO(Daniel): Fetch reqs
       pnp: false,
@@ -119,8 +119,8 @@ export default function Dashboard() {
 
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const [sortPage, setSortPage] = useState<'Semester' | 'Course'>('Semester');
-  const [sortOption, setSortOption] = useState<
-  'Oldest' | 'Newest' | 'Unsorted' | 'A-Z' | 'Z-A'>('Oldest');
+  const [sortSemesterOption, setSortSemesterOption] = useState<'Oldest' | 'Newest'>('Oldest');
+  const [sortCourseOption, setSortCourseOption] = useState<'Unsorted' | 'A-Z' | 'Z-A'>('Unsorted');
 
   const [editPlan] = useEditPlan();
   const [editPlanTerm] = useEditPlanTerm();
@@ -320,8 +320,13 @@ export default function Dashboard() {
     setSortPage(page);
   };
 
-  const handleSortOptionChange = (option: 'Oldest' | 'Newest' | 'Unsorted' | 'A-Z' | 'Z-A') => {
-    setSortOption(option);
+  const handleSortSemesterOptionChange = (option: 'Oldest' | 'Newest') => {
+    setSortSemesterOption(option);
+    setSortMenuOpen(false);
+  };
+
+  const handleSortCourseOptionChange = (option: 'Unsorted' | 'A-Z' | 'Z-A') => {
+    setSortCourseOption(option);
     setSortMenuOpen(false);
   };
 
@@ -696,91 +701,155 @@ export default function Dashboard() {
               </DropdownMenu.Content>
             </DropdownMenu.Root>
 
-            <DropdownMenu.Root
-              open={sortMenuOpen}
-              onOpenChange={setSortMenuOpen}
-            >
-              <DropdownMenu.Trigger asChild>
-                <Tooltip content="Sort">
-                  <div style={{ position: 'relative', display: 'inline-block' }}>
-                    <IconButton
-                      style={{
-                        backgroundColor: sortMenuOpen ? '#52525B' : undefined
-                      }}
-                    >
-                      <Sort />
-                    </IconButton>
-                  </div>
-                </Tooltip>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content
-                sideOffset={5}
-                align="end"
-                style={{ 
-                  width: "max-content",
-                  padding: "16px",
-                  paddingTop: "0px",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
-                }}
+            <div className={styles.dropdown}>
+              <DropdownMenu.Root
+                open={sortMenuOpen}
+                onOpenChange={setSortMenuOpen}
               >
-                <Box>
-                  <Flex direction="column" gap="8px">
-                    <Text style={{ fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
-                      Status
-                    </Text>
-                    <Flex 
-                      align="center" 
-                      gap="8px" 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleFilterOptionChange('completed')}
-                      className={styles.option}
-                    >
-                      <label className={styles.option}>
-                        <input
-                          type="radio"
-                          name="sortType"
-                          checked={sortPage === 'Semester'}
-                          onChange={() => handleChangeSortPage('Semester')}
-                          className={styles.input}
-                        />
-                        <div className={styles.circle} style={{ borderColor: sortPage === 'Semester' ? 'var(--blue-500)' : '#C7C7C7' }}>
-                          {sortPage === 'Semester' && <div className={styles.dot}></div>}
-                        </div>
-                        <Text style={{ color: sortPage === 'Semester' ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Semester Block</Text>
-                      </label>
-                    </Flex>
-                    <Flex 
-                      align="center" 
-                      gap="8px" 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleFilterOptionChange('completed')}
-                      className={styles.option}
-                    >
-                      <label className={styles.option}>
-                        <input
-                          type="radio"
-                          name="sortType"
-                          checked={sortPage === 'Course'}
-                          onChange={() => handleChangeSortPage('Course')}
-                          className={styles.input}
-                        />
-                        <div className={styles.circle} style={{ borderColor: sortPage === 'Course' ? 'var(--blue-500)' : '#C7C7C7' }}>
-                          {sortPage === 'Course' && <div className={styles.dot}></div>}
-                        </div>
-                        <Text style={{ color: sortPage === 'Course' ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Class</Text>
-                      </label>
-                    </Flex>
-                    
-                    <div style={{ 
-                      height: '1px', 
-                      backgroundColor: 'var(--border-color)', 
-                      margin: '8px -16px'
-                    }} />
+                <DropdownMenu.Trigger asChild>
+                  <Tooltip content="Sort">
+                    <div 
+                      style={{ position: 'relative', display: 'inline-block' }}>
+                      <IconButton
+                        style={{
+                          backgroundColor: sortMenuOpen ? '#52525B' : undefined
+                        }}
+                      >
+                        <Sort />
+                      </IconButton>
+                    </div>
+                  </Tooltip>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content 
+                  sideOffset={5} 
+                  align="end"
+                  style={{ 
+                    width: "max-content",
+                    paddingTop: "0px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
+                  }}
+                >
+                  <Text style={{ paddingLeft: '13px', fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
+                    Sort By
+                  </Text>
+                  <DropdownMenu.Item 
+                    style={{ 
+                      cursor: 'pointer',
+                      alignItems: 'center',
+                      backgroundColor: 'transparent !important'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                    onClick={() => handleChangeSortPage('Semester')}
+                  >
+                    <label className={styles.option}>
+                      <input
+                        type="radio"
+                        name="sortType"
+                        checked={sortPage === 'Semester'}
+                        className={styles.input}
+                      />
+                      <div className={styles.circle} style={{ borderColor: sortPage === 'Semester' ? 'var(--blue-500)' : '#C7C7C7' }}>
+                        {sortPage === 'Semester' && <div className={styles.dot}></div>}
+                      </div>
+                      <Text style={{ 
+                        color: sortPage === 'Semester' ? 'var(--heading-color)' : 'var(--paragraph-color)',
+                        marginLeft: '-6px'
+                      }}>Semester Block</Text>
+                    </label>
+                  </DropdownMenu.Item>
 
-                  </Flex>
-                </Box>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+                  <DropdownMenu.Item 
+                    style={{ 
+                      cursor: 'pointer',
+                      alignItems: 'center',
+                      backgroundColor: 'transparent !important'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                    onClick={() => handleChangeSortPage('Course')}
+                  >
+                    <label className={styles.option}>
+                      <input
+                        type="radio"
+                        name="sortType"
+                        checked={sortPage === 'Course'}
+                        className={styles.input}
+                      />
+                      <div className={styles.circle} style={{ borderColor: sortPage === 'Course' ? 'var(--blue-500)' : '#C7C7C7' }}>
+                        {sortPage === 'Course' && <div className={styles.dot}></div>}
+                      </div>
+                      <Text style={{ 
+                        color: sortPage === 'Course' ? 'var(--heading-color)' : 'var(--paragraph-color)',
+                        marginLeft: '-6px'
+                      }}>Course</Text>
+                    </label>
+                  </DropdownMenu.Item>
+
+                  <div style={{ 
+                    height: '1px', 
+                    backgroundColor: 'var(--border-color)', 
+                    margin: '5px 0px',
+                    width: '100%'
+                  }} />
+
+                  {sortPage === 'Semester' && 
+                  <div>
+                    <DropdownMenu.Item 
+                      onClick={() => handleSortSemesterOptionChange('Oldest')}
+                      className={`${styles.menuItem} ${sortSemesterOption === 'Oldest' ? styles.selected : ''}`}
+                    >
+                      <ArrowUp className={styles.menuIcon} />
+                      <Text className={styles.menuText}>Oldest First</Text>
+                    </DropdownMenu.Item>
+
+                    <DropdownMenu.Item 
+                      onClick={() => handleSortSemesterOptionChange('Newest')}
+                      className={`${styles.menuItem} ${sortSemesterOption === 'Newest' ? styles.selected : ''}`}
+                    >
+                      <ArrowDown className={styles.menuIcon} /> 
+                      <Text className={styles.menuText}>Newest First</Text>
+                    </DropdownMenu.Item>
+                  </div>}
+
+                  {sortPage === 'Course' && 
+                  <div>
+                    <DropdownMenu.Item 
+                      onClick={() => handleSortCourseOptionChange('Unsorted')}
+                      className={`${styles.menuItem} ${sortCourseOption === 'Unsorted' ? styles.selected : ''}`}
+                    >
+                      <Minus className={styles.menuIcon} /> 
+                      <Text className={styles.menuText}>Unsorted</Text>
+                    </DropdownMenu.Item>
+
+                    <DropdownMenu.Item 
+                      onClick={() => handleSortCourseOptionChange('A-Z')}
+                      className={`${styles.menuItem} ${sortCourseOption === 'A-Z' ? styles.selected : ''}`}
+                    >
+                      <ArrowUp className={styles.menuIcon} />
+                      <Text className={styles.menuText}>A-Z</Text>
+                    </DropdownMenu.Item>
+
+                    <DropdownMenu.Item 
+                      onClick={() => handleSortCourseOptionChange('Z-A')}
+                      className={`${styles.menuItem} ${sortCourseOption === 'Z-A' ? styles.selected : ''}`}
+                    >
+                      <ArrowDown className={styles.menuIcon} /> 
+                      <Text className={styles.menuText}>Z-A</Text>
+                    </DropdownMenu.Item>
+                  </div>}
+
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            </div>
 
             <Tooltip content="Add new block">
               <IconButton
@@ -846,9 +915,12 @@ export default function Dashboard() {
                   return filteredAllSemesters[term._id].length > 0;
                 })
                 .sort((a, b) => {
-                  // Pinned terms first, then by existing order
+                  // Pinned terms first
                   if (a.pinned && !b.pinned) return -1;
                   if (!a.pinned && b.pinned) return 1;
+
+                  // TODO(Daniel): sort by semester order
+                  
                   return 0;
                 })
                 .map((term) => (

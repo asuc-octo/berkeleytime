@@ -108,3 +108,17 @@
   width: 0;
   height: 0;
 }
+
+.menuText {
+  padding-left: 10px;
+}
+
+.menuItem {
+  &:hover {
+    background-color: var(--button-hover-color) !important;
+  }
+  
+  &.selected {
+    background-color: var(--button-active-color);
+  }
+}
