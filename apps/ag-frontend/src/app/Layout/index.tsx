@@ -47,7 +47,7 @@ function Content() {
         <Container>
           <Flex justify="between">
             <Heading className={styles.heading} asChild>
-              <Link to="/">Academic Guide</Link>
+              <Link to="/">Berkeley Catalog</Link>
             </Heading>
             <Button
               variant="outline"
