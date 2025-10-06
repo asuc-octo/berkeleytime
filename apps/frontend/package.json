@@ -16,7 +16,6 @@
     "@repo/theme": "*",
     "@shopify/draggable": "^1.1.4",
     "@tanstack/react-virtual": "^3.13.12",
-    "babel-plugin-react-compiler": "^19.1.0-rc.2",
     "classnames": "^2.5.1",
     "fuse.js": "^7.1.0",
     "graphql": "^16.11.0",

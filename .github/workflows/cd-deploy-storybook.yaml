@@ -3,7 +3,13 @@ name: Deploy Storybook
 on:
   push:
     branches: [master, gql]
-    paths: ["packages/common/src/**", ".storybook/**", "Dockerfile", "docker-compose.yml", ".github/workflows/cd-deploy-storybook.yaml", "infra/storybook/**"]
+    paths:
+      [
+        "packages/theme/**",
+        "apps/storybook/**",
+        ".github/workflows/cd-deploy-storybook.yaml",
+        "infra/storybook/**",
+      ]
 
 jobs:
   build-push-image:
@@ -27,6 +33,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           target: storybook-prod
+          file: ./apps/storybook/Dockerfile
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod-cache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod-cache,mode=max
@@ -55,7 +62,6 @@ jobs:
           helm registry login registry-1.docker.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           helm package storybook --version 0.1.0 --dependency-update
           helm push bt-storybook-0.1.0.tgz oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}
-
 
   deploy:
     name: SSH and Deploy
