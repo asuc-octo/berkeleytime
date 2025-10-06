@@ -33,6 +33,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
+          context: .
           file: ./apps/${{ matrix.image }}/Dockerfile
           target: ${{ matrix.image }}-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}

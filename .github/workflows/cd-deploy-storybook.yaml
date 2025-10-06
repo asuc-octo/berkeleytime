@@ -32,6 +32,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
+          context: .
           target: storybook-prod
           file: ./apps/storybook/Dockerfile
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod
