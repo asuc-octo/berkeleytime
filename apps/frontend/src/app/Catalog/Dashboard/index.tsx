@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import {
   ArrowSeparateVertical,
   BookmarkSolid,
@@ -90,7 +90,7 @@ export default function Dashboard({
             },
           });
 
-          return response.data.class;
+          return response.data?.class;
         } catch {
           // TODO: Handle errors
 
