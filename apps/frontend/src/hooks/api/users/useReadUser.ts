@@ -1,8 +1,8 @@
-import { QueryHookOptions, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 import { READ_USER, ReadUserResponse } from "@/lib/api";
 
-export const useReadUser = (options?: QueryHookOptions<ReadUserResponse>) => {
+export const useReadUser = (options?: useQuery.Options<ReadUserResponse>) => {
   const query = useQuery<ReadUserResponse>(READ_USER, options);
 
   return {
