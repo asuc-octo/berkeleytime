@@ -44,6 +44,7 @@ interface SemesterBlockProps {
   handleUpdateTermName: (name: string) => void;
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;
+  sortCourseOption: string;
 }
 
 function SemesterBlock({
@@ -59,6 +60,7 @@ function SemesterBlock({
   handleUpdateTermName,
   handleTogglePin,
   handleSetStatus,
+  sortCourseOption,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -582,7 +584,12 @@ function SemesterBlock({
 
         {open && (
           <>
-            {selectedClasses.map((cls, index) => (
+            {selectedClasses.sort((a, b) => {
+              if (sortCourseOption === 'Unsorted') return 0;
+              if (sortCourseOption === 'A-Z') return a.courseName.localeCompare(b.courseName);
+              if (sortCourseOption === 'Z-A') return b.courseName.localeCompare(a.courseName);
+              return 0;
+            }).map((cls, index) => (
               <React.Fragment key={`class-group-${index}`}>
                 {placeholderIndex === index && (
                   <div className={styles.placeholder} />

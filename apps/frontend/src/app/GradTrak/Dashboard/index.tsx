@@ -194,31 +194,8 @@ export default function Dashboard() {
     }
   };
   const insertPlanTerm = (planTerms: IPlanTerm[], newTerm: IPlanTerm) => {
-    const insertIndex = findInsertionIndex(planTerms, newTerm);
-    const newArray = [...planTerms];
-    newArray.splice(insertIndex, 0, newTerm);
+    const newArray = [...planTerms, newTerm];
     setLocalPlanTerms(newArray);
-  };
-  const findInsertionIndex = (
-    planTerms: IPlanTerm[],
-    newTerm: IPlanTerm
-  ): number => {
-    for (let i = 0; i < planTerms.length; i++) {
-      const currentTerm = planTerms[i];
-      if (newTerm.year < currentTerm.year) {
-        return i;
-      }
-      if (newTerm.year === currentTerm.year) {
-        if (
-          getTermOrder(newTerm.term) < getTermOrder(currentTerm.term) ||
-          (getTermOrder(newTerm.term) === getTermOrder(currentTerm.term) &&
-            newTerm.name < currentTerm.name)
-        ) {
-          return i;
-        }
-      }
-    }
-    return planTerms.length;
   };
 
   const [createNewPlanTerm] = useCreateNewPlanTerm();
@@ -398,7 +375,6 @@ export default function Dashboard() {
     });
 
     setFilteredAllSemesters(filteredSemesters);
-    console.log(filteredSemesters);
   }, [allSemesters, filterOptions]);
 
   // Calculate label counts when dropdown is opened
@@ -732,25 +708,19 @@ export default function Dashboard() {
                   <Text style={{ paddingLeft: '13px', fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
                     Sort By
                   </Text>
-                  <DropdownMenu.Item 
-                    style={{ 
-                      cursor: 'pointer',
-                      alignItems: 'center',
-                      backgroundColor: 'transparent !important'
+                  <div 
+                    className={styles.sortMenu}
+                    onClick={() => {
+                      handleChangeSortPage('Semester');
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                    onClick={() => handleChangeSortPage('Semester')}
                   >
+                    <div style={{ paddingTop: '3px' }} />
                     <label className={styles.option}>
                       <input
                         type="radio"
                         name="sortType"
                         checked={sortPage === 'Semester'}
+                        onChange={() => handleChangeSortPage('Semester')}
                         className={styles.input}
                       />
                       <div className={styles.circle} style={{ borderColor: sortPage === 'Semester' ? 'var(--blue-500)' : '#C7C7C7' }}>
@@ -761,27 +731,20 @@ export default function Dashboard() {
                         marginLeft: '-6px'
                       }}>Semester Block</Text>
                     </label>
-                  </DropdownMenu.Item>
+                  </div>
 
-                  <DropdownMenu.Item 
-                    style={{ 
-                      cursor: 'pointer',
-                      alignItems: 'center',
-                      backgroundColor: 'transparent !important'
+                  <div 
+                    className={styles.sortMenu}
+                    onClick={() => {
+                      handleChangeSortPage('Course');
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                    onClick={() => handleChangeSortPage('Course')}
                   >
                     <label className={styles.option}>
                       <input
                         type="radio"
                         name="sortType"
                         checked={sortPage === 'Course'}
+                        onChange={() => handleChangeSortPage('Course')}
                         className={styles.input}
                       />
                       <div className={styles.circle} style={{ borderColor: sortPage === 'Course' ? 'var(--blue-500)' : '#C7C7C7' }}>
@@ -792,7 +755,7 @@ export default function Dashboard() {
                         marginLeft: '-6px'
                       }}>Course</Text>
                     </label>
-                  </DropdownMenu.Item>
+                  </div>
 
                   <div style={{ 
                     height: '1px', 
@@ -919,9 +882,17 @@ export default function Dashboard() {
                   if (a.pinned && !b.pinned) return -1;
                   if (!a.pinned && b.pinned) return 1;
 
-                  // TODO(Daniel): sort by semester order
-                  
-                  return 0;
+                  // misc always comes first
+                  if (a.year == -1 || b.year == -1) {
+                    return a.year - b.year;
+                  }
+                  if (sortSemesterOption === 'Oldest') {
+                    if (a.year != b.year) return a.year - b.year;
+                    return getTermOrder(a.term) - getTermOrder(b.term);
+                  } else {
+                    if (a.year != b.year) return b.year - a.year;
+                    return getTermOrder(b.term) - getTermOrder(a.term);
+                  }
                 })
                 .map((term) => (
                   <SemesterBlock
@@ -949,6 +920,7 @@ export default function Dashboard() {
                     handleSetStatus={(status: Status) =>
                       handleSetStatus(term._id, status)
                     }
+                    sortCourseOption={sortCourseOption}
                   />
                 ))}
           </div>
