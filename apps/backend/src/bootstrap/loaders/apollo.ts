@@ -72,6 +72,9 @@ const protection = armor.protect();
 export default async (redis: RedisClientType) => {
   const schema = buildSchema();
 
+  const cache = new RedisCache(redis);
+  console.log(cache);
+
   const server = new ApolloServer({
     schema,
     validationRules: [...protection.validationRules],

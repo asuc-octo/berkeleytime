@@ -111,7 +111,8 @@ export default function Enrollment() {
           response?.data
             ? acc.concat({
                 color: LIGHT_COLORS[index],
-                enrollmentHistory: response.data.enrollment,
+                // TODO: Error handling
+                enrollmentHistory: response.data!.enrollment,
                 input: initialInputs[index],
                 active: false,
                 hidden: false,

@@ -130,7 +130,8 @@ export default function GradeDistributions() {
           response?.data
             ? acc.concat({
                 color: LIGHT_COLORS[index],
-                gradeDistribution: response.data.grade,
+                // TODO: Error handling
+                gradeDistribution: response.data!.grade,
                 input: initialInputs[index],
                 active: false,
                 hidden: false,
@@ -215,7 +216,7 @@ export default function GradeDistributions() {
     if (outputs.length > 0) {
       if (!hoveredSeries) setHoveredSeries(0);
     } else setHoveredSeries(null);
-  }, [outputs]);
+  }, [hoveredSeries, outputs]);
 
   return (
     <Box p="5">

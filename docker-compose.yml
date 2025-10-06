@@ -6,6 +6,7 @@ services:
   backend:
     build:
       context: .
+      dockerfile: ./apps/backend/Dockerfile
       target: backend-dev
     depends_on:
       mongodb:
@@ -22,6 +23,7 @@ services:
   frontend:
     build:
       context: .
+      dockerfile: ./apps/frontend/Dockerfile
       target: frontend-dev
     networks:
       - bt
@@ -32,6 +34,7 @@ services:
   ag-frontend:
     build:
       context: .
+      dockerfile: ./apps/ag-frontend/Dockerfile
       target: ag-frontend-dev
     networks:
       - bt
@@ -80,6 +83,7 @@ services:
   storybook:
     build:
       context: .
+      dockerfile: ./apps/storybook/Dockerfile
       target: storybook-dev
     ports:
       - 6006:6006
@@ -87,7 +91,18 @@ services:
       - bt
     restart: always
     volumes:
-      - ./packages/theme/src:/storybook/packages/theme/src
-      - ./apps/frontend/src:/storybook/apps/frontend/src
-      - ./.storybook:/storybook/.storybook
+      - ./packages/theme:/storybook/packages/theme
+      - ./apps/storybook:/storybook/apps/storybook
+  docs:
+    build:
+      context: .
+      dockerfile: ./apps/docs/Dockerfile
+      target: docs-dev
+    ports:
+      - 3000:3000
+    networks:
+      - bt
+    restart: always
+    volumes:
+      - ./apps/docs:/storybook/apps/docs
 

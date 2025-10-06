@@ -53,9 +53,7 @@ export default async (app: Application, redis: RedisClientType) => {
     const { redirect_uri: redirectURI } = req.query;
 
     const parsedRedirectURI =
-      typeof redirectURI === "string" && redirectURI.startsWith("/")
-        ? redirectURI
-        : null;
+      typeof redirectURI === "string" ? redirectURI : null;
 
     if (authenticated) {
       res.redirect(parsedRedirectURI ?? SUCCESS_REDIRECT);
@@ -92,9 +90,7 @@ export default async (app: Application, redis: RedisClientType) => {
         );
 
         parsedRedirectURI =
-          typeof redirectURI === "string" && redirectURI.startsWith("/")
-            ? redirectURI
-            : undefined;
+          typeof redirectURI === "string" ? redirectURI : undefined;
       } catch {
         // Do nothing
       }

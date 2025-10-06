@@ -21,5 +21,4 @@ bt-app-*.tgz
 generated-types/
 stage_backup.gz
 *storybook.log
-storybook-static
 vitest.config.js

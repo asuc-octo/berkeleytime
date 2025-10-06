@@ -28,7 +28,8 @@ export const READ_USER = gql`
 
 export const signIn = (redirectURI?: string) => {
   redirectURI =
-    redirectURI ?? window.location.pathname + window.location.search;
+    redirectURI ??
+    window.location.origin + window.location.pathname + window.location.search;
 
   window.location.href = `${BASE}/api/login?redirect_uri=${redirectURI}`;
 };

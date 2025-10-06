@@ -186,7 +186,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         hidden: false,
         active: false,
         color: LIGHT_COLORS[outputs.length],
-        enrollmentHistory: response.data.enrollment,
+        // TODO: Error handling
+        enrollmentHistory: response.data!.enrollment,
         input,
       };
 

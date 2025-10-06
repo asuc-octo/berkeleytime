@@ -6,9 +6,9 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "mongoose": "^8.18.0"
+    "mongoose": "^8.19.1"
   }
 }

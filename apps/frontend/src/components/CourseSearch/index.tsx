@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import { useQuery } from "@apollo/client/react";
 import { Search } from "iconoir-react";
 
@@ -71,7 +72,7 @@ export default function CourseSearch({
   }, [isOpen]);
 
   return (
-    <div ref={wrapperRef} className={styles.searchContainer}>
+    <div ref={wrapperRef}>
       <div className={styles.inputWrapper}>
         <Search className={styles.searchIcon} />
         <input

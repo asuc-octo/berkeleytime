@@ -277,7 +277,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         hidden: false,
         active: false,
         color: LIGHT_COLORS[outputs.length],
-        gradeDistribution: response.data.grade,
+        // TODO: Error handling
+        gradeDistribution: response.data!.grade,
         input,
       };
 

@@ -44,12 +44,8 @@ import {
   isMetricRating,
 } from "./metricsUtil";
 
-{
-  /* // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend */
-}
-{
-  /* // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor */
-}
+// TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
+// TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
 
 interface AggregatedRatings {
   metrics: {
@@ -160,7 +156,13 @@ export function RatingsContainer() {
     ],
   });
 
-  const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS);
+  const [getAggregatedRatings, { data: aggregatedRatingsData }] = useLazyQuery(
+    GET_AGGREGATED_RATINGS
+  );
+
+  useEffect(() => {
+    setTermRatings(aggregatedRatingsData as AggregatedRatings | null);
+  }, [aggregatedRatingsData]);
 
   // Get semesters with ratings
   const { data: semestersWithRatingsData } =
@@ -211,8 +213,10 @@ export function RatingsContainer() {
   }, [currentClass]);
 
   const userRatings = useMemo(() => {
+    // @ts-expect-error - need to fix types
     if (!userRatingsData?.userRatings?.classes) return null;
 
+    // @ts-expect-error - need to fix types
     const matchedRating = userRatingsData.userRatings.classes.find(
       (classRating: {
         subject: string;
@@ -231,7 +235,8 @@ export function RatingsContainer() {
     const metrics =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
-        : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+        : // @ts-expect-error - need to fix types
+          aggregatedRatings?.course?.aggregatedRatings?.metrics;
     if (
       !metrics ||
       !metrics.some(
@@ -275,6 +280,7 @@ export function RatingsContainer() {
 
   const hasRatings = useMemo(() => {
     const totalRatings =
+      // @ts-expect-error - need to fix types
       aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
         (total: number, metric: any) => total + metric.count,
         0
