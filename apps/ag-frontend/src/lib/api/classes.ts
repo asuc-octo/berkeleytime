@@ -369,6 +369,7 @@ export const GET_CATALOG = gql`
   query GetCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
       number
+      sessionId
       title
       unitsMax
       unitsMin

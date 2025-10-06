@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useReadTerms } from "@/hooks/api";
 
-import PostTable from "../Posts/PostTable";
+import PostTable from "../CuratedClasses/PostTable";
 import styles from "./Landing.module.scss";
 
 export interface Post {

@@ -10,10 +10,10 @@ import {
   redirect,
 } from "react-router-dom";
 
-import AddPost from "@/app/New";
+import CuratedClass from "@/app/CuratedClass";
+import CuratedClasses from "@/app/CuratedClasses";
 import Layout from "@/app/Layout";
-import Post from "@/app/Post";
-import Posts from "@/app/Posts";
+import New from "@/app/New";
 
 import "./reset.css";
 
@@ -23,19 +23,19 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        loader: () => redirect("/posts"),
+        loader: () => redirect("/curated-classes"),
       },
       {
-        path: "/posts",
-        element: <Posts />,
+        path: "/curated-classes",
+        element: <CuratedClasses />,
       },
       {
-        path: "/posts/new",
-        element: <AddPost />,
+        path: "/curated-classes/new",
+        element: <New />,
       },
       {
-        path: "/posts/:postId",
-        element: <Post />,
+        path: "/curated-classes/:curatedClassId",
+        element: <CuratedClass />,
       },
       {
         path: "*",

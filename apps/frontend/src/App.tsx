@@ -44,6 +44,7 @@ const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
+const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
@@ -113,18 +114,21 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
+        path: "curated",
+        element: (
+          <SuspenseBoundary key="curated">
+            <CuratedClasses />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "about",
         element: (
           <SuspenseBoundary key="about">
             <About />
           </SuspenseBoundary>
         ),
-        path: "about",
       },
-    ],
-  },
-  {
-    element: <Layout />,
-    children: [
       {
         element: (
           <SuspenseBoundary key="profile">

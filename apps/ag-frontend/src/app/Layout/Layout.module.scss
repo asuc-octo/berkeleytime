@@ -1,3 +1,17 @@
 .root {
   min-height: 100dvh;
+  background-color: var(--gray-2);
+
+  .header {
+    background-color: white;
+
+    .heading {
+      color: var(--accent-9);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--accent-10);
+      }
+    }
+  }
 }

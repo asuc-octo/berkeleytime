@@ -9,7 +9,8 @@ import {
   Separator,
   Spinner,
 } from "@radix-ui/themes";
-import { Outlet } from "react-router-dom";
+import { LogOut } from "iconoir-react";
+import { Link, Outlet } from "react-router-dom";
 
 import { useReadUser } from "@/hooks/api";
 import { BASE, signIn, signOut } from "@/lib/api";
@@ -42,15 +43,24 @@ function Content() {
 
   return (
     <Flex direction="column" flexGrow="1">
-      <Box px="3">
+      <Box px="6" py="3" className={styles.header}>
         <Container>
-          <Flex>
-            <Heading>Academic Guide</Heading>
-            <Button onClick={() => signOut(BASE)}>Sign out</Button>
+          <Flex justify="between">
+            <Heading className={styles.heading} asChild>
+              <Link to="/">Academic Guide</Link>
+            </Heading>
+            <Button
+              variant="outline"
+              color="gray"
+              onClick={() => signOut(BASE)}
+            >
+              Sign out
+              <LogOut />
+            </Button>
           </Flex>
         </Container>
       </Box>
-      <Separator />
+      <Separator size="4" />
       <Outlet />
     </Flex>
   );
