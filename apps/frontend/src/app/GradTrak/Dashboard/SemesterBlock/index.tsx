@@ -82,6 +82,7 @@ function SemesterBlock({
   const [rename, setRename] = useState(planTerm.name);
   const [renameDropdownOpen, setRenameDropdownOpen] = useState(false);
 
+  
   useEffect(() => {
     const total = selectedClasses.reduce(
       (sum, cls) => sum + cls.courseUnits,
@@ -420,6 +421,7 @@ function SemesterBlock({
               <DropdownMenu.Root
                 open={renameDropdownOpen}
                 onOpenChange={setRenameDropdownOpen}
+                modal={false}
               >
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
