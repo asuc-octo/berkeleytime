@@ -1,20 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
-import { ArrowDown, ArrowUp, Minus, Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
+import classNames from "classnames";
+import {
+  ArrowDown,
+  ArrowUp,
+  Filter,
+  Minus,
+  NavArrowDown,
+  Plus,
+  Sort,
+} from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import {
+  BadgeLabel,
   Boundary,
+  Box,
   Button,
+  Checkbox,
+  Color,
+  DropdownMenu,
+  Flex,
   IconButton,
   LoadingIndicator,
+  Text,
   Tooltip,
-  DropdownMenu,
-  Flex, 
-  Box,
-  Checkbox,
-  Text
 } from "@repo/theme";
 
 import { initialize } from "@/components/CourseSearch/browser";
@@ -26,6 +37,7 @@ import {
   useReadUser,
 } from "@/hooks/api";
 import {
+  Colleges,
   GET_COURSE_NAMES,
   GetCoursesResponse,
   ILabel,
@@ -34,9 +46,7 @@ import {
   PlanInput,
   PlanTermInput,
   Status,
-  Colleges
 } from "@/lib/api";
-
 import { convertStringsToRequirementEnum } from "@/lib/course";
 
 import AddBlockMenu from "./AddBlockMenu";
@@ -46,6 +56,36 @@ import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
+
+const FILTER_OPTIONS = [
+  {
+    label: "Completed",
+    value: "completed",
+  },
+
+  {
+    label: "In Progress",
+    value: "inProgress",
+  },
+  {
+    label: "Incomplete",
+    value: "incomplete",
+  },
+];
+
+const SORT_OPTIONS = ["Course", "Semester"];
+const SORT_OPTIONS_SEMESTER = ["Oldest", "Newest"];
+const SORT_OPTIONS_COURSE = ["Unsorted", "A-Z", "Z-A"];
+
+const SORT_OPTION_SEMESTER_ICON = {
+  Oldest: <ArrowUp className={styles.menuIcon} />,
+  Newest: <ArrowDown className={styles.menuIcon} />,
+};
+const SORT_OPTION_COURSE_ICON = {
+  Unsorted: <Minus className={styles.menuIcon} />,
+  "A-Z": <ArrowUp className={styles.menuIcon} />,
+  "Z-A": <ArrowDown className={styles.menuIcon} />,
+};
 
 export interface SelectedCourse extends ISelectedCourse {
   courseSubject: string;
@@ -121,9 +161,12 @@ export default function Dashboard() {
   });
 
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
-  const [sortPage, setSortPage] = useState<'Semester' | 'Course'>('Semester');
-  const [sortSemesterOption, setSortSemesterOption] = useState<'Oldest' | 'Newest'>('Oldest');
-  const [sortCourseOption, setSortCourseOption] = useState<'Unsorted' | 'A-Z' | 'Z-A'>('Unsorted');
+  const [sortPage, setSortPage] =
+    useState<(typeof SORT_OPTIONS)[number]>("Semester");
+  const [sortSemesterOption, setSortSemesterOption] =
+    useState<(typeof SORT_OPTIONS_SEMESTER)[number]>("Oldest");
+  const [sortCourseOption, setSortCourseOption] =
+    useState<(typeof SORT_OPTIONS_COURSE)[number]>("Unsorted");
 
   const [editPlan] = useEditPlan();
   const [editPlanTerm] = useEditPlanTerm();
@@ -141,7 +184,7 @@ export default function Dashboard() {
       setColleges(gradTrak.colleges.map((college) => college as Colleges));
     }
   }, [gradTrak?.colleges]);
-  
+
   useEffect(() => {
     if (gradTrak?.labels) {
       setLocalLabels(gradTrak.labels);
@@ -158,27 +201,27 @@ export default function Dashboard() {
 
   // Update filter options when labels change
   useEffect(() => {
-    setFilterOptions(prev => {
+    setFilterOptions((prev) => {
       const newOptions = { ...prev };
-      
+
       // Add new label filters
-      localLabels.forEach(label => {
+      localLabels.forEach((label) => {
         const labelKey = `label_${label.name}`;
         if (!(labelKey in newOptions)) {
           newOptions[labelKey] = false;
         }
       });
-      
+
       // Remove label filters that no longer exist
-      Object.keys(newOptions).forEach(key => {
-        if (key.startsWith('label_')) {
-          const labelName = key.replace('label_', '');
-          if (!localLabels.some(label => label.name === labelName)) {
+      Object.keys(newOptions).forEach((key) => {
+        if (key.startsWith("label_")) {
+          const labelName = key.replace("label_", "");
+          if (!localLabels.some((label) => label.name === labelName)) {
             delete newOptions[key];
           }
         }
       });
-      
+
       return newOptions;
     });
   }, [localLabels]);
@@ -266,10 +309,8 @@ export default function Dashboard() {
   };
 
   const handleSetStatus = async (termId: string, status: Status) => {
-    const updatedPlanTerms = localPlanTerms.map((term) => 
-      term._id === termId 
-        ? { ...term, status } 
-        : term
+    const updatedPlanTerms = localPlanTerms.map((term) =>
+      term._id === termId ? { ...term, status } : term
     );
     setLocalPlanTerms(updatedPlanTerms);
 
@@ -290,27 +331,32 @@ export default function Dashboard() {
   };
 
   const handleFilterOptionChange = (option: keyof typeof filterOptions) => {
-    setFilterOptions(prev => ({
+    setFilterOptions((prev) => ({
       ...prev,
-      [option]: !prev[option]
+      [option]: !prev[option],
     }));
   };
 
-  const handleChangeSortPage = (page: 'Semester' | 'Course') => {
+  const handleChangeSortPage = (page: (typeof SORT_OPTIONS)[number]) => {
     setSortPage(page);
   };
 
-  const handleSortSemesterOptionChange = (option: 'Oldest' | 'Newest') => {
+  const handleSortSemesterOptionChange = (
+    option: (typeof SORT_OPTIONS_SEMESTER)[number]
+  ) => {
     setSortSemesterOption(option);
     setSortMenuOpen(false);
   };
 
-  const handleSortCourseOptionChange = (option: 'Unsorted' | 'A-Z' | 'Z-A') => {
+  const handleSortCourseOptionChange = (
+    option: (typeof SORT_OPTIONS_COURSE)[number]
+  ) => {
     setSortCourseOption(option);
     setSortMenuOpen(false);
   };
 
-  const activeFiltersCount = Object.values(filterOptions).filter(Boolean).length;
+  const activeFiltersCount =
+    Object.values(filterOptions).filter(Boolean).length;
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {
@@ -350,8 +396,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     // if none of the label filters are selected, return all semesters
-    const hasActiveLabelFilters = Object.keys(filterOptions).some(key => key.startsWith('label_') && filterOptions[key]);
-    
+    const hasActiveLabelFilters = Object.keys(filterOptions).some(
+      (key) => key.startsWith("label_") && filterOptions[key]
+    );
+
     if (!hasActiveLabelFilters) {
       setFilteredAllSemesters(allSemesters);
       return;
@@ -362,7 +410,7 @@ export default function Dashboard() {
     Object.entries(allSemesters).forEach(([key, value]) => {
       const filteredClasses = value.filter((course) => {
         for (const label of course.labels) {
-          if (filterOptions['label_' + label.name]) {
+          if (filterOptions["label_" + label.name]) {
             return true;
           }
         }
@@ -377,15 +425,15 @@ export default function Dashboard() {
   // Calculate label counts when dropdown is opened
   const calculateLabelCounts = () => {
     const counts: Record<string, number> = {};
-    
-    localLabels.forEach(label => {
+
+    localLabels.forEach((label) => {
       counts[label.name] = 0;
     });
-    
-    Object.values(allSemesters).forEach(courses => {
-      courses.forEach(course => {
+
+    Object.values(allSemesters).forEach((courses) => {
+      courses.forEach((course) => {
         if (course.labels) {
-          course.labels.forEach(courseLabel => {
+          course.labels.forEach((courseLabel) => {
             if (counts[courseLabel.name] !== undefined) {
               counts[courseLabel.name]++;
             }
@@ -393,7 +441,7 @@ export default function Dashboard() {
         }
       });
     });
-    
+
     return counts;
   };
 
@@ -404,17 +452,17 @@ export default function Dashboard() {
       inProgress: 0,
       incomplete: 0,
     };
-    
-    localPlanTerms.forEach(planTerm => {
-      if (planTerm.status === 'Complete') {
+
+    localPlanTerms.forEach((planTerm) => {
+      if (planTerm.status === "Complete") {
         counts.completed++;
-      } else if (planTerm.status === 'InProgress') {
+      } else if (planTerm.status === "InProgress") {
         counts.inProgress++;
-      } else if (planTerm.status === 'Incomplete') {
+      } else if (planTerm.status === "Incomplete") {
         counts.incomplete++;
       }
     });
-    
+
     return counts;
   };
 
@@ -548,34 +596,15 @@ export default function Dashboard() {
             >
               <DropdownMenu.Trigger asChild>
                 <Tooltip content="Filter">
-                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                  <div className={styles.filterButtonContainer}>
                     <IconButton
-                      style={{
-                        backgroundColor: filterMenuOpen ? '#52525B' : undefined
-                      }}
+                      className={styles.filterButton}
+                      data-open={filterMenuOpen}
                     >
                       <Filter />
                     </IconButton>
                     {activeFiltersCount > 0 && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: '-6px',
-                          right: '-6px',
-                          backgroundColor: '#3B82F6',
-                          color: 'white',
-                          borderRadius: '12px',
-                          minWidth: '20px',
-                          height: '20px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          padding: '0 6px',
-                          boxSizing: 'border-box'
-                        }}
-                      >
+                      <div className={styles.filterButtonBadge}>
                         {activeFiltersCount}
                       </div>
                     )}
@@ -585,84 +614,81 @@ export default function Dashboard() {
               <DropdownMenu.Content
                 sideOffset={5}
                 align="end"
-                style={{ 
-                  width: "max-content",
-                  padding: "16px",
-                  paddingTop: "0px",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
-                }}
+                className={styles.filtersDropdown}
               >
                 <Box>
                   <Flex direction="column" gap="8px">
-                    <Text style={{ fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
+                    <Text
+                      className={styles.sectionTitle}
+                      style={{ marginTop: "8px" }}
+                    >
                       Status
                     </Text>
                     {(() => {
                       const statusCounts = calculateStatusCounts();
                       return (
                         <>
-                          <Flex 
-                            align="center" 
-                            gap="8px" 
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleFilterOptionChange('completed')}
-                          >
-                            <Checkbox
-                              checked={filterOptions.completed}
-                              onCheckedChange={() => handleFilterOptionChange('completed')}
-                            />
-                            <Text style={{ color: filterOptions.completed ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Completed ({statusCounts.completed})</Text>
-                          </Flex>
-                          <Flex 
-                            align="center" 
-                            gap="8px" 
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleFilterOptionChange('inProgress')}
-                          >
-                            <Checkbox
-                              checked={filterOptions.inProgress}
-                              onCheckedChange={() => handleFilterOptionChange('inProgress')}
-                            />
-                            <Text style={{ color: filterOptions.inProgress ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>In Progress ({statusCounts.inProgress})</Text>
-                          </Flex>
-                          <Flex 
-                            align="center" 
-                            gap="8px" 
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleFilterOptionChange('incomplete')}
-                          >
-                            <Checkbox
-                              checked={filterOptions.incomplete}
-                              onCheckedChange={() => handleFilterOptionChange('incomplete')}
-                            />
-                            <Text style={{ color: filterOptions.incomplete ? 'var(--heading-color)' : 'var(--paragraph-color)' }}>Incomplete ({statusCounts.incomplete})</Text>
-                          </Flex>
+                          {FILTER_OPTIONS.map((option) => (
+                            <Flex
+                              key={option.value}
+                              align="center"
+                              gap="8px"
+                              style={{ cursor: "pointer" }}
+                              onClick={() =>
+                                handleFilterOptionChange(option.value)
+                              }
+                            >
+                              <Checkbox
+                                checked={filterOptions[option.value]}
+                                style={{ cursor: "pointer" }}
+                              />
+                              <Text
+                                className={styles.filterOptionText}
+                                data-selected={filterOptions[option.value]}
+                              >
+                                {option.label}
+                              </Text>
+                              <Text className={styles.labelCount}>
+                                (
+                                {
+                                  statusCounts[
+                                    option.value as keyof typeof statusCounts
+                                  ]
+                                }
+                                )
+                              </Text>
+                            </Flex>
+                          ))}
                         </>
                       );
                     })()}
-                    
+
                     {localLabels.length > 0 && (
                       <>
-                        <Text style={{ fontSize: '14px', fontWeight: '500', marginTop: '12px' }}>
+                        <Text className={styles.sectionTitle}>
                           Custom Labels
                         </Text>
-                        {localLabels.map(label => {
+                        {localLabels.map((label) => {
                           const labelKey = `label_${label.name}`;
                           const labelCounts = calculateLabelCounts();
                           return (
-                            <Flex 
+                            <Flex
                               key={labelKey}
-                              align="center" 
-                              gap="8px" 
-                              style={{ cursor: 'pointer' }}
+                              align="center"
+                              gap="8px"
+                              style={{ cursor: "pointer" }}
                               onClick={() => handleFilterOptionChange(labelKey)}
                             >
                               <Checkbox
                                 checked={filterOptions[labelKey] || false}
-                                onCheckedChange={() => handleFilterOptionChange(labelKey)}
+                                style={{ cursor: "pointer" }}
                               />
-                              <Text style={{ color: label.color }}>
-                                {label.name} ({labelCounts[label.name] || 0})
+                              <BadgeLabel
+                                label={label.name}
+                                color={label.color as Color}
+                              />
+                              <Text className={styles.labelCount}>
+                                ({labelCounts[label.name] || 0})
                               </Text>
                             </Flex>
                           );
@@ -681,11 +707,12 @@ export default function Dashboard() {
               >
                 <DropdownMenu.Trigger asChild>
                   <Tooltip content="Sort">
-                    <div 
-                      style={{ position: 'relative', display: 'inline-block' }}>
+                    <div
+                      style={{ position: "relative", display: "inline-block" }}
+                    >
                       <IconButton
                         style={{
-                          backgroundColor: sortMenuOpen ? '#52525B' : undefined
+                          backgroundColor: sortMenuOpen ? "#52525B" : undefined,
                         }}
                       >
                         <Sort />
@@ -693,120 +720,113 @@ export default function Dashboard() {
                     </div>
                   </Tooltip>
                 </DropdownMenu.Trigger>
-                <DropdownMenu.Content 
-                  sideOffset={5} 
+                <DropdownMenu.Content
+                  sideOffset={5}
                   align="end"
-                  style={{ 
+                  style={{
                     width: "max-content",
                     paddingTop: "0px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)"
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
                   }}
                 >
-                  <Text style={{ paddingLeft: '13px', fontSize: '14px', fontWeight: '500', marginTop: '8px' }}>
+                  <Text
+                    className={styles.sectionTitle}
+                    style={{ marginTop: "8px" }}
+                  >
                     Sort By
                   </Text>
-                  <div 
-                    className={styles.sortMenu}
-                    onClick={() => {
-                      handleChangeSortPage('Semester');
+                  {SORT_OPTIONS.map((option) => (
+                    <div
+                      key={option}
+                      className={styles.sortMenu}
+                      onClick={() => {
+                        handleChangeSortPage(option);
+                      }}
+                    >
+                      <div style={{ paddingTop: "3px" }} />
+                      <label className={styles.option}>
+                        <input
+                          type="radio"
+                          name="sortType"
+                          checked={sortPage === option}
+                          onChange={() => handleChangeSortPage(option)}
+                          className={styles.input}
+                        />
+                        <div
+                          className={styles.circle}
+                          style={{
+                            borderColor:
+                              sortPage === option
+                                ? "var(--blue-500)"
+                                : "#C7C7C7",
+                          }}
+                        >
+                          {sortPage === option && (
+                            <div className={styles.dot}></div>
+                          )}
+                        </div>
+                        <Text
+                          style={{
+                            color:
+                              sortPage === option
+                                ? "var(--heading-color)"
+                                : "var(--paragraph-color)",
+                            marginLeft: "-6px",
+                          }}
+                        >
+                          {option}
+                        </Text>
+                      </label>
+                    </div>
+                  ))}
+
+                  <div
+                    style={{
+                      height: "1px",
+                      backgroundColor: "var(--border-color)",
+                      margin: "5px 0px",
+                      width: "100%",
                     }}
-                  >
-                    <div style={{ paddingTop: '3px' }} />
-                    <label className={styles.option}>
-                      <input
-                        type="radio"
-                        name="sortType"
-                        checked={sortPage === 'Semester'}
-                        onChange={() => handleChangeSortPage('Semester')}
-                        className={styles.input}
-                      />
-                      <div className={styles.circle} style={{ borderColor: sortPage === 'Semester' ? 'var(--blue-500)' : '#C7C7C7' }}>
-                        {sortPage === 'Semester' && <div className={styles.dot}></div>}
-                      </div>
-                      <Text style={{ 
-                        color: sortPage === 'Semester' ? 'var(--heading-color)' : 'var(--paragraph-color)',
-                        marginLeft: '-6px'
-                      }}>Semester Block</Text>
-                    </label>
-                  </div>
+                  />
 
-                  <div 
-                    className={styles.sortMenu}
-                    onClick={() => {
-                      handleChangeSortPage('Course');
-                    }}
-                  >
-                    <label className={styles.option}>
-                      <input
-                        type="radio"
-                        name="sortType"
-                        checked={sortPage === 'Course'}
-                        onChange={() => handleChangeSortPage('Course')}
-                        className={styles.input}
-                      />
-                      <div className={styles.circle} style={{ borderColor: sortPage === 'Course' ? 'var(--blue-500)' : '#C7C7C7' }}>
-                        {sortPage === 'Course' && <div className={styles.dot}></div>}
-                      </div>
-                      <Text style={{ 
-                        color: sortPage === 'Course' ? 'var(--heading-color)' : 'var(--paragraph-color)',
-                        marginLeft: '-6px'
-                      }}>Course</Text>
-                    </label>
-                  </div>
-
-                  <div style={{ 
-                    height: '1px', 
-                    backgroundColor: 'var(--border-color)', 
-                    margin: '5px 0px',
-                    width: '100%'
-                  }} />
-
-                  {sortPage === 'Semester' && 
                   <div>
-                    <DropdownMenu.Item 
-                      onClick={() => handleSortSemesterOptionChange('Oldest')}
-                      className={`${styles.menuItem} ${sortSemesterOption === 'Oldest' ? styles.selected : ''}`}
-                    >
-                      <ArrowUp className={styles.menuIcon} />
-                      <Text className={styles.menuText}>Oldest First</Text>
-                    </DropdownMenu.Item>
-
-                    <DropdownMenu.Item 
-                      onClick={() => handleSortSemesterOptionChange('Newest')}
-                      className={`${styles.menuItem} ${sortSemesterOption === 'Newest' ? styles.selected : ''}`}
-                    >
-                      <ArrowDown className={styles.menuIcon} /> 
-                      <Text className={styles.menuText}>Newest First</Text>
-                    </DropdownMenu.Item>
-                  </div>}
-
-                  {sortPage === 'Course' && 
-                  <div>
-                    <DropdownMenu.Item 
-                      onClick={() => handleSortCourseOptionChange('Unsorted')}
-                      className={`${styles.menuItem} ${sortCourseOption === 'Unsorted' ? styles.selected : ''}`}
-                    >
-                      <Minus className={styles.menuIcon} /> 
-                      <Text className={styles.menuText}>Unsorted</Text>
-                    </DropdownMenu.Item>
-
-                    <DropdownMenu.Item 
-                      onClick={() => handleSortCourseOptionChange('A-Z')}
-                      className={`${styles.menuItem} ${sortCourseOption === 'A-Z' ? styles.selected : ''}`}
-                    >
-                      <ArrowUp className={styles.menuIcon} />
-                      <Text className={styles.menuText}>A-Z</Text>
-                    </DropdownMenu.Item>
-
-                    <DropdownMenu.Item 
-                      onClick={() => handleSortCourseOptionChange('Z-A')}
-                      className={`${styles.menuItem} ${sortCourseOption === 'Z-A' ? styles.selected : ''}`}
-                    >
-                      <ArrowDown className={styles.menuIcon} /> 
-                      <Text className={styles.menuText}>Z-A</Text>
-                    </DropdownMenu.Item>
-                  </div>}
-
+                    {sortPage === "Semester" &&
+                      SORT_OPTIONS_SEMESTER.map((option) => (
+                        <DropdownMenu.Item
+                          key={option}
+                          onClick={() => handleSortSemesterOptionChange(option)}
+                          className={classNames(styles.menuItem, {
+                            [styles.selected]: sortSemesterOption === option,
+                          })}
+                        >
+                          {
+                            SORT_OPTION_SEMESTER_ICON[
+                              option as keyof typeof SORT_OPTION_SEMESTER_ICON
+                            ]
+                          }
+                          <Text className={styles.menuText}>
+                            {option} First
+                          </Text>
+                        </DropdownMenu.Item>
+                      ))}
+                    {sortPage === "Course" &&
+                      SORT_OPTIONS_COURSE.map((option) => (
+                        <DropdownMenu.Item
+                          key={option}
+                          onClick={() => handleSortCourseOptionChange(option)}
+                          className={classNames(styles.menuItem, {
+                            [styles.selected]: sortCourseOption === option,
+                          })}
+                        >
+                          {
+                            SORT_OPTION_COURSE_ICON[
+                              option as keyof typeof SORT_OPTION_COURSE_ICON
+                            ]
+                          }
+                          <Text className={styles.menuText}>{option}</Text>
+                        </DropdownMenu.Item>
+                      ))}
+                  </div>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
             </div>
@@ -862,16 +882,31 @@ export default function Dashboard() {
             {localPlanTerms &&
               [...localPlanTerms]
                 .filter((term) => {
-                  if (!(filterOptions.completed || filterOptions.inProgress || filterOptions.incomplete)) return true;
+                  if (
+                    !(
+                      filterOptions.completed ||
+                      filterOptions.inProgress ||
+                      filterOptions.incomplete
+                    )
+                  )
+                    return true;
 
-                  if (filterOptions.completed && term.status === 'Complete') return true;
-                  if (filterOptions.inProgress && term.status === 'InProgress') return true;
-                  if (filterOptions.incomplete && term.status === 'Incomplete') return true;
-                  
+                  if (filterOptions.completed && term.status === "Complete")
+                    return true;
+                  if (filterOptions.inProgress && term.status === "InProgress")
+                    return true;
+                  if (filterOptions.incomplete && term.status === "Incomplete")
+                    return true;
+
                   return false;
                 })
                 .filter((term) => {
-                  if (!Object.keys(filterOptions).some(key => key.startsWith('label_') && filterOptions[key])) return true;
+                  if (
+                    !Object.keys(filterOptions).some(
+                      (key) => key.startsWith("label_") && filterOptions[key]
+                    )
+                  )
+                    return true;
                   return filteredAllSemesters[term._id].length > 0;
                 })
                 .sort((a, b) => {
@@ -883,7 +918,7 @@ export default function Dashboard() {
                   if (a.year == -1 || b.year == -1) {
                     return a.year - b.year;
                   }
-                  if (sortSemesterOption === 'Oldest') {
+                  if (sortSemesterOption === "Oldest") {
                     if (a.year != b.year) return a.year - b.year;
                     return getTermOrder(a.term) - getTermOrder(b.term);
                   } else {
