@@ -33,9 +33,8 @@ function SearchBar({
   setShowLabelMenu,
 }: SearchBarProps) {
   const [isCustomClassOpen, setIsCustomClassOpen] = useState(false);
-
   return (
-    <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog.Root open={isOpen} onOpenChange={setIsOpen} modal={false}>
       <Dialog.Content className={styles.content}>
         <VisuallyHidden>
           <Dialog.Title>Add Class</Dialog.Title>
