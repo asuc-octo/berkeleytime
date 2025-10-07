@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 import {
   CREATE_NEW_PLAN_TERM,

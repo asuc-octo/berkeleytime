@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
 import { Link } from "react-router-dom";
 

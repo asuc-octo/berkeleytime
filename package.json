@@ -6,42 +6,25 @@
     "lint": "turbo run lint",
     "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,scss}\"",
-    "postinstall": "patch-package",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "postinstall": "patch-package"
   },
   "engines": {
     "node": ">=21.0.0",
     "npm": ">=10.0.0"
   },
-  "packageManager": "npm@11.5.2",
+  "packageManager": "npm@11.6.1",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
-  "dependencies": {
+  "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
-    "patch-package": "8.0.0",
+    "patch-package": "8.0.1",
     "prettier": "3.6.2",
-    "turbo": "2.5.5"
+    "turbo": "2.5.8"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.46.2"
+    "@rollup/rollup-linux-x64-gnu": "4.52.4"
   },
-  "name": "berkeleytime",
-  "devDependencies": {
-    "@chromatic-com/storybook": "^4.1.1",
-    "@storybook/addon-a11y": "^9.1.5",
-    "@storybook/addon-docs": "^9.1.5",
-    "@storybook/addon-vitest": "^9.1.5",
-    "@storybook/react-vite": "^9.1.5",
-    "@types/papaparse": "^5.3.16",
-    "prop-types": "^15.8.1",
-    "rollup": "4.46.2",
-    "storybook": "^9.1.5",
-    "vitest": "^3.2.4",
-    "@vitest/browser": "^3.2.4",
-    "playwright": "^1.55.0",
-    "@vitest/coverage-v8": "^3.2.4"
-  }
+  "name": "berkeleytime"
 }

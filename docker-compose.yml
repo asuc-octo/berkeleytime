@@ -6,6 +6,7 @@ services:
   backend:
     build:
       context: .
+      dockerfile: ./apps/backend/Dockerfile
       target: backend-dev
     depends_on:
       mongodb:
@@ -18,17 +19,17 @@ services:
     volumes:
       - ./.env:/backend/apps/backend/.env
       - ./apps/backend:/backend/apps/backend
-      - ./packages:/frontend/packages
+      - ./packages:/backend/packages
   frontend:
     build:
       context: .
+      dockerfile: ./apps/frontend/Dockerfile
       target: frontend-dev
     networks:
       - bt
     restart: always
     volumes:
-      - ./apps/frontend/src:/frontend/apps/frontend/src
-      - ./apps/frontend/public:/frontend/apps/frontend/public
+      - ./apps/frontend:/frontend/apps/frontend
       - ./packages:/frontend/packages
   mongodb:
     image: mongo:7.0.5
@@ -69,6 +70,7 @@ services:
   storybook:
     build:
       context: .
+      dockerfile: ./apps/storybook/Dockerfile
       target: storybook-dev
     ports:
       - 6006:6006
@@ -76,7 +78,18 @@ services:
       - bt
     restart: always
     volumes:
-      - ./packages/theme/src:/storybook/packages/theme/src
-      - ./apps/frontend/src:/storybook/apps/frontend/src
-      - ./.storybook:/storybook/.storybook
+      - ./packages/theme:/storybook/packages/theme
+      - ./apps/storybook:/storybook/apps/storybook
+  docs:
+    build:
+      context: .
+      dockerfile: ./apps/docs/Dockerfile
+      target: docs-dev
+    ports:
+      - 3000:3000
+    networks:
+      - bt
+    restart: always
+    volumes:
+      - ./apps/docs:/storybook/apps/docs
 

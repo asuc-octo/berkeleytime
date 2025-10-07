@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
@@ -64,10 +64,13 @@ export default function Dashboard() {
   const { data: courses, loading: courseLoading } =
     useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
       skip: hasLoadedRef.current,
-      onCompleted: () => {
-        hasLoadedRef.current = true;
-      },
     });
+
+  useEffect(() => {
+    if (courses && !hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+    }
+  }, [courses]);
   const catalogCoursesRef = useRef<SelectedCourse[]>([]);
   const indexRef = useRef<ReturnType<typeof initialize> | null>(null);
 

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, useMutation } from "@apollo/client";
+import { MutationHookOptions, useMutation } from "@apollo/client/react";
 
 import { EDIT_PLAN, EditPlanResponse, PlanInput } from "@/lib/api";
 

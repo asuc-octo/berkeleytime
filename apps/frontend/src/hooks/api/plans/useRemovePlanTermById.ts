@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 import { REMOVE_PLAN_TERM_BY_ID } from "@/lib/api";
 
