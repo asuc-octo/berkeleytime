@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 import {
   EDIT_PLAN_TERM,
@@ -10,7 +10,6 @@ import {
 
 export const useEditPlanTerm = () => {
   const mutation = useMutation<EditPlanTermResponse>(EDIT_PLAN_TERM, {
-    refetchQueries: ["GetPlan"],
     update(_, { data }) {
       const planTerm = data?.editPlanTerm;
 

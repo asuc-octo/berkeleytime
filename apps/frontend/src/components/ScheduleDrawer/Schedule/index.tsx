@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 import { READ_SCHEDULES, ReadSchedulesResponse, Semester } from "@/lib/api";
 
