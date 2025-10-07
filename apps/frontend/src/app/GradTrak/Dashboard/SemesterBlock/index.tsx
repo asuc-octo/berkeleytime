@@ -13,7 +13,7 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Box, Button, DropdownMenu, Flex, Input } from "@repo/theme";
+import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
@@ -80,7 +80,33 @@ function SemesterBlock({
   const [getCourseUnits] = useReadCourseUnits();
 
   const [rename, setRename] = useState(planTerm.name);
-  const [renameDropdownOpen, setRenameDropdownOpen] = useState(false);
+  const [renameEditActive, setRenameEditActive] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setRename(planTerm.name);
+  }, [planTerm.name]);
+
+  useEffect(() => {
+    if (renameEditActive && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [renameEditActive]);
+
+  const handleSaveRename = async () => {
+    if (rename.trim() && rename !== planTerm.name) {
+      handleUpdateTermName(rename.trim());
+    } else {
+      setRename(planTerm.name);
+    }
+    setRenameEditActive(false);
+  };
+
+  const handleCancelRename = () => {
+    setRename(planTerm.name);
+    setRenameEditActive(false);
+  };
 
   useEffect(() => {
     const total = selectedClasses.reduce(
@@ -399,7 +425,33 @@ function SemesterBlock({
             {planTerm.pinned && (
               <PinSolid className={styles.pin} onClick={handleTogglePin} />
             )}
-            <h2>{planTerm.name}</h2>
+            <h2>
+              {renameEditActive ? (
+                <Input
+                  ref={inputRef}
+                  value={rename}
+                  onChange={(e) => setRename(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSaveRename();
+                    } else if (e.key === "Escape") {
+                      handleCancelRename();
+                    }
+                  }}
+                  onBlur={handleSaveRename}
+                  style={{ width: "100%", minWidth: "120px" }}
+                />
+              ) : (
+                <span
+                  onClick={() => {
+                    setRenameEditActive(true);
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  {planTerm.name}
+                </span>
+              )}
+            </h2>
             <p className={styles.counter}>{totalUnits}</p>
             {planTerm.status !== Status.None && (
               <span
@@ -417,10 +469,7 @@ function SemesterBlock({
           </div>
           <Flex direction="row" gap="6px">
             <div className={styles.dropdown}>
-              <DropdownMenu.Root
-                open={renameDropdownOpen}
-                onOpenChange={setRenameDropdownOpen}
-              >
+              <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
                 </DropdownMenu.Trigger>
@@ -430,46 +479,11 @@ function SemesterBlock({
                   style={{ width: "160px" }}
                 >
                   {planTerm.term === Terms.Misc && (
-                    <DropdownMenu.Sub>
-                      <DropdownMenu.SubTrigger onClick={() => {}}>
-                        <Edit className={styles.menuIcon} /> Rename
-                        <NavArrowRight
-                          className={styles.rightAlignedIcon}
-                          style={{ left: "48px" }}
-                        />
-                      </DropdownMenu.SubTrigger>
-                      <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
-                        <Box width="200px" height="70px">
-                          <Flex
-                            direction="column"
-                            justify="between"
-                            height="100%"
-                          >
-                            <Input
-                              placeholder={"Name your column..."}
-                              value={rename}
-                              onChange={(v) => setRename(v.target.value)}
-                            />
-                            <Flex
-                              direction="row"
-                              justify="end"
-                              gap="5px"
-                              width="100%"
-                            >
-                              <Button
-                                onClick={() => {
-                                  handleUpdateTermName(rename);
-                                  setRenameDropdownOpen(false);
-                                }}
-                                disabled={!rename || rename === planTerm.name}
-                              >
-                                Save
-                              </Button>
-                            </Flex>
-                          </Flex>
-                        </Box>
-                      </DropdownMenu.SubContent>
-                    </DropdownMenu.Sub>
+                    <DropdownMenu.Item
+                      onClick={() => setRenameEditActive(true)}
+                    >
+                      <Edit className={styles.menuIcon} /> Rename
+                    </DropdownMenu.Item>
                   )}
                   <DropdownMenu.Sub>
                     <DropdownMenu.SubTrigger>

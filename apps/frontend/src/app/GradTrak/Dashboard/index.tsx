@@ -21,6 +21,7 @@ import {
   useReadUser,
 } from "@/hooks/api";
 import {
+  Colleges,
   GET_COURSE_NAMES,
   GetCoursesResponse,
   ILabel,
@@ -29,9 +30,7 @@ import {
   PlanInput,
   PlanTermInput,
   Status,
-  Colleges
 } from "@/lib/api";
-
 import { convertStringsToRequirementEnum } from "@/lib/course";
 
 import AddBlockMenu from "./AddBlockMenu";
@@ -119,7 +118,7 @@ export default function Dashboard() {
       setColleges(gradTrak.colleges.map((college) => college as Colleges));
     }
   }, [gradTrak?.colleges]);
-  
+
   useEffect(() => {
     if (gradTrak?.labels) {
       setLocalLabels(gradTrak.labels);
@@ -205,10 +204,14 @@ export default function Dashboard() {
 
   // Helper functions to update both local state and backend
   const handleUpdateTermName = async (termId: string, name: string) => {
-    const updatedPlanTerms = [...localPlanTerms];
-    const termIndex = updatedPlanTerms.findIndex((term) => term._id === termId);
+    let updatedPlanTerms = [...localPlanTerms];
+    const termIndex = localPlanTerms.findIndex((term) => term._id === termId);
     if (termIndex !== -1) {
-      updatedPlanTerms[termIndex].name = name;
+      const updatedTerm = {
+        ...updatedPlanTerms[termIndex],
+        name: name,
+      };
+      updatedPlanTerms[termIndex] = updatedTerm;
       setLocalPlanTerms(updatedPlanTerms);
 
       try {
