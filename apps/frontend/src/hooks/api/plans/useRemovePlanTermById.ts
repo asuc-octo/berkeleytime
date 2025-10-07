@@ -6,7 +6,6 @@ import { REMOVE_PLAN_TERM_BY_ID } from "@/lib/api";
 
 export const useRemovePlanTermByID = () => {
   const mutation = useMutation(REMOVE_PLAN_TERM_BY_ID, {
-    refetchQueries: ["GetPlan"],
   });
 
   const removePlanTermByID = useCallback(

@@ -263,12 +263,6 @@ export default function Dashboard() {
     editPlan(plan);
   };
 
-  useEffect(() => {
-    if (gradTrak?.labels) {
-      setLocalLabels(gradTrak.labels);
-    }
-  }, [gradTrak?.labels]);
-
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {
       if (!user) {

@@ -12,7 +12,6 @@ export const useCreateNewPlanTerm = () => {
   const mutation = useMutation<CreateNewPlanTermResponse>(
     CREATE_NEW_PLAN_TERM,
     {
-      refetchQueries: ["GetPlan"],
       update(_, { data }) {
         const planTerm = data?.createNewPlanTerm;
 

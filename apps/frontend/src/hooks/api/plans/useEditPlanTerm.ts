@@ -10,7 +10,6 @@ import {
 
 export const useEditPlanTerm = () => {
   const mutation = useMutation<EditPlanTermResponse>(EDIT_PLAN_TERM, {
-    refetchQueries: ["GetPlan"],
     update(_, { data }) {
       const planTerm = data?.editPlanTerm;
 
