@@ -6,31 +6,31 @@
   align-self: stretch;
   justify-content: space-between;
   text-align: left;
-      padding: 16px;
-      gap: 8px;
-      transition: all 0.2s ease;
-      border-radius: 8px;
+  padding: 16px;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border-radius: 8px;
   background-color: var(--foreground-color);
   box-shadow: 0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.10)), 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.10));
   transition: all 0.2s ease;
 
   &:hover {
-      background-color: var(--button-hover-color);
-      cursor: grab;
+    background-color: var(--button-hover-color);
+    cursor: grab;
 
-      .dropdown .trigger {
-          opacity: 1;
-        }
+    .dropdown .trigger {
+      opacity: 1;
+    }
   }
 
   &:active {
-      cursor: grabbing;
+    cursor: grabbing;
   }
-  
+
   .start {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
   }
 
   // .tag {
@@ -52,15 +52,45 @@
   // }
 
   .title {
-      margin: 0;
-      padding-bottom: 2px;
+    margin: 0;
+    padding-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .titleBlockInline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .titleBlockChart {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .labelsInline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .unitsText {
+    white-space: nowrap;
+    margin-top: 5px;
+    color: var(--paragraph-color);
   }
 
   .labelsContainer {
-      display: flex;
-      flex-direction: row;
-      gap: 8px;
-      flex-wrap: wrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 
   .dropdown {
@@ -69,18 +99,18 @@
       border: none;
       padding: 0;
       color: var(--paragraph-color);
-      display: flex; 
+      display: flex;
       align-items: center;
       justify-content: center;
       width: 20px;
       height: 8px;
-      opacity: 0; 
+      opacity: 0;
       transition: opacity 0.2s ease;
-      flex-shrink: 0; 
+      flex-shrink: 0;
       transition: all 0.2s ease;
 
       &:hover {
-        color: var(--heading-color); 
+        color: var(--heading-color);
         opacity: 1;
       }
 
@@ -88,13 +118,13 @@
         opacity: 1;
       }
 
-      .more-horiz { 
+      .more-horiz {
         cursor: pointer;
       }
     }
   }
 
-  
+
 
 }
 
