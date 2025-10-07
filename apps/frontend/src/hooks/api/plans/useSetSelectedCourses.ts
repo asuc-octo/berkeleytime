@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, useMutation } from "@apollo/client";
+import { MutationHookOptions, useMutation } from "@apollo/client/react";
 
 import {
   SET_SELECTED_COURSES,

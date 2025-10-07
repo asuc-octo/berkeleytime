@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { ArrowDown, ArrowUp, Minus, Filter, NavArrowDown, Plus, Sort } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
@@ -69,10 +69,13 @@ export default function Dashboard() {
   const { data: courses, loading: courseLoading } =
     useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
       skip: hasLoadedRef.current,
-      onCompleted: () => {
-        hasLoadedRef.current = true;
-      },
     });
+
+  useEffect(() => {
+    if (courses && !hasLoadedRef.current) {
+      hasLoadedRef.current = true;
+    }
+  }, [courses]);
   const catalogCoursesRef = useRef<SelectedCourse[]>([]);
   const indexRef = useRef<ReturnType<typeof initialize> | null>(null);
 
@@ -308,12 +311,6 @@ export default function Dashboard() {
   };
 
   const activeFiltersCount = Object.values(filterOptions).filter(Boolean).length;
-
-  useEffect(() => {
-    if (gradTrak?.labels) {
-      setLocalLabels(gradTrak.labels);
-    }
-  }, [gradTrak?.labels]);
 
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {

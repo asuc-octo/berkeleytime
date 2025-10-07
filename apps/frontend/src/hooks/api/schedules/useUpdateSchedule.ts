@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, Reference, useMutation } from "@apollo/client";
+import { Reference } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 import {
   IScheduleEvent,
@@ -45,7 +46,7 @@ export const useUpdateSchedule = () => {
       schedule: Partial<Pick<IScheduleInput, "name" | "public" | "classes">> & {
         events?: Partial<Omit<IScheduleEvent, "id">>[];
       },
-      options?: Omit<MutationHookOptions<UpdateScheduleResponse>, "variables">
+      options?: Omit<useMutation.Options<UpdateScheduleResponse>, "variables">
     ) => {
       const mutate = mutation[0];
 
