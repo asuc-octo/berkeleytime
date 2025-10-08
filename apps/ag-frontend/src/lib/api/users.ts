@@ -13,7 +13,7 @@ export interface ReadUserResponse {
 
 export const BASE = import.meta.env.DEV
   ? "http://localhost:8080"
-  : "https://berkeleytime.com";
+  : "https://beta.berkeleytime.com";
 
 export const READ_USER = gql`
   query GetUser {
