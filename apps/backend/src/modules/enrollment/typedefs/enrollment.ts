@@ -12,7 +12,7 @@ export default gql`
     ): Enrollment
   }
 
-  type Enrollment @cacheControl(maxAge: 300) {
+  type Enrollment {
     "Identifiers"
     termId: TermIdentifier!
     year: Int!
