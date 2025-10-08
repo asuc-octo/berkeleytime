@@ -944,7 +944,8 @@ export default function Dashboard() {
                         transferUnits
                       )
                     }
-                    allSemesters={filteredAllSemesters}
+                    filteredSemesters={filteredAllSemesters}
+                    allSemesters={allSemesters}
                     updateAllSemesters={updateAllSemesters}
                     settings={settings}
                     labels={localLabels}
@@ -965,6 +966,7 @@ export default function Dashboard() {
                       );
                       setLocalPlanTerms(updatedPlanTerms);
                     }}
+                    filtersActive={activeFiltersCount > 0}
                   />
                 ))}
           </div>
