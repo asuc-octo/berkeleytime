@@ -80,7 +80,7 @@ export default function Class({
 
           {settings.show[ShowSetting.units] && (
             <p className={styles.unitsText}>
-              {cls.courseUnits} Units &bull; {gradingLabel}
+              {cls.courseUnits} Units{settings.show[ShowSetting.grading] && <> &bull; {gradingLabel}</>}
             </p>
           )}
         </Flex>
