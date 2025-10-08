@@ -44,6 +44,7 @@ interface SemesterBlockProps {
   handleUpdateTermName: (name: string) => void;
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;
+  sortCourseOption: string;
 }
 
 function SemesterBlock({
@@ -59,6 +60,7 @@ function SemesterBlock({
   handleUpdateTermName,
   handleTogglePin,
   handleSetStatus,
+  sortCourseOption,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -292,6 +294,13 @@ function SemesterBlock({
     onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
     setClassToEdit(null);
+    
+    // update global state
+    const updatedSemesters = {
+      ...allSemesters,
+      [semesterId]: newClasses,
+    };
+    updateAllSemesters(updatedSemesters);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -454,19 +463,17 @@ function SemesterBlock({
               )}
             </h2>
             <p className={styles.counter}>{totalUnits}</p>
-            {planTerm.status !== Status.None && (
-              <span
-                className={styles.status}
-                style={{
-                  backgroundColor:
-                    planTerm.status === Status.Complete
-                      ? "var(--emerald-500)"
-                      : planTerm.status == Status.InProgress
-                        ? "var(--yellow-500)"
-                        : "var(--gray-500)",
-                }}
-              />
-            )}
+            <span
+              className={styles.status}
+              style={{
+                backgroundColor:
+                  planTerm.status === Status.Complete
+                    ? "var(--emerald-500)"
+                    : planTerm.status == Status.InProgress
+                      ? "var(--yellow-500)"
+                      : "var(--gray-500)",
+              }}
+            />
           </div>
           <Flex direction="row" gap="6px">
             <div className={styles.dropdown}>
@@ -543,19 +550,7 @@ function SemesterBlock({
                             />
                             Incomplete
                           </span>
-                          {planTerm.status === Status.Incomplete && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.None);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          None
-                          {planTerm.status === Status.None && (
+                          {(planTerm.status === Status.Incomplete) && (
                             <Check className={styles.statusSelected} />
                           )}
                         </Flex>
@@ -570,15 +565,14 @@ function SemesterBlock({
                     )}{" "}
                     Pin
                   </DropdownMenu.Item>
-                  {/* <DropdownMenu.Item onClick={() => {}}>
-                    <ShareIos className={styles.menuIcon} /> Export to Scheduler
-                  </DropdownMenu.Item> */}
-                  {/* <DropdownMenu.Item onClick={() => {}}>
-                    <Eye className={styles.menuIcon} /> Hide
-                  </DropdownMenu.Item> */}
                   <DropdownMenu.Item
                     onClick={() => {
-                      removePlanTermByID(planTerm._id);
+                      try{
+                        removePlanTermByID(planTerm._id);
+                      }catch(error){
+                        return;
+                      }
+                      onTotalUnitsChange(0, 0, 0);
                     }}
                     isDelete
                   >
@@ -607,7 +601,12 @@ function SemesterBlock({
 
         {open && (
           <>
-            {selectedClasses.map((cls, index) => (
+            {selectedClasses.sort((a, b) => {
+              if (sortCourseOption === 'Unsorted') return 0;
+              if (sortCourseOption === 'A-Z') return a.courseName.localeCompare(b.courseName);
+              if (sortCourseOption === 'Z-A') return b.courseName.localeCompare(a.courseName);
+              return 0;
+            }).map((cls, index) => (
               <React.Fragment key={`class-group-${index}`}>
                 {placeholderIndex === index && (
                   <div className={styles.placeholder} />

@@ -19,41 +19,6 @@ import {
 } from "../../generated-types/graphql";
 import { formatPlan, formatPlanTerm } from "./formatter";
 
-// Helper functions for chronological insertion
-function getTermOrder(term: string): number {
-  switch (term) {
-    case "Spring":
-      return 1;
-    case "Summer":
-      return 2;
-    case "Fall":
-      return 3;
-    default:
-      return 0;
-  }
-}
-
-function findInsertionIndex(planTerms: any[], newTerm: any): number {
-  for (let i = 0; i < planTerms.length; i++) {
-    const currentTerm = planTerms[i];
-    if (newTerm.year < currentTerm.year) {
-      return i;
-    }
-    if (newTerm.year === currentTerm.year) {
-      if (getTermOrder(newTerm.term) < getTermOrder(currentTerm.term)) {
-        return i;
-      }
-      if (
-        getTermOrder(newTerm.term) === getTermOrder(currentTerm.term) &&
-        newTerm.name < currentTerm.name
-      ) {
-        return i;
-      }
-    }
-  }
-  return planTerms.length;
-}
-
 // get plan for a user
 export async function getPlanByUser(context: any): Promise<Plan[]> {
   if (!context.user.email) throw new Error("Unauthorized");
@@ -108,8 +73,7 @@ export async function createPlanTerm(
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
-  const insertIndex = findInsertionIndex(gt.planTerms, newPlanTerm);
-  gt.planTerms.splice(insertIndex, 0, newPlanTerm);
+  gt.planTerms.push(newPlanTerm);
   await gt.save();
 
   return formatPlanTerm(newPlanTerm);

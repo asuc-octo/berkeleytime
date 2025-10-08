@@ -6,7 +6,10 @@ import styles from "./DropdownMenu.module.scss";
 function Content({ className, ...props }: Primitive.DropdownMenuContentProps) {
   return (
     <Primitive.Portal>
-      <Primitive.Content {...props} className={styles.content} />
+      <Primitive.Content
+        {...props}
+        className={classNames(styles.content, className)}
+      />
     </Primitive.Portal>
   );
 }
