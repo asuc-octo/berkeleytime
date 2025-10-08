@@ -20,8 +20,8 @@ export default function Schedule() {
   useEffect(() => {
     if (loading || schedule) return;
 
-    navigate("/schedules");
-  }, [loading, schedule, navigate]);
+    navigate("/schedules", { replace: true });
+  }, [loading, navigate, schedule]);
 
   const editing = useMemo(
     () => schedule?.createdBy === user?._id,

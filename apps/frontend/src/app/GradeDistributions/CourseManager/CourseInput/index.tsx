@@ -153,8 +153,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const instructorOptions = useMemo(getInstructorOptions, [
     course,
-    selectedType,
     selectedSemester,
+    selectedType,
     selectedInstructor,
   ]);
 
@@ -313,6 +313,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         query: READ_GRADE_DISTRIBUTION,
         variables: input,
       });
+
+      if (!response.data) {
+        throw response.error;
+      }
 
       const output: Output = {
         hidden: false,

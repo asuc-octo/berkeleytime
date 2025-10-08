@@ -23,13 +23,7 @@ export default async (
   app.use(
     cors({
       // Allow requests from the local frontend (should be the only requirement)
-      origin: [
-        config.url,
-        "http://localhost:8080",
-        "http://localhost:5173",
-        // TODO: Remove
-        "https://gn980r4n-8080.usw3.devtunnels.ms",
-      ],
+      origin: [config.url, "http://localhost:8080", "http://localhost:8081"],
       credentials: true,
     })
   );

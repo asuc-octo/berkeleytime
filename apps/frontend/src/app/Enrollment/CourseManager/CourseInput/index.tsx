@@ -178,6 +178,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         variables: input,
       });
 
+      if (!response.data) {
+        throw response.error;
+      }
+
       const output: Output = {
         hidden: false,
         active: false,
