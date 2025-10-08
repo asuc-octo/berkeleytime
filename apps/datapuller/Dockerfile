@@ -1,7 +1,6 @@
 FROM node:22-alpine AS base
 RUN ["npm", "install", "-g", "turbo@latest"]
 
-# datapuller
 FROM base AS datapuller-builder
 WORKDIR /datapuller
 COPY . .
