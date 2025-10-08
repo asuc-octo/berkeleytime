@@ -1,5 +1,6 @@
 import Fuse from "fuse.js";
 import { GraphQLResolveInfo } from "graphql";
+import type { RedisClientType } from "redis";
 
 import {
   ClassModel,
@@ -13,6 +14,7 @@ import {
   TermModel,
 } from "@repo/common";
 
+import { timeToNextPull } from "../../utils/cache";
 import { getFields } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
@@ -96,6 +98,234 @@ export const getIndex = (classes: ClassModule.Class[]) => {
   };
 
   return new Fuse(list, options);
+};
+
+const CATALOG_CACHE_PREFIX = "catalog";
+
+const buildCatalogCacheKey = (
+  year: number,
+  semester: string,
+  includesGradeDistribution: boolean
+) =>
+  `${CATALOG_CACHE_PREFIX}:${year}:${semester}:${
+    includesGradeDistribution ? "with-grade" : "base"
+  }`;
+
+const tryGetCachedCatalog = async (
+  cache: RedisClientType,
+  key: string
+): Promise<ClassModule.Class[] | null> => {
+  try {
+    const cached = await cache.get(key);
+    if (!cached) return null;
+
+    return JSON.parse(cached) as ClassModule.Class[];
+  } catch {
+    return null;
+  }
+};
+
+const storeCatalogInCache = async (
+  cache: RedisClientType,
+  key: string,
+  classes: ClassModule.Class[]
+) => {
+  try {
+    await cache.set(key, JSON.stringify(classes), { EX: timeToNextPull() });
+  } catch {
+    /* cache writes are best-effort */
+  }
+};
+
+const applyQueryFilter = (
+  classes: ClassModule.Class[],
+  query?: string | null
+) => {
+  const trimmedQuery = query?.trim();
+  if (!trimmedQuery) return classes;
+
+  const index = getIndex(classes);
+
+  // TODO: Limit query because Fuse performance decreases linearly by
+  // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
+  return index
+    .search(trimmedQuery)
+    .map(({ refIndex }) => classes[refIndex]);
+};
+
+const fetchCatalogData = async (
+  year: number,
+  semester: string,
+  includesGradeDistribution: boolean
+) => {
+  const term = await TermModel.findOne({
+    name: `${year} ${semester}`,
+  })
+    .select({ _id: 1 })
+    .lean();
+
+  if (!term) throw new Error("Invalid term");
+
+  /**
+   * TODO:
+   * Basic pagination can be introduced by using skip and limit
+   * However, because filtering requires access to all three collections,
+   * we cannot paginate the MongoDB queries themselves while filtering
+   * course or section fields
+   *
+   * We can optimize filtering by applying skip and limit to the classes
+   * query when only filtering by class fields, and then fall back to
+   * in-memory filtering for fields from courses and sections
+   */
+
+  // Fetch available classes for the term
+  const classes = await ClassModel.find({
+    year,
+    semester,
+    anyPrintInScheduleOfClasses: true,
+  }).lean();
+
+  // Filtering by identifiers reduces the amount of data returned for courses and sections
+  const courseIds = classes.map((_class) => _class.courseId);
+
+  // Fetch available courses for the term
+  const courses = await CourseModel.find({
+    courseId: { $in: courseIds },
+    printInCatalog: true,
+  }).lean();
+
+  // Fetch available sections for the term
+  const sections = await SectionModel.find({
+    year,
+    semester,
+    courseId: { $in: courseIds },
+    printInScheduleOfClasses: true,
+  }).lean();
+
+  const parsedGradeDistributions = {} as Record<
+    string,
+    GradeDistributionModule.GradeDistribution
+  >;
+
+  if (includesGradeDistribution) {
+    const sectionIds = sections.map((section) => section.sectionId);
+
+    const gradeDistributions = await GradeDistributionModel.find({
+      // The bottleneck seems to be the amount of data we are fetching and not the query itself
+      sectionId: { $in: sectionIds },
+    }).lean();
+
+    const reducedGradeDistributions = gradeDistributions.reduce(
+      (accumulator, gradeDistribution) => {
+        const courseSubjectNumber = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
+        const sectionId = gradeDistribution.sectionId;
+
+        accumulator[courseSubjectNumber] = accumulator[courseSubjectNumber]
+          ? [...accumulator[courseSubjectNumber], gradeDistribution]
+          : [gradeDistribution];
+        accumulator[sectionId] = accumulator[sectionId]
+          ? [...accumulator[sectionId], gradeDistribution]
+          : [gradeDistribution];
+
+        return accumulator;
+      },
+      {} as Record<string, IGradeDistributionItem[]>
+    );
+
+    const entries = Object.entries(reducedGradeDistributions);
+
+    for (const [key, value] of entries) {
+      const distribution = getDistribution(value);
+
+      parsedGradeDistributions[key] = {
+        average: getAverageGrade(distribution),
+        distribution,
+      } as GradeDistributionModule.GradeDistribution;
+    }
+  }
+
+  // Turn courses into a map to decrease time complexity for filtering
+  const reducedCourses = courses.reduce(
+    (accumulator, course) => {
+      accumulator[course.courseId] = course as ICourseItem;
+      return accumulator;
+    },
+    {} as Record<string, ICourseItem>
+  );
+
+  // Turn sections into a map to decrease time complexity for filtering
+  const reducedSections = sections.reduce(
+    (accumulator, section) => {
+      const courseId = section.courseId;
+      const classNumber = section.classNumber;
+
+      const id = `${courseId}-${classNumber}`;
+
+      accumulator[id] = (
+        accumulator[id] ? [...accumulator[id], section] : [section]
+      ) as ISectionItem[];
+
+      return accumulator;
+    },
+    {} as Record<string, ISectionItem[]>
+  );
+
+  return classes.reduce((accumulator, _class) => {
+    const courseId = _class.courseId;
+
+    const course = reducedCourses[courseId];
+    if (!course) return accumulator;
+
+    const sectionsForClass = reducedSections[`${courseId}-${_class.number}`];
+    if (!sectionsForClass) return accumulator;
+
+    const index = sectionsForClass.findIndex((section) => section.primary);
+    if (index === -1) return accumulator;
+
+    const formattedPrimarySection = formatSection(
+      sectionsForClass.splice(index, 1)[0]
+    );
+    const formattedSections = sectionsForClass.map(formatSection);
+
+    const formattedCourse = formatCourse(
+      course
+    ) as unknown as ClassModule.Course;
+
+    // Add grade distribution to course
+    if (includesGradeDistribution) {
+      const key = `${course.subject}-${course.number}`;
+      const gradeDistribution = parsedGradeDistributions[key];
+
+      // Fall back to an empty grade distribution to prevent resolving the field again
+      formattedCourse.gradeDistribution = gradeDistribution ?? {
+        average: null,
+        distribution: [],
+      };
+    }
+
+    const formattedClass = {
+      ...formatClass(_class as IClassItem),
+      primarySection: formattedPrimarySection,
+      sections: formattedSections,
+      course: formattedCourse,
+    } as unknown as ClassModule.Class;
+
+    // Add grade distribution to class
+    if (includesGradeDistribution) {
+      const sectionId = formattedPrimarySection.sectionId;
+
+      // Fall back to an empty grade distribution to prevent resolving the field again
+      const gradeDistribution = parsedGradeDistributions[sectionId] ?? {
+        average: null,
+        distribution: [],
+      };
+
+      formattedClass.gradeDistribution = gradeDistribution;
+    }
+
+    accumulator.push(formattedClass);
+    return accumulator;
+  }, [] as ClassModule.Class[]);
 };
 
 interface Subject {
@@ -357,195 +587,47 @@ export const subjects: Record<string, Subject> = {
 };
 
 // TODO: Pagination, filtering
+interface CatalogOptions {
+  cache?: RedisClientType;
+  refresh?: boolean | null;
+}
+
 export const getCatalog = async (
   year: number,
   semester: string,
   info: GraphQLResolveInfo,
-  query?: string | null
+  query?: string | null,
+  options: CatalogOptions = {}
 ) => {
-  const term = await TermModel.findOne({
-    name: `${year} ${semester}`,
-  })
-    .select({ _id: 1 })
-    .lean();
+  const { cache, refresh } = options;
+  const shouldRefresh = refresh === true;
 
-  if (!term) throw new Error("Invalid term");
+  const includesGradeDistribution = getFields(info.fieldNodes).includes(
+    "gradeDistribution"
+  );
 
-  /**
-   * TODO:
-   * Basic pagination can be introduced by using skip and limit
-   * However, because filtering requires access to all three collections,
-   * we cannot paginate the MongoDB queries themselves while filtering
-   * course or section fields
-   *
-   * We can optimize filtering by applying skip and limit to the classes
-   * query when only filtering by class fields, and then fall back to
-   * in-memory filtering for fields from courses and sections
-   */
-
-  // Fetch available classes for the term
-  const classes = await ClassModel.find({
+  const cacheKey = buildCatalogCacheKey(
     year,
     semester,
-    anyPrintInScheduleOfClasses: true,
-  }).lean();
+    includesGradeDistribution
+  );
 
-  // Filtering by identifiers reduces the amount of data returned for courses and sections
-  const courseIds = classes.map((_class) => _class.courseId);
-
-  // Fetch available courses for the term
-  const courses = await CourseModel.find({
-    courseId: { $in: courseIds },
-    printInCatalog: true,
-  }).lean();
-
-  // Fetch available sections for the term
-  const sections = await SectionModel.find({
-    year,
-    semester,
-    courseId: { $in: courseIds },
-    printInScheduleOfClasses: true,
-  }).lean();
-
-  const parsedGradeDistributions = {} as Record<
-    string,
-    GradeDistributionModule.GradeDistribution
-  >;
-
-  const children = getFields(info.fieldNodes);
-  const includesGradeDistribution = children.includes("gradeDistribution");
-
-  if (includesGradeDistribution) {
-    const sectionIds = sections.map((section) => section.sectionId);
-
-    const gradeDistributions = await GradeDistributionModel.find({
-      // The bottleneck seems to be the amount of data we are fetching and not the query itself
-      sectionId: { $in: sectionIds },
-    }).lean();
-
-    const reducedGradeDistributions = gradeDistributions.reduce(
-      (accumulator, gradeDistribution) => {
-        const courseSubjectNumber = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
-        const sectionId = gradeDistribution.sectionId;
-
-        accumulator[courseSubjectNumber] = accumulator[courseSubjectNumber]
-          ? [...accumulator[courseSubjectNumber], gradeDistribution]
-          : [gradeDistribution];
-        accumulator[sectionId] = accumulator[sectionId]
-          ? [...accumulator[sectionId], gradeDistribution]
-          : [gradeDistribution];
-
-        return accumulator;
-      },
-      {} as Record<string, IGradeDistributionItem[]>
-    );
-
-    const entries = Object.entries(reducedGradeDistributions);
-
-    for (const [key, value] of entries) {
-      const distribution = getDistribution(value);
-
-      parsedGradeDistributions[key] = {
-        average: getAverageGrade(distribution),
-        distribution,
-      } as GradeDistributionModule.GradeDistribution;
+  if (cache && !shouldRefresh) {
+    const cachedCatalog = await tryGetCachedCatalog(cache, cacheKey);
+    if (cachedCatalog) {
+      return applyQueryFilter(cachedCatalog, query);
     }
   }
 
-  // Turn courses into a map to decrease time complexity for filtering
-  const reducedCourses = courses.reduce(
-    (accumulator, course) => {
-      accumulator[course.courseId] = course as ICourseItem;
-      return accumulator;
-    },
-    {} as Record<string, ICourseItem>
+  const classes = await fetchCatalogData(
+    year,
+    semester,
+    includesGradeDistribution
   );
 
-  // Turn sections into a map to decrease time complexity for filtering
-  const reducedSections = sections.reduce(
-    (accumulator, section) => {
-      const courseId = section.courseId;
-      const classNumber = section.classNumber;
-
-      const id = `${courseId}-${classNumber}`;
-
-      accumulator[id] = (
-        accumulator[id] ? [...accumulator[id], section] : [section]
-      ) as ISectionItem[];
-
-      return accumulator;
-    },
-    {} as Record<string, ISectionItem[]>
-  );
-
-  const reducedClasses = classes.reduce((accumulator, _class) => {
-    const courseId = _class.courseId;
-
-    const course = reducedCourses[courseId];
-    if (!course) return accumulator;
-
-    const sections = reducedSections[`${courseId}-${_class.number}`];
-    if (!sections) return accumulator;
-
-    const index = sections.findIndex((section) => section.primary);
-    if (index === -1) return accumulator;
-
-    const formattedPrimarySection = formatSection(sections.splice(index, 1)[0]);
-    const formattedSections = sections.map(formatSection);
-
-    const formattedCourse = formatCourse(
-      course
-    ) as unknown as ClassModule.Course;
-
-    // Add grade distribution to course
-    if (includesGradeDistribution) {
-      const key = `${course.subject}-${course.number}`;
-      const gradeDistribution = parsedGradeDistributions[key];
-
-      // Fall back to an empty grade distribution to prevent resolving the field again
-      formattedCourse.gradeDistribution = gradeDistribution ?? {
-        average: null,
-        distribution: [],
-      };
-    }
-
-    const formattedClass = {
-      ...formatClass(_class as IClassItem),
-      primarySection: formattedPrimarySection,
-      sections: formattedSections,
-      course: formattedCourse,
-    } as unknown as ClassModule.Class;
-
-    // Add grade distribution to class
-    if (includesGradeDistribution) {
-      const sectionId = formattedPrimarySection.sectionId;
-
-      // Fall back to an empty grade distribution to prevent resolving the field again
-      const gradeDistribution = parsedGradeDistributions[sectionId] ?? {
-        average: null,
-        distribution: [],
-      };
-
-      formattedClass.gradeDistribution = gradeDistribution;
-    }
-
-    accumulator.push(formattedClass);
-    return accumulator;
-  }, [] as ClassModule.Class[]);
-
-  query = query?.trim();
-
-  if (query) {
-    const index = getIndex(reducedClasses);
-
-    // TODO: Limit query because Fuse performance decreases linearly by
-    // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-    const filteredClasses = index
-      .search(query)
-      .map(({ refIndex }) => reducedClasses[refIndex]);
-
-    return filteredClasses;
+  if (cache) {
+    await storeCatalogInCache(cache, cacheKey, classes);
   }
 
-  return reducedClasses;
+  return applyQueryFilter(classes, query);
 };
