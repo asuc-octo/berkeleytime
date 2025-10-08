@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chart: [app, base]
+        chart: [app, base, ag]
 
     steps:
       - name: Checkout Repository
