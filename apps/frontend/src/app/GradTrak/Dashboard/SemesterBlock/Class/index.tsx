@@ -2,7 +2,7 @@ import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
 import { BadgeLabel, Button, Color, DropdownMenu, Flex } from "@repo/theme";
 
-import { ISelectedCourse, ILabel } from "@/lib/api";
+import { ILabel, ISelectedCourse } from "@/lib/api";
 
 import { GradTrakSettings, ShowSetting } from "../../settings";
 import styles from "./Class.module.scss";
@@ -68,11 +68,16 @@ export default function Class({
                 {cls.labels
                   .filter((l) =>
                     labels.some(
-                      (label) => label.name === l.name && label.color === l.color
+                      (label) =>
+                        label.name === l.name && label.color === l.color
                     )
                   )
                   .map((l, idx) => (
-                    <BadgeLabel key={idx} label={l.name} color={l.color as Color} />
+                    <BadgeLabel
+                      key={idx}
+                      label={l.name}
+                      color={l.color as Color}
+                    />
                   ))}
               </div>
             )}
@@ -80,13 +85,16 @@ export default function Class({
 
           {settings.show[ShowSetting.units] && (
             <p className={styles.unitsText}>
-              {cls.courseUnits} Units{settings.show[ShowSetting.grading] && <> &bull; {gradingLabel}</>}
+              {cls.courseUnits} Units
+              {settings.show[ShowSetting.grading] && (
+                <> &bull; {gradingLabel}</>
+              )}
             </p>
           )}
         </Flex>
 
         <div className={styles.dropdown}>
-          <DropdownMenu.Root>
+          <DropdownMenu.Root modal={false}>
             <DropdownMenu.Trigger asChild>
               <Button className={styles.trigger}>
                 <MoreHoriz className={styles.moreHoriz} />
