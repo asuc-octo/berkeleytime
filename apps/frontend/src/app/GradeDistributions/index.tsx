@@ -80,6 +80,7 @@ export default function GradeDistributions() {
           givenName: professor?.[0],
         };
 
+        // @ts-expect-error - sessionId is wrong
         if (term?.[2]) parsedInput.sessionId = term[2];
 
         return acc.concat(parsedInput);

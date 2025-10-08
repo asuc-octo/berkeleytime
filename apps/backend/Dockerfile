@@ -1,4 +1,4 @@
-FROM node:alpine AS base
+FROM node:22-alpine AS base
 RUN ["npm", "install", "-g", "turbo@latest"]
 
 FROM base AS backend-builder
