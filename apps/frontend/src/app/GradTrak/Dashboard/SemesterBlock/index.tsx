@@ -108,6 +108,7 @@ function SemesterBlock({
     setRenameEditActive(false);
   };
 
+  
   useEffect(() => {
     const total = selectedClasses.reduce(
       (sum, cls) => sum + cls.courseUnits,
@@ -469,7 +470,9 @@ function SemesterBlock({
           </div>
           <Flex direction="row" gap="6px">
             <div className={styles.dropdown}>
-              <DropdownMenu.Root>
+              <DropdownMenu.Root
+                modal={false}
+              >
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
                 </DropdownMenu.Trigger>
