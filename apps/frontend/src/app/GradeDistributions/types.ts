@@ -95,7 +95,6 @@ export const isInputEqual = (a: Input, b: Input) => {
   if (!a.type && !b.type)
     return b.courseNumber === a.courseNumber && b.subject === a.subject;
 
-
   if (a.type !== b.type) return false;
 
   if (a.type === InputType.Term && b.type === InputType.Term) {

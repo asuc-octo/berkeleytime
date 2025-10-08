@@ -251,6 +251,10 @@ export default function GradeDistributions() {
                   <YAxis tickFormatter={toPercent} />
                   {filteredOutputs?.length && (
                     <Tooltip
+                      cursor={{
+                        fill: "var(--border-color)",
+                        fillOpacity: 0.5,
+                      }}
                       content={(props) => {
                         return (
                           <HoverCard

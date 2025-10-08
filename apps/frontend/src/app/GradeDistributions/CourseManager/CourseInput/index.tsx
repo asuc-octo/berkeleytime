@@ -50,7 +50,9 @@ const buildSemesterValue = (
   sessionId: string
 ) => JSON.stringify({ year, semester, sessionId });
 
-const parseSemesterValue = (value: string | null): {
+const parseSemesterValue = (
+  value: string | null
+): {
   year: number;
   semester: string;
   sessionId: string;
@@ -72,10 +74,8 @@ const parseSemesterValue = (value: string | null): {
   }
 };
 
-const formatSemesterLabel = (
-  semester: string,
-  year: number,
-) => `${semester} ${year}`;
+const formatSemesterLabel = (semester: string, year: number) =>
+  `${semester} ${year}`;
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
