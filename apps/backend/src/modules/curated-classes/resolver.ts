@@ -15,8 +15,8 @@ const resolvers: CuratedClassesModule.Resolvers = {
       const curatedClasses = await getCuratedClasses(info);
       return curatedClasses as unknown as CuratedClassesModule.CuratedClass[];
     },
-    curatedClass: async (_, { id }) => {
-      const curatedClass = await getCuratedClass(id);
+    curatedClass: async (_, { id }, context) => {
+      const curatedClass = await getCuratedClass(context, id);
       return curatedClass as unknown as CuratedClassesModule.CuratedClass;
     },
   },

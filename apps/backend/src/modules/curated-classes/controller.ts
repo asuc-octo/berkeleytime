@@ -221,7 +221,12 @@ export const getCuratedClasses = async (info: GraphQLResolveInfo) => {
   );
 };
 
-export const getCuratedClass = async (id: string) => {
+export const getCuratedClass = async (
+  context: { user?: UserType },
+  id: string
+) => {
+  if (!context.user?.staff) throw new Error("Unauthorized");
+
   const curatedClass = await CuratedClassModel.findOne({
     _id: id,
   });

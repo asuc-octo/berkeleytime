@@ -1,7 +1,7 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-  type CuratedClass {
+  type CuratedClass @cacheControl(maxAge: 1) {
     _id: ID!
 
     class: Class!
@@ -25,7 +25,7 @@ const typedef = gql`
 
   type Query {
     curatedClasses: [CuratedClass!]!
-    curatedClass(id: ID!): CuratedClass
+    curatedClass(id: ID!): CuratedClass @auth
   }
 
   input CreateCuratedClassInput {
@@ -54,11 +54,12 @@ const typedef = gql`
 
   type Mutation {
     createCuratedClass(curatedClass: CreateCuratedClassInput!): CuratedClass
+      @auth
     updateCuratedClass(
       id: ID!
       curatedClass: UpdateCuratedClassInput!
-    ): CuratedClass
-    deleteCuratedClass(id: ID!): Boolean
+    ): CuratedClass @auth
+    deleteCuratedClass(id: ID!): Boolean @auth
   }
 `;
 
