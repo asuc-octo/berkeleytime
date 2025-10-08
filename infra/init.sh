@@ -20,7 +20,7 @@ helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.12.0 --nam
 
 helm package ./infra/base --version 1.0.0 --dependency-update
 helm push ./bt-base-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
-helm upgrade bt-base oci://registry-1.docker.io/octoberkeleytime/bt-base --namespace=bt \
+helm install bt-base oci://registry-1.docker.io/octoberkeleytime/bt-base --namespace=bt \
     --version=1.0.0
 
 # ==========
@@ -99,7 +99,7 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
 # DOCS
 # ==========
 
-helm upgrade bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs --namespace=bt \
+helm install bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs --namespace=bt \
     --version=1.0.0 \
     --set host=docs.stanfurdtime.com
 

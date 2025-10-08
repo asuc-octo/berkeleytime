@@ -72,9 +72,6 @@ const protection = armor.protect();
 export default async (redis: RedisClientType) => {
   const schema = buildSchema();
 
-  const cache = new RedisCache(redis);
-  console.log(cache);
-
   const server = new ApolloServer({
     schema,
     validationRules: [...protection.validationRules],
@@ -92,7 +89,7 @@ export default async (redis: RedisClientType) => {
     ],
     // TODO(prod): introspection: config.isDev,
     introspection: true,
-    // cache: new RedisCache(redis),
+    cache: new RedisCache(redis),
     formatError: (formattedError) => {
       // Return BAD_USER_INPUT errors as 400s
       if (formattedError.extensions?.code === "BAD_USER_INPUT") {
