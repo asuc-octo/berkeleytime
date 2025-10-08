@@ -45,6 +45,7 @@ interface SemesterBlockProps {
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;
   sortCourseOption: string;
+  handleRemoveTerm: () => void;
 }
 
 function SemesterBlock({
@@ -61,6 +62,7 @@ function SemesterBlock({
   handleTogglePin,
   handleSetStatus,
   sortCourseOption,
+  handleRemoveTerm,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -150,7 +152,6 @@ function SemesterBlock({
       ...allSemesters,
       [semesterId]: updatedClasses,
     };
-    updateAllSemesters(updatedSemesters);
     updateAllSemesters(updatedSemesters);
     const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
@@ -403,7 +404,6 @@ function SemesterBlock({
       // update the global state
       const oldSemesters = { ...allSemesters };
       updateAllSemesters(updatedSemesters);
-      updateAllSemesters(updatedSemesters);
       try {
         for (const semesterId of semestersToUpdate) {
           await setCourses(semesterId, updatedSemesters[semesterId], {
@@ -569,6 +569,7 @@ function SemesterBlock({
                     onClick={() => {
                       try{
                         removePlanTermByID(planTerm._id);
+                        handleRemoveTerm();
                       }catch(error){
                         return;
                       }
