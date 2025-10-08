@@ -28,6 +28,7 @@ import HoverInfo from "./HoverInfo";
 import {
   DARK_COLORS,
   Input,
+  InputType,
   LIGHT_COLORS,
   Output,
   getInputSearchParam,
@@ -65,25 +66,82 @@ export default function GradeDistributions() {
         // Any input must specify a term or professor
         if (!["T", "P"].includes(output[2])) return acc;
 
+        const subject = output[0];
+        const courseNumber = output[1];
+        const typeToken = output[2] as InputType;
+
         // COMPSCI;61B;T;2024:Spring;John:DeNero, COMPSCI;61B;T;2024:Spring
-        const term = output[output[2] === "T" ? 3 : 4]?.split(":");
+        const term = output[typeToken === InputType.Term ? 3 : 4]?.split(":");
 
         // COMPSCI;61B;P;John:DeNero;2024:Spring, COMPSCI;61B;P;John:DeNero
-        const professor = output[output[2] === "T" ? 4 : 3]?.split(":");
+        const professor =
+          output[typeToken === InputType.Term ? 4 : 3]?.split(":");
 
-        const parsedInput: Input = {
-          subject: output[0],
-          courseNumber: output[1],
-          year: parseInt(term?.[0]),
-          semester: term?.[1] as Semester,
-          familyName: professor?.[1],
-          givenName: professor?.[0],
-        };
+        if (typeToken === InputType.Term) {
+          if (!term || term.length < 3) return acc;
 
-        // @ts-expect-error - sessionId is wrong
-        if (term?.[2]) parsedInput.sessionId = term[2];
+          const [rawYear, rawSemester, sessionId] = term;
+          if (!rawYear || !rawSemester || !sessionId) return acc;
 
-        return acc.concat(parsedInput);
+          const year = Number.parseInt(rawYear, 10);
+          if (Number.isNaN(year)) return acc;
+
+          const parsedInput: Input =
+            professor && professor.length === 2
+              ? {
+                  subject,
+                  courseNumber,
+                  type: InputType.Term,
+                  year,
+                  semester: rawSemester as Semester,
+                  sessionId,
+                  givenName: professor[0],
+                  familyName: professor[1],
+                }
+              : {
+                  subject,
+                  courseNumber,
+                  type: InputType.Term,
+                  year,
+                  semester: rawSemester as Semester,
+                  sessionId,
+                };
+
+          return acc.concat(parsedInput);
+        }
+
+        if (typeToken === InputType.Instructor) {
+          if (!professor || professor.length < 2) return acc;
+
+          const baseInstructor = {
+            subject,
+            courseNumber,
+            type: InputType.Instructor,
+            givenName: professor[0],
+            familyName: professor[1],
+          } as const;
+
+          if (term && term.length >= 3) {
+            const [rawYear, rawSemester, sessionId] = term;
+            if (rawYear && rawSemester && sessionId) {
+              const year = Number.parseInt(rawYear, 10);
+              if (!Number.isNaN(year)) {
+                const parsedInput: Input = {
+                  ...baseInstructor,
+                  year,
+                  semester: rawSemester as Semester,
+                  sessionId,
+                };
+
+                return acc.concat(parsedInput);
+              }
+            }
+          }
+
+          return acc.concat(baseInstructor);
+        }
+
+        return acc;
       }, [] as Input[])
       // Filter out duplicates
       .filter(
