@@ -80,6 +80,8 @@ export default function GradeDistributions() {
           givenName: professor?.[0],
         };
 
+        if (term?.[2]) parsedInput.sessionId = term[2];
+
         return acc.concat(parsedInput);
       }, [] as Input[])
       // Filter out duplicates
@@ -249,6 +251,10 @@ export default function GradeDistributions() {
                   <YAxis tickFormatter={toPercent} />
                   {filteredOutputs?.length && (
                     <Tooltip
+                      cursor={{
+                        fill: "var(--border-color)",
+                        fillOpacity: 0.5,
+                      }}
                       content={(props) => {
                         return (
                           <HoverCard

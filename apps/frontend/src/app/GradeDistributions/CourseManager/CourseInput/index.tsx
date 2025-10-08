@@ -44,6 +44,39 @@ const TYPE_OPTIONS = [
   { value: InputType.Term, label: "By Semester" },
 ];
 
+const buildSemesterValue = (
+  year: number,
+  semester: string,
+  sessionId: string
+) => JSON.stringify({ year, semester, sessionId });
+
+const parseSemesterValue = (
+  value: string | null
+): {
+  year: number;
+  semester: string;
+  sessionId: string;
+} | null => {
+  if (!value || value === "all") return null;
+
+  try {
+    const parsed = JSON.parse(value);
+    if (
+      typeof parsed.year === "number" &&
+      typeof parsed.semester === "string" &&
+      typeof parsed.sessionId === "string"
+    ) {
+      return parsed;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const formatSemesterLabel = (semester: string, year: number) =>
+  `${semester} ${year}`;
+
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
 
@@ -83,13 +116,20 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     if (!course) return list;
 
     const localSelectedSemester = semester ? semester : selectedSemester;
+    const selectedTerm = parseSemesterValue(localSelectedSemester);
 
     const instructorSet = new Set();
     course?.classes.forEach((c) => {
       // get only current semester if getting by semester
       if (!c.gradeDistribution.average) return;
       if (selectedType === InputType.Term) {
-        if (`${c.semester} ${c.year}` !== localSelectedSemester) return;
+        if (!selectedTerm) return;
+        if (
+          c.year !== selectedTerm.year ||
+          c.semester !== selectedTerm.semester ||
+          c.sessionId !== selectedTerm.sessionId
+        )
+          return;
       }
       c.primarySection.meetings.forEach((m) => {
         // instructor for current class lecture
@@ -115,6 +155,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     course,
     selectedType,
     selectedSemester,
+    selectedInstructor,
   ]);
 
   const getSemesterOptions = (
@@ -140,23 +181,21 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
                 )
               )
             );
-    const filteredOptions = filteredClasses
+    const seen = new Set<string>();
+    const uniqueClasses = filteredClasses
+      .filter(({ sessionId }) => !!sessionId)
       .filter(({ gradeDistribution }) => gradeDistribution.average)
-      .filter(
-        ({ year, semester }, index) =>
-          index ===
-          filteredClasses.findIndex(
-            (_class) => _class.semester === semester && _class.year === year
-          )
-      )
-      .toSorted(sortByTermDescending)
-      .map((t) => {
-        const str = `${t.semester} ${t.year}`;
-        return {
-          value: str,
-          label: str,
-        };
-      });
+      .filter(({ year, semester }) => {
+        const key = `${year}-${semester}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .toSorted(sortByTermDescending);
+    const filteredOptions = uniqueClasses.map((t) => ({
+      value: buildSemesterValue(t.year, t.semester, t.sessionId),
+      label: formatSemesterLabel(t.semester, t.year),
+    }));
     if (filteredOptions.length == 1) {
       // if only one option, select it
       if (
@@ -201,15 +240,18 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     }
     // Term input
     else if (selectedType === InputType.Term) {
-      const [semester, year] = selectedSemester.split(" ");
+      const parsedTerm = parseSemesterValue(selectedSemester);
+      if (!parsedTerm) return;
+      const { semester, year, sessionId } = parsedTerm;
 
       if (selectedInstructor === "all") {
         input = {
           subject: selectedCourse.subject,
           courseNumber: selectedCourse.number,
           type: InputType.Term,
-          year: parseInt(year),
+          year,
           semester: semester as Semester,
+          sessionId,
         };
       } else {
         const [familyName, givenName] = selectedInstructor.split(", ");
@@ -218,10 +260,11 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           subject: selectedCourse.subject,
           courseNumber: selectedCourse.number,
           type: InputType.Term,
-          year: parseInt(year),
+          year,
           semester: semester as Semester,
           familyName,
           givenName,
+          sessionId,
         };
       }
     }
@@ -239,16 +282,19 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           givenName,
         };
       } else {
-        const [semester, year] = selectedSemester.split(" ");
+        const parsedTerm = parseSemesterValue(selectedSemester);
+        if (!parsedTerm) return;
+        const { semester, year, sessionId } = parsedTerm;
 
         input = {
           subject: selectedCourse.subject,
           courseNumber: selectedCourse.number,
           type: InputType.Instructor,
-          year: parseInt(year),
+          year,
           semester: semester as Semester,
           familyName,
           givenName,
+          sessionId,
         };
       }
     }
