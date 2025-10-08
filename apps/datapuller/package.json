@@ -7,6 +7,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.0",
+    "@types/papaparse": "^5.3.16",
     "eslint": "^9.37.0",
     "typescript": "^5.9.3"
   },
