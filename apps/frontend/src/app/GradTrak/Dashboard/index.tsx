@@ -160,6 +160,8 @@ export default function Dashboard() {
     incomplete: false,
   });
 
+  const [activeFiltersCount, setActiveFiltersCount] = useState(0);
+
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const [sortPage, setSortPage] =
     useState<(typeof SORT_OPTIONS)[number]>("Semester");
@@ -359,9 +361,6 @@ export default function Dashboard() {
     setSortMenuOpen(false);
   };
 
-  const activeFiltersCount =
-    Object.values(filterOptions).filter(Boolean).length;
-
   const currentUserInfo = useMemo(
     (): { name: string; majors: string[]; minors: string[] } | null => {
       if (!user) {
@@ -398,7 +397,7 @@ export default function Dashboard() {
     [key: string]: ISelectedCourse[];
   }>({});
 
-  useEffect(() => {
+  const filterSemesters = (allSemesters: { [key: string]: ISelectedCourse[] }) => {
     // if none of the label filters are selected, return all semesters
     const hasActiveLabelFilters = Object.keys(filterOptions).some(
       (key) => key.startsWith("label_") && filterOptions[key]
@@ -422,9 +421,13 @@ export default function Dashboard() {
       });
       filteredSemesters[key] = filteredClasses;
     });
-
     setFilteredAllSemesters(filteredSemesters);
-  }, [allSemesters, filterOptions]);
+  };
+
+  useEffect(() => {
+    setActiveFiltersCount(Object.values(filterOptions).filter(Boolean).length);
+    filterSemesters(allSemesters);
+  }, [filterOptions]);
 
   // Calculate label counts when dropdown is opened
   const calculateLabelCounts = () => {
@@ -527,12 +530,10 @@ export default function Dashboard() {
   );
 
   // Function to update all semesters data
-  const updateAllSemesters = useCallback(
-    (semesters: { [key: string]: ISelectedCourse[] }) => {
-      setAllSemesters(semesters);
-    },
-    []
-  );
+  const updateAllSemesters = (semesters: { [key: string]: ISelectedCourse[] }) => {
+    filterSemesters(semesters);
+    setAllSemesters(semesters);
+  }
 
   useEffect(() => {
     if (localPlanTerms && localPlanTerms.length > 0) {
@@ -909,9 +910,10 @@ export default function Dashboard() {
                     !Object.keys(filterOptions).some(
                       (key) => key.startsWith("label_") && filterOptions[key]
                     )
-                  )
+                  ) {
                     return true;
-                  return filteredAllSemesters[term._id].length > 0;
+                  }
+                  return filteredAllSemesters[term._id] ? filteredAllSemesters[term._id].length > 0 : false;
                 })
                 .sort((a, b) => {
                   // Pinned terms first
@@ -942,7 +944,8 @@ export default function Dashboard() {
                         transferUnits
                       )
                     }
-                    allSemesters={filteredAllSemesters}
+                    filteredSemesters={filteredAllSemesters}
+                    allSemesters={allSemesters}
                     updateAllSemesters={updateAllSemesters}
                     settings={settings}
                     labels={localLabels}
@@ -957,6 +960,13 @@ export default function Dashboard() {
                       handleSetStatus(term._id, status)
                     }
                     sortCourseOption={sortCourseOption}
+                    handleRemoveTerm={() => {
+                      const updatedPlanTerms = localPlanTerms.filter(
+                        (t) => t._id !== term._id
+                      );
+                      setLocalPlanTerms(updatedPlanTerms);
+                    }}
+                    filtersActive={activeFiltersCount > 0}
                   />
                 ))}
           </div>

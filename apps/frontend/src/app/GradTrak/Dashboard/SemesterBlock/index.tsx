@@ -29,6 +29,7 @@ import styles from "./SemesterBlock.module.scss";
 
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
+  filteredSemesters: { [key: string]: ISelectedCourse[] };
   allSemesters: { [key: string]: ISelectedCourse[] };
   onTotalUnitsChange: (
     newTotal: number,
@@ -45,11 +46,14 @@ interface SemesterBlockProps {
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;
   sortCourseOption: string;
+  filtersActive: boolean;
+  handleRemoveTerm: () => void;
 }
 
 function SemesterBlock({
   planTerm,
   onTotalUnitsChange,
+  filteredSemesters,
   allSemesters,
   updateAllSemesters,
   settings,
@@ -61,6 +65,8 @@ function SemesterBlock({
   handleTogglePin,
   handleSetStatus,
   sortCourseOption,
+  filtersActive,
+  handleRemoveTerm,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -68,7 +74,7 @@ function SemesterBlock({
   const [classToEdit, setClassToEdit] = useState<ISelectedCourse | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [selectedClasses, setSelectedCourses] = useState<ISelectedCourse[]>(
-    allSemesters[semesterId] || []
+    filteredSemesters[semesterId] || []
   );
   const [totalUnits, setTotalUnits] = useState(0);
   const [_pnpUnits, setPnpUnits] = useState(0);
@@ -130,12 +136,12 @@ function SemesterBlock({
     onTotalUnitsChange(total, pnp, transfer);
   }, [selectedClasses]);
 
-  // update local state when allSemesters changes
+  // update local state when filteredSemesters changes
   useEffect(() => {
-    if (allSemesters[semesterId]) {
-      setSelectedCourses(allSemesters[semesterId]);
+    if (filteredSemesters[semesterId]) {
+      setSelectedCourses(filteredSemesters[semesterId]);
     }
-  }, [allSemesters, semesterId]);
+  }, [filteredSemesters, semesterId]);
 
   const handleDeleteClass = async (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter(
@@ -147,10 +153,9 @@ function SemesterBlock({
 
     // update global state
     const updatedSemesters = {
-      ...allSemesters,
+      ...filteredSemesters,
       [semesterId]: updatedClasses,
     };
-    updateAllSemesters(updatedSemesters);
     updateAllSemesters(updatedSemesters);
     const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
@@ -222,7 +227,7 @@ function SemesterBlock({
 
     // update global state
     const updatedSemesters = {
-      ...allSemesters,
+      ...filteredSemesters,
       [semesterId]: updatedClasses,
     };
     updateAllSemesters(updatedSemesters);
@@ -297,7 +302,7 @@ function SemesterBlock({
     
     // update global state
     const updatedSemesters = {
-      ...allSemesters,
+      ...filteredSemesters,
       [semesterId]: newClasses,
     };
     updateAllSemesters(updatedSemesters);
@@ -403,7 +408,6 @@ function SemesterBlock({
       // update the global state
       const oldSemesters = { ...allSemesters };
       updateAllSemesters(updatedSemesters);
-      updateAllSemesters(updatedSemesters);
       try {
         for (const semesterId of semestersToUpdate) {
           await setCourses(semesterId, updatedSemesters[semesterId], {
@@ -425,9 +429,9 @@ function SemesterBlock({
     <div
       ref={containerRef}
       className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      onDragOver={filtersActive ? undefined : handleDragOver}
+      onDragLeave={filtersActive ? undefined : handleDragLeave}
+      onDrop={filtersActive ? undefined : handleDrop}
     >
       <div className={styles.body} data-layout={settings.layout}>
         <Flex direction="row" justify="between" width="100%">
@@ -569,6 +573,7 @@ function SemesterBlock({
                     onClick={() => {
                       try{
                         removePlanTermByID(planTerm._id);
+                        handleRemoveTerm();
                       }catch(error){
                         return;
                       }
@@ -620,6 +625,7 @@ function SemesterBlock({
                   handleDelete={handleDeleteClass}
                   settings={settings}
                   labels={labels}
+                  draggable={!filtersActive}
                 />
               </React.Fragment>
             ))}

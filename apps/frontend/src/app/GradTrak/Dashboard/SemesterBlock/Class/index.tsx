@@ -16,6 +16,7 @@ interface ClassProps {
   handleDelete: (index: number) => void;
   settings: GradTrakSettings;
   labels: ILabel[];
+  draggable?: boolean;
 }
 
 export default function Class({
@@ -27,6 +28,7 @@ export default function Class({
   handleDelete,
   settings,
   labels,
+  draggable = true,
 }: ClassProps) {
   const gradingLabel = cls.pnp ? "PNP" : "GRD";
   return (
@@ -34,7 +36,7 @@ export default function Class({
       key={index}
       data-class-container
       className={styles.classContainer}
-      draggable={true}
+      draggable={draggable}
       onDragStart={(e) => handleDragStart(e, index)}
       onDragEnd={handleDragEnd}
     >
