@@ -14,6 +14,7 @@ import { AverageGrade } from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
+
 import styles from "./ClassCard.module.scss";
 
 interface ClassProps {
