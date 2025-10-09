@@ -14,6 +14,7 @@ import { AverageGrade } from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
+import styles from "./ClassCard.module.scss";
 
 interface ClassProps {
   class: IClass;
@@ -58,7 +59,8 @@ export default function ClassCard({
       <Card.ColumnHeader>
         <Card.Body>
           <Card.Heading>
-            {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
+            {subject ?? courseSubject} {courseNumber ?? courseNumber2}{" "}
+            <span className={styles.sectionNumber}>#{number}</span>
           </Card.Heading>
           <Card.Description>{title ?? courseTitle}</Card.Description>
           <Card.Footer>
