@@ -1,7 +1,45 @@
 .root {
-  padding: 24px 0;
-  flex-grow: 1;
+  background-color: var(--background-color);
+  height: 100%;
+}
+
+.wrapper {
+  background-color: var(--foreground-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  min-width: 450px;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  color: var(--heading-color);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--label-color);
+}
+
+.chart {
+  height: 360px;
 }
