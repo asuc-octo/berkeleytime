@@ -193,7 +193,7 @@ export default function Enrollment() {
 
   function updateGraphHover(data: any) {
     if (!data.isTooltipActive) return;
-    setHoveredDay(data.activeLabel);
+    // setHoveredDay(data.activeLabel); WHAT DOES THIS EVEN DO?
     // figure out closest series to mouse that has data point at that value
     const mousePercent =
       ((-data.chartY + CHART_HEIGHT) / CHART_HEIGHT) * dataMax;
