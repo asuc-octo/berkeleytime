@@ -17,18 +17,58 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
+const LETTER_GRADES = new Set([
+  "A+",
+  "A",
+  "A-",
+  "B+",
+  "B",
+  "B-",
+  "C+",
+  "C",
+  "C-",
+  "D+",
+  "D",
+  "D-",
+  "F",
+]);
+
+const PASS_GRADES = new Set(["P", "S"]);
+
+const GRADE_THRESHOLDS = [
+  { min: 4, letter: "A+" },
+  { min: 3.7, letter: "A" },
+  { min: 3.5, letter: "A-" },
+  { min: 3, letter: "B+" },
+  { min: 2.7, letter: "B" },
+  { min: 2.5, letter: "B-" },
+  { min: 2, letter: "C+" },
+  { min: 1.7, letter: "C" },
+  { min: 1.5, letter: "C-" },
+  { min: 1, letter: "D+" },
+  { min: 0.7, letter: "D" },
+  { min: 0, letter: "D-" },
+] as const;
+
+function getLetterGrade(average: number): string {
+  const threshold = GRADE_THRESHOLDS.find((t) => average > t.min);
+  return threshold?.letter ?? "F";
+}
+
+function getGradeColor(grade: string): string {
+  if (grade === "N/A" || grade.includes("% P")) {
+    return "var(--paragraph-color)";
+  }
+
+  const firstLetter = grade[0];
+  if (firstLetter === "A") return "var(--emerald-500)";
+  if (firstLetter === "B") return "var(--amber-500)";
+  return "var(--rose-500)";
+}
+
 export function ColoredGrade({ grade, style }: ColoredGradeProps) {
-  const color = useMemo(
-    () =>
-      grade === "N/A" || grade.includes("% P")
-        ? "var(--paragraph-color)"
-        : grade === "A+" || grade === "A" || grade === "A-"
-          ? "var(--emerald-500)"
-          : grade === "B+" || grade === "B" || grade === "B-"
-            ? "var(--amber-500)"
-            : "var(--rose-500)",
-    [grade]
-  );
+  const color = useMemo(() => getGradeColor(grade), [grade]);
+
   return (
     <div className={styles.trigger} style={{ color, ...style }}>
       {grade}
@@ -43,35 +83,13 @@ export function AverageGrade({
 }: AverageGradeProps) {
   const average = gradeDistribution?.average ?? null;
   const distribution = gradeDistribution?.distribution ?? [];
-  const LETTER_GRADE_SET = useMemo(
-    () =>
-      new Set([
-        "A+",
-        "A",
-        "A-",
-        "B+",
-        "B",
-        "B-",
-        "C+",
-        "C",
-        "C-",
-        "D+",
-        "D",
-        "D-",
-        "F",
-      ]),
-    []
-  );
-
-  const PASS_GRADE_SET = useMemo(() => new Set(["P", "S"]), []);
 
   const hasLetterGrades = useMemo(
     () =>
       distribution.some(
-        (grade) =>
-          LETTER_GRADE_SET.has(grade.letter) && (grade.count ?? 0) > 0
+        (grade) => LETTER_GRADES.has(grade.letter) && (grade.count ?? 0) > 0
       ),
-    [distribution, LETTER_GRADE_SET]
+    [distribution]
   );
 
   const passFailPercent = useMemo(() => {
@@ -80,7 +98,7 @@ export function AverageGrade({
     const totals = distribution.reduce(
       (acc, grade) => {
         const count = grade.count ?? 0;
-        if (PASS_GRADE_SET.has(grade.letter)) {
+        if (PASS_GRADES.has(grade.letter)) {
           acc.passCount += count;
           acc.passPercentage += grade.percentage ?? 0;
         } else if (grade.letter === "NP" || grade.letter === "U") {
@@ -109,7 +127,9 @@ export function AverageGrade({
     }
 
     if (totals.totalCount > 0) {
-      const percentage = Math.round((totals.passCount / totals.totalCount) * 100);
+      const percentage = Math.round(
+        (totals.passCount / totals.totalCount) * 100
+      );
       if (Number.isFinite(percentage)) {
         return Math.min(100, Math.max(0, percentage));
       }
@@ -123,50 +143,19 @@ export function AverageGrade({
     }
 
     return null;
-  }, [distribution, hasLetterGrades, PASS_GRADE_SET]);
+  }, [distribution, hasLetterGrades]);
+
   const text = useMemo(() => {
-    if (passFailPercent !== null) return `${passFailPercent}% P`;
-
-    if (!average) return "";
-
-    return average > 4
-      ? "A+"
-      : average > 3.7
-        ? "A"
-        : average > 3.5
-          ? "A-"
-          : average > 3
-            ? "B+"
-            : average > 2.7
-              ? "B"
-              : average > 2.5
-                ? "B-"
-                : average > 2
-                  ? "C+"
-                  : average > 1.7
-                    ? "C"
-                    : average > 1.5
-                      ? "C-"
-                      : average > 1
-                        ? "D+"
-                        : average > 0.7
-                          ? "D"
-                          : average
-                            ? "D-"
-                            : "F";
+    if (passFailPercent !== null) {
+      return `${passFailPercent}% P`;
+    }
+    if (!average) {
+      return "";
+    }
+    return getLetterGrade(average);
   }, [average, passFailPercent]);
 
-  const color = useMemo(() => {
-    if (passFailPercent !== null) return "var(--paragraph-color)";
-
-    if (!average) return "var(--paragraph-color)";
-
-    return average > 3.5
-      ? "var(--emerald-500)"
-      : average > 2.5
-        ? "var(--amber-500)"
-        : "var(--rose-500)";
-  }, [average, passFailPercent]);
+  const color = useMemo(() => getGradeColor(text), [text]);
 
   return (
     <Tooltip.Root disableHoverableContent>
@@ -186,10 +175,7 @@ export function AverageGrade({
             {passFailPercent !== null ? (
               <p className={styles.description}>
                 Students received{" "}
-                <span style={{ color }}>
-                  {passFailPercent}% P
-                </span>{" "}
-                {tooltip}.
+                <span style={{ color }}>{passFailPercent}% P</span> {tooltip}.
               </p>
             ) : average ? (
               <p className={styles.description}>
