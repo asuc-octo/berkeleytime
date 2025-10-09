@@ -412,13 +412,12 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    {/* <Tabs.Trigger value="enrollment" asChild>
-                      <MenuItem>Enrollment</MenuItem>
-                    </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
-                    */}
+                    {/* <Tabs.Trigger value="enrollment" asChild>
+                      <MenuItem>Enrollment</MenuItem>
+                    </Tabs.Trigger> */}
                     <NavLink
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                     >
@@ -445,17 +444,16 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Enrollment</MenuItem>
-                    )}
-                  </NavLink>
                   <NavLink to={{ ...location, pathname: "grades" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
                   </NavLink>
-                  */}
+                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink> */}
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>

@@ -1,4 +1,7 @@
 .root {
-  height: 384px;
   padding: 24px 0;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
 }
