@@ -21,6 +21,7 @@ export interface BrowserContextType {
   online: boolean;
   sortBy: SortBy;
   open: boolean;
+  reverse: boolean;
   updateComponents: Dispatch<Component[]>;
   updateUnits: Dispatch<Unit[]>;
   updateLevels: Dispatch<Level[]>;
@@ -29,6 +30,7 @@ export interface BrowserContextType {
   updateSortBy: Dispatch<SortBy>;
   updateOpen: Dispatch<boolean>;
   updateOnline: Dispatch<boolean>;
+  updateReverse: Dispatch<SetStateAction<boolean>>;
   loading: boolean;
 }
 

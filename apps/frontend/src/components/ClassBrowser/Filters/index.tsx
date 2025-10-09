@@ -41,8 +41,10 @@ export default function Filters() {
     online,
     // updateOnline,
     sortBy,
+    reverse,
     updateSortBy,
     responsive,
+    updateReverse,
   } = useBrowser();
 
   const [expanded, setExpanded] = useState(false);
@@ -275,13 +277,26 @@ export default function Filters() {
       <Header />
       <div className={styles.body}>
         <p className={styles.label}>SORT BY</p>
-        <Select
-          value={sortBy}
-          onChange={(value) => updateSortBy(value as SortBy)}
-          options={Object.values(SortBy).map((sortBy) => {
-            return { value: sortBy, label: sortBy };
-          })}
-        />
+        <div className={styles.sortControls}>
+            <div className={styles.sortSelectLeft}>
+                <Select
+                value={sortBy}
+                onChange={(value) => updateSortBy(value as SortBy)}
+                options={Object.values(SortBy).map((sortBy) => {
+                    return { value: sortBy, label: sortBy };
+                })}
+                />
+            </div>
+            <div >
+                <button className={styles.sortSelectRightButton} onClick={() => updateReverse((previous) => !previous)}>
+                    {
+                        reverse ? (<svg width="1.5em" height="1.5em" stroke-width="2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#8A8A8A"><path d="M14 14H2M10 10H2M6 6H2M18 18H2M19 14V4m0 0l3 3m-3-3l-3 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path></svg>) : (<svg width="1.5em" height="1.5em" stroke-width="2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#8A8A8A"><path d="M14 10H2M10 14H2M6 18H2M18 6H2M19 10v10m0 0l3-3m-3 3l-3-3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path></svg>)
+                    }
+                </button>
+            </div>
+        </div>
+        
+        
         <p className={styles.label}>LEVEL</p>
         <Select
           multi

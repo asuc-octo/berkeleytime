@@ -162,10 +162,9 @@ export default function ClassBrowser({
           .map(({ refIndex }) => includedClasses[refIndex])
       : includedClasses;
 
-    if (sortBy) {
-      // Clone the courses to avoid sorting in-place
-      filteredClasses = structuredClone(filteredClasses).sort((a, b) => {
+    const compareClasses = (a: IClass, b: IClass) => {
         if (sortBy === SortBy.AverageGrade) {
+            
           return b.course.gradeDistribution.average ===
             a.course.gradeDistribution.average
             ? 0
@@ -178,15 +177,12 @@ export default function ClassBrowser({
         }
 
         if (sortBy === SortBy.Units) {
-          return b.unitsMax - a.unitsMax;
+            return b.unitsMax - a.unitsMax;
         }
+        
 
         if (sortBy === SortBy.Alphabetical) {
-          if (!localReverse) {
             return a.course.subject.localeCompare(b.course.subject);
-          } else {
-            return b.course.subject.localeCompare(a.course.subject);
-          }
         }
 
         if (sortBy === SortBy.OpenSeats) {
@@ -213,11 +209,16 @@ export default function ClassBrowser({
 
         // Classes are by default sorted by relevance and number
         return 0;
-      });
+    }
+
+    if (sortBy) {
+        filteredClasses = structuredClone(filteredClasses).sort((a, b) =>
+            localReverse ? compareClasses(b, a) : compareClasses(a, b)
+        );
     }
 
     return filteredClasses;
-  }, [query, index, includedClasses, sortBy]);
+  }, [query, index, includedClasses, sortBy, localReverse]);
 
   const updateArray = <T,>(
     key: string,
@@ -298,6 +299,7 @@ export default function ClassBrowser({
         days,
         online,
         open,
+        reverse: localReverse,
         updateQuery,
         updateComponents: (components) =>
           updateArray("components", setLocalComponents, components),
@@ -310,6 +312,7 @@ export default function ClassBrowser({
           updateBoolean("online", setLocalOnline, online),
         setExpanded,
         loading,
+        updateReverse: setLocalReverse,
       }}
     >
       <div

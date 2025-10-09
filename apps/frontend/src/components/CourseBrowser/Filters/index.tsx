@@ -283,7 +283,6 @@ export default function Filters({
             </div>
           );
         })}
-
         <p className={styles.label}>Level</p>
         {Object.values(Level).map((level) => {
           const active = currentLevels.includes(level as Level);
