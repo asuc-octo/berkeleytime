@@ -54,6 +54,11 @@ export const READ_USER = gql`
         }
         gradeDistribution {
           average
+          distribution {
+            letter
+            percentage
+            count
+          }
         }
       }
     }
