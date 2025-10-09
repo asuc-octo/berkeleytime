@@ -377,23 +377,39 @@ export default function Class({
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  <AverageGrade
-                    gradeDistribution={_class.course.gradeDistribution}
-                  />
-                  <Capacity
-                    enrolledCount={
-                      _class.primarySection.enrollment?.latest.enrolledCount
-                    }
-                    maxEnroll={
-                      _class.primarySection.enrollment?.latest.maxEnroll
-                    }
-                    waitlistedCount={
-                      _class.primarySection.enrollment?.latest.waitlistedCount
-                    }
-                    maxWaitlist={
-                      _class.primarySection.enrollment?.latest.maxWaitlist
-                    }
-                  />
+                  <Link
+                    to={`/grades?input=${encodeURIComponent(
+                      `${_class.subject};${_class.courseNumber}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <AverageGrade
+                      gradeDistribution={_class.course.gradeDistribution}
+                    />
+                  </Link>
+                  <Link
+                    to={`/enrollment?input=${encodeURIComponent(
+                      `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Capacity
+                      enrolledCount={
+                        _class.primarySection.enrollment?.latest.enrolledCount
+                      }
+                      maxEnroll={
+                        _class.primarySection.enrollment?.latest.maxEnroll
+                      }
+                      waitlistedCount={
+                        _class.primarySection.enrollment?.latest.waitlistedCount
+                      }
+                      maxWaitlist={
+                        _class.primarySection.enrollment?.latest.maxWaitlist
+                      }
+                    />
+                  </Link>
                   <Units
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
