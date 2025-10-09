@@ -148,9 +148,7 @@ const applyQueryFilter = (
 
   // TODO: Limit query because Fuse performance decreases linearly by
   // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-  return index
-    .search(trimmedQuery)
-    .map(({ refIndex }) => classes[refIndex]);
+  return index.search(trimmedQuery).map(({ refIndex }) => classes[refIndex]);
 };
 
 const fetchCatalogData = async (

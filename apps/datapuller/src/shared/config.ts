@@ -17,6 +17,9 @@ export interface Config {
   mongoDB: {
     uri: string;
   };
+  backend: {
+    graphqlEndpoint: string;
+  };
   sis: {
     CLASS_APP_ID: string;
     CLASS_APP_KEY: string;
@@ -47,6 +50,25 @@ export function loadConfig(): Config {
     log,
     mongoDB: {
       uri: env("MONGODB_URI"),
+    },
+    backend: {
+      graphqlEndpoint: (() => {
+        const baseUrl = env("URL").replace(/\/$/, "");
+        const backendPathRaw = env("BACKEND_PATH");
+        const graphqlPathRaw = env("GRAPHQL_PATH");
+
+        const backendPath = backendPathRaw.startsWith("/")
+          ? backendPathRaw
+          : `/${backendPathRaw}`;
+        const cleanedBackendPath = backendPath.endsWith("/")
+          ? backendPath.slice(0, -1)
+          : backendPath;
+        const graphqlPath = graphqlPathRaw.startsWith("/")
+          ? graphqlPathRaw
+          : `/${graphqlPathRaw}`;
+
+        return `${baseUrl}${cleanedBackendPath}${graphqlPath}`;
+      })(),
     },
     sis: {
       CLASS_APP_ID: env("SIS_CLASS_APP_ID"),
