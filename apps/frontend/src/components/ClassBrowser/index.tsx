@@ -42,13 +42,13 @@ export default function ClassBrowser({
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [localQuery, setLocalQuery] = useState<string>("");
   const [localComponents, setLocalComponents] = useState<Component[]>([]);
   const [localUnits, setLocalUnits] = useState<Unit[]>([]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
+  const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
@@ -179,6 +179,14 @@ export default function ClassBrowser({
 
         if (sortBy === SortBy.Units) {
           return b.unitsMax - a.unitsMax;
+        }
+
+        if (sortBy === SortBy.Alphabetical) {
+          if (!localReverse) {
+            return a.course.subject.localeCompare(b.course.subject);
+          } else {
+            return b.course.subject.localeCompare(a.course.subject);
+          }
         }
 
         if (sortBy === SortBy.OpenSeats) {
