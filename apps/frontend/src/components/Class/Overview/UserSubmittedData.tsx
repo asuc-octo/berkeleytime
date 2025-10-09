@@ -16,6 +16,7 @@ import {
   MINIMUM_RESPONSES_THRESHOLD,
   MetricName,
 } from "@repo/shared";
+import { Flex } from "@repo/theme";
 
 import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
@@ -49,104 +50,101 @@ export function UserSubmittedData() {
   const atLeastOneConsensus = Object.values(responses).some(
     (c) => c == Consensus.Yes || c == Consensus.No
   );
-  if (!atLeastOneConsensus) {
-    return (
-      <div className={styles.userSubmissionRequirements}>
-        <p className={styles.userSubmissionLabel}>
-          User-Submitted Class Requirements
-        </p>
-        <p className={styles.userSubmissionDescription}>
-          No user-submitted information is available for this course yet.
-        </p>
-        <Link
-          to="ratings?feedbackModal=true"
-          className={styles.suggestEdit}
-          onClick={handleFeedbackClick}
-        >
-          Taken this course? Help others by adding what you know →
-        </Link>
-      </div>
-    );
-  }
+
   return (
-    <div className={styles.userSubmissionRequirements}>
-      <p className={styles.userSubmissionLabel}>
-        User-Submitted Class Requirements
-      </p>
-      <div>
-        {responses.Attendance === Consensus.Yes && (
-          <>
-            <User className={styles.icon} />
-            <span className={styles.userSubmissionDescription}>
-              Attendance Required
-            </span>
-          </>
-        )}
-        {responses.Attendance === Consensus.No && (
-          <>
-            <UserXmark className={styles.icon} />
-            <span className={styles.userSubmissionDescription}>
-              Attendance Not Required
-            </span>
-          </>
-        )}
-        {(responses.Attendance === Consensus.Indeterminate ||
-          responses.Attendance === Consensus.BellowThreshold) && (
-          <>
-            <QuestionMark
-              className={styles.icon}
-              style={{ color: "var(--label-color)" }}
-            />
-            <span
-              className={styles.userSubmissionDescription}
-              style={{ color: "var(--label-color)" }}
+    <Flex direction="column" gap="2">
+      <p className={styles.label}>User-Submitted Class Requirements</p>
+      {!atLeastOneConsensus ? (
+        <>
+          <p className={styles.description}>
+            No user-submitted information is available for this course yet.
+          </p>
+          <Link
+            to="ratings?feedbackModal=true"
+            className={styles.suggestEdit}
+            onClick={handleFeedbackClick}
+          >
+            Taken this course? Help others by adding what you know →
+          </Link>
+        </>
+      ) : (
+        <div className={styles.userSubmissionRequirements}>
+          <div className={styles.dataGroup}>
+            <div>
+              {responses.Attendance === Consensus.Yes && (
+                <>
+                  <User className={styles.icon} />
+                  <span className={styles.description}>Attendance Required</span>
+                </>
+              )}
+              {responses.Attendance === Consensus.No && (
+                <>
+                  <UserXmark className={styles.icon} />
+                  <span className={styles.description}>
+                    Attendance Not Required
+                  </span>
+                </>
+              )}
+              {(responses.Attendance === Consensus.Indeterminate ||
+                responses.Attendance === Consensus.BellowThreshold) && (
+                <>
+                  <QuestionMark
+                    className={styles.icon}
+                    style={{ color: "var(--label-color)" }}
+                  />
+                  <span
+                    className={styles.description}
+                    style={{ color: "var(--label-color)" }}
+                  >
+                    Unknown Attendance Requirement
+                  </span>
+                </>
+              )}
+            </div>
+            <div>
+              {responses.Recording === Consensus.Yes && (
+                <>
+                  <VideoCamera className={styles.icon} />
+                  <span className={styles.description}>Lectures Recorded</span>
+                </>
+              )}
+              {responses.Recording === Consensus.No && (
+                <>
+                  <VideoCameraOff className={styles.icon} />
+                  <span className={styles.description}>
+                    Lectures Not Recorded
+                  </span>
+                </>
+              )}
+              {(responses.Recording === Consensus.Indeterminate ||
+                responses.Recording === Consensus.BellowThreshold) && (
+                <>
+                  <QuestionMark
+                    className={styles.icon}
+                    style={{ color: "var(--label-color)" }}
+                  />
+                  <span
+                    className={styles.description}
+                    style={{ color: "var(--label-color)" }}
+                  >
+                    Unknown Recording Status
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+          <div>
+            <Link
+              to="ratings?feedbackModal=true"
+              className={styles.suggestEdit}
+              onClick={handleFeedbackClick}
             >
-              Unknown Attendance Requirement
-            </span>
-          </>
-        )}
-      </div>
-      <div>
-        {responses.Recording === Consensus.Yes && (
-          <>
-            <VideoCamera className={styles.icon} />
-            <span className={styles.userSubmissionDescription}>
-              Lectures Recorded
-            </span>
-          </>
-        )}
-        {responses.Recording === Consensus.No && (
-          <>
-            <VideoCameraOff className={styles.icon} />
-            <span className={styles.userSubmissionDescription}>
-              Lectures Not Recorded
-            </span>
-          </>
-        )}
-        {(responses.Recording === Consensus.Indeterminate ||
-          responses.Recording === Consensus.BellowThreshold) && (
-          <>
-            <QuestionMark
-              className={styles.icon}
-              style={{ color: "var(--label-color)" }}
-            />
-            <span
-              className={styles.userSubmissionDescription}
-              style={{ color: "var(--label-color)" }}
-            >
-              Unknown Recording Status
-            </span>
-          </>
-        )}
-      </div>
-      <Link
-        to="ratings?feedbackModal=true"
-        className={styles.suggestEdit}
-        onClick={handleFeedbackClick}
-      >
-        Look inaccurate? Suggest an edit →{" "}
-      </Link>
-    </div>
+              Look inaccurate? Suggest an edit →{" "}
+            </Link>
+          </div>
+        </div>
+      )}
+    </Flex>
   );
 }
 
