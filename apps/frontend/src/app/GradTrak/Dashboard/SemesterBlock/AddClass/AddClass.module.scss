@@ -19,6 +19,9 @@ body {
     background-color: var(--foreground-color);
     box-shadow: 0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.10)), 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.10));
     transition: all 0.2s ease;
+    max-height: 18rem;
+    width: max-content;
+    overflow: hidden;
   
     input {
       color: var(--heading-color);
@@ -28,7 +31,6 @@ body {
       padding: 0;
     }
   }
-  
   .suggestion-popover {
     display: flex;
     flex-direction: column;
@@ -41,10 +43,16 @@ body {
     border-radius: 0.25rem;
     border: 1px solid var(--border-color);
     box-shadow: 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.10));
+    max-height: 18rem;
+    width: max-content;
+    overflow: hidden;
+    --max-visible-items: 3;
+    --item-height: 44px; 
 
-    .list {
-      max-height: 6rem;
-      overflow-y: scroll;
+    .list {      
+      flex: 1 1 auto;
+      max-height: calc(var(--item-height) * var(--max-visible-items));
+      overflow-y: auto;
       list-style-type: none;
       padding: 0;
       margin: 0;
@@ -52,7 +60,8 @@ body {
       scrollbar-width: thin;
 
       &.has-items {
-        border-bottom: 1px solid var(--border-color);
+        /* keep visual separation from footer when items exist */
+        /* no border-bottom here so footer border can be sticky */
       }
 
       &::-webkit-scrollbar-thumb {
@@ -60,7 +69,7 @@ body {
       }
 
       ::-webkit-scrollbar-track {
-        background-color: #8A8A8A; /* Lighter gray track */
+        background-color: transparent;
       }
 
       .item {
@@ -80,29 +89,29 @@ body {
         }
       }
     }
-}
+    .footer {
+      flex: 0 0 auto;
+      position: sticky;
+      bottom: 0;
+      z-index: 1;
+      background: linear-gradient(var(--foreground-color), var(--foreground-color)); /* ensure background covers scrolled content */
+      border-top: 1px solid var(--border-color);
+      padding: 0;
 
-.footer {
-    display: flex;
-    flex-shrink: 0;
-    background: var(--foreground-color);
-    position: sticky;
-    bottom: 0;
-    z-index: 1;
+      .create-custom-class-button {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        padding: 1rem;
+        gap: 0.625rem;
+        color: var(--paragraph-color);
+        transition: background-color 0.3 ease;
 
-    .create-custom-class-button {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
-      padding: 1rem;
-      gap: 0.625rem;
-      color: var(--paragraph-color);
-      transition: background-color 0.3 ease;
-
-      &:hover {
-        background-color: var(--button-hover-color);
-        color: var(--heading-color);
+        &:hover {
+          background-color: var(--button-hover-color);
+          color: var(--heading-color);
+        }
       }
     }
   }

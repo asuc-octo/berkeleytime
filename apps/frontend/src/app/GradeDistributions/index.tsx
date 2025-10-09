@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -130,7 +130,8 @@ export default function GradeDistributions() {
           response
             ? acc.concat({
                 color: LIGHT_COLORS[index],
-                gradeDistribution: response.data.grade,
+                // TODO: Error handling
+                gradeDistribution: response.data!.grade,
                 input: initialInputs[index],
                 active: false,
                 hidden: false,
@@ -215,7 +216,7 @@ export default function GradeDistributions() {
     if (outputs.length > 0) {
       if (!hoveredSeries) setHoveredSeries(0);
     } else setHoveredSeries(null);
-  }, [outputs]);
+  }, [hoveredSeries, outputs]);
 
   return (
     <Box p="5">

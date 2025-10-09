@@ -144,6 +144,7 @@ export function Select<T>({
               <Flex direction="row" gap="8px" wrap="wrap">
                 {activeElem.map((el) => (
                   <BadgeLabel
+                    key={el.label}
                     label={el.label}
                     color={el.color ? el.color : Color.blue}
                     icon={

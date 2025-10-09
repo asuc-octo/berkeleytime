@@ -13,7 +13,7 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Box, Button, DropdownMenu, Flex, Input } from "@repo/theme";
+import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
@@ -29,6 +29,7 @@ import styles from "./SemesterBlock.module.scss";
 
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
+  filteredSemesters: { [key: string]: ISelectedCourse[] };
   allSemesters: { [key: string]: ISelectedCourse[] };
   onTotalUnitsChange: (
     newTotal: number,
@@ -44,11 +45,15 @@ interface SemesterBlockProps {
   handleUpdateTermName: (name: string) => void;
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;
+  sortCourseOption: string;
+  filtersActive: boolean;
+  handleRemoveTerm: () => void;
 }
 
 function SemesterBlock({
   planTerm,
   onTotalUnitsChange,
+  filteredSemesters,
   allSemesters,
   updateAllSemesters,
   settings,
@@ -59,6 +64,9 @@ function SemesterBlock({
   handleUpdateTermName,
   handleTogglePin,
   handleSetStatus,
+  sortCourseOption,
+  filtersActive,
+  handleRemoveTerm,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -66,7 +74,7 @@ function SemesterBlock({
   const [classToEdit, setClassToEdit] = useState<ISelectedCourse | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [selectedClasses, setSelectedCourses] = useState<ISelectedCourse[]>(
-    allSemesters[semesterId] || []
+    filteredSemesters[semesterId] || []
   );
   const [totalUnits, setTotalUnits] = useState(0);
   const [_pnpUnits, setPnpUnits] = useState(0);
@@ -80,8 +88,35 @@ function SemesterBlock({
   const [getCourseUnits] = useReadCourseUnits();
 
   const [rename, setRename] = useState(planTerm.name);
-  const [renameDropdownOpen, setRenameDropdownOpen] = useState(false);
+  const [renameEditActive, setRenameEditActive] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    setRename(planTerm.name);
+  }, [planTerm.name]);
+
+  useEffect(() => {
+    if (renameEditActive && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [renameEditActive]);
+
+  const handleSaveRename = async () => {
+    if (rename.trim() && rename !== planTerm.name) {
+      handleUpdateTermName(rename.trim());
+    } else {
+      setRename(planTerm.name);
+    }
+    setRenameEditActive(false);
+  };
+
+  const handleCancelRename = () => {
+    setRename(planTerm.name);
+    setRenameEditActive(false);
+  };
+
+  
   useEffect(() => {
     const total = selectedClasses.reduce(
       (sum, cls) => sum + cls.courseUnits,
@@ -101,12 +136,12 @@ function SemesterBlock({
     onTotalUnitsChange(total, pnp, transfer);
   }, [selectedClasses]);
 
-  // update local state when allSemesters changes
+  // update local state when filteredSemesters changes
   useEffect(() => {
-    if (allSemesters[semesterId]) {
-      setSelectedCourses(allSemesters[semesterId]);
+    if (filteredSemesters[semesterId]) {
+      setSelectedCourses(filteredSemesters[semesterId]);
     }
-  }, [allSemesters, semesterId]);
+  }, [filteredSemesters, semesterId]);
 
   const handleDeleteClass = async (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter(
@@ -118,10 +153,9 @@ function SemesterBlock({
 
     // update global state
     const updatedSemesters = {
-      ...allSemesters,
+      ...filteredSemesters,
       [semesterId]: updatedClasses,
     };
-    updateAllSemesters(updatedSemesters);
     updateAllSemesters(updatedSemesters);
     const deletedClassUnits = selectedClasses[indexToDelete].courseUnits;
     const newTotalUnits = totalUnits - deletedClassUnits;
@@ -193,7 +227,7 @@ function SemesterBlock({
 
     // update global state
     const updatedSemesters = {
-      ...allSemesters,
+      ...filteredSemesters,
       [semesterId]: updatedClasses,
     };
     updateAllSemesters(updatedSemesters);
@@ -265,6 +299,13 @@ function SemesterBlock({
     onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
     setClassToEdit(null);
+    
+    // update global state
+    const updatedSemesters = {
+      ...filteredSemesters,
+      [semesterId]: newClasses,
+    };
+    updateAllSemesters(updatedSemesters);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -367,7 +408,6 @@ function SemesterBlock({
       // update the global state
       const oldSemesters = { ...allSemesters };
       updateAllSemesters(updatedSemesters);
-      updateAllSemesters(updatedSemesters);
       try {
         for (const semesterId of semestersToUpdate) {
           await setCourses(semesterId, updatedSemesters[semesterId], {
@@ -389,9 +429,9 @@ function SemesterBlock({
     <div
       ref={containerRef}
       className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      onDragOver={filtersActive ? undefined : handleDragOver}
+      onDragLeave={filtersActive ? undefined : handleDragLeave}
+      onDrop={filtersActive ? undefined : handleDrop}
     >
       <div className={styles.body} data-layout={settings.layout}>
         <Flex direction="row" justify="between" width="100%">
@@ -399,27 +439,50 @@ function SemesterBlock({
             {planTerm.pinned && (
               <PinSolid className={styles.pin} onClick={handleTogglePin} />
             )}
-            <h2>{planTerm.name}</h2>
+            <h2>
+              {renameEditActive ? (
+                <Input
+                  ref={inputRef}
+                  value={rename}
+                  onChange={(e) => setRename(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSaveRename();
+                    } else if (e.key === "Escape") {
+                      handleCancelRename();
+                    }
+                  }}
+                  onBlur={handleSaveRename}
+                  style={{ width: "100%", minWidth: "120px" }}
+                />
+              ) : (
+                <span
+                  onClick={() => {
+                    setRenameEditActive(true);
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  {planTerm.name}
+                </span>
+              )}
+            </h2>
             <p className={styles.counter}>{totalUnits}</p>
-            {planTerm.status !== Status.None && (
-              <span
-                className={styles.status}
-                style={{
-                  backgroundColor:
-                    planTerm.status === Status.Complete
-                      ? "var(--emerald-500)"
-                      : planTerm.status == Status.InProgress
-                        ? "var(--yellow-500)"
-                        : "var(--gray-500)",
-                }}
-              />
-            )}
+            <span
+              className={styles.status}
+              style={{
+                backgroundColor:
+                  planTerm.status === Status.Complete
+                    ? "var(--emerald-500)"
+                    : planTerm.status == Status.InProgress
+                      ? "var(--yellow-500)"
+                      : "var(--gray-500)",
+              }}
+            />
           </div>
           <Flex direction="row" gap="6px">
             <div className={styles.dropdown}>
               <DropdownMenu.Root
-                open={renameDropdownOpen}
-                onOpenChange={setRenameDropdownOpen}
+                modal={false}
               >
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
@@ -430,46 +493,11 @@ function SemesterBlock({
                   style={{ width: "160px" }}
                 >
                   {planTerm.term === Terms.Misc && (
-                    <DropdownMenu.Sub>
-                      <DropdownMenu.SubTrigger onClick={() => {}}>
-                        <Edit className={styles.menuIcon} /> Rename
-                        <NavArrowRight
-                          className={styles.rightAlignedIcon}
-                          style={{ left: "48px" }}
-                        />
-                      </DropdownMenu.SubTrigger>
-                      <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
-                        <Box width="200px" height="70px">
-                          <Flex
-                            direction="column"
-                            justify="between"
-                            height="100%"
-                          >
-                            <Input
-                              placeholder={"Name your column..."}
-                              value={rename}
-                              onChange={(v) => setRename(v.target.value)}
-                            />
-                            <Flex
-                              direction="row"
-                              justify="end"
-                              gap="5px"
-                              width="100%"
-                            >
-                              <Button
-                                onClick={() => {
-                                  handleUpdateTermName(rename);
-                                  setRenameDropdownOpen(false);
-                                }}
-                                disabled={!rename || rename === planTerm.name}
-                              >
-                                Save
-                              </Button>
-                            </Flex>
-                          </Flex>
-                        </Box>
-                      </DropdownMenu.SubContent>
-                    </DropdownMenu.Sub>
+                    <DropdownMenu.Item
+                      onClick={() => setRenameEditActive(true)}
+                    >
+                      <Edit className={styles.menuIcon} /> Rename
+                    </DropdownMenu.Item>
                   )}
                   <DropdownMenu.Sub>
                     <DropdownMenu.SubTrigger>
@@ -526,19 +554,7 @@ function SemesterBlock({
                             />
                             Incomplete
                           </span>
-                          {planTerm.status === Status.Incomplete && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.None);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          None
-                          {planTerm.status === Status.None && (
+                          {(planTerm.status === Status.Incomplete) && (
                             <Check className={styles.statusSelected} />
                           )}
                         </Flex>
@@ -553,15 +569,15 @@ function SemesterBlock({
                     )}{" "}
                     Pin
                   </DropdownMenu.Item>
-                  {/* <DropdownMenu.Item onClick={() => {}}>
-                    <ShareIos className={styles.menuIcon} /> Export to Scheduler
-                  </DropdownMenu.Item> */}
-                  {/* <DropdownMenu.Item onClick={() => {}}>
-                    <Eye className={styles.menuIcon} /> Hide
-                  </DropdownMenu.Item> */}
                   <DropdownMenu.Item
                     onClick={() => {
-                      removePlanTermByID(planTerm._id);
+                      try{
+                        removePlanTermByID(planTerm._id);
+                        handleRemoveTerm();
+                      }catch(error){
+                        return;
+                      }
+                      onTotalUnitsChange(0, 0, 0);
                     }}
                     isDelete
                   >
@@ -590,7 +606,12 @@ function SemesterBlock({
 
         {open && (
           <>
-            {selectedClasses.map((cls, index) => (
+            {selectedClasses.sort((a, b) => {
+              if (sortCourseOption === 'Unsorted') return 0;
+              if (sortCourseOption === 'A-Z') return a.courseName.localeCompare(b.courseName);
+              if (sortCourseOption === 'Z-A') return b.courseName.localeCompare(a.courseName);
+              return 0;
+            }).map((cls, index) => (
               <React.Fragment key={`class-group-${index}`}>
                 {placeholderIndex === index && (
                   <div className={styles.placeholder} />
@@ -604,6 +625,7 @@ function SemesterBlock({
                   handleDelete={handleDeleteClass}
                   settings={settings}
                   labels={labels}
+                  draggable={!filtersActive}
                 />
               </React.Fragment>
             ))}

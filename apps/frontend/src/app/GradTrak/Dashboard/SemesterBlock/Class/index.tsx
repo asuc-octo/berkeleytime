@@ -2,7 +2,7 @@ import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
 import { BadgeLabel, Button, Color, DropdownMenu, Flex } from "@repo/theme";
 
-import { ISelectedCourse, ILabel } from "@/lib/api";
+import { ILabel, ISelectedCourse } from "@/lib/api";
 
 import { GradTrakSettings, ShowSetting } from "../../settings";
 import styles from "./Class.module.scss";
@@ -16,6 +16,7 @@ interface ClassProps {
   handleDelete: (index: number) => void;
   settings: GradTrakSettings;
   labels: ILabel[];
+  draggable?: boolean;
 }
 
 export default function Class({
@@ -27,13 +28,15 @@ export default function Class({
   handleDelete,
   settings,
   labels,
+  draggable = true,
 }: ClassProps) {
+  const gradingLabel = cls.pnp ? "PNP" : "GRD";
   return (
     <div
       key={index}
       data-class-container
       className={styles.classContainer}
-      draggable={true}
+      draggable={draggable}
       onDragStart={(e) => handleDragStart(e, index)}
       onDragEnd={handleDragEnd}
     >
@@ -41,23 +44,57 @@ export default function Class({
         <Flex
           direction={settings.layout === "chart" ? "column" : "row"}
           justify="between"
+          align={settings.layout === "chart" ? "start" : "center"}
           width="100%"
+          className={styles.headerRow}
         >
-          <h3 className={styles.title}>{cls.courseName}</h3>
-          {settings.show[ShowSetting.units] && <p>{cls.courseUnits} Units</p>}
-          {settings.show[ShowSetting.labels] && (
-            <div
-              className={styles.labelsContainer}
-              style={{ marginTop: settings.layout === "grid" ? "0" : "8px" }}
-            >
-              {cls.labels.filter((l) => labels.some((label) => label.name === l.name && label.color === l.color)).map((l, idx) => (
-                <BadgeLabel key={idx} label={l.name} color={l.color as Color} />
-              ))}
-            </div>
+          <div
+            className={
+              settings.layout === "chart"
+                ? styles.titleBlockChart
+                : styles.titleBlockInline
+            }
+          >
+            <h3 className={styles.title}>{cls.courseName}</h3>
+
+            {settings.show[ShowSetting.labels] && cls.labels.length > 0 && (
+              <div
+                className={
+                  settings.layout === "chart"
+                    ? styles.labelsContainer
+                    : styles.labelsInline
+                }
+              >
+                {cls.labels
+                  .filter((l) =>
+                    labels.some(
+                      (label) =>
+                        label.name === l.name && label.color === l.color
+                    )
+                  )
+                  .map((l, idx) => (
+                    <BadgeLabel
+                      key={idx}
+                      label={l.name}
+                      color={l.color as Color}
+                    />
+                  ))}
+              </div>
+            )}
+          </div>
+
+          {settings.show[ShowSetting.units] && (
+            <p className={styles.unitsText}>
+              {cls.courseUnits} Units
+              {settings.show[ShowSetting.grading] && (
+                <> &bull; {gradingLabel}</>
+              )}
+            </p>
           )}
         </Flex>
+
         <div className={styles.dropdown}>
-          <DropdownMenu.Root>
+          <DropdownMenu.Root modal={false}>
             <DropdownMenu.Trigger asChild>
               <Button className={styles.trigger}>
                 <MoreHoriz className={styles.moreHoriz} />
