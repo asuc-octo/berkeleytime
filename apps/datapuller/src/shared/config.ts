@@ -52,23 +52,7 @@ export function loadConfig(): Config {
       uri: env("MONGODB_URI"),
     },
     backend: {
-      graphqlEndpoint: (() => {
-        const baseUrl = env("URL").replace(/\/$/, "");
-        const backendPathRaw = env("BACKEND_PATH");
-        const graphqlPathRaw = env("GRAPHQL_PATH");
-
-        const backendPath = backendPathRaw.startsWith("/")
-          ? backendPathRaw
-          : `/${backendPathRaw}`;
-        const cleanedBackendPath = backendPath.endsWith("/")
-          ? backendPath.slice(0, -1)
-          : backendPath;
-        const graphqlPath = graphqlPathRaw.startsWith("/")
-          ? graphqlPathRaw
-          : `/${graphqlPathRaw}`;
-
-        return `${baseUrl}${cleanedBackendPath}${graphqlPath}`;
-      })(),
+      graphqlEndpoint: "http://backend:5001/api/graphql",
     },
     sis: {
       CLASS_APP_ID: env("SIS_CLASS_APP_ID"),
