@@ -11,16 +11,16 @@ export const functions: FunctionMapEntry[] = [
   ["or", {
     eval: (args: Data<Array<boolean>>) => { return { data: args.data.some(v => v), type: "boolean" } },
     args: ["List<boolean>"],
-    return_type: "boolean"
+    // return_type: "boolean"
   }],
   ["and", {
     eval: (args: Data<Array<boolean>>) => { return { data: args.data.every(v => v), type: "boolean" } },
     args: ["List<boolean>"],
-    return_type: "boolean"
+    // return_type: "boolean"
   }],
   ["not", {
     eval: (args: Data<boolean>) => { return { data: !args.data, type: "boolean" } },
     args: ["boolean"],
-    return_type: "boolean"
+    // return_type: "boolean"
   }]
 ];

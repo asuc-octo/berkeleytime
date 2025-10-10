@@ -27,7 +27,7 @@ export const functions: FunctionMapEntry[] = [
       if (!BasicTypeList.includes(t as BasicType)) throw new UnsupportedTypeError(`$List<${t}>`);
       return [`List<${t}>`, t] as Type[];
     },
-    return_type: "boolean"
+    // return_type: "boolean"
   }],
   ["get_element", {
     eval: (list: Data<Array<any>>, index: Data<number>) => {
@@ -41,6 +41,6 @@ export const functions: FunctionMapEntry[] = [
       return [`List<${t}>`, "number"] as Type[];
     },
     args: ["List<T>", "number"],
-    return_type: "T"
+    // return_type: "T"
   }],
 ];

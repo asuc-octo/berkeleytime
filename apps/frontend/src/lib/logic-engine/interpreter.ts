@@ -5,7 +5,6 @@ import { Data, isGenericType, matchTypes, StringToType, Type } from "./types";
 
 export const run = (code: string) => {
   const lines = code.split("\n");
-  VARIABLE_MAP.clear();
   for (const line of lines) {
     if (line.trim() === "") continue;
     if (line.trim().startsWith("//")) continue;
@@ -13,6 +12,7 @@ export const run = (code: string) => {
     const expr = rest.join(" ").trim();
     
     const return_type = StringToType(type);
+    if (isGenericType(return_type)) throw new SyntaxError(line, `Cannot return generic type`);
     const expr_val = evaluate(expr, return_type);
     console.log(`EXPR VAL: ${expr_val.data} (${expr_val.type})`);
 
@@ -27,7 +27,8 @@ export const run = (code: string) => {
 }
 
 export const evaluate = (expr: string, expected_type: Type): Data<any> => {
-  console.log(`EVALUATE: "${expr}" (${expected_type})`);
+  console.log(VARIABLE_MAP)
+  console.log(`EVALUATE: "${expr}" (${expected_type}) ${VARIABLE_MAP.has(expr)}`);
   const functionMatch = expr.match(/^\s*([^\s<>()]+)(?:\<([^\s<>()]+)\>)?\s*\((.*)\)\s*$/);
   if (functionMatch) {
     // function
@@ -50,6 +51,8 @@ export const evaluate = (expr: string, expected_type: Type): Data<any> => {
 
     console.log(`FUNC_EVAL ARGS VAL: ${args_val}`);
     const result = func.eval(...args_val);
+
+    if (isGenericType(result.type)) throw new SyntaxError(expr, `Cannot return generic type`);
 
     return result;
 

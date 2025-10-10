@@ -5,9 +5,16 @@ import { constructor as number_constructor } from "./lib/number";
 import { constructor as string_constructor } from "./lib/string";
 import { functions as list_functions, constructor as list_constructor } from "./lib/list"
 
+const get_attr_function: Function = {
+  eval: (obj: Data<any>, attr: Data<string>) => obj.data[attr.data],
+  args: ["T", "string"],
+  genericArgs: (t: Type) => [t, "string"]
+}
+
 export const FUNCTION_MAP: Map<string, Function> = new Map([
   ...logic_functions,
-  ...list_functions
+  ...list_functions,
+  ["get_attr", get_attr_function]
 ])
 
 export const VARIABLE_MAP: Map<string, Data<any>> = new Map();

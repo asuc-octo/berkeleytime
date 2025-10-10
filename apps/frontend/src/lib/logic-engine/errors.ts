@@ -29,3 +29,9 @@ export class UndefinedFunctionError extends Error {
     super (`Function ${functionName} is not defined`)
   }
 }
+
+export class RuntimeError extends Error {
+  constructor (msg: string) {
+    super (msg);
+  }
+}

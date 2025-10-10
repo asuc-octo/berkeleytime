@@ -56,6 +56,7 @@ import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
+import LogicEngineInterface from "@/lib/logic-engine/interface";
 
 const FILTER_OPTIONS = [
   {
@@ -562,6 +563,10 @@ export default function Dashboard() {
       navigate("/gradtrak", { replace: true });
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
+
+  const [requirements, setRequirements] = useState<string>("");
+  console.log(requirements);
+  LogicEngineInterface(gradTrak, setRequirements);
 
   if (userLoading || gradTrakLoading || courseLoading) {
     return (

@@ -64,7 +64,6 @@ export interface Function {
   eval: (...args: Data<any>[]) => Data<any>;
   args: Type[];
   genericArgs?: (t: Type) => Type[];
-  return_type: Type;
 }
 
 export type Constructor = (T: Type, v: string) => Data<any>;
