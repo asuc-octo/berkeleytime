@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { ArrowUpRight } from "iconoir-react";
+import { ArrowUpRight, Reports } from "iconoir-react";
 import {
   Bar,
   BarChart,
@@ -48,6 +48,24 @@ export default function Grades() {
       course: { gradeDistribution: courseGradeDistribution },
     },
   } = useClass();
+
+  const hasNoGradeData = useMemo(() => {
+    const classTotal = gradeDistribution.distribution.reduce(
+      (acc, grade) => acc + (grade.count ?? 0),
+      0
+    );
+    const courseTotal = courseGradeDistribution.distribution.reduce(
+      (acc, grade) => acc + (grade.count ?? 0),
+      0
+    );
+
+    return (
+      classTotal === 0 &&
+      courseTotal === 0 &&
+      !gradeDistribution.average &&
+      !courseGradeDistribution.average
+    );
+  }, [gradeDistribution, courseGradeDistribution]);
 
   const { data, courseTotal } = useMemo(() => {
     const getTotal = (distribution: typeof gradeDistribution.distribution) =>
@@ -118,6 +136,21 @@ export default function Grades() {
     return `From ${courseTotal.toLocaleString()} course ${gradesLabel}`;
   }, [courseTotal]);
 
+  if (hasNoGradeData) {
+    return (
+      <div className={styles.placeholder}>
+        <Reports width={32} height={32} />
+        <p className={styles.heading}>No Grade Data Available</p>
+        <p className={styles.paragraph}>
+          This course doesn't have any historical grade data yet.
+          <br />
+          Grade distributions will appear here once students complete the
+          course.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <Box p="5" className={styles.root}>
       <Container size="3">
@@ -133,6 +166,7 @@ export default function Grades() {
               target="_blank"
               rel="noreferrer noopener"
               variant="secondary"
+              className={styles.openButton}
             >
               Open in Grades
               <ArrowUpRight height={16} width={16} />

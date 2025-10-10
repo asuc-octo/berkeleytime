@@ -274,7 +274,7 @@ export default function Filters() {
     >
       <Header />
       <div className={styles.body}>
-        <p className={styles.label}>SORT BY</p>
+        <p className={styles.label}>Sort By</p>
         <Select
           value={sortBy}
           onChange={(value) => updateSortBy(value as SortBy)}
@@ -282,7 +282,7 @@ export default function Filters() {
             return { value: sortBy, label: sortBy };
           })}
         />
-        <p className={styles.label}>LEVEL</p>
+        <p className={styles.label}>Class Level</p>
         <Select
           multi
           value={levels}
@@ -297,7 +297,7 @@ export default function Filters() {
             };
           })}
         />
-        <p className={styles.label}>UNITS</p>
+        <p className={styles.label}>Units</p>
         <Select
           multi
           value={units}
@@ -312,7 +312,7 @@ export default function Filters() {
             };
           })}
         />
-        <p className={styles.label}>DAY</p>
+        <p className={styles.label}>Day</p>
         <DaySelect
           days={daysArray}
           updateDays={(v) => {
@@ -320,7 +320,7 @@ export default function Filters() {
           }}
           size="sm"
         />
-        <p className={styles.label}>KIND</p>
+        <p className={styles.label}>Kind</p>
         {Object.keys(filteredComponents)
           .slice(0, expanded ? undefined : 5)
           .map((component) => {
