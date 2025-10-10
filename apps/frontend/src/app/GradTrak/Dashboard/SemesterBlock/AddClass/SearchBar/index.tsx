@@ -54,9 +54,9 @@ function SearchBar({
               <ul
                 className={`${styles.list} ${filteredClasses.length > 0 ? styles.hasItems : ""}`}
               >
-                {filteredClasses.map((cls) => (
+                {filteredClasses.map((cls, i) => (
                   <li
-                    key={cls.courseID}
+                    key={i}
                     onClick={() => handleSelectClass(cls)}
                     className={styles.item}
                   >

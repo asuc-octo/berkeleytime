@@ -39,7 +39,7 @@ const ClassDetails = ({
   const [classId, setClassId] = useState(classData?.courseID || "");
   const [className, setClassName] = useState(classData?.courseName || "");
   const [classTitle, setClassTitle] = useState(classData?.courseTitle || "");
-  const [units, setUnits] = useState(classData?.courseUnits || 0);
+  const [units, setUnits] = useState(classData?.courseUnits);
   const [semester] = useState("Coming Soon");
   const [pnp, setPnp] = useState(classData?.pnp || false);
   const [transfer, setTransfer] = useState(classData?.transfer || false);
@@ -76,7 +76,7 @@ const ClassDetails = ({
       courseID: classId,
       courseName: className,
       courseTitle: classTitle,
-      courseUnits: units,
+      courseUnits: units ?? 0,
       uniReqs: [],
       collegeReqs: [],
       pnp: pnp,
@@ -153,11 +153,12 @@ const ClassDetails = ({
                   <Hashtag />
                 </div>
                 <input
-                  type="number"
-                  value={units}
-                  onChange={(e) => setUnits(Number(e.target.value))}
-                  min="1"
-                  max="12"
+                  value={units ?? ""}
+                  onChange={(e) =>
+                    Number.isNaN(e.target.value)
+                      ? setUnits(undefined)
+                      : setUnits(Number(e.target.value))
+                  }
                 />
               </div>
             </section>

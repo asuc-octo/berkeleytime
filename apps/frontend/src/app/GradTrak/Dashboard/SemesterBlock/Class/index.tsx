@@ -83,12 +83,13 @@ export default function Class({
             )}
           </div>
 
-          {settings.show[ShowSetting.units] && (
+          {(settings.show[ShowSetting.units] ||
+            settings.show[ShowSetting.grading]) && (
             <p className={styles.unitsText}>
-              {cls.courseUnits} Units
-              {settings.show[ShowSetting.grading] && (
-                <> &bull; {gradingLabel}</>
-              )}
+              {settings.show[ShowSetting.units] && <>{cls.courseUnits} Units</>}
+              {settings.show[ShowSetting.units] &&
+                settings.show[ShowSetting.grading] && <> &bull; </>}
+              {settings.show[ShowSetting.grading] && gradingLabel}
             </p>
           )}
         </Flex>

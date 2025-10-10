@@ -17,7 +17,6 @@ import {
   Color,
   Flex,
   IconButton,
-  Switch,
   Text,
   Tooltip,
 } from "@repo/theme";
@@ -42,7 +41,7 @@ const SETTING_KEY_TO_DETAILS = {
     icon: <Hashtag />,
   },
   [ShowSetting.grading]: {
-    label: "Grades",
+    label: "Grading Option",
     icon: <Reports />,
   },
   [ShowSetting.labels]: {
@@ -161,7 +160,7 @@ export default function DisplayMenu({
             </div>
           </div>
 
-          <div className={styles.section}>
+          {/* <div className={styles.section}>
             <div className={styles.sectionBubble}>
               <div className={styles.sectionTitle}>Board</div>
               <div className={styles.toggleGroup}>
@@ -192,7 +191,7 @@ export default function DisplayMenu({
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className={styles.section}>
             <div className={styles.sectionBubble}>
