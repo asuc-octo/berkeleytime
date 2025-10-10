@@ -1,16 +1,8 @@
 import { ChangeEventHandler, useEffect, useState } from "react";
 
-import { NavArrowDown, Trash } from "iconoir-react";
+import { NavArrowDown, Plus, Trash } from "iconoir-react";
 
-import {
-  Box,
-  Button,
-  Color,
-  Dialog,
-  Flex,
-  IconButton,
-  Input,
-} from "@repo/theme";
+import { Button, Color, Dialog, Flex, IconButton, Input } from "@repo/theme";
 
 import { ILabel } from "@/lib/api";
 
@@ -37,12 +29,12 @@ const LabelColor = (props: { color: Color }) => {
 
 const LabelRow = (
   onTextChange: ChangeEventHandler<HTMLInputElement>,
-  onDelete?: () => void,
-  label?: ILabel,
-  showColorPicker?: boolean,
-  onColorSelectClick?: () => void,
-  onColorSelect?: (color: Color) => void,
-  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
+  onDelete: () => void,
+  label: ILabel,
+  showColorPicker: boolean,
+  onColorSelectClick: () => void,
+  onColorSelect: (color: Color) => void,
+  handleAdd: () => void
 ) => {
   return (
     <Flex
@@ -69,7 +61,9 @@ const LabelRow = (
         <Input
           value={label ? label.name : ""}
           onChange={onTextChange}
-          onKeyDown={onKeyDown}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleAdd();
+          }}
           placeholder={"Enter label's name..."}
           className={styles.labelInput}
           style={{ flex: 1 }}
@@ -79,7 +73,9 @@ const LabelRow = (
             <Trash />
           </IconButton>
         ) : (
-          <Box width="32px" />
+          <IconButton onClick={handleAdd} style={{ border: "none" }}>
+            <Plus />
+          </IconButton>
         )}
       </Flex>
       {showColorPicker && (
@@ -123,8 +119,13 @@ export default function LabelMenu({
   }, [labels]);
 
   const handleSave = () => {
+    const tmpEditingLabels = editingLabels;
+    if (tmpLabel.name.trim()) {
+      tmpEditingLabels.push(tmpLabel);
+      setTmpLabel({ name: "", color: Color.gray });
+    }
     onLabelsChange(
-      editingLabels
+      tmpEditingLabels
         .filter((label) => label.name)
         .map((l) => {
           return {
@@ -193,11 +194,7 @@ export default function LabelMenu({
                 showColorPicker === i,
                 () => setShowColorPicker(showColorPicker === i ? null : i),
                 (color) => handleColorSelect(i, color),
-                (e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key === "Enter") {
-                    e.currentTarget.blur();
-                  }
-                }
+                () => {}
               )
             )}
             {LabelRow(
@@ -206,7 +203,7 @@ export default function LabelMenu({
                 setTmpLabel(tmp);
                 setDuplicateError(false); // Clear error when typing
               },
-              undefined,
+              () => {},
               tmpLabel,
               showColorPicker === -1,
               () => setShowColorPicker(showColorPicker === -1 ? null : -1),
@@ -215,8 +212,8 @@ export default function LabelMenu({
                 setTmpLabel(tmp);
                 setShowColorPicker(null);
               },
-              (e: React.KeyboardEvent<HTMLInputElement>) => {
-                if (e.key === "Enter" && tmpLabel.name.trim()) {
+              () => {
+                if (tmpLabel.name.trim()) {
                   const labelExists = editingLabels.some(
                     (label) =>
                       label.name === tmpLabel.name &&

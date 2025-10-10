@@ -31,7 +31,7 @@
 
           .filter-button {
             &[data-open="true"] {
-              background-color: #52525B;
+              background-color: var(--button-active-color);
             }
           }
 
@@ -39,7 +39,7 @@
             position: absolute;
             top: -6px;
             right: -6px;
-            background-color: #3B82F6;
+            background-color: var(--blue-500);
             color: white;
             border-radius: 12px;
             min-width: 20px;

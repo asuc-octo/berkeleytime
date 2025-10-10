@@ -181,7 +181,6 @@ export default function RequirementsAccordion({
                             ? "Mark as Unfulfilled"
                             : "Mark as Fulfilled"}
                         </div>
-                        <p className={styles.icon}>M</p>
                       </button>
                     </div>
                   )}
