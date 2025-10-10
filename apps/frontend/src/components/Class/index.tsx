@@ -257,13 +257,6 @@ export default function Class({
             <Flex direction="column" gap="5">
               <Flex justify="between">
                 <Flex gap="3">
-                  {!dialog && (
-                    <Tooltip content={expanded ? "Expand" : "Collapse"}>
-                      <IconButton onClick={() => onExpandedChange(!expanded)}>
-                        {expanded ? <SidebarCollapse /> : <SidebarExpand />}
-                      </IconButton>
-                    </Tooltip>
-                  )}
                   {/* TODO: Reusable bookmark button */}
                   <Tooltip
                     content={bookmarked ? "Remove bookmark" : "Bookmark"}
@@ -294,29 +287,6 @@ export default function Class({
                       <CalendarPlus />
                     </IconButton>
                   </Tooltip>
-                </Flex>
-                <Flex gap="3">
-                  {dialog ? (
-                    <Tooltip content="View course">
-                      <IconButton
-                        as={Link}
-                        to={`/courses/${_class.subject}/${_class.courseNumber}`}
-                      >
-                        <OpenBook />
-                      </IconButton>
-                    </Tooltip>
-                  ) : (
-                    <CourseDrawer
-                      subject={_class.subject}
-                      number={_class.courseNumber}
-                    >
-                      <Tooltip content="View course">
-                        <IconButton>
-                          <OpenBook />
-                        </IconButton>
-                      </Tooltip>
-                    </CourseDrawer>
-                  )}
                   <Tooltip content="Berkeley Catalog">
                     <IconButton
                       as="a"
@@ -333,38 +303,6 @@ export default function Class({
                       <OpenNewWindow />
                     </IconButton>
                   </Tooltip>
-                  {dialog && (
-                    <Tooltip content="Expand">
-                      <Dialog.Close asChild>
-                        <IconButton
-                          as={Link}
-                          to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
-                        >
-                          <Expand />
-                        </IconButton>
-                      </Dialog.Close>
-                    </Tooltip>
-                  )}
-                  <Tooltip content="Close">
-                    {dialog ? (
-                      <Dialog.Close asChild>
-                        <IconButton>
-                          <Xmark />
-                        </IconButton>
-                      </Dialog.Close>
-                    ) : (
-                      <IconButton
-                        as={Link}
-                        to={{
-                          ...location,
-                          pathname: `/catalog/${_class.year}/${_class.semester}`,
-                        }}
-                        onClick={() => onClose()}
-                      >
-                        <Xmark />
-                      </IconButton>
-                    )}
-                  </Tooltip>
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
@@ -377,17 +315,19 @@ export default function Class({
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  <Link
-                    to={`/grades?input=${encodeURIComponent(
-                      `${_class.subject};${_class.courseNumber}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <AverageGrade
-                      gradeDistribution={_class.course.gradeDistribution}
-                    />
-                  </Link>
+                  {_class.course.gradeDistribution?.average && (
+                    <Link
+                      to={`/grades?input=${encodeURIComponent(
+                        `${_class.subject};${_class.courseNumber}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <AverageGrade
+                        gradeDistribution={_class.course.gradeDistribution}
+                      />
+                    </Link>
+                  )}
                   <Link
                     to={`/enrollment?input=${encodeURIComponent(
                       `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
@@ -431,9 +371,6 @@ export default function Class({
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
-                    {/* <Tabs.Trigger value="enrollment" asChild>
-                      <MenuItem>Enrollment</MenuItem>
-                    </Tabs.Trigger> */}
                     <NavLink
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                     >
