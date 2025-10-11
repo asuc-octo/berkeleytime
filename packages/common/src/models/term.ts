@@ -120,8 +120,15 @@ const termSchema = new Schema<ITermItem>({
     ],
   },
 });
-termSchema.index({ id: 1, academicCareerCode: 1 }, { unique: true });
+
+// for catalog, grade distribution by semester, scheduler, and terms controllers
 termSchema.index({ name: 1 });
+
+// below is a valid uniqueness constraint, but the index is not needed for
+// any queries, so we don't use it
+/*
+termSchema.index({ id: 1, academicCareerCode: 1 }, { unique: true });
+*/
 
 export const TermModel: Model<ITermItem> = model<ITermItem>(
   "terms",

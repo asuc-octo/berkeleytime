@@ -98,6 +98,9 @@ export const scheduleSchema = new Schema(
   }
 );
 
+// for scheduler controller
+scheduleSchema.index({ createdBy: 1 });
+
 export type CustomEventType = Document &
   InferSchemaType<typeof customEventSchema>;
 
