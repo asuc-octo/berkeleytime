@@ -52,8 +52,8 @@ export default function CuratedClasses() {
     return (
       <Box p="6">
         <Container size="4">
-          <Flex gap="5" direction={{ initial: "column-reverse", md: "row" }}>
-            <Flex direction="column" gap="5" flexGrow="1">
+          <Flex gap="6" direction={{ initial: "column-reverse", md: "row" }}>
+            <Flex direction="column" gap="6" flexGrow="1">
               {Object.entries(semesters).map(([semester, classes]) => (
                 <Flex direction="column" gap="5" key={semester}>
                   <div className={styles.title}>
@@ -62,7 +62,7 @@ export default function CuratedClasses() {
                     </div>
                     {semester}
                   </div>
-                  <Grid columns="2" gap="3">
+                  <Grid columns="2" gap="5">
                     {classes.map((curatedClass) => (
                       <ClassDrawer
                         key={curatedClass._id}
@@ -101,12 +101,12 @@ export default function CuratedClasses() {
                 <HeartSolid width={32} height={32} />
               </div>
               <Flex direction="column" gap="2">
-                <p className={styles.heading}>What are curated classes?</p>
+                <p className={styles.heading}>Curated classes</p>
                 <p className={styles.description}>
-                  Curated classes are hand-picked by the Berkeley Catalog staff
-                  in collaboration with professors and departments. These
-                  classes are often unique, interesting, or have a special
-                  significance that makes them stand out from the rest.
+                  Notable classes with open seats that are recommended by
+                  Berkeley faculty and departments. These classes are often
+                  unique, interesting, or have a special significance that makes
+                  them stand out from the rest.
                 </p>
               </Flex>
               <Button

@@ -37,8 +37,6 @@ const resolvers: CuratedClassesModule.Resolvers = {
         parent.number
       );
 
-      console.log(parent);
-
       return _class as unknown as CuratedClassesModule.Class;
     },
   },

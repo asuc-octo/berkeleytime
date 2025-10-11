@@ -59,7 +59,7 @@ const typedef = gql`
       id: ID!
       curatedClass: UpdateCuratedClassInput!
     ): CuratedClass @auth
-    deleteCuratedClass(id: ID!): Boolean @auth
+    deleteCuratedClass(id: ID!): ID! @auth
   }
 `;
 
