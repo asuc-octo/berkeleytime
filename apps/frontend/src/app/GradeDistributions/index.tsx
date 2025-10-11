@@ -21,7 +21,7 @@ import {
   ReadGradeDistributionResponse,
 } from "@/lib/api";
 import { GRADES } from "@/lib/grades";
-import { proportionToPercent } from "@/utils/number-formatter";
+import { decimalToPercentString } from "@/utils/number-formatter";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseManager from "./CourseManager";
@@ -172,7 +172,9 @@ const GradeDistributions = () => {
                     fill="var(--label-color)"
                     tickMargin={8}
                   />
-                  <YAxis tickFormatter={proportionToPercent} />
+                  <YAxis
+                    tickFormatter={(value) => decimalToPercentString(value, 1)}
+                  />
                   {filteredOutputs?.length && (
                     <Tooltip
                       cursor={{
@@ -189,7 +191,7 @@ const GradeDistributions = () => {
                                 label: name ? name.toString() : "N/A",
                                 value:
                                   typeof v.value === "number"
-                                    ? proportionToPercent(v.value)
+                                    ? decimalToPercentString(v.value, 1)
                                     : "N/A",
                                 color: v.fill,
                               };
