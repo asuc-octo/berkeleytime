@@ -266,7 +266,7 @@ export const deleteCuratedClass = async (
   });
   if (!curatedClass) throw new Error("Not Found");
 
-  return true;
+  return id;
 };
 
 export const createCuratedClass = async (
