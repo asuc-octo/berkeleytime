@@ -22,25 +22,37 @@
       }
     }
 
-    .sortControls {
+    .sortLabel {
       display: flex;
-      gap: 12px;
+      align-items: center;
+      gap: 8px;
+
+      span {
+        flex: 1;
+      }
     }
-    .sortSelectLeft {
-      display: flex;
-      flex: 1;
-      > * { width: 100%; } // I have no idea what this css is -Sam
-    }
-    .sortSelectRightButton {
+
+    .sortToggleButton {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 6px;
-      border: 1px solid var(--border-color);
+      width: 28px;
+      height: 28px;
+      border: none;
       border-radius: 4px;
+      background: transparent;
+      color: var(--label-color);
       cursor: pointer;
+      transition: color 0.15s ease, background-color 0.15s ease;
+
       &:hover {
+        color: var(--heading-color);
         background-color: var(--button-hover-color);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--blue-500);
+        outline-offset: 2px;
       }
     }
 

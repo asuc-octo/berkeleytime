@@ -282,26 +282,29 @@ export default function Filters() {
     >
       <Header />
       <div className={styles.body}>
-        <p className={styles.label}>SORT BY</p>
-        <div className={styles.sortControls}>
-          <div className={styles.sortSelectLeft}>
-            <Select
-              value={sortBy}
-              onChange={(value) => updateSortBy(value as SortBy)}
-              options={Object.values(SortBy).map((sortBy) => {
-                return { value: sortBy, label: sortBy };
-              })}
-            />
-          </div>
-          <div>
-            <button
-              className={styles.sortSelectRightButton}
-              onClick={() => updateReverse((previous) => !previous)}
-            >
-              {reverse ? <SortUp /> : <SortDown />}
-            </button>
-          </div>
-        </div>
+        <p className={classNames(styles.label, styles.sortLabel)}>
+          <span>SORT BY</span>
+          <button
+            type="button"
+            className={styles.sortToggleButton}
+            onClick={() => updateReverse((previous) => !previous)}
+            aria-label={`Sort ${reverse ? "ascending" : "descending"}`}
+            title={`Sort ${reverse ? "ascending" : "descending"}`}
+          >
+            {reverse ? (
+              <SortUp width={16} height={16} />
+            ) : (
+              <SortDown width={16} height={16} />
+            )}
+          </button>
+        </p>
+        <Select
+          value={sortBy}
+          onChange={(value) => updateSortBy(value as SortBy)}
+          options={Object.values(SortBy).map((sortOption) => {
+            return { value: sortOption, label: sortOption };
+          })}
+        />
 
         <p className={styles.label}>LEVEL</p>
         <Select
