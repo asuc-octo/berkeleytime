@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -109,10 +109,11 @@ export default function Enrollment() {
       // Filter out failed queries and set any initial state
       .reduce(
         (acc, response, index) =>
-          response
+          response?.data
             ? acc.concat({
                 color: LIGHT_COLORS[index],
-                enrollmentHistory: response.data.enrollment,
+                // TODO: Error handling
+                enrollmentHistory: response.data!.enrollment,
                 input: initialInputs[index],
                 active: false,
                 hidden: false,
@@ -211,7 +212,7 @@ export default function Enrollment() {
     if (outputs.length > 0) {
       if (!hoveredSeries) setHoveredSeries(0);
     } else setHoveredSeries(null);
-  }, [outputs]);
+  }, [hoveredSeries, outputs]);
 
   const dataMax = useMemo(() => {
     return (

@@ -1,6 +1,7 @@
 import { lazy } from "react";
 
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import {
   RouterProvider,
   createBrowserRouter,
@@ -43,6 +44,7 @@ const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
+const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
@@ -112,18 +114,21 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
+        path: "curated",
+        element: (
+          <SuspenseBoundary key="curated">
+            <CuratedClasses />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "about",
         element: (
           <SuspenseBoundary key="about">
             <About />
           </SuspenseBoundary>
         ),
-        path: "about",
       },
-    ],
-  },
-  {
-    element: <Layout />,
-    children: [
       {
         element: (
           <SuspenseBoundary key="profile">
@@ -312,7 +317,10 @@ const router = createBrowserRouter([
 ]);
 
 const client = new ApolloClient({
-  uri: "/api/graphql",
+  link: new HttpLink({
+    uri: "/api/graphql",
+    credentials: "include",
+  }),
   cache: new InMemoryCache(),
 });
 

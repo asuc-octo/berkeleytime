@@ -7,7 +7,7 @@ concurrency:
 on:
   push:
     branches: [master, gql]
-    paths: ["docs/**", "infra/docs/**"]
+    paths: ["apps/docs/**", "infra/docs/**"]
 
 jobs:
   build-push:
@@ -30,7 +30,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          context: docs
+          file: ./apps/docs/Dockerfile
           target: docs-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-docs:prod
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod-cache
