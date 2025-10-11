@@ -48,6 +48,7 @@ export default function Filters() {
     // updateOnline,
     sortBy,
     reverse,
+    effectiveOrder,
     updateSortBy,
     responsive,
     updateReverse,
@@ -274,6 +275,9 @@ export default function Filters() {
     );
   };
 
+  const isAscending = effectiveOrder === "asc";
+  const nextOrderLabel = isAscending ? "descending" : "ascending";
+
   return (
     <div
       className={classNames(styles.root, {
@@ -288,10 +292,11 @@ export default function Filters() {
             type="button"
             className={styles.sortToggleButton}
             onClick={() => updateReverse((previous) => !previous)}
-            aria-label={`Sort ${reverse ? "ascending" : "descending"}`}
-            title={`Sort ${reverse ? "ascending" : "descending"}`}
+            aria-label={`Switch to ${nextOrderLabel} order`}
+            title={`Switch to ${nextOrderLabel} order`}
+            aria-pressed={reverse}
           >
-            {reverse ? (
+            {isAscending ? (
               <SortUp width={16} height={16} />
             ) : (
               <SortDown width={16} height={16} />

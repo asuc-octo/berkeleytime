@@ -22,6 +22,7 @@ export interface BrowserContextType {
   sortBy: SortBy;
   open: boolean;
   reverse: boolean;
+  effectiveOrder: "asc" | "desc";
   updateComponents: Dispatch<Component[]>;
   updateUnits: Dispatch<Unit[]>;
   updateLevels: Dispatch<Level[]>;
