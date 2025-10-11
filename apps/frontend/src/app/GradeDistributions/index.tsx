@@ -20,6 +20,7 @@ import {
   READ_GRADE_DISTRIBUTION,
   ReadGradeDistributionResponse,
 } from "@/lib/api";
+import { GRADES } from "@/lib/grades";
 import { proportionToPercent } from "@/utils/number-formatter";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
@@ -74,23 +75,7 @@ const transformGradeDistributionData = (
 
       return acc;
     },
-    [
-      { letter: "A+" },
-      { letter: "A" },
-      { letter: "A-" },
-      { letter: "B+" },
-      { letter: "B" },
-      { letter: "B-" },
-      { letter: "C+" },
-      { letter: "C" },
-      { letter: "C-" },
-      { letter: "D+" },
-      { letter: "D" },
-      { letter: "D-" },
-      { letter: "F" },
-      { letter: "P" },
-      { letter: "NP" },
-    ] as {
+    GRADES.map((letter) => ({ letter })) as {
       letter: string;
       [key: number]: number;
     }[]

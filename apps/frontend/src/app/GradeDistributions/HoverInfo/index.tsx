@@ -5,6 +5,7 @@ import { ColoredSquare } from "@repo/theme";
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
 import { useReadCourseGradeDist } from "@/hooks/api";
 import { GradeDistribution, Semester } from "@/lib/api";
+import { LETTER_GRADES } from "@/lib/grades";
 
 import styles from "./HoverInfo.module.scss";
 
@@ -21,21 +22,6 @@ interface HoverInfoProps {
 }
 
 const GRADE_STYLE = { display: "inline-block", marginRight: "4px" };
-const GRADE_ORDER = [
-  "A+",
-  "A",
-  "A-",
-  "B+",
-  "B",
-  "B-",
-  "C+",
-  "C",
-  "C-",
-  "D+",
-  "D",
-  "D-",
-  "F",
-];
 
 function addOrdinalSuffix(n: string) {
   if (n === "11" || n === "12" || n === "13") return n + "th";
@@ -96,7 +82,7 @@ export default function HoverInfo({
             ?.count ?? 0,
         total: ret.total,
       };
-    GRADE_ORDER.reduce((acc, grade) => {
+    LETTER_GRADES.reduce((acc, grade) => {
       if (grade === hoveredLetter)
         ret.upper = addOrdinalSuffix(
           (((ret.total - acc) * 100) / ret.total).toFixed(0)
