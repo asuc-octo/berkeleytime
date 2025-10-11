@@ -170,7 +170,7 @@ const GradeDistributions = () => {
         ) : (
           <Flex direction="row">
             <div className={styles.view}>
-              <ResponsiveContainer width="100%" height={450}>
+              <ResponsiveContainer width="100%" height={550}>
                 <BarChart
                   syncId="grade-distributions"
                   width={730}
@@ -245,25 +245,31 @@ const GradeDistributions = () => {
                 </div>
               )}
             </div>
-            {outputs?.[0] ? (
-              outputs.map((output: Output, i: number) => (
-                <HoverInfo
-                  color={LIGHT_COLORS[i]}
-                  subject={output.input.subject}
-                  courseNumber={output.input.courseNumber}
-                  gradeDistribution={output.gradeDistribution}
-                  hoveredLetter={hoveredLetter}
-                />
-              ))
-            ) : (
-              <HoverInfo
-                color={"#aaa"}
-                subject={"No Class"}
-                courseNumber={"Selected"}
-                gradeDistribution={undefined}
-                hoveredLetter={null}
-              />
-            )}
+            <div className={styles.hoverInfoContainer}>
+              {outputs?.[0] ? (
+                outputs.map((output: Output, i: number) => (
+                  <div key={i} className={styles.hoverInfoCard}>
+                    <HoverInfo
+                      color={LIGHT_COLORS[i]}
+                      subject={output.input.subject}
+                      courseNumber={output.input.courseNumber}
+                      gradeDistribution={output.gradeDistribution}
+                      hoveredLetter={hoveredLetter}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className={styles.hoverInfoCard}>
+                  <HoverInfo
+                    color={"#aaa"}
+                    subject={"No Class"}
+                    courseNumber={"Selected"}
+                    gradeDistribution={undefined}
+                    hoveredLetter={null}
+                  />
+                </div>
+              )}
+            </div>
           </Flex>
         )}
       </Flex>
