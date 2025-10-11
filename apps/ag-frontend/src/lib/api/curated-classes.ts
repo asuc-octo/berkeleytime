@@ -224,57 +224,7 @@ export interface DeleteCuratedClassResponse {
 
 export const DELETE_CURATED_CLASS = gql`
   mutation DeleteCuratedClass($id: ID!) {
-    deleteCuratedClass(id: $id) {
-      _id
-      text
-      image
-      subject
-      courseNumber
-      number
-      semester
-      year
-      sessionId
-      publishedAt
-      createdAt
-      updatedAt
-      class {
-        number
-        sessionId
-        title
-        unitsMax
-        unitsMin
-        finalExam
-        gradingBasis
-        primarySection {
-          component
-          online
-          instructionMode
-          attendanceRequired
-          lecturesRecorded
-          enrollment {
-            latest {
-              status
-              enrolledCount
-              maxEnroll
-              waitlistedCount
-              maxWaitlist
-            }
-          }
-          meetings {
-            days
-          }
-        }
-        course {
-          subject
-          number
-          title
-          gradeDistribution {
-            average
-          }
-          academicCareer
-        }
-      }
-    }
+    deleteCuratedClass(id: $id)
   }
 `;
 

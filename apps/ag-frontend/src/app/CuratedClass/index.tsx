@@ -1,11 +1,24 @@
 import { useMemo, useState } from "react";
 
-import { Box, Button, Container, Flex, Spinner } from "@radix-ui/themes";
-import { FloppyDisk } from "iconoir-react";
-import { useParams } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Container,
+  Dialog,
+  DropdownMenu,
+  Flex,
+  IconButton,
+  Spinner,
+} from "@radix-ui/themes";
+import { FloppyDisk, MoreVert, Trash } from "iconoir-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import CuratedClassEditor from "@/components/CuratedClassEditor";
-import { useReadCuratedClass, useUpdateCuratedClass } from "@/hooks/api";
+import {
+  useDeleteCuratedClass,
+  useReadCuratedClass,
+  useUpdateCuratedClass,
+} from "@/hooks/api";
 import {
   CuratedClassIdentifier,
   ICuratedClass,
@@ -17,6 +30,8 @@ interface ContentProps {
 }
 
 function Content({ curatedClass }: ContentProps) {
+  const navigate = useNavigate();
+
   const externalValue = useMemo<Partial<ICuratedClassInput>>(
     () => ({
       image: curatedClass.image,
@@ -32,8 +47,16 @@ function Content({ curatedClass }: ContentProps) {
   );
 
   const [value, setValue] = useState(externalValue);
+  const [open, setOpen] = useState(false);
 
   const [mutate, { loading }] = useUpdateCuratedClass();
+  const [remove, { loading: removing }] = useDeleteCuratedClass();
+
+  const confirm = () => {
+    remove(curatedClass._id);
+
+    navigate("/curated-classes");
+  };
 
   const unsavedChanges = useMemo(
     () =>
@@ -66,7 +89,7 @@ function Content({ curatedClass }: ContentProps) {
     <Box p="6">
       <Container>
         <Flex direction="column">
-          <Flex justify="end">
+          <Flex justify="end" gap="3">
             <Button
               loading={loading}
               disabled={disabled || !unsavedChanges}
@@ -75,6 +98,55 @@ function Content({ curatedClass }: ContentProps) {
               <FloppyDisk />
               Save
             </Button>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <IconButton variant="outline" color="gray">
+                  <MoreVert />
+                </IconButton>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end">
+                <Dialog.Root
+                  onOpenChange={(open) => !loading && setOpen(open)}
+                  open={open}
+                >
+                  <Dialog.Trigger>
+                    <DropdownMenu.Item
+                      color="red"
+                      onSelect={(event) => event.preventDefault()}
+                    >
+                      <Trash />
+                      Remove curated class
+                    </DropdownMenu.Item>
+                  </Dialog.Trigger>
+                  <Dialog.Content>
+                    <Flex direction="column" gap="5">
+                      <Flex direction="column">
+                        <Dialog.Title size="4">Are you sure?</Dialog.Title>
+                        <Dialog.Description size="3">
+                          This curated class will be permanently deleted and
+                          cannot be recovered.
+                        </Dialog.Description>
+                      </Flex>
+                      <Flex gap="4">
+                        <Dialog.Close>
+                          <Button disabled={removing}>
+                            No, keep the curated class
+                          </Button>
+                        </Dialog.Close>
+                        <Button
+                          variant="outline"
+                          color="gray"
+                          onClick={() => confirm()}
+                          loading={removing}
+                        >
+                          Yes, remove the curated class
+                        </Button>
+                      </Flex>
+                    </Flex>
+                  </Dialog.Content>
+                </Dialog.Root>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </Flex>
           <CuratedClassEditor value={value} onChange={setValue} />
         </Flex>
