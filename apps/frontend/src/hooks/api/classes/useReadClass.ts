@@ -1,6 +1,11 @@
 import { useQuery } from "@apollo/client/react";
 
-import { READ_CLASS, READ_ENROLLMENT, ReadClassResponse, Semester } from "@/lib/api";
+import {
+  READ_CLASS,
+  READ_ENROLLMENT,
+  ReadClassResponse,
+  Semester,
+} from "@/lib/api";
 
 export const useReadClass = (
   year: number,

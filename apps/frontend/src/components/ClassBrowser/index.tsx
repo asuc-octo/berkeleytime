@@ -163,58 +163,55 @@ export default function ClassBrowser({
       : includedClasses;
 
     const compareClasses = (a: IClass, b: IClass) => {
-        if (sortBy === SortBy.AverageGrade) {
-            
-          return b.course.gradeDistribution.average ===
-            a.course.gradeDistribution.average
-            ? 0
-            : b.course.gradeDistribution.average === null
-              ? -1
-              : a.course.gradeDistribution.average === null
-                ? 1
-                : b.course.gradeDistribution.average -
-                  a.course.gradeDistribution.average;
-        }
+      if (sortBy === SortBy.AverageGrade) {
+        return b.course.gradeDistribution.average ===
+          a.course.gradeDistribution.average
+          ? 0
+          : b.course.gradeDistribution.average === null
+            ? -1
+            : a.course.gradeDistribution.average === null
+              ? 1
+              : b.course.gradeDistribution.average -
+                a.course.gradeDistribution.average;
+      }
 
-        if (sortBy === SortBy.Units) {
-            return b.unitsMax - a.unitsMax;
-        }
-        
+      if (sortBy === SortBy.Units) {
+        return b.unitsMax - a.unitsMax;
+      }
 
-        if (sortBy === SortBy.Alphabetical) {
-            return a.course.subject.localeCompare(b.course.subject);
-        }
+      if (sortBy === SortBy.Alphabetical) {
+        return a.course.subject.localeCompare(b.course.subject);
+      }
 
-        if (sortBy === SortBy.OpenSeats) {
-          const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-            enrollment
-              ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
-              : 0;
+      if (sortBy === SortBy.OpenSeats) {
+        const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
+          enrollment
+            ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
+            : 0;
 
-          return getOpenSeats(b) - getOpenSeats(a);
-        }
+        return getOpenSeats(b) - getOpenSeats(a);
+      }
 
-        if (sortBy === SortBy.PercentOpenSeats) {
-          const getPercentOpenSeats = ({
-            primarySection: { enrollment },
-          }: IClass) =>
-            enrollment?.latest.maxEnroll
-              ? (enrollment.latest.maxEnroll -
-                  enrollment.latest.enrolledCount) /
-                enrollment.latest.maxEnroll
-              : 0;
+      if (sortBy === SortBy.PercentOpenSeats) {
+        const getPercentOpenSeats = ({
+          primarySection: { enrollment },
+        }: IClass) =>
+          enrollment?.latest.maxEnroll
+            ? (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
+              enrollment.latest.maxEnroll
+            : 0;
 
-          return getPercentOpenSeats(b) - getPercentOpenSeats(a);
-        }
+        return getPercentOpenSeats(b) - getPercentOpenSeats(a);
+      }
 
-        // Classes are by default sorted by relevance and number
-        return 0;
-    }
+      // Classes are by default sorted by relevance and number
+      return 0;
+    };
 
     if (sortBy) {
-        filteredClasses = structuredClone(filteredClasses).sort((a, b) =>
-            localReverse ? compareClasses(b, a) : compareClasses(a, b)
-        );
+      filteredClasses = structuredClone(filteredClasses).sort((a, b) =>
+        localReverse ? compareClasses(b, a) : compareClasses(a, b)
+      );
     }
 
     return filteredClasses;

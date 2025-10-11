@@ -1,7 +1,13 @@
 import { Dispatch, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
-import { Check, NavArrowDown, NavArrowUp, SortUp, SortDown } from "iconoir-react";
+import {
+  Check,
+  NavArrowDown,
+  NavArrowUp,
+  SortDown,
+  SortUp,
+} from "iconoir-react";
 import { Checkbox } from "radix-ui";
 
 import { Button, DaySelect, Select } from "@repo/theme";
@@ -278,25 +284,25 @@ export default function Filters() {
       <div className={styles.body}>
         <p className={styles.label}>SORT BY</p>
         <div className={styles.sortControls}>
-            <div className={styles.sortSelectLeft}>
-                <Select
-                value={sortBy}
-                onChange={(value) => updateSortBy(value as SortBy)}
-                options={Object.values(SortBy).map((sortBy) => {
-                    return { value: sortBy, label: sortBy };
-                })}
-                />
-            </div>
-            <div >
-                <button className={styles.sortSelectRightButton} onClick={() => updateReverse((previous) => !previous)}>
-                    {
-                        reverse ? <SortUp/> : <SortDown/>
-                    }
-                </button>
-            </div>
+          <div className={styles.sortSelectLeft}>
+            <Select
+              value={sortBy}
+              onChange={(value) => updateSortBy(value as SortBy)}
+              options={Object.values(SortBy).map((sortBy) => {
+                return { value: sortBy, label: sortBy };
+              })}
+            />
+          </div>
+          <div>
+            <button
+              className={styles.sortSelectRightButton}
+              onClick={() => updateReverse((previous) => !previous)}
+            >
+              {reverse ? <SortUp /> : <SortDown />}
+            </button>
+          </div>
         </div>
-        
-        
+
         <p className={styles.label}>LEVEL</p>
         <Select
           multi

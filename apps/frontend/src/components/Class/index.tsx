@@ -240,27 +240,29 @@ export default function Class({
   }, [course]);
 
   const seatReservationTypeMap = useMemo(() => {
-    const reservationTypes = _class?.primarySection.enrollment?.seatReservationTypes ?? [];
+    const reservationTypes =
+      _class?.primarySection.enrollment?.seatReservationTypes ?? [];
 
     const reservationMap = new Map<number, string>();
     for (const type of reservationTypes) {
-        reservationMap.set(type.number, type.requirementGroup);
+      reservationMap.set(type.number, type.requirementGroup);
     }
     return reservationMap;
   }, [_class]);
 
   const seatReservationMaxEnroll = useMemo(() => {
-    const maxEnroll = _class?.primarySection.enrollment?.history[0].seatReservationCounts ?? [];
+    const maxEnroll =
+      _class?.primarySection.enrollment?.history[0].seatReservationCounts ?? [];
     const maxEnrollMap = new Map<number, number>();
 
     for (const type of maxEnroll) {
-        maxEnrollMap.set(type.number, type.maxEnroll);
+      maxEnrollMap.set(type.number, type.maxEnroll);
     }
     return maxEnrollMap;
   }, [_class]);
 
-  const seatReservationCounts = _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
-  
+  const seatReservationCounts =
+    _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
 
   if (loading || courseLoading) {
     return <></>;
@@ -417,11 +419,15 @@ export default function Class({
                     }
                   />
                   <p>
-                    {_class.primarySection.enrollment?.latest?.seatReservationCounts?.map((count) => (
+                    {_class.primarySection.enrollment?.latest?.seatReservationCounts?.map(
+                      (count) => (
                         <li>
-                        Class {seatReservationTypeMap.get(count.number)}: {Math.max(count.enrolledCount, count.maxEnroll)} / {seatReservationMaxEnroll.get(count.number)}
+                          Class {seatReservationTypeMap.get(count.number)}:{" "}
+                          {Math.max(count.enrolledCount, count.maxEnroll)} /{" "}
+                          {seatReservationMaxEnroll.get(count.number)}
                         </li>
-                    ))}
+                      )
+                    )}
                   </p>
                   <Units
                     unitsMax={_class.unitsMax}
