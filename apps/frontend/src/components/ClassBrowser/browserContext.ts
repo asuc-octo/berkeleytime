@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 
-import { Component, IClass, Semester } from "@/lib/api";
+import { Component, IClass, ITerm, Semester } from "@/lib/api";
 
 import { Day, Level, SortBy, Unit } from "./browser";
 
@@ -13,6 +13,7 @@ export interface BrowserContextType {
   excludedClasses: IClass[];
   year: number;
   semester: Semester;
+  terms?: ITerm[];
   query: string;
   components: Component[];
   units: Unit[];

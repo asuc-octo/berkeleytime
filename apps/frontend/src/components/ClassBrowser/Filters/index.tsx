@@ -9,10 +9,12 @@ import {
   SortUp,
 } from "iconoir-react";
 import { Checkbox } from "radix-ui";
+import { useNavigate } from "react-router-dom";
 
-import { Button, DaySelect, Select } from "@repo/theme";
+import { Button, DaySelect, IconButton, Select } from "@repo/theme";
 
 import { Component, componentMap } from "@/lib/api";
+import { sortByTermDescending } from "@/lib/classes";
 
 import Header from "../Header";
 import {
@@ -52,7 +54,12 @@ export default function Filters() {
     updateSortBy,
     responsive,
     updateReverse,
+    year,
+    semester,
+    terms,
   } = useBrowser();
+
+  const navigate = useNavigate();
 
   const [expanded, setExpanded] = useState(false);
 
@@ -278,6 +285,22 @@ export default function Filters() {
   const isAscending = effectiveOrder === "asc";
   const nextOrderLabel = isAscending ? "descending" : "ascending";
 
+  const availableTerms = useMemo(() => {
+    if (!terms) return [];
+
+    return terms
+      .filter(
+        ({ year, semester }, index) =>
+          index ===
+          terms.findIndex(
+            (term) => term.semester === semester && term.year === year
+          )
+      )
+      .toSorted(sortByTermDescending);
+  }, [terms]);
+
+  const currentTermLabel = `${semester} ${year}`;
+
   return (
     <div
       className={classNames(styles.root, {
@@ -286,30 +309,52 @@ export default function Filters() {
     >
       <Header />
       <div className={styles.body}>
-        <p className={classNames(styles.label, styles.sortLabel)}>
-          <span>SORT BY</span>
-          <button
-            type="button"
+        {terms && terms.length > 0 && (
+          <>
+            <p className={styles.label}>TERM</p>
+            <Select
+              value={currentTermLabel}
+              onChange={(value) => {
+                const selectedTerm = availableTerms.find(
+                  (term) => `${term.semester} ${term.year}` === value
+                );
+                if (selectedTerm) {
+                  navigate(
+                    `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
+                  );
+                }
+              }}
+              options={availableTerms.map((term) => ({
+                value: `${term.semester} ${term.year}`,
+                label: `${term.semester} ${term.year}`,
+              }))}
+            />
+          </>
+        )}
+        <p className={styles.label}>SORT BY</p>
+        <div className={styles.sortControls}>
+          <Select
+            value={sortBy}
+            onChange={(value) => updateSortBy(value as SortBy)}
+            options={Object.values(SortBy).map((sortOption) => {
+              return { value: sortOption, label: sortOption };
+            })}
+          />
+          <IconButton
             className={styles.sortToggleButton}
             onClick={() => updateReverse((previous) => !previous)}
             aria-label={`Switch to ${nextOrderLabel} order`}
             title={`Switch to ${nextOrderLabel} order`}
             aria-pressed={reverse}
+            style={{ width: 44, height: 44 }}
           >
             {isAscending ? (
               <SortUp width={16} height={16} />
             ) : (
               <SortDown width={16} height={16} />
             )}
-          </button>
-        </p>
-        <Select
-          value={sortBy}
-          onChange={(value) => updateSortBy(value as SortBy)}
-          options={Object.values(SortBy).map((sortOption) => {
-            return { value: sortOption, label: sortOption };
-          })}
-        />
+          </IconButton>
+        </div>
 
         <p className={styles.label}>LEVEL</p>
         <Select

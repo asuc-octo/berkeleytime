@@ -9,6 +9,7 @@ import {
   GET_CATALOG,
   GetCatalogResponse,
   IClass,
+  ITerm,
   Semester,
 } from "@/lib/api";
 
@@ -33,7 +34,10 @@ const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.PercentOpenSeats]: "desc",
 };
 
-const getEffectiveOrder = (sortBy: SortBy, reverse: boolean): "asc" | "desc" => {
+const getEffectiveOrder = (
+  sortBy: SortBy,
+  reverse: boolean
+): "asc" | "desc" => {
   const defaultOrder = DEFAULT_SORT_ORDER[sortBy] ?? "asc";
 
   if (!reverse) return defaultOrder;
@@ -46,6 +50,7 @@ interface ClassBrowserProps {
   responsive?: boolean;
   semester: Semester;
   year: number;
+  terms?: ITerm[];
   persistent?: boolean;
 }
 
@@ -54,6 +59,7 @@ export default function ClassBrowser({
   responsive = true,
   semester: currentSemester,
   year: currentYear,
+  terms,
   persistent,
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
@@ -273,9 +279,7 @@ export default function ClassBrowser({
               enrollment.latest.maxEnroll
             : 0;
 
-        return (
-          getPercentOpenSeats(a) - getPercentOpenSeats(b)
-        ) * multiplier;
+        return (getPercentOpenSeats(a) - getPercentOpenSeats(b)) * multiplier;
       }
 
       // Classes default to alphabetical ordering when no other sort is selected
@@ -362,6 +366,7 @@ export default function ClassBrowser({
         excludedClasses,
         year: currentYear,
         semester: currentSemester,
+        terms,
         query,
         components,
         units,

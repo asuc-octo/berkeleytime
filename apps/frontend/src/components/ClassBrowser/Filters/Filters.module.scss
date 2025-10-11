@@ -22,38 +22,23 @@
       }
     }
 
-    .sortLabel {
+    .sortControls {
       display: flex;
-      align-items: center;
       gap: 8px;
+      align-items: stretch;
 
-      span {
-        flex: 1;
+      > :first-child {
+        flex: 1 1 auto;
       }
     }
 
     .sortToggleButton {
+      width: 44px;
+      height: 44px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
-      border: none;
-      border-radius: 4px;
-      background: transparent;
-      color: var(--label-color);
-      cursor: pointer;
-      transition: color 0.15s ease, background-color 0.15s ease;
-
-      &:hover {
-        color: var(--heading-color);
-        background-color: var(--button-hover-color);
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--blue-500);
-        outline-offset: 2px;
-      }
+      padding: 0;
     }
 
     .filter {
