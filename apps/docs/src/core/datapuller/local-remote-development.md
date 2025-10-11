@@ -11,7 +11,7 @@ The `datapuller` inserts data into the Mongo database. Thus, to test locally, a 
 docker compose up -d
 
 # Build the datapuller-dev image
-docker build --target datapuller-dev --tag "datapuller-dev" .
+docker build --target datapuller-dev --tag "datapuller-dev" --file="./apps/datapuller/Dockerfile" .
 
 # Run the desired puller. The default puller is main.
 docker run --volume ./.env:/datapuller/apps/datapuller/.env --network bt \

@@ -24,7 +24,7 @@ Using Docker allows us to build the docs without downloading dependencies on our
 git pull
 
 # Build the container (only needed once every time docs/Dockerfile changes!)
-docker build --target=docs-dev --tag="docs:dev" ./docs
+docker build --target=docs-dev --tag="docs:dev" --file="./apps/docs/Dockerfile" .
 
 # Run the container
 docker run --publish 3000:3000 --volume ./docs:/docs "docs:dev"
