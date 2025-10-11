@@ -133,16 +133,16 @@ export interface IExam {
 }
 
 export interface ISection {
+  enrollment: IEnrollment;
   // Identifiers
   termId: string;
   sessionId: string;
   sectionId: string;
 
-  // Relationships
+  // Relationships (what is relationships?)
   term: ITerm;
   course: ICourse;
   class: IClass;
-  enrollment?: IEnrollment;
 
   // Attributes
   year: number;
@@ -161,12 +161,6 @@ export interface ISection {
   online: boolean;
   attendanceRequired: boolean;
   lecturesRecorded: boolean;
-}
-
-export interface IReservation {
-  enrollCount: number;
-  enrollMax: number;
-  group: string;
 }
 
 export interface IMeeting {
@@ -284,11 +278,11 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
-          }
-          seatReservationTypes {
-            number
-            requirementGroup
-            fromDate
+            seatReservationCounts {
+              enrolledCount
+              maxEnroll
+              number
+            }
           }
           history {
             status
@@ -296,6 +290,16 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            seatReservationCounts {
+              enrolledCount
+              maxEnroll
+              number
+            }
+          }
+          seatReservationTypes {
+            fromDate
+            number
+            requirementGroup
           }
         }
         meetings {
@@ -332,11 +336,6 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
-          }
-          seatReservationTypes {
-            number
-            requirementGroup
-            fromDate
           }
         }
         meetings {

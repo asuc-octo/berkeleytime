@@ -13,7 +13,7 @@ const typedef = gql`
   """
   Ratings by class
   """
-  type AggregatedRatings @cacheControl {
+  type AggregatedRatings @cacheControl(maxAge: 3600) {
     "Class identifier"
     year: Int
     semester: Semester

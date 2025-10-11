@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
@@ -77,6 +77,7 @@ export default function Enrollment() {
 
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
+  const shouldAnimate = useRef(true);
 
   const initialize = useCallback(async () => {
     if (!loading) return;
@@ -138,6 +139,10 @@ export default function Enrollment() {
     initialize();
   }, [initialize]);
 
+  useEffect(() => {
+    shouldAnimate.current = false;
+  }, []);
+
   const activeOutput = useMemo(
     () => outputs?.find((out) => out.active),
     [outputs]
@@ -189,7 +194,7 @@ export default function Enrollment() {
 
   function updateGraphHover(data: any) {
     if (!data.isTooltipActive) return;
-    setHoveredDay(data.activeLabel);
+    // setHoveredDay(data.activeLabel); WHAT DOES THIS EVEN DO?
     // figure out closest series to mouse that has data point at that value
     const mousePercent =
       ((-data.chartY + CHART_HEIGHT) / CHART_HEIGHT) * dataMax;
@@ -286,6 +291,7 @@ export default function Enrollment() {
                         }
                         key={index}
                         name={`${output.input.subject} ${output.input.courseNumber}`}
+                        isAnimationActive={shouldAnimate.current}
                         dot={false}
                         strokeWidth={3}
                         type={"monotone"}

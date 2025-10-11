@@ -4,11 +4,11 @@ import { AcademicCareer, Component, IClass, academicCareers } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 export enum SortBy {
-  Relevance = "Relevance",
+  Alphabetical = "Alphabetical",
   Units = "Units",
   AverageGrade = "Average grade",
   OpenSeats = "Open seats",
-  PercentOpenSeats = "Percent open seats",
+  PercentOpenSeats = "Open seats (%)",
 }
 
 export enum Level {
