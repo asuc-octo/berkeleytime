@@ -160,7 +160,7 @@ export default function HoverInfo({
           />
         )}
         {gradeDistribution
-          ? `(${gradeDistribution.average?.toFixed(3)}`
+          ? `(${gradeDistribution.average?.toFixed(3)})`
           : "No data"}
       </div>
       {hoveredLetter && (
