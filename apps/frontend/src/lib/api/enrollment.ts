@@ -1,35 +1,23 @@
 import { gql } from "@apollo/client";
 
-export interface ISeatReservationType {
-  number: number;
-  requirementGroup: string;
-  fromDate: string;
-}
-
 export enum EnrollmentStatus {
   Closed = "C",
   Open = "O",
-}
-
-export interface ISeatReservationCount {
-  number: number;
-  maxEnroll: number;
-  enrolledCount: number;
 }
 
 export interface IEnrollmentSingular {
   time: string;
   status: EnrollmentStatus;
   enrolledCount: number;
-  reservedCount: number;
   waitlistedCount: number;
   minEnroll: number;
   maxEnroll: number;
   maxWaitlist: number;
-  openReserved: number;
   instructorAddConsentRequired: boolean;
   instructorDropConsentRequired: boolean;
-  seatReservationCounts: ISeatReservationCount[];
+
+  // lowkey dont need reservation count for entire class if we have individual seat reservations
+  seatReservationCounts: ISeatReservationCounts[];
 }
 
 export interface IEnrollment {
@@ -41,10 +29,21 @@ export interface IEnrollment {
   subject: string;
   courseNumber: string;
   sectionNumber: string;
-
-  seatReservationTypes: ISeatReservationType[];
   history: IEnrollmentSingular[];
   latest: IEnrollmentSingular;
+  seatReservationTypes: IReservationType[];
+}
+
+export interface ISeatReservationCounts {
+  number: number;
+  maxEnroll: number;
+  enrolledCount: number;
+}
+
+export interface IReservationType {
+  number: number;
+  requirementGroup: string;
+  fromDate: string;
 }
 
 export interface ReadEnrollmentResponse {
@@ -84,8 +83,8 @@ export const READ_ENROLLMENT = gql`
         time
         status
         enrolledCount
-        reservedCount
         waitlistedCount
+        reservedCount
         minEnroll
         maxEnroll
         maxWaitlist

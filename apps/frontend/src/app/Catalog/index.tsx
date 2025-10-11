@@ -128,6 +128,7 @@ export default function Catalog() {
             onSelect={handleSelect}
             semester={term.semester}
             year={term.year}
+            terms={terms}
             persistent
           />
         </div>
@@ -145,7 +146,6 @@ export default function Catalog() {
         ) : (
           <Dashboard
             term={term}
-            terms={terms}
             expanded={expanded}
             setExpanded={setExpanded}
             setOpen={setOpen}

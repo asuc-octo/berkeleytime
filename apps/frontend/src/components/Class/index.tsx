@@ -239,7 +239,31 @@ export default function Class({
     );
   }, [course]);
 
-  // TODO: Loading state
+  const seatReservationTypeMap = useMemo(() => {
+    const reservationTypes =
+      _class?.primarySection.enrollment?.seatReservationTypes ?? [];
+
+    const reservationMap = new Map<number, string>();
+    for (const type of reservationTypes) {
+      reservationMap.set(type.number, type.requirementGroup);
+    }
+    return reservationMap;
+  }, [_class]);
+
+  const seatReservationMaxEnroll = useMemo(() => {
+    const maxEnroll =
+      _class?.primarySection.enrollment?.history[0].seatReservationCounts ?? [];
+    const maxEnrollMap = new Map<number, number>();
+
+    for (const type of maxEnroll) {
+      maxEnrollMap.set(type.number, type.maxEnroll);
+    }
+    return maxEnrollMap;
+  }, [_class]);
+
+  const seatReservationCounts =
+    _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
+
   if (loading || courseLoading) {
     return <></>;
   }

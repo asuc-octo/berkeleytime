@@ -116,6 +116,10 @@ addEventListener(
         return b.unitsMax - a.unitsMax;
       }
 
+      if (sortBy === SortBy.Alphabetical) {
+        return b.subject.localeCompare(a.subject);
+      }
+
       if (sortBy === SortBy.OpenSeats) {
         const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
           enrollment
