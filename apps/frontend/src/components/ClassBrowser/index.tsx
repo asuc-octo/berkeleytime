@@ -25,9 +25,10 @@ import {
   getIndex,
 } from "./browser";
 import BrowserContext from "./browserContext";
+import { sortClasses } from "./sorting";
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
-  [SortBy.Alphabetical]: "asc",
+  [SortBy.Relevance]: "asc",
   [SortBy.Units]: "asc",
   [SortBy.AverageGrade]: "desc",
   [SortBy.OpenSeats]: "desc",
@@ -72,7 +73,7 @@ export default function ClassBrowser({
   const [localUnits, setLocalUnits] = useState<Unit[]>([]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
-  const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Alphabetical);
+  const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
@@ -143,7 +144,7 @@ export default function ClassBrowser({
 
       return Object.values(SortBy).includes(parameter)
         ? parameter
-        : SortBy.Alphabetical;
+        : SortBy.Relevance;
     }
 
     return localSortBy;
@@ -184,114 +185,30 @@ export default function ClassBrowser({
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
   const filteredClasses = useMemo(() => {
-    let filteredClasses = query
-      ? index
-          // Limit query because Fuse performance decreases linearly by
-          // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-          .search(query.slice(0, 24))
-          .map(({ refIndex }) => includedClasses[refIndex])
-      : includedClasses;
+    const trimmedQuery = query.trim();
+    const hasQuery = trimmedQuery.length > 0;
 
-    const compareClasses = (a: IClass, b: IClass) => {
-      const multiplier = effectiveOrder === "asc" ? 1 : -1;
-
-      if (sortBy === SortBy.AverageGrade) {
-        const aAvg = a.course.gradeDistribution.average;
-        const bAvg = b.course.gradeDistribution.average;
-
-        const aHasAverage = typeof aAvg === "number";
-        const bHasAverage = typeof bAvg === "number";
-
-        if (aHasAverage !== bHasAverage) {
-          return aHasAverage ? -1 : 1;
-        }
-
-        if (!aHasAverage || !bHasAverage) {
-          return 0;
-        }
-
-        return (aAvg - bAvg) * multiplier;
-      }
-
-      if (sortBy === SortBy.Units) {
-        const normalize = (value: number) =>
-          Math.round((value ?? 0) * 100) / 100;
-
-        const aMin = normalize(a.unitsMin);
-        const aMax = normalize(a.unitsMax);
-        const bMin = normalize(b.unitsMin);
-        const bMax = normalize(b.unitsMax);
-
-        const isSingleUnit = (min: number, max: number) =>
-          Math.abs(max - min) < 0.001;
-
-        const aIsRange = !isSingleUnit(aMin, aMax);
-        const bIsRange = !isSingleUnit(bMin, bMax);
-
-        if (aIsRange !== bIsRange) {
-          return aIsRange ? 1 : -1;
-        }
-
-        if (!aIsRange && !bIsRange) {
-          if (aMax !== bMax) {
-            return (aMax - bMax) * multiplier;
-          }
-        } else {
-          if (aMin !== bMin) {
-            return (aMin - bMin) * multiplier;
-          }
-
-          if (aMax !== bMax) {
-            return (aMax - bMax) * multiplier;
-          }
-        }
-
-        const subjectComparison = a.course.subject.localeCompare(
-          b.course.subject
-        );
-        if (subjectComparison !== 0) return subjectComparison * multiplier;
-
-        return a.course.number.localeCompare(b.course.number) * multiplier;
-      }
-
-      if (sortBy === SortBy.Alphabetical) {
-        return (
-          a.course.subject.localeCompare(b.course.subject) * multiplier ||
-          a.course.number.localeCompare(b.course.number) * multiplier
-        );
-      }
-
-      if (sortBy === SortBy.OpenSeats) {
-        const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-          enrollment
-            ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
-            : 0;
-
-        return (getOpenSeats(a) - getOpenSeats(b)) * multiplier;
-      }
-
-      if (sortBy === SortBy.PercentOpenSeats) {
-        const getPercentOpenSeats = ({
-          primarySection: { enrollment },
-        }: IClass) =>
-          enrollment?.latest.maxEnroll
-            ? (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
-              enrollment.latest.maxEnroll
-            : 0;
-
-        return (getPercentOpenSeats(a) - getPercentOpenSeats(b)) * multiplier;
-      }
-
-      // Classes default to alphabetical ordering when no other sort is selected
-      return 0;
-    };
-
-    if (sortBy) {
-      filteredClasses = structuredClone(filteredClasses).sort(compareClasses);
+    if (!hasQuery) {
+      return sortClasses(includedClasses, sortBy, effectiveOrder);
     }
 
-    return filteredClasses;
-  }, [query, index, includedClasses, sortBy, localReverse, effectiveOrder]);
+    const limitedQuery = trimmedQuery.slice(0, 24);
+    const searchResults = index.search(limitedQuery);
+    const classesFromSearch = searchResults.map(
+      ({ refIndex }) => includedClasses[refIndex]
+    );
+
+    const relevanceScores = new Map<IClass, number>(
+      searchResults.map(({ refIndex, score }) => [
+        includedClasses[refIndex],
+        score ?? 0,
+      ])
+    );
+
+    return sortClasses(classesFromSearch, sortBy, effectiveOrder, {
+      relevanceScores,
+    });
+  }, [query, index, includedClasses, sortBy, effectiveOrder]);
 
   const updateArray = <T,>(
     key: string,
@@ -333,7 +250,7 @@ export default function ClassBrowser({
   const updateSortBy = (value: SortBy) => {
     setLocalReverse(false);
     if (persistent) {
-      if (value === SortBy.Alphabetical) searchParams.delete("sortBy");
+      if (value === SortBy.Relevance) searchParams.delete("sortBy");
       else searchParams.set("sortBy", value);
       setSearchParams(searchParams);
 
