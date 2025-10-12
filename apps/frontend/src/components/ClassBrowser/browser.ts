@@ -4,7 +4,7 @@ import { AcademicCareer, Component, IClass, academicCareers } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 export enum SortBy {
-  Alphabetical = "Alphabetical",
+  Relevance = "Relevance",
   Units = "Units",
   AverageGrade = "Average grade",
   OpenSeats = "Open seats",

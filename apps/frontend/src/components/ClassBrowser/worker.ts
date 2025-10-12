@@ -4,6 +4,15 @@ import { IClass } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 import { SortBy } from "./browser";
+import { SortOrder, sortClasses } from "./sorting";
+
+const DEFAULT_SORT_ORDER: Record<SortBy, SortOrder> = {
+  [SortBy.Relevance]: "asc",
+  [SortBy.Units]: "asc",
+  [SortBy.AverageGrade]: "desc",
+  [SortBy.OpenSeats]: "desc",
+  [SortBy.PercentOpenSeats]: "desc",
+};
 
 const initializeFuse = (classes: IClass[]) => {
   const list = classes.map((_class) => {
@@ -86,65 +95,32 @@ interface Data {
 addEventListener(
   "message",
   ({ data: { classes, query, sortBy } }: MessageEvent<Data>) => {
+    const trimmedQuery = query.trim();
     const fuse = initializeFuse(classes);
 
-    const filteredClasses = query
-      ? fuse.search(query).map(({ refIndex }) => classes[refIndex])
+    const searchResults = trimmedQuery
+      ? fuse.search(trimmedQuery.slice(0, 24))
+      : [];
+
+    const filteredClasses = trimmedQuery
+      ? searchResults.map(({ refIndex }) => classes[refIndex])
       : classes;
 
-    if (!sortBy) {
-      postMessage(filteredClasses);
+    const relevanceScores = trimmedQuery
+      ? new Map<IClass, number>(
+          searchResults.map(({ refIndex, score }) => [
+            classes[refIndex],
+            score ?? 0,
+          ])
+        )
+      : undefined;
 
-      return;
-    }
+    const order = DEFAULT_SORT_ORDER[sortBy] ?? "asc";
 
-    // Clone the courses to avoid sorting in-place
-    filteredClasses.sort((a, b) => {
-      if (sortBy === SortBy.AverageGrade) {
-        return b.course.gradeDistribution.average ===
-          a.course.gradeDistribution.average
-          ? 0
-          : b.course.gradeDistribution.average === null
-            ? -1
-            : a.course.gradeDistribution.average === null
-              ? 1
-              : b.course.gradeDistribution.average -
-                a.course.gradeDistribution.average;
-      }
+    const sortedClasses = sortBy
+      ? sortClasses(filteredClasses, sortBy, order, { relevanceScores })
+      : [...filteredClasses];
 
-      if (sortBy === SortBy.Units) {
-        return b.unitsMax - a.unitsMax;
-      }
-
-      if (sortBy === SortBy.Alphabetical) {
-        return b.subject.localeCompare(a.subject);
-      }
-
-      if (sortBy === SortBy.OpenSeats) {
-        const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-          enrollment
-            ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
-            : 0;
-
-        return getOpenSeats(b) - getOpenSeats(a);
-      }
-
-      if (sortBy === SortBy.PercentOpenSeats) {
-        const getPercentOpenSeats = ({
-          primarySection: { enrollment },
-        }: IClass) =>
-          enrollment?.latest.maxEnroll
-            ? (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
-              enrollment.latest.maxEnroll
-            : 0;
-
-        return getPercentOpenSeats(b) - getPercentOpenSeats(a);
-      }
-
-      // Classes are by default sorted by relevance and number
-      return 0;
-    });
-
-    postMessage(filteredClasses);
+    postMessage(sortedClasses);
   }
 );
