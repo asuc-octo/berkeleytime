@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
+import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -35,25 +36,6 @@ const LETTER_GRADES = new Set([
 
 const PASS_GRADES = new Set(["P", "S"]);
 
-const GRADE_THRESHOLDS = [
-  { min: 4, letter: "A+" },
-  { min: 3.7, letter: "A" },
-  { min: 3.5, letter: "A-" },
-  { min: 3, letter: "B+" },
-  { min: 2.7, letter: "B" },
-  { min: 2.5, letter: "B-" },
-  { min: 2, letter: "C+" },
-  { min: 1.7, letter: "C" },
-  { min: 1.5, letter: "C-" },
-  { min: 1, letter: "D+" },
-  { min: 0.7, letter: "D" },
-  { min: 0, letter: "D-" },
-] as const;
-
-function getLetterGrade(average: number): string {
-  const threshold = GRADE_THRESHOLDS.find((t) => average > t.min);
-  return threshold?.letter ?? "F";
-}
 
 function getGradeColor(grade: string): string {
   if (grade === "N/A" || grade.includes("% P")) {
@@ -155,7 +137,7 @@ export function AverageGrade({
     if (!average) {
       return "";
     }
-    return getLetterGrade(average);
+    return getLetterGradeFromGPA(average);
   }, [average, passFailPercent]);
 
   const color = useMemo(() => getGradeColor(text), [text]);

@@ -14,29 +14,13 @@ import {
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
 import useClass from "@/hooks/useClass";
+import { GRADES } from "@/lib/grades";
+import { decimalToPercentString } from "@/utils/number-formatter";
 
 import styles from "./Grades.module.scss";
 
-const letters = [
-  "A+",
-  "A",
-  "A-",
-  "B+",
-  "B",
-  "B-",
-  "C+",
-  "C",
-  "C-",
-  "D+",
-  "D",
-  "D-",
-  "F",
-  "P",
-  "NP",
-];
-
 const toPercent = (decimal: number) => {
-  return `${decimal.toFixed(1).replace(/\.0$/, "")}%`;
+  return decimalToPercentString(decimal, 1).replace(/\.0%$/, "%");
 };
 
 export default function Grades() {
@@ -74,7 +58,7 @@ export default function Grades() {
     const classTotalCount = getTotal(gradeDistribution.distribution);
     const courseTotalCount = getTotal(courseGradeDistribution.distribution);
 
-    const mapped = letters.map((letter) => {
+    const mapped = GRADES.map((letter) => {
       const classGrade = gradeDistribution.distribution.find(
         (grade) => grade.letter === letter
       );

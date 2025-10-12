@@ -1,3 +1,4 @@
+// TODO: refactor to match GradeDistribution/index.tsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
@@ -75,7 +76,6 @@ export default function Enrollment() {
   const [loading, setLoading] = useState(initialInputs.length > 0);
   const [outputs, setOutputs] = useState<Output[]>([]);
 
-  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
   const shouldAnimate = useRef(true);
 
@@ -192,20 +192,23 @@ export default function Enrollment() {
       .sort((a, b) => a.day - b.day);
   }, [outputs]);
 
-  function updateGraphHover(data: any) {
-    if (!data.isTooltipActive) return;
-    // setHoveredDay(data.activeLabel); WHAT DOES THIS EVEN DO?
+  function updateGraphHover(data: {
+    isTooltipActive?: boolean;
+    chartY?: number;
+    activePayload?: Array<{ value?: number; dataKey?: number }>;
+  }) {
+    if (!data.isTooltipActive || data.chartY === undefined) return;
     // figure out closest series to mouse that has data point at that value
-    const mousePercent =
-      ((-data.chartY + CHART_HEIGHT) / CHART_HEIGHT) * dataMax;
-    const filteredSeries = data.activePayload.filter((p: any) => p.value);
+    const mousePercent = ((-data.chartY + CHART_HEIGHT) / CHART_HEIGHT) * dataMax;
+    const filteredSeries =
+      data.activePayload?.filter((p) => p.value !== undefined) ?? [];
     const minDiff = Math.min(
-      ...filteredSeries.map((fs: any) => Math.abs(fs.value - mousePercent))
+      ...filteredSeries.map((fs) => Math.abs((fs.value ?? 0) - mousePercent))
     );
     const best = filteredSeries.find(
-      (fs: any) => Math.abs(fs.value - mousePercent) === minDiff
+      (fs) => Math.abs((fs.value ?? 0) - mousePercent) === minDiff
     );
-    if (best) setHoveredSeries(best.dataKey);
+    if (best?.dataKey !== undefined) setHoveredSeries(best.dataKey);
   }
 
   useEffect(() => {
@@ -317,7 +320,7 @@ export default function Enrollment() {
                 subject={outputs[hoveredSeries].input.subject}
                 courseNumber={outputs[hoveredSeries].input.courseNumber}
                 enrollmentHistory={outputs[hoveredSeries].enrollmentHistory}
-                hoveredDay={hoveredDay}
+                hoveredDay={null}
                 semester={outputs[hoveredSeries].input.semester}
                 year={outputs[hoveredSeries].input.year}
               />
