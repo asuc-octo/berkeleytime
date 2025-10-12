@@ -264,6 +264,22 @@ export default function Class({
   const seatReservationCounts =
     _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
 
+  const courseGradeDistribution = _class?.course.gradeDistribution;
+  const hasCourseGradeSummary = useMemo(() => {
+    if (!courseGradeDistribution) return false;
+
+    const average = courseGradeDistribution.average;
+    if (typeof average === "number" && Number.isFinite(average)) {
+      return true;
+    }
+
+    return courseGradeDistribution.distribution?.some((grade) => {
+      const count = grade.count ?? 0;
+      const percentage = grade.percentage ?? 0;
+      return count > 0 || percentage > 0;
+    });
+  }, [courseGradeDistribution]);
+
   if (loading || courseLoading) {
     return <></>;
   }
@@ -339,7 +355,7 @@ export default function Class({
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  {_class.course.gradeDistribution?.average && (
+                  {hasCourseGradeSummary && (
                     <Link
                       to={`/grades?input=${encodeURIComponent(
                         `${_class.subject};${_class.courseNumber}`
