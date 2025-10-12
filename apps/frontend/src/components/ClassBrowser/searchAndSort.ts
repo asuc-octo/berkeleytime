@@ -1,0 +1,204 @@
+import Fuse from "fuse.js";
+
+import { IClass } from "@/lib/api";
+
+import { SortBy } from "./browser";
+import { SortOrder, sortClasses } from "./sorting";
+
+const MAX_QUERY_LENGTH = 24;
+const EXACT_THRESHOLD = 0.001;
+const HIGH_CONFIDENCE_THRESHOLD = 0.05;
+const EPSILON = 1e-6;
+
+// This file is quite complicated, but basically we want to find a balance between fuzzy search and user sort preference
+// We achieve this by bucketing fuzzy score into categories of different confidences, then sorting within each bucket
+
+interface SearchAndSortParams {
+  classes: readonly IClass[];
+  index: Fuse<unknown>;
+  query: string;
+  sortBy: SortBy;
+  order: SortOrder;
+  maxQueryLength?: number;
+}
+
+interface Hit {
+  item: IClass;
+  score: number;
+  refIndex: number;
+  order: number;
+}
+
+interface BucketedHit extends Hit {
+  bucket: number;
+}
+
+const quantile = (sorted: readonly number[], percentile: number) => {
+  if (sorted.length === 0) return 0;
+  if (sorted.length === 1) return sorted[0];
+
+  const index = Math.floor(percentile * (sorted.length - 1));
+  const clampedIndex = Math.min(sorted.length - 1, Math.max(0, index));
+
+  return sorted[clampedIndex];
+};
+
+const bucketizeHits = (hits: Hit[]): BucketedHit[] => {
+  if (hits.length === 0) return [];
+
+  const sortedByScore = [...hits].sort((a, b) => a.score - b.score);
+  const scores = sortedByScore.map((hit) => hit.score);
+
+  const median = quantile(scores, 0.5);
+  const highConfidence = median <= HIGH_CONFIDENCE_THRESHOLD;
+
+  const thresholds: number[] = [];
+
+  const maybeAddThreshold = (value: number) => {
+    if (Number.isNaN(value)) return;
+    if (thresholds.length === 0) {
+      thresholds.push(value);
+      return;
+    }
+
+    const last = thresholds[thresholds.length - 1];
+    if (value > last + EPSILON) {
+      thresholds.push(value);
+    }
+  };
+
+  if (scores.length > 0) {
+    const firstPercentile = highConfidence ? 0.45 : 0.75;
+    const secondPercentile = highConfidence ? 0.8 : 0.95;
+
+    maybeAddThreshold(quantile(scores, firstPercentile));
+    maybeAddThreshold(quantile(scores, secondPercentile));
+  }
+
+  return hits.map((hit) => {
+    const bucketIndex = thresholds.findIndex(
+      (threshold) => hit.score <= threshold + EPSILON
+    );
+
+    return {
+      ...hit,
+      bucket: bucketIndex === -1 ? thresholds.length : bucketIndex,
+    };
+  });
+};
+
+export const searchAndSortClasses = ({
+  classes,
+  index,
+  query,
+  sortBy,
+  order,
+  maxQueryLength = MAX_QUERY_LENGTH,
+}: SearchAndSortParams): IClass[] => {
+  const trimmedQuery = query.trim();
+
+  if (trimmedQuery.length === 0) {
+    return sortClasses(classes, sortBy, order);
+  }
+
+  const limitedQuery = trimmedQuery.slice(0, maxQueryLength).toUpperCase();
+  const results = index.search(limitedQuery);
+
+  if (results.length === 0) {
+    return [];
+  }
+
+  const relevanceScores = new Map<IClass, number>();
+  const hits: Hit[] = [];
+
+  results.forEach(({ refIndex, score }, orderIndex) => {
+    if (typeof refIndex !== "number") return;
+
+    const item = classes[refIndex];
+    if (!item) return;
+
+    const normalizedScore =
+      typeof score === "number" ? Math.max(0, Math.min(1, score)) : 1;
+
+    relevanceScores.set(item, normalizedScore);
+    hits.push({
+      item,
+      score: normalizedScore,
+      refIndex,
+      order: orderIndex,
+    });
+  });
+
+  if (hits.length === 0) {
+    return [];
+  }
+
+  const exactHits = hits.filter(
+    (hit) => hit.score <= EXACT_THRESHOLD + EPSILON
+  );
+  const nonExactHits = hits.filter(
+    (hit) => hit.score > EXACT_THRESHOLD + EPSILON
+  );
+
+  const bucketedHits = bucketizeHits(nonExactHits);
+  const buckets = new Map<number, Hit[]>();
+
+  bucketedHits.forEach(({ bucket, ...rest }) => {
+    const current = buckets.get(bucket);
+
+    if (current) {
+      current.push(rest);
+    } else {
+      buckets.set(bucket, [rest]);
+    }
+  });
+
+  const orderedBuckets = [...buckets.keys()].sort((a, b) => a - b);
+  const rankedClasses: IClass[] = [];
+
+  if (exactHits.length > 0) {
+    const primaryExact = [...exactHits].sort(
+      (a, b) => a.score - b.score || a.order - b.order
+    )[0];
+
+    if (primaryExact) {
+      const sortedExact = sortClasses([primaryExact.item], sortBy, order, {
+        relevanceScores,
+      });
+
+      rankedClasses.push(...sortedExact);
+    }
+  }
+
+  orderedBuckets.forEach((bucketKey) => {
+    const bucketHits = buckets.get(bucketKey);
+    if (!bucketHits) return;
+
+    const bucketClasses = bucketHits.map((hit) => hit.item);
+    const sortedBucket = sortClasses(bucketClasses, sortBy, order, {
+      relevanceScores,
+    });
+
+    rankedClasses.push(...sortedBucket);
+  });
+
+  const bestHit = [...hits].sort(
+    (a, b) => a.score - b.score || a.order - b.order
+  )[0];
+
+  if (bestHit) {
+    const bestItem = bestHit.item;
+    const existingIndex = rankedClasses.findIndex((item) => item === bestItem);
+
+    if (existingIndex > 0) {
+      rankedClasses.splice(existingIndex, 1);
+      rankedClasses.unshift(bestItem);
+    } else if (existingIndex === -1) {
+      rankedClasses.unshift(bestItem);
+    }
+  }
+
+  return rankedClasses;
+};
+
+export const MAX_FUSE_QUERY_LENGTH = MAX_QUERY_LENGTH;

@@ -193,6 +193,7 @@ export const getIndex = (classes: IClass[]) => {
   // Attempt to increase performance by dropping unnecessary fields
   const options = {
     includeScore: true,
+    isCaseSensitive: false,
     // ignoreLocation: true,
     threshold: 0.25,
     keys: [
