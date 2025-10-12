@@ -3,7 +3,10 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
-import { getLetterGradeFromGPA } from "@/lib/grades";
+import {
+  LETTER_GRADES as LETTER_GRADE_ORDER,
+  getLetterGradeFromGPA,
+} from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -18,21 +21,7 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
-const LETTER_GRADES = new Set([
-  "A+",
-  "A",
-  "A-",
-  "B+",
-  "B",
-  "B-",
-  "C+",
-  "C",
-  "C-",
-  "D+",
-  "D",
-  "D-",
-  "F",
-]);
+const LETTER_GRADES = new Set(LETTER_GRADE_ORDER);
 
 const PASS_GRADES = new Set(["P", "S"]);
 const FAIL_GRADES = new Set(["NP", "U"]);
@@ -116,8 +105,7 @@ export function AverageGrade({
     }
 
     if (totals.totalCount > 0) {
-      const percentage =
-        (totals.passCount / totals.totalCount) * 100;
+      const percentage = (totals.passCount / totals.totalCount) * 100;
       if (Number.isFinite(percentage)) {
         return clampPercentage(percentage);
       }
