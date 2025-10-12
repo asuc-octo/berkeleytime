@@ -6,7 +6,6 @@ import { SortBy } from "./browser";
 import { SortOrder, sortClasses } from "./sorting";
 
 const MAX_QUERY_LENGTH = 24;
-const EXACT_THRESHOLD = 0.001;
 const HIGH_CONFIDENCE_THRESHOLD = 0.05;
 const EPSILON = 1e-6;
 
@@ -133,14 +132,20 @@ export const searchAndSortClasses = ({
     return [];
   }
 
-  const exactHits = hits.filter(
-    (hit) => hit.score <= EXACT_THRESHOLD + EPSILON
-  );
-  const nonExactHits = hits.filter(
-    (hit) => hit.score > EXACT_THRESHOLD + EPSILON
-  );
+  const bestHit = hits.reduce<Hit | null>((currentBest, hit) => {
+    if (!currentBest) return hit;
 
-  const bucketedHits = bucketizeHits(nonExactHits);
+    if (hit.score < currentBest.score - EPSILON) return hit;
+    if (Math.abs(hit.score - currentBest.score) <= EPSILON) {
+      return hit.order < currentBest.order ? hit : currentBest;
+    }
+
+    return currentBest;
+  }, null);
+
+  const remainingHits = bestHit ? hits.filter((hit) => hit !== bestHit) : hits;
+
+  const bucketedHits = bucketizeHits(remainingHits);
   const buckets = new Map<number, Hit[]>();
 
   bucketedHits.forEach(({ bucket, ...rest }) => {
@@ -156,18 +161,12 @@ export const searchAndSortClasses = ({
   const orderedBuckets = [...buckets.keys()].sort((a, b) => a - b);
   const rankedClasses: IClass[] = [];
 
-  if (exactHits.length > 0) {
-    const primaryExact = [...exactHits].sort(
-      (a, b) => a.score - b.score || a.order - b.order
-    )[0];
+  if (bestHit) {
+    const sortedBest = sortClasses([bestHit.item], sortBy, order, {
+      relevanceScores,
+    });
 
-    if (primaryExact) {
-      const sortedExact = sortClasses([primaryExact.item], sortBy, order, {
-        relevanceScores,
-      });
-
-      rankedClasses.push(...sortedExact);
-    }
+    rankedClasses.push(...sortedBest);
   }
 
   orderedBuckets.forEach((bucketKey) => {
@@ -181,22 +180,6 @@ export const searchAndSortClasses = ({
 
     rankedClasses.push(...sortedBucket);
   });
-
-  const bestHit = [...hits].sort(
-    (a, b) => a.score - b.score || a.order - b.order
-  )[0];
-
-  if (bestHit) {
-    const bestItem = bestHit.item;
-    const existingIndex = rankedClasses.findIndex((item) => item === bestItem);
-
-    if (existingIndex > 0) {
-      rankedClasses.splice(existingIndex, 1);
-      rankedClasses.unshift(bestItem);
-    } else if (existingIndex === -1) {
-      rankedClasses.unshift(bestItem);
-    }
-  }
 
   return rankedClasses;
 };
