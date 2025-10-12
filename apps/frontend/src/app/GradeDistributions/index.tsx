@@ -49,7 +49,7 @@ const fetchGradeDistribution = async (
     if (!response.data?.grade) return null;
 
     return {
-      color: LIGHT_COLORS[i],
+      color: LIGHT_COLORS[i % LIGHT_COLORS.length],
       gradeDistribution: response.data.grade,
       input,
       active: false,
@@ -237,7 +237,7 @@ const GradeDistributions = () => {
                 outputs.map((output: Output, i: number) => (
                   <div key={i} className={styles.hoverInfoCard}>
                     <HoverInfo
-                      color={LIGHT_COLORS[i]}
+                      color={output.color}
                       subject={output.input.subject}
                       courseNumber={output.input.courseNumber}
                       gradeDistribution={output.gradeDistribution}

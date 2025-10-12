@@ -318,10 +318,15 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         throw response.error;
       }
 
+      // first available color
+      const usedColors = new Set(outputs.map((output) => output.color));
+      const availableColor =
+        LIGHT_COLORS.find((color) => !usedColors.has(color)) || LIGHT_COLORS[0];
+
       const output: Output = {
         hidden: false,
         active: false,
-        color: LIGHT_COLORS[outputs.length],
+        color: availableColor,
         // TODO: Error handling
         gradeDistribution: response.data!.grade,
         input,
