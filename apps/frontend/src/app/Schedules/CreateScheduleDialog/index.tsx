@@ -43,6 +43,14 @@ export default function CreateScheduleDialog({
   const term = useMemo(() => {
     if (localTerm) return localTerm;
 
+    const defaultTerm = terms?.find(
+      (t) => t.semester === "Spring" && t.year === 2026
+    );
+
+    if (defaultTerm) {
+      return `${defaultTerm.semester} ${defaultTerm.year}`;
+    }
+
     if (!terms?.[0]) return;
 
     return `${terms[0].semester} ${terms[0].year}`;
