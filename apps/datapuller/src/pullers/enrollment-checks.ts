@@ -1,4 +1,4 @@
-import { NewEnrollmentHistoryModel } from "@repo/common";
+import { NewEnrollmentHistoryModel, UserModel } from "@repo/common";
 import { Logger } from "tslog";
 
 import { Config } from "../shared/config";
@@ -157,8 +157,63 @@ const checkEnrollmentThresholds = async (config: Config) => {
       }
     }
 
-    //Add email sending logic here
-    log.info("Enrollment alerts detected - notification system not yet implemented");
+    const usersToNotify = new Map<string, Set<EnrollmentAlert>>();
+    
+    for (const alert of alerts) {
+      const thresholdPercentage = ENROLLMENT_THRESHOLDS.find(
+        (t) => t.name === alert.threshold
+      )?.percentage;
+      
+      if (!thresholdPercentage) {
+        continue;
+      }
+      
+      const matchingUsers = await UserModel.find({
+        notificationType: { $ne: "Off" },
+        "monitoredClasses": {
+          $elemMatch: {
+            "class.year": alert.year,
+            "class.semester": alert.semester,
+            "class.subject": alert.subject,
+            "class.courseNumber": alert.courseNumber,
+            "class.number": alert.sectionNumber,
+          },
+        },
+      }).lean();
+      
+      for (const user of matchingUsers) {
+        const monitoredClass = user.monitoredClasses?.find(
+          (mc) =>
+            mc.class &&
+            mc.class.year === alert.year &&
+            mc.class.semester === alert.semester &&
+            mc.class.subject === alert.subject &&
+            mc.class.courseNumber === alert.courseNumber &&
+            mc.class.number === alert.sectionNumber
+        );
+        
+        if (monitoredClass && monitoredClass.thresholds.includes(thresholdPercentage)) {
+          const userId = user._id.toString();
+          if (!usersToNotify.has(userId)) {
+            usersToNotify.set(userId, new Set());
+          }
+          usersToNotify.get(userId)!.add(alert);
+        }
+      }
+    }
+    
+    log.info(`Found ${usersToNotify.size} users to notify`);
+    
+    for (const [userId, userAlerts] of usersToNotify.entries()) {
+      log.info(`  User ${userId}: ${userAlerts.size} alert(s)`);
+      for (const alert of userAlerts) {
+        log.info(
+          `    - ${alert.subject} ${alert.courseNumber} ${alert.sectionNumber}: ${alert.threshold} (${alert.percentage}%)`
+        );
+      }
+    }
+    
+    log.info("Enrollment alerts detected - email sending not yet implemented");
   } else {
     log.info("No enrollment threshold alerts detected");
   }
