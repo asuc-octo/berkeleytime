@@ -125,7 +125,7 @@ export default function Dashboard({
           <Carousel.Root
             title="Bookmarked"
             Icon={<BookmarkSolid />}
-            to="/account"
+            to="/profile"
           >
             {/* TODO: Better placeholder states */}
             {!bookmarkedClasses ? (
