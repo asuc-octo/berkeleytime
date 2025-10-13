@@ -1,5 +1,11 @@
 // TODO: refactor to match GradeDistribution/index.tsx
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
@@ -8,6 +14,7 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -168,10 +175,17 @@ export default function Enrollment() {
               Math.round(
                 (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
               ) / 10;
+            const waitlistValue =
+              enrollment.maxWaitlist > 0
+                ? Math.round(
+                    (enrollment.waitlistedCount / enrollment.maxWaitlist) * 1000
+                  ) / 10
+                : 0;
             if (!column) {
               acc.push({
                 day: dayOffset,
                 [index]: enrollValue,
+                [`waitlist_${index}`]: waitlistValue,
               });
             } else {
               if (index in column) {
@@ -179,13 +193,21 @@ export default function Enrollment() {
               } else {
                 column[index] = enrollValue;
               }
+              if (`waitlist_${index}` in column) {
+                column[`waitlist_${index}`] = Math.max(
+                  waitlistValue,
+                  column[`waitlist_${index}`]
+                );
+              } else {
+                column[`waitlist_${index}`] = waitlistValue;
+              }
             }
           });
 
           return acc;
         },
         [] as {
-          [key: number]: number;
+          [key: string | number]: number;
           day: number;
         }[]
       )
@@ -261,6 +283,21 @@ export default function Enrollment() {
                     type="number"
                   />
                   <YAxis domain={[0, dataMax]} tickFormatter={toPercent} />
+                  {dataMax >= 100 && (
+                    <ReferenceLine
+                      y={100}
+                      stroke="var(--label-color)"
+                      strokeDasharray="5 5"
+                      strokeOpacity={0.5}
+                      label={{
+                        value: "100% Capacity",
+                        position: "insideTopRight",
+                        fill: "var(--label-color)",
+                        fontSize: 12,
+                        offset: 10,
+                      }}
+                    />
+                  )}
                   {outputs?.length && (
                     <Tooltip
                       content={(props) => {
@@ -284,22 +321,39 @@ export default function Enrollment() {
                     />
                   )}
                   {filteredOutputs?.map((output, index) => {
+                    const originalIndex = outputs.indexOf(output);
                     return (
-                      <Line
-                        dataKey={index}
-                        stroke={
-                          activeOutput && !output.active
-                            ? DARK_COLORS[index]
-                            : LIGHT_COLORS[index]
-                        }
-                        key={index}
-                        name={`${output.input.subject} ${output.input.courseNumber}`}
-                        isAnimationActive={shouldAnimate.current}
-                        dot={false}
-                        strokeWidth={3}
-                        type={"monotone"}
-                        connectNulls
-                      />
+                      <React.Fragment key={index}>
+                        <Line
+                          dataKey={originalIndex}
+                          stroke={
+                            activeOutput && !output.active
+                              ? DARK_COLORS[originalIndex]
+                              : LIGHT_COLORS[originalIndex]
+                          }
+                          name={`${output.input.subject} ${output.input.courseNumber}`}
+                          isAnimationActive={shouldAnimate.current}
+                          dot={false}
+                          strokeWidth={3}
+                          type={"bump"}
+                          connectNulls
+                        />
+                        <Line
+                          dataKey={`waitlist_${originalIndex}`}
+                          stroke={
+                            activeOutput && !output.active
+                              ? DARK_COLORS[originalIndex]
+                              : LIGHT_COLORS[originalIndex]
+                          }
+                          name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
+                          isAnimationActive={shouldAnimate.current}
+                          dot={false}
+                          strokeWidth={2}
+                          strokeDasharray="5 5"
+                          type={"bump"}
+                          connectNulls
+                        />
+                      </React.Fragment>
                     );
                   })}
                 </LineChart>
