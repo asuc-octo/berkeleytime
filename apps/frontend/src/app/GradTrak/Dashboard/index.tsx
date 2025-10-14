@@ -125,8 +125,8 @@ export default function Dashboard() {
       courseName: `${course.subject} ${course.number}`,
       courseTitle: course.title,
       courseUnits: -1,
-      uniReqs: [], // TODO(Daniel): Fetch reqs
-      collegeReqs: [], // TODO(Daniel): Fetch reqs
+      uniReqs: [], // TODO(Gradtrak): Fetch reqs
+      collegeReqs: [], // TODO(Gradtrak): Fetch reqs
       pnp: false,
       transfer: false,
       labels: [],

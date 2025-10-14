@@ -12,18 +12,18 @@ export const useSetSelectedCourses = () => {
   const mutation = useMutation<SetSelectedCoursesResponse>(
     SET_SELECTED_COURSES,
     {
-      update(_, { data }) {
+      update(cache, { data }) {
         const selectedCourses = data?.setSelectedCourses;
 
         if (!selectedCourses) return;
 
-        // TODO(Daniel): Uncomment when done
-        //   cache.modify({
-        //     id: `PlanTerm:${selectedCourses._id}`,
-        //     fields: {
-        //       courses: () => selectedCourses.courses,
-        //     },
-        //   });
+        // TODO(Gradtrak): Uncomment when done
+        cache.modify({
+          id: cache.identify({ __typename: "PlanTerm", _id: selectedCourses._id }),
+          fields: {
+            courses: () => selectedCourses.courses,
+          },
+        });
       },
     }
   );

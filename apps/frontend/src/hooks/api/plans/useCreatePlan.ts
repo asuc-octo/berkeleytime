@@ -3,75 +3,67 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import { CREATE_NEW_PLAN, Colleges, CreatePlanResponse } from "@/lib/api";
+import { gql } from "@apollo/client";
 
 export const useCreatePlan = () => {
   const mutation = useMutation<CreatePlanResponse>(CREATE_NEW_PLAN, {
-    update(_, { data }) {
+    update(cache, { data }) {
       const plan = data?.createNewPlan;
 
       if (!plan) return;
 
-      // TODO(Daniel): Uncomment when done
-      // cache.modify({
-      //   fields: {
-      //     plans: (existingPlans = []) => {
-      //       const reference = cache.writeFragment({
-      //         data: plan,
-      //         fragment: gql`
-      //           fragment CreatedPlan on Plan {
-      //             _id
-      //             userEmail
-      //             majors
-      //             minors
-      //             college
-      //             created
-      //             revised
-      //             labels {
-      //               name
-      //               color
-      //             }
-      //             uniReqsSatisfied
-      //             collegeReqsSatisfied
-      //             planTerms {
-      //               _id
-      //               name
-      //               year
-      //               term
-      //               hidden
-      //               status
-      //               pinned
-      //               courses {
-      //                 courseID
-      //                 uniReqs
-      //                 collegeReqs
-      //                 pnp
-      //                 transfer
-      //                 labels {
-      //                   name
-      //                   color
-      //                 }
-      //               }
-      //               customCourses {
-      //                 title
-      //                 description
-      //                 uniReqs
-      //                 collegeReqs
-      //                 pnp
-      //                 transfer
-      //                 labels {
-      //                   name
-      //                   color
-      //                 }
-      //               }
-      //             }
-      //           }
-      //         `,
-      //       });
-
-      //       return [...existingPlans, reference];
-      //     },
-      //   },
-      // });
+      // Update cache with the new plan (user should only have one plan)
+      cache.writeQuery({
+        query: gql`
+          query GetPlan {
+            planByUser {
+              _id
+              userEmail
+              planTerms {
+                _id
+                name
+                userEmail
+                year
+                term
+                courses {
+                  courseID
+                  courseName
+                  courseTitle
+                  courseUnits
+                  uniReqs
+                  collegeReqs
+                  pnp
+                  transfer
+                }
+                hidden
+                status
+                pinned
+              }
+              majorReqs {
+                name
+                major
+                numCoursesRequired
+                satisfyingCourseIds
+                isMinor
+              }
+              majors
+              minors
+              created
+              revised
+              colleges
+              labels {
+                name
+                color
+              }
+              uniReqsSatisfied
+              collegeReqsSatisfied
+            }
+          }
+        `,
+        data: {
+          planByUser: [plan], // Single plan in array format to match schema
+        },
+      });
     },
   });
 

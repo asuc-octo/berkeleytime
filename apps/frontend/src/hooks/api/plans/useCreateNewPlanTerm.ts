@@ -7,65 +7,55 @@ import {
   CreateNewPlanTermResponse,
   PlanTermInput,
 } from "@/lib/api";
+import { gql } from "@apollo/client";
 
 export const useCreateNewPlanTerm = () => {
   const mutation = useMutation<CreateNewPlanTermResponse>(
     CREATE_NEW_PLAN_TERM,
     {
-      update(_, { data }) {
+      update(cache, { data }) {
         const planTerm = data?.createNewPlanTerm;
 
         if (!planTerm) return;
 
-        // TODO(Daniel): Uncomment when done
-        // cache.modify({
-        //   id: cache.identify({ __typename: "Plan", _id: planTerm.planId }), // Assuming planTerm has planId
-        //   fields: {
-        //     planTerms: (existingPlanTerms = []) => {
-        //       const reference = cache.writeFragment({
-        //         data: planTerm,
-        //         fragment: gql`
-        //           fragment CreatedPlanTerm on PlanTerm {
-        //             _id
-        //             name
-        //             year
-        //             term
-        //             hidden
-        //             status
-        //             pinned
-        //             courses {
-        //               courseID
-        //               courseName
-        //               courseTitle
-        //               courseUnits
-        //               uniReqs
-        //               collegeReqs
-        //               pnp
-        //               transfer
-        //               labels {
-        //                 name
-        //                 color
-        //               }
-        //             }
-        //             customCourses {
-        //               title
-        //               description
-        //               uniReqs
-        //               collegeReqs
-        //               pnp
-        //               transfer
-        //               labels {
-        //                 name
-        //                 color
-        //               }
-        //             }
-        //           }
-        //         `,
-        //       });
-        //       return [...existingPlanTerms, reference];
-        //     },
-        //   },
-        // });
+        // TODO(Gradtrak): Uncomment when done
+        cache.modify({
+          id: cache.identify({ __typename: "PlanTerm", _id: planTerm._id }),
+          fields: {
+            planTerms: (existingPlanTerms = []) => {
+              const reference = cache.writeFragment({
+                data: planTerm,
+                fragment: gql`
+                  fragment CreatedPlanTerm on PlanTerm {
+                    _id
+                    name
+                    userEmail
+                    year
+                    term
+                    courses {
+                      courseID
+                      courseName
+                      courseTitle
+                      courseUnits
+                      uniReqs
+                      collegeReqs
+                      pnp
+                      transfer
+                      labels {
+                        name
+                        color
+                      }
+                    }
+                    hidden
+                    status
+                    pinned
+                  }
+                `,
+              });
+              return [...existingPlanTerms, reference];
+            },
+          },
+        });
       },
     }
   );

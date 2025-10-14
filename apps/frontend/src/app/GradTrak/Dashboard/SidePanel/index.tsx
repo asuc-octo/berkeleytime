@@ -1,4 +1,3 @@
-// TODO: also import in CoEReqs, HaasReqs
 import { useState, useEffect } from "react";
 
 import { WarningCircle } from "iconoir-react";
@@ -16,7 +15,6 @@ import { Colleges } from "@/lib/api";
 import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
 
-// TODO(Daniel): Implement proper handling of reqs based on user's college...
 interface SidePanelProps {
   colleges: Colleges[];
   majors: string[];
