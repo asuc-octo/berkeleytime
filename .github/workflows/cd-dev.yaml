@@ -22,19 +22,6 @@ env:
   HOSTS: "beta.berkeleytime.com auth1.stanfurdtime.com"
 
 jobs:
-  auth-sha:
-    name: Compute sha_short and host
-    runs-on: ubuntu-latest
-    outputs:
-      auth_host: ${{ steps.vars.outputs.auth_host }}
-
-    steps:
-      - name: Capture and set auth_host
-        id: vars
-        run: |
-          echo $(echo "auth_host=${{ steps.ssh.outputs.stdout }}" | head -n 1)
-          echo $(echo "auth_host=${{ steps.ssh.outputs.stdout }}" | head -n 1) >> $GITHUB_OUTPUT
-
   compute-sha:
     name: Compute sha_short and host
     needs: [auth-sha]
@@ -70,13 +57,13 @@ jobs:
         id: vars
         run: |
           sha_short=$(git rev-parse --short ${{ github.sha }})
-          auth_host=$(echo ${{ needs.auth-sha.outputs.auth_host || '' }} | head -n 1)
+          auth_host=$(echo ${{ steps.ssh.outputs.stdout || '' }} | head -n 1)
 
           echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
           if [ -z $auth_host ]; then
             echo "host=$sha_short.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
           else
-            echo "host=${{ needs.auth-sha.outputs.auth_host }}.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
+            echo "host=$auth_host.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
           fi
 
   build-push:
