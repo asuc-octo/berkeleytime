@@ -36,20 +36,16 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          allenvs: true
           script: |
             set -e  # Exit immediately if a command fails
 
             for domain in ${{ env.DOMAINS }}; do
               if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qx "$domain"; then
-                echo $domain
+                echo $domain >> "$GITHUB_OUTPUT"
                 exit 0
               fi
             done
-
-      - name: Capture and set auth_domain
-        run: |
-          echo "auth_domain=${{ steps.ssh.outputs.stdout }}"
-          echo "auth_domain=${{ steps.ssh.outputs.stdout }}" >> $GITHUB_OUTPUT
 
   compute-sha:
     name: Compute sha_short
