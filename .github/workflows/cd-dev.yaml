@@ -24,7 +24,6 @@ env:
 jobs:
   compute-sha:
     name: Compute sha_short and host
-    needs: [auth-sha]
     runs-on: ubuntu-latest
     outputs:
       sha_short: ${{ steps.vars.outputs.sha_short }}
