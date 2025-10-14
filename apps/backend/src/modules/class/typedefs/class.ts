@@ -131,6 +131,7 @@ export default gql`
     online: Boolean!
     attendanceRequired: Boolean
     lecturesRecorded: Boolean
+    sectionAttributes: [SectionAttribute!]
   }
 
   enum Component {
@@ -246,6 +247,17 @@ export default gql`
   type Instructor {
     familyName: String
     givenName: String
+  }
+
+  type SectionAttribute {
+    attribute: SectionAttributeInfo!
+    value: SectionAttributeInfo!
+  }
+
+  type SectionAttributeInfo {
+    code: String!
+    description: String!
+    formalDescription: String!
   }
 
   type EnrollmentDay {
