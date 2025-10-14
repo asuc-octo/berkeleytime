@@ -47,6 +47,18 @@ export interface ISectionItem {
       role?: string;
     }[];
   }[];
+  sectionAttributes?: {
+    attribute: {
+      code: string;
+      description: string;
+      formalDescription: string;
+    };
+    value: {
+      code: string;
+      description: string;
+      formalDescription: string;
+    };
+  }[];
 }
 
 export interface ISectionItemDocument extends ISectionItem, Document {}
@@ -107,6 +119,20 @@ const sectionSchema = new Schema<ISectionItem>({
           role: { type: String },
         },
       ],
+    },
+  ],
+  sectionAttributes: [
+    {
+      attribute: {
+        code: { type: String },
+        description: { type: String },
+        formalDescription: { type: String },
+      },
+      value: {
+        code: { type: String },
+        description: { type: String },
+        formalDescription: { type: String },
+      },
     },
   ],
 });

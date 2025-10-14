@@ -90,6 +90,8 @@ export default async (redis: RedisClientType) => {
     // TODO(prod): introspection: config.isDev,
     introspection: true,
     cache: new RedisCache(redis),
+    // Increase limits for large requests
+    csrfPrevention: false, // Disable CSRF prevention to reduce header size
     formatError: (formattedError) => {
       // Return BAD_USER_INPUT errors as 400s
       if (formattedError.extensions?.code === "BAD_USER_INPUT") {
