@@ -2,19 +2,19 @@ name: Deploy to Development
 
 concurrency:
   group: dev-${{ github.ref }}
-  capture_stdout: true
+  cancel-in-progress: true
 
 on:
   workflow_dispatch:
     inputs:
       ttl:
         description: "Deployment time to live in hours"
-        capture_stdout: true
+        required: true
         type: number
         default: 1
       auth:
         description: "Enable authentication support"
-        capture_stdout: true
+        required: true
         type: boolean
         default: false
 
@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: SSH and Query Domains
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.2
         id: ssh
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -42,12 +42,12 @@ jobs:
 
             for domain in ${{ env.DOMAINS }}; do
               if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qx "$domain"; then
-                echo $domain >> "$GITHUB_OUTPUT"
+                echo $domain
                 exit 0
               fi
             done
 
-      - name: Capture stdout and set auth_domain
+      - name: Capture and set auth_domain
         run: |
           echo "auth_domain=${{ steps.ssh.outputs.stdout }}"
           echo "auth_domain=${{ steps.ssh.outputs.stdout }}" >> $GITHUB_OUTPUT
@@ -99,7 +99,7 @@ jobs:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:
-        capture_stdout: true
+          suspend: true
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
@@ -126,7 +126,7 @@ jobs:
             deployments=$(helm list \
               --namespace=bt \
               --date \
-              capture_stdout: true
+              --short | grep '^bt-dev-app') || true
             deployment_count=$(echo "$deployments" | wc -l)
 
             # Check if deployment count > 8
