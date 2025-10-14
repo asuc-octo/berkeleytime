@@ -292,13 +292,13 @@ export default function Enrollment() {
                       strokeOpacity={0.5}
                       label={{
                         value: "100% Capacity",
-                        position: "insideTopRight",
+                        position: "insideTopLeft",
                         fill: "var(--label-color)",
                         fontSize: 12,
                         offset: 10,
                       }}
                     />
-                  )}
+                  )}{" "}
                   {outputs?.length && (
                     <Tooltip
                       content={(props) => {
