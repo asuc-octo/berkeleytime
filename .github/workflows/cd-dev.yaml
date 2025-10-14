@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: SSH and Query Domains
-        uses: appleboy/ssh-action@v1.2.2
+        uses: appleboy/ssh-action@v1
         id: ssh
         with:
           host: ${{ secrets.SSH_HOST }}
