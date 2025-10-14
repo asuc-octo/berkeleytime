@@ -31,6 +31,7 @@ jobs:
     steps:
       - name: SSH and Query Domains
         uses: appleboy/ssh-action@v1.2.0
+        id: ssh
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -39,15 +40,16 @@ jobs:
             set -e  # Exit immediately if a command fails
 
             for domain in ${{ env.DOMAINS }}; do
-              echo "Checking $domain ..."
-              # Look for the domain in any ingress host field
-              if ! kubectl get ingress -n "$NAMESPACE" -o jsonpath='{.items[*].spec.rules[*].host}' | grep -q "$domain"; then
-                echo "auth_domain=$domain" >> "$GITHUB_OUTPUT"
+              if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qx "$domain"; then
+                echo $domain
                 exit 0
               fi
             done
 
-            echo "auth_domain=" >> "$GITHUB_OUTPUT"
+      - name: Capture and set auth_domain
+        run: |
+          echo "auth_domain=${{ steps.ssh.outputs.stdout }}"
+          echo "auth_domain=${{ steps.ssh.outputs.stdout }}" >> $GITHUB_OUTPUT
 
   compute-sha:
     name: Compute sha_short
