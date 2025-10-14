@@ -12,10 +12,46 @@ on:
         required: true
         type: number
         default: 1
+      auth:
+        description: "Enable authentication support"
+        required: true
+        type: boolean
+        default: false
+
+env:
+  DOMAINS: "beta.berkeleytime.com auth1.stanfurdtime.com"
 
 jobs:
+  auth-sha:
+    name: Compute sha_short when auth is enabled
+    runs-on: ubuntu-latest
+    outputs:
+      auth_domain: ${{ steps.vars.outputs.auth_domain }}
+
+    steps:
+      - name: SSH and Query Domains
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            for domain in ${{ env.DOMAINS }}; do
+              echo "Checking $domain ..."
+              # Look for the domain in any ingress host field
+              if ! kubectl get ingress -n "$NAMESPACE" -o jsonpath='{.items[*].spec.rules[*].host}' | grep -q "$domain"; then
+                echo "auth_domain=$domain" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            done
+
+            echo "auth_domain=" >> "$GITHUB_OUTPUT"
+
   compute-sha:
     name: Compute sha_short
+    needs: [auth-sha]
     runs-on: ubuntu-latest
     outputs:
       sha_short: ${{ steps.vars.outputs.sha_short }}
@@ -27,7 +63,11 @@ jobs:
       - name: Set vars
         id: vars
         run: |
-          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+          if [ -z "${{ needs.auth-sha.outputs.auth_domain }}" ]; then
+            echo "sha_short=${{ needs.auth-sha.outputs.auth_domain}}" >> $GITHUB_OUTPUT
+          else
+            echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+          fi
 
   build-push:
     name: Build and Push Images and Charts
