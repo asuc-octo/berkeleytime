@@ -37,12 +37,12 @@ export default function List({ onSelect }: ListProps) {
   // Helper to show focus ring and auto-hide after 1 second
   const showFocusRingTemporarily = useCallback(() => {
     setShowFocusRing(true);
-    
+
     // Clear existing timer
     if (focusRingTimerRef.current) {
       clearTimeout(focusRingTimerRef.current);
     }
-    
+
     // Set new timer to hide after 1 second
     focusRingTimerRef.current = setTimeout(() => {
       setShowFocusRing(false);
@@ -156,7 +156,13 @@ export default function List({ onSelect }: ListProps) {
       rootElement.addEventListener("keydown", handleKeyDown);
       return () => rootElement.removeEventListener("keydown", handleKeyDown);
     }
-  }, [classes, focusedIndex, onSelect, isListFocused, showFocusRingTemporarily]);
+  }, [
+    classes,
+    focusedIndex,
+    onSelect,
+    isListFocused,
+    showFocusRingTemporarily,
+  ]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -189,7 +195,12 @@ export default function List({ onSelect }: ListProps) {
   };
 
   return (
-    <div ref={rootRef} className={styles.root} tabIndex={0} onClick={handleListClick}>
+    <div
+      ref={rootRef}
+      className={styles.root}
+      tabIndex={0}
+      onClick={handleListClick}
+    >
       <div
         className={styles.view}
         style={{

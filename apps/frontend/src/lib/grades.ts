@@ -18,19 +18,41 @@ export const PASS_FAIL = ["P", "NP"] as const;
 
 export const GRADES = [...LETTER_GRADES, ...PASS_FAIL] as const;
 
+// sort thresholds desc for binary search
+const GRADE_THRESHOLDS = [
+  { min: 4.0, grade: "A+" },
+  { min: 3.7, grade: "A" },
+  { min: 3.5, grade: "A-" },
+  { min: 3.0, grade: "B+" },
+  { min: 2.7, grade: "B" },
+  { min: 2.5, grade: "B-" },
+  { min: 2.0, grade: "C+" },
+  { min: 1.7, grade: "C" },
+  { min: 1.5, grade: "C-" },
+  { min: 1.0, grade: "D+" },
+  { min: 0.7, grade: "D" },
+  { min: 0.0, grade: "D-" },
+] as const;
+
 export function getLetterGradeFromGPA(gpa: number): string {
   if (!gpa) return "F";
-  if (gpa > 4) return "A+";
-  if (gpa > 3.7) return "A";
-  if (gpa > 3.5) return "A-";
-  if (gpa > 3) return "B+";
-  if (gpa > 2.7) return "B";
-  if (gpa > 2.5) return "B-";
-  if (gpa > 2) return "C+";
-  if (gpa > 1.7) return "C";
-  if (gpa > 1.5) return "C-";
-  if (gpa > 1) return "D+";
-  if (gpa > 0.7) return "D";
 
-  return gpa ? "D-" : "F";
+  let left = 0;
+  let right = GRADE_THRESHOLDS.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const threshold = GRADE_THRESHOLDS[mid];
+
+    if (gpa > threshold.min) {
+      if (mid === 0 || gpa <= GRADE_THRESHOLDS[mid - 1].min) {
+        return threshold.grade;
+      }
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
+  }
+
+  return "F";
 }
