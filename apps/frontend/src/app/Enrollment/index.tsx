@@ -161,57 +161,49 @@ export default function Enrollment() {
   );
 
   const data = useMemo(() => {
-    return outputs
-      ?.reduce(
-        (acc, output, index) => {
-          const day0 = new Date(output.enrollmentHistory.history[0].time);
-          output.enrollmentHistory.history.forEach((enrollment) => {
-            const dayOffset = Math.ceil(
-              (new Date(enrollment.time).getTime() - day0.getTime()) /
-                (1000 * 3600 * 24)
-            );
-            const column = acc.find((item) => item.day === dayOffset);
-            const enrollValue =
-              Math.round(
-                (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
-              ) / 10;
-            const waitlistValue =
-              enrollment.maxWaitlist > 0
-                ? Math.round(
-                    (enrollment.waitlistedCount / enrollment.maxWaitlist) * 1000
-                  ) / 10
-                : 0;
-            if (!column) {
-              acc.push({
-                day: dayOffset,
-                [index]: enrollValue,
-                [`waitlist_${index}`]: waitlistValue,
-              });
-            } else {
-              if (index in column) {
-                column[index] = Math.max(enrollValue, column[index]);
-              } else {
-                column[index] = enrollValue;
-              }
-              if (`waitlist_${index}` in column) {
-                column[`waitlist_${index}`] = Math.max(
-                  waitlistValue,
-                  column[`waitlist_${index}`]
-                );
-              } else {
-                column[`waitlist_${index}`] = waitlistValue;
-              }
-            }
-          });
+    if (!outputs) return undefined;
 
-          return acc;
-        },
-        [] as {
-          [key: string | number]: number;
-          day: number;
-        }[]
-      )
-      .sort((a, b) => a.day - b.day);
+    const dayMap = new Map<number, { [key: string | number]: number; day: number }>();
+
+    outputs.forEach((output, index) => {
+      const day0 = new Date(output.enrollmentHistory.history[0].time);
+      output.enrollmentHistory.history.forEach((enrollment) => {
+        const dayOffset = Math.ceil(
+          (new Date(enrollment.time).getTime() - day0.getTime()) /
+            (1000 * 3600 * 24)
+        );
+        
+        let column = dayMap.get(dayOffset);
+        const enrollValue =
+          Math.round(
+            (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
+          ) / 10;
+        const waitlistValue =
+          enrollment.maxWaitlist > 0
+            ? Math.round(
+                (enrollment.waitlistedCount / enrollment.maxWaitlist) * 1000
+              ) / 10
+            : 0;
+        
+        if (!column) {
+          column = {
+            day: dayOffset,
+            [index]: enrollValue,
+            [`waitlist_${index}`]: waitlistValue,
+          };
+          dayMap.set(dayOffset, column);
+        } else {
+          column[index] = index in column 
+            ? Math.max(enrollValue, column[index])
+            : enrollValue;
+          column[`waitlist_${index}`] = `waitlist_${index}` in column
+            ? Math.max(waitlistValue, column[`waitlist_${index}`])
+            : waitlistValue;
+        }
+      });
+    });
+
+    return Array.from(dayMap.values()).sort((a, b) => a.day - b.day);
   }, [outputs]);
 
   function updateGraphHover(data: {
@@ -241,6 +233,8 @@ export default function Enrollment() {
   }, [hoveredSeries, outputs]);
 
   const dataMax = useMemo(() => {
+    if (!data) return 0;
+    
     return (
       data.reduce((acc, d) => {
         const m = Math.max(

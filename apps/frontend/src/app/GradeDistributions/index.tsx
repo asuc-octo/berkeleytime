@@ -63,23 +63,24 @@ const fetchGradeDistribution = async (
 const transformGradeDistributionData = (
   filteredOutputs: Output[]
 ): Array<{ letter: string; [key: number]: number }> => {
-  return filteredOutputs?.reduce(
-    (acc, output, index) => {
-      output.gradeDistribution.distribution.forEach((grade) => {
-        const column = acc.find((item) => item.letter === grade.letter);
-        if (!column) return;
+  const letterMap = new Map<string, { letter: string; [key: number]: number }>();
+  
+  // Initialize map with all grade letters
+  GRADES.forEach((letter) => {
+    letterMap.set(letter, { letter });
+  });
 
-        const percent = Math.round(grade.percentage * 1000) / 10;
-        column[index] = percent;
-      });
+  filteredOutputs?.forEach((output, index) => {
+    output.gradeDistribution.distribution.forEach((grade) => {
+      const column = letterMap.get(grade.letter);
+      if (!column) return;
 
-      return acc;
-    },
-    GRADES.map((letter) => ({ letter })) as {
-      letter: string;
-      [key: number]: number;
-    }[]
-  );
+      const percent = Math.round(grade.percentage * 1000) / 10;
+      column[index] = percent;
+    });
+  });
+
+  return Array.from(letterMap.values());
 };
 
 const GradeDistributions = () => {
