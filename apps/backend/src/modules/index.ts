@@ -6,6 +6,7 @@ import Common from "./common";
 import Course from "./course";
 import CuratedClasses from "./curated-classes";
 import Enrollment from "./enrollment";
+import Plan from "./plan";
 import GradeDistribution from "./grade-distribution";
 import Rating from "./rating";
 import Schedule from "./schedule";
@@ -23,6 +24,7 @@ const modules = [
   Course,
   Class,
   Enrollment,
+  Plan,
   Rating,
 ];
 
