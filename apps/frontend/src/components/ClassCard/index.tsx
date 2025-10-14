@@ -25,6 +25,7 @@ interface ClassProps {
   leftBorderColor?: string;
   bookmarked?: boolean;
   bookmarkToggle?: () => void;
+  active?: boolean;
 }
 
 export default function ClassCard({
@@ -51,10 +52,11 @@ export default function ClassCard({
   bookmarked = false,
   children,
   bookmarkToggle,
+  active = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   return (
-    <Card.RootColumn {...props}>
+    <Card.RootColumn active={active} {...props}>
       {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
       <Card.ColumnHeader>
         <Card.Body>

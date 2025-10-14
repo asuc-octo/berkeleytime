@@ -4,6 +4,10 @@
   overflow: auto;
   background-color: var(--background-color);
 
+  &:focus {
+    outline: none;
+  }
+
   @media (width <= 992px) {
     width: 100%;
   }
