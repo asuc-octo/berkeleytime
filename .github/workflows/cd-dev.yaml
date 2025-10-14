@@ -19,17 +19,17 @@ on:
         default: false
 
 env:
-  DOMAINS: "beta.berkeleytime.com auth1.stanfurdtime.com"
+  HOSTS: "beta.berkeleytime.com auth1.stanfurdtime.com"
 
 jobs:
   auth-sha:
     name: Compute sha_short when auth is enabled
     runs-on: ubuntu-latest
     outputs:
-      auth_domain: ${{ steps.vars.outputs.auth_domain }}
+      auth_host: ${{ steps.vars.outputs.auth_host }}
 
     steps:
-      - name: SSH and Query Domains
+      - name: SSH and Query Hosts
         uses: appleboy/ssh-action@v1.2.2
         id: ssh
         with:
@@ -40,24 +40,26 @@ jobs:
           script: |
             set -e  # Exit immediately if a command fails
 
-            for domain in ${{ env.DOMAINS }}; do
-              if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qw "$domain"; then
-                echo $domain
+            for host in ${{ env.HOSTS }}; do
+              if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qw "$host"; then
+                echo $host
                 exit 0
               fi
             done
 
-      - name: Capture and set auth_domain
+      - name: Capture and set auth_host
+        id: vars
         run: |
-          echo $(echo "auth_domain=${{ steps.ssh.outputs.stdout }}" | head -n 1)
-          echo $(echo "auth_domain=${{ steps.ssh.outputs.stdout }}" | head -n 1) >> $GITHUB_OUTPUT
+          echo $(echo "auth_host=${{ steps.ssh.outputs.stdout }}" | head -n 1)
+          echo $(echo "auth_host=${{ steps.ssh.outputs.stdout }}" | head -n 1) >> $GITHUB_OUTPUT
 
   compute-sha:
-    name: Compute sha_short
+    name: Compute sha_short and host
     needs: [auth-sha]
     runs-on: ubuntu-latest
     outputs:
       sha_short: ${{ steps.vars.outputs.sha_short }}
+      host: ${{ steps.vars.outputs.host }}
 
     steps:
       - name: Checkout Repository
@@ -66,10 +68,13 @@ jobs:
       - name: Set vars
         id: vars
         run: |
-          if [ -z "${{ needs.auth-sha.outputs.auth_domain }}" ]; then
-            echo "sha_short=${{ needs.auth-sha.outputs.auth_domain}}" >> $GITHUB_OUTPUT
+          sha_short=$(git rev-parse --short ${{ github.sha }})
+
+          echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
+          if [ -z "${{ needs.auth-sha.outputs.auth_host }}" ]; then
+            echo "host=${{ needs.auth-sha.outputs.auth_host }}.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
           else
-            echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+            echo "host=${sha_short }.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
           fi
 
   build-push:
@@ -102,10 +107,10 @@ jobs:
           suspend: true
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
-        host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
+        host: ${{ needs.compute-sha.outputs.host }}.dev.stanfurdtime.com
         mongoUri: mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
-      host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
+      host: ${{ needs.compute-sha.outputs.host }}.dev.stanfurdtime.com
     secrets: inherit
 
   limit-deploy:
