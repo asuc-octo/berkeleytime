@@ -43,7 +43,7 @@ export default function CourseSearch({
   const currentCourses = useMemo(() => {
     // Don't search until user types at least 2 characters
     if (!searchQuery || searchQuery.length < 2) return [];
-    
+
     return index
       .search(searchQuery.slice(0, 24))
       .slice(0, 50) // Limit to first 50 results for performance
@@ -136,7 +136,12 @@ export default function CourseSearch({
                   <h2>CATALOG</h2>
                   <div className={styles.catalogList}>
                     {currentCourses.length === 0 ? (
-                      <div style={{ padding: '12px', color: 'var(--paragraph-color)' }}>
+                      <div
+                        style={{
+                          padding: "12px",
+                          color: "var(--paragraph-color)",
+                        }}
+                      >
                         No courses found
                       </div>
                     ) : (

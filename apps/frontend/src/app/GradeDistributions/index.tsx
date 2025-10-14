@@ -63,8 +63,11 @@ const fetchGradeDistribution = async (
 const transformGradeDistributionData = (
   filteredOutputs: Output[]
 ): Array<{ letter: string; [key: number]: number }> => {
-  const letterMap = new Map<string, { letter: string; [key: number]: number }>();
-  
+  const letterMap = new Map<
+    string,
+    { letter: string; [key: number]: number }
+  >();
+
   // Initialize map with all grade letters
   GRADES.forEach((letter) => {
     letterMap.set(letter, { letter });

@@ -163,7 +163,10 @@ export default function Enrollment() {
   const data = useMemo(() => {
     if (!outputs) return undefined;
 
-    const dayMap = new Map<number, { [key: string | number]: number; day: number }>();
+    const dayMap = new Map<
+      number,
+      { [key: string | number]: number; day: number }
+    >();
 
     outputs.forEach((output, index) => {
       const day0 = new Date(output.enrollmentHistory.history[0].time);
@@ -172,19 +175,18 @@ export default function Enrollment() {
           (new Date(enrollment.time).getTime() - day0.getTime()) /
             (1000 * 3600 * 24)
         );
-        
+
         let column = dayMap.get(dayOffset);
         const enrollValue =
-          Math.round(
-            (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
-          ) / 10;
+          Math.round((enrollment.enrolledCount / enrollment.maxEnroll) * 1000) /
+          10;
         const waitlistValue =
           enrollment.maxWaitlist > 0
             ? Math.round(
                 (enrollment.waitlistedCount / enrollment.maxWaitlist) * 1000
               ) / 10
             : 0;
-        
+
         if (!column) {
           column = {
             day: dayOffset,
@@ -193,12 +195,14 @@ export default function Enrollment() {
           };
           dayMap.set(dayOffset, column);
         } else {
-          column[index] = index in column 
-            ? Math.max(enrollValue, column[index])
-            : enrollValue;
-          column[`waitlist_${index}`] = `waitlist_${index}` in column
-            ? Math.max(waitlistValue, column[`waitlist_${index}`])
-            : waitlistValue;
+          column[index] =
+            index in column
+              ? Math.max(enrollValue, column[index])
+              : enrollValue;
+          column[`waitlist_${index}`] =
+            `waitlist_${index}` in column
+              ? Math.max(waitlistValue, column[`waitlist_${index}`])
+              : waitlistValue;
         }
       });
     });
@@ -233,7 +237,7 @@ export default function Enrollment() {
 
   const dataMax = useMemo(() => {
     if (!data) return 0;
-    
+
     return (
       data.reduce((acc, d) => {
         const m = Math.max(

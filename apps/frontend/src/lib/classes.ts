@@ -11,6 +11,7 @@ interface PartialTerm {
 
 export const sortByTermDescending = <T extends PartialTerm>(a: T, b: T) => {
   return a.year === b.year
-    ? (SEMESTER_INDEX.get(b.semester) ?? 0) - (SEMESTER_INDEX.get(a.semester) ?? 0)
+    ? (SEMESTER_INDEX.get(b.semester) ?? 0) -
+        (SEMESTER_INDEX.get(a.semester) ?? 0)
     : b.year - a.year;
 };
