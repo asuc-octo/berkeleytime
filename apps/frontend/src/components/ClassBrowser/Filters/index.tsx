@@ -371,7 +371,7 @@ export default function Filters() {
             };
           })}
         />
-        <p className={styles.label}>Units</p>
+        <p className={styles.label}>UNITS</p>
         <Select
           multi
           value={units}
@@ -386,7 +386,7 @@ export default function Filters() {
             };
           })}
         />
-        <p className={styles.label}>Day</p>
+        <p className={styles.label}>DAY</p>
         <DaySelect
           days={daysArray}
           updateDays={(v) => {
@@ -394,7 +394,7 @@ export default function Filters() {
           }}
           size="sm"
         />
-        <p className={styles.label}>Kind</p>
+        <p className={styles.label}>KIND</p>
         {Object.keys(filteredComponents)
           .slice(0, expanded ? undefined : 5)
           .map((component) => {

@@ -161,6 +161,7 @@ const GradeDistributions = () => {
                   width={730}
                   height={200}
                   data={data}
+                  onMouseLeave={() => setHoveredLetter(null)}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -182,6 +183,11 @@ const GradeDistributions = () => {
                         fillOpacity: 0.5,
                       }}
                       content={(props) => {
+                        // Update hovered letter based on tooltip position
+                        const letter = props.label?.toString() ?? null;
+                        if (letter !== hoveredLetter) {
+                          setHoveredLetter(letter);
+                        }
                         return (
                           <HoverCard
                             content={props.label}
@@ -211,7 +217,6 @@ const GradeDistributions = () => {
                       }
                       key={index}
                       name={`${output.input.subject} ${output.input.courseNumber}`}
-                      onMouseMove={(data) => setHoveredLetter(data.letter)}
                       radius={[
                         10 / filteredOutputs.length,
                         10 / filteredOutputs.length,
