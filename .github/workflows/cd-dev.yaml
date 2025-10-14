@@ -2,19 +2,19 @@ name: Deploy to Development
 
 concurrency:
   group: dev-${{ github.ref }}
-  cancel-in-progress: true
+  capture_stdout: true
 
 on:
   workflow_dispatch:
     inputs:
       ttl:
         description: "Deployment time to live in hours"
-        required: true
+        capture_stdout: true
         type: number
         default: 1
       auth:
         description: "Enable authentication support"
-        required: true
+        capture_stdout: true
         type: boolean
         default: false
 
@@ -30,13 +30,13 @@ jobs:
 
     steps:
       - name: SSH and Query Domains
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.2
         id: ssh
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          allenvs: true
+          capture_stdout: true
           script: |
             set -e  # Exit immediately if a command fails
 
@@ -46,6 +46,11 @@ jobs:
                 exit 0
               fi
             done
+
+      - name: Capture stdout and set auth_domain
+        run: |
+          echo "auth_domain=${{ steps.ssh.outputs.stdout }}"
+          echo "auth_domain=${{ steps.ssh.outputs.stdout }}" >> $GITHUB_OUTPUT
 
   compute-sha:
     name: Compute sha_short
@@ -94,7 +99,7 @@ jobs:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:
-          suspend: true
+        capture_stdout: true
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
@@ -121,7 +126,7 @@ jobs:
             deployments=$(helm list \
               --namespace=bt \
               --date \
-              --short | grep '^bt-dev-app') || true
+              capture_stdout: true
             deployment_count=$(echo "$deployments" | wc -l)
 
             # Check if deployment count > 8
