@@ -369,24 +369,32 @@ export default function Enrollment() {
                 </div>
               )}
             </div>
-            {outputs && hoveredSeries !== null && outputs[hoveredSeries] ? (
-              <HoverInfo
-                color={LIGHT_COLORS[hoveredSeries]}
-                subject={outputs[hoveredSeries].input.subject}
-                courseNumber={outputs[hoveredSeries].input.courseNumber}
-                enrollmentHistory={outputs[hoveredSeries].enrollmentHistory}
-                hoveredDay={null}
-                semester={outputs[hoveredSeries].input.semester}
-                year={outputs[hoveredSeries].input.year}
-              />
-            ) : (
-              <HoverInfo
-                color={"#aaa"}
-                subject={"No Class"}
-                courseNumber={"Selected"}
-                hoveredDay={null}
-              />
-            )}
+            <div className={styles.hoverInfoContainer}>
+              {outputs?.[0] ? (
+                outputs.map((output: Output, i: number) => (
+                  <div key={i} className={styles.hoverInfoCard}>
+                    <HoverInfo
+                      color={output.color}
+                      subject={output.input.subject}
+                      courseNumber={output.input.courseNumber}
+                      enrollmentHistory={output.enrollmentHistory}
+                      hoveredDay={null}
+                      semester={output.input.semester}
+                      year={output.input.year}
+                    />
+                  </div>
+                ))
+              ) : (
+                <div className={styles.hoverInfoCard}>
+                  <HoverInfo
+                    color={"#aaa"}
+                    subject={"No Class"}
+                    courseNumber={"Selected"}
+                    hoveredDay={null}
+                  />
+                </div>
+              )}
+            </div>
           </Flex>
         )}
       </Flex>
