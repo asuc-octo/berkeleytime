@@ -8,4 +8,4 @@ Berkeleytime was created by [Yuxin Zhu](http://yuxinzhu.com/) and [Noah Gilmore]
 
 # Getting started
 
-Much of the current development is on [the gql branch](https://github.com/asuc-octo/berkeleytime/tree/gql).
+Follow the instructions on the [Getting Started page of the docs](https://docs.stanfurdtime.com/getting-started/local-development.html) to setup!

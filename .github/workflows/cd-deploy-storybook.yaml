@@ -34,7 +34,6 @@ jobs:
         with:
           file: ./apps/storybook/Dockerfile
           target: storybook-prod
-          file: ./apps/storybook/Dockerfile
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod-cache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod-cache,mode=max
