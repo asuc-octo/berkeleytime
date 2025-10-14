@@ -128,6 +128,7 @@ export default gql`
     component: Component!
     meetings: [Meeting!]!
     exams: [Exam!]!
+    sectionAttributes: [SectionAttribute!]
     online: Boolean!
     attendanceRequired: Boolean
     lecturesRecorded: Boolean
@@ -246,6 +247,17 @@ export default gql`
   type Instructor {
     familyName: String
     givenName: String
+  }
+
+  type SectionAttribute {
+    attribute: AttributeDescriptor!
+    value: AttributeDescriptor!
+  }
+
+  type AttributeDescriptor {
+    code: String!
+    description: String!
+    formalDescription: String!
   }
 
   type EnrollmentDay {

@@ -72,6 +72,7 @@ export const formatSection = (section: ISectionItem) => {
     course: section.courseId,
     attendanceRequired: false, // Default value
     lecturesRecorded: false, // Default value
+    sectionAttributes: section.sectionAttributes || [],
 
     term: null,
     class: null,
