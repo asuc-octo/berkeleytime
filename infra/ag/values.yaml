@@ -1,0 +1,17 @@
+env: prod
+
+host: ag.berkeleytime.com
+port: 80
+
+issuer: letsencrypt-prod
+
+frontend:
+  replicas: 1
+
+  port: 3001
+  path: /
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-ag-frontend
+    tag: prod

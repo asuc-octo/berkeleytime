@@ -17,7 +17,7 @@ The frontend consists of the design, components, and logic that make up our SPA.
 Berkeleytime is built entirely with [TypeScript](https://www.typescriptlang.org/) and the frontend follows suit with strictly-typed [React](https://react.dev/) built with [Vite](https://vite.dev/). Because we use [Apollo](https://www.apollographql.com/docs) for our GraphQL server, use the [React Apollo client](https://www.apollographql.com/docs/react) for fetching and mutating data on the frontend.
 
 ```typescript
-import { QueryHookOptions, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 import { READ_CLASS, ReadClassResponse, Semester } from "@/lib/api";
 
@@ -27,7 +27,7 @@ export const useReadClass = (
   subject: string,
   courseNumber: string,
   number: string,
-  options?: Omit<QueryHookOptions<ReadClassResponse>, "variables">
+  options?: Omit<useQuery.Options<ReadClassResponse>, "variables">
 ) => {
   const query = useQuery<ReadClassResponse>(READ_CLASS, {
     ...options,

@@ -317,7 +317,7 @@ export default function Class({
                       </Tooltip>
                     </CourseDrawer>
                   )}
-                  <Tooltip content="Berkeley Academic Guide">
+                  <Tooltip content="Berkeley Catalog">
                     <IconButton
                       as="a"
                       href={getExternalLink(

@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [backend, frontend, datapuller]
+        image: [backend, frontend, datapuller, ag-frontend]
 
     steps:
       - name: Login to Docker Hub
@@ -33,7 +33,6 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          context: .
           file: ./apps/${{ matrix.image }}/Dockerfile
           target: ${{ matrix.image }}-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}
@@ -49,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chart: [app, base]
+        chart: [app, base, ag]
 
     steps:
       - name: Checkout Repository

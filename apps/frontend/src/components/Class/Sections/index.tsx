@@ -131,7 +131,7 @@ export default function Sections() {
                     waitlistedCount={section.enrollment?.latest.waitlistedCount}
                     maxWaitlist={section.enrollment?.latest.maxWaitlist}
                   />
-                  <Tooltip content="Berkeley Academic Guide">
+                  <Tooltip content="Berkeley Catalog">
                     <a
                       href={getExternalLink(
                         _class.year,

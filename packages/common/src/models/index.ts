@@ -8,3 +8,4 @@ export * from "./rating";
 export * from "./grade-distribution";
 export * from "./plan";
 export * from "./enrollment-history";
+export * from "./curated-classes";

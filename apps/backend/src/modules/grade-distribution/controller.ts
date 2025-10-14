@@ -2,6 +2,7 @@ import {
   GradeDistributionModel,
   IGradeDistributionItem,
   SectionModel,
+  TermModel,
 } from "@repo/common";
 
 enum Letter {
@@ -194,7 +195,7 @@ export const getGradeDistributionByClass = async (
   const section = await SectionModel.findOne({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     number: sectionNumber,
@@ -229,10 +230,17 @@ export const getGradeDistributionBySemester = async (
   subject: string,
   courseNumber: string
 ) => {
+  const term = await TermModel.findOne({
+    name: `${year} ${semester}`,
+  })
+    .select({ id: 1 })
+    .lean();
+
+  if (!term) throw new Error(`Term not found for ${year} ${semester}`);
+
   const distributions = await GradeDistributionModel.find({
-    year,
-    semester,
-    sessionId: sessionId ? sessionId : "1",
+    termId: term.id,
+    sessionId,
     subject,
     courseNumber,
   });
@@ -294,7 +302,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
   const sections = await SectionModel.find({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     "meetings.instructors.familyName": familyName,
