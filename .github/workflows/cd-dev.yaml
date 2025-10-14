@@ -41,7 +41,7 @@ jobs:
             set -e  # Exit immediately if a command fails
 
             for domain in ${{ env.DOMAINS }}; do
-              if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qx "$domain"; then
+              if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qw "$domain"; then
                 echo $domain
                 exit 0
               fi
@@ -49,8 +49,8 @@ jobs:
 
       - name: Capture and set auth_domain
         run: |
-          echo "auth_domain=${{ steps.ssh.outputs.stdout }}"
-          echo "auth_domain=${{ steps.ssh.outputs.stdout }}" >> $GITHUB_OUTPUT
+          echo $(echo "auth_domain=${{ steps.ssh.outputs.stdout }}" | head -n 1)
+          echo $(echo "auth_domain=${{ steps.ssh.outputs.stdout }}" | head -n 1) >> $GITHUB_OUTPUT
 
   compute-sha:
     name: Compute sha_short
