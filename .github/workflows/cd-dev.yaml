@@ -19,7 +19,7 @@ on:
         default: false
 
 env:
-  HOSTS: "beta.berkeleytime.com auth1.stanfurdtime.com"
+  HOSTS: "auth0.dev.stanfurdtime.com auth1.dev.stanfurdtime.com auth2.dev.stanfurdtime.com auth3.dev.stanfurdtime.com auth4.dev.stanfurdtime.com auth5.dev.stanfurdtime.com auth6.dev.stanfurdtime.com auth7.dev.stanfurdtime.com auth8.dev.stanfurdtime.com auth9.dev.stanfurdtime.com"
 
 jobs:
   compute-sha:
@@ -62,7 +62,7 @@ jobs:
           if [ -z $auth_host ]; then
             echo "host=$sha_short.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
           else
-            echo "host=$auth_host.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
+            echo "host=$auth_host" >> $GITHUB_OUTPUT
           fi
 
   build-push:
