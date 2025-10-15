@@ -5,14 +5,9 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
-  Expand,
-  OpenBook,
   OpenNewWindow,
-  SidebarCollapse,
-  SidebarExpand,
-  Xmark,
 } from "iconoir-react";
-import { Dialog, Tabs } from "radix-ui";
+import { Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
@@ -27,7 +22,6 @@ import {
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
-import CourseDrawer from "@/components/CourseDrawer";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
@@ -90,16 +84,10 @@ interface UncontrolledProps {
 
 interface CatalogClassProps {
   dialog?: never;
-  expanded: boolean;
-  onExpandedChange: (expanded: boolean) => void;
-  onClose: () => void;
 }
 
 interface DialogClassProps {
   dialog: true;
-  expanded?: never;
-  onExpandedChange?: never;
-  onClose?: never;
 }
 
 // TODO: Determine whether a controlled input is even necessary
@@ -113,9 +101,6 @@ export default function Class({
   courseNumber,
   number,
   class: providedClass,
-  expanded,
-  onExpandedChange,
-  onClose,
   dialog,
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
@@ -239,30 +224,21 @@ export default function Class({
     );
   }, [course]);
 
-  const seatReservationTypeMap = useMemo(() => {
-    const reservationTypes =
-      _class?.primarySection.enrollment?.seatReservationTypes ?? [];
+  const courseGradeDistribution = _class?.course.gradeDistribution;
+  const hasCourseGradeSummary = useMemo(() => {
+    if (!courseGradeDistribution) return false;
 
-    const reservationMap = new Map<number, string>();
-    for (const type of reservationTypes) {
-      reservationMap.set(type.number, type.requirementGroup);
+    const average = courseGradeDistribution.average;
+    if (typeof average === "number" && Number.isFinite(average)) {
+      return true;
     }
-    return reservationMap;
-  }, [_class]);
 
-  const seatReservationMaxEnroll = useMemo(() => {
-    const maxEnroll =
-      _class?.primarySection.enrollment?.history[0].seatReservationCounts ?? [];
-    const maxEnrollMap = new Map<number, number>();
-
-    for (const type of maxEnroll) {
-      maxEnrollMap.set(type.number, type.maxEnroll);
-    }
-    return maxEnrollMap;
-  }, [_class]);
-
-  const seatReservationCounts =
-    _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
+    return courseGradeDistribution.distribution?.some((grade) => {
+      const count = grade.count ?? 0;
+      const percentage = grade.percentage ?? 0;
+      return count > 0 || percentage > 0;
+    });
+  }, [courseGradeDistribution]);
 
   if (loading || courseLoading) {
     return <></>;
@@ -339,7 +315,7 @@ export default function Class({
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  {_class.course.gradeDistribution?.average && (
+                  {hasCourseGradeSummary && (
                     <Link
                       to={`/grades?input=${encodeURIComponent(
                         `${_class.subject};${_class.courseNumber}`

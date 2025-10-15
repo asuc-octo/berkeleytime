@@ -4,7 +4,8 @@ import { IClass } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 import { SortBy } from "./browser";
-import { SortOrder, sortClasses } from "./sorting";
+import { searchAndSortClasses } from "./searchAndSort";
+import { SortOrder } from "./sorting";
 
 const DEFAULT_SORT_ORDER: Record<SortBy, SortOrder> = {
   [SortBy.Relevance]: "asc",
@@ -62,6 +63,7 @@ const initializeFuse = (classes: IClass[]) => {
 
   const options = {
     includeScore: true,
+    isCaseSensitive: false,
     // ignoreLocation: true,
     threshold: 0.25,
     keys: [
@@ -95,31 +97,16 @@ interface Data {
 addEventListener(
   "message",
   ({ data: { classes, query, sortBy } }: MessageEvent<Data>) => {
-    const trimmedQuery = query.trim();
     const fuse = initializeFuse(classes);
-
-    const searchResults = trimmedQuery
-      ? fuse.search(trimmedQuery.slice(0, 24))
-      : [];
-
-    const filteredClasses = trimmedQuery
-      ? searchResults.map(({ refIndex }) => classes[refIndex])
-      : classes;
-
-    const relevanceScores = trimmedQuery
-      ? new Map<IClass, number>(
-          searchResults.map(({ refIndex, score }) => [
-            classes[refIndex],
-            score ?? 0,
-          ])
-        )
-      : undefined;
-
     const order = DEFAULT_SORT_ORDER[sortBy] ?? "asc";
 
-    const sortedClasses = sortBy
-      ? sortClasses(filteredClasses, sortBy, order, { relevanceScores })
-      : [...filteredClasses];
+    const sortedClasses = searchAndSortClasses({
+      classes,
+      index: fuse,
+      query,
+      sortBy,
+      order,
+    });
 
     postMessage(sortedClasses);
   }

@@ -3,7 +3,10 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
-import { getLetterGradeFromGPA } from "@/lib/grades";
+import {
+  LETTER_GRADES as LETTER_GRADE_ORDER,
+  getLetterGradeFromGPA,
+} from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -18,24 +21,14 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
-const LETTER_GRADES = new Set([
-  "A+",
-  "A",
-  "A-",
-  "B+",
-  "B",
-  "B-",
-  "C+",
-  "C",
-  "C-",
-  "D+",
-  "D",
-  "D-",
-  "F",
-]);
+const LETTER_GRADES: ReadonlySet<string> = new Set(LETTER_GRADE_ORDER);
 
 const PASS_GRADES = new Set(["P", "S"]);
+const FAIL_GRADES = new Set(["NP", "U"]);
+const PERCENTAGE_SCALE_THRESHOLD = 1.0001;
 
+const clampPercentage = (value: number) =>
+  Math.min(100, Math.max(0, Math.round(value)));
 
 function getGradeColor(grade: string): string {
   if (grade === "N/A" || grade.includes("% P")) {
@@ -83,15 +76,17 @@ export function AverageGrade({
     const totals = distribution.reduce(
       (acc, grade) => {
         const count = grade.count ?? 0;
+        const rawPercentage = grade.percentage ?? 0;
         if (PASS_GRADES.has(grade.letter)) {
           acc.passCount += count;
-          acc.passPercentage += grade.percentage ?? 0;
-        } else if (grade.letter === "NP" || grade.letter === "U") {
+          acc.passPercentage += rawPercentage;
+        } else if (FAIL_GRADES.has(grade.letter)) {
           acc.failCount += count;
         } else {
           acc.otherCount += count;
         }
         acc.totalCount += count;
+        acc.totalPercentage += rawPercentage;
         return acc;
       },
       {
@@ -100,6 +95,7 @@ export function AverageGrade({
         otherCount: 0,
         totalCount: 0,
         passPercentage: 0,
+        totalPercentage: 0,
       }
     );
 
@@ -112,18 +108,18 @@ export function AverageGrade({
     }
 
     if (totals.totalCount > 0) {
-      const percentage = Math.round(
-        (totals.passCount / totals.totalCount) * 100
-      );
+      const percentage = (totals.passCount / totals.totalCount) * 100;
       if (Number.isFinite(percentage)) {
-        return Math.min(100, Math.max(0, percentage));
+        return clampPercentage(percentage);
       }
     }
 
     if (totals.passPercentage > 0) {
-      const percentage = Math.round(totals.passPercentage * 100);
+      const scale =
+        totals.totalPercentage > PERCENTAGE_SCALE_THRESHOLD ? 1 : 100;
+      const percentage = totals.passPercentage * scale;
       if (Number.isFinite(percentage)) {
-        return Math.min(100, Math.max(0, percentage));
+        return clampPercentage(percentage);
       }
     }
 

@@ -16,6 +16,8 @@ import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 import styles from "./ClassCard.module.scss";
 
+import styles from "./ClassCard.module.scss";
+
 interface ClassProps {
   class: IClass;
   expandable?: boolean;

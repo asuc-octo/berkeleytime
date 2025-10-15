@@ -1,4 +1,5 @@
 import { GradeDistribution, IClass } from "@/lib/api";
+import { LETTER_GRADES as LETTER_GRADE_ORDER } from "@/lib/grades";
 
 import { SortBy } from "./browser";
 
@@ -20,21 +21,7 @@ type Sorter = (context: SorterContext) => IClass[];
 
 const directionFromOrder = (order: SortOrder) => (order === "asc" ? 1 : -1);
 
-const LETTER_GRADES = new Set([
-  "A+",
-  "A",
-  "A-",
-  "B+",
-  "B",
-  "B-",
-  "C+",
-  "C",
-  "C-",
-  "D+",
-  "D",
-  "D-",
-  "F",
-]);
+const LETTER_GRADES = new Set(LETTER_GRADE_ORDER);
 
 const PASS_GRADES = new Set(["P", "S"]);
 

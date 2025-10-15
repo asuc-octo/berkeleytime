@@ -8,7 +8,6 @@ import {
   Component,
   GET_CATALOG,
   GetCatalogResponse,
-  IClass,
   ITerm,
   Semester,
 } from "@/lib/api";
@@ -25,7 +24,7 @@ import {
   getIndex,
 } from "./browser";
 import BrowserContext from "./browserContext";
-import { sortClasses } from "./sorting";
+import { searchAndSortClasses } from "./searchAndSort";
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Relevance]: "asc",
@@ -184,31 +183,17 @@ export default function ClassBrowser({
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
-  const filteredClasses = useMemo(() => {
-    const trimmedQuery = query.trim();
-    const hasQuery = trimmedQuery.length > 0;
-
-    if (!hasQuery) {
-      return sortClasses(includedClasses, sortBy, effectiveOrder);
-    }
-
-    const limitedQuery = trimmedQuery.slice(0, 24);
-    const searchResults = index.search(limitedQuery);
-    const classesFromSearch = searchResults.map(
-      ({ refIndex }) => includedClasses[refIndex]
-    );
-
-    const relevanceScores = new Map<IClass, number>(
-      searchResults.map(({ refIndex, score }) => [
-        includedClasses[refIndex],
-        score ?? 0,
-      ])
-    );
-
-    return sortClasses(classesFromSearch, sortBy, effectiveOrder, {
-      relevanceScores,
-    });
-  }, [query, index, includedClasses, sortBy, effectiveOrder]);
+  const filteredClasses = useMemo(
+    () =>
+      searchAndSortClasses({
+        classes: includedClasses,
+        index,
+        query,
+        sortBy,
+        order: effectiveOrder,
+      }),
+    [includedClasses, index, query, sortBy, effectiveOrder]
+  );
 
   const updateArray = <T,>(
     key: string,
