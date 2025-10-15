@@ -17,9 +17,6 @@ export interface Config {
   mongoDB: {
     uri: string;
   };
-  backend: {
-    graphqlEndpoint: string;
-  };
   sis: {
     CLASS_APP_ID: string;
     CLASS_APP_KEY: string;
@@ -50,9 +47,6 @@ export function loadConfig(): Config {
     log,
     mongoDB: {
       uri: env("MONGODB_URI"),
-    },
-    backend: {
-      graphqlEndpoint: "http://backend:5001/api/graphql",
     },
     sis: {
       CLASS_APP_ID: env("SIS_CLASS_APP_ID"),

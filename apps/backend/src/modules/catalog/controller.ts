@@ -102,7 +102,7 @@ export const getIndex = (classes: ClassModule.Class[]) => {
 
 const CATALOG_CACHE_PREFIX = "catalog";
 
-const buildCatalogCacheKey = (
+export const buildCatalogCacheKey = (
   year: number,
   semester: string,
   includesGradeDistribution: boolean
@@ -125,7 +125,7 @@ const tryGetCachedCatalog = async (
   }
 };
 
-const storeCatalogInCache = async (
+export const storeCatalogInCache = async (
   cache: RedisClientType,
   key: string,
   classes: ClassModule.Class[]
@@ -151,7 +151,7 @@ const applyQueryFilter = (
   return index.search(trimmedQuery).map(({ refIndex }) => classes[refIndex]);
 };
 
-const fetchCatalogData = async (
+export const fetchCatalogData = async (
   year: number,
   semester: string,
   includesGradeDistribution: boolean

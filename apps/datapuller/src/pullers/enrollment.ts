@@ -4,7 +4,6 @@ import {
 } from "@repo/common";
 
 import { getEnrollmentSingulars } from "../lib/enrollment";
-import { refreshCatalogCache } from "../shared/catalog-cache";
 import { Config } from "../shared/config";
 import { getActiveTerms } from "../shared/term-selectors";
 
@@ -61,7 +60,6 @@ const enrollmentSingularsEqual = (
 
 const updateEnrollmentHistories = async ({
   log,
-  backend: { graphqlEndpoint },
   sis: { CLASS_APP_ID, CLASS_APP_KEY },
 }: Config) => {
   log.trace(`Fetching terms...`);
@@ -196,12 +194,6 @@ const updateEnrollmentHistories = async ({
   log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments, updated ${totalUpdated.toLocaleString()} documents.`
   );
-
-  await refreshCatalogCache({
-    graphqlEndpoint,
-    log,
-    terms,
-  });
 };
 
 export default { updateEnrollmentHistories };
