@@ -45,11 +45,11 @@ export const METRIC_MAPPINGS = {
       "This indicates the level of challenge students face in understanding course material.",
     getStatus: (avg: number) =>
       avg >= 4.3
-        ? "Very Difficult"
+        ? "Very Hard"
         : avg >= 3.5
-          ? "Difficult"
+          ? "Hard"
           : avg >= 2.7
-            ? "Fairly Difficult"
+            ? "Fairly Hard"
             : avg >= 1.9
               ? "Easy"
               : "Very Easy",

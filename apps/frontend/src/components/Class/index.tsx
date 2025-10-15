@@ -239,7 +239,47 @@ export default function Class({
     );
   }, [course]);
 
-  // TODO: Loading state
+  const seatReservationTypeMap = useMemo(() => {
+    const reservationTypes =
+      _class?.primarySection.enrollment?.seatReservationTypes ?? [];
+
+    const reservationMap = new Map<number, string>();
+    for (const type of reservationTypes) {
+      reservationMap.set(type.number, type.requirementGroup);
+    }
+    return reservationMap;
+  }, [_class]);
+
+  const seatReservationMaxEnroll = useMemo(() => {
+    const maxEnroll =
+      _class?.primarySection.enrollment?.history[0].seatReservationCounts ?? [];
+    const maxEnrollMap = new Map<number, number>();
+
+    for (const type of maxEnroll) {
+      maxEnrollMap.set(type.number, type.maxEnroll);
+    }
+    return maxEnrollMap;
+  }, [_class]);
+
+  const seatReservationCounts =
+    _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
+
+  const courseGradeDistribution = _class?.course.gradeDistribution;
+  const hasCourseGradeSummary = useMemo(() => {
+    if (!courseGradeDistribution) return false;
+
+    const average = courseGradeDistribution.average;
+    if (typeof average === "number" && Number.isFinite(average)) {
+      return true;
+    }
+
+    return courseGradeDistribution.distribution?.some((grade) => {
+      const count = grade.count ?? 0;
+      const percentage = grade.percentage ?? 0;
+      return count > 0 || percentage > 0;
+    });
+  }, [courseGradeDistribution]);
+
   if (loading || courseLoading) {
     return <></>;
   }
@@ -257,13 +297,6 @@ export default function Class({
             <Flex direction="column" gap="5">
               <Flex justify="between">
                 <Flex gap="3">
-                  {!dialog && (
-                    <Tooltip content={expanded ? "Expand" : "Collapse"}>
-                      <IconButton onClick={() => onExpandedChange(!expanded)}>
-                        {expanded ? <SidebarCollapse /> : <SidebarExpand />}
-                      </IconButton>
-                    </Tooltip>
-                  )}
                   {/* TODO: Reusable bookmark button */}
                   <Tooltip
                     content={bookmarked ? "Remove bookmark" : "Bookmark"}
@@ -294,29 +327,6 @@ export default function Class({
                       <CalendarPlus />
                     </IconButton>
                   </Tooltip>
-                </Flex>
-                <Flex gap="3">
-                  {dialog ? (
-                    <Tooltip content="View course">
-                      <IconButton
-                        as={Link}
-                        to={`/courses/${_class.subject}/${_class.courseNumber}`}
-                      >
-                        <OpenBook />
-                      </IconButton>
-                    </Tooltip>
-                  ) : (
-                    <CourseDrawer
-                      subject={_class.subject}
-                      number={_class.courseNumber}
-                    >
-                      <Tooltip content="View course">
-                        <IconButton>
-                          <OpenBook />
-                        </IconButton>
-                      </Tooltip>
-                    </CourseDrawer>
-                  )}
                   <Tooltip content="Berkeley Catalog">
                     <IconButton
                       as="a"
@@ -333,38 +343,6 @@ export default function Class({
                       <OpenNewWindow />
                     </IconButton>
                   </Tooltip>
-                  {dialog && (
-                    <Tooltip content="Expand">
-                      <Dialog.Close asChild>
-                        <IconButton
-                          as={Link}
-                          to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
-                        >
-                          <Expand />
-                        </IconButton>
-                      </Dialog.Close>
-                    </Tooltip>
-                  )}
-                  <Tooltip content="Close">
-                    {dialog ? (
-                      <Dialog.Close asChild>
-                        <IconButton>
-                          <Xmark />
-                        </IconButton>
-                      </Dialog.Close>
-                    ) : (
-                      <IconButton
-                        as={Link}
-                        to={{
-                          ...location,
-                          pathname: `/catalog/${_class.year}/${_class.semester}`,
-                        }}
-                        onClick={() => onClose()}
-                      >
-                        <Xmark />
-                      </IconButton>
-                    )}
-                  </Tooltip>
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
@@ -377,23 +355,41 @@ export default function Class({
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  <AverageGrade
-                    gradeDistribution={_class.course.gradeDistribution}
-                  />
-                  <Capacity
-                    enrolledCount={
-                      _class.primarySection.enrollment?.latest.enrolledCount
-                    }
-                    maxEnroll={
-                      _class.primarySection.enrollment?.latest.maxEnroll
-                    }
-                    waitlistedCount={
-                      _class.primarySection.enrollment?.latest.waitlistedCount
-                    }
-                    maxWaitlist={
-                      _class.primarySection.enrollment?.latest.maxWaitlist
-                    }
-                  />
+                  {hasCourseGradeSummary && (
+                    <Link
+                      to={`/grades?input=${encodeURIComponent(
+                        `${_class.subject};${_class.courseNumber}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <AverageGrade
+                        gradeDistribution={_class.course.gradeDistribution}
+                      />
+                    </Link>
+                  )}
+                  <Link
+                    to={`/enrollment?input=${encodeURIComponent(
+                      `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Capacity
+                      enrolledCount={
+                        _class.primarySection.enrollment?.latest.enrolledCount
+                      }
+                      maxEnroll={
+                        _class.primarySection.enrollment?.latest.maxEnroll
+                      }
+                      waitlistedCount={
+                        _class.primarySection.enrollment?.latest.waitlistedCount
+                      }
+                      maxWaitlist={
+                        _class.primarySection.enrollment?.latest.maxWaitlist
+                      }
+                    />
+                  </Link>
                   <Units
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
@@ -412,13 +408,9 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    {/* <Tabs.Trigger value="enrollment" asChild>
-                      <MenuItem>Enrollment</MenuItem>
-                    </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
-                    */}
                     <NavLink
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                     >
@@ -445,17 +437,16 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Enrollment</MenuItem>
-                    )}
-                  </NavLink>
                   <NavLink to={{ ...location, pathname: "grades" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
                   </NavLink>
-                  */}
+                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink> */}
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>

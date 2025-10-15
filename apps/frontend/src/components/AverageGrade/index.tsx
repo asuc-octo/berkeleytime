@@ -3,6 +3,10 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
+import {
+  LETTER_GRADES as LETTER_GRADE_ORDER,
+  getLetterGradeFromGPA,
+} from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -17,18 +21,29 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
+const LETTER_GRADES = new Set(LETTER_GRADE_ORDER);
+
+const PASS_GRADES = new Set(["P", "S"]);
+const FAIL_GRADES = new Set(["NP", "U"]);
+const PERCENTAGE_SCALE_THRESHOLD = 1.0001;
+
+const clampPercentage = (value: number) =>
+  Math.min(100, Math.max(0, Math.round(value)));
+
+function getGradeColor(grade: string): string {
+  if (grade === "N/A" || grade.includes("% P")) {
+    return "var(--paragraph-color)";
+  }
+
+  const firstLetter = grade[0];
+  if (firstLetter === "A") return "var(--emerald-500)";
+  if (firstLetter === "B") return "var(--amber-500)";
+  return "var(--rose-500)";
+}
+
 export function ColoredGrade({ grade, style }: ColoredGradeProps) {
-  const color = useMemo(
-    () =>
-      grade === "N/A"
-        ? "var(--paragraph-color)"
-        : grade === "A+" || grade === "A" || grade === "A-"
-          ? "var(--emerald-500)"
-          : grade === "B+" || grade === "B" || grade === "B-"
-            ? "var(--amber-500)"
-            : "var(--rose-500)",
-    [grade]
-  );
+  const color = useMemo(() => getGradeColor(grade), [grade]);
+
   return (
     <div className={styles.trigger} style={{ color, ...style }}>
       {grade}
@@ -37,53 +52,88 @@ export function ColoredGrade({ grade, style }: ColoredGradeProps) {
 }
 
 export function AverageGrade({
-  gradeDistribution: { average },
+  gradeDistribution,
   style,
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
-  const text = useMemo(
+  const average = gradeDistribution?.average ?? null;
+  const distribution = gradeDistribution?.distribution ?? [];
+
+  const hasLetterGrades = useMemo(
     () =>
-      !average
-        ? ""
-        : average > 4
-          ? "A+"
-          : average > 3.7
-            ? "A"
-            : average > 3.5
-              ? "A-"
-              : average > 3
-                ? "B+"
-                : average > 2.7
-                  ? "B"
-                  : average > 2.5
-                    ? "B-"
-                    : average > 2
-                      ? "C+"
-                      : average > 1.7
-                        ? "C"
-                        : average > 1.5
-                          ? "C-"
-                          : average > 1
-                            ? "D+"
-                            : average > 0.7
-                              ? "D"
-                              : average
-                                ? "D-"
-                                : "F",
-    [average]
+      distribution.some(
+        (grade) => LETTER_GRADES.has(grade.letter) && (grade.count ?? 0) > 0
+      ),
+    [distribution]
   );
 
-  const color = useMemo(
-    () =>
-      !average
-        ? "var(--paragraph-color)"
-        : average > 3.5
-          ? "var(--emerald-500)"
-          : average > 2.5
-            ? "var(--amber-500)"
-            : "var(--rose-500)",
-    [average]
-  );
+  const passFailPercent = useMemo(() => {
+    if (hasLetterGrades) return null;
+
+    const totals = distribution.reduce(
+      (acc, grade) => {
+        const count = grade.count ?? 0;
+        const rawPercentage = grade.percentage ?? 0;
+        if (PASS_GRADES.has(grade.letter)) {
+          acc.passCount += count;
+          acc.passPercentage += rawPercentage;
+        } else if (FAIL_GRADES.has(grade.letter)) {
+          acc.failCount += count;
+        } else {
+          acc.otherCount += count;
+        }
+        acc.totalCount += count;
+        acc.totalPercentage += rawPercentage;
+        return acc;
+      },
+      {
+        passCount: 0,
+        failCount: 0,
+        otherCount: 0,
+        totalCount: 0,
+        passPercentage: 0,
+        totalPercentage: 0,
+      }
+    );
+
+    if (
+      totals.passCount === 0 &&
+      totals.passPercentage === 0 &&
+      totals.totalCount === 0
+    ) {
+      return null;
+    }
+
+    if (totals.totalCount > 0) {
+      const percentage = (totals.passCount / totals.totalCount) * 100;
+      if (Number.isFinite(percentage)) {
+        return clampPercentage(percentage);
+      }
+    }
+
+    if (totals.passPercentage > 0) {
+      const scale =
+        totals.totalPercentage > PERCENTAGE_SCALE_THRESHOLD ? 1 : 100;
+      const percentage = totals.passPercentage * scale;
+      if (Number.isFinite(percentage)) {
+        return clampPercentage(percentage);
+      }
+    }
+
+    return null;
+  }, [distribution, hasLetterGrades]);
+
+  const text = useMemo(() => {
+    if (passFailPercent !== null) {
+      return `${passFailPercent}% P`;
+    }
+    if (!average) {
+      return "";
+    }
+    return getLetterGradeFromGPA(average);
+  }, [average, passFailPercent]);
+
+  const color = useMemo(() => getGradeColor(text), [text]);
 
   return (
     <Tooltip.Root disableHoverableContent>
@@ -100,7 +150,12 @@ export function AverageGrade({
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Average grade</p>
-            {average ? (
+            {passFailPercent !== null ? (
+              <p className={styles.description}>
+                Students received{" "}
+                <span style={{ color }}>{passFailPercent}% P</span> {tooltip}.
+              </p>
+            ) : average ? (
               <p className={styles.description}>
                 Students have received{" "}
                 {["A", "F"].includes(text[0]) ? "an " : "a "}

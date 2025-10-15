@@ -8,7 +8,7 @@ export enum SortBy {
   Units = "Units",
   AverageGrade = "Average grade",
   OpenSeats = "Open seats",
-  PercentOpenSeats = "Percent open seats",
+  PercentOpenSeats = "Open seats (%)",
 }
 
 export enum Level {
@@ -193,6 +193,7 @@ export const getIndex = (classes: IClass[]) => {
   // Attempt to increase performance by dropping unnecessary fields
   const options = {
     includeScore: true,
+    isCaseSensitive: false,
     // ignoreLocation: true,
     threshold: 0.25,
     keys: [

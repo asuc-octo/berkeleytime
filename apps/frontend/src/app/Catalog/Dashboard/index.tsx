@@ -8,15 +8,8 @@ import {
 } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import {
-  ArrowSeparateVertical,
-  BookmarkSolid,
-  Collapse,
-  Expand,
-  Search,
-} from "iconoir-react";
+import { BookmarkSolid, Collapse, Expand, Search } from "iconoir-react";
 import moment from "moment";
-import { useNavigate } from "react-router-dom";
 
 import {
   Box,
@@ -28,21 +21,18 @@ import {
   Text,
   Tooltip,
 } from "@repo/theme";
-import { DropdownMenu } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
 import { useReadUser } from "@/hooks/api";
 import { IClass, ITerm, READ_CLASS, ReadClassResponse } from "@/lib/api";
-import { sortByTermDescending } from "@/lib/classes";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./Dashboard.module.scss";
 
 interface DashboardProps {
   term: ITerm;
-  terms: ITerm[];
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -50,12 +40,10 @@ interface DashboardProps {
 
 export default function Dashboard({
   term,
-  terms,
   expanded,
   setExpanded,
   setOpen,
 }: DashboardProps) {
-  const navigate = useNavigate();
   const client = useApolloClient();
 
   const { data: user } = useReadUser();
@@ -110,37 +98,7 @@ export default function Dashboard({
     <Box p="5">
       <Container size="3">
         <Flex direction="column" gap="6">
-          <Flex justify="between" align="center">
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <Button variant="secondary">
-                  <ArrowSeparateVertical />
-                  Switch terms
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content sideOffset={5} style={{ maxHeight: 200 }}>
-                {terms
-                  .filter(
-                    ({ year, semester }, index) =>
-                      index ===
-                      terms.findIndex(
-                        (term) =>
-                          term.semester === semester && term.year === year
-                      )
-                  )
-                  .toSorted(sortByTermDescending)
-                  .map(({ year, semester }) => {
-                    return (
-                      <DropdownMenu.Item
-                        key={`${semester} ${year}`}
-                        onClick={() => navigate(`/catalog/${year}/${semester}`)}
-                      >
-                        {semester} {year}
-                      </DropdownMenu.Item>
-                    );
-                  })}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+          <Flex justify="end" align="center">
             <div className={styles.toggle}>
               <Button onClick={() => setOpen(false)}>
                 Search
@@ -167,7 +125,7 @@ export default function Dashboard({
           <Carousel.Root
             title="Bookmarked"
             Icon={<BookmarkSolid />}
-            to="/account"
+            to="/profile"
           >
             {/* TODO: Better placeholder states */}
             {!bookmarkedClasses ? (
