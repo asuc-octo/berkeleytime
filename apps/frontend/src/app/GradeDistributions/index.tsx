@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
+import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 import {
@@ -28,6 +28,7 @@ import HoverInfo from "./HoverInfo";
 import {
   DARK_COLORS,
   Input,
+  InputType,
   LIGHT_COLORS,
   Output,
   getInputSearchParam,
@@ -65,22 +66,82 @@ export default function GradeDistributions() {
         // Any input must specify a term or professor
         if (!["T", "P"].includes(output[2])) return acc;
 
+        const subject = output[0];
+        const courseNumber = output[1];
+        const typeToken = output[2] as InputType;
+
         // COMPSCI;61B;T;2024:Spring;John:DeNero, COMPSCI;61B;T;2024:Spring
-        const term = output[output[2] === "T" ? 3 : 4]?.split(":");
+        const term = output[typeToken === InputType.Term ? 3 : 4]?.split(":");
 
         // COMPSCI;61B;P;John:DeNero;2024:Spring, COMPSCI;61B;P;John:DeNero
-        const professor = output[output[2] === "T" ? 4 : 3]?.split(":");
+        const professor =
+          output[typeToken === InputType.Term ? 4 : 3]?.split(":");
 
-        const parsedInput: Input = {
-          subject: output[0],
-          courseNumber: output[1],
-          year: parseInt(term?.[0]),
-          semester: term?.[1] as Semester,
-          familyName: professor?.[1],
-          givenName: professor?.[0],
-        };
+        if (typeToken === InputType.Term) {
+          if (!term || term.length < 3) return acc;
 
-        return acc.concat(parsedInput);
+          const [rawYear, rawSemester, sessionId] = term;
+          if (!rawYear || !rawSemester || !sessionId) return acc;
+
+          const year = Number.parseInt(rawYear, 10);
+          if (Number.isNaN(year)) return acc;
+
+          const parsedInput: Input =
+            professor && professor.length === 2
+              ? {
+                  subject,
+                  courseNumber,
+                  type: InputType.Term,
+                  year,
+                  semester: rawSemester as Semester,
+                  sessionId,
+                  givenName: professor[0],
+                  familyName: professor[1],
+                }
+              : {
+                  subject,
+                  courseNumber,
+                  type: InputType.Term,
+                  year,
+                  semester: rawSemester as Semester,
+                  sessionId,
+                };
+
+          return acc.concat(parsedInput);
+        }
+
+        if (typeToken === InputType.Instructor) {
+          if (!professor || professor.length < 2) return acc;
+
+          const baseInstructor = {
+            subject,
+            courseNumber,
+            type: InputType.Instructor,
+            givenName: professor[0],
+            familyName: professor[1],
+          } as const;
+
+          if (term && term.length >= 3) {
+            const [rawYear, rawSemester, sessionId] = term;
+            if (rawYear && rawSemester && sessionId) {
+              const year = Number.parseInt(rawYear, 10);
+              if (!Number.isNaN(year)) {
+                const parsedInput: Input = {
+                  ...baseInstructor,
+                  year,
+                  semester: rawSemester as Semester,
+                  sessionId,
+                };
+
+                return acc.concat(parsedInput);
+              }
+            }
+          }
+
+          return acc.concat(baseInstructor);
+        }
+
+        return acc;
       }, [] as Input[])
       // Filter out duplicates
       .filter(
@@ -127,10 +188,11 @@ export default function GradeDistributions() {
       // Filter out failed queries and set any initial state
       .reduce(
         (acc, response, index) =>
-          response
+          response?.data
             ? acc.concat({
                 color: LIGHT_COLORS[index],
-                gradeDistribution: response.data.grade,
+                // TODO: Error handling
+                gradeDistribution: response.data!.grade,
                 input: initialInputs[index],
                 active: false,
                 hidden: false,
@@ -215,7 +277,7 @@ export default function GradeDistributions() {
     if (outputs.length > 0) {
       if (!hoveredSeries) setHoveredSeries(0);
     } else setHoveredSeries(null);
-  }, [outputs]);
+  }, [hoveredSeries, outputs]);
 
   return (
     <Box p="5">
@@ -248,13 +310,28 @@ export default function GradeDistributions() {
                   <YAxis tickFormatter={toPercent} />
                   {filteredOutputs?.length && (
                     <Tooltip
-                      labelStyle={{ color: "var(--heading-color)" }}
-                      contentStyle={{
-                        backgroundColor: "var(--backdrop-color)",
-                        border: "none",
+                      cursor={{
+                        fill: "var(--border-color)",
+                        fillOpacity: 0.5,
                       }}
-                      cursor={{ fill: "var(--foreground-color)" }}
-                      formatter={toPercent}
+                      content={(props) => {
+                        return (
+                          <HoverCard
+                            content={props.label}
+                            data={props.payload?.map((v) => {
+                              const name = v.name?.valueOf();
+                              return {
+                                label: name ? name.toString() : "N/A",
+                                value:
+                                  typeof v.value === "number"
+                                    ? toPercent(v.value)
+                                    : "N/A",
+                                color: v.fill,
+                              };
+                            })}
+                          />
+                        );
+                      }}
                     />
                   )}
                   {filteredOutputs?.map((output, index) => (

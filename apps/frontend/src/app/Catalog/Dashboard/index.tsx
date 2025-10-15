@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import {
   ArrowSeparateVertical,
   BookmarkSolid,
@@ -90,7 +90,7 @@ export default function Dashboard({
             },
           });
 
-          return response.data.class;
+          return response.data?.class;
         } catch {
           // TODO: Handle errors
 
@@ -113,7 +113,7 @@ export default function Dashboard({
           <Flex justify="between" align="center">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Button>
+                <Button variant="secondary">
                   <ArrowSeparateVertical />
                   Switch terms
                 </Button>
@@ -142,7 +142,7 @@ export default function Dashboard({
               </DropdownMenu.Content>
             </DropdownMenu.Root>
             <div className={styles.toggle}>
-              <Button variant="solid" onClick={() => setOpen(false)}>
+              <Button onClick={() => setOpen(false)}>
                 Search
                 <Search />
               </Button>

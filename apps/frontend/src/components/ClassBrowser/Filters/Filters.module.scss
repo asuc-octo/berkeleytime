@@ -1,35 +1,21 @@
 .root {
   width: 288px;
   flex-shrink: 0;
-  overflow: auto;
+  overflow-y: auto;
   background-color: var(--foreground-color);
+  scrollbar-color: var(--label-color) var(--foreground-color);
 
   .body {
     display: flex;
     flex-direction: column;
     padding: 24px;
 
-    // .button {
-    //   display: flex;
-    //   align-items: center;
-    //   gap: 12px;
-    //   font-size: 14px;
-    //   color: var(--blue-500);
-    //   line-height: 1;
-    //   cursor: pointer;
-    //   font-weight: 500;
-    //   margin-top: 12px;
-    //   transition: all 100ms ease-in-out;
-
-    //   &:hover {
-    //     color: var(--blue-600);
-    //   }
-    // }
-
     .label {
-      font-size: 14px;
+      font-size: 12px;
       color: var(--label-color);
       line-height: 1;
+      font-weight: 600;
+      margin-bottom: 12px;
 
       &:not(:first-child) {
         margin-top: 24px;

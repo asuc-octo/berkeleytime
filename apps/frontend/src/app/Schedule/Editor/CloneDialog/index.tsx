@@ -82,51 +82,46 @@ export default function CloneDialog({ children }: CloneDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="4" direction="column" gap="4">
-            <Flex align="start" gap="4">
-              <Flex direction="column" gap="1" flexGrow="1">
-                <Dialog.Title asChild>
-                  <Heading>Clone schedule</Heading>
-                </Dialog.Title>
-                <Dialog.Description asChild>
-                  <Text>Create a copy of this schedule</Text>
-                </Dialog.Description>
-              </Flex>
-              <Dialog.Close asChild>
-                <IconButton disabled={loading}>
-                  <Xmark />
-                </IconButton>
-              </Dialog.Close>
+          <Dialog.Header>
+            <Flex direction="column" gap="1" flexGrow="1">
+              <Dialog.Title asChild>
+                <Heading>Clone schedule</Heading>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <Text>Create a copy of this schedule</Text>
+              </Dialog.Description>
             </Flex>
+            <Dialog.Close asChild>
+              <IconButton disabled={loading}>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </Dialog.Header>
+          <Dialog.Body>
             <Flex direction="column" gap="3">
+              <Text as="span">Name</Text>
               <Input
                 placeholder="Schedule name"
                 value={name}
                 disabled={loading}
                 onChange={(event) => setName(event.target.value)}
               />
-              <label>
-                <Flex align="center" gap="3">
-                  <Checkbox
-                    disabled={loading}
-                    checked={events}
-                    onCheckedChange={(value) => setEvents(value as boolean)}
-                  />
-                  <Text as="span">Include custom events</Text>
-                </Flex>
-              </label>
+              <Text as="span">Include custom events</Text>
+              <Checkbox
+                disabled={loading}
+                checked={events}
+                onCheckedChange={(value) => setEvents(value as boolean)}
+              />
             </Flex>
-            <Button
-              onClick={() => confirm()}
-              variant="solid"
-              disabled={loading}
-            >
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button onClick={() => confirm()} disabled={loading}>
               Confirm
               <LoadingIndicator loading={loading}>
                 <ArrowRight />
               </LoadingIndicator>
             </Button>
-          </Flex>
+          </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

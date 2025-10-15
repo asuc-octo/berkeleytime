@@ -37,9 +37,9 @@ export default function SideBar({ children }: SideBarProps) {
               <Link className={styles.item} to="/catalog">
                 Catalog
               </Link>
-              {/* <Link className={styles.item} to="/catalog">
-              Courses
-            </Link> */}
+              <Link className={styles.item} to="/curated">
+                Curated classes
+              </Link>
             </div>
             <div className={styles.group}>
               <p className={styles.label}>Career</p>
@@ -65,24 +65,24 @@ export default function SideBar({ children }: SideBarProps) {
               GPA calculator
             </Link> */}
             </div>
-            <div className={styles.group}>
+            {/* <div className={styles.group}>
               <p className={styles.label}>Organization</p>
               <Link className={styles.item} to="/about">
                 About us
               </Link>
-              {/* <Link className={styles.item} to="/catalog">
+              <Link className={styles.item} to="/catalog">
               Frequently asked questions
-            </Link> */}
+            </Link>
               <Link className={styles.item} to="/">
                 Terms of service
               </Link>
               <Link className={styles.item} to="/">
                 Privacy policy
               </Link>
-              {/* <Link className={styles.item} to="/catalog">
+              <Link className={styles.item} to="/catalog">
               Data API
-            </Link> */}
-            </div>
+            </Link>
+            </div> */}
           </div>
         </Dialog.Drawer>
       </Dialog.Portal>

@@ -6,9 +6,10 @@ import { useSearchParams } from "react-router-dom";
 
 import { LoadingIndicator } from "@repo/theme";
 
+import ClassCard from "@/components/ClassCard";
+
 import Header from "../Header";
 import useBrowser from "../useBrowser";
-import Class from "./Class";
 import styles from "./List.module.scss";
 
 interface ListProps {
@@ -16,8 +17,6 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  "use no memo";
-
   const { classes, loading } = useBrowser();
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -73,9 +72,9 @@ export default function List({ onSelect }: ListProps) {
               const _class = classes[index];
 
               return (
-                <Class
-                  {..._class}
-                  index={index}
+                <ClassCard
+                  class={_class}
+                  data-index={index}
                   key={key}
                   ref={virtualizer.measureElement}
                   onClick={() =>

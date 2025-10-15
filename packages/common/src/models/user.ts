@@ -20,6 +20,11 @@ export const userSchema = new Schema(
       trim: true,
       required: true,
     },
+    staff: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     majors: {
       type: [String],
       required: false,

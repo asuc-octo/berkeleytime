@@ -1,0 +1,23 @@
+.root {
+  padding: 60px 0;
+  margin: auto 120px;
+  display: flex;
+  flex-direction: column;
+
+  .add {
+    align-self: flex-start;
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+  .controls {
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 1rem;
+  }
+
+}

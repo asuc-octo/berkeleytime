@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrowRight, Clock } from "iconoir-react";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Button, Container } from "@repo/theme";
 
@@ -50,6 +51,7 @@ const steps = [
 ];
 
 export default function Hero() {
+  const navigate = useNavigate();
   const root = useRef<HTMLDivElement>(null);
 
   // Berkeley time
@@ -92,6 +94,11 @@ export default function Hero() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const query = formData.get("query");
+
+    navigate(`/catalog?query=${query}`);
   };
 
   return (
@@ -112,9 +119,11 @@ export default function Hero() {
                 className={styles.input}
                 type="text"
                 autoFocus
+                name="query"
+                required
                 placeholder="Search for courses..."
               />
-              <Button variant="solid">
+              <Button>
                 Go
                 <ArrowRight />
               </Button>

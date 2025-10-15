@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
@@ -264,7 +264,7 @@ export default function ClassBrowser({
     if (persistent) {
       if (query) searchParams.set("query", query);
       else searchParams.delete("query");
-      setSearchParams(searchParams);
+      setSearchParams(searchParams, { replace: true });
 
       return;
     }

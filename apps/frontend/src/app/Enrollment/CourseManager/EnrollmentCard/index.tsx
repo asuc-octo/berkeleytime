@@ -3,9 +3,10 @@ import { useRef } from "react";
 import { Eye, EyeClosed, Trash } from "iconoir-react";
 
 import { Card } from "@repo/theme";
+import { ColoredSquare } from "@repo/theme";
 
-import { ColoredSquare } from "@/components/ColoredSquare";
-import { useReadCourseTitle } from "@/hooks/api";
+import { AverageGrade } from "@/components/AverageGrade";
+import { useReadCourse } from "@/hooks/api";
 
 interface EnrollmentCardProps {
   color: string;
@@ -33,12 +34,12 @@ export default function EnrollmentCard({
   const hideRef = useRef<HTMLDivElement>(null);
   const deleteRef = useRef<HTMLDivElement>(null);
 
-  const { data: data } = useReadCourseTitle(subject, number);
+  const { data: data } = useReadCourse(subject, number);
 
   return (
     <Card.Root
       active={active}
-      hidden={hidden}
+      disabled={hidden}
       onClick={(event) => {
         if (
           hideRef.current &&
@@ -71,6 +72,9 @@ export default function EnrollmentCard({
         <Card.Footer style={{ marginTop: "2px" }}>{description}</Card.Footer>
       </Card.Body>
       <Card.Actions>
+        {data?.gradeDistribution && (
+          <AverageGrade gradeDistribution={data.gradeDistribution} />
+        )}
         <Card.ActionIcon onClick={onClickHide} ref={hideRef}>
           {!hidden ? <Eye /> : <EyeClosed />}
         </Card.ActionIcon>

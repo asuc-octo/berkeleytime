@@ -131,7 +131,7 @@ export default function Sections() {
                     waitlistedCount={section.enrollment?.latest.waitlistedCount}
                     maxWaitlist={section.enrollment?.latest.maxWaitlist}
                   />
-                  <Tooltip content="Berkeley Academic Guide">
+                  <Tooltip content="Berkeley Catalog">
                     <a
                       href={getExternalLink(
                         _class.year,
@@ -149,13 +149,9 @@ export default function Sections() {
                     </a>
                   </Tooltip>
                 </div>
-                <Details
-                  days={section.meetings[0].days}
-                  startTime={section.meetings[0].startTime}
-                  endTime={section.meetings[0].endTime}
-                  location={section.meetings[0].location}
-                  instructors={section.meetings[0].instructors}
-                />
+                {section.meetings.map((meeting, i) => (
+                  <Details {...meeting} key={i} />
+                ))}
               </div>
             ))}
           </div>

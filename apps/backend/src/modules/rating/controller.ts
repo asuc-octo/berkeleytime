@@ -4,7 +4,11 @@ import { connection } from "mongoose";
 import { AggregatedMetricsModel, RatingModel, RatingType } from "@repo/common";
 import { METRIC_MAPPINGS } from "@repo/shared";
 
-import { MetricName, Semester } from "../../generated-types/graphql";
+import {
+  InputMaybe,
+  MetricName,
+  Semester,
+} from "../../generated-types/graphql";
 import {
   formatAggregatedRatings,
   formatSemesterRatings,
@@ -15,6 +19,7 @@ import {
   courseRatingAggregator,
   ratingAggregator,
   semestersWithRatingsAggregator,
+  termRatingsAggregator,
   userClassRatingsAggregator,
   userRatingsAggregator,
 } from "./helper/aggregator";
@@ -326,15 +331,17 @@ export const getClassAggregatedRatings = async (
   semester: Semester,
   subject: string,
   courseNumber: string,
-  classNumber: string
+  classNumber?: InputMaybe<string>
 ) => {
-  const aggregated = await ratingAggregator({
-    subject,
-    courseNumber,
-    classNumber,
-    semester,
-    year,
-  });
+  const aggregated = classNumber
+    ? await ratingAggregator({
+        subject,
+        courseNumber,
+        classNumber,
+        semester,
+        year,
+      })
+    : await termRatingsAggregator(subject, courseNumber, semester, year);
   if (!aggregated || !aggregated[0])
     return {
       subject,

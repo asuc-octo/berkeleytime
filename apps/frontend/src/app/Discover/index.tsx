@@ -1,6 +1,6 @@
 import { FormEvent, useCallback, useMemo, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { ArrowRight } from "iconoir-react";
 
 import { Button } from "@repo/theme";
@@ -95,7 +95,7 @@ export default function Discover() {
               onChange={(event) => setInput(event.target.value)}
             />
             <Placeholder className={styles.placeholder} />
-            <Button variant="solid">
+            <Button>
               Search
               <ArrowRight />
             </Button>

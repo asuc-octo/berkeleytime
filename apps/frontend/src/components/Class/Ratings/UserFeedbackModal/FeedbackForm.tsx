@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 import { MetricName } from "@repo/shared";
 
-import { MetricData } from "../helper/metricsUtil";
+import { MetricData } from "../metricsUtil";
 import styles from "./UserFeedbackModal.module.scss";
 
 interface BooleanInputProps {
@@ -47,7 +47,7 @@ export function AttendanceForm({
   };
 
   return (
-    <div className={styles.attendanceSection}>
+    <div>
       {/* Question 5 */}
       <div className={styles.formGroup}>
         <h3>5. Is lecture attendance required?</h3>
@@ -84,7 +84,7 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
   };
 
   return (
-    <div className={styles.ratingSection}>
+    <div>
       <RatingScale
         type={MetricName.Usefulness}
         question="2. How would you rate the usefulness of this course?"

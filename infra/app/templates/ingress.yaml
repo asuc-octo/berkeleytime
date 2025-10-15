@@ -4,14 +4,12 @@ metadata:
   name: {{ .Release.Name }}-ingress
   labels:
     {{- include "bt-app.labels" . | nindent 4 }}
-  annotations:
-    cert-manager.io/issuer: {{ .Values.issuer }}
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - {{ .Values.host }}
-      secretName: bt-tls
+      secretName: bt-cert
   rules:
     - host: {{ .Values.host }}
       http:

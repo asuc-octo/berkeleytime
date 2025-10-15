@@ -1,26 +1,30 @@
 import { ComponentPropsWithRef } from "react";
 
-import { Flex } from "@radix-ui/themes";
+import { Box, BoxProps, Flex, FlexProps } from "@radix-ui/themes";
 import classNames from "classnames";
 
 import styles from "./Card.module.scss";
 
 interface RootProps {
   active?: boolean;
-  hidden?: boolean;
+  disabled?: boolean;
+  hoverColorChange?: boolean;
 }
 
 function Root({
   children,
   active,
-  hidden,
+  disabled,
+  hoverColorChange = true,
+  className,
   ...props
 }: RootProps & ComponentPropsWithRef<"div">) {
   return (
     <div
-      className={classNames(styles.root, {
+      className={classNames(styles.root, className, {
         [styles.active]: active,
-        [styles.hidden]: hidden,
+        [styles.disabled]: disabled,
+        [styles.hoverColorChange]: hoverColorChange,
       })}
       {...props}
     >
@@ -34,6 +38,18 @@ function Body({ children, ...props }: ComponentPropsWithRef<"div">) {
     <div className={styles.body} {...props}>
       {children}
     </div>
+  );
+}
+
+function LeftBorder({ color, ...props }: ComponentPropsWithRef<"div">) {
+  return (
+    <div
+      className={styles.border}
+      style={{
+        backgroundColor: color,
+      }}
+      {...props}
+    />
   );
 }
 
@@ -85,12 +101,44 @@ function ActionIcon({
   );
 }
 
+function RootColumn({
+  style,
+  ...props
+}: RootProps & ComponentPropsWithRef<"div">) {
+  return <Root style={{ flexDirection: "column", ...style }} {...props} />;
+}
+
+function ColumnHeader({ children, style, ...props }: FlexProps) {
+  return (
+    <Flex
+      direction="row"
+      style={{
+        width: "100%",
+        overflow: "hidden",
+        flexShrink: "0",
+        ...style,
+      }}
+      {...props}
+    >
+      {children}
+    </Flex>
+  );
+}
+
+function ColumnBody({ ...props }: BoxProps) {
+  return <Box p="4" width="100%" {...props} />;
+}
+
 export const Card = {
   Root,
+  RootColumn,
   Body,
+  LeftBorder,
   Heading,
   Description,
   Footer,
   Actions,
   ActionIcon,
+  ColumnHeader,
+  ColumnBody,
 };

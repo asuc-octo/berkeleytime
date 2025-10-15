@@ -228,6 +228,17 @@ export default function Class({
     });
   }, [_class]);
 
+  const ratingsCount = useMemo(() => {
+    return (
+      course &&
+      course.aggregatedRatings &&
+      course.aggregatedRatings.metrics.length > 0 &&
+      Math.max(
+        ...Object.values(course.aggregatedRatings.metrics.map((v) => v.count))
+      )
+    );
+  }, [course]);
+
   // TODO: Loading state
   if (loading || courseLoading) {
     return <></>;
@@ -306,7 +317,7 @@ export default function Class({
                       </Tooltip>
                     </CourseDrawer>
                   )}
-                  <Tooltip content="Berkeley Academic Guide">
+                  <Tooltip content="Berkeley Catalog">
                     <IconButton
                       as="a"
                       href={getExternalLink(
@@ -408,9 +419,18 @@ export default function Class({
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
                     */}
-                    <Tabs.Trigger value="ratings" asChild>
-                      <MenuItem>Ratings</MenuItem>
-                    </Tabs.Trigger>
+                    <NavLink
+                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                    >
+                      <MenuItem styl>
+                        Ratings
+                        {ratingsCount ? (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        ) : (
+                          <div className={styles.dot}></div>
+                        )}
+                      </MenuItem>
+                    </NavLink>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -438,7 +458,14 @@ export default function Class({
                   */}
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
-                      <MenuItem active={isActive}>Ratings</MenuItem>
+                      <MenuItem active={isActive}>
+                        Ratings
+                        {ratingsCount ? (
+                          <div className={styles.badge}>{ratingsCount}</div>
+                        ) : (
+                          <div className={styles.dot}></div>
+                        )}
+                      </MenuItem>
                     )}
                   </NavLink>
                 </Flex>

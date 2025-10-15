@@ -5,6 +5,7 @@ const typedef = gql`
     _id: ID!
     email: String!
     name: String!
+    staff: Boolean!
     student: Boolean!
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!

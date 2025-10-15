@@ -2,10 +2,12 @@
   "name": "@repo/typescript-config",
   "private": true,
   "files": [
+    "next.json",
     "base.json",
-    "vite.json"
+    "vite.json",
+    "react.json"
   ],
-  "dependencies": {
-    "typescript-plugin-css-modules": "^5.1.0"
+  "devDependencies": {
+    "typescript-plugin-css-modules": "^5.2.0"
   }
 }

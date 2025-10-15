@@ -58,10 +58,16 @@ const typedef = gql`
     value: Int!
   }
 
-  type SemesterRatings {
+  type SemesterRatings @cacheControl(maxAge: 1) {
     year: Int!
     semester: Semester!
     maxMetricCount: Int!
+  }
+
+  input ClassWithoutCourseInput {
+    year: Int!
+    semester: Int!
+    classNumber: String!
   }
 
   """
@@ -73,7 +79,13 @@ const typedef = gql`
       semester: Semester!
       subject: String!
       courseNumber: String!
-      classNumber: String!
+      classNumber: String
+    ): AggregatedRatings!
+
+    multipleClassAggregatedRatings(
+      subject: String!
+      courseNumber: String!
+      classes: [ClassWithoutCourseInput!]!
     ): AggregatedRatings!
 
     userRatings: UserRatings! @auth

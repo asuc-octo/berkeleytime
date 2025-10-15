@@ -12,7 +12,6 @@ export default function Feedback() {
         href="https://forms.gle/zeAUQAHrMcrRJyhK6"
         target="_blank"
         className={styles.button}
-        variant="solid"
       >
         <MessageText />
         Provide feedback

@@ -1,5 +1,5 @@
 import type { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+import { expressMiddleware } from "@as-integrations/express5";
 import compression from "compression";
 import cors from "cors";
 import { type Application, json } from "express";
@@ -26,9 +26,8 @@ export default async (
       origin: [
         config.url,
         "http://localhost:8080",
-        "http://localhost:5173",
-        // TODO: Remove
-        "https://gn980r4n-8080.usw3.devtunnels.ms",
+        "http://localhost:8081",
+        "https://ag.berkeleytime.com",
       ],
       credentials: true,
     })

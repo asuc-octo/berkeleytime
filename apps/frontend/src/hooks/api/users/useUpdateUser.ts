@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 import { IUserInput, UPDATE_USER, UpdateUserResponse } from "@/lib/api";
 
@@ -20,7 +20,7 @@ export const useUpdateUser = () => {
   const updateUser = useCallback(
     async (
       user: Partial<IUserInput>,
-      options?: Omit<MutationHookOptions<UpdateUserResponse>, "variables">
+      options?: Omit<useMutation.Options<UpdateUserResponse>, "variables">
     ) => {
       const mutate = mutation[0];
 

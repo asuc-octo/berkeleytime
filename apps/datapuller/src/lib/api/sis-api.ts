@@ -1,12 +1,19 @@
 import { Logger } from "tslog";
 
-export async function fetchPaginatedData<T, R>(
+import { HttpResponse } from "@repo/sis-api/courses";
+
+export async function fetchPaginatedData<
+  T,
+  R,
+  API extends Record<string, (...args: any[]) => Promise<HttpResponse<any>>>,
+  Method extends keyof API,
+>(
   logger: Logger<unknown>,
-  api: any,
+  api: API,
   termIds: string[] | null,
-  method: string,
+  method: Method,
   headers: Record<string, string>,
-  responseProcessor: (data: any) => R[],
+  responseProcessor: (data: Awaited<ReturnType<API[Method]>>["data"]) => R[],
   itemFilter: (item: R) => boolean,
   itemProcessor: (item: R) => T
 ): Promise<T[]> {

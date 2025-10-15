@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Search } from "iconoir-react";
 
-import { LoadingIndicator } from "@repo/theme";
+import { Badge, Color, LoadingIndicator } from "@repo/theme";
 
 import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
@@ -14,17 +14,23 @@ import { initialize } from "./browser";
 interface CourseSearchProps {
   onSelect?: (course: ICourse) => void;
   onClear?: () => void;
-  selectedCourse?: { subject: string; courseNumber: string };
+  selectedCourse: ICourse | null;
+  inputStyle?: React.CSSProperties;
 }
 
-export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
+export default function CourseSearch({
+  onSelect,
+  onClear,
+  selectedCourse,
+  inputStyle,
+}: CourseSearchProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [recentGrades, setRecentGrades] = useState<Recent<RecentType.Course>[]>(
-    []
-  );
+  const [recentCourses, setRecentCourses] = useState<
+    Recent<RecentType.Course>[]
+  >([]);
 
   const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
 
@@ -44,8 +50,6 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
       : catalogCourses;
   }, [catalogCourses, index, searchQuery]);
 
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -64,11 +68,11 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
   useEffect(() => {
     if (!isOpen) return;
 
-    setRecentGrades(getRecents(RecentType.Course));
+    setRecentCourses(getRecents(RecentType.Course));
   }, [isOpen]);
 
   return (
-    <div ref={wrapperRef} className={styles.searchContainer}>
+    <div ref={wrapperRef}>
       <div className={styles.inputWrapper}>
         <Search className={styles.searchIcon} />
         <input
@@ -85,9 +89,9 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
           onClick={() => setIsOpen(true)}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            setSelectedCourse(null);
             if (onClear) onClear();
           }}
+          style={inputStyle}
         />
       </div>
 
@@ -99,12 +103,11 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
             <div>
               <section className={styles.section}>
                 <h2>RECENT</h2>
-                {recentGrades.length > 0 && (
+                {recentCourses.length > 0 && (
                   <div className={styles.recentCourses}>
-                    {recentGrades.map((course, index) => (
-                      <button
+                    {recentCourses.map((course, index) => (
+                      <Badge
                         key={`grades-${course.subject}-${course.number}-${index}`}
-                        className={styles.courseButton}
                         onClick={() => {
                           const full = data?.courses.find(
                             (c) =>
@@ -113,14 +116,16 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
                           );
                           if (full) {
                             onSelect?.(full);
-                            setSelectedCourse(full);
                             setSearchQuery("");
                           }
                           setIsOpen(false);
                         }}
-                      >
-                        {course.subject} {course.number}
-                      </button>
+                        label={`${course.subject} ${course.number}`}
+                        color={Color.zinc}
+                        style={{
+                          cursor: "pointer",
+                        }}
+                      />
                     ))}
                   </div>
                 )}
@@ -135,7 +140,6 @@ export default function CourseSearch({ onSelect, onClear }: CourseSearchProps) {
                       className={styles.catalogItem}
                       onClick={() => {
                         onSelect?.(course);
-                        setSelectedCourse(course);
                         setSearchQuery("");
                         setIsOpen(false);
                       }}

@@ -14,11 +14,13 @@ export default defineConfig({
     },
   },
   plugins: [
-    react({
-      babel: {
-        plugins: [["babel-plugin-react-compiler"]],
-      },
-    }),
+    react(),
+    // TODO: Not really necessary for now, but could be useful for restrictions later
+    // react({
+    //   babel: {
+    //     plugins: [["babel-plugin-react-compiler"]],
+    //   },
+    // }),
   ],
   css: {
     modules: {

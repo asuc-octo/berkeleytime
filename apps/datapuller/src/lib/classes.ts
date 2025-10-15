@@ -7,7 +7,7 @@ import { fetchPaginatedData } from "./api/sis-api";
 
 // Include relevant fields missing from the automatically generated type
 type CombinedClass = Class & {
-  requisites: {
+  requisites?: {
     code: {
       type: string;
     };
@@ -91,7 +91,7 @@ export const getClasses = async (
 ) => {
   const classesAPI = new ClassesAPI();
 
-  const courses = await fetchPaginatedData<IClassItem, CombinedClass>(
+  const courses = await fetchPaginatedData(
     logger,
     classesAPI.v1,
     termIds || null,
@@ -100,7 +100,7 @@ export const getClasses = async (
       app_id: id,
       app_key: key,
     },
-    (data) => data.apiResponse.response.classes || [],
+    (data) => data.apiResponse?.response.classes || [],
     filterClass,
     formatClass
   );

@@ -1,15 +1,22 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
+import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
-import ReactSelect from "react-select";
 
-import { METRIC_ORDER } from "@repo/shared";
-import { Container } from "@repo/theme";
+import { METRIC_ORDER, MetricName, REQUIRED_METRICS } from "@repo/shared";
+import { Color, Container, Select } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
-import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/FeedbackPopups";
+import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
 import { useReadTerms, useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import {
@@ -19,33 +26,26 @@ import {
   GET_COURSE_RATINGS,
   GET_SEMESTERS_WITH_RATINGS,
   GET_USER_RATINGS,
+  SemestersWithRatingsResponse,
 } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
+import { sortByTermDescending } from "@/lib/classes";
 
+import { RatingButton } from "./RatingButton";
+import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
 import styles from "./Ratings.module.scss";
+import UserRatingSummary from "./UserRatingSummary";
 import {
-  RatingButton,
-  RatingDetailProps,
-  RatingDetailView,
-  RatingUserSummary,
-  ratingDelete,
-  ratingSubmit,
-} from "./helper/RatingsContainerHelper";
-import {
+  MetricData,
   UserRating,
   checkConstraint,
   getMetricStatus,
   getStatusColor,
   isMetricRating,
-} from "./helper/metricsUtil";
-import { termSelectStyle } from "./helper/termSelectStyle";
+} from "./metricsUtil";
 
-{
-  /* // TODO: [CROWD-SOURCED-DATA] edge case: first semester a class is offered - user cannot submit a rating */
-}
-{
-  /* // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend */
-}
+// TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
+// TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
 
 interface AggregatedRatings {
   metrics: {
@@ -86,9 +86,6 @@ export function RatingsContainer() {
   // Get user's existing ratings
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS, {
     skip: !user,
-    onError: (error) => {
-      console.error("GET_USER_RATINGS error:", error);
-    },
   });
 
   const handleModalStateChange = useCallback(
@@ -140,9 +137,6 @@ export function RatingsContainer() {
           }
         : undefined,
     skip: !currentClass?.subject || !currentClass?.courseNumber,
-    onError: (error) => {
-      console.error("GET_COURSE_RATINGS error:", error);
-    },
   });
 
   // Create rating mutation
@@ -162,59 +156,67 @@ export function RatingsContainer() {
     ],
   });
 
-  const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS, {
-    onCompleted: (data) => {
-      setTermRatings(data.aggregatedRatings);
-    },
-    onError: (error) => {
-      console.error("GET_AGGREGATED_RATINGS error:", error);
-    },
-  });
+  const [getAggregatedRatings, { data: aggregatedRatingsData }] = useLazyQuery(
+    GET_AGGREGATED_RATINGS
+  );
+
+  useEffect(() => {
+    setTermRatings(aggregatedRatingsData as AggregatedRatings | null);
+  }, [aggregatedRatingsData]);
 
   // Get semesters with ratings
-  const { data: semestersWithRatings } = useQuery(GET_SEMESTERS_WITH_RATINGS, {
-    variables:
-      currentClass?.subject && currentClass?.courseNumber
-        ? {
-            subject: currentClass.subject,
-            courseNumber: currentClass.courseNumber,
-          }
-        : undefined,
-    skip: !currentClass?.subject || !currentClass?.courseNumber,
-  });
+  const { data: semestersWithRatingsData } =
+    useQuery<SemestersWithRatingsResponse>(GET_SEMESTERS_WITH_RATINGS, {
+      variables:
+        currentClass?.subject && currentClass?.courseNumber
+          ? {
+              subject: currentClass.subject,
+              courseNumber: currentClass.courseNumber,
+            }
+          : undefined,
+      skip: !currentClass?.subject || !currentClass?.courseNumber,
+    });
+
+  const semestersWithRatings = useMemo(() => {
+    if (!semestersWithRatingsData) return [];
+    return semestersWithRatingsData.semestersWithRatings.filter(
+      (sem) => sem.maxMetricCount > 0
+    );
+  }, [semestersWithRatingsData]);
 
   const availableTerms = useMemo(() => {
     if (!currentCourse.classes) return [];
 
-    return _.chain(currentCourse.classes)
-      .map((ClassData: any) => ({
-        value: `${ClassData.semester} ${ClassData.year}`,
-        label: `${ClassData.semester} ${ClassData.year}`,
-        semester: ClassData.semester as Semester,
-        year: ClassData.year,
-      }))
-      .uniqBy((term: any) => `${term.semester}-${term.year}`)
-      .orderBy(
-        [
-          "year",
-          (term: any) => {
-            const semesterOrder = {
-              [Semester.Spring]: 0,
-              [Semester.Summer]: 1,
-              [Semester.Fall]: 2,
-              [Semester.Winter]: 3,
-            };
-            return semesterOrder[term.semester as Semester];
-          },
-        ],
-        ["desc", "desc"]
-      )
+    return _.chain(currentCourse.classes.toSorted(sortByTermDescending))
+      .map((c) => {
+        let allInstructors = "";
+        if (c.primarySection) {
+          c.primarySection.meetings.forEach((m) => {
+            m.instructors.forEach((i) => {
+              if (!i.familyName || !i.givenName) return;
+              allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName.charAt(0)};`;
+            });
+          });
+          if (allInstructors.length === 0) allInstructors = "(No instructor)";
+          else
+            allInstructors = `(${allInstructors.substring(1, allInstructors.length - 1)})`;
+        }
+        return {
+          value: `${c.semester} ${c.year} ${c.number}`,
+          label: `${c.semester} ${c.year} ${allInstructors}`,
+          semester: c.semester as Semester,
+          year: c.year,
+        };
+      })
+      .uniqBy((term: any) => `${term.label}`)
       .value();
   }, [currentClass]);
 
   const userRatings = useMemo(() => {
+    // @ts-expect-error - need to fix types
     if (!userRatingsData?.userRatings?.classes) return null;
 
+    // @ts-expect-error - need to fix types
     const matchedRating = userRatingsData.userRatings.classes.find(
       (classRating: {
         subject: string;
@@ -233,7 +235,8 @@ export function RatingsContainer() {
     const metrics =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
-        : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+        : // @ts-expect-error - need to fix types
+          aggregatedRatings?.course?.aggregatedRatings?.metrics;
     if (
       !metrics ||
       !metrics.some(
@@ -265,7 +268,10 @@ export function RatingsContainer() {
         metric: metric.metricName,
         stats: allCategories,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
-        statusColor: getStatusColor(metric.metricName, metric.weightedAverage),
+        statusColor: getStatusColor(
+          metric.metricName,
+          metric.weightedAverage
+        ) as Color,
         reviewCount: metric.count,
         weightedAverage: metric.weightedAverage,
       };
@@ -274,6 +280,7 @@ export function RatingsContainer() {
 
   const hasRatings = useMemo(() => {
     const totalRatings =
+      // @ts-expect-error - need to fix types
       aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
         (total: number, metric: any) => total + metric.count,
         0
@@ -281,181 +288,319 @@ export function RatingsContainer() {
     return totalRatings > 0;
   }, [aggregatedRatings]);
 
+  const termSelectOptions = useMemo(() => {
+    const withDuplicates = availableTerms
+      .filter((term: Term) => {
+        // Filter for past terms
+        const termPosition = termsData?.find(
+          (t) => t.semester === term.semester && t.year === term.year
+        )?.temporalPosition;
+        const isValidTerm =
+          !termPosition ||
+          termPosition === TemporalPosition.Past ||
+          termPosition === TemporalPosition.Current;
+
+        // Filter for terms with ratings
+        const hasRatingsForTerm = semestersWithRatings?.some(
+          (s: { semester: Semester; year: number }) =>
+            s.semester === term.semester && s.year === term.year
+        );
+
+        console.log(term.semester, term.year, hasRatingsForTerm, isValidTerm);
+
+        return isValidTerm && hasRatingsForTerm;
+      })
+      .map((t) => ({
+        value: `${t.semester} ${t.year}`,
+        label: `${t.semester} ${t.year}`,
+      }));
+    return withDuplicates.filter(
+      (v) => withDuplicates.find((v2) => v2.value === v.value) === v
+    );
+  }, [availableTerms, semestersWithRatings]);
+
   // const ratingsCount = useMemo(
-  //   () => (ratingsData ? getRatingsCount(ratingsData) : 0),
+  //   () => (ratingsData ? ratingsData.reduce((acc, v) => acc + v.reviewCount, 0) : 0),
   //   [ratingsData]
   // );
 
-  return (
-    <div className={styles.root}>
-      <Container size="2">
-        {userRatings ? (
-          <RatingUserSummary
-            userRatings={userRatings}
-            onOpenModal={handleModalStateChange}
-            ratingDelete={() => setIsDeleteModalOpen(true)}
-          />
-        ) : (
-          <div></div>
-        )}
-        <div className={styles.header}>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            {hasRatings && !userRatings && (
-              <RatingButton
-                user={user}
-                onOpenModal={handleModalStateChange}
-                userRatingData={userRatingsData}
-                currentClass={currentClass}
-              />
-            )}
-            <div className={styles.termSelectWrapper}>
-              {hasRatings && (
-                <ReactSelect
-                  options={[
-                    { value: "all", label: "Overall Ratings" },
-                    ...availableTerms.filter((term: Term) => {
-                      // Filter for past terms
-                      const termPosition = termsData?.find(
-                        (t) =>
-                          t.semester === term.semester && t.year === term.year
-                      )?.temporalPosition;
-                      const isValidTerm =
-                        termPosition === TemporalPosition.Past ||
-                        termPosition === TemporalPosition.Current;
-
-                      // Filter for terms with ratings
-                      const hasRatingsForTerm =
-                        semestersWithRatings?.semestersWithRatings?.some(
-                          (s: { semester: Semester; year: number }) =>
-                            s.semester === term.semester && s.year === term.year
-                        );
-
-                      return isValidTerm && hasRatingsForTerm;
-                    }),
-                  ]}
-                  value={
-                    availableTerms.find(
-                      (term) => term.value === selectedTerm
-                    ) || {
-                      value: "all",
-                      label: "Overall Ratings",
-                    }
-                  }
-                  onChange={(option) => {
-                    // Handle both single option and multi-value cases
-                    const selectedValue =
-                      option && "value" in option ? option.value : "all";
-                    setSelectedTerm(selectedValue);
-                    if (selectedValue === "all") {
-                      setTermRatings(null);
-                    } else if (isSemester(selectedValue)) {
-                      const [semester, year] = selectedValue.split(" ");
-                      getAggregatedRatings({
-                        variables: {
-                          subject: currentClass.subject,
-                          courseNumber: currentClass.courseNumber,
-                          semester: semester,
-                          year: parseInt(year),
-                          classNumber: currentClass.number,
-                        },
-                      });
-                    }
-                  }}
-                  isClearable={true}
-                  placeholder="Select term"
-                  classNamePrefix="select"
-                  className={styles.termSelect}
-                  styles={termSelectStyle}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div
-          className={styles.ratingsContainer}
-          style={{
-            backgroundColor: !hasRatings
-              ? "transparent"
-              : "var(--foreground-color)",
-            boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
-            border: !hasRatings ? "none" : "1px solid var(--border-color)",
-          }}
-        >
-          {!hasRatings ? (
-            <div className={styles.emptyRatings}>
-              <p>This course doesn't have any reviews yet.</p>
-              <p>Be the first to share your experience!</p>
-              <RatingButton
-                user={user}
-                onOpenModal={handleModalStateChange}
-                userRatingData={userRatingsData}
-                currentClass={currentClass}
-              />
-            </div>
-          ) : (
-            ratingsData
-              ?.filter((ratingData) => isMetricRating(ratingData.metric))
-              .sort((a, b) => {
-                const indexA = METRIC_ORDER.indexOf(a.metric);
-                const indexB = METRIC_ORDER.indexOf(b.metric);
-                return indexA - indexB;
-              })
-              .map((ratingData) => (
-                <div className={styles.ratingSection} key={ratingData.metric}>
-                  <RatingDetailView {...ratingData} />
-                </div>
-              ))
-          )}
-        </div>
-
-        {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
-        {/* <div>
-          {hasRatings && ratingsData && selectedTerm !== "all" && (
-            <div className={styles.ratingsCountContainer}>
-              This semester has been rated by {ratingsCount} user
-              {ratingsCount !== 1 ? "s" : ""}
-            </div>
-          )}
-        </div> */}
-
-        <UserFeedbackModal
-          isOpen={isModalOpen}
-          onClose={() => handleModalStateChange(false)}
-          title={userRatings ? "Edit Rating" : "Rate Course"}
-          currentClass={currentClass}
-          availableTerms={availableTerms}
-          onSubmit={async (metricValues, termInfo) => {
-            try {
-              await ratingSubmit(
-                metricValues,
-                termInfo,
-                createRating,
-                deleteRating,
-                currentClass,
-                setIsModalOpen,
-                userRatings
+  const ratingSubmit = async (
+    metricValues: MetricData,
+    termInfo: { semester: Semester; year: number },
+    createRating: any,
+    deleteRating: any,
+    currentClass: any,
+    setModalOpen: Dispatch<SetStateAction<boolean>>,
+    currentRatings?: {
+      semester: string;
+      year: number;
+      metrics: Array<{ metricName: string; value: number }>;
+    } | null
+  ) => {
+    try {
+      const populatedMetrics = Object.keys(MetricName).filter(
+        (metric) =>
+          metricValues[MetricName[metric as keyof typeof MetricName]] !==
+            null &&
+          metricValues[MetricName[metric as keyof typeof MetricName]] !==
+            undefined
+      );
+      if (populatedMetrics.length === 0) {
+        throw new Error(`No populated metrics`);
+      }
+      const missingRequiredMetrics = REQUIRED_METRICS.filter(
+        (metric) => !populatedMetrics.includes(metric)
+      );
+      if (missingRequiredMetrics.length > 0) {
+        throw new Error(
+          `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
+        );
+      }
+      await Promise.all(
+        (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
+          (metric) => {
+            const value = metricValues[MetricName[metric]];
+            // If metric is not in populated metrics but was in current ratings, delete
+            if (!populatedMetrics.includes(metric)) {
+              const metricExists = currentRatings?.metrics?.some(
+                (m) => m.metricName === metric
               );
-            } catch (error) {
-              console.error("Error submitting rating:", error);
+              if (metricExists) {
+                return deleteRating({
+                  variables: {
+                    subject: currentClass.subject,
+                    courseNumber: currentClass.courseNumber,
+                    semester: termInfo.semester,
+                    year: termInfo.year,
+                    classNumber: currentClass.number,
+                    metricName: metric,
+                  },
+                  refetchQueries: [
+                    "GetClass",
+                    "GetUserRatings",
+                    "GetCourseRatings",
+                    "GetSemestersWithRatings",
+                  ],
+                });
+              }
+              // Skip if metric doesn't exist in current ratings
+              return Promise.resolve();
             }
-          }}
-          initialUserClass={userRatings}
-        />
+            // Check if the current rating value is different from the new value
+            if (
+              currentRatings?.semester === termInfo.semester &&
+              currentRatings?.year === termInfo.year
+            ) {
+              const currentMetric = currentRatings?.metrics.find(
+                (m) => m.metricName === metric
+              );
+              if (currentMetric?.value === value) {
+                return Promise.resolve();
+              }
+            }
+            return createRating({
+              variables: {
+                subject: currentClass.subject,
+                courseNumber: currentClass.courseNumber,
+                semester: termInfo.semester,
+                year: termInfo.year,
+                classNumber: currentClass.number,
+                metricName: metric,
+                value,
+              },
+              refetchQueries: [
+                "GetClass",
+                "GetUserRatings",
+                "GetCourseRatings",
+                "GetSemestersWithRatings",
+              ],
+              awaitRefetchQueries: true,
+            });
+          }
+        )
+      );
 
-        <DeleteRatingPopup
-          isOpen={isDeleteModalOpen}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-          }}
-          onConfirmDelete={async () => {
-            if (userRatings) {
-              await ratingDelete(userRatings, currentClass, deleteRating);
-            }
-          }}
-        />
-      </Container>
-    </div>
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error submitting ratings:", error);
+    }
+  };
+
+  const ratingDelete = async (
+    userRating: UserRating,
+    currentClass: any,
+    deleteRating: any
+  ) => {
+    const deletePromises = userRating.metrics.map((metric) =>
+      deleteRating({
+        variables: {
+          subject: currentClass.subject,
+          courseNumber: currentClass.courseNumber,
+          semester: userRating.semester,
+          year: userRating.year,
+          classNumber: currentClass.number,
+          metricName: metric.metricName,
+        },
+        refetchQueries: [
+          "GetClass",
+          "GetUserRatings",
+          "GetCourseRatings",
+          "GetSemestersWithRatings",
+        ],
+        awaitRefetchQueries: true,
+      })
+    );
+    await Promise.all(deletePromises);
+  };
+
+  return (
+    <>
+      {!hasRatings ? (
+        <div className={styles.placeholder}>
+          <UserStar width={32} height={32} strokeWidth={1.5} />
+          <p className={styles.heading}>No Course Ratings</p>
+          <p className={styles.paragraph}>
+            This course doesn't have any reviews yet.
+            <br />
+            Be the first to share your experience!
+          </p>
+          <RatingButton
+            user={user}
+            onOpenModal={handleModalStateChange}
+            userRatingData={userRatingsData}
+            currentClass={currentClass}
+          />
+        </div>
+      ) : (
+        <div className={styles.root}>
+          <Container size="2">
+            {userRatings ? (
+              <UserRatingSummary
+                userRatings={userRatings}
+                onOpenModal={handleModalStateChange}
+                ratingDelete={() => setIsDeleteModalOpen(true)}
+              />
+            ) : (
+              <div></div>
+            )}
+            <div className={styles.header}>
+              <div
+                style={{ display: "flex", gap: "12px", alignItems: "center" }}
+              >
+                {hasRatings && !userRatings && (
+                  <RatingButton
+                    user={user}
+                    onOpenModal={handleModalStateChange}
+                    userRatingData={userRatingsData}
+                    currentClass={currentClass}
+                  />
+                )}
+                <div className={styles.termSelectWrapper}>
+                  {hasRatings && (
+                    <Select
+                      options={[
+                        { value: "all", label: "Overall Ratings" },
+                        ...termSelectOptions,
+                      ]}
+                      value={selectedTerm}
+                      variant="foreground"
+                      onChange={async (selectedValue) => {
+                        if (Array.isArray(selectedValue) || !selectedValue)
+                          return; // ensure it is string
+                        setSelectedTerm(selectedValue);
+                        if (selectedValue === "all") {
+                          setTermRatings(null);
+                        } else if (isSemester(selectedValue)) {
+                          const [semester, year] = selectedValue.split(" ");
+                          const { data } = await getAggregatedRatings({
+                            variables: {
+                              subject: currentClass.subject,
+                              courseNumber: currentClass.courseNumber,
+                              semester: semester,
+                              year: parseInt(year),
+                            },
+                          });
+                          setTermRatings(data?.aggregatedRatings);
+                        }
+                      }}
+                      placeholder="Select term"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+            <div
+              className={styles.ratingsBody}
+              style={{
+                backgroundColor: !hasRatings
+                  ? "transparent"
+                  : "var(--foreground-color)",
+                boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
+                border: !hasRatings ? "none" : "1px solid var(--border-color)",
+              }}
+            >
+              {ratingsData
+                ?.filter((ratingData) => isMetricRating(ratingData.metric))
+                .sort((a, b) => {
+                  const indexA = METRIC_ORDER.indexOf(a.metric);
+                  const indexB = METRIC_ORDER.indexOf(b.metric);
+                  return indexA - indexB;
+                })
+                .map((ratingData) => (
+                  <div className={styles.ratingSection} key={ratingData.metric}>
+                    <RatingDetailView {...ratingData} />
+                  </div>
+                ))}
+            </div>
+            {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
+            {/* <div>
+              {hasRatings && ratingsData && (
+                <div className={styles.ratingsCountContainer}>
+                  This semester has been rated by {ratingsCount} user
+                  {ratingsCount !== 1 ? "s" : ""}
+                </div>
+              )}
+            </div> */}
+          </Container>
+        </div>
+      )}
+
+      <UserFeedbackModal
+        isOpen={isModalOpen}
+        onClose={() => handleModalStateChange(false)}
+        title={userRatings ? "Edit Rating" : "Rate Course"}
+        currentClass={currentClass}
+        availableTerms={availableTerms}
+        onSubmit={async (metricValues, termInfo) => {
+          try {
+            await ratingSubmit(
+              metricValues,
+              termInfo,
+              createRating,
+              deleteRating,
+              currentClass,
+              setIsModalOpen,
+              userRatings
+            );
+          } catch (error) {
+            console.error("Error submitting rating:", error);
+          }
+        }}
+        initialUserClass={userRatings}
+      />
+
+      <DeleteRatingPopup
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+        }}
+        onConfirmDelete={async () => {
+          if (userRatings) {
+            await ratingDelete(userRatings, currentClass, deleteRating);
+          }
+        }}
+      />
+    </>
   );
 }
 

@@ -1,22 +1,22 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Default",
   "compilerOptions": {
-    "composite": false,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "preserveWatchOutput": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
     "noFallthroughCasesInSwitch": true,
-  },
-  "exclude": ["node_modules"]
+    "noUncheckedSideEffectImports": true
+  }
 }

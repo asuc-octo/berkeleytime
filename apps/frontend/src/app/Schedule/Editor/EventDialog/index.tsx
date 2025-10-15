@@ -4,6 +4,7 @@ import { ArrowRight, Xmark } from "iconoir-react";
 
 import {
   Button,
+  DaySelect,
   Dialog,
   Flex,
   Heading,
@@ -111,22 +112,22 @@ export default function EventDialog({ children }: EventDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          <Flex p="4" direction="column" gap="4">
-            <Flex align="start" gap="4">
-              <Flex direction="column" gap="1" flexGrow="1">
-                <Dialog.Title asChild>
-                  <Heading>Add a custom event</Heading>
-                </Dialog.Title>
-                <Dialog.Description asChild>
-                  <Text>Insert a custom event in your schedule</Text>
-                </Dialog.Description>
-              </Flex>
-              <Dialog.Close asChild>
-                <IconButton>
-                  <Xmark />
-                </IconButton>
-              </Dialog.Close>
+          <Dialog.Header>
+            <Flex direction="column" gap="1" flexGrow="1">
+              <Dialog.Title asChild>
+                <Heading>Add a custom event</Heading>
+              </Dialog.Title>
+              <Dialog.Description asChild>
+                <Text>Insert a custom event in your schedule</Text>
+              </Dialog.Description>
             </Flex>
+            <Dialog.Close asChild>
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </Dialog.Header>
+          <Dialog.Body gap="3">
             <Flex direction="column" gap="2">
               <Label>Name</Label>
               <Input
@@ -139,7 +140,6 @@ export default function EventDialog({ children }: EventDialogProps) {
             <Flex direction="column" gap="2">
               <Label>Time</Label>
               <p className={styles.time}>
-                Time
                 <span className={styles.timeSelect}>
                   <input
                     type="time"
@@ -161,78 +161,7 @@ export default function EventDialog({ children }: EventDialogProps) {
             </Flex>
             <Flex direction="column" gap="2">
               <Label>Repeat</Label>
-              <div className={styles.daySelect}>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[6] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Su</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[0] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>M</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[1] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Tu</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[2] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>W</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[3] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Th</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[4] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>F</span>
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => {
-                      days[5] = e.target.checked;
-                      setDays(days);
-                    }}
-                  />
-                  <span>Sa</span>
-                </label>
-              </div>
+              <DaySelect days={days} updateDays={setDays} />
             </Flex>
             <Flex direction="column" gap="2">
               <Label>Description</Label>
@@ -243,11 +172,13 @@ export default function EventDialog({ children }: EventDialogProps) {
                 onChange={(event) => setDescription(event.target.value)}
               />
             </Flex>
-            <Button variant="solid" onClick={() => save()}>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button onClick={() => save()}>
               Add
               <ArrowRight />
             </Button>
-          </Flex>
+          </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>
     </Dialog.Root>

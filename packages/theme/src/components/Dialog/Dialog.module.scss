@@ -154,3 +154,21 @@
     opacity: 0;
   }
 }
+
+.header {
+  border-bottom: solid 1px var(--border-color);
+  align-items: center;
+}
+.headerTitle {
+  font-size: 20px;
+  color: var(--heading-color);
+  font-weight: 580;
+}
+.headerSubtitle {
+  color: var(--paragraph-color);
+  font-weight: 500;
+  font-size: 14px;
+}
+.footer {
+  border-top: solid 1px var(--border-color);
+}

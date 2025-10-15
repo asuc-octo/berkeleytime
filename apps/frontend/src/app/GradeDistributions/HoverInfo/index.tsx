@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
+import { ColoredSquare } from "@repo/theme";
+
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
-import { ColoredSquare } from "@/components/ColoredSquare";
 import { useReadCourseGradeDist } from "@/hooks/api";
 import { GradeDistribution, Semester } from "@/lib/api";
 
@@ -137,13 +138,13 @@ export default function HoverInfo({
       )}
       <div className={styles.label}>Course Average</div>
       <div className={styles.value}>
-        {courseGradeDist && gradeDistribution ? (
+        {courseGradeDist ? (
           <span>
             <AverageGrade
               style={GRADE_STYLE}
               gradeDistribution={courseGradeDist}
             />
-            ({gradeDistribution.average?.toFixed(3)})
+            ({courseGradeDist.average?.toFixed(3)})
           </span>
         ) : (
           "No data"
