@@ -20,7 +20,7 @@ export const GRADES = [...LETTER_GRADES, ...PASS_FAIL] as const;
 
 // gpa scale based on
 // https://reslife.berkeley.edu/gpa-calculator/
-export function getLetterGradeFromGPA(gpa: number): string {
+export function getLetterGradeFromAverage(gpa: number): string {
   if (gpa >= 4.0) return "A+";
   if (gpa > 3.7) return "A";
   if (gpa > 3.3) return "A-";
