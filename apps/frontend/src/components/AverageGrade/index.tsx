@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
+import { getLetterGradeFromAverage } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -42,34 +43,7 @@ export function AverageGrade({
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
   const text = useMemo(
-    () =>
-      !average
-        ? ""
-        : average > 4
-          ? "A+"
-          : average > 3.7
-            ? "A"
-            : average > 3.5
-              ? "A-"
-              : average > 3
-                ? "B+"
-                : average > 2.7
-                  ? "B"
-                  : average > 2.5
-                    ? "B-"
-                    : average > 2
-                      ? "C+"
-                      : average > 1.7
-                        ? "C"
-                        : average > 1.5
-                          ? "C-"
-                          : average > 1
-                            ? "D+"
-                            : average > 0.7
-                              ? "D"
-                              : average
-                                ? "D-"
-                                : "F",
+    () => (average ? getLetterGradeFromAverage(average) : ""),
     [average]
   );
 
