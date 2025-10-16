@@ -21,7 +21,7 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
-const LETTER_GRADES = new Set(LETTER_GRADE_ORDER);
+const LETTER_GRADES = new Set<string>(LETTER_GRADE_ORDER);
 
 const PASS_GRADES = new Set(["P", "S"]);
 const FAIL_GRADES = new Set(["NP", "U"]);
@@ -57,7 +57,10 @@ export function AverageGrade({
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
   const average = gradeDistribution?.average ?? null;
-  const distribution = gradeDistribution?.distribution ?? [];
+  const distribution = useMemo(
+    () => gradeDistribution?.distribution ?? [],
+    [gradeDistribution?.distribution]
+  );
 
   const hasLetterGrades = useMemo(
     () =>
