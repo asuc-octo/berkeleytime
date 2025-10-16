@@ -37,12 +37,39 @@ export enum Day {
   Saturday = "6",
 }
 
+export type Breadth = string;
+
 export const getLevel = (academicCareer: AcademicCareer, number: string) => {
   return academicCareer === AcademicCareer.Undergraduate
     ? number.match(/(\d)\d\d/)
       ? Level.UpperDivision
       : Level.LowerDivision
     : (academicCareers[academicCareer] as Level);
+};
+
+export const getBreadthRequirements = (sectionAttributes: any[]): Breadth[] => {
+  if (!sectionAttributes) return [];
+  
+  const geAttributes = sectionAttributes.filter(attr => 
+    attr.attribute?.code === "GE"
+  );
+  
+  const breadths = geAttributes
+    .map(attr => attr.value?.description)
+    .filter(Boolean);
+    
+  return breadths;
+};
+
+export const getAllBreadthRequirements = (classes: IClass[]): Breadth[] => {
+  const allBreadths = new Set<Breadth>();
+  
+  classes.forEach(_class => {
+    const breadths = getBreadthRequirements(_class.primarySection.sectionAttributes);
+    breadths.forEach(breadth => allBreadths.add(breadth));
+  });
+  
+  return Array.from(allBreadths).sort();
 };
 
 export const getFilteredClasses = (
@@ -52,7 +79,8 @@ export const getFilteredClasses = (
   currentLevels: Level[],
   currentDays: Day[],
   currentOpen: boolean,
-  currentOnline: boolean
+  currentOnline: boolean,
+  currentBreadths: Breadth[] = []
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -127,6 +155,20 @@ export const getFilteredClasses = (
         );
 
         if (!includesDays) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
+      }
+
+      // Filter by breadth requirements
+      if (currentBreadths.length > 0) {
+        const classBreadths = getBreadthRequirements(_class.primarySection.sectionAttributes);
+        const includesAllBreadths = currentBreadths.every(breadth => 
+          classBreadths.includes(breadth)
+        );
+
+        if (!includesAllBreadths) {
           acc.excludedClasses.push(_class);
 
           return acc;

@@ -22,6 +22,7 @@ import {
   Level,
   SortBy,
   Unit,
+  getAllBreadthRequirements,
   getFilteredClasses,
   getLevel,
 } from "../browser";
@@ -44,6 +45,8 @@ export default function Filters() {
     updateLevels,
     days,
     updateDays,
+    breadths,
+    updateBreadths,
     open,
     // updateOpen,
     online,
@@ -123,6 +126,10 @@ export default function Filters() {
     open,
     online,
   ]);
+
+  const filteredBreadths = useMemo(() => {
+    return getAllBreadthRequirements(includedClasses);
+  }, [includedClasses]);
 
   const filteredComponents = useMemo(() => {
     const filteredComponents = Object.keys(componentMap).reduce(
@@ -383,6 +390,20 @@ export default function Filters() {
               value: unit,
               label: unit,
               meta: filteredUnits[unit].toString(),
+            };
+          })}
+        />
+        <p className={styles.label}>BREADTH REQUIREMENTS</p>
+        <Select
+          multi
+          value={breadths}
+          onChange={(v) => {
+            if (Array.isArray(v)) updateBreadths(v);
+          }}
+          options={filteredBreadths.map((breadth) => {
+            return {
+              value: breadth,
+              label: breadth,
             };
           })}
         />
