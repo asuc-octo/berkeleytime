@@ -1,6 +1,7 @@
 import { ReactNode, useMemo, useState } from "react";
 
 import { ArrowRight, Xmark } from "iconoir-react";
+import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 import { Select } from "@repo/theme";
@@ -17,7 +18,7 @@ import {
 } from "@repo/theme";
 
 import { useCreateSchedule, useReadTerms } from "@/hooks/api";
-import { Semester } from "@/lib/api";
+import { Semester, TemporalPosition } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 
 interface CreateScheduleDialogProps {
@@ -43,17 +44,22 @@ export default function CreateScheduleDialog({
   const term = useMemo(() => {
     if (localTerm) return localTerm;
 
-    const defaultTerm = terms?.find(
-      (t) => t.semester === "Spring" && t.year === 2026
+    // Default to the current term
+    const currentTerm = terms?.find(
+      (term) => term.temporalPosition === TemporalPosition.Current
     );
 
-    if (defaultTerm) {
-      return `${defaultTerm.semester} ${defaultTerm.year}`;
-    }
+    // Fall back to the next term when the current term has ended
+    const nextTerm = terms
+      ?.filter((term) => term.startDate)
+      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
+      .find((term) => term.temporalPosition === TemporalPosition.Future);
 
-    if (!terms?.[0]) return;
+    const defaultTerm = currentTerm ?? nextTerm ?? terms?.[0];
 
-    return `${terms[0].semester} ${terms[0].year}`;
+    if (!defaultTerm) return;
+
+    return `${defaultTerm.semester} ${defaultTerm.year}`;
   }, [localTerm, terms]);
 
   const options = useMemo(
