@@ -1,3 +1,4 @@
+// TODO: refactor to match GradeDistribution/index.tsx
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
