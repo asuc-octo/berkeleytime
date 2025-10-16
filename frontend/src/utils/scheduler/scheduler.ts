@@ -175,8 +175,8 @@ export const serializeSchedule = (schedule: Schedule, semester: Semester): Backe
  * Generates iCal file string.
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
-	const SEMESTER_START = new Date(2025, 7, 27); // july 27th
-	const LAST_COURSE_DAY = new Date(2025, 11, 5); // dec 5th
+	const SEMESTER_START = new Date(2026, 0, 20); // jan 20th
+	const LAST_COURSE_DAY = new Date(2026, 4, 8); // may 8th
 
 	const dateToICal = (date: Date) => {
 		// Function to pad a number with leading zeros
