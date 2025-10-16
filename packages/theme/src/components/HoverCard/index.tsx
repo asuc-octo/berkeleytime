@@ -9,7 +9,7 @@ import styles from "./HoverCard.module.scss";
 
 interface Props {
   content: ReactNode;
-  data?: { label: string; value: string; color?: string }[];
+  data?: { label: string; value: string; color?: string; key?: string }[];
 }
 
 export type HoverCardProps = Props &
@@ -27,9 +27,14 @@ export function HoverCard({ content, data }: HoverCardProps) {
       description={
         data && (
           <Flex direction="column" className={styles.dataCont}>
-            {data?.map((d) => {
+            {data?.map((d, index) => {
               return (
-                <Flex direction="row" justify="between" className={styles.row}>
+                <Flex
+                  key={d.key ?? `${d.label}-${index}`}
+                  direction="row"
+                  justify="between"
+                  className={styles.row}
+                >
                   <span>
                     {d.color && (
                       <ColoredSquare

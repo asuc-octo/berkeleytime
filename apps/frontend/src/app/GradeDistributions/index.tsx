@@ -63,23 +63,27 @@ const fetchGradeDistribution = async (
 const transformGradeDistributionData = (
   filteredOutputs: Output[]
 ): Array<{ letter: string; [key: number]: number }> => {
-  return filteredOutputs?.reduce(
-    (acc, output, index) => {
-      output.gradeDistribution.distribution.forEach((grade) => {
-        const column = acc.find((item) => item.letter === grade.letter);
-        if (!column) return;
+  const letterMap = new Map<
+    string,
+    { letter: string; [key: number]: number }
+  >();
 
-        const percent = Math.round(grade.percentage * 1000) / 10;
-        column[index] = percent;
-      });
+  // Initialize map with all grade letters
+  GRADES.forEach((letter) => {
+    letterMap.set(letter, { letter });
+  });
 
-      return acc;
-    },
-    GRADES.map((letter) => ({ letter })) as {
-      letter: string;
-      [key: number]: number;
-    }[]
-  );
+  filteredOutputs?.forEach((output, index) => {
+    output.gradeDistribution.distribution.forEach((grade) => {
+      const column = letterMap.get(grade.letter);
+      if (!column) return;
+
+      const percent = Math.round(grade.percentage * 1000) / 10;
+      column[index] = percent;
+    });
+  });
+
+  return Array.from(letterMap.values());
 };
 
 const GradeDistributions = () => {
@@ -161,6 +165,7 @@ const GradeDistributions = () => {
                   width={730}
                   height={200}
                   data={data}
+                  onMouseLeave={() => setHoveredLetter(null)}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -182,6 +187,11 @@ const GradeDistributions = () => {
                         fillOpacity: 0.5,
                       }}
                       content={(props) => {
+                        // Update hovered letter based on tooltip position
+                        const letter = props.label?.toString() ?? null;
+                        if (letter !== hoveredLetter) {
+                          setHoveredLetter(letter);
+                        }
                         return (
                           <HoverCard
                             content={props.label}
@@ -211,7 +221,6 @@ const GradeDistributions = () => {
                       }
                       key={index}
                       name={`${output.input.subject} ${output.input.courseNumber}`}
-                      onMouseMove={(data) => setHoveredLetter(data.letter)}
                       radius={[
                         10 / filteredOutputs.length,
                         10 / filteredOutputs.length,

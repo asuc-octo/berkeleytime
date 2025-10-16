@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
@@ -8,7 +8,7 @@ import {
   Component,
   GET_CATALOG,
   GetCatalogResponse,
-  IClass,
+  ITerm,
   Semester,
 } from "@/lib/api";
 
@@ -24,12 +24,33 @@ import {
   getIndex,
 } from "./browser";
 import BrowserContext from "./browserContext";
+import { searchAndSortClasses } from "./searchAndSort";
+
+const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
+  [SortBy.Relevance]: "asc",
+  [SortBy.Units]: "asc",
+  [SortBy.AverageGrade]: "desc",
+  [SortBy.OpenSeats]: "desc",
+  [SortBy.PercentOpenSeats]: "desc",
+};
+
+const getEffectiveOrder = (
+  sortBy: SortBy,
+  reverse: boolean
+): "asc" | "desc" => {
+  const defaultOrder = DEFAULT_SORT_ORDER[sortBy] ?? "asc";
+
+  if (!reverse) return defaultOrder;
+
+  return defaultOrder === "asc" ? "desc" : "asc";
+};
 
 interface ClassBrowserProps {
   onSelect: (subject: string, courseNumber: string, number: string) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
+  terms?: ITerm[];
   persistent?: boolean;
 }
 
@@ -38,17 +59,21 @@ export default function ClassBrowser({
   responsive = true,
   semester: currentSemester,
   year: currentYear,
+  terms,
   persistent,
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [localQuery, setLocalQuery] = useState<string>("");
+  const [localQuery, setLocalQuery] = useState<string>(() =>
+    persistent ? (searchParams.get("query") ?? "") : ""
+  );
   const [localComponents, setLocalComponents] = useState<Component[]>([]);
   const [localUnits, setLocalUnits] = useState<Unit[]>([]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
+  const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
@@ -61,10 +86,7 @@ export default function ClassBrowser({
 
   const classes = useMemo(() => data?.catalog ?? [], [data]);
 
-  const query = useMemo(
-    () => (persistent ? (searchParams.get("query") ?? "") : localQuery),
-    [searchParams, localQuery, persistent]
-  );
+  const query = localQuery;
 
   const components = useMemo(
     () =>
@@ -127,6 +149,14 @@ export default function ClassBrowser({
     return localSortBy;
   }, [searchParams, localSortBy, persistent]);
 
+  const effectiveOrder = useMemo(
+    () => getEffectiveOrder(sortBy, localReverse),
+    [sortBy, localReverse]
+  );
+  useEffect(() => {
+    setLocalReverse(false);
+  }, [sortBy]);
+
   const open = useMemo(
     () => (persistent ? searchParams.has("open") : localOpen),
     [searchParams, localOpen, persistent]
@@ -153,63 +183,17 @@ export default function ClassBrowser({
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
-  const filteredClasses = useMemo(() => {
-    let filteredClasses = query
-      ? index
-          // Limit query because Fuse performance decreases linearly by
-          // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-          .search(query.slice(0, 24))
-          .map(({ refIndex }) => includedClasses[refIndex])
-      : includedClasses;
-
-    if (sortBy) {
-      // Clone the courses to avoid sorting in-place
-      filteredClasses = structuredClone(filteredClasses).sort((a, b) => {
-        if (sortBy === SortBy.AverageGrade) {
-          return b.course.gradeDistribution.average ===
-            a.course.gradeDistribution.average
-            ? 0
-            : b.course.gradeDistribution.average === null
-              ? -1
-              : a.course.gradeDistribution.average === null
-                ? 1
-                : b.course.gradeDistribution.average -
-                  a.course.gradeDistribution.average;
-        }
-
-        if (sortBy === SortBy.Units) {
-          return b.unitsMax - a.unitsMax;
-        }
-
-        if (sortBy === SortBy.OpenSeats) {
-          const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-            enrollment
-              ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
-              : 0;
-
-          return getOpenSeats(b) - getOpenSeats(a);
-        }
-
-        if (sortBy === SortBy.PercentOpenSeats) {
-          const getPercentOpenSeats = ({
-            primarySection: { enrollment },
-          }: IClass) =>
-            enrollment?.latest.maxEnroll
-              ? (enrollment.latest.maxEnroll -
-                  enrollment.latest.enrolledCount) /
-                enrollment.latest.maxEnroll
-              : 0;
-
-          return getPercentOpenSeats(b) - getPercentOpenSeats(a);
-        }
-
-        // Classes are by default sorted by relevance and number
-        return 0;
-      });
-    }
-
-    return filteredClasses;
-  }, [query, index, includedClasses, sortBy]);
+  const filteredClasses = useMemo(
+    () =>
+      searchAndSortClasses({
+        classes: includedClasses,
+        index,
+        query,
+        sortBy,
+        order: effectiveOrder,
+      }),
+    [includedClasses, index, query, sortBy, effectiveOrder]
+  );
 
   const updateArray = <T,>(
     key: string,
@@ -249,6 +233,7 @@ export default function ClassBrowser({
   };
 
   const updateSortBy = (value: SortBy) => {
+    setLocalReverse(false);
     if (persistent) {
       if (value === SortBy.Relevance) searchParams.delete("sortBy");
       else searchParams.set("sortBy", value);
@@ -261,14 +246,6 @@ export default function ClassBrowser({
   };
 
   const updateQuery = (query: string) => {
-    if (persistent) {
-      if (query) searchParams.set("query", query);
-      else searchParams.delete("query");
-      setSearchParams(searchParams, { replace: true });
-
-      return;
-    }
-
     setLocalQuery(query);
   };
 
@@ -283,6 +260,7 @@ export default function ClassBrowser({
         excludedClasses,
         year: currentYear,
         semester: currentSemester,
+        terms,
         query,
         components,
         units,
@@ -290,6 +268,8 @@ export default function ClassBrowser({
         days,
         online,
         open,
+        reverse: localReverse,
+        effectiveOrder,
         updateQuery,
         updateComponents: (components) =>
           updateArray("components", setLocalComponents, components),
@@ -302,6 +282,7 @@ export default function ClassBrowser({
           updateBoolean("online", setLocalOnline, online),
         setExpanded,
         loading,
+        updateReverse: setLocalReverse,
       }}
     >
       <div

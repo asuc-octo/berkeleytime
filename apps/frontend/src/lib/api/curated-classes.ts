@@ -87,6 +87,11 @@ export const READ_CURATED_CLASS = gql`
           title
           gradeDistribution {
             average
+            distribution {
+              letter
+              percentage
+              count
+            }
           }
           academicCareer
         }
@@ -147,6 +152,11 @@ export const CREATE_CURATED_CLASS = gql`
           title
           gradeDistribution {
             average
+            distribution {
+              letter
+              percentage
+              count
+            }
           }
           academicCareer
         }
@@ -210,6 +220,11 @@ export const UPDATE_CURATED_CLASS = gql`
           title
           gradeDistribution {
             average
+            distribution {
+              letter
+              percentage
+              count
+            }
           }
           academicCareer
         }
@@ -270,6 +285,11 @@ export const DELETE_CURATED_CLASS = gql`
           title
           gradeDistribution {
             average
+            distribution {
+              letter
+              percentage
+              count
+            }
           }
           academicCareer
         }
@@ -330,6 +350,11 @@ export const READ_CURATED_CLASSES = gql`
           title
           gradeDistribution {
             average
+            distribution {
+              letter
+              percentage
+              count
+            }
           }
           academicCareer
         }

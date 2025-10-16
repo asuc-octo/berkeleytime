@@ -16,10 +16,6 @@ import useClass from "@/hooks/useClass";
 
 import styles from "./Enrollment.module.scss";
 
-// import Reservations from "./Reservations";
-
-// import Reservations from "./Reservations";
-
 export default function Enrollment() {
   const { class: _class } = useClass();
 
@@ -100,11 +96,6 @@ export default function Enrollment() {
           Average
         </div>
       </div>
-      {/* { _class.primarySection.enrollment && <Reservations
-        enrolledCount={_class.primarySection.enrollment.latest.enrolledCount}
-        maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
-        reservations={_class.primarySection.enrollment.seatReservationTypes}
-      /> } */}
     </div>
   );
 }

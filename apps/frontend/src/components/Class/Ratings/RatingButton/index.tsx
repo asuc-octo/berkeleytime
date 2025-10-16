@@ -36,11 +36,7 @@ export const RatingButton = memo(
     } else {
       const redirectPath = `${window.location.pathname}${checkConstraint(userRatingData, currentClass) ? "?feedbackModal=true" : ""}`;
       return (
-        <Button
-          variant="secondary"
-          onClick={() => signIn(redirectPath)}
-          className={styles.ratingButton}
-        >
+        <Button variant="secondary" onClick={() => signIn(redirectPath)}>
           Sign in to add ratings
           <ArrowRight />
         </Button>

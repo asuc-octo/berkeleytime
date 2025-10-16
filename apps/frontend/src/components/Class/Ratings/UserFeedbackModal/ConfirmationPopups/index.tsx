@@ -82,7 +82,12 @@ export function DeleteRatingPopup({
           </Dialog.Body>
           <Dialog.Footer>
             {!isDeleting && (
-              <Button onClick={onClose} variant="tertiary" isDelete>
+              <Button
+                onClick={onClose}
+                variant="tertiary"
+                style={{ color: "var(--paragraph-color)" }}
+                isDelete
+              >
                 No, keep my rating
               </Button>
             )}

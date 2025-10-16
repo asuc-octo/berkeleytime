@@ -283,6 +283,39 @@ export default function Filters({
             </div>
           );
         })}
+        <p className={styles.label}>Level</p>
+        {Object.values(Level).map((level) => {
+          const active = currentLevels.includes(level as Level);
+
+          const key = `level-${level}`;
+
+          return (
+            <div className={styles.filter} key={key}>
+              <Checkbox.Root
+                className={styles.checkbox}
+                checked={active}
+                id={key}
+                onCheckedChange={(checked) =>
+                  update(
+                    "levels",
+                    currentLevels,
+                    setCurrentLevels,
+                    level,
+                    checked as boolean
+                  )
+                }
+              >
+                <Checkbox.Indicator asChild>
+                  <Check width={12} height={12} />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              <label className={styles.text} htmlFor={key}>
+                <span className={styles.value}>{level}</span>
+                {!active && ` (${filteredLevels[level].toLocaleString()})`}
+              </label>
+            </div>
+          );
+        })}
         <p className={styles.label}>Semester</p>
         {Object.values(Semester).map((semester) => {
           const active = currentSemesters.includes(semester as Semester);
@@ -317,6 +350,7 @@ export default function Filters({
             </div>
           );
         })}
+
         <p className={styles.label}>Kind</p>
         {Object.keys(filteredInstructionMethods)
           .slice(0, expanded ? undefined : 5)
