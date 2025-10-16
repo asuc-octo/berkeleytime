@@ -5,7 +5,7 @@ import { ColoredSquare } from "@repo/theme";
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
 import { useReadCourseGradeDist } from "@/hooks/api";
 import { GradeDistribution, Semester } from "@/lib/api";
-import { GRADES } from "@/lib/grades";
+import { LETTER_GRADES } from "@/lib/grades";
 
 import styles from "./HoverInfo.module.scss";
 
@@ -73,7 +73,16 @@ export default function HoverInfo({
       (acc, g) => acc + g.count,
       0
     );
-    GRADES.reduce((acc, grade) => {
+    if (hoveredLetter === "NP" || hoveredLetter === "P")
+      return {
+        lower: "N/A",
+        upper: "N/A",
+        count:
+          gradeDistribution.distribution.find((g) => g.letter === hoveredLetter)
+            ?.count ?? 0,
+        total: ret.total,
+      };
+    LETTER_GRADES.reduce((acc, grade) => {
       if (grade === hoveredLetter)
         ret.upper = addOrdinalSuffix(
           (((ret.total - acc) * 100) / ret.total).toFixed(0)
