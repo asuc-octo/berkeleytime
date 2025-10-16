@@ -71,7 +71,7 @@ PAST_SEMESTERS = [
     {'semester': 'spring', 'year': '2024', 'display': 'Spring 2024'},
     {'semester': 'fall', 'year': '2024', 'display': 'Fall 2024'},
     {'semester': 'spring', 'year': '2025', 'display': 'Spring 2025'},
-    # {'semester': 'fall', 'year': '2025', 'display': 'Fall 2025'},
+    {'semester': 'fall', 'year': '2025', 'display': 'Fall 2025'},
 ]
 
 PAST_SEMESTERS_SIS = [
