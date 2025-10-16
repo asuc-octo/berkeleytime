@@ -4,4 +4,3 @@ data/
 .env
 coverage/
 .DS_Store
-src/modules/discussion/
