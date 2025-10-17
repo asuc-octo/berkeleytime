@@ -8,13 +8,13 @@
   }  
 
 .primary {
-    width: 50%;
+    flex: 1;
     justify-content: center;
     padding: 1.25rem 1rem;
     gap: 0.625rem;
   }
 .majorSearch {
-    width: 100%;
+    width:100%;
     text-align: start;
     color: var(--paragraph-color);
     background-color: var(--foreground-color);
@@ -27,7 +27,7 @@
   
   
 .secondary {
-    width: 50%;
+    flex: 1;
     justify-content: center;
     padding: 1.25rem 1rem;
     gap: 0.625rem;
