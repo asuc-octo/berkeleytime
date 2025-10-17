@@ -13,6 +13,18 @@
     padding: 1.25rem 1rem;
     gap: 0.625rem;
   }
+.majorSearch {
+    width: 100%;
+    text-align: start;
+    color: var(--paragraph-color);
+    background-color: var(--foreground-color);
+    border-color: var(--border-color)
+
+    input {
+      color: var(--paragraph-color) !important
+    }
+  }
+  
   
 .secondary {
     width: 50%;
