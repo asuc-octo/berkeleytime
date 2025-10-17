@@ -37,12 +37,57 @@ export enum Day {
   Saturday = "6",
 }
 
+export type Breadth = string;
+export type UniversityRequirement = string;
+
 export const getLevel = (academicCareer: AcademicCareer, number: string) => {
   return academicCareer === AcademicCareer.Undergraduate
     ? number.match(/(\d)\d\d/)
       ? Level.UpperDivision
       : Level.LowerDivision
     : (academicCareers[academicCareer] as Level);
+};
+
+export const getBreadthRequirements = (sectionAttributes: any[]): Breadth[] => {
+  if (!sectionAttributes) return [];
+  
+  const geAttributes = sectionAttributes.filter(attr => 
+    attr.attribute?.code === "GE"
+  );
+  
+  const breadths = geAttributes
+    .map(attr => attr.value?.description)
+    .filter(Boolean);
+    
+  return breadths;
+};
+
+export const getAllBreadthRequirements = (classes: IClass[]): Breadth[] => {
+  const allBreadths = new Set<Breadth>();
+  
+  classes.forEach(_class => {
+    const breadths = getBreadthRequirements(_class.primarySection.sectionAttributes);
+    breadths.forEach(breadth => allBreadths.add(breadth));
+  });
+  
+  return Array.from(allBreadths).sort();
+};
+
+export const getUniversityRequirements = (requirementDesignation: any): UniversityRequirement[] => {
+  if (!requirementDesignation) return [];
+  
+  return [requirementDesignation].filter(Boolean);
+};
+
+export const getAllUniversityRequirements = (classes: IClass[]): UniversityRequirement[] => {
+  const allRequirements = new Set<UniversityRequirement>();
+  
+  classes.forEach(_class => {
+    const requirements = getUniversityRequirements(_class.requirementDesignation);
+    requirements.forEach(req => allRequirements.add(req));
+  });
+  
+  return Array.from(allRequirements).sort();
 };
 
 export const getFilteredClasses = (
@@ -52,7 +97,9 @@ export const getFilteredClasses = (
   currentLevels: Level[],
   currentDays: Day[],
   currentOpen: boolean,
-  currentOnline: boolean
+  currentOnline: boolean,
+  currentBreadths: Breadth[] = [],
+  currentUniversityRequirement: UniversityRequirement | null = null
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -127,6 +174,32 @@ export const getFilteredClasses = (
         );
 
         if (!includesDays) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
+      }
+
+      // Filter by breadth requirements
+      if (currentBreadths.length > 0) {
+        const classBreadths = getBreadthRequirements(_class.primarySection.sectionAttributes);
+        const includesAllBreadths = currentBreadths.every(breadth => 
+          classBreadths.includes(breadth)
+        );
+
+        if (!includesAllBreadths) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
+      }
+
+      // Filter by university requirement
+      if (currentUniversityRequirement) {
+        const classRequirements = getUniversityRequirements(_class.requirementDesignation);
+        const hasRequirement = classRequirements.includes(currentUniversityRequirement);
+
+        if (!hasRequirement) {
           acc.excludedClasses.push(_class);
 
           return acc;

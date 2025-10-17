@@ -161,6 +161,18 @@ export interface ISection {
   online: boolean;
   attendanceRequired: boolean;
   lecturesRecorded: boolean;
+  sectionAttributes: {
+    attribute: {
+      code: string;
+      description: string;
+      formalDescription: string;
+    };
+    value: {
+      code: string;
+      description: string;
+      formalDescription: string;
+    };
+  }[];
 }
 
 export interface IMeeting {
@@ -197,6 +209,7 @@ export interface IClass {
   title: string | null;
   unitsMax: number;
   unitsMin: number;
+  requirementDesignation?: string;
 }
 
 export interface ReadClassResponse {
@@ -381,6 +394,18 @@ export const GET_CATALOG = gql`
         instructionMode
         attendanceRequired
         lecturesRecorded
+        sectionAttributes {
+          attribute {
+            code
+            description
+            formalDescription
+          }
+          value {
+            code
+            description
+            formalDescription
+          }
+        }
         enrollment {
           latest {
             status
@@ -408,6 +433,7 @@ export const GET_CATALOG = gql`
         }
         academicCareer
       }
+      requirementDesignation
     }
   }
 `;

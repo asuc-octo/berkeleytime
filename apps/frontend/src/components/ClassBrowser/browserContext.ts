@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, createContext } from "react";
 
 import { Component, IClass, ITerm, Semester } from "@/lib/api";
 
-import { Day, Level, SortBy, Unit } from "./browser";
+import { Breadth, Day, Level, SortBy, Unit, UniversityRequirement } from "./browser";
 
 export interface BrowserContextType {
   responsive: boolean;
@@ -19,6 +19,8 @@ export interface BrowserContextType {
   units: Unit[];
   levels: Level[];
   days: Day[];
+  breadths: Breadth[];
+  universityRequirement: UniversityRequirement | null;
   online: boolean;
   sortBy: SortBy;
   open: boolean;
@@ -28,6 +30,8 @@ export interface BrowserContextType {
   updateUnits: Dispatch<Unit[]>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
+  updateBreadths: Dispatch<Breadth[]>;
+  updateUniversityRequirement: Dispatch<UniversityRequirement | null>;
   updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
   updateOpen: Dispatch<boolean>;
