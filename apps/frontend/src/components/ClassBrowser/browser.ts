@@ -38,6 +38,7 @@ export enum Day {
 }
 
 export type Breadth = string;
+export type UniversityRequirement = string;
 
 export const getLevel = (academicCareer: AcademicCareer, number: string) => {
   return academicCareer === AcademicCareer.Undergraduate
@@ -72,6 +73,23 @@ export const getAllBreadthRequirements = (classes: IClass[]): Breadth[] => {
   return Array.from(allBreadths).sort();
 };
 
+export const getUniversityRequirements = (requirementDesignation: any): UniversityRequirement[] => {
+  if (!requirementDesignation) return [];
+  
+  return [requirementDesignation].filter(Boolean);
+};
+
+export const getAllUniversityRequirements = (classes: IClass[]): UniversityRequirement[] => {
+  const allRequirements = new Set<UniversityRequirement>();
+  
+  classes.forEach(_class => {
+    const requirements = getUniversityRequirements(_class.requirementDesignation);
+    requirements.forEach(req => allRequirements.add(req));
+  });
+  
+  return Array.from(allRequirements).sort();
+};
+
 export const getFilteredClasses = (
   classes: IClass[],
   currentComponents: Component[],
@@ -80,7 +98,8 @@ export const getFilteredClasses = (
   currentDays: Day[],
   currentOpen: boolean,
   currentOnline: boolean,
-  currentBreadths: Breadth[] = []
+  currentBreadths: Breadth[] = [],
+  currentUniversityRequirement: UniversityRequirement | null = null
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -169,6 +188,18 @@ export const getFilteredClasses = (
         );
 
         if (!includesAllBreadths) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
+      }
+
+      // Filter by university requirement
+      if (currentUniversityRequirement) {
+        const classRequirements = getUniversityRequirements(_class.requirementDesignation);
+        const hasRequirement = classRequirements.includes(currentUniversityRequirement);
+
+        if (!hasRequirement) {
           acc.excludedClasses.push(_class);
 
           return acc;

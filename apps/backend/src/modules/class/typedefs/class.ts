@@ -48,6 +48,7 @@ export default gql`
     title: String
     unitsMax: Float!
     unitsMin: Float!
+    requirementDesignation: String
   }
 
   enum ClassFinalExam {

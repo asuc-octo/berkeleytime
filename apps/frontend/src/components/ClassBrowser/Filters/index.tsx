@@ -23,6 +23,7 @@ import {
   SortBy,
   Unit,
   getAllBreadthRequirements,
+  getAllUniversityRequirements,
   getFilteredClasses,
   getLevel,
 } from "../browser";
@@ -47,6 +48,8 @@ export default function Filters() {
     updateDays,
     breadths,
     updateBreadths,
+    universityRequirement,
+    updateUniversityRequirement,
     open,
     // updateOpen,
     online,
@@ -129,6 +132,10 @@ export default function Filters() {
 
   const filteredBreadths = useMemo(() => {
     return getAllBreadthRequirements(includedClasses);
+  }, [includedClasses]);
+
+  const filteredUniversityRequirements = useMemo(() => {
+    return getAllUniversityRequirements(includedClasses);
   }, [includedClasses]);
 
   const filteredComponents = useMemo(() => {
@@ -393,7 +400,7 @@ export default function Filters() {
             };
           })}
         />
-        <p className={styles.label}>BREADTH REQUIREMENTS</p>
+        <p className={styles.label}>L&S REQUIREMENTS</p>
         <Select
           multi
           value={breadths}
@@ -406,6 +413,22 @@ export default function Filters() {
               label: breadth,
             };
           })}
+        />
+        <p className={styles.label}>UNIVERSITY REQUIREMENTS</p>
+        <Select
+          value={universityRequirement}
+          onChange={(v) => {
+            updateUniversityRequirement(v as string | null);
+          }}
+          options={[
+            { value: null, label: "None" },
+            ...filteredUniversityRequirements.map((requirement) => {
+              return {
+                value: requirement,
+                label: requirement,
+              };
+            })
+          ]}
         />
         <p className={styles.label}>DAY</p>
         <DaySelect

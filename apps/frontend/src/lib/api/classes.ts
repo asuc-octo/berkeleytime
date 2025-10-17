@@ -209,6 +209,7 @@ export interface IClass {
   title: string | null;
   unitsMax: number;
   unitsMin: number;
+  requirementDesignation?: string;
 }
 
 export interface ReadClassResponse {
@@ -432,6 +433,7 @@ export const GET_CATALOG = gql`
         }
         academicCareer
       }
+      requirementDesignation
     }
   }
 `;
