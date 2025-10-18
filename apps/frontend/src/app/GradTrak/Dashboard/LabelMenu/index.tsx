@@ -140,6 +140,15 @@ export default function LabelMenu({
   const handleCancel = () => {
     setEditingLabels(labels);
     onOpenChange(false);
+    setTmpLabel({ name: "", color: Color.gray });
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setEditingLabels(labels);
+      setTmpLabel({ name: "", color: Color.gray });
+    }
+    onOpenChange(open);
   };
 
   const handleColorSelect = (labelIndex: number, color: Color) => {
@@ -167,7 +176,7 @@ export default function LabelMenu({
   }, [showColorPicker]);
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Overlay />
       <Dialog.Card className={styles.labelDialog}>
         <Dialog.Header title="Labels" hasCloseButton />
