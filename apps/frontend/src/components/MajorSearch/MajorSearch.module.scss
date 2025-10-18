@@ -1,0 +1,103 @@
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.625rem 1rem 0.625rem 2.5rem; // left padding for icon space
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: var(--heading-color);
+
+  &::placeholder {
+    color: var(--paragraph-color);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--button-active-color);
+  }
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  color: var(--paragraph-color);
+  pointer-events: none;
+}
+
+.section {
+  padding: 0.5rem 0;
+
+  h2 {
+    padding: 0 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--heading-color);
+    margin-bottom: 0.25rem;
+  }
+}
+
+.recentCourses {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.25rem 1rem 0.5rem;
+  overflow-x: auto;
+}
+
+.catalogList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0 0.5rem;
+}
+
+.catalogItem {
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0.625rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--paragraph-color);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    background-color: var(--background-color);
+  }
+
+  span {
+    font-weight: 500;
+  }
+}
+
+.dropdownPanel {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  margin-top: 0.25rem;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10;
+  position: absolute;
+  width: 38%;
+  display: flex;
+  flex-direction: column;
+  scrollbar-color: var(--label-color) var(--foreground-color);
+}
+
+.loading {
+  margin: 50px auto;
+}

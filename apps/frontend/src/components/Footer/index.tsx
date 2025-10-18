@@ -94,6 +94,9 @@ export default function Footer({ invert }: FooterProps) {
             <Link to="/scheduler" className={styles.link}>
               My schedules
             </Link>
+            <Link to="/gradtrak" className={styles.link}>
+              Gradtrak
+            </Link>
             <Link to="/grades" className={styles.link}>
               Grades
             </Link>

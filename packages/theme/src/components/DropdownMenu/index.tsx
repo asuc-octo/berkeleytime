@@ -14,9 +14,39 @@ function Content({ className, ...props }: Primitive.DropdownMenuContentProps) {
   );
 }
 
-function Item({ className, ...props }: Primitive.DropdownMenuItemProps) {
+type ItemProps = Primitive.DropdownMenuItemProps & { isDelete?: boolean };
+
+function Item({ className, isDelete = false, ...props }: ItemProps) {
   return (
-    <Primitive.Item {...props} className={classNames(styles.item, className)} />
+    <Primitive.Item
+      {...props}
+      className={classNames(
+        styles.item,
+        { [styles.delete]: isDelete },
+        className
+      )}
+    />
+  );
+}
+
+function SubTrigger(props: Primitive.DropdownMenuSubTriggerProps) {
+  return (
+    <Primitive.SubTrigger {...props} className={classNames(styles.item)} />
+  );
+}
+
+function SubContent({
+  className,
+  ...props
+}: Primitive.DropdownMenuSubContentProps) {
+  return (
+    <Primitive.Portal>
+      <Primitive.SubContent
+        {...props}
+        className={styles.content}
+        style={{ left: 0 }}
+      />
+    </Primitive.Portal>
   );
 }
 
@@ -24,4 +54,6 @@ export const DropdownMenu = {
   ...Primitive,
   Item,
   Content,
+  SubTrigger,
+  SubContent,
 };

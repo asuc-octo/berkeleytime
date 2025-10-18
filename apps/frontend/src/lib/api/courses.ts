@@ -57,6 +57,16 @@ export const READ_COURSE_TITLE = gql`
   }
 `;
 
+export const READ_COURSE_UNITS = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      classes {
+        unitsMax
+      }
+    }
+  }
+`;
+
 export const READ_COURSE = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {

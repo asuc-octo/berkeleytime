@@ -32,3 +32,28 @@ export function Badge({ label, color, icon, style, ...props }: BadgeProps) {
     </span>
   );
 }
+export function BadgeLabel({
+  label,
+  color,
+  icon,
+  style,
+  ...props
+}: BadgeProps) {
+  return (
+    <span
+      className={styles.root}
+      style={{
+        color: `var(--${color}-500)`,
+        backgroundColor: `var(--${color}-500-20)`,
+        border: "none",
+        ...style,
+      }}
+      {...props}
+    >
+      <Flex direction="row" gap="4px">
+        {label}
+        {icon && icon}
+      </Flex>
+    </span>
+  );
+}

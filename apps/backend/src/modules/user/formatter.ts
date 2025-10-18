@@ -19,5 +19,7 @@ export const formatUser = (user: UserType) => {
     student: user.email.endsWith("@berkeley.edu"),
     bookmarkedCourses: user.bookmarkedCourses,
     bookmarkedClasses: user.bookmarkedClasses,
+    majors: user.majors ? user.majors : [],
+    minors: user.minors ? user.minors : []
   } as IntermediateUser;
 };
