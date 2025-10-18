@@ -40,7 +40,7 @@ function AddClass({
         ? index
             .search(term.slice(0, 24))
             .map(({ refIndex }) => catalogCourses[refIndex])
-        : catalogCourses;
+        : [];
 
     setFilteredClasses(filtered);
   };
@@ -53,7 +53,7 @@ function AddClass({
   };
 
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <SearchBar
         isOpen={isOpen}
         setIsOpen={setIsOpen}

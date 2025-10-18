@@ -1,10 +1,9 @@
+
 import { useState } from "react";
-
 import { Separator } from "@radix-ui/themes";
-
-import { Box, Button, Container, Flex, Select } from "@repo/theme";
-
+import { Box, Button, Container, Flex } from "@repo/theme";
 import DotsIndicator from "../DotsIndicator";
+import MajorSearch from "@/components/MajorSearch";
 import styles from "./AddDegree.module.scss";
 import DEGREES from "./degree-programs-types.json";
 
@@ -20,31 +19,19 @@ type AddDegreeProps = {
 
 export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
   const optionType = isMajor ? "Major" : "Minor";
-  const [selectedDegree, setSelectedDegree] = useState<string | null>(null);
-  const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>(
-    []
-  );
-  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>(
-    []
-  );
+  const [selectedDegree, setSelectedDegree] = useState<DegreeOption | null>(null);
+  const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>([]);
+  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>([]);
 
-  const majorOptions = DEGREES.majors.map((degree) => ({
-    label: degree,
-    value: degree,
-  }));
-
-  const minorOptions = DEGREES.minors.map((degree) => ({
-    label: degree,
-    value: degree,
-  }));
+  const majorOptions = DEGREES.majors;
+  const minorOptions = DEGREES.minors;
 
   const handleAddDegree = () => {
     if (
       selectedDegree &&
-      !selectedDegreeList.some((degree) => degree.value === selectedDegree)
+      !selectedDegreeList.some((degree) => degree.value === selectedDegree.value)
     ) {
-      const newDegree = { label: selectedDegree, value: selectedDegree };
-      setSelectedDegreeList([...selectedDegreeList, newDegree]);
+      setSelectedDegreeList([...selectedDegreeList, selectedDegree]);
       setSelectedDegree(null);
     }
   };
@@ -52,10 +39,9 @@ export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
   const handleAddMinor = () => {
     if (
       selectedDegree &&
-      !selectedMinorList.some((degree) => degree.value === selectedDegree)
+      !selectedMinorList.some((degree) => degree.value === selectedDegree.value)
     ) {
-      const newMinor = { label: selectedDegree, value: selectedDegree };
-      setSelectedMinorList([...selectedMinorList, newMinor]);
+      setSelectedMinorList([...selectedMinorList, selectedDegree]);
       setSelectedDegree(null);
     }
   };
@@ -84,17 +70,13 @@ export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
     onNext(isMajor ? selectedDegreeList : selectedMinorList);
   };
 
-  const DegreeSelect = () => (
-    <div className={styles.degreeSelect}>
-      <Select
-        options={isMajor ? majorOptions : minorOptions}
-        clearable={true}
-        placeholder={`Search for a ${optionType.toLowerCase()}...`}
-        value={selectedDegree}
-        onChange={(newValue) => setSelectedDegree(newValue as string | null)}
-      />
-    </div>
-  );
+  const handleDegreeSelect = (degree: DegreeOption) => {
+    setSelectedDegree(degree);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedDegree(null);
+  };
 
   return (
     <Box p="5">
@@ -110,13 +92,22 @@ export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
             </Flex>
 
             <Flex direction="column" align="start" gap="16px" width="100%">
-              <DegreeSelect />
+              <div className={styles.majorSearch}>
+              <MajorSearch
+                onSelect={handleDegreeSelect}
+                onClear={handleClearSelection}
+                selectedDegree={selectedDegree}
+                degrees={isMajor ? majorOptions : minorOptions}
+                placeholder={`Search for a ${optionType.toLowerCase()}...`}
+              />
+              </div>
               <a>Don't see your {optionType.toLowerCase()}?</a>
               {isMajor && (
                 <Button
                   className={styles.addButton}
                   variant="tertiary"
                   onClick={handleAddDegree}
+                  disabled={!selectedDegree}
                 >
                   Add
                 </Button>
@@ -126,6 +117,7 @@ export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
                   className={styles.addButton}
                   variant="tertiary"
                   onClick={handleAddMinor}
+                  disabled={!selectedDegree}
                 >
                   Add
                 </Button>
