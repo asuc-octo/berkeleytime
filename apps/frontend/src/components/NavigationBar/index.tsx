@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { ArrowRight, Menu, User } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
 
-import { Button, IconButton, MenuItem } from "@repo/theme";
+import { Button, Flex, IconButton, MenuItem } from "@repo/theme";
 
 import { useReadUser } from "@/hooks/api";
 import { signIn } from "@/lib/api";
@@ -18,7 +18,10 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
   const { data: user } = useReadUser();
 
   return (
-    <div
+    <Flex
+      align="center"
+      flexShrink="0"
+      gap="3"
       className={classNames(styles.root, {
         [styles.invert]: invert,
       })}
@@ -91,6 +94,6 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
           <Pin />
         </IconButton>
       </PinsDrawer> */}
-    </div>
+    </Flex>
   );
 }

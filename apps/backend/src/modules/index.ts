@@ -4,6 +4,7 @@ import Catalog from "./catalog";
 import Class from "./class";
 import Common from "./common";
 import Course from "./course";
+import CuratedClasses from "./curated-classes";
 import Enrollment from "./enrollment";
 import Plan from "./plan";
 import GradeDistribution from "./grade-distribution";
@@ -16,6 +17,7 @@ const modules = [
   User,
   GradeDistribution,
   Catalog,
+  CuratedClasses,
   Common,
   Schedule,
   Term,

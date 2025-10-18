@@ -17,4 +17,11 @@ jobs:
           script: |
             set -e  # Exit immediately if a command fails
 
-            echo "not implemented yet"
+            # Create Mongo job from mongo-reset
+            kubectl create job --from=cronjob/bt-base-reset-dev-mongo bt-base-reset-dev-mongo-ga-manual
+            echo "MongoDB reset scheduled."
+
+            # Wait for job_pod log output
+            job_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-base-reset-dev-mongo-ga-manual')
+            kubectl wait --for=condition=ready pod/$job_pod -n bt --timeout=30s
+            kubectl logs -f $job_pod -n bt

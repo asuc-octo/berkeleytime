@@ -1,5 +1,7 @@
 import { Outlet } from "react-router";
 
+import { Flex } from "@repo/theme";
+
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 
@@ -14,14 +16,14 @@ interface LayoutProps {
 
 export default function Layout({ header = true, footer = true }: LayoutProps) {
   return (
-    <div className={styles.root}>
-      <div className={styles.view}>
+    <Flex direction="column">
+      <Flex direction="column" className={styles.view}>
         <Banner />
         {header && <NavigationBar />}
         <Outlet />
-      </div>
+      </Flex>
       {footer && <Footer />}
       <Feedback />
-    </div>
+    </Flex>
   );
 }

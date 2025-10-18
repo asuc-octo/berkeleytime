@@ -64,6 +64,7 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
     --version=0.1.0-stage \
     --set env=stage \
     --set frontend.image.tag=latest \
+    --set agFrontend.image.tag=latest \
     --set backend.image.tag=latest \
     --set host=staging.stanfurdtime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
@@ -87,6 +88,7 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
     --set env=dev \
     --set ttl=24 \
     --set frontend.image.tag=dev1 \
+    --set agFrontend.image.tag=dev1 \
     --set backend.image.tag=dev1 \
     --set host=dev1.stanfurdtime.com \
     --set mongoUri=mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
@@ -100,3 +102,10 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
 helm install bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs --namespace=bt \
     --version=1.0.0 \
     --set host=docs.stanfurdtime.com
+
+# ==========
+# AG
+# ==========
+
+helm install bt-ag oci://registry-1.docker.io/octoberkeleytime/bt-ag --namespace=bt \
+    --version=1.0.0

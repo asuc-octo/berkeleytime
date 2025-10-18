@@ -19,6 +19,7 @@ interface BaseTermInput extends BaseInput {
   year: number;
   semester: Semester;
   type: InputType.Term;
+  sessionId: string;
 }
 
 export interface InstructorTermInput extends BaseTermInput {
@@ -42,6 +43,7 @@ interface BaseInstructorInput extends BaseInput {
 export interface TermInstructorInput extends BaseInstructorInput {
   year: number;
   semester: Semester;
+  sessionId: string;
 }
 
 export interface NoTermInstructorInput extends BaseInstructorInput {
@@ -67,11 +69,12 @@ export const getInputSearchParam = (input: Input) => {
 
   // Term input
   if (input.type === InputType.Term) {
+    const termSegment = `${input.year}:${input.semester}:${input.sessionId}`;
     if (!input.givenName && !input.familyName) {
-      return `${input.subject};${input.courseNumber};T;${input.year}:${input.semester}`;
+      return `${input.subject};${input.courseNumber};T;${termSegment}`;
     }
 
-    return `${input.subject};${input.courseNumber};T;${input.year}:${input.semester};${input.givenName}:${input.familyName}`;
+    return `${input.subject};${input.courseNumber};T;${termSegment};${input.givenName}:${input.familyName}`;
   }
 
   // Instructor input
@@ -79,7 +82,9 @@ export const getInputSearchParam = (input: Input) => {
     return `${input.subject};${input.courseNumber};P;${input.givenName}:${input.familyName}`;
   }
 
-  return `${input.subject};${input.courseNumber};P;${input.givenName}:${input.familyName};${input.year}:${input.semester}`;
+  const termSegment = `${input.year}:${input.semester}:${input.sessionId}`;
+
+  return `${input.subject};${input.courseNumber};P;${input.givenName}:${input.familyName};${termSegment}`;
 };
 
 export const LIGHT_COLORS = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
@@ -90,18 +95,35 @@ export const isInputEqual = (a: Input, b: Input) => {
   if (!a.type && !b.type)
     return b.courseNumber === a.courseNumber && b.subject === a.subject;
 
-  if (
-    (a.type === InputType.Instructor && b.type === InputType.Instructor) ||
-    (a.type === InputType.Term && b.type === InputType.Term)
-  ) {
+  if (a.type !== b.type) return false;
+
+  if (a.type === InputType.Term && b.type === InputType.Term) {
     return (
       b.subject === a.subject &&
       b.courseNumber === a.courseNumber &&
       b.givenName === a.givenName &&
       b.familyName === a.familyName &&
       b.year === a.year &&
-      b.semester === a.semester
+      b.semester === a.semester &&
+      b.sessionId === a.sessionId
     );
+  }
+
+  if (a.type === InputType.Instructor && b.type === InputType.Instructor) {
+    const baseMatch =
+      b.subject === a.subject &&
+      b.courseNumber === a.courseNumber &&
+      b.givenName === a.givenName &&
+      b.familyName === a.familyName;
+    if (a.year && a.semester && b.year && b.semester) {
+      return (
+        baseMatch &&
+        b.year === a.year &&
+        b.semester === a.semester &&
+        b.sessionId === a.sessionId
+      );
+    }
+    return baseMatch && !a.year && !b.year;
   }
 
   return false;

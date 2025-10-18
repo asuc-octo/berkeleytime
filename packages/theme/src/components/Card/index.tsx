@@ -16,11 +16,12 @@ function Root({
   active,
   disabled,
   hoverColorChange = true,
+  className,
   ...props
 }: RootProps & ComponentPropsWithRef<"div">) {
   return (
     <div
-      className={classNames(styles.root, {
+      className={classNames(styles.root, className, {
         [styles.active]: active,
         [styles.disabled]: disabled,
         [styles.hoverColorChange]: hoverColorChange,

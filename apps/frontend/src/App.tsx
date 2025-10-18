@@ -42,8 +42,9 @@ const Course = {
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
-// const About = lazy(() => import("@/app/About"));
+const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
+const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
@@ -51,7 +52,6 @@ const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 // const Map = lazy(() => import("@/app/Map"));
 const Plans = lazy(() => import("@/app/Plans"));
-
 const GradTrak = lazy(() => import("@/app/GradTrak"));
 const GradTrakOnboarding = lazy(() => import("@/app/GradTrak/Onboarding"));
 const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
@@ -149,6 +149,22 @@ const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
+      {
+        path: "curated",
+        element: (
+          <SuspenseBoundary key="curated">
+            <CuratedClasses />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "about",
+        element: (
+          <SuspenseBoundary key="about">
+            <About />
+          </SuspenseBoundary>
+        ),
+      },
       {
         element: (
           <SuspenseBoundary key="profile">
@@ -339,6 +355,7 @@ const router = createBrowserRouter([
 const client = new ApolloClient({
   link: new HttpLink({
     uri: "/api/graphql",
+    credentials: "include",
   }),
   cache: new InMemoryCache({
     typePolicies: {

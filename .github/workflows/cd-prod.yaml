@@ -1,129 +1,38 @@
 name: Deploy to Production
 
-concurrency: prod
+concurrency: production
 
 on:
   workflow_dispatch:
 
-env:
-  artifact-retention-days: 7
-
 jobs:
   branch-check:
-    name: Check Branch
+    name: Environment Check
     runs-on: ubuntu-latest
-    environment: prod
+    environment: production
 
     steps:
       - name: Pass
         run: echo "Passed check"
 
-  build-backend:
-    name: Build Backend Image
-    needs: branch-check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Build Image with Tag
-        run: |
-          docker build --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod" .
-          docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod" --output "bt-backend-prod.tar"
-
-      - name: Upload Image as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: "bt-backend-prod.tar"
-          path: "bt-backend-prod.tar"
-          retention-days: ${{ env.artifact-retention-days }}
-          overwrite: true
-
-  build-frontend:
-    name: Build Frontend Image
-    needs: branch-check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Build Image with Tag
-        run: |
-          docker build --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod" .
-          docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod" --output "bt-frontend-prod.tar"
-
-      - name: Upload Image as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: "bt-frontend-prod.tar"
-          path: "bt-frontend-prod.tar"
-          retention-days: ${{ env.artifact-retention-days }}
-          overwrite: true
-
-  push-backend:
-    name: Push Backend Image
-    needs: build-backend
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Download Artifact as Image
-        uses: actions/download-artifact@v4
-        with:
-          name: "bt-backend-prod.tar"
-
-      - name: Push Image to Docker Hub
-        run: |
-          docker import "bt-backend-prod.tar" "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod"
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod"
-
-  push-frontend:
-    name: Push Frontend Image
-    needs: build-frontend
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Download Artifact as Image
-        uses: actions/download-artifact@v4
-        with:
-          name: "bt-frontend-prod.tar"
-
-      - name: Push Image to Docker Hub
-        run: |
-          docker import "bt-frontend-prod.tar" "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod"
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod"
+  build-push:
+    name: Build and Push Images and Charts
+    needs: [branch-check]
+    uses: ./.github/workflows/cd-build.yaml
+    with:
+      image_tag: prod
+      chart_ver: "1.0.0"
+    secrets: inherit
 
   deploy:
-    name: Deploy with SSH
-    needs: [push-backend, push-frontend]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: SSH and Helm Install
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: root
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd ./infra
-            if helm status bt-prod-app ; then
-              kubectl rollout restart bt-prod-app-backend
-              kubectl rollout restart bt-prod-app-frontend
-            else
-              helm install bt-prod-app ./app --namespace=bt \
-                --set host=stanfurdtime.com
-            fi
+    name: SSH and Deploy
+    needs: [build-push]
+    uses: ./.github/workflows/cd-deploy.yaml
+    with:
+      environment: production
+      name: bt-prod-app
+      version: "1.0.0"
+      values: |
+        host: beta.berkeleytime.com
+      host: beta.berkeleytime.com
+    secrets: inherit

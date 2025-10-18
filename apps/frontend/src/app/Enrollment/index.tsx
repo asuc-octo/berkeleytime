@@ -108,7 +108,7 @@ export default function Enrollment() {
       // Filter out failed queries and set any initial state
       .reduce(
         (acc, response, index) =>
-          response
+          response?.data
             ? acc.concat({
                 color: LIGHT_COLORS[index],
                 // TODO: Error handling

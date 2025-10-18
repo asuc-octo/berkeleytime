@@ -1,18 +1,26 @@
 name: Generate Helm Diffs for PR
 
 on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to generate diff for'
+        required: true
+        type: string
   issue_comment:
     types: [created]
 
 jobs:
   helm-diff:
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/helm-diff') }}
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.pull_request && contains(github.event.comment.body, '/helm-diff'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR Code
         uses: actions/checkout@v4
         with:
-          ref: refs/pull/${{ github.event.issue.number }}/head
+          ref: refs/pull/${{ inputs.pr_number }}/head
 
       - name: Set up Helm
         uses: azure/setup-helm@v1
@@ -90,7 +98,7 @@ jobs:
             fi
           }
           
-          # Update chart dependencies if needed
+          # First update dependencies if needed
           helm dependency update ./infra/app
           helm dependency update ./infra/base
           
@@ -103,7 +111,7 @@ jobs:
             --namespace=bt \
             --set host=stanfurdtime.com \
             --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
-          
+            
           # Process base chart diff output and log raw diff
           echo "" >> diff_output.md
           echo "#### Base Chart Changes" >> diff_output.md
@@ -147,8 +155,10 @@ jobs:
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: ${{ github.event.issue.number }},
+              issue_number: Number(process.env.PR_NUMBER),
               body: process.env.DIFF
             });
         env:
+          PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}
+
