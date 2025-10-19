@@ -75,12 +75,6 @@ export const userSchema = new Schema(
         },
       ],
     },
-    refresh_token: {
-      type: String,
-      trim: true,
-      required: false,
-      select: false,
-    },
   },
   {
     timestamps: {
