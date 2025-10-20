@@ -15,6 +15,7 @@
     "@aws-sdk/client-s3": "^3.857.0",
     "@repo/common": "*",
     "@repo/sis-api": "*",
+    "@sendgrid/mail": "^8.1.4",
     "dotenv": "^17.2.1",
     "papaparse": "^5.5.3",
     "tslog": "^4.9.3"

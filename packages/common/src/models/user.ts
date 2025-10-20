@@ -107,6 +107,10 @@ export const userSchema = new Schema(
       enum: ["Email", "Mobile", "Off"],
       required: true,
     },
+    lastNotified: {
+      type: Date,
+      required: false,
+    },
     refresh_token: {
       type: String,
       trim: true,

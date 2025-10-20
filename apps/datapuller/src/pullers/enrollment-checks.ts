@@ -1,5 +1,6 @@
 import { NewEnrollmentHistoryModel, UserModel } from "@repo/common";
 import { Logger } from "tslog";
+import sgMail from "@sendgrid/mail";
 
 import { Config } from "../shared/config";
 import { getActiveTerms } from "../shared/term-selectors";
@@ -34,6 +35,76 @@ interface EnrollmentAlert {
   timestamp: string;
   previousPercentage?: number;
 }
+
+const generateEnrollmentAlertEmail = (
+  userEmail: string,
+  userName: string,
+  alerts: EnrollmentAlert[]
+): { to: string; from: string; subject: string; html: string } => {
+  // TODO: Replace with actual email template/design
+  const alertsList = alerts
+    .map(
+      (alert) => `
+      <div style="margin-bottom: 20px; padding: 15px; border-left: 4px solid #0066cc; background-color: #f5f5f5;">
+        <h3 style="margin: 0 0 10px 0; color: #333;">
+          ${alert.subject} ${alert.courseNumber} - Section ${alert.sectionNumber}
+        </h3>
+        <p style="margin: 5px 0; color: #666;">
+          <strong>Enrollment Status:</strong> ${alert.threshold.replace(/_/g, " ").toUpperCase()}
+        </p>
+        <p style="margin: 5px 0; color: #666;">
+          <strong>Current Enrollment:</strong> ${alert.enrolledCount}/${alert.maxEnroll} (${alert.percentage}%)
+        </p>
+        ${
+          alert.waitlistedCount > 0
+            ? `<p style="margin: 5px 0; color: #666;">
+              <strong>Waitlist:</strong> ${alert.waitlistedCount}/${alert.maxWaitlist}
+            </p>`
+            : ""
+        }
+        <p style="margin: 5px 0; color: #666;">
+          <strong>Term:</strong> ${alert.semester} ${alert.year}
+        </p>
+      </div>
+    `
+    )
+    .join("");
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #0066cc; margin-bottom: 10px;">BerkeleTime Enrollment Alert</h1>
+          <p style="color: #666; margin: 0;">Your monitored classes have reached enrollment thresholds</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <p>Hello ${userName},</p>
+          <p>The following classes you're monitoring have crossed their enrollment thresholds:</p>
+        </div>
+
+        ${alertsList}
+
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 14px;">
+          <p>You're receiving this email because you've set up enrollment notifications on BerkeleTime.</p>
+          <p>To manage your notification settings, please visit your <a href="https://berkeleytime.com/profile" style="color: #0066cc;">profile page</a>.</p>
+        </div>
+      </body>
+    </html>
+  `;
+
+  return {
+    to: userEmail,
+    from: process.env.SENDGRID_FROM_EMAIL || "octo.berkeleytime@asuc.org",
+    subject: `BerkeleTime Alert: ${alerts.length} class${alerts.length > 1 ? "es" : ""} reached enrollment threshold`,
+    html,
+  };
+};
 
 const checkEnrollmentThresholds = async (config: Config) => {
   const log = config.log || new Logger({
@@ -204,16 +275,80 @@ const checkEnrollmentThresholds = async (config: Config) => {
     
     log.info(`Found ${usersToNotify.size} users to notify`);
     
+    // Initialize SendGrid
+    const sendgridApiKey = process.env.SENDGRID_API_KEY;
+    if (!sendgridApiKey) {
+      log.warn("SENDGRID_API_KEY not set - skipping email notifications");
+    } else {
+      sgMail.setApiKey(sendgridApiKey);
+    }
+
+    let emailsSent = 0;
+    let emailsFailed = 0;
+    let emailsThrottled = 0;
+    
     for (const [userId, userAlerts] of usersToNotify.entries()) {
       log.info(`  User ${userId}: ${userAlerts.size} alert(s)`);
+      
+      // Get user email for notifications
+      const user = await UserModel.findById(userId).lean();
+      if (!user) {
+        log.warn(`    User ${userId} not found, skipping`);
+        continue;
+      }
+
+      // Only send email notifications
+      if (user.notificationType !== "Email") {
+        log.info(`    User has notification type: ${user.notificationType}, skipping email`);
+        continue;
+      }
+
+      // Check if user was notified less than 2 hours ago
+      if (user.lastNotified) {
+        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        if (new Date(user.lastNotified) > twoHoursAgo) {
+          emailsThrottled++;
+          log.info(`    User was notified less than 2 hours ago, skipping email`);
+          continue;
+        }
+      }
+
       for (const alert of userAlerts) {
         log.info(
           `    - ${alert.subject} ${alert.courseNumber} ${alert.sectionNumber}: ${alert.threshold} (${alert.percentage}%)`
         );
       }
+
+      // Send email if SendGrid is configured
+      if (sendgridApiKey && user.email) {
+        try {
+          const emailData = generateEnrollmentAlertEmail(
+            user.email,
+            user.name,
+            Array.from(userAlerts)
+          );
+          
+          await sgMail.send(emailData);
+          
+          // Update lastNotified after successfully sending email
+          await UserModel.findByIdAndUpdate(userId, {
+            lastNotified: new Date(),
+          });
+          
+          emailsSent++;
+          log.info(`    ✓ Email sent to ${user.email}`);
+        } catch (error) {
+          emailsFailed++;
+          log.error(`    ✗ Failed to send email to ${user.email}:`, error);
+        }
+      }
     }
     
-    log.info("Enrollment alerts detected - email sending not yet implemented");
+    if (sendgridApiKey) {
+      log.info(`Email notifications: ${emailsSent} sent, ${emailsFailed} failed, ${emailsThrottled} throttled`);
+    } else {
+      log.info("Email sending skipped - SENDGRID_API_KEY not configured");
+    }
   } else {
     log.info("No enrollment threshold alerts detected");
   }
