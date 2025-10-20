@@ -9,6 +9,8 @@ class ReadingService(AbstractPlaylistService):
     """Reading Service."""
 
     def update(self):
+        return # no longer working
+
         """Update corresponding playlists."""
         definition_a, definition_b = reading_resource.get()
 

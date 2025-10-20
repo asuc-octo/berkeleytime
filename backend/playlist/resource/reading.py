@@ -10,7 +10,7 @@ from playlist.utils.definition import MapperDefinition
 class ReadingResource(object):
     """Resource for R1A/R1B requirements."""
 
-    url = 'http://guide.berkeley.edu/undergraduate/colleges-schools/letters-science/reading-composition-requirement/'
+    url = 'http://guide.berkeley.edu/undergraduate/colleges-schools/letters-science/reading-composition-requirement/' # outdated
 
     def get(self):
         """Return a tuple of definitions."""
