@@ -75,6 +75,11 @@ export const userSchema = new Schema(
         },
       ],
     },
+    minors: {
+      type: [String],
+      trim: true,
+      required: false,
+    },
   },
   {
     timestamps: {
