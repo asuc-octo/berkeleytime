@@ -12,6 +12,7 @@ import {
 
 import useClass from "@/hooks/useClass";
 import { Grade } from "@/lib/api";
+import { GRADES } from "@/lib/grades";
 
 import styles from "./Grades.module.scss";
 
@@ -31,22 +32,6 @@ import styles from "./Grades.module.scss";
 //   F: 0,
 // };
 
-const letters = [
-  "A+",
-  "A",
-  "A-",
-  "B+",
-  "B",
-  "B-",
-  "C+",
-  "C",
-  "C-",
-  "D",
-  "F",
-  "P",
-  "NP",
-];
-
 export default function Grades() {
   const {
     class: {
@@ -62,7 +47,7 @@ export default function Grades() {
     const classTotal = getTotal(gradeDistribution.distribution);
     const courseTotal = getTotal(courseGradeDistribution.distribution);
 
-    return letters.map((letter) => {
+    return GRADES.map((letter) => {
       const getCount = (distribution: Grade[]) =>
         distribution.find((grade) => grade.letter === letter)?.count || 0;
 

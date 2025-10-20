@@ -33,7 +33,7 @@ export default async (app: Application, redis: RedisClientType) => {
       cookie: {
         secure: !config.isDev,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60, // 1 hour
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
         sameSite: "lax",
       },
       store: new RedisStore({
@@ -145,7 +145,6 @@ export default async (app: Application, redis: RedisClientType) => {
             email,
             googleId: profile.id,
             name: profile.displayName,
-            // TODO: refreshToken
           });
         }
 
