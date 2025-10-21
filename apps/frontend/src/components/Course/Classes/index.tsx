@@ -6,7 +6,6 @@ import styles from "./Classes.module.scss";
 
 export default function Classes() {
   const { course } = useCourse();
-  console.log(course.classes);
 
   // TODO: UI and drawer vs. link for classes depending on dialog state
   return (
