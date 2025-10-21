@@ -54,8 +54,8 @@ export default function ClassCard({
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   return (
     <Card.RootColumn {...props}>
-      {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
       <Card.ColumnHeader>
+        {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
         <Card.Body>
           <Card.Heading>
             {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
