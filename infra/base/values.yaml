@@ -4,3 +4,20 @@ acme:
   server: https://acme-v02.api.letsencrypt.org/directory
   cloudflareApiTokenSecretName: cloudflare-api-token-secret
 ipAddressRange: 169.229.226.51-169.229.226.51
+
+oauth2-proxy:
+  config:
+    existingSecret: bt-github-oauth-secret
+    clientID: client-id
+    clientSecret: client-secret
+    cookieSecret: cookie-secret
+    provider: "github"
+    githubOrg: "asuc-octo"
+    githubTeam: "Berkeleytime"
+    emailDomains: ["*"]
+    upstreamTimeout: "30s"
+    cookie:
+      name: "_oauth2_proxy"
+      secure: true
+      httpOnly: true
+      expire: "4h"
