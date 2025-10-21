@@ -6,6 +6,7 @@ import styles from "./Classes.module.scss";
 
 export default function Classes() {
   const { course } = useCourse();
+  console.log(course.classes);
 
   // TODO: UI and drawer vs. link for classes depending on dialog state
   return (
@@ -16,7 +17,12 @@ export default function Classes() {
             <div className={styles.term}>
               {_class.semester} {_class.year}
             </div>
-            <ClassCard class={_class} />
+            <ClassCard
+              class={{
+                ..._class,
+                course: course,
+              }}
+            />
           </div>
         ))}
     </div>
