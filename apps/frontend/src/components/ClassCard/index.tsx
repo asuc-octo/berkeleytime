@@ -15,8 +15,6 @@ import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
-import styles from "./ClassCard.module.scss";
-
 interface ClassProps {
   class: IClass;
   expandable?: boolean;
@@ -25,8 +23,7 @@ interface ClassProps {
   onDelete?: () => void;
   leftBorderColor?: string;
   bookmarked?: boolean;
-  bookmarkToggle?: () => void;
-  active?: boolean;
+  bookmarkToggle?: () => {};
 }
 
 export default function ClassCard({
@@ -53,30 +50,16 @@ export default function ClassCard({
   bookmarked = false,
   children,
   bookmarkToggle,
-  active = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   return (
-    <Card.RootColumn active={active} {...props}>
-      {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
+    <Card.RootColumn {...props}>
       <Card.ColumnHeader>
+        {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
         <Card.Body>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 8,
-            }}
-          >
-            <Card.Heading style={{ marginBottom: 0 }}>
-              {subject ?? courseSubject} {courseNumber ?? courseNumber2}{" "}
-              <span className={styles.sectionNumber}>#{number}</span>
-            </Card.Heading>
-            {gradeDistribution && (
-              <AverageGrade gradeDistribution={gradeDistribution} />
-            )}
-          </div>
+          <Card.Heading>
+            {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
+          </Card.Heading>
           <Card.Description>{title ?? courseTitle}</Card.Description>
           <Card.Footer>
             <Capacity
@@ -86,37 +69,40 @@ export default function ClassCard({
               maxWaitlist={enrollment?.latest.maxWaitlist}
             />
             <Units unitsMin={unitsMin} unitsMax={unitsMax} />
-            <div style={{ marginLeft: "auto", display: "flex", gap: 12 }}>
-              {expandable && onExpandedChange !== undefined && (
-                <Card.ActionIcon
-                  onClick={() => {
-                    onExpandedChange(!expanded);
-                  }}
-                >
-                  {expanded ? (
-                    <ArrowUnionVertical />
-                  ) : (
-                    <ArrowSeparateVertical />
-                  )}
-                </Card.ActionIcon>
-              )}
-              {bookmarked && bookmarkToggle && (
-                <Card.ActionIcon onClick={bookmarkToggle}>
-                  {bookmarked ? (
-                    <BookmarkSolid width={16} height={16} />
-                  ) : (
-                    <Bookmark width={16} height={16} />
-                  )}
-                </Card.ActionIcon>
-              )}
-              {onDelete && (
-                <Card.ActionIcon isDelete onClick={onDelete}>
-                  <Trash />
-                </Card.ActionIcon>
-              )}
-            </div>
+            {expandable && onExpandedChange !== undefined && (
+              <Card.ActionIcon
+                onClick={() => {
+                  onExpandedChange(!expanded);
+                }}
+                style={{ position: "absolute", right: 16 }}
+              >
+                {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
+              </Card.ActionIcon>
+            )}
           </Card.Footer>
         </Card.Body>
+        <Card.Actions>
+          {gradeDistribution && (
+            <AverageGrade
+              gradeDistribution={gradeDistribution}
+              style={{ marginTop: 0.5, fontSize: 15 }}
+            />
+          )}
+          {bookmarked && bookmarkToggle && (
+            <Card.ActionIcon onClick={bookmarkToggle}>
+              {bookmarked ? (
+                <BookmarkSolid width={16} height={16} />
+              ) : (
+                <Bookmark width={16} height={16} />
+              )}
+            </Card.ActionIcon>
+          )}
+          {onDelete && (
+            <Card.ActionIcon isDelete onClick={onDelete}>
+              <Trash />
+            </Card.ActionIcon>
+          )}
+        </Card.Actions>
       </Card.ColumnHeader>
       {expanded && <Card.ColumnBody>{children}</Card.ColumnBody>}
     </Card.RootColumn>
