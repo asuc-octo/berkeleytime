@@ -1,9 +1,5 @@
 name: Deploy to Development
 
-concurrency:
-  group: dev-${{ github.ref }}
-  cancel-in-progress: true
-
 on:
   workflow_dispatch:
     inputs:
@@ -17,6 +13,13 @@ on:
         required: true
         type: boolean
         default: false
+
+concurrency:
+  # If auth=true, group in dev-auth. Else, group in dev-<ref>.
+  group: dev-${{ github.event.inputs.auth == 'true' && 'auth' || github.ref }}
+
+  # If auth=true, do not cancel in progress (possibly different branch being deployed). Else, cancel in progress (same branch).
+  cancel-in-progress: ${{ github.event.inputs.auth == 'false' }}
 
 env:
   HOSTS: "auth0.dev.stanfurdtime.com auth1.dev.stanfurdtime.com auth2.dev.stanfurdtime.com auth3.dev.stanfurdtime.com auth4.dev.stanfurdtime.com auth5.dev.stanfurdtime.com auth6.dev.stanfurdtime.com auth7.dev.stanfurdtime.com auth8.dev.stanfurdtime.com auth9.dev.stanfurdtime.com"
