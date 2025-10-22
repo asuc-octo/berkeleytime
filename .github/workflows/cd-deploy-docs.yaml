@@ -10,7 +10,7 @@ on:
     paths: ["apps/docs/**", "infra/docs/**"]
 
 jobs:
-  build-push:
+  build-push-image:
     name: Build and Push Docs Image
     runs-on: ubuntu-latest
 
@@ -37,7 +37,7 @@ jobs:
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-docs:prod-cache,mode=max
           platforms: linux/amd64
           push: true
-  
+
   build-push-chart:
     name: Build and Push Docs Helm Chart
     runs-on: ubuntu-latest
@@ -63,7 +63,7 @@ jobs:
 
   deploy:
     name: SSH and Deploy
-    needs: [build-push]
+    needs: [build-push-image, build-push-chart]
     runs-on: ubuntu-latest
     environment:
       name: documentation
