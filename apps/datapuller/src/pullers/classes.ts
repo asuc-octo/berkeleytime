@@ -9,7 +9,8 @@ import {
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
 
-const TERMS_PER_API_BATCH = 4;
+//const TERMS_PER_API_BATCH = 4;
+const CLASSES_PER_BATCH = 5000;
 
 // Note: We scan ALL terms in the database rather than just the affected ones.
 // This is intentional to ensure data consistency, as class data may be modified
@@ -98,49 +99,44 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
   let totalClasses = 0;
   let totalInserted = 0;
-  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
-    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
-    const termsBatchIds = termsBatch.map((term) => term.id);
-
-    log.trace(
-      `Fetching classes for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
-    );
-
-    const classes = await getClasses(
+  
+  const termsBatchIds = terms.map((term) => term.id);
+  log.trace(
+    `Fetching classes for ${terms.length.toLocaleString()} terms...`
+  );
+  const classes = await getClasses(
       log,
       CLASS_APP_ID,
       CLASS_APP_KEY,
       termsBatchIds
-    );
+  );
 
-    log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
-    if (classes.length === 0) {
-      log.error(`No classes found, skipping update.`);
-      return;
-    }
-    totalClasses += classes.length;
+  log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
+  if (!classes || classes.length === 0) {
+    log.error(`No classes found, skipping update.`);
+    return;
+  }
+  totalClasses += classes.length;
 
-    log.trace("Deleting classes to be replaced...");
+  log.trace("Deleting classes to be replaced...");
 
-    const { deletedCount } = await ClassModel.deleteMany({
-      termId: { $in: termsBatchIds },
+  const { deletedCount } = await ClassModel.deleteMany({
+    termId: { $in: termsBatchIds },
+  });
+
+  log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
+
+  // Insert classes in batches of 5000
+  for (let i = 0; i < classes.length; i += CLASSES_PER_BATCH) {
+    const batch = classes.slice(i, i + CLASSES_PER_BATCH);
+
+    log.trace(`Inserting batch ${i / CLASSES_PER_BATCH + 1}...`);
+
+    const { insertedCount } = await ClassModel.insertMany(batch, {
+      ordered: false,
+      rawResult: true,
     });
-
-    log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
-
-    // Insert classes in batches of 5000
-    const insertBatchSize = 5000;
-    for (let i = 0; i < classes.length; i += insertBatchSize) {
-      const batch = classes.slice(i, i + insertBatchSize);
-
-      log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
-
-      const { insertedCount } = await ClassModel.insertMany(batch, {
-        ordered: false,
-        rawResult: true,
-      });
-      totalInserted += insertedCount;
-    }
+    totalInserted += insertedCount;
   }
 
   log.info(
