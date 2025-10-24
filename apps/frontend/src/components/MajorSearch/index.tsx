@@ -77,7 +77,7 @@ export default function MajorSearch({
   }, []);
 
   return (
-    <div ref={wrapperRef}>
+    <div ref={wrapperRef} className={styles.wrapper}>
       <div className={styles.inputWrapper}>
         <Search className={styles.searchIcon} />
         <input

@@ -72,7 +72,7 @@ export default function CourseSearch({
   }, [isOpen]);
 
   return (
-    <div ref={wrapperRef}>
+    <div ref={wrapperRef} style={{ position: "relative" }}>
       <div className={styles.inputWrapper}>
         <Search className={styles.searchIcon} />
         <input
@@ -134,9 +134,9 @@ export default function CourseSearch({
               <section className={styles.section}>
                 <h2>CATALOG</h2>
                 <div className={styles.catalogList}>
-                  {currentCourses.map((course) => (
+                  {currentCourses.map((course, i) => (
                     <button
-                      key={`${course.subject}-${course.number}`}
+                      key={i}
                       className={styles.catalogItem}
                       onClick={() => {
                         onSelect?.(course);
