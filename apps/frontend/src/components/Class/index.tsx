@@ -5,9 +5,14 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  Expand,
+  OpenBook,
   OpenNewWindow,
+  SidebarCollapse,
+  SidebarExpand,
+  Xmark,
 } from "iconoir-react";
-import { Tabs } from "radix-ui";
+import { Dialog, Tabs } from "radix-ui";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
@@ -21,7 +26,7 @@ import {
 
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
-import Capacity from "@/components/Capacity";
+import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
@@ -84,10 +89,16 @@ interface UncontrolledProps {
 
 interface CatalogClassProps {
   dialog?: never;
+  expanded: boolean;
+  onExpandedChange: (expanded: boolean) => void;
+  onClose: () => void;
 }
 
 interface DialogClassProps {
   dialog: true;
+  expanded?: never;
+  onExpandedChange?: never;
+  onClose?: never;
 }
 
 // TODO: Determine whether a controlled input is even necessary
@@ -101,6 +112,9 @@ export default function Class({
   courseNumber,
   number,
   class: providedClass,
+  expanded,
+  onExpandedChange,
+  onClose,
   dialog,
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
@@ -224,6 +238,31 @@ export default function Class({
     );
   }, [course]);
 
+  const seatReservationTypeMap = useMemo(() => {
+    const reservationTypes =
+      _class?.primarySection.enrollment?.seatReservationTypes ?? [];
+
+    const reservationMap = new Map<number, string>();
+    for (const type of reservationTypes) {
+      reservationMap.set(type.number, type.requirementGroup);
+    }
+    return reservationMap;
+  }, [_class]);
+
+  const seatReservationMaxEnroll = useMemo(() => {
+    const maxEnroll =
+      _class?.primarySection.enrollment?.history[0].seatReservationCounts ?? [];
+    const maxEnrollMap = new Map<number, number>();
+
+    for (const type of maxEnroll) {
+      maxEnrollMap.set(type.number, type.maxEnroll);
+    }
+    return maxEnrollMap;
+  }, [_class]);
+
+  const seatReservationCounts =
+    _class?.primarySection.enrollment?.latest?.seatReservationCounts ?? [];
+
   const courseGradeDistribution = _class?.course.gradeDistribution;
   const hasCourseGradeSummary = useMemo(() => {
     if (!courseGradeDistribution) return false;
@@ -328,28 +367,27 @@ export default function Class({
                       />
                     </Link>
                   )}
-                  <Link
-                    to={`/enrollment?input=${encodeURIComponent(
-                      `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <EnrollmentDisplay
+                    enrolledCount={
+                      _class.primarySection.enrollment?.latest.enrolledCount
+                    }
+                    maxEnroll={
+                      _class.primarySection.enrollment?.latest.maxEnroll
+                    }
                   >
-                    <Capacity
-                      enrolledCount={
-                        _class.primarySection.enrollment?.latest.enrolledCount
-                      }
-                      maxEnroll={
-                        _class.primarySection.enrollment?.latest.maxEnroll
-                      }
-                      waitlistedCount={
-                        _class.primarySection.enrollment?.latest.waitlistedCount
-                      }
-                      maxWaitlist={
-                        _class.primarySection.enrollment?.latest.maxWaitlist
-                      }
-                    />
-                  </Link>
+                    {(content) => (
+                      <Link
+                        to={`/enrollment?input=${encodeURIComponent(
+                          `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        {content}
+                      </Link>
+                    )}
+                  </EnrollmentDisplay>
                   <Units
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}

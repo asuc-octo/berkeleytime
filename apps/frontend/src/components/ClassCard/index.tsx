@@ -11,7 +11,7 @@ import {
 import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import Capacity from "@/components/Capacity";
+import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
@@ -62,11 +62,9 @@ export default function ClassCard({
           </Card.Heading>
           <Card.Description>{title ?? courseTitle}</Card.Description>
           <Card.Footer>
-            <Capacity
-              enrolledCount={enrollment?.latest.enrolledCount}
-              maxEnroll={enrollment?.latest.maxEnroll}
-              waitlistedCount={enrollment?.latest.waitlistedCount}
-              maxWaitlist={enrollment?.latest.maxWaitlist}
+            <EnrollmentDisplay
+              enrolledCount={enrollment?.latest?.enrolledCount}
+              maxEnroll={enrollment?.latest?.maxEnroll}
             />
             <Units unitsMin={unitsMin} unitsMax={unitsMax} />
             {expandable && onExpandedChange !== undefined && (
