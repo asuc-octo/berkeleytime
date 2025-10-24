@@ -52,6 +52,9 @@ const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 // const Map = lazy(() => import("@/app/Map"));
 const Plans = lazy(() => import("@/app/Plans"));
+const GradTrak = lazy(() => import("@/app/GradTrak"));
+const GradTrakOnboarding = lazy(() => import("@/app/GradTrak/Onboarding"));
+const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 
 const router = createBrowserRouter([
   {
@@ -108,6 +111,39 @@ const router = createBrowserRouter([
       //   ),
       //   path: "map",
       // },
+    ],
+  },
+  {
+    element: <Layout footer={false} />,
+    children: [
+      {
+        path: "gradtrak",
+        element: (
+          <SuspenseBoundary key="gradtrak-landing">
+            <GradTrak />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "gradtrak/onboarding",
+        element: (
+          <SuspenseBoundary key="gradtrak-onboarding">
+            <GradTrakOnboarding />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "gradtrak/dashboard",
+        element: (
+          <SuspenseBoundary key="gradtrak-dashboard">
+            <GradTrakDashboard />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "*",
+        loader: () => redirect("/gradtrak"),
+      },
     ],
   },
   {
@@ -321,7 +357,19 @@ const client = new ApolloClient({
     uri: "/api/graphql",
     credentials: "include",
   }),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      PlanTerm: {
+        fields: {
+          courses: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
+    },
+  }),
 });
 
 export default function App() {
