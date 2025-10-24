@@ -15,7 +15,6 @@ import { Semester, TemporalPosition } from "@/lib/api";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
-import Dashboard from "./Dashboard";
 
 export default function Catalog() {
   const {
@@ -160,12 +159,7 @@ export default function Catalog() {
             onClose={() => setOpen(false)}
           />
         ) : (
-          <Dashboard
-            term={term}
-            expanded={expanded}
-            setExpanded={setExpanded}
-            setOpen={setOpen}
-          />
+          <div />
         )}
       </Flex>
     </div>
