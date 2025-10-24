@@ -105,7 +105,7 @@ export function RatingDetailView({
                   <div
                     className={classNames(styles.bar, {
                       [styles.inactiveBar]:
-                        hoveredIndex !== null && hoveredIndex !== index,
+                        hoveredIndex !== null && hoveredIndex !== index && stat.count > 0,
                     })}
                     style={{
                       width: shouldAnimate ? `${stat.barPercentage}%` : "0%",

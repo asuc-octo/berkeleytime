@@ -23,7 +23,7 @@
 
   .day {
     width: 24px;
-    height: 188px;
+    height: 240px; // 24 hours * 10px/hour
     position: relative;
 
     .label {
@@ -32,10 +32,20 @@
       margin-bottom: 4px;
     }
 
+    .noonReference {
+      position: absolute;
+      bottom: 120px; // 12 PM: 12 hours from midnight * 10px/hour = 120px from bottom (middle of 240px)
+      left: 0;
+      width: 100%;
+      height: 1px;
+      border-top: 1px dashed var(--neutral-600);
+      opacity: 0.6;
+    }
+
     .event {
       width: 100%;
       border-radius: 1px;
-      background-color: white;
+      background-color: var(--blue-500);
       position: absolute;
       left: 0;
     }
@@ -43,7 +53,7 @@
 
   .divider {
     width: 1px;
-    background-color: var(--neutral-700);
+    background-color: var(--border-color);
   }
 }
 
