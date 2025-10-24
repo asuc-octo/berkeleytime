@@ -26,8 +26,7 @@ import {
 
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
-import Capacity from "@/components/Capacity";
-import CourseDrawer from "@/components/CourseDrawer";
+import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
@@ -368,28 +367,27 @@ export default function Class({
                       />
                     </Link>
                   )}
-                  <Link
-                    to={`/enrollment?input=${encodeURIComponent(
-                      `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <EnrollmentDisplay
+                    enrolledCount={
+                      _class.primarySection.enrollment?.latest.enrolledCount
+                    }
+                    maxEnroll={
+                      _class.primarySection.enrollment?.latest.maxEnroll
+                    }
                   >
-                    <Capacity
-                      enrolledCount={
-                        _class.primarySection.enrollment?.latest.enrolledCount
-                      }
-                      maxEnroll={
-                        _class.primarySection.enrollment?.latest.maxEnroll
-                      }
-                      waitlistedCount={
-                        _class.primarySection.enrollment?.latest.waitlistedCount
-                      }
-                      maxWaitlist={
-                        _class.primarySection.enrollment?.latest.maxWaitlist
-                      }
-                    />
-                  </Link>
+                    {(content) => (
+                      <Link
+                        to={`/enrollment?input=${encodeURIComponent(
+                          `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        {content}
+                      </Link>
+                    )}
+                  </EnrollmentDisplay>
                   <Units
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
