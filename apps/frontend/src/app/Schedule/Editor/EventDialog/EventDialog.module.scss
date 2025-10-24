@@ -1,5 +1,4 @@
 .day-select {
-
   input[type="checkbox"] {
     display: none;
   }
@@ -13,7 +12,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;            
+    width: 40px;
     height: 40px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -28,7 +27,7 @@
   }
 
   input[type="checkbox"]:checked + span {
-    background-color: var(--button-active-color); 
+    background-color: var(--button-active-color);
     color: var(--heading-color);
   }
 }
@@ -50,5 +49,4 @@
       display: none;
     }
   }
-
 }

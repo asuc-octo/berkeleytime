@@ -1,24 +1,24 @@
 .dots-container {
-    position: relative; /* Position the dots at the bottom of the page */
-    /* Adjust spacing from the bottom */
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    /* transform: translateX(-50%); Center horizontally */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px; /* Space between dots */
+  position: relative; /* Position the dots at the bottom of the page */
+  /* Adjust spacing from the bottom */
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  /* transform: translateX(-50%); Center horizontally */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px; /* Space between dots */
 }
 
 .dot {
-    width: 8px;
-    height: 8px;
-    background-color: var(--Gray-2, #C7C7C7);;
-    border-radius: 50%;
-    transition: background-color 0.3s ease;
+  width: 8px;
+  height: 8px;
+  background-color: var(--Gray-2, #c7c7c7);
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
 }
 
 .dot.active {
-    background-color: var(--button-active-color); /* Highlight the active dot */
+  background-color: var(--button-active-color); /* Highlight the active dot */
 }

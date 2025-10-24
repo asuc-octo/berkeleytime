@@ -1,81 +1,76 @@
 .hero {
-    padding: 5rem 1rem;
-    text-align: center;
-    margin-left: 25%;
-    max-width: 50%;
-    position: static;
-    color: var(--paragraph-color);
-  }  
+  padding: 5rem 1rem;
+  text-align: center;
+  margin-left: 25%;
+  max-width: 50%;
+  position: static;
+  color: var(--paragraph-color);
+}
 
 .primary {
-    flex: 1;
-    justify-content: center;
-    padding: 1.25rem 1rem;
-    gap: 0.625rem;
-  }
+  flex: 1;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  gap: 0.625rem;
+}
 .majorSearch {
-    width:100%;
-    text-align: start;
-    color: var(--paragraph-color);
-    background-color: var(--foreground-color);
-    border-color: var(--border-color)
+  width: 100%;
+  text-align: start;
+  color: var(--paragraph-color);
+  background-color: var(--foreground-color);
+  border-color: var(--border-color) input {
+    color: var(--paragraph-color) !important;
+  }
+}
 
-    input {
-      color: var(--paragraph-color) !important
-    }
-  }
-  
-  
 .secondary {
-    flex: 1;
-    justify-content: center;
-    padding: 1.25rem 1rem;
-    gap: 0.625rem;
-  }
-  
+  flex: 1;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  gap: 0.625rem;
+}
+
 .add-button {
-    width: 100%;
-    justify-content: center;
-    padding: 1.25rem 1rem;
-    gap: 0.625rem;
-  }
+  width: 100%;
+  justify-content: center;
+  padding: 1.25rem 1rem;
+  gap: 0.625rem;
+}
 
 /* ------------------*/
 /* ------ MISC ------*/
 /* ----------------- */
 
 .degree-select {
-    width: 100%;
-    text-align: start;
-    color: var(--paragraph-color);
-    background-color: var(--foreground-color);
-    border-color: var(--border-color)
-
-    input {
-      color: var(--paragraph-color) !important
-    }
+  width: 100%;
+  text-align: start;
+  color: var(--paragraph-color);
+  background-color: var(--foreground-color);
+  border-color: var(--border-color) input {
+    color: var(--paragraph-color) !important;
+  }
 }
 
 .degree-chip {
-    display: flex;
-    padding: 4px 8px;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    border-radius: 4px;
-    background: rgba(47, 128, 237, 0.10);
-    color:var(--Blue, #2F80ED);
+  display: flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border-radius: 4px;
+  background: rgba(47, 128, 237, 0.1);
+  color: var(--Blue, #2f80ed);
 }
 
 .delete-icon {
-    cursor: pointer;
-    margin-left: 8px;
-    font-size: 16px;
-    color: var(--Blue, #2F80ED);
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 16px;
+  color: var(--Blue, #2f80ed);
 }
 
 .selected-degree-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }

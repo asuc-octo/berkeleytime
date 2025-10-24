@@ -116,7 +116,6 @@ function SemesterBlock({
     setRenameEditActive(false);
   };
 
-  
   useEffect(() => {
     const total = selectedClasses.reduce(
       (sum, cls) => sum + cls.courseUnits,
@@ -299,7 +298,7 @@ function SemesterBlock({
     onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
     setClassToEdit(null);
-    
+
     // update global state
     const updatedSemesters = {
       ...filteredSemesters,
@@ -481,9 +480,7 @@ function SemesterBlock({
           </div>
           <Flex direction="row" gap="6px">
             <div className={styles.dropdown}>
-              <DropdownMenu.Root
-                modal={false}
-              >
+              <DropdownMenu.Root modal={false}>
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
                 </DropdownMenu.Trigger>
@@ -554,7 +551,7 @@ function SemesterBlock({
                             />
                             Incomplete
                           </span>
-                          {(planTerm.status === Status.Incomplete) && (
+                          {planTerm.status === Status.Incomplete && (
                             <Check className={styles.statusSelected} />
                           )}
                         </Flex>
@@ -571,10 +568,10 @@ function SemesterBlock({
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
                     onClick={() => {
-                      try{
+                      try {
                         removePlanTermByID(planTerm._id);
                         handleRemoveTerm();
-                      }catch(error){
+                      } catch (error) {
                         return;
                       }
                       onTotalUnitsChange(0, 0, 0);
@@ -606,29 +603,33 @@ function SemesterBlock({
 
         {open && (
           <>
-            {selectedClasses.sort((a, b) => {
-              if (sortCourseOption === 'Unsorted') return 0;
-              if (sortCourseOption === 'A-Z') return a.courseName.localeCompare(b.courseName);
-              if (sortCourseOption === 'Z-A') return b.courseName.localeCompare(a.courseName);
-              return 0;
-            }).map((cls, index) => (
-              <React.Fragment key={`class-group-${index}`}>
-                {placeholderIndex === index && (
-                  <div className={styles.placeholder} />
-                )}
-                <Class
-                  cls={cls}
-                  index={index}
-                  handleDragEnd={handleDragEnd}
-                  handleDragStart={handleDragStart}
-                  handleDetails={handleClassDetails}
-                  handleDelete={handleDeleteClass}
-                  settings={settings}
-                  labels={labels}
-                  draggable={!filtersActive}
-                />
-              </React.Fragment>
-            ))}
+            {selectedClasses
+              .sort((a, b) => {
+                if (sortCourseOption === "Unsorted") return 0;
+                if (sortCourseOption === "A-Z")
+                  return a.courseName.localeCompare(b.courseName);
+                if (sortCourseOption === "Z-A")
+                  return b.courseName.localeCompare(a.courseName);
+                return 0;
+              })
+              .map((cls, index) => (
+                <React.Fragment key={`class-group-${index}`}>
+                  {placeholderIndex === index && (
+                    <div className={styles.placeholder} />
+                  )}
+                  <Class
+                    cls={cls}
+                    index={index}
+                    handleDragEnd={handleDragEnd}
+                    handleDragStart={handleDragStart}
+                    handleDetails={handleClassDetails}
+                    handleDelete={handleDeleteClass}
+                    settings={settings}
+                    labels={labels}
+                    draggable={!filtersActive}
+                  />
+                </React.Fragment>
+              ))}
 
             {/* Dragging placeholder */}
             {placeholderIndex === selectedClasses.length && (

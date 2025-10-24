@@ -73,7 +73,7 @@
       gap: 12px;
       margin-top: 12px;
       align-items: center;
-      color: var(--paragraph-color)
+      color: var(--paragraph-color);
     }
   }
 }
@@ -84,7 +84,7 @@
 .hover-color-change:hover .body {
   background-color: var(--button-hover-color);
 }
-  
+
 .active {
   border: 1px solid var(--blue-500);
 }
