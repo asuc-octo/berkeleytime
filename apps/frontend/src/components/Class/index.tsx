@@ -347,7 +347,10 @@ export default function Class({
               <Flex direction="column" gap="4">
                 <Flex direction="column" gap="1">
                   <h1 className={styles.heading}>
-                    {_class.subject} {_class.courseNumber} #{_class.number}
+                    {_class.subject} {_class.courseNumber}{" "}
+                    <span className={styles.sectionNumber}>
+                      #{_class.number}
+                    </span>
                   </h1>
                   <p className={styles.description}>
                     {_class.title || _class.course.title}

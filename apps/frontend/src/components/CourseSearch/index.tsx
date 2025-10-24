@@ -72,7 +72,7 @@ export default function CourseSearch({
   }, [isOpen]);
 
   return (
-    <div ref={wrapperRef}>
+    <div ref={wrapperRef} style={{ position: "relative" }}>
       <div className={styles.inputWrapper}>
         <Search className={styles.searchIcon} />
         <input

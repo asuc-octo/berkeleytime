@@ -18,7 +18,7 @@ import { IClass } from "@/lib/api";
 import styles from "./ClassCard.module.scss";
 
 interface ClassProps {
-  class: IClass;
+  class?: IClass;
   expandable?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
@@ -30,21 +30,7 @@ interface ClassProps {
 }
 
 export default function ClassCard({
-  class: {
-    course: {
-      title: courseTitle,
-      subject: courseSubject,
-      number: courseNumber2,
-      gradeDistribution,
-    },
-    title,
-    subject,
-    courseNumber,
-    number,
-    primarySection: { enrollment },
-    unitsMax,
-    unitsMin,
-  },
+  class: _class,
   expandable = false,
   expanded,
   onExpandedChange,
@@ -61,60 +47,58 @@ export default function ClassCard({
       <Card.ColumnHeader>
         {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
         <Card.Body>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 8,
-            }}
-          >
-            <Card.Heading style={{ marginBottom: 0 }}>
-              {subject ?? courseSubject} {courseNumber ?? courseNumber2}{" "}
-              <span className={styles.sectionNumber}>#{number}</span>
-            </Card.Heading>
-            {gradeDistribution && (
-              <AverageGrade gradeDistribution={gradeDistribution} />
-            )}
-          </div>
-          <Card.Description>{title ?? courseTitle}</Card.Description>
+          <Card.Heading>
+            {_class?.subject ?? _class?.course?.subject}{" "}
+            {_class?.courseNumber ?? _class?.course?.number}{" "}
+            <span className={styles.sectionNumber}>#{_class?.number}</span>
+          </Card.Heading>
+          <Card.Description>
+            {_class?.title ?? _class?.course?.title}
+          </Card.Description>
           <Card.Footer>
             <EnrollmentDisplay
-              enrolledCount={enrollment?.latest?.enrolledCount}
-              maxEnroll={enrollment?.latest?.maxEnroll}
+              enrolledCount={
+                _class?.primarySection?.enrollment?.latest.enrolledCount
+              }
+              maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
             />
-            <Units unitsMin={unitsMin} unitsMax={unitsMax} />
-            <div style={{ marginLeft: "auto", display: "flex", gap: 12 }}>
-              {expandable && onExpandedChange !== undefined && (
-                <Card.ActionIcon
-                  onClick={() => {
-                    onExpandedChange(!expanded);
-                  }}
-                >
-                  {expanded ? (
-                    <ArrowUnionVertical />
-                  ) : (
-                    <ArrowSeparateVertical />
-                  )}
-                </Card.ActionIcon>
-              )}
-              {bookmarked && bookmarkToggle && (
-                <Card.ActionIcon onClick={bookmarkToggle}>
-                  {bookmarked ? (
-                    <BookmarkSolid width={16} height={16} />
-                  ) : (
-                    <Bookmark width={16} height={16} />
-                  )}
-                </Card.ActionIcon>
-              )}
-              {onDelete && (
-                <Card.ActionIcon isDelete onClick={onDelete}>
-                  <Trash />
-                </Card.ActionIcon>
-              )}
-            </div>
+            {_class?.unitsMin && _class.unitsMax && (
+              <Units unitsMin={_class?.unitsMin} unitsMax={_class?.unitsMax} />
+            )}
+            {expandable && onExpandedChange !== undefined && (
+              <Card.ActionIcon
+                onClick={() => {
+                  onExpandedChange(!expanded);
+                }}
+                style={{ position: "absolute", right: 16 }}
+              >
+                {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
+              </Card.ActionIcon>
+            )}
           </Card.Footer>
         </Card.Body>
+        <Card.Actions>
+          {_class?.gradeDistribution && (
+            <AverageGrade
+              gradeDistribution={_class.gradeDistribution}
+              style={{ marginTop: 0.5, fontSize: 15 }}
+            />
+          )}
+          {bookmarked && bookmarkToggle && (
+            <Card.ActionIcon onClick={bookmarkToggle}>
+              {bookmarked ? (
+                <BookmarkSolid width={16} height={16} />
+              ) : (
+                <Bookmark width={16} height={16} />
+              )}
+            </Card.ActionIcon>
+          )}
+          {onDelete && (
+            <Card.ActionIcon isDelete onClick={onDelete}>
+              <Trash />
+            </Card.ActionIcon>
+          )}
+        </Card.Actions>
       </Card.ColumnHeader>
       {expanded && <Card.ColumnBody>{children}</Card.ColumnBody>}
     </Card.RootColumn>

@@ -18,6 +18,10 @@
       "cv12" on,
       "cv06" on;
     color: var(--heading-color);
+
+    .sectionNumber {
+      color: var(--paragraph-color);
+    }
   }
 
   .description {
