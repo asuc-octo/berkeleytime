@@ -5,8 +5,7 @@ import { useMutation } from "@apollo/client/react";
 import { REMOVE_PLAN_TERM_BY_ID } from "@/lib/api";
 
 export const useRemovePlanTermByID = () => {
-  const mutation = useMutation(REMOVE_PLAN_TERM_BY_ID, {
-  });
+  const mutation = useMutation(REMOVE_PLAN_TERM_BY_ID, {});
 
   const removePlanTermByID = useCallback(
     async (id: string) => {

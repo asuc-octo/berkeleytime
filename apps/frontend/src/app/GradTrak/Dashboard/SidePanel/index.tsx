@@ -1,8 +1,9 @@
 // TODO: also import in CoEReqs, HaasReqs
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { WarningCircle } from "iconoir-react";
 
+import { Colleges } from "@/lib/api";
 import {
   CoEReqs,
   HaasReqs,
@@ -10,8 +11,6 @@ import {
   RequirementEnum,
   UniReqs,
 } from "@/lib/course";
-
-import { Colleges } from "@/lib/api";
 
 import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
@@ -51,11 +50,12 @@ export default function SidePanel({
         reqs.push(...Object.values(LnSReqs));
       } else {
         // assuming the OTHER colleges also have the same requirements as LnS
-        if (!colleges.includes(Colleges.LnS)) {  // avoids duplication
+        if (!colleges.includes(Colleges.LnS)) {
+          // avoids duplication
           reqs.push(...Object.values(LnSReqs));
         }
       }
-    });    
+    });
     setCollegeReqs(reqs);
   }, [colleges]);
 

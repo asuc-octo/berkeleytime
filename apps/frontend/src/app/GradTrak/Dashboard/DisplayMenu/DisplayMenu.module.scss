@@ -4,7 +4,7 @@
   position: absolute;
   right: 30px;
   top: 80px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   border-radius: 8px;
 
   .section {
@@ -13,7 +13,7 @@
     font-size: 14px;
     font-weight: 500;
     color: var(--heading-color);
-    
+
     &:last-child {
       margin-bottom: 0;
       border: none;
@@ -27,7 +27,7 @@
         margin-bottom: 12px;
       }
     }
-      
+
     .sectionBubbleButton {
       padding: 12px;
       border-radius: 4px;
@@ -36,7 +36,6 @@
       cursor: pointer;
       &:hover {
         background-color: var(--background-color);
-
       }
     }
   }
@@ -65,14 +64,14 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background-color: var(--button-active-color);
   }
-  
+
   &.selected {
     border-color: var(--blue-500);
-    background-color: var(--button-active-color)
+    background-color: var(--button-active-color);
   }
 }
 
@@ -132,11 +131,11 @@
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
-  
+
   &.toggleOff {
     background: var(--border-color);
   }
-  
+
   &.toggleOn {
     background: var(--primary-color);
   }
@@ -150,11 +149,11 @@
   position: absolute;
   top: 2px;
   transition: all 0.2s ease;
-  
+
   .toggleOff & {
     left: 2px;
   }
-  
+
   .toggleOn & {
     left: 22px;
   }

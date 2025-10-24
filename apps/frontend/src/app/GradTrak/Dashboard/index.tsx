@@ -397,7 +397,9 @@ export default function Dashboard() {
     [key: string]: ISelectedCourse[];
   }>({});
 
-  const filterSemesters = (allSemesters: { [key: string]: ISelectedCourse[] }) => {
+  const filterSemesters = (allSemesters: {
+    [key: string]: ISelectedCourse[];
+  }) => {
     // if none of the label filters are selected, return all semesters
     const hasActiveLabelFilters = Object.keys(filterOptions).some(
       (key) => key.startsWith("label_") && filterOptions[key]
@@ -530,10 +532,12 @@ export default function Dashboard() {
   );
 
   // Function to update all semesters data
-  const updateAllSemesters = (semesters: { [key: string]: ISelectedCourse[] }) => {
+  const updateAllSemesters = (semesters: {
+    [key: string]: ISelectedCourse[];
+  }) => {
     filterSemesters(semesters);
     setAllSemesters(semesters);
-  }
+  };
 
   useEffect(() => {
     if (localPlanTerms && localPlanTerms.length > 0) {
@@ -913,7 +917,9 @@ export default function Dashboard() {
                   ) {
                     return true;
                   }
-                  return filteredAllSemesters[term._id] ? filteredAllSemesters[term._id].length > 0 : false;
+                  return filteredAllSemesters[term._id]
+                    ? filteredAllSemesters[term._id].length > 0
+                    : false;
                 })
                 .sort((a, b) => {
                   // Pinned terms first
