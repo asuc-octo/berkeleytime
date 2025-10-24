@@ -7,7 +7,8 @@
   &:hover {
     background-color: var(--button-hover-color);
   }
-  &:active, &:focus-visible {
+  &:active,
+  &:focus-visible {
     background-color: var(--blue-500);
     color: white;
   }

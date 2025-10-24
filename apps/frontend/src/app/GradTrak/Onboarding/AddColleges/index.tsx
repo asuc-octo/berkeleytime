@@ -4,9 +4,10 @@ import { Separator } from "@radix-ui/themes";
 
 import { Box, Button, Container, Flex, Select } from "@repo/theme";
 
+import { Colleges } from "@/lib/api";
+
 import DotsIndicator from "../DotsIndicator";
 import styles from "./AddCollege.module.scss";
-import { Colleges } from "@/lib/api";
 import colleges from "./colleges.json";
 
 type CollegeOption = {
@@ -20,24 +21,23 @@ type AddCollegesProps = {
 
 export default function AddColleges({ onNext }: AddCollegesProps) {
   const [selectedCollege, setSelectedCollege] = useState<string | null>(null);
-  const [selectedCollegeList, setSelectedCollegeList] = useState<CollegeOption[]>(
-    []
-  );
+  const [selectedCollegeList, setSelectedCollegeList] = useState<
+    CollegeOption[]
+  >([]);
 
   const collegeOptions = colleges.colleges.map((college) => ({
     label: college,
     value: college,
   }));
 
-  
-  const convertCollegeOptions = (colleges: CollegeOption[]) : Colleges[] => {
+  const convertCollegeOptions = (colleges: CollegeOption[]): Colleges[] => {
     const output = colleges.map((college) => {
       switch (college.value) {
         case "Business":
           return Colleges.HAAS;
         case "Letters & Science":
           return Colleges.LnS;
-        case "Engineering": 
+        case "Engineering":
           return Colleges.CoE;
         default:
           return Colleges.OTHER;
@@ -45,7 +45,7 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
     });
     // prune duplicates
     return [...new Set(output)];
-  }
+  };
 
   const handleAddCollege = () => {
     if (selectedCollege) {
@@ -91,8 +91,8 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
             <Flex direction="column" align="center" gap="16px">
               <h1>Add Schools & Colleges</h1>
               <p>
-                Search for your college and add it to
-                Gradtrak to list specific requirements.
+                Search for your college and add it to Gradtrak to list specific
+                requirements.
               </p>
             </Flex>
 
@@ -100,10 +100,10 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
               <CollegeSelect />
               <a>Don't see your college?</a>
               <Button
-                  className={styles.addButton}
-                  variant="tertiary"
-                  onClick={handleAddCollege}
-                >
+                className={styles.addButton}
+                variant="tertiary"
+                onClick={handleAddCollege}
+              >
                 Add
               </Button>
             </Flex>
@@ -120,16 +120,16 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
                   id={`colleges-list`}
                 >
                   {selectedCollegeList.map((college) => (
-                      <div key={college.value} className={styles.collegeChip}>
-                        {college.label}
-                        <span
-                          className={styles.deleteIcon}
-                          onClick={() => handleRemoveCollege(college)}
-                        >
-                          ✕
-                        </span>
-                      </div>
-                    ))}
+                    <div key={college.value} className={styles.collegeChip}>
+                      {college.label}
+                      <span
+                        className={styles.deleteIcon}
+                        onClick={() => handleRemoveCollege(college)}
+                      >
+                        ✕
+                      </span>
+                    </div>
+                  ))}
                 </div>
               )}
             </Flex>
@@ -146,9 +146,7 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
                 className={styles.primary}
                 variant="primary"
                 onClick={handleConfirmClick}
-                disabled={
-                  selectedCollegeList.length === 0
-                }
+                disabled={selectedCollegeList.length === 0}
               >
                 Confirm
               </Button>

@@ -1,9 +1,12 @@
-
 import { useState } from "react";
+
 import { Separator } from "@radix-ui/themes";
+
 import { Box, Button, Container, Flex } from "@repo/theme";
-import DotsIndicator from "../DotsIndicator";
+
 import MajorSearch from "@/components/MajorSearch";
+
+import DotsIndicator from "../DotsIndicator";
 import styles from "./AddDegree.module.scss";
 import DEGREES from "./degree-programs-types.json";
 
@@ -19,9 +22,15 @@ type AddDegreeProps = {
 
 export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
   const optionType = isMajor ? "Major" : "Minor";
-  const [selectedDegree, setSelectedDegree] = useState<DegreeOption | null>(null);
-  const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>([]);
-  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>([]);
+  const [selectedDegree, setSelectedDegree] = useState<DegreeOption | null>(
+    null
+  );
+  const [selectedDegreeList, setSelectedDegreeList] = useState<DegreeOption[]>(
+    []
+  );
+  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>(
+    []
+  );
 
   const majorOptions = DEGREES.majors;
   const minorOptions = DEGREES.minors;
@@ -29,7 +38,9 @@ export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
   const handleAddDegree = () => {
     if (
       selectedDegree &&
-      !selectedDegreeList.some((degree) => degree.value === selectedDegree.value)
+      !selectedDegreeList.some(
+        (degree) => degree.value === selectedDegree.value
+      )
     ) {
       setSelectedDegreeList([...selectedDegreeList, selectedDegree]);
       setSelectedDegree(null);
@@ -93,13 +104,13 @@ export default function AddDegree({ isMajor, onNext }: AddDegreeProps) {
 
             <Flex direction="column" align="start" gap="16px" width="100%">
               <div className={styles.majorSearch}>
-              <MajorSearch
-                onSelect={handleDegreeSelect}
-                onClear={handleClearSelection}
-                selectedDegree={selectedDegree}
-                degrees={isMajor ? majorOptions : minorOptions}
-                placeholder={`Search for a ${optionType.toLowerCase()}...`}
-              />
+                <MajorSearch
+                  onSelect={handleDegreeSelect}
+                  onClear={handleClearSelection}
+                  selectedDegree={selectedDegree}
+                  degrees={isMajor ? majorOptions : minorOptions}
+                  placeholder={`Search for a ${optionType.toLowerCase()}...`}
+                />
               </div>
               <a>Don't see your {optionType.toLowerCase()}?</a>
               {isMajor && (
