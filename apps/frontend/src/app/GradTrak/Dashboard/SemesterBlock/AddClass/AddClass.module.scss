@@ -1,5 +1,5 @@
 body {
-    background-color: var(--foreground-color);
+  background-color: var(--foreground-color);
 }
 
 .content {
@@ -16,12 +16,14 @@ body {
     padding: 1rem;
     border-radius: 0.5rem;
     background-color: var(--foreground-color);
-    box-shadow: 0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.10)), 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.10));
+    box-shadow:
+      0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.1)),
+      0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.1));
     transition: all 0.2s ease;
     max-height: 18rem;
     width: 100%;
     overflow: hidden;
-  
+
     input {
       color: var(--heading-color);
       font-size: 0.75rem;
@@ -41,21 +43,22 @@ body {
 
     border-radius: 0.25rem;
     border: 1px solid var(--border-color);
-    box-shadow: 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.10));
+    box-shadow: 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.1));
     max-height: 18rem;
     width: max-content;
     overflow: hidden;
     --max-visible-items: 3;
-    --item-height: 44px; 
+    --item-height: 44px;
 
-    .list {      
+    .list {
       flex: 1 1 auto;
       max-height: calc(var(--item-height) * var(--max-visible-items));
       overflow-y: auto;
       list-style-type: none;
       padding: 0;
       margin: 0;
-      scrollbar-color: var(--paragraph-color) var(--border-color, rgba(0, 0, 0, 0.10));
+      scrollbar-color: var(--paragraph-color)
+        var(--border-color, rgba(0, 0, 0, 0.1));
       scrollbar-width: thin;
 
       // &.has-items {
@@ -64,7 +67,7 @@ body {
       // }
 
       &::-webkit-scrollbar-thumb {
-        background-color: #8A8A8A; /* Light gray scrollbar handle */
+        background-color: #8a8a8a; /* Light gray scrollbar handle */
       }
 
       ::-webkit-scrollbar-track {
@@ -84,7 +87,9 @@ body {
         transition: background-color 0.3 ease;
 
         &:hover {
-          background-color: var(--button-hover-color); /* Light blue for hover */
+          background-color: var(
+            --button-hover-color
+          ); /* Light blue for hover */
         }
       }
     }
@@ -93,7 +98,10 @@ body {
       position: sticky;
       bottom: 0;
       z-index: 1;
-      background: linear-gradient(var(--foreground-color), var(--foreground-color)); /* ensure background covers scrolled content */
+      background: linear-gradient(
+        var(--foreground-color),
+        var(--foreground-color)
+      ); /* ensure background covers scrolled content */
       border-top: 1px solid var(--border-color);
       padding: 0;
 

@@ -19,19 +19,19 @@ export default function EnrollmentDisplay({
 
   if (!hasData) return null;
 
-  const percentage = maxEnroll === 0 ? 0 : Math.round((enrolledCount / maxEnroll) * 100);
+  const percentage =
+    maxEnroll === 0 ? 0 : Math.round((enrolledCount / maxEnroll) * 100);
   const color = getEnrollmentColor(enrolledCount, maxEnroll);
 
   const content = (
     <span
-      style={{ color, fontSize: '14px' }}
+      style={{ color, fontSize: "14px" }}
       onMouseEnter={() => setShowRawCount(true)}
       onMouseLeave={() => setShowRawCount(false)}
     >
       {showRawCount
         ? `${enrolledCount}/${maxEnroll} enrolled`
-        : `${percentage}% enrolled`
-      }
+        : `${percentage}% enrolled`}
     </span>
   );
 
