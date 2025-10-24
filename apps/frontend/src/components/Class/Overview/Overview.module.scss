@@ -33,10 +33,17 @@
   color: var(--blue-500);
   text-decoration: none;
   font-size: 14px;
+  font-weight: 500;
   display: flex;
   align-items: center;
+  transition: all 100ms ease-in-out;
+  width: fit-content;
 
   &:hover {
-    text-decoration: underline;
+    color: var(--blue-600);
+
+    @media (prefers-color-scheme: dark) {
+      color: var(--blue-400);
+    }
   }
 }
