@@ -16,7 +16,7 @@ import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
 interface ClassProps {
-  class: IClass;
+  class?: IClass;
   expandable?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
@@ -27,21 +27,7 @@ interface ClassProps {
 }
 
 export default function ClassCard({
-  class: {
-    course: {
-      title: courseTitle,
-      subject: courseSubject,
-      number: courseNumber2,
-      gradeDistribution,
-    },
-    title,
-    subject,
-    courseNumber,
-    number,
-    primarySection: { enrollment },
-    unitsMax,
-    unitsMin,
-  },
+  class: _class,
   expandable = false,
   expanded,
   onExpandedChange,
@@ -58,15 +44,20 @@ export default function ClassCard({
         {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
         <Card.Body>
           <Card.Heading>
-            {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
+            {_class?.subject ?? _class?.course?.subject}{" "}
+            {_class?.courseNumber ?? _class?.course?.number} #{_class?.number}
           </Card.Heading>
-          <Card.Description>{title ?? courseTitle}</Card.Description>
+          <Card.Description>
+            {_class?.title ?? _class?.course?.title}
+          </Card.Description>
           <Card.Footer>
             <EnrollmentDisplay
               enrolledCount={enrollment?.latest?.enrolledCount}
               maxEnroll={enrollment?.latest?.maxEnroll}
             />
-            <Units unitsMin={unitsMin} unitsMax={unitsMax} />
+            {_class?.unitsMin && _class.unitsMax && (
+              <Units unitsMin={_class?.unitsMin} unitsMax={_class?.unitsMax} />
+            )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 onClick={() => {
@@ -80,9 +71,9 @@ export default function ClassCard({
           </Card.Footer>
         </Card.Body>
         <Card.Actions>
-          {gradeDistribution && (
+          {_class?.gradeDistribution && (
             <AverageGrade
-              gradeDistribution={gradeDistribution}
+              gradeDistribution={_class.gradeDistribution}
               style={{ marginTop: 0.5, fontSize: 15 }}
             />
           )}

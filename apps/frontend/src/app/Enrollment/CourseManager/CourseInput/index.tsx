@@ -242,7 +242,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         <Select
           ref={semesterSelectRef}
           options={semesterOptions}
-          disabled={disabled}
+          disabled={disabled || !selectedCourse}
           value={selectedSemester}
           onChange={(s) => {
             if (Array.isArray(s)) return;
@@ -260,7 +260,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         <Select
           ref={classSelectRef}
           options={classOptions}
-          disabled={disabled}
+          disabled={disabled || !selectedCourse}
           value={selectedClass}
           onChange={(s) => {
             if (Array.isArray(s)) return;
