@@ -83,22 +83,6 @@ export default async (redis: RedisClientType) => {
         defaultMaxAge: 24 * 60 * 60, // 24 hours
       }),
       responseCachePlugin({
-        shouldReadFromCache: async (ctx) => {
-          const variables = ctx.request.variables as Record<
-            string,
-            unknown
-          > | null;
-          if (variables?.refresh === true) return false;
-          return true;
-        },
-        shouldWriteToCache: async (ctx) => {
-          const variables = ctx.request.variables as Record<
-            string,
-            unknown
-          > | null;
-          if (variables?.refresh === true) return false;
-          return true;
-        },
         sessionId: async (req) =>
           req.request.http?.headers.get("sessionId") || null,
       }),

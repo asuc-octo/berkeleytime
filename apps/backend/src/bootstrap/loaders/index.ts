@@ -1,7 +1,6 @@
 import { type Application, Router } from "express";
 
 import { config } from "../../config";
-import { registerCatalogCacheRefresh } from "../../modules/catalog/cache-refresh";
 // loaders
 import apolloLoader from "./apollo";
 import expressLoader from "./express";
@@ -26,8 +25,6 @@ export default async (root: Application): Promise<void> => {
   // load everything related to express. depends on apollo
   console.log("Loading express...");
   await expressLoader(app, server, redis);
-
-  registerCatalogCacheRefresh(redis);
 
   // append backend path to all routes
   root.use(config.backendPath, app);
