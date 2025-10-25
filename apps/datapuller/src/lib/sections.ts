@@ -106,6 +106,18 @@ const formatSection = (input: ClassSection) => {
         };
       }),
     })),
+    sectionAttributes: input.sectionAttributes?.map((attr) => ({
+      attribute: {
+        code: attr.attribute?.code || "",
+        description: attr.attribute?.description || "",
+        formalDescription: attr.attribute?.formalDescription || "",
+      },
+      value: {
+        code: attr.value?.code || "",
+        description: attr.value?.description || "",
+        formalDescription: attr.value?.formalDescription || "",
+      },
+    })),
   };
 
   return output;
