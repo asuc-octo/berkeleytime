@@ -17,6 +17,7 @@ import {
   useKeyboardNavigation,
 } from "../keyboardHelpers";
 import useBrowser from "../useBrowser";
+import { useRecentlyViewed } from "../useRecentlyViewed";
 import styles from "./List.module.scss";
 
 interface ListProps {
@@ -24,8 +25,15 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading } = useBrowser();
+  const { classes, loading, year, semester } = useBrowser();
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
+
+  const { recentClasses, allClasses, addToRecent, shouldPreserveScroll } =
+    useRecentlyViewed({
+      classes,
+      year,
+      semester,
+    });
 
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
@@ -36,12 +44,14 @@ export default function List({ onSelect }: ListProps) {
   const isListFocused = useContainerFocus(rootRef);
 
   const virtualizer = useVirtualizer({
-    count: classes.length,
+    count: allClasses.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
     gap: 12,
   });
+
+  const items = virtualizer.getVirtualItems();
 
   // Reset scroll position and focus when search params change
   useEffect(() => {
@@ -50,7 +60,10 @@ export default function List({ onSelect }: ListProps) {
     hideFocusRing();
   }, [searchParams, hideFocusRing]);
 
-  // Reset focus when classes change (filters, search, etc.)
+  useEffect(() => {
+    shouldPreserveScroll();
+  }, [recentClasses, shouldPreserveScroll]);
+
   useEffect(() => {
     setFocusedIndex(0);
     hideFocusRing();
@@ -58,14 +71,14 @@ export default function List({ onSelect }: ListProps) {
 
   // Scroll focused item into view
   useEffect(() => {
-    if (focusedIndex >= 0 && focusedIndex < classes.length) {
+    if (focusedIndex >= 0 && focusedIndex < allClasses.length) {
       virtualizer.scrollToIndex(focusedIndex, { align: "auto" });
     }
-  }, [focusedIndex, virtualizer, classes.length]);
+  }, [focusedIndex, virtualizer, allClasses.length]);
 
   // Keyboard navigation
   useKeyboardNavigation({
-    items: classes,
+    items: allClasses,
     containerRef: rootRef,
     focusedIndex,
     setFocusedIndex,
@@ -82,7 +95,7 @@ export default function List({ onSelect }: ListProps) {
 
   // Auto-load focused item after debounce
   useAutoLoadOnFocus(
-    classes,
+    allClasses,
     focusedIndex,
     isListFocused,
     (focusedClass) => {
@@ -95,12 +108,12 @@ export default function List({ onSelect }: ListProps) {
     300
   );
 
-  const items = virtualizer.getVirtualItems();
-
   const handleClassClick = (index: number) => {
     setFocusedIndex(index);
     hideFocusRing();
-    const _class = classes[index];
+    const _class = allClasses[index];
+
+    addToRecent(_class);
     onSelect(_class.course.subject, _class.course.number, _class.number);
   };
 
@@ -150,17 +163,43 @@ export default function List({ onSelect }: ListProps) {
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
           >
             {items.map(({ key, index }) => {
-              const _class = classes[index];
+              const _class = allClasses[index];
+              const showRecentHeader = recentClasses.length > 0 && index === 0;
+              const showCatalogHeader =
+                recentClasses.length > 0 && index === recentClasses.length;
 
               return (
-                <ClassCard
-                  class={_class}
-                  data-index={index}
-                  key={key}
-                  ref={virtualizer.measureElement}
-                  active={showFocusRing && index === focusedIndex}
-                  onClick={() => handleClassClick(index)}
-                />
+                <div key={key}>
+                  {showRecentHeader && (
+                    <div
+                      style={{
+                        fontSize: "14px",
+                        color: "var(--paragraph-color)",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      Recently Viewed
+                    </div>
+                  )}
+                  {showCatalogHeader && (
+                    <div
+                      style={{
+                        fontSize: "14px",
+                        color: "var(--paragraph-color)",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      Catalog
+                    </div>
+                  )}
+                  <ClassCard
+                    class={_class}
+                    data-index={index}
+                    ref={virtualizer.measureElement}
+                    active={showFocusRing && index === focusedIndex}
+                    onClick={() => handleClassClick(index)}
+                  />
+                </div>
               );
             })}
           </div>
