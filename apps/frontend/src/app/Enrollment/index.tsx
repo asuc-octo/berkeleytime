@@ -18,7 +18,6 @@ import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 import Footer from "@/components/Footer";
 import { READ_ENROLLMENT, ReadEnrollmentResponse } from "@/lib/api";
 import { decimalToPercentString } from "@/utils/number-formatter";
-import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseManager from "./CourseManager";
 import styles from "./Enrollment.module.scss";
@@ -30,6 +29,7 @@ import {
   Output,
   getInputSearchParam,
 } from "./types";
+import { parseEnrollmentInputsFromUrl } from "./utils";
 
 const fetchEnrollment = async (
   client: ReturnType<typeof useApolloClient>,
@@ -105,7 +105,7 @@ const Enrollment = () => {
   const [searchParams, setSearchParams] = useSearchParams(); // specify courses plotted
 
   const initialInputs: Input[] = useMemo(
-    () => parseInputsFromUrl(searchParams),
+    () => parseEnrollmentInputsFromUrl(searchParams),
     [searchParams]
   );
 
