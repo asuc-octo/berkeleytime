@@ -164,9 +164,12 @@ export default function List({ onSelect }: ListProps) {
           >
             {items.map(({ key, index }) => {
               const _class = allClasses[index];
-              const showRecentHeader = recentClasses.length > 0 && index === 0;
-              const showCatalogHeader =
-                recentClasses.length > 0 && index === recentClasses.length;
+              const hasRecents = recentClasses.length > 0;
+              const showRecentHeader = hasRecents && index === 0;
+              const catalogHeaderIndex = hasRecents
+                ? recentClasses.length
+                : 0;
+              const showCatalogHeader = index === catalogHeaderIndex;
 
               return (
                 <div
@@ -177,9 +180,11 @@ export default function List({ onSelect }: ListProps) {
                   {showRecentHeader && (
                     <div
                       style={{
-                        fontSize: "14px",
+                        fontSize: "12px",
+                        letterSpacing: "0.08em",
                         color: "var(--paragraph-color)",
-                        marginBottom: "12px",
+                        marginBottom: "8px",
+                        textTransform: "uppercase",
                       }}
                     >
                       Recently Viewed
@@ -188,9 +193,11 @@ export default function List({ onSelect }: ListProps) {
                   {showCatalogHeader && (
                     <div
                       style={{
-                        fontSize: "14px",
+                        fontSize: "12px",
+                        letterSpacing: "0.08em",
                         color: "var(--paragraph-color)",
-                        marginBottom: "12px",
+                        marginBottom: "8px",
+                        textTransform: "uppercase",
                       }}
                     >
                       Catalog

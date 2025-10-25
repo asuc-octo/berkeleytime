@@ -2,7 +2,7 @@
   width: 384px;
   flex-shrink: 0;
   overflow: auto;
-  background-color: var(--background-color);
+  background-color: var(--foreground-color);
 
   &:focus {
     outline: none;
