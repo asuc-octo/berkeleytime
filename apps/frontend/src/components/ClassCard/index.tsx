@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, memo } from "react";
 
 import {
   ArrowSeparateVertical,
@@ -29,7 +29,7 @@ interface ClassProps {
   active?: boolean;
 }
 
-export default function ClassCard({
+function ClassCard({
   class: _class,
   expandable = false,
   expanded,
@@ -113,3 +113,5 @@ export default function ClassCard({
     </Card.RootColumn>
   );
 }
+
+export default memo(ClassCard);

@@ -1,4 +1,4 @@
-import { ReactNode, lazy, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, lazy, memo, useCallback, useEffect, useMemo } from "react";
 
 import classNames from "classnames";
 import {
@@ -105,7 +105,7 @@ interface DialogClassProps {
 type ClassProps = (CatalogClassProps | DialogClassProps) &
   (ControlledProps | UncontrolledProps);
 
-export default function Class({
+function Class({
   year,
   semester,
   subject,
@@ -503,3 +503,5 @@ export default function Class({
     </Root>
   );
 }
+
+export default memo(Class);

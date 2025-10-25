@@ -169,7 +169,11 @@ export default function List({ onSelect }: ListProps) {
                 recentClasses.length > 0 && index === recentClasses.length;
 
               return (
-                <div key={key}>
+                <div
+                  key={key}
+                  ref={virtualizer.measureElement}
+                  data-index={index}
+                >
                   {showRecentHeader && (
                     <div
                       style={{
@@ -195,7 +199,6 @@ export default function List({ onSelect }: ListProps) {
                   <ClassCard
                     class={_class}
                     data-index={index}
-                    ref={virtualizer.measureElement}
                     active={showFocusRing && index === focusedIndex}
                     onClick={() => handleClassClick(index)}
                   />

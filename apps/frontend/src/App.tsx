@@ -368,8 +368,30 @@ const client = new ApolloClient({
           },
         },
       },
+      Query: {
+        fields: {
+          class: {
+            merge(existing, incoming) {
+              return incoming;
+            },
+          },
+          user: {
+            merge(existing, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
     },
   }),
+  defaultOptions: {
+    query: {
+      errorPolicy: 'ignore',
+    },
+    watchQuery: {
+      errorPolicy: 'ignore',
+    },
+  },
 });
 
 export default function App() {
