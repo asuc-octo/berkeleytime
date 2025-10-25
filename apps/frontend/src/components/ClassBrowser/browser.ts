@@ -1,6 +1,13 @@
 import Fuse from "fuse.js";
 
-import { AcademicCareer, Component, IClass, academicCareers } from "@/lib/api";
+import {
+  AcademicCareer,
+  Component,
+  IClass,
+  ISectionAttribute,
+  ISectionAttriuteInfo,
+  academicCareers,
+} from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 export enum SortBy {
@@ -48,45 +55,55 @@ export const getLevel = (academicCareer: AcademicCareer, number: string) => {
     : (academicCareers[academicCareer] as Level);
 };
 
-export const getBreadthRequirements = (sectionAttributes: any[]): Breadth[] => {
+export const getBreadthRequirements = (
+  sectionAttributes: ISectionAttribute[]
+): Breadth[] => {
   if (!sectionAttributes) return [];
-  
-  const geAttributes = sectionAttributes.filter(attr => 
-    attr.attribute?.code === "GE"
+
+  const geAttributes = sectionAttributes.filter(
+    (attr) => attr.attribute?.code === "GE"
   );
-  
+
   const breadths = geAttributes
-    .map(attr => attr.value?.description)
+    .map((attr) => attr.value?.description ?? "")
     .filter(Boolean);
-    
+
   return breadths;
 };
 
 export const getAllBreadthRequirements = (classes: IClass[]): Breadth[] => {
   const allBreadths = new Set<Breadth>();
-  
-  classes.forEach(_class => {
-    const breadths = getBreadthRequirements(_class.primarySection.sectionAttributes);
-    breadths.forEach(breadth => allBreadths.add(breadth));
+
+  classes.forEach((_class) => {
+    const breadths = getBreadthRequirements(
+      _class.primarySection.sectionAttributes
+    );
+    breadths.forEach((breadth) => allBreadths.add(breadth));
   });
-  
+
   return Array.from(allBreadths).sort();
 };
 
-export const getUniversityRequirements = (requirementDesignation: any): UniversityRequirement[] => {
-  if (!requirementDesignation) return [];
-  
-  return [requirementDesignation].filter(Boolean);
+export const getUniversityRequirements = (
+  requirementDesignation?: ISectionAttriuteInfo
+): UniversityRequirement[] => {
+  if (!requirementDesignation || !requirementDesignation.description) return [];
+
+  return [requirementDesignation.description];
 };
 
-export const getAllUniversityRequirements = (classes: IClass[]): UniversityRequirement[] => {
+export const getAllUniversityRequirements = (
+  classes: IClass[]
+): UniversityRequirement[] => {
   const allRequirements = new Set<UniversityRequirement>();
-  
-  classes.forEach(_class => {
-    const requirements = getUniversityRequirements(_class.requirementDesignation);
-    requirements.forEach(req => allRequirements.add(req));
+
+  classes.forEach((_class) => {
+    const requirements = getUniversityRequirements(
+      _class.requirementDesignation
+    );
+    requirements.forEach((req) => allRequirements.add(req));
   });
-  
+
   return Array.from(allRequirements).sort();
 };
 
@@ -182,8 +199,10 @@ export const getFilteredClasses = (
 
       // Filter by breadth requirements
       if (currentBreadths.length > 0) {
-        const classBreadths = getBreadthRequirements(_class.primarySection.sectionAttributes);
-        const includesAllBreadths = currentBreadths.every(breadth => 
+        const classBreadths = getBreadthRequirements(
+          _class.primarySection.sectionAttributes
+        );
+        const includesAllBreadths = currentBreadths.every((breadth) =>
           classBreadths.includes(breadth)
         );
 
@@ -196,8 +215,12 @@ export const getFilteredClasses = (
 
       // Filter by university requirement
       if (currentUniversityRequirement) {
-        const classRequirements = getUniversityRequirements(_class.requirementDesignation);
-        const hasRequirement = classRequirements.includes(currentUniversityRequirement);
+        const classRequirements = getUniversityRequirements(
+          _class.requirementDesignation
+        );
+        const hasRequirement = classRequirements.includes(
+          currentUniversityRequirement
+        );
 
         if (!hasRequirement) {
           acc.excludedClasses.push(_class);

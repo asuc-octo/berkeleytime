@@ -132,6 +132,17 @@ export interface IExam {
   endTime: string;
 }
 
+export interface ISectionAttriuteInfo {
+  code?: string;
+  description?: string;
+  formalDescription?: string;
+}
+
+export interface ISectionAttribute {
+  attribute: ISectionAttriuteInfo;
+  value: ISectionAttriuteInfo;
+}
+
 export interface ISection {
   enrollment: IEnrollment;
   // Identifiers
@@ -161,18 +172,7 @@ export interface ISection {
   online: boolean;
   attendanceRequired: boolean;
   lecturesRecorded: boolean;
-  sectionAttributes: {
-    attribute: {
-      code: string;
-      description: string;
-      formalDescription: string;
-    };
-    value: {
-      code: string;
-      description: string;
-      formalDescription: string;
-    };
-  }[];
+  sectionAttributes: ISectionAttribute[];
 }
 
 export interface IMeeting {
@@ -209,7 +209,7 @@ export interface IClass {
   title: string | null;
   unitsMax: number;
   unitsMin: number;
-  requirementDesignation?: string;
+  requirementDesignation?: ISectionAttriuteInfo;
 }
 
 export interface ReadClassResponse {
@@ -433,7 +433,11 @@ export const GET_CATALOG = gql`
         }
         academicCareer
       }
-      requirementDesignation
+      requirementDesignation {
+        code
+        description
+        formalDescription
+      }
     }
   }
 `;
