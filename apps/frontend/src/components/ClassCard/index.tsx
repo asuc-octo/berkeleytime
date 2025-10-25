@@ -42,6 +42,9 @@ export default function ClassCard({
   active = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
+  const gradeDistribution =
+    _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
+
   return (
     <Card.RootColumn active={active} {...props}>
       <Card.ColumnHeader>
@@ -78,10 +81,16 @@ export default function ClassCard({
           </Card.Footer>
         </Card.Body>
         <Card.Actions>
-          {_class?.gradeDistribution && (
+          {gradeDistribution && (
             <AverageGrade
-              gradeDistribution={_class.gradeDistribution}
-              style={{ marginTop: 0.5, fontSize: 15 }}
+              gradeDistribution={gradeDistribution}
+              style={{
+                marginTop: 0.5,
+                fontSize: 14,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+                textAlign: "right",
+              }}
             />
           )}
           {bookmarked && bookmarkToggle && (
