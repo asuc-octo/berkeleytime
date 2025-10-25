@@ -4,9 +4,9 @@ import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
-  Bar,
-  BarChart,
   CartesianGrid,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -16,16 +16,12 @@ import {
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
-import {
-  READ_GRADE_DISTRIBUTION,
-  ReadGradeDistributionResponse,
-} from "@/lib/api";
-import { GRADES } from "@/lib/grades";
+import { READ_ENROLLMENT, ReadEnrollmentResponse } from "@/lib/api";
 import { decimalToPercentString } from "@/utils/number-formatter";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseManager from "./CourseManager";
-import styles from "./GradeDistributions.module.scss";
+import styles from "./Enrollment.module.scss";
 import HoverInfo from "./HoverInfo";
 import {
   DARK_COLORS,
@@ -35,22 +31,23 @@ import {
   getInputSearchParam,
 } from "./types";
 
-const fetchGradeDistribution = async (
+const fetchEnrollment = async (
   client: ReturnType<typeof useApolloClient>,
   input: Input,
   i: number
 ): Promise<Output | null> => {
   try {
-    const response = await client.query<ReadGradeDistributionResponse>({
-      query: READ_GRADE_DISTRIBUTION,
+    const response = await client.query<ReadEnrollmentResponse>({
+      query: READ_ENROLLMENT,
       variables: input,
+      fetchPolicy: "no-cache",
     });
 
-    if (!response.data?.grade) return null;
+    if (!response.data?.enrollment) return null;
 
     return {
       color: LIGHT_COLORS[i % LIGHT_COLORS.length],
-      gradeDistribution: response.data.grade,
+      enrollmentHistory: response.data.enrollment,
       input,
       active: false,
       hidden: false,
@@ -60,40 +57,61 @@ const fetchGradeDistribution = async (
   }
 };
 
-const transformGradeDistributionData = (
+const transformEnrollmentData = (
   filteredOutputs: Output[]
-): Array<{ letter: string; [key: number]: number }> => {
-  return filteredOutputs?.reduce(
-    (acc, output, index) => {
-      output.gradeDistribution.distribution.forEach((grade) => {
-        const column = acc.find((item) => item.letter === grade.letter);
-        if (!column) return;
+): Array<{ day: number; [key: number]: number }> => {
+  return filteredOutputs
+    ?.reduce(
+      (acc, output, index) => {
+        const day0 = new Date(output.enrollmentHistory.history[0].time);
+        output.enrollmentHistory.history.forEach((enrollment) => {
+          const dayOffset = Math.ceil(
+            (new Date(enrollment.time).getTime() - day0.getTime()) /
+              (1000 * 3600 * 24)
+          );
+          const column = acc.find((item) => item.day === dayOffset);
+          const enrollValue =
+            Math.round(
+              (enrollment.enrolledCount / enrollment.maxEnroll) * 1000
+            ) / 10;
+          if (!column) {
+            acc.push({
+              day: dayOffset,
+              [index]: enrollValue,
+            });
+          } else {
+            if (index in column) {
+              column[index] = Math.max(enrollValue, column[index]);
+            } else {
+              column[index] = enrollValue;
+            }
+          }
+        });
 
-        const percent = Math.round(grade.percentage * 1000) / 10;
-        column[index] = percent;
-      });
-
-      return acc;
-    },
-    GRADES.map((letter) => ({ letter })) as {
-      letter: string;
-      [key: number]: number;
-    }[]
-  );
+        return acc;
+      },
+      [] as {
+        [key: number]: number;
+        day: number;
+      }[]
+    )
+    .sort((a, b) => a.day - b.day);
 };
 
-const GradeDistributions = () => {
+const CHART_HEIGHT = 450;
+
+const Enrollment = () => {
   const client = useApolloClient();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams(); // specify courses plotted
 
   const initialInputs: Input[] = useMemo(
     () => parseInputsFromUrl(searchParams),
     [searchParams]
-  ); // if courses are specified in the url, empty array if none
+  );
 
-  const [loading, setLoading] = useState<boolean>(initialInputs.length > 0); // true if courses are specified in url
-  const [outputs, setOutputs] = useState<Output[]>([]); // list of course grade information
-  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null); // which grade bucket is hovered
+  const [loading, setLoading] = useState<boolean>(initialInputs.length > 0);
+  const [outputs, setOutputs] = useState<Output[]>([]); // enrollment timeseries data
+  const [hoveredDay, setHoveredDay] = useState<number | null>(null); // which day is hovered
 
   useEffect(() => {
     const initialize = async () => {
@@ -106,9 +124,7 @@ const GradeDistributions = () => {
       }
 
       const results = await Promise.all(
-        initialInputs.map((input, i) =>
-          fetchGradeDistribution(client, input, i)
-        )
+        initialInputs.map((input, i) => fetchEnrollment(client, input, i))
       );
 
       const outputs = results
@@ -140,12 +156,25 @@ const GradeDistributions = () => {
   );
 
   const data = useMemo(
-    () => transformGradeDistributionData(filteredOutputs || []),
+    () => transformEnrollmentData(filteredOutputs || []),
     [filteredOutputs]
   );
 
+  const dataMax = useMemo(() => {
+    return (
+      data.reduce((acc, d) => {
+        const m = Math.max(
+          ...Object.entries(d)
+            .filter(([key]) => !isNaN(Number(key)))
+            .map(([, value]) => value)
+        );
+        return m > acc ? m : acc;
+      }, 0) * 1.2
+    );
+  }, [data]);
+
   return (
-    <Box p="5">
+    <Box p="5" className={styles.root}>
       <Flex direction="column">
         <CourseManager outputs={outputs} setOutputs={setOutputs} />
         {loading ? (
@@ -155,12 +184,16 @@ const GradeDistributions = () => {
         ) : (
           <Flex direction="row">
             <div className={styles.view}>
-              <ResponsiveContainer width="100%" height={550}>
-                <BarChart
+              <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+                <LineChart
                   syncId="grade-distributions"
                   width={730}
                   height={200}
                   data={data}
+                  onMouseMove={(data) => {
+                    if (!data.isTooltipActive || !data.activeLabel) return;
+                    setHoveredDay(Number(data.activeLabel));
+                  }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -168,32 +201,30 @@ const GradeDistributions = () => {
                     stroke="var(--border-color)"
                   />
                   <XAxis
-                    dataKey="letter"
+                    dataKey="day"
                     fill="var(--label-color)"
                     tickMargin={8}
+                    type="number"
                   />
                   <YAxis
-                    tickFormatter={(value) => decimalToPercentString(value, 1)}
+                    domain={[0, dataMax]}
+                    tickFormatter={(value) => decimalToPercentString(value, 0)}
                   />
-                  {filteredOutputs?.length && (
+                  {outputs?.length && (
                     <Tooltip
-                      cursor={{
-                        fill: "var(--border-color)",
-                        fillOpacity: 0.5,
-                      }}
                       content={(props) => {
                         return (
                           <HoverCard
-                            content={props.label}
+                            content={`Day ${props.label}`}
                             data={props.payload?.map((v) => {
                               const name = v.name?.valueOf();
                               return {
                                 label: name ? name.toString() : "N/A",
                                 value:
                                   typeof v.value === "number"
-                                    ? decimalToPercentString(v.value, 1)
+                                    ? decimalToPercentString(v.value, 0)
                                     : "N/A",
-                                color: v.fill,
+                                color: v.stroke,
                               };
                             })}
                           />
@@ -201,28 +232,27 @@ const GradeDistributions = () => {
                       }}
                     />
                   )}
-                  {filteredOutputs?.map((output, index) => (
-                    <Bar
-                      dataKey={index}
-                      fill={
-                        activeOutput && !output.active
-                          ? DARK_COLORS[index]
-                          : output.color
-                      }
-                      key={index}
-                      name={`${output.input.subject} ${output.input.courseNumber}`}
-                      onMouseMove={(data) => setHoveredLetter(data.letter)}
-                      radius={[
-                        10 / filteredOutputs.length,
-                        10 / filteredOutputs.length,
-                        0,
-                        0,
-                      ]}
-                    />
-                  ))}
-                </BarChart>
+                  {filteredOutputs?.map((output, index) => {
+                    return (
+                      <Line
+                        dataKey={index}
+                        stroke={
+                          activeOutput && !output.active
+                            ? DARK_COLORS[index]
+                            : LIGHT_COLORS[index]
+                        }
+                        key={index}
+                        name={`${output.input.subject} ${output.input.courseNumber}`}
+                        dot={false}
+                        strokeWidth={3}
+                        type={"monotone"}
+                        connectNulls
+                      />
+                    );
+                  })}
+                </LineChart>
               </ResponsiveContainer>
-              {!filteredOutputs?.length && (
+              {!outputs?.length && (
                 <div className={styles.empty}>
                   <FrameAltEmpty height={24} width={24} />
                   <br />
@@ -240,21 +270,20 @@ const GradeDistributions = () => {
                       color={output.color}
                       subject={output.input.subject}
                       courseNumber={output.input.courseNumber}
-                      gradeDistribution={output.gradeDistribution}
-                      hoveredLetter={hoveredLetter}
+                      enrollmentHistory={output.enrollmentHistory}
+                      hoveredDay={hoveredDay}
+                      semester={output.input.semester}
+                      year={output.input.year}
                     />
                   </div>
                 ))
               ) : (
-                <div className={styles.hoverInfoCard}>
-                  <HoverInfo
-                    color={"#aaa"}
-                    subject={"No Class"}
-                    courseNumber={"Selected"}
-                    gradeDistribution={undefined}
-                    hoveredLetter={null}
-                  />
-                </div>
+                <HoverInfo
+                  color={"#aaa"}
+                  subject={"No Class"}
+                  courseNumber={"Selected"}
+                  hoveredDay={null}
+                />
               )}
             </div>
           </Flex>
@@ -265,4 +294,4 @@ const GradeDistributions = () => {
   );
 };
 
-export default GradeDistributions;
+export default Enrollment;

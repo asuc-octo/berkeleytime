@@ -79,6 +79,8 @@ export default function Enrollment() {
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
 
+  console.log(hoveredDay, hoveredSeries);
+
   const initialize = useCallback(async () => {
     if (!loading) return;
 
