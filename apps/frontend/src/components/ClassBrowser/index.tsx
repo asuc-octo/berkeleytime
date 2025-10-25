@@ -75,7 +75,8 @@ export default function ClassBrowser({
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localBreadths, setLocalBreadths] = useState<Breadth[]>([]);
-  const [localUniversityRequirement, setLocalUniversityRequirement] = useState<UniversityRequirement | null>(null);
+  const [localUniversityRequirement, setLocalUniversityRequirement] =
+    useState<UniversityRequirement | null>(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
@@ -200,7 +201,17 @@ export default function ClassBrowser({
         breadths,
         universityRequirement
       ),
-    [classes, components, units, levels, days, open, online, breadths, universityRequirement]
+    [
+      classes,
+      components,
+      units,
+      levels,
+      days,
+      open,
+      online,
+      breadths,
+      universityRequirement,
+    ]
   );
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
@@ -267,7 +278,9 @@ export default function ClassBrowser({
     setLocalSortBy(value);
   };
 
-  const updateUniversityRequirement = (universityRequirement: UniversityRequirement | null) => {
+  const updateUniversityRequirement = (
+    universityRequirement: UniversityRequirement | null
+  ) => {
     if (persistent) {
       if (universityRequirement) {
         searchParams.set("universityRequirement", universityRequirement);
@@ -313,7 +326,8 @@ export default function ClassBrowser({
         updateUnits: (units) => updateArray("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
         updateDays: (days) => updateArray("days", setLocalDays, days),
-        updateBreadths: (breadths) => updateArray("breadths", setLocalBreadths, breadths),
+        updateBreadths: (breadths) =>
+          updateArray("breadths", setLocalBreadths, breadths),
         updateUniversityRequirement,
         updateSortBy,
         updateOpen: (open) => updateBoolean("open", setLocalOpen, open),

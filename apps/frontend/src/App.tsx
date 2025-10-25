@@ -386,10 +386,10 @@ const client = new ApolloClient({
   }),
   defaultOptions: {
     query: {
-      errorPolicy: 'ignore',
+      errorPolicy: "ignore",
     },
     watchQuery: {
-      errorPolicy: 'ignore',
+      errorPolicy: "ignore",
     },
   },
 });

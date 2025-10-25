@@ -166,9 +166,7 @@ export default function List({ onSelect }: ListProps) {
               const _class = allClasses[index];
               const hasRecents = recentClasses.length > 0;
               const showRecentHeader = hasRecents && index === 0;
-              const catalogHeaderIndex = hasRecents
-                ? recentClasses.length
-                : 0;
+              const catalogHeaderIndex = hasRecents ? recentClasses.length : 0;
               const showCatalogHeader = index === catalogHeaderIndex;
 
               return (

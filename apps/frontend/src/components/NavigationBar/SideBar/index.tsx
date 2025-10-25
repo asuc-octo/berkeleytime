@@ -44,7 +44,7 @@ export default function SideBar({ children }: SideBarProps) {
             <div className={styles.group}>
               <p className={styles.label}>Career</p>
               <Link className={styles.item} to="/schedules">
-                My schedules
+                Scheduler
               </Link>
               <Link className={styles.item} to="/gradtrak">
                 Gradtrak
