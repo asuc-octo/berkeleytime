@@ -1,0 +1,81 @@
+.cardWrapper {
+  position: relative;
+  overflow: visible;
+  height: 128px; // Fixed height to match carousel cards
+
+  &.popupOpen {
+    z-index: 100;
+  }
+
+  // Override Card's default overflow: hidden but keep height
+  > * {
+    height: 100% !important;
+    overflow: visible !important;
+  }
+}
+
+.bellWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  margin-top: -3.5px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: background-color 150ms ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--background-color);
+  }
+
+  &.active {
+    color: var(--blue-500);
+
+    &:hover {
+      background-color: var(--background-color);
+      color: var(--blue-600);
+    }
+  }
+}
+
+.popup {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkboxOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--paragraph-color);
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  span {
+    line-height: 1.3;
+  }
+
+  &:hover {
+    color: var(--blue-500);
+  }
+}

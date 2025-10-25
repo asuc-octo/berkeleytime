@@ -18,6 +18,7 @@ import SuspenseBoundary from "@/components/SuspenseBoundary";
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
+  Notifications: lazy(() => import("@/app/Profile/Notifications")),
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
 };
@@ -139,6 +140,14 @@ const router = createBrowserRouter([
               </SuspenseBoundary>
             ),
             index: true,
+          },
+          {
+            element: (
+              <SuspenseBoundary key="notifications">
+                <Profile.Notifications />
+              </SuspenseBoundary>
+            ),
+            path: "notifications",
           },
           {
             element: (

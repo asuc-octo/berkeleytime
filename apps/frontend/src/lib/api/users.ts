@@ -4,6 +4,17 @@ import { IClass } from "./classes";
 import { ICourse } from "./courses";
 import { Semester } from "./terms";
 
+export enum NotificationType {
+  Email = "Email",
+  Mobile = "Mobile",
+  Off = "Off",
+}
+
+export interface IMonitoredClass {
+  class: IClass;
+  thresholds: number[];
+}
+
 export interface IUser {
   _id: string;
   name: string;
@@ -11,6 +22,8 @@ export interface IUser {
   student: boolean;
   bookmarkedCourses: ICourse[];
   bookmarkedClasses: IClass[];
+  monitoredClasses?: IMonitoredClass[];
+  notificationType?: NotificationType;
 }
 
 export interface ReadUserResponse {
@@ -74,9 +87,16 @@ export interface IBookmarkedClassInput {
   sessionId: string | null;
 }
 
+export interface IMonitoredClassInput {
+  class: IBookmarkedClassInput;
+  thresholds: number[];
+}
+
 export interface IUserInput {
   bookmarkedCourses?: IBookmarkedCourseInput[];
   bookmarkedClasses?: IBookmarkedClassInput[];
+  monitoredClasses?: IMonitoredClassInput[];
+  notificationType?: NotificationType;
 }
 
 export interface UpdateUserResponse {
@@ -86,9 +106,11 @@ export interface UpdateUserResponse {
 export const UPDATE_USER = gql`
   mutation UpdateUser($user: UpdateUserInput!) {
     updateUser(user: $user) {
+      _id
       name
       email
       student
+      # notificationType # TODO: Uncomment when backend implements this field
       bookmarkedCourses {
         title
         subject
@@ -102,7 +124,37 @@ export const UPDATE_USER = gql`
         year
         semester
         sessionId
+        unitsMin
+        unitsMax
+        course {
+          title
+        }
+        primarySection {
+          enrollment {
+            latest {
+              enrolledCount
+              maxEnroll
+              waitlistedCount
+              maxWaitlist
+            }
+          }
+        }
+        gradeDistribution {
+          average
+        }
       }
+      # monitoredClasses { # TODO: Uncomment when backend implements this field
+      #   thresholds
+      #   class {
+      #     title
+      #     subject
+      #     number
+      #     courseNumber
+      #     year
+      #     semester
+      #     sessionId
+      #   }
+      # }
     }
   }
 `;
