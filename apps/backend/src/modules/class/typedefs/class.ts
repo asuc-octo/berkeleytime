@@ -48,7 +48,7 @@ export default gql`
     title: String
     unitsMax: Float!
     unitsMin: Float!
-    requirementDesignation: String
+    requirementDesignation: SectionAttributeInfo
   }
 
   enum ClassFinalExam {
@@ -256,9 +256,9 @@ export default gql`
   }
 
   type SectionAttributeInfo {
-    code: String!
-    description: String!
-    formalDescription: String!
+    code: String
+    description: String
+    formalDescription: String
   }
 
   type EnrollmentDay {

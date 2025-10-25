@@ -131,11 +131,14 @@ export default function Filters() {
   ]);
 
   const filteredBreadths = useMemo(() => {
-    return getAllBreadthRequirements(includedClasses);
+    return getAllBreadthRequirements([...includedClasses, ...excludedClasses]);
   }, [includedClasses]);
 
   const filteredUniversityRequirements = useMemo(() => {
-    return getAllUniversityRequirements(includedClasses);
+    return getAllUniversityRequirements([
+      ...includedClasses,
+      ...excludedClasses,
+    ]);
   }, [includedClasses]);
 
   const filteredComponents = useMemo(() => {
@@ -427,7 +430,7 @@ export default function Filters() {
                 value: requirement,
                 label: requirement,
               };
-            })
+            }),
           ]}
         />
         <p className={styles.label}>DAY</p>
