@@ -4,7 +4,7 @@ import { EnrollmentModule } from "./generated-types/module-types";
 
 type EnrollmentHistorySingular = IEnrollmentHistoryItem["history"][number];
 const normalizeSeatReservationCounts = (
-  counts: EnrollmentHistorySingular["seatReservationCounts"]
+  counts: EnrollmentHistorySingular["seatReservationCount"]
 ) => {
   if (!counts) return [];
 
@@ -28,8 +28,8 @@ const normalizeEnrollmentSingular = (singular: EnrollmentHistorySingular) => {
     maxEnroll: singular.maxEnroll ?? 0,
     maxWaitlist: singular.maxWaitlist ?? 0,
     openReserved: singular.openReserved ?? 0,
-    seatReservationCounts: normalizeSeatReservationCounts(
-      singular.seatReservationCounts
+    seatReservationCount: normalizeSeatReservationCounts(
+      singular.seatReservationCount
     ),
   } as EnrollmentModule.EnrollmentSingular;
 

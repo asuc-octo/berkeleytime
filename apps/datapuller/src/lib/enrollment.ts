@@ -58,7 +58,7 @@ const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
         input.enrollmentStatus?.instructorAddConsentRequired,
       instructorDropConsentRequired:
         input.enrollmentStatus?.instructorDropConsentRequired,
-      seatReservationCounts: input.enrollmentStatus?.seatReservations?.map(
+      seatReservationCount: input.enrollmentStatus?.seatReservations?.map(
         (reservation) => ({
           number: reservation.number ?? 0,
           maxEnroll: reservation.maxEnroll ?? 0,

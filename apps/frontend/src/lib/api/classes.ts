@@ -291,7 +291,7 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
-            seatReservationCounts {
+            seatReservationCount {
               enrolledCount
               maxEnroll
               number
@@ -303,7 +303,7 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
-            seatReservationCounts {
+            seatReservationCount {
               enrolledCount
               maxEnroll
               number
