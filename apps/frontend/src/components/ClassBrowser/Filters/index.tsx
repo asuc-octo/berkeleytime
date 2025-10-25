@@ -22,6 +22,8 @@ import {
   Level,
   SortBy,
   Unit,
+  getAllBreadthRequirements,
+  getAllUniversityRequirements,
   getFilteredClasses,
   getLevel,
 } from "../browser";
@@ -44,6 +46,10 @@ export default function Filters() {
     updateLevels,
     days,
     updateDays,
+    breadths,
+    updateBreadths,
+    universityRequirement,
+    updateUniversityRequirement,
     open,
     // updateOpen,
     online,
@@ -123,6 +129,17 @@ export default function Filters() {
     open,
     online,
   ]);
+
+  const filteredBreadths = useMemo(() => {
+    return getAllBreadthRequirements([...includedClasses, ...excludedClasses]);
+  }, [includedClasses]);
+
+  const filteredUniversityRequirements = useMemo(() => {
+    return getAllUniversityRequirements([
+      ...includedClasses,
+      ...excludedClasses,
+    ]);
+  }, [includedClasses]);
 
   const filteredComponents = useMemo(() => {
     const filteredComponents = Object.keys(componentMap).reduce(
@@ -385,6 +402,36 @@ export default function Filters() {
               meta: filteredUnits[unit].toString(),
             };
           })}
+        />
+        <p className={styles.label}>L&S REQUIREMENTS</p>
+        <Select
+          multi
+          value={breadths}
+          onChange={(v) => {
+            if (Array.isArray(v)) updateBreadths(v);
+          }}
+          options={filteredBreadths.map((breadth) => {
+            return {
+              value: breadth,
+              label: breadth,
+            };
+          })}
+        />
+        <p className={styles.label}>UNIVERSITY REQUIREMENTS</p>
+        <Select
+          value={universityRequirement}
+          onChange={(v) => {
+            updateUniversityRequirement(v as string | null);
+          }}
+          options={[
+            { value: null, label: "None" },
+            ...filteredUniversityRequirements.map((requirement) => {
+              return {
+                value: requirement,
+                label: requirement,
+              };
+            }),
+          ]}
         />
         <p className={styles.label}>DAY</p>
         <DaySelect

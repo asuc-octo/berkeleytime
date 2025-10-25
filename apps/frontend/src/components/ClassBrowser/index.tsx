@@ -16,10 +16,12 @@ import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
 import {
+  Breadth,
   Day,
   Level,
   SortBy,
   Unit,
+  UniversityRequirement,
   getFilteredClasses,
   getIndex,
 } from "./browser";
@@ -72,6 +74,8 @@ export default function ClassBrowser({
   const [localUnits, setLocalUnits] = useState<Unit[]>([]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
+  const [localBreadths, setLocalBreadths] = useState<Breadth[]>([]);
+  const [localUniversityRequirement, setLocalUniversityRequirement] = useState<UniversityRequirement | null>(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
@@ -137,6 +141,22 @@ export default function ClassBrowser({
     [searchParams, localDays, persistent]
   );
 
+  const breadths = useMemo(
+    () =>
+      persistent
+        ? (searchParams.get("breadths")?.split(",") ?? [])
+        : localBreadths,
+    [searchParams, localBreadths, persistent]
+  );
+
+  const universityRequirement = useMemo(
+    () =>
+      persistent
+        ? (searchParams.get("universityRequirement") ?? null)
+        : localUniversityRequirement,
+    [searchParams, localUniversityRequirement, persistent]
+  );
+
   const sortBy = useMemo(() => {
     if (persistent) {
       const parameter = searchParams.get("sortBy") as SortBy;
@@ -176,9 +196,11 @@ export default function ClassBrowser({
         levels,
         days,
         open,
-        online
+        online,
+        breadths,
+        universityRequirement
       ),
-    [classes, components, units, levels, days, open, online]
+    [classes, components, units, levels, days, open, online, breadths, universityRequirement]
   );
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
@@ -245,6 +267,19 @@ export default function ClassBrowser({
     setLocalSortBy(value);
   };
 
+  const updateUniversityRequirement = (universityRequirement: UniversityRequirement | null) => {
+    if (persistent) {
+      if (universityRequirement) {
+        searchParams.set("universityRequirement", universityRequirement);
+      } else {
+        searchParams.delete("universityRequirement");
+      }
+      setSearchParams(searchParams);
+      return;
+    }
+    setLocalUniversityRequirement(universityRequirement);
+  };
+
   const updateQuery = (query: string) => {
     setLocalQuery(query);
   };
@@ -266,6 +301,8 @@ export default function ClassBrowser({
         units,
         levels,
         days,
+        breadths,
+        universityRequirement,
         online,
         open,
         reverse: localReverse,
@@ -276,6 +313,8 @@ export default function ClassBrowser({
         updateUnits: (units) => updateArray("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
         updateDays: (days) => updateArray("days", setLocalDays, days),
+        updateBreadths: (breadths) => updateArray("breadths", setLocalBreadths, breadths),
+        updateUniversityRequirement,
         updateSortBy,
         updateOpen: (open) => updateBoolean("open", setLocalOpen, open),
         updateOnline: (online) =>

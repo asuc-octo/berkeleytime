@@ -48,7 +48,11 @@ export interface IClassItem {
   blindGrading?: boolean;
   // NOTE: Exclude if always the same as course requirementsFulfilled
   // requirementDesignation.code
-  requirementDesignation?: string;
+  requirementDesignation?: {
+    code?: string;
+    description?: string;
+    formalDescription?: string;
+  };
   // requisites.description
   requisites?: string;
 }
@@ -80,7 +84,11 @@ const classSchema = new Schema<IClassItem>({
   anyPrintInScheduleOfClasses: { type: Boolean },
   contactHours: { type: Number },
   blindGrading: { type: Boolean }, // NOTE: Exclude if always the same as course blindGrading
-  requirementDesignation: { type: String }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
+  requirementDesignation: {
+    code: String,
+    description: String,
+    formalDescription: String,
+  }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
 });
 classSchema.index(
