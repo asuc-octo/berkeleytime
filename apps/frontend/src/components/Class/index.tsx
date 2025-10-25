@@ -279,6 +279,12 @@ function Class({
     });
   }, [courseGradeDistribution]);
 
+  const handleClose = useCallback(() => {
+    if (!onClose) return;
+
+    onClose();
+  }, [onClose]);
+
   if (loading || courseLoading) {
     return <></>;
   }
@@ -294,7 +300,7 @@ function Class({
         <Box className={styles.header} pt="5" px="5">
           <Container size="3">
             <Flex direction="column" gap="5">
-              <Flex justify="between">
+              <Flex justify="between" align="start">
                 <Flex gap="3">
                   {/* TODO: Reusable bookmark button */}
                   <Tooltip
@@ -320,13 +326,15 @@ function Class({
                 >
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
-              </Tooltip> */}
+                  </Tooltip> */}
                   <Tooltip content="Add to schedule">
                     <IconButton>
                       <CalendarPlus />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip content="Berkeley Catalog">
+                </Flex>
+                <Flex gap="2">
+                  <Tooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
                       href={getExternalLink(
@@ -338,10 +346,18 @@ function Class({
                         _class.primarySection.component
                       )}
                       target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <OpenNewWindow />
                     </IconButton>
                   </Tooltip>
+                  {onClose && (
+                    <Tooltip content="Close">
+                      <IconButton onClick={handleClose}>
+                        <Xmark />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">

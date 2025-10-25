@@ -111,6 +111,17 @@ export default function Catalog() {
     [navigate, location, term]
   );
 
+  const handleClose = useCallback(() => {
+    setOpen(false);
+
+    if (!term) return;
+
+    navigate({
+      ...location,
+      pathname: `/catalog/${term.year}/${term.semester}`,
+    });
+  }, [navigate, location, term]);
+
   // TODO: Loading state
   if (termsLoading) {
     return <></>;
@@ -151,12 +162,12 @@ export default function Catalog() {
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
           <></>
-        ) : _class ? (
+        ) : _class && subject && courseNumber && number ? (
           <Class
             class={_class}
             expanded={expanded}
             onExpandedChange={setExpanded}
-            onClose={() => setOpen(false)}
+            onClose={handleClose}
           />
         ) : (
           <div />
