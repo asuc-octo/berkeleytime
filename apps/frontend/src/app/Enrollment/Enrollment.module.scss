@@ -1,11 +1,6 @@
 .root {
   background-color: var(--background-color);
 
-  .panel {
-    width: 384px;
-    border-right: 1px solid var(--border-color);
-  }
-
   .view {
     padding: 24px;
     flex-grow: 1;
@@ -14,16 +9,6 @@
     overflow: auto;
     gap: 24px;
     position: relative;
-
-    .grid {
-      display: grid;
-      gap: 24px;
-      grid-template-columns: repeat(auto-fit, minmax(384px, 1fr));
-    }
-    .legend {
-      margin-left: 30px;
-      color: var(--paragraph-color);
-    }
   }
 
   .empty {
