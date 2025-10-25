@@ -12,6 +12,17 @@
     "@apollo/client": "4.0.7",
     "@floating-ui/dom": "^1.7.4",
     "@mapbox/mapbox-gl-directions": "^4.3.1",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-web": "^0.43.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.56.0",
+    "@opentelemetry/instrumentation": "^0.56.0",
+    "@opentelemetry/instrumentation-document-load": "^0.43.0",
+    "@opentelemetry/instrumentation-fetch": "^0.56.0",
+    "@opentelemetry/instrumentation-user-interaction": "^0.43.0",
+    "@opentelemetry/instrumentation-xml-http-request": "^0.56.0",
+    "@opentelemetry/resources": "^1.29.0",
+    "@opentelemetry/sdk-trace-web": "^1.29.0",
+    "@opentelemetry/semantic-conventions": "^1.29.0",
     "@repo/shared": "*",
     "@repo/theme": "*",
     "@shopify/draggable": "^1.1.4",
@@ -42,6 +53,7 @@
     "eslint": "^9.37.0",
     "serve": "^14.2.5",
     "typescript": "^5.9.3",
-    "vite": "^7.1.9"
+    "vite": "^7.1.9",
+    "tsx": "^4.19.0"
   }
 }

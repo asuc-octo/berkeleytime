@@ -25,6 +25,9 @@ services:
       context: .
       dockerfile: ./apps/frontend/Dockerfile
       target: frontend-dev
+    environment:
+      - VITE_OTEL_SERVICE_NAME=frontend
+      - VITE_OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
     networks:
       - bt
     restart: always
@@ -93,16 +96,28 @@ services:
     volumes:
       - ./packages/theme:/storybook/packages/theme
       - ./apps/storybook:/storybook/apps/storybook
-  docs:
-    build:
-      context: .
-      dockerfile: ./apps/docs/Dockerfile
-      target: docs-dev
-    ports:
-      - 3000:3000
+  # docs:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/docs/Dockerfile
+  #     target: docs-dev
+  #   ports:
+  #     - 3000:3000
+  #   networks:
+  #     - bt
+  #   restart: always
+  #   volumes:
+  #     - ./apps/docs:/storybook/apps/docs
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.126.0
+    command: ["--config=/etc/otel/collector/config.yaml"]
     networks:
       - bt
+    ports:
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP HTTP receiver
+      - 9464:9464 # Prometheus metrics exporter
+      - 55679:55679 # zpages extension
     restart: always
     volumes:
-      - ./apps/docs:/storybook/apps/docs
-
+      - ./otel-collector.yaml:/etc/otel/collector/config.yaml

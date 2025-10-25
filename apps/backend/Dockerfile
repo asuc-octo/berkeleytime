@@ -13,6 +13,9 @@ COPY --from=backend-builder /backend/out/json/ .
 COPY --from=backend-builder /backend/out/package-lock.json ./package-lock.json
 RUN ["npm", "install"]
 
+ENV OTEL_SERVICE_NAME=backend
+ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+
 COPY --from=backend-builder /backend/out/full/ .
 ENTRYPOINT ["turbo", "run", "dev", "--filter=backend"]
 
