@@ -53,10 +53,16 @@ export function AverageGrade({
 
   const color = useMemo(() => getGradeColor(text), [text]);
 
+  if (!average) {
+    return null;
+  }
+
   return (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
-        <ColoredGrade style={style} grade={text} />
+        <div className={styles.trigger} style={{ color, ...style }}>
+          {text}
+        </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
@@ -68,21 +74,14 @@ export function AverageGrade({
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Average grade</p>
-            {average ? (
-              <p className={styles.description}>
-                Students have received{" "}
-                {["A", "F"].includes(text[0]) ? "an " : "a "}
-                <span style={{ color }}>
-                  {text} ({average.toLocaleString()})
-                </span>{" "}
-                in this course on average {tooltip}.
-              </p>
-            ) : (
-              <p className={styles.description}>
-                Either this course has not been previously offered, or the
-                average grade is not available.
-              </p>
-            )}
+            <p className={styles.description}>
+              Students have received{" "}
+              {["A", "F"].includes(text[0]) ? "an " : "a "}
+              <span style={{ color }}>
+                {text} ({average.toLocaleString()})
+              </span>{" "}
+              in this course on average {tooltip}.
+            </p>
           </div>
         </Tooltip.Content>
       </Tooltip.Portal>

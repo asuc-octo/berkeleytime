@@ -33,7 +33,9 @@ export default function List({ onSelect }: ListProps) {
   // Keyboard navigation helpers
   const { showFocusRing, showFocusRingTemporarily, hideFocusRing } =
     useFocusRingTimer();
-  const isListFocused = useContainerFocus(rootRef as RefObject<HTMLElement | null>);
+  const isListFocused = useContainerFocus(
+    rootRef as RefObject<HTMLElement | null>
+  );
 
   const virtualizer = useVirtualizer({
     count: classes.length,
