@@ -248,7 +248,6 @@ export const READ_CLASS = gql`
         average
         distribution {
           letter
-          percentage
           count
         }
       }
@@ -270,7 +269,6 @@ export const READ_CLASS = gql`
           average
           distribution {
             letter
-            percentage
             count
           }
         }
@@ -425,11 +423,6 @@ export const GET_CATALOG = gql`
         title
         gradeDistribution {
           average
-          distribution {
-            letter
-            percentage
-            count
-          }
         }
         academicCareer
       }

@@ -93,7 +93,6 @@ export const READ_SCHEDULE = gql`
               average
               distribution {
                 letter
-                percentage
                 count
               }
             }
@@ -218,7 +217,6 @@ export const UPDATE_SCHEDULE = gql`
               average
               distribution {
                 letter
-                percentage
                 count
               }
             }

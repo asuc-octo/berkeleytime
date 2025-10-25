@@ -80,7 +80,6 @@ export const READ_COURSE = gql`
         average
         distribution {
           letter
-          percentage
           count
         }
       }
@@ -126,7 +125,6 @@ export const READ_COURSE_GRADE_DIST = gql`
         average
         distribution {
           letter
-          percentage
           count
         }
       }
@@ -146,7 +144,6 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         average
         distribution {
           letter
-          percentage
           count
         }
       }
@@ -178,11 +175,6 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         }
         gradeDistribution {
           average
-          distribution {
-            letter
-            percentage
-            count
-          }
         }
       }
     }
@@ -213,7 +205,6 @@ export const GET_COURSES = gql`
         average
         distribution {
           letter
-          percentage
           count
         }
       }
