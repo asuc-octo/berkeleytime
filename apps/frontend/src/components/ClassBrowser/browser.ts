@@ -202,11 +202,11 @@ export const getFilteredClasses = (
         const classBreadths = getBreadthRequirements(
           _class.primarySection.sectionAttributes
         );
-        const includesAllBreadths = currentBreadths.every((breadth) =>
+        const matchesAnyBreadth = currentBreadths.some((breadth) =>
           classBreadths.includes(breadth)
         );
 
-        if (!includesAllBreadths) {
+        if (!matchesAnyBreadth) {
           acc.excludedClasses.push(_class);
 
           return acc;
