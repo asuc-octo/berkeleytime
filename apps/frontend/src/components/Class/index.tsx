@@ -33,7 +33,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourse, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
-import { IClass, Semester } from "@/lib/api";
+import { IClass, ICourse, Semester } from "@/lib/api";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
@@ -72,6 +72,7 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClass;
+  course?: ICourse;
   year?: never;
   semester?: never;
   subject?: never;
@@ -81,6 +82,7 @@ interface ControlledProps {
 
 interface UncontrolledProps {
   class?: never;
+  course?: never;
   year: number;
   semester: Semester;
   subject: string;
@@ -113,6 +115,7 @@ export default function Class({
   courseNumber,
   number,
   class: providedClass,
+  course: providedCourse,
   expanded,
   onExpandedChange,
   onClose,
@@ -127,7 +130,10 @@ export default function Class({
 
   const { data: course, loading: courseLoading } = useReadCourse(
     providedClass?.subject ?? (subject as string),
-    providedClass?.courseNumber ?? (courseNumber as string)
+    providedClass?.courseNumber ?? (courseNumber as string),
+    {
+      skip: !!providedCourse,
+    }
   );
 
   const { data, loading } = useReadClass(
@@ -143,6 +149,8 @@ export default function Class({
   );
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+
+  const _course = useMemo(() => providedCourse ?? course, [course, providedCourse]);
 
   const bookmarked = useMemo(
     () =>
@@ -230,14 +238,14 @@ export default function Class({
 
   const ratingsCount = useMemo(() => {
     return (
-      course &&
-      course.aggregatedRatings &&
-      course.aggregatedRatings.metrics.length > 0 &&
+      _course &&
+      _course.aggregatedRatings &&
+      _course.aggregatedRatings.metrics.length > 0 &&
       Math.max(
-        ...Object.values(course.aggregatedRatings.metrics.map((v) => v.count))
+        ...Object.values(_course.aggregatedRatings.metrics.map((v) => v.count))
       )
     );
-  }, [course]);
+  }, [_course]);
 
   const seatReservationTypeMap = useMemo(() => {
     const reservationTypes =
@@ -286,7 +294,7 @@ export default function Class({
   }
 
   // TODO: Error state
-  if (!course || !_class || !pin) {
+  if (!_course || !_class || !pin) {
     return <></>;
   }
 
@@ -471,7 +479,7 @@ export default function Class({
         <ClassContext
           value={{
             class: _class,
-            course,
+            course: _course,
           }}
         >
           <Body dialog={dialog}>

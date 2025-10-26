@@ -9,7 +9,7 @@ import { Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
-import { useReadTerms } from "@/hooks/api";
+import { useReadCourse, useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { Semester, TemporalPosition } from "@/lib/api";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
@@ -98,6 +98,14 @@ export default function Catalog() {
     }
   );
 
+  const { data: _course, loading: courseLoading } = useReadCourse(
+    subject as string,
+    courseNumber as string,
+    {
+      skip: !subject || !courseNumber,
+    }
+  );
+
   const handleSelect = useCallback(
     (subject: string, courseNumber: string, number: string) => {
       if (!term) return;
@@ -150,11 +158,12 @@ export default function Catalog() {
         </div>
       </div>
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {classLoading ? (
+        {classLoading || courseLoading ? (
           <></>
-        ) : _class ? (
+        ) : _class && _course ? (
           <Class
             class={_class}
+            course={_course}
             expanded={expanded}
             onExpandedChange={setExpanded}
             onClose={() => setOpen(false)}
