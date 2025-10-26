@@ -16,20 +16,6 @@
 .labelRow {
   width: 100%;
 
-  .colorSelect {
-    width: 40px;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-    align-items: center;
-
-    .colorLabel {
-      width: 16px;
-      height: 16px;
-      border-radius: 16px;
-      border: 1px solid black;
-    }
-  }
 
   .labelInput {
     min-width: 0;
@@ -37,28 +23,3 @@
   }
 }
 
-.colorPicker {
-  position: absolute;
-  top: 35px;
-  left: -60px;
-  display: flex;
-  gap: 8px;
-  padding: 8px;
-  background: var(--foreground-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 52px;
-  z-index: 999;
-
-  .colorOption {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
-}

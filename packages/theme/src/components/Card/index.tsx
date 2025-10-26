@@ -3,6 +3,7 @@ import { ComponentPropsWithRef } from "react";
 import { Box, BoxProps, Flex, FlexProps } from "@radix-ui/themes";
 import classNames from "classnames";
 
+import { Color } from "../ThemeProvider";
 import styles from "./Card.module.scss";
 
 interface RootProps {
@@ -41,12 +42,15 @@ function Body({ children, ...props }: ComponentPropsWithRef<"div">) {
   );
 }
 
-function LeftBorder({ color, ...props }: ComponentPropsWithRef<"div">) {
+function LeftBorder({
+  color,
+  ...props
+}: ComponentPropsWithRef<"div"> & { color: Color }) {
   return (
     <div
       className={styles.border}
       style={{
-        backgroundColor: color,
+        backgroundColor: `var(--${color}-500)`,
       }}
       {...props}
     />
