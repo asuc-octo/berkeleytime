@@ -66,7 +66,8 @@ export default function Catalog() {
       terms?.find((term) => term.year === year && term.semester === semester) ??
       terms.find(
         (term) =>
-          term.year === recentTerm?.year && term.semester === recentTerm?.semester
+          term.year === recentTerm?.year &&
+          term.semester === recentTerm?.semester
       ) ??
       currentTerm ??
       nextTerm;

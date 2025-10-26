@@ -23,7 +23,7 @@ interface ClassProps {
   onDelete?: () => void;
   leftBorderColor?: string;
   bookmarked?: boolean;
-  bookmarkToggle?: () => {};
+  bookmarkToggle?: () => void;
 }
 
 export default function ClassCard({
@@ -52,8 +52,10 @@ export default function ClassCard({
           </Card.Description>
           <Card.Footer>
             <EnrollmentDisplay
-              enrolledCount={enrollment?.latest?.enrolledCount}
-              maxEnroll={enrollment?.latest?.maxEnroll}
+              enrolledCount={
+                _class?.primarySection?.enrollment?.latest?.enrolledCount
+              }
+              maxEnroll={_class?.primarySection?.enrollment?.latest?.maxEnroll}
             />
             {_class?.unitsMin && _class.unitsMax && (
               <Units unitsMin={_class?.unitsMin} unitsMax={_class?.unitsMax} />

@@ -382,7 +382,7 @@ export default function Class({
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ textDecoration: 'none' }}
+                        style={{ textDecoration: "none" }}
                       >
                         {content}
                       </Link>
