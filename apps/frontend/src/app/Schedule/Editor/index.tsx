@@ -773,6 +773,7 @@ export default function Editor() {
           ) : tab === 1 ? (
             <Calendar
               term={schedule.term}
+              customEvents={schedule.events}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />

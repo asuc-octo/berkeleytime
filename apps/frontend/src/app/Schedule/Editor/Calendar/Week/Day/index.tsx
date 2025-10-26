@@ -2,8 +2,6 @@ import { CSSProperties } from "react";
 
 import classNames from "classnames";
 
-import { getColor } from "@/lib/section";
-
 import { IDay } from "../../calendar";
 import styles from "./Day.module.scss";
 
@@ -22,6 +20,7 @@ interface DayProps extends IDay {
 }
 
 export default function Day({ date, events, active }: DayProps) {
+  console.log(events);
   return (
     <div key={date.format("YYYY-MM-DD")} className={styles.root}>
       {active && (
@@ -40,7 +39,7 @@ export default function Day({ date, events, active }: DayProps) {
               [styles.exam]: event.date,
             })}
             key={index}
-            style={{ "--color": color } as CSSProperties}
+            style={{ "--color": `var(--${color}-500)` } as CSSProperties}
           >
             <div className={styles.time}>{parseTime(event.startTime)}</div>
             <div className={styles.course}>
