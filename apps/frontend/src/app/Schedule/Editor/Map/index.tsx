@@ -12,6 +12,7 @@ import { Button, IconButton, useColorScheme, useTheme } from "@repo/theme";
 import { ISection } from "@/lib/api";
 import { buildings } from "@/lib/location";
 
+import { SectionColor } from "../../schedule";
 import styles from "./Map.module.scss";
 
 const TOKEN =
@@ -25,7 +26,7 @@ const DEFAULT_ZOOM = 15.5;
 mapboxgl.accessToken = TOKEN;
 
 interface MapProps {
-  selectedSections: ISection[];
+  selectedSections: SectionColor[];
 }
 
 export default function Map({ selectedSections }: MapProps) {
@@ -45,11 +46,17 @@ export default function Map({ selectedSections }: MapProps) {
   const waypoints = useMemo(
     () =>
       selectedSections
-        .filter((section) => section.meetings[0].location)
-        .map(({ meetings: [{ location }] }) => {
-          const building = location!.split(" ").slice(0, -1).join(" ");
-          return buildings[building].location;
-        }),
+        .filter((section) => section.section.meetings[0].location)
+        .map(
+          ({
+            section: {
+              meetings: [{ location }],
+            },
+          }) => {
+            const building = location!.split(" ").slice(0, -1).join(" ");
+            return buildings[building].location;
+          }
+        ),
     [selectedSections]
   );
 

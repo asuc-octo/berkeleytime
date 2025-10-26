@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { Color } from "@repo/theme";
+
 import { IClass, ISection } from "../api";
 import { ITerm, Semester } from "./terms";
 
@@ -10,6 +12,7 @@ export type ScheduleIdentifier = string & {
 export interface IScheduleClass {
   class: IClass;
   selectedSections: ISection[];
+  color?: Color;
 }
 
 export interface IScheduleClassInput {
@@ -17,6 +20,7 @@ export interface IScheduleClassInput {
   courseNumber: string;
   number: string;
   sectionIds: string[];
+  color?: Color;
 }
 
 export interface IScheduleEvent {
@@ -27,6 +31,7 @@ export interface IScheduleEvent {
   location?: string;
   description?: string;
   days: boolean[];
+  color?: Color;
   __typename: string;
 }
 
@@ -79,6 +84,7 @@ export const READ_SCHEDULE = gql`
         startTime
         endTime
         days
+        color
       }
       classes {
         class {
@@ -173,6 +179,7 @@ export const READ_SCHEDULE = gql`
         selectedSections {
           sectionId
         }
+        color
       }
     }
   }

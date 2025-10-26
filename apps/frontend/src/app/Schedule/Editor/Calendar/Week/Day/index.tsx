@@ -31,7 +31,7 @@ export default function Day({ date, events, active }: DayProps) {
         </div>
       )}
       {events.map((event, index) => {
-        const color = getColor(event.subject, event.number);
+        const color = event.color!;
 
         return (
           <div

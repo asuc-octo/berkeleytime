@@ -1,9 +1,10 @@
 import { ChangeEventHandler, useEffect, useState } from "react";
 
-import { NavArrowDown, Plus, Trash } from "iconoir-react";
+import { Plus, Trash } from "iconoir-react";
 
 import { Button, Color, Dialog, Flex, IconButton, Input } from "@repo/theme";
 
+import ColorSelector from "@/components/ColorSelector";
 import { ILabel } from "@/lib/api";
 
 import styles from "./LabelMenu.module.scss";
@@ -15,24 +16,10 @@ type LabelMenuProps = {
   onLabelsChange: (labels: ILabel[]) => void;
 };
 
-const LabelColor = (props: { color: Color }) => {
-  return (
-    <div
-      className={styles.colorLabel}
-      style={{
-        backgroundColor: `var(--${props.color}-500-20)`,
-        borderColor: `var(--${props.color}-500)`,
-      }}
-    ></div>
-  );
-};
-
 const LabelRow = (
   onTextChange: ChangeEventHandler<HTMLInputElement>,
   onDelete: () => void,
   label: ILabel,
-  showColorPicker: boolean,
-  onColorSelectClick: () => void,
   onColorSelect: (color: Color) => void,
   handleAdd: () => void
 ) => {
@@ -50,14 +37,10 @@ const LabelRow = (
         align="center"
         className={styles.labelRow}
       >
-        <div className={styles.colorSelect} onClick={onColorSelectClick}>
-          {label ? (
-            <LabelColor color={label.color as Color} />
-          ) : (
-            <LabelColor color={Color.gray} />
-          )}
-          <NavArrowDown />
-        </div>
+        <ColorSelector
+          selectedColor={label ? (label.color as Color) : Color.gray}
+          onColorSelect={onColorSelect}
+        />
         <Input
           value={label ? label.name : ""}
           onChange={onTextChange}
@@ -78,24 +61,6 @@ const LabelRow = (
           </IconButton>
         )}
       </Flex>
-      {showColorPicker && (
-        <div className={styles.colorPicker}>
-          {Object.values(Color).map((color) => (
-            <div
-              key={color}
-              className={styles.colorOption}
-              style={{
-                backgroundColor: `var(--${color}-500-20)`,
-                border:
-                  label?.color === color
-                    ? "2px solid var(--blue-500)"
-                    : `1px solid var(--${color}-500)`,
-              }}
-              onClick={() => onColorSelect?.(color)}
-            />
-          ))}
-        </div>
-      )}
     </Flex>
   );
 };
@@ -107,7 +72,6 @@ export default function LabelMenu({
   onLabelsChange,
 }: LabelMenuProps) {
   const [editingLabels, setEditingLabels] = useState<ILabel[]>(labels);
-  const [showColorPicker, setShowColorPicker] = useState<number | null>(null);
   const [tmpLabel, setTmpLabel] = useState<ILabel>({
     name: "",
     color: Color.gray,
@@ -155,25 +119,7 @@ export default function LabelMenu({
     const updatedLabels = [...editingLabels];
     updatedLabels[labelIndex] = { ...updatedLabels[labelIndex], color };
     setEditingLabels(updatedLabels);
-    setShowColorPicker(null);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (
-        !target.closest(`.${styles.colorSelect}`) &&
-        !target.closest(`.${styles.colorPicker}`)
-      ) {
-        setShowColorPicker(null);
-      }
-    };
-
-    if (showColorPicker !== null) {
-      document.addEventListener("click", handleClickOutside);
-      return () => document.removeEventListener("click", handleClickOutside);
-    }
-  }, [showColorPicker]);
 
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
@@ -200,8 +146,6 @@ export default function LabelMenu({
                   setEditingLabels(updatedLabels);
                 },
                 label,
-                showColorPicker === i,
-                () => setShowColorPicker(showColorPicker === i ? null : i),
                 (color) => handleColorSelect(i, color),
                 () => {}
               )
@@ -214,12 +158,9 @@ export default function LabelMenu({
               },
               () => {},
               tmpLabel,
-              showColorPicker === -1,
-              () => setShowColorPicker(showColorPicker === -1 ? null : -1),
               (color) => {
                 const tmp = { ...tmpLabel, color };
                 setTmpLabel(tmp);
-                setShowColorPicker(null);
               },
               () => {
                 if (tmpLabel.name.trim()) {

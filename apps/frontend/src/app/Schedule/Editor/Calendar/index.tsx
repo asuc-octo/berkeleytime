@@ -5,13 +5,14 @@ import moment from "moment";
 
 import { ISection, ITerm } from "@/lib/api";
 
+import { SectionColor } from "../../schedule";
 import styles from "./Calendar.module.scss";
 import Week from "./Week";
 import { IDay, IEvent } from "./calendar";
 
 interface CalendarProps {
-  selectedSections: ISection[];
-  currentSection: ISection | null;
+  selectedSections: SectionColor[];
+  currentSection: SectionColor | null;
   term: ITerm;
 }
 
@@ -45,7 +46,7 @@ export default function Calendar({
       (currentSection
         ? [...selectedSections, currentSection]
         : selectedSections
-      ).reduce((events, section) => {
+      ).reduce((events, { section }) => {
         const {
           startDate,
           endDate,
@@ -64,7 +65,7 @@ export default function Calendar({
             endDate,
             subject,
             number,
-            active: currentSection?.sectionId === sectionId,
+            active: currentSection?.section.sectionId === sectionId,
             days,
             startTime,
             endTime,
@@ -89,7 +90,7 @@ export default function Calendar({
             date,
             subject: subject,
             number: number,
-            active: currentSection?.sectionId === sectionId,
+            active: currentSection?.section.sectionId === sectionId,
             startTime,
             endTime,
             startDate,

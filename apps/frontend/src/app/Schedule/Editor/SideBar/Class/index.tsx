@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 
+import { Color } from "@repo/theme";
+
 import ClassCard from "@/components/ClassCard";
 import { Component, IClass, ISection, componentMap } from "@/lib/api";
-import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
@@ -11,6 +12,7 @@ interface ClassProps {
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
   class: IClass;
+  color: Color;
   selectedSections: ISection[];
   onSectionSelect: (
     subject: string,
@@ -26,17 +28,25 @@ interface ClassProps {
   ) => void;
   onSectionMouseOut: () => void;
   onDelete: (cls: IClass) => void;
+  onColorChange: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    color: Color
+  ) => void;
 }
 
 export default function Class({
   expanded,
   onExpandedChange,
   class: _class,
+  color,
   selectedSections,
   onSectionSelect,
   onSectionMouseOver,
   onSectionMouseOut,
   onDelete,
+  onColorChange,
 }: ClassProps) {
   const groups = useMemo(() => {
     const sortedSections = _class.sections.toSorted((a, b) =>
@@ -55,7 +65,10 @@ export default function Class({
       onDelete={() => {
         onDelete(_class);
       }}
-      leftBorderColor={getColor(_class.subject, _class.courseNumber)}
+      leftBorderColor={color}
+      onColorSelect={(color) =>
+        onColorChange(_class.subject, _class.courseNumber, _class.number, color)
+      }
     >
       <div className={styles.group}>
         <div className={styles.label}>
