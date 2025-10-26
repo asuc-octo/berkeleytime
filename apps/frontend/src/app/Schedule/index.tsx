@@ -2,20 +2,41 @@ import { useEffect, useMemo } from "react";
 
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
-import { Boundary, LoadingIndicator } from "@repo/theme";
+import { Boundary, Color, LoadingIndicator } from "@repo/theme";
 
 import ScheduleContext from "@/contexts/ScheduleContext";
 import { useReadSchedule, useReadUser } from "@/hooks/api";
-import { ScheduleIdentifier } from "@/lib/api";
+import { ISchedule, ScheduleIdentifier } from "@/lib/api";
+
+import { acceptedColors, getNextClassColor } from "./schedule";
 
 export default function Schedule() {
   const { scheduleId } = useParams();
   const navigate = useNavigate();
   const { data: user } = useReadUser();
 
-  const { data: schedule, loading } = useReadSchedule(
+  const { data: scheduleData, loading } = useReadSchedule(
     scheduleId as ScheduleIdentifier
   );
+
+  const schedule: ISchedule | undefined = useMemo(() => {
+    if (!scheduleData) return undefined;
+    return {
+      ...scheduleData,
+      classes: scheduleData.classes.map((cls, i) => {
+        return {
+          ...cls,
+          color: cls.color ?? getNextClassColor(i),
+        };
+      }),
+      events: scheduleData.events.map((ev) => {
+        return {
+          ...ev,
+          color: ev.color ?? Color.gray,
+        };
+      }),
+    };
+  }, [scheduleData]);
 
   useEffect(() => {
     if (loading || schedule) return;

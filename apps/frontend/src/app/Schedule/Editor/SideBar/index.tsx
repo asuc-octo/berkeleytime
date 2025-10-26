@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { Plugins, Sortable } from "@shopify/draggable";
 import { Plus } from "iconoir-react";
 
-import { Button } from "@repo/theme";
+import { Button, Color } from "@repo/theme";
 
 import Units from "@/components/Units";
 import useSchedule from "@/hooks/useSchedule";
@@ -40,6 +40,14 @@ interface SideBarProps {
   onExpandedChange: (index: number, expanded: boolean) => void;
   onDeleteClass: (cls: IClass) => void;
   onDeleteEvent: (event: IScheduleEvent) => void;
+  onColorChange: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    color: Color
+  ) => void;
+  onEventColorChange: (id: string, color: Color) => void;
+  onEventTitleChange: (id: string, title: string) => void;
 }
 
 export default function SideBar({
@@ -52,6 +60,9 @@ export default function SideBar({
   onSortEnd,
   onDeleteClass,
   onDeleteEvent,
+  onColorChange,
+  onEventColorChange,
+  onEventTitleChange,
 }: SideBarProps) {
   const { schedule, editing } = useSchedule();
 
@@ -126,19 +137,31 @@ export default function SideBar({
       </div>
       <div className={styles.body} ref={bodyRef}>
         {schedule.events?.map((event, index) => {
-          return <Event key={index} event={event} onDelete={onDeleteEvent} />;
+          return (
+            <Event
+              key={index}
+              event={event}
+              onDelete={onDeleteEvent}
+              onColorSelect={(c) => {
+                onEventColorChange(event._id, c);
+              }}
+              onEventTitleChange={onEventTitleChange}
+            />
+          );
         })}
         {schedule.classes.map((selectedClass, index) => {
           return (
             <Class
-              key={selectedClass.class.primarySection.sectionId}
+              key={`${selectedClass.class.subject}${selectedClass.class.courseNumber}${selectedClass.class.number}`}
               {...selectedClass}
-              expanded={expanded[index]}
+              color={selectedClass.color!}
+              expanded={expanded[index] ?? false}
               onExpandedChange={(expanded) => onExpandedChange(index, expanded)}
               onSectionSelect={onSectionSelect}
               onSectionMouseOver={onSectionMouseOver}
               onSectionMouseOut={onSectionMouseOut}
               onDelete={onDeleteClass}
+              onColorChange={onColorChange}
             />
           );
         })}

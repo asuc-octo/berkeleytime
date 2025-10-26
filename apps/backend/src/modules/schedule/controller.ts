@@ -134,6 +134,7 @@ export const getClasses = async (
     classes.push({
       class: formatClass(_class as IClassItem) as unknown as ClassModule.Class,
       selectedSections: sections as unknown as ClassModule.Section[],
+      color: selectedClass.color,
     } as ScheduleModule.SelectedClass);
   }
 

@@ -1,0 +1,111 @@
+import { useEffect, useRef, useState } from "react";
+
+import { NavArrowDown } from "iconoir-react";
+import { createPortal } from "react-dom";
+
+import { Color } from "@repo/theme";
+
+import styles from "./ColorSelector.module.scss";
+
+interface ColorSelectorProps {
+  selectedColor: Color;
+  onColorSelect: (color: Color) => void;
+  allowedColors?: Color[];
+}
+
+export const LabelColor = (props: { color: Color }) => {
+  return (
+    <div
+      className={styles.colorLabel}
+      style={{
+        backgroundColor: `var(--${props.color}-500-20)`,
+        borderColor: `var(--${props.color}-500)`,
+      }}
+    ></div>
+  );
+};
+
+export default function ColorSelector({
+  selectedColor,
+  onColorSelect,
+  allowedColors = Object.values(Color),
+}: ColorSelectorProps) {
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const updatePopupPosition = () => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setPopupPosition({
+        top: rect.top + 20, // Position it just below the color selector button
+        left: rect.left - 60,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (
+        !target.closest(`.${styles.colorSelect}`) &&
+        !target.closest(`.${styles.colorPicker}`)
+      ) {
+        if (showColorPicker) {
+          setShowColorPicker(false);
+        }
+      }
+    };
+
+    if (showColorPicker) {
+      updatePopupPosition();
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [showColorPicker]);
+
+  return (
+    <div className={styles.colorSelectorContainer} ref={containerRef}>
+      <div
+        className={styles.colorSelect}
+        onClick={() => {
+          setShowColorPicker(true);
+        }}
+      >
+        <LabelColor color={selectedColor} />
+        <NavArrowDown />
+      </div>
+      {showColorPicker &&
+        createPortal(
+          <div
+            className={styles.colorPicker}
+            style={{
+              position: "fixed",
+              top: popupPosition.top,
+              left: popupPosition.left,
+              zIndex: 9999,
+            }}
+          >
+            {allowedColors.map((color) => (
+              <div
+                key={color}
+                className={styles.colorOption}
+                style={{
+                  backgroundColor: `var(--${color}-500-20)`,
+                  border:
+                    selectedColor === color
+                      ? "2px solid var(--blue-500)"
+                      : `1px solid var(--${color}-500)`,
+                }}
+                onClick={() => {
+                  setShowColorPicker(false);
+                  onColorSelect(color);
+                }}
+              />
+            ))}
+          </div>,
+          document.body
+        )}
+    </div>
+  );
+}

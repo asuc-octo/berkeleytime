@@ -4,6 +4,7 @@ const typedef = gql`
   type SelectedClass {
     class: Class!
     selectedSections: [Section!]!
+    color: String
   }
 
   type Event {
@@ -14,6 +15,7 @@ const typedef = gql`
     location: String
     title: String!
     description: String
+    color: String
   }
 
   type Schedule @cacheControl(maxAge: 1) {
@@ -41,6 +43,7 @@ const typedef = gql`
     location: String
     title: String!
     description: String
+    color: String
   }
 
   input SelectedClassInput {
@@ -48,6 +51,7 @@ const typedef = gql`
     courseNumber: CourseNumber!
     number: ClassNumber!
     sectionIds: [SectionIdentifier!]!
+    color: String
   }
 
   input UpdateScheduleInput {

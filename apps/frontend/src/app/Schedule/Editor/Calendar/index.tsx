@@ -3,16 +3,18 @@ import { useMemo, useState } from "react";
 import { MinusSquareDashed, MinusSquareSolid } from "iconoir-react";
 import moment from "moment";
 
-import { ISection, ITerm } from "@/lib/api";
+import { IScheduleEvent, ITerm } from "@/lib/api";
 
+import { SectionColor } from "../../schedule";
 import styles from "./Calendar.module.scss";
 import Week from "./Week";
 import { IDay, IEvent } from "./calendar";
 
 interface CalendarProps {
-  selectedSections: ISection[];
-  currentSection: ISection | null;
+  selectedSections: SectionColor[];
+  currentSection: SectionColor | null;
   term: ITerm;
+  customEvents?: IScheduleEvent[];
 }
 
 function rotateRight<T>(arr: T[]): T[] {
@@ -24,6 +26,7 @@ export default function Calendar({
   selectedSections,
   currentSection,
   term,
+  customEvents = [],
 }: CalendarProps) {
   const [first] = useState(() => moment(term.startDate));
   const [last] = useState(() => moment(term.endDate));
@@ -40,67 +43,80 @@ export default function Calendar({
     return stop;
   });
 
-  const events = useMemo(
-    () =>
-      (currentSection
-        ? [...selectedSections, currentSection]
-        : selectedSections
-      ).reduce((events, section) => {
-        const {
+  const events = useMemo(() => {
+    const sectionEvents = (
+      currentSection ? [...selectedSections, currentSection] : selectedSections
+    ).reduce((events, { section, color }) => {
+      const {
+        startDate,
+        endDate,
+        meetings,
+        exams,
+        subject,
+        courseNumber: number,
+        sectionId,
+      } = section;
+
+      for (const meeting of meetings) {
+        const { days, startTime, endTime } = meeting;
+
+        events.push({
           startDate,
           endDate,
-          meetings,
-          exams,
           subject,
-          courseNumber: number,
-          sectionId,
-        } = section;
-
-        for (const meeting of meetings) {
-          const { days, startTime, endTime } = meeting;
-
-          events.push({
-            startDate,
-            endDate,
-            subject,
-            number,
-            active: currentSection?.sectionId === sectionId,
-            days,
-            startTime,
-            endTime,
-          });
-        }
-
-        const filteredExams = exams.filter(function (exam, index) {
-          return (
-            exams.findIndex(
-              ({ date, startTime, endTime }) =>
-                date === exam.date &&
-                exam.startTime === startTime &&
-                exam.endTime === endTime
-            ) == index
-          );
+          number,
+          active: currentSection?.section.sectionId === sectionId,
+          days,
+          startTime,
+          endTime,
+          color,
         });
+      }
 
-        for (const exam of filteredExams) {
-          const { date, startTime, endTime } = exam;
+      const filteredExams = exams.filter(function (exam, index) {
+        return (
+          exams.findIndex(
+            ({ date, startTime, endTime }) =>
+              date === exam.date &&
+              exam.startTime === startTime &&
+              exam.endTime === endTime
+          ) == index
+        );
+      });
 
-          events.push({
-            date,
-            subject: subject,
-            number: number,
-            active: currentSection?.sectionId === sectionId,
-            startTime,
-            endTime,
-            startDate,
-            endDate,
-          });
-        }
+      for (const exam of filteredExams) {
+        const { date, startTime, endTime } = exam;
 
-        return events;
-      }, [] as IEvent[]),
-    [selectedSections, currentSection]
-  );
+        events.push({
+          date,
+          subject: subject,
+          number: number,
+          active: currentSection?.section.sectionId === sectionId,
+          startTime,
+          endTime,
+          startDate,
+          endDate,
+        });
+      }
+
+      return events;
+    }, [] as IEvent[]);
+
+    // Add custom events
+    const customEventItems: IEvent[] = customEvents.map((event) => ({
+      startDate: term.startDate || "",
+      endDate: term.endDate || "",
+      subject: event.title,
+      number: "",
+      active: false,
+      days: event.days,
+      startTime: event.startTime,
+      endTime: event.endTime,
+      color: event.color,
+    }));
+
+    return [...sectionEvents, ...customEventItems];
+  }, [selectedSections, currentSection, customEvents, term]);
 
   const weeks = useMemo(() => {
     const weeks: IDay[][] = [];

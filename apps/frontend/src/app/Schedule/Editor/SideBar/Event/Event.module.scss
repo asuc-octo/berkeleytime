@@ -69,6 +69,26 @@
           line-height: 1;
         }
 
+        .titleInput {
+          font-weight: 700;
+          color: var(--heading-color);
+          margin-bottom: 8px;
+          line-height: 1;
+          font-size: inherit;
+          font-family: inherit;
+          width: 100%;
+          height: auto;
+          padding: 2px 4px;
+          border: 1px solid var(--border-color);
+          background-color: var(--background-color);
+          border-radius: 4px;
+          
+          &:focus {
+            border-color: var(--blue-500);
+            outline: none;
+          }
+        }
+
         .description {
           color: var(--paragraph-color);
           line-height: 1.5;

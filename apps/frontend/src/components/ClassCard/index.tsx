@@ -8,13 +8,14 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card } from "@repo/theme";
+import { Card, Color } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
+import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
 
 interface ClassProps {
@@ -23,7 +24,8 @@ interface ClassProps {
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
   onDelete?: () => void;
-  leftBorderColor?: string;
+  leftBorderColor?: Color;
+  onColorSelect?: (c: Color) => void;
   bookmarked?: boolean;
   bookmarkToggle?: () => void;
   active?: boolean;
@@ -36,6 +38,7 @@ export default function ClassCard({
   onExpandedChange,
   onDelete,
   leftBorderColor = undefined,
+  onColorSelect = undefined,
   bookmarked = false,
   children,
   bookmarkToggle,
@@ -46,8 +49,11 @@ export default function ClassCard({
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
   return (
-    <Card.RootColumn active={active} {...props}>
-      <Card.ColumnHeader>
+    <Card.RootColumn
+      style={{ overflow: "visible", ...props?.style }}
+      {...props}
+    >
+      <Card.ColumnHeader style={{ overflow: "visible" }}>
         {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
         <Card.Body>
           <Card.Heading>
@@ -103,6 +109,12 @@ export default function ClassCard({
                 <Bookmark width={16} height={16} />
               )}
             </Card.ActionIcon>
+          )}
+          {onColorSelect && leftBorderColor && (
+            <ColorSelector
+              selectedColor={leftBorderColor}
+              onColorSelect={onColorSelect}
+            />
           )}
           {onDelete && (
             <Card.ActionIcon isDelete onClick={onDelete}>
