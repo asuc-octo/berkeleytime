@@ -43,7 +43,7 @@ export function useFocusRingTimer() {
 /**
  * Hook to track focus state of a container element
  */
-export function useContainerFocus(containerRef: RefObject<HTMLElement>) {
+export function useContainerFocus(containerRef: RefObject<HTMLElement | null>) {
   const [isContainerFocused, setIsContainerFocused] = useState<boolean>(false);
 
   useEffect(() => {
@@ -74,16 +74,6 @@ export function isInputElement(target: EventTarget | null): boolean {
   );
 }
 
-interface KeyboardNavigationConfig<T> {
-  items: T[];
-  containerRef: RefObject<HTMLElement>;
-  focusedIndex: number;
-  setFocusedIndex: (index: number) => void;
-  onSelect: (item: T, index: number) => void;
-  isContainerFocused: boolean;
-  showFocusRing: () => void;
-}
-
 /**
  * Handles keyboard navigation (ArrowUp, ArrowDown, Enter, Space)
  */
@@ -95,7 +85,15 @@ export function useKeyboardNavigation<T>({
   onSelect,
   isContainerFocused,
   showFocusRing,
-}: KeyboardNavigationConfig<T>) {
+}: {
+  items: T[];
+  containerRef: RefObject<HTMLElement | null>;
+  focusedIndex: number;
+  setFocusedIndex: (index: number) => void;
+  onSelect: (item: T, index: number) => void;
+  isContainerFocused: boolean;
+  showFocusRing: () => void;
+}) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't handle keyboard events when typing in inputs

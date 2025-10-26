@@ -29,7 +29,7 @@ export interface IEnrollmentSingular {
   openReserved: number;
   instructorAddConsentRequired: boolean;
   instructorDropConsentRequired: boolean;
-  seatReservationCounts: ISeatReservationCount[];
+  seatReservationCount: ISeatReservationCount[];
 }
 
 export interface IEnrollment {
@@ -90,7 +90,7 @@ export const READ_ENROLLMENT = gql`
         maxEnroll
         maxWaitlist
         openReserved
-        seatReservationCounts {
+        seatReservationCount {
           number
           maxEnroll
           enrolledCount

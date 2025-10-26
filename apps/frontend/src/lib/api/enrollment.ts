@@ -17,7 +17,7 @@ export interface IEnrollmentSingular {
   instructorDropConsentRequired: boolean;
 
   // lowkey dont need reservation count for entire class if we have individual seat reservations
-  seatReservationCounts: ISeatReservationCounts[];
+  seatReservationCount: ISeatReservationCounts[];
 }
 
 export interface IEnrollment {
@@ -89,7 +89,7 @@ export const READ_ENROLLMENT = gql`
         maxEnroll
         maxWaitlist
         openReserved
-        seatReservationCounts {
+        seatReservationCount {
           number
           maxEnroll
           enrolledCount

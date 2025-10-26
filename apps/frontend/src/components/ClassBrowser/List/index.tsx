@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
@@ -33,7 +33,9 @@ export default function List({ onSelect }: ListProps) {
   // Keyboard navigation helpers
   const { showFocusRing, showFocusRingTemporarily, hideFocusRing } =
     useFocusRingTimer();
-  const isListFocused = useContainerFocus(rootRef);
+  const isListFocused = useContainerFocus(
+    rootRef as RefObject<HTMLElement | null>
+  );
 
   const virtualizer = useVirtualizer({
     count: classes.length,
@@ -66,7 +68,7 @@ export default function List({ onSelect }: ListProps) {
   // Keyboard navigation
   useKeyboardNavigation({
     items: classes,
-    containerRef: rootRef,
+    containerRef: rootRef as RefObject<HTMLElement | null>,
     focusedIndex,
     setFocusedIndex,
     onSelect: (focusedClass) => {

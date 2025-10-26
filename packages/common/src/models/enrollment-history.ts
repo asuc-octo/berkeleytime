@@ -22,7 +22,7 @@ export interface IEnrollmentHistoryItem {
     openReserved?: number;
     instructorAddConsentRequired?: boolean;
     instructorDropConsentRequired?: boolean;
-    seatReservationCounts?: {
+    seatReservationCount?: {
       number: number; // maps to seatReservations.number to get requirementGroup
       maxEnroll: number;
       enrolledCount?: number;
@@ -70,7 +70,7 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
       openReserved: { type: Number },
       instructorAddConsentRequired: { type: Boolean },
       instructorDropConsentRequired: { type: Boolean },
-      seatReservationCounts: [
+      seatReservationCount: [
         {
           _id: false,
           number: { type: Number },

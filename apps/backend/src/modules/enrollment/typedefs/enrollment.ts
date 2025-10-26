@@ -12,7 +12,7 @@ export default gql`
     ): Enrollment
   }
 
-  type Enrollment {
+  type Enrollment @cacheControl(maxAge: 900) {
     "Identifiers"
     termId: TermIdentifier!
     year: Int!
@@ -47,7 +47,7 @@ export default gql`
     openReserved: Int!
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
-    seatReservationCounts: [SeatReservationCounts!]
+    seatReservationCount: [SeatReservationCounts!]
   }
 
   type SeatReservationCounts {

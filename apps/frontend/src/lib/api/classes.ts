@@ -248,7 +248,6 @@ export const READ_CLASS = gql`
         average
         distribution {
           letter
-          percentage
           count
         }
       }
@@ -270,7 +269,6 @@ export const READ_CLASS = gql`
           average
           distribution {
             letter
-            percentage
             count
           }
         }
@@ -288,24 +286,26 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
+            time
             status
             enrolledCount
             maxEnroll
             waitlistedCount
             maxWaitlist
-            seatReservationCounts {
+            seatReservationCount {
               enrolledCount
               maxEnroll
               number
             }
           }
           history {
+            time
             status
             enrolledCount
             maxEnroll
             waitlistedCount
             maxWaitlist
-            seatReservationCounts {
+            seatReservationCount {
               enrolledCount
               maxEnroll
               number
@@ -346,6 +346,7 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
+            time
             status
             enrolledCount
             maxEnroll
@@ -408,6 +409,7 @@ export const GET_CATALOG = gql`
         }
         enrollment {
           latest {
+            time
             status
             enrolledCount
             maxEnroll
@@ -425,11 +427,6 @@ export const GET_CATALOG = gql`
         title
         gradeDistribution {
           average
-          distribution {
-            letter
-            percentage
-            count
-          }
         }
         academicCareer
       }

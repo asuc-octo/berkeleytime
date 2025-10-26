@@ -11,7 +11,7 @@ interface UnitsProps {
 export default function Units({ unitsMin, unitsMax, children }: UnitsProps) {
   const units = useMemo(() => {
     return unitsMax === unitsMin
-      ? `${unitsMin} ${unitsMin === 1 ? "unit" : "units"}`
+      ? `${unitsMin} ${unitsMin === 1 || unitsMin === 0 ? "unit" : "units"}`
       : `${unitsMin} - ${unitsMax} units`;
   }, [unitsMax, unitsMin]);
 

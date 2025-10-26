@@ -3,10 +3,7 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
-import {
-  LETTER_GRADES as LETTER_GRADE_ORDER,
-  getLetterGradeFromGPA,
-} from "@/lib/grades";
+import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -21,17 +18,8 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
-const LETTER_GRADES = new Set<string>(LETTER_GRADE_ORDER);
-
-const PASS_GRADES = new Set(["P", "S"]);
-const FAIL_GRADES = new Set(["NP", "U"]);
-const PERCENTAGE_SCALE_THRESHOLD = 1.0001;
-
-const clampPercentage = (value: number) =>
-  Math.min(100, Math.max(0, Math.round(value)));
-
 function getGradeColor(grade: string): string {
-  if (grade === "N/A" || grade.includes("% P")) {
+  if (grade === "N/A") {
     return "var(--paragraph-color)";
   }
 
@@ -52,96 +40,29 @@ export function ColoredGrade({ grade, style }: ColoredGradeProps) {
 }
 
 export function AverageGrade({
-  gradeDistribution,
+  gradeDistribution: { average },
   style,
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
-  const average = gradeDistribution?.average ?? null;
-  const distribution = useMemo(
-    () => gradeDistribution?.distribution ?? [],
-    [gradeDistribution?.distribution]
-  );
-
-  const hasLetterGrades = useMemo(
-    () =>
-      distribution.some(
-        (grade) => LETTER_GRADES.has(grade.letter) && (grade.count ?? 0) > 0
-      ),
-    [distribution]
-  );
-
-  const passFailPercent = useMemo(() => {
-    if (hasLetterGrades) return null;
-
-    const totals = distribution.reduce(
-      (acc, grade) => {
-        const count = grade.count ?? 0;
-        const rawPercentage = grade.percentage ?? 0;
-        if (PASS_GRADES.has(grade.letter)) {
-          acc.passCount += count;
-          acc.passPercentage += rawPercentage;
-        } else if (FAIL_GRADES.has(grade.letter)) {
-          acc.failCount += count;
-        } else {
-          acc.otherCount += count;
-        }
-        acc.totalCount += count;
-        acc.totalPercentage += rawPercentage;
-        return acc;
-      },
-      {
-        passCount: 0,
-        failCount: 0,
-        otherCount: 0,
-        totalCount: 0,
-        passPercentage: 0,
-        totalPercentage: 0,
-      }
-    );
-
-    if (
-      totals.passCount === 0 &&
-      totals.passPercentage === 0 &&
-      totals.totalCount === 0
-    ) {
-      return null;
-    }
-
-    if (totals.totalCount > 0) {
-      const percentage = (totals.passCount / totals.totalCount) * 100;
-      if (Number.isFinite(percentage)) {
-        return clampPercentage(percentage);
-      }
-    }
-
-    if (totals.passPercentage > 0) {
-      const scale =
-        totals.totalPercentage > PERCENTAGE_SCALE_THRESHOLD ? 1 : 100;
-      const percentage = totals.passPercentage * scale;
-      if (Number.isFinite(percentage)) {
-        return clampPercentage(percentage);
-      }
-    }
-
-    return null;
-  }, [distribution, hasLetterGrades]);
-
   const text = useMemo(() => {
-    if (passFailPercent !== null) {
-      return `${passFailPercent}% P`;
-    }
     if (!average) {
       return "";
     }
     return getLetterGradeFromGPA(average);
-  }, [average, passFailPercent]);
+  }, [average]);
 
   const color = useMemo(() => getGradeColor(text), [text]);
+
+  if (!average) {
+    return null;
+  }
 
   return (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
-        <ColoredGrade style={style} grade={text} />
+        <div className={styles.trigger} style={{ color, ...style }}>
+          {text}
+        </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
@@ -153,26 +74,14 @@ export function AverageGrade({
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Average grade</p>
-            {passFailPercent !== null ? (
-              <p className={styles.description}>
-                Students received{" "}
-                <span style={{ color }}>{passFailPercent}% P</span> {tooltip}.
-              </p>
-            ) : average ? (
-              <p className={styles.description}>
-                Students have received{" "}
-                {["A", "F"].includes(text[0]) ? "an " : "a "}
-                <span style={{ color }}>
-                  {text} ({average.toLocaleString()})
-                </span>{" "}
-                in this course on average {tooltip}.
-              </p>
-            ) : (
-              <p className={styles.description}>
-                Either this course has not been previously offered, or the
-                average grade is not available.
-              </p>
-            )}
+            <p className={styles.description}>
+              Students have received{" "}
+              {["A", "F"].includes(text[0]) ? "an " : "a "}
+              <span style={{ color }}>
+                {text} ({average.toLocaleString()})
+              </span>{" "}
+              in this course on average {tooltip}.
+            </p>
           </div>
         </Tooltip.Content>
       </Tooltip.Portal>
