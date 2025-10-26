@@ -4,7 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 
 import { Button, Flex, IconButton, MenuItem } from "@repo/theme";
 
-import { useReadUser } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
 
 import styles from "./NavigationBar.module.scss";
@@ -15,7 +15,7 @@ interface NavigationBarProps {
 }
 
 export default function NavigationBar({ invert }: NavigationBarProps) {
-  const { data: user } = useReadUser();
+  const { user } = useUser();
 
   return (
     <Flex

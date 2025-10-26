@@ -13,6 +13,7 @@ import { ThemeProvider } from "@repo/theme";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+import UserProvider from "@/providers/UserProvider";
 
 // import PinsProvider from "@/components/PinsProvider";
 
@@ -375,11 +376,13 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider>
-        {/* <PinsProvider> */}
-        <RouterProvider router={router} />
-        {/* </PinsProvider> */}
-      </ThemeProvider>
+      <UserProvider>
+        <ThemeProvider>
+          {/* <PinsProvider> */}
+          <RouterProvider router={router} />
+          {/* </PinsProvider> */}
+        </ThemeProvider>
+      </UserProvider>
     </ApolloProvider>
   );
 }

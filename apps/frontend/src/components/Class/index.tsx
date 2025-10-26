@@ -30,8 +30,9 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
-import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
+import { useReadCourse, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import useUser from "@/hooks/useUser";
 import { IClass, Semester } from "@/lib/api";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
@@ -120,7 +121,7 @@ export default function Class({
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
 
-  const { data: user, loading: userLoading } = useReadUser();
+  const { user, loading: userLoading } = useUser();
 
   const [updateUser] = useUpdateUser();
 

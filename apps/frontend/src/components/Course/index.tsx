@@ -26,7 +26,8 @@ import {
 import { AverageGrade } from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
-import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
+import { useReadCourse, useUpdateUser } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { ICourse } from "@/lib/api";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -89,7 +90,7 @@ export default function Course({
 
   const location = useLocation();
 
-  const { data: user, loading: userLoading } = useReadUser();
+  const { user, loading: userLoading } = useUser();
 
   const [updateUser] = useUpdateUser();
 

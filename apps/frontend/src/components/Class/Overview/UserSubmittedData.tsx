@@ -18,8 +18,8 @@ import {
 } from "@repo/shared";
 import { Flex } from "@repo/theme";
 
-import { useReadUser } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
+import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
 import { ICourse } from "@/lib/api";
 
@@ -33,7 +33,7 @@ enum Consensus {
 }
 
 export function UserSubmittedData() {
-  const { data: user } = useReadUser();
+  const { user } = useUser();
   const { class: _class } = useClass();
   const handleFeedbackClick = (e: ReactMouseEvent<HTMLAnchorElement>) => {
     if (!user) {

@@ -25,7 +25,7 @@ import {
 import Carousel from "@/components/Carousel";
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
-import { useReadUser } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { IClass, ITerm, READ_CLASS, ReadClassResponse } from "@/lib/api";
 import { RecentType, getRecents } from "@/lib/recent";
 
@@ -46,7 +46,7 @@ export default function Dashboard({
 }: DashboardProps) {
   const client = useApolloClient();
 
-  const { data: user } = useReadUser();
+  const { user } = useUser();
 
   const bookmarkedClasses = useMemo(
     () =>
