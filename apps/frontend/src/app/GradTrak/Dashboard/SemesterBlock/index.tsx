@@ -197,7 +197,12 @@ function SemesterBlock({
       "courseSubject" in cls &&
       "courseNumber" in cls
     ) {
-      const data = await getCourseUnits(cls.courseSubject, cls.courseNumber);
+      const data = await getCourseUnits(
+        cls.courseSubject,
+        cls.courseNumber,
+        planTerm.term,
+        planTerm.year.toString()
+      );
       cls.courseUnits = data;
     }
     // Ensure all required fields are present
