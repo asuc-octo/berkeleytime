@@ -10,13 +10,13 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
 
 // import PinsProvider from "@/components/PinsProvider";
 
+const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
@@ -70,7 +70,11 @@ const router = createBrowserRouter([
       //   path: "discover",
       // },
       {
-        element: <Landing />,
+        element: (
+          <SuspenseBoundary key="landing">
+            <Landing />
+          </SuspenseBoundary>
+        ),
         index: true,
       },
       {

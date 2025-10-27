@@ -487,31 +487,35 @@ export default function Class({
           }}
         >
           <Body dialog={dialog}>
-            <Tabs.Content value="overview" asChild>
-              <SuspenseBoundary>
-                <Overview />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="sections" asChild>
-              <SuspenseBoundary>
-                <Sections />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="enrollment" asChild>
-              <SuspenseBoundary>
-                <Enrollment />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="grades" asChild>
-              <SuspenseBoundary>
-                <Grades />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="ratings" asChild>
-              <SuspenseBoundary>
-                <Ratings />
-              </SuspenseBoundary>
-            </Tabs.Content>
+            {dialog && (
+              <>
+                <Tabs.Content value="overview" asChild>
+                  <SuspenseBoundary>
+                    <Overview />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="sections" asChild>
+                  <SuspenseBoundary>
+                    <Sections />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="enrollment" asChild>
+                  <SuspenseBoundary>
+                    <Enrollment />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="grades" asChild>
+                  <SuspenseBoundary>
+                    <Grades />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="ratings" asChild>
+                  <SuspenseBoundary>
+                    <Ratings />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+              </>
+            )}
           </Body>
         </ClassContext>
       </Flex>
