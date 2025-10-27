@@ -69,6 +69,7 @@ export default function Dashboard({
         try {
           const response = await client.query<ReadClassResponse>({
             query: READ_CLASS,
+            fetchPolicy: "no-cache",
             variables: {
               subject,
               year,

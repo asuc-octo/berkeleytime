@@ -11,6 +11,8 @@ export const useReadClass = (
   options?: Omit<useQuery.Options<ReadClassResponse>, "variables">
 ) => {
   const query = useQuery<ReadClassResponse>(READ_CLASS, {
+    fetchPolicy: "no-cache",
+    nextFetchPolicy: "no-cache",
     ...options,
     variables: {
       year,
