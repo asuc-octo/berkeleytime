@@ -1,7 +1,7 @@
 FROM rust:1.83 AS docs-deps
 RUN ["cargo", "install", "mdbook", "--vers", "^0.4", "--locked"]
-RUN ["cargo", "install", "mdbook-alerts"]
-RUN ["cargo", "install", "mdbook-toc"]
+RUN ["cargo", "install", "mdbook-alerts", "--vers", "^0.8", "--locked"]
+RUN ["cargo", "install", "mdbook-toc", "--vers", "^0.14", "--locked"]
 
 # dev
 FROM docs-deps AS docs-dev

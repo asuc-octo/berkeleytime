@@ -1,0 +1,74 @@
+.addBlockMenu {
+  width: 318px;
+  background-color: var(--foreground-color);
+  position: absolute;
+  right: 30px;
+  top: 80px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  border-radius: 8px;
+
+  .section {
+    border-bottom: 1px solid var(--border-color);
+    padding: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--heading-color);
+
+    &:last-child {
+      margin-bottom: 0;
+      border: none;
+    }
+
+    .inputContainer {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      border-radius: 0.25rem;
+      gap: 12px;
+
+      .confirmButton {
+        width: 28%;
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    .sectionBubble {
+      padding: 10px;
+      border-radius: 6px;
+
+      .sectionTitle {
+        margin-bottom: 12px;
+      }
+    }
+
+    .sectionBubbleButton {
+      padding: 12px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      cursor: pointer;
+      &:hover {
+        background-color: var(--background-color);
+      }
+    }
+  }
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--text-color-secondary);
+}
+
+.confirmButton {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

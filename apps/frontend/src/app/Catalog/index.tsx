@@ -12,6 +12,7 @@ import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { Semester, TemporalPosition } from "@/lib/api";
+import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
 import Dashboard from "./Dashboard";
@@ -48,6 +49,8 @@ export default function Catalog() {
   const term = useMemo(() => {
     if (!terms) return null;
 
+    const recentTerm = getRecents(RecentType.CatalogTerm)[0];
+
     // Default to the current term
     const currentTerm = terms.find(
       (term) => term.temporalPosition === TemporalPosition.Current
@@ -59,11 +62,24 @@ export default function Catalog() {
       .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
       .find((term) => term.temporalPosition === TemporalPosition.Future);
 
-    return (
+    const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??
+      terms.find(
+        (term) =>
+          term.year === recentTerm?.year &&
+          term.semester === recentTerm?.semester
+      ) ??
       currentTerm ??
-      nextTerm
-    );
+      nextTerm;
+
+    if (selectedTerm) {
+      addRecent(RecentType.CatalogTerm, {
+        year: selectedTerm.year,
+        semester: selectedTerm.semester,
+      });
+    }
+
+    return selectedTerm;
   }, [terms, year, semester]);
 
   const subject = useMemo(

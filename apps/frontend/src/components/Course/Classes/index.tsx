@@ -16,7 +16,12 @@ export default function Classes() {
             <div className={styles.term}>
               {_class.semester} {_class.year}
             </div>
-            <ClassCard class={_class} />
+            <ClassCard
+              class={{
+                ..._class,
+                course: course,
+              }}
+            />
           </div>
         ))}
     </div>

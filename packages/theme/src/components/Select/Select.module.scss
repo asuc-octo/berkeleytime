@@ -26,7 +26,6 @@
     background-color: var(--button-hover-color);
     cursor: default;
   }
-
 }
 
 .content {
@@ -36,4 +35,12 @@
   max-height: 148px;
   overflow-y: scroll;
   scrollbar-color: var(--label-color) var(--foreground-color);
+}
+
+.addOption {
+  color: var(--paragraph-color);
+  cursor: pointer;
+  border-top: solid 1px var(--button-active-color);
+  padding: 12px 24px;
+  margin: 2px;
 }
