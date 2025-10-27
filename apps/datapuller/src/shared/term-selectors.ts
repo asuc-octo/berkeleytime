@@ -17,7 +17,9 @@ export const getRecentPastTerms = async () => {
 export const getActiveTerms = async () => {
   return TermModel.find({
     temporalPosition: { $in: ["Current", "Future"] },
-  }).lean();
+  })
+    .lean()
+    .sort({ id: 1 });
 };
 
 /**

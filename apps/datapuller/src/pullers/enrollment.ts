@@ -1,11 +1,11 @@
 import {
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
+  TermModel,
 } from "@repo/common";
 
 import { getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
-import { getActiveTerms } from "../shared/term-selectors";
 
 const TERMS_PER_API_BATCH = 4;
 
@@ -64,27 +64,23 @@ const updateEnrollmentHistories = async ({
 }: Config) => {
   log.trace(`Fetching terms...`);
 
-  const allTerms = await getActiveTerms(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
-  const terms = allTerms.filter((term) => {
-    if (term.academicCareerCode !== "UGRD") {
-      return false;
-    }
+  const terms = await TermModel.find({
+    academicCareerCode: "UGRD",
+    temporalPosition: { $in: ["Current", "Future"] },
+  })
+    .lean()
+    .sort({ id: 1 })
+    .select({ id: 1, name: 1 })
+    .limit(4);
 
-    if (!term.sessions) return true;
-    return term.sessions.some((session) => {
-      if (!session.enrollBeginDate || !session.enrollEndDate) return false;
-
-      const now = Date.now();
-      const enrollBeginDate = new Date(session.enrollBeginDate).getTime();
-      const enrollEndDate = new Date(session.enrollEndDate).getTime();
-
-      return now >= enrollBeginDate && now <= enrollEndDate;
-    });
+  log.info("Fetched terms.", {
+    length: terms.length,
+    terms: terms
+      .map((term) => {
+        (term.name, term.temporalPosition);
+      })
+      .toLocaleString(),
   });
-
-  log.info(
-    `Fetched ${terms.length.toLocaleString()} terms: ${terms.map((term) => term.name).toLocaleString()}.`
-  );
   if (terms.length == 0) {
     log.warn(`No terms found, skipping update.`);
     return;
@@ -167,6 +163,30 @@ const updateEnrollmentHistories = async ({
           }
         }
 
+        // only append to history if the term is current. if it's future, we set
+        // the first entry of history to be the data (overwriting any existing
+        // history)
+        const term = termsBatch.find(
+          (term) => term.id === enrollmentSingular.termId
+        );
+        const temporalPosition = term!.temporalPosition;
+        const operation =
+          temporalPosition === "Current"
+            ? {
+                $set: {
+                  seatReservationTypes: enrollmentSingular.seatReservationTypes,
+                },
+                $push: {
+                  history: enrollmentSingular.data,
+                },
+              }
+            : {
+                $set: {
+                  seatReservationTypes: enrollmentSingular.seatReservationTypes,
+                  history: [enrollmentSingular.data],
+                },
+              };
+
         // append to history array, upsert if needed
         const op = await NewEnrollmentHistoryModel.updateOne(
           {
@@ -174,14 +194,7 @@ const updateEnrollmentHistories = async ({
             sessionId: enrollmentSingular.sessionId,
             sectionId: enrollmentSingular.sectionId,
           },
-          {
-            $set: {
-              seatReservationTypes: enrollmentSingular.seatReservationTypes,
-            },
-            $push: {
-              history: enrollmentSingular.data,
-            },
-          },
+          operation,
           { upsert: true, session }
         );
         totalUpdated += op.modifiedCount + op.upsertedCount;
