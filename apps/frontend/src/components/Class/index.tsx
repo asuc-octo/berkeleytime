@@ -5,15 +5,17 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
-  Expand,
-  OpenBook,
   OpenNewWindow,
-  SidebarCollapse,
-  SidebarExpand,
   Xmark,
 } from "iconoir-react";
-import { Dialog, Tabs } from "radix-ui";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Tabs } from "radix-ui";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import {
   Box,
@@ -123,6 +125,7 @@ export default function Class({
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
@@ -293,6 +296,16 @@ export default function Class({
     });
   }, [courseGradeDistribution]);
 
+  const handleClose = useCallback(() => {
+    if (!_class) return;
+
+    navigate(`/catalog/${_class.year}/${_class.semester}`);
+
+    if (onClose) {
+      onClose();
+    }
+  }, [_class, navigate, onClose]);
+
   if (loading || courseLoading) {
     return <></>;
   }
@@ -304,11 +317,11 @@ export default function Class({
 
   return (
     <Root dialog={dialog}>
-      <Flex direction="column" flexGrow="1">
+      <Flex direction="column" flexGrow="1" className={styles.root}>
         <Box className={styles.header} pt="5" px="5">
           <Container size="3">
             <Flex direction="column" gap="5">
-              <Flex justify="between">
+              <Flex justify="between" align="start">
                 <Flex gap="3">
                   {/* TODO: Reusable bookmark button */}
                   <Tooltip
@@ -334,13 +347,15 @@ export default function Class({
                 >
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
-              </Tooltip> */}
+                  </Tooltip> */}
                   <Tooltip content="Add to schedule">
                     <IconButton>
                       <CalendarPlus />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip content="Berkeley Catalog">
+                </Flex>
+                <Flex gap="3">
+                  <Tooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
                       href={getExternalLink(
@@ -352,10 +367,18 @@ export default function Class({
                         _class.primarySection.component
                       )}
                       target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <OpenNewWindow />
                     </IconButton>
                   </Tooltip>
+                  {onClose && (
+                    <Tooltip content="Close">
+                      <IconButton onClick={handleClose}>
+                        <Xmark />
+                      </IconButton>
+                    </Tooltip>
+                  )}
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
