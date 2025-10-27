@@ -20,9 +20,12 @@ export default function Enrollment() {
   const { class: _class } = useClass();
 
   const data = useMemo(() => {
-    if (!_class.primarySection.enrollment) return [];
-    const day0 = new Date(_class.primarySection.enrollment?.history[0].time);
-    return _class.primarySection.enrollment?.history
+    const history = _class.primarySection.enrollment?.history ?? [];
+    if (history.length === 0) return [];
+
+    const day0 = new Date(history[0].time);
+
+    return history
       .reduce(
         (acc, enrollment) => {
           const dayOffset = Math.ceil(

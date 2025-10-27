@@ -298,19 +298,6 @@ export const READ_CLASS = gql`
               number
             }
           }
-          history {
-            time
-            status
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
-            seatReservationCount {
-              enrolledCount
-              maxEnroll
-              number
-            }
-          }
           seatReservationTypes {
             fromDate
             number

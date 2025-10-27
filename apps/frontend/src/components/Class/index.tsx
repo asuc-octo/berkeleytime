@@ -150,7 +150,10 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
 
-  const _course = useMemo(() => providedCourse ?? course, [course, providedCourse]);
+  const _course = useMemo(
+    () => providedCourse ?? course,
+    [course, providedCourse]
+  );
 
   const bookmarked = useMemo(
     () =>
@@ -247,30 +250,31 @@ export default function Class({
     );
   }, [_course]);
 
-  const seatReservationTypeMap = useMemo(() => {
-    const reservationTypes =
-      _class?.primarySection.enrollment?.seatReservationTypes ?? [];
+  // seat reservation logic pending design + consideration for performance.
+  // const seatReservationTypeMap = useMemo(() => {
+  //   const reservationTypes =
+  //     _class?.primarySection.enrollment?.seatReservationTypes ?? [];
 
-    const reservationMap = new Map<number, string>();
-    for (const type of reservationTypes) {
-      reservationMap.set(type.number, type.requirementGroup);
-    }
-    return reservationMap;
-  }, [_class]);
+  //   const reservationMap = new Map<number, string>();
+  //   for (const type of reservationTypes) {
+  //     reservationMap.set(type.number, type.requirementGroup);
+  //   }
+  //   return reservationMap;
+  // }, [_class]);
 
-  const seatReservationMaxEnroll = useMemo(() => {
-    const maxEnroll =
-      _class?.primarySection.enrollment?.history[0].seatReservationCount ?? [];
-    const maxEnrollMap = new Map<number, number>();
+  // const seatReservationMaxEnroll = useMemo(() => {
+  //   const maxEnroll =
+  //     _class?.primarySection.enrollment?.history[0].seatReservationCount ?? [];
+  //   const maxEnrollMap = new Map<number, number>();
 
-    for (const type of maxEnroll) {
-      maxEnrollMap.set(type.number, type.maxEnroll);
-    }
-    return maxEnrollMap;
-  }, [_class]);
+  //   for (const type of maxEnroll) {
+  //     maxEnrollMap.set(type.number, type.maxEnroll);
+  //   }
+  //   return maxEnrollMap;
+  // }, [_class]);
 
-  const seatReservationCount =
-    _class?.primarySection.enrollment?.latest?.seatReservationCount ?? [];
+  // const seatReservationCount =
+  //   _class?.primarySection.enrollment?.latest?.seatReservationCount ?? [];
 
   const courseGradeDistribution = _class?.course.gradeDistribution;
 
