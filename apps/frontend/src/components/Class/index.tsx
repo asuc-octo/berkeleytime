@@ -30,7 +30,7 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
-import { useReadCourse, useUpdateUser } from "@/hooks/api";
+import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
 import { IClass, ICourse, Semester } from "@/lib/api";
@@ -128,7 +128,7 @@ export default function Class({
 
   const [updateUser] = useUpdateUser();
 
-  const { data: course, loading: courseLoading } = useReadCourse(
+  const { data: course, loading: courseLoading } = useReadCourseForClass(
     providedClass?.subject ?? (subject as string),
     providedClass?.courseNumber ?? (courseNumber as string),
     {
