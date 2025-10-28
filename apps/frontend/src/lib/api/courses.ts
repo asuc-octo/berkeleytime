@@ -62,6 +62,8 @@ export const READ_COURSE_UNITS = gql`
     course(subject: $subject, number: $number) {
       classes {
         unitsMax
+        semester
+        year
       }
     }
   }

@@ -115,14 +115,37 @@ export const useReadCourseUnits = () => {
     async (
       subject: string,
       number: string,
+      semester: string,
+      year: number,
       options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
     ) => {
       const result = await getCourseUnitsQuery({
         ...options,
         variables: { subject, number },
       });
+      const classes = result.data?.course?.classes;
+      
+      if (!classes || classes.length === 0) {
+        return 0;
+      }
 
-      return result.data?.course?.classes?.[0]?.unitsMax || 0;
+      // find exact year/semester
+      const exactMatch = classes.find(
+        (cls) => cls.semester === semester && cls.year === year
+      );
+      if (exactMatch) {
+        return exactMatch.unitsMax || 0;
+      }
+
+      // find latest year
+      const latestYear = classes.reduce(
+        (max, cls) => Math.max(max, cls.year),
+        classes[0].year
+      );
+      const latestClass = classes.find(
+        (cls) => cls.year === latestYear
+      );
+      return latestClass?.unitsMax || 0;
     },
     [getCourseUnitsQuery]
   );
