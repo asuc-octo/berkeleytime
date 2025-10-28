@@ -226,7 +226,7 @@ export default function Enrollment() {
         }
         return datapoint;
       })
-      .sort((a, b) => a.timeDelta - b.timeDelta);
+      .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
   }, [outputs]);
 
   function updateGraphHover(data: {
