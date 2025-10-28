@@ -35,7 +35,7 @@ export function commonReducer(state = initialState, action: CommonAction): Commo
 				landingModal: true
 			};
 		case CLOSE_LANDING_MODAL:
-			const modalType = 'fa25recruitment';
+			const modalType = 'beta';
 			localStorage.setItem('bt-hide-landing-modal', modalType);
 			return {
 				...state,

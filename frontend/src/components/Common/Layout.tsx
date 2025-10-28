@@ -6,6 +6,7 @@ import BTLoader from './BTLoader';
 import Footer from './Footer';
 import Meta from './Meta';
 import Banner from './Banner';
+import LandingModal from '../Landing/LandingModal';
 
 ReactGA.initialize('UA-35316609-1');
 
@@ -28,6 +29,7 @@ export default function RootLayout({ footer }: LayoutProps) {
 
 	return (
 		<>
+			<LandingModal />
 			<Banner />
 			<Navigation />
 			<Meta title="Berkeleytime" />

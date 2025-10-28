@@ -1,7 +1,28 @@
 .modal.landing-modal {
 	flex-direction: column;
 
+	.landing-modal-buttons {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 10px;
+		width: 100%;
+	}
+
 	.landing-modal-btn {
+		width: 350px;
+		align-self: center;
+
+		@include mobile {
+			width: 200px;
+			justify-content: center;
+			height: 40px;
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.landing-modal-btn-secondary {
 		width: 350px;
 		align-self: center;
 
