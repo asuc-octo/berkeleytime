@@ -9,6 +9,51 @@ export interface Input {
   sessionId?: string;
 }
 
+/**
+ * Parses a single input string from URL parameters for Enrollment
+ *
+ * Format examples:
+ * - Basic: "COMPSCI;61B;T;2024:Spring"
+ * - With section: "COMPSCI;61B;T;2024:Spring;001"
+ */
+export function parseInputString(inputString: string): Input | null {
+  const parts = inputString.split(";");
+
+  // Minimum required: subject, courseNumber, type token, and term
+  if (parts.length < 4) return null;
+
+  const [subject, courseNumber, typeToken, termString] = parts;
+  if (!subject || !courseNumber || typeToken !== "T" || !termString)
+    return null;
+
+  // Parse term (year:semester)
+  const termParts = termString.split(":");
+  if (termParts.length < 2) return null;
+
+  const [rawYear, rawSemester] = termParts;
+  if (!rawYear || !rawSemester) return null;
+
+  const year = Number.parseInt(rawYear, 10);
+  if (Number.isNaN(year)) return null;
+
+  const semester = rawSemester as Semester;
+
+  // Build the input object
+  const input: Input = {
+    subject,
+    courseNumber,
+    year,
+    semester,
+  };
+
+  // Add optional sectionNumber if present
+  if (parts[4]) {
+    input.sectionNumber = parts[4];
+  }
+
+  return input;
+}
+
 export interface Output {
   color: string;
   enrollmentHistory: IEnrollment;

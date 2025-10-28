@@ -24,7 +24,9 @@ import {
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
-import { READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
+import { READ_ENROLLMENT, ReadEnrollmentResponse } from "@/lib/api";
+import { decimalToPercentString } from "@/utils/number-formatter";
+import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseManager from "./CourseManager";
 import styles from "./Enrollment.module.scss";
@@ -36,49 +38,19 @@ import {
   Output,
   getInputSearchParam,
   isInputEqual,
+  parseInputString,
 } from "./types";
-
-const toPercent = (decimal: number) => {
-  return `${decimal.toFixed(0)}%`;
-};
 
 const CHART_HEIGHT = 450;
 
-export default function Enrollment() {
+const Enrollment = () => {
   const client = useApolloClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [initialInputs] = useState<Input[]>(() =>
-    searchParams
-      .getAll("input")
-      .reduce((acc, input) => {
-        const output = input.split(";");
-
-        // Filter out invalid inputs
-        if (output.length < 4) return acc;
-
-        // Filter out invalid inputs
-        if (output[2] !== "T") return acc;
-
-        // COMPSCI;61B;T;2024:Spring;001, COMPSCI;61B;T;2024:Spring
-        const term = output[3]?.split(":");
-
-        const parsedInput: Input = {
-          subject: output[0],
-          courseNumber: output[1],
-          year: parseInt(term?.[0]),
-          semester: term?.[1] as Semester,
-          sectionNumber: output[4],
-        };
-
-        return acc.concat(parsedInput);
-      }, [] as Input[])
-      // Filter out duplicates
-      .filter(
-        (input, index, inputs) =>
-          inputs.findIndex((i) => isInputEqual(input, i)) === index
-      )
-  );
+  const initialInputs: Input[] = useMemo(
+    () => parseInputsFromUrl(searchParams, parseInputString, isInputEqual),
+    [searchParams]
+  ); // if courses are specified in the url, empty array if none
 
   const [loading, setLoading] = useState(initialInputs.length > 0);
   const [outputs, setOutputs] = useState<Output[]>([]);
@@ -281,7 +253,10 @@ export default function Enrollment() {
                     tickMargin={8}
                     type="number"
                   />
-                  <YAxis domain={[0, dataMax]} tickFormatter={toPercent} />
+                  <YAxis
+                    domain={[0, dataMax]}
+                    tickFormatter={(value) => decimalToPercentString(value, 0)}
+                  />
                   {dataMax >= 100 && (
                     <ReferenceLine
                       y={100}
@@ -309,7 +284,7 @@ export default function Enrollment() {
                                 label: name ? name.toString() : "N/A",
                                 value:
                                   typeof v.value === "number"
-                                    ? toPercent(v.value)
+                                    ? decimalToPercentString(v.value, 0)
                                     : "N/A",
                                 color: v.stroke,
                               };
@@ -399,4 +374,6 @@ export default function Enrollment() {
       <Footer />
     </Box>
   );
-}
+};
+
+export default Enrollment;

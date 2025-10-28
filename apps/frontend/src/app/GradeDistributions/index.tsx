@@ -33,6 +33,8 @@ import {
   LIGHT_COLORS,
   Output,
   getInputSearchParam,
+  isInputEqual,
+  parseInputString,
 } from "./types";
 
 const fetchGradeDistribution = async (
@@ -91,7 +93,7 @@ const GradeDistributions = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initialInputs: Input[] = useMemo(
-    () => parseInputsFromUrl(searchParams),
+    () => parseInputsFromUrl(searchParams, parseInputString, isInputEqual),
     [searchParams]
   ); // if courses are specified in the url, empty array if none
 
