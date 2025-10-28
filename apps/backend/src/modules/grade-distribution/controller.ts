@@ -207,6 +207,7 @@ export const getGradeDistributionByCourse = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -246,6 +247,7 @@ export const getGradeDistributionByClass = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -279,6 +281,7 @@ export const getGradeDistributionBySemester = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -313,6 +316,7 @@ export const getGradeDistributionByInstructor = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -352,5 +356,6 @@ export const getGradeDistributionByInstructorAndSemester = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };

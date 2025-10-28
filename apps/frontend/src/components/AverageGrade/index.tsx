@@ -40,22 +40,28 @@ export function ColoredGrade({ grade, style }: ColoredGradeProps) {
 }
 
 export function AverageGrade({
-  gradeDistribution: { average },
+  gradeDistribution: { average, pnpPercentage },
   style,
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
   const text = useMemo(() => {
-    if (!average) {
-      return "";
+    if (average) {
+      return getLetterGradeFromGPA(average);
     }
-    return getLetterGradeFromGPA(average);
-  }, [average]);
+    if (pnpPercentage !== null && pnpPercentage !== undefined) {
+      return `${Math.round(pnpPercentage * 100)}% P`;
+    }
+    return "";
+  }, [average, pnpPercentage]);
 
   const color = useMemo(() => getGradeColor(text), [text]);
 
-  if (!average) {
+  // Show if either average or pnpPercentage is available
+  if (!average && (pnpPercentage === null || pnpPercentage === undefined)) {
     return null;
   }
+
+  const isPnp = !average && pnpPercentage !== null && pnpPercentage !== undefined;
 
   return (
     <Tooltip.Root disableHoverableContent>
@@ -73,14 +79,25 @@ export function AverageGrade({
         >
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
-            <p className={styles.title}>Average grade</p>
+            <p className={styles.title}>
+              {isPnp ? "Pass rate" : "Average grade"}
+            </p>
             <p className={styles.description}>
-              Students have received{" "}
-              {["A", "F"].includes(text[0]) ? "an " : "a "}
-              <span style={{ color }}>
-                {text} ({average.toLocaleString()})
-              </span>{" "}
-              in this course on average {tooltip}.
+              {isPnp ? (
+                <>
+                  <span style={{ color }}>{text}</span> of students passed this
+                  course on average {tooltip}.
+                </>
+              ) : (
+                <>
+                  Students have received{" "}
+                  {["A", "F"].includes(text[0]) ? "an " : "a "}
+                  <span style={{ color }}>
+                    {text} ({average!.toLocaleString()})
+                  </span>{" "}
+                  in this course on average {tooltip}.
+                </>
+              )}
             </p>
           </div>
         </Tooltip.Content>
