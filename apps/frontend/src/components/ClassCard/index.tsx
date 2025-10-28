@@ -51,6 +51,7 @@ export default function ClassCard({
   return (
     <Card.RootColumn
       style={{ overflow: "visible", ...props?.style }}
+      active={active}
       {...props}
     >
       <Card.ColumnHeader style={{ overflow: "visible" }}>
