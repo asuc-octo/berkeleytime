@@ -8,44 +8,31 @@ import styles from "./Badge.module.scss";
 interface Props {
   label: string;
   color: Color;
+  variant?: "filled" | "border";
   icon?: React.ReactNode;
 }
 
 export type BadgeProps = Props &
   Omit<ComponentPropsWithRef<"span">, keyof Props>;
 
-export function Badge({ label, color, icon, style, ...props }: BadgeProps) {
-  return (
-    <span
-      className={styles.root}
-      style={{
-        color: `var(--${color}-badge)`,
-        backgroundColor: `var(--${color}-500-20)`,
-        ...style,
-      }}
-      {...props}
-    >
-      <Flex direction="row" gap="4px">
-        {label}
-        {icon && icon}
-      </Flex>
-    </span>
-  );
-}
-export function BadgeLabel({
+export function Badge({
   label,
   color,
   icon,
   style,
+  variant = "filled",
   ...props
 }: BadgeProps) {
   return (
     <span
       className={styles.root}
       style={{
-        color: `var(--${color}-500)`,
+        color:
+          variant === "filled"
+            ? `var(--${color}-500)`
+            : `var(--${color}-badge)`,
         backgroundColor: `var(--${color}-500-20)`,
-        border: "none",
+        border: variant === "filled" ? "none" : undefined,
         ...style,
       }}
       {...props}

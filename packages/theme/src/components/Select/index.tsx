@@ -11,7 +11,7 @@ import classNames from "classnames";
 import { NavArrowDown, Plus, Xmark } from "iconoir-react";
 import { DropdownMenu } from "radix-ui";
 
-import { BadgeLabel } from "../Badge";
+import { Badge } from "../Badge";
 import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
 import SelectItem from "./SelectItem";
@@ -143,7 +143,7 @@ export function Select<T>({
             Array.isArray(activeElem) ? (
               <Flex direction="row" gap="8px" wrap="wrap">
                 {activeElem.map((el) => (
-                  <BadgeLabel
+                  <Badge
                     key={el.label}
                     label={el.label}
                     color={el.color ? el.color : Color.blue}
