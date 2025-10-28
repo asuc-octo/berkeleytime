@@ -328,7 +328,7 @@ export default function Enrollment() {
                         const day = Math.floor(duration.asDays()) + 1;
                         // if not granular (12:00am only), then don't show time
                         const time =
-                          duration.minutes() > 0
+                          duration.hours() > 0
                             ? moment.utc(0).add(duration).format("h:mm a")
                             : "";
 
