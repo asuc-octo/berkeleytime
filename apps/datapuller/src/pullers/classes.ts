@@ -8,7 +8,7 @@ import {
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
 
-const TERMS_PER_API_BATCH = 4;
+// const TERMS_PER_API_BATCH = 4;
 const CLASSES_PER_BATCH = 5000;
 
 const updateClasses = async (
@@ -43,7 +43,7 @@ const updateClasses = async (
     );
 
   log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
-  if (!classes) {
+  if (!classes || classes.length == 0) {
     log.warn(`No classes found, skipping update.`);
     return;
   }
