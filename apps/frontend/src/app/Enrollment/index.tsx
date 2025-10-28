@@ -212,19 +212,21 @@ export default function Enrollment() {
       );
     });
 
-    return Array.from(timeDeltas).map((timeDelta) => {
-      const datapoint: { timeDelta: number; [key: string]: number | null } = {
-        timeDelta,
-      };
-      for (let i = 0; i < outputs.length; i++) {
-        const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[i].get(
-          timeDelta
-        ) || { enrolledCount: null, waitlistedCount: null };
-        datapoint[`enroll_${i}`] = enrolledCount;
-        datapoint[`waitlist_${i}`] = waitlistedCount;
-      }
-      return datapoint;
-    });
+    return Array.from(timeDeltas)
+      .map((timeDelta) => {
+        const datapoint: { timeDelta: number; [key: string]: number | null } = {
+          timeDelta,
+        };
+        for (let i = 0; i < outputs.length; i++) {
+          const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[
+            i
+          ].get(timeDelta) || { enrolledCount: null, waitlistedCount: null };
+          datapoint[`enroll_${i}`] = enrolledCount;
+          datapoint[`waitlist_${i}`] = waitlistedCount;
+        }
+        return datapoint;
+      })
+      .sort((a, b) => a.timeDelta - b.timeDelta);
   }, [outputs]);
 
   function updateGraphHover(data: {
