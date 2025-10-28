@@ -44,24 +44,35 @@ export function AverageGrade({
   style,
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
+  const isPnp =
+    !average && pnpPercentage !== null && pnpPercentage !== undefined;
+
+  const passRate = useMemo(() => {
+    if (pnpPercentage === null || pnpPercentage === undefined) {
+      return null;
+    }
+    return Math.round(pnpPercentage * 100);
+  }, [pnpPercentage]);
+
   const text = useMemo(() => {
     if (average) {
       return getLetterGradeFromGPA(average);
     }
-    if (pnpPercentage !== null && pnpPercentage !== undefined) {
-      return `${Math.round(pnpPercentage * 100)}% P`;
+    if (passRate !== null) {
+      return `${passRate}% P`;
     }
     return "";
-  }, [average, pnpPercentage]);
+  }, [average, passRate]);
 
-  const color = useMemo(() => getGradeColor(text), [text]);
+  const color = useMemo(
+    () => (isPnp ? "var(--paragraph-color)" : getGradeColor(text)),
+    [isPnp, text]
+  );
 
   // Show if either average or pnpPercentage is available
   if (!average && (pnpPercentage === null || pnpPercentage === undefined)) {
     return null;
   }
-
-  const isPnp = !average && pnpPercentage !== null && pnpPercentage !== undefined;
 
   return (
     <Tooltip.Root disableHoverableContent>
@@ -85,8 +96,8 @@ export function AverageGrade({
             <p className={styles.description}>
               {isPnp ? (
                 <>
-                  <span style={{ color }}>{text}</span> of students passed this
-                  course on average {tooltip}.
+                  <span>{passRate!}% of students</span> have passed this course{" "}
+                  {tooltip}.
                 </>
               ) : (
                 <>
