@@ -96,7 +96,7 @@ export const useReadCourseUnits = () => {
       subject: string,
       number: string,
       semester: string,
-      year: string,
+      year: number,
       options?: Omit<QueryHookOptions<ReadCourseResponse>, "variables">
     ) => {
       const result = await getCourseUnitsQuery({
@@ -111,7 +111,7 @@ export const useReadCourseUnits = () => {
 
       // find exact year/semester
       const exactMatch = classes.find(
-        (cls) => cls.semester === semester && cls.year.toString() === year
+        (cls) => cls.semester === semester && cls.year === year
       );
       if (exactMatch) {
         return exactMatch.unitsMax || 0;

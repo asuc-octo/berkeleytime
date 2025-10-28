@@ -201,7 +201,7 @@ function SemesterBlock({
         cls.courseSubject,
         cls.courseNumber,
         planTerm.term,
-        planTerm.year.toString()
+        planTerm.year
       );
       cls.courseUnits = data;
     }
