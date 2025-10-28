@@ -31,18 +31,18 @@ const enrollmentSingularsEqual = (
   }
 
   const aSeatReservationsEmpty =
-    a.seatReservationCounts == undefined || a.seatReservationCounts.length == 0;
+    a.seatReservationCount == undefined || a.seatReservationCount.length == 0;
   const bSeatReservationsEmpty =
-    b.seatReservationCounts == undefined || b.seatReservationCounts.length == 0;
+    b.seatReservationCount == undefined || b.seatReservationCount.length == 0;
   if (aSeatReservationsEmpty != bSeatReservationsEmpty) {
     return false;
   }
 
-  if (a.seatReservationCounts && b.seatReservationCounts) {
-    if (a.seatReservationCounts.length !== b.seatReservationCounts.length)
+  if (a.seatReservationCount && b.seatReservationCount) {
+    if (a.seatReservationCount.length !== b.seatReservationCount.length)
       return false;
-    for (const aSeats of a.seatReservationCounts) {
-      const bSeats = b.seatReservationCounts.find(
+    for (const aSeats of a.seatReservationCount) {
+      const bSeats = b.seatReservationCount.find(
         (bSeats) => bSeats.number === aSeats.number
       );
       if (

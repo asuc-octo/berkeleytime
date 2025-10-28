@@ -132,17 +132,28 @@ export interface IExam {
   endTime: string;
 }
 
+export interface ISectionAttriuteInfo {
+  code?: string;
+  description?: string;
+  formalDescription?: string;
+}
+
+export interface ISectionAttribute {
+  attribute: ISectionAttriuteInfo;
+  value: ISectionAttriuteInfo;
+}
+
 export interface ISection {
+  enrollment: IEnrollment;
   // Identifiers
   termId: string;
   sessionId: string;
   sectionId: string;
 
-  // Relationships
+  // Relationships (what is relationships?)
   term: ITerm;
   course: ICourse;
   class: IClass;
-  enrollment?: IEnrollment;
 
   // Attributes
   year: number;
@@ -161,12 +172,7 @@ export interface ISection {
   online: boolean;
   attendanceRequired: boolean;
   lecturesRecorded: boolean;
-}
-
-export interface IReservation {
-  enrollCount: number;
-  enrollMax: number;
-  group: string;
+  sectionAttributes: ISectionAttribute[];
 }
 
 export interface IMeeting {
@@ -203,6 +209,7 @@ export interface IClass {
   title: string | null;
   unitsMax: number;
   unitsMin: number;
+  requirementDesignation?: ISectionAttriuteInfo;
 }
 
 export interface ReadClassResponse {
@@ -279,23 +286,22 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
+            time
             status
             enrolledCount
             maxEnroll
             waitlistedCount
             maxWaitlist
+            seatReservationCount {
+              enrolledCount
+              maxEnroll
+              number
+            }
           }
           seatReservationTypes {
+            fromDate
             number
             requirementGroup
-            fromDate
-          }
-          history {
-            status
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
           }
         }
         meetings {
@@ -327,16 +333,12 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
+            time
             status
             enrolledCount
             maxEnroll
             waitlistedCount
             maxWaitlist
-          }
-          seatReservationTypes {
-            number
-            requirementGroup
-            fromDate
           }
         }
         meetings {
@@ -380,8 +382,21 @@ export const GET_CATALOG = gql`
         instructionMode
         attendanceRequired
         lecturesRecorded
+        sectionAttributes {
+          attribute {
+            code
+            description
+            formalDescription
+          }
+          value {
+            code
+            description
+            formalDescription
+          }
+        }
         enrollment {
           latest {
+            time
             status
             enrolledCount
             maxEnroll
@@ -401,6 +416,11 @@ export const GET_CATALOG = gql`
           average
         }
         academicCareer
+      }
+      requirementDesignation {
+        code
+        description
+        formalDescription
       }
     }
   }

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
-import { getLetterGradeFromAverage } from "@/lib/grades";
+import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -18,18 +18,20 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
+function getGradeColor(grade: string): string {
+  if (grade === "N/A") {
+    return "var(--paragraph-color)";
+  }
+
+  const firstLetter = grade[0];
+  if (firstLetter === "A") return "var(--emerald-500)";
+  if (firstLetter === "B") return "var(--amber-500)";
+  return "var(--rose-500)";
+}
+
 export function ColoredGrade({ grade, style }: ColoredGradeProps) {
-  const color = useMemo(
-    () =>
-      grade === "N/A"
-        ? "var(--paragraph-color)"
-        : grade === "A+" || grade === "A" || grade === "A-"
-          ? "var(--emerald-500)"
-          : grade === "B+" || grade === "B" || grade === "B-"
-            ? "var(--amber-500)"
-            : "var(--rose-500)",
-    [grade]
-  );
+  const color = useMemo(() => getGradeColor(grade), [grade]);
+
   return (
     <div className={styles.trigger} style={{ color, ...style }}>
       {grade}
@@ -42,27 +44,25 @@ export function AverageGrade({
   style,
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
-  const text = useMemo(
-    () => (average ? getLetterGradeFromAverage(average) : ""),
-    [average]
-  );
+  const text = useMemo(() => {
+    if (!average) {
+      return "";
+    }
+    return getLetterGradeFromGPA(average);
+  }, [average]);
 
-  const color = useMemo(
-    () =>
-      !average
-        ? "var(--paragraph-color)"
-        : average > 3.5
-          ? "var(--emerald-500)"
-          : average > 2.5
-            ? "var(--amber-500)"
-            : "var(--rose-500)",
-    [average]
-  );
+  const color = useMemo(() => getGradeColor(text), [text]);
+
+  if (!average) {
+    return null;
+  }
 
   return (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
-        <ColoredGrade style={style} grade={text} />
+        <div className={styles.trigger} style={{ color, ...style }}>
+          {text}
+        </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
@@ -74,21 +74,14 @@ export function AverageGrade({
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Average grade</p>
-            {average ? (
-              <p className={styles.description}>
-                Students have received{" "}
-                {["A", "F"].includes(text[0]) ? "an " : "a "}
-                <span style={{ color }}>
-                  {text} ({average.toLocaleString()})
-                </span>{" "}
-                in this course on average {tooltip}.
-              </p>
-            ) : (
-              <p className={styles.description}>
-                Either this course has not been previously offered, or the
-                average grade is not available.
-              </p>
-            )}
+            <p className={styles.description}>
+              Students have received{" "}
+              {["A", "F"].includes(text[0]) ? "an " : "a "}
+              <span style={{ color }}>
+                {text} ({average.toLocaleString()})
+              </span>{" "}
+              in this course on average {tooltip}.
+            </p>
           </div>
         </Tooltip.Content>
       </Tooltip.Portal>

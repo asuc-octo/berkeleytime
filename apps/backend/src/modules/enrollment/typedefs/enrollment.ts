@@ -12,7 +12,7 @@ export default gql`
     ): Enrollment
   }
 
-  type Enrollment @cacheControl(maxAge: 300) {
+  type Enrollment @cacheControl(maxAge: 900) {
     "Identifiers"
     termId: TermIdentifier!
     year: Int!
@@ -24,12 +24,12 @@ export default gql`
     sectionNumber: SectionNumber!
 
     "Attributes"
-    seatReservationTypes: [SeatReservationType!]
     history: [EnrollmentSingular!]!
     latest: EnrollmentSingular
+    seatReservationTypes: [ReservationType!]
   }
 
-  type SeatReservationType {
+  type ReservationType {
     number: Int!
     requirementGroup: String!
     fromDate: String!
@@ -39,15 +39,21 @@ export default gql`
     time: String!
     status: EnrollmentStatus
     enrolledCount: Int!
-    reservedCount: Int
+    reservedCount: Int!
     waitlistedCount: Int!
     minEnroll: Int
     maxEnroll: Int!
     maxWaitlist: Int!
-    openReserved: Int
+    openReserved: Int!
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
-    seatReservationCounts: [SeatReservationCount!]
+    seatReservationCount: [SeatReservationCounts!]
+  }
+
+  type SeatReservationCounts {
+    number: Int!
+    maxEnroll: Int!
+    enrolledCount: Int!
   }
 
   enum EnrollmentStatus {
@@ -56,11 +62,5 @@ export default gql`
 
     "Open"
     O
-  }
-
-  type SeatReservationCount {
-    number: Int!
-    maxEnroll: Int!
-    enrolledCount: Int!
   }
 `;

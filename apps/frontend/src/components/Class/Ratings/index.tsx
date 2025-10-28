@@ -17,8 +17,9 @@ import { Color, Container, Select } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
-import { useReadTerms, useReadUser } from "@/hooks/api";
+import { useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
+import useUser from "@/hooks/useUser";
 import {
   CREATE_RATING,
   DELETE_RATING,
@@ -79,7 +80,7 @@ export function RatingsContainer() {
   const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(
     null
   );
-  const { data: user } = useReadUser();
+  const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 

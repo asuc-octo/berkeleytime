@@ -94,13 +94,39 @@ export const READ_COURSE = gql`
         year
         semester
         number
-        primarySection {
-          meetings {
-            instructors {
-              familyName
-              givenName
-            }
+      }
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
           }
+        }
+      }
+    }
+  }
+`;
+
+export const READ_COURSE_FOR_CLASS = gql`
+  query GetCourseForClass($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      courseId
+      subject
+      number
+      title
+      description
+      academicCareer
+      gradingBasis
+      finalExam
+      requirements
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
         }
       }
       aggregatedRatings {

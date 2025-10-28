@@ -11,11 +11,12 @@ import {
 import { Card, Color } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import Capacity from "@/components/Capacity";
+import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
 import ColorSelector from "../ColorSelector";
+import styles from "./ClassCard.module.scss";
 
 interface ClassProps {
   class?: IClass;
@@ -26,7 +27,8 @@ interface ClassProps {
   leftBorderColor?: Color;
   onColorSelect?: (c: Color) => void;
   bookmarked?: boolean;
-  bookmarkToggle?: () => {};
+  bookmarkToggle?: () => void;
+  active?: boolean;
 }
 
 export default function ClassCard({
@@ -40,11 +42,16 @@ export default function ClassCard({
   bookmarked = false,
   children,
   bookmarkToggle,
+  active = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
+  const gradeDistribution =
+    _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
+
   return (
     <Card.RootColumn
       style={{ overflow: "visible", ...props?.style }}
+      active={active}
       {...props}
     >
       <Card.ColumnHeader style={{ overflow: "visible" }}>
@@ -52,27 +59,24 @@ export default function ClassCard({
         <Card.Body>
           <Card.Heading>
             {_class?.subject ?? _class?.course?.subject}{" "}
-            {_class?.courseNumber ?? _class?.course?.number} #{_class?.number}
+            {_class?.courseNumber ?? _class?.course?.number}{" "}
+            <span className={styles.sectionNumber}>#{_class?.number}</span>
           </Card.Heading>
           <Card.Description>
             {_class?.title ?? _class?.course?.title}
           </Card.Description>
           <Card.Footer>
-            <Capacity
+            <EnrollmentDisplay
               enrolledCount={
                 _class?.primarySection?.enrollment?.latest.enrolledCount
               }
               maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
-              waitlistedCount={
-                _class?.primarySection?.enrollment?.latest.waitlistedCount
-              }
-              maxWaitlist={
-                _class?.primarySection?.enrollment?.latest.maxWaitlist
-              }
+              time={_class?.primarySection?.enrollment?.latest.time}
             />
-            {_class?.unitsMin && _class.unitsMax && (
-              <Units unitsMin={_class?.unitsMin} unitsMax={_class?.unitsMax} />
-            )}
+            {_class?.unitsMin !== undefined &&
+              _class.unitsMax !== undefined && (
+                <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
+              )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 onClick={() => {
@@ -86,10 +90,16 @@ export default function ClassCard({
           </Card.Footer>
         </Card.Body>
         <Card.Actions>
-          {_class?.gradeDistribution && (
+          {gradeDistribution && (
             <AverageGrade
-              gradeDistribution={_class.gradeDistribution}
-              style={{ marginTop: 0.5, fontSize: 15 }}
+              gradeDistribution={gradeDistribution}
+              style={{
+                marginTop: 0.5,
+                fontSize: 14,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+                textAlign: "right",
+              }}
             />
           )}
           {bookmarked && bookmarkToggle && (

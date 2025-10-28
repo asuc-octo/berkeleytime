@@ -41,13 +41,14 @@ export default function Time({
   className,
   ...props
 }: Omit<ComponentPropsWithRef<"p">, keyof TimeProps> & TimeProps) {
-  // TODO: Use getY with a multiple instead
+  // Calculate position from midnight (0:00) to midnight (24:00)
   const bottom = useMemo(() => {
     if (!endTime) return;
 
     const [hours, minutes] = endTime.split(":").map((value) => parseInt(value));
 
-    return 170 - ((hours - 6) * 10 + minutes / 6);
+    // 240px total height (24 hours * 10px/hour), position from bottom
+    return 240 - (hours * 10 + minutes / 6);
   }, [endTime]);
 
   // TODO: Use getY with a multiple instead
@@ -108,6 +109,7 @@ export default function Time({
                   <div className={styles.label}>
                     {["Su", "M", "Tu", "W", "Th", "F", "Sa"][index]}
                   </div>
+                  <div className={styles.noonReference} />
                   {day && (
                     <div
                       className={styles.event}

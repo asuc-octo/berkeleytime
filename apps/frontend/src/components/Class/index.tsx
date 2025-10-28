@@ -5,15 +5,17 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
-  Expand,
-  OpenBook,
   OpenNewWindow,
-  SidebarCollapse,
-  SidebarExpand,
   Xmark,
 } from "iconoir-react";
-import { Dialog, Tabs } from "radix-ui";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Tabs } from "radix-ui";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import {
   Box,
@@ -26,14 +28,14 @@ import {
 
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
-import Capacity from "@/components/Capacity";
-import CourseDrawer from "@/components/CourseDrawer";
+import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
-import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
+import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import { IClass, Semester } from "@/lib/api";
+import useUser from "@/hooks/useUser";
+import { IClass, ICourse, Semester } from "@/lib/api";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
@@ -72,6 +74,7 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClass;
+  course?: ICourse;
   year?: never;
   semester?: never;
   subject?: never;
@@ -81,6 +84,7 @@ interface ControlledProps {
 
 interface UncontrolledProps {
   class?: never;
+  course?: never;
   year: number;
   semester: Semester;
   subject: string;
@@ -113,6 +117,7 @@ export default function Class({
   courseNumber,
   number,
   class: providedClass,
+  course: providedCourse,
   expanded,
   onExpandedChange,
   onClose,
@@ -120,14 +125,18 @@ export default function Class({
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const { data: user, loading: userLoading } = useReadUser();
+  const { user, loading: userLoading } = useUser();
 
   const [updateUser] = useUpdateUser();
 
-  const { data: course, loading: courseLoading } = useReadCourse(
+  const { data: course, loading: courseLoading } = useReadCourseForClass(
     providedClass?.subject ?? (subject as string),
-    providedClass?.courseNumber ?? (courseNumber as string)
+    providedClass?.courseNumber ?? (courseNumber as string),
+    {
+      skip: !!providedCourse,
+    }
   );
 
   const { data, loading } = useReadClass(
@@ -143,6 +152,11 @@ export default function Class({
   );
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+
+  const _course = useMemo(
+    () => providedCourse ?? course,
+    [course, providedCourse]
+  );
 
   const bookmarked = useMemo(
     () =>
@@ -230,40 +244,85 @@ export default function Class({
 
   const ratingsCount = useMemo(() => {
     return (
-      course &&
-      course.aggregatedRatings &&
-      course.aggregatedRatings.metrics.length > 0 &&
+      _course &&
+      _course.aggregatedRatings &&
+      _course.aggregatedRatings.metrics.length > 0 &&
       Math.max(
-        ...Object.values(course.aggregatedRatings.metrics.map((v) => v.count))
+        ...Object.values(_course.aggregatedRatings.metrics.map((v) => v.count))
       )
     );
-  }, [course]);
+  }, [_course]);
 
-  // TODO: Loading state
+  // seat reservation logic pending design + consideration for performance.
+  // const seatReservationTypeMap = useMemo(() => {
+  //   const reservationTypes =
+  //     _class?.primarySection.enrollment?.seatReservationTypes ?? [];
+
+  //   const reservationMap = new Map<number, string>();
+  //   for (const type of reservationTypes) {
+  //     reservationMap.set(type.number, type.requirementGroup);
+  //   }
+  //   return reservationMap;
+  // }, [_class]);
+
+  // const seatReservationMaxEnroll = useMemo(() => {
+  //   const maxEnroll =
+  //     _class?.primarySection.enrollment?.history[0].seatReservationCount ?? [];
+  //   const maxEnrollMap = new Map<number, number>();
+
+  //   for (const type of maxEnroll) {
+  //     maxEnrollMap.set(type.number, type.maxEnroll);
+  //   }
+  //   return maxEnrollMap;
+  // }, [_class]);
+
+  // const seatReservationCount =
+  //   _class?.primarySection.enrollment?.latest?.seatReservationCount ?? [];
+
+  const courseGradeDistribution = _class?.course.gradeDistribution;
+
+  const hasCourseGradeSummary = useMemo(() => {
+    if (!courseGradeDistribution) return false;
+
+    const average = courseGradeDistribution.average;
+    if (typeof average === "number" && Number.isFinite(average)) {
+      return true;
+    }
+
+    return courseGradeDistribution.distribution?.some((grade) => {
+      const count = grade.count ?? 0;
+      const percentage = grade.percentage ?? 0;
+      return count > 0 || percentage > 0;
+    });
+  }, [courseGradeDistribution]);
+
+  const handleClose = useCallback(() => {
+    if (!_class) return;
+
+    navigate(`/catalog/${_class.year}/${_class.semester}`);
+
+    if (onClose) {
+      onClose();
+    }
+  }, [_class, navigate, onClose]);
+
   if (loading || courseLoading) {
     return <></>;
   }
 
   // TODO: Error state
-  if (!course || !_class || !pin) {
+  if (!_course || !_class || !pin) {
     return <></>;
   }
 
   return (
     <Root dialog={dialog}>
-      <Flex direction="column" flexGrow="1">
+      <Flex direction="column" flexGrow="1" className={styles.root}>
         <Box className={styles.header} pt="5" px="5">
           <Container size="3">
             <Flex direction="column" gap="5">
-              <Flex justify="between">
+              <Flex justify="between" align="start">
                 <Flex gap="3">
-                  {!dialog && (
-                    <Tooltip content={expanded ? "Expand" : "Collapse"}>
-                      <IconButton onClick={() => onExpandedChange(!expanded)}>
-                        {expanded ? <SidebarCollapse /> : <SidebarExpand />}
-                      </IconButton>
-                    </Tooltip>
-                  )}
                   {/* TODO: Reusable bookmark button */}
                   <Tooltip
                     content={bookmarked ? "Remove bookmark" : "Bookmark"}
@@ -288,7 +347,7 @@ export default function Class({
                 >
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
-              </Tooltip> */}
+                  </Tooltip> */}
                   <Tooltip content="Add to schedule">
                     <IconButton>
                       <CalendarPlus />
@@ -296,28 +355,7 @@ export default function Class({
                   </Tooltip>
                 </Flex>
                 <Flex gap="3">
-                  {dialog ? (
-                    <Tooltip content="View course">
-                      <IconButton
-                        as={Link}
-                        to={`/courses/${_class.subject}/${_class.courseNumber}`}
-                      >
-                        <OpenBook />
-                      </IconButton>
-                    </Tooltip>
-                  ) : (
-                    <CourseDrawer
-                      subject={_class.subject}
-                      number={_class.courseNumber}
-                    >
-                      <Tooltip content="View course">
-                        <IconButton>
-                          <OpenBook />
-                        </IconButton>
-                      </Tooltip>
-                    </CourseDrawer>
-                  )}
-                  <Tooltip content="Berkeley Catalog">
+                  <Tooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
                       href={getExternalLink(
@@ -329,71 +367,68 @@ export default function Class({
                         _class.primarySection.component
                       )}
                       target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <OpenNewWindow />
                     </IconButton>
                   </Tooltip>
-                  {dialog && (
-                    <Tooltip content="Expand">
-                      <Dialog.Close asChild>
-                        <IconButton
-                          as={Link}
-                          to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
-                        >
-                          <Expand />
-                        </IconButton>
-                      </Dialog.Close>
-                    </Tooltip>
-                  )}
-                  <Tooltip content="Close">
-                    {dialog ? (
-                      <Dialog.Close asChild>
-                        <IconButton>
-                          <Xmark />
-                        </IconButton>
-                      </Dialog.Close>
-                    ) : (
-                      <IconButton
-                        as={Link}
-                        to={{
-                          ...location,
-                          pathname: `/catalog/${_class.year}/${_class.semester}`,
-                        }}
-                        onClick={() => onClose()}
-                      >
+                  {onClose && (
+                    <Tooltip content="Close">
+                      <IconButton onClick={handleClose}>
                         <Xmark />
                       </IconButton>
-                    )}
-                  </Tooltip>
+                    </Tooltip>
+                  )}
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
                 <Flex direction="column" gap="1">
                   <h1 className={styles.heading}>
-                    {_class.subject} {_class.courseNumber} #{_class.number}
+                    {_class.subject} {_class.courseNumber}{" "}
+                    <span className={styles.sectionNumber}>
+                      #{_class.number}
+                    </span>
                   </h1>
                   <p className={styles.description}>
                     {_class.title || _class.course.title}
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  <AverageGrade
-                    gradeDistribution={_class.course.gradeDistribution}
-                  />
-                  <Capacity
+                  {hasCourseGradeSummary && (
+                    <Link
+                      to={`/grades?input=${encodeURIComponent(
+                        `${_class.subject};${_class.courseNumber}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <AverageGrade
+                        gradeDistribution={_class.course.gradeDistribution}
+                      />
+                    </Link>
+                  )}
+                  <EnrollmentDisplay
                     enrolledCount={
                       _class.primarySection.enrollment?.latest.enrolledCount
                     }
                     maxEnroll={
                       _class.primarySection.enrollment?.latest.maxEnroll
                     }
-                    waitlistedCount={
-                      _class.primarySection.enrollment?.latest.waitlistedCount
-                    }
-                    maxWaitlist={
-                      _class.primarySection.enrollment?.latest.maxWaitlist
-                    }
-                  />
+                    time={_class.primarySection.enrollment?.latest.time}
+                  >
+                    {(content) => (
+                      <Link
+                        to={`/enrollment?input=${encodeURIComponent(
+                          `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: "none" }}
+                      >
+                        {content}
+                      </Link>
+                    )}
+                  </EnrollmentDisplay>
                   <Units
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
@@ -412,13 +447,9 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    {/* <Tabs.Trigger value="enrollment" asChild>
-                      <MenuItem>Enrollment</MenuItem>
-                    </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
-                    */}
                     <NavLink
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                     >
@@ -445,17 +476,16 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Enrollment</MenuItem>
-                    )}
-                  </NavLink>
                   <NavLink to={{ ...location, pathname: "grades" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
                   </NavLink>
-                  */}
+                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink> */}
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>
@@ -476,35 +506,39 @@ export default function Class({
         <ClassContext
           value={{
             class: _class,
-            course,
+            course: _course,
           }}
         >
           <Body dialog={dialog}>
-            <Tabs.Content value="overview" asChild>
-              <SuspenseBoundary>
-                <Overview />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="sections" asChild>
-              <SuspenseBoundary>
-                <Sections />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="enrollment" asChild>
-              <SuspenseBoundary>
-                <Enrollment />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="grades" asChild>
-              <SuspenseBoundary>
-                <Grades />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="ratings" asChild>
-              <SuspenseBoundary>
-                <Ratings />
-              </SuspenseBoundary>
-            </Tabs.Content>
+            {dialog && (
+              <>
+                <Tabs.Content value="overview" asChild>
+                  <SuspenseBoundary>
+                    <Overview />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="sections" asChild>
+                  <SuspenseBoundary>
+                    <Sections />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="enrollment" asChild>
+                  <SuspenseBoundary>
+                    <Enrollment />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="grades" asChild>
+                  <SuspenseBoundary>
+                    <Grades />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="ratings" asChild>
+                  <SuspenseBoundary>
+                    <Ratings />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+              </>
+            )}
           </Body>
         </ClassContext>
       </Flex>

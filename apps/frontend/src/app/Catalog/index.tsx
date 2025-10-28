@@ -9,13 +9,12 @@ import { Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
-import { useReadTerms } from "@/hooks/api";
+import { useReadCourseForClass, useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { Semester, TemporalPosition } from "@/lib/api";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
-import Dashboard from "./Dashboard";
 
 export default function Catalog() {
   const {
@@ -66,7 +65,8 @@ export default function Catalog() {
       terms?.find((term) => term.year === year && term.semester === semester) ??
       terms.find(
         (term) =>
-          term.year === recentTerm?.year && term.semester === recentTerm?.semester
+          term.year === recentTerm?.year &&
+          term.semester === recentTerm?.semester
       ) ??
       currentTerm ??
       nextTerm;
@@ -94,6 +94,14 @@ export default function Catalog() {
     number as string,
     {
       skip: !subject || !courseNumber || !number || !term,
+    }
+  );
+
+  const { data: _course, loading: courseLoading } = useReadCourseForClass(
+    subject as string,
+    courseNumber as string,
+    {
+      skip: !subject || !courseNumber,
     }
   );
 
@@ -143,29 +151,23 @@ export default function Catalog() {
             onSelect={handleSelect}
             semester={term.semester}
             year={term.year}
+            terms={terms}
             persistent
           />
         </div>
       </div>
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {classLoading ? (
+        {classLoading || courseLoading ? (
           <></>
-        ) : _class ? (
+        ) : _class && _course ? (
           <Class
             class={_class}
+            course={_course}
             expanded={expanded}
             onExpandedChange={setExpanded}
             onClose={() => setOpen(false)}
           />
-        ) : (
-          <Dashboard
-            term={term}
-            terms={terms}
-            expanded={expanded}
-            setExpanded={setExpanded}
-            setOpen={setOpen}
-          />
-        )}
+        ) : null}
       </Flex>
     </div>
   );

@@ -4,6 +4,7 @@ import { QueryHookOptions, useLazyQuery, useQuery } from "@apollo/client/react";
 
 import {
   READ_COURSE,
+  READ_COURSE_FOR_CLASS,
   READ_COURSE_GRADE_DIST,
   READ_COURSE_TITLE,
   READ_COURSE_UNITS,
@@ -17,6 +18,25 @@ export const useReadCourse = (
   options?: Omit<useQuery.Options<ReadCourseResponse>, "variables">
 ) => {
   const query = useQuery<ReadCourseResponse>(READ_COURSE, {
+    ...options,
+    variables: {
+      subject,
+      number,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.course,
+  };
+};
+
+export const useReadCourseForClass = (
+  subject: string,
+  number: string,
+  options?: Omit<useQuery.Options<ReadCourseResponse>, "variables">
+) => {
+  const query = useQuery<ReadCourseResponse>(READ_COURSE_FOR_CLASS, {
     ...options,
     variables: {
       subject,

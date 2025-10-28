@@ -1,12 +1,20 @@
 import { Dispatch, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
-import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
+import {
+  Check,
+  NavArrowDown,
+  NavArrowUp,
+  SortDown,
+  SortUp,
+} from "iconoir-react";
 import { Checkbox } from "radix-ui";
+import { useNavigate } from "react-router-dom";
 
-import { Button, DaySelect, Select } from "@repo/theme";
+import { Button, DaySelect, IconButton, Select } from "@repo/theme";
 
 import { Component, componentMap } from "@/lib/api";
+import { sortByTermDescending } from "@/lib/classes";
 
 import Header from "../Header";
 import {
@@ -14,6 +22,8 @@ import {
   Level,
   SortBy,
   Unit,
+  getAllBreadthRequirements,
+  getAllUniversityRequirements,
   getFilteredClasses,
   getLevel,
 } from "../browser";
@@ -36,14 +46,26 @@ export default function Filters() {
     updateLevels,
     days,
     updateDays,
+    breadths,
+    updateBreadths,
+    universityRequirement,
+    updateUniversityRequirement,
     open,
     // updateOpen,
     online,
     // updateOnline,
     sortBy,
+    reverse,
+    effectiveOrder,
     updateSortBy,
     responsive,
+    updateReverse,
+    year,
+    semester,
+    terms,
   } = useBrowser();
+
+  const navigate = useNavigate();
 
   const [expanded, setExpanded] = useState(false);
 
@@ -107,6 +129,17 @@ export default function Filters() {
     open,
     online,
   ]);
+
+  const filteredBreadths = useMemo(() => {
+    return getAllBreadthRequirements([...includedClasses, ...excludedClasses]);
+  }, [includedClasses]);
+
+  const filteredUniversityRequirements = useMemo(() => {
+    return getAllUniversityRequirements([
+      ...includedClasses,
+      ...excludedClasses,
+    ]);
+  }, [includedClasses]);
 
   const filteredComponents = useMemo(() => {
     const filteredComponents = Object.keys(componentMap).reduce(
@@ -266,6 +299,25 @@ export default function Filters() {
     );
   };
 
+  const isAscending = effectiveOrder === "asc";
+  const nextOrderLabel = isAscending ? "descending" : "ascending";
+
+  const availableTerms = useMemo(() => {
+    if (!terms) return [];
+
+    return terms
+      .filter(
+        ({ year, semester }, index) =>
+          index ===
+          terms.findIndex(
+            (term) => term.semester === semester && term.year === year
+          )
+      )
+      .toSorted(sortByTermDescending);
+  }, [terms]);
+
+  const currentTermLabel = `${semester} ${year}`;
+
   return (
     <div
       className={classNames(styles.root, {
@@ -274,14 +326,53 @@ export default function Filters() {
     >
       <Header />
       <div className={styles.body}>
+        {terms && terms.length > 0 && (
+          <>
+            <p className={styles.label}>TERM</p>
+            <Select
+              value={currentTermLabel}
+              onChange={(value) => {
+                const selectedTerm = availableTerms.find(
+                  (term) => `${term.semester} ${term.year}` === value
+                );
+                if (selectedTerm) {
+                  navigate(
+                    `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
+                  );
+                }
+              }}
+              options={availableTerms.map((term) => ({
+                value: `${term.semester} ${term.year}`,
+                label: `${term.semester} ${term.year}`,
+              }))}
+            />
+          </>
+        )}
         <p className={styles.label}>SORT BY</p>
-        <Select
-          value={sortBy}
-          onChange={(value) => updateSortBy(value as SortBy)}
-          options={Object.values(SortBy).map((sortBy) => {
-            return { value: sortBy, label: sortBy };
-          })}
-        />
+        <div className={styles.sortControls}>
+          <Select
+            value={sortBy}
+            onChange={(value) => updateSortBy(value as SortBy)}
+            options={Object.values(SortBy).map((sortOption) => {
+              return { value: sortOption, label: sortOption };
+            })}
+          />
+          <IconButton
+            className={styles.sortToggleButton}
+            onClick={() => updateReverse((previous) => !previous)}
+            aria-label={`Switch to ${nextOrderLabel} order`}
+            title={`Switch to ${nextOrderLabel} order`}
+            aria-pressed={reverse}
+            style={{ width: 44, height: 44 }}
+          >
+            {isAscending ? (
+              <SortUp width={16} height={16} />
+            ) : (
+              <SortDown width={16} height={16} />
+            )}
+          </IconButton>
+        </div>
+
         <p className={styles.label}>LEVEL</p>
         <Select
           multi
@@ -311,6 +402,36 @@ export default function Filters() {
               meta: filteredUnits[unit].toString(),
             };
           })}
+        />
+        <p className={styles.label}>L&S REQUIREMENTS</p>
+        <Select
+          multi
+          value={breadths}
+          onChange={(v) => {
+            if (Array.isArray(v)) updateBreadths(v);
+          }}
+          options={filteredBreadths.map((breadth) => {
+            return {
+              value: breadth,
+              label: breadth,
+            };
+          })}
+        />
+        <p className={styles.label}>UNIVERSITY REQUIREMENTS</p>
+        <Select
+          value={universityRequirement}
+          onChange={(v) => {
+            updateUniversityRequirement(v as string | null);
+          }}
+          options={[
+            { value: null, label: "None" },
+            ...filteredUniversityRequirements.map((requirement) => {
+              return {
+                value: requirement,
+                label: requirement,
+              };
+            }),
+          ]}
         />
         <p className={styles.label}>DAY</p>
         <DaySelect

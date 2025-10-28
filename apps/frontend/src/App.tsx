@@ -10,12 +10,13 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+import UserProvider from "@/providers/UserProvider";
 
 // import PinsProvider from "@/components/PinsProvider";
 
+const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
@@ -69,7 +70,11 @@ const router = createBrowserRouter([
       //   path: "discover",
       // },
       {
-        element: <Landing />,
+        element: (
+          <SuspenseBoundary key="landing">
+            <Landing />
+          </SuspenseBoundary>
+        ),
         index: true,
       },
       {
@@ -375,11 +380,13 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider>
-        {/* <PinsProvider> */}
-        <RouterProvider router={router} />
-        {/* </PinsProvider> */}
-      </ThemeProvider>
+      <UserProvider>
+        <ThemeProvider>
+          {/* <PinsProvider> */}
+          <RouterProvider router={router} />
+          {/* </PinsProvider> */}
+        </ThemeProvider>
+      </UserProvider>
     </ApolloProvider>
   );
 }
