@@ -1,13 +1,14 @@
 import { useMemo } from "react";
 
-import { Calendar, Plus } from "iconoir-react";
+import { ArrowRight, Calendar, Plus } from "iconoir-react";
 
 import { Box, Button, Container, Flex } from "@repo/theme";
 
 import Carousel from "@/components/Carousel";
 import Footer from "@/components/Footer";
 import ScheduleCard from "@/components/ScheduleCard";
-import { useReadSchedules, useReadUser } from "@/hooks/api";
+import { useReadSchedules } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { ISchedule, signIn } from "@/lib/api";
 
 // import { RecentType, getRecents } from "@/lib/recent";
@@ -18,7 +19,7 @@ import styles from "./Schedules.module.scss";
 const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
 
 export default function Schedules() {
-  const { data: user, loading: userLoading } = useReadUser();
+  const { user, loading: userLoading } = useUser();
 
   const { data: schedules, loading: schedulesLoading } = useReadSchedules({
     skip: !user,
@@ -40,11 +41,9 @@ export default function Schedules() {
 
   // const recentSchedules = getRecents(RecentType.Schedule);
 
-  if (userLoading || schedulesLoading) return <></>;
+  if (userLoading) return <></>;
 
-  if (!user) signIn();
-
-  if (!schedules) {
+  if (user && (schedulesLoading || !schedules)) {
     return <></>;
   }
 
@@ -60,14 +59,21 @@ export default function Schedules() {
             to add new classes or select from saved ones, and add your own time
             preferences.
           </div>
-          <CreateScheduleDialog
-            defaultName={`Schedule ${schedules.length + 1}`}
-          >
-            <Button>
-              <Plus />
-              Create a schedule
+          {user ? (
+            <CreateScheduleDialog
+              defaultName={`Schedule ${schedules?.length ? schedules.length + 1 : 1}`}
+            >
+              <Button>
+                <Plus />
+                Create a schedule
+              </Button>
+            </CreateScheduleDialog>
+          ) : (
+            <Button onClick={() => signIn()}>
+              Sign in
+              <ArrowRight />
             </Button>
-          </CreateScheduleDialog>
+          )}
         </div>
         <Flex direction="column" gap="5">
           {/* TODO: Removed recent schedules. Delete doesn't work and # a user would have is too small to justify this?
