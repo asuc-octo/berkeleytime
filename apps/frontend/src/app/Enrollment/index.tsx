@@ -331,7 +331,12 @@ export default function Enrollment() {
                         // if not granular (12:00am only), then don't show time
                         const time =
                           duration.hours() > 0
-                            ? moment.utc(0).add(duration).format("h:mm a")
+                            ? Intl.DateTimeFormat("en-US", {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                                timeZone: "America/Los_Angeles",
+                              }).format(moment.utc(0).add(duration).toDate())
                             : "";
 
                         return (
