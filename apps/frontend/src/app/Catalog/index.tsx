@@ -28,7 +28,6 @@ export default function Catalog() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [expanded, setExpanded] = useState(true);
   const [open, setOpen] = useState(false);
 
   const { data: terms, loading: termsLoading } = useReadTerms();
@@ -133,7 +132,6 @@ export default function Catalog() {
   return (
     <div
       className={classNames(styles.root, {
-        [styles.collapsed]: !expanded,
         [styles.open]: open,
       })}
     >
@@ -163,8 +161,6 @@ export default function Catalog() {
           <Class
             class={_class}
             course={_course}
-            expanded={expanded}
-            onExpandedChange={setExpanded}
             onClose={() => setOpen(false)}
           />
         ) : null}
