@@ -164,6 +164,32 @@ export const getAverageGrade = (distribution: Grade[]) => {
   return weightedTotal / total;
 };
 
+export const getPnpPercentage = (distribution: Grade[]) => {
+  // Calculate (P + S) / (P + NP + S + U)
+  const pnpGrades = distribution.reduce(
+    (acc, { letter, count }) => {
+      if (letter === Letter.Pass) acc.pass += count;
+      else if (letter === Letter.Satisfactory) acc.satisfactory += count;
+      else if (letter === Letter.NotPass) acc.notPass += count;
+      else if (letter === Letter.Unsatisfactory) acc.unsatisfactory += count;
+      return acc;
+    },
+    { pass: 0, satisfactory: 0, notPass: 0, unsatisfactory: 0 }
+  );
+
+  const totalPnp =
+    pnpGrades.pass +
+    pnpGrades.satisfactory +
+    pnpGrades.notPass +
+    pnpGrades.unsatisfactory;
+
+  // If there are no PNP grades, return null
+  if (totalPnp === 0) return null;
+
+  const passingPnp = pnpGrades.pass + pnpGrades.satisfactory;
+  return passingPnp / totalPnp;
+};
+
 export const getGradeDistributionByCourse = async (
   subject: string,
   number: string

@@ -4,6 +4,7 @@ export default gql`
   type GradeDistribution {
     average: Float
     distribution: [Grade!]
+    pnpPercentage: Float
   }
 
   type Grade {
