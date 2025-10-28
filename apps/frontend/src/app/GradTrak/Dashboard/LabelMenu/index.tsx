@@ -16,13 +16,21 @@ type LabelMenuProps = {
   onLabelsChange: (labels: ILabel[]) => void;
 };
 
-const LabelRow = (
-  onTextChange: ChangeEventHandler<HTMLInputElement>,
-  onDelete: () => void,
-  label: ILabel,
-  onColorSelect: (color: Color) => void,
-  handleAdd: () => void
-) => {
+type LabelRowProps = {
+  onTextChange: ChangeEventHandler<HTMLInputElement>;
+  onDelete?: () => void;
+  label: ILabel;
+  onColorSelect: (color: Color) => void;
+  handleAdd: () => void;
+};
+
+const LabelRow = ({
+  onTextChange,
+  onDelete,
+  label,
+  onColorSelect,
+  handleAdd,
+}: LabelRowProps) => {
   return (
     <Flex
       direction="column"
@@ -40,6 +48,7 @@ const LabelRow = (
         <ColorSelector
           selectedColor={label ? (label.color as Color) : Color.gray}
           onColorSelect={onColorSelect}
+          usePortal={false}
         />
         <Input
           value={label ? label.name : ""}
@@ -129,40 +138,40 @@ export default function LabelMenu({
 
         <Dialog.Body className={styles.body}>
           <Flex direction="column" width="100%">
-            {editingLabels.map((label, i) =>
-              LabelRow(
-                (e) => {
+            {editingLabels.map((label, i) => (
+              <LabelRow
+                key={i}
+                onTextChange={(e) => {
                   const updatedLabels = [...editingLabels];
                   updatedLabels[i] = {
                     ...updatedLabels[i],
                     name: e.target.value,
                   };
                   setEditingLabels(updatedLabels);
-                },
-                () => {
+                }}
+                onDelete={() => {
                   const updatedLabels = editingLabels.filter(
                     (_, index) => index !== i
                   );
                   setEditingLabels(updatedLabels);
-                },
-                label,
-                (color) => handleColorSelect(i, color),
-                () => {}
-              )
-            )}
-            {LabelRow(
-              (e) => {
+                }}
+                label={label}
+                onColorSelect={(color) => handleColorSelect(i, color)}
+                handleAdd={() => {}}
+              />
+            ))}
+            <LabelRow
+              onTextChange={(e) => {
                 const tmp = { ...tmpLabel, name: e.target.value };
                 setTmpLabel(tmp);
                 setDuplicateError(false); // Clear error when typing
-              },
-              () => {},
-              tmpLabel,
-              (color) => {
+              }}
+              label={tmpLabel}
+              onColorSelect={(color) => {
                 const tmp = { ...tmpLabel, color };
                 setTmpLabel(tmp);
-              },
-              () => {
+              }}
+              handleAdd={() => {
                 if (tmpLabel.name.trim()) {
                   const labelExists = editingLabels.some(
                     (label) =>
@@ -178,8 +187,8 @@ export default function LabelMenu({
                     setDuplicateError(true);
                   }
                 }
-              }
-            )}
+              }}
+            />
             {duplicateError && (
               <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
                 A label with that name and color already exists.
