@@ -101,7 +101,6 @@ export default function Dashboard() {
   });
 
   if (!gradTrakLoading && !gradTrak) {
-    console.log("GradTrak not found");
     navigate("/gradtrak");
   }
 

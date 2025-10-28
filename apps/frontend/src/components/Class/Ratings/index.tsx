@@ -27,6 +27,7 @@ import {
   GET_COURSE_RATINGS,
   GET_SEMESTERS_WITH_RATINGS,
   GET_USER_RATINGS,
+  IAggregatedRatings,
   SemestersWithRatingsResponse,
 } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
@@ -48,18 +49,6 @@ import {
 // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
 // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
 
-interface AggregatedRatings {
-  metrics: {
-    metricName: string;
-    count: number;
-    weightedAverage: number;
-    categories: {
-      value: number;
-      count: number;
-    }[];
-  }[];
-}
-
 const isSemester = (value: string): boolean => {
   const firstWord = value.split(" ")[0];
   return Object.values(Semester).includes(firstWord as Semester);
@@ -77,7 +66,7 @@ export function RatingsContainer() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { class: currentClass, course: currentCourse } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
-  const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(
+  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
     null
   );
   const { user } = useUser();
@@ -157,12 +146,11 @@ export function RatingsContainer() {
     ],
   });
 
-  const [getAggregatedRatings, { data: aggregatedRatingsData }] = useLazyQuery(
-    GET_AGGREGATED_RATINGS
-  );
+  const [getAggregatedRatings, { data: aggregatedRatingsData }] =
+    useLazyQuery<IAggregatedRatings>(GET_AGGREGATED_RATINGS);
 
   useEffect(() => {
-    setTermRatings(aggregatedRatingsData as AggregatedRatings | null);
+    setTermRatings(aggregatedRatingsData as IAggregatedRatings | null);
   }, [aggregatedRatingsData]);
 
   // Get semesters with ratings
@@ -306,8 +294,6 @@ export function RatingsContainer() {
           (s: { semester: Semester; year: number }) =>
             s.semester === term.semester && s.year === term.year
         );
-
-        console.log(term.semester, term.year, hasRatingsForTerm, isValidTerm);
 
         return isValidTerm && hasRatingsForTerm;
       })
@@ -521,7 +507,7 @@ export function RatingsContainer() {
                               year: parseInt(year),
                             },
                           });
-                          setTermRatings(data?.aggregatedRatings);
+                          if (data) setTermRatings(data);
                         }
                       }}
                       placeholder="Select term"

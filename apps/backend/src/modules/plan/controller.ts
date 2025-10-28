@@ -50,7 +50,6 @@ export async function removePlanTerm(
     throw new Error("PlanTerm does not exist in user's plan");
   }
   gt.planTerms.splice(planTermIndex, 1);
-  console.log(planTermIndex, gt.planTerms);
   await gt.save();
 
   return planTermID;
@@ -282,7 +281,6 @@ export async function editPlan(plan: PlanInput, context: any): Promise<Plan> {
 
 export async function deletePlan(context: any): Promise<string> {
   if (!context.user.email) throw new Error("Unauthorized");
-  console.log(context.user);
   await PlanModel.deleteOne({ userEmail: context.user.email }).catch((err) => {
     return err;
   });

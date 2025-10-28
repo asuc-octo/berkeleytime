@@ -369,8 +369,6 @@ export default function Editor() {
         color: getNextClassColor(_schedule.classes.length),
       });
 
-      console.log(_schedule.classes);
-
       const optimisticResponse = {
         ..._schedule,
         classes: _schedule.classes.map(
@@ -391,8 +389,6 @@ export default function Editor() {
             color: event.color,
           })) || [],
       };
-
-      console.log(optimisticResponse);
 
       // Update the schedule
       updateSchedule(

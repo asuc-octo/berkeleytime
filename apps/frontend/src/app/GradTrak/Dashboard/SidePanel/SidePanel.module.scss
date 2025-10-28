@@ -6,6 +6,7 @@
   border-right: 1px var(--border-color);
   background: var(--background-color);
   color: var(--heading-color);
+  scrollbar-color: var(--label-color) var(--foreground-color);
 
   h2 {
     font-size: 1rem;

@@ -24,8 +24,6 @@ export default function GradTrakIndex() {
     skip: !user,
   });
 
-  console.log("Gradtrak:", gradTraks);
-
   const navigate = useNavigate();
 
   const hasGradTraks = useMemo(() => {
@@ -39,7 +37,6 @@ export default function GradTrakIndex() {
 
   useEffect(() => {
     if (user && !userLoading && !gradTraksLoading && hasGradTraks) {
-      console.log("User has existing GradTraks, redirecting to dashboard.");
       const latestGradTrak = gradTraks?.[0];
 
       if (latestGradTrak) {
@@ -54,7 +51,6 @@ export default function GradTrakIndex() {
   }, [user, userLoading, gradTraksLoading, hasGradTraks, gradTraks, navigate]);
 
   if (userLoading || gradTraksLoading) {
-    console.log("Loading GradTrak data");
     return (
       <Boundary>
         <LoadingIndicator size="lg" />
@@ -68,7 +64,6 @@ export default function GradTrakIndex() {
   }
 
   if (hasGradTraks) {
-    console.log("Loading user's GradTrak");
     return (
       <Boundary>
         <LoadingIndicator size="lg" />
