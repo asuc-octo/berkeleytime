@@ -52,7 +52,6 @@ export default function GradTrakIndex() {
   }, [user, userLoading, gradTraksLoading, hasGradTraks, gradTraks, navigate]);
 
   if (userLoading) {
-    console.log("Loading GradTrak data");
     return (
       <Boundary>
         <LoadingIndicator size="lg" />
@@ -61,7 +60,6 @@ export default function GradTrakIndex() {
   }
 
   if (user && gradTraksLoading) {
-    console.log("Loading GradTrak data");
     return (
       <Boundary>
         <LoadingIndicator size="lg" />
@@ -70,7 +68,6 @@ export default function GradTrakIndex() {
   }
 
   if (user && hasGradTraks) {
-    console.log("Loading user's GradTrak");
     return (
       <Boundary>
         <LoadingIndicator size="lg" />
