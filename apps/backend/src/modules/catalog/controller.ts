@@ -407,7 +407,7 @@ export const getCatalog = async (
     printInScheduleOfClasses: true,
   }).lean();
 
-  const parsedGradeDistributions = {} as Record<
+  let parsedGradeDistributions = {} as Record<
     string,
     GradeDistributionModule.GradeDistribution
   >;
@@ -418,38 +418,66 @@ export const getCatalog = async (
   if (includesGradeDistribution) {
     const sectionIds = sections.map((section) => section.sectionId);
 
-    const gradeDistributions = await GradeDistributionModel.find({
-      // The bottleneck seems to be the amount of data we are fetching and not the query itself
+    // Get class-level grade distributions (current semester only)
+    const classGradeDistributions = await GradeDistributionModel.find({
       sectionId: { $in: sectionIds },
     }).lean();
 
-    const reducedGradeDistributions = gradeDistributions.reduce(
-      (accumulator, gradeDistribution) => {
-        const courseSubjectNumber = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
+    // Get course-level grade distributions (all semesters/history)
+    const courseGradeDistributions = await GradeDistributionModel.find({
+      $or: courses.map((course) => ({
+        subject: course.subject,
+        courseNumber: course.number,
+      })),
+    }).lean();
+
+    // Separate processing for class-level and course-level distributions
+    const reducedGradeDistributions = {} as Record<
+      string,
+      GradeDistributionModule.GradeDistribution
+    >;
+
+    // Process class-level distributions (by sectionId)
+    const classBySection = classGradeDistributions.reduce(
+      (acc, gradeDistribution) => {
         const sectionId = gradeDistribution.sectionId;
-
-        accumulator[courseSubjectNumber] = accumulator[courseSubjectNumber]
-          ? [...accumulator[courseSubjectNumber], gradeDistribution]
+        acc[sectionId] = acc[sectionId]
+          ? [...acc[sectionId], gradeDistribution]
           : [gradeDistribution];
-        accumulator[sectionId] = accumulator[sectionId]
-          ? [...accumulator[sectionId], gradeDistribution]
-          : [gradeDistribution];
-
-        return accumulator;
+        return acc;
       },
       {} as Record<string, IGradeDistributionItem[]>
     );
 
-    const entries = Object.entries(reducedGradeDistributions);
-
-    for (const [key, value] of entries) {
-      const distribution = getDistribution(value);
-
-      parsedGradeDistributions[key] = {
+    for (const [sectionId, distributions] of Object.entries(classBySection)) {
+      const distribution = getDistribution(distributions);
+      reducedGradeDistributions[sectionId] = {
         average: getAverageGrade(distribution),
         distribution,
       } as GradeDistributionModule.GradeDistribution;
     }
+
+    // Process course-level distributions (by subject-number, all history)
+    const courseByCourse = courseGradeDistributions.reduce(
+      (acc, gradeDistribution) => {
+        const key = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
+        acc[key] = acc[key]
+          ? [...acc[key], gradeDistribution]
+          : [gradeDistribution];
+        return acc;
+      },
+      {} as Record<string, IGradeDistributionItem[]>
+    );
+
+    for (const [key, distributions] of Object.entries(courseByCourse)) {
+      const distribution = getDistribution(distributions);
+      reducedGradeDistributions[key] = {
+        average: getAverageGrade(distribution),
+        distribution,
+      } as GradeDistributionModule.GradeDistribution;
+    }
+
+    parsedGradeDistributions = reducedGradeDistributions;
   }
 
   // Turn courses into a map to decrease time complexity for filtering
