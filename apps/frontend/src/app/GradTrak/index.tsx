@@ -51,23 +51,7 @@ export default function GradTrakIndex() {
     }
   }, [user, userLoading, gradTraksLoading, hasGradTraks, gradTraks, navigate]);
 
-  if (userLoading) {
-    return (
-      <Boundary>
-        <LoadingIndicator size="lg" />
-      </Boundary>
-    );
-  }
-
-  if (user && gradTraksLoading) {
-    return (
-      <Boundary>
-        <LoadingIndicator size="lg" />
-      </Boundary>
-    );
-  }
-
-  if (user && hasGradTraks) {
+  if (userLoading || (user && (gradTraksLoading || hasGradTraks))) {
     return (
       <Boundary>
         <LoadingIndicator size="lg" />
