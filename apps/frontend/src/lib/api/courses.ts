@@ -140,6 +140,18 @@ export const READ_COURSE_FOR_CLASS = gql`
           }
         }
       }
+      classes {
+        semester
+        year
+        primarySection {
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
+          }
+        }
+      }
     }
   }
 `;

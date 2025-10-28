@@ -55,7 +55,6 @@ export default function GradTrakOnboarding() {
       parseInt(startYear, 10),
       parseInt(gradYear, 10)
     );
-    console.log(data);
     navigate(`/gradtrak/dashboard`, {
       state: {
         planTerms: data ? data.createNewPlan.planTerms : [],

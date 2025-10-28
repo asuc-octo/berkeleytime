@@ -212,8 +212,6 @@ export const getCuratedClasses = async (info: GraphQLResolveInfo) => {
     return accumulator;
   }, [] as CuratedClassesModule.CuratedClass[]);
 
-  console.log(reducedClasses);
-
   return reducedClasses.toSorted((a, b) =>
     a.publishedAt && b.publishedAt
       ? String(b.publishedAt).localeCompare(String(a.publishedAt))
