@@ -178,7 +178,9 @@ export default function Enrollment() {
    *
    * `timeDelta` is in minutes since the first time data point of that selected class
    */
-  const data = useMemo(() => {
+  const data:
+    | { timeDelta: number; [key: string]: number | null }[]
+    | undefined = useMemo(() => {
     if (!outputs) return undefined;
 
     // set of all unique time deltas (in minutes). used to generate combined time series
@@ -366,7 +368,7 @@ export default function Enrollment() {
                           isAnimationActive={shouldAnimate.current}
                           dot={false}
                           strokeWidth={3}
-                          type={"bump"}
+                          type="stepAfter"
                           connectNulls
                         />
                         <Line
@@ -381,7 +383,7 @@ export default function Enrollment() {
                           dot={false}
                           strokeWidth={2}
                           strokeDasharray="5 5"
-                          type={"bump"}
+                          type="stepAfter"
                           connectNulls
                         />
                       </React.Fragment>
