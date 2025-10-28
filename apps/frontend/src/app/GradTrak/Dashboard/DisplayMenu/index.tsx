@@ -12,14 +12,7 @@ import {
   Reports,
 } from "iconoir-react";
 
-import {
-  BadgeLabel,
-  Color,
-  Flex,
-  IconButton,
-  Text,
-  Tooltip,
-} from "@repo/theme";
+import { Badge, Color, Flex, IconButton, Text, Tooltip } from "@repo/theme";
 
 import { ILabel } from "@/lib/api";
 
@@ -198,7 +191,7 @@ export default function DisplayMenu({
               <div className={styles.sectionTitle}>Labels</div>
               <div className={styles.labelsContainer}>
                 {labels.map((label, index) => (
-                  <BadgeLabel
+                  <Badge
                     key={index}
                     label={label.name}
                     color={label.color as Color}
