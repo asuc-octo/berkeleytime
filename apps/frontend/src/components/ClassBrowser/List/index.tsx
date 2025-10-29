@@ -82,8 +82,10 @@ export default function List({ onSelect }: ListProps) {
     count: classes.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
-    paddingStart: 72, // Header height
+    paddingStart: 0, // No padding needed - Recently Viewed section handles spacing
+    paddingEnd: 12,
     gap: 12,
+    overscan: 5, // Keep extra items rendered for smoother scrolling
   });
 
   // Reset scroll position and focus when search params change
@@ -191,30 +193,30 @@ export default function List({ onSelect }: ListProps) {
           <p className={styles.catalogTitle}>CATALOG</p>
         </div>
       )}
-      <div
-        className={styles.view}
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-        }}
-      >
-        {loading && classes.length === 0 ? (
-          <div className={styles.placeholder}>
-            <LoadingIndicator size="lg" />
-            <p className={styles.heading}>Fetching courses...</p>
-            <p className={styles.description}>
-              Search for, filter, and sort courses to narrow down your results.
-            </p>
-          </div>
-        ) : classes.length === 0 ? (
-          <div className={styles.placeholder}>
-            <FrameAltEmpty width={32} height={32} />
-            <p className={styles.heading}>No courses found</p>
-            <p className={styles.description}>
-              Find courses by broadening your search or entering a different
-              query.
-            </p>
-          </div>
-        ) : (
+      {loading && classes.length === 0 ? (
+        <div className={styles.placeholder}>
+          <LoadingIndicator size="lg" />
+          <p className={styles.heading}>Fetching courses...</p>
+          <p className={styles.description}>
+            Search for, filter, and sort courses to narrow down your results.
+          </p>
+        </div>
+      ) : classes.length === 0 ? (
+        <div className={styles.placeholder}>
+          <FrameAltEmpty width={32} height={32} />
+          <p className={styles.heading}>No courses found</p>
+          <p className={styles.description}>
+            Find courses by broadening your search or entering a different
+            query.
+          </p>
+        </div>
+      ) : (
+        <div
+          className={styles.view}
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+          }}
+        >
           <div
             className={styles.body}
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
@@ -234,8 +236,8 @@ export default function List({ onSelect }: ListProps) {
               );
             })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
       {/* <div className={styles.footer}>
         <Link to="/discover" className={styles.button}>
           <Sparks />

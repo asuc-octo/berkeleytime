@@ -14,16 +14,15 @@
   }
 
   .recentlyViewedSection {
-    padding: 0 12px;
+    padding: 5px 12px 0; // Start right below sticky header (12px top padding from header)
   }
 
   .recentlyViewed {
-    margin-bottom: 12px;
-
     .recentlyViewedList {
       display: flex;
       flex-direction: column;
       gap: 12px;
+      margin-bottom: 12px;
     }
   }
 
@@ -44,7 +43,31 @@
     color: var(--label-color);
     text-transform: uppercase;
     margin-bottom: 12px;
-    margin-top: 0;
+    margin-top: 12px;
+  }
+
+  .placeholder {
+    color: var(--paragraph-color);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px 12px;
+    margin-top: 72px; // Account for sticky header
+    gap: 16px;
+    font-size: 16px;
+
+    .heading {
+      font-weight: 500;
+      color: var(--heading-color);
+      margin-bottom: 8px;
+    }
+
+    .description {
+      line-height: 1.5;
+    }
   }
 
   .view {
@@ -52,30 +75,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 100%;
-
-    .placeholder {
-      color: var(--paragraph-color);
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 24px 12px;
-      gap: 16px;
-      font-size: 16px;
-
-      .heading {
-        font-weight: 500;
-        color: var(--heading-color);
-        margin-bottom: 8px;
-      }
-
-      .description {
-        line-height: 1.5;
-      }
-    }
 
     .body {
       padding: 0 12px;
