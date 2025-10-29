@@ -6,8 +6,8 @@ import { useSearchParams } from "react-router-dom";
 
 import {
   Component,
-  GET_CATALOG,
-  GetCatalogResponse,
+  GET_CANONICAL_CATALOG,
+  GetCanonicalCatalogResponse,
   ITerm,
   Semester,
 } from "@/lib/api";
@@ -82,14 +82,17 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
-    variables: {
-      semester: currentSemester,
-      year: currentYear,
-    },
-    fetchPolicy: "no-cache",
-    nextFetchPolicy: "no-cache",
-  });
+  const { data, loading } = useQuery<GetCanonicalCatalogResponse>(
+    GET_CANONICAL_CATALOG,
+    {
+      variables: {
+        semester: currentSemester,
+        year: currentYear,
+      },
+      fetchPolicy: "no-cache",
+      nextFetchPolicy: "no-cache",
+    }
+  );
 
   const classes = useMemo(() => data?.catalog ?? [], [data]);
 

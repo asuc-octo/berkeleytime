@@ -26,21 +26,6 @@ function getOperationName(operation: any): string | null {
   return firstSelection?.name?.value || null;
 }
 
-/**
- * Generates a hash from the full query string and variables to ensure uniqueness.
- *
- * @param query - The GraphQL query string
- * @param variables - The variables object passed with the query
- * @returns A SHA-256 hash
- */
-function generateQueryHash(
-  query: string,
-  variables: Record<string, any>
-): string {
-  const content = query + JSON.stringify(variables);
-  return createHash("sha256").update(content).digest("hex");
-}
-
 class RedisCache implements KeyValueCache {
   client: RedisClientType;
 
@@ -70,6 +55,7 @@ class RedisCache implements KeyValueCache {
     options?: KeyValueCacheSetOptions
   ) {
     if (!value) return;
+
     await this.client.set(
       this.prefix + key,
       gzipSync(value).toString("base64"),
@@ -114,36 +100,33 @@ export default async (redis: RedisClientType) => {
           req.request.http?.headers.get("sessionId") || null,
 
         /**
-         * Custom cache key generator for catalog queries only.
+         * Custom cache key generator for the canonical catalog query only.
          *
-         * Catalog queries get pattern-based keys for targeted invalidation:
-         *   Format: catalog:{year}-{semester}:{hash}
-         *   Example: "catalog:2024-fall:a3f2b9c1d4e5f6..."
+         * GetCanonicalCatalog query gets a deterministic key for instant O(1) invalidation:
+         *   Format: catalog:{year}-{semester}
+         *   Example: "catalog:2024-fall"
          *
-         * When enrollment updates for Fall 2024, invalidate with Redis SCAN:
-         *   SCAN 0 MATCH apollo-cache:*:catalog:2024-fall:*
+         * When enrollment updates for Fall 2024, invalidate directly:
+         *   DEL apollo-cache:fqc:catalog:2024-fall
          *
-         * All other queries use Apollo's default cache key with short TTL.
+         * All other queries use Apollo's default cache key.
          */
         generateCacheKey: (requestContext, keyData) => {
           const variables = requestContext.request.variables;
           const operation = requestContext.operation;
           const operationName = getOperationName(operation);
 
-          // Only apply custom keys to catalog queries with year and semester
+          // Only cache the GetCanonicalCatalog query (no search term)
           if (
+            requestContext.operationName === "GetCanonicalCatalog" &&
             operationName === "catalog" &&
             variables?.year &&
-            variables?.semester
+            variables?.semester &&
+            !variables?.query  // No search parameter
           ) {
-            const hash = generateQueryHash(
-              requestContext.request.query || "",
-              variables
-            );
-
-            // Create pattern-based key: catalog:{year}-{semester}:{hash}
+            // Deterministic key - one per semester
             const semester = String(variables.semester).toLowerCase();
-            return `catalog:${variables.year}-${semester}:${hash}`;
+            return `catalog:${variables.year}-${semester}`;
           }
 
           // For all other queries, use default Apollo cache key

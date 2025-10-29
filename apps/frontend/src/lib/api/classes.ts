@@ -363,12 +363,22 @@ export const READ_CLASS = gql`
   }
 `;
 
-export interface GetCatalogResponse {
+export interface GetCanonicalCatalogResponse {
   catalog: IClass[];
 }
 
-export const GET_CATALOG = gql`
-  query GetCatalog($year: Int!, $semester: Semester!) {
+/**
+ * IMPORTANT: This is the canonical catalog query that is heavily cached on the backend.
+ * The cache key is deterministic based on year/semester: catalog:{year}-{semester}
+ *
+ * DO NOT:
+ * - Rename this operation (backend checks for "GetCanonicalCatalog")
+ * - Add search/filter parameters (use a separate query for that)
+ *
+ * Cache is invalidated every 15 minutes when datapuller updates enrollment data.
+ */
+export const GET_CANONICAL_CATALOG = gql`
+  query GetCanonicalCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
       number
       title
