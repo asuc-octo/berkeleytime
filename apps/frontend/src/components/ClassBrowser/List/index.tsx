@@ -7,7 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { LoadingIndicator } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
-import { getRecentlyViewedForTerm } from "@/lib/recentlyViewed";
+import { getRecents, RecentType } from "@/lib/recent";
 
 import Header from "../Header";
 import {
@@ -33,7 +33,10 @@ export default function List({ onSelect }: ListProps) {
   const [searchParams] = useSearchParams();
 
   const recentlyViewed = useMemo(() => {
-    return getRecentlyViewedForTerm(year, semester);
+    const allRecents = getRecents(RecentType.Class);
+    return allRecents
+      .filter((recent) => recent.year === year && recent.semester === semester)
+      .slice(0, 3);
   }, [year, semester, recentlyViewedVersion]);
 
   const recentlyViewedClasses = useMemo(() => {
@@ -53,21 +56,15 @@ export default function List({ onSelect }: ListProps) {
 
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "recently-viewed-classes") {
+      if (e.key === RecentType.Class) {
         setRecentlyViewedVersion((v) => v + 1);
       }
     };
 
-    const handleCustomUpdate = () => {
-      setRecentlyViewedVersion((v) => v + 1);
-    };
-
     window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("recently-viewed-updated", handleCustomUpdate);
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("recently-viewed-updated", handleCustomUpdate);
     };
   }, []);
 
