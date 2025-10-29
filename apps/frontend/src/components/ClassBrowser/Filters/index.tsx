@@ -444,6 +444,7 @@ export default function Filters() {
         <p className={styles.label}>KIND</p>
         {Object.keys(filteredComponents)
           .slice(0, expanded ? undefined : 5)
+          .filter((component) => componentMap[component as Component])
           .map((component) => {
             const active = components.includes(component as Component);
 

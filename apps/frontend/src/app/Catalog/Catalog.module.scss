@@ -35,10 +35,6 @@
   }
 
   @media (width > 992px) {
-    &.collapsed .panel {
-      display: none;
-    }
-
     .panel {
       border-right: 1px solid var(--border-color);
     }

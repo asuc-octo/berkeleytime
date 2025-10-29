@@ -45,7 +45,7 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
         <NavLink to="/schedules">
           {({ isActive }) => (
             <MenuItem className={styles.item} active={isActive}>
-              My schedules
+              Scheduler
             </MenuItem>
           )}
         </NavLink>
