@@ -61,10 +61,19 @@ export default function List({ onSelect }: ListProps) {
       }
     };
 
+    const handleRecentUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ type: RecentType }>;
+      if (customEvent.detail.type === RecentType.Class) {
+        setRecentlyViewedVersion((v) => v + 1);
+      }
+    };
+
     window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("recent-updated", handleRecentUpdate);
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("recent-updated", handleRecentUpdate);
     };
   }, []);
 
