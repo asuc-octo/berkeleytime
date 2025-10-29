@@ -368,8 +368,7 @@ export interface GetCanonicalCatalogResponse {
 }
 
 /**
- * IMPORTANT: This is the canonical catalog query that is heavily cached on the backend.
- * The cache key is deterministic based on year/semester: catalog:{year}-{semester}
+ * IMPORTANT: This is the canonical catalog query that is used for server-side caching identifier.
  *
  * DO NOT:
  * - Rename this operation (backend checks for "GetCanonicalCatalog")

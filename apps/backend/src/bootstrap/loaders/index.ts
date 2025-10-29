@@ -20,11 +20,11 @@ export default async (root: Application): Promise<void> => {
 
   // load apollo server config. must be loaded before express
   console.log("Loading apollo...");
-  const server = await apolloLoader(redis);
+  const { server, redis: apolloRedis } = await apolloLoader(redis);
 
   // load everything related to express. depends on apollo
   console.log("Loading express...");
-  await expressLoader(app, server, redis);
+  await expressLoader(app, server, apolloRedis);
 
   // append backend path to all routes
   root.use(config.backendPath, app);

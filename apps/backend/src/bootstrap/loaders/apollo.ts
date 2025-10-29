@@ -102,12 +102,14 @@ export default async (redis: RedisClientType) => {
         /**
          * Custom cache key generator for the canonical catalog query only.
          *
-         * GetCanonicalCatalog query gets a deterministic key for instant O(1) invalidation:
-         *   Format: catalog:{year}-{semester}
-         *   Example: "catalog:2024-fall"
+         * GetCanonicalCatalog query uses deterministic keys:
+         *   Production: catalog:{year}-{semester} (e.g., "catalog:2024-fall")
+         *   Staging: catalog:{year}-{semester}:staging (for pre-warming)
          *
-         * When enrollment updates for Fall 2024, invalidate directly:
-         *   DEL apollo-cache:fqc:catalog:2024-fall
+         * When warming cache:
+         *   1. executeOperation() with { __warmStaging: true } context
+         *   2. Writes to staging key
+         *   3. RENAME staging → production (atomic swap, zero downtime)
          *
          * All other queries use Apollo's default cache key.
          */
@@ -122,11 +124,14 @@ export default async (redis: RedisClientType) => {
             operationName === "catalog" &&
             variables?.year &&
             variables?.semester &&
-            !variables?.query  // No search parameter
+            !variables?.query // No search parameter
           ) {
-            // Deterministic key - one per semester
             const semester = String(variables.semester).toLowerCase();
-            return `catalog:${variables.year}-${semester}`;
+            const isWarmingStaging =
+              requestContext.contextValue?.__warmStaging === true;
+            const suffix = isWarmingStaging ? ":staging" : "";
+
+            return `catalog:${variables.year}-${semester}${suffix}`;
           }
 
           // For all other queries, use default Apollo cache key
@@ -163,5 +168,5 @@ export default async (redis: RedisClientType) => {
 
   await server.start();
 
-  return server;
+  return { server, redis };
 };
