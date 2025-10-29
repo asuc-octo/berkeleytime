@@ -37,6 +37,7 @@ import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
 import { IClass, ICourse, Semester } from "@/lib/api";
 import { RecentType, addRecent } from "@/lib/recent";
+import { addRecentlyViewed } from "@/lib/recentlyViewed";
 import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -231,6 +232,12 @@ export default function Class({
       subject: _class.subject,
       year: _class.year,
       semester: _class.semester,
+      courseNumber: _class.courseNumber,
+      number: _class.number,
+    });
+
+    addRecentlyViewed(_class.year, _class.semester, {
+      subject: _class.subject,
       courseNumber: _class.courseNumber,
       number: _class.number,
     });

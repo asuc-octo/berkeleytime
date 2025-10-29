@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { LoadingIndicator } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
+import { getRecentlyViewedForTerm } from "@/lib/recentlyViewed";
 
 import Header from "../Header";
 import {
@@ -24,11 +25,51 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading } = useBrowser();
+  const { classes, loading, year, semester, query } = useBrowser();
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
+  const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
+
+  const recentlyViewed = useMemo(() => {
+    return getRecentlyViewedForTerm(year, semester);
+  }, [year, semester, recentlyViewedVersion]);
+
+  const recentlyViewedClasses = useMemo(() => {
+    return recentlyViewed
+      .map((recent) => {
+        return classes.find(
+          (c) =>
+            c.course?.subject === recent.subject &&
+            c.course?.number === recent.courseNumber &&
+            c.number === recent.number
+        );
+      })
+      .filter((c) => c !== undefined);
+  }, [recentlyViewed, classes]);
+
+  const showRecentlyViewed = !query && recentlyViewedClasses.length > 0;
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "recently-viewed-classes") {
+        setRecentlyViewedVersion((v) => v + 1);
+      }
+    };
+
+    const handleCustomUpdate = () => {
+      setRecentlyViewedVersion((v) => v + 1);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("recently-viewed-updated", handleCustomUpdate);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("recently-viewed-updated", handleCustomUpdate);
+    };
+  }, []);
 
   // Keyboard navigation helpers
   const { showFocusRing, showFocusRingTemporarily, hideFocusRing } =
@@ -41,7 +82,7 @@ export default function List({ onSelect }: ListProps) {
     count: classes.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
-    paddingStart: 72,
+    paddingStart: 72, // Header height
     gap: 12,
   });
 
@@ -122,14 +163,41 @@ export default function List({ onSelect }: ListProps) {
       tabIndex={0}
       onClick={handleListClick}
     >
+      <Header />
+      {showRecentlyViewed && (
+        <div className={styles.recentlyViewedSection}>
+          <div className={styles.recentlyViewed}>
+            <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
+            <div className={styles.recentlyViewedList}>
+              {recentlyViewedClasses.map((_class) => (
+                <ClassCard
+                  class={_class}
+                  key={`recent-${_class.course.subject}-${_class.course.number}-${_class.number}`}
+                  onClick={() => {
+                    const index = classes.findIndex(
+                      (c) =>
+                        c.course.subject === _class.course.subject &&
+                        c.course.number === _class.course.number &&
+                        c.number === _class.number
+                    );
+                    if (index >= 0) {
+                      handleClassClick(index);
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          <p className={styles.catalogTitle}>CATALOG</p>
+        </div>
+      )}
       <div
         className={styles.view}
         style={{
           height: `${virtualizer.getTotalSize()}px`,
         }}
       >
-        <Header />
-        {loading && items.length === 0 ? (
+        {loading && classes.length === 0 ? (
           <div className={styles.placeholder}>
             <LoadingIndicator size="lg" />
             <p className={styles.heading}>Fetching courses...</p>
@@ -137,7 +205,7 @@ export default function List({ onSelect }: ListProps) {
               Search for, filter, and sort courses to narrow down your results.
             </p>
           </div>
-        ) : items.length === 0 ? (
+        ) : classes.length === 0 ? (
           <div className={styles.placeholder}>
             <FrameAltEmpty width={32} height={32} />
             <p className={styles.heading}>No courses found</p>
@@ -167,14 +235,14 @@ export default function List({ onSelect }: ListProps) {
             })}
           </div>
         )}
-        {/* <div className={styles.footer}>
-          <Link to="/discover" className={styles.button}>
-            <Sparks />
-            <p className={styles.text}>Try discovering courses</p>
-            <ArrowRight />
-          </Link>
-        </div> */}
       </div>
+      {/* <div className={styles.footer}>
+        <Link to="/discover" className={styles.button}>
+          <Sparks />
+          <p className={styles.text}>Try discovering courses</p>
+          <ArrowRight />
+        </Link>
+      </div> */}
     </div>
   );
 }
