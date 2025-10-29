@@ -212,19 +212,21 @@ export default function Enrollment() {
       );
     });
 
-    return Array.from(timeDeltas).map((timeDelta) => {
-      const datapoint: { timeDelta: number; [key: string]: number | null } = {
-        timeDelta,
-      };
-      for (let i = 0; i < outputs.length; i++) {
-        const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[i].get(
-          timeDelta
-        ) || { enrolledCount: null, waitlistedCount: null };
-        datapoint[`enroll_${i}`] = enrolledCount;
-        datapoint[`waitlist_${i}`] = waitlistedCount;
-      }
-      return datapoint;
-    });
+    return Array.from(timeDeltas)
+      .map((timeDelta) => {
+        const datapoint: { timeDelta: number; [key: string]: number | null } = {
+          timeDelta,
+        };
+        for (let i = 0; i < outputs.length; i++) {
+          const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[
+            i
+          ].get(timeDelta) || { enrolledCount: null, waitlistedCount: null };
+          datapoint[`enroll_${i}`] = enrolledCount;
+          datapoint[`waitlist_${i}`] = waitlistedCount;
+        }
+        return datapoint;
+      })
+      .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
   }, [outputs]);
 
   function updateGraphHover(data: {
@@ -331,7 +333,12 @@ export default function Enrollment() {
                         // if not granular (12:00am only), then don't show time
                         const time =
                           duration.hours() > 0
-                            ? moment.utc(0).add(duration).format("h:mm a")
+                            ? Intl.DateTimeFormat("en-US", {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                                timeZone: "America/Los_Angeles",
+                              }).format(moment.utc(0).add(duration).toDate())
                             : "";
 
                         return (
