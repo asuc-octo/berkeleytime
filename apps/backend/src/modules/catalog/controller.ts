@@ -20,6 +20,7 @@ import { formatCourse } from "../course/formatter";
 import {
   getAverageGrade,
   getDistribution,
+  getPnpPercentage,
 } from "../grade-distribution/controller";
 import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 
@@ -454,6 +455,7 @@ export const getCatalog = async (
       reducedGradeDistributions[sectionId] = {
         average: getAverageGrade(distribution),
         distribution,
+        pnpPercentage: getPnpPercentage(distribution),
       } as GradeDistributionModule.GradeDistribution;
     }
 
@@ -474,6 +476,7 @@ export const getCatalog = async (
       reducedGradeDistributions[key] = {
         average: getAverageGrade(distribution),
         distribution,
+        pnpPercentage: getPnpPercentage(distribution),
       } as GradeDistributionModule.GradeDistribution;
     }
 
@@ -534,6 +537,7 @@ export const getCatalog = async (
       formattedCourse.gradeDistribution = gradeDistribution ?? {
         average: null,
         distribution: [],
+        pnpPercentage: null,
       };
     }
 
@@ -552,6 +556,7 @@ export const getCatalog = async (
       const gradeDistribution = parsedGradeDistributions[sectionId] ?? {
         average: null,
         distribution: [],
+        pnpPercentage: null,
       };
 
       formattedClass.gradeDistribution = gradeDistribution;

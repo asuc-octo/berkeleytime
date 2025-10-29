@@ -7,7 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { LoadingIndicator } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
-import { getRecents, RecentType } from "@/lib/recent";
+import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
 import {
