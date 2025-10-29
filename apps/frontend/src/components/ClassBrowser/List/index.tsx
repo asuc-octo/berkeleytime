@@ -172,8 +172,8 @@ export default function List({ onSelect }: ListProps) {
       onClick={handleListClick}
     >
       <Header />
-      {showRecentlyViewed && (
-        <div className={styles.recentlyViewedSection}>
+      <div className={styles.recentlyViewedSection}>
+        {showRecentlyViewed && (
           <div className={styles.recentlyViewed}>
             <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
             <div className={styles.recentlyViewedList}>
@@ -196,9 +196,9 @@ export default function List({ onSelect }: ListProps) {
               ))}
             </div>
           </div>
-          <p className={styles.catalogTitle}>CATALOG</p>
-        </div>
-      )}
+        )}
+        <p className={styles.catalogTitle}>CATALOG</p>
+      </div>
       {loading && classes.length === 0 ? (
         <div className={styles.placeholder}>
           <LoadingIndicator size="lg" />
