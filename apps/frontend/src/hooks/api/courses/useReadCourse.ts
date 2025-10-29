@@ -124,7 +124,7 @@ export const useReadCourseUnits = () => {
         variables: { subject, number },
       });
       const classes = result.data?.course?.classes;
-      
+
       if (!classes || classes.length === 0) {
         return 0;
       }
@@ -142,9 +142,7 @@ export const useReadCourseUnits = () => {
         (max, cls) => Math.max(max, cls.year),
         classes[0].year
       );
-      const latestClass = classes.find(
-        (cls) => cls.year === latestYear
-      );
+      const latestClass = classes.find((cls) => cls.year === latestYear);
       return latestClass?.unitsMax || 0;
     },
     [getCourseUnitsQuery]
