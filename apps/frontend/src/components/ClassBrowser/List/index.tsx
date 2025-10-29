@@ -94,10 +94,7 @@ export default function List({ onSelect }: ListProps) {
     overscan: 5, // Keep extra items rendered for smoother scrolling
   });
 
-  // Reset scroll position and focus when search params change
   useEffect(() => {
-    rootRef.current?.scrollTo({ top: 0 });
-    setFocusedIndex(0);
     hideFocusRing();
   }, [searchParams, hideFocusRing]);
 
@@ -181,16 +178,14 @@ export default function List({ onSelect }: ListProps) {
                 <ClassCard
                   class={_class}
                   key={`recent-${_class.course.subject}-${_class.course.number}-${_class.number}`}
-                  onClick={() => {
-                    const index = classes.findIndex(
-                      (c) =>
-                        c.course.subject === _class.course.subject &&
-                        c.course.number === _class.course.number &&
-                        c.number === _class.number
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    rootRef.current?.blur();
+                    onSelect(
+                      _class.course.subject,
+                      _class.course.number,
+                      _class.number
                     );
-                    if (index >= 0) {
-                      handleClassClick(index);
-                    }
                   }}
                 />
               ))}
