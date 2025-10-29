@@ -1,6 +1,6 @@
 import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
-import { BadgeLabel, Button, Color, DropdownMenu, Flex } from "@repo/theme";
+import { Badge, Button, Color, DropdownMenu, Flex } from "@repo/theme";
 
 import { ILabel, ISelectedCourse } from "@/lib/api";
 
@@ -73,11 +73,7 @@ export default function Class({
                     )
                   )
                   .map((l, idx) => (
-                    <BadgeLabel
-                      key={idx}
-                      label={l.name}
-                      color={l.color as Color}
-                    />
+                    <Badge key={idx} label={l.name} color={l.color as Color} />
                   ))}
               </div>
             )}

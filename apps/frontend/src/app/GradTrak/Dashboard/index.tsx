@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import {
-  BadgeLabel,
+  Badge,
   Boundary,
   Box,
   Button,
@@ -101,7 +101,6 @@ export default function Dashboard() {
   });
 
   if (!gradTrakLoading && !gradTrak) {
-    console.log("GradTrak not found");
     navigate("/gradtrak");
   }
 
@@ -692,7 +691,7 @@ export default function Dashboard() {
                                 checked={filterOptions[labelKey] || false}
                                 style={{ cursor: "pointer" }}
                               />
-                              <BadgeLabel
+                              <Badge
                                 label={label.name}
                                 color={label.color as Color}
                               />

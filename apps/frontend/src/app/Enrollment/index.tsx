@@ -9,6 +9,7 @@ import React, {
 
 import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
+import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import {
   CartesianGrid,
@@ -160,54 +161,72 @@ export default function Enrollment() {
     [outputs]
   );
 
-  const data = useMemo(() => {
+  /**
+   *
+   * A list of combined time series of the format:
+   *
+   *    ```
+   *    {
+   *      timeDelta: number,
+   *      enroll_0: number | null,
+   *      enroll_1: number | null,
+   *      waitlist_0: number | null,
+   *      waitlist_1: number | null,
+   *      // ...
+   *    }
+   *    ```
+   *
+   * `timeDelta` is in minutes since the first time data point of that selected class
+   */
+  const data:
+    | { timeDelta: number; [key: string]: number | null }[]
+    | undefined = useMemo(() => {
     if (!outputs) return undefined;
 
-    const dayMap = new Map<
+    // set of all unique time deltas (in minutes). used to generate combined time series
+    const timeDeltas = new Set<number>();
+
+    // list (one for each selected class) of mappings from time (prettified string) to enrollment data
+    const timeToEnrollmentMaps: Map<
       number,
-      { [key: string | number]: number; day: number }
-    >();
-
-    outputs.forEach((output, index) => {
-      const day0 = new Date(output.enrollmentHistory.history[0].time);
-      output.enrollmentHistory.history.forEach((enrollment) => {
-        const dayOffset = Math.ceil(
-          (new Date(enrollment.time).getTime() - day0.getTime()) /
-            (1000 * 3600 * 24)
-        );
-
-        let column = dayMap.get(dayOffset);
-        const enrollValue =
-          Math.round((enrollment.enrolledCount / enrollment.maxEnroll) * 1000) /
-          10;
-        const waitlistValue =
-          enrollment.maxWaitlist > 0
-            ? Math.round(
-                (enrollment.waitlistedCount / enrollment.maxWaitlist) * 1000
-              ) / 10
-            : 0;
-
-        if (!column) {
-          column = {
-            day: dayOffset,
-            [index]: enrollValue,
-            [`waitlist_${index}`]: waitlistValue,
-          };
-          dayMap.set(dayOffset, column);
-        } else {
-          column[index] =
-            index in column
-              ? Math.max(enrollValue, column[index])
-              : enrollValue;
-          column[`waitlist_${index}`] =
-            `waitlist_${index}` in column
-              ? Math.max(waitlistValue, column[`waitlist_${index}`])
-              : waitlistValue;
-        }
-      });
+      { enrolledCount: number; waitlistedCount: number }
+    >[] = outputs.map((output) => {
+      // the first time data point, floored to the nearest minute
+      const firstTime = moment(
+        output.enrollmentHistory.history[0].time
+      ).startOf("minute");
+      return new Map(
+        output.enrollmentHistory.history.map((enrollment) => {
+          // time as prettified string floored to nearest minute
+          const time = moment(enrollment.time).startOf("minute");
+          const timeDelta = moment.duration(time.diff(firstTime)).asMinutes();
+          timeDeltas.add(timeDelta);
+          return [
+            timeDelta,
+            {
+              enrolledCount: enrollment.enrolledCount,
+              waitlistedCount: enrollment.waitlistedCount,
+            },
+          ];
+        })
+      );
     });
 
-    return Array.from(dayMap.values()).sort((a, b) => a.day - b.day);
+    return Array.from(timeDeltas)
+      .map((timeDelta) => {
+        const datapoint: { timeDelta: number; [key: string]: number | null } = {
+          timeDelta,
+        };
+        for (let i = 0; i < outputs.length; i++) {
+          const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[
+            i
+          ].get(timeDelta) || { enrolledCount: null, waitlistedCount: null };
+          datapoint[`enroll_${i}`] = enrolledCount;
+          datapoint[`waitlist_${i}`] = waitlistedCount;
+        }
+        return datapoint;
+      })
+      .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
   }, [outputs]);
 
   function updateGraphHover(data: {
@@ -240,13 +259,12 @@ export default function Enrollment() {
     if (!data) return 0;
 
     return (
-      data.reduce((acc, d) => {
-        const m = Math.max(
-          ...Object.entries(d)
-            .filter(([key]) => !isNaN(Number(key)))
-            .map(([, value]) => value)
-        );
-        return m > acc ? m : acc;
+      data.reduce((acc, datapoint) => {
+        const datapointValues = Object.values({
+          ...datapoint,
+          timeDelta: null,
+        }).filter((v) => v !== null) as number[];
+        return Math.max(acc, ...datapointValues);
       }, 0) * 1.2
     );
   }, [data]);
@@ -276,10 +294,17 @@ export default function Enrollment() {
                     stroke="var(--border-color)"
                   />
                   <XAxis
-                    dataKey="day"
+                    dataKey="timeDelta"
                     fill="var(--label-color)"
                     tickMargin={8}
                     type="number"
+                    tickFormatter={(timeDelta) =>
+                      String(
+                        Math.floor(
+                          moment.duration(timeDelta, "minutes").asDays()
+                        ) + 1
+                      )
+                    }
                   />
                   <YAxis domain={[0, dataMax]} tickFormatter={toPercent} />
                   {dataMax >= 100 && (
@@ -300,9 +325,25 @@ export default function Enrollment() {
                   {outputs?.length && (
                     <Tooltip
                       content={(props) => {
+                        const duration = moment.duration(
+                          props.label,
+                          "minutes"
+                        );
+                        const day = Math.floor(duration.asDays()) + 1;
+                        // if not granular (12:00am only), then don't show time
+                        const time =
+                          duration.hours() > 0
+                            ? Intl.DateTimeFormat("en-US", {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                                timeZone: "America/Los_Angeles",
+                              }).format(moment.utc(0).add(duration).toDate())
+                            : "";
+
                         return (
                           <HoverCard
-                            content={`Day ${props.label}`}
+                            content={`Day ${day} ${time}`}
                             data={props.payload?.map((v) => {
                               const name = v.name?.valueOf();
                               return {
@@ -324,7 +365,7 @@ export default function Enrollment() {
                     return (
                       <React.Fragment key={index}>
                         <Line
-                          dataKey={originalIndex}
+                          dataKey={`enroll_${originalIndex}`}
                           stroke={
                             activeOutput && !output.active
                               ? DARK_COLORS[originalIndex]
@@ -334,7 +375,7 @@ export default function Enrollment() {
                           isAnimationActive={shouldAnimate.current}
                           dot={false}
                           strokeWidth={3}
-                          type={"bump"}
+                          type="stepAfter"
                           connectNulls
                         />
                         <Line
@@ -349,7 +390,7 @@ export default function Enrollment() {
                           dot={false}
                           strokeWidth={2}
                           strokeDasharray="5 5"
-                          type={"bump"}
+                          type="stepAfter"
                           connectNulls
                         />
                       </React.Fragment>

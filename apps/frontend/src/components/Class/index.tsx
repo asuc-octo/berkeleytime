@@ -94,15 +94,11 @@ interface UncontrolledProps {
 
 interface CatalogClassProps {
   dialog?: never;
-  expanded: boolean;
-  onExpandedChange: (expanded: boolean) => void;
   onClose: () => void;
 }
 
 interface DialogClassProps {
   dialog: true;
-  expanded?: never;
-  onExpandedChange?: never;
   onClose?: never;
 }
 
@@ -118,8 +114,6 @@ export default function Class({
   number,
   class: providedClass,
   course: providedCourse,
-  expanded,
-  onExpandedChange,
   onClose,
   dialog,
 }: ClassProps) {

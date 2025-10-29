@@ -75,7 +75,7 @@ export default function Calendar({
 
       const filteredExams = exams.filter(function (exam, index) {
         return (
-          exams.findIndex(
+          exams?.findIndex(
             ({ date, startTime, endTime }) =>
               date === exam.date &&
               exam.startTime === startTime &&

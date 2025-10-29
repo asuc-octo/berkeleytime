@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 
-import { Plus } from "iconoir-react";
+import { ArrowRight, Plus } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -12,19 +12,18 @@ import {
 } from "@repo/theme";
 
 import Footer from "@/components/Footer";
-import { useReadPlans, useReadUser } from "@/hooks/api";
+import { useReadPlans } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
 
 import styles from "./GradTrak.module.scss";
 
 export default function GradTrakIndex() {
-  const { data: user, loading: userLoading } = useReadUser();
+  const { user, loading: userLoading } = useUser();
 
   const { data: gradTraks, loading: gradTraksLoading } = useReadPlans({
     skip: !user,
   });
-
-  console.log("Gradtrak:", gradTraks);
 
   const navigate = useNavigate();
 
@@ -39,7 +38,6 @@ export default function GradTrakIndex() {
 
   useEffect(() => {
     if (user && !userLoading && !gradTraksLoading && hasGradTraks) {
-      console.log("User has existing GradTraks, redirecting to dashboard.");
       const latestGradTrak = gradTraks?.[0];
 
       if (latestGradTrak) {
@@ -53,22 +51,7 @@ export default function GradTrakIndex() {
     }
   }, [user, userLoading, gradTraksLoading, hasGradTraks, gradTraks, navigate]);
 
-  if (userLoading || gradTraksLoading) {
-    console.log("Loading GradTrak data");
-    return (
-      <Boundary>
-        <LoadingIndicator size="lg" />
-      </Boundary>
-    );
-  }
-
-  if (!user) {
-    signIn();
-    return <></>;
-  }
-
-  if (hasGradTraks) {
-    console.log("Loading user's GradTrak");
+  if (userLoading || (user && (gradTraksLoading || hasGradTraks))) {
     return (
       <Boundary>
         <LoadingIndicator size="lg" />
@@ -85,13 +68,20 @@ export default function GradTrakIndex() {
             Use our GradTrak to build your ideal 4-year plan. Find courses,
             track requirements, and visualize your academic journey.
           </div>
-          <Button
-            variant="primary"
-            onClick={() => navigate("/gradtrak/onboarding")}
-          >
-            <Plus />
-            Create a GradTrak
-          </Button>
+          {user ? (
+            <Button
+              variant="primary"
+              onClick={() => navigate("/gradtrak/onboarding")}
+            >
+              <Plus />
+              Create a GradTrak
+            </Button>
+          ) : (
+            <Button onClick={() => signIn()}>
+              Sign in
+              <ArrowRight />
+            </Button>
+          )}
         </div>
       </Container>
       <Footer />

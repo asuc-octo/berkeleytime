@@ -37,7 +37,7 @@ const typedef = gql`
   """
   Ratings by user
   """
-  type UserRatings {
+  type UserRatings @cacheControl(maxAge: 1) {
     createdBy: String!
     count: Int!
     classes: [UserClass!]!

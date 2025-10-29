@@ -20,7 +20,6 @@ interface DayProps extends IDay {
 }
 
 export default function Day({ date, events, active }: DayProps) {
-  console.log(events);
   return (
     <div key={date.format("YYYY-MM-DD")} className={styles.root}>
       {active && (

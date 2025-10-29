@@ -24,7 +24,12 @@ const meta: Meta<typeof Badge> = {
   render: (args: any) => {
     return (
       <ThemeProvider>
-        <Badge label={args.label} color={args.color} icon={args.icon} />
+        <Badge
+          label={args.label}
+          color={args.color}
+          icon={args.icon}
+          variant={args.variant}
+        />
       </ThemeProvider>
     );
   },

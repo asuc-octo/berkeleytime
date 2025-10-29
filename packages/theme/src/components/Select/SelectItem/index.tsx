@@ -4,7 +4,7 @@ import { Box, Flex } from "@radix-ui/themes";
 import classNames from "classnames";
 import { Check } from "iconoir-react";
 
-import { BadgeLabel } from "../../Badge";
+import { Badge } from "../../Badge";
 import { Checkbox } from "../../Checkbox";
 import { Color } from "../../ThemeProvider";
 import styles from "./SelectItem.module.scss";
@@ -42,7 +42,7 @@ export default function SelectItem({
           )}
           {color && !meta ? (
             <Flex direction="row" gap="12px">
-              <BadgeLabel label={label} color={color} icon={icon} />
+              <Badge label={label} color={color} icon={icon} />
             </Flex>
           ) : (
             <Flex direction="row" gap="12px">

@@ -90,6 +90,8 @@ export const addRecent = <T extends RecentType>(
 
   const item = JSON.stringify(recents.slice(0, MaxLength[type]));
   localStorage.setItem(type, item);
+
+  window.dispatchEvent(new CustomEvent('recent-updated', { detail: { type } }));
 };
 
 export const removeRecent = <T extends RecentType>(
