@@ -14,10 +14,12 @@
   }
 
   .recentlyViewedSection {
-    padding: 5px 12px 0;
+    padding: 0 12px 0;
   }
 
   .recentlyViewed {
+    padding-top: 5px;
+
     .recentlyViewedList {
       display: flex;
       flex-direction: column;
@@ -43,7 +45,13 @@
     color: var(--label-color);
     text-transform: uppercase;
     margin-bottom: 12px;
-    margin-top: 12px;
+    margin-top: 0;
+    padding-top: 5px;
+
+    .recentlyViewed + & {
+      margin-top: 12px;
+      padding-top: 0;
+    }
   }
 
   .placeholder {
