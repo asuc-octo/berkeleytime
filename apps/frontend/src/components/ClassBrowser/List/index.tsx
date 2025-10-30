@@ -44,8 +44,8 @@ export default function List({ onSelect }: ListProps) {
       .map((recent) => {
         return classes.find(
           (c) =>
-            c.course?.subject === recent.subject &&
-            c.course?.number === recent.courseNumber &&
+            c.subject === recent.subject &&
+            c.courseNumber === recent.courseNumber &&
             c.number === recent.number
         );
       })
@@ -119,8 +119,8 @@ export default function List({ onSelect }: ListProps) {
     setFocusedIndex,
     onSelect: (focusedClass) => {
       onSelect(
-        focusedClass.course.subject,
-        focusedClass.course.number,
+        focusedClass.subject,
+        focusedClass.courseNumber,
         focusedClass.number
       );
     },
@@ -135,8 +135,8 @@ export default function List({ onSelect }: ListProps) {
     isListFocused,
     (focusedClass) => {
       onSelect(
-        focusedClass.course.subject,
-        focusedClass.course.number,
+        focusedClass.subject,
+        focusedClass.courseNumber,
         focusedClass.number
       );
     },
@@ -149,7 +149,7 @@ export default function List({ onSelect }: ListProps) {
     setFocusedIndex(index);
     hideFocusRing();
     const _class = classes[index];
-    onSelect(_class.course.subject, _class.course.number, _class.number);
+    onSelect(_class.subject, _class.courseNumber, _class.number);
   };
 
   const handleListClick = (e: React.MouseEvent) => {
@@ -177,13 +177,13 @@ export default function List({ onSelect }: ListProps) {
               {recentlyViewedClasses.map((_class) => (
                 <ClassCard
                   class={_class}
-                  key={`recent-${_class.course.subject}-${_class.course.number}-${_class.number}`}
+                  key={`recent-${_class.subject}-${_class.courseNumber}-${_class.number}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     rootRef.current?.blur();
                     onSelect(
-                      _class.course.subject,
-                      _class.course.number,
+                      _class.subject,
+                      _class.courseNumber,
                       _class.number
                     );
                   }}
