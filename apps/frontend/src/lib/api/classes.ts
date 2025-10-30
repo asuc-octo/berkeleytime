@@ -276,6 +276,10 @@ export const READ_CLASS = gql`
         }
         academicCareer
         requirements
+        requiredCourses {
+          subject
+          number
+        }
       }
       primarySection {
         number
