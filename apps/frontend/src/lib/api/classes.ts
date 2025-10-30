@@ -246,6 +246,7 @@ export const READ_CLASS = gql`
       finalExam
       gradeDistribution {
         average
+        pnpPercentage
         distribution {
           letter
           count
@@ -267,6 +268,7 @@ export const READ_CLASS = gql`
         }
         gradeDistribution {
           average
+          pnpPercentage
           distribution {
             letter
             count
@@ -423,6 +425,7 @@ export const GET_CANONICAL_CATALOG = gql`
         title
         gradeDistribution {
           average
+          pnpPercentage
         }
         academicCareer
       }

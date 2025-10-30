@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
 import SuspenseBoundary from "@/components/SuspenseBoundary";
-import { useCreatePlan, useReadUser } from "@/hooks/api";
+import { useCreatePlan, useReadPlans, useReadUser } from "@/hooks/api";
 import { Colleges, DegreeOption, signIn } from "@/lib/api";
 
 import AddColleges from "./AddColleges";
@@ -13,6 +13,9 @@ import OnboardingSetup from "./OnboardingSetUp";
 
 export default function GradTrakOnboarding() {
   const { data: user, loading: userLoading } = useReadUser();
+  const { data: gradTraks, loading: gradTraksLoading } = useReadPlans({
+    skip: !user,
+  });
 
   const [step, setStep] = useState(0);
   const [startYear, setStartYear] = useState("");
@@ -24,6 +27,25 @@ export default function GradTrakOnboarding() {
   const [selectedMajors, setSelectedMajors] = useState<DegreeOption[]>([]);
   const [selectedColleges, setSelectedColleges] = useState<Colleges[]>([]);
   const [, setSelectedMinors] = useState<DegreeOption[]>([]);
+
+  const hasGradTraks = useMemo(() => {
+    return (
+      !gradTraksLoading &&
+      gradTraks !== null &&
+      gradTraks !== undefined &&
+      gradTraks.length > 0
+    );
+  }, [gradTraks, gradTraksLoading]);
+
+  useEffect(() => {
+    if (user && !userLoading && !gradTraksLoading && hasGradTraks) {
+      const latestGradTrak = gradTraks?.[0];
+
+      if (latestGradTrak) {
+        navigate(`/gradtrak/dashboard`);
+      }
+    }
+  }, [user, userLoading, gradTraksLoading, hasGradTraks, gradTraks, navigate]);
 
   if (!user && !userLoading) {
     signIn();

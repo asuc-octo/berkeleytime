@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { LoadingIndicator } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
+import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
 import {
@@ -24,11 +25,57 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading } = useBrowser();
+  const { classes, loading, year, semester, query } = useBrowser();
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
+  const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
+
+  const recentlyViewed = useMemo(() => {
+    const allRecents = getRecents(RecentType.Class);
+    return allRecents
+      .filter((recent) => recent.year === year && recent.semester === semester)
+      .slice(0, 3);
+  }, [year, semester, recentlyViewedVersion]);
+
+  const recentlyViewedClasses = useMemo(() => {
+    return recentlyViewed
+      .map((recent) => {
+        return classes.find(
+          (c) =>
+            c.course?.subject === recent.subject &&
+            c.course?.number === recent.courseNumber &&
+            c.number === recent.number
+        );
+      })
+      .filter((c) => c !== undefined);
+  }, [recentlyViewed, classes]);
+
+  const showRecentlyViewed = !query && recentlyViewedClasses.length > 0;
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === RecentType.Class) {
+        setRecentlyViewedVersion((v) => v + 1);
+      }
+    };
+
+    const handleRecentUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ type: RecentType }>;
+      if (customEvent.detail.type === RecentType.Class) {
+        setRecentlyViewedVersion((v) => v + 1);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("recent-updated", handleRecentUpdate);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("recent-updated", handleRecentUpdate);
+    };
+  }, []);
 
   // Keyboard navigation helpers
   const { showFocusRing, showFocusRingTemporarily, hideFocusRing } =
@@ -41,14 +88,13 @@ export default function List({ onSelect }: ListProps) {
     count: classes.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
-    paddingStart: 72,
+    paddingStart: 0, // No padding needed - Recently Viewed section handles spacing
+    paddingEnd: 12,
     gap: 12,
+    overscan: 5, // Keep extra items rendered for smoother scrolling
   });
 
-  // Reset scroll position and focus when search params change
   useEffect(() => {
-    rootRef.current?.scrollTo({ top: 0 });
-    setFocusedIndex(0);
     hideFocusRing();
   }, [searchParams, hideFocusRing]);
 
@@ -122,31 +168,56 @@ export default function List({ onSelect }: ListProps) {
       tabIndex={0}
       onClick={handleListClick}
     >
-      <div
-        className={styles.view}
-        style={{
-          height: `${virtualizer.getTotalSize()}px`,
-        }}
-      >
-        <Header />
-        {loading && items.length === 0 ? (
-          <div className={styles.placeholder}>
-            <LoadingIndicator size="lg" />
-            <p className={styles.heading}>Fetching courses...</p>
-            <p className={styles.description}>
-              Search for, filter, and sort courses to narrow down your results.
-            </p>
+      <Header />
+      <div className={styles.recentlyViewedSection}>
+        {showRecentlyViewed && (
+          <div className={styles.recentlyViewed}>
+            <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
+            <div className={styles.recentlyViewedList}>
+              {recentlyViewedClasses.map((_class) => (
+                <ClassCard
+                  class={_class}
+                  key={`recent-${_class.course.subject}-${_class.course.number}-${_class.number}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    rootRef.current?.blur();
+                    onSelect(
+                      _class.course.subject,
+                      _class.course.number,
+                      _class.number
+                    );
+                  }}
+                />
+              ))}
+            </div>
           </div>
-        ) : items.length === 0 ? (
-          <div className={styles.placeholder}>
-            <FrameAltEmpty width={32} height={32} />
-            <p className={styles.heading}>No courses found</p>
-            <p className={styles.description}>
-              Find courses by broadening your search or entering a different
-              query.
-            </p>
-          </div>
-        ) : (
+        )}
+        <p className={styles.catalogTitle}>CATALOG</p>
+      </div>
+      {loading && classes.length === 0 ? (
+        <div className={styles.placeholder}>
+          <LoadingIndicator size="lg" />
+          <p className={styles.heading}>Fetching courses...</p>
+          <p className={styles.description}>
+            Search for, filter, and sort courses to narrow down your results.
+          </p>
+        </div>
+      ) : classes.length === 0 ? (
+        <div className={styles.placeholder}>
+          <FrameAltEmpty width={32} height={32} />
+          <p className={styles.heading}>No courses found</p>
+          <p className={styles.description}>
+            Find courses by broadening your search or entering a different
+            query.
+          </p>
+        </div>
+      ) : (
+        <div
+          className={styles.view}
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+          }}
+        >
           <div
             className={styles.body}
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
@@ -166,15 +237,15 @@ export default function List({ onSelect }: ListProps) {
               );
             })}
           </div>
-        )}
-        {/* <div className={styles.footer}>
-          <Link to="/discover" className={styles.button}>
-            <Sparks />
-            <p className={styles.text}>Try discovering courses</p>
-            <ArrowRight />
-          </Link>
-        </div> */}
-      </div>
+        </div>
+      )}
+      {/* <div className={styles.footer}>
+        <Link to="/discover" className={styles.button}>
+          <Sparks />
+          <p className={styles.text}>Try discovering courses</p>
+          <ArrowRight />
+        </Link>
+      </div> */}
     </div>
   );
 }
