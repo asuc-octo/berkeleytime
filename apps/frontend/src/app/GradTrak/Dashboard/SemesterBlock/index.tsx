@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import Fuse from "fuse.js";
 import {
   Check,
   Edit,
@@ -12,6 +11,8 @@ import {
   PinSolid,
   Trash,
 } from "iconoir-react";
+
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
@@ -41,7 +42,7 @@ interface SemesterBlockProps {
   labels: ILabel[];
   setShowLabelMenu: (v: boolean) => void;
   catalogCourses: SelectedCourse[];
-  index: Fuse<{ title: string; name: string; alternateNames: string[] }> | null;
+  index: FuzzySearch<{ title: string; name: string; alternateNames: string[] }> | null;
   handleUpdateTermName: (name: string) => void;
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;

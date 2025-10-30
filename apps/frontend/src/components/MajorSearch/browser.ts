@@ -1,4 +1,4 @@
-import Fuse from "fuse.js";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export const initialize = (list: any[], customOptions?: any) => {
   const defaultOptions = {
@@ -9,5 +9,5 @@ export const initialize = (list: any[], customOptions?: any) => {
 
   const options = customOptions || defaultOptions;
 
-  return new Fuse(list, options);
+  return new FuzzySearch(list, options);
 };

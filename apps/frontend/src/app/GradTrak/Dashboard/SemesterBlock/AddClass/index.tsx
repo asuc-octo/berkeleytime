@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import Fuse from "fuse.js";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { ILabel, ISelectedCourse } from "@/lib/api";
 
@@ -14,7 +14,7 @@ interface AddClassProps {
   handleOnConfirm: (cls: ISelectedCourse) => void;
   labels: ILabel[];
   setShowLabelMenu: (v: boolean) => void;
-  index: Fuse<{ title: string; name: string; alternateNames: string[] }> | null;
+  index: FuzzySearch<{ title: string; name: string; alternateNames: string[] }> | null;
   catalogCourses: SelectedCourse[];
 }
 

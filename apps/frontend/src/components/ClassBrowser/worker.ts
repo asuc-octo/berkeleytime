@@ -1,7 +1,6 @@
-import Fuse from "fuse.js";
-
 import { IClass } from "@/lib/api";
 import { subjects } from "@/lib/course";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SortBy } from "./browser";
 import { searchAndSortClasses } from "./searchAndSort";
@@ -85,7 +84,7 @@ const initializeFuse = (classes: IClass[]) => {
     // },
   };
 
-  return new Fuse(list, options);
+  return new FuzzySearch(list, options);
 };
 
 interface Data {
