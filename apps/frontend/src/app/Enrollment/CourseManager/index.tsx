@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 
 import { Flex, Grid } from "@repo/theme";
 
-import { Output, getInputSearchParam } from "../types";
+import { LIGHT_COLORS, Output, getInputSearchParam } from "../types";
 import CourseInput from "./CourseInput";
 import styles from "./CourseManage.module.scss";
 import EnrollmentCard from "./EnrollmentCard";
@@ -65,7 +65,7 @@ export default function CourseManager({
           const semester = `${input.semester} ${input.year}`;
           return (
             <EnrollmentCard
-              key={index}
+              key={`${index}-${input.subject}-${input.courseNumber}-${semester} • ${instructor}`}
               subject={input.subject}
               number={input.courseNumber}
               description={`${semester} • ${instructor}`}
@@ -73,6 +73,7 @@ export default function CourseManager({
               onClickDelete={() => remove(index)}
               onClickHide={() => updateHidden(index, !rest.hidden)}
               {...rest}
+              color={LIGHT_COLORS[index]}
             />
           );
         })}
