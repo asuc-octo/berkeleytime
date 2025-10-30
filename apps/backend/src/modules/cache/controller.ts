@@ -1,68 +1,7 @@
 import type { ApolloServer } from "@apollo/server";
 import { RedisClientType } from "redis";
 
-/**
- * GraphQL query that matches frontend's GetCanonicalCatalog.
- * This ensures cache warming produces identical responses to user requests.
- */
-const GET_CANONICAL_CATALOG = `
-  query GetCanonicalCatalog($year: Int!, $semester: Semester!) {
-    catalog(year: $year, semester: $semester) {
-      number
-      title
-      unitsMax
-      unitsMin
-      finalExam
-      gradingBasis
-      primarySection {
-        component
-        online
-        instructionMode
-        attendanceRequired
-        lecturesRecorded
-        sectionAttributes {
-          attribute {
-            code
-            description
-            formalDescription
-          }
-          value {
-            code
-            description
-            formalDescription
-          }
-        }
-        enrollment {
-          latest {
-            time
-            status
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
-          }
-        }
-        meetings {
-          days
-        }
-      }
-      course {
-        subject
-        number
-        title
-        gradeDistribution {
-          average
-        }
-        academicCareer
-      }
-      requirementDesignation {
-        code
-        description
-        formalDescription
-      }
-    }
-  }
-`;
+import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
 
 /**
  * Warms catalog cache using Apollo's executeOperation.
@@ -94,7 +33,7 @@ export async function warmCatalogCache(
     // Execute GraphQL query with staging flag
     const result = await server.executeOperation(
       {
-        query: GET_CANONICAL_CATALOG,
+        query: GET_CANONICAL_CATALOG_QUERY,
         variables: {
           year,
           semester: normalizedSemester,

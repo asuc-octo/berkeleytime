@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
+
 import { GradeDistribution, ICourse, IEnrollment } from ".";
 import { IAggregatedRatings } from "./ratings";
 import { ITerm, Semester } from "./terms";
@@ -370,70 +372,11 @@ export interface GetCanonicalCatalogResponse {
 }
 
 /**
- * IMPORTANT: This is the canonical catalog query that is used for server-side caching identifier.
+ * Canonical catalog query imported from @repo/common.
+ * Ensures parity between frontend and backend cache warming.
  *
- * DO NOT:
- * - Rename this operation (backend checks for "GetCanonicalCatalog")
- * - Add search/filter parameters (use a separate query for that)
- *
- * Cache is invalidated every 15 minutes when datapuller updates enrollment data.
+ * See: packages/common/src/lib/queries.ts for query definition and documentation.
  */
 export const GET_CANONICAL_CATALOG = gql`
-  query GetCanonicalCatalog($year: Int!, $semester: Semester!) {
-    catalog(year: $year, semester: $semester) {
-      number
-      title
-      unitsMax
-      unitsMin
-      finalExam
-      gradingBasis
-      primarySection {
-        component
-        online
-        instructionMode
-        attendanceRequired
-        lecturesRecorded
-        sectionAttributes {
-          attribute {
-            code
-            description
-            formalDescription
-          }
-          value {
-            code
-            description
-            formalDescription
-          }
-        }
-        enrollment {
-          latest {
-            time
-            status
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
-          }
-        }
-        meetings {
-          days
-        }
-      }
-      course {
-        subject
-        number
-        title
-        gradeDistribution {
-          average
-          pnpPercentage
-        }
-        academicCareer
-      }
-      requirementDesignation {
-        code
-        description
-        formalDescription
-      }
-    }
-  }
+  ${GET_CANONICAL_CATALOG_QUERY}
 `;
