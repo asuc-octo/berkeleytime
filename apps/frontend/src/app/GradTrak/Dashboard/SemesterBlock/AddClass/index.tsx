@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
-import { FuzzySearch } from "@/utils/fuzzy-find";
-
 import { ILabel, ISelectedCourse } from "@/lib/api";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SelectedCourse } from "../../index";
 import SearchBar from "./SearchBar";
@@ -14,7 +13,11 @@ interface AddClassProps {
   handleOnConfirm: (cls: ISelectedCourse) => void;
   labels: ILabel[];
   setShowLabelMenu: (v: boolean) => void;
-  index: FuzzySearch<{ title: string; name: string; alternateNames: string[] }> | null;
+  index: FuzzySearch<{
+    title: string;
+    name: string;
+    alternateNames: string[];
+  }> | null;
   catalogCourses: SelectedCourse[];
 }
 

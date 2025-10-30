@@ -12,14 +12,13 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { FuzzySearch } from "@/utils/fuzzy-find";
-
 import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
 import { ISelectedCourse } from "@/lib/api";
 import { ILabel, IPlanTerm, Status, Terms } from "@/lib/api/plans";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
@@ -42,7 +41,11 @@ interface SemesterBlockProps {
   labels: ILabel[];
   setShowLabelMenu: (v: boolean) => void;
   catalogCourses: SelectedCourse[];
-  index: FuzzySearch<{ title: string; name: string; alternateNames: string[] }> | null;
+  index: FuzzySearch<{
+    title: string;
+    name: string;
+    alternateNames: string[];
+  }> | null;
   handleUpdateTermName: (name: string) => void;
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;
