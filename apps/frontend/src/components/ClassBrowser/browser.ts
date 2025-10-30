@@ -242,7 +242,9 @@ export const getFilteredClasses = (
 
 export const getIndex = (classes: IClass[]) => {
   const list = classes.map((_class) => {
-    const { title, subject, number } = _class.course;
+    const subject = _class.subject;
+    const number = _class.courseNumber;
+    const title = _class.course.title;
 
     // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
