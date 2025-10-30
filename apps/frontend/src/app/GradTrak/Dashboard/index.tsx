@@ -38,8 +38,8 @@ import {
 } from "@/hooks/api";
 import {
   Colleges,
-  GET_CATALOG,
-  GetCatalogResponse,
+  GET_CANONICAL_CATALOG,
+  GetCanonicalCatalogResponse,
   ILabel,
   IPlanTerm,
   ISelectedCourse,
@@ -108,7 +108,7 @@ export default function Dashboard() {
   const hasLoadedRef = useRef(false);
   // Use catalog query to get all classes (including cross-listed with correct subjects)
   const { data: catalogData, loading: courseLoading } =
-    useQuery<GetCatalogResponse>(GET_CATALOG, {
+    useQuery<GetCanonicalCatalogResponse>(GET_CANONICAL_CATALOG, {
       variables: {
         year: 2026,
         semester: "Spring" as Semester,

@@ -1,6 +1,6 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
-import { getCourse, getCourseById } from "../course/controller";
+import { getCourseById } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
