@@ -98,7 +98,7 @@ export const userSchema = new Schema(
               required: true,
             },
           },
-          thresholds: [Number]
+          thresholds: [Number],
         },
       ],
     },

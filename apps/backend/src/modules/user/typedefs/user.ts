@@ -14,7 +14,7 @@ const typedef = gql`
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!
     monitoredClasses: [MonitoredClass!]!
-		notificationsOn: Boolean!
+    notificationsOn: Boolean!
   }
 
   type Query {
