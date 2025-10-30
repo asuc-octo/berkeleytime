@@ -20,6 +20,6 @@ export const formatUser = (user: UserType) => {
     bookmarkedCourses: user.bookmarkedCourses,
     bookmarkedClasses: user.bookmarkedClasses,
     monitoredClasses: user.monitoredClasses,
-    notificationType: user.notificationType,
+    notificationsOn: user.notificationsOn,
   } as IntermediateUser;
 };

@@ -4,12 +4,6 @@ import { IClass } from "./classes";
 import { ICourse } from "./courses";
 import { Semester } from "./terms";
 
-export enum NotificationType {
-  Email = "Email",
-  Mobile = "Mobile",
-  Off = "Off",
-}
-
 export interface IMonitoredClass {
   class: IClass;
   thresholds: number[];
@@ -23,7 +17,7 @@ export interface IUser {
   bookmarkedCourses: ICourse[];
   bookmarkedClasses: IClass[];
   monitoredClasses?: IMonitoredClass[];
-  notificationType?: NotificationType;
+  notificationsOn?: boolean;
 }
 
 export interface ReadUserResponse {
@@ -96,7 +90,7 @@ export interface IUserInput {
   bookmarkedCourses?: IBookmarkedCourseInput[];
   bookmarkedClasses?: IBookmarkedClassInput[];
   monitoredClasses?: IMonitoredClassInput[];
-  notificationType?: NotificationType;
+  notificationsOn?: boolean;
 }
 
 export interface UpdateUserResponse {
@@ -110,7 +104,6 @@ export const UPDATE_USER = gql`
       name
       email
       student
-      # notificationType # TODO: Uncomment when backend implements this field
       bookmarkedCourses {
         title
         subject

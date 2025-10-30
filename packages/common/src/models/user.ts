@@ -102,10 +102,10 @@ export const userSchema = new Schema(
         },
       ],
     },
-    notificationType: {
-      type: String,
-      enum: ["Email", "Mobile", "Off"],
+    notificationsOn: {
+      type: Boolean,
       required: true,
+      default: false,
     },
     lastNotified: {
       type: Date,

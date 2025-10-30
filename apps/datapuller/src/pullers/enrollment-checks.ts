@@ -240,7 +240,7 @@ const checkEnrollmentThresholds = async (config: Config) => {
       }
       
       const matchingUsers = await UserModel.find({
-        notificationType: { $ne: "Off" },
+        notificationsOn: true,
         "monitoredClasses": {
           $elemMatch: {
             "class.year": alert.year,
@@ -298,8 +298,8 @@ const checkEnrollmentThresholds = async (config: Config) => {
       }
 
       // Only send email notifications
-      if (user.notificationType !== "Email") {
-        log.info(`    User has notification type: ${user.notificationType}, skipping email`);
+      if (!user.notificationsOn) {
+        log.info(`User has notifications off, skipping email`);
         continue;
       }
 
