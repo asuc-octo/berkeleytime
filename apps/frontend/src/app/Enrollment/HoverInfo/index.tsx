@@ -49,9 +49,9 @@ export default function HoverInfo({
     const targetDate = targetTime.toDate();
 
     // Find the last entry at or before the target time
-    const entry = [...enrollmentHistory.history]
-      .reverse()
-      .find((es) => moment(es.time).isSameOrBefore(targetTime));
+    const entry = enrollmentHistory.history.findLast((es) =>
+      moment(es.time).isSameOrBefore(targetTime)
+    );
 
     const formatted = new Intl.DateTimeFormat("en-US", {
       year: "numeric",
