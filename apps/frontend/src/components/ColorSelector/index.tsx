@@ -11,6 +11,7 @@ interface ColorSelectorProps {
   selectedColor: Color;
   onColorSelect: (color: Color) => void;
   allowedColors?: Color[];
+  usePortal?: boolean;
 }
 
 export const LabelColor = (props: { color: Color }) => {
@@ -29,6 +30,7 @@ export default function ColorSelector({
   selectedColor,
   onColorSelect,
   allowedColors = Object.values(Color),
+  usePortal = true,
 }: ColorSelectorProps) {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
@@ -64,6 +66,36 @@ export default function ColorSelector({
     }
   }, [showColorPicker]);
 
+  const colorPickerJSX = (
+    <div
+      className={styles.colorPicker}
+      style={{
+        position: usePortal ? "fixed" : "absolute",
+        top: usePortal ? popupPosition.top : "20px",
+        left: usePortal ? popupPosition.left : "10px",
+        zIndex: 9999,
+      }}
+    >
+      {allowedColors.map((color) => (
+        <div
+          key={color}
+          className={styles.colorOption}
+          style={{
+            backgroundColor: `var(--${color}-500-20)`,
+            border:
+              selectedColor === color
+                ? "2px solid var(--blue-500)"
+                : `1px solid var(--${color}-500)`,
+          }}
+          onClick={() => {
+            setShowColorPicker(false);
+            onColorSelect(color);
+          }}
+        />
+      ))}
+    </div>
+  );
+
   return (
     <div className={styles.colorSelectorContainer} ref={containerRef}>
       <div
@@ -76,36 +108,9 @@ export default function ColorSelector({
         <NavArrowDown />
       </div>
       {showColorPicker &&
-        createPortal(
-          <div
-            className={styles.colorPicker}
-            style={{
-              position: "fixed",
-              top: popupPosition.top,
-              left: popupPosition.left,
-              zIndex: 9999,
-            }}
-          >
-            {allowedColors.map((color) => (
-              <div
-                key={color}
-                className={styles.colorOption}
-                style={{
-                  backgroundColor: `var(--${color}-500-20)`,
-                  border:
-                    selectedColor === color
-                      ? "2px solid var(--blue-500)"
-                      : `1px solid var(--${color}-500)`,
-                }}
-                onClick={() => {
-                  setShowColorPicker(false);
-                  onColorSelect(color);
-                }}
-              />
-            ))}
-          </div>,
-          document.body
-        )}
+        (usePortal
+          ? createPortal(colorPickerJSX, document.body)
+          : colorPickerJSX)}
     </div>
   );
 }
