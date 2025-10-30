@@ -206,8 +206,22 @@ export default function Enrollment() {
           return [
             timeDelta,
             {
-              enrolledCount: enrollment.enrolledCount,
-              waitlistedCount: enrollment.waitlistedCount,
+              enrolledCount:
+                (enrollment.enrolledCount /
+                  (output.enrollmentHistory.latest?.maxEnroll ??
+                    output.enrollmentHistory.history[
+                      output.enrollmentHistory.history.length - 1
+                    ].maxEnroll ??
+                    1)) *
+                100,
+              waitlistedCount:
+                (enrollment.waitlistedCount /
+                  (output.enrollmentHistory.latest?.maxWaitlist ??
+                    output.enrollmentHistory.history[
+                      output.enrollmentHistory.history.length - 1
+                    ].maxWaitlist ??
+                    1)) *
+                100,
             },
           ];
         })
