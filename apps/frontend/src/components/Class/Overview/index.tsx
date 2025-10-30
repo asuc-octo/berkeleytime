@@ -11,14 +11,8 @@ export default function Overview() {
   const { class: _class } = useClass();
   const prereqs = useMemo(() => {
     const requiredCourses = _class.course.requiredCourses;
-    console.log(_class);
-    console.log(requiredCourses);
     if (requiredCourses == null) return "No Prerequisites Listed";
-    let prereqs = "";
-    for (const course of requiredCourses) {
-      prereqs += `${course.subject} ${course.number}, `;
-    }
-    return prereqs.slice(0, -2);
+    return requiredCourses.map(course => `${course.subject} ${course.number}`).join(", ");
   }, [_class]);
   return (
     <Box p="5">
