@@ -119,7 +119,6 @@ export default function Enrollment() {
         (acc, response, index) =>
           response?.data
             ? acc.concat({
-                color: LIGHT_COLORS[index],
                 // TODO: Error handling
                 enrollmentHistory: response.data!.enrollment,
                 input: initialInputs[index],
@@ -413,7 +412,7 @@ export default function Enrollment() {
                 outputs.map((output: Output, i: number) => (
                   <div key={i} className={styles.hoverInfoCard}>
                     <HoverInfo
-                      color={output.color}
+                      color={LIGHT_COLORS[i]}
                       subject={output.input.subject}
                       courseNumber={output.input.courseNumber}
                       enrollmentHistory={output.enrollmentHistory}
