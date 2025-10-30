@@ -11,7 +11,7 @@ nodeEnv: production
 issuer: letsencrypt-prod
 
 frontend:
-  replicas: 2
+  replicas: 1
 
   port: 3000
   path: /
