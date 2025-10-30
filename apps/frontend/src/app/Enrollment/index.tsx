@@ -21,6 +21,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { CategoricalChartFunc } from "recharts/types/chart/types";
 
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
@@ -86,6 +87,9 @@ export default function Enrollment() {
 
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
   const shouldAnimate = useRef(true);
+
+  const [hoveredDuration, setHoveredDuration] =
+    useState<moment.Duration | null>(null);
 
   const initialize = useCallback(async () => {
     if (!loading) return;
@@ -203,8 +207,22 @@ export default function Enrollment() {
           return [
             timeDelta,
             {
-              enrolledCount: enrollment.enrolledCount,
-              waitlistedCount: enrollment.waitlistedCount,
+              enrolledCount:
+                (enrollment.enrolledCount /
+                  (output.enrollmentHistory.latest?.maxEnroll ??
+                    output.enrollmentHistory.history[
+                      output.enrollmentHistory.history.length - 1
+                    ].maxEnroll ??
+                    1)) *
+                100,
+              waitlistedCount:
+                (enrollment.waitlistedCount /
+                  (output.enrollmentHistory.latest?.maxWaitlist ??
+                    output.enrollmentHistory.history[
+                      output.enrollmentHistory.history.length - 1
+                    ].maxWaitlist ??
+                    1)) *
+                100,
             },
           ];
         })
@@ -228,25 +246,24 @@ export default function Enrollment() {
       .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
   }, [outputs]);
 
-  function updateGraphHover(data: {
-    isTooltipActive?: boolean;
-    chartY?: number;
-    activePayload?: Array<{ value?: number; dataKey?: number }>;
-  }) {
-    if (!data.isTooltipActive || data.chartY === undefined) return;
-    // figure out closest series to mouse that has data point at that value
-    const mousePercent =
-      ((-data.chartY + CHART_HEIGHT) / CHART_HEIGHT) * dataMax;
-    const filteredSeries =
-      data.activePayload?.filter((p) => p.value !== undefined) ?? [];
-    const minDiff = Math.min(
-      ...filteredSeries.map((fs) => Math.abs((fs.value ?? 0) - mousePercent))
+  const updateGraphHover: CategoricalChartFunc = (data) => {
+    // if (!data.isTooltipActive || data.chartY === undefined) return;
+    // // figure out closest series to mouse that has data point at that value
+    // const mousePercent =
+    //   ((-data.chartY + CHART_HEIGHT) / CHART_HEIGHT) * dataMax;
+    // const filteredSeries =
+    //   data.activePayload?.filter((p) => p.value !== undefined) ?? [];
+    // const minDiff = Math.min(
+    //   ...filteredSeries.map((fs) => Math.abs((fs.value ?? 0) - mousePercent))
+    // );
+    // const best = filteredSeries.find(
+    //   (fs) => Math.abs((fs.value ?? 0) - mousePercent) === minDiff
+    // );
+    // if (best?.dataKey !== undefined) setHoveredSeries(best.dataKey);
+    setHoveredDuration(
+      data.activeLabel ? moment.duration(data.activeLabel, "minutes") : null
     );
-    const best = filteredSeries.find(
-      (fs) => Math.abs((fs.value ?? 0) - mousePercent) === minDiff
-    );
-    if (best?.dataKey !== undefined) setHoveredSeries(best.dataKey);
-  }
+  };
 
   useEffect(() => {
     if (outputs.length > 0) {
@@ -328,6 +345,7 @@ export default function Enrollment() {
                           props.label,
                           "minutes"
                         );
+                        // setHoveredDuration(duration);
                         const day = Math.floor(duration.asDays()) + 1;
                         // if not granular (12:00am only), then don't show time
                         const time =
@@ -416,7 +434,7 @@ export default function Enrollment() {
                       subject={output.input.subject}
                       courseNumber={output.input.courseNumber}
                       enrollmentHistory={output.enrollmentHistory}
-                      hoveredDay={null}
+                      hoveredDuration={hoveredDuration}
                       semester={output.input.semester}
                       year={output.input.year}
                     />
@@ -428,7 +446,7 @@ export default function Enrollment() {
                     color={"#aaa"}
                     subject={"No Class"}
                     courseNumber={"Selected"}
-                    hoveredDay={null}
+                    hoveredDuration={null}
                   />
                 </div>
               )}

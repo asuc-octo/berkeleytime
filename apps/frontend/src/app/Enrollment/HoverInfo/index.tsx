@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import moment from "moment";
+
 import { ColoredSquare } from "@repo/theme";
 
 import { getEnrollmentColor } from "@/components/Capacity";
@@ -14,7 +16,7 @@ interface HoverInfoProps {
   enrollmentHistory?: IEnrollment;
   semester?: Semester;
   year?: number;
-  hoveredDay: number | null;
+  hoveredDuration: moment.Duration | null;
 }
 
 const DisplayCount = (count: number, capacity: number) => {
@@ -32,18 +34,40 @@ export default function HoverInfo({
   enrollmentHistory,
   semester,
   year,
-  hoveredDay,
+  hoveredDuration,
 }: HoverInfoProps) {
-  const enrollmentSingular = useMemo(() => {
-    if (!enrollmentHistory) return undefined;
-    const day0 = new Date(enrollmentHistory?.history[0].time).getTime();
-    return enrollmentHistory?.history.findLast((es) => {
-      return (
-        Math.ceil((new Date(es.time).getTime() - day0) / (1000 * 3600 * 24)) ==
-        hoveredDay
-      );
-    });
-  }, [hoveredDay, enrollmentHistory]);
+  const { enrollmentSingular, timeString } = useMemo(() => {
+    if (!enrollmentHistory || !hoveredDuration) {
+      return {
+        enrollmentSingular: undefined,
+        timeString: "Select a time",
+      };
+    }
+
+    const firstTime = moment(enrollmentHistory.history[0].time);
+    const targetTime = firstTime.clone().add(hoveredDuration);
+    const targetDate = targetTime.toDate();
+
+    // Find the last entry at or before the target time
+    const entry = enrollmentHistory.history.findLast((es) =>
+      moment(es.time).isSameOrBefore(targetTime)
+    );
+
+    const formatted = new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "America/Los_Angeles",
+    }).format(targetDate);
+
+    return {
+      enrollmentSingular: entry,
+      timeString: formatted,
+    };
+  }, [hoveredDuration, enrollmentHistory]);
 
   return (
     <div className={styles.info}>
@@ -65,9 +89,7 @@ export default function HoverInfo({
       ) : (
         <div className={styles.distType}>No data</div>
       )}
-      <div className={styles.label}>
-        {hoveredDay} Days After Enrollment Start
-      </div>
+      <div className={styles.label}>{timeString}</div>
       {enrollmentSingular ? (
         <div className={styles.value}>
           Enrolled:{" "}
