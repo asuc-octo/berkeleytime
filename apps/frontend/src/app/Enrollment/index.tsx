@@ -21,6 +21,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { CategoricalChartFunc } from "recharts/types/chart/types";
 
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
@@ -245,7 +246,7 @@ export default function Enrollment() {
       .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
   }, [outputs]);
 
-  function updateGraphHover(data: { activeLabel: string | undefined }) {
+  const updateGraphHover: CategoricalChartFunc = (data) => {
     // if (!data.isTooltipActive || data.chartY === undefined) return;
     // // figure out closest series to mouse that has data point at that value
     // const mousePercent =
@@ -262,7 +263,7 @@ export default function Enrollment() {
     setHoveredDuration(
       data.activeLabel ? moment.duration(data.activeLabel, "minutes") : null
     );
-  }
+  };
 
   useEffect(() => {
     if (outputs.length > 0) {
