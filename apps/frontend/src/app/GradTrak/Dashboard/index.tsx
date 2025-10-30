@@ -38,13 +38,14 @@ import {
 } from "@/hooks/api";
 import {
   Colleges,
-  GET_COURSE_NAMES,
-  GetCoursesResponse,
+  GET_CATALOG,
+  GetCatalogResponse,
   ILabel,
   IPlanTerm,
   ISelectedCourse,
   PlanInput,
   PlanTermInput,
+  Semester,
   Status,
 } from "@/lib/api";
 import { convertStringsToRequirementEnum } from "@/lib/course";
@@ -105,35 +106,58 @@ export default function Dashboard() {
   }
 
   const hasLoadedRef = useRef(false);
-  const { data: courses, loading: courseLoading } =
-    useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
+  // Use catalog query to get all classes (including cross-listed with correct subjects)
+  const { data: catalogData, loading: courseLoading } =
+    useQuery<GetCatalogResponse>(GET_CATALOG, {
+      variables: {
+        year: 2026,
+        semester: "Spring" as Semester,
+      },
       skip: hasLoadedRef.current,
     });
 
   useEffect(() => {
-    if (courses && !hasLoadedRef.current) {
+    if (catalogData && !hasLoadedRef.current) {
       hasLoadedRef.current = true;
     }
-  }, [courses]);
+  }, [catalogData]);
   const catalogCoursesRef = useRef<SelectedCourse[]>([]);
   const indexRef = useRef<ReturnType<typeof initialize> | null>(null);
 
-  if (courses?.courses && catalogCoursesRef.current.length === 0) {
-    const formattedClasses = courses.courses.map((course) => ({
-      courseID: `${course.subject}_${course.number}`,
-      courseName: `${course.subject} ${course.number}`,
-      courseTitle: course.title,
-      courseUnits: -1,
+  if (catalogData?.catalog && catalogCoursesRef.current.length === 0) {
+    const courseMap = new Map<string, typeof catalogData.catalog[0]>();
+
+    catalogData.catalog.forEach((_class) => {
+      const key = `${_class.subject}_${_class.courseNumber}`;
+      if (!courseMap.has(key)) {
+        courseMap.set(key, _class);
+      }
+    });
+
+    const uniqueClasses = Array.from(courseMap.values());
+
+    const formattedClasses = uniqueClasses.map((_class) => ({
+      courseID: `${_class.subject}_${_class.courseNumber}`,
+      courseName: `${_class.subject} ${_class.courseNumber}`,
+      courseTitle: _class.course?.title || _class.title || "",
+      courseUnits: _class.unitsMax || -1,
       uniReqs: [], // TODO(Daniel): Fetch reqs
       collegeReqs: [], // TODO(Daniel): Fetch reqs
       pnp: false,
       transfer: false,
       labels: [],
-      courseSubject: course.subject,
-      courseNumber: course.number,
+      courseSubject: _class.subject,
+      courseNumber: _class.courseNumber,
     }));
+
     catalogCoursesRef.current = formattedClasses;
-    indexRef.current = initialize(courses.courses);
+
+    const coursesForIndex = uniqueClasses.map((_class) => ({
+      subject: _class.subject,
+      number: _class.courseNumber,
+      title: _class.course?.title || _class.title || "",
+    }));
+    indexRef.current = initialize(coursesForIndex);
   }
   const catalogCourses = catalogCoursesRef.current;
   const index = indexRef.current;
