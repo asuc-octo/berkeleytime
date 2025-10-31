@@ -48,7 +48,9 @@ const fuzzyScore = (query: string, target: string): number => {
       }
     }
 
-    return SUBSTRING_MATCH_SCORE + query.length - substringIndex + wordBoundaryBonus;
+    return (
+      SUBSTRING_MATCH_SCORE + query.length - substringIndex + wordBoundaryBonus
+    );
   }
 
   // fuzzy match - skip spaces in target
