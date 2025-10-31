@@ -98,6 +98,8 @@ export default function Editor() {
       // Add the selected section
       selectedClass.selectedSections = [...selectedSections, section];
 
+      setCurrentSection(null);
+
       // Update the schedule
       updateSchedule(
         schedule._id,
@@ -188,8 +190,10 @@ export default function Editor() {
         (selectedClass) => selectedClass.selectedSections
       );
 
-      // Ignore selected sections
-      if (selectedSections.includes(section)) return;
+      if (selectedSections.some((s) => s.sectionId === section.sectionId)) {
+        setCurrentSection(null);
+        return;
+      }
 
       setCurrentSection({
         section,
