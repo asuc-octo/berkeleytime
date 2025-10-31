@@ -37,7 +37,7 @@ const typedef = gql`
     courseNumber: CourseNumber!
     number: ClassNumber!
   }
-  
+
   input MonitoredClassRefInput {
     year: Int!
     semester: Semester!
