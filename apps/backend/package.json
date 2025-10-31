@@ -68,6 +68,8 @@
     "@repo/gql-typedefs": "*",
     "@repo/shared": "*",
     "@repo/sis-api": "*",
+    "@types/node-cron": "^3.0.11",
+    "@types/nodemailer": "^7.0.2",
     "compression": "^1.8.1",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.5",

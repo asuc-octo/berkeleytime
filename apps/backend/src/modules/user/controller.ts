@@ -70,3 +70,31 @@ export const deleteAccount = async (context: RequestContext) => {
 
   return true;
 };
+
+export const getMonitoredClasses = async (
+  monitoredClasses: UserModule.MonitoredClassInput[] | UserModule.MonitoredClass[]
+) => {
+  const classes = [];
+
+  for (const monitoredClass of monitoredClasses) {
+    const classData = monitoredClass.class;
+
+    const _class = await ClassModel.findOne({
+      year: classData.year,
+      semester: classData.semester,
+      sessionId: classData.sessionId ? classData.sessionId : "1",
+      subject: classData.subject,
+      courseNumber: classData.courseNumber,
+      number: classData.number,
+    }).lean();
+
+    if (!_class) continue;
+
+    classes.push({
+      class: formatClass(_class),
+      thresholds: monitoredClass.thresholds,
+    });
+  }
+
+  return classes;
+}

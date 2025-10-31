@@ -19,6 +19,7 @@ const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
+  Notifications: lazy(() => import("@/app/Profile/Notifications")),
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
   Bookmarks: lazy(() => import("@/app/Profile/Bookmarks")),
