@@ -34,9 +34,18 @@ const typedef = gql`
     courseNumber: CourseNumber!
     number: ClassNumber!
   }
+  
+  input MonitoredClassRefInput {
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+  }
 
   input MonitoredClassInput {
-    class: BookmarkedClassInput!
+    class: MonitoredClassRefInput!
     thresholds: [Float!]!
   }
 
