@@ -75,6 +75,51 @@ export const userSchema = new Schema(
         },
       ],
     },
+    monitoredClasses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          class: {
+            year: {
+              type: Number,
+              required: true,
+            },
+            semester: {
+              type: String,
+              enum: ["Spring", "Summer", "Fall", "Winter"],
+              required: true,
+            },
+            subject: {
+              type: String,
+              required: true,
+            },
+            courseNumber: {
+              type: String,
+              required: true,
+            },
+            number: {
+              type: String,
+              required: true,
+            },
+          },
+          thresholds: [Number],
+        },
+      ],
+    },
+    notificationsOn: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    lastNotified: {
+      type: Date,
+      required: false,
+    },
+    refresh_token: {
+      type: String,
+      required: false,
+    },
     minors: {
       type: [String],
       trim: true,

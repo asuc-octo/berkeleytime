@@ -17,6 +17,7 @@
     "@repo/common": "*",
     "@repo/sis-api": "*",
     "dotenv": "^17.2.3",
+    "@sendgrid/mail": "^8.1.4",
     "papaparse": "^5.5.3",
     "tslog": "^4.10.2"
   }
