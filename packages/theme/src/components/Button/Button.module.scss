@@ -12,6 +12,8 @@
   cursor: pointer;
   gap: 8px;
   user-select: none;
+  border: none;
+  background: unset;
   transition:
     border-color 100ms ease-in-out,
     background-color 100ms ease-in-out,

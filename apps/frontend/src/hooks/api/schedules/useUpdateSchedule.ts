@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, Reference, useMutation } from "@apollo/client";
+import { Reference } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 import {
   IScheduleEvent,
@@ -12,32 +13,7 @@ import {
 } from "@/lib/api";
 
 export const useUpdateSchedule = () => {
-  const mutation = useMutation<UpdateScheduleResponse>(UPDATE_SCHEDULE, {
-    update(cache, { data }) {
-      const schedule = data?.updateSchedule;
-
-      if (!schedule) return;
-
-      cache.writeQuery({
-        query: READ_SCHEDULE,
-        variables: { id: schedule._id },
-        data: {
-          schedule,
-        },
-      });
-
-      cache.modify({
-        fields: {
-          schedules: (existingSchedules = [], { readField }) =>
-            existingSchedules.map((reference: Reference) =>
-              readField("_id", reference) === schedule._id
-                ? { ...reference, ...schedule }
-                : reference
-            ),
-        },
-      });
-    },
-  });
+  const mutation = useMutation<UpdateScheduleResponse>(UPDATE_SCHEDULE);
 
   const updateSchedule = useCallback(
     async (
@@ -45,13 +21,15 @@ export const useUpdateSchedule = () => {
       schedule: Partial<Pick<IScheduleInput, "name" | "public" | "classes">> & {
         events?: Partial<Omit<IScheduleEvent, "id">>[];
       },
-      options?: Omit<MutationHookOptions<UpdateScheduleResponse>, "variables">
+      options?: Omit<useMutation.Options<UpdateScheduleResponse>, "variables">
     ) => {
       const mutate = mutation[0];
 
+      // TODO: this also throws a lot of errors related to section not having subject and stuff
       return await mutate({
         ...options,
         variables: { id, schedule },
+        refetchQueries: [{ query: READ_SCHEDULE, variables: { id } }],
       });
     },
     [mutation]

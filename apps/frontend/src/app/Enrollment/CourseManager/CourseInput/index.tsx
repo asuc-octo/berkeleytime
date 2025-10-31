@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { useSearchParams } from "react-router-dom";
 
 import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
@@ -84,7 +84,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       return filteredOptions;
     }
     return [...list, ...filteredOptions];
-  }, [courseData]);
+  }, [courseData, selectedSemester]);
 
   const getClassOptions = (
     semester: string | null = null,
@@ -133,7 +133,11 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     return [...list, ...opts];
   };
 
-  const classOptions = useMemo(getClassOptions, [courseData, selectedSemester]);
+  const classOptions = useMemo(getClassOptions, [
+    courseData,
+    selectedClass,
+    selectedSemester,
+  ]);
 
   const add = async () => {
     if (!selectedClass || !selectedCourse || !selectedSemester) return;
@@ -174,11 +178,16 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         variables: input,
       });
 
+      if (!response.data) {
+        throw response.error;
+      }
+
       const output: Output = {
         hidden: false,
         active: false,
         color: LIGHT_COLORS[outputs.length],
-        enrollmentHistory: response.data.enrollment,
+        // TODO: Error handling
+        enrollmentHistory: response.data!.enrollment,
         input,
       };
 
@@ -233,7 +242,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         <Select
           ref={semesterSelectRef}
           options={semesterOptions}
-          disabled={disabled}
+          disabled={disabled || !selectedCourse}
           value={selectedSemester}
           onChange={(s) => {
             if (Array.isArray(s)) return;
@@ -251,7 +260,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         <Select
           ref={classSelectRef}
           options={classOptions}
-          disabled={disabled}
+          disabled={disabled || !selectedCourse}
           value={selectedClass}
           onChange={(s) => {
             if (Array.isArray(s)) return;

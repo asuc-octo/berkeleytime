@@ -1,0 +1,35 @@
+:root {
+  --light-semesterblock-color: var(--slate-100);
+  --dark-semesterblock-color: var(--zinc-950);
+}
+
+@mixin light-theme {
+  --semesterblock-color: var(--light-semesterblock-color);
+}
+@mixin dark-theme {
+  --semesterblock-color: var(--dark-semesterblock-color);
+}
+
+.header {
+  padding: 5rem 1rem;
+  text-align: center;
+  margin-left: 25%;
+  max-width: 50%;
+  position: static;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--heading-color);
+  text-align: center;
+}
+
+.prompt {
+  margin-bottom: 2rem;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--paragraph-color);
+  text-align: center;
+}

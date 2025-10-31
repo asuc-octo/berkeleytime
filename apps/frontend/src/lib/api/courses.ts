@@ -57,6 +57,18 @@ export const READ_COURSE_TITLE = gql`
   }
 `;
 
+export const READ_COURSE_UNITS = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      classes {
+        unitsMax
+        semester
+        year
+      }
+    }
+  }
+`;
+
 export const READ_COURSE = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
@@ -84,13 +96,39 @@ export const READ_COURSE = gql`
         year
         semester
         number
-        primarySection {
-          meetings {
-            instructors {
-              familyName
-              givenName
-            }
+      }
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
           }
+        }
+      }
+    }
+  }
+`;
+
+export const READ_COURSE_FOR_CLASS = gql`
+  query GetCourseForClass($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      courseId
+      subject
+      number
+      title
+      description
+      academicCareer
+      gradingBasis
+      finalExam
+      requirements
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
         }
       }
       aggregatedRatings {
@@ -101,6 +139,18 @@ export const READ_COURSE = gql`
           categories {
             value
             count
+          }
+        }
+      }
+      classes {
+        semester
+        year
+        primarySection {
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
           }
         }
       }
@@ -181,6 +231,11 @@ export const GET_COURSE_NAMES = gql`
       subject
       number
       title
+      crossListing {
+        subject
+        number
+        title
+      }
     }
   }
 `;

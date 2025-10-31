@@ -12,9 +12,9 @@ import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import { Semester, TemporalPosition } from "@/lib/api";
+import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
-import Dashboard from "./Dashboard";
 
 export default function Catalog() {
   const {
@@ -28,7 +28,6 @@ export default function Catalog() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [expanded, setExpanded] = useState(true);
   const [open, setOpen] = useState(false);
 
   const { data: terms, loading: termsLoading } = useReadTerms();
@@ -48,6 +47,8 @@ export default function Catalog() {
   const term = useMemo(() => {
     if (!terms) return null;
 
+    const recentTerm = getRecents(RecentType.CatalogTerm)[0];
+
     // Default to the current term
     const currentTerm = terms.find(
       (term) => term.temporalPosition === TemporalPosition.Current
@@ -59,11 +60,24 @@ export default function Catalog() {
       .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
       .find((term) => term.temporalPosition === TemporalPosition.Future);
 
-    return (
+    const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??
+      terms.find(
+        (term) =>
+          term.year === recentTerm?.year &&
+          term.semester === recentTerm?.semester
+      ) ??
       currentTerm ??
-      nextTerm
-    );
+      nextTerm;
+
+    if (selectedTerm) {
+      addRecent(RecentType.CatalogTerm, {
+        year: selectedTerm.year,
+        semester: selectedTerm.semester,
+      });
+    }
+
+    return selectedTerm;
   }, [terms, year, semester]);
 
   const subject = useMemo(
@@ -81,6 +95,9 @@ export default function Catalog() {
       skip: !subject || !courseNumber || !number || !term,
     }
   );
+
+  // Course data is already included in _class via the backend resolver
+  const _course = _class?.course;
 
   const handleSelect = useCallback(
     (subject: string, courseNumber: string, number: string) => {
@@ -110,7 +127,6 @@ export default function Catalog() {
   return (
     <div
       className={classNames(styles.root, {
-        [styles.collapsed]: !expanded,
         [styles.open]: open,
       })}
     >
@@ -128,6 +144,7 @@ export default function Catalog() {
             onSelect={handleSelect}
             semester={term.semester}
             year={term.year}
+            terms={terms}
             persistent
           />
         </div>
@@ -135,22 +152,13 @@ export default function Catalog() {
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
           <></>
-        ) : _class ? (
+        ) : _class && _course ? (
           <Class
             class={_class}
-            expanded={expanded}
-            onExpandedChange={setExpanded}
+            course={_course}
             onClose={() => setOpen(false)}
           />
-        ) : (
-          <Dashboard
-            term={term}
-            terms={terms}
-            expanded={expanded}
-            setExpanded={setExpanded}
-            setOpen={setOpen}
-          />
-        )}
+        ) : null}
       </Flex>
     </div>
   );

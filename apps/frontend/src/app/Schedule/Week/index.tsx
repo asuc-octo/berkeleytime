@@ -1,8 +1,10 @@
 import { MouseEvent, useMemo, useRef, useState } from "react";
 
+import { Color } from "@repo/theme";
+
 import { IScheduleEvent, ISection } from "@/lib/api";
 
-import { ScheduleEvent, getY } from "../schedule";
+import { ScheduleEvent, SectionColor, getY } from "../schedule";
 import Event from "./Event";
 import styles from "./Week.module.scss";
 
@@ -42,8 +44,8 @@ const adjustAttachedEvents = (
 };
 
 interface WeekProps {
-  selectedSections: ISection[];
-  currentSection?: ISection | null;
+  selectedSections: SectionColor[];
+  currentSection?: SectionColor | null;
   events: IScheduleEvent[];
   y?: number | null;
   updateY?: (y: number | null) => void;
@@ -95,12 +97,13 @@ export default function Week({
                 days: event.days,
                 id: event._id,
                 type: "custom",
+                color: event.color,
               }) as ScheduleEvent
           );
 
         const relevantSections = sections
           // Filter sections for the current day which have a time specified
-          .flatMap((section) =>
+          .flatMap(({ section, color }) =>
             section.meetings
               .filter(
                 (meeting) =>
@@ -117,6 +120,7 @@ export default function Week({
                     days: meeting.days,
                     id: section.sectionId,
                     type: "section",
+                    color: color,
                   }) as ScheduleEvent
               )
           );
@@ -180,7 +184,7 @@ export default function Week({
           return {
             ...event,
             position,
-            active: event.id !== currentSection?.sectionId,
+            active: event.id !== currentSection?.section.sectionId,
             columns,
           };
         });
@@ -253,7 +257,12 @@ export default function Week({
                 <div key={hour} className={styles.hour}></div>
               ))}
               {events.map((event) => (
-                <Event key={event.id} {...event} />
+                <Event
+                  key={`${event.id}${event.position}`}
+                  {...event}
+                  flipPopup={day >= 5}
+                  color={event.color}
+                />
               ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}
             </div>

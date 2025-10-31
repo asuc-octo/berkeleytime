@@ -1,4 +1,4 @@
-import { QueryHookOptions, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 import { READ_CLASS, ReadClassResponse, Semester } from "@/lib/api";
 
@@ -8,9 +8,11 @@ export const useReadClass = (
   subject: string,
   courseNumber: string,
   number: string,
-  options?: Omit<QueryHookOptions<ReadClassResponse>, "variables">
+  options?: Omit<useQuery.Options<ReadClassResponse>, "variables">
 ) => {
   const query = useQuery<ReadClassResponse>(READ_CLASS, {
+    fetchPolicy: "no-cache",
+    nextFetchPolicy: "no-cache",
     ...options,
     variables: {
       year,
@@ -26,3 +28,29 @@ export const useReadClass = (
     data: query.data?.class,
   };
 };
+
+/*
+export const useReadEnrollment = (
+  year: number,
+  semester: Semester,
+  subject: string,
+  courseNumber: string,
+  number: string,
+  options?: Omit<QueryHookOptions<ReadClassResponse>, "variables">
+) => {
+  const query = useQuery<ReadClassResponse>(READ_ENROLLMENT, {
+    ...options,
+    variables: {
+      year,
+      semester,
+      subject,
+      courseNumber,
+      number,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.enrollment,
+  };
+}; */

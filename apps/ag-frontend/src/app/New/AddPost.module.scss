@@ -1,0 +1,13 @@
+.root {
+  width: 1000px;
+  padding: 60px 0;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  button:hover {
+    cursor: pointer;
+  }
+}

@@ -14,6 +14,16 @@ export const getCourse = async (subject: string, number: string) => {
   return formatCourse(course as ICourseItem);
 };
 
+export const getCourseById = async (courseId: string) => {
+  const course = await CourseModel.findOne({ courseId })
+    .sort({ fromDate: -1 })
+    .lean();
+
+  if (!course) return null;
+
+  return formatCourse(course as ICourseItem);
+};
+
 export const getClassesByCourse = async (courseId: string) => {
   const classes = await ClassModel.find({
     courseId,

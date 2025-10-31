@@ -26,7 +26,8 @@ import {
 import { AverageGrade } from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
-import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
+import { useReadCourse, useUpdateUser } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { ICourse } from "@/lib/api";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -89,7 +90,7 @@ export default function Course({
 
   const location = useLocation();
 
-  const { data: user, loading: userLoading } = useReadUser();
+  const { user, loading: userLoading } = useUser();
 
   const [updateUser] = useUpdateUser();
 
@@ -220,8 +221,8 @@ export default function Course({
   // TODO: Differentiate between class and course
   return (
     <Root dialog={dialog}>
-      <Flex direction="column" flexGrow="1">
-        <Box className={styles.header} px="5" pt="5">
+      <Flex direction="column" flexGrow="1" height="100vh" minHeight="0">
+        <Box className={styles.header} px="5" pt="5" flexShrink="0">
           <Container size="3">
             <Flex direction="column" gap="5">
               <Flex justify="between">
@@ -352,28 +353,30 @@ export default function Course({
             course,
           }}
         >
-          <Body dialog={dialog}>
-            <Tabs.Content value="overview" asChild>
-              <SuspenseBoundary>
-                <Overview />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="classes" asChild>
-              <SuspenseBoundary>
-                <Classes />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="enrollment" asChild>
-              <SuspenseBoundary>
-                <Enrollment />
-              </SuspenseBoundary>
-            </Tabs.Content>
-            <Tabs.Content value="grades" asChild>
-              <SuspenseBoundary>
-                <Grades />
-              </SuspenseBoundary>
-            </Tabs.Content>
-          </Body>
+          <Box flexGrow="1" minHeight="0" overflow="auto">
+            <Body dialog={dialog}>
+              <Tabs.Content value="overview" asChild>
+                <SuspenseBoundary>
+                  <Overview />
+                </SuspenseBoundary>
+              </Tabs.Content>
+              <Tabs.Content value="classes" asChild>
+                <SuspenseBoundary>
+                  <Classes />
+                </SuspenseBoundary>
+              </Tabs.Content>
+              <Tabs.Content value="enrollment" asChild>
+                <SuspenseBoundary>
+                  <Enrollment />
+                </SuspenseBoundary>
+              </Tabs.Content>
+              <Tabs.Content value="grades" asChild>
+                <SuspenseBoundary>
+                  <Grades />
+                </SuspenseBoundary>
+              </Tabs.Content>
+            </Body>
+          </Box>
         </CourseContext>
       </Flex>
     </Root>

@@ -98,7 +98,7 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
         type={MetricName.Difficulty}
         question="3. How would you rate the difficulty of this course?"
         leftLabel="Very easy"
-        rightLabel="Very difficult"
+        rightLabel="Very hard"
         metricData={metricData}
         onRatingClick={handleRatingClick}
       />

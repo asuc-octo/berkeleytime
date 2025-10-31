@@ -16,17 +16,16 @@ import useClass from "@/hooks/useClass";
 
 import styles from "./Enrollment.module.scss";
 
-// import Reservations from "./Reservations";
-
-// import Reservations from "./Reservations";
-
 export default function Enrollment() {
   const { class: _class } = useClass();
 
   const data = useMemo(() => {
-    if (!_class.primarySection.enrollment) return [];
-    const day0 = new Date(_class.primarySection.enrollment?.history[0].time);
-    return _class.primarySection.enrollment?.history
+    const history = _class.primarySection.enrollment?.history ?? [];
+    if (history.length === 0) return [];
+
+    const day0 = new Date(history[0].time);
+
+    return history
       .reduce(
         (acc, enrollment) => {
           const dayOffset = Math.ceil(
@@ -100,11 +99,6 @@ export default function Enrollment() {
           Average
         </div>
       </div>
-      {/* { _class.primarySection.enrollment && <Reservations
-        enrolledCount={_class.primarySection.enrollment.latest.enrolledCount}
-        maxEnroll={_class.primarySection.enrollment.latest.maxEnroll}
-        reservations={_class.primarySection.enrollment.seatReservationTypes}
-      /> } */}
     </div>
   );
 }

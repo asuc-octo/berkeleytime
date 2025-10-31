@@ -7,18 +7,19 @@ import {
   useState,
 } from "react";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 
 import { METRIC_ORDER, MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { Container, Select } from "@repo/theme";
+import { Color, Container, Select } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
-import { useReadTerms, useReadUser } from "@/hooks/api";
+import { useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
+import useUser from "@/hooks/useUser";
 import {
   CREATE_RATING,
   DELETE_RATING,
@@ -26,6 +27,7 @@ import {
   GET_COURSE_RATINGS,
   GET_SEMESTERS_WITH_RATINGS,
   GET_USER_RATINGS,
+  IAggregatedRatings,
   SemestersWithRatingsResponse,
 } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/api/terms";
@@ -44,24 +46,8 @@ import {
   isMetricRating,
 } from "./metricsUtil";
 
-{
-  /* // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend */
-}
-{
-  /* // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor */
-}
-
-interface AggregatedRatings {
-  metrics: {
-    metricName: string;
-    count: number;
-    weightedAverage: number;
-    categories: {
-      value: number;
-      count: number;
-    }[];
-  }[];
-}
+// TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
+// TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
 
 const isSemester = (value: string): boolean => {
   const firstWord = value.split(" ")[0];
@@ -80,19 +66,16 @@ export function RatingsContainer() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { class: currentClass, course: currentCourse } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
-  const [termRatings, setTermRatings] = useState<AggregatedRatings | null>(
+  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
     null
   );
-  const { data: user } = useReadUser();
+  const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 
   // Get user's existing ratings
   const { data: userRatingsData } = useQuery(GET_USER_RATINGS, {
     skip: !user,
-    onError: (error) => {
-      console.error("GET_USER_RATINGS error:", error);
-    },
   });
 
   const handleModalStateChange = useCallback(
@@ -144,9 +127,6 @@ export function RatingsContainer() {
           }
         : undefined,
     skip: !currentClass?.subject || !currentClass?.courseNumber,
-    onError: (error) => {
-      console.error("GET_COURSE_RATINGS error:", error);
-    },
   });
 
   // Create rating mutation
@@ -166,14 +146,12 @@ export function RatingsContainer() {
     ],
   });
 
-  const [getAggregatedRatings] = useLazyQuery(GET_AGGREGATED_RATINGS, {
-    onCompleted: (data) => {
-      setTermRatings(data.aggregatedRatings);
-    },
-    onError: (error) => {
-      console.error("GET_AGGREGATED_RATINGS error:", error);
-    },
-  });
+  const [getAggregatedRatings, { data: aggregatedRatingsData }] =
+    useLazyQuery<IAggregatedRatings>(GET_AGGREGATED_RATINGS);
+
+  useEffect(() => {
+    setTermRatings(aggregatedRatingsData as IAggregatedRatings | null);
+  }, [aggregatedRatingsData]);
 
   // Get semesters with ratings
   const { data: semestersWithRatingsData } =
@@ -224,8 +202,10 @@ export function RatingsContainer() {
   }, [currentClass]);
 
   const userRatings = useMemo(() => {
+    // @ts-expect-error - need to fix types
     if (!userRatingsData?.userRatings?.classes) return null;
 
+    // @ts-expect-error - need to fix types
     const matchedRating = userRatingsData.userRatings.classes.find(
       (classRating: {
         subject: string;
@@ -244,7 +224,8 @@ export function RatingsContainer() {
     const metrics =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
-        : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+        : // @ts-expect-error - need to fix types
+          aggregatedRatings?.course?.aggregatedRatings?.metrics;
     if (
       !metrics ||
       !metrics.some(
@@ -276,7 +257,10 @@ export function RatingsContainer() {
         metric: metric.metricName,
         stats: allCategories,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
-        statusColor: getStatusColor(metric.metricName, metric.weightedAverage),
+        statusColor: getStatusColor(
+          metric.metricName,
+          metric.weightedAverage
+        ) as Color,
         reviewCount: metric.count,
         weightedAverage: metric.weightedAverage,
       };
@@ -285,6 +269,7 @@ export function RatingsContainer() {
 
   const hasRatings = useMemo(() => {
     const totalRatings =
+      // @ts-expect-error - need to fix types
       aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
         (total: number, metric: any) => total + metric.count,
         0
@@ -309,8 +294,6 @@ export function RatingsContainer() {
           (s: { semester: Semester; year: number }) =>
             s.semester === term.semester && s.year === term.year
         );
-
-        console.log(term.semester, term.year, hasRatingsForTerm, isValidTerm);
 
         return isValidTerm && hasRatingsForTerm;
       })
@@ -508,7 +491,7 @@ export function RatingsContainer() {
                       ]}
                       value={selectedTerm}
                       variant="foreground"
-                      onChange={(selectedValue) => {
+                      onChange={async (selectedValue) => {
                         if (Array.isArray(selectedValue) || !selectedValue)
                           return; // ensure it is string
                         setSelectedTerm(selectedValue);
@@ -516,7 +499,7 @@ export function RatingsContainer() {
                           setTermRatings(null);
                         } else if (isSemester(selectedValue)) {
                           const [semester, year] = selectedValue.split(" ");
-                          getAggregatedRatings({
+                          const { data } = await getAggregatedRatings({
                             variables: {
                               subject: currentClass.subject,
                               courseNumber: currentClass.courseNumber,
@@ -524,6 +507,7 @@ export function RatingsContainer() {
                               year: parseInt(year),
                             },
                           });
+                          if (data) setTermRatings(data);
                         }
                       }}
                       placeholder="Select term"

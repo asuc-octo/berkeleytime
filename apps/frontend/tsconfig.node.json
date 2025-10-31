@@ -1,10 +1,5 @@
 {
-  "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "allowSyntheticDefaultImports": true
-  },
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@repo/typescript-config/node.json",
   "include": ["vite.config.ts"]
 }

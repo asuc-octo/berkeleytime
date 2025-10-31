@@ -1,0 +1,134 @@
+.class-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+  align-self: stretch;
+  justify-content: space-between;
+  text-align: left;
+  padding: 16px;
+  gap: 8px;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  background-color: var(--foreground-color);
+  box-shadow:
+    0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.1)),
+    0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.1));
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--button-hover-color);
+    cursor: grab;
+
+    .dropdown .trigger {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  .start {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  // .tag {
+  //     display: flex;
+  //     padding: 0.0625rem 0.375rem;
+  //     align-items: center;
+  //     gap: 0.125rem;
+  //     border-radius: 0.25rem;
+  //     background-color: var(--button-hover-color);
+  //     color: var(--heading-color);
+  //     font-size: 0.75rem;
+  //     line-height: 1rem;
+
+  //     .icon {
+  //         width: 0.75rem;
+  //         height: 0.75rem;
+  //         color: var(--green-500)
+  //     }
+  // }
+
+  .title {
+    margin: 0;
+    padding-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .titleBlockInline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .titleBlockChart {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .labelsInline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .unitsText {
+    white-space: nowrap;
+    margin-top: 5px;
+    color: var(--paragraph-color);
+  }
+
+  .labelsContainer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .dropdown {
+    .trigger {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--paragraph-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 8px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: var(--heading-color);
+        opacity: 1;
+      }
+
+      &[data-state="open"] {
+        opacity: 1;
+      }
+
+      .more-horiz {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.menu-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+}

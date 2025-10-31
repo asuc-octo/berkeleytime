@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
+import { Button, Color, IconButton, MenuItem, Tooltip } from "@repo/theme";
 
 import Week from "@/app/Schedule/Week";
 import { useUpdateSchedule } from "@/hooks/api";
@@ -12,13 +12,12 @@ import useSchedule from "@/hooks/useSchedule";
 import {
   IClass,
   IScheduleEvent,
-  ISection,
   READ_CLASS,
   ReadClassResponse,
 } from "@/lib/api";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import { getY } from "../schedule";
+import { SectionColor, getNextClassColor, getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
 import CloneDialog from "./CloneDialog";
@@ -39,7 +38,9 @@ export default function Editor() {
   const [updateSchedule] = useUpdateSchedule();
 
   const [expanded, setExpanded] = useState<boolean[]>([]);
-  const [currentSection, setCurrentSection] = useState<ISection | null>(null);
+  const [currentSection, setCurrentSection] = useState<SectionColor | null>(
+    null
+  );
   const [tab, setTab] = useState(0);
 
   const selectedSections = useMemo(
@@ -105,19 +106,21 @@ export default function Editor() {
             ({
               selectedSections,
               class: { number, subject, courseNumber },
+              color,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
             })
           ),
-        },
-        {
-          optimisticResponse: {
-            updateSchedule: _schedule,
-          },
         }
+        // {
+        //   optimisticResponse: {
+        //     updateSchedule: _schedule,
+        //   },
+        // }
       );
     },
     [schedule, updateSchedule]
@@ -154,14 +157,31 @@ export default function Editor() {
         section.meetings[0].startTime &&
         section.meetings[0].endTime
       ) {
-        const top = getY(section.meetings[0].startTime);
+        const top = getY(section.meetings[0].startTime) - 50;
+        const bottom = getY(section.meetings[0].endTime) + 50;
+        const container = bodyRef.current;
 
-        const offset = (getY(section.meetings[0].endTime) - top) / 2;
+        if (container) {
+          const containerTop = container.scrollTop;
+          const containerBottom = containerTop + container.clientHeight;
 
-        bodyRef.current?.scrollTo({
-          top: top + offset - bodyRef.current.clientHeight / 2,
-          behavior: "smooth",
-        });
+          // Only scroll if section is out of view
+          if (top < containerTop || bottom > containerBottom) {
+            // If section fits in viewport, center it; otherwise show as much as possible
+            if (bottom - top <= container.clientHeight) {
+              container.scrollTo({
+                top: top - (container.clientHeight - (bottom - top)) / 2,
+                behavior: "smooth",
+              });
+            } else {
+              // Section is larger than viewport, scroll to show the top
+              container.scrollTo({
+                top: top,
+                behavior: "smooth",
+              });
+            }
+          }
+        }
       }
 
       const selectedSections = schedule.classes.flatMap(
@@ -171,13 +191,19 @@ export default function Editor() {
       // Ignore selected sections
       if (selectedSections.includes(section)) return;
 
-      setCurrentSection(section);
+      setCurrentSection({
+        section,
+        color: selectedClass.color!,
+      });
     },
     [schedule, tab]
   );
 
   const handleSortEnd = useCallback(
     (previousIndex: number, currentIndex: number) => {
+      previousIndex -= schedule.events.length;
+      currentIndex -= schedule.events.length;
+
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -193,19 +219,37 @@ export default function Editor() {
             ({
               selectedSections,
               class: { number, subject, courseNumber },
+              color,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
             })
           ),
-        },
-        {
-          optimisticResponse: {
-            updateSchedule: _schedule,
-          },
         }
+        // {
+        //   optimisticResponse: {
+        //     updateSchedule: {
+        //       ..._schedule,
+        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
+        //         class: _class,
+        //         selectedSections: selectedSections.map(section => ({
+        //           ...section,
+        //           subject: _class.subject,
+        //           courseNumber: _class.courseNumber,
+        //           classNumber: _class.number
+        //         })),
+        //         color
+        //       })),
+        //       events: _schedule.events?.map(event => ({
+        //         ...event,
+        //         color: event.color
+        //       })) || []
+        //     },
+        //   },
+        // }
       );
     },
     [schedule, updateSchedule]
@@ -251,19 +295,37 @@ export default function Editor() {
               ({
                 selectedSections,
                 class: { number, subject, courseNumber },
+                color,
               }) => ({
                 subject,
                 courseNumber,
                 number,
                 sectionIds: selectedSections.map((s) => s.sectionId),
+                color,
               })
             ),
-          },
-          {
-            optimisticResponse: {
-              updateSchedule: _schedule,
-            },
           }
+          // {
+          //   optimisticResponse: {
+          //     updateSchedule: {
+          //       ..._schedule,
+          //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
+          //         class: _class,
+          //         selectedSections: selectedSections.map(section => ({
+          //           ...section,
+          //           subject: _class.subject,
+          //           courseNumber: _class.courseNumber,
+          //           classNumber: _class.number
+          //         })),
+          //         color
+          //       })),
+          //       events: _schedule.events?.map(event => ({
+          //         ...event,
+          //         color: event.color
+          //       })) || []
+          //     },
+          //   },
+          // }
         );
 
         return;
@@ -304,7 +366,29 @@ export default function Editor() {
       _schedule.classes.push({
         class: _class,
         selectedSections,
+        color: getNextClassColor(_schedule.classes.length),
       });
+
+      const optimisticResponse = {
+        ..._schedule,
+        classes: _schedule.classes.map(
+          ({ class: _class, selectedSections, color }) => ({
+            class: _class,
+            selectedSections: selectedSections.map((section) => ({
+              ...section,
+              subject: _class.subject,
+              courseNumber: _class.courseNumber,
+              classNumber: _class.number,
+            })),
+            color,
+          })
+        ),
+        events:
+          _schedule.events?.map((event) => ({
+            ...event,
+            color: event.color,
+          })) || [],
+      };
 
       // Update the schedule
       updateSchedule(
@@ -314,19 +398,21 @@ export default function Editor() {
             ({
               class: { subject, courseNumber, number },
               selectedSections,
+              color,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
             })
           ),
-        },
-        {
-          optimisticResponse: {
-            updateSchedule: _schedule,
-          },
         }
+        // {
+        //   optimisticResponse: {
+        //     updateSchedule: optimisticResponse,
+        //   },
+        // }
       );
     },
     [apolloClient, setExpanded, schedule, updateSchedule]
@@ -339,6 +425,197 @@ export default function Editor() {
       return _expandedClasses;
     });
   };
+
+  const handleColorChange = useCallback(
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      color: Color
+    ) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      // Find the associated class
+      const selectedClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      // Update the color
+      selectedClass.color = color;
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+              color,
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
+            })
+          ),
+        }
+        // {
+        //   optimisticResponse: {
+        //     updateSchedule: {
+        //       ..._schedule,
+        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
+        //         class: _class,
+        //         selectedSections: selectedSections.map(section => ({
+        //           ...section,
+        //           subject: _class.subject,
+        //           courseNumber: _class.courseNumber,
+        //           classNumber: _class.number
+        //         })),
+        //         color
+        //       })),
+        //       events: _schedule.events?.map(event => ({
+        //         ...event,
+        //         color: event.color
+        //       })) || []
+        //     },
+        //   },
+        // }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleEventColorChange = useCallback(
+    (id: string, color: Color) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      const event = _schedule.events.find((e) => e._id == id);
+
+      if (!event) return;
+
+      // Update the color
+      event.color = color;
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          events: _schedule.events.map(
+            ({
+              startTime,
+              endTime,
+              title,
+              location,
+              description,
+              days,
+              color,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              location,
+              description,
+              days,
+              color,
+            })
+          ),
+        }
+        // {
+        //   optimisticResponse: {
+        //     updateSchedule: {
+        //       ..._schedule,
+        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
+        //         class: _class,
+        //         selectedSections: selectedSections.map(section => ({
+        //           ...section,
+        //           subject: _class.subject,
+        //           courseNumber: _class.courseNumber,
+        //           classNumber: _class.number
+        //         })),
+        //         color
+        //       })),
+        //       events: _schedule.events?.map(event => ({
+        //         ...event,
+        //         color: event.color
+        //       })) || []
+        //     },
+        //   },
+        // }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleEventTitleChange = useCallback(
+    (id: string, title: string) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      const event = _schedule.events.find((e) => e._id == id);
+
+      if (!event) return;
+
+      // Update the title
+      event.title = title;
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          events: _schedule.events.map(
+            ({
+              startTime,
+              endTime,
+              title,
+              location,
+              description,
+              days,
+              color,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              location,
+              description,
+              days,
+              color,
+            })
+          ),
+        }
+        // {
+        //   optimisticResponse: {
+        //     updateSchedule: {
+        //       ..._schedule,
+        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
+        //         class: _class,
+        //         selectedSections: selectedSections.map(section => ({
+        //           ...section,
+        //           subject: _class.subject,
+        //           courseNumber: _class.courseNumber,
+        //           classNumber: _class.number
+        //         })),
+        //         color
+        //       })),
+        //       events: _schedule.events?.map(event => ({
+        //         ...event,
+        //         color: event.color
+        //       })) || []
+        //     },
+        //   },
+        // }
+      );
+    },
+    [schedule, updateSchedule]
+  );
 
   const handleDeleteEvent = (event: IScheduleEvent) => {
     updateSchedule(
@@ -361,15 +638,15 @@ export default function Editor() {
 
             return _e;
           }),
-      },
-      {
-        optimisticResponse: {
-          updateSchedule: {
-            ...schedule,
-            events: schedule.events.filter((e) => e._id != event._id),
-          },
-        },
       }
+      // {
+      //   optimisticResponse: {
+      //     updateSchedule: {
+      //       ...schedule,
+      //       events: schedule.events.filter((e) => e._id != event._id),
+      //     },
+      //   },
+      // }
     );
   };
 
@@ -387,26 +664,28 @@ export default function Editor() {
             ({
               selectedSections,
               class: { number, subject, courseNumber },
+              color,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
             })
           ),
-      },
-      {
-        optimisticResponse: {
-          updateSchedule: {
-            ...schedule,
-            classes: schedule.classes.filter(
-              (c) =>
-                c.class.primarySection.sectionId !=
-                _class.primarySection.sectionId
-            ),
-          },
-        },
       }
+      // {
+      //   optimisticResponse: {
+      //     updateSchedule: {
+      //       ...schedule,
+      //       classes: schedule.classes.filter(
+      //         (c) =>
+      //           c.class.primarySection.sectionId !=
+      //           _class.primarySection.sectionId
+      //       ),
+      //     },
+      //   },
+      // }
     );
   };
 
@@ -476,6 +755,9 @@ export default function Editor() {
           onSortEnd={handleSortEnd}
           onDeleteClass={handleDeleteClass}
           onDeleteEvent={handleDeleteEvent}
+          onColorChange={handleColorChange}
+          onEventColorChange={handleEventColorChange}
+          onEventTitleChange={handleEventTitleChange}
         />
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (
@@ -487,6 +769,7 @@ export default function Editor() {
           ) : tab === 1 ? (
             <Calendar
               term={schedule.term}
+              customEvents={schedule.events}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />

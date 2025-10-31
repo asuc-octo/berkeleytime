@@ -76,7 +76,13 @@ const formatClass = (input: CombinedClass) => {
     anyPrintInScheduleOfClasses: input.anyPrintInScheduleOfClasses,
     contactHours: input.contactHours,
     blindGrading: input.blindGrading,
-    requirementDesignation: input.requirementDesignation?.code,
+    requirementDesignation: input.requirementDesignation
+      ? {
+          code: input.requirementDesignation.code,
+          description: input.requirementDesignation.description,
+          formalDescription: input.requirementDesignation.formalDescription,
+        }
+      : undefined,
     requisites: input.requisites?.formalDescription,
   };
 

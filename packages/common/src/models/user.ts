@@ -20,6 +20,11 @@ export const userSchema = new Schema(
       trim: true,
       required: true,
     },
+    staff: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     majors: {
       type: [String],
       required: false,
@@ -113,9 +118,11 @@ export const userSchema = new Schema(
     },
     refresh_token: {
       type: String,
+    },
+    minors: {
+      type: [String],
       trim: true,
       required: false,
-      select: false,
     },
   },
   {

@@ -2,6 +2,7 @@ import {
   GradeDistributionModel,
   IGradeDistributionItem,
   SectionModel,
+  TermModel,
 } from "@repo/common";
 
 enum Letter {
@@ -163,6 +164,32 @@ export const getAverageGrade = (distribution: Grade[]) => {
   return weightedTotal / total;
 };
 
+export const getPnpPercentage = (distribution: Grade[]) => {
+  // Calculate (P + S) / (P + NP + S + U)
+  const pnpGrades = distribution.reduce(
+    (acc, { letter, count }) => {
+      if (letter === Letter.Pass) acc.pass += count;
+      else if (letter === Letter.Satisfactory) acc.satisfactory += count;
+      else if (letter === Letter.NotPass) acc.notPass += count;
+      else if (letter === Letter.Unsatisfactory) acc.unsatisfactory += count;
+      return acc;
+    },
+    { pass: 0, satisfactory: 0, notPass: 0, unsatisfactory: 0 }
+  );
+
+  const totalPnp =
+    pnpGrades.pass +
+    pnpGrades.satisfactory +
+    pnpGrades.notPass +
+    pnpGrades.unsatisfactory;
+
+  // If there are no PNP grades, return null
+  if (totalPnp === 0) return null;
+
+  const passingPnp = pnpGrades.pass + pnpGrades.satisfactory;
+  return passingPnp / totalPnp;
+};
+
 export const getGradeDistributionByCourse = async (
   subject: string,
   number: string
@@ -180,6 +207,7 @@ export const getGradeDistributionByCourse = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -194,7 +222,7 @@ export const getGradeDistributionByClass = async (
   const section = await SectionModel.findOne({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     number: sectionNumber,
@@ -219,6 +247,7 @@ export const getGradeDistributionByClass = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -229,10 +258,17 @@ export const getGradeDistributionBySemester = async (
   subject: string,
   courseNumber: string
 ) => {
+  const term = await TermModel.findOne({
+    name: `${year} ${semester}`,
+  })
+    .select({ id: 1 })
+    .lean();
+
+  if (!term) throw new Error(`Term not found for ${year} ${semester}`);
+
   const distributions = await GradeDistributionModel.find({
-    year,
-    semester,
-    sessionId: sessionId ? sessionId : "1",
+    termId: term.id,
+    sessionId,
     subject,
     courseNumber,
   });
@@ -245,6 +281,7 @@ export const getGradeDistributionBySemester = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -279,6 +316,7 @@ export const getGradeDistributionByInstructor = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };
 
@@ -294,7 +332,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
   const sections = await SectionModel.find({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     "meetings.instructors.familyName": familyName,
@@ -318,5 +356,6 @@ export const getGradeDistributionByInstructorAndSemester = async (
   return {
     average: getAverageGrade(distribution),
     distribution,
+    pnpPercentage: getPnpPercentage(distribution),
   };
 };

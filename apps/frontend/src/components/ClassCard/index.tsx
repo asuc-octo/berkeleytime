@@ -8,67 +8,75 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card } from "@repo/theme";
+import { Card, Color } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import Capacity from "@/components/Capacity";
+import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
+import ColorSelector from "../ColorSelector";
+import styles from "./ClassCard.module.scss";
+
 interface ClassProps {
-  class: IClass;
+  class?: IClass;
   expandable?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
   onDelete?: () => void;
-  leftBorderColor?: string;
+  leftBorderColor?: Color;
+  onColorSelect?: (c: Color) => void;
   bookmarked?: boolean;
-  bookmarkToggle?: () => {};
+  bookmarkToggle?: () => void;
+  active?: boolean;
 }
 
 export default function ClassCard({
-  class: {
-    course: {
-      title: courseTitle,
-      subject: courseSubject,
-      number: courseNumber2,
-      gradeDistribution,
-    },
-    title,
-    subject,
-    courseNumber,
-    number,
-    primarySection: { enrollment },
-    unitsMax,
-    unitsMin,
-  },
+  class: _class,
   expandable = false,
   expanded,
   onExpandedChange,
   onDelete,
   leftBorderColor = undefined,
+  onColorSelect = undefined,
   bookmarked = false,
   children,
   bookmarkToggle,
+  active = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
+  const gradeDistribution =
+    _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
+
   return (
-    <Card.RootColumn {...props}>
-      {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
-      <Card.ColumnHeader>
+    <Card.RootColumn
+      style={{ overflow: "visible", ...props?.style }}
+      active={active}
+      {...props}
+    >
+      <Card.ColumnHeader style={{ overflow: "visible" }}>
+        {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
         <Card.Body>
           <Card.Heading>
-            {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
+            {_class?.subject ?? _class?.course?.subject}{" "}
+            {_class?.courseNumber ?? _class?.course?.number}{" "}
+            <span className={styles.sectionNumber}>#{_class?.number}</span>
           </Card.Heading>
-          <Card.Description>{title ?? courseTitle}</Card.Description>
+          <Card.Description>
+            {_class?.title ?? _class?.course?.title}
+          </Card.Description>
           <Card.Footer>
-            <Capacity
-              enrolledCount={enrollment?.latest.enrolledCount}
-              maxEnroll={enrollment?.latest.maxEnroll}
-              waitlistedCount={enrollment?.latest.waitlistedCount}
-              maxWaitlist={enrollment?.latest.maxWaitlist}
+            <EnrollmentDisplay
+              enrolledCount={
+                _class?.primarySection?.enrollment?.latest.enrolledCount
+              }
+              maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
+              time={_class?.primarySection?.enrollment?.latest.time}
             />
-            <Units unitsMin={unitsMin} unitsMax={unitsMax} />
+            {_class?.unitsMin !== undefined &&
+              _class.unitsMax !== undefined && (
+                <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
+              )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 onClick={() => {
@@ -85,7 +93,13 @@ export default function ClassCard({
           {gradeDistribution && (
             <AverageGrade
               gradeDistribution={gradeDistribution}
-              style={{ marginTop: 0.5, fontSize: 15 }}
+              style={{
+                marginTop: 0.5,
+                fontSize: 14,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+                textAlign: "right",
+              }}
             />
           )}
           {onDelete && (

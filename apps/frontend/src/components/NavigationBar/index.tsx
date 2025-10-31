@@ -2,9 +2,9 @@ import classNames from "classnames";
 import { ArrowRight, Menu, User } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
 
-import { Button, IconButton, MenuItem } from "@repo/theme";
+import { Button, Flex, IconButton, MenuItem } from "@repo/theme";
 
-import { useReadUser } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
 
 import styles from "./NavigationBar.module.scss";
@@ -15,10 +15,13 @@ interface NavigationBarProps {
 }
 
 export default function NavigationBar({ invert }: NavigationBarProps) {
-  const { data: user } = useReadUser();
+  const { user } = useUser();
 
   return (
-    <div
+    <Flex
+      align="center"
+      flexShrink="0"
+      gap="3"
       className={classNames(styles.root, {
         [styles.invert]: invert,
       })}
@@ -42,7 +45,14 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
         <NavLink to="/schedules">
           {({ isActive }) => (
             <MenuItem className={styles.item} active={isActive}>
-              My schedules
+              Scheduler
+            </MenuItem>
+          )}
+        </NavLink>
+        <NavLink to="/gradtrak">
+          {({ isActive }) => (
+            <MenuItem className={styles.item} active={isActive}>
+              Gradtrak
             </MenuItem>
           )}
         </NavLink>
@@ -84,6 +94,6 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
           <Pin />
         </IconButton>
       </PinsDrawer> */}
-    </div>
+    </Flex>
   );
 }

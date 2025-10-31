@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 import { GET_USER_RATINGS, UserRatingsResponse } from "@/lib/api/ratings";
 

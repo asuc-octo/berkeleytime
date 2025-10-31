@@ -2,7 +2,7 @@
   border-radius: 4px;
   min-height: 32px;
   background-color: var(--tooltip-color);
-  animation: fadeIn 100ms ease-in;
+  animation: fadeIn 50ms ease-in;
   display: flex;
   align-items: center;
   z-index: 998;
@@ -22,7 +22,7 @@
     color: var(--heading-color);
   }
   .description {
-    width: 100%;
+    width: calc(100% - 24px);
     border-top: 1px solid var(--border-color);
     color: var(--paragraph-color);
     padding: 8px 12px;

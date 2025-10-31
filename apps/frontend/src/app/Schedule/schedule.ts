@@ -1,3 +1,5 @@
+import { Color } from "@repo/theme";
+
 import { ISchedule, IScheduleEvent, ISection } from "@/lib/api";
 
 interface BaseEvent {
@@ -5,6 +7,7 @@ interface BaseEvent {
   startTime: string;
   endTime: string;
   id: string;
+  color: Color;
 }
 
 interface SectionEvent extends BaseEvent {
@@ -15,6 +18,11 @@ interface SectionEvent extends BaseEvent {
 interface CustomEvent extends BaseEvent {
   type: "custom";
   event: IScheduleEvent;
+}
+
+export interface SectionColor {
+  color: Color;
+  section: ISection;
 }
 
 export type ScheduleEvent = SectionEvent | CustomEvent;
@@ -38,7 +46,7 @@ export const getUnits = (schedule?: ISchedule) => {
 
 export const getSelectedSections = (schedule?: ISchedule) => {
   return (
-    schedule?.classes.flatMap(({ selectedSections, class: _class }) =>
+    schedule?.classes.flatMap(({ selectedSections, class: _class, color }) =>
       selectedSections.reduce((acc, section) => {
         const _section =
           _class.primarySection.sectionId === section.sectionId
@@ -48,8 +56,35 @@ export const getSelectedSections = (schedule?: ISchedule) => {
                   currentSection.sectionId === section.sectionId
               );
 
-        return _section ? [...acc, _section] : acc;
-      }, [] as ISection[])
+        return _section
+          ? [
+              ...acc,
+              {
+                section: _section,
+                color: color!,
+              },
+            ]
+          : acc;
+      }, [] as SectionColor[])
     ) ?? []
   );
+};
+
+export const acceptedColors = Object.values(Color);
+
+// DARK_MODE colors from grades mapped to Color enum
+const COLOR_ORDER: Color[] = [
+  Color.blue,
+  Color.green,
+  Color.red,
+  Color.teal,
+  Color.orange,
+  Color.emerald,
+  Color.sky,
+  Color.violet,
+];
+
+export const getNextClassColor = (classIndex: number): Color => {
+  const colorIndex = classIndex % COLOR_ORDER.length;
+  return COLOR_ORDER[colorIndex];
 };

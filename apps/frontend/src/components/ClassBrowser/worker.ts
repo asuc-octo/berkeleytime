@@ -4,6 +4,16 @@ import { IClass } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 import { SortBy } from "./browser";
+import { searchAndSortClasses } from "./searchAndSort";
+import { SortOrder } from "./sorting";
+
+const DEFAULT_SORT_ORDER: Record<SortBy, SortOrder> = {
+  [SortBy.Relevance]: "asc",
+  [SortBy.Units]: "asc",
+  [SortBy.AverageGrade]: "desc",
+  [SortBy.OpenSeats]: "desc",
+  [SortBy.PercentOpenSeats]: "desc",
+};
 
 const initializeFuse = (classes: IClass[]) => {
   const list = classes.map((_class) => {
@@ -53,6 +63,7 @@ const initializeFuse = (classes: IClass[]) => {
 
   const options = {
     includeScore: true,
+    isCaseSensitive: false,
     // ignoreLocation: true,
     threshold: 0.25,
     keys: [
@@ -87,60 +98,16 @@ addEventListener(
   "message",
   ({ data: { classes, query, sortBy } }: MessageEvent<Data>) => {
     const fuse = initializeFuse(classes);
+    const order = DEFAULT_SORT_ORDER[sortBy] ?? "asc";
 
-    const filteredClasses = query
-      ? fuse.search(query).map(({ refIndex }) => classes[refIndex])
-      : classes;
-
-    if (!sortBy) {
-      postMessage(filteredClasses);
-
-      return;
-    }
-
-    // Clone the courses to avoid sorting in-place
-    filteredClasses.sort((a, b) => {
-      if (sortBy === SortBy.AverageGrade) {
-        return b.course.gradeDistribution.average ===
-          a.course.gradeDistribution.average
-          ? 0
-          : b.course.gradeDistribution.average === null
-            ? -1
-            : a.course.gradeDistribution.average === null
-              ? 1
-              : b.course.gradeDistribution.average -
-                a.course.gradeDistribution.average;
-      }
-
-      if (sortBy === SortBy.Units) {
-        return b.unitsMax - a.unitsMax;
-      }
-
-      if (sortBy === SortBy.OpenSeats) {
-        const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-          enrollment
-            ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
-            : 0;
-
-        return getOpenSeats(b) - getOpenSeats(a);
-      }
-
-      if (sortBy === SortBy.PercentOpenSeats) {
-        const getPercentOpenSeats = ({
-          primarySection: { enrollment },
-        }: IClass) =>
-          enrollment?.latest.maxEnroll
-            ? (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
-              enrollment.latest.maxEnroll
-            : 0;
-
-        return getPercentOpenSeats(b) - getPercentOpenSeats(a);
-      }
-
-      // Classes are by default sorted by relevance and number
-      return 0;
+    const sortedClasses = searchAndSortClasses({
+      classes,
+      index: fuse,
+      query,
+      sortBy,
+      order,
     });
 
-    postMessage(filteredClasses);
+    postMessage(sortedClasses);
   }
 );

@@ -1,8 +1,6 @@
 .info {
-  position: relative;
-  top: 100px;
-  display: inline-block;
-  width: 250px;
+  display: block;
+  width: 100%;
   color: var(--paragraph-color);
 
   .heading {
@@ -15,7 +13,6 @@
     }
   }
   .label {
-    font-family: "Inter Variable", sans-serif;
     font-weight: 600;
     color: var(--heading-color);
     margin-top: 10px;
