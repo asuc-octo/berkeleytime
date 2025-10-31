@@ -1,7 +1,14 @@
+/* Final NotificationClassCard.module.scss */
+
+// This section controls the overall card box and allows the popup to show over everything
 .cardWrapper {
   position: relative;
   overflow: visible;
-  height: 128px; // Fixed height to match carousel cards
+  /* The original height was fixed (e.g., 128px), which made the card short.
+    We are removing the fixed height to let the content inside dictate the size, 
+    which should match the Catalog card's natural height.
+  */
+  height: auto; // Change from fixed height to auto for flexibility 
 
   &.popupOpen {
     z-index: 100;
@@ -14,20 +21,54 @@
   }
 }
 
+// Card Header Styles
 .cardHeading {
   font-size: 16px !important;
   font-weight: 600 !important;
-  margin-bottom: 8px !important; /* <--- ADD THIS LINE */
+  margin-bottom: 8px !important; 
+  color: var(--heading-color); 
 }
+
+.sectionNumber {
+  color: var(--paragraph-color) !important; /* MUST be the light grey color */
+  font-weight: 600 !important; /* Ensure it's not bold */
+}
+
+// Class Description Styles (for ellipsis and grey color)
+.description {
+  white-space: nowrap;  
+  overflow: hidden;     
+  text-overflow: ellipsis; 
+  width: 100%;          
+  color: var(--paragraph-color); 
+}
+
+// Enrollment Percentage Text Styles (unbolded, color is set by inline style in TSX)
+.enrollmentText {
+  font-size: 14px;
+  font-weight: 400; 
+  line-height: 1;
+}
+
+// Grade Wrapper (Restored to work with AverageGrade component)
+.gradeWrapper {
+  /* This block is usually needed to correctly position the AverageGrade component */
+  padding-right: 4px; /* small adjustment */
+}
+
+
+/* --- Bell Icon and Popup Styles (Necessary for Functionality) --- */
 
 .bellWrapper {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   gap: 2px;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 4px;
+  min-width: 28px;
+  height: 28px;
+  z-index: 100;
+  padding: 0 6px;
   margin-top: -3.5px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -42,13 +83,11 @@
     color: var(--blue-500);
 
     &:hover {
-      background-color: var(--background-color);
       color: var(--blue-600);
     }
   }
 }
 
-// fix this up for the popup to be sticky
 .popup {
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
@@ -60,26 +99,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.gradeWrapper {
-  /* The > * selector targets the <AverageGrade> component
-    inside our wrapper and forces these styles onto it.
-  */
-  > * {
-    /* 1. Remove the default pill styles */
-    background: none !important;
-    padding: 0 !important;
-    border: none !important;
-    
-    /* 2. Add the new target styles */
-    font-size: 14px !important;
-    color: #F59E0B !important;
-    font-weight: 600 !important;
-    
-    /* Optional: a small tweak to align it */
-    margin-top: 1px;
-  }
+  position: absolute; /* Anchors it to the bell wrapper */
+  top: 40px;          /* Positions it ~10px below the bell icon (30px bell height + 10px gap) */
+  right: 0;
 }
 
 .checkboxOption {
