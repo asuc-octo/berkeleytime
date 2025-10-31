@@ -5,20 +5,15 @@ import {
   useRef,
   useState,
 } from "react";
-
-import {
-  Bell,
-  BellNotification,
-  Bookmark,
-  BookmarkSolid,
-  NavArrowDown,
-} from "iconoir-react";
 import { createPortal } from "react-dom";
+
+import { Bookmark, BookmarkSolid, Bell, BellNotification, NavArrowDown } from "iconoir-react";
 
 import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
+import { getEnrollmentColor } from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
@@ -56,11 +51,10 @@ export default function NotificationClassCard({
   bookmarked = false,
   bookmarkToggle,
   ...props
-}: NotificationClassCardProps &
-  Omit<ComponentPropsWithRef<"div">, keyof NotificationClassCardProps>) {
+}: NotificationClassCardProps & Omit<ComponentPropsWithRef<"div">, keyof NotificationClassCardProps>) {
   const [showPopup, setShowPopup] = useState(false);
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  // DELETED: const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 }); 
   const [tempThresholds, setTempThresholds] = useState<number[]>(thresholds);
   const popupRef = useRef<HTMLDivElement>(null);
   const bellIconRef = useRef<HTMLDivElement>(null);
@@ -71,23 +65,7 @@ export default function NotificationClassCard({
     setTempThresholds(thresholds);
   }, [thresholds]);
 
-  // Update popup position when it opens
-  useEffect(() => {
-    if (showPopup && bellIconRef.current) {
-      const rect = bellIconRef.current.getBoundingClientRect();
-      const popupWidth = 280; // min-width from CSS
-      const viewportWidth = window.innerWidth;
-      const spaceOnRight = viewportWidth - rect.left;
-
-      // If popup would overflow the right edge, align it to the right edge
-      const shouldAlignRight = spaceOnRight < popupWidth;
-
-      setPopupPosition({
-        top: rect.top + 20, // 20px below the icon
-        left: shouldAlignRight ? viewportWidth - popupWidth - 16 : rect.left, // 16px padding from edge
-      });
-    }
-  }, [showPopup]);
+  // DELETED: useEffect hook for position calculation removed
 
   // Handle threshold change with temp state
   const handleTempThresholdChange = (threshold: number, checked: boolean) => {
@@ -143,154 +121,92 @@ export default function NotificationClassCard({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showPopup, tempThresholds, thresholds, onThresholdChange]);
+  const enrolled = enrollment?.latest.enrolledCount ?? 0;
+  const max = enrollment?.latest.maxEnroll ?? 0;
+  const enrollmentPercentage = max > 0 ? Math.round((enrolled / max) * 100) : 0;
+  const enrollmentColor = getEnrollmentColor(enrolled, max);
 
   return (
-    <div
-      className={`${styles.cardWrapper} ${showPopup ? styles.popupOpen : ""}`}
-    >
+    <div className={`${styles.cardWrapper} ${showPopup ? styles.popupOpen : ''}`}>
       <Card.RootColumn {...props}>
-        <Card.ColumnHeader style={{ height: "100%" }}>
-          <Card.Body
-            style={{
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              paddingBottom: "16px",
-              paddingRight: "16px",
-            }}
-          >
+        <Card.ColumnHeader style={{ height: '100%' }}>
+          <Card.Body style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '16px', paddingRight: '16px' }}>
             <div>
               <Card.Heading className={styles.cardHeading}>
-                {subject ?? courseSubject} {courseNumber ?? courseNumber2} #
-                {number}
-              </Card.Heading>
-              <Card.Description>{title ?? courseTitle}</Card.Description>
+                {subject ?? courseSubject} {courseNumber ?? courseNumber2}
+                <span className={styles.sectionNumber}> #{number}</span>
+                </Card.Heading>
+              <Card.Description className={styles.description}>{title ?? courseTitle}</Card.Description>
             </div>
-            {/* --- CHANGE 1: marginTop changed to '12px' ---
-             */}
-            <Card.Footer
-              style={{
-                marginTop: "12px",
-                marginBottom: "0",
-                whiteSpace: "nowrap",
-              }}
-            >
-              <Capacity
-                enrolledCount={enrollment?.latest.enrolledCount}
-                maxEnroll={enrollment?.latest.maxEnroll}
-                waitlistedCount={enrollment?.latest.waitlistedCount}
-                maxWaitlist={enrollment?.latest.maxWaitlist}
-              />
+            {/* --- Footer with Enrollment and Units --- */}
+            <Card.Footer style={{ marginTop: '12px', marginBottom: '0', whiteSpace: 'nowrap' }}>
+              <span className={styles.enrollmentText} style={{ color: enrollmentColor }}>
+                {enrollmentPercentage}% enrolled
+              </span>
               <Units unitsMin={unitsMin} unitsMax={unitsMax} />
             </Card.Footer>
           </Card.Body>
-          <Card.Actions style={{ float: "right" }}>
-            {/* --- CHANGE 2: Wrapped AverageGrade in a div to fix styling ---
-             */}
+          <Card.Actions style={{ float: 'right' }}>
+            {/* --- AverageGrade Pill --- */}
             {gradeDistribution && (
-              <div className={styles.gradeWrapper}>
-                <AverageGrade gradeDistribution={gradeDistribution} />
-              </div>
+            <div className={styles.gradeWrapper}>
+              <AverageGrade
+                gradeDistribution={gradeDistribution}
+              />
+            </div>
             )}
-            {bookmarkToggle && (
-              <Card.ActionIcon onClick={bookmarkToggle}>
-                {bookmarked ? (
-                  <BookmarkSolid
-                    width={16}
-                    height={16}
-                    style={{ color: "var(--blue-500)" }}
-                  />
-                ) : (
-                  <Bookmark width={16} height={16} />
-                )}
-              </Card.ActionIcon>
-            )}
+            {/* Bell Icon and Dropdown Arrow */}
             <div
               ref={bellIconRef}
-              className={`${styles.bellWrapper} ${isActive ? styles.active : ""}`}
+              className={`${styles.bellWrapper} ${isActive ? styles.active : ''}`}
               onClick={() => setShowPopup(!showPopup)}
             >
               {isActive ? (
                 <>
-                  <BellNotification
-                    width={16}
-                    height={16}
-                    style={{ fill: "var(--blue-500)" }}
-                  />
-                  <NavArrowDown
-                    width={14}
-                    height={14}
-                    strokeWidth={2.5}
-                    style={{ color: "var(--blue-500)" }}
-                  />
+                  <BellNotification width={16} height={16} style={{ fill: 'var(--blue-500)' }} />
+                  <NavArrowDown width={14} height={14} strokeWidth={2.5} style={{ color: 'var(--blue-500)' }} />
                 </>
               ) : (
                 <Bell width={16} height={16} />
               )}
             </div>
-            {showPopup &&
-              createPortal(
-                <div
-                  ref={popupRef}
-                  className={styles.popup}
-                  style={{
-                    position: "fixed",
-                    top: `${popupPosition.top}px`,
-                    left: `${popupPosition.left}px`,
-                  }}
-                >
-                  <label className={styles.checkboxOption}>
-                    <input
-                      type="checkbox"
-                      checked={tempThresholds.includes(50)}
-                      onChange={(e) =>
-                        handleTempThresholdChange(50, e.target.checked)
-                      }
-                    />
-                    <span>When 50% full</span>
-                  </label>
-                  <label className={styles.checkboxOption}>
-                    <input
-                      type="checkbox"
-                      checked={tempThresholds.includes(75)}
-                      onChange={(e) =>
-                        handleTempThresholdChange(75, e.target.checked)
-                      }
-                    />
-                    <span>When 75% full</span>
-                  </label>
-                  <label className={styles.checkboxOption}>
-                    <input
-                      type="checkbox"
-                      checked={tempThresholds.includes(90)}
-                      onChange={(e) =>
-                        handleTempThresholdChange(90, e.target.checked)
-                      }
-                    />
-                    <span>When 90% full</span>
-                  </label>
-                  <label className={styles.checkboxOption}>
-                    <input
-                      type="checkbox"
-                      checked={tempThresholds.includes(100)}
-                      onChange={(e) =>
-                        handleTempThresholdChange(100, e.target.checked)
-                      }
-                    />
-                    <span>When an unreserved seat opens</span>
-                  </label>
-                  <label className={styles.checkboxOption}>
-                    <input type="checkbox" />
-                    <span>When my waitlist position improves</span>
-                  </label>
-                  <label className={styles.checkboxOption}>
-                    <input type="checkbox" />
-                    <span>When there is space to join the waitlist</span>
-                  </label>
-                </div>,
-                document.body
-              )}
+            {/* Popup Menu - Cleaned up to use pure CSS positioning */}
+            {showPopup && createPortal(
+              <div
+                ref={popupRef}
+                className={styles.popup}
+                // REMOVED: style prop that referenced deleted popupPosition
+              >
+                <label className={styles.checkboxOption}>
+                  <input
+                    type="checkbox"
+                    checked={tempThresholds.includes(50)}
+                    onChange={(e) => handleTempThresholdChange(50, e.target.checked)}
+                  />
+                  <span>When 50% full</span>
+                </label>
+                <label className={styles.checkboxOption}>
+                  <input
+                    type="checkbox"
+                    checked={tempThresholds.includes(75)}
+                    onChange={(e) => handleTempThresholdChange(75, e.target.checked)}
+                  />
+                  <span>When 75% full</span>
+                </label>
+                <label className={styles.checkboxOption}>
+                  <input
+                    type="checkbox"
+                    checked={tempThresholds.includes(90)}
+                    onChange={(e) => handleTempThresholdChange(90, e.target.checked)}
+                  />
+                  <span>When 90% full</span>
+                </label>
+                {/* DELETED: When an unreserved seat opens */}
+                {/* DELETED: When my waitlist position improves */}
+                {/* DELETED: When there is space to join the waitlist */}
+              </div>,
+              document.body
+            )}
           </Card.Actions>
         </Card.ColumnHeader>
       </Card.RootColumn>
