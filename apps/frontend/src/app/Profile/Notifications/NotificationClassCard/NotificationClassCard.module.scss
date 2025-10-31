@@ -100,8 +100,8 @@
   flex-direction: column;
   gap: 8px;
   position: absolute; /* Anchors it to the bell wrapper */
-  top: 40px;          /* Positions it ~10px below the bell icon (30px bell height + 10px gap) */
-  right: 0;
+  top: 48px;          /* Positions it ~10px below the bell icon (30px bell height + 10px gap) */
+  right: 13px;
 }
 
 .checkboxOption {
@@ -118,6 +118,8 @@
     height: 16px;
     cursor: pointer;
     flex-shrink: 0;
+    background-color: var(--foreground-color);
+    border: 3px solid var(--border-color);
   }
 
   span {

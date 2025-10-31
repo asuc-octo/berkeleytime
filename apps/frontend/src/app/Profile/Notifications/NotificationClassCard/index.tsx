@@ -1,18 +1,16 @@
 import {
   ComponentPropsWithRef,
-  useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { createPortal } from "react-dom";
+// Removed: import { createPortal } from "react-dom";
 
-import { Bookmark, BookmarkSolid, Bell, BellNotification, NavArrowDown } from "iconoir-react";
+import { Bell, BellNotification, NavArrowDown } from "iconoir-react"; 
 
 import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import Capacity from "@/components/Capacity";
 import { getEnrollmentColor } from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
@@ -54,7 +52,7 @@ export default function NotificationClassCard({
 }: NotificationClassCardProps & Omit<ComponentPropsWithRef<"div">, keyof NotificationClassCardProps>) {
   const [showPopup, setShowPopup] = useState(false);
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
-  // DELETED: const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 }); 
+  // DELETED: popupPosition state variable
   const [tempThresholds, setTempThresholds] = useState<number[]>(thresholds);
   const popupRef = useRef<HTMLDivElement>(null);
   const bellIconRef = useRef<HTMLDivElement>(null);
@@ -65,7 +63,7 @@ export default function NotificationClassCard({
     setTempThresholds(thresholds);
   }, [thresholds]);
 
-  // DELETED: useEffect hook for position calculation removed
+  // DELETED: Obsolete position calculation useEffect hook
 
   // Handle threshold change with temp state
   const handleTempThresholdChange = (threshold: number, checked: boolean) => {
@@ -121,6 +119,7 @@ export default function NotificationClassCard({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showPopup, tempThresholds, thresholds, onThresholdChange]);
+
   const enrolled = enrollment?.latest.enrolledCount ?? 0;
   const max = enrollment?.latest.maxEnroll ?? 0;
   const enrollmentPercentage = max > 0 ? Math.round((enrolled / max) * 100) : 0;
@@ -135,7 +134,7 @@ export default function NotificationClassCard({
               <Card.Heading className={styles.cardHeading}>
                 {subject ?? courseSubject} {courseNumber ?? courseNumber2}
                 <span className={styles.sectionNumber}> #{number}</span>
-                </Card.Heading>
+              </Card.Heading>
               <Card.Description className={styles.description}>{title ?? courseTitle}</Card.Description>
             </div>
             {/* --- Footer with Enrollment and Units --- */}
@@ -170,12 +169,13 @@ export default function NotificationClassCard({
                 <Bell width={16} height={16} />
               )}
             </div>
-            {/* Popup Menu - Cleaned up to use pure CSS positioning */}
-            {showPopup && createPortal(
+            
+            {/* 🌟 FINAL FIX: Popup Menu rendered directly inside Card.Actions (NO PORTAL) 🌟 */}
+            {showPopup && (
               <div
                 ref={popupRef}
                 className={styles.popup}
-                // REMOVED: style prop that referenced deleted popupPosition
+                // NOTE: CSS positioning must be absolute and anchored to a relative parent
               >
                 <label className={styles.checkboxOption}>
                   <input
@@ -201,12 +201,9 @@ export default function NotificationClassCard({
                   />
                   <span>When 90% full</span>
                 </label>
-                {/* DELETED: When an unreserved seat opens */}
-                {/* DELETED: When my waitlist position improves */}
-                {/* DELETED: When there is space to join the waitlist */}
-              </div>,
-              document.body
+              </div>
             )}
+            
           </Card.Actions>
         </Card.ColumnHeader>
       </Card.RootColumn>
