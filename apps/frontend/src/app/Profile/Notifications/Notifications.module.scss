@@ -6,20 +6,16 @@
   margin-bottom: 32px;
 
   h1 {
-    /* --- APPLY THESE CHANGES --- */
-    font-size: 32px; /* Changed from 28px to 32px */
-    font-weight: 700; /* Increased to 700 (bold) for better consistency, or keep at 600 */
-    margin: 0 0 24px 0; /* Changed from 12px to 40px margin at the bottom for spacing */
-    /* --------------------------- */
+    font-size: 32px; 
+    font-weight: 700; 
+    margin: 0 0 24px 0; 
     color: var(--heading-color);
   }
 }
 
 .subtitle {
-  /* Update font-size and color */
   font-size: 16px; 
   color: #64748B; 
-  /* Remaining styles */
   line-height: 1.6;
   margin: 0 0 40px 0;
   max-width: 80%;
@@ -38,7 +34,6 @@
 }
 
 .sectionDescription {
-  /* Update font-size and color */
   font-size: 16px; 
   color: #64748B;  
   /* Remaining styles */
@@ -56,7 +51,7 @@
 
 .classGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 326px); /* <--- CHANGE THIS */
+  grid-template-columns: repeat(auto-fill, 326px); 
   gap: 20px;
   /* ... */
 }
@@ -67,7 +62,7 @@
   background-color: var(--foreground-color);
   overflow: hidden;
   transition: box-shadow 150ms ease-in-out;
-  padding: 16px; /* <--- ADD THIS LINE */
+  padding: 16px; 
   /* ... */
 }
 
@@ -139,9 +134,9 @@
 .courseName {
   margin: 0 0 8px 0;
   font-size: 14px;
-  color: #64748B !important;     /* <--- ADD !important */
+  color: #64748B !important;     
   line-height: 1.4;
-  white-space: nowrap !important; /* <--- ADD !important */
+  white-space: nowrap !important; 
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
@@ -192,7 +187,7 @@
   }
 
   &:hover {
-    color: var(--blue-500);
+    color: var(--paragraph-color);
   }
 }
 

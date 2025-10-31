@@ -1,27 +1,19 @@
-/* Final NotificationClassCard.module.scss */
 
-// This section controls the overall card box and allows the popup to show over everything
 .cardWrapper {
   position: relative;
   overflow: visible;
-  /* The original height was fixed (e.g., 128px), which made the card short.
-    We are removing the fixed height to let the content inside dictate the size, 
-    which should match the Catalog card's natural height.
-  */
-  height: auto; // Change from fixed height to auto for flexibility 
+  height: auto; 
 
   &.popupOpen {
     z-index: 100;
   }
 
-  // Override Card's default overflow: hidden but keep height
   > * {
     height: 100% !important;
     overflow: visible !important;
   }
 }
 
-// Card Header Styles
 .cardHeading {
   font-size: 16px !important;
   font-weight: 600 !important;
@@ -30,11 +22,10 @@
 }
 
 .sectionNumber {
-  color: var(--paragraph-color) !important; /* MUST be the light grey color */
-  font-weight: 600 !important; /* Ensure it's not bold */
+  color: var(--paragraph-color) !important; 
+  font-weight: 600 !important; 
 }
 
-// Class Description Styles (for ellipsis and grey color)
 .description {
   white-space: nowrap;  
   overflow: hidden;     
@@ -43,21 +34,15 @@
   color: var(--paragraph-color); 
 }
 
-// Enrollment Percentage Text Styles (unbolded, color is set by inline style in TSX)
 .enrollmentText {
   font-size: 14px;
   font-weight: 400; 
   line-height: 1;
 }
 
-// Grade Wrapper (Restored to work with AverageGrade component)
 .gradeWrapper {
-  /* This block is usually needed to correctly position the AverageGrade component */
-  padding-right: 4px; /* small adjustment */
+  padding-right: 4px; 
 }
-
-
-/* --- Bell Icon and Popup Styles (Necessary for Functionality) --- */
 
 .bellWrapper {
   display: inline-flex;
@@ -99,9 +84,13 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  position: absolute; /* Anchors it to the bell wrapper */
-  top: 48px;          /* Positions it ~10px below the bell icon (30px bell height + 10px gap) */
+  position: absolute; 
+  top: 48px;          
   right: 13px;
+}
+
+.arrowRotated {
+  transform: rotate(180deg);
 }
 
 .checkboxOption {
@@ -126,7 +115,8 @@
     line-height: 1.3;
   }
 
-  &:hover {
-    color: var(--blue-500);
+  &:hover span {
+    color: var(--slate-600) !important;
   }
+
 }

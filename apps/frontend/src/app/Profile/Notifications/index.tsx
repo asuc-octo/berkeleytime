@@ -41,7 +41,7 @@ const TEST_DATA: IMonitoredClass[] = [
         average: "A+",
       },
     } as any,
-    thresholds: [100],
+    thresholds: [50],
   },
   {
     class: {
@@ -116,8 +116,6 @@ export default function Notifications() {
   const { data: user } = useReadUser();
   const [updateUser] = useUpdateUser();
 
-  // Local state for managing notification preferences
-  // Use test data if no monitored classes exist
   const [monitoredClasses, setMonitoredClasses] = useState<IMonitoredClass[]>(
     user?.monitoredClasses && user.monitoredClasses.length > 0
       ? user.monitoredClasses
