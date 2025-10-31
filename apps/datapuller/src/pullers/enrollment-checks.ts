@@ -1,6 +1,7 @@
-import { NewEnrollmentHistoryModel, UserModel } from "@repo/common";
-import { Logger } from "tslog";
 import sgMail from "@sendgrid/mail";
+import { Logger } from "tslog";
+
+import { NewEnrollmentHistoryModel, UserModel } from "@repo/common";
 
 import { Config } from "../shared/config";
 import { getActiveTerms } from "../shared/term-selectors";
@@ -107,10 +108,12 @@ const generateEnrollmentAlertEmail = (
 };
 
 const checkEnrollmentThresholds = async (config: Config) => {
-  const log = config.log || new Logger({
-    type: "pretty",
-    prettyLogTimeZone: "local",
-  });
+  const log =
+    config.log ||
+    new Logger({
+      type: "pretty",
+      prettyLogTimeZone: "local",
+    });
   log.trace(`Starting enrollment threshold checks...`);
 
   const allTerms = await getActiveTerms();
@@ -152,14 +155,14 @@ const checkEnrollmentThresholds = async (config: Config) => {
 
   for (const history of enrollmentHistories) {
     if (!history.history || history.history.length < 2) {
-      continue; 
+      continue;
     }
 
     const latestData = history.history[history.history.length - 1];
     const previousData = history.history[history.history.length - 2];
 
     if (!latestData.enrolledCount || !latestData.maxEnroll) {
-      continue; 
+      continue;
     }
 
     totalChecks++;
@@ -168,13 +171,16 @@ const checkEnrollmentThresholds = async (config: Config) => {
       (latestData.enrolledCount / latestData.maxEnroll) * 100
     );
 
-    const previousPercentage = previousData.enrolledCount && previousData.maxEnroll
-      ? Math.round((previousData.enrolledCount / previousData.maxEnroll) * 100)
-      : undefined;
+    const previousPercentage =
+      previousData.enrolledCount && previousData.maxEnroll
+        ? Math.round(
+            (previousData.enrolledCount / previousData.maxEnroll) * 100
+          )
+        : undefined;
 
     // Check each threshold
     for (const threshold of ENROLLMENT_THRESHOLDS) {
-      const crossedThreshold = 
+      const crossedThreshold =
         currentPercentage >= threshold.percentage &&
         (!previousPercentage || previousPercentage < threshold.percentage);
 
@@ -205,43 +211,48 @@ const checkEnrollmentThresholds = async (config: Config) => {
 
   if (alerts.length > 0) {
     log.info(`Found ${alerts.length} enrollment threshold alerts:`);
-    
-    const alertsByThreshold = alerts.reduce((acc, alert) => {
-      if (!acc[alert.threshold]) {
-        acc[alert.threshold] = [];
-      }
-      acc[alert.threshold].push(alert);
-      return acc;
-    }, {} as Record<string, EnrollmentAlert[]>);
 
-    for (const [threshold, thresholdAlerts] of Object.entries(alertsByThreshold)) {
+    const alertsByThreshold = alerts.reduce(
+      (acc, alert) => {
+        if (!acc[alert.threshold]) {
+          acc[alert.threshold] = [];
+        }
+        acc[alert.threshold].push(alert);
+        return acc;
+      },
+      {} as Record<string, EnrollmentAlert[]>
+    );
+
+    for (const [threshold, thresholdAlerts] of Object.entries(
+      alertsByThreshold
+    )) {
       log.info(`  ${threshold}: ${thresholdAlerts.length} sections`);
-      
+
       thresholdAlerts.slice(0, 3).forEach((alert) => {
         log.info(
           `    ${alert.subject} ${alert.courseNumber} ${alert.sectionNumber} - ${alert.percentage}% (${alert.enrolledCount}/${alert.maxEnroll})`
         );
       });
-      
+
       if (thresholdAlerts.length > 3) {
         log.info(`    ... and ${thresholdAlerts.length - 3} more`);
       }
     }
 
     const usersToNotify = new Map<string, Set<EnrollmentAlert>>();
-    
+
     for (const alert of alerts) {
       const thresholdPercentage = ENROLLMENT_THRESHOLDS.find(
         (t) => t.name === alert.threshold
       )?.percentage;
-      
+
       if (!thresholdPercentage) {
         continue;
       }
-      
+
       const matchingUsers = await UserModel.find({
-        notificationType: { $ne: "Off" },
-        "monitoredClasses": {
+        notificationsOn: true,
+        monitoredClasses: {
           $elemMatch: {
             "class.year": alert.year,
             "class.semester": alert.semester,
@@ -251,7 +262,7 @@ const checkEnrollmentThresholds = async (config: Config) => {
           },
         },
       }).lean();
-      
+
       for (const user of matchingUsers) {
         const monitoredClass = user.monitoredClasses?.find(
           (mc) =>
@@ -262,8 +273,11 @@ const checkEnrollmentThresholds = async (config: Config) => {
             mc.class.courseNumber === alert.courseNumber &&
             mc.class.number === alert.sectionNumber
         );
-        
-        if (monitoredClass && monitoredClass.thresholds.includes(thresholdPercentage)) {
+
+        if (
+          monitoredClass &&
+          monitoredClass.thresholds.includes(thresholdPercentage)
+        ) {
           const userId = user._id.toString();
           if (!usersToNotify.has(userId)) {
             usersToNotify.set(userId, new Set());
@@ -272,9 +286,9 @@ const checkEnrollmentThresholds = async (config: Config) => {
         }
       }
     }
-    
+
     log.info(`Found ${usersToNotify.size} users to notify`);
-    
+
     // Initialize SendGrid
     const sendgridApiKey = process.env.SENDGRID_API_KEY;
     if (!sendgridApiKey) {
@@ -286,10 +300,10 @@ const checkEnrollmentThresholds = async (config: Config) => {
     let emailsSent = 0;
     let emailsFailed = 0;
     let emailsThrottled = 0;
-    
+
     for (const [userId, userAlerts] of usersToNotify.entries()) {
       log.info(`  User ${userId}: ${userAlerts.size} alert(s)`);
-      
+
       // Get user email for notifications
       const user = await UserModel.findById(userId).lean();
       if (!user) {
@@ -298,8 +312,8 @@ const checkEnrollmentThresholds = async (config: Config) => {
       }
 
       // Only send email notifications
-      if (user.notificationType !== "Email") {
-        log.info(`    User has notification type: ${user.notificationType}, skipping email`);
+      if (!user.notificationsOn) {
+        log.info(`User has notifications off, skipping email`);
         continue;
       }
 
@@ -308,7 +322,9 @@ const checkEnrollmentThresholds = async (config: Config) => {
         const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
         if (new Date(user.lastNotified) > twoHoursAgo) {
           emailsThrottled++;
-          log.info(`    User was notified less than 2 hours ago, skipping email`);
+          log.info(
+            `    User was notified less than 2 hours ago, skipping email`
+          );
           continue;
         }
       }
@@ -327,14 +343,14 @@ const checkEnrollmentThresholds = async (config: Config) => {
             user.name,
             Array.from(userAlerts)
           );
-          
+
           await sgMail.send(emailData);
-          
+
           // Update lastNotified after successfully sending email
           await UserModel.findByIdAndUpdate(userId, {
             lastNotified: new Date(),
           });
-          
+
           emailsSent++;
           log.info(`    ✓ Email sent to ${user.email}`);
         } catch (error) {
@@ -343,9 +359,11 @@ const checkEnrollmentThresholds = async (config: Config) => {
         }
       }
     }
-    
+
     if (sendgridApiKey) {
-      log.info(`Email notifications: ${emailsSent} sent, ${emailsFailed} failed, ${emailsThrottled} throttled`);
+      log.info(
+        `Email notifications: ${emailsSent} sent, ${emailsFailed} failed, ${emailsThrottled} throttled`
+      );
     } else {
       log.info("Email sending skipped - SENDGRID_API_KEY not configured");
     }

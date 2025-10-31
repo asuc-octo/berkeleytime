@@ -6,12 +6,6 @@ const typedef = gql`
     thresholds: [Float]!
   }
 
-  enum NotificationType {
-    Email
-    Mobile
-    Off
-  }
-    
   type User @cacheControl(scope: PRIVATE) {
     _id: ID!
     email: String!
@@ -20,7 +14,7 @@ const typedef = gql`
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!
     monitoredClasses: [MonitoredClass!]!
-		notificationType: NotificationType!
+    notificationsOn: Boolean!
   }
 
   type Query {
@@ -40,9 +34,18 @@ const typedef = gql`
     courseNumber: CourseNumber!
     number: ClassNumber!
   }
+  
+  input MonitoredClassRefInput {
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+  }
 
   input MonitoredClassInput {
-    class: BookmarkedClassInput!
+    class: MonitoredClassRefInput!
     thresholds: [Float!]!
   }
 
@@ -50,7 +53,7 @@ const typedef = gql`
     bookmarkedClasses: [BookmarkedClassInput!]
     bookmarkedCourses: [BookmarkedCourseInput!]
     monitoredClasses: [MonitoredClassInput!]
-    notificationType: NotificationType!
+    notificationsOn: Boolean!
   }
 
   type Mutation {

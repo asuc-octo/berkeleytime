@@ -98,14 +98,14 @@ export const userSchema = new Schema(
               required: true,
             },
           },
-          thresholds: [Number]
+          thresholds: [Number],
         },
       ],
     },
-    notificationType: {
-      type: String,
-      enum: ["Email", "Mobile", "Off"],
-      required: false, // TODO: Change to true when implemented
+    notificationsOn: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
     lastNotified: {
       type: Date,
