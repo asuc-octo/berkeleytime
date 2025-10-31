@@ -5,6 +5,7 @@ import { UserModule } from "./generated-types/module-types";
 interface UserRelationships {
   bookmarkedCourses: UserModule.BookmarkedCourseInput[];
   bookmarkedClasses: UserModule.BookmarkedClassInput[];
+  monitoredClasses: UserModule.MonitoredClassInput[];
 }
 
 export type IntermediateUser = Omit<UserModule.User, keyof UserRelationships> &
@@ -21,5 +22,7 @@ export const formatUser = (user: UserType) => {
     bookmarkedClasses: user.bookmarkedClasses,
     majors: user.majors ? user.majors : [],
     minors: user.minors ? user.minors : [],
+    monitoredClasses: user.monitoredClasses,
+    notificationsOn: user.notificationsOn,
   } as IntermediateUser;
 };

@@ -1,0 +1,29 @@
+.body {
+  align-items: center;
+  color: var(--heading-color);
+}
+.icon {
+  margin-top: 40px;
+  width: 70px;
+  height: 70px;
+  color: var(--blue-500);
+}
+.red {
+  color: var(--red-500);
+}
+
+.title {
+  margin-top: 28px;
+  margin-bottom: 14px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0px 20px;
+  color: var(--paragraph-color);
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
