@@ -130,6 +130,9 @@ export default function NotificationClassCard({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showPopup, tempThresholds, thresholds, onThresholdChange]);
+  const enrolled = enrollment?.latest.enrolledCount ?? 0;
+  const max = enrollment?.latest.maxEnroll ?? 0;
+  const enrollmentPercentage = max > 0 ? Math.round((enrolled / max) * 100) : 0;
 
   return (
     <div className={`${styles.cardWrapper} ${showPopup ? styles.popupOpen : ''}`}>
@@ -140,19 +143,21 @@ export default function NotificationClassCard({
               <Card.Heading className={styles.cardHeading}>
                 {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
               </Card.Heading>
-              <Card.Description>{title ?? courseTitle}</Card.Description> 
+              <Card.Description className={styles.description}>{title ?? courseTitle}</Card.Description>
             </div>
             {/* --- CHANGE 1: marginTop changed to '12px' ---
             */}
             <Card.Footer style={{ marginTop: '12px', marginBottom: '0', whiteSpace: 'nowrap' }}>
-              <Capacity
-                enrolledCount={enrollment?.latest.enrolledCount}
-                maxEnroll={enrollment?.latest.maxEnroll}
-                waitlistedCount={enrollment?.latest.waitlistedCount}
-                maxWaitlist={enrollment?.latest.maxWaitlist}
-              />
-              <Units unitsMin={unitsMin} unitsMax={unitsMax} />
-            </Card.Footer>
+  
+  {/* The <Capacity> component is GONE */}
+
+  {/* This is the new span you added, which is correct */}
+  <span className={styles.enrollmentText}>
+    {enrollmentPercentage}% enrolled
+  </span>
+  
+  <Units unitsMin={unitsMin} unitsMax={unitsMax} />
+</Card.Footer>
           </Card.Body>
           <Card.Actions style={{ float: 'right' }}>
             {/* --- CHANGE 2: Wrapped AverageGrade in a div to fix styling ---
@@ -163,15 +168,6 @@ export default function NotificationClassCard({
                 gradeDistribution={gradeDistribution}
               />
             </div>
-            )}
-            {bookmarkToggle && (
-            <Card.ActionIcon onClick={bookmarkToggle}>
-              {bookmarked ? (
-                <BookmarkSolid width={16} height={16} style={{ color: 'var(--blue-500)' }} />
-              ) : (
-                <Bookmark width={16} height={16} />
-              )}
-            </Card.ActionIcon>
             )}
             <div
               ref={bellIconRef}

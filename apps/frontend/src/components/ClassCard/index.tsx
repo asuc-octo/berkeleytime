@@ -88,15 +88,6 @@ export default function ClassCard({
               style={{ marginTop: 0.5, fontSize: 15 }}
             />
           )}
-          {bookmarked && bookmarkToggle && (
-            <Card.ActionIcon onClick={bookmarkToggle}>
-              {bookmarked ? (
-                <BookmarkSolid width={16} height={16} />
-              ) : (
-                <Bookmark width={16} height={16} />
-              )}
-            </Card.ActionIcon>
-          )}
           {onDelete && (
             <Card.ActionIcon isDelete onClick={onDelete}>
               <Trash />

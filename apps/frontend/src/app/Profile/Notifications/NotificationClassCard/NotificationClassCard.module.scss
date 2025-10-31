@@ -20,6 +20,13 @@
   margin-bottom: 8px !important; /* <--- ADD THIS LINE */
 }
 
+.description {
+  white-space: nowrap;  /* Prevents the text from wrapping */
+  overflow: hidden;     /* Hides any text that goes past the edge */
+  text-overflow: ellipsis; /* Adds the "..." */
+  width: 100%;          /* Ensures it knows the width to overflow */
+}
+
 .bellWrapper {
   display: inline-flex;
   align-items: center;
