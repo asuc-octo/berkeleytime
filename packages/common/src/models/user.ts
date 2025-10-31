@@ -105,7 +105,7 @@ export const userSchema = new Schema(
     notificationType: {
       type: String,
       enum: ["Email", "Mobile", "Off"],
-      required: true,
+      required: false, // TODO: Change to true when implemented
     },
     lastNotified: {
       type: Date,

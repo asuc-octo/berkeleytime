@@ -10,7 +10,7 @@ import styles from "./Notifications.module.scss";
 const TEST_DATA: IMonitoredClass[] = [
   {
     class: {
-      title: "Foundations of the U.S. Air Force",
+      title: "Foundations of the U.S Air Force",
       subject: "AEROSPC",
       number: "1A",
       courseNumber: "1A",
@@ -20,7 +20,7 @@ const TEST_DATA: IMonitoredClass[] = [
       unitsMin: 1,
       unitsMax: 1,
       course: {
-        title: "Foundations of the U.S. Air Force",
+        title: "Foundations of U.S Air Force",
         subject: "AEROSPC",
         number: "1A",
         gradeDistribution: {
@@ -45,17 +45,16 @@ const TEST_DATA: IMonitoredClass[] = [
   },
   {
     class: {
-      title: "Introduction to Computer Science",
+      title: "Intro to Computer Science",
       subject: "COMPSCI",
       number: "61A",
-      courseNumber: "61A",
       year: 2024,
       semester: "Fall",
       sessionId: null,
       unitsMin: 4,
       unitsMax: 4,
       course: {
-        title: "Introduction to Computer Science",
+        title: "Intro to Computer Science",
         subject: "COMPSCI",
         number: "61A",
         gradeDistribution: {
@@ -83,7 +82,6 @@ const TEST_DATA: IMonitoredClass[] = [
       title: "Calculus",
       subject: "MATH",
       number: "1A",
-      courseNumber: "1A",
       year: 2024,
       semester: "Spring",
       sessionId: null,
@@ -92,7 +90,6 @@ const TEST_DATA: IMonitoredClass[] = [
       course: {
         title: "Calculus",
         subject: "MATH",
-        number: "1A",
         gradeDistribution: {
           average: "B"
         }
@@ -195,9 +192,9 @@ export default function Notifications() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>Course Enrollment & Waitlist Notifications</h1>
+        <h1>Course Enrollment Notifications</h1>
         <p className={styles.subtitle}>
-          Manage the classes you are tracking for enrollment changes. You can set specific alerts for enrollment thresholds, waitlist movement, and open seats for each course. Notifications will be delivered to your registered @berkeley.edu email address.
+          Manage the classes you are tracking by setting specific alerts for enrollment thresholds. Notifications will be delivered to your registered @berkeley.edu email address.
         </p>
       </div>
 

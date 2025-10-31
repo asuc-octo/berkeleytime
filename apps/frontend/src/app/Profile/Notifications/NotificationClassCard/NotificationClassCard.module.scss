@@ -14,6 +14,12 @@
   }
 }
 
+.cardHeading {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important; /* <--- ADD THIS LINE */
+}
+
 .bellWrapper {
   display: inline-flex;
   align-items: center;
@@ -42,6 +48,7 @@
   }
 }
 
+// fix this up for the popup to be sticky
 .popup {
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
@@ -53,6 +60,26 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.gradeWrapper {
+  /* The > * selector targets the <AverageGrade> component
+    inside our wrapper and forces these styles onto it.
+  */
+  > * {
+    /* 1. Remove the default pill styles */
+    background: none !important;
+    padding: 0 !important;
+    border: none !important;
+    
+    /* 2. Add the new target styles */
+    font-size: 14px !important;
+    color: #F59E0B !important;
+    font-weight: 600 !important;
+    
+    /* Optional: a small tweak to align it */
+    margin-top: 1px;
+  }
 }
 
 .checkboxOption {

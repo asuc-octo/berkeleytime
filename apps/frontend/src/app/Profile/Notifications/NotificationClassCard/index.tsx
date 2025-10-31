@@ -135,14 +135,16 @@ export default function NotificationClassCard({
     <div className={`${styles.cardWrapper} ${showPopup ? styles.popupOpen : ''}`}>
       <Card.RootColumn {...props}>
         <Card.ColumnHeader style={{ height: '100%' }}>
-          <Card.Body style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '4px' }}>
+          <Card.Body style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '16px', paddingRight: '16px' }}>
             <div>
-              <Card.Heading>
+              <Card.Heading className={styles.cardHeading}>
                 {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
               </Card.Heading>
-              <Card.Description>{title ?? courseTitle}</Card.Description>
+              <Card.Description>{title ?? courseTitle}</Card.Description> 
             </div>
-            <Card.Footer style={{ marginTop: '0', marginBottom: '0', whiteSpace: 'nowrap' }}>
+            {/* --- CHANGE 1: marginTop changed to '12px' ---
+            */}
+            <Card.Footer style={{ marginTop: '12px', marginBottom: '0', whiteSpace: 'nowrap' }}>
               <Capacity
                 enrolledCount={enrollment?.latest.enrolledCount}
                 maxEnroll={enrollment?.latest.maxEnroll}
@@ -152,12 +154,15 @@ export default function NotificationClassCard({
               <Units unitsMin={unitsMin} unitsMax={unitsMax} />
             </Card.Footer>
           </Card.Body>
-          <Card.Actions>
+          <Card.Actions style={{ float: 'right' }}>
+            {/* --- CHANGE 2: Wrapped AverageGrade in a div to fix styling ---
+            */}
             {gradeDistribution && (
-            <AverageGrade
-              gradeDistribution={gradeDistribution}
-              style={{ marginTop: 0.5, fontSize: 15 }}
-            />
+            <div className={styles.gradeWrapper}>
+              <AverageGrade
+                gradeDistribution={gradeDistribution}
+              />
+            </div>
             )}
             {bookmarkToggle && (
             <Card.ActionIcon onClick={bookmarkToggle}>

@@ -6,34 +6,42 @@
   margin-bottom: 32px;
 
   h1 {
-    font-size: 28px;
-    font-weight: 600;
-    margin: 0 0 12px 0;
+    /* --- APPLY THESE CHANGES --- */
+    font-size: 32px; /* Changed from 28px to 32px */
+    font-weight: 700; /* Increased to 700 (bold) for better consistency, or keep at 600 */
+    margin: 0 0 24px 0; /* Changed from 12px to 40px margin at the bottom for spacing */
+    /* --------------------------- */
     color: var(--heading-color);
   }
 }
 
 .subtitle {
-  font-size: 14px;
-  color: var(--label-color);
+  /* Update font-size and color */
+  font-size: 16px; 
+  color: #64748B; 
+  /* Remaining styles */
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 40px 0;
+  max-width: 80%;
 }
 
 .section {
   margin-bottom: 48px;
 
   h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 600;
-    margin: 0 0 16px 0;
+    margin: 0 0 24px 0;
     color: var(--heading-color);
+    max-width: 80%;
   }
 }
 
 .sectionDescription {
-  font-size: 14px;
-  color: var(--label-color);
+  /* Update font-size and color */
+  font-size: 16px; 
+  color: #64748B;  
+  /* Remaining styles */
   line-height: 1.6;
   margin: 0 0 20px 0;
 }
@@ -48,10 +56,9 @@
 
 .classGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 288px);
+  grid-template-columns: repeat(auto-fill, 326px); /* <--- CHANGE THIS */
   gap: 20px;
-  margin-bottom: 20px;
-  position: relative;
+  /* ... */
 }
 
 .classCard {
@@ -60,15 +67,11 @@
   background-color: var(--foreground-color);
   overflow: hidden;
   transition: box-shadow 150ms ease-in-out;
-
-  &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
+  padding: 16px; /* <--- ADD THIS LINE */
+  /* ... */
 }
 
 .cardHeader {
-  padding: 16px;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .classTitle {
@@ -136,8 +139,12 @@
 .courseName {
   margin: 0 0 8px 0;
   font-size: 14px;
-  color: var(--paragraph-color);
+  color: #64748B !important;     /* <--- ADD !important */
   line-height: 1.4;
+  white-space: nowrap !important; /* <--- ADD !important */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .enrollment {
@@ -222,8 +229,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 15px;
-  color: var(--paragraph-color);
+  font-size: 16px;
+  color: #64748B;
   cursor: pointer;
   user-select: none;
 
