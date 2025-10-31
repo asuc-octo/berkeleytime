@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { useReadUser, useUpdateUser } from "@/hooks/api";
 import { IMonitoredClass } from "@/lib/api/users";
@@ -24,8 +24,8 @@ const TEST_DATA: IMonitoredClass[] = [
         subject: "AEROSPC",
         number: "1A",
         gradeDistribution: {
-          average: "A+"
-        }
+          average: "A+",
+        },
       },
       primarySection: {
         enrollment: {
@@ -33,15 +33,15 @@ const TEST_DATA: IMonitoredClass[] = [
             enrolledCount: 0,
             maxEnroll: 60,
             waitlistedCount: 0,
-            maxWaitlist: 0
-          }
-        }
+            maxWaitlist: 0,
+          },
+        },
       },
       gradeDistribution: {
-        average: "A+"
-      }
+        average: "A+",
+      },
     } as any,
-    thresholds: [100]
+    thresholds: [100],
   },
   {
     class: {
@@ -58,8 +58,8 @@ const TEST_DATA: IMonitoredClass[] = [
         subject: "COMPSCI",
         number: "61A",
         gradeDistribution: {
-          average: "B+"
-        }
+          average: "B+",
+        },
       },
       primarySection: {
         enrollment: {
@@ -67,15 +67,15 @@ const TEST_DATA: IMonitoredClass[] = [
             enrolledCount: 450,
             maxEnroll: 500,
             waitlistedCount: 25,
-            maxWaitlist: 50
-          }
-        }
+            maxWaitlist: 50,
+          },
+        },
       },
       gradeDistribution: {
-        average: "B+"
-      }
+        average: "B+",
+      },
     } as any,
-    thresholds: [50, 75, 90]
+    thresholds: [50, 75, 90],
   },
   {
     class: {
@@ -91,8 +91,8 @@ const TEST_DATA: IMonitoredClass[] = [
         title: "Calculus",
         subject: "MATH",
         gradeDistribution: {
-          average: "B"
-        }
+          average: "B",
+        },
       },
       primarySection: {
         enrollment: {
@@ -100,16 +100,16 @@ const TEST_DATA: IMonitoredClass[] = [
             enrolledCount: 200,
             maxEnroll: 250,
             waitlistedCount: 10,
-            maxWaitlist: 30
-          }
-        }
+            maxWaitlist: 30,
+          },
+        },
       },
       gradeDistribution: {
-        average: "B"
-      }
+        average: "B",
+      },
     } as any,
-    thresholds: [75, 100]
-  }
+    thresholds: [75, 100],
+  },
 ];
 
 export default function Notifications() {
@@ -128,19 +128,31 @@ export default function Notifications() {
   const [lateChangeSchedule, setLateChangeSchedule] = useState(false);
   const [receiveEmails, setReceiveEmails] = useState(true);
 
-  const handleThresholdChange = (classIndex: number, threshold: number, checked: boolean) => {
+  const handleThresholdChange = (
+    classIndex: number,
+    threshold: number,
+    checked: boolean
+  ) => {
     const updated = [...monitoredClasses];
     const currentThresholds = updated[classIndex].thresholds;
 
     if (checked) {
-      updated[classIndex].thresholds = [...currentThresholds, threshold].sort((a, b) => a - b);
+      updated[classIndex].thresholds = [...currentThresholds, threshold].sort(
+        (a, b) => a - b
+      );
     } else {
-      updated[classIndex].thresholds = currentThresholds.filter((t) => t !== threshold);
+      updated[classIndex].thresholds = currentThresholds.filter(
+        (t) => t !== threshold
+      );
     }
 
     setMonitoredClasses(updated);
     // TODO: Call mutation to update user preferences
-    console.log("Update thresholds for class:", classIndex, updated[classIndex].thresholds);
+    console.log(
+      "Update thresholds for class:",
+      classIndex,
+      updated[classIndex].thresholds
+    );
   };
 
   const handleRemoveClass = async (classIndex: number) => {
@@ -150,51 +162,56 @@ export default function Notifications() {
     console.log("Removed class at index:", classIndex);
   };
 
-  const bookmark = useCallback(async (classToBookmark: any) => {
-    if (!user || !classToBookmark) return;
+  const bookmark = useCallback(
+    async (classToBookmark: any) => {
+      if (!user || !classToBookmark) return;
 
-    const bookmarked = user.bookmarkedClasses.some(
-      (bookmarkedClass) =>
-        bookmarkedClass.subject === classToBookmark.subject &&
-        bookmarkedClass.courseNumber === classToBookmark.courseNumber &&
-        bookmarkedClass.number === classToBookmark.number &&
-        bookmarkedClass.year === classToBookmark.year &&
-        bookmarkedClass.semester === classToBookmark.semester
-    );
+      const bookmarked = user.bookmarkedClasses.some(
+        (bookmarkedClass) =>
+          bookmarkedClass.subject === classToBookmark.subject &&
+          bookmarkedClass.courseNumber === classToBookmark.courseNumber &&
+          bookmarkedClass.number === classToBookmark.number &&
+          bookmarkedClass.year === classToBookmark.year &&
+          bookmarkedClass.semester === classToBookmark.semester
+      );
 
-    const bookmarkedClasses = bookmarked
-      ? user.bookmarkedClasses.filter(
-          (bookmarkedClass) =>
-            !(
-              bookmarkedClass.subject === classToBookmark.subject &&
-              bookmarkedClass.courseNumber === classToBookmark.courseNumber &&
-              bookmarkedClass.number === classToBookmark.number &&
-              bookmarkedClass.year === classToBookmark.year &&
-              bookmarkedClass.semester === classToBookmark.semester
-            )
-        )
-      : [...user.bookmarkedClasses, classToBookmark];
+      const bookmarkedClasses = bookmarked
+        ? user.bookmarkedClasses.filter(
+            (bookmarkedClass) =>
+              !(
+                bookmarkedClass.subject === classToBookmark.subject &&
+                bookmarkedClass.courseNumber === classToBookmark.courseNumber &&
+                bookmarkedClass.number === classToBookmark.number &&
+                bookmarkedClass.year === classToBookmark.year &&
+                bookmarkedClass.semester === classToBookmark.semester
+              )
+          )
+        : [...user.bookmarkedClasses, classToBookmark];
 
-    const payload = {
-      bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
-        subject: bookmarkedClass.subject,
-        number: bookmarkedClass.number,
-        courseNumber: bookmarkedClass.courseNumber,
-        year: bookmarkedClass.year,
-        semester: bookmarkedClass.semester,
-        sessionId: bookmarkedClass.sessionId || "1", // Default to "1" if null
-      })),
-    };
+      const payload = {
+        bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
+          subject: bookmarkedClass.subject,
+          number: bookmarkedClass.number,
+          courseNumber: bookmarkedClass.courseNumber,
+          year: bookmarkedClass.year,
+          semester: bookmarkedClass.semester,
+          sessionId: bookmarkedClass.sessionId || "1", // Default to "1" if null
+        })),
+      };
 
-    await updateUser(payload);
-  }, [user, updateUser]);
+      await updateUser(payload);
+    },
+    [user, updateUser]
+  );
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Course Enrollment Notifications</h1>
         <p className={styles.subtitle}>
-          Manage the classes you are tracking by setting specific alerts for enrollment thresholds. Notifications will be delivered to your registered @berkeley.edu email address.
+          Manage the classes you are tracking by setting specific alerts for
+          enrollment thresholds. Notifications will be delivered to your
+          registered @berkeley.edu email address.
         </p>
       </div>
 
@@ -221,7 +238,8 @@ export default function Notifications() {
               const isBookmarked = user?.bookmarkedClasses.some(
                 (bookmarkedClass) =>
                   bookmarkedClass.subject === monitoredClass.class.subject &&
-                  bookmarkedClass.courseNumber === monitoredClass.class.courseNumber &&
+                  bookmarkedClass.courseNumber ===
+                    monitoredClass.class.courseNumber &&
                   bookmarkedClass.number === monitoredClass.class.number &&
                   bookmarkedClass.year === monitoredClass.class.year &&
                   bookmarkedClass.semester === monitoredClass.class.semester
@@ -232,7 +250,9 @@ export default function Notifications() {
                   key={index}
                   class={monitoredClass.class}
                   thresholds={monitoredClass.thresholds}
-                  onThresholdChange={(threshold, checked) => handleThresholdChange(index, threshold, checked)}
+                  onThresholdChange={(threshold, checked) =>
+                    handleThresholdChange(index, threshold, checked)
+                  }
                   onRemoveClass={async () => await handleRemoveClass(index)}
                   bookmarked={isBookmarked}
                   bookmarkToggle={() => bookmark(monitoredClass.class)}
@@ -246,7 +266,8 @@ export default function Notifications() {
       <div className={styles.section}>
         <h2>Add/Drop Deadline Notifications</h2>
         <p className={styles.sectionDescription}>
-          Get notified about key academic deadlines, including add/drop and late change of class schedule for the semester.
+          Get notified about key academic deadlines, including add/drop and late
+          change of class schedule for the semester.
         </p>
 
         <div className={styles.toggleOptions}>

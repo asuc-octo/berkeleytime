@@ -1,7 +1,19 @@
-import { ComponentPropsWithRef, useState, useRef, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
+import {
+  ComponentPropsWithRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-import { Bookmark, BookmarkSolid, Bell, BellNotification, NavArrowDown } from "iconoir-react";
+import {
+  Bell,
+  BellNotification,
+  Bookmark,
+  BookmarkSolid,
+  NavArrowDown,
+} from "iconoir-react";
+import { createPortal } from "react-dom";
 
 import { Card } from "@repo/theme";
 
@@ -44,7 +56,8 @@ export default function NotificationClassCard({
   bookmarked = false,
   bookmarkToggle,
   ...props
-}: NotificationClassCardProps & Omit<ComponentPropsWithRef<"div">, keyof NotificationClassCardProps>) {
+}: NotificationClassCardProps &
+  Omit<ComponentPropsWithRef<"div">, keyof NotificationClassCardProps>) {
   const [showPopup, setShowPopup] = useState(false);
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
@@ -132,19 +145,37 @@ export default function NotificationClassCard({
   }, [showPopup, tempThresholds, thresholds, onThresholdChange]);
 
   return (
-    <div className={`${styles.cardWrapper} ${showPopup ? styles.popupOpen : ''}`}>
+    <div
+      className={`${styles.cardWrapper} ${showPopup ? styles.popupOpen : ""}`}
+    >
       <Card.RootColumn {...props}>
-        <Card.ColumnHeader style={{ height: '100%' }}>
-          <Card.Body style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', paddingBottom: '16px', paddingRight: '16px' }}>
+        <Card.ColumnHeader style={{ height: "100%" }}>
+          <Card.Body
+            style={{
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              paddingBottom: "16px",
+              paddingRight: "16px",
+            }}
+          >
             <div>
               <Card.Heading className={styles.cardHeading}>
-                {subject ?? courseSubject} {courseNumber ?? courseNumber2} #{number}
+                {subject ?? courseSubject} {courseNumber ?? courseNumber2} #
+                {number}
               </Card.Heading>
-              <Card.Description>{title ?? courseTitle}</Card.Description> 
+              <Card.Description>{title ?? courseTitle}</Card.Description>
             </div>
             {/* --- CHANGE 1: marginTop changed to '12px' ---
-            */}
-            <Card.Footer style={{ marginTop: '12px', marginBottom: '0', whiteSpace: 'nowrap' }}>
+             */}
+            <Card.Footer
+              style={{
+                marginTop: "12px",
+                marginBottom: "0",
+                whiteSpace: "nowrap",
+              }}
+            >
               <Capacity
                 enrolledCount={enrollment?.latest.enrolledCount}
                 maxEnroll={enrollment?.latest.maxEnroll}
@@ -154,96 +185,112 @@ export default function NotificationClassCard({
               <Units unitsMin={unitsMin} unitsMax={unitsMax} />
             </Card.Footer>
           </Card.Body>
-          <Card.Actions style={{ float: 'right' }}>
+          <Card.Actions style={{ float: "right" }}>
             {/* --- CHANGE 2: Wrapped AverageGrade in a div to fix styling ---
-            */}
+             */}
             {gradeDistribution && (
-            <div className={styles.gradeWrapper}>
-              <AverageGrade
-                gradeDistribution={gradeDistribution}
-              />
-            </div>
+              <div className={styles.gradeWrapper}>
+                <AverageGrade gradeDistribution={gradeDistribution} />
+              </div>
             )}
             {bookmarkToggle && (
-            <Card.ActionIcon onClick={bookmarkToggle}>
-              {bookmarked ? (
-                <BookmarkSolid width={16} height={16} style={{ color: 'var(--blue-500)' }} />
-              ) : (
-                <Bookmark width={16} height={16} />
-              )}
-            </Card.ActionIcon>
+              <Card.ActionIcon onClick={bookmarkToggle}>
+                {bookmarked ? (
+                  <BookmarkSolid
+                    width={16}
+                    height={16}
+                    style={{ color: "var(--blue-500)" }}
+                  />
+                ) : (
+                  <Bookmark width={16} height={16} />
+                )}
+              </Card.ActionIcon>
             )}
             <div
               ref={bellIconRef}
-              className={`${styles.bellWrapper} ${isActive ? styles.active : ''}`}
+              className={`${styles.bellWrapper} ${isActive ? styles.active : ""}`}
               onClick={() => setShowPopup(!showPopup)}
             >
               {isActive ? (
                 <>
-                  <BellNotification width={16} height={16} style={{ fill: 'var(--blue-500)' }} />
-                  <NavArrowDown width={14} height={14} strokeWidth={2.5} style={{ color: 'var(--blue-500)' }} />
+                  <BellNotification
+                    width={16}
+                    height={16}
+                    style={{ fill: "var(--blue-500)" }}
+                  />
+                  <NavArrowDown
+                    width={14}
+                    height={14}
+                    strokeWidth={2.5}
+                    style={{ color: "var(--blue-500)" }}
+                  />
                 </>
               ) : (
                 <Bell width={16} height={16} />
               )}
             </div>
-            {showPopup && createPortal(
-              <div
-                ref={popupRef}
-                className={styles.popup}
-                style={{
-                  position: 'fixed',
-                  top: `${popupPosition.top}px`,
-                  left: `${popupPosition.left}px`,
-                }}
-              >
-                <label className={styles.checkboxOption}>
-                  <input
-                    type="checkbox"
-                    checked={tempThresholds.includes(50)}
-                    onChange={(e) => handleTempThresholdChange(50, e.target.checked)}
-                  />
-                  <span>When 50% full</span>
-                </label>
-                <label className={styles.checkboxOption}>
-                  <input
-                    type="checkbox"
-                    checked={tempThresholds.includes(75)}
-                    onChange={(e) => handleTempThresholdChange(75, e.target.checked)}
-                  />
-                  <span>When 75% full</span>
-                </label>
-                <label className={styles.checkboxOption}>
-                  <input
-                    type="checkbox"
-                    checked={tempThresholds.includes(90)}
-                    onChange={(e) => handleTempThresholdChange(90, e.target.checked)}
-                  />
-                  <span>When 90% full</span>
-                </label>
-                <label className={styles.checkboxOption}>
-                  <input
-                    type="checkbox"
-                    checked={tempThresholds.includes(100)}
-                    onChange={(e) => handleTempThresholdChange(100, e.target.checked)}
-                  />
-                  <span>When an unreserved seat opens</span>
-                </label>
-                <label className={styles.checkboxOption}>
-                  <input
-                    type="checkbox"
-                  />
-                  <span>When my waitlist position improves</span>
-                </label>
-                <label className={styles.checkboxOption}>
-                  <input
-                    type="checkbox"
-                  />
-                  <span>When there is space to join the waitlist</span>
-                </label>
-              </div>,
-              document.body
-            )}
+            {showPopup &&
+              createPortal(
+                <div
+                  ref={popupRef}
+                  className={styles.popup}
+                  style={{
+                    position: "fixed",
+                    top: `${popupPosition.top}px`,
+                    left: `${popupPosition.left}px`,
+                  }}
+                >
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={tempThresholds.includes(50)}
+                      onChange={(e) =>
+                        handleTempThresholdChange(50, e.target.checked)
+                      }
+                    />
+                    <span>When 50% full</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={tempThresholds.includes(75)}
+                      onChange={(e) =>
+                        handleTempThresholdChange(75, e.target.checked)
+                      }
+                    />
+                    <span>When 75% full</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={tempThresholds.includes(90)}
+                      onChange={(e) =>
+                        handleTempThresholdChange(90, e.target.checked)
+                      }
+                    />
+                    <span>When 90% full</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input
+                      type="checkbox"
+                      checked={tempThresholds.includes(100)}
+                      onChange={(e) =>
+                        handleTempThresholdChange(100, e.target.checked)
+                      }
+                    />
+                    <span>When an unreserved seat opens</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input type="checkbox" />
+                    <span>When my waitlist position improves</span>
+                  </label>
+                  <label className={styles.checkboxOption}>
+                    <input type="checkbox" />
+                    <span>When there is space to join the waitlist</span>
+                  </label>
+                </div>,
+                document.body
+              )}
           </Card.Actions>
         </Card.ColumnHeader>
       </Card.RootColumn>
