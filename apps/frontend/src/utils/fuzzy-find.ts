@@ -13,24 +13,77 @@ const fuzzyScore = (query: string, target: string): number => {
   query = query.toLowerCase();
   target = target.toLowerCase();
 
-  if (query === target) return EXACT_MATCH_SCORE + query.length; // exact match
-  if (target.startsWith(query)) return PREFIX_MATCH_SCORE + query.length; // prefix match
+  // Try exact/prefix/substring matches with space-normalized versions
+  const queryNoSpaces = query.replace(/\s+/g, "");
+  const targetNoSpaces = target.replace(/\s+/g, "");
 
-  const substringIndex = target.indexOf(query);
-  if (substringIndex !== -1)
-    return SUBSTRING_MATCH_SCORE + query.length - substringIndex; // substring match
+  if (queryNoSpaces === targetNoSpaces) return EXACT_MATCH_SCORE + query.length; // exact match (ignoring spaces)
+  if (targetNoSpaces.startsWith(queryNoSpaces))
+    return PREFIX_MATCH_SCORE + query.length; // prefix match (ignoring spaces)
 
-  // fuzzy match
+  const substringIndex = targetNoSpaces.indexOf(queryNoSpaces);
+  if (substringIndex !== -1) {
+    // Add word boundary bonus for substring matches
+    let wordBoundaryBonus = 0;
+
+    // Check if match is at start of target
+    if (substringIndex === 0) {
+      wordBoundaryBonus = 1000;
+    } else {
+      // Check if match is after a word boundary in original target (with spaces)
+      let actualIndex = 0;
+      let noSpaceIndex = 0;
+      for (let i = 0; i < target.length; i++) {
+        if (target[i] !== " ") {
+          if (noSpaceIndex === substringIndex) {
+            actualIndex = i;
+            break;
+          }
+          noSpaceIndex++;
+        }
+      }
+
+      if (actualIndex > 0 && target[actualIndex - 1] === " ") {
+        wordBoundaryBonus = 500;
+      }
+    }
+
+    return SUBSTRING_MATCH_SCORE + query.length - substringIndex + wordBoundaryBonus;
+  }
+
+  // fuzzy match - skip spaces in target
   let score = 0;
   let queryIndex = 0;
   let consecutiveBonus = 0;
+  let wordBoundaryBonus = 0;
   let lastMatchIndex = -1;
+  let firstMatchIndex = -1;
+
   for (let i = 0; i < target.length && queryIndex < query.length; i++) {
+    // Skip spaces in target
+    if (target[i] === " ") continue;
+
     if (target[i] === query[queryIndex]) {
       score += 1;
 
-      // bonus for consecutive matches
-      if (lastMatchIndex === i - 1) {
+      // Track first match for word boundary detection
+      if (firstMatchIndex === -1) {
+        firstMatchIndex = i;
+        // Bonus if match starts at beginning
+        if (i === 0) {
+          wordBoundaryBonus += 70000;
+        } else if (target[i - 1] === " ") {
+          // Bonus if match starts after a space (word boundary)
+          wordBoundaryBonus += 35000;
+        }
+      }
+
+      // bonus for consecutive matches (ignoring spaces)
+      if (
+        lastMatchIndex === i - 1 ||
+        (lastMatchIndex < i &&
+          target.slice(lastMatchIndex + 1, i).trim() === "")
+      ) {
         consecutiveBonus += 5;
       }
 
@@ -42,7 +95,7 @@ const fuzzyScore = (query: string, target: string): number => {
   // no match if not all characters in query were matched
   if (queryIndex < query.length) return 0;
 
-  return score + consecutiveBonus;
+  return score + consecutiveBonus + wordBoundaryBonus;
 };
 
 export const fuzzyFind = (query: string, targets: string[]): string[] => {
@@ -130,7 +183,7 @@ export class FuzzySearch<T> {
       if (bestScore > 0) {
         // Normalize score to 0-1 range (lower is better, like Fuse.js)
         // Convert our high-is-better score to low-is-better
-        const normalizedScore = 1 / (1 + bestScore / 1000);
+        const normalizedScore = 1 / (1 + bestScore);
 
         results.push({
           item,
