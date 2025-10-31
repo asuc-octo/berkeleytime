@@ -1,5 +1,11 @@
 import classNames from "classnames";
-import { Bell, ChatBubbleQuestion, LogOut, ProfileCircle, Star } from "iconoir-react";
+import {
+  Bell,
+  ChatBubbleQuestion,
+  LogOut,
+  ProfileCircle,
+  Star,
+} from "iconoir-react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import UserContext from "@/contexts/UserContext";

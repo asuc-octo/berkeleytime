@@ -50,7 +50,9 @@ const resolvers: UserModule.Resolvers = {
         return parent.monitoredClasses as UserModule.MonitoredClass[];
       }
 
-      const monitoredClasses = await getMonitoredClasses(parent.monitoredClasses);
+      const monitoredClasses = await getMonitoredClasses(
+        parent.monitoredClasses
+      );
 
       return monitoredClasses as unknown as UserModule.MonitoredClass[];
     },

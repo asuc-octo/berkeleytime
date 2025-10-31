@@ -81,7 +81,9 @@ export const getBookmarkedClasses = async (
 };
 
 export const getMonitoredClasses = async (
-  monitoredClasses: UserModule.MonitoredClassInput[] | UserModule.MonitoredClass[]
+  monitoredClasses:
+    | UserModule.MonitoredClassInput[]
+    | UserModule.MonitoredClass[]
 ) => {
   const classes = [];
 
@@ -106,4 +108,4 @@ export const getMonitoredClasses = async (
   }
 
   return classes;
-}
+};
