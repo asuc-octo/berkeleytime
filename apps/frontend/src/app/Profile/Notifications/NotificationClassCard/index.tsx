@@ -4,7 +4,6 @@ import {
   useRef,
   useState,
 } from "react";
-// Removed: import { createPortal } from "react-dom";
 
 import { Bell, BellNotification, NavArrowDown } from "iconoir-react"; 
 
@@ -52,20 +51,17 @@ export default function NotificationClassCard({
 }: NotificationClassCardProps & Omit<ComponentPropsWithRef<"div">, keyof NotificationClassCardProps>) {
   const [showPopup, setShowPopup] = useState(false);
   const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
-  // DELETED: popupPosition state variable
   const [tempThresholds, setTempThresholds] = useState<number[]>(thresholds);
   const popupRef = useRef<HTMLDivElement>(null);
   const bellIconRef = useRef<HTMLDivElement>(null);
   const isActive = thresholds.length > 0;
 
-  // Sync temp thresholds with prop changes
   useEffect(() => {
     setTempThresholds(thresholds);
   }, [thresholds]);
 
-  // DELETED: Obsolete position calculation useEffect hook
 
-  // Handle threshold change with temp state
+
   const handleTempThresholdChange = (threshold: number, checked: boolean) => {
     setTempThresholds((prev) => {
       if (checked) {
@@ -76,7 +72,6 @@ export default function NotificationClassCard({
     });
   };
 
-  // Apply threshold changes
   const applyThresholdChanges = () => {
     tempThresholds.forEach((threshold) => {
       if (!thresholds.includes(threshold)) {
@@ -90,7 +85,6 @@ export default function NotificationClassCard({
     });
   };
 
-  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -99,12 +93,10 @@ export default function NotificationClassCard({
         !popupRef.current.contains(event.target as Node) &&
         !bellIconRef.current.contains(event.target as Node)
       ) {
-        // Check if user unchecked all options
         if (tempThresholds.length === 0 && thresholds.length > 0) {
           setShowRemoveConfirmation(true);
           setShowPopup(false);
         } else {
-          // Apply changes
           applyThresholdChanges();
           setShowPopup(false);
         }
@@ -154,7 +146,6 @@ export default function NotificationClassCard({
               />
             </div>
             )}
-            {/* Bell Icon and Dropdown Arrow */}
             <div
               ref={bellIconRef}
               className={`${styles.bellWrapper} ${isActive ? styles.active : ''}`}
@@ -163,19 +154,18 @@ export default function NotificationClassCard({
               {isActive ? (
                 <>
                   <BellNotification width={16} height={16} style={{ fill: 'var(--blue-500)' }} />
-                  <NavArrowDown width={14} height={14} strokeWidth={2.5} style={{ color: 'var(--blue-500)' }} />
+                  <NavArrowDown width={14} height={14} strokeWidth={2.5} style={{ color: 'var(--blue-500)' }}
+                  className={showPopup ? styles.arrowRotated : ''}/>
                 </>
               ) : (
                 <Bell width={16} height={16} />
               )}
             </div>
             
-            {/* 🌟 FINAL FIX: Popup Menu rendered directly inside Card.Actions (NO PORTAL) 🌟 */}
             {showPopup && (
               <div
                 ref={popupRef}
                 className={styles.popup}
-                // NOTE: CSS positioning must be absolute and anchored to a relative parent
               >
                 <label className={styles.checkboxOption}>
                   <input
@@ -210,7 +200,6 @@ export default function NotificationClassCard({
       <RemoveClassPopup
         isOpen={showRemoveConfirmation}
         onClose={() => {
-          // User changed their mind, restore previous thresholds
           setTempThresholds(thresholds);
           setShowRemoveConfirmation(false);
         }}

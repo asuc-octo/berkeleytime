@@ -52,7 +52,7 @@ export function RemoveClassPopup({
           <Dialog.Footer>
             {!isRemoving && (
               <Button onClick={onClose} variant="tertiary" isDelete>
-                No, keep tracking
+                Cancel
               </Button>
             )}
             <Button onClick={handleRemove} disabled={isRemoving} isDelete>
