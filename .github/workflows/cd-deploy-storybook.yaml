@@ -1,0 +1,104 @@
+name: Deploy Storybook
+
+on:
+  push:
+    branches: [master, gql]
+    paths:
+      [
+        "packages/theme/**",
+        "apps/storybook/**",
+        ".github/workflows/cd-deploy-storybook.yaml",
+        "infra/storybook/**",
+      ]
+
+jobs:
+  build-push-image:
+    name: Build and Push Storybook Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          file: ./apps/storybook/Dockerfile
+          target: storybook-prod
+          tags: ${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod-cache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-storybook:prod-cache,mode=max
+          platforms: linux/amd64
+          push: true
+
+  build-push-chart:
+    name: Build and Push Storybook Helm Chart
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: infra
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Helm Chart
+        run: |
+          cd ./infra
+          helm registry login registry-1.docker.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          helm package storybook --version 0.1.0 --dependency-update
+          helm push bt-storybook-0.1.0.tgz oci://registry-1.docker.io/${{ secrets.DOCKER_USERNAME }}
+
+  deploy:
+    name: SSH and Deploy
+    needs: [build-push-image, build-push-chart]
+    runs-on: ubuntu-latest
+    environment:
+      name: storybook
+      url: https://storybook.stanfurdtime.com
+
+    steps:
+      - name: SSH and Helm Install
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            # Check if helm chart exists
+            helm status bt-prod-storybook &>/dev/null && status=true || status=false
+
+            # Upgrade helm chart, or install if not exists
+            helm upgrade bt-prod-storybook oci://registry-1.docker.io/octoberkeleytime/bt-storybook \
+              --install \
+              --version=0.1.0 \
+              --namespace=bt \
+              --set host=storybook.stanfurdtime.com
+
+            # Restart deployment if helm chart existed
+            if [ $status = true ]; then
+              kubectl rollout restart deployment bt-prod-storybook-frontend
+            fi
+
+            # Check container status
+            kubectl rollout status --timeout=180s deployment bt-prod-storybook-frontend
+
+      - name: Output Summary
+        run: |
+          echo "# :white_check_mark: Deployment available at [storybook.stanfurdtime.com](https://storybook.stanfurdtime.com)." >> $GITHUB_STEP_SUMMARY

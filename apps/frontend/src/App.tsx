@@ -1,6 +1,7 @@
 import { lazy } from "react";
 
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import {
   RouterProvider,
   createBrowserRouter,
@@ -9,12 +10,13 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+import UserProvider from "@/providers/UserProvider";
 
 // import PinsProvider from "@/components/PinsProvider";
 
+const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
@@ -44,6 +46,7 @@ const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
+const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
@@ -51,6 +54,9 @@ const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 // const Map = lazy(() => import("@/app/Map"));
 const Plans = lazy(() => import("@/app/Plans"));
+const GradTrak = lazy(() => import("@/app/GradTrak"));
+const GradTrakOnboarding = lazy(() => import("@/app/GradTrak/Onboarding"));
+const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 
 const router = createBrowserRouter([
   {
@@ -65,7 +71,11 @@ const router = createBrowserRouter([
       //   path: "discover",
       // },
       {
-        element: <Landing />,
+        element: (
+          <SuspenseBoundary key="landing">
+            <Landing />
+          </SuspenseBoundary>
+        ),
         index: true,
       },
       {
@@ -110,21 +120,57 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <Layout />,
+    element: <Layout footer={false} />,
     children: [
       {
+        path: "gradtrak",
         element: (
-          <SuspenseBoundary key="about">
-            <About />
+          <SuspenseBoundary key="gradtrak-landing">
+            <GradTrak />
           </SuspenseBoundary>
         ),
-        path: "about",
+      },
+      {
+        path: "gradtrak/onboarding",
+        element: (
+          <SuspenseBoundary key="gradtrak-onboarding">
+            <GradTrakOnboarding />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "gradtrak/dashboard",
+        element: (
+          <SuspenseBoundary key="gradtrak-dashboard">
+            <GradTrakDashboard />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "*",
+        loader: () => redirect("/gradtrak"),
       },
     ],
   },
   {
     element: <Layout />,
     children: [
+      {
+        path: "curated",
+        element: (
+          <SuspenseBoundary key="curated">
+            <CuratedClasses />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "about",
+        element: (
+          <SuspenseBoundary key="about">
+            <About />
+          </SuspenseBoundary>
+        ),
+      },
       {
         element: (
           <SuspenseBoundary key="profile">
@@ -321,18 +367,35 @@ const router = createBrowserRouter([
 ]);
 
 const client = new ApolloClient({
-  uri: "/api/graphql",
-  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: "/api/graphql",
+    credentials: "include",
+  }),
+  cache: new InMemoryCache({
+    typePolicies: {
+      PlanTerm: {
+        fields: {
+          courses: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
+    },
+  }),
 });
 
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <ThemeProvider>
-        {/* <PinsProvider> */}
-        <RouterProvider router={router} />
-        {/* </PinsProvider> */}
-      </ThemeProvider>
+      <UserProvider>
+        <ThemeProvider>
+          {/* <PinsProvider> */}
+          <RouterProvider router={router} />
+          {/* </PinsProvider> */}
+        </ThemeProvider>
+      </UserProvider>
     </ApolloProvider>
   );
 }

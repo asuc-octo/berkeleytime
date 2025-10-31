@@ -1,3 +1,5 @@
+import { Color } from "@repo/theme";
+
 export interface IEvent {
   subject: string;
   number: string;
@@ -6,6 +8,7 @@ export interface IEvent {
   endTime: string;
   startDate: string;
   endDate: string;
+  color?: Color;
   days?: boolean[];
   date?: string;
 }

@@ -3,7 +3,7 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  background: linear-gradient(to bottom, var(--background-color), transparent);
+  background-color: var(--foreground-color);
 
   .group {
     border: 1px solid var(--border-color);

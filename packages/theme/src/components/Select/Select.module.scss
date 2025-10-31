@@ -26,10 +26,7 @@
     background-color: var(--button-hover-color);
     cursor: default;
   }
-
 }
-
-
 
 .content {
   background-color: var(--foreground-color);
@@ -40,6 +37,10 @@
   scrollbar-color: var(--label-color) var(--foreground-color);
 }
 
-.radix-menu-item {
-  outline: none !important;
+.addOption {
+  color: var(--paragraph-color);
+  cursor: pointer;
+  border-top: solid 1px var(--button-active-color);
+  padding: 12px 24px;
+  margin: 2px;
 }

@@ -33,7 +33,7 @@ export default async (app: Application, redis: RedisClientType) => {
       cookie: {
         secure: !config.isDev,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60, // 1 hour
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
         sameSite: "lax",
       },
       store: new RedisStore({
@@ -53,9 +53,7 @@ export default async (app: Application, redis: RedisClientType) => {
     const { redirect_uri: redirectURI } = req.query;
 
     const parsedRedirectURI =
-      typeof redirectURI === "string" && redirectURI.startsWith("/")
-        ? redirectURI
-        : null;
+      typeof redirectURI === "string" ? redirectURI : null;
 
     if (authenticated) {
       res.redirect(parsedRedirectURI ?? SUCCESS_REDIRECT);
@@ -92,9 +90,7 @@ export default async (app: Application, redis: RedisClientType) => {
         );
 
         parsedRedirectURI =
-          typeof redirectURI === "string" && redirectURI.startsWith("/")
-            ? redirectURI
-            : undefined;
+          typeof redirectURI === "string" ? redirectURI : undefined;
       } catch {
         // Do nothing
       }
@@ -149,7 +145,6 @@ export default async (app: Application, redis: RedisClientType) => {
             email,
             googleId: profile.id,
             name: profile.displayName,
-            // TODO: refreshToken
           });
         }
 

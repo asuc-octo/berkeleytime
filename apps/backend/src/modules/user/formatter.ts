@@ -15,11 +15,14 @@ export const formatUser = (user: UserType) => {
   return {
     _id: user._id,
     email: user.email,
+    staff: user.staff,
     name: user.name,
     student: user.email.endsWith("@berkeley.edu"),
     bookmarkedCourses: user.bookmarkedCourses,
     bookmarkedClasses: user.bookmarkedClasses,
     monitoredClasses: user.monitoredClasses,
     notificationsOn: user.notificationsOn,
+    majors: user.majors ? user.majors : [],
+    minors: user.minors ? user.minors : [],
   } as IntermediateUser;
 };

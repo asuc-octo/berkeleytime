@@ -8,16 +8,43 @@ import {
 
 import { Flex } from "@radix-ui/themes";
 import classNames from "classnames";
-import { NavArrowDown, Xmark } from "iconoir-react";
+import { NavArrowDown, Plus, Xmark } from "iconoir-react";
 import { DropdownMenu } from "radix-ui";
 
 import { Badge } from "../Badge";
+import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
 import SelectItem from "./SelectItem";
 
+// Helper function to compare objects by their key-value pairs
+const deepEqual = (obj1: any, obj2: any): boolean => {
+  if (obj1 === obj2) return true;
+
+  if (obj1 == null || obj2 == null) return false;
+
+  if (typeof obj1 !== "object" || typeof obj2 !== "object") return false;
+
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  if (keys1.length !== keys2.length) return false;
+
+  for (let key of keys1) {
+    if (!keys2.includes(key)) return false;
+    if (!deepEqual(obj1[key], obj2[key])) return false;
+  }
+
+  return true;
+};
+
 export * from "./SelectItem";
 
-export type Option<T> = { value: T; label: string; meta?: string };
+export type Option<T> = {
+  value: T;
+  label: string;
+  meta?: string;
+  color?: Color;
+};
 
 export interface SelectHandle {
   focus: () => void;
@@ -32,10 +59,15 @@ export interface SelectProps<T> {
   onChange: (newValue: T | T[] | null) => void;
   disabled?: boolean;
   multi?: boolean;
+  checkboxMulti?: boolean;
   placeholder?: string;
   clearable?: boolean;
   ref?: React.Ref<SelectHandle>;
   variant?: "default" | "foreground";
+  addOption?: {
+    text: string;
+    onClick: () => void;
+  };
 }
 
 export function useMatchTriggerWidth<T extends HTMLElement>() {
@@ -62,10 +94,12 @@ export function Select<T>({
   onChange,
   disabled = false,
   multi = false,
+  checkboxMulti = false,
   placeholder = "Select",
   clearable = false,
   ref,
   variant = "default",
+  addOption,
 }: SelectProps<T>) {
   const { triggerRef, triggerWidth } = useMatchTriggerWidth<HTMLDivElement>();
 
@@ -80,15 +114,13 @@ export function Select<T>({
     },
   }));
 
-  const activeLabel = useMemo(
+  const activeElem = useMemo(
     () =>
       Array.isArray(value)
         ? value.length === 0
           ? null
-          : options
-              .filter((opt) => value.includes(opt.value))
-              .map((opt) => opt.label)
-        : options.find((opt) => opt.value === value)?.label,
+          : options.filter((opt) => value.some((v) => deepEqual(v, opt.value)))
+        : options.find((opt) => opt.value === value),
     [value]
   );
 
@@ -100,20 +132,21 @@ export function Select<T>({
           ref={triggerRef}
           justify="between"
           className={classNames(styles.trigger, {
-            [styles.selected]: activeLabel,
+            [styles.selected]: activeElem,
             [styles.disabled]: disabled,
             [styles.foreground]: variant === "foreground",
           })}
           tabIndex={0}
           gap="12px"
         >
-          {activeLabel ? (
-            Array.isArray(activeLabel) ? (
+          {activeElem ? (
+            Array.isArray(activeElem) ? (
               <Flex direction="row" gap="8px" wrap="wrap">
-                {activeLabel.map((l) => (
+                {activeElem.map((el) => (
                   <Badge
-                    label={l}
-                    color="blue"
+                    key={el.label}
+                    label={el.label}
+                    color={el.color ? el.color : Color.blue}
                     icon={
                       <Xmark
                         style={{ zIndex: 100 }}
@@ -121,9 +154,9 @@ export function Select<T>({
                           e.stopPropagation();
                           if (!Array.isArray(value)) return;
                           const myV = options.find(
-                            (opt) => opt.label === l
+                            (opt) => opt.label === el.label
                           )?.value;
-                          onChange(value.filter((v) => v !== myV));
+                          onChange(value.filter((v) => !deepEqual(v, myV)));
                           e.preventDefault();
                         }}
                       />
@@ -132,7 +165,7 @@ export function Select<T>({
                 ))}
               </Flex>
             ) : (
-              activeLabel
+              activeElem.label
             )
           ) : (
             placeholder
@@ -161,7 +194,7 @@ export function Select<T>({
             return (
               <DropdownMenu.Item
                 key={i}
-                className={styles.radixMenuItem}
+                style={{ outline: "none" }}
                 onSelect={(e) => {
                   if (multi) {
                     e.preventDefault();
@@ -169,26 +202,45 @@ export function Select<T>({
                     if (Array.isArray(value))
                       newValues = structuredClone(value);
                     else newValues = [];
-                    if (!newValues.includes(opt.value)) {
+                    if (!newValues.some((v) => deepEqual(v, opt.value))) {
                       newValues.push(opt.value);
                       onChange(newValues);
-                    } else onChange(newValues.filter((v) => v !== opt.value));
+                    } else
+                      onChange(
+                        newValues.filter((v) => !deepEqual(v, opt.value))
+                      );
                   } else onChange(opt.value);
                 }}
               >
                 <SelectItem
                   label={opt.label}
                   meta={opt.meta}
-                  multi={multi}
+                  checkboxMulti={checkboxMulti}
                   selected={
                     Array.isArray(value)
-                      ? value.includes(opt.value)
-                      : value === opt.value
+                      ? value.some((v) => deepEqual(v, opt.value))
+                      : deepEqual(value, opt.value)
                   }
+                  color={opt.color}
                 />
               </DropdownMenu.Item>
             );
           })}
+          {addOption && (
+            <DropdownMenu.Item
+              key="add"
+              onSelect={addOption.onClick}
+              className={styles.addOption}
+            >
+              <Plus
+                style={{
+                  position: "relative",
+                  top: "2px",
+                }}
+              />{" "}
+              {addOption.text}
+            </DropdownMenu.Item>
+          )}
         </DropdownMenu.Content>
       )}
     </DropdownMenu.Root>

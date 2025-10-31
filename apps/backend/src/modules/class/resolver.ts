@@ -1,6 +1,6 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
-import { getCourse } from "../course/controller";
+import { getCourse, getCourseById } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
@@ -107,7 +107,8 @@ const resolvers: ClassModule.Resolvers = {
     course: async (parent: IntermediateClass | ClassModule.Class) => {
       if (parent.course) return parent.course;
 
-      const course = await getCourse(parent.subject, parent.courseNumber);
+      // Use courseId for cross-listed courses to get the correct course
+      const course = await getCourseById(parent.courseId);
 
       return course as unknown as CourseModule.Course;
     },
@@ -186,7 +187,8 @@ const resolvers: ClassModule.Resolvers = {
     course: async (parent: IntermediateSection | ClassModule.Section) => {
       if (typeof parent.course !== "string") return parent.course;
 
-      const course = await getCourse(parent.subject, parent.courseNumber);
+      // Use courseId (stored in parent.course) for cross-listed courses
+      const course = await getCourseById(parent.course);
 
       return course as unknown as CourseModule.Course;
     },

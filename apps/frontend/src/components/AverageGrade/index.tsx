@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Tooltip } from "radix-ui";
 
 import { GradeDistribution } from "@/lib/api";
+import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -17,18 +18,20 @@ interface AverageGradeProps {
   tooltip?: string;
 }
 
+function getGradeColor(grade: string): string {
+  if (grade === "N/A") {
+    return "var(--paragraph-color)";
+  }
+
+  const firstLetter = grade[0];
+  if (firstLetter === "A") return "var(--emerald-500)";
+  if (firstLetter === "B") return "var(--amber-500)";
+  return "var(--rose-500)";
+}
+
 export function ColoredGrade({ grade, style }: ColoredGradeProps) {
-  const color = useMemo(
-    () =>
-      grade === "N/A"
-        ? "var(--paragraph-color)"
-        : grade === "A+" || grade === "A" || grade === "A-"
-          ? "var(--emerald-500)"
-          : grade === "B+" || grade === "B" || grade === "B-"
-            ? "var(--amber-500)"
-            : "var(--rose-500)",
-    [grade]
-  );
+  const color = useMemo(() => getGradeColor(grade), [grade]);
+
   return (
     <div className={styles.trigger} style={{ color, ...style }}>
       {grade}
@@ -37,58 +40,46 @@ export function ColoredGrade({ grade, style }: ColoredGradeProps) {
 }
 
 export function AverageGrade({
-  gradeDistribution: { average },
+  gradeDistribution: { average, pnpPercentage },
   style,
   tooltip = "across all semesters this course has been offered",
 }: AverageGradeProps) {
-  const text = useMemo(
-    () =>
-      !average
-        ? ""
-        : average > 4
-          ? "A+"
-          : average > 3.7
-            ? "A"
-            : average > 3.5
-              ? "A-"
-              : average > 3
-                ? "B+"
-                : average > 2.7
-                  ? "B"
-                  : average > 2.5
-                    ? "B-"
-                    : average > 2
-                      ? "C+"
-                      : average > 1.7
-                        ? "C"
-                        : average > 1.5
-                          ? "C-"
-                          : average > 1
-                            ? "D+"
-                            : average > 0.7
-                              ? "D"
-                              : average
-                                ? "D-"
-                                : "F",
-    [average]
-  );
+  const isPnp =
+    !average && pnpPercentage !== null && pnpPercentage !== undefined;
+
+  const passRate = useMemo(() => {
+    if (pnpPercentage === null || pnpPercentage === undefined) {
+      return null;
+    }
+    return Math.round(pnpPercentage * 100);
+  }, [pnpPercentage]);
+
+  const text = useMemo(() => {
+    if (average) {
+      return getLetterGradeFromGPA(average);
+    }
+    if (passRate !== null) {
+      return `${passRate}% P`;
+    }
+    return "";
+  }, [average, passRate]);
 
   const color = useMemo(
-    () =>
-      !average
-        ? "var(--paragraph-color)"
-        : average > 3.5
-          ? "var(--emerald-500)"
-          : average > 2.5
-            ? "var(--amber-500)"
-            : "var(--rose-500)",
-    [average]
+    () => (isPnp ? "var(--paragraph-color)" : getGradeColor(text)),
+    [isPnp, text]
   );
+
+  // Show if either average or pnpPercentage is available
+  if (!average && (pnpPercentage === null || pnpPercentage === undefined)) {
+    return null;
+  }
 
   return (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
-        <ColoredGrade style={style} grade={text} />
+        <div className={styles.trigger} style={{ color, ...style }}>
+          {text}
+        </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
@@ -99,22 +90,26 @@ export function AverageGrade({
         >
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
-            <p className={styles.title}>Average grade</p>
-            {average ? (
-              <p className={styles.description}>
-                Students have received{" "}
-                {["A", "F"].includes(text[0]) ? "an " : "a "}
-                <span style={{ color }}>
-                  {text} ({average.toLocaleString()})
-                </span>{" "}
-                in this course on average {tooltip}.
-              </p>
-            ) : (
-              <p className={styles.description}>
-                Either this course has not been previously offered, or the
-                average grade is not available.
-              </p>
-            )}
+            <p className={styles.title}>
+              {isPnp ? "Pass rate" : "Average grade"}
+            </p>
+            <p className={styles.description}>
+              {isPnp ? (
+                <>
+                  <span>{passRate!}% of students</span> have passed this course{" "}
+                  {tooltip}.
+                </>
+              ) : (
+                <>
+                  Students have received{" "}
+                  {["A", "F"].includes(text[0]) ? "an " : "a "}
+                  <span style={{ color }}>
+                    {text} ({average!.toLocaleString()})
+                  </span>{" "}
+                  in this course on average {tooltip}.
+                </>
+              )}
+            </p>
           </div>
         </Tooltip.Content>
       </Tooltip.Portal>

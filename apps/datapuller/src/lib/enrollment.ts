@@ -47,32 +47,32 @@ const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
     data: {
       time: time.toISOString(),
       status: input.enrollmentStatus?.status?.code,
-      enrolledCount: input.enrollmentStatus?.enrolledCount,
-      reservedCount: input.enrollmentStatus?.reservedCount,
-      waitlistedCount: input.enrollmentStatus?.waitlistedCount,
-      minEnroll: input.enrollmentStatus?.minEnroll,
-      maxEnroll: input.enrollmentStatus?.maxEnroll,
-      maxWaitlist: input.enrollmentStatus?.maxWaitlist,
-      openReserved: input.enrollmentStatus?.openReserved,
+      enrolledCount: input.enrollmentStatus?.enrolledCount ?? 0,
+      reservedCount: input.enrollmentStatus?.reservedCount ?? 0,
+      waitlistedCount: input.enrollmentStatus?.waitlistedCount ?? 0,
+      minEnroll: input.enrollmentStatus?.minEnroll ?? undefined,
+      maxEnroll: input.enrollmentStatus?.maxEnroll ?? 0,
+      maxWaitlist: input.enrollmentStatus?.maxWaitlist ?? 0,
+      openReserved: input.enrollmentStatus?.openReserved ?? 0,
       instructorAddConsentRequired:
         input.enrollmentStatus?.instructorAddConsentRequired,
       instructorDropConsentRequired:
         input.enrollmentStatus?.instructorDropConsentRequired,
-      seatReservationCounts: input.enrollmentStatus?.seatReservations?.map(
+      seatReservationCount: input.enrollmentStatus?.seatReservations?.map(
         (reservation) => ({
-          number: reservation.number,
-          maxEnroll: reservation.maxEnroll,
-          enrolledCount: reservation.enrolledCount,
+          number: reservation.number ?? 0,
+          maxEnroll: reservation.maxEnroll ?? 0,
+          enrolledCount: reservation.enrolledCount ?? 0,
         })
       ),
     },
-    seatReservationTypes: input.enrollmentStatus?.seatReservations?.map(
-      (reservation) => ({
-        number: reservation.number,
-        requirementGroup: reservation.requirementGroup?.description,
-        fromDate: reservation.fromDate,
-      })
-    ),
+    seatReservationTypes: input.enrollmentStatus?.seatReservations
+      ?.filter((reservation) => reservation.requirementGroup?.description)
+      .map((reservation) => ({
+        number: reservation.number ?? 0,
+        requirementGroup: reservation.requirementGroup?.description!,
+        fromDate: reservation.fromDate ?? "",
+      })),
   };
 
   return output;

@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, Reference, useMutation } from "@apollo/client";
+import { Reference } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 import {
   DELETE_SCHEDULE,
@@ -29,7 +30,7 @@ export const useDeleteSchedule = () => {
   const deleteSchedule = useCallback(
     async (
       id: ScheduleIdentifier,
-      options?: Omit<MutationHookOptions<DeleteScheduleResponse>, "variables">
+      options?: Omit<useMutation.Options<DeleteScheduleResponse>, "variables">
     ) => {
       const mutate = mutation[0];
 

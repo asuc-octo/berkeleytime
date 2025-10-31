@@ -10,7 +10,6 @@ export interface Input {
 }
 
 export interface Output {
-  color: string;
   enrollmentHistory: IEnrollment;
   input: Input;
   hidden: boolean;

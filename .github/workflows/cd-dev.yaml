@@ -12,22 +12,58 @@ on:
         required: true
         type: number
         default: 1
+      auth:
+        description: "Enable authentication support"
+        required: true
+        type: boolean
+        default: false
+
+env:
+  HOSTS: "auth0.dev.stanfurdtime.com auth1.dev.stanfurdtime.com auth2.dev.stanfurdtime.com auth3.dev.stanfurdtime.com auth4.dev.stanfurdtime.com auth5.dev.stanfurdtime.com auth6.dev.stanfurdtime.com auth7.dev.stanfurdtime.com auth8.dev.stanfurdtime.com auth9.dev.stanfurdtime.com"
 
 jobs:
   compute-sha:
-    name: Compute sha_short
+    name: Compute sha_short and host
     runs-on: ubuntu-latest
     outputs:
       sha_short: ${{ steps.vars.outputs.sha_short }}
+      host: ${{ steps.vars.outputs.host }}
 
     steps:
+      - name: SSH and Query Hosts
+        uses: appleboy/ssh-action@v1.2.2
+        if: ${{ inputs.auth }}
+        id: ssh
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          capture_stdout: true
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            for host in ${{ env.HOSTS }}; do
+              if ! kubectl get ingress -o jsonpath='{.items[*].spec.rules[*].host}' | grep -qw "$host"; then
+                echo $host
+                exit 0
+              fi
+            done
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set vars
         id: vars
         run: |
-          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+          sha_short=$(git rev-parse --short ${{ github.sha }})
+          auth_host=$(echo ${{ steps.ssh.outputs.stdout || '' }} | head -n 1)
+
+          echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
+          if [ -z $auth_host ]; then
+            echo "host=$sha_short.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
+          else
+            echo "host=$auth_host" >> $GITHUB_OUTPUT
+          fi
 
   build-push:
     name: Build and Push Images and Charts
@@ -59,10 +95,10 @@ jobs:
           suspend: true
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
-        host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
-        mongoUri: mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
-        redisUri: redis://bt-dev-redis-master.bt.svc.cluster.local:6379
-      host: ${{ needs.compute-sha.outputs.sha_short }}.dev.stanfurdtime.com
+        host: ${{ needs.compute-sha.outputs.host }}
+        mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
+        redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
+      host: ${{ needs.compute-sha.outputs.host }}
     secrets: inherit
 
   limit-deploy:

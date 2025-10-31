@@ -29,6 +29,10 @@ export const customEventSchema = new Schema({
     required: true,
     trim: true,
   },
+  color: {
+    type: String,
+    required: false,
+  },
 });
 
 export const selectedClassSchema = new Schema({
@@ -49,6 +53,10 @@ export const selectedClassSchema = new Schema({
   },
   sectionIds: {
     type: [Number],
+    required: false,
+  },
+  color: {
+    type: String,
     required: false,
   },
 });

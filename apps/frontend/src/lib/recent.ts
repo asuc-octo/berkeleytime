@@ -4,12 +4,14 @@ export enum RecentType {
   Class = "recent-classes",
   Schedule = "recent-schedules",
   Course = "recent-courses",
+  CatalogTerm = "recent-catalog-term",
 }
 
 const MaxLength = {
   [RecentType.Class]: 10,
   [RecentType.Schedule]: 5,
   [RecentType.Course]: 5,
+  [RecentType.CatalogTerm]: 1,
 };
 
 interface RecentClass {
@@ -33,11 +35,18 @@ interface RecentCourse {
   number: string;
 }
 
+interface RecentCatalogTerm {
+  semester: Semester;
+  year: number;
+}
+
 export type Recent<T extends RecentType> = T extends RecentType.Class
   ? RecentClass
   : T extends RecentType.Schedule
     ? RecentSchedule
-    : RecentCourse;
+    : T extends RecentType.Course
+      ? RecentCourse
+      : RecentCatalogTerm;
 
 export const getRecents = <T extends RecentType>(
   type: T,
@@ -81,6 +90,8 @@ export const addRecent = <T extends RecentType>(
 
   const item = JSON.stringify(recents.slice(0, MaxLength[type]));
   localStorage.setItem(type, item);
+
+  window.dispatchEvent(new CustomEvent("recent-updated", { detail: { type } }));
 };
 
 export const removeRecent = <T extends RecentType>(

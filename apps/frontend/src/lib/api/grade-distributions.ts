@@ -9,6 +9,7 @@ export interface Grade {
 export interface GradeDistribution {
   average: number | null;
   distribution: Grade[];
+  pnpPercentage?: number | null;
 }
 
 export interface ReadGradeDistributionResponse {

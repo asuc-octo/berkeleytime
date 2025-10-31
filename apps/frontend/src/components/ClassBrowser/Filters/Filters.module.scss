@@ -22,6 +22,25 @@
       }
     }
 
+    .sortControls {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+
+      > :first-child {
+        flex: 1 1 auto;
+      }
+    }
+
+    .sortToggleButton {
+      width: 44px;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
     .filter {
       display: flex;
       align-items: center;

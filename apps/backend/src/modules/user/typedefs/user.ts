@@ -10,11 +10,14 @@ const typedef = gql`
     _id: ID!
     email: String!
     name: String!
+    staff: Boolean!
     student: Boolean!
     bookmarkedCourses: [Course!]!
     bookmarkedClasses: [Class!]!
     monitoredClasses: [MonitoredClass!]!
     notificationsOn: Boolean!
+    majors: [String!]!
+    minors: [String!]!
   }
 
   type Query {
@@ -54,6 +57,8 @@ const typedef = gql`
     bookmarkedCourses: [BookmarkedCourseInput!]
     monitoredClasses: [MonitoredClassInput!]
     notificationsOn: Boolean!
+    majors: [String!]
+    minors: [String!]
   }
 
   type Mutation {

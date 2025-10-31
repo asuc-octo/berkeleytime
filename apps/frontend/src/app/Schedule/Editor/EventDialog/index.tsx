@@ -4,6 +4,7 @@ import { ArrowRight, Xmark } from "iconoir-react";
 
 import {
   Button,
+  Color,
   DaySelect,
   Dialog,
   Flex,
@@ -60,6 +61,7 @@ export default function EventDialog({ children }: EventDialogProps) {
       startTime,
       endTime,
       days,
+      color: Color.gray,
     };
 
     updateSchedule(

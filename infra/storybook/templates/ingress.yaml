@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  labels:
+    {{- include "bt-storybook.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/issuer: {{ .Values.issuer }}
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .Values.host }}
+      secretName: bt-cert
+  rules:
+    - host: {{ .Values.host }}
+      http:
+        paths:
+          - path: {{ .Values.frontend.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bt-storybook.frontendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}

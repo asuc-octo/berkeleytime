@@ -1,0 +1,25 @@
+.labelDialog {
+  max-width: 400px;
+  width: 100%;
+}
+
+.body {
+  padding: 24px;
+  background-color: var(--foreground-color);
+}
+
+.rowContainer {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.labelRow {
+  width: 100%;
+
+
+  .labelInput {
+    min-width: 0;
+    flex: 1;
+  }
+}
+

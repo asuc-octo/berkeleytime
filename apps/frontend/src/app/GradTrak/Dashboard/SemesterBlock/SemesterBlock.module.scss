@@ -1,0 +1,194 @@
+@import "../../GradTrak.module.scss";
+
+body[data-theme="dark"] {
+  @include dark-theme;
+}
+
+body[data-theme="light"] {
+  @include light-theme;
+}
+
+body:not([data-theme]) {
+  @include light-theme;
+
+  @media (prefers-color-scheme: dark) {
+    @include dark-theme;
+  }
+}
+
+.root {
+  color: var(--heading-color);
+
+  h2 {
+    color: var(--heading-color);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  h3 {
+    color: var(--heading-color);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  p {
+    color: var(--paragraph-color);
+    font-size: 12px;
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--foreground-color);
+
+      .title {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--heading-color);
+        line-height: 1;
+      }
+    }
+
+    .body {
+      flex-grow: 1;
+      min-height: 0;
+    }
+  }
+
+  @media (width > 992px) {
+    &.collapsed .panel {
+      display: none;
+    }
+
+    .panel {
+      border-right: 1px solid var(--border-color);
+    }
+
+    .panel .header {
+      display: none;
+    }
+
+    .view {
+      flex-grow: 1;
+    }
+  }
+
+  @media (width <= 992px) {
+    .panel {
+      flex-grow: 1;
+    }
+
+    &.open .panel {
+      display: none;
+    }
+
+    &:not(.open) .view {
+      display: none;
+    }
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    background-color: var(--semesterblock-color);
+    border-radius: 0.5rem;
+    width: 226px;
+    padding: 16px 8px;
+    gap: 8px;
+    flex-shrink: 0;
+
+    &[data-layout="grid"] {
+      width: 30vw;
+    }
+
+    @media (max-width: 600px) {
+      width: 100%;
+    }
+
+    .action-button {
+      cursor: pointer;
+    }
+
+    .semester-counter {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+
+      .pin {
+        position: relative;
+        top: 2px;
+        cursor: pointer;
+      }
+
+      .status {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 7px;
+        background-color: var(--green-500);
+      }
+
+      .counter {
+        background-color: var(--button-active-color);
+        color: var(--heading-color);
+        text-align: center;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 4px 6px;
+        border-radius: 4px;
+      }
+    }
+
+    .placeholder {
+      width: 100%;
+      height: 92px;
+      background-color: var(--background-color);
+      border-radius: 0.5rem;
+    }
+
+    .add-button {
+      align-items: center;
+      border: 0;
+      padding: 0;
+      font-size: 14px;
+      color: var(--paragraph-color);
+      background-color: var(--backdrop-color);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: var(--semesterblock-color);
+        color: var(--heading-color);
+      }
+    }
+  }
+}
+
+.dropdown-content {
+  width: 500px;
+}
+.menu-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+}
+.right-aligned-icon {
+  position: relative;
+  left: 60px;
+}
+.menuStatusColor {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 6px;
+  margin-right: 8px;
+}
+.status-selected {
+  color: var(--blue-500);
+}
