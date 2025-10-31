@@ -5,7 +5,14 @@ import { Search } from "iconoir-react";
 
 import { Badge, Color, LoadingIndicator } from "@repo/theme";
 
-import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
+import {
+  AcademicCareer,
+  GET_CATALOG,
+  GetCatalogResponse,
+  ICourse,
+  InstructionMethod,
+  Semester,
+} from "@/lib/api";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
@@ -32,11 +39,48 @@ export default function CourseSearch({
     Recent<RecentType.Course>[]
   >([]);
 
-  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
+  // Use GET_CATALOG to include all cross-listed course variations
+  // Use Fall 2024 as the most recent complete semester
+  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
+    variables: {
+      year: 2024,
+      semester: "Fall" as Semester,
+    },
+  });
 
   const catalogCourses = useMemo(() => {
-    if (!data?.courses) return [];
-    return data.courses; // no transformation
+    if (!data?.catalog) return [];
+
+    // Convert classes to unique courses (by subject + courseNumber)
+    const courseMap = new Map<string, ICourse>();
+    data.catalog.forEach((_class) => {
+      const key = `${_class.subject}_${_class.courseNumber}`;
+      if (!courseMap.has(key)) {
+        // Create a minimal ICourse object from class data
+        const course: ICourse = {
+          courseId: "",
+          subject: _class.subject,
+          number: _class.courseNumber,
+          title: _class.title || "",
+          // Add other required fields with defaults
+          classes: [],
+          crossListing: [],
+          requiredCourses: [],
+          gradeDistribution: { average: null, distribution: [] },
+          requirements: null,
+          description: "",
+          fromDate: "",
+          gradingBasis: "",
+          finalExam: null,
+          academicCareer: AcademicCareer.Undergraduate,
+          primaryInstructionMethod: InstructionMethod.Lecture,
+          toDate: "",
+          typicallyOffered: null,
+        };
+        courseMap.set(key, course);
+      }
+    });
+    return Array.from(courseMap.values());
   }, [data]);
 
   const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
@@ -109,7 +153,7 @@ export default function CourseSearch({
                       <Badge
                         key={`grades-${course.subject}-${course.number}-${index}`}
                         onClick={() => {
-                          const full = data?.courses.find(
+                          const full = catalogCourses.find(
                             (c) =>
                               c.subject === course.subject &&
                               c.number === course.number

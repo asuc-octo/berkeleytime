@@ -5,9 +5,27 @@ import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
 export const getCourse = async (subject: string, number: string) => {
-  const course = await CourseModel.findOne({ subject, number })
+  let course = await CourseModel.findOne({ subject, number })
     .sort({ fromDate: -1 })
     .lean();
+
+  // If not found, this might be a cross-listed course
+  // Find via class to get the courseId, then lookup course
+  if (!course) {
+    const _class = await ClassModel.findOne({
+      subject,
+      courseNumber: number,
+    })
+      .select({ courseId: 1 })
+      .sort({ year: -1, semester: -1 })
+      .lean();
+
+    if (_class?.courseId) {
+      course = await CourseModel.findOne({ courseId: _class.courseId })
+        .sort({ fromDate: -1 })
+        .lean();
+    }
+  }
 
   if (!course) return null;
 

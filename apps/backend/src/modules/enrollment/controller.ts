@@ -1,4 +1,4 @@
-import { NewEnrollmentHistoryModel } from "@repo/common";
+import { NewEnrollmentHistoryModel, SectionModel } from "@repo/common";
 
 import { Semester } from "../../generated-types/graphql";
 import { formatEnrollment } from "./formatter";
@@ -11,13 +11,24 @@ export const getEnrollment = async (
   courseNumber: string,
   sectionNumber: string
 ) => {
-  const enrollment = await NewEnrollmentHistoryModel.findOne({
+  // First find the section to get sectionId (handles cross-listed courses)
+  const section = await SectionModel.findOne({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",
     subject,
     courseNumber,
-    sectionNumber,
+    number: sectionNumber,
+    primary: true,
+  })
+    .select({ sectionId: 1 })
+    .lean();
+
+  if (!section) return null;
+
+  // Query by sectionId instead of subject+courseNumber
+  const enrollment = await NewEnrollmentHistoryModel.findOne({
+    sectionId: section.sectionId,
   }).lean();
 
   if (!enrollment) return null;

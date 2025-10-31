@@ -2,7 +2,6 @@ import {
   GradeDistributionModel,
   IGradeDistributionItem,
   SectionModel,
-  TermModel,
 } from "@repo/common";
 
 enum Letter {
@@ -194,13 +193,30 @@ export const getGradeDistributionByCourse = async (
   subject: string,
   number: string
 ) => {
-  const distributions = await GradeDistributionModel.find({
+  // First find all sections for this course (handles cross-listed courses)
+  const sections = await SectionModel.find({
     subject,
     courseNumber: number,
-  });
+    primary: true,
+  })
+    .select({ sectionId: 1 })
+    .lean();
 
-  // if (distributions.length === 0)
-  //   throw new Error("No grade distributions found");
+  if (sections.length === 0) {
+    const distribution = getDistribution([]);
+    return {
+      average: getAverageGrade(distribution),
+      distribution,
+      pnpPercentage: getPnpPercentage(distribution),
+    };
+  }
+
+  const sectionIds = sections.map((s) => s.sectionId);
+
+  // Query by sectionId instead of subject+courseNumber
+  const distributions = await GradeDistributionModel.find({
+    sectionId: { $in: sectionIds },
+  });
 
   const distribution = getDistribution(distributions);
 
@@ -233,9 +249,8 @@ export const getGradeDistributionByClass = async (
 
   if (!section) throw new Error("Class not found");
 
+  // Query by sectionId only (handles cross-listed courses)
   const distributions = await GradeDistributionModel.find({
-    subject,
-    courseNumber,
     sectionId: section.sectionId,
   });
 
@@ -258,23 +273,33 @@ export const getGradeDistributionBySemester = async (
   subject: string,
   courseNumber: string
 ) => {
-  const term = await TermModel.findOne({
-    name: `${year} ${semester}`,
-  })
-    .select({ id: 1 })
-    .lean();
-
-  if (!term) throw new Error(`Term not found for ${year} ${semester}`);
-
-  const distributions = await GradeDistributionModel.find({
-    termId: term.id,
+  // First find all sections for this course in this semester (handles cross-listed courses)
+  const sections = await SectionModel.find({
+    year,
+    semester,
     sessionId,
     subject,
     courseNumber,
-  });
+    primary: true,
+  })
+    .select({ sectionId: 1 })
+    .lean();
 
-  // if (distributions.length === 0)
-  //   throw new Error("No grade distributions found");
+  if (sections.length === 0) {
+    const distribution = getDistribution([]);
+    return {
+      average: getAverageGrade(distribution),
+      distribution,
+      pnpPercentage: getPnpPercentage(distribution),
+    };
+  }
+
+  const sectionIds = sections.map((s) => s.sectionId);
+
+  // Query by sectionId instead of termId+sessionId+subject+courseNumber
+  const distributions = await GradeDistributionModel.find({
+    sectionId: { $in: sectionIds },
+  });
 
   const distribution = getDistribution(distributions);
 
