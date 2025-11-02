@@ -329,9 +329,14 @@ export const CREATE_SCHEDULE = gql`
       _id
       name
       public
-      year
       createdBy
+      year
       semester
+      sessionId
+      term {
+        startDate
+        endDate
+      }
       events {
         _id
         title
@@ -340,14 +345,99 @@ export const CREATE_SCHEDULE = gql`
         endTime
         days
       }
-      sessionId
       classes {
         class {
           subject
           courseNumber
           number
+          unitsMax
+          unitsMin
+          course {
+            title
+            gradeDistribution {
+              average
+              distribution {
+                letter
+                count
+              }
+            }
+          }
+          primarySection {
+            sectionId
+            subject
+            courseNumber
+            classNumber
+            number
+            startDate
+            endDate
+            component
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
+            meetings {
+              days
+              location
+              endTime
+              startTime
+              instructors {
+                familyName
+                givenName
+              }
+            }
+            exams {
+              date
+              type
+              location
+              startTime
+              endTime
+            }
+          }
+          sections {
+            sectionId
+            subject
+            courseNumber
+            classNumber
+            number
+            startDate
+            endDate
+            component
+            enrollment {
+              latest {
+                status
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
+            meetings {
+              days
+              location
+              endTime
+              startTime
+              instructors {
+                familyName
+                givenName
+              }
+            }
+            exams {
+              date
+              type
+              location
+              startTime
+              endTime
+            }
+          }
         }
-        # selectedSections
+        selectedSections {
+          sectionId
+        }
       }
     }
   }
