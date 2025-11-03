@@ -151,6 +151,7 @@ export function Select<T>({
           direction="row"
           ref={triggerRef}
           justify="between"
+          align="center"
           className={classNames(styles.trigger, {
             [styles.selected]: activeElem,
             [styles.disabled]: disabled,
@@ -173,7 +174,7 @@ export function Select<T>({
                         onPointerDown={(e) => {
                           e.stopPropagation();
                           if (!Array.isArray(value)) return;
-                          const myV = options.find(
+                          const myV = selectableOptions.find(
                             (opt) => opt.label === el.label
                           )?.value;
                           onChange(value.filter((v) => !deepEqual(v, myV)));
@@ -190,7 +191,7 @@ export function Select<T>({
           ) : (
             placeholder
           )}
-          <Flex direction="row" gap="8px">
+          <Flex direction="row" gap="8px" align="center">
             {clearable && (
               <Xmark
                 onPointerDown={(e) => {

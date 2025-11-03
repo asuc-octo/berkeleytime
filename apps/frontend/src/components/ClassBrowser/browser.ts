@@ -47,6 +47,31 @@ export enum Day {
 
 export type Breadth = string;
 export type UniversityRequirement = string;
+export enum GradingBasis {
+  ESU = "ESU",
+  SUS = "SUS",
+  OPT = "OPT",
+  PNP = "PNP",
+  BMT = "BMT",
+  GRD = "GRD",
+  IOP = "IOP",
+}
+
+export enum GradingFilter {
+  Graded = "Graded",
+  PassNoPass = "Pass/Not Pass",
+  Other = "Other",
+}
+
+export const gradingBasisCategoryMap: Record<GradingBasis, GradingFilter> = {
+  [GradingBasis.OPT]: GradingFilter.Graded,
+  [GradingBasis.GRD]: GradingFilter.Graded,
+  [GradingBasis.PNP]: GradingFilter.PassNoPass,
+  [GradingBasis.ESU]: GradingFilter.Other,
+  [GradingBasis.SUS]: GradingFilter.Other,
+  [GradingBasis.BMT]: GradingFilter.Other,
+  [GradingBasis.IOP]: GradingFilter.Other,
+};
 
 export const getLevel = (academicCareer: AcademicCareer, number: string) => {
   return academicCareer === AcademicCareer.Undergraduate
@@ -116,7 +141,9 @@ export const getFilteredClasses = (
   currentOpen: boolean,
   currentOnline: boolean,
   currentBreadths: Breadth[] = [],
-  currentUniversityRequirement: UniversityRequirement | null = null
+  currentUniversityRequirement: UniversityRequirement | null = null,
+  currentGradingFilters: GradingFilter[] = [],
+  currentDepartment: string | null = null
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -212,6 +239,27 @@ export const getFilteredClasses = (
 
           return acc;
         }
+      }
+
+      if (currentGradingFilters.length > 0) {
+        const basis = (_class.gradingBasis ?? "") as GradingBasis;
+        const category =
+          gradingBasisCategoryMap[basis] ?? GradingFilter.Other;
+
+        if (!currentGradingFilters.includes(category)) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
+      }
+
+      if (
+        currentDepartment &&
+        _class.subject.toLowerCase() !== currentDepartment.toLowerCase()
+      ) {
+        acc.excludedClasses.push(_class);
+
+        return acc;
       }
 
       acc.includedClasses.push(_class);

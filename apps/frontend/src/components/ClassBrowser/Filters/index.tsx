@@ -7,11 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option } from "@repo/theme";
 import { sortByTermDescending } from "@/lib/classes";
+import { subjects } from "@/lib/course";
 
 import Header from "../Header";
 import {
   Breadth,
   Day,
+  GradingFilter,
   Level,
   SortBy,
   getAllBreadthRequirements,
@@ -31,6 +33,8 @@ type RequirementSelection =
   | { type: "breadth"; value: Breadth }
   | { type: "university"; value: UniversityRequirement };
 
+const EMPTY_DAYS: boolean[] = [false, false, false, false, false, false, false];
+
 export default function Filters() {
   const {
     includedClasses,
@@ -45,6 +49,10 @@ export default function Filters() {
     updateBreadths,
     universityRequirement,
     updateUniversityRequirement,
+    gradingFilters,
+    updateGradingFilters,
+    department,
+    updateDepartment,
     open,
     // updateOpen,
     online,
@@ -62,11 +70,7 @@ export default function Filters() {
 
   const navigate = useNavigate();
 
-  const defaultDaysState = useMemo(
-    () => [false, false, false, false, false, false, false],
-    []
-  );
-  const [daysArray, setDaysArray] = useState(defaultDaysState);
+  const [daysArray, setDaysArray] = useState<boolean[]>(() => [...EMPTY_DAYS]);
 
   useEffect(() => {
     const newDays = daysArray.reduce((acc, v, i) => {
@@ -86,7 +90,11 @@ export default function Filters() {
             [],
             days,
             open,
-            online
+            online,
+            breadths,
+            universityRequirement,
+            gradingFilters,
+            department
           ).includedClasses;
 
     return classes.reduce(
@@ -115,6 +123,10 @@ export default function Filters() {
     days,
     open,
     online,
+    breadths,
+    universityRequirement,
+    gradingFilters,
+    department,
   ]);
 
   const filteredBreadths = useMemo(() => {
@@ -168,6 +180,33 @@ export default function Filters() {
     ],
     [breadths, universityRequirement]
   );
+
+  const gradingOptions = useMemo<Option<GradingFilter>[]>(() => {
+    return Object.values(GradingFilter).map((category) => ({
+      value: category,
+      label: category,
+    }));
+  }, []);
+
+  const departmentOptions = useMemo<Option<string>[]>(() => {
+    const allSubjects = new Set<string>();
+    [...includedClasses, ...excludedClasses].forEach((_class) => {
+      if (_class.subject) allSubjects.add(_class.subject);
+    });
+
+    return Array.from(allSubjects)
+      .map((code) => {
+        const key = code.toLowerCase();
+        const info = subjects[key];
+        if (!info) return null;
+        return {
+          value: key,
+          label: info.name,
+        };
+      })
+      .filter((option): option is Option<string> => option !== null)
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [includedClasses, excludedClasses]);
 
   // const filteredDays = useMemo(() => {
   //   const filteredDays = Object.values(Day).reduce(
@@ -248,8 +287,11 @@ export default function Filters() {
     updateLevels([]);
     updateBreadths([]);
     updateUniversityRequirement(null);
+    updateGradingFilters([]);
+    updateDepartment(null);
     updateUnits([0, 5]);
-    setDaysArray([...defaultDaysState]);
+    setDaysArray([...EMPTY_DAYS]);
+    updateDays([]);
   };
 
   return (
@@ -341,7 +383,7 @@ export default function Filters() {
           />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Class Level</p>
+          <p className={styles.label}>Class level</p>
           <Select
             multi
             value={levels}
@@ -356,6 +398,20 @@ export default function Filters() {
                 meta: filteredLevels[level].toString(),
               };
             })}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Department</p>
+          <Select<string>
+            value={department}
+            placeholder="Select department"
+            clearable
+            onChange={(value) => {
+              if (typeof value === "string" || value === null) {
+                updateDepartment(value);
+              }
+            }}
+            options={departmentOptions}
           />
         </div>
         <div className={styles.formControl}>
@@ -377,6 +433,18 @@ export default function Filters() {
               setDaysArray([...v]);
             }}
             size="sm"
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Grading options</p>
+          <Select<GradingFilter>
+            multi
+            value={gradingFilters}
+            placeholder="Filter by grading options"
+            onChange={(v) => {
+              if (Array.isArray(v)) updateGradingFilters(v);
+            }}
+            options={gradingOptions}
           />
         </div>
       </div>
