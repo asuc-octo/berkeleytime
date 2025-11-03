@@ -85,6 +85,34 @@ const aggregatedMetricsSchema = new Schema({
   },
 });
 
+// CLASS-level queries (most specific)
+aggregatedMetricsSchema.index(
+  {
+    subject: 1,
+    courseNumber: 1,
+    semester: 1,
+    year: 1,
+    classNumber: 1,
+    metricName: 1,
+    categoryValue: 1,
+  },
+  { unique: true }
+);
+
+// TERM-level queries (group all classes in a semester)
+aggregatedMetricsSchema.index({
+  subject: 1,
+  courseNumber: 1,
+  semester: 1,
+  year: 1,
+});
+
+// COURSE-level queries (group all classes across all semesters)
+aggregatedMetricsSchema.index({
+  subject: 1,
+  courseNumber: 1,
+});
+
 export const AggregatedMetricsModel = mongoose.model(
   "aggregatedMetrics",
   aggregatedMetricsSchema
