@@ -11,7 +11,7 @@ import {
 import { Checkbox } from "radix-ui";
 import { useNavigate } from "react-router-dom";
 
-import { Button, DaySelect, IconButton, Select } from "@repo/theme";
+import { Button, DaySelect, IconButton, Select, Slider } from "@repo/theme";
 
 import { Component, componentMap } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -21,7 +21,6 @@ import {
   Day,
   Level,
   SortBy,
-  Unit,
   getAllBreadthRequirements,
   getAllUniversityRequirements,
   getFilteredClasses,
@@ -225,53 +224,6 @@ export default function Filters() {
   //   online,
   // ]);
 
-  const filteredUnits = useMemo(() => {
-    const filteredUnits = Object.values(Unit).reduce(
-      (acc, units) => {
-        acc[units] = 0;
-        return acc;
-      },
-      {} as Record<Unit, number>
-    );
-
-    const classes =
-      units.length === 0
-        ? includedClasses
-        : getFilteredClasses(
-            excludedClasses,
-            components,
-            [],
-            levels,
-            days,
-            open,
-            online
-          ).includedClasses;
-
-    for (const _class of classes) {
-      const unitsMin = Math.floor(_class.unitsMin);
-      const unitsMax = Math.floor(_class.unitsMax);
-
-      [...Array(unitsMax - unitsMin || 1)].forEach((_, index) => {
-        const units = unitsMin + index;
-
-        filteredUnits[
-          units === 5 ? Unit.FivePlus : (units.toString() as Unit)
-        ] += 1;
-      });
-    }
-
-    return filteredUnits;
-  }, [
-    excludedClasses,
-    includedClasses,
-    units,
-    components,
-    levels,
-    days,
-    open,
-    online,
-  ]);
-
   // const amountOpen = useMemo(
   //   () =>
   //     includedClasses.filter(
@@ -363,7 +315,6 @@ export default function Filters() {
             aria-label={`Switch to ${nextOrderLabel} order`}
             title={`Switch to ${nextOrderLabel} order`}
             aria-pressed={reverse}
-            style={{ width: 44, height: 44 }}
           >
             {isAscending ? (
               <SortUp width={16} height={16} />
@@ -389,19 +340,13 @@ export default function Filters() {
           })}
         />
         <p className={styles.label}>UNITS</p>
-        <Select
-          multi
+        <Slider
+          min={0}
+          max={5}
+          step={1}
           value={units}
-          onChange={(v) => {
-            if (Array.isArray(v)) updateUnits(v);
-          }}
-          options={Object.values(Unit).map((unit) => {
-            return {
-              value: unit,
-              label: unit,
-              meta: filteredUnits[unit].toString(),
-            };
-          })}
+          onValueChange={updateUnits}
+          labels={["0", "1", "2", "3", "4", "5+"]}
         />
         <p className={styles.label}>L&S REQUIREMENTS</p>
         <Select
@@ -484,7 +429,7 @@ export default function Filters() {
           noFill
           onClick={() => setExpanded(!expanded)}
           as="button"
-          style={{ marginTop: 15 }}
+          className={styles.showMoreButton}
         >
           {expanded ? "Show less" : "Show more"}
           {expanded ? <NavArrowUp /> : <NavArrowDown />}

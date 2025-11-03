@@ -7,7 +7,7 @@ import {
   Day,
   Level,
   SortBy,
-  Unit,
+  UnitRange,
   UniversityRequirement,
 } from "./browser";
 
@@ -23,7 +23,7 @@ export interface BrowserContextType {
   terms?: ITerm[];
   query: string;
   components: Component[];
-  units: Unit[];
+  units: UnitRange;
   levels: Level[];
   days: Day[];
   breadths: Breadth[];
@@ -34,7 +34,7 @@ export interface BrowserContextType {
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
   updateComponents: Dispatch<Component[]>;
-  updateUnits: Dispatch<Unit[]>;
+  updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
   updateBreadths: Dispatch<Breadth[]>;

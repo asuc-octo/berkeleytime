@@ -34,6 +34,8 @@ export enum Unit {
   Zero = "0",
 }
 
+export type UnitRange = [number, number];
+
 export enum Day {
   Sunday = "0",
   Monday = "1",
@@ -110,7 +112,7 @@ export const getAllUniversityRequirements = (
 export const getFilteredClasses = (
   classes: IClass[],
   currentComponents: Component[],
-  currentUnits: Unit[],
+  currentUnits: UnitRange,
   currentLevels: Level[],
   currentDays: Day[],
   currentOpen: boolean,
@@ -162,22 +164,18 @@ export const getFilteredClasses = (
         }
       }
 
-      // Filter by units
-      if (currentUnits.length > 0) {
+      // Filter by units - check if class unit range overlaps with filter range
+      // Default range [0, 5] means no filtering
+      if (currentUnits[0] !== 0 || currentUnits[1] !== 5) {
         const unitsMin = Math.floor(_class.unitsMin);
         const unitsMax = Math.floor(_class.unitsMax);
+        const classMaxCapped = Math.min(unitsMax, 5); // Cap at 5 for 5+ classes
 
-        const includesUnits = [...Array(unitsMax - unitsMin || 1)].some(
-          (_, index) => {
-            const units = unitsMin + index;
+        // Check if ranges overlap
+        const overlaps =
+          classMaxCapped >= currentUnits[0] && unitsMin <= currentUnits[1];
 
-            return currentUnits.includes(
-              unitsMin + index === 5 ? Unit.FivePlus : (`${units}` as Unit)
-            );
-          }
-        );
-
-        if (!includesUnits) {
+        if (!overlaps) {
           acc.excludedClasses.push(_class);
 
           return acc;

@@ -21,7 +21,7 @@ import {
   Day,
   Level,
   SortBy,
-  Unit,
+  UnitRange,
   UniversityRequirement,
   getFilteredClasses,
   getIndex,
@@ -78,7 +78,7 @@ export default function ClassBrowser({
     persistent ? (searchParams.get("query") ?? "") : ""
   );
   const [localComponents, setLocalComponents] = useState<Component[]>([]);
-  const [localUnits, setLocalUnits] = useState<Unit[]>([]);
+  const [localUnits, setLocalUnits] = useState<UnitRange>([0, 5]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localBreadths, setLocalBreadths] = useState<Breadth[]>([]);
@@ -170,17 +170,19 @@ export default function ClassBrowser({
     [searchParams, localComponents, persistent]
   );
 
-  const units = useMemo(
-    () =>
-      persistent
-        ? ((searchParams
-            .get("units")
-            ?.split(",")
-            .filter((unit) => Object.values(Unit).includes(unit as Unit)) ??
-            []) as Unit[])
-        : localUnits,
-    [searchParams, localUnits, persistent]
-  );
+  const units = useMemo((): UnitRange => {
+    if (!persistent) return localUnits;
+
+    const unitsParam = searchParams.get("units");
+    if (!unitsParam) return [0, 5];
+
+    const parts = unitsParam.split("-").map(Number);
+    if (parts.length === 2 && !parts.some(isNaN)) {
+      return [parts[0], parts[1]];
+    }
+
+    return [0, 5];
+  }, [searchParams, localUnits, persistent]);
 
   const levels = useMemo(
     () =>
@@ -423,6 +425,26 @@ export default function ClassBrowser({
     setState(value);
   };
 
+  const updateRange = (
+    key: string,
+    setState: (state: UnitRange) => void,
+    value: UnitRange
+  ) => {
+    if (persistent) {
+      // Check if range is default [0, 5]
+      if (value[0] === 0 && value[1] === 5) {
+        searchParams.delete(key);
+      } else {
+        searchParams.set(key, `${value[0]}-${value[1]}`);
+      }
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    setState(value);
+  };
+
   const updateSortBy = (value: SortBy) => {
     setLocalReverse(false);
     if (persistent) {
@@ -481,7 +503,7 @@ export default function ClassBrowser({
         updateQuery,
         updateComponents: (components) =>
           updateArray("components", setLocalComponents, components),
-        updateUnits: (units) => updateArray("units", setLocalUnits, units),
+        updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
         updateDays: (days) => updateArray("days", setLocalDays, days),
         updateBreadths: (breadths) =>
