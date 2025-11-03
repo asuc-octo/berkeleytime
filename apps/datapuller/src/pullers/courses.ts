@@ -35,7 +35,11 @@ const updateCourses = async ({
     await CourseModel.bulkWrite(
       batch.map((course) => ({
         updateOne: {
-          filter: { courseId: course.courseId },
+          filter: {
+            courseId: course.courseId,
+            subject: course.subject,
+            number: course.number,
+          },
           update: { $set: course },
           upsert: true,
         },
