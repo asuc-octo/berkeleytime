@@ -208,7 +208,7 @@ const courseSchema = new Schema<ICourseItem>({
 });
 
 // for catalog, associated courses by id, curated class controllers
-courseSchema.index({ courseId: 1 }, { unique: true });
+courseSchema.index({ courseId: 1 });
 
 // for associated courses by subject number and bookmarked courses controllers
 courseSchema.index({
