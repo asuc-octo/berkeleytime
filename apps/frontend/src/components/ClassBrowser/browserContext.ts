@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 
-import { Component, IClass, ITerm, Semester } from "@/lib/api";
+import { IClass, ITerm, Semester } from "@/lib/api";
 
 import {
   Breadth,
@@ -22,7 +22,6 @@ export interface BrowserContextType {
   semester: Semester;
   terms?: ITerm[];
   query: string;
-  components: Component[];
   units: UnitRange;
   levels: Level[];
   days: Day[];
@@ -33,7 +32,6 @@ export interface BrowserContextType {
   open: boolean;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
-  updateComponents: Dispatch<Component[]>;
   updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;

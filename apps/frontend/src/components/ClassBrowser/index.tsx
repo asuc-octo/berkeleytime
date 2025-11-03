@@ -1,17 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import {
-  Component,
-  GET_CATALOG,
-  GetCatalogResponse,
-  IClass,
-  ITerm,
-  Semester,
-} from "@/lib/api";
+import { GET_CATALOG, GetCatalogResponse, ITerm, Semester } from "@/lib/api";
 
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
@@ -28,12 +21,6 @@ import {
 } from "./browser";
 import BrowserContext from "./browserContext";
 import { searchAndSortClasses } from "./searchAndSort";
-
-// Pagination constants
-const INITIAL_LOAD_SIZE = 100;
-const AUTO_LOAD_BATCH_SIZE = 1000;
-const AUTO_LOAD_DELAY_MS = 1000;
-const AUTO_LOAD_START_DELAY_MS = 300;
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Relevance]: "asc",
@@ -77,7 +64,6 @@ export default function ClassBrowser({
   const [localQuery, setLocalQuery] = useState<string>(() =>
     persistent ? (searchParams.get("query") ?? "") : ""
   );
-  const [localComponents, setLocalComponents] = useState<Component[]>([]);
   const [localUnits, setLocalUnits] = useState<UnitRange>([0, 5]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
@@ -89,86 +75,18 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
+  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
+    variables: {
+      semester: currentSemester,
+      year: currentYear,
+    },
+    fetchPolicy: "no-cache",
+    nextFetchPolicy: "no-cache",
+  });
+
+  const classes = useMemo(() => data?.catalog ?? [], [data]);
+
   const query = localQuery;
-
-  const { data, loading, fetchMore } = useQuery<GetCatalogResponse>(
-    GET_CATALOG,
-    {
-      variables: {
-        semester: currentSemester,
-        year: currentYear,
-        limit: INITIAL_LOAD_SIZE,
-        offset: 0,
-      },
-      fetchPolicy: "cache-and-network",
-      nextFetchPolicy: "cache-first",
-    }
-  );
-
-  const classes = useMemo(() => data?.catalog.classes ?? [], [data]);
-  const totalCount = data?.catalog.totalCount ?? 0;
-
-  // Auto-load all remaining data in background
-  const isLoadingAllRef = useRef(false);
-  const loadedCountRef = useRef(0);
-  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
-
-  useEffect(() => {
-    loadedCountRef.current = classes.length;
-  }, [classes.length]);
-
-  useEffect(() => {
-    // Prevent multiple simultaneous loads
-    if (isLoadingAllRef.current) return;
-    if (!totalCount || totalCount === 0) return;
-    if (loadedCountRef.current >= totalCount) return;
-
-    const loadAllData = async () => {
-      isLoadingAllRef.current = true;
-      setIsBackgroundLoading(true);
-
-      try {
-        while (loadedCountRef.current < totalCount) {
-          const remainingCount = totalCount - loadedCountRef.current;
-          const loadSize = Math.min(AUTO_LOAD_BATCH_SIZE, remainingCount);
-
-          await fetchMore({
-            variables: {
-              offset: loadedCountRef.current,
-              limit: loadSize,
-            },
-          });
-
-          // Delay between batches to avoid blocking UI
-          await new Promise((resolve) =>
-            setTimeout(resolve, AUTO_LOAD_DELAY_MS)
-          );
-        }
-      } catch (error) {
-        console.error("Error loading data:", error);
-      } finally {
-        isLoadingAllRef.current = false;
-        setIsBackgroundLoading(false);
-      }
-    };
-
-    // Start loading after initial render
-    const timer = setTimeout(loadAllData, AUTO_LOAD_START_DELAY_MS);
-    return () => clearTimeout(timer);
-  }, [totalCount, fetchMore]); // Only trigger once when totalCount is known
-
-  const components = useMemo(
-    () =>
-      persistent
-        ? ((searchParams
-            .get("components")
-            ?.split(",")
-            .filter((component) =>
-              Object.values(Component).includes(component as Component)
-            ) ?? []) as Component[])
-        : localComponents,
-    [searchParams, localComponents, persistent]
-  );
 
   const units = useMemo((): UnitRange => {
     if (!persistent) return localUnits;
@@ -254,62 +172,10 @@ export default function ClassBrowser({
     [searchParams, localOnline, persistent]
   );
 
-  // Incremental filtering and sorting for performance
-  // Only process new classes, not the entire dataset every time
-  const previousClassesCountRef = useRef(0);
-  const processedIncludedRef = useRef<IClass[]>([]);
-  const processedExcludedRef = useRef<IClass[]>([]);
-  const previousFiltersRef = useRef({
-    query,
-    year: currentYear,
-    semester: currentSemester,
-    components,
-    units,
-    levels,
-    days,
-    open,
-    online,
-    breadths,
-    universityRequirement,
-  });
-
-  const { includedClasses, excludedClasses, isFiltersChanged } = useMemo(() => {
-    const previousCount = previousClassesCountRef.current;
-    const currentCount = classes.length;
-
-    // Check if any filter changed (including query, year, semester)
-    const filtersChanged =
-      previousFiltersRef.current.query !== query ||
-      previousFiltersRef.current.year !== currentYear ||
-      previousFiltersRef.current.semester !== currentSemester ||
-      previousFiltersRef.current.components !== components ||
-      previousFiltersRef.current.units !== units ||
-      previousFiltersRef.current.levels !== levels ||
-      previousFiltersRef.current.days !== days ||
-      previousFiltersRef.current.open !== open ||
-      previousFiltersRef.current.online !== online ||
-      previousFiltersRef.current.breadths !== breadths ||
-      previousFiltersRef.current.universityRequirement !==
-        universityRequirement;
-
-    // If filters changed, first load, or data reset, reprocess everything
-    if (filtersChanged || previousCount === 0 || currentCount < previousCount) {
-      previousFiltersRef.current = {
-        query,
-        year: currentYear,
-        semester: currentSemester,
-        components,
-        units,
-        levels,
-        days,
-        open,
-        online,
-        breadths,
-        universityRequirement,
-      };
-      const result = getFilteredClasses(
+  const { includedClasses, excludedClasses } = useMemo(
+    () =>
+      getFilteredClasses(
         classes,
-        components,
         units,
         levels,
         days,
@@ -317,62 +183,18 @@ export default function ClassBrowser({
         online,
         breadths,
         universityRequirement
-      );
-      processedIncludedRef.current = result.includedClasses;
-      processedExcludedRef.current = result.excludedClasses;
-      previousClassesCountRef.current = currentCount;
-      return {
-        ...result,
-        isFiltersChanged: filtersChanged,
-      };
-    }
-
-    // Only process new classes (incremental)
-    if (currentCount > previousCount) {
-      const newClasses = classes.slice(previousCount);
-      const newFiltered = getFilteredClasses(
-        newClasses,
-        components,
-        units,
-        levels,
-        days,
-        open,
-        online,
-        breadths,
-        universityRequirement
-      );
-
-      // Append new results
-      processedIncludedRef.current = [
-        ...processedIncludedRef.current,
-        ...newFiltered.includedClasses,
-      ];
-      processedExcludedRef.current = [
-        ...processedExcludedRef.current,
-        ...newFiltered.excludedClasses,
-      ];
-      previousClassesCountRef.current = currentCount;
-    }
-
-    return {
-      includedClasses: processedIncludedRef.current,
-      excludedClasses: processedExcludedRef.current,
-      isFiltersChanged: false,
-    };
-  }, [
-    classes,
-    query,
-    currentYear,
-    currentSemester,
-    components,
-    units,
-    levels,
-    days,
-    open,
-    online,
-    breadths,
-    universityRequirement,
-  ]);
+      ),
+    [
+      classes,
+      units,
+      levels,
+      days,
+      open,
+      online,
+      breadths,
+      universityRequirement,
+    ]
+  );
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
@@ -490,7 +312,6 @@ export default function ClassBrowser({
         semester: currentSemester,
         terms,
         query,
-        components,
         units,
         levels,
         days,
@@ -501,8 +322,6 @@ export default function ClassBrowser({
         reverse: localReverse,
         effectiveOrder,
         updateQuery,
-        updateComponents: (components) =>
-          updateArray("components", setLocalComponents, components),
         updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
         updateDays: (days) => updateArray("days", setLocalDays, days),
@@ -516,10 +335,6 @@ export default function ClassBrowser({
         setExpanded,
         loading,
         updateReverse: setLocalReverse,
-        totalCount,
-        isFiltersChanged,
-        loadedCount: classes.length,
-        isBackgroundLoading,
       }}
     >
       <div
