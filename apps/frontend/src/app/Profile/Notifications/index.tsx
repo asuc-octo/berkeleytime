@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Text } from "@repo/theme";
 
 import { useReadUser, useUpdateUser } from "@/hooks/api";
 import { IMonitoredClass } from "@/lib/api/users";
@@ -263,10 +264,10 @@ export default function Notifications() {
 
       <div className={styles.section}>
         <h2>Add/Drop Deadline Notifications</h2>
-        <p className={styles.sectionDescription}>
-          Get notified about key academic deadlines, including add/drop and late
-          change of class schedule for the semester.
-        </p>
+        <Text size="md" className={styles.sectionDescription}>
+  Get notified about key academic deadlines, including add/drop and late
+  change of class schedule for the semester.
+</Text>
 
         <div className={styles.toggleOptions}>
           <label className={styles.toggleOption}>
