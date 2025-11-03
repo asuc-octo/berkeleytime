@@ -11,13 +11,21 @@ import {
 import { Checkbox } from "radix-ui";
 import { useNavigate } from "react-router-dom";
 
-import { Button, DaySelect, IconButton, Select, Slider } from "@repo/theme";
+import {
+  Button,
+  DaySelect,
+  IconButton,
+  Select,
+  Slider,
+} from "@repo/theme";
+import type { Option } from "@repo/theme";
 
 import { Component, componentMap } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 
 import Header from "../Header";
 import {
+  Breadth,
   Day,
   Level,
   SortBy,
@@ -25,6 +33,7 @@ import {
   getAllUniversityRequirements,
   getFilteredClasses,
   getLevel,
+  UniversityRequirement,
 } from "../browser";
 import useBrowser from "../useBrowser";
 import styles from "./Filters.module.scss";
@@ -32,6 +41,10 @@ import styles from "./Filters.module.scss";
 // TODO: Add Mode of Instruction
 
 // TODO: Add requirements from relevant sources
+
+type RequirementSelection =
+  | { type: "breadth"; value: Breadth }
+  | { type: "university"; value: UniversityRequirement };
 
 export default function Filters() {
   const {
@@ -139,6 +152,47 @@ export default function Filters() {
       ...excludedClasses,
     ]);
   }, [includedClasses]);
+
+  const requirementOptions = useMemo<Option<RequirementSelection>[]>(() => {
+    const options: Option<RequirementSelection>[] = [];
+
+    if (filteredBreadths.length > 0) {
+      options.push({ type: "label", label: "L&S REQUIREMENTS" });
+      options.push(
+        ...filteredBreadths.map((breadth) => ({
+          value: { type: "breadth", value: breadth } as RequirementSelection,
+          label: breadth,
+        }))
+      );
+    }
+
+    if (filteredUniversityRequirements.length > 0) {
+      options.push({ type: "label", label: "UNIVERSITY REQUIREMENTS" });
+      options.push(
+        ...filteredUniversityRequirements.map((requirement) => ({
+          value: {
+            type: "university",
+            value: requirement,
+          } as RequirementSelection,
+          label: requirement,
+        }))
+      );
+    }
+
+    return options;
+  }, [
+    filteredBreadths,
+    filteredUniversityRequirements,
+  ]);
+  const selectedRequirements = useMemo<RequirementSelection[]>(
+    () => [
+      ...breadths.map((breadth) => ({ type: "breadth", value: breadth })),
+      ...(universityRequirement
+        ? [{ type: "university", value: universityRequirement }]
+        : []),
+    ],
+    [breadths, universityRequirement]
+  );
 
   const filteredComponents = useMemo(() => {
     const filteredComponents = Object.keys(componentMap).reduce(
@@ -348,35 +402,29 @@ export default function Filters() {
           onValueChange={updateUnits}
           labels={["0", "1", "2", "3", "4", "5+"]}
         />
-        <p className={styles.label}>L&S REQUIREMENTS</p>
-        <Select
+        <p className={styles.label}>REQUIREMENTS</p>
+        <Select<RequirementSelection>
           multi
-          value={breadths}
+          value={selectedRequirements}
+          placeholder="Requirements..."
           onChange={(v) => {
-            if (Array.isArray(v)) updateBreadths(v);
+            if (!Array.isArray(v)) return;
+            const nextBreadths = v
+              .filter(
+                (option): option is Extract<RequirementSelection, { type: "breadth" }> =>
+                  option.type === "breadth"
+              )
+              .map((option) => option.value);
+            const nextUniversityRequirement =
+              v.find(
+                (option): option is Extract<RequirementSelection, { type: "university" }> =>
+                  option.type === "university"
+              )?.value ?? null;
+
+            updateBreadths(nextBreadths);
+            updateUniversityRequirement(nextUniversityRequirement);
           }}
-          options={filteredBreadths.map((breadth) => {
-            return {
-              value: breadth,
-              label: breadth,
-            };
-          })}
-        />
-        <p className={styles.label}>UNIVERSITY REQUIREMENTS</p>
-        <Select
-          value={universityRequirement}
-          onChange={(v) => {
-            updateUniversityRequirement(v as string | null);
-          }}
-          options={[
-            { value: null, label: "None" },
-            ...filteredUniversityRequirements.map((requirement) => {
-              return {
-                value: requirement,
-                label: requirement,
-              };
-            }),
-          ]}
+          options={requirementOptions}
         />
         <p className={styles.label}>DAY</p>
         <DaySelect

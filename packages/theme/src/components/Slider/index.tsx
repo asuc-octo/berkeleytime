@@ -43,11 +43,23 @@ export function Slider({
       </Primitive.Root>
       {labels && labels.length > 0 && (
         <div className={styles.labels}>
-          {labels.map((label, index) => (
-            <span key={index} className={styles.label}>
-              {label}
-            </span>
-          ))}
+          {labels.map((label, index) => {
+            // Complicated slider positioning logic, leave it be.
+            const percent = (index / (labels.length - 1)) * 100;
+            const thumbWidth = 24;
+            const offsetPx = (thumbWidth / 2) - (percent / 100) * thumbWidth;
+            return (
+              <span
+                key={index}
+                className={styles.label}
+                style={{
+                  left: `calc(${percent}% + ${offsetPx}px)`,
+                }}
+              >
+                {label}
+              </span>
+            );
+          })}
         </div>
       )}
     </div>
