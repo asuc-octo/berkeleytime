@@ -8,11 +8,25 @@ receivers:
         cors:
           allowed_origins:
             - "http://localhost:8080"
+            - "http://localhost:3000"
           allowed_headers:
             - "Content-Type"
             - "Authorization"
             - "User-Agent"
           max_age: 7200
+
+  # Host metrics receiver for system-level metrics
+  hostmetrics:
+    collection_interval: 30s
+    scrapers:
+      cpu:
+      disk:
+      filesystem:
+      load:
+      memory:
+      network:
+      paging:
+      processes:
 
 exporters:
   # Export traces to console for debugging
@@ -25,11 +39,11 @@ exporters:
   prometheus:
     endpoint: "0.0.0.0:9464"
 
-  # You can add additional exporters here (e.g., Jaeger, Zipkin, etc.)
-  # jaeger:
-  #   endpoint: jaeger:14250
-  #   tls:
-  #     insecure: true
+  # Export traces to Jaeger
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
 
 processors:
   batch:
@@ -44,13 +58,18 @@ processors:
         action: upsert
 
 service:
+  telemetry:
+    metrics:
+      level: detailed
+      address: 0.0.0.0:8888
+
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch, resource]
-      exporters: [debug]
+      exporters: [debug, otlp/jaeger]
 
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, hostmetrics]
       processors: [batch, resource]
       exporters: [prometheus, debug]

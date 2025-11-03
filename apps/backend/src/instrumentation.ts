@@ -1,5 +1,7 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { Resource } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
@@ -15,15 +17,27 @@ const resource = Resource.default().merge(
   })
 );
 
-// Create the OTLP gRPC exporter
+// Create the OTLP gRPC exporter for traces
 const traceExporter = new OTLPTraceExporter({
   url: collectorEndpoint,
+});
+
+// Create the OTLP gRPC exporter for metrics
+const metricExporter = new OTLPMetricExporter({
+  url: collectorEndpoint,
+});
+
+// Create a metric reader that exports every 30 seconds
+const metricReader = new PeriodicExportingMetricReader({
+  exporter: metricExporter,
+  exportIntervalMillis: 30000, // Export every 30 seconds
 });
 
 // Initialize the SDK
 const sdk = new NodeSDK({
   resource: resource,
   traceExporter: traceExporter,
+  metricReader: metricReader,
   instrumentations: [
     getNodeAutoInstrumentations({
       // Disable fs instrumentation to reduce noise
@@ -62,7 +76,9 @@ const sdk = new NodeSDK({
 // Start the SDK
 sdk.start();
 
-console.log(`OpenTelemetry initialized for ${serviceName}, sending traces to ${collectorEndpoint}`);
+console.log(`OpenTelemetry initialized for ${serviceName}`);
+console.log(`  - Traces: ${collectorEndpoint}`);
+console.log(`  - Metrics: ${collectorEndpoint} (exported every 30s)`);
 
 // Gracefully shut down the SDK on process exit
 process.on('SIGTERM', () => {

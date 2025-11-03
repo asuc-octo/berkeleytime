@@ -13,6 +13,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    environment:
+      - OTEL_SERVICE_NAME=backend
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_NODE_ENABLED_INSTRUMENTATIONS=all
     networks:
       - bt
     restart: always
@@ -28,8 +33,11 @@ services:
     environment:
       - VITE_OTEL_SERVICE_NAME=frontend
       - VITE_OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
+      - VITE_OTEL_METRICS_ENDPOINT=http://localhost:4318/v1/metrics
     networks:
       - bt
+    ports:
+      - 3000:3000
     restart: always
     volumes:
       - ./apps/frontend:/frontend/apps/frontend
@@ -111,13 +119,36 @@ services:
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.126.0
     command: ["--config=/etc/otel/collector/config.yaml"]
+    depends_on:
+      - jaeger
     networks:
       - bt
     ports:
-      - 4317:4317 # OTLP gRPC receiver
-      - 4318:4318 # OTLP HTTP receiver
-      - 9464:9464 # Prometheus metrics exporter
-      - 55679:55679 # zpages extension
+      - 4317:4317
+      - 4318:4318
+      - 8888:8888
+      - 9464:9464
+      - 55679:55679
     restart: always
     volumes:
       - ./otel-collector.yaml:/etc/otel/collector/config.yaml
+  prometheus:
+    command: ["--config.file=/etc/prometheus/prometheus.yaml"]
+    image: prom/prometheus:v2.51.0
+    networks:
+      - bt
+    ports:
+      - 9090:9090
+    restart: always
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+  jaeger:
+    image: jaegertracing/all-in-one:1.60.0
+    networks:
+      - bt
+    ports:
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+      - 14251:14251
+      - 14269:14269
