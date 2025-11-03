@@ -99,7 +99,7 @@ export default function Dashboard() {
 
   const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
     skip: !user,
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   if (!gradTrakLoading && !gradTrak) {
@@ -111,7 +111,7 @@ export default function Dashboard() {
   const { data: catalogData, loading: courseLoading } =
     useQuery<GetCatalogResponse>(GET_CATALOG, {
       variables: {
-        year: 2026,
+        year: 2025,
         semester: "Spring" as Semester,
       },
       skip: hasLoadedRef.current,
@@ -220,7 +220,6 @@ export default function Dashboard() {
   useEffect(() => {
     if (gradTrak?.planTerms) {
       setLocalPlanTerms(gradTrak.planTerms);
-      console.log("gradTrak.planTerms", gradTrak.planTerms);
     } else {
       setLocalPlanTerms([]);
     }
@@ -569,7 +568,6 @@ export default function Dashboard() {
       const convertedSemesters = convertPlanTermsToSemesters(localPlanTerms);
       setAllSemesters(convertedSemesters);
     }
-    console.log("localPlanTerms", localPlanTerms);
   }, [localPlanTerms, convertPlanTermsToSemesters]);
 
   const totalUnits = Object.values(semesterTotals).reduce(
