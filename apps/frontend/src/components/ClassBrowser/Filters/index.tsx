@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option } from "@repo/theme";
+
 import { sortByTermDescending } from "@/lib/classes";
 import { subjects } from "@/lib/course";
 
@@ -16,11 +17,11 @@ import {
   GradingFilter,
   Level,
   SortBy,
+  UniversityRequirement,
   getAllBreadthRequirements,
   getAllUniversityRequirements,
   getFilteredClasses,
   getLevel,
-  UniversityRequirement,
 } from "../browser";
 import useBrowser from "../useBrowser";
 import styles from "./Filters.module.scss";
@@ -167,10 +168,7 @@ export default function Filters() {
     }
 
     return options;
-  }, [
-    filteredBreadths,
-    filteredUniversityRequirements,
-  ]);
+  }, [filteredBreadths, filteredUniversityRequirements]);
   const selectedRequirements = useMemo<RequirementSelection[]>(
     () => [
       ...breadths.map((breadth) => ({ type: "breadth", value: breadth })),
@@ -366,14 +364,22 @@ export default function Filters() {
               if (!Array.isArray(v)) return;
               const nextBreadths = v
                 .filter(
-                  (option): option is Extract<RequirementSelection, { type: "breadth" }> =>
-                    option.type === "breadth"
+                  (
+                    option
+                  ): option is Extract<
+                    RequirementSelection,
+                    { type: "breadth" }
+                  > => option.type === "breadth"
                 )
                 .map((option) => option.value);
               const nextUniversityRequirement =
                 v.find(
-                  (option): option is Extract<RequirementSelection, { type: "university" }> =>
-                    option.type === "university"
+                  (
+                    option
+                  ): option is Extract<
+                    RequirementSelection,
+                    { type: "university" }
+                  > => option.type === "university"
                 )?.value ?? null;
 
               updateBreadths(nextBreadths);

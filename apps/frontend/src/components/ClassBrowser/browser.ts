@@ -243,8 +243,7 @@ export const getFilteredClasses = (
 
       if (currentGradingFilters.length > 0) {
         const basis = (_class.gradingBasis ?? "") as GradingBasis;
-        const category =
-          gradingBasisCategoryMap[basis] ?? GradingFilter.Other;
+        const category = gradingBasisCategoryMap[basis] ?? GradingFilter.Other;
 
         if (!currentGradingFilters.includes(category)) {
           acc.excludedClasses.push(_class);
