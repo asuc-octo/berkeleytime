@@ -234,11 +234,6 @@ export const GET_COURSE_NAMES = gql`
       subject
       number
       title
-      crossListing {
-        subject
-        number
-        title
-      }
     }
   }
 `;

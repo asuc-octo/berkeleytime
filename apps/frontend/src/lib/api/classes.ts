@@ -375,6 +375,7 @@ export const GET_CATALOG = gql`
       number
       subject
       courseNumber
+      courseId
       title
       unitsMax
       unitsMin
