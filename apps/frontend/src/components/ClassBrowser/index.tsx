@@ -162,7 +162,7 @@ export default function ClassBrowser({
 
   const department = useMemo(() => {
     const value = persistent
-      ? searchParams.get("department") ?? null
+      ? (searchParams.get("department") ?? null)
       : localDepartment;
 
     return value ? value.toLowerCase() : null;

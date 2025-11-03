@@ -214,10 +214,7 @@ export function Select<T>({
           {options.map((opt, i) => {
             if (!isOptionItem(opt)) {
               return (
-                <div
-                  key={`label-${i}`}
-                  className={styles.sectionLabel}
-                >
+                <div key={`label-${i}`} className={styles.sectionLabel}>
                   {opt.label}
                 </div>
               );
