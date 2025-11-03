@@ -224,7 +224,7 @@ export function Select<T>({
 
             return (
               <DropdownMenu.Item
-                key={`option-${i}`}
+                key={`${i}-${opt.label}`}
                 style={{ outline: "none" }}
                 disabled={opt.disabled}
                 onSelect={(e) => {

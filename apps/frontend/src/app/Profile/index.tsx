@@ -1,5 +1,11 @@
 import classNames from "classnames";
-import { ChatBubbleQuestion, LogOut, ProfileCircle, Star } from "iconoir-react";
+import {
+  ChatBubbleQuestion,
+  LogOut,
+  ProfileCircle,
+  Settings as SettingsIcon,
+  Star,
+} from "iconoir-react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import UserContext from "@/contexts/UserContext";
@@ -32,6 +38,18 @@ export default function Root() {
               >
                 <ProfileCircle />
                 <span>Your Account</span>
+              </div>
+            )}
+          </NavLink>
+          <NavLink to={{ ...location, pathname: "settings" }} end>
+            {({ isActive }) => (
+              <div
+                className={classNames(styles.navItem, {
+                  [styles.active]: isActive,
+                })}
+              >
+                <SettingsIcon />
+                <span>Settings</span>
               </div>
             )}
           </NavLink>
@@ -68,6 +86,7 @@ export default function Root() {
           <UserContext
             value={{
               user,
+              loading: userLoading,
             }}
           >
             <Outlet />

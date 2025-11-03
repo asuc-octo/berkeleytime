@@ -46,7 +46,7 @@ export function Slider({
           {labels.map((label, index) => {
             // Complicated slider positioning logic, leave it be.
             const percent = (index / (labels.length - 1)) * 100;
-            const thumbWidth = 24;
+            const thumbWidth = 22;
             const offsetPx = (thumbWidth / 2) - (percent / 100) * thumbWidth;
             return (
               <span

@@ -45,47 +45,49 @@ export default function Account() {
       <div>
         <div className={styles.infoItem}>
           <label>Full Name</label>
-          <span className={styles.infoValue}>{user.name}</span>
+          <span className={styles.infoValue}>{user?.name}</span>
         </div>
         <div className={styles.infoItem}>
           <label>bConnected Email</label>
-          <span className={styles.infoValue}>{user.email}</span>
+          <span className={styles.infoValue}>{user?.email}</span>
         </div>
         <div className={styles.infoItem}>
           <label>Student Account</label>
           <span className={styles.infoValue}>
-            {user.student ? "Yes" : "No"}
+            {user?.student ? "Yes" : "No"}
           </span>
         </div>
       </div>
       <h2>Bookmarked Classes</h2>
       <div>
-        <Carousel.CarouselNoTitle>
-          {/* TODO: Update placeholder here alongside dashboard placeholder */}
-          {user.bookmarkedClasses.length === 0 ? (
-            <Carousel.Item>
-              <Flex
-                align="center"
-                justify="center"
-                className={styles.classesPlaceholder}
-              >
-                <Text>No bookmarked classes</Text>
-              </Flex>
-            </Carousel.Item>
-          ) : (
-            user.bookmarkedClasses.map((bookmarkedClass, index) => (
-              <Carousel.Item key={index}>
-                <ClassDrawer {...bookmarkedClass}>
-                  <ClassCard class={bookmarkedClass} />
-                </ClassDrawer>
+        {user && (
+          <Carousel.CarouselNoTitle>
+            {/* TODO: Update placeholder here alongside dashboard placeholder */}
+            {user.bookmarkedClasses.length === 0 ? (
+              <Carousel.Item>
+                <Flex
+                  align="center"
+                  justify="center"
+                  className={styles.classesPlaceholder}
+                >
+                  <Text>No bookmarked classes</Text>
+                </Flex>
               </Carousel.Item>
-            ))
-          )}
-        </Carousel.CarouselNoTitle>
+            ) : (
+              user.bookmarkedClasses.map((bookmarkedClass, index) => (
+                <Carousel.Item key={index}>
+                  <ClassDrawer {...bookmarkedClass}>
+                    <ClassCard class={bookmarkedClass} />
+                  </ClassDrawer>
+                </Carousel.Item>
+              ))
+            )}
+          </Carousel.CarouselNoTitle>
+        )}
         <Link to={"/catalog"} className={styles.afterCarouselLink}>
           View Catalog
         </Link>
-        {schedulesLoading ? (
+        {schedulesLoading || !user ? (
           <></>
         ) : (
           <div>
