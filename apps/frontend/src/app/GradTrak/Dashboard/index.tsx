@@ -99,6 +99,7 @@ export default function Dashboard() {
 
   const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
     skip: !user,
+    fetchPolicy: "network-only",
   });
 
   if (!gradTrakLoading && !gradTrak) {
@@ -219,6 +220,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (gradTrak?.planTerms) {
       setLocalPlanTerms(gradTrak.planTerms);
+      console.log("gradTrak.planTerms", gradTrak.planTerms);
     } else {
       setLocalPlanTerms([]);
     }
@@ -567,6 +569,7 @@ export default function Dashboard() {
       const convertedSemesters = convertPlanTermsToSemesters(localPlanTerms);
       setAllSemesters(convertedSemesters);
     }
+    console.log("localPlanTerms", localPlanTerms);
   }, [localPlanTerms, convertPlanTermsToSemesters]);
 
   const totalUnits = Object.values(semesterTotals).reduce(
