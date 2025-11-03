@@ -13,6 +13,17 @@
   }
 }
 
+.cardColumnHeader {
+  height: 100%;
+}
+
+.cardBodyWrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .cardHeading {
   font-size: 16px !important;
   font-weight: 600 !important;
