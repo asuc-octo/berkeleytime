@@ -13,7 +13,7 @@ const updateCourses = async ({
 
   log.info(`Fetched ${courses.length.toLocaleString()} courses.`);
   if (courses.length === 0) {
-    log.warn("No courses found, skipping update.");
+    log.error("No courses found, skipping update.");
     return;
   }
 

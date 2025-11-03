@@ -48,7 +48,7 @@ const updateGradeDistributions = async (
       `Fetched ${gradeDistributions.length.toLocaleString()} grade distributions.`
     );
     if (gradeDistributions.length === 0) {
-      log.warn("No grade distributions found, skipping update");
+      log.error("No grade distributions found, skipping update");
       return;
     }
 
