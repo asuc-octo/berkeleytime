@@ -94,7 +94,11 @@ export default function CourseSearch({
             setSearchQuery(e.target.value);
             if (onClear) onClear();
           }}
-          style={inputStyle}
+          style={{
+            ...inputStyle,
+            cursor:
+              !searchQuery && selectedCourse && onClear ? "pointer" : undefined,
+          }}
         />
       </div>
 
