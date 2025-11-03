@@ -62,17 +62,16 @@
 
 .labels {
   display: flex;
-  justify-content: space-between;
+  position: relative;
   width: 100%;
+  height: 20px;
 }
 
 .label {
+  position: absolute;
   font-size: 14px;
   color: var(--paragraph-color-50);
   font-weight: 500;
-  flex: 0 0 auto;
-
-  &:last-child {
-    margin-right: -0.4em;
-  }
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
