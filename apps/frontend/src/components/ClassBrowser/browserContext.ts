@@ -5,6 +5,7 @@ import { IClass, ITerm, Semester } from "@/lib/api";
 import {
   Breadth,
   Day,
+  GradingFilter,
   Level,
   SortBy,
   UnitRange,
@@ -27,6 +28,8 @@ export interface BrowserContextType {
   days: Day[];
   breadths: Breadth[];
   universityRequirement: UniversityRequirement | null;
+  gradingFilters: GradingFilter[];
+  department: string | null;
   online: boolean;
   sortBy: SortBy;
   open: boolean;
@@ -37,6 +40,8 @@ export interface BrowserContextType {
   updateDays: Dispatch<Day[]>;
   updateBreadths: Dispatch<Breadth[]>;
   updateUniversityRequirement: Dispatch<UniversityRequirement | null>;
+  updateGradingFilters: Dispatch<GradingFilter[]>;
+  updateDepartment: Dispatch<string | null>;
   updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
   updateOpen: Dispatch<boolean>;
