@@ -125,7 +125,7 @@ export default function Dashboard() {
   const indexRef = useRef<ReturnType<typeof initialize> | null>(null);
 
   if (catalogData?.catalog && catalogCoursesRef.current.length === 0) {
-    const courseMap = new Map<string, typeof catalogData.catalog[0]>();
+    const courseMap = new Map<string, (typeof catalogData.catalog)[0]>();
 
     catalogData.catalog.forEach((_class) => {
       const key = `${_class.subject}_${_class.courseNumber}`;
