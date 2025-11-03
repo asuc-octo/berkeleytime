@@ -1,26 +1,11 @@
-import { Dispatch, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
-import {
-  Check,
-  NavArrowDown,
-  NavArrowUp,
-  SortDown,
-  SortUp,
-} from "iconoir-react";
-import { Checkbox } from "radix-ui";
+import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Button,
-  DaySelect,
-  IconButton,
-  Select,
-  Slider,
-} from "@repo/theme";
+import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option } from "@repo/theme";
-
-import { Component, componentMap } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 
 import Header from "../Header";
@@ -50,8 +35,6 @@ export default function Filters() {
   const {
     includedClasses,
     excludedClasses,
-    components,
-    updateComponents,
     units,
     updateUnits,
     levels,
@@ -79,17 +62,11 @@ export default function Filters() {
 
   const navigate = useNavigate();
 
-  const [expanded, setExpanded] = useState(false);
-
-  const [daysArray, setDaysArray] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const defaultDaysState = useMemo(
+    () => [false, false, false, false, false, false, false],
+    []
+  );
+  const [daysArray, setDaysArray] = useState(defaultDaysState);
 
   useEffect(() => {
     const newDays = daysArray.reduce((acc, v, i) => {
@@ -105,7 +82,6 @@ export default function Filters() {
         ? includedClasses
         : getFilteredClasses(
             excludedClasses,
-            components,
             units,
             [],
             days,
@@ -135,7 +111,6 @@ export default function Filters() {
     excludedClasses,
     includedClasses,
     units,
-    components,
     levels,
     days,
     open,
@@ -194,46 +169,6 @@ export default function Filters() {
     [breadths, universityRequirement]
   );
 
-  const filteredComponents = useMemo(() => {
-    const filteredComponents = Object.keys(componentMap).reduce(
-      (acc, component) => {
-        acc[component] = 0;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const classes =
-      components.length === 0
-        ? includedClasses
-        : getFilteredClasses(
-            excludedClasses,
-            [],
-            units,
-            levels,
-            days,
-            open,
-            online
-          ).includedClasses;
-
-    for (const _class of classes) {
-      const { component } = _class.primarySection;
-
-      filteredComponents[component] += 1;
-    }
-
-    return filteredComponents;
-  }, [
-    excludedClasses,
-    includedClasses,
-    components,
-    units,
-    levels,
-    days,
-    open,
-    online,
-  ]);
-
   // const filteredDays = useMemo(() => {
   //   const filteredDays = Object.values(Day).reduce(
   //     (acc, day) => {
@@ -248,7 +183,6 @@ export default function Filters() {
   //       ? includedClasses
   //       : getFilteredClasses(
   //           excludedClasses,
-  //           components,
   //           units,
   //           levels,
   //           [],
@@ -270,7 +204,6 @@ export default function Filters() {
   // }, [
   //   excludedClasses,
   //   includedClasses,
-  //   components,
   //   units,
   //   levels,
   //   days,
@@ -292,19 +225,6 @@ export default function Filters() {
   //   [includedClasses]
   // );
 
-  const updateArray = <T,>(
-    state: T[],
-    setState: Dispatch<T[]>,
-    value: T,
-    checked: boolean
-  ) => {
-    setState(
-      checked
-        ? [...state, value]
-        : state.filter((previousValue) => previousValue !== value)
-    );
-  };
-
   const isAscending = effectiveOrder === "asc";
   const nextOrderLabel = isAscending ? "descending" : "ascending";
 
@@ -324,6 +244,14 @@ export default function Filters() {
 
   const currentTermLabel = `${semester} ${year}`;
 
+  const handleClearFilters = () => {
+    updateLevels([]);
+    updateBreadths([]);
+    updateUniversityRequirement(null);
+    updateUnits([0, 5]);
+    setDaysArray([...defaultDaysState]);
+  };
+
   return (
     <div
       className={classNames(styles.root, {
@@ -332,29 +260,16 @@ export default function Filters() {
     >
       <Header />
       <div className={styles.body}>
-        {terms && terms.length > 0 && (
-          <>
-            <p className={styles.label}>TERM</p>
-            <Select
-              value={currentTermLabel}
-              onChange={(value) => {
-                const selectedTerm = availableTerms.find(
-                  (term) => `${term.semester} ${term.year}` === value
-                );
-                if (selectedTerm) {
-                  navigate(
-                    `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
-                  );
-                }
-              }}
-              options={availableTerms.map((term) => ({
-                value: `${term.semester} ${term.year}`,
-                label: `${term.semester} ${term.year}`,
-              }))}
-            />
-          </>
-        )}
-        <p className={styles.label}>SORT BY</p>
+        <div className={styles.filtersHeader}>
+          <p className={styles.filtersTitle}>Filters</p>
+          <button
+            type="button"
+            className={styles.clearButton}
+            onClick={handleClearFilters}
+          >
+            Clear
+          </button>
+        </div>
         <div className={styles.sortControls}>
           <Select
             value={sortBy}
@@ -377,111 +292,93 @@ export default function Filters() {
             )}
           </IconButton>
         </div>
+        {terms && terms.length > 0 && (
+          <div className={styles.formControl}>
+            <p className={styles.label}>Semester</p>
+            <Select
+              value={currentTermLabel}
+              onChange={(value) => {
+                const selectedTerm = availableTerms.find(
+                  (term) => `${term.semester} ${term.year}` === value
+                );
+                if (selectedTerm) {
+                  navigate(
+                    `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
+                  );
+                }
+              }}
+              options={availableTerms.map((term) => ({
+                value: `${term.semester} ${term.year}`,
+                label: `${term.semester} ${term.year}`,
+              }))}
+            />
+          </div>
+        )}
+        <div className={styles.formControl}>
+          <p className={styles.label}>Requirements</p>
+          <Select<RequirementSelection>
+            multi
+            value={selectedRequirements}
+            placeholder="Filter by requirements"
+            onChange={(v) => {
+              if (!Array.isArray(v)) return;
+              const nextBreadths = v
+                .filter(
+                  (option): option is Extract<RequirementSelection, { type: "breadth" }> =>
+                    option.type === "breadth"
+                )
+                .map((option) => option.value);
+              const nextUniversityRequirement =
+                v.find(
+                  (option): option is Extract<RequirementSelection, { type: "university" }> =>
+                    option.type === "university"
+                )?.value ?? null;
 
-        <p className={styles.label}>LEVEL</p>
-        <Select
-          multi
-          value={levels}
-          onChange={(v) => {
-            if (Array.isArray(v)) updateLevels(v);
-          }}
-          options={Object.values(Level).map((level) => {
-            return {
-              value: level,
-              label: level,
-              meta: filteredLevels[level].toString(),
-            };
-          })}
-        />
-        <p className={styles.label}>UNITS</p>
-        <Slider
-          min={0}
-          max={5}
-          step={1}
-          value={units}
-          onValueChange={updateUnits}
-          labels={["0", "1", "2", "3", "4", "5+"]}
-        />
-        <p className={styles.label}>REQUIREMENTS</p>
-        <Select<RequirementSelection>
-          multi
-          value={selectedRequirements}
-          placeholder="Requirements..."
-          onChange={(v) => {
-            if (!Array.isArray(v)) return;
-            const nextBreadths = v
-              .filter(
-                (option): option is Extract<RequirementSelection, { type: "breadth" }> =>
-                  option.type === "breadth"
-              )
-              .map((option) => option.value);
-            const nextUniversityRequirement =
-              v.find(
-                (option): option is Extract<RequirementSelection, { type: "university" }> =>
-                  option.type === "university"
-              )?.value ?? null;
-
-            updateBreadths(nextBreadths);
-            updateUniversityRequirement(nextUniversityRequirement);
-          }}
-          options={requirementOptions}
-        />
-        <p className={styles.label}>DAY</p>
-        <DaySelect
-          days={daysArray}
-          updateDays={(v) => {
-            setDaysArray([...v]);
-          }}
-          size="sm"
-        />
-        <p className={styles.label}>KIND</p>
-        {Object.keys(filteredComponents)
-          .slice(0, expanded ? undefined : 5)
-          .filter((component) => componentMap[component as Component])
-          .map((component) => {
-            const active = components.includes(component as Component);
-
-            const key = `component-${component}`;
-
-            return (
-              <div className={styles.filter} key={key}>
-                <Checkbox.Root
-                  className={styles.checkbox}
-                  checked={active}
-                  id={key}
-                  onCheckedChange={(checked) =>
-                    updateArray(
-                      components,
-                      updateComponents,
-                      component as Component,
-                      checked as boolean
-                    )
-                  }
-                >
-                  <Checkbox.Indicator asChild>
-                    <Check width={12} height={12} />
-                  </Checkbox.Indicator>
-                </Checkbox.Root>
-                <label className={styles.text} htmlFor={key}>
-                  <span className={styles.value}>
-                    {componentMap[component as Component]}
-                  </span>
-                  {!active &&
-                    ` (${filteredComponents[component].toLocaleString()})`}
-                </label>
-              </div>
-            );
-          })}
-        <Button
-          variant="tertiary"
-          noFill
-          onClick={() => setExpanded(!expanded)}
-          as="button"
-          className={styles.showMoreButton}
-        >
-          {expanded ? "Show less" : "Show more"}
-          {expanded ? <NavArrowUp /> : <NavArrowDown />}
-        </Button>
+              updateBreadths(nextBreadths);
+              updateUniversityRequirement(nextUniversityRequirement);
+            }}
+            options={requirementOptions}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Class Level</p>
+          <Select
+            multi
+            value={levels}
+            placeholder="Select class levels"
+            onChange={(v) => {
+              if (Array.isArray(v)) updateLevels(v);
+            }}
+            options={Object.values(Level).map((level) => {
+              return {
+                value: level,
+                label: level,
+                meta: filteredLevels[level].toString(),
+              };
+            })}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Units</p>
+          <Slider
+            min={0}
+            max={5}
+            step={1}
+            value={units}
+            onValueChange={updateUnits}
+            labels={["0", "1", "2", "3", "4", "5+"]}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Date and Time</p>
+          <DaySelect
+            days={daysArray}
+            updateDays={(v) => {
+              setDaysArray([...v]);
+            }}
+            size="sm"
+          />
+        </div>
       </div>
     </div>
   );

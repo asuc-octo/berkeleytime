@@ -2,7 +2,6 @@ import Fuse from "fuse.js";
 
 import {
   AcademicCareer,
-  Component,
   IClass,
   ISectionAttribute,
   ISectionAttriuteInfo,
@@ -111,7 +110,6 @@ export const getAllUniversityRequirements = (
 
 export const getFilteredClasses = (
   classes: IClass[],
-  currentComponents: Component[],
   currentUnits: UnitRange,
   currentLevels: Level[],
   currentDays: Day[],
@@ -137,17 +135,6 @@ export const getFilteredClasses = (
         acc.excludedClasses.push(_class);
 
         return acc;
-      }
-
-      // Filter by component
-      if (currentComponents.length > 0) {
-        const { component } = _class.primarySection;
-
-        if (!currentComponents.includes(component)) {
-          acc.excludedClasses.push(_class);
-
-          return acc;
-        }
       }
 
       // Filter by level

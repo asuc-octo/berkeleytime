@@ -4,13 +4,7 @@ import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import {
-  Component,
-  GET_CATALOG,
-  GetCatalogResponse,
-  ITerm,
-  Semester,
-} from "@/lib/api";
+import { GET_CATALOG, GetCatalogResponse, ITerm, Semester } from "@/lib/api";
 
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
@@ -70,7 +64,6 @@ export default function ClassBrowser({
   const [localQuery, setLocalQuery] = useState<string>(() =>
     persistent ? (searchParams.get("query") ?? "") : ""
   );
-  const [localComponents, setLocalComponents] = useState<Component[]>([]);
   const [localUnits, setLocalUnits] = useState<UnitRange>([0, 5]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
@@ -94,19 +87,6 @@ export default function ClassBrowser({
   const classes = useMemo(() => data?.catalog ?? [], [data]);
 
   const query = localQuery;
-
-  const components = useMemo(
-    () =>
-      persistent
-        ? ((searchParams
-            .get("components")
-            ?.split(",")
-            .filter((component) =>
-              Object.values(Component).includes(component as Component)
-            ) ?? []) as Component[])
-        : localComponents,
-    [searchParams, localComponents, persistent]
-  );
 
   const units = useMemo((): UnitRange => {
     if (!persistent) return localUnits;
@@ -196,7 +176,6 @@ export default function ClassBrowser({
     () =>
       getFilteredClasses(
         classes,
-        components,
         units,
         levels,
         days,
@@ -207,7 +186,6 @@ export default function ClassBrowser({
       ),
     [
       classes,
-      components,
       units,
       levels,
       days,
@@ -334,7 +312,6 @@ export default function ClassBrowser({
         semester: currentSemester,
         terms,
         query,
-        components,
         units,
         levels,
         days,
@@ -345,8 +322,6 @@ export default function ClassBrowser({
         reverse: localReverse,
         effectiveOrder,
         updateQuery,
-        updateComponents: (components) =>
-          updateArray("components", setLocalComponents, components),
         updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
         updateDays: (days) => updateArray("days", setLocalDays, days),
