@@ -78,7 +78,7 @@ export default function ShareDialog({ children }: ShareDialogProps) {
     };
 
     const getDayOfWeek = (dayIndex: number) => {
-      const days = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+      const days = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
       return days[dayIndex];
     };
 
