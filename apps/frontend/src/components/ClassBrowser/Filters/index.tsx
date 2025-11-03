@@ -355,6 +355,20 @@ export default function Filters() {
           </div>
         )}
         <div className={styles.formControl}>
+          <p className={styles.label}>Department</p>
+          <Select<string>
+            value={department}
+            placeholder="Select a department"
+            clearable
+            onChange={(value) => {
+              if (typeof value === "string" || value === null) {
+                updateDepartment(value);
+              }
+            }}
+            options={departmentOptions}
+          />
+        </div>
+        <div className={styles.formControl}>
           <p className={styles.label}>Requirements</p>
           <Select<RequirementSelection>
             multi
@@ -407,20 +421,6 @@ export default function Filters() {
           />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Department</p>
-          <Select<string>
-            value={department}
-            placeholder="Select department"
-            clearable
-            onChange={(value) => {
-              if (typeof value === "string" || value === null) {
-                updateDepartment(value);
-              }
-            }}
-            options={departmentOptions}
-          />
-        </div>
-        <div className={styles.formControl}>
           <p className={styles.label}>Units</p>
           <Slider
             min={0}
@@ -442,7 +442,7 @@ export default function Filters() {
           />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Grading options</p>
+          <p className={styles.label}>Grading Option</p>
           <Select<GradingFilter>
             multi
             value={gradingFilters}
