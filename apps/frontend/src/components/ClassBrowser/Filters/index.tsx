@@ -173,7 +173,7 @@ export default function Filters() {
     () => [
       ...breadths.map((breadth) => ({ type: "breadth", value: breadth } as const)),
       ...(universityRequirement
-        ? [{ type: "university", value: universityRequirement }]
+        ? [{ type: "university" as const, value: universityRequirement }]
         : []),
     ],
     [breadths, universityRequirement]
