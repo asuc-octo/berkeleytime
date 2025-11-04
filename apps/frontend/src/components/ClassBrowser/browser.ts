@@ -254,7 +254,7 @@ export const getFilteredClasses = (
 
       if (
         currentDepartment &&
-        _class.subject.toLowerCase() !== currentDepartment.toLowerCase()
+        _class.subject.toLowerCase() !== currentDepartment
       ) {
         acc.excludedClasses.push(_class);
 
