@@ -10,43 +10,51 @@ import {
 } from "@/lib/api";
 
 export const useCreateSchedule = () => {
-  const mutation = useMutation<CreateScheduleResponse>(CREATE_SCHEDULE, {
-    update(cache, { data }) {
-      const schedule = data?.createSchedule;
+  const mutation = useMutation<CreateScheduleResponse>(CREATE_SCHEDULE); //, {
+  //   update(cache, { data }) {
+  //     const schedule = data?.createSchedule;
 
-      if (!schedule) return;
+  //     if (!schedule) return;
 
-      cache.modify({
-        fields: {
-          schedules: (existingSchedules = []) => {
-            const reference = cache.writeFragment({
-              data: schedule,
-              fragment: gql`
-                fragment CreatedSchedule on Schedule {
-                  _id
-                  name
-                  public
-                  createdBy
-                  year
-                  semester
-                  classes {
-                    class {
-                      subject
-                      courseNumber
-                      number
-                    }
-                    selectedSections
-                  }
-                }
-              `,
-            });
+  //     cache.modify({
+  //       fields: {
+  //         schedules: (existingSchedules = []) => {
+  //           const reference = cache.writeFragment({
+  //             data: schedule,
+  //             fragment: gql`
+  //               fragment CreatedSchedule on Schedule {
+  //                 _id
+  //                 name
+  //                 public
+  //                 createdBy
+  //                 year
+  //                 semester
+  //                 events {
+  //                   _id
+  //                   title
+  //                   description
+  //                   startTime
+  //                   endTime
+  //                   days
+  //                 }
+  //                 classes {
+  //                   class {
+  //                     subject
+  //                     courseNumber
+  //                     number
+  //                   }
+  //                   selectedSections
+  //                 }
+  //               }
+  //             `,
+  //           });
 
-            return [...existingSchedules, reference];
-          },
-        },
-      });
-    },
-  });
+  //           return [...existingSchedules, reference];
+  //         },
+  //       },
+  //     });
+  //   },
+  // });
 
   const createSchedule = useCallback(
     async (schedule: IScheduleInput) => {

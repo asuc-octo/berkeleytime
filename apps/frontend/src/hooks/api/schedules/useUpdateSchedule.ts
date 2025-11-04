@@ -29,7 +29,7 @@ export const useUpdateSchedule = () => {
       return await mutate({
         ...options,
         variables: { id, schedule },
-        refetchQueries: [{ query: READ_SCHEDULE, variables: { id } }],
+        // refetchQueries: [{ query: READ_SCHEDULE, variables: { id } }],
       });
     },
     [mutation]
