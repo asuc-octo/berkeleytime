@@ -2,7 +2,14 @@ import { Dispatch, SetStateAction, createContext } from "react";
 
 import { Component, IClass, ITerm, Semester } from "@/lib/api";
 
-import { Breadth, Day, Level, SortBy, Unit, UniversityRequirement } from "./browser";
+import {
+  Breadth,
+  Day,
+  Level,
+  SortBy,
+  Unit,
+  UniversityRequirement,
+} from "./browser";
 
 export interface BrowserContextType {
   responsive: boolean;

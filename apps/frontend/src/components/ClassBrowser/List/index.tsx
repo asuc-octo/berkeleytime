@@ -25,7 +25,16 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query, loadMore, hasMore, totalCount } = useBrowser();
+  const {
+    classes,
+    loading,
+    year,
+    semester,
+    query,
+    loadMore,
+    hasMore,
+    totalCount,
+  } = useBrowser();
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
 

@@ -84,16 +84,19 @@ export default function ClassBrowser({
 
   const query = localQuery;
 
-  const { data, loading, fetchMore } = useQuery<GetCatalogResponse>(GET_CATALOG, {
-    variables: {
-      semester: currentSemester,
-      year: currentYear,
-      limit: 100,
-      offset: 0,
-    },
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-first",
-  });
+  const { data, loading, fetchMore } = useQuery<GetCatalogResponse>(
+    GET_CATALOG,
+    {
+      variables: {
+        semester: currentSemester,
+        year: currentYear,
+        limit: 100,
+        offset: 0,
+      },
+      fetchPolicy: "cache-and-network",
+      nextFetchPolicy: "cache-first",
+    }
+  );
 
   const classes = useMemo(() => data?.catalog.classes ?? [], [data]);
   const hasMore = data?.catalog.hasMore ?? false;
@@ -132,7 +135,7 @@ export default function ClassBrowser({
           });
 
           // Longer delay between batches (1 second) to avoid blocking UI
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       } catch (error) {
         console.error("Error loading data:", error);
@@ -257,7 +260,16 @@ export default function ClassBrowser({
   const previousClassesCountRef = useRef(0);
   const processedIncludedRef = useRef<IClass[]>([]);
   const processedExcludedRef = useRef<IClass[]>([]);
-  const previousFiltersRef = useRef({ components, units, levels, days, open, online, breadths, universityRequirement });
+  const previousFiltersRef = useRef({
+    components,
+    units,
+    levels,
+    days,
+    open,
+    online,
+    breadths,
+    universityRequirement,
+  });
 
   const { includedClasses, excludedClasses } = useMemo(() => {
     const previousCount = previousClassesCountRef.current;
@@ -272,11 +284,21 @@ export default function ClassBrowser({
       previousFiltersRef.current.open !== open ||
       previousFiltersRef.current.online !== online ||
       previousFiltersRef.current.breadths !== breadths ||
-      previousFiltersRef.current.universityRequirement !== universityRequirement;
+      previousFiltersRef.current.universityRequirement !==
+        universityRequirement;
 
     // If filters changed, first load, or data reset, reprocess everything
     if (filtersChanged || previousCount === 0 || currentCount < previousCount) {
-      previousFiltersRef.current = { components, units, levels, days, open, online, breadths, universityRequirement };
+      previousFiltersRef.current = {
+        components,
+        units,
+        levels,
+        days,
+        open,
+        online,
+        breadths,
+        universityRequirement,
+      };
       const result = getFilteredClasses(
         classes,
         components,

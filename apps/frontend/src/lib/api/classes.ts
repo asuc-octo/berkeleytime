@@ -376,7 +376,12 @@ export interface GetCatalogResponse {
 }
 
 export const GET_CATALOG = gql`
-  query GetCatalog($year: Int!, $semester: Semester!, $limit: Int, $offset: Int) {
+  query GetCatalog(
+    $year: Int!
+    $semester: Semester!
+    $limit: Int
+    $offset: Int
+  ) {
     catalog(year: $year, semester: $semester, limit: $limit, offset: $offset) {
       classes {
         number
