@@ -5,6 +5,22 @@
   z-index: 1;
   background-color: var(--foreground-color);
 
+  .progressBar {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    height: 2px;
+    background-color: transparent;
+    overflow: hidden;
+  }
+
+  .progressFill {
+    height: 100%;
+    background: var(--blue-500);
+    transition: width 0.3s ease-out;
+  }
+
   .group {
     border: 1px solid var(--border-color);
     border-radius: 4px;

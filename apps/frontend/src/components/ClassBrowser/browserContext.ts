@@ -47,6 +47,8 @@ export interface BrowserContextType {
   loading: boolean;
   totalCount: number;
   isFiltersChanged: boolean;
+  loadedCount: number;
+  isBackgroundLoading: boolean;
 }
 
 const BrowserContext = createContext<BrowserContextType | null>(null);

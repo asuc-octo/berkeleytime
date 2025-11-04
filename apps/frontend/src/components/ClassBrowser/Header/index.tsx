@@ -16,7 +16,12 @@ export default function Header() {
     semester,
     year,
     responsive,
+    totalCount,
+    loadedCount,
+    isBackgroundLoading,
   } = useBrowser();
+
+  const progress = totalCount > 0 ? (loadedCount / totalCount) * 100 : 0;
 
   return (
     <div
@@ -44,6 +49,14 @@ export default function Header() {
           {expanded ? <FilterSolid /> : <Filter />}
         </IconButton>
       </div>
+      {isBackgroundLoading && (
+        <div className={styles.progressBar}>
+          <div
+            className={styles.progressFill}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
     </div>
   );
 }

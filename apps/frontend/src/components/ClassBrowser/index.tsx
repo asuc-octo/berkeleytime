@@ -111,6 +111,7 @@ export default function ClassBrowser({
   // Auto-load all remaining data in background
   const isLoadingAllRef = useRef(false);
   const loadedCountRef = useRef(0);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
 
   useEffect(() => {
     loadedCountRef.current = classes.length;
@@ -124,6 +125,7 @@ export default function ClassBrowser({
 
     const loadAllData = async () => {
       isLoadingAllRef.current = true;
+      setIsBackgroundLoading(true);
 
       try {
         while (loadedCountRef.current < totalCount) {
@@ -144,6 +146,7 @@ export default function ClassBrowser({
         console.error("Error loading data:", error);
       } finally {
         isLoadingAllRef.current = false;
+        setIsBackgroundLoading(false);
       }
     };
 
@@ -491,6 +494,8 @@ export default function ClassBrowser({
         updateReverse: setLocalReverse,
         totalCount,
         isFiltersChanged,
+        loadedCount: classes.length,
+        isBackgroundLoading,
       }}
     >
       <div
