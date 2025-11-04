@@ -117,8 +117,8 @@ export default function ClassBrowser({
       isLoadingAllRef.current = true;
 
       try {
-        // Load in larger batches (500 per batch)
-        const batchSize = 500;
+        // Load in larger batches (1000 per batch)
+        const batchSize = 1000;
 
         while (loadedCountRef.current < totalCount) {
           const remainingCount = totalCount - loadedCountRef.current;
@@ -131,8 +131,8 @@ export default function ClassBrowser({
             },
           });
 
-          // Shorter delay between batches
-          await new Promise(resolve => setTimeout(resolve, 50));
+          // Longer delay between batches (1 second) to avoid blocking UI
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       } catch (error) {
         console.error("Error loading data:", error);

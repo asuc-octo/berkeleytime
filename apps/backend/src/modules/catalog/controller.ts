@@ -358,7 +358,7 @@ export const subjects: Record<string, Subject> = {
 };
 
 const DEFAULT_LIMIT = 100;
-const MAX_LIMIT = 500;
+const MAX_LIMIT = 1000;
 
 // Pagination implemented with offset-based approach
 // Query/filtering/sorting are handled on frontend after all data is loaded
