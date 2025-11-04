@@ -8,7 +8,11 @@ interface UserProviderProps {
 }
 
 export default function UserProvider({ children }: UserProviderProps) {
-  const { data: user, loading, error } = useReadUser({
+  const {
+    data: user,
+    loading,
+    error,
+  } = useReadUser({
     fetchPolicy: "cache-and-network",
   });
 
