@@ -104,13 +104,6 @@ export default function List({ onSelect }: ListProps) {
     hideFocusRing();
   }, [classes, hideFocusRing]);
 
-  // Scroll focused item into view
-  useEffect(() => {
-    if (focusedIndex >= 0 && focusedIndex < classes.length) {
-      virtualizer.scrollToIndex(focusedIndex, { align: "auto" });
-    }
-  }, [focusedIndex, virtualizer, classes.length]);
-
   // Keyboard navigation
   useKeyboardNavigation({
     items: classes,
