@@ -608,7 +608,7 @@ function SemesterBlock({
 
         {open && (
           <>
-            {selectedClasses
+            {[...selectedClasses]
               .sort((a, b) => {
                 if (sortCourseOption === "Unsorted") return 0;
                 if (sortCourseOption === "A-Z")

@@ -18,7 +18,7 @@ export const useSetSelectedCourses = () => {
         if (!selectedCourses || !variables) return;
 
         cache.modify({
-          id: `PlanTerm:${variables.id}`,
+          id: cache.identify({ __typename: "PlanTerm", _id: variables.id }),
           fields: {
             courses: () => variables.courses,
           },

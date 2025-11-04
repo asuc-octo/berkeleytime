@@ -11,7 +11,6 @@ export const useCreatePlan = () => {
 
       if (!plan) return;
     },
-    refetchQueries: ["GetPlan"],
   });
 
   const createPlan = useCallback(
