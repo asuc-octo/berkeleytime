@@ -365,69 +365,79 @@ export const READ_CLASS = gql`
   }
 `;
 
+export interface CatalogConnection {
+  classes: IClass[];
+  totalCount: number;
+  hasMore: boolean;
+}
+
 export interface GetCatalogResponse {
-  catalog: IClass[];
+  catalog: CatalogConnection;
 }
 
 export const GET_CATALOG = gql`
-  query GetCatalog($year: Int!, $semester: Semester!) {
-    catalog(year: $year, semester: $semester) {
-      number
-      subject
-      courseNumber
-      courseId
-      title
-      unitsMax
-      unitsMin
-      finalExam
-      gradingBasis
-      primarySection {
-        component
-        online
-        instructionMode
-        attendanceRequired
-        lecturesRecorded
-        sectionAttributes {
-          attribute {
-            code
-            description
-            formalDescription
-          }
-          value {
-            code
-            description
-            formalDescription
-          }
-        }
-        enrollment {
-          latest {
-            time
-            status
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
-          }
-        }
-        meetings {
-          days
-        }
-      }
-      course {
-        subject
+  query GetCatalog($year: Int!, $semester: Semester!, $limit: Int, $offset: Int) {
+    catalog(year: $year, semester: $semester, limit: $limit, offset: $offset) {
+      classes {
         number
+        subject
+        courseNumber
+        courseId
         title
-        gradeDistribution {
-          average
-          pnpPercentage
+        unitsMax
+        unitsMin
+        finalExam
+        gradingBasis
+        primarySection {
+          component
+          online
+          instructionMode
+          attendanceRequired
+          lecturesRecorded
+          sectionAttributes {
+            attribute {
+              code
+              description
+              formalDescription
+            }
+            value {
+              code
+              description
+              formalDescription
+            }
+          }
+          enrollment {
+            latest {
+              time
+              status
+              enrolledCount
+              maxEnroll
+              waitlistedCount
+              maxWaitlist
+            }
+          }
+          meetings {
+            days
+          }
         }
-        academicCareer
+        course {
+          subject
+          number
+          title
+          gradeDistribution {
+            average
+            pnpPercentage
+          }
+          academicCareer
+        }
+        requirementDesignation {
+          code
+          description
+          formalDescription
+        }
       }
-      requirementDesignation {
-        code
-        description
-        formalDescription
-      }
+      totalCount
+      hasMore
     }
   }
 `;

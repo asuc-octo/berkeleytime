@@ -38,6 +38,9 @@ export interface BrowserContextType {
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
   loading: boolean;
+  loadMore: () => void;
+  hasMore: boolean;
+  totalCount: number;
 }
 
 const BrowserContext = createContext<BrowserContextType | null>(null);

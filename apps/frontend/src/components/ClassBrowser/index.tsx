@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
@@ -82,18 +82,80 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
+  const query = localQuery;
+
+  const { data, loading, fetchMore } = useQuery<GetCatalogResponse>(GET_CATALOG, {
     variables: {
       semester: currentSemester,
       year: currentYear,
+      limit: 100,
+      offset: 0,
     },
-    fetchPolicy: "no-cache",
-    nextFetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-first",
   });
 
-  const classes = useMemo(() => data?.catalog ?? [], [data]);
+  const classes = useMemo(() => data?.catalog.classes ?? [], [data]);
+  const hasMore = data?.catalog.hasMore ?? false;
+  const totalCount = data?.catalog.totalCount ?? 0;
 
-  const query = localQuery;
+  // Auto-load all remaining data in background
+  const isLoadingAllRef = useRef(false);
+  const loadedCountRef = useRef(0);
+
+  useEffect(() => {
+    loadedCountRef.current = classes.length;
+  }, [classes.length]);
+
+  useEffect(() => {
+    // Prevent multiple simultaneous loads
+    if (isLoadingAllRef.current) return;
+    if (!totalCount || totalCount === 0) return;
+    if (loadedCountRef.current >= totalCount) return;
+
+    const loadAllData = async () => {
+      isLoadingAllRef.current = true;
+
+      try {
+        // Load in larger batches (500 per batch)
+        const batchSize = 500;
+
+        while (loadedCountRef.current < totalCount) {
+          const remainingCount = totalCount - loadedCountRef.current;
+          const loadSize = Math.min(batchSize, remainingCount);
+
+          await fetchMore({
+            variables: {
+              offset: loadedCountRef.current,
+              limit: loadSize,
+            },
+          });
+
+          // Shorter delay between batches
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        isLoadingAllRef.current = false;
+      }
+    };
+
+    // Start loading after initial render
+    const timer = setTimeout(loadAllData, 300);
+    return () => clearTimeout(timer);
+  }, [totalCount, fetchMore]); // Only trigger once when totalCount is known
+
+  const loadMore = useCallback(() => {
+    if (!hasMore || loading) return;
+
+    fetchMore({
+      variables: {
+        offset: classes.length,
+        limit: 50,
+      },
+    });
+  }, [hasMore, loading, classes.length, fetchMore]);
 
   const components = useMemo(
     () =>
@@ -190,9 +252,32 @@ export default function ClassBrowser({
     [searchParams, localOnline, persistent]
   );
 
-  const { includedClasses, excludedClasses } = useMemo(
-    () =>
-      getFilteredClasses(
+  // Incremental filtering and sorting for performance
+  // Only process new classes, not the entire dataset every time
+  const previousClassesCountRef = useRef(0);
+  const processedIncludedRef = useRef<IClass[]>([]);
+  const processedExcludedRef = useRef<IClass[]>([]);
+  const previousFiltersRef = useRef({ components, units, levels, days, open, online, breadths, universityRequirement });
+
+  const { includedClasses, excludedClasses } = useMemo(() => {
+    const previousCount = previousClassesCountRef.current;
+    const currentCount = classes.length;
+
+    // Check if any filter changed
+    const filtersChanged =
+      previousFiltersRef.current.components !== components ||
+      previousFiltersRef.current.units !== units ||
+      previousFiltersRef.current.levels !== levels ||
+      previousFiltersRef.current.days !== days ||
+      previousFiltersRef.current.open !== open ||
+      previousFiltersRef.current.online !== online ||
+      previousFiltersRef.current.breadths !== breadths ||
+      previousFiltersRef.current.universityRequirement !== universityRequirement;
+
+    // If filters changed, first load, or data reset, reprocess everything
+    if (filtersChanged || previousCount === 0 || currentCount < previousCount) {
+      previousFiltersRef.current = { components, units, levels, days, open, online, breadths, universityRequirement };
+      const result = getFilteredClasses(
         classes,
         components,
         units,
@@ -202,19 +287,55 @@ export default function ClassBrowser({
         online,
         breadths,
         universityRequirement
-      ),
-    [
-      classes,
-      components,
-      units,
-      levels,
-      days,
-      open,
-      online,
-      breadths,
-      universityRequirement,
-    ]
-  );
+      );
+      processedIncludedRef.current = result.includedClasses;
+      processedExcludedRef.current = result.excludedClasses;
+      previousClassesCountRef.current = currentCount;
+      return result;
+    }
+
+    // Only process new classes (incremental)
+    if (currentCount > previousCount) {
+      const newClasses = classes.slice(previousCount);
+      const newFiltered = getFilteredClasses(
+        newClasses,
+        components,
+        units,
+        levels,
+        days,
+        open,
+        online,
+        breadths,
+        universityRequirement
+      );
+
+      // Append new results
+      processedIncludedRef.current = [
+        ...processedIncludedRef.current,
+        ...newFiltered.includedClasses,
+      ];
+      processedExcludedRef.current = [
+        ...processedExcludedRef.current,
+        ...newFiltered.excludedClasses,
+      ];
+      previousClassesCountRef.current = currentCount;
+    }
+
+    return {
+      includedClasses: processedIncludedRef.current,
+      excludedClasses: processedExcludedRef.current,
+    };
+  }, [
+    classes,
+    components,
+    units,
+    levels,
+    days,
+    open,
+    online,
+    breadths,
+    universityRequirement,
+  ]);
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
@@ -338,6 +459,9 @@ export default function ClassBrowser({
         setExpanded,
         loading,
         updateReverse: setLocalReverse,
+        loadMore,
+        hasMore,
+        totalCount,
       }}
     >
       <div

@@ -25,12 +25,19 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query } = useBrowser();
+  const { classes, loading, year, semester, query, loadMore, hasMore, totalCount } = useBrowser();
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
+
+  // Track query/filter state to detect non-pagination changes
+  const previousFiltersRef = useRef({ query, year, semester });
+  const isFiltersChanged =
+    previousFiltersRef.current.query !== query ||
+    previousFiltersRef.current.year !== year ||
+    previousFiltersRef.current.semester !== semester;
 
   const recentlyViewed = useMemo(() => {
     const allRecents = getRecents(RecentType.Class);
@@ -98,17 +105,29 @@ export default function List({ onSelect }: ListProps) {
     hideFocusRing();
   }, [searchParams, hideFocusRing]);
 
-  // Reset focus when classes change (filters, search, etc.)
+  // Reset focus and scroll only when filters/search change (not pagination)
   useEffect(() => {
-    setFocusedIndex(0);
-    hideFocusRing();
-  }, [classes, hideFocusRing]);
+    if (isFiltersChanged) {
+      setFocusedIndex(0);
+      hideFocusRing();
+      if (rootRef.current) {
+        rootRef.current.scrollTop = 0;
+      }
+      previousFiltersRef.current = { query, year, semester };
+    }
+  }, [query, year, semester, isFiltersChanged, hideFocusRing]);
 
-  // Scroll focused item into view
+  // Scroll focused item into view when keyboard navigation changes focus
+  // But NOT on initial render or pagination
+  const previousFocusIndexRef = useRef(focusedIndex);
   useEffect(() => {
-    if (focusedIndex >= 0 && focusedIndex < classes.length) {
+    const focusChanged = previousFocusIndexRef.current !== focusedIndex;
+
+    if (focusChanged && focusedIndex >= 0 && focusedIndex < classes.length) {
       virtualizer.scrollToIndex(focusedIndex, { align: "auto" });
     }
+
+    previousFocusIndexRef.current = focusedIndex;
   }, [focusedIndex, virtualizer, classes.length]);
 
   // Keyboard navigation
@@ -142,6 +161,25 @@ export default function List({ onSelect }: ListProps) {
     },
     300
   );
+
+  // Manual scroll-triggered load (as backup if auto-load is slow)
+  useEffect(() => {
+    const container = rootRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
+
+      // Load more when scrolled 95% of the way down
+      if (scrollPercentage > 0.95 && hasMore && !loading) {
+        loadMore();
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [hasMore, loading, loadMore]);
 
   const items = virtualizer.getVirtualItems();
 
@@ -212,32 +250,40 @@ export default function List({ onSelect }: ListProps) {
           </p>
         </div>
       ) : (
-        <div
-          className={styles.view}
-          style={{
-            height: `${virtualizer.getTotalSize()}px`,
-          }}
-        >
+        <>
           <div
-            className={styles.body}
-            style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
+            className={styles.view}
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+            }}
           >
-            {items.map(({ key, index }) => {
-              const _class = classes[index];
+            <div
+              className={styles.body}
+              style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
+            >
+              {items.map(({ key, index }) => {
+                const _class = classes[index];
 
-              return (
-                <ClassCard
-                  class={_class}
-                  data-index={index}
-                  key={key}
-                  ref={virtualizer.measureElement}
-                  active={showFocusRing && index === focusedIndex}
-                  onClick={() => handleClassClick(index)}
-                />
-              );
-            })}
+                return (
+                  <ClassCard
+                    class={_class}
+                    data-index={index}
+                    key={key}
+                    ref={virtualizer.measureElement}
+                    active={showFocusRing && index === focusedIndex}
+                    onClick={() => handleClassClick(index)}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
+          {loading && hasMore && (
+            <div className={styles.loadingMore}>
+              <LoadingIndicator size="sm" />
+              <p>Loading more courses...</p>
+            </div>
+          )}
+        </>
       )}
       {/* <div className={styles.footer}>
         <Link to="/discover" className={styles.button}>

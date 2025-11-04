@@ -357,13 +357,21 @@ export const subjects: Record<string, Subject> = {
   },
 };
 
-// TODO: Pagination, filtering
+const DEFAULT_LIMIT = 100;
+const MAX_LIMIT = 500;
+
+// Pagination implemented with offset-based approach
+// Query/filtering/sorting are handled on frontend after all data is loaded
 export const getCatalog = async (
   year: number,
   semester: string,
   info: GraphQLResolveInfo,
-  query?: string | null
+  limit?: number | null,
+  offset?: number | null
 ) => {
+  // Apply pagination defaults and limits
+  const appliedLimit = Math.min(limit ?? DEFAULT_LIMIT, MAX_LIMIT);
+  const appliedOffset = offset ?? 0;
   const term = await TermModel.findOne({
     name: `${year} ${semester}`,
   })
@@ -574,19 +582,17 @@ export const getCatalog = async (
     return accumulator;
   }, [] as ClassModule.Class[]);
 
-  query = query?.trim();
+  // Apply pagination (no filtering/searching on backend)
+  const totalCount = reducedClasses.length;
+  const paginatedClasses = reducedClasses.slice(
+    appliedOffset,
+    appliedOffset + appliedLimit
+  );
+  const hasMore = appliedOffset + appliedLimit < totalCount;
 
-  if (query) {
-    const index = getIndex(reducedClasses);
-
-    // TODO: Limit query because Fuse performance decreases linearly by
-    // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-    const filteredClasses = index
-      .search(query)
-      .map(({ refIndex }) => reducedClasses[refIndex]);
-
-    return filteredClasses;
-  }
-
-  return reducedClasses;
+  return {
+    classes: paginatedClasses,
+    totalCount,
+    hasMore,
+  };
 };
