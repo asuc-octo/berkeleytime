@@ -44,14 +44,15 @@ export default function CreateScheduleDialog({
   const term = useMemo(() => {
     if (localTerm) return localTerm;
 
-    // Default to the current term
-    const currentTerm = terms?.find(
+    const ugrdTerms = terms?.filter(term => term.academicCareerCode === "UGRD");
+
+    const currentTerm = ugrdTerms?.find(
       (term) => term.temporalPosition === TemporalPosition.Current
     );
 
-    // Fall back to the next term based on enrollment dates
     const now = moment();
-    const nextTerm = terms
+
+    const nextTerm = ugrdTerms
       ?.filter((term) => term.selfServiceEnrollBeginDate || term.startDate)
       .toSorted((a, b) => {
         const aDate = a.selfServiceEnrollBeginDate || a.startDate;
@@ -60,11 +61,21 @@ export default function CreateScheduleDialog({
       })
       .find((term) => {
         const enrollDate = term.selfServiceEnrollBeginDate || term.startDate;
+        const termStart = term.startDate;
+
+        // Show this term if we're within 1 month before enrollment starts
+        // or if enrollment has already started
+        const enrollStartsWithinMonth = moment(enrollDate).subtract(1, 'month');
+        const shouldShowTerm = now.isAfter(enrollStartsWithinMonth);
+        const semesterHasntStarted = moment(termStart).isAfter(now);
+
         return term.temporalPosition === TemporalPosition.Future &&
-               moment(enrollDate).isAfter(now);
+               shouldShowTerm &&
+               semesterHasntStarted;
       });
 
-    const defaultTerm = currentTerm ?? nextTerm ?? terms?.[0];
+    // Priority: smart enrollment-based selection > current term > any term
+    const defaultTerm = nextTerm ?? currentTerm ?? ugrdTerms?.[0];
 
     if (!defaultTerm) return;
 

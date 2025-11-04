@@ -47,16 +47,18 @@ export default function Catalog() {
   const term = useMemo(() => {
     if (!terms) return null;
 
+    const ugrdTerms = terms.filter(term => term.academicCareerCode === "UGRD");
+
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
-    // Default to the current term
-    const currentTerm = terms.find(
+    const currentTerm = ugrdTerms.find(
       (term) => term.temporalPosition === TemporalPosition.Current
     );
 
-    // Fall back to the next term based on enrollment dates
+    // Show semester starting ~1 month before enrollment begins
     const now = moment();
-    const nextTerm = terms
+
+    const nextTerm = ugrdTerms
       .filter((term) => term.selfServiceEnrollBeginDate || term.startDate)
       .toSorted((a, b) => {
         const aDate = a.selfServiceEnrollBeginDate || a.startDate;
@@ -65,19 +67,34 @@ export default function Catalog() {
       })
       .find((term) => {
         const enrollDate = term.selfServiceEnrollBeginDate || term.startDate;
+        const termStart = term.startDate;
+
+        // Show this term if we're within 1 month before enrollment starts
+        // or if enrollment has already started
+        const enrollStartsWithinMonth = moment(enrollDate).subtract(1, 'month');
+        const shouldShowTerm = now.isAfter(enrollStartsWithinMonth);
+        const semesterHasntStarted = moment(termStart).isAfter(now);
+
         return term.temporalPosition === TemporalPosition.Future &&
-               moment(enrollDate).isAfter(now);
+               shouldShowTerm &&
+               semesterHasntStarted;
       });
 
+    // Selection priority:
+    // 1. URL parameter (explicit user choice)
+    // 2. Smart selection: if enrollment is starting soon, show that term
+    // 3. Recent term (localStorage)
+    // 4. Current term
+    // 5. Next future term
     const selectedTerm =
-      terms?.find((term) => term.year === year && term.semester === semester) ??
-      terms.find(
+      ugrdTerms?.find((term) => term.year === year && term.semester === semester) ??
+      nextTerm ??
+      ugrdTerms.find(
         (term) =>
           term.year === recentTerm?.year &&
           term.semester === recentTerm?.semester
       ) ??
-      currentTerm ??
-      nextTerm;
+      currentTerm;
 
     if (selectedTerm) {
       addRecent(RecentType.CatalogTerm, {

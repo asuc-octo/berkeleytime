@@ -75,6 +75,7 @@ export const READ_TERM = gql`
       year
       semester
       temporalPosition
+      academicCareerCode
       sessions {
         name
         startDate
