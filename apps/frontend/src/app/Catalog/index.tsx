@@ -47,7 +47,9 @@ export default function Catalog() {
   const term = useMemo(() => {
     if (!terms) return null;
 
-    const ugrdTerms = terms.filter(term => term.academicCareerCode === "UGRD");
+    const ugrdTerms = terms.filter(
+      (term) => term.academicCareerCode === "UGRD"
+    );
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
@@ -55,29 +57,27 @@ export default function Catalog() {
       (term) => term.temporalPosition === TemporalPosition.Current
     );
 
-    // Show semester starting ~1 month before enrollment begins
+    // Show semester when enrollment opens (We assume that selfServiceEnrollBeginDate refers to the official date on which the school publishes the semester catalog!)
     const now = moment();
 
     const nextTerm = ugrdTerms
-      .filter((term) => term.selfServiceEnrollBeginDate || term.startDate)
+      .filter((term) => term.selfServiceEnrollBeginDate && term.startDate)
       .toSorted((a, b) => {
-        const aDate = a.selfServiceEnrollBeginDate || a.startDate;
-        const bDate = b.selfServiceEnrollBeginDate || b.startDate;
-        return moment(aDate).diff(moment(bDate));
+        return moment(a.selfServiceEnrollBeginDate).diff(
+          moment(b.selfServiceEnrollBeginDate)
+        );
       })
       .find((term) => {
-        const enrollDate = term.selfServiceEnrollBeginDate || term.startDate;
-        const termStart = term.startDate;
+        const enrollmentHasStarted = now.isAfter(
+          moment(term.selfServiceEnrollBeginDate)
+        );
+        const semesterHasntStarted = moment(term.startDate).isAfter(now);
 
-        // Show this term if we're within 1 month before enrollment starts
-        // or if enrollment has already started
-        const enrollStartsWithinMonth = moment(enrollDate).subtract(1, 'month');
-        const shouldShowTerm = now.isAfter(enrollStartsWithinMonth);
-        const semesterHasntStarted = moment(termStart).isAfter(now);
-
-        return term.temporalPosition === TemporalPosition.Future &&
-               shouldShowTerm &&
-               semesterHasntStarted;
+        return (
+          term.temporalPosition === TemporalPosition.Future &&
+          enrollmentHasStarted &&
+          semesterHasntStarted
+        );
       });
 
     // Selection priority:
@@ -87,7 +87,9 @@ export default function Catalog() {
     // 4. Current term
     // 5. Next future term
     const selectedTerm =
-      ugrdTerms?.find((term) => term.year === year && term.semester === semester) ??
+      ugrdTerms?.find(
+        (term) => term.year === year && term.semester === semester
+      ) ??
       nextTerm ??
       ugrdTerms.find(
         (term) =>

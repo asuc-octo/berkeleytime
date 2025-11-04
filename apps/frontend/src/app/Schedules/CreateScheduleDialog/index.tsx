@@ -44,7 +44,9 @@ export default function CreateScheduleDialog({
   const term = useMemo(() => {
     if (localTerm) return localTerm;
 
-    const ugrdTerms = terms?.filter(term => term.academicCareerCode === "UGRD");
+    const ugrdTerms = terms?.filter(
+      (term) => term.academicCareerCode === "UGRD"
+    );
 
     const currentTerm = ugrdTerms?.find(
       (term) => term.temporalPosition === TemporalPosition.Current
@@ -53,25 +55,23 @@ export default function CreateScheduleDialog({
     const now = moment();
 
     const nextTerm = ugrdTerms
-      ?.filter((term) => term.selfServiceEnrollBeginDate || term.startDate)
+      ?.filter((term) => term.selfServiceEnrollBeginDate && term.startDate)
       .toSorted((a, b) => {
-        const aDate = a.selfServiceEnrollBeginDate || a.startDate;
-        const bDate = b.selfServiceEnrollBeginDate || b.startDate;
-        return moment(aDate).diff(moment(bDate));
+        return moment(a.selfServiceEnrollBeginDate).diff(
+          moment(b.selfServiceEnrollBeginDate)
+        );
       })
       .find((term) => {
-        const enrollDate = term.selfServiceEnrollBeginDate || term.startDate;
-        const termStart = term.startDate;
+        const enrollmentHasStarted = now.isAfter(
+          moment(term.selfServiceEnrollBeginDate)
+        );
+        const semesterHasntStarted = moment(term.startDate).isAfter(now);
 
-        // Show this term if we're within 1 month before enrollment starts
-        // or if enrollment has already started
-        const enrollStartsWithinMonth = moment(enrollDate).subtract(1, 'month');
-        const shouldShowTerm = now.isAfter(enrollStartsWithinMonth);
-        const semesterHasntStarted = moment(termStart).isAfter(now);
-
-        return term.temporalPosition === TemporalPosition.Future &&
-               shouldShowTerm &&
-               semesterHasntStarted;
+        return (
+          term.temporalPosition === TemporalPosition.Future &&
+          enrollmentHasStarted &&
+          semesterHasntStarted
+        );
       });
 
     // Priority: smart enrollment-based selection > current term > any term
