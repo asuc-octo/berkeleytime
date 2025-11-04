@@ -144,6 +144,10 @@ export function Select<T>({
     [value, selectableOptions]
   );
 
+  const hasSelection = Array.isArray(activeElem)
+    ? activeElem.length > 0
+    : Boolean(activeElem);
+
   return (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <DropdownMenu.Trigger asChild disabled={disabled}>
@@ -153,7 +157,7 @@ export function Select<T>({
           justify="between"
           align="center"
           className={classNames(styles.trigger, {
-            [styles.selected]: activeElem,
+            [styles.selected]: hasSelection,
             [styles.disabled]: disabled,
             [styles.foreground]: variant === "foreground",
           })}
@@ -192,7 +196,7 @@ export function Select<T>({
             placeholder
           )}
           <Flex direction="row" gap="8px" align="center">
-            {clearable && (
+            {clearable && hasSelection && (
               <Xmark
                 onPointerDown={(e) => {
                   e.stopPropagation();
