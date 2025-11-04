@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
@@ -8,9 +8,16 @@ import {
   Component,
   GET_CATALOG,
   GetCatalogResponse,
+  IClass,
   ITerm,
   Semester,
 } from "@/lib/api";
+
+// Pagination constants
+const INITIAL_LOAD_SIZE = 100;
+const AUTO_LOAD_BATCH_SIZE = 1000;
+const AUTO_LOAD_DELAY_MS = 1000;
+const AUTO_LOAD_START_DELAY_MS = 300;
 
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
@@ -90,7 +97,7 @@ export default function ClassBrowser({
       variables: {
         semester: currentSemester,
         year: currentYear,
-        limit: 100,
+        limit: INITIAL_LOAD_SIZE,
         offset: 0,
       },
       fetchPolicy: "cache-and-network",
@@ -99,7 +106,6 @@ export default function ClassBrowser({
   );
 
   const classes = useMemo(() => data?.catalog.classes ?? [], [data]);
-  const hasMore = data?.catalog.hasMore ?? false;
   const totalCount = data?.catalog.totalCount ?? 0;
 
   // Auto-load all remaining data in background
@@ -120,12 +126,9 @@ export default function ClassBrowser({
       isLoadingAllRef.current = true;
 
       try {
-        // Load in larger batches (1000 per batch)
-        const batchSize = 1000;
-
         while (loadedCountRef.current < totalCount) {
           const remainingCount = totalCount - loadedCountRef.current;
-          const loadSize = Math.min(batchSize, remainingCount);
+          const loadSize = Math.min(AUTO_LOAD_BATCH_SIZE, remainingCount);
 
           await fetchMore({
             variables: {
@@ -134,8 +137,8 @@ export default function ClassBrowser({
             },
           });
 
-          // Longer delay between batches (1 second) to avoid blocking UI
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // Delay between batches to avoid blocking UI
+          await new Promise((resolve) => setTimeout(resolve, AUTO_LOAD_DELAY_MS));
         }
       } catch (error) {
         console.error("Error loading data:", error);
@@ -145,20 +148,9 @@ export default function ClassBrowser({
     };
 
     // Start loading after initial render
-    const timer = setTimeout(loadAllData, 300);
+    const timer = setTimeout(loadAllData, AUTO_LOAD_START_DELAY_MS);
     return () => clearTimeout(timer);
   }, [totalCount, fetchMore]); // Only trigger once when totalCount is known
-
-  const loadMore = useCallback(() => {
-    if (!hasMore || loading) return;
-
-    fetchMore({
-      variables: {
-        offset: classes.length,
-        limit: 50,
-      },
-    });
-  }, [hasMore, loading, classes.length, fetchMore]);
 
   const components = useMemo(
     () =>
@@ -261,6 +253,9 @@ export default function ClassBrowser({
   const processedIncludedRef = useRef<IClass[]>([]);
   const processedExcludedRef = useRef<IClass[]>([]);
   const previousFiltersRef = useRef({
+    query,
+    year: currentYear,
+    semester: currentSemester,
     components,
     units,
     levels,
@@ -271,12 +266,15 @@ export default function ClassBrowser({
     universityRequirement,
   });
 
-  const { includedClasses, excludedClasses } = useMemo(() => {
+  const { includedClasses, excludedClasses, isFiltersChanged } = useMemo(() => {
     const previousCount = previousClassesCountRef.current;
     const currentCount = classes.length;
 
-    // Check if any filter changed
+    // Check if any filter changed (including query, year, semester)
     const filtersChanged =
+      previousFiltersRef.current.query !== query ||
+      previousFiltersRef.current.year !== currentYear ||
+      previousFiltersRef.current.semester !== currentSemester ||
       previousFiltersRef.current.components !== components ||
       previousFiltersRef.current.units !== units ||
       previousFiltersRef.current.levels !== levels ||
@@ -290,6 +288,9 @@ export default function ClassBrowser({
     // If filters changed, first load, or data reset, reprocess everything
     if (filtersChanged || previousCount === 0 || currentCount < previousCount) {
       previousFiltersRef.current = {
+        query,
+        year: currentYear,
+        semester: currentSemester,
         components,
         units,
         levels,
@@ -313,7 +314,10 @@ export default function ClassBrowser({
       processedIncludedRef.current = result.includedClasses;
       processedExcludedRef.current = result.excludedClasses;
       previousClassesCountRef.current = currentCount;
-      return result;
+      return {
+        ...result,
+        isFiltersChanged: filtersChanged,
+      };
     }
 
     // Only process new classes (incremental)
@@ -346,9 +350,13 @@ export default function ClassBrowser({
     return {
       includedClasses: processedIncludedRef.current,
       excludedClasses: processedExcludedRef.current,
+      isFiltersChanged: false,
     };
   }, [
     classes,
+    query,
+    currentYear,
+    currentSemester,
     components,
     units,
     levels,
@@ -481,9 +489,8 @@ export default function ClassBrowser({
         setExpanded,
         loading,
         updateReverse: setLocalReverse,
-        loadMore,
-        hasMore,
         totalCount,
+        isFiltersChanged,
       }}
     >
       <div
