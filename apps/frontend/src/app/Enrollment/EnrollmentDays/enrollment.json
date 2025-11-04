@@ -711,6 +711,10 @@
             "date": "2023-01-10"
         },
         {
+            "description": "Semester Begin",
+            "date": "2023-01-10"
+        },
+        {
             "description": "23 - Tuition & Fee Payment Deadline (either in full or first installment)",
             "date": "2023-01-13"
         },
@@ -759,6 +763,10 @@
             "date": "2023-03-24"
         },
         {
+            "description": "Spring Recess",
+            "date": "2023-03-27"
+        },
+        {
             "description": "23 - Final Examinations",
             "date": "2023-05-08"
         },
@@ -767,17 +775,7 @@
             "date": "2023-05-12"
         }
     ],
-    "Spring 23": [
-        {
-            "description": "Semester Begin",
-            "date": "2023-01-10"
-        },
-        {
-            "description": "Spring Recess",
-            "date": "2023-03-27"
-        }
-    ],
-    "Fall 23": [
+    "Fall 2023": [
         {
             "description": "Schedule of Classes Published",
             "date": "2023-03-26"
@@ -879,7 +877,7 @@
             "date": "2023-12-15"
         }
     ],
-    "Spring 24": [
+    "Spring 2024": [
         {
             "description": "Appointments released to students",
             "date": "2023-09-23"
@@ -989,7 +987,7 @@
             "date": "2024-05-10"
         }
     ],
-    "Fall 24": [
+    "Fall 2024": [
         {
             "description": "Appointments released to students",
             "date": "2024-03-30"
@@ -1099,7 +1097,7 @@
             "date": "2024-12-20"
         }
     ],
-    "Spring 25": [
+    "Spring 2025": [
         {
             "description": "Schedule of Classes Published",
             "date": "2024-10-06"
@@ -1217,7 +1215,7 @@
             "date": "2025-05-16"
         }
     ],
-    "Fall 25": [
+    "Fall 2025": [
         {
             "description": "Appointments released to students",
             "date": "2025-03-23"
@@ -1335,7 +1333,7 @@
             "date": "2025-12-19"
         }
     ],
-    "Spring 26": [
+    "Spring 2026": [
         {
             "description": "Appointments released to students",
             "date": "2025-10-05"

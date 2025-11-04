@@ -31,6 +31,7 @@ import { READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
 import CourseManager from "./CourseManager";
 import styles from "./Enrollment.module.scss";
 import HoverInfo from "./HoverInfo";
+import { EnrollmentEventReturn, semesterEnrollments } from "./EnrollmentDays";
 import {
   DARK_COLORS,
   Input,
@@ -45,11 +46,6 @@ const toPercent = (decimal: number) => {
 };
 
 const CHART_HEIGHT = 450;
-const MINUTES_PER_DAY = 24 * 60;
-const DAY_THRESHOLDS = [53];
-const DAY_THRESHOLD_MINUTES = DAY_THRESHOLDS.map(
-  (day) => day * MINUTES_PER_DAY
-);
 
 export default function Enrollment() {
   const client = useApolloClient();
@@ -182,6 +178,7 @@ export default function Enrollment() {
     return semesterSet;
   }, [outputs]);
 
+  const [enrollmentDaysShowed, setEnrollmentDaysShowed] = useState<EnrollmentEventReturn[]>([]);
   const enrollmentDays = useMemo(() => {
     if (!outputs) return undefined;
     const output = outputs[0];
@@ -189,6 +186,12 @@ export default function Enrollment() {
     const firstTime = moment(
         output.enrollmentHistory.history[0].time
     ).startOf("minute");
+
+    const keywords = ["Phase 1", "Phase 2", "Adjustment"];
+    const importantDays = semesterEnrollments(Array.from(uniqueSemesters), keywords, firstTime);
+    const firstSemester = Array.from(uniqueSemesters)[0]; // doesn't make sense with multiple semesters selected
+    setEnrollmentDaysShowed(importantDays[firstSemester]);
+    return importantDays;
 
   }, [uniqueSemesters, outputs]);
   /**
@@ -312,20 +315,6 @@ export default function Enrollment() {
     );
   }, [data]);
 
-  const dayThresholdLines = useMemo(() => {
-    if (!data || data.length === 0) return [];
-
-    return DAY_THRESHOLDS.reduce<
-      { day: number; minutes: number }[]
-    >((acc, day, index) => {
-      const minutes = DAY_THRESHOLD_MINUTES[index];
-      if (data.some((datapoint) => datapoint.timeDelta >= minutes)) {
-        acc.push({ day, minutes });
-      }
-      return acc;
-    }, []);
-  }, [data]);
-
   return (
     <Box p="5" className={styles.root}>
       <Flex direction="column">
@@ -378,20 +367,19 @@ export default function Enrollment() {
                       }}
                     />
                   )}{" "}
-                  {dayThresholdLines.map(({ day, minutes }) => (
+                  {enrollmentDaysShowed.map(({ description, timeDelta }) => (
                     <ReferenceLine
-                      key={`day-threshold-${minutes}`}
-                      x={minutes}
+                      x={timeDelta}
                       stroke="var(--label-color)"
                       strokeDasharray="5 5"
                       strokeOpacity={0.5}
                       label={{
-                        value: `Day ${day}`,
+                        value: description,
                         position: "insideLeft",
                         fill: "var(--label-color)",
                         fontSize: 12,
                         offset: 10,
-                      }}
+                      }} 
                     />
                   ))}
                   {outputs?.length && (
