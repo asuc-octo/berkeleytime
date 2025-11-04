@@ -425,11 +425,18 @@ export const getCatalog = async (
     }).lean();
 
     // Get course-level grade distributions (all semesters/history)
+    // Include both the cross-listed parent courses AND the classes themselves
     const courseGradeDistributions = await GradeDistributionModel.find({
-      $or: courses.map((course) => ({
-        subject: course.subject,
-        courseNumber: course.number,
-      })),
+      $or: [
+        ...courses.map((course) => ({
+          subject: course.subject,
+          courseNumber: course.number,
+        })),
+        ...classes.map((_class) => ({
+          subject: _class.subject,
+          courseNumber: _class.courseNumber,
+        })),
+      ],
     }).lean();
 
     // Separate processing for class-level and course-level distributions
@@ -529,8 +536,9 @@ export const getCatalog = async (
     ) as unknown as ClassModule.Course;
 
     // Add grade distribution to course
+    // Use the class's subject and courseNumber to get the correct grades for cross-listed courses
     if (includesGradeDistribution) {
-      const key = `${course.subject}-${course.number}`;
+      const key = `${_class.subject}-${_class.courseNumber}`;
       const gradeDistribution = parsedGradeDistributions[key];
 
       // Fall back to an empty grade distribution to prevent resolving the field again
