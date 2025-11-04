@@ -40,6 +40,7 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "./types";
+import { uniq } from "lodash";
 
 const toPercent = (decimal: number) => {
   return `${decimal.toFixed(0)}%`;
@@ -191,6 +192,7 @@ export default function Enrollment() {
     const importantDays = semesterEnrollments(Array.from(uniqueSemesters), keywords, firstTime);
     const firstSemester = Array.from(uniqueSemesters)[0]; // doesn't make sense with multiple semesters selected
     setEnrollmentDaysShowed(importantDays[firstSemester]);
+    if (uniqueSemesters.size > 1) setEnrollmentDaysShowed([]);
     return importantDays;
 
   }, [uniqueSemesters, outputs]);
@@ -375,8 +377,9 @@ export default function Enrollment() {
                       strokeOpacity={0.5}
                       label={{
                         value: description,
-                        position: "insideLeft",
+                        position: "insideTopLeft",
                         fill: "var(--label-color)",
+                        angle: 90,
                         fontSize: 12,
                         offset: 10,
                       }} 
