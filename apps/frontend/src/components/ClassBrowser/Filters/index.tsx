@@ -14,14 +14,18 @@ import Header from "../Header";
 import {
   Breadth,
   Day,
+  GradingBasis,
   GradingFilter,
   Level,
   SortBy,
   UniversityRequirement,
   getAllBreadthRequirements,
   getAllUniversityRequirements,
+  getBreadthRequirements,
   getFilteredClasses,
   getLevel,
+  getUniversityRequirements,
+  gradingBasisCategoryMap,
 } from "../browser";
 import useBrowser from "../useBrowser";
 import styles from "./Filters.module.scss";
@@ -81,24 +85,44 @@ export default function Filters() {
     updateDays(newDays);
   }, [daysArray]);
 
-  const filteredLevels = useMemo(() => {
-    const classes =
-      levels.length === 0
-        ? includedClasses
-        : getFilteredClasses(
-            excludedClasses,
-            units,
-            [],
-            days,
-            open,
-            online,
-            breadths,
-            universityRequirement,
-            gradingFilters,
-            department
-          ).includedClasses;
+  const allClasses = useMemo(
+    () => [...includedClasses, ...excludedClasses],
+    [includedClasses, excludedClasses]
+  );
 
-    return classes.reduce(
+  const classesForLevelCounts = useMemo(() => {
+    if (levels.length === 0) {
+      return includedClasses;
+    }
+
+    return getFilteredClasses(
+      allClasses,
+      units,
+      [],
+      days,
+      open,
+      online,
+      breadths,
+      universityRequirement,
+      gradingFilters,
+      department
+    ).includedClasses;
+  }, [
+    allClasses,
+    includedClasses,
+    levels,
+    units,
+    days,
+    open,
+    online,
+    breadths,
+    universityRequirement,
+    gradingFilters,
+    department,
+  ]);
+
+  const filteredLevels = useMemo(() => {
+    return classesForLevelCounts.reduce(
       (acc, _class) => {
         const level = getLevel(
           _class.course.academicCareer,
@@ -116,30 +140,138 @@ export default function Filters() {
         Extension: 0,
       } as Record<Level, number>
     );
-  }, [
-    excludedClasses,
-    includedClasses,
-    units,
-    levels,
-    days,
-    open,
-    online,
-    breadths,
-    universityRequirement,
-    gradingFilters,
-    department,
-  ]);
+  }, [classesForLevelCounts]);
+
+  const classesWithoutDepartment = useMemo(
+    () =>
+      getFilteredClasses(
+        allClasses,
+        units,
+        levels,
+        days,
+        open,
+        online,
+        breadths,
+        universityRequirement,
+        gradingFilters,
+        null
+      ).includedClasses,
+    [
+      allClasses,
+      units,
+      levels,
+      days,
+      open,
+      online,
+      breadths,
+      universityRequirement,
+      gradingFilters,
+    ]
+  );
+
+  const departmentCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    classesWithoutDepartment.forEach((_class) => {
+      const key = _class.subject?.toLowerCase();
+      if (!key) return;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    });
+    return counts;
+  }, [classesWithoutDepartment]);
+
+  const classesWithoutRequirements = useMemo(
+    () =>
+      getFilteredClasses(
+        allClasses,
+        units,
+        levels,
+        days,
+        open,
+        online,
+        [],
+        null,
+        gradingFilters,
+        department
+      ).includedClasses,
+    [allClasses, units, levels, days, open, online, gradingFilters, department]
+  );
+
+  const breadthCounts = useMemo(() => {
+    const counts = new Map<Breadth, number>();
+    classesWithoutRequirements.forEach((_class) => {
+      const breadthList = getBreadthRequirements(
+        _class.primarySection.sectionAttributes
+      );
+      breadthList.forEach((breadth) => {
+        counts.set(breadth, (counts.get(breadth) ?? 0) + 1);
+      });
+    });
+    return counts;
+  }, [classesWithoutRequirements]);
+
+  const universityRequirementCounts = useMemo(() => {
+    const counts = new Map<UniversityRequirement, number>();
+    classesWithoutRequirements.forEach((_class) => {
+      const requirements = getUniversityRequirements(
+        _class.requirementDesignation
+      );
+      requirements.forEach((requirement) => {
+        counts.set(requirement, (counts.get(requirement) ?? 0) + 1);
+      });
+    });
+    return counts;
+  }, [classesWithoutRequirements]);
+
+  const classesWithoutGrading = useMemo(
+    () =>
+      getFilteredClasses(
+        allClasses,
+        units,
+        levels,
+        days,
+        open,
+        online,
+        breadths,
+        universityRequirement,
+        [],
+        department
+      ).includedClasses,
+    [
+      allClasses,
+      units,
+      levels,
+      days,
+      open,
+      online,
+      breadths,
+      universityRequirement,
+      department,
+    ]
+  );
+
+  const gradingCounts = useMemo<Record<GradingFilter, number>>(() => {
+    return classesWithoutGrading.reduce<Record<GradingFilter, number>>(
+      (acc, _class) => {
+        const basis = (_class.gradingBasis ?? "") as GradingBasis;
+        const category = gradingBasisCategoryMap[basis] ?? GradingFilter.Other;
+        acc[category] += 1;
+        return acc;
+      },
+      {
+        [GradingFilter.Graded]: 0,
+        [GradingFilter.PassNoPass]: 0,
+        [GradingFilter.Other]: 0,
+      }
+    );
+  }, [classesWithoutGrading]);
 
   const filteredBreadths = useMemo(() => {
-    return getAllBreadthRequirements([...includedClasses, ...excludedClasses]);
-  }, [includedClasses]);
+    return getAllBreadthRequirements(allClasses);
+  }, [allClasses]);
 
   const filteredUniversityRequirements = useMemo(() => {
-    return getAllUniversityRequirements([
-      ...includedClasses,
-      ...excludedClasses,
-    ]);
-  }, [includedClasses]);
+    return getAllUniversityRequirements(allClasses);
+  }, [allClasses]);
 
   const requirementOptions = useMemo<Option<RequirementSelection>[]>(() => {
     const options: Option<RequirementSelection>[] = [];
@@ -150,6 +282,7 @@ export default function Filters() {
         ...filteredBreadths.map((breadth) => ({
           value: { type: "breadth", value: breadth } as RequirementSelection,
           label: breadth,
+          meta: (breadthCounts.get(breadth) ?? 0).toString(),
         }))
       );
     }
@@ -163,15 +296,23 @@ export default function Filters() {
             value: requirement,
           } as RequirementSelection,
           label: requirement,
+          meta: (universityRequirementCounts.get(requirement) ?? 0).toString(),
         }))
       );
     }
 
     return options;
-  }, [filteredBreadths, filteredUniversityRequirements]);
+  }, [
+    filteredBreadths,
+    filteredUniversityRequirements,
+    breadthCounts,
+    universityRequirementCounts,
+  ]);
   const selectedRequirements = useMemo<RequirementSelection[]>(
     () => [
-      ...breadths.map((breadth) => ({ type: "breadth", value: breadth } as const)),
+      ...breadths.map(
+        (breadth) => ({ type: "breadth", value: breadth }) as const
+      ),
       ...(universityRequirement
         ? [{ type: "university" as const, value: universityRequirement }]
         : []),
@@ -183,12 +324,13 @@ export default function Filters() {
     return Object.values(GradingFilter).map((category) => ({
       value: category,
       label: category,
+      meta: (gradingCounts[category] ?? 0).toString(),
     }));
-  }, []);
+  }, [gradingCounts]);
 
   const departmentOptions = useMemo<Option<string>[]>(() => {
     const allSubjects = new Set<string>();
-    [...includedClasses, ...excludedClasses].forEach((_class) => {
+    allClasses.forEach((_class) => {
       if (_class.subject) allSubjects.add(_class.subject);
     });
 
@@ -200,11 +342,12 @@ export default function Filters() {
         return {
           value: key,
           label: info.name,
+          meta: (departmentCounts.get(key) ?? 0).toString(),
         };
       })
       .filter((option): option is Option<string> => option !== null)
       .sort((a, b) => a.label.localeCompare(b.label));
-  }, [includedClasses, excludedClasses]);
+  }, [allClasses, departmentCounts]);
 
   // const filteredDays = useMemo(() => {
   //   const filteredDays = Object.values(Day).reduce(
