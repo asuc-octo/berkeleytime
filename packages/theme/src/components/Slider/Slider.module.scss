@@ -46,7 +46,6 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
   }
 
   &:active {
@@ -69,8 +68,7 @@
 .label {
   position: absolute;
   font-size: 14px;
-  color: var(--paragraph-color-50);
-  font-weight: 500;
+  color: var(--paragraph-color);
   transform: translateX(-50%);
   white-space: nowrap;
 }
