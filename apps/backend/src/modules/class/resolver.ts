@@ -110,7 +110,13 @@ const resolvers: ClassModule.Resolvers = {
       // Use courseId for cross-listed courses to get the correct course
       const course = await getCourseById(parent.courseId);
 
-      return course as unknown as CourseModule.Course;
+      // Override course subject and number with class's values for correct grade lookup
+      // This ensures cross-listed courses show grades for the specific subject (e.g., DATA C100 not STAT C100)
+      return {
+        ...course,
+        subject: parent.subject,
+        number: parent.courseNumber,
+      } as unknown as CourseModule.Course;
     },
 
     primarySection: async (parent: IntermediateClass | ClassModule.Class) => {

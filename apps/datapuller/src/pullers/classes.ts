@@ -45,8 +45,8 @@ const updateClasses = async (
     );
 
     log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
-    if (!classes) {
-      log.warn(`No classes found, skipping update.`);
+    if (classes.length === 0) {
+      log.error(`No classes found, skipping update.`);
       return;
     }
     totalClasses += classes.length;

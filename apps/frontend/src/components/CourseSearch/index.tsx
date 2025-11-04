@@ -86,12 +86,19 @@ export default function CourseSearch({
               : "")
           }
           onFocus={() => setIsOpen(true)}
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            if (!searchQuery && selectedCourse && onClear) onClear(); // clear on click
+            setIsOpen(true);
+          }}
           onChange={(e) => {
             setSearchQuery(e.target.value);
             if (onClear) onClear();
           }}
-          style={inputStyle}
+          style={{
+            ...inputStyle,
+            cursor:
+              !searchQuery && selectedCourse && onClear ? "pointer" : undefined,
+          }}
         />
       </div>
 
