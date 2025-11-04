@@ -392,12 +392,22 @@ export const getCatalog = async (
    * in-memory filtering for fields from courses and sections
    */
 
-  // Fetch available classes for the term
+  // Get total count first (fast, just counts documents)
+  const totalCount = await ClassModel.countDocuments({
+    year,
+    semester,
+    anyPrintInScheduleOfClasses: true,
+  });
+
+  // Fetch available classes for the term with pagination at DB level
   const classes = await ClassModel.find({
     year,
     semester,
     anyPrintInScheduleOfClasses: true,
-  }).lean();
+  })
+    .skip(appliedOffset)
+    .limit(appliedLimit)
+    .lean();
 
   // Filtering by identifiers reduces the amount of data returned for courses and sections
   const courseIds = classes.map((_class) => _class.courseId);
@@ -582,16 +592,12 @@ export const getCatalog = async (
     return accumulator;
   }, [] as ClassModule.Class[]);
 
-  // Apply pagination (no filtering/searching on backend)
-  const totalCount = reducedClasses.length;
-  const paginatedClasses = reducedClasses.slice(
-    appliedOffset,
-    appliedOffset + appliedLimit
-  );
-  const hasMore = appliedOffset + appliedLimit < totalCount;
+  // Pagination already applied at DB level
+  // reducedClasses already contains only the requested page
+  const hasMore = appliedOffset + reducedClasses.length < totalCount;
 
   return {
-    classes: paginatedClasses,
+    classes: reducedClasses,
     totalCount,
     hasMore,
   };
