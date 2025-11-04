@@ -22,6 +22,7 @@ const Profile = {
   Account: lazy(() => import("@/app/Profile/Account")),
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
+  Settings: lazy(() => import("@/app/Profile/Settings")),
 };
 
 const Class = {
@@ -201,6 +202,14 @@ const router = createBrowserRouter([
               </SuspenseBoundary>
             ),
             path: "ratings",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="settings">
+                <Profile.Settings />
+              </SuspenseBoundary>
+            ),
+            path: "settings",
           },
         ],
       },
