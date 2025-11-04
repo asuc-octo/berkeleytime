@@ -13,12 +13,6 @@ import {
   Semester,
 } from "@/lib/api";
 
-// Pagination constants
-const INITIAL_LOAD_SIZE = 100;
-const AUTO_LOAD_BATCH_SIZE = 1000;
-const AUTO_LOAD_DELAY_MS = 1000;
-const AUTO_LOAD_START_DELAY_MS = 300;
-
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
@@ -34,6 +28,12 @@ import {
 } from "./browser";
 import BrowserContext from "./browserContext";
 import { searchAndSortClasses } from "./searchAndSort";
+
+// Pagination constants
+const INITIAL_LOAD_SIZE = 100;
+const AUTO_LOAD_BATCH_SIZE = 1000;
+const AUTO_LOAD_DELAY_MS = 1000;
+const AUTO_LOAD_START_DELAY_MS = 300;
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Relevance]: "asc",
@@ -140,7 +140,9 @@ export default function ClassBrowser({
           });
 
           // Delay between batches to avoid blocking UI
-          await new Promise((resolve) => setTimeout(resolve, AUTO_LOAD_DELAY_MS));
+          await new Promise((resolve) =>
+            setTimeout(resolve, AUTO_LOAD_DELAY_MS)
+          );
         }
       } catch (error) {
         console.error("Error loading data:", error);
