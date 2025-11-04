@@ -171,7 +171,7 @@ export default function Filters() {
   }, [filteredBreadths, filteredUniversityRequirements]);
   const selectedRequirements = useMemo<RequirementSelection[]>(
     () => [
-      ...breadths.map((breadth) => ({ type: "breadth", value: breadth })),
+      ...breadths.map((breadth) => ({ type: "breadth", value: breadth } as const)),
       ...(universityRequirement
         ? [{ type: "university", value: universityRequirement }]
         : []),
