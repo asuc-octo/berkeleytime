@@ -373,6 +373,20 @@ const client = new ApolloClient({
           },
         },
       },
+      Schedule: {
+        fields: {
+          events: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+          classes: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
     },
   }),
 });

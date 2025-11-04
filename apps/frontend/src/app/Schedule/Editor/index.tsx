@@ -117,12 +117,12 @@ export default function Editor() {
               color,
             })
           ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
         }
-        // {
-        //   optimisticResponse: {
-        //     updateSchedule: _schedule,
-        //   },
-        // }
       );
     },
     [schedule, updateSchedule]
@@ -232,28 +232,12 @@ export default function Editor() {
               color,
             })
           ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
         }
-        // {
-        //   optimisticResponse: {
-        //     updateSchedule: {
-        //       ..._schedule,
-        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
-        //         class: _class,
-        //         selectedSections: selectedSections.map(section => ({
-        //           ...section,
-        //           subject: _class.subject,
-        //           courseNumber: _class.courseNumber,
-        //           classNumber: _class.number
-        //         })),
-        //         color
-        //       })),
-        //       events: _schedule.events?.map(event => ({
-        //         ...event,
-        //         color: event.color
-        //       })) || []
-        //     },
-        //   },
-        // }
       );
     },
     [schedule, updateSchedule]
@@ -273,7 +257,7 @@ export default function Editor() {
 
       // Move existing classes to the top rather than duplicating them
       if (existingClass) {
-        const index = _schedule.classes.findIndex(
+        const index = _schedule.classes?.findIndex(
           (selectedClass) =>
             selectedClass.class.subject === subject &&
             selectedClass.class.courseNumber === courseNumber &&
@@ -308,28 +292,12 @@ export default function Editor() {
                 color,
               })
             ),
+          },
+          {
+            optimisticResponse: {
+              updateSchedule: _schedule,
+            },
           }
-          // {
-          //   optimisticResponse: {
-          //     updateSchedule: {
-          //       ..._schedule,
-          //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
-          //         class: _class,
-          //         selectedSections: selectedSections.map(section => ({
-          //           ...section,
-          //           subject: _class.subject,
-          //           courseNumber: _class.courseNumber,
-          //           classNumber: _class.number
-          //         })),
-          //         color
-          //       })),
-          //       events: _schedule.events?.map(event => ({
-          //         ...event,
-          //         color: event.color
-          //       })) || []
-          //     },
-          //   },
-          // }
         );
 
         return;
@@ -350,7 +318,23 @@ export default function Editor() {
       // TODO: Error
       if (!data) return;
 
-      const _class = data.class;
+      const _class = structuredClone(data.class);
+
+      _class.primarySection = {
+        ..._class.primarySection,
+        subject: _class.subject,
+        courseNumber: _class.courseNumber,
+        classNumber: _class.number,
+      };
+
+      _class.sections = _class.sections.map((s) => {
+        return {
+          ...s,
+          subject: _class.subject,
+          courseNumber: _class.courseNumber,
+          classNumber: _class.number,
+        };
+      });
 
       const selectedSections = [_class.primarySection];
 
@@ -373,27 +357,6 @@ export default function Editor() {
         color: getNextClassColor(_schedule.classes.length),
       });
 
-      const optimisticResponse = {
-        ..._schedule,
-        classes: _schedule.classes.map(
-          ({ class: _class, selectedSections, color }) => ({
-            class: _class,
-            selectedSections: selectedSections.map((section) => ({
-              ...section,
-              subject: _class.subject,
-              courseNumber: _class.courseNumber,
-              classNumber: _class.number,
-            })),
-            color,
-          })
-        ),
-        events:
-          _schedule.events?.map((event) => ({
-            ...event,
-            color: event.color,
-          })) || [],
-      };
-
       // Update the schedule
       updateSchedule(
         schedule._id,
@@ -411,12 +374,12 @@ export default function Editor() {
               color,
             })
           ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
         }
-        // {
-        //   optimisticResponse: {
-        //     updateSchedule: optimisticResponse,
-        //   },
-        // }
       );
     },
     [apolloClient, setExpanded, schedule, updateSchedule]
@@ -470,28 +433,12 @@ export default function Editor() {
               color,
             })
           ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
         }
-        // {
-        //   optimisticResponse: {
-        //     updateSchedule: {
-        //       ..._schedule,
-        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
-        //         class: _class,
-        //         selectedSections: selectedSections.map(section => ({
-        //           ...section,
-        //           subject: _class.subject,
-        //           courseNumber: _class.courseNumber,
-        //           classNumber: _class.number
-        //         })),
-        //         color
-        //       })),
-        //       events: _schedule.events?.map(event => ({
-        //         ...event,
-        //         color: event.color
-        //       })) || []
-        //     },
-        //   },
-        // }
       );
     },
     [schedule, updateSchedule]
@@ -508,6 +455,8 @@ export default function Editor() {
 
       // Update the color
       event.color = color;
+
+      console.log(_schedule);
 
       // Update the schedule
       updateSchedule(
@@ -532,28 +481,12 @@ export default function Editor() {
               color,
             })
           ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
         }
-        // {
-        //   optimisticResponse: {
-        //     updateSchedule: {
-        //       ..._schedule,
-        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
-        //         class: _class,
-        //         selectedSections: selectedSections.map(section => ({
-        //           ...section,
-        //           subject: _class.subject,
-        //           courseNumber: _class.courseNumber,
-        //           classNumber: _class.number
-        //         })),
-        //         color
-        //       })),
-        //       events: _schedule.events?.map(event => ({
-        //         ...event,
-        //         color: event.color
-        //       })) || []
-        //     },
-        //   },
-        // }
       );
     },
     [schedule, updateSchedule]
@@ -594,102 +527,78 @@ export default function Editor() {
               color,
             })
           ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
         }
-        // {
-        //   optimisticResponse: {
-        //     updateSchedule: {
-        //       ..._schedule,
-        //       classes: _schedule.classes.map(({ class: _class, selectedSections, color }) => ({
-        //         class: _class,
-        //         selectedSections: selectedSections.map(section => ({
-        //           ...section,
-        //           subject: _class.subject,
-        //           courseNumber: _class.courseNumber,
-        //           classNumber: _class.number
-        //         })),
-        //         color
-        //       })),
-        //       events: _schedule.events?.map(event => ({
-        //         ...event,
-        //         color: event.color
-        //       })) || []
-        //     },
-        //   },
-        // }
       );
     },
     [schedule, updateSchedule]
   );
 
   const handleDeleteEvent = (event: IScheduleEvent) => {
+    const _schedule = structuredClone(schedule);
+
+    _schedule.events = _schedule.events.filter((e) => e._id != event._id);
+
     updateSchedule(
       schedule._id,
       {
-        events: schedule.events
-          .filter((e) => e._id != event._id)
-          .map((e) => {
-            // TODO: Fix?
-            const _e = structuredClone(e) as Omit<
-              IScheduleEvent,
-              "_id" | "__typename"
-            > & {
-              _id?: string;
-              __typename?: string;
-            };
+        events: _schedule.events.map((e) => {
+          // TODO: Fix?
+          const _e = structuredClone(e) as Omit<
+            IScheduleEvent,
+            "_id" | "__typename"
+          > & {
+            _id?: string;
+            __typename?: string;
+          };
 
-            delete _e._id;
-            delete _e.__typename;
+          delete _e._id;
+          delete _e.__typename;
 
-            return _e;
-          }),
+          return _e;
+        }),
+      },
+      {
+        optimisticResponse: {
+          updateSchedule: _schedule,
+        },
       }
-      // {
-      //   optimisticResponse: {
-      //     updateSchedule: {
-      //       ...schedule,
-      //       events: schedule.events.filter((e) => e._id != event._id),
-      //     },
-      //   },
-      // }
     );
   };
 
   const handleDeleteClass = (_class: IClass) => {
+    const _schedule = structuredClone(schedule);
+
+    _schedule.classes = schedule.classes.filter(
+      (c) => c.class.primarySection.sectionId != _class.primarySection.sectionId
+    );
+
     updateSchedule(
       schedule._id,
       {
-        classes: schedule.classes
-          .filter(
-            (c) =>
-              c.class.primarySection.sectionId !=
-              _class.primarySection.sectionId
-          )
-          .map(
-            ({
-              selectedSections,
-              class: { number, subject, courseNumber },
-              color,
-            }) => ({
-              subject,
-              courseNumber,
-              number,
-              sectionIds: selectedSections.map((s) => s.sectionId),
-              color,
-            })
-          ),
+        classes: _schedule.classes.map(
+          ({
+            selectedSections,
+            class: { number, subject, courseNumber },
+            color,
+          }) => ({
+            subject,
+            courseNumber,
+            number,
+            sectionIds: selectedSections.map((s) => s.sectionId),
+            color,
+          })
+        ),
+      },
+      {
+        optimisticResponse: {
+          updateSchedule: _schedule,
+        },
       }
-      // {
-      //   optimisticResponse: {
-      //     updateSchedule: {
-      //       ...schedule,
-      //       classes: schedule.classes.filter(
-      //         (c) =>
-      //           c.class.primarySection.sectionId !=
-      //           _class.primarySection.sectionId
-      //       ),
-      //     },
-      //   },
-      // }
     );
   };
 
