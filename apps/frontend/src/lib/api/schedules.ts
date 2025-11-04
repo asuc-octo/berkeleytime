@@ -63,10 +63,7 @@ export interface ReadScheduleResponse {
   schedule: ISchedule;
 }
 
-export const READ_SCHEDULE = gql`
-  query ReadSchedule($id: ID!) {
-    schedule(id: $id) {
-      _id
+const SCHEDULE_RESPONSE_STRING = `_id
       name
       public
       createdBy
@@ -180,7 +177,12 @@ export const READ_SCHEDULE = gql`
           sectionId
         }
         color
-      }
+      }`;
+
+export const READ_SCHEDULE = gql`
+  query ReadSchedule($id: ID!) {
+    schedule(id: $id) {
+      ${SCHEDULE_RESPONSE_STRING}
     }
   }
 `;
@@ -192,119 +194,7 @@ export interface UpdateScheduleResponse {
 export const UPDATE_SCHEDULE = gql`
   mutation UpdateSchedule($id: ID!, $schedule: UpdateScheduleInput!) {
     updateSchedule(id: $id, schedule: $schedule) {
-      _id
-      name
-      public
-      createdBy
-      year
-      semester
-      sessionId
-      term {
-        startDate
-        endDate
-      }
-      events {
-        _id
-        title
-        description
-        startTime
-        endTime
-        days
-      }
-      classes {
-        class {
-          subject
-          courseNumber
-          number
-          unitsMax
-          unitsMin
-          course {
-            title
-            gradeDistribution {
-              average
-              distribution {
-                letter
-                count
-              }
-            }
-          }
-          primarySection {
-            sectionId
-            subject
-            courseNumber
-            classNumber
-            number
-            startDate
-            endDate
-            component
-            enrollment {
-              latest {
-                status
-                enrolledCount
-                maxEnroll
-                waitlistedCount
-                maxWaitlist
-              }
-            }
-            meetings {
-              days
-              location
-              endTime
-              startTime
-              instructors {
-                familyName
-                givenName
-              }
-            }
-            exams {
-              date
-              type
-              location
-              startTime
-              endTime
-            }
-          }
-          sections {
-            sectionId
-            subject
-            courseNumber
-            classNumber
-            number
-            startDate
-            endDate
-            component
-            enrollment {
-              latest {
-                status
-                enrolledCount
-                maxEnroll
-                waitlistedCount
-                maxWaitlist
-              }
-            }
-            meetings {
-              days
-              location
-              endTime
-              startTime
-              instructors {
-                familyName
-                givenName
-              }
-            }
-            exams {
-              date
-              type
-              location
-              startTime
-              endTime
-            }
-          }
-        }
-        selectedSections {
-          sectionId
-        }
-      }
+      ${SCHEDULE_RESPONSE_STRING}
     }
   }
 `;
@@ -326,29 +216,7 @@ export interface CreateScheduleResponse {
 export const CREATE_SCHEDULE = gql`
   mutation CreateSchedule($schedule: CreateScheduleInput!) {
     createSchedule(schedule: $schedule) {
-      _id
-      name
-      public
-      year
-      createdBy
-      semester
-      events {
-        _id
-        title
-        description
-        startTime
-        endTime
-        days
-      }
-      sessionId
-      classes {
-        class {
-          subject
-          courseNumber
-          number
-        }
-        # selectedSections
-      }
+      ${SCHEDULE_RESPONSE_STRING}
     }
   }
 `;
