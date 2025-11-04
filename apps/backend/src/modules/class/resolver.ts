@@ -1,6 +1,6 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
-import { getCourse } from "../course/controller";
+import { getCourseById } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
@@ -107,9 +107,16 @@ const resolvers: ClassModule.Resolvers = {
     course: async (parent: IntermediateClass | ClassModule.Class) => {
       if (parent.course) return parent.course;
 
-      const course = await getCourse(parent.subject, parent.courseNumber);
+      // Use courseId for cross-listed courses to get the correct course
+      const course = await getCourseById(parent.courseId);
 
-      return course as unknown as CourseModule.Course;
+      // Override course subject and number with class's values for correct grade lookup
+      // This ensures cross-listed courses show grades for the specific subject (e.g., DATA C100 not STAT C100)
+      return {
+        ...course,
+        subject: parent.subject,
+        number: parent.courseNumber,
+      } as unknown as CourseModule.Course;
     },
 
     primarySection: async (parent: IntermediateClass | ClassModule.Class) => {
@@ -186,7 +193,8 @@ const resolvers: ClassModule.Resolvers = {
     course: async (parent: IntermediateSection | ClassModule.Section) => {
       if (typeof parent.course !== "string") return parent.course;
 
-      const course = await getCourse(parent.subject, parent.courseNumber);
+      // Use courseId (stored in parent.course) for cross-listed courses
+      const course = await getCourseById(parent.course);
 
       return course as unknown as CourseModule.Course;
     },

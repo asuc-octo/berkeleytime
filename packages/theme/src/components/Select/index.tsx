@@ -193,7 +193,7 @@ export function Select<T>({
           {options.map((opt, i) => {
             return (
               <DropdownMenu.Item
-                key={i}
+                key={`${i}-${opt.label}`}
                 style={{ outline: "none" }}
                 onSelect={(e) => {
                   if (multi) {
