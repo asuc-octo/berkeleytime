@@ -5,7 +5,7 @@ import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
-import type { Option } from "@repo/theme";
+import type { Option, OptionItem } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
 import { subjects } from "@/lib/course";
@@ -349,6 +349,36 @@ export default function Filters() {
       .sort((a, b) => a.label.localeCompare(b.label));
   }, [allClasses, departmentCounts]);
 
+  // Disable filters when all options have count 0
+  const isDepartmentDisabled = useMemo(
+    () =>
+      departmentOptions.length === 0 ||
+      departmentOptions.every(
+        (opt) => opt.type !== "label" && (opt.meta === "0" || !opt.meta)
+      ),
+    [departmentOptions]
+  );
+
+  const isRequirementsDisabled = useMemo(() => {
+    const optionItems = requirementOptions.filter(
+      (opt): opt is OptionItem<RequirementSelection> => opt.type !== "label"
+    );
+    return (
+      optionItems.length === 0 ||
+      optionItems.every((opt) => opt.meta === "0" || !opt.meta)
+    );
+  }, [requirementOptions]);
+
+  const isClassLevelDisabled = useMemo(
+    () => Object.values(filteredLevels).every((count) => count === 0),
+    [filteredLevels]
+  );
+
+  const isGradingDisabled = useMemo(
+    () => Object.values(gradingCounts).every((count) => count === 0),
+    [gradingCounts]
+  );
+
   // const filteredDays = useMemo(() => {
   //   const filteredDays = Object.values(Day).reduce(
   //     (acc, day) => {
@@ -503,6 +533,7 @@ export default function Filters() {
             value={department}
             placeholder="Select a department"
             clearable
+            disabled={isDepartmentDisabled}
             onChange={(value) => {
               if (typeof value === "string" || value === null) {
                 updateDepartment(value);
@@ -517,6 +548,7 @@ export default function Filters() {
             multi
             value={selectedRequirements}
             placeholder="Filter by requirements"
+            disabled={isRequirementsDisabled}
             onChange={(v) => {
               if (!Array.isArray(v)) return;
               const nextBreadths = v
@@ -551,6 +583,7 @@ export default function Filters() {
             multi
             value={levels}
             placeholder="Select class levels"
+            disabled={isClassLevelDisabled}
             onChange={(v) => {
               if (Array.isArray(v)) updateLevels(v);
             }}
@@ -590,6 +623,7 @@ export default function Filters() {
             multi
             value={gradingFilters}
             placeholder="Filter by grading options"
+            disabled={isGradingDisabled}
             onChange={(v) => {
               if (Array.isArray(v)) updateGradingFilters(v);
             }}

@@ -132,6 +132,13 @@ export function Select<T>({
     [options]
   );
 
+  // Auto-disable if no options available
+  const hasNoOptions = selectableOptions.length === 0;
+  const effectiveDisabled = disabled || hasNoOptions;
+  const effectivePlaceholder = effectiveDisabled
+    ? "No option available"
+    : placeholder;
+
   const activeElem = useMemo(
     () =>
       Array.isArray(value)
@@ -150,7 +157,7 @@ export function Select<T>({
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
-      <DropdownMenu.Trigger asChild disabled={disabled}>
+      <DropdownMenu.Trigger asChild disabled={effectiveDisabled}>
         <Flex
           direction="row"
           ref={triggerRef}
@@ -158,7 +165,7 @@ export function Select<T>({
           align="center"
           className={classNames(styles.trigger, {
             [styles.selected]: hasSelection,
-            [styles.disabled]: disabled,
+            [styles.disabled]: effectiveDisabled,
             [styles.foreground]: variant === "foreground",
           })}
           tabIndex={0}
@@ -193,7 +200,7 @@ export function Select<T>({
               activeElem.label
             )
           ) : (
-            placeholder
+            effectivePlaceholder
           )}
           <Flex direction="row" gap="8px" align="center">
             {clearable && hasSelection && (
@@ -209,7 +216,7 @@ export function Select<T>({
           </Flex>
         </Flex>
       </DropdownMenu.Trigger>
-      {!disabled && (
+      {!effectiveDisabled && (
         <DropdownMenu.Content
           className={styles.content}
           style={{ width: triggerWidth, zIndex: 999 }}
