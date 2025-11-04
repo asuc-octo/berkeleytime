@@ -343,7 +343,6 @@ export default function Enrollment() {
                   width={730}
                   height={200}
                   data={data}
-                  onMouseMove={updateGraphHover}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
