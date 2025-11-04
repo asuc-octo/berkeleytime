@@ -53,6 +53,12 @@ export default function Catalog() {
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
+    // Check if recent term is still valid (within 7 days TTL)
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    const isRecentTermValid =
+      recentTerm?.timestamp &&
+      Date.now() - recentTerm.timestamp < SEVEN_DAYS_MS;
+
     const currentTerm = ugrdTerms.find(
       (term) => term.temporalPosition === TemporalPosition.Current
     );
@@ -82,26 +88,28 @@ export default function Catalog() {
 
     // Selection priority:
     // 1. URL parameter (explicit user choice)
-    // 2. Smart selection: if enrollment is starting soon, show that term
-    // 3. Recent term (localStorage)
+    // 2. Recent term (localStorage, within 7 day TTL)
+    // 3. Smart selection: if enrollment is starting soon, show that term
     // 4. Current term
-    // 5. Next future term
     const selectedTerm =
       ugrdTerms?.find(
         (term) => term.year === year && term.semester === semester
       ) ??
+      (isRecentTermValid
+        ? ugrdTerms.find(
+            (term) =>
+              term.year === recentTerm?.year &&
+              term.semester === recentTerm?.semester
+          )
+        : null) ??
       nextTerm ??
-      ugrdTerms.find(
-        (term) =>
-          term.year === recentTerm?.year &&
-          term.semester === recentTerm?.semester
-      ) ??
       currentTerm;
 
     if (selectedTerm) {
       addRecent(RecentType.CatalogTerm, {
         year: selectedTerm.year,
         semester: selectedTerm.semester,
+        timestamp: Date.now(),
       });
     }
 

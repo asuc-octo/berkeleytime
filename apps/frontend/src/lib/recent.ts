@@ -38,6 +38,7 @@ interface RecentCourse {
 interface RecentCatalogTerm {
   semester: Semester;
   year: number;
+  timestamp?: number;
 }
 
 export type Recent<T extends RecentType> = T extends RecentType.Class
