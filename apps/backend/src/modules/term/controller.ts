@@ -11,12 +11,16 @@ const fields = {
   name: 1,
   beginDate: 1,
   endDate: 1,
+  selfServiceEnrollBeginDate: 1,
+  selfServiceEnrollEndDate: 1,
   sessions: {
     temporalPosition: 1,
     id: 1,
     name: 1,
     beginDate: 1,
     endDate: 1,
+    enrollBeginDate: 1,
+    enrollEndDate: 1,
   },
 };
 

@@ -20,6 +20,8 @@ export interface ISession {
   name: string;
   startDate?: string;
   endDate?: string;
+  enrollBeginDate?: string;
+  enrollEndDate?: string;
   temporalPosition: TemporalPosition;
 }
 
@@ -27,9 +29,12 @@ export interface ITerm {
   year: number;
   semester: Semester;
   temporalPosition: TemporalPosition;
+  academicCareerCode: string;
   sessions: ISession[];
   startDate?: string;
   endDate?: string;
+  selfServiceEnrollBeginDate?: string;
+  selfServiceEnrollEndDate?: string;
 }
 
 export interface ReadTermsResponse {
@@ -42,15 +47,20 @@ export const READ_TERMS = gql`
       year
       semester
       temporalPosition
+      academicCareerCode
       sessions {
         id
         name
         startDate
         endDate
+        enrollBeginDate
+        enrollEndDate
         temporalPosition
       }
       startDate
       endDate
+      selfServiceEnrollBeginDate
+      selfServiceEnrollEndDate
     }
   }
 `;
@@ -69,10 +79,14 @@ export const READ_TERM = gql`
         name
         startDate
         endDate
+        enrollBeginDate
+        enrollEndDate
         temporalPosition
       }
       startDate
       endDate
+      selfServiceEnrollBeginDate
+      selfServiceEnrollEndDate
     }
   }
 `;

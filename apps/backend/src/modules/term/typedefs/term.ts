@@ -48,6 +48,8 @@ const typedef = gql`
     name: String!
     startDate: String!
     endDate: String!
+    enrollBeginDate: String
+    enrollEndDate: String
   }
 
   "Unique term identifier. Maps to term.id"
@@ -67,6 +69,8 @@ const typedef = gql`
     semester: Semester!
     startDate: String!
     endDate: String!
+    selfServiceEnrollBeginDate: String
+    selfServiceEnrollEndDate: String
     sessions: [Session!]
   }
 

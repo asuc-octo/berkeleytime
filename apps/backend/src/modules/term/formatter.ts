@@ -6,6 +6,8 @@ const formatSession = (session: ISessionItem) => {
   return {
     ...session,
     startDate: session.beginDate,
+    enrollBeginDate: session.enrollBeginDate,
+    enrollEndDate: session.enrollEndDate,
   } as TermModule.Session;
 };
 
@@ -17,6 +19,8 @@ export const formatTerm = (term: ITermItem) => {
     year: parseInt(year),
     semester,
     startDate: term.beginDate,
+    selfServiceEnrollBeginDate: term.selfServiceEnrollBeginDate,
+    selfServiceEnrollEndDate: term.selfServiceEnrollEndDate,
     sessions: term.sessions?.map(formatSession),
   } as TermModule.Term;
 };

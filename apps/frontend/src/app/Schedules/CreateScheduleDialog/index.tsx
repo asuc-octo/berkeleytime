@@ -49,11 +49,20 @@ export default function CreateScheduleDialog({
       (term) => term.temporalPosition === TemporalPosition.Current
     );
 
-    // Fall back to the next term when the current term has ended
+    // Fall back to the next term based on enrollment dates
+    const now = moment();
     const nextTerm = terms
-      ?.filter((term) => term.startDate)
-      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
-      .find((term) => term.temporalPosition === TemporalPosition.Future);
+      ?.filter((term) => term.selfServiceEnrollBeginDate || term.startDate)
+      .toSorted((a, b) => {
+        const aDate = a.selfServiceEnrollBeginDate || a.startDate;
+        const bDate = b.selfServiceEnrollBeginDate || b.startDate;
+        return moment(aDate).diff(moment(bDate));
+      })
+      .find((term) => {
+        const enrollDate = term.selfServiceEnrollBeginDate || term.startDate;
+        return term.temporalPosition === TemporalPosition.Future &&
+               moment(enrollDate).isAfter(now);
+      });
 
     const defaultTerm = currentTerm ?? nextTerm ?? terms?.[0];
 
