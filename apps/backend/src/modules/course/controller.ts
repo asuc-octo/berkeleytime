@@ -14,7 +14,27 @@ export const getCourse = async (subject: string, number: string) => {
   return formatCourse(course as ICourseItem);
 };
 
-export const getCourseById = async (courseId: string) => {
+export const getCourseById = async (
+  courseId: string,
+  preferredSubject?: string,
+  preferredNumber?: string
+) => {
+  // If preferred subject and number are provided, try to find exact match first
+  if (preferredSubject && preferredNumber) {
+    const exactMatch = await CourseModel.findOne({
+      courseId,
+      subject: preferredSubject,
+      number: preferredNumber,
+    })
+      .sort({ fromDate: -1 })
+      .lean();
+
+    if (exactMatch) {
+      return formatCourse(exactMatch as ICourseItem);
+    }
+  }
+
+  // Fall back to any course with the courseId
   const course = await CourseModel.findOne({ courseId })
     .sort({ fromDate: -1 })
     .lean();

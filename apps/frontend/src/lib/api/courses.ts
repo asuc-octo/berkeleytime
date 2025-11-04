@@ -175,6 +175,7 @@ export const READ_COURSE_GRADE_DIST = gql`
 export const READ_COURSE_WITH_INSTRUCTOR = gql`
   query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
+      courseId
       subject
       number
       title
@@ -199,6 +200,8 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         semester
         number
         sessionId
+        subject
+        courseNumber
         primarySection {
           enrollment {
             latest {
@@ -231,11 +234,6 @@ export const GET_COURSE_NAMES = gql`
       subject
       number
       title
-      crossListing {
-        subject
-        number
-        title
-      }
     }
   }
 `;
