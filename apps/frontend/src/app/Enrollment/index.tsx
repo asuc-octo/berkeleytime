@@ -45,6 +45,11 @@ const toPercent = (decimal: number) => {
 };
 
 const CHART_HEIGHT = 450;
+const MINUTES_PER_DAY = 24 * 60;
+const DAY_THRESHOLDS = [53];
+const DAY_THRESHOLD_MINUTES = DAY_THRESHOLDS.map(
+  (day) => day * MINUTES_PER_DAY
+);
 
 export default function Enrollment() {
   const client = useApolloClient();
@@ -164,6 +169,28 @@ export default function Enrollment() {
     [outputs]
   );
 
+  const uniqueSemesters = useMemo(() => { // would only work with one semseter selected, not sure how multiple semester selected would work
+    const semesterSet = new Set<string>();
+
+    outputs
+      ?.filter((output) => !output.hidden)
+      .forEach((output) => {
+        if (output.input.semester && output.input.year) {
+          semesterSet.add(`${output.input.semester} ${output.input.year}`);
+        }
+      });
+    return semesterSet;
+  }, [outputs]);
+
+  const enrollmentDays = useMemo(() => {
+    if (!outputs) return undefined;
+    const output = outputs[0];
+    if (!output) return undefined;
+    const firstTime = moment(
+        output.enrollmentHistory.history[0].time
+    ).startOf("minute");
+
+  }, [uniqueSemesters, outputs]);
   /**
    *
    * A list of combined time series of the format:
@@ -285,6 +312,20 @@ export default function Enrollment() {
     );
   }, [data]);
 
+  const dayThresholdLines = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    return DAY_THRESHOLDS.reduce<
+      { day: number; minutes: number }[]
+    >((acc, day, index) => {
+      const minutes = DAY_THRESHOLD_MINUTES[index];
+      if (data.some((datapoint) => datapoint.timeDelta >= minutes)) {
+        acc.push({ day, minutes });
+      }
+      return acc;
+    }, []);
+  }, [data]);
+
   return (
     <Box p="5" className={styles.root}>
       <Flex direction="column">
@@ -338,6 +379,22 @@ export default function Enrollment() {
                       }}
                     />
                   )}{" "}
+                  {dayThresholdLines.map(({ day, minutes }) => (
+                    <ReferenceLine
+                      key={`day-threshold-${minutes}`}
+                      x={minutes}
+                      stroke="var(--label-color)"
+                      strokeDasharray="5 5"
+                      strokeOpacity={0.5}
+                      label={{
+                        value: `Day ${day}`,
+                        position: "insideLeft",
+                        fill: "var(--label-color)",
+                        fontSize: 12,
+                        offset: 10,
+                      }}
+                    />
+                  ))}
                   {outputs?.length && (
                     <Tooltip
                       content={(props) => {

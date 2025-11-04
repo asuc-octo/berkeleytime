@@ -1,0 +1,1460 @@
+{
+    "Fall 2020": [
+        {
+            "description": "Deadline to file doctoral dissertations and master’s theses with Graduate Degrees Office for degrees to be conferred in 2021–2022.",
+            "date": "2020-12-17"
+        }
+    ],
+    "Fall 2021": [
+        {
+            "description": "Filing Period for Resident Classification Periods for tuition purposes begins. (Continuing students admitted for fall.)",
+            "date": "2021-03-01"
+        },
+        {
+            "description": "Enrollment appointments are available on CalCentral for continuing and readmitted students.",
+            "date": "2021-04-16"
+        },
+        {
+            "description": "Phase I enrollment begins for continuing students.",
+            "date": "2021-04-26"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All freshmen admitted for fall and spring.)",
+            "date": "2021-05-01"
+        },
+        {
+            "description": "Enrollment appointments available on CalCentral for new undergraduate students.",
+            "date": "2021-05-28"
+        },
+        {
+            "description": "Deadline to file applications for readmission.",
+            "date": "2021-06-01"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All transfer students admitted for fall and spring.)",
+            "date": "2021-06-01"
+        },
+        {
+            "description": "Phase I enrollment ends for continuing students.",
+            "date": "2021-06-11"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (Continuing students admitted to fall and spring.)",
+            "date": "2021-07-01"
+        },
+        {
+            "description": "Phase I enrollment begins for new undergraduate students.",
+            "date": "2021-07-13"
+        },
+        {
+            "description": "Deadline to submit requested residency documentation.",
+            "date": "2021-07-15"
+        },
+        {
+            "description": "Enrollment appointments available on CalCentral for new graduate students.",
+            "date": "2021-07-16"
+        },
+        {
+            "description": "Phase II enrollment begins for continuing students.",
+            "date": "2021-07-19"
+        },
+        {
+            "description": "Enrollment begins for continuing graduate students.",
+            "date": "2021-07-19"
+        },
+        {
+            "description": "Phase I enrollment ends for new undergraduate students.",
+            "date": "2021-08-15"
+        },
+        {
+            "description": "Phase II enrollment ends for continuing students.",
+            "date": "2021-08-15"
+        },
+        {
+            "description": "Adjustment Period for enrollment begins.",
+            "date": "2021-08-16"
+        },
+        {
+            "description": "Semester begins.",
+            "date": "2021-08-18"
+        },
+        {
+            "description": "Fall tuition and registration fee payment due (in full or first installment payment of 20%).",
+            "date": "2021-08-20"
+        },
+        {
+            "description": "Deadline to withdraw without penalty. Programs with different instruction start date - please see your program's calendar",
+            "date": "2021-08-24"
+        },
+        {
+            "description": "Deadline for replacement of incomplete grades received fall semester 2020.",
+            "date": "2021-08-25"
+        },
+        {
+            "description": "Instruction begins.",
+            "date": "2021-08-25"
+        },
+        {
+            "description": "Deadline for undergraduates to drop EDD classes. Advisor’s exception required after this date.",
+            "date": "2021-09-03"
+        },
+        {
+            "description": "Deadline for all students to drop classes without a fee. $10 fee charged for each class dropped after this date.",
+            "date": "2021-09-03"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2021-09-06"
+        },
+        {
+            "description": "Deadline to become “officially registered” (enrolled, tuition and fees paid, no blocks). $150 Late Registration Fee after this date.",
+            "date": "2021-09-10"
+        },
+        {
+            "description": "Deadline for all students to add classes without a fee. $5 fee charged for each class added after this date.",
+            "date": "2021-09-10"
+        },
+        {
+            "description": "Deadline for undergraduates to add/drop classes or swap/change units for classes.",
+            "date": "2021-09-15"
+        },
+        {
+            "description": "Tuition and registration fees: Second installment of Fee Payment Plan due.",
+            "date": "2021-09-20"
+        },
+        {
+            "description": "Deadline for undergraduates in the College of Engineering to change grading option for non-degree tech courses",
+            "date": "2021-09-24"
+        },
+        {
+            "description": "Deadline for undergraduates in the College of Chemistry to change grading options. Subsequent changes require adviser's exception.",
+            "date": "2021-09-24"
+        },
+        {
+            "description": "Deadline for graduate students to add/drop classes or swap/change units for classes.",
+            "date": "2021-09-24"
+        },
+        {
+            "description": "Tuition and registration fees: Third installment of Fee Payment Plan due.",
+            "date": "2021-10-21"
+        },
+        {
+            "description": "Deadline to change grading options via CalCentral. Subsequent changes require advisor's approval.",
+            "date": "2021-10-29"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2021-11-11"
+        },
+        {
+            "description": "Tuition and registration fees: Fourth installment of Fee Payment Plan due.",
+            "date": "2021-11-19"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2021-11-25"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2021-11-26"
+        },
+        {
+            "description": "Formal classes end.",
+            "date": "2021-12-03"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2021-12-06"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2021-12-07"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2021-12-08"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2021-12-09"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2021-12-10"
+        },
+        {
+            "description": "Last day of instruction.",
+            "date": "2021-12-10"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2021-12-13"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2021-12-14"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2021-12-15"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2021-12-16"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2021-12-17"
+        },
+        {
+            "description": "Semester ends.",
+            "date": "2021-12-17"
+        },
+        {
+            "description": "Tuition and registration fees: Final installment of Fee Payment Plan due.",
+            "date": "2021-12-21"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2021-12-23"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2021-12-24"
+        },
+        {
+            "description": "Academic & administrative holiday",
+            "date": "2021-12-30"
+        },
+        {
+            "description": "Academic & administrative holiday",
+            "date": "2021-12-31"
+        }
+    ],
+    "Spring 2021": [
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All freshmen admitted for fall and spring.)",
+            "date": "2021-05-01"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All transfer students admitted for fall and spring.)",
+            "date": "2021-06-01"
+        },
+        {
+            "description": "Enrollment appointments are available on CalCentral for continuing and readmitted students.",
+            "date": "2021-09-25"
+        },
+        {
+            "description": "Filing Period for Resident Classification Periods for tuition purposes begins. (Continuing students admitted for spring.)",
+            "date": "2021-10-01"
+        },
+        {
+            "description": "Enrollment begins for continuing graduate students.",
+            "date": "2021-10-11"
+        },
+        {
+            "description": "Phase I enrollment begins for continuing students.",
+            "date": "2021-10-11"
+        },
+        {
+            "description": "Deadline to file applications for readmission spring 2022",
+            "date": "2021-11-01"
+        },
+        {
+            "description": "Phase I enrollment ends for continuing students",
+            "date": "2021-11-07"
+        },
+        {
+            "description": "Phase I enrollment begins for new undergraduate transfers",
+            "date": "2021-11-09"
+        },
+        {
+            "description": "Phase I enrollment begins for new undergraduate first year",
+            "date": "2021-11-09"
+        },
+        {
+            "description": "Phase I enrollment begins for new graduate students.",
+            "date": "2021-11-12"
+        },
+        {
+            "description": "Phase II enrollment begins for continuing students.",
+            "date": "2021-11-15"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (Continuing students admitted to fall and spring.)",
+            "date": "2021-12-01"
+        },
+        {
+            "description": "Deadline to submit requested residency documentation.",
+            "date": "2021-12-15"
+        }
+    ],
+    "Spring 2022": [
+        {
+            "description": "Phase II enrollment ends for continuing students.",
+            "date": "2022-01-09"
+        },
+        {
+            "description": "Phase I enrollment ends for new undergraduate students.",
+            "date": "2022-01-09"
+        },
+        {
+            "description": "Adjustment Period for enrollment begins.",
+            "date": "2022-01-10"
+        },
+        {
+            "description": "Semester begins.",
+            "date": "2022-01-11"
+        },
+        {
+            "description": "Spring tuition and registration fee payment due (in full or first installment of 20%.)",
+            "date": "2022-01-14"
+        },
+        {
+            "description": "Deadline to withdraw without penalty. Programs with different instruction start date - please see your program's calendar",
+            "date": "2022-01-17"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2022-01-17"
+        },
+        {
+            "description": "Instruction begins.",
+            "date": "2022-01-18"
+        },
+        {
+            "description": "Deadline for replacement of incomplete grades received spring semester 2020 or summer sessions 2020.",
+            "date": "2022-01-18"
+        },
+        {
+            "description": "Deadline for all students to drop classes without a fee. $10 fee charged for each class dropped after this date.",
+            "date": "2022-01-28"
+        },
+        {
+            "description": "Deadline for undergraduates to drop EDD classes. Advisor’s exception required after this date.",
+            "date": "2022-01-28"
+        },
+        {
+            "description": "Deadline for all students to add classes without a fee. $5 fee charged for each class added after this date.",
+            "date": "2022-02-04"
+        },
+        {
+            "description": "Deadline to become “officially registered” (enrolled, tuition and fees paid, no blocks). $150 Late Registration Fee after this date.",
+            "date": "2022-02-04"
+        },
+        {
+            "description": "Deadline for undergraduates to add/drop classes or swap/change units for classes.",
+            "date": "2022-02-09"
+        },
+        {
+            "description": "Deadline for undergraduates in the College of Chemistry to change grading options. Subsequent changes require adviser's exception.",
+            "date": "2022-02-18"
+        },
+        {
+            "description": "Deadline for undergraduates in the College of Engineering to change grading option for non-degree tech courses",
+            "date": "2022-02-18"
+        },
+        {
+            "description": "Deadline for graduate students to add/drop classes or swap/change units for classes.",
+            "date": "2022-02-18"
+        },
+        {
+            "description": "Academic & adminstrative holiday.",
+            "date": "2022-02-21"
+        },
+        {
+            "description": "Spring recess.",
+            "date": "2022-03-21"
+        },
+        {
+            "description": "Spring recess.",
+            "date": "2022-03-22"
+        },
+        {
+            "description": "Spring recess.",
+            "date": "2022-03-23"
+        },
+        {
+            "description": "Spring recess.",
+            "date": "2022-03-24"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2022-03-25"
+        },
+        {
+            "description": "Deadline to change grading options via CalCentral. Subsequent changes require advisor’s exception.",
+            "date": "2022-04-01"
+        },
+        {
+            "description": "Formal classes end.",
+            "date": "2022-04-29"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All freshmen admitted for fall and spring)",
+            "date": "2022-05-01"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2022-05-02"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2022-05-03"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2022-05-04"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2022-05-05"
+        },
+        {
+            "description": "Reading/review/recitation period.",
+            "date": "2022-05-06"
+        },
+        {
+            "description": "Last day of instruction.",
+            "date": "2022-05-06"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2022-05-09"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2022-05-10"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2022-05-11"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2022-05-12"
+        },
+        {
+            "description": "Deadline to file doctoral dissertations and master’s theses with Graduate Degrees Office for degrees to be conferred in 2020–2021.",
+            "date": "2022-05-13"
+        },
+        {
+            "description": "Semester ends.",
+            "date": "2022-05-13"
+        },
+        {
+            "description": "Final examinations.",
+            "date": "2022-05-13"
+        },
+        {
+            "description": "Academic & administrative holiday.",
+            "date": "2022-05-30"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All transfer students admitted for fall and spring)",
+            "date": "2022-06-01"
+        },
+        {
+            "description": "rollment Appointments available on CalCentral",
+            "date": "2022-09-26"
+        },
+        {
+            "description": "Filing Period for Resident Classification Periods for tuition purposes begins. (Continuing students admitted for spring.)",
+            "date": "2022-10-01"
+        },
+        {
+            "description": "23 - Phase 1 Begins",
+            "date": "2022-10-17"
+        },
+        {
+            "description": "Deadline to file applications for readmission spring 2023",
+            "date": "2022-11-01"
+        },
+        {
+            "description": "23 - Phase 1 Ends",
+            "date": "2022-11-06"
+        },
+        {
+            "description": "23 - Phase 2 Begins",
+            "date": "2022-11-14"
+        }
+    ],
+    "Fall 2022": [
+        {
+            "description": "Enrollment Appointments Available in CalCentral",
+            "date": "2022-03-25"
+        },
+        {
+            "description": "Enrollment Begins for Continuing Students",
+            "date": "2022-04-18"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All freshmen admitted for fall and spring)",
+            "date": "2022-05-01"
+        },
+        {
+            "description": "Enrollment appointments available on CalCentral for new undergraduate students",
+            "date": "2022-05-27"
+        },
+        {
+            "description": "Deadline to file applications for readmission",
+            "date": "2022-06-01"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (All transfer students admitted for fall and spring)",
+            "date": "2022-06-01"
+        },
+        {
+            "description": "Phase 1 Enrollment Ends for Continuing Students",
+            "date": "2022-06-17"
+        },
+        {
+            "description": "Deadline to submit Statement of Legal Residence. (Continuing students admitted to fall and spring)",
+            "date": "2022-07-01"
+        },
+        {
+            "description": "Enrollment appointments available on CalCentral for new graduate students",
+            "date": "2022-07-08"
+        },
+        {
+            "description": "Phase I enrollment begins for new transfer undergraduates",
+            "date": "2022-07-12"
+        },
+        {
+            "description": "Phase I enrollment begins for new freshmen students",
+            "date": "2022-07-14"
+        },
+        {
+            "description": "Deadline to submit requested residency documentation",
+            "date": "2022-07-15"
+        },
+        {
+            "description": "Enrollment begins for new graduate students",
+            "date": "2022-07-15"
+        },
+        {
+            "description": "Phase II enrollment begins for continuing students",
+            "date": "2022-07-18"
+        },
+        {
+            "description": "Phase 2 Ends",
+            "date": "2022-08-14"
+        },
+        {
+            "description": "Adjustment Period Begins",
+            "date": "2022-08-15"
+        },
+        {
+            "description": "Semester Begins",
+            "date": "2022-08-17"
+        },
+        {
+            "description": "Fall tuition and registration fee payment due (in full or first installment payment)",
+            "date": "2022-08-19"
+        },
+        {
+            "description": "Deadline to Withdraw without penalty. Programs with different instruction start date - please see your program's calendar",
+            "date": "2022-08-23"
+        },
+        {
+            "description": "Instruction Begins",
+            "date": "2022-08-24"
+        },
+        {
+            "description": "Deadline for replacement of incomplete grades received fall semester 2021",
+            "date": "2022-08-24"
+        },
+        {
+            "description": "Deadline for undergraduates to drop EDD classes. Advisor’s exception required after this date.",
+            "date": "2022-09-02"
+        },
+        {
+            "description": "Deadline for all students to drop classes without a fee. $10 fee charged for each class dropped after this date.",
+            "date": "2022-09-02"
+        },
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2022-09-05"
+        },
+        {
+            "description": "Deadline for all students to add classes without a fee. $5 fee charged for each class added after this date.",
+            "date": "2022-09-09"
+        },
+        {
+            "description": "Deadline to become “officially registered” (enrolled, tuition and fees paid, no blocks). $150 Late Registration Fee after this date.",
+            "date": "2022-09-09"
+        },
+        {
+            "description": "Deadline for undergraduates to add/drop classes or swap/change units for classes.",
+            "date": "2022-09-14"
+        },
+        {
+            "description": "Deadline for undergraduates in the College of Engineering to change grading option for non-degree tech courses",
+            "date": "2022-09-23"
+        },
+        {
+            "description": "Deadline for graduate students to add/drop classes or swap/change units for classes.",
+            "date": "2022-09-23"
+        },
+        {
+            "description": "Deadline for undergraduates in the College of Chemistry to change grading options. Subsequent changes require adviser's exception.",
+            "date": "2022-09-23"
+        },
+        {
+            "description": "Deadline to change grading options via CalCentral. Subsequent changes require advisor's approval.",
+            "date": "2022-10-28"
+        },
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2022-11-11"
+        },
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2022-11-24"
+        },
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2022-11-25"
+        },
+        {
+            "description": "Formal Classes End",
+            "date": "2022-12-02"
+        },
+        {
+            "description": "Reading/Review/Recitation",
+            "date": "2022-12-05"
+        },
+        {
+            "description": "Reading/Review/Recitation",
+            "date": "2022-12-06"
+        },
+        {
+            "description": "Reading/Review/Recitation",
+            "date": "2022-12-07"
+        },
+        {
+            "description": "Reading/Review/Recitation",
+            "date": "2022-12-08"
+        },
+        {
+            "description": "Last Day of Instruction",
+            "date": "2022-12-09"
+        },
+        {
+            "description": "Reading/Review/Recitation",
+            "date": "2022-12-09"
+        },
+        {
+            "description": "22 - Final Examinations",
+            "date": "2022-12-12"
+        },
+        {
+            "description": "Final Examinations",
+            "date": "2022-12-12"
+        },
+        {
+            "description": "Final Examinations",
+            "date": "2022-12-13"
+        },
+        {
+            "description": "Final Examinations",
+            "date": "2022-12-14"
+        },
+        {
+            "description": "Final Examinations",
+            "date": "2022-12-15"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2022-12-16"
+        },
+        {
+            "description": "22 Semester Ends",
+            "date": "2022-12-16"
+        },
+        {
+            "description": "Final Examinations",
+            "date": "2022-12-16"
+        }
+    ],
+    "Uncategorized 2022": [
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2022-12-23"
+        },
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2022-12-26"
+        },
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2022-12-30"
+        }
+    ],
+    "Uncategorized 2023": [
+        {
+            "description": "Academic & Administrative Holiday",
+            "date": "2023-01-02"
+        }
+    ],
+    "Spring 2023": [
+        {
+            "description": "23 - Phase 2 Ends",
+            "date": "2023-01-08"
+        },
+        {
+            "description": "23 - Adjustment Period Begins",
+            "date": "2023-01-09"
+        },
+        {
+            "description": "23 Semester Begins",
+            "date": "2023-01-10"
+        },
+        {
+            "description": "23 - Tuition & Fee Payment Deadline (either in full or first installment)",
+            "date": "2023-01-13"
+        },
+        {
+            "description": "23 - Last Day to Withdraw without Penalties",
+            "date": "2023-01-16"
+        },
+        {
+            "description": "23 - Instruction Begins",
+            "date": "2023-01-17"
+        },
+        {
+            "description": "23 - Last Day to Drop EDD Classes",
+            "date": "2023-01-27"
+        },
+        {
+            "description": "23 - Last Day to Drop without a Fee",
+            "date": "2023-01-27"
+        },
+        {
+            "description": "23 - Deadline to become Officially Registered",
+            "date": "2023-02-03"
+        },
+        {
+            "description": "23 - Last Day to Add without a Fee",
+            "date": "2023-02-03"
+        },
+        {
+            "description": "23 - Last Day for Undergraduates to Add/Drop Classes via Enrollment Center",
+            "date": "2023-02-08"
+        },
+        {
+            "description": "23 - Last Day for Graduate Students to add/drop via Enrollment Center",
+            "date": "2023-02-17"
+        },
+        {
+            "description": "23 - Last Day for undergraduates in Chemistry and Engineering to Change the Grading Option",
+            "date": "2023-02-17"
+        },
+        {
+            "description": "23 - Last Day for Graduate and Undergraduate students to Change the Grading Option",
+            "date": "2023-03-24"
+        },
+        {
+            "description": "23 - Adjustment Period Ends",
+            "date": "2023-03-24"
+        },
+        {
+            "description": "23 - Final Examinations",
+            "date": "2023-05-08"
+        },
+        {
+            "description": "23 Semester Ends",
+            "date": "2023-05-12"
+        }
+    ],
+    "Spring 23": [
+        {
+            "description": "Semester Begin",
+            "date": "2023-01-10"
+        },
+        {
+            "description": "Spring Recess",
+            "date": "2023-03-27"
+        }
+    ],
+    "Fall 23": [
+        {
+            "description": "Schedule of Classes Published",
+            "date": "2023-03-26"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Begins",
+            "date": "2023-04-17"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Ends",
+            "date": "2023-06-16"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Transfer Student Enrollment Begins",
+            "date": "2023-07-11"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Freshman Student Enrollment Begins",
+            "date": "2023-07-13"
+        },
+        {
+            "description": "Phase 2 Continuing Enrollment Begins",
+            "date": "2023-07-17"
+        },
+        {
+            "description": "Phase 2 Continuing Student Enrollment Ends",
+            "date": "2023-08-13"
+        },
+        {
+            "description": "Phase 1 New Student Enrollment Ends",
+            "date": "2023-08-13"
+        },
+        {
+            "description": "Law Instruction Begins",
+            "date": "2023-08-14"
+        },
+        {
+            "description": "Adjustment Period Begins",
+            "date": "2023-08-14"
+        },
+        {
+            "description": "Semester Begin",
+            "date": "2023-08-16"
+        },
+        {
+            "description": "Fee Payment Deadline (either in full or the first installment if on Fee Payment Plan)",
+            "date": "2023-08-18"
+        },
+        {
+            "description": "Last Day to Withdraw for Full Refund (before instruction begins)",
+            "date": "2023-08-22"
+        },
+        {
+            "description": "Last Day to drop Early Drop Deadline (EDD) courses",
+            "date": "2023-09-01"
+        },
+        {
+            "description": "Last Day to Drop Classes Without a Fee",
+            "date": "2023-09-01"
+        },
+        {
+            "description": "Deadline to Become Officially Registered (late registration fee is not assessed)",
+            "date": "2023-09-08"
+        },
+        {
+            "description": "Last Day to Add Without a Fee",
+            "date": "2023-09-08"
+        },
+        {
+            "description": "Last Day for Undergraduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2023-09-13"
+        },
+        {
+            "description": "Departmental Schedulers/Enrollment Managers Add/Drop/Swap/Unit Change Deadline",
+            "date": "2023-09-15"
+        },
+        {
+            "description": "Deadline for Students to be Enrolled (record will be cancelled if not enrolled)",
+            "date": "2023-09-22"
+        },
+        {
+            "description": "Last Day for Graduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2023-09-22"
+        },
+        {
+            "description": "Undergraduate and Graduate Students Grading Option Deadline",
+            "date": "2023-10-27"
+        },
+        {
+            "description": "Last day of Formal Instruction",
+            "date": "2023-12-01"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2023-12-15"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2023-12-15"
+        }
+    ],
+    "Spring 24": [
+        {
+            "description": "Appointments released to students",
+            "date": "2023-09-23"
+        },
+        {
+            "description": "Schedule of Classes Published",
+            "date": "2023-09-24"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Begins",
+            "date": "2023-10-16"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Ends",
+            "date": "2023-11-05"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Transfer Student Enrollment Begins",
+            "date": "2023-11-07"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Freshman Student Enrollment Begins",
+            "date": "2023-11-08"
+        },
+        {
+            "description": "Phase 1 New Graduate Student Enrollment Begins",
+            "date": "2023-11-09"
+        },
+        {
+            "description": "Phase 2 Continuing Enrollment Begins",
+            "date": "2023-11-14"
+        },
+        {
+            "description": "Assess Registration Fees (tentative)",
+            "date": "2023-11-15"
+        },
+        {
+            "description": "Phase 2 Enrollment Ends",
+            "date": "2024-01-07"
+        },
+        {
+            "description": "Adjustment Period Begins",
+            "date": "2024-01-08"
+        },
+        {
+            "description": "Semester Begin",
+            "date": "2024-01-09"
+        },
+        {
+            "description": "Fee Payment Deadline (either in full or the first installment if on Fee Payment Plan)",
+            "date": "2024-01-12"
+        },
+        {
+            "description": "Last Day to Withdraw for Full Refund (before instruction begins)",
+            "date": "2024-01-15"
+        },
+        {
+            "description": "Last Day to drop Early Drop Deadline (EDD) courses",
+            "date": "2024-01-26"
+        },
+        {
+            "description": "Last Day to Drop Classes Without a Fee",
+            "date": "2024-01-26"
+        },
+        {
+            "description": "Instructor Drop Deadline",
+            "date": "2024-02-02"
+        },
+        {
+            "description": "Deadline to Become Officially Registered (enroll and pay 20% tuition and fees)",
+            "date": "2024-02-02"
+        },
+        {
+            "description": "Last Day to Add Without a Fee",
+            "date": "2024-02-02"
+        },
+        {
+            "description": "Last Day for Undergraduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2024-02-07"
+        },
+        {
+            "description": "Last Day for undergraduates in Chemistry and Engineering to Change the Grading Option in technical courses",
+            "date": "2024-02-16"
+        },
+        {
+            "description": "Last Day for Graduates to Add/Drop Classes and Change Units via Enrollment Center",
+            "date": "2024-02-16"
+        },
+        {
+            "description": "Undergraduate and Graduate Students Grading Option Deadline",
+            "date": "2024-03-22"
+        },
+        {
+            "description": "Adjustment Period Ends",
+            "date": "2024-03-22"
+        },
+        {
+            "description": "Spring Recess",
+            "date": "2024-03-25"
+        },
+        {
+            "description": "Last day of Formal Instruction",
+            "date": "2024-04-26"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2024-05-10"
+        }
+    ],
+    "Fall 24": [
+        {
+            "description": "Appointments released to students",
+            "date": "2024-03-30"
+        },
+        {
+            "description": "Schedule of Classes Published",
+            "date": "2024-03-31"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Begins",
+            "date": "2024-04-22"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Ends",
+            "date": "2024-06-21"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Transfer Student Enrollment Begins",
+            "date": "2024-07-16"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Freshman Student Enrollment Begins",
+            "date": "2024-07-18"
+        },
+        {
+            "description": "Phase 1 New Graduate Student Enrollment Begins",
+            "date": "2024-07-19"
+        },
+        {
+            "description": "Phase 2 Continuing Enrollment Begins",
+            "date": "2024-07-22"
+        },
+        {
+            "description": "Assess Registration Fees (tentative)",
+            "date": "2024-07-27"
+        },
+        {
+            "description": "Phase 2 Enrollment Ends",
+            "date": "2024-08-18"
+        },
+        {
+            "description": "Adjustment Period Begins",
+            "date": "2024-08-19"
+        },
+        {
+            "description": "Semester Begin",
+            "date": "2024-08-21"
+        },
+        {
+            "description": "Fee Payment Deadline (either in full or the first installment if on Fee Payment Plan)",
+            "date": "2024-08-23"
+        },
+        {
+            "description": "Last Day to Withdraw for Full Refund (before instruction begins)",
+            "date": "2024-08-27"
+        },
+        {
+            "description": "Last Day to Drop Classes Without a Fee",
+            "date": "2024-09-06"
+        },
+        {
+            "description": "Last Day to drop Early Drop Deadline (EDD) courses",
+            "date": "2024-09-06"
+        },
+        {
+            "description": "Last Day to Add Without a Fee",
+            "date": "2024-09-13"
+        },
+        {
+            "description": "Deadline to Become Officially Registered (enroll and pay 20% tuition and fees)",
+            "date": "2024-09-13"
+        },
+        {
+            "description": "Last Day for Undergraduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2024-09-18"
+        },
+        {
+            "description": "Departmental Schedulers/Enrollment Managers Add/Drop/Swap/Unit Change Deadline",
+            "date": "2024-09-20"
+        },
+        {
+            "description": "Last Day for undergraduates in Chemistry and Engineering to Change the Grading Option in technical courses",
+            "date": "2024-09-27"
+        },
+        {
+            "description": "Last Day for Graduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2024-09-27"
+        },
+        {
+            "description": "Census Date",
+            "date": "2024-09-28"
+        },
+        {
+            "description": "Undergraduate and Graduate Students Grading Option Deadline",
+            "date": "2024-11-01"
+        },
+        {
+            "description": "Adjustment Period Ends",
+            "date": "2024-11-01"
+        },
+        {
+            "description": "Last day of Formal Instruction",
+            "date": "2024-12-06"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2024-12-20"
+        }
+    ],
+    "Spring 25": [
+        {
+            "description": "Schedule of Classes Published",
+            "date": "2024-10-06"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Begins",
+            "date": "2024-10-28"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Ends",
+            "date": "2024-11-17"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Transfer Student Enrollment Begins",
+            "date": "2024-11-19"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Freshman Student Enrollment Begins",
+            "date": "2024-11-20"
+        },
+        {
+            "description": "Phase 1 New Graduate Student Enrollment Begins",
+            "date": "2024-11-22"
+        },
+        {
+            "description": "Phase 2 Continuing Enrollment Begins",
+            "date": "2024-11-25"
+        },
+        {
+            "description": "Assess Registration Fees (tentative)",
+            "date": "2024-11-26"
+        },
+        {
+            "description": "Phase 2 Enrollment Ends",
+            "date": "2025-01-12"
+        },
+        {
+            "description": "Adjustment Period Begins",
+            "date": "2025-01-13"
+        },
+        {
+            "description": "Semester Begin",
+            "date": "2025-01-14"
+        },
+        {
+            "description": "Fee Payment Deadline (either in full or the first installment if on Fee Payment Plan)",
+            "date": "2025-01-17"
+        },
+        {
+            "description": "Last Day to Withdraw for Full Refund (before instruction begins)",
+            "date": "2025-01-20"
+        },
+        {
+            "description": "Last Day to Drop Classes Without a Fee",
+            "date": "2025-01-31"
+        },
+        {
+            "description": "Last Day to drop Early Drop Deadline (EDD) courses",
+            "date": "2025-01-31"
+        },
+        {
+            "description": "Last Day to Add Without a Fee",
+            "date": "2025-02-07"
+        },
+        {
+            "description": "Last Day Automatic Waitlist Runs - 6:40PM",
+            "date": "2025-02-07"
+        },
+        {
+            "description": "Instructor Drop Deadline",
+            "date": "2025-02-07"
+        },
+        {
+            "description": "Deadline to Become Officially Registered (enroll and pay 20% tuition and fees)",
+            "date": "2025-02-07"
+        },
+        {
+            "description": "Last Day for Undergraduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2025-02-12"
+        },
+        {
+            "description": "Departmental Schedulers/Enrollment Managers Add/Drop/Swap/Unit Change Deadline",
+            "date": "2025-02-14"
+        },
+        {
+            "description": "Last Day for undergraduates in Engineering to Change the Grading Option in technical courses",
+            "date": "2025-02-21"
+        },
+        {
+            "description": "Last Day for Graduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2025-02-21"
+        },
+        {
+            "description": "Census Date",
+            "date": "2025-02-22"
+        },
+        {
+            "description": "Spring Recess",
+            "date": "2025-03-24"
+        },
+        {
+            "description": "Adjustment Period Ends",
+            "date": "2025-04-04"
+        },
+        {
+            "description": "Undergraduate and Graduate Students Grading Option Deadline",
+            "date": "2025-04-04"
+        },
+        {
+            "description": "Last day of Formal Instruction",
+            "date": "2025-05-02"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2025-05-16"
+        }
+    ],
+    "Fall 25": [
+        {
+            "description": "Appointments released to students",
+            "date": "2025-03-23"
+        },
+        {
+            "description": "Schedule of Classes Published",
+            "date": "2025-03-23"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Begins",
+            "date": "2025-04-14"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Ends",
+            "date": "2025-06-13"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Transfer Student Enrollment Begins",
+            "date": "2025-07-15"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Freshman Student Enrollment Begins",
+            "date": "2025-07-17"
+        },
+        {
+            "description": "Phase 1 New Graduate Student Enrollment Begins",
+            "date": "2025-07-18"
+        },
+        {
+            "description": "Phase 2 Continuing Enrollment Begins",
+            "date": "2025-07-21"
+        },
+        {
+            "description": "Assess Registration Fees (tentative)",
+            "date": "2025-07-26"
+        },
+        {
+            "description": "Phase 2 Enrollment Ends",
+            "date": "2025-08-17"
+        },
+        {
+            "description": "Adjustment Period Begins",
+            "date": "2025-08-18"
+        },
+        {
+            "description": "Semester Begin",
+            "date": "2025-08-20"
+        },
+        {
+            "description": "Fee Payment Deadline (either in full or the first installment if on Fee Payment Plan)",
+            "date": "2025-08-22"
+        },
+        {
+            "description": "Last Day to Withdraw for Full Refund (before instruction begins)",
+            "date": "2025-08-26"
+        },
+        {
+            "description": "Last Day to Drop Classes Without a Fee",
+            "date": "2025-09-05"
+        },
+        {
+            "description": "Last Day to drop Early Drop Deadline (EDD) courses",
+            "date": "2025-09-05"
+        },
+        {
+            "description": "Instructor Drop Deadline",
+            "date": "2025-09-12"
+        },
+        {
+            "description": "Deadline to Become Officially Registered (enroll and pay 20% tuition and fees)",
+            "date": "2025-09-12"
+        },
+        {
+            "description": "Last Day to Add Without a Fee",
+            "date": "2025-09-12"
+        },
+        {
+            "description": "Last Day for Undergraduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2025-09-17"
+        },
+        {
+            "description": "Departmental Schedulers/Enrollment Managers Add/Drop/Swap/Unit Change Deadline",
+            "date": "2025-09-19"
+        },
+        {
+            "description": "Last Day for Graduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2025-09-26"
+        },
+        {
+            "description": "Last Day for undergraduates in Engineering to Change the Grading Option in technical courses",
+            "date": "2025-09-26"
+        },
+        {
+            "description": "Adjustment Period Ends",
+            "date": "2025-10-31"
+        },
+        {
+            "description": "Department Scheduler/Enrollment Managers Grading Option Deadline",
+            "date": "2025-10-31"
+        },
+        {
+            "description": "Undergraduate and Graduate Students Grading Option Deadline",
+            "date": "2025-10-31"
+        },
+        {
+            "description": "Last day of Formal Instruction",
+            "date": "2025-12-05"
+        },
+        {
+            "description": "GSAO's/College Advisers Add/Drop/Swap/Grading Option/Unit Change Deadline",
+            "date": "2025-12-12"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2025-12-19"
+        }
+    ],
+    "Spring 26": [
+        {
+            "description": "Appointments released to students",
+            "date": "2025-10-05"
+        },
+        {
+            "description": "Schedule of Classes Published",
+            "date": "2025-10-05"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Begins",
+            "date": "2025-10-27"
+        },
+        {
+            "description": "Phase 1 Continuing Students Enrollment Ends",
+            "date": "2025-11-16"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Transfer Student Enrollment Begins",
+            "date": "2025-11-18"
+        },
+        {
+            "description": "Phase 1 New Undergraduate Freshman Student Enrollment Begins",
+            "date": "2025-11-19"
+        },
+        {
+            "description": "Phase 1 New Graduate Student Enrollment Begins",
+            "date": "2025-11-21"
+        },
+        {
+            "description": "Phase 2 Continuing Enrollment Begins",
+            "date": "2025-11-24"
+        },
+        {
+            "description": "Assess Registration Fees (tentative)",
+            "date": "2025-11-25"
+        },
+        {
+            "description": "Phase 1 New Student Enrollment Ends",
+            "date": "2026-01-11"
+        },
+        {
+            "description": "Phase 2 Enrollment Ends",
+            "date": "2026-01-11"
+        },
+        {
+            "description": "Adjustment Period Begins",
+            "date": "2026-01-12"
+        },
+        {
+            "description": "Semester Begin",
+            "date": "2026-01-13"
+        },
+        {
+            "description": "Fee Payment Deadline (either in full or the first installment if on Fee Payment Plan)",
+            "date": "2026-01-16"
+        },
+        {
+            "description": "Last Day to Withdraw for Full Refund (before instruction begins)",
+            "date": "2026-01-19"
+        },
+        {
+            "description": "Last Day to drop Early Drop Deadline (EDD) courses",
+            "date": "2026-01-30"
+        },
+        {
+            "description": "Last Day to Drop Classes Without a Fee",
+            "date": "2026-01-30"
+        },
+        {
+            "description": "Last Day to Add Without a Fee",
+            "date": "2026-02-06"
+        },
+        {
+            "description": "Instructor Drop Deadline",
+            "date": "2026-02-06"
+        },
+        {
+            "description": "Deadline to Become Officially Registered (enroll and pay 20% tuition and fees)",
+            "date": "2026-02-06"
+        },
+        {
+            "description": "Last Day for Undergraduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2026-02-11"
+        },
+        {
+            "description": "Last Day for Graduates to Add/Drop Classes and Change Units via Enrollment Center.",
+            "date": "2026-02-20"
+        },
+        {
+            "description": "Last Day for undergraduates in Engineering to Change the Grading Option in technical courses",
+            "date": "2026-02-20"
+        },
+        {
+            "description": "Spring Recess",
+            "date": "2026-03-23"
+        },
+        {
+            "description": "Department Scheduler/Enrollment Managers Grading Option Deadline",
+            "date": "2026-04-03"
+        },
+        {
+            "description": "Undergraduate and Graduate Students Grading Option Deadline",
+            "date": "2026-04-03"
+        },
+        {
+            "description": "Adjustment Period Ends",
+            "date": "2026-04-03"
+        },
+        {
+            "description": "Last day of Formal Instruction",
+            "date": "2026-05-01"
+        },
+        {
+            "description": "GSAO's/College Advisers Add/Drop/Swap/Grading Option/Unit Change Deadline",
+            "date": "2026-05-08"
+        },
+        {
+            "description": "Semester Ends",
+            "date": "2026-05-15"
+        }
+    ]
+}
