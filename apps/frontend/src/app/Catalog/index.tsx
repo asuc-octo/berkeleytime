@@ -53,11 +53,11 @@ export default function Catalog() {
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
-    // Check if recent term is still valid (within 7 days TTL)
-    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    // Check if recent term is still valid (within 12 hours TTL)
+    const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
     const isRecentTermValid =
       recentTerm?.timestamp &&
-      Date.now() - recentTerm.timestamp < SEVEN_DAYS_MS;
+      Date.now() - recentTerm.timestamp < TWELVE_HOURS_MS;
 
     const currentTerm = ugrdTerms.find(
       (term) => term.temporalPosition === TemporalPosition.Current
@@ -88,7 +88,7 @@ export default function Catalog() {
 
     // Selection priority:
     // 1. URL parameter (explicit user choice)
-    // 2. Recent term (localStorage, within 7 day TTL)
+    // 2. Recent term (localStorage, within 12 hour TTL)
     // 3. Smart selection: if enrollment is starting soon, show that term
     // 4. Current term
     const selectedTerm =
