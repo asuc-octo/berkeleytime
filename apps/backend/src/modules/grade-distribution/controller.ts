@@ -345,8 +345,16 @@ export const getGradeDistributionByInstructorAndSemester = async (
   if (sections.length === 0) throw new Error("No classes found");
 
   const sectionIds = sections.map((section) => section.sectionId);
+  const term = await TermModel.findOne({
+    name: `${year} ${semester}`,
+  })
+    .select({ id: 1 })
+    .lean();
+
   const distributions = await GradeDistributionModel.find({
     sectionId: { $in: sectionIds },
+    termId: term.id,
+    sessionId: sessionId,
   });
 
   if (distributions.length === 0) throw new Error("No grades found");

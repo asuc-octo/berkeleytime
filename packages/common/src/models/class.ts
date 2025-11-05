@@ -91,17 +91,18 @@ const classSchema = new Schema<IClassItem>({
   }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
 });
-classSchema.index(
-  {
-    year: 1,
-    semester: 1,
-    sessionId: 1,
-    subject: 1,
-    courseNumber: 1,
-    number: 1,
-  },
-  { unique: true }
-);
+
+// for catalog, class, scheduler, and bookmarked classes controllers
+classSchema.index({
+  year: 1,
+  semester: 1,
+  sessionId: 1,
+  subject: 1,
+  courseNumber: 1,
+  number: 1,
+});
+
+// for course controller
 classSchema.index({ courseId: 1 });
 
 export const ClassModel: Model<IClassItem> = model<IClassItem>(
