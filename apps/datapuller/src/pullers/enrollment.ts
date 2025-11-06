@@ -76,8 +76,8 @@ const updateEnrollmentHistories = async ({
     academicCareerCode: "UGRD",
     temporalPosition: { $in: ["Current", "Future"] },
     $and: [
-      { selfServiceEnrollBeginDate: { $gte: nowPTDate } },
-      { selfServiceEnrollEndDate: { $lte: nowPTDate } },
+      { selfServiceEnrollBeginDate: { $lte: nowPTDate } },
+      { selfServiceEnrollEndDate: { $gte: nowPTDate } },
     ],
   }).lean();
 
@@ -147,7 +147,7 @@ const updateEnrollmentHistories = async ({
                  2. Latest enrollment entry's granularity matches incoming granularity
                  3. Latest enrollment entry's endTime is less than DATAGAP_THRESHOLD ago
 
-              Then: Modify lastEntry's with an extended endTime.
+              Then: Modify lastEntry with an extended endTime.
 
               Else: Append a new entry with incoming startTime and endTime.
             */

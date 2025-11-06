@@ -6,7 +6,7 @@ import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 import { fetchPaginatedData } from "./api/sis-api";
 import { filterSection } from "./sections";
 
-// default enrollments datapuller scheduled interval (15 minnutes) in seconds
+// default enrollments datapuller scheduled interval (15 minutes) in seconds
 export const GRANULARITY = 15 * 60;
 
 const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
