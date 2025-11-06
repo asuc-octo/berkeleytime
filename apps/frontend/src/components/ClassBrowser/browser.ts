@@ -1,5 +1,3 @@
-import Fuse from "fuse.js";
-
 import {
   AcademicCareer,
   IClass,
@@ -8,6 +6,7 @@ import {
   academicCareers,
 } from "@/lib/api";
 import { subjects } from "@/lib/course";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -345,5 +344,5 @@ export const getIndex = (classes: IClass[]) => {
     // },
   };
 
-  return new Fuse(list, options);
+  return new FuzzySearch(list, options);
 };
