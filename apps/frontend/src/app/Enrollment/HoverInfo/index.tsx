@@ -44,13 +44,15 @@ export default function HoverInfo({
       };
     }
 
-    const firstTime = moment(enrollmentHistory.history[0].time);
+    const firstTime = moment(enrollmentHistory.history[0].startTime);
     const targetTime = firstTime.clone().add(hoveredDuration);
     const targetDate = targetTime.toDate();
 
-    // Find the last entry at or before the target time
-    const entry = enrollmentHistory.history.findLast((es) =>
-      moment(es.time).isSameOrBefore(targetTime)
+    // Find the last entry where target time falls within [startTime, endTime] range
+    const entry = enrollmentHistory.history.findLast(
+      (es) =>
+        targetTime.isSameOrAfter(moment(es.startTime)) &&
+        targetTime.isSameOrBefore(moment(es.endTime))
     );
 
     const formatted = new Intl.DateTimeFormat("en-US", {

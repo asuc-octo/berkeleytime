@@ -196,37 +196,46 @@ export default function Enrollment() {
     >[] = outputs.map((output) => {
       // the first time data point, floored to the nearest minute
       const firstTime = moment(
-        output.enrollmentHistory.history[0].time
+        output.enrollmentHistory.history[0].startTime
       ).startOf("minute");
-      return new Map(
-        output.enrollmentHistory.history.map((enrollment) => {
-          // time as prettified string floored to nearest minute
-          const time = moment(enrollment.time).startOf("minute");
-          const timeDelta = moment.duration(time.diff(firstTime)).asMinutes();
+      const map = new Map<
+        number,
+        { enrolledCount: number; waitlistedCount: number }
+      >();
+      for (const enrollment of output.enrollmentHistory.history) {
+        const start = moment(enrollment.startTime).startOf("minute");
+        const end = moment(enrollment.endTime).startOf("minute");
+        const granularity = enrollment.granularitySeconds;
+
+        for (
+          let cur = start.clone();
+          !cur.isAfter(end);
+          cur.add(granularity, "seconds")
+        ) {
+          const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
           timeDeltas.add(timeDelta);
-          return [
-            timeDelta,
-            {
-              enrolledCount:
-                (enrollment.enrolledCount /
-                  (output.enrollmentHistory.latest?.maxEnroll ??
-                    output.enrollmentHistory.history[
-                      output.enrollmentHistory.history.length - 1
-                    ].maxEnroll ??
-                    1)) *
-                100,
-              waitlistedCount:
-                (enrollment.waitlistedCount /
-                  (output.enrollmentHistory.latest?.maxWaitlist ??
-                    output.enrollmentHistory.history[
-                      output.enrollmentHistory.history.length - 1
-                    ].maxWaitlist ??
-                    1)) *
-                100,
-            },
-          ];
-        })
-      );
+
+          map.set(timeDelta, {
+            enrolledCount:
+              (enrollment.enrolledCount /
+                (output.enrollmentHistory.latest?.maxEnroll ??
+                  output.enrollmentHistory.history[
+                    output.enrollmentHistory.history.length - 1
+                  ].maxEnroll ??
+                  1)) *
+              100,
+            waitlistedCount:
+              (enrollment.waitlistedCount /
+                (output.enrollmentHistory.latest?.maxWaitlist ??
+                  output.enrollmentHistory.history[
+                    output.enrollmentHistory.history.length - 1
+                  ].maxWaitlist ??
+                  1)) *
+              100,
+          });
+        }
+      }
+      return map;
     });
 
     return Array.from(timeDeltas)

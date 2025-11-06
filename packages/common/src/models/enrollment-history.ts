@@ -11,7 +11,9 @@ export interface IEnrollmentHistoryItem {
   sectionNumber: string;
 
   history: {
-    time: string;
+    startTime: Date; // inclusive
+    endTime: Date; // inclusive
+    granularitySeconds: number;
     status?: string;
     enrolledCount?: number;
     reservedCount?: number;
@@ -59,7 +61,9 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
   history: [
     {
       _id: false,
-      time: { type: String, required: true },
+      startTime: { type: Date, required: true },
+      endTime: { type: Date, required: true },
+      granularitySeconds: { type: Number, required: true },
       status: { type: String },
       enrolledCount: { type: Number },
       reservedCount: { type: Number },
