@@ -133,7 +133,7 @@ const updateEnrollmentHistories = async ({
         if (!doc) {
           const { data, ...rest } = enrollmentSingular;
           await NewEnrollmentHistoryModel.create(
-            { ...rest, history: [data] },
+            [{ ...rest, history: [data] }],
             { session }
           );
           totalUpdated += 1;

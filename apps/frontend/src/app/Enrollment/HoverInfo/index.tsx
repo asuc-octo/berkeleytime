@@ -44,16 +44,24 @@ export default function HoverInfo({
       };
     }
 
-    const firstTime = moment(enrollmentHistory.history[0].startTime);
+    const firstTime = moment(enrollmentHistory.history[0].startTime).startOf(
+      "minute"
+    );
     const targetTime = firstTime.clone().add(hoveredDuration);
     const targetDate = targetTime.toDate();
 
-    // Find the last entry where target time falls within [startTime, endTime] range
-    const entry = enrollmentHistory.history.findLast(
+    // Find the entry where the target time falls within its time range
+    // For step-after charts, we need to check if targetTime is within [startTime, endTime]
+    let entry = enrollmentHistory.history.findLast(
       (es) =>
-        targetTime.isSameOrAfter(moment(es.startTime)) &&
-        targetTime.isSameOrBefore(moment(es.endTime))
+        targetTime.isSameOrAfter(moment(es.startTime).startOf("minute")) &&
+        targetTime.isSameOrBefore(moment(es.endTime).startOf("minute"))
     );
+
+    // If no entry found and we're at or near the start, use the first entry
+    if (!entry && hoveredDuration.asMinutes() <= 0) {
+      entry = enrollmentHistory.history[0];
+    }
 
     const formatted = new Intl.DateTimeFormat("en-US", {
       year: "numeric",

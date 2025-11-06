@@ -270,7 +270,9 @@ export default function Enrollment() {
     // );
     // if (best?.dataKey !== undefined) setHoveredSeries(best.dataKey);
     setHoveredDuration(
-      data.activeLabel ? moment.duration(data.activeLabel, "minutes") : null
+      data.activeLabel !== undefined && data.activeLabel !== null
+        ? moment.duration(data.activeLabel, "minutes")
+        : null
     );
   };
 

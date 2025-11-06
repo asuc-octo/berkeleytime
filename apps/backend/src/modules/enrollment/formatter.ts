@@ -21,6 +21,8 @@ const normalizeSeatReservationCounts = (
 const normalizeEnrollmentSingular = (singular: EnrollmentHistorySingular) => {
   const normalized = {
     ...singular,
+    startTime: singular.startTime.toISOString(),
+    endTime: singular.endTime.toISOString(),
     enrolledCount: singular.enrolledCount ?? 0,
     reservedCount: singular.reservedCount ?? 0,
     waitlistedCount: singular.waitlistedCount ?? 0,
