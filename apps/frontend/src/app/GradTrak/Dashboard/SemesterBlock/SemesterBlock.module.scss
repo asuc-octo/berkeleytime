@@ -1,4 +1,4 @@
-@import "../../GradTrak.module.scss";
+@use "../../GradTrak.module.scss" as *;
 
 body[data-theme="dark"] {
   @include dark-theme;
