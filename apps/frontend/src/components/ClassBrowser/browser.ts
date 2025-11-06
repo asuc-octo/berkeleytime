@@ -2,7 +2,6 @@ import Fuse from "fuse.js";
 
 import {
   AcademicCareer,
-  Component,
   IClass,
   ISectionAttribute,
   ISectionAttriuteInfo,
@@ -34,6 +33,8 @@ export enum Unit {
   Zero = "0",
 }
 
+export type UnitRange = [number, number];
+
 export enum Day {
   Sunday = "0",
   Monday = "1",
@@ -46,6 +47,31 @@ export enum Day {
 
 export type Breadth = string;
 export type UniversityRequirement = string;
+export enum GradingBasis {
+  ESU = "ESU",
+  SUS = "SUS",
+  OPT = "OPT",
+  PNP = "PNP",
+  BMT = "BMT",
+  GRD = "GRD",
+  IOP = "IOP",
+}
+
+export enum GradingFilter {
+  Graded = "Graded",
+  PassNoPass = "Pass/Not Pass",
+  Other = "Other",
+}
+
+export const gradingBasisCategoryMap: Record<GradingBasis, GradingFilter> = {
+  [GradingBasis.OPT]: GradingFilter.Graded,
+  [GradingBasis.GRD]: GradingFilter.Graded,
+  [GradingBasis.PNP]: GradingFilter.PassNoPass,
+  [GradingBasis.ESU]: GradingFilter.Other,
+  [GradingBasis.SUS]: GradingFilter.Other,
+  [GradingBasis.BMT]: GradingFilter.Other,
+  [GradingBasis.IOP]: GradingFilter.Other,
+};
 
 export const getLevel = (academicCareer: AcademicCareer, number: string) => {
   return academicCareer === AcademicCareer.Undergraduate
@@ -109,14 +135,15 @@ export const getAllUniversityRequirements = (
 
 export const getFilteredClasses = (
   classes: IClass[],
-  currentComponents: Component[],
-  currentUnits: Unit[],
+  currentUnits: UnitRange,
   currentLevels: Level[],
   currentDays: Day[],
   currentOpen: boolean,
   currentOnline: boolean,
   currentBreadths: Breadth[] = [],
-  currentUniversityRequirement: UniversityRequirement | null = null
+  currentUniversityRequirement: UniversityRequirement | null = null,
+  currentGradingFilters: GradingFilter[] = [],
+  currentDepartment: string | null = null
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -137,17 +164,6 @@ export const getFilteredClasses = (
         return acc;
       }
 
-      // Filter by component
-      if (currentComponents.length > 0) {
-        const { component } = _class.primarySection;
-
-        if (!currentComponents.includes(component)) {
-          acc.excludedClasses.push(_class);
-
-          return acc;
-        }
-      }
-
       // Filter by level
       if (currentLevels.length > 0) {
         const level = getLevel(
@@ -162,22 +178,18 @@ export const getFilteredClasses = (
         }
       }
 
-      // Filter by units
-      if (currentUnits.length > 0) {
+      // Filter by units - check if class unit range overlaps with filter range
+      // Default range [0, 5] means no filtering
+      if (currentUnits[0] !== 0 || currentUnits[1] !== 5) {
         const unitsMin = Math.floor(_class.unitsMin);
         const unitsMax = Math.floor(_class.unitsMax);
+        const classMaxCapped = Math.min(unitsMax, 5); // Cap at 5 for 5+ classes
 
-        const includesUnits = [...Array(unitsMax - unitsMin || 1)].some(
-          (_, index) => {
-            const units = unitsMin + index;
+        // Check if ranges overlap
+        const overlaps =
+          classMaxCapped >= currentUnits[0] && unitsMin <= currentUnits[1];
 
-            return currentUnits.includes(
-              unitsMin + index === 5 ? Unit.FivePlus : (`${units}` as Unit)
-            );
-          }
-        );
-
-        if (!includesUnits) {
+        if (!overlaps) {
           acc.excludedClasses.push(_class);
 
           return acc;
@@ -227,6 +239,26 @@ export const getFilteredClasses = (
 
           return acc;
         }
+      }
+
+      if (currentGradingFilters.length > 0) {
+        const basis = (_class.gradingBasis ?? "") as GradingBasis;
+        const category = gradingBasisCategoryMap[basis] ?? GradingFilter.Other;
+
+        if (!currentGradingFilters.includes(category)) {
+          acc.excludedClasses.push(_class);
+
+          return acc;
+        }
+      }
+
+      if (
+        currentDepartment &&
+        _class.subject.toLowerCase() !== currentDepartment
+      ) {
+        acc.excludedClasses.push(_class);
+
+        return acc;
       }
 
       acc.includedClasses.push(_class);
