@@ -22,6 +22,7 @@ import {
   YAxis,
 } from "recharts";
 import { CategoricalChartFunc } from "recharts/types/chart/types";
+import type { ContentType } from "recharts/types/component/Tooltip";
 
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
@@ -45,6 +46,20 @@ const toPercent = (decimal: number) => {
 };
 
 const CHART_HEIGHT = 450;
+
+// Memoized formatter to avoid recreating on each render
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Los_Angeles",
+});
+
+// Type alias for tooltip content function props
+type TooltipContentProps = Parameters<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Extract<ContentType<number, string>, (...args: any[]) => any>
+>[0];
 
 export default function Enrollment() {
   const client = useApolloClient();
@@ -90,6 +105,34 @@ export default function Enrollment() {
 
   const [hoveredDuration, setHoveredDuration] =
     useState<moment.Duration | null>(null);
+
+  // Memoized tooltip content renderer
+  const tooltipContent: ContentType<number, string> = useCallback(
+    (props: TooltipContentProps) => {
+      const duration = moment.duration(props.label, "minutes");
+      const day = Math.floor(duration.asDays()) + 1;
+      // if not granular (12:00am only), then don't show time
+      const time =
+        duration.hours() > 0
+          ? timeFormatter.format(moment.utc(0).add(duration).toDate())
+          : "";
+
+      return (
+        <HoverCard
+          content={`Day ${day} ${time}`}
+          data={props.payload?.map((v) => {
+            const name = v.name?.valueOf();
+            return {
+              label: name ? name.toString() : "N/A",
+              value: typeof v.value === "number" ? toPercent(v.value) : "N/A",
+              color: v.stroke,
+            };
+          })}
+        />
+      );
+    },
+    []
+  );
 
   const initialize = useCallback(async () => {
     if (!loading) return;
@@ -349,45 +392,7 @@ export default function Enrollment() {
                       }}
                     />
                   )}{" "}
-                  {outputs?.length && (
-                    <Tooltip
-                      content={(props) => {
-                        const duration = moment.duration(
-                          props.label,
-                          "minutes"
-                        );
-                        // setHoveredDuration(duration);
-                        const day = Math.floor(duration.asDays()) + 1;
-                        // if not granular (12:00am only), then don't show time
-                        const time =
-                          duration.hours() > 0
-                            ? Intl.DateTimeFormat("en-US", {
-                                hour: "numeric",
-                                minute: "2-digit",
-                                hour12: true,
-                                timeZone: "America/Los_Angeles",
-                              }).format(moment.utc(0).add(duration).toDate())
-                            : "";
-
-                        return (
-                          <HoverCard
-                            content={`Day ${day} ${time}`}
-                            data={props.payload?.map((v) => {
-                              const name = v.name?.valueOf();
-                              return {
-                                label: name ? name.toString() : "N/A",
-                                value:
-                                  typeof v.value === "number"
-                                    ? toPercent(v.value)
-                                    : "N/A",
-                                color: v.stroke,
-                              };
-                            })}
-                          />
-                        );
-                      }}
-                    />
-                  )}
+                  {outputs?.length && <Tooltip content={tooltipContent} />}
                   {filteredOutputs?.map((output, index) => {
                     const originalIndex = outputs.indexOf(output);
                     return (
