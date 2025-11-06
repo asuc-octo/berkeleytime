@@ -26,22 +26,10 @@ const fuzzyScore = (query: string, target: string): number => {
     // Add word boundary bonus for substring matches
     let wordBoundaryBonus = 0;
 
-    // Check if match is after a word boundary in original target (with spaces)
-    let actualIndex = 0;
-    let noSpaceIndex = 0;
-    for (let i = 0; i < target.length; i++) {
-      if (target[i] !== " ") {
-        if (noSpaceIndex === substringIndex) {
-          actualIndex = i;
-          break;
-        }
-        noSpaceIndex++;
-      }
-    }
-
-    if (actualIndex > 0 && target[actualIndex - 1] === " ") {
+    // Check if match is after a space in original target
+    const directIndex = target.indexOf(queryNoSpaces);
+    if (directIndex > 0 && target[directIndex - 1] === " ")
       wordBoundaryBonus = 500;
-    }
 
     return (
       SUBSTRING_MATCH_SCORE + query.length - substringIndex + wordBoundaryBonus
