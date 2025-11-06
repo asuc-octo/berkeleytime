@@ -89,6 +89,9 @@ export const userSchema = new Schema(
   }
 );
 
+// for login
+userSchema.index({ email: 1 }, { unique: true });
+
 export const UserModel = mongoose.model("users", userSchema);
 
 export type UserType = Document & InferSchemaType<typeof userSchema>;

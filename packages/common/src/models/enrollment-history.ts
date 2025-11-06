@@ -89,21 +89,19 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
     },
   ],
 });
-enrollmentHistorySchema.index(
-  { termId: 1, sessionId: 1, sectionId: 1 },
-  { unique: true }
-);
-enrollmentHistorySchema.index(
-  {
-    year: 1,
-    semester: 1,
-    sessionId: 1,
-    subject: 1,
-    courseNumber: 1,
-    sectionNumber: 1,
-  },
-  { unique: true }
-);
+
+// for enrollment controller
+enrollmentHistorySchema.index({ termId: 1, sessionId: 1, sectionId: 1 });
+
+// for enrollment controller
+enrollmentHistorySchema.index({
+  year: 1,
+  semester: 1,
+  sessionId: 1,
+  subject: 1,
+  courseNumber: 1,
+  sectionNumber: 1,
+});
 
 export const NewEnrollmentHistoryModel: Model<IEnrollmentHistoryItem> =
   model<IEnrollmentHistoryItem>("enrollmentHistories", enrollmentHistorySchema);
