@@ -20,5 +20,6 @@ bt-app-*.tgz
 .turbo
 generated-types/
 stage_backup.gz
+prod-backup.gz
 *storybook.log
 vitest.config.js
