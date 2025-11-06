@@ -351,6 +351,8 @@ export const getGradeDistributionByInstructorAndSemester = async (
     .select({ id: 1 })
     .lean();
 
+  if (!term) throw new Error("Term not found");
+
   const distributions = await GradeDistributionModel.find({
     sectionId: { $in: sectionIds },
     termId: term.id,
