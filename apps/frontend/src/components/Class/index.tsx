@@ -408,7 +408,7 @@ export default function Class({
                     maxEnroll={
                       _class.primarySection.enrollment?.latest.maxEnroll
                     }
-                    time={_class.primarySection.enrollment?.latest.endTime}
+                    time={_class.primarySection.enrollment?.latest.time}
                   >
                     {(content) => (
                       <Link

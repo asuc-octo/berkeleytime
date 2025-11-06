@@ -23,13 +23,13 @@ export default function Enrollment() {
     const history = _class.primarySection.enrollment?.history ?? [];
     if (history.length === 0) return [];
 
-    const day0 = new Date(history[0].startTime);
+    const day0 = new Date(history[0].time);
 
     return history
       .reduce(
         (acc, enrollment) => {
           const dayOffset = Math.ceil(
-            (new Date(enrollment.startTime).getTime() - day0.getTime()) /
+            (new Date(enrollment.time).getTime() - day0.getTime()) /
               (1000 * 3600 * 24)
           );
           acc.push({
