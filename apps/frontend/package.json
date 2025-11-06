@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint src/",
-    "start": "serve -s dist -p 3000"
+    "start": "serve -s dist -p 3000",
+    "test": "vitest run"
   },
   "dependencies": {
     "@apollo/client": "4.0.7",
