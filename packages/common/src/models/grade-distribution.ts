@@ -88,11 +88,23 @@ const gradeDistributionSchema = new Schema<IGradeDistributionItem>(
     timestamps: true,
   }
 );
-gradeDistributionSchema.index(
-  { termId: 1, sessionId: 1, sectionId: 1 },
-  { unique: true }
-);
+
+// for catalog, curated classes, grades by instructor, and grades by instructor and semester controllers
 gradeDistributionSchema.index({
+  sectionId: 1,
+});
+
+// for grades by course and grades by class controllers
+gradeDistributionSchema.index({
+  subject: 1,
+  courseNumber: 1,
+  sectionId: 1,
+});
+
+// for grades by semester controller
+gradeDistributionSchema.index({
+  termId: 1,
+  sessionId: 1,
   subject: 1,
   courseNumber: 1,
 });

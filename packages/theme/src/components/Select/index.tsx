@@ -39,12 +39,21 @@ const deepEqual = (obj1: any, obj2: any): boolean => {
 
 export * from "./SelectItem";
 
-export type Option<T> = {
+export type OptionLabel = {
+  type: "label";
+  label: string;
+};
+
+export type OptionItem<T> = {
   value: T;
   label: string;
   meta?: string;
   color?: Color;
+  disabled?: boolean;
+  type?: "option";
 };
+
+export type Option<T> = OptionItem<T> | OptionLabel;
 
 export interface SelectHandle {
   focus: () => void;
@@ -69,6 +78,10 @@ export interface SelectProps<T> {
     onClick: () => void;
   };
 }
+
+const isOptionItem = <T,>(option: Option<T>): option is OptionItem<T> => {
+  return option.type !== "label";
+};
 
 export function useMatchTriggerWidth<T extends HTMLElement>() {
   const triggerRef = useRef<T | null>(null);
@@ -114,26 +127,45 @@ export function Select<T>({
     },
   }));
 
+  const selectableOptions = useMemo(
+    () => options.filter(isOptionItem),
+    [options]
+  );
+
+  // Auto-disable if no options available
+  const hasNoOptions = selectableOptions.length === 0;
+  const effectiveDisabled = disabled || hasNoOptions;
+  const effectivePlaceholder = effectiveDisabled
+    ? "No option available"
+    : placeholder;
+
   const activeElem = useMemo(
     () =>
       Array.isArray(value)
         ? value.length === 0
           ? null
-          : options.filter((opt) => value.some((v) => deepEqual(v, opt.value)))
-        : options.find((opt) => opt.value === value),
-    [value]
+          : selectableOptions.filter((opt) =>
+              value.some((v) => deepEqual(v, opt.value))
+            )
+        : selectableOptions.find((opt) => deepEqual(opt.value, value)),
+    [value, selectableOptions]
   );
+
+  const hasSelection = Array.isArray(activeElem)
+    ? activeElem.length > 0
+    : Boolean(activeElem);
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
-      <DropdownMenu.Trigger asChild disabled={disabled}>
+      <DropdownMenu.Trigger asChild disabled={effectiveDisabled}>
         <Flex
           direction="row"
           ref={triggerRef}
           justify="between"
+          align="center"
           className={classNames(styles.trigger, {
-            [styles.selected]: activeElem,
-            [styles.disabled]: disabled,
+            [styles.selected]: hasSelection,
+            [styles.disabled]: effectiveDisabled,
             [styles.foreground]: variant === "foreground",
           })}
           tabIndex={0}
@@ -153,7 +185,7 @@ export function Select<T>({
                         onPointerDown={(e) => {
                           e.stopPropagation();
                           if (!Array.isArray(value)) return;
-                          const myV = options.find(
+                          const myV = selectableOptions.find(
                             (opt) => opt.label === el.label
                           )?.value;
                           onChange(value.filter((v) => !deepEqual(v, myV)));
@@ -168,10 +200,10 @@ export function Select<T>({
               activeElem.label
             )
           ) : (
-            placeholder
+            effectivePlaceholder
           )}
-          <Flex direction="row" gap="8px">
-            {clearable && (
+          <Flex direction="row" gap="8px" align="center">
+            {clearable && hasSelection && (
               <Xmark
                 onPointerDown={(e) => {
                   e.stopPropagation();
@@ -184,18 +216,31 @@ export function Select<T>({
           </Flex>
         </Flex>
       </DropdownMenu.Trigger>
-      {!disabled && (
+      {!effectiveDisabled && (
         <DropdownMenu.Content
           className={styles.content}
           style={{ width: triggerWidth, zIndex: 999 }}
           sideOffset={5}
         >
           {options.map((opt, i) => {
+            if (!isOptionItem(opt)) {
+              return (
+                <div key={`label-${i}`} className={styles.sectionLabel}>
+                  {opt.label}
+                </div>
+              );
+            }
+
             return (
               <DropdownMenu.Item
                 key={`${i}-${opt.label}`}
                 style={{ outline: "none" }}
+                disabled={opt.disabled}
                 onSelect={(e) => {
+                  if (opt.disabled) {
+                    e.preventDefault();
+                    return;
+                  }
                   if (multi) {
                     e.preventDefault();
                     let newValues: T[];
@@ -216,6 +261,7 @@ export function Select<T>({
                   label={opt.label}
                   meta={opt.meta}
                   checkboxMulti={checkboxMulti}
+                  disabled={opt.disabled}
                   selected={
                     Array.isArray(value)
                       ? value.some((v) => deepEqual(v, opt.value))

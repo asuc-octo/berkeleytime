@@ -280,6 +280,20 @@ export const READ_CLASS = gql`
           subject
           number
         }
+        classes {
+          semester
+          year
+          number
+          anyPrintInScheduleOfClasses
+          primarySection {
+            meetings {
+              instructors {
+                familyName
+                givenName
+              }
+            }
+          }
+        }
       }
       primarySection {
         number
