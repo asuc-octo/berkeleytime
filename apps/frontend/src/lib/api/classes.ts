@@ -280,6 +280,7 @@ export const READ_CLASS = gql`
           semester
           year
           number
+          anyPrintInScheduleOfClasses
           primarySection {
             meetings {
               instructors {
