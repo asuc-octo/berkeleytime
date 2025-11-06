@@ -271,6 +271,16 @@ export default function Enrollment() {
     } else setHoveredSeries(null);
   }, [hoveredSeries, outputs]);
 
+  // Set hoveredDuration to the last data point when data changes or on initial load
+  useEffect(() => {
+    if (data && data.length > 0) {
+      const lastDataPoint = data[data.length - 1];
+      setHoveredDuration(moment.duration(lastDataPoint.timeDelta, "minutes"));
+    } else {
+      setHoveredDuration(null);
+    }
+  }, [data]);
+
   const dataMax = useMemo(() => {
     if (!data) return 0;
 
@@ -303,6 +313,14 @@ export default function Enrollment() {
                   height={200}
                   data={data}
                   onMouseMove={updateGraphHover}
+                  onMouseLeave={() => {
+                    if (data && data.length > 0) {
+                      const lastDataPoint = data[data.length - 1];
+                      setHoveredDuration(
+                        moment.duration(lastDataPoint.timeDelta, "minutes")
+                      );
+                    }
+                  }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
