@@ -1,6 +1,5 @@
-import Fuse from "fuse.js";
-
 import { IClass } from "@/lib/api";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SortBy } from "./browser";
 import { SortOrder, sortClasses } from "./sorting";
@@ -14,7 +13,7 @@ const EPSILON = 1e-6;
 
 interface SearchAndSortParams {
   classes: readonly IClass[];
-  index: Fuse<unknown>;
+  index: FuzzySearch<unknown>;
   query: string;
   sortBy: SortBy;
   order: SortOrder;
