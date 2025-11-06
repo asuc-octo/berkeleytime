@@ -246,6 +246,15 @@ export default function Enrollment() {
       .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
   }, [outputs]);
 
+  const resetHoveredDurationToLast = useCallback(() => {
+    if (data && data.length > 0) {
+      const lastDataPoint = data[data.length - 1];
+      setHoveredDuration(moment.duration(lastDataPoint.timeDelta, "minutes"));
+    } else {
+      setHoveredDuration(null);
+    }
+  }, [data]);
+
   const updateGraphHover: CategoricalChartFunc = (data) => {
     setHoveredDuration(
       data.activeLabel ? moment.duration(data.activeLabel, "minutes") : null
@@ -260,13 +269,8 @@ export default function Enrollment() {
 
   // Set hoveredDuration to the last data point when data changes or on initial load
   useEffect(() => {
-    if (data && data.length > 0) {
-      const lastDataPoint = data[data.length - 1];
-      setHoveredDuration(moment.duration(lastDataPoint.timeDelta, "minutes"));
-    } else {
-      setHoveredDuration(null);
-    }
-  }, [data]);
+    resetHoveredDurationToLast();
+  }, [resetHoveredDurationToLast]);
 
   const dataMax = useMemo(() => {
     if (!data) return 0;
@@ -300,14 +304,7 @@ export default function Enrollment() {
                   height={200}
                   data={data}
                   onMouseMove={updateGraphHover}
-                  onMouseLeave={() => {
-                    if (data && data.length > 0) {
-                      const lastDataPoint = data[data.length - 1];
-                      setHoveredDuration(
-                        moment.duration(lastDataPoint.timeDelta, "minutes")
-                      );
-                    }
-                  }}
+                  onMouseLeave={resetHoveredDurationToLast}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
