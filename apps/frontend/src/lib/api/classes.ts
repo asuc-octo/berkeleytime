@@ -276,6 +276,19 @@ export const READ_CLASS = gql`
         }
         academicCareer
         requirements
+        classes {
+          semester
+          year
+          number
+          primarySection {
+            meetings {
+              instructors {
+                familyName
+                givenName
+              }
+            }
+          }
+        }
       }
       primarySection {
         number
