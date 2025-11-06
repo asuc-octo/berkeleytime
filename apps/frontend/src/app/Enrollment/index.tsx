@@ -247,19 +247,6 @@ export default function Enrollment() {
   }, [outputs]);
 
   const updateGraphHover: CategoricalChartFunc = (data) => {
-    // if (!data.isTooltipActive || data.chartY === undefined) return;
-    // // figure out closest series to mouse that has data point at that value
-    // const mousePercent =
-    //   ((-data.chartY + CHART_HEIGHT) / CHART_HEIGHT) * dataMax;
-    // const filteredSeries =
-    //   data.activePayload?.filter((p) => p.value !== undefined) ?? [];
-    // const minDiff = Math.min(
-    //   ...filteredSeries.map((fs) => Math.abs((fs.value ?? 0) - mousePercent))
-    // );
-    // const best = filteredSeries.find(
-    //   (fs) => Math.abs((fs.value ?? 0) - mousePercent) === minDiff
-    // );
-    // if (best?.dataKey !== undefined) setHoveredSeries(best.dataKey);
     setHoveredDuration(
       data.activeLabel ? moment.duration(data.activeLabel, "minutes") : null
     );
