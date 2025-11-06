@@ -43,6 +43,7 @@ const fuzzyScore = (query: string, target: string): number => {
   let wordBoundaryBonus = 0;
   let lastMatchIndex = -1;
   let firstMatchIndex = -1;
+  let gapPenalty = 0;
 
   for (let i = 0; i < target.length && queryIndex < query.length; i++) {
     // Skip spaces in target
@@ -70,6 +71,12 @@ const fuzzyScore = (query: string, target: string): number => {
           target.slice(lastMatchIndex + 1, i).trim() === "")
       ) {
         consecutiveBonus += 5;
+      } else if (lastMatchIndex !== -1) {
+        // penalize gaps between matches
+        const gap = target
+          .slice(lastMatchIndex + 1, i)
+          .replace(/\s/g, "").length;
+        gapPenalty += gap * 2;
       }
 
       lastMatchIndex = i;
@@ -80,7 +87,7 @@ const fuzzyScore = (query: string, target: string): number => {
   // no match if not all characters in query were matched
   if (queryIndex < query.length) return 0;
 
-  return score + consecutiveBonus + wordBoundaryBonus;
+  return score + consecutiveBonus + wordBoundaryBonus - gapPenalty;
 };
 
 export const fuzzyFind = (query: string, targets: string[]): string[] => {

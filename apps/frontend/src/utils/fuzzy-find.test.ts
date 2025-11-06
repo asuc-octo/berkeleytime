@@ -36,6 +36,7 @@ const tests: string[][] = [
   ["cs61a", "COMPSCI 61A"],
   ["16a", "EECS 16A"],
   ["math16a", "MATH 16A"],
+  ["hist7a", "HISTORY 7A"],
 ];
 
 describe("fuzzyFind", () => {
