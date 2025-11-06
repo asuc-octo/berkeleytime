@@ -328,34 +328,36 @@ export default function Filters() {
     }));
   }, [gradingCounts]);
 
-  const departmentOptions = useMemo<Option<string>[]>(() => {
+  const departmentOptions = useMemo<OptionItem<string>[]>(() => {
     const allSubjects = new Set<string>();
     allClasses.forEach((_class) => {
       if (_class.subject) allSubjects.add(_class.subject);
     });
 
-    return Array.from(allSubjects)
-      .map((code) => {
+    const options = Array.from(allSubjects).reduce<OptionItem<string>[]>(
+      (acc, code) => {
         const key = code.toLowerCase();
         const info = subjects[key];
-        if (!info) return null;
-        return {
+        if (!info) return acc;
+        acc.push({
           value: key,
           label: info.name,
           meta: (departmentCounts.get(key) ?? 0).toString(),
-        };
-      })
-      .filter((option): option is Option<string> => option !== null)
-      .sort((a, b) => a.label.localeCompare(b.label));
+          type: "option",
+        });
+        return acc;
+      },
+      []
+    );
+
+    return options.sort((a, b) => a.label.localeCompare(b.label));
   }, [allClasses, departmentCounts]);
 
   // Disable filters when all options have count 0
   const isDepartmentDisabled = useMemo(
     () =>
       departmentOptions.length === 0 ||
-      departmentOptions.every(
-        (opt) => opt.type !== "label" && (opt.meta === "0" || !opt.meta)
-      ),
+      departmentOptions.every((opt) => opt.meta === "0" || !opt.meta),
     [departmentOptions]
   );
 
