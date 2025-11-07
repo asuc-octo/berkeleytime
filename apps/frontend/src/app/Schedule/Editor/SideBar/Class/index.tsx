@@ -69,6 +69,7 @@ export default function Class({
       onColorSelect={(color) =>
         onColorChange(_class.subject, _class.courseNumber, _class.number, color)
       }
+      enableWrap={true}
     >
       <div className={styles.group}>
         <div className={styles.label}>
