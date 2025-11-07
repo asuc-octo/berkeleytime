@@ -29,6 +29,7 @@ export default function List({ onSelect }: ListProps) {
     useBrowser();
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
+  const [focusedByKeyboard, setFocusedByKeyboard] = useState<boolean>(false);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
@@ -128,7 +129,10 @@ export default function List({ onSelect }: ListProps) {
     items: classes,
     containerRef: rootRef as RefObject<HTMLElement | null>,
     focusedIndex,
-    setFocusedIndex,
+    setFocusedIndex: (index) => {
+      setFocusedIndex(index);
+      setFocusedByKeyboard(true);
+    },
     onSelect: (focusedClass) => {
       onSelect(
         focusedClass.subject,
@@ -140,11 +144,11 @@ export default function List({ onSelect }: ListProps) {
     showFocusRing: showFocusRingTemporarily,
   });
 
-  // Auto-load focused item after debounce
+  // Auto-load focused item after debounce (only for keyboard navigation)
   useAutoLoadOnFocus(
     classes,
     focusedIndex,
-    isListFocused,
+    isListFocused && focusedByKeyboard,
     (focusedClass) => {
       onSelect(
         focusedClass.subject,
@@ -169,6 +173,8 @@ export default function List({ onSelect }: ListProps) {
     if (isInputElement(e.target)) {
       return;
     }
+    // Mark as mouse focus to prevent auto-load
+    setFocusedByKeyboard(false);
     // Ensure list is focused when clicked so keyboard nav works
     rootRef.current?.focus();
   };
