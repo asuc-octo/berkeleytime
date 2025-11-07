@@ -98,6 +98,7 @@ export default function Dashboard() {
 
   const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
     skip: !user,
+    fetchPolicy: "cache-and-network",
   });
 
   if (!gradTrakLoading && !gradTrak) {
