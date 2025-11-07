@@ -6,29 +6,22 @@ import { EDIT_PLAN, EditPlanResponse, PlanInput } from "@/lib/api";
 
 export const useEditPlan = () => {
   const mutation = useMutation<EditPlanResponse>(EDIT_PLAN, {
-    update(_, { data }) {
+    update(cache, { data }) {
       const plan = data?.editPlan;
 
       if (!plan) return;
 
-      // TODO(Daniel): Uncomment when done
-      // cache.modify({
-      //   fields: {
-      //     plans: (existingPlans = []) => {
-      //       const reference = cache.writeFragment({
-      //         data: plan,
-      //         fragment: gql`
-      //           fragment CreatedPlan on Plan {
-      //             uniReqsSatisfied
-      //             collegeReqsSatisfied
-      //           }
-      //         `,
-      //       });
-
-      //       return [...existingPlans, reference];
-      //     },
-      //   },
-      // });
+      cache.modify({
+        id: `Plan:${plan._id}`,
+        fields: {
+          majors: () => plan.majors,
+          minors: () => plan.minors,
+          colleges: () => plan.colleges,
+          labels: () => plan.labels,
+          uniReqsSatisfied: () => plan.uniReqsSatisfied,
+          collegeReqsSatisfied: () => plan.collegeReqsSatisfied,
+        },
+      });
     },
   });
 

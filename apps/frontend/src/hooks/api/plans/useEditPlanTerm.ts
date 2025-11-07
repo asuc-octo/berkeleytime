@@ -10,24 +10,22 @@ import {
 
 export const useEditPlanTerm = () => {
   const mutation = useMutation<EditPlanTermResponse>(EDIT_PLAN_TERM, {
-    update(_, { data }) {
+    update(cache, { data }) {
       const planTerm = data?.editPlanTerm;
 
       if (!planTerm) return;
 
-      // TODO(Daniel): Uncomment when done
-      // cache.modify({
-      //   id: cache.identify({ __typename: "PlanTerm", _id: planTerm._id }),
-      //   fields: {
-      //     name: () => planTerm.name,
-      //     year: () => planTerm.year,
-      //     term: () => planTerm.term,
-      //     courses: () => planTerm.courses,
-      //     hidden: () => planTerm.hidden,
-      //     status: () => planTerm.status,
-      //     pinned: () => planTerm.pinned,
-      //   },
-      // });
+      cache.modify({
+        id: `PlanTerm:${planTerm._id}`,
+        fields: {
+          name: () => planTerm.name,
+          year: () => planTerm.year,
+          term: () => planTerm.term,
+          hidden: () => planTerm.hidden,
+          status: () => planTerm.status,
+          pinned: () => planTerm.pinned,
+        },
+      });
     },
   });
 
