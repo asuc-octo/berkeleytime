@@ -1,5 +1,6 @@
 import { ComponentPropsWithRef } from "react";
 
+import classNames from "classnames";
 import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
@@ -65,7 +66,7 @@ export default function ClassCard({
             <span className={styles.sectionNumber}>#{_class?.number}</span>
           </Card.Heading>
           <Card.Description>
-            <span className={enableWrap ? styles.description : undefined}>
+            <span className={classNames({ [styles.description]: enableWrap })}>
               {_class?.title ?? _class?.course?.title}
             </span>
           </Card.Description>
