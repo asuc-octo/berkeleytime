@@ -20,6 +20,7 @@
   .column {
     padding: 16px;
     padding-left: 0;
+    height: min-content;
     .icon {
       color: var(--paragraph-color);
       transition: all 100ms ease-in-out;

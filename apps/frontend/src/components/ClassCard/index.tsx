@@ -79,7 +79,10 @@ export default function ClassCard({
               )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
-                onClick={() => {
+                data-action-icon
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   onExpandedChange(!expanded);
                 }}
                 style={{ position: "absolute", right: 16 }}
@@ -89,7 +92,7 @@ export default function ClassCard({
             )}
           </Card.Footer>
         </Card.Body>
-        <Card.Actions>
+        <Card.Actions data-actions>
           {gradeDistribution && (
             <AverageGrade
               gradeDistribution={gradeDistribution}
@@ -103,7 +106,14 @@ export default function ClassCard({
             />
           )}
           {bookmarked && bookmarkToggle && (
-            <Card.ActionIcon onClick={bookmarkToggle}>
+            <Card.ActionIcon
+              data-action-icon
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                bookmarkToggle();
+              }}
+            >
               {bookmarked ? (
                 <BookmarkSolid width={16} height={16} />
               ) : (
@@ -118,7 +128,15 @@ export default function ClassCard({
             />
           )}
           {onDelete && (
-            <Card.ActionIcon isDelete onClick={onDelete}>
+            <Card.ActionIcon
+              data-action-icon
+              isDelete
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onDelete();
+              }}
+            >
               <Trash />
             </Card.ActionIcon>
           )}
