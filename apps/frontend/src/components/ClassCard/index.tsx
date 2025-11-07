@@ -65,10 +65,10 @@ export default function ClassCard({
             {_class?.courseNumber ?? _class?.course?.number}{" "}
             <span className={styles.sectionNumber}>#{_class?.number}</span>
           </Card.Heading>
-          <Card.Description>
-            <span className={classNames({ [styles.description]: enableWrap })}>
-              {_class?.title ?? _class?.course?.title}
-            </span>
+          <Card.Description
+            className={classNames({ [styles.description]: enableWrap })}
+          >
+            {_class?.title ?? _class?.course?.title}
           </Card.Description>
           <Card.Footer>
             <EnrollmentDisplay
