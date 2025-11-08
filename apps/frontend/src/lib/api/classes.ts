@@ -306,7 +306,9 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll
@@ -353,7 +355,9 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll
@@ -383,84 +387,71 @@ export const READ_CLASS = gql`
   }
 `;
 
-export interface CatalogConnection {
-  classes: IClass[];
-  totalCount: number;
-  hasMore: boolean;
-}
-
 export interface GetCatalogResponse {
-  catalog: CatalogConnection;
+  catalog: IClass[];
 }
 
 export const GET_CATALOG = gql`
-  query GetCatalog(
-    $year: Int!
-    $semester: Semester!
-    $limit: Int
-    $offset: Int
-  ) {
-    catalog(year: $year, semester: $semester, limit: $limit, offset: $offset) {
-      classes {
-        number
-        subject
-        courseNumber
-        courseId
-        title
-        unitsMax
-        unitsMin
-        finalExam
-        gradingBasis
-        primarySection {
-          component
-          online
-          instructionMode
-          attendanceRequired
-          lecturesRecorded
-          sectionAttributes {
-            attribute {
-              code
-              description
-              formalDescription
-            }
-            value {
-              code
-              description
-              formalDescription
-            }
+  query GetCatalog($year: Int!, $semester: Semester!) {
+    catalog(year: $year, semester: $semester) {
+      number
+      subject
+      courseNumber
+      courseId
+      title
+      unitsMax
+      unitsMin
+      finalExam
+      gradingBasis
+      primarySection {
+        component
+        online
+        instructionMode
+        attendanceRequired
+        lecturesRecorded
+        sectionAttributes {
+          attribute {
+            code
+            description
+            formalDescription
           }
-          enrollment {
-            latest {
-              time
-              status
-              enrolledCount
-              maxEnroll
-              waitlistedCount
-              maxWaitlist
-            }
-          }
-          meetings {
-            days
+          value {
+            code
+            description
+            formalDescription
           }
         }
-        course {
-          subject
-          number
-          title
-          gradeDistribution {
-            average
-            pnpPercentage
+        enrollment {
+          latest {
+            startTime
+            endTime
+            granularitySeconds
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
           }
-          academicCareer
         }
-        requirementDesignation {
-          code
-          description
-          formalDescription
+        meetings {
+          days
         }
       }
-      totalCount
-      hasMore
+      course {
+        subject
+        number
+        title
+        gradeDistribution {
+          average
+          pnpPercentage
+        }
+        academicCareer
+      }
+      requirementDesignation {
+        code
+        description
+        formalDescription
+      }
     }
   }
 `;
