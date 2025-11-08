@@ -92,7 +92,6 @@ const updateEnrollmentHistories = async ({
 
   let totalEnrollmentSingulars = 0;
   let totalUpdated = 0;
-  const updatedTerms = new Set<string>(); // Track unique year-semester combinations
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
     const termsBatchIds = termsBatch.map((term) => term.id);
@@ -185,14 +184,7 @@ const updateEnrollmentHistories = async ({
           },
           { upsert: true, session }
         );
-        const updated = op.modifiedCount + op.upsertedCount;
-        if (updated > 0) {
-          totalUpdated += updated;
-          // Track this term as updated
-          updatedTerms.add(
-            `${enrollmentSingular.year}-${enrollmentSingular.semester.toLowerCase()}`
-          );
-        }
+        totalUpdated += op.modifiedCount + op.upsertedCount;
       });
 
       session.endSession();
@@ -202,15 +194,6 @@ const updateEnrollmentHistories = async ({
   log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments, updated ${totalUpdated.toLocaleString()} documents.`
   );
-
-  // TODO: Call backend warm endpoint for updated terms
-  // updatedTerms contains Set of "year-semester" strings that were modified
-  if (updatedTerms.size > 0) {
-    log.info(
-      `${updatedTerms.size} term(s) were updated:`,
-      Array.from(updatedTerms)
-    );
-  }
 };
 
 export default { updateEnrollmentHistories };
