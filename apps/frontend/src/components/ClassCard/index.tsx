@@ -73,7 +73,7 @@ export default function ClassCard({
                 _class?.primarySection?.enrollment?.latest.enrolledCount
               }
               maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
-              time={_class?.primarySection?.enrollment?.latest.time}
+              time={_class?.primarySection?.enrollment?.latest.endTime}
             />
             {_class?.unitsMin !== undefined &&
               _class.unitsMax !== undefined && (
