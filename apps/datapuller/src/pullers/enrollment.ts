@@ -90,7 +90,9 @@ const updateEnrollmentHistories = async ({
   }
 
   let totalEnrollmentSingulars = 0;
+  let totalInserted = 0;
   let totalUpdated = 0;
+
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
     const termsBatchIds = termsBatch.map((term) => term.id);
@@ -115,31 +117,70 @@ const updateEnrollmentHistories = async ({
     }
     totalEnrollmentSingulars += enrollmentSingulars.length;
 
-    for (const enrollmentSingular of enrollmentSingulars) {
-      const session = await NewEnrollmentHistoryModel.startSession();
+    const PROCESSING_BATCH_SIZE = 500;
 
-      await session.withTransaction(async () => {
+    // Process enrollments in batches to avoid massive queries
+    for (
+      let batchStart = 0;
+      batchStart < enrollmentSingulars.length;
+      batchStart += PROCESSING_BATCH_SIZE
+    ) {
+      const enrollmentBatch = enrollmentSingulars.slice(
+        batchStart,
+        batchStart + PROCESSING_BATCH_SIZE
+      );
+
+      // Build list of identifiers for this batch
+      const identifiers = enrollmentBatch.map((es) => ({
+        termId: es.termId,
+        sessionId: es.sessionId,
+        sectionId: es.sectionId,
+      }));
+
+      // Pre-fetch existing documents for this batch only
+      const existingDocs = await NewEnrollmentHistoryModel.find({
+        $or: identifiers,
+      }).lean();
+
+      // Build a map for O(1) lookups: "termId:sessionId:sectionId" -> doc
+      const existingDocsMap = new Map(
+        existingDocs.map((doc) => [
+          `${doc.termId}:${doc.sessionId}:${doc.sectionId}`,
+          doc,
+        ])
+      );
+
+      // Build bulk write operations for this batch
+      const bulkOps: any[] = [];
+
+      for (const enrollmentSingular of enrollmentBatch) {
         const identifier = {
           termId: enrollmentSingular.termId,
           sessionId: enrollmentSingular.sessionId,
           sectionId: enrollmentSingular.sectionId,
         };
+        const docKey = `${identifier.termId}:${identifier.sessionId}:${identifier.sectionId}`;
+        const existingDoc = existingDocsMap.get(docKey);
 
-        // find existing history
-        const doc = await NewEnrollmentHistoryModel.findOne(identifier, null, {
-          session,
-        });
-
-        if (!doc) {
+        if (!existingDoc) {
           const { data, ...rest } = enrollmentSingular;
-          await NewEnrollmentHistoryModel.create(
-            [{ ...rest, history: [data] }],
-            { session }
-          );
-          totalUpdated += 1;
+          bulkOps.push({
+            insertOne: {
+              document: { ...rest, history: [data] },
+            },
+          });
+          totalInserted += 1;
         } else {
-          if (doc.history.length == 0) {
-            doc.history.push(enrollmentSingular.data);
+          if (existingDoc.history.length === 0) {
+            bulkOps.push({
+              updateOne: {
+                filter: identifier,
+                update: {
+                  $push: { history: enrollmentSingular.data },
+                },
+              },
+            });
+            totalUpdated += 1;
           } else {
             /*
               If all of the following are true:
@@ -147,11 +188,13 @@ const updateEnrollmentHistories = async ({
                  2. Latest enrollment entry's granularity matches incoming granularity
                  3. Latest enrollment entry's endTime is less than DATAGAP_THRESHOLD ago
 
-              Then: Modify lastEntry with an extended endTime.
+              Then: Extend the last entry's endTime using atomic $set.
 
-              Else: Append a new entry with incoming startTime and endTime.
+              Else: Append a new entry with incoming startTime and endTime using $push.
             */
-            const lastEntry = doc.history[doc.history.length - 1];
+            const lastEntry =
+              existingDoc.history[existingDoc.history.length - 1];
+            const lastIndex = existingDoc.history.length - 1;
 
             // true if enrollment singular data is equal to latest entry
             const dataMatches = enrollmentSingularsEqual(
@@ -174,22 +217,42 @@ const updateEnrollmentHistories = async ({
               DATAGAP_THRESHOLD;
 
             if (dataMatches && granularityMatches && withinDatagapThreshold) {
-              lastEntry.endTime = now.toJSDate();
+              // Extend the endTime of the last entry using atomic update
+              bulkOps.push({
+                updateOne: {
+                  filter: identifier,
+                  update: {
+                    $set: { [`history.${lastIndex}.endTime`]: now.toJSDate() },
+                  },
+                },
+              });
             } else {
-              doc.history.push(enrollmentSingular.data);
+              // Append a new entry
+              bulkOps.push({
+                updateOne: {
+                  filter: identifier,
+                  update: {
+                    $push: { history: enrollmentSingular.data },
+                  },
+                },
+              });
             }
+            totalUpdated += 1;
           }
-          await doc.save({ session });
-          totalUpdated += 1;
         }
-      });
+      }
 
-      session.endSession();
+      // Execute bulk operations for this batch
+      if (bulkOps.length > 0) {
+        await NewEnrollmentHistoryModel.bulkWrite(bulkOps, {
+          ordered: false,
+        });
+      }
     }
   }
 
   log.info(
-    `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments, updated ${totalUpdated.toLocaleString()} documents.`
+    `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`
   );
 };
 
