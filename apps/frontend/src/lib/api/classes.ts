@@ -306,7 +306,9 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll
@@ -353,7 +355,9 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll
@@ -419,7 +423,9 @@ export const GET_CATALOG = gql`
         }
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll
