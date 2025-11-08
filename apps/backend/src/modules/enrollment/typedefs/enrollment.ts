@@ -36,7 +36,9 @@ export default gql`
   }
 
   type EnrollmentSingular {
-    time: String!
+    startTime: String!
+    endTime: String!
+    granularitySeconds: Int!
     status: EnrollmentStatus
     enrolledCount: Int!
     reservedCount: Int!
