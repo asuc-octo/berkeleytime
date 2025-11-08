@@ -72,6 +72,14 @@ for i, doc in enumerate(enrollments):
             end_time = end_time.isoformat(timespec='milliseconds').replace('+00:00', 'Z')
         else:
             end_time = entry["time"]
+            if i == len(doc["history"]) - 1:
+                now = datetime.now()
+                rounded = now - timedelta(
+                    minutes=now.minute % 15,
+                    seconds=now.second,
+                    microseconds=now.microsecond
+                )
+                end_time = rounded
         new_entry = {
             "startTime": datetime.fromisoformat(entry["time"]),
             "endTime": datetime.fromisoformat(end_time),
