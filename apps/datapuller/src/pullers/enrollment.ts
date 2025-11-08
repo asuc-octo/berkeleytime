@@ -61,6 +61,7 @@ const enrollmentSingularsEqual = (
 const updateEnrollmentHistories = async ({
   log,
   sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  backend: { url: BACKEND_URL },
 }: Config) => {
   log.trace(`Fetching terms...`);
 
@@ -194,6 +195,64 @@ const updateEnrollmentHistories = async ({
   log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments, updated ${totalUpdated.toLocaleString()} documents.`
   );
+
+  // Warm catalog cache for all terms we just updated
+  log.info("Warming catalog cache for updated terms...");
+  for (const term of terms) {
+    const [yearStr, semester] = term.name.split(" ");
+    const year = parseInt(yearStr);
+
+    if (!year || !semester) {
+      log.warn(`Failed to parse term name: ${term.name}`);
+      continue;
+    }
+
+    try {
+      log.trace(`Warming cache for ${term.name}...`);
+
+      // Try configured URL, fallback to common Docker service names
+      const urlsToTry = [
+        BACKEND_URL,
+        ...(BACKEND_URL.includes("localhost")
+          ? ["http://backend:5001/api", "http://bt-backend:5001/api"]
+          : []),
+      ];
+
+      let response: Response | null = null;
+      let lastError: Error | null = null;
+
+      for (const url of urlsToTry) {
+        try {
+          response = await fetch(`${url}/cache/warm-catalog`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ year, semester }),
+          });
+          break; // Success, exit loop
+        } catch (err: any) {
+          lastError = err;
+          continue; // Try next URL
+        }
+      }
+
+      if (!response) {
+        throw lastError || new Error("All URLs failed");
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        log.warn(
+          `Failed to warm cache for ${term.name}: HTTP ${response.status} - ${errorText}`
+        );
+      } else {
+        const result = await response.json();
+        log.info(`Warmed cache for ${term.name}: ${result.key}`);
+      }
+    } catch (error: any) {
+      log.warn(`Failed to warm cache for ${term.name}: ${error.message}`);
+    }
+  }
+  log.info("Completed catalog cache warming.");
 };
 
 export default { updateEnrollmentHistories };
