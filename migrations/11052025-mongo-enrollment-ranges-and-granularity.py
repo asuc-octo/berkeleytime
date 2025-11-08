@@ -12,7 +12,7 @@ db.enrollmenthistories.renameCollection("enrollmenthistories_old")
 db.enrollmenthistories_new.renameCollection("enrollmenthistories")
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from math import floor
 import pymongo
 
@@ -63,26 +63,26 @@ for i, doc in enumerate(enrollments):
         "sectionNumber": doc["sectionNumber"],
         "history": [],
     }
-    for i in range(len(doc["history"])):
-        entry = doc["history"][i]
-        if i + 1 < len(doc["history"]):
-            # round and format to js-style Date object iso string
-            end_time = (datetime.fromisoformat(doc["history"][i + 1]["time"]) - timedelta(seconds=900))
-            end_time =end_time.replace(microsecond=round(end_time.microsecond / 1000) * 1000)
-            end_time = end_time.isoformat(timespec='milliseconds').replace('+00:00', 'Z')
+    for hidx, entry in enumerate(doc["history"]):
+        start_dt = datetime.fromisoformat(entry["time"].replace("Z", "+00:00")).astimezone(timezone.utc)
+        end_dt = None
+
+        if hidx + 1 < len(doc["history"]):
+            next_dt = datetime.fromisoformat(doc["history"][hidx + 1]["time"].replace("Z", "+00:00")).astimezone(timezone.utc)
+            end_dt = next_dt - timedelta(seconds=900)
+            end_dt = end_dt.replace(microsecond=round(end_dt.microsecond / 1000) * 1000)
         else:
-            end_time = entry["time"]
-            if i == len(doc["history"]) - 1:
-                now = datetime.now()
-                rounded = now - timedelta(
-                    minutes=now.minute % 15,
-                    seconds=now.second,
-                    microseconds=now.microsecond
-                )
-                end_time = rounded
+            now = datetime.now(timezone.utc)
+            end_dt = now - timedelta(
+                minutes=now.minute % 15,
+                seconds=now.second,
+                microseconds=now.microsecond
+            )
+            end_dt = end_dt.replace(microsecond=round(end_dt.microsecond / 1000) * 1000)
+
         new_entry = {
-            "startTime": datetime.fromisoformat(entry["time"]),
-            "endTime": datetime.fromisoformat(end_time),
+            "startTime": start_dt,
+            "endTime": end_dt,
             "granularitySeconds": 15 * 60,
             "status": entry.get("status", None),
             "enrolledCount": entry.get("enrolledCount", None),
@@ -94,7 +94,7 @@ for i, doc in enumerate(enrollments):
             "openReserved": entry.get("openReserved", None),
             "instructorAddConsentRequired": entry.get("instructorAddConsentRequired", None),
             "instructorDropConsentRequired": entry.get("instructorDropConsentRequired", None),
-            "seastReservationCount": entry.get("seastReservationCount", None),
+            "seatsReservationCount": entry.get("seatsReservationCount", None),
         }
         new_doc["history"].append(new_entry)
 
