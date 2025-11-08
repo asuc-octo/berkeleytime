@@ -5,7 +5,6 @@ import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
 import {
-  Component,
   GET_CANONICAL_CATALOG,
   GetCanonicalCatalogResponse,
   ITerm,
@@ -18,9 +17,10 @@ import List from "./List";
 import {
   Breadth,
   Day,
+  GradingFilter,
   Level,
   SortBy,
-  Unit,
+  UnitRange,
   UniversityRequirement,
   getFilteredClasses,
   getIndex,
@@ -70,13 +70,16 @@ export default function ClassBrowser({
   const [localQuery, setLocalQuery] = useState<string>(() =>
     persistent ? (searchParams.get("query") ?? "") : ""
   );
-  const [localComponents, setLocalComponents] = useState<Component[]>([]);
-  const [localUnits, setLocalUnits] = useState<Unit[]>([]);
+  const [localUnits, setLocalUnits] = useState<UnitRange>([0, 5]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localBreadths, setLocalBreadths] = useState<Breadth[]>([]);
   const [localUniversityRequirement, setLocalUniversityRequirement] =
     useState<UniversityRequirement | null>(null);
+  const [localGradingFilters, setLocalGradingFilters] = useState<
+    GradingFilter[]
+  >([]);
+  const [localDepartment, setLocalDepartment] = useState<string | null>(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
@@ -98,30 +101,19 @@ export default function ClassBrowser({
 
   const query = localQuery;
 
-  const components = useMemo(
-    () =>
-      persistent
-        ? ((searchParams
-            .get("components")
-            ?.split(",")
-            .filter((component) =>
-              Object.values(Component).includes(component as Component)
-            ) ?? []) as Component[])
-        : localComponents,
-    [searchParams, localComponents, persistent]
-  );
+  const units = useMemo((): UnitRange => {
+    if (!persistent) return localUnits;
 
-  const units = useMemo(
-    () =>
-      persistent
-        ? ((searchParams
-            .get("units")
-            ?.split(",")
-            .filter((unit) => Object.values(Unit).includes(unit as Unit)) ??
-            []) as Unit[])
-        : localUnits,
-    [searchParams, localUnits, persistent]
-  );
+    const unitsParam = searchParams.get("units");
+    if (!unitsParam) return [0, 5];
+
+    const parts = unitsParam.split("-").map(Number);
+    if (parts.length === 2 && !parts.some(isNaN)) {
+      return [parts[0], parts[1]];
+    }
+
+    return [0, 5];
+  }, [searchParams, localUnits, persistent]);
 
   const levels = useMemo(
     () =>
@@ -163,6 +155,27 @@ export default function ClassBrowser({
     [searchParams, localUniversityRequirement, persistent]
   );
 
+  const gradingFilters = useMemo(
+    () =>
+      persistent
+        ? ((searchParams
+            .get("gradingBases")
+            ?.split(",")
+            .filter((basis) =>
+              Object.values(GradingFilter).includes(basis as GradingFilter)
+            ) ?? []) as GradingFilter[])
+        : localGradingFilters,
+    [searchParams, localGradingFilters, persistent]
+  );
+
+  const department = useMemo(() => {
+    const value = persistent
+      ? (searchParams.get("department") ?? null)
+      : localDepartment;
+
+    return value ? value.toLowerCase() : null;
+  }, [searchParams, localDepartment, persistent]);
+
   const sortBy = useMemo(() => {
     if (persistent) {
       const parameter = searchParams.get("sortBy") as SortBy;
@@ -197,18 +210,18 @@ export default function ClassBrowser({
     () =>
       getFilteredClasses(
         classes,
-        components,
         units,
         levels,
         days,
         open,
         online,
         breadths,
-        universityRequirement
+        universityRequirement,
+        gradingFilters,
+        department
       ),
     [
       classes,
-      components,
       units,
       levels,
       days,
@@ -216,6 +229,8 @@ export default function ClassBrowser({
       online,
       breadths,
       universityRequirement,
+      gradingFilters,
+      department,
     ]
   );
 
@@ -270,6 +285,26 @@ export default function ClassBrowser({
     setState(value);
   };
 
+  const updateRange = (
+    key: string,
+    setState: (state: UnitRange) => void,
+    value: UnitRange
+  ) => {
+    if (persistent) {
+      // Check if range is default [0, 5]
+      if (value[0] === 0 && value[1] === 5) {
+        searchParams.delete(key);
+      } else {
+        searchParams.set(key, `${value[0]}-${value[1]}`);
+      }
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    setState(value);
+  };
+
   const updateSortBy = (value: SortBy) => {
     setLocalReverse(false);
     if (persistent) {
@@ -315,25 +350,40 @@ export default function ClassBrowser({
         semester: currentSemester,
         terms,
         query,
-        components,
         units,
         levels,
         days,
         breadths,
         universityRequirement,
+        gradingFilters,
+        department,
         online,
         open,
         reverse: localReverse,
         effectiveOrder,
         updateQuery,
-        updateComponents: (components) =>
-          updateArray("components", setLocalComponents, components),
-        updateUnits: (units) => updateArray("units", setLocalUnits, units),
+        updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
         updateDays: (days) => updateArray("days", setLocalDays, days),
         updateBreadths: (breadths) =>
           updateArray("breadths", setLocalBreadths, breadths),
         updateUniversityRequirement,
+        updateGradingFilters: (filters) =>
+          updateArray("gradingBases", setLocalGradingFilters, filters),
+        updateDepartment: (dept) => {
+          if (persistent) {
+            const normalized = dept ? dept.toLowerCase() : null;
+            if (normalized) {
+              searchParams.set("department", normalized);
+            } else {
+              searchParams.delete("department");
+            }
+            setSearchParams(searchParams);
+            return;
+          }
+
+          setLocalDepartment(dept ? dept.toLowerCase() : null);
+        },
         updateSortBy,
         updateOpen: (open) => updateBoolean("open", setLocalOpen, open),
         updateOnline: (online) =>

@@ -211,7 +211,7 @@ export const READ_PLAN = gql`
 `;
 
 export const READ_PLANS = gql`
-  query GetPlan {
+  query GetPlans {
     planByUser {
       _id
     }

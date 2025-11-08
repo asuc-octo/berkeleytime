@@ -1,24 +1,29 @@
 *.DS_Store
-*.log
+
+# database seed files
 *.dump
+*.gz
+*.sql
+mdb.archive
+
+# helm chart packages
+*.tgz
 *.rdb
-.env*
-!.env.template
-postgres-data.tar.gz
-bt_main.sql
+
+# IDEs and editors
 .vscode
+.idea
+
+# build outputs
+*.log
+.env
+.turbo
 node_modules
-*.cert
-*.key
 dist/
 db/
 data/
-mdb.archive
-bt_seed.sql
-bt_seed.sql.gz
-bt-app-*.tgz
-.turbo
 generated-types/
-stage_backup.gz
-*storybook.log
-vitest.config.js
+
+# others
+*.cert
+*.key

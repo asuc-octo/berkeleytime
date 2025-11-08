@@ -278,6 +278,24 @@ export const READ_CLASS = gql`
         }
         academicCareer
         requirements
+        requiredCourses {
+          subject
+          number
+        }
+        classes {
+          semester
+          year
+          number
+          anyPrintInScheduleOfClasses
+          primarySection {
+            meetings {
+              instructors {
+                familyName
+                givenName
+              }
+            }
+          }
+        }
       }
       primarySection {
         number
@@ -372,10 +390,10 @@ export interface GetCanonicalCatalogResponse {
 }
 
 /**
- * Canonical catalog query imported from @repo/common.
+ * Canonical catalog query imported from @repo/shared.
  * Ensures parity between frontend and backend cache warming.
  *
- * See: packages/common/src/lib/queries.ts for query definition and documentation.
+ * See: packages/shared/queries.ts for query definition and documentation.
  */
 export const GET_CANONICAL_CATALOG = gql`
   ${GET_CANONICAL_CATALOG_QUERY}

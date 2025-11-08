@@ -49,6 +49,7 @@ export default gql`
     unitsMax: Float!
     unitsMin: Float!
     requirementDesignation: SectionAttributeInfo
+    anyPrintInScheduleOfClasses: Boolean
   }
 
   enum ClassFinalExam {

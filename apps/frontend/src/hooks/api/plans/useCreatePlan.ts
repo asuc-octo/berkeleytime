@@ -10,68 +10,6 @@ export const useCreatePlan = () => {
       const plan = data?.createNewPlan;
 
       if (!plan) return;
-
-      // TODO(Daniel): Uncomment when done
-      // cache.modify({
-      //   fields: {
-      //     plans: (existingPlans = []) => {
-      //       const reference = cache.writeFragment({
-      //         data: plan,
-      //         fragment: gql`
-      //           fragment CreatedPlan on Plan {
-      //             _id
-      //             userEmail
-      //             majors
-      //             minors
-      //             college
-      //             created
-      //             revised
-      //             labels {
-      //               name
-      //               color
-      //             }
-      //             uniReqsSatisfied
-      //             collegeReqsSatisfied
-      //             planTerms {
-      //               _id
-      //               name
-      //               year
-      //               term
-      //               hidden
-      //               status
-      //               pinned
-      //               courses {
-      //                 courseID
-      //                 uniReqs
-      //                 collegeReqs
-      //                 pnp
-      //                 transfer
-      //                 labels {
-      //                   name
-      //                   color
-      //                 }
-      //               }
-      //               customCourses {
-      //                 title
-      //                 description
-      //                 uniReqs
-      //                 collegeReqs
-      //                 pnp
-      //                 transfer
-      //                 labels {
-      //                   name
-      //                   color
-      //                 }
-      //               }
-      //             }
-      //           }
-      //         `,
-      //       });
-
-      //       return [...existingPlans, reference];
-      //     },
-      //   },
-      // });
     },
   });
 

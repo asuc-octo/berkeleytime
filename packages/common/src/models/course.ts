@@ -206,14 +206,15 @@ const courseSchema = new Schema<ICourseItem>({
   // createdDate: { type: String },
   updatedDate: { type: String },
 });
-courseSchema.index({ courseId: 1 }, { unique: true });
-courseSchema.index(
-  {
-    subject: 1,
-    number: 1,
-  },
-  { unique: true }
-);
+
+// for catalog, associated courses by id, curated class controllers
+courseSchema.index({ courseId: 1 });
+
+// for associated courses by subject number and bookmarked courses controllers
+courseSchema.index({
+  subject: 1,
+  number: 1,
+});
 
 export const CourseModel: Model<ICourseItem> = model<ICourseItem>(
   "courses",

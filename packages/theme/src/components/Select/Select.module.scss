@@ -23,7 +23,6 @@
   &.disabled {
     color: var(--paragraph-color-50);
     border-color: var(--border-color);
-    background-color: var(--button-hover-color);
     cursor: default;
   }
 }
@@ -32,9 +31,23 @@
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);
   border-radius: 4px;
-  max-height: 148px;
+  max-height: 300px;
   overflow-y: scroll;
   scrollbar-color: var(--label-color) var(--foreground-color);
+}
+
+.sectionLabel {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--label-color);
+  user-select: none;
+  pointer-events: none;
+  cursor: default;
+  line-height: 1;
+  text-align: left;
 }
 
 .addOption {

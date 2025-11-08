@@ -144,7 +144,7 @@ export default function Week({
           let position = 0;
 
           while (
-            attachedSections.findIndex(
+            attachedSections?.findIndex(
               (eventId) => positions[eventId][0] === position
             ) !== -1
           ) {
@@ -258,7 +258,7 @@ export default function Week({
               ))}
               {events.map((event) => (
                 <Event
-                  key={`${event.id}${event.position}`}
+                  key={`${event.id}-${event.position}-${event.active}`}
                   {...event}
                   flipPopup={day >= 5}
                   color={event.color}

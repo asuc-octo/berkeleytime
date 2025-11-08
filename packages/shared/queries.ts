@@ -22,6 +22,11 @@
 export const GET_CANONICAL_CATALOG_QUERY = `
   query GetCanonicalCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
+      termId
+      sessionId
+      courseId
+      subject
+      courseNumber
       number
       title
       unitsMax
