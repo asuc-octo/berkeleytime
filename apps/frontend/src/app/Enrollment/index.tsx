@@ -408,7 +408,7 @@ export default function Enrollment() {
                           isAnimationActive={shouldAnimate.current}
                           dot={false}
                           strokeWidth={3}
-                          type="stepAfter"
+                          type="monotone"
                           connectNulls
                         />
                         <Line
@@ -423,7 +423,7 @@ export default function Enrollment() {
                           dot={false}
                           strokeWidth={2}
                           strokeDasharray="5 5"
-                          type="stepAfter"
+                          type="monotone"
                           connectNulls
                         />
                       </React.Fragment>
