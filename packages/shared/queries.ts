@@ -53,7 +53,8 @@ export const GET_CANONICAL_CATALOG_QUERY = `
         }
         enrollment {
           latest {
-            time
+            startTime
+            endTime
             status
             enrolledCount
             maxEnroll
