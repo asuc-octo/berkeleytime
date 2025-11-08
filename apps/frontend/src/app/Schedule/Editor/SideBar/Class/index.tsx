@@ -107,6 +107,7 @@ export default function Class({
               color
             )
           }
+          wrapDescription={true}
         >
           <div className={styles.group}>
             <div className={styles.label}>
