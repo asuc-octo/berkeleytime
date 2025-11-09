@@ -46,6 +46,10 @@ datapuller:
       schedule: "0 4 2-31 * *"
       args: ["--puller=terms-nearby"]
 
+    schedule-all:
+      schedule: "6 7 6 7 *"
+      args: ["--puller=schedule-all"]
+
     courses:
       schedule: "5 4 * * *"
       args: ["--puller=courses"]
