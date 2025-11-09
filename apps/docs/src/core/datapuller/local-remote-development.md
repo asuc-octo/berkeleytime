@@ -27,6 +27,7 @@ The valid pullers are:
 - `grades-recent`
 - `grades-last-five-years`
 - `enrollments`
+- `enrollment-calendar`
 - `terms-all`
 - `terms-nearby`
 
