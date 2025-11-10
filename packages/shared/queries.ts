@@ -1,9 +1,4 @@
 /**
- * Shared GraphQL queries used across frontend and backend.
- * Ensures parity between client requests and server-side cache warming.
- */
-
-/**
  * Canonical catalog query for fetching class listings.
  *
  * IMPORTANT: This query is used for:
