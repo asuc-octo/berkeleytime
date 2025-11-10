@@ -8,6 +8,7 @@ helm repo add bitnami-labs https://bitnami-labs.github.io/sealed-secrets/
 helm repo add cert-manager https://charts.jetstack.io
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo add metallb https://metallb.github.io/metallb
+helm repo add oauth2-proxy https://oauth2-proxy.github.io/manifests
 
 # ===================
 # BASE INFRASTRUCTURE
@@ -16,12 +17,16 @@ helm repo add metallb https://metallb.github.io/metallb
 helm install bt-sealed-secrets bitnami-labs/sealed-secrets --version 2.17.0 --namespace=bt --create-namespace
 helm install bt-metallb metallb/metallb --version 0.14.9 --namespace=bt
 helm install bt-cert-manager cert-manager/cert-manager --set crds.enabled=true --version 1.16.2 --namespace=bt
-helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.12.0 --namespace=bt
 
 helm package ./infra/base --version 1.0.0 --dependency-update
 helm push ./bt-base-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
 helm install bt-base oci://registry-1.docker.io/octoberkeleytime/bt-base --namespace=bt \
     --version=1.0.0
+
+# Install OAuth2 Proxy with values from base chart
+helm install bt-oauth2-proxy oauth2-proxy/oauth2-proxy \
+  --namespace=bt \
+  --values ./infra/base/values.yaml
 
 # ==========
 # BUILD CHARTS AND PUSH TO REGISTRY
