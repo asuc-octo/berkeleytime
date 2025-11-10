@@ -19,19 +19,27 @@ export const useCreateNewPlanTerm = () => {
 
         if (!planTerm) return;
 
-        const planData = cache.readQuery<ReadPlanResponse>({ query: READ_PLAN });
+        const planData = cache.readQuery<ReadPlanResponse>({
+          query: READ_PLAN,
+        });
         if (!planData?.planByUser?.[0]) return;
-        const planCacheId = cache.identify({ __typename: "Plan", _id: planData.planByUser[0]._id });
+        const planCacheId = cache.identify({
+          __typename: "Plan",
+          _id: planData.planByUser[0]._id,
+        });
 
         if (planCacheId) {
           cache.modify({
             id: planCacheId,
             fields: {
               planTerms: (existingPlanTerms = []) => {
-                const newPlanTermRef = cache.identify({ __typename: "PlanTerm", _id: planTerm._id });
+                const newPlanTermRef = cache.identify({
+                  __typename: "PlanTerm",
+                  _id: planTerm._id,
+                });
                 return [...existingPlanTerms, { __ref: newPlanTermRef }];
-              }
-            }
+              },
+            },
           });
         }
       },
