@@ -8,6 +8,7 @@ import {
   getActiveTerms,
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
+import { connection } from "mongoose";
 
 //const TERMS_PER_API_BATCH = 4;
 const CLASSES_PER_BATCH = 5000;
@@ -128,19 +129,30 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
   // Insert classes in batches of 5000
   for (let i = 0; i < classes.length; i += CLASSES_PER_BATCH) {
-    const batch = classes.slice(i, i + CLASSES_PER_BATCH);
+    const session = await connection.startSession();
+    try {
+      await session.withTransaction(async () => {
+        const batch = classes.slice(i, i + CLASSES_PER_BATCH);
+        //const terms = classes.filter((class) => class.termId === "2258");
 
-    log.trace(`Inserting batch ${i / CLASSES_PER_BATCH + 1}...`);
+        log.trace(`Inserting batch ${i / CLASSES_PER_BATCH + 1}...`);
 
-    const { insertedCount } = await ClassModel.insertMany(batch, {
-      ordered: false,
-      rawResult: true,
-    });
-    totalInserted += insertedCount;
+        const { insertedCount } = await ClassModel.insertMany(batch, {
+          ordered: false,
+          rawResult: true,
+        });
+        totalInserted += insertedCount;
+      })
+    } catch (error: any) {
+      log.warn(`Error inserting batch: ${error.message}`);
+    } finally {
+      await session.endSession();
+    }
+    
   }
 
   log.info(
-    `Completed updating database with ${totalClasses.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
+    `Inserted ${totalInserted.toLocaleString()} classes, after fetching ${totalClasses.toLocaleString()} classes.`
   );
 
   await updateTermsCatalogDataFlags(log);
