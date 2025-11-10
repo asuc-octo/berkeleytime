@@ -7,6 +7,7 @@ import {
   getActiveTerms,
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
+import { connection } from "mongoose";
 
 // const TERMS_PER_API_BATCH = 4;
 const CLASSES_PER_BATCH = 5000;
@@ -59,69 +60,31 @@ const updateClasses = async (
 
   // Insert classes in batches of 5000
   for (let i = 0; i < classes.length; i += CLASSES_PER_BATCH) {
-    const batch = classes.slice(i, i + CLASSES_PER_BATCH);
+    const session = await connection.startSession();
+    try {
+      await session.withTransaction(async () => {
+        const batch = classes.slice(i, i + CLASSES_PER_BATCH);
+        //const terms = classes.filter((class) => class.termId === "2258");
 
-    log.trace(`Inserting batch ${i / CLASSES_PER_BATCH + 1}...`);
+        log.trace(`Inserting batch ${i / CLASSES_PER_BATCH + 1}...`);
 
-    const { insertedCount } = await ClassModel.insertMany(batch, {
-      ordered: false,
-      rawResult: true,
-    });
-    totalInserted += insertedCount;
+        const { insertedCount } = await ClassModel.insertMany(batch, {
+          ordered: false,
+          rawResult: true,
+        });
+        totalInserted += insertedCount;
+      })
+    } catch (error: any) {
+      log.warn(`Error inserting batch: ${error.message}`);
+    } finally {
+      await session.endSession();
+    }
+    
   }
 
   log.info(
-    `Completed updating database with ${totalClasses.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
+    `Inserted ${totalInserted.toLocaleString()} classes, after fetching ${totalClasses.toLocaleString()} classes.`
   );
-
-  // for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
-  //   const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
-  //   const termsBatchIds = termsBatch.map((term) => term.id);
-
-  //   log.trace(
-  //     `Fetching classes for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
-  //   );
-
-  //   const classes = await getClasses(
-  //     log,
-  //     CLASS_APP_ID,
-  //     CLASS_APP_KEY,
-  //     termsBatchIds
-  //   );
-
-  //   log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
-  //   if (!classes) {
-  //     log.warn(`No classes found, skipping update.`);
-  //     return;
-  //   }
-  //   totalClasses += classes.length;
-
-  //   log.trace("Deleting classes to be replaced...");
-
-  //   const { deletedCount } = await ClassModel.deleteMany({
-  //     termId: { $in: termsBatchIds },
-  //   });
-
-  //   log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
-
-  //   // Insert classes in batches of 5000
-  //   const insertBatchSize = 5000;
-  //   for (let i = 0; i < classes.length; i += insertBatchSize) {
-  //     const batch = classes.slice(i, i + insertBatchSize);
-
-  //     log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
-
-  //     const { insertedCount } = await ClassModel.insertMany(batch, {
-  //       ordered: false,
-  //       rawResult: true,
-  //     });
-  //     totalInserted += insertedCount;
-  //   }
-  // }
-
-  // log.info(
-  //   `Completed updating database with ${totalClasses.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
-  // );
 };
 
 const activeTerms = async (config: Config) => {
