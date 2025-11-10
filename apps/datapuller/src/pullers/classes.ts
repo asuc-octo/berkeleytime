@@ -1,3 +1,5 @@
+import { connection } from "mongoose";
+
 import { ClassModel } from "@repo/common";
 
 import { getClasses } from "../lib/classes";
@@ -7,10 +9,6 @@ import {
   getActiveTerms,
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
-import { connection } from "mongoose";
-
-// const TERMS_PER_API_BATCH = 4;
-const CLASSES_PER_BATCH = 5000;
 
 const updateClasses = async (
   { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
@@ -31,17 +29,16 @@ const updateClasses = async (
 
   let totalClasses = 0;
   let totalInserted = 0;
-  
+  let totalDeleted = 0;
+
   const termsBatchIds = terms.map((term) => term.id);
-  log.trace(
-    `Fetching classes for ${terms.length.toLocaleString()} terms...`
-  );
+  log.trace(`Fetching classes for ${terms.length.toLocaleString()} terms...`);
   const classes = await getClasses(
-      log,
-      CLASS_APP_ID,
-      CLASS_APP_KEY,
-      termsBatchIds
-    );
+    log,
+    CLASS_APP_ID,
+    CLASS_APP_KEY,
+    termsBatchIds
+  );
 
   log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
   if (!classes || classes.length == 0) {
@@ -50,38 +47,39 @@ const updateClasses = async (
   }
   totalClasses += classes.length;
 
-  log.trace("Deleting classes to be replaced...");
-
-  const { deletedCount } = await ClassModel.deleteMany({
-    termId: { $in: termsBatchIds },
-  });
-
-  log.info(`Deleted ${deletedCount.toLocaleString()} classes.`);
-
   // Insert classes in batches of 5000
-  for (let i = 0; i < classes.length; i += CLASSES_PER_BATCH) {
+  for (let i = 0; i < termsBatchIds.length; i += 1) {
     const session = await connection.startSession();
+    let currentTerm = termsBatchIds[i];
     try {
       await session.withTransaction(async () => {
-        const batch = classes.slice(i, i + CLASSES_PER_BATCH);
-        //const terms = classes.filter((class) => class.termId === "2258");
+        // const batch = classes.slice(i, i + CLASSES_PER_BATCH);
+        const batch = classes.filter((x) => x.termId == currentTerm);
 
-        log.trace(`Inserting batch ${i / CLASSES_PER_BATCH + 1}...`);
+        log.trace(`Deleting classes to be replaced in term ${currentTerm}...`);
+
+        const { deletedCount } = await ClassModel.deleteMany({
+          termId: currentTerm,
+        });
+
+        log.trace(`Inserting term ${currentTerm}...`);
 
         const { insertedCount } = await ClassModel.insertMany(batch, {
           ordered: false,
           rawResult: true,
         });
+
+        totalDeleted += deletedCount;
         totalInserted += insertedCount;
-      })
+      });
     } catch (error: any) {
       log.warn(`Error inserting batch: ${error.message}`);
     } finally {
       await session.endSession();
     }
-    
   }
 
+  log.info(`Deleted ${totalDeleted.toLocaleString()} classes`);
   log.info(
     `Inserted ${totalInserted.toLocaleString()} classes, after fetching ${totalClasses.toLocaleString()} classes.`
   );
