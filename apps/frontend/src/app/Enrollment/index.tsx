@@ -350,6 +350,7 @@ export default function Enrollment() {
                     dataKey="timeDelta"
                     fill="var(--label-color)"
                     tickMargin={8}
+                    interval={"preserveStartEnd"}
                     type="number"
                     tickFormatter={(timeDelta) =>
                       String(
