@@ -92,9 +92,11 @@ spec:
   selector:
     {{- include "bt-app.backendLabels" . | nindent 4 }}
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: {{ .Values.port }}
       targetPort: {{ .Values.backend.port }}
-    - protocol: TCP
+    - name: cache-warming
+      protocol: TCP
       port: {{ .Values.backend.cacheWarmingPort }}
       targetPort: {{ .Values.backend.cacheWarmingPort }}
