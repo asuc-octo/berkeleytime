@@ -15,6 +15,7 @@ const env = (name: string): string => {
 
 export interface Config {
   port: number;
+  cacheWarmingPort: number;
   url: string;
   backendPath: string;
   graphqlPath: string;
@@ -39,6 +40,7 @@ export interface Config {
 // All your secrets, keys go here
 export const config: Config = {
   port: +env("PORT"),
+  cacheWarmingPort: +env("CACHE_WARMING_PORT"),
   url: env("URL"),
   backendPath: env("BACKEND_PATH"),
   graphqlPath: env("GRAPHQL_PATH"),
