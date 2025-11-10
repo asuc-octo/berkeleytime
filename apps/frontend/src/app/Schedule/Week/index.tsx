@@ -144,7 +144,7 @@ export default function Week({
           let position = 0;
 
           while (
-            attachedSections.findIndex(
+            attachedSections?.findIndex(
               (eventId) => positions[eventId][0] === position
             ) !== -1
           ) {

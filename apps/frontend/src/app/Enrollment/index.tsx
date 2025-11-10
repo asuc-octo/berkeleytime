@@ -22,6 +22,7 @@ import {
   YAxis,
 } from "recharts";
 import { CategoricalChartFunc } from "recharts/types/chart/types";
+import type { ContentType } from "recharts/types/component/Tooltip";
 
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
@@ -31,7 +32,6 @@ import { READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
 import CourseManager from "./CourseManager";
 import styles from "./Enrollment.module.scss";
 import HoverInfo from "./HoverInfo";
-import { EnrollmentEventReturn, semesterEnrollments } from "./EnrollmentDays";
 import {
   DARK_COLORS,
   Input,
@@ -40,13 +40,26 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "./types";
-import { uniq } from "lodash";
 
 const toPercent = (decimal: number) => {
   return `${decimal.toFixed(0)}%`;
 };
 
 const CHART_HEIGHT = 450;
+
+// Memoized formatter to avoid recreating on each render
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Los_Angeles",
+});
+
+// Type alias for tooltip content function props
+type TooltipContentProps = Parameters<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Extract<ContentType<number, string>, (...args: any[]) => any>
+>[0];
 
 export default function Enrollment() {
   const client = useApolloClient();
@@ -92,6 +105,34 @@ export default function Enrollment() {
 
   const [hoveredDuration, setHoveredDuration] =
     useState<moment.Duration | null>(null);
+
+  // Memoized tooltip content renderer
+  const tooltipContent: ContentType<number, string> = useCallback(
+    (props: TooltipContentProps) => {
+      const duration = moment.duration(props.label, "minutes");
+      const day = Math.floor(duration.asDays()) + 1;
+      // if not granular (12:00am only), then don't show time
+      const time =
+        duration.hours() > 0
+          ? timeFormatter.format(moment.utc(0).add(duration).toDate())
+          : "";
+
+      return (
+        <HoverCard
+          content={`Day ${day} ${time}`}
+          data={props.payload?.map((v) => {
+            const name = v.name?.valueOf();
+            return {
+              label: name ? name.toString() : "N/A",
+              value: typeof v.value === "number" ? toPercent(v.value) : "N/A",
+              color: v.stroke,
+            };
+          })}
+        />
+      );
+    },
+    []
+  );
 
   const initialize = useCallback(async () => {
     if (!loading) return;
@@ -166,36 +207,6 @@ export default function Enrollment() {
     [outputs]
   );
 
-  const uniqueSemesters = useMemo(() => { // would only work with one semseter selected, not sure how multiple semester selected would work
-    const semesterSet = new Set<string>();
-
-    outputs
-      ?.filter((output) => !output.hidden)
-      .forEach((output) => {
-        if (output.input.semester && output.input.year) {
-          semesterSet.add(`${output.input.semester} ${output.input.year}`);
-        }
-      });
-    return semesterSet;
-  }, [outputs]);
-
-  const [enrollmentDaysShowed, setEnrollmentDaysShowed] = useState<EnrollmentEventReturn[]>([]);
-  const enrollmentDays = useMemo(() => {
-    if (!outputs) return undefined;
-    const output = outputs[0];
-    if (!output) return undefined;
-    const firstTime = moment(
-        output.enrollmentHistory.history[0].time
-    ).startOf("minute");
-
-    const keywords = ["Phase 1", "Phase 2", "Adjustment"];
-    const importantDays = semesterEnrollments(Array.from(uniqueSemesters), keywords, firstTime);
-    const firstSemester = Array.from(uniqueSemesters)[0]; // doesn't make sense with multiple semesters selected
-    setEnrollmentDaysShowed(importantDays[firstSemester]);
-    if (uniqueSemesters.size > 1) setEnrollmentDaysShowed([]);
-    return importantDays;
-
-  }, [uniqueSemesters, outputs]);
   /**
    *
    * A list of combined time series of the format:
@@ -228,37 +239,46 @@ export default function Enrollment() {
     >[] = outputs.map((output) => {
       // the first time data point, floored to the nearest minute
       const firstTime = moment(
-        output.enrollmentHistory.history[0].time
+        output.enrollmentHistory.history[0].startTime
       ).startOf("minute");
-      return new Map(
-        output.enrollmentHistory.history.map((enrollment) => {
-          // time as prettified string floored to nearest minute
-          const time = moment(enrollment.time).startOf("minute");
-          const timeDelta = moment.duration(time.diff(firstTime)).asMinutes();
+      const map = new Map<
+        number,
+        { enrolledCount: number; waitlistedCount: number }
+      >();
+      for (const enrollment of output.enrollmentHistory.history) {
+        const start = moment(enrollment.startTime).startOf("minute");
+        const end = moment(enrollment.endTime).startOf("minute");
+        const granularity = enrollment.granularitySeconds;
+
+        for (
+          let cur = start.clone();
+          !cur.isAfter(end);
+          cur.add(granularity, "seconds")
+        ) {
+          const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
           timeDeltas.add(timeDelta);
-          return [
-            timeDelta,
-            {
-              enrolledCount:
-                (enrollment.enrolledCount /
-                  (output.enrollmentHistory.latest?.maxEnroll ??
-                    output.enrollmentHistory.history[
-                      output.enrollmentHistory.history.length - 1
-                    ].maxEnroll ??
-                    1)) *
-                100,
-              waitlistedCount:
-                (enrollment.waitlistedCount /
-                  (output.enrollmentHistory.latest?.maxWaitlist ??
-                    output.enrollmentHistory.history[
-                      output.enrollmentHistory.history.length - 1
-                    ].maxWaitlist ??
-                    1)) *
-                100,
-            },
-          ];
-        })
-      );
+
+          map.set(timeDelta, {
+            enrolledCount:
+              (enrollment.enrolledCount /
+                (output.enrollmentHistory.latest?.maxEnroll ??
+                  output.enrollmentHistory.history[
+                    output.enrollmentHistory.history.length - 1
+                  ].maxEnroll ??
+                  1)) *
+              100,
+            waitlistedCount:
+              (enrollment.waitlistedCount /
+                (output.enrollmentHistory.latest?.maxWaitlist ??
+                  output.enrollmentHistory.history[
+                    output.enrollmentHistory.history.length - 1
+                  ].maxWaitlist ??
+                  1)) *
+              100,
+          });
+        }
+      }
+      return map;
     });
 
     return Array.from(timeDeltas)
@@ -293,7 +313,9 @@ export default function Enrollment() {
     // );
     // if (best?.dataKey !== undefined) setHoveredSeries(best.dataKey);
     setHoveredDuration(
-      data.activeLabel ? moment.duration(data.activeLabel, "minutes") : null
+      data.activeLabel !== undefined && data.activeLabel !== null
+        ? moment.duration(data.activeLabel, "minutes")
+        : null
     );
   };
 
@@ -369,61 +391,7 @@ export default function Enrollment() {
                       }}
                     />
                   )}{" "}
-                  {enrollmentDaysShowed.map(({ description, timeDelta }) => (
-                    <ReferenceLine
-                      x={timeDelta}
-                      stroke="var(--label-color)"
-                      strokeDasharray="5 5"
-                      strokeOpacity={0.5}
-                      label={{
-                        value: description,
-                        position: "insideTopLeft",
-                        fill: "var(--label-color)",
-                        angle: 90,
-                        fontSize: 12,
-                        offset: 10,
-                      }} 
-                    />
-                  ))}
-                  {outputs?.length && (
-                    <Tooltip
-                      content={(props) => {
-                        const duration = moment.duration(
-                          props.label,
-                          "minutes"
-                        );
-                        // setHoveredDuration(duration);
-                        const day = Math.floor(duration.asDays()) + 1;
-                        // if not granular (12:00am only), then don't show time
-                        const time =
-                          duration.hours() > 0
-                            ? Intl.DateTimeFormat("en-US", {
-                                hour: "numeric",
-                                minute: "2-digit",
-                                hour12: true,
-                                timeZone: "America/Los_Angeles",
-                              }).format(moment.utc(0).add(duration).toDate())
-                            : "";
-
-                        return (
-                          <HoverCard
-                            content={`Day ${day} ${time}`}
-                            data={props.payload?.map((v) => {
-                              const name = v.name?.valueOf();
-                              return {
-                                label: name ? name.toString() : "N/A",
-                                value:
-                                  typeof v.value === "number"
-                                    ? toPercent(v.value)
-                                    : "N/A",
-                                color: v.stroke,
-                              };
-                            })}
-                          />
-                        );
-                      }}
-                    />
-                  )}
+                  {outputs?.length && <Tooltip content={tooltipContent} />}
                   {filteredOutputs?.map((output, index) => {
                     const originalIndex = outputs.indexOf(output);
                     return (
@@ -439,7 +407,7 @@ export default function Enrollment() {
                           isAnimationActive={shouldAnimate.current}
                           dot={false}
                           strokeWidth={3}
-                          type="stepAfter"
+                          type="monotone"
                           connectNulls
                         />
                         <Line
@@ -454,7 +422,7 @@ export default function Enrollment() {
                           dot={false}
                           strokeWidth={2}
                           strokeDasharray="5 5"
-                          type="stepAfter"
+                          type="monotone"
                           connectNulls
                         />
                       </React.Fragment>

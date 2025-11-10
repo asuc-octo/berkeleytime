@@ -25,6 +25,7 @@ export function formatCourse(course: ICourseItem) {
     gradeDistribution: null,
     crossListing: course.crossListing ?? [],
     requiredCourses: course.preparation?.requiredCourses ?? [],
+    requirements: course.preparation?.requiredText ?? null,
   } as IntermediateCourse;
 
   return output;

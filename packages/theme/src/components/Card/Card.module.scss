@@ -68,6 +68,12 @@
       white-space: nowrap;
     }
 
+    .wrapDescription {
+      white-space: normal;
+      overflow: unset;
+      text-overflow: unset;
+    }
+
     .footer {
       display: flex;
       gap: 12px;

@@ -1,7 +1,6 @@
-import Fuse from "fuse.js";
-
 import { ICourse } from "@/lib/api";
 import { subjects } from "@/lib/course";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export const initialize = (courses: ICourse[]) => {
   const list = courses.map((course) => {
@@ -73,5 +72,5 @@ export const initialize = (courses: ICourse[]) => {
     // },
   };
 
-  return new Fuse(list, options);
+  return new FuzzySearch(list, options);
 };

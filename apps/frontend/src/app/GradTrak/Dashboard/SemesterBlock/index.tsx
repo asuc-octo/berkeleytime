@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import Fuse from "fuse.js";
 import {
   Check,
   Edit,
@@ -19,6 +18,7 @@ import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
 import { ISelectedCourse } from "@/lib/api";
 import { ILabel, IPlanTerm, Status, Terms } from "@/lib/api/plans";
+import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
@@ -41,7 +41,11 @@ interface SemesterBlockProps {
   labels: ILabel[];
   setShowLabelMenu: (v: boolean) => void;
   catalogCourses: SelectedCourse[];
-  index: Fuse<{ title: string; name: string; alternateNames: string[] }> | null;
+  index: FuzzySearch<{
+    title: string;
+    name: string;
+    alternateNames: string[];
+  }> | null;
   handleUpdateTermName: (name: string) => void;
   handleTogglePin: () => void;
   handleSetStatus: (status: Status) => void;
@@ -608,7 +612,7 @@ function SemesterBlock({
 
         {open && (
           <>
-            {selectedClasses
+            {[...selectedClasses]
               .sort((a, b) => {
                 if (sortCourseOption === "Unsorted") return 0;
                 if (sortCourseOption === "A-Z")

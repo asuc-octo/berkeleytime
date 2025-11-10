@@ -29,6 +29,7 @@ interface ClassProps {
   bookmarked?: boolean;
   bookmarkToggle?: () => void;
   active?: boolean;
+  wrapDescription?: boolean;
 }
 
 export default function ClassCard({
@@ -43,6 +44,7 @@ export default function ClassCard({
   children,
   bookmarkToggle,
   active = false,
+  wrapDescription = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   const gradeDistribution =
@@ -62,7 +64,7 @@ export default function ClassCard({
             {_class?.courseNumber ?? _class?.course?.number}{" "}
             <span className={styles.sectionNumber}>#{_class?.number}</span>
           </Card.Heading>
-          <Card.Description>
+          <Card.Description wrapDescription={wrapDescription}>
             {_class?.title ?? _class?.course?.title}
           </Card.Description>
           <Card.Footer>
@@ -71,7 +73,7 @@ export default function ClassCard({
                 _class?.primarySection?.enrollment?.latest.enrolledCount
               }
               maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
-              time={_class?.primarySection?.enrollment?.latest.time}
+              time={_class?.primarySection?.enrollment?.latest.endTime}
             />
             {_class?.unitsMin !== undefined &&
               _class.unitsMax !== undefined && (
