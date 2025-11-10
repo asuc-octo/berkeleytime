@@ -42,6 +42,7 @@ export const enrollmentCalendarEventSchema = new Schema(
   },
   {
     timestamps: true,
+    collection: "enrollmentcalendar",
   }
 );
 
