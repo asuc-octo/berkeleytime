@@ -270,34 +270,11 @@ const updateEnrollmentHistories = async ({
     try {
       log.trace(`Warming cache for ${term.name}...`);
 
-      // Try configured URL, fallback to common Docker service names
-      const urlsToTry = [
-        BACKEND_URL,
-        ...(BACKEND_URL.includes("localhost")
-          ? ["http://backend:5001/api", "http://bt-backend:5001/api"]
-          : []),
-      ];
-
-      let response: Response | null = null;
-      let lastError: Error | null = null;
-
-      for (const url of urlsToTry) {
-        try {
-          response = await fetch(`${url}/cache/warm-catalog`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ year, semester }),
-          });
-          break; // Success, exit loop
-        } catch (err: any) {
-          lastError = err;
-          continue; // Try next URL
-        }
-      }
-
-      if (!response) {
-        throw lastError || new Error("All URLs failed");
-      }
+      const response = await fetch(`${BACKEND_URL}/cache/warm-catalog`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ year, semester }),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();

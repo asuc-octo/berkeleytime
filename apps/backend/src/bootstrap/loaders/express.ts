@@ -7,7 +7,6 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../config";
-import cacheRoutes from "../../modules/cache/routes";
 import passportLoader from "./passport";
 
 export default async (
@@ -58,9 +57,6 @@ export default async (
 
   // load authentication
   passportLoader(app, redis);
-
-  // load cache warming routes
-  cacheRoutes(app, server, redis);
 
   app.use(
     config.graphqlPath,
