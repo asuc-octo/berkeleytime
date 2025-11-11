@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
 import {
-  GET_CANONICAL_CATALOG,
-  GetCanonicalCatalogResponse,
+  GET_CATALOG,
+  GetCatalogResponse,
   ITerm,
   Semester,
 } from "@/lib/api";
@@ -27,6 +27,12 @@ import {
 } from "./browser";
 import BrowserContext from "./browserContext";
 import { searchAndSortClasses } from "./searchAndSort";
+
+// Pagination constants
+const INITIAL_LOAD_SIZE = 100;
+const AUTO_LOAD_BATCH_SIZE = 1000;
+const AUTO_LOAD_DELAY_MS = 1000;
+const AUTO_LOAD_START_DELAY_MS = 300;
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Relevance]: "asc",
@@ -85,19 +91,71 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetCanonicalCatalogResponse>(
-    GET_CANONICAL_CATALOG,
+  const { data, loading, fetchMore } = useQuery<GetCatalogResponse>(
+    GET_CATALOG,
     {
       variables: {
         semester: currentSemester,
         year: currentYear,
+        limit: INITIAL_LOAD_SIZE,
+        offset: 0,
       },
-      fetchPolicy: "no-cache",
-      nextFetchPolicy: "no-cache",
+      fetchPolicy: "cache-and-network",
+      nextFetchPolicy: "cache-first",
     }
   );
 
-  const classes = useMemo(() => data?.catalog ?? [], [data]);
+  const classes = useMemo(() => data?.catalog.classes ?? [], [data]);
+  const totalCount = data?.catalog.totalCount ?? 0;
+
+  // Auto-load all remaining data in background
+  const isLoadingAllRef = useRef(false);
+  const loadedCountRef = useRef(0);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
+
+  useEffect(() => {
+    loadedCountRef.current = classes.length;
+  }, [classes.length]);
+
+  useEffect(() => {
+    // Prevent multiple simultaneous loads
+    if (isLoadingAllRef.current) return;
+    if (!totalCount || totalCount === 0) return;
+    if (loadedCountRef.current >= totalCount) return;
+
+    const loadAllData = async () => {
+      isLoadingAllRef.current = true;
+      setIsBackgroundLoading(true);
+
+      try {
+        while (loadedCountRef.current < totalCount) {
+          const remainingCount = totalCount - loadedCountRef.current;
+          const loadSize = Math.min(AUTO_LOAD_BATCH_SIZE, remainingCount);
+
+          await fetchMore({
+            variables: {
+              offset: loadedCountRef.current,
+              limit: loadSize,
+            },
+          });
+
+          // Delay between batches to avoid blocking UI
+          await new Promise((resolve) =>
+            setTimeout(resolve, AUTO_LOAD_DELAY_MS)
+          );
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        isLoadingAllRef.current = false;
+        setIsBackgroundLoading(false);
+      }
+    };
+
+    // Start loading after initial render
+    const timer = setTimeout(loadAllData, AUTO_LOAD_START_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [totalCount, fetchMore]);
 
   const query = localQuery;
 
@@ -391,6 +449,10 @@ export default function ClassBrowser({
         setExpanded,
         loading,
         updateReverse: setLocalReverse,
+        totalCount,
+        isFiltersChanged: false,
+        loadedCount: classes.length,
+        isBackgroundLoading,
       }}
     >
       <div
