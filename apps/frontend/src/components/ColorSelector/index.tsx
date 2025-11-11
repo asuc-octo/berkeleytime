@@ -87,7 +87,8 @@ export default function ColorSelector({
                 ? "2px solid var(--blue-500)"
                 : `1px solid var(--${color}-500)`,
           }}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setShowColorPicker(false);
             onColorSelect(color);
           }}
@@ -97,10 +98,16 @@ export default function ColorSelector({
   );
 
   return (
-    <div className={styles.colorSelectorContainer} ref={containerRef}>
+    <div
+      className={styles.colorSelectorContainer}
+      ref={containerRef}
+      data-color-selector
+    >
       <div
         className={styles.colorSelect}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
           setShowColorPicker(true);
         }}
       >

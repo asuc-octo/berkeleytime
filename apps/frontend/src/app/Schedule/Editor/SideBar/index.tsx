@@ -154,6 +154,8 @@ export default function SideBar({
             <Class
               key={`${selectedClass.class.subject}${selectedClass.class.courseNumber}${selectedClass.class.number}`}
               {...selectedClass}
+              semester={schedule.semester}
+              year={schedule.year}
               color={selectedClass.color!}
               expanded={expanded[index] ?? false}
               onExpandedChange={(expanded) => onExpandedChange(index, expanded)}
