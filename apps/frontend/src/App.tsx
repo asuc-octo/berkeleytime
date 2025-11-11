@@ -23,6 +23,7 @@ const Profile = {
   Notifications: lazy(() => import("@/app/Profile/Notifications")),
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
+  Settings: lazy(() => import("@/app/Profile/Settings")),
 };
 
 const Class = {
@@ -211,6 +212,14 @@ const router = createBrowserRouter([
             ),
             path: "ratings",
           },
+          {
+            element: (
+              <SuspenseBoundary key="settings">
+                <Profile.Settings />
+              </SuspenseBoundary>
+            ),
+            path: "settings",
+          },
         ],
       },
     ],
@@ -376,6 +385,20 @@ const client = new ApolloClient({
       PlanTerm: {
         fields: {
           courses: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
+      Schedule: {
+        fields: {
+          events: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+          classes: {
             merge(_, incoming) {
               return incoming;
             },

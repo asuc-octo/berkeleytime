@@ -45,8 +45,8 @@ const updateSections = async (
     );
 
     log.info(`Fetched ${sections.length.toLocaleString()} sections.`);
-    if (!sections) {
-      log.warn(`No sections found, skipping update.`);
+    if (sections.length === 0) {
+      log.error(`No sections found, skipping update.`);
       return;
     }
     totalSections += sections.length;

@@ -395,6 +395,10 @@ export default function Class({
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        textDecoration: "none",
+                      }}
                     >
                       <AverageGrade
                         gradeDistribution={_class.course.gradeDistribution}
@@ -408,7 +412,7 @@ export default function Class({
                     maxEnroll={
                       _class.primarySection.enrollment?.latest.maxEnroll
                     }
-                    time={_class.primarySection.enrollment?.latest.time}
+                    time={_class.primarySection.enrollment?.latest.endTime}
                   >
                     {(content) => (
                       <Link
@@ -417,7 +421,10 @@ export default function Class({
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ textDecoration: "none" }}
+                        style={{
+                          display: "inline-flex",
+                          textDecoration: "none",
+                        }}
                       >
                         {content}
                       </Link>

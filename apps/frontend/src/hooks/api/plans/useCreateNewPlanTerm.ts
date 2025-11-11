@@ -6,66 +6,34 @@ import {
   CREATE_NEW_PLAN_TERM,
   CreateNewPlanTermResponse,
   PlanTermInput,
+  READ_PLAN,
+  ReadPlanResponse,
 } from "@/lib/api";
 
 export const useCreateNewPlanTerm = () => {
   const mutation = useMutation<CreateNewPlanTermResponse>(
     CREATE_NEW_PLAN_TERM,
     {
-      update(_, { data }) {
+      update(cache, { data }) {
         const planTerm = data?.createNewPlanTerm;
 
         if (!planTerm) return;
 
-        // TODO(Daniel): Uncomment when done
-        // cache.modify({
-        //   id: cache.identify({ __typename: "Plan", _id: planTerm.planId }), // Assuming planTerm has planId
-        //   fields: {
-        //     planTerms: (existingPlanTerms = []) => {
-        //       const reference = cache.writeFragment({
-        //         data: planTerm,
-        //         fragment: gql`
-        //           fragment CreatedPlanTerm on PlanTerm {
-        //             _id
-        //             name
-        //             year
-        //             term
-        //             hidden
-        //             status
-        //             pinned
-        //             courses {
-        //               courseID
-        //               courseName
-        //               courseTitle
-        //               courseUnits
-        //               uniReqs
-        //               collegeReqs
-        //               pnp
-        //               transfer
-        //               labels {
-        //                 name
-        //                 color
-        //               }
-        //             }
-        //             customCourses {
-        //               title
-        //               description
-        //               uniReqs
-        //               collegeReqs
-        //               pnp
-        //               transfer
-        //               labels {
-        //                 name
-        //                 color
-        //               }
-        //             }
-        //           }
-        //         `,
-        //       });
-        //       return [...existingPlanTerms, reference];
-        //     },
-        //   },
-        // });
+        const planData = cache.readQuery<ReadPlanResponse>({ query: READ_PLAN });
+        if (!planData?.planByUser?.[0]) return;
+        const planCacheId = cache.identify({ __typename: "Plan", _id: planData.planByUser[0]._id });
+
+        if (planCacheId) {
+          cache.modify({
+            id: planCacheId,
+            fields: {
+              planTerms: (existingPlanTerms = []) => {
+                const newPlanTermRef = cache.identify({ __typename: "PlanTerm", _id: planTerm._id });
+                return [...existingPlanTerms, { __ref: newPlanTermRef }];
+              }
+            }
+          });
+        }
       },
     }
   );

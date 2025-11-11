@@ -276,6 +276,24 @@ export const READ_CLASS = gql`
         }
         academicCareer
         requirements
+        requiredCourses {
+          subject
+          number
+        }
+        classes {
+          semester
+          year
+          number
+          anyPrintInScheduleOfClasses
+          primarySection {
+            meetings {
+              instructors {
+                familyName
+                givenName
+              }
+            }
+          }
+        }
       }
       primarySection {
         number
@@ -288,7 +306,9 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll
@@ -335,7 +355,9 @@ export const READ_CLASS = gql`
         endDate
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll
@@ -375,6 +397,7 @@ export const GET_CATALOG = gql`
       number
       subject
       courseNumber
+      courseId
       title
       unitsMax
       unitsMin
@@ -400,7 +423,9 @@ export const GET_CATALOG = gql`
         }
         enrollment {
           latest {
-            time
+            startTime
+            endTime
+            granularitySeconds
             status
             enrolledCount
             maxEnroll

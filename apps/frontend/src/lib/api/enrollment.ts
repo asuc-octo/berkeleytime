@@ -6,7 +6,9 @@ export enum EnrollmentStatus {
 }
 
 export interface IEnrollmentSingular {
-  time: string;
+  startTime: string;
+  endTime: string;
+  granularitySeconds: number;
   status: EnrollmentStatus;
   enrolledCount: number;
   waitlistedCount: number;
@@ -80,7 +82,9 @@ export const READ_ENROLLMENT = gql`
         fromDate
       }
       history {
-        time
+        startTime
+        endTime
+        granularitySeconds
         status
         enrolledCount
         waitlistedCount

@@ -64,9 +64,19 @@ function Heading({ children, ...props }: ComponentPropsWithRef<"p">) {
     </p>
   );
 }
-function Description({ children, ...props }: ComponentPropsWithRef<"p">) {
+function Description({
+  children,
+  className,
+  wrapDescription,
+  ...props
+}: ComponentPropsWithRef<"p"> & { wrapDescription?: boolean }) {
   return (
-    <p className={styles.description} {...props}>
+    <p
+      className={classNames(styles.description, className, {
+        [styles.wrapDescription]: wrapDescription,
+      })}
+      {...props}
+    >
       {children}
     </p>
   );

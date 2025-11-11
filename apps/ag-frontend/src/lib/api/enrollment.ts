@@ -18,7 +18,9 @@ export interface ISeatReservationCount {
 }
 
 export interface IEnrollmentSingular {
-  time: string;
+  startTime: string;
+  endTime: string;
+  granularitySeconds: number;
   status: EnrollmentStatus;
   enrolledCount: number;
   reservedCount: number;
@@ -81,7 +83,9 @@ export const READ_ENROLLMENT = gql`
         fromDate
       }
       history {
-        time
+        startTime
+        endTime
+        granularitySeconds
         status
         enrolledCount
         reservedCount

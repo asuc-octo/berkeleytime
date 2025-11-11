@@ -177,6 +177,10 @@ export function RatingsContainer() {
     if (!currentCourse.classes) return [];
 
     return _.chain(currentCourse.classes.toSorted(sortByTermDescending))
+      .filter((c) => {
+        // Filter out ghost classes that shouldn't appear in schedule (quick fix for ghost classes -> after database level fix can delete!)
+        return c.anyPrintInScheduleOfClasses !== false;
+      })
       .map((c) => {
         let allInstructors = "";
         if (c.primarySection) {

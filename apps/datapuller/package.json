@@ -6,6 +6,7 @@
     "main": "tsx src/main.ts"
   },
   "devDependencies": {
+    "@types/luxon": "^3.7.1",
     "@types/node": "^24.7.0",
     "@types/papaparse": "^5.3.16",
     "eslint": "^9.37.0",
@@ -17,6 +18,7 @@
     "@repo/common": "*",
     "@repo/sis-api": "*",
     "dotenv": "^17.2.3",
+    "luxon": "^3.7.2",
     "@sendgrid/mail": "^8.1.4",
     "papaparse": "^5.5.3",
     "tslog": "^4.10.2"
