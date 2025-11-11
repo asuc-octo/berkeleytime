@@ -20,12 +20,26 @@ export default async (root: Application): Promise<void> => {
 
   // load apollo server config. must be loaded before express
   console.log("Loading apollo...");
-  const server = await apolloLoader(redis);
+  const { server, redis: apolloRedis } = await apolloLoader(redis);
 
   // load everything related to express. depends on apollo
   console.log("Loading express...");
-  await expressLoader(app, server, redis);
+  await expressLoader(app, server, apolloRedis);
 
   // append backend path to all routes
   root.use(config.backendPath, app);
 };
+
+// loader for cache warming server
+export async function loadCacheWarmingDependencies() {
+  console.log("[Cache Warmer] Booting up mongo...");
+  await mongooseLoader();
+
+  console.log("[Cache Warmer] Booting up redis...");
+  const redis = await redisLoader();
+
+  console.log("[Cache Warmer] Loading apollo...");
+  const { server, redis: apolloRedis } = await apolloLoader(redis);
+
+  return { server, redis: apolloRedis };
+}

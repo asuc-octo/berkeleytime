@@ -42,7 +42,7 @@ export default function CourseSearch({
 
   const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
   const currentCourses = useMemo(() => {
-    if (!searchQuery) return [];
+    if (!searchQuery) return catalogCourses.slice(0, 50);
 
     return index
       .search(searchQuery.slice(0, 24))
@@ -138,35 +138,30 @@ export default function CourseSearch({
                 </section>
               )}
 
-              {searchQuery && (
+              {currentCourses.length > 0 && (
                 <section className={styles.section}>
                   <h2>CATALOG</h2>
                   <div className={styles.catalogList}>
-                    {currentCourses.length === 0 ? (
-                      <div
-                        style={{
-                          padding: "12px",
-                          color: "var(--paragraph-color)",
+                    {currentCourses.map((course) => (
+                      <button
+                        key={`${course.subject}-${course.number}`}
+                        className={styles.catalogItem}
+                        onClick={() => {
+                          onSelect?.(course);
+                          setSearchQuery("");
+                          setIsOpen(false);
                         }}
                       >
-                        No courses found
+                        <span>
+                          {course.subject} {course.number}
+                        </span>
+                      </button>
+                    ))}
+                    {!searchQuery && catalogCourses.length > 50 && (
+                      <div className={styles.moreCoursesHint}>
+                        +{catalogCourses.length - 50} more courses. Type to
+                        search and narrow results.
                       </div>
-                    ) : (
-                      currentCourses.map((course) => (
-                        <button
-                          key={`${course.subject}-${course.number}`}
-                          className={styles.catalogItem}
-                          onClick={() => {
-                            onSelect?.(course);
-                            setSearchQuery("");
-                            setIsOpen(false);
-                          }}
-                        >
-                          <span>
-                            {course.subject} {course.number}
-                          </span>
-                        </button>
-                      ))
                     )}
                   </div>
                 </section>

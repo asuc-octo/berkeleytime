@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-import { GradeDistribution, ICourse, IEnrollment } from ".";
-import { IAggregatedRatings } from "./ratings";
-import { Exam, GetCatalogQuery, GetClassQuery, Instructor, Meeting, SectionAttribute, SectionAttributeInfo } from "../generated/graphql";
+import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
+
+import { Exam, GetCanonicalCatalogQuery, GetClassQuery, Instructor, Meeting, SectionAttribute, SectionAttributeInfo } from "../generated/graphql";
 
 export type IInstructor = Instructor;
 
@@ -189,69 +189,12 @@ export const READ_CLASS = gql`
   }
 `;
 
-export type ICatalogClass = NonNullable<GetCatalogQuery["catalog"]>[number];
+export type ICatalogClass = NonNullable<GetCanonicalCatalogQuery["catalog"]>[number];
 
-export const GET_CATALOG = gql`
-  query GetCatalog($year: Int!, $semester: Semester!) {
-    catalog(year: $year, semester: $semester) {
-      number
-      subject
-      courseNumber
-      courseId
-      title
-      unitsMax
-      unitsMin
-      finalExam
-      gradingBasis
-      primarySection {
-        component
-        online
-        instructionMode
-        attendanceRequired
-        lecturesRecorded
-        sectionAttributes {
-          attribute {
-            code
-            description
-            formalDescription
-          }
-          value {
-            code
-            description
-            formalDescription
-          }
-        }
-        enrollment {
-          latest {
-            startTime
-            endTime
-            granularitySeconds
-            status
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
-          }
-        }
-        meetings {
-          days
-        }
-      }
-      course {
-        subject
-        number
-        title
-        gradeDistribution {
-          average
-          pnpPercentage
-        }
-        academicCareer
-      }
-      requirementDesignation {
-        code
-        description
-        formalDescription
-      }
-    }
-  }
-`;
+/**
+ * Canonical catalog query imported from @repo/shared.
+ * Ensures parity between frontend and backend cache warming.
+ *
+ * See: packages/shared/queries.ts for query definition and documentation.
+ */
+export const GET_CANONICAL_CATALOG = gql(GET_CANONICAL_CATALOG_QUERY);
