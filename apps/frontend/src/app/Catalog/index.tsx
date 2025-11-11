@@ -5,7 +5,7 @@ import { Xmark } from "iconoir-react";
 import moment from "moment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { Flex, IconButton } from "@repo/theme";
+import { Boundary, Flex, IconButton, LoadingIndicator } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
@@ -113,9 +113,12 @@ export default function Catalog() {
     [navigate, location, term]
   );
 
-  // TODO: Loading state
   if (termsLoading) {
-    return <></>;
+    return (
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
+    );
   }
 
   // TODO: Error state
@@ -151,7 +154,9 @@ export default function Catalog() {
       </div>
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
-          <></>
+          <Boundary>
+            <LoadingIndicator size="lg" />
+          </Boundary>
         ) : _class && _course ? (
           <Class
             class={_class}

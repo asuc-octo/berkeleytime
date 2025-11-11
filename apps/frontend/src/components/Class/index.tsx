@@ -18,10 +18,12 @@ import {
 } from "react-router-dom";
 
 import {
+  Boundary,
   Box,
   Container,
   Flex,
   IconButton,
+  LoadingIndicator,
   MenuItem,
   Tooltip,
 } from "@repo/theme";
@@ -301,7 +303,11 @@ export default function Class({
   }, [_class, navigate, onClose]);
 
   if (loading || courseLoading) {
-    return <></>;
+    return (
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
+    );
   }
 
   // TODO: Error state
