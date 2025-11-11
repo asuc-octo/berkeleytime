@@ -4,12 +4,7 @@ import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import {
-  GET_CATALOG,
-  GetCatalogResponse,
-  ITerm,
-  Semester,
-} from "@/lib/api";
+import { GET_CATALOG, GetCatalogResponse, ITerm, Semester } from "@/lib/api";
 
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
