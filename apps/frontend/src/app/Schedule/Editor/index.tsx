@@ -4,17 +4,11 @@ import { useApolloClient } from "@apollo/client/react";
 import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { Button, Color, IconButton, MenuItem, Tooltip } from "@repo/theme";
+import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
 
 import Week from "@/app/Schedule/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-import {
-  IClass,
-  IScheduleEvent,
-  READ_CLASS,
-  ReadClassResponse,
-} from "@/lib/api";
 import { RecentType, addRecent } from "@/lib/recent";
 
 import { SectionColor, getNextClassColor, getY } from "../schedule";
@@ -26,6 +20,8 @@ import styles from "./Editor.module.scss";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
+import { Color, GetClassDocument, GetClassQuery } from "@/lib/generated/graphql";
+import { IScheduleClass, IScheduleEvent } from "@/lib/api";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
@@ -304,8 +300,8 @@ export default function Editor() {
       }
 
       // Fetch the selected class
-      const { data } = await apolloClient.query<ReadClassResponse>({
-        query: READ_CLASS,
+      const { data } = await apolloClient.query({
+        query: GetClassDocument,
         variables: {
           year: schedule.year,
           semester: schedule.semester,
@@ -316,30 +312,32 @@ export default function Editor() {
       });
 
       // TODO: Error
-      if (!data) return;
+      if (!data || !data.class) return;
 
-      const _class = structuredClone(data.class);
+      const _classClone = structuredClone(data.class);
 
-      _class.primarySection = {
-        ..._class.primarySection,
-        subject: _class.subject,
-        courseNumber: _class.courseNumber,
-        classNumber: _class.number,
-      };
-
-      _class.sections = _class.sections.map((s) => {
-        return {
-          ...s,
-          subject: _class.subject,
-          courseNumber: _class.courseNumber,
-          classNumber: _class.number,
-        };
-      });
+      const _class: IScheduleClass["class"] = {
+        ..._classClone,
+        primarySection: {
+          ..._classClone.primarySection,
+          subject: _classClone.subject,
+          courseNumber: _classClone.courseNumber,
+          classNumber: _classClone.number,
+        },
+        sections: _classClone.sections.map((s) => {
+          return {
+            ...s,
+            subject: _class.subject,
+            courseNumber: _class.courseNumber,
+            classNumber: _class.number,
+          };
+        })
+      }
 
       const selectedSections = [_class.primarySection];
 
       const kinds = Array.from(
-        new Set(_class.sections.map((section) => section.component))
+        new Set(_classClone.sections.map((section) => section.component))
       );
 
       // Add the first section of each kind to selected sections
@@ -467,7 +465,6 @@ export default function Editor() {
               startTime,
               endTime,
               title,
-              location,
               description,
               days,
               color,
@@ -475,7 +472,6 @@ export default function Editor() {
               startTime,
               endTime,
               title,
-              location,
               description,
               days,
               color,
@@ -513,7 +509,6 @@ export default function Editor() {
               startTime,
               endTime,
               title,
-              location,
               description,
               days,
               color,
@@ -521,7 +516,6 @@ export default function Editor() {
               startTime,
               endTime,
               title,
-              location,
               description,
               days,
               color,
@@ -570,7 +564,7 @@ export default function Editor() {
     );
   };
 
-  const handleDeleteClass = (_class: IClass) => {
+  const handleDeleteClass = (_class: IScheduleClass["class"]) => {
     const _schedule = structuredClone(schedule);
 
     _schedule.classes = schedule.classes.filter(

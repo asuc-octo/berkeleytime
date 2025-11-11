@@ -56,6 +56,7 @@ import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
+import { GetCourseNamesDocument } from "@/lib/generated/graphql";
 
 const FILTER_OPTIONS = [
   {
@@ -107,7 +108,7 @@ export default function Dashboard() {
 
   const hasLoadedRef = useRef(false);
   const { data: courses, loading: courseLoading } =
-    useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
+    useQuery(GetCourseNamesDocument, {
       skip: hasLoadedRef.current,
     });
 

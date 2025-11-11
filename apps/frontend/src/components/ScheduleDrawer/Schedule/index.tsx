@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useQuery } from "@apollo/client/react";
 
 import { READ_SCHEDULES, ReadSchedulesResponse, Semester } from "@/lib/api";
+import { ReadSchedulesDocument } from "@/lib/generated/graphql";
 
 interface ScheduleProps {
   year: number;
@@ -19,7 +20,7 @@ export default function Schedule({
   // courseNumber,
   // classNumber,
 }: ScheduleProps) {
-  const { data } = useQuery<ReadSchedulesResponse>(READ_SCHEDULES);
+  const { data } = useQuery(ReadSchedulesDocument);
 
   const schedules = useMemo(() => data?.schedules ?? [], [data]);
 

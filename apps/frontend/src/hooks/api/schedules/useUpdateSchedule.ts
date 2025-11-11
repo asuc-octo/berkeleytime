@@ -1,27 +1,17 @@
 import { useCallback } from "react";
 
-import { Reference } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
-import {
-  IScheduleEvent,
-  IScheduleInput,
-  READ_SCHEDULE,
-  ScheduleIdentifier,
-  UPDATE_SCHEDULE,
-  UpdateScheduleResponse,
-} from "@/lib/api";
+import { UpdateScheduleDocument, UpdateScheduleInput, UpdateScheduleMutation, UpdateScheduleMutationVariables } from "@/lib/generated/graphql";
 
 export const useUpdateSchedule = () => {
-  const mutation = useMutation<UpdateScheduleResponse>(UPDATE_SCHEDULE);
+  const mutation = useMutation(UpdateScheduleDocument);
 
   const updateSchedule = useCallback(
     async (
-      id: ScheduleIdentifier,
-      schedule: Partial<Pick<IScheduleInput, "name" | "public" | "classes">> & {
-        events?: Partial<Omit<IScheduleEvent, "id">>[];
-      },
-      options?: Omit<useMutation.Options<UpdateScheduleResponse>, "variables">
+      id: string,
+      schedule: UpdateScheduleInput,
+      options?: Omit<useMutation.Options<UpdateScheduleMutation, UpdateScheduleMutationVariables>, "variables">
     ) => {
       const mutate = mutation[0];
 

@@ -17,6 +17,7 @@ import styles from "./CourseBrowser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
 import { Level, SortBy, getFilteredCourses, initialize } from "./browser";
+import { GetCoursesDocument } from "@/lib/generated/graphql";
 
 interface CourseBrowserProps {
   onSelect: (course: ICourse) => void;
@@ -52,7 +53,7 @@ export default function CourseBrowser({
     [width, responsive, block]
   );
 
-  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSES);
+  const { data, loading } = useQuery(GetCoursesDocument);
 
   const courses = useMemo(() => data?.courses ?? [], [data?.courses]);
 

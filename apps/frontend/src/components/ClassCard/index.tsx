@@ -14,12 +14,33 @@ import { AverageGrade } from "@/components/AverageGrade";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
+import { IEnrollmentSingular } from "@/lib/api/enrollment";
 
 import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
+type BaseClassFields = Pick<
+  IClass,
+  "subject" | "courseNumber" | "number" | "title" | "unitsMax" | "unitsMin" | "gradeDistribution"
+>;
+
+type CourseSummary = Pick<IClass["course"], "subject" | "number" | "title" | "gradeDistribution">;
+
+type EnrollmentSnapshot = Pick<
+  IEnrollmentSingular,
+  "enrolledCount" | "maxEnroll" | "endTime"
+>;
+
+type ClassCardClass = Partial<BaseClassFields> & {
+  course?: Partial<CourseSummary> | null;
+  primarySection?: {
+    enrollment?: {
+      latest?: Partial<EnrollmentSnapshot> | null;
+    } | null;
+  } | null;
+};
 
 interface ClassProps {
-  class?: IClass;
+  class?: ClassCardClass;
   expandable?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
@@ -70,10 +91,12 @@ export default function ClassCard({
           <Card.Footer>
             <EnrollmentDisplay
               enrolledCount={
-                _class?.primarySection?.enrollment?.latest.enrolledCount
+                _class?.primarySection?.enrollment?.latest?.enrolledCount
               }
-              maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
-              time={_class?.primarySection?.enrollment?.latest.endTime}
+              maxEnroll={
+                _class?.primarySection?.enrollment?.latest?.maxEnroll
+              }
+              time={_class?.primarySection?.enrollment?.latest?.endTime}
             />
             {_class?.unitsMin !== undefined &&
               _class.unitsMax !== undefined && (

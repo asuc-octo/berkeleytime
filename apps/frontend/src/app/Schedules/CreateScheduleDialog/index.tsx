@@ -98,7 +98,7 @@ export default function CreateScheduleDialog({
     setLoading(true);
 
     // TODO: Error handling, loading state
-    const { data } = await createSchedule({
+    const { data: { createSchedule: schedule } = {} } = await createSchedule({
       name: name,
       year: Number(year),
       semester: semester as Semester,
@@ -107,9 +107,9 @@ export default function CreateScheduleDialog({
 
     setLoading(false);
 
-    if (!data) return;
+    if (!schedule) return;
 
-    navigate(data.createSchedule._id);
+    navigate(schedule._id);
   };
 
   const handleOpenChange = (open: boolean) => {

@@ -1,56 +1,13 @@
 import { gql } from "@apollo/client";
+import { EnrollmentSingular, GetEnrollmentQuery, ReservationType, SeatReservationCounts } from "../generated/graphql";
 
-export enum EnrollmentStatus {
-  Closed = "C",
-  Open = "O",
-}
+export type IEnrollmentSingular = EnrollmentSingular;
 
-export interface IEnrollmentSingular {
-  startTime: string;
-  endTime: string;
-  granularitySeconds: number;
-  status: EnrollmentStatus;
-  enrolledCount: number;
-  waitlistedCount: number;
-  minEnroll: number;
-  maxEnroll: number;
-  maxWaitlist: number;
-  instructorAddConsentRequired: boolean;
-  instructorDropConsentRequired: boolean;
+export type IEnrollment = NonNullable<GetEnrollmentQuery["enrollment"]>;
 
-  // lowkey dont need reservation count for entire class if we have individual seat reservations
-  seatReservationCount: ISeatReservationCounts[];
-}
+export type ISeatReservationCounts = NonNullable<NonNullable<GetEnrollmentQuery["enrollment"]>["history"][number]["seatReservationCount"]>[number];
 
-export interface IEnrollment {
-  termId: string;
-  year: number;
-  semester: string;
-  sessionId: string;
-  sectionId: string;
-  subject: string;
-  courseNumber: string;
-  sectionNumber: string;
-  history: IEnrollmentSingular[];
-  latest: IEnrollmentSingular;
-  seatReservationTypes: IReservationType[];
-}
-
-export interface ISeatReservationCounts {
-  number: number;
-  maxEnroll: number;
-  enrolledCount: number;
-}
-
-export interface IReservationType {
-  number: number;
-  requirementGroup: string;
-  fromDate: string;
-}
-
-export interface ReadEnrollmentResponse {
-  enrollment: IEnrollment;
-}
+export type IReservationType = NonNullable<NonNullable<GetEnrollmentQuery["enrollment"]>["seatReservationTypes"]>[number];
 
 export const READ_ENROLLMENT = gql`
   query GetEnrollment(

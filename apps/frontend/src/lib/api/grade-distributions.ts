@@ -1,20 +1,9 @@
 import { gql } from "@apollo/client";
+import { GetGradeDistributionQuery } from "../generated/graphql";
 
-export interface Grade {
-  letter: string;
-  percentage: number;
-  count: number;
-}
+export type Grade = NonNullable<NonNullable<GetGradeDistributionQuery["grade"]>["distribution"]>[number];
 
-export interface GradeDistribution {
-  average: number | null;
-  distribution: Grade[];
-  pnpPercentage?: number | null;
-}
-
-export interface ReadGradeDistributionResponse {
-  grade: GradeDistribution;
-}
+export type GradeDistribution = GetGradeDistributionQuery["grade"];
 
 export const READ_GRADE_DISTRIBUTION = gql`
   query GetGradeDistribution(

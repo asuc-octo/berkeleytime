@@ -1,10 +1,80 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
+
+enum Color {
+  
+  "slate"
+  slate,
+    
+  "gray"
+  gray,
+    
+  "zinc"
+  zinc,
+    
+  "neutral"
+  neutral,
+    
+  "stone"
+  stone,
+    
+  "red"
+  red,
+    
+  "orange"
+  orange,
+    
+  "amber"
+  amber,
+    
+  "yellow"
+  yellow,
+    
+  "lime"
+  lime,
+    
+  "green"
+  green,
+    
+  "emerald"
+  emerald,
+    
+  "teal"
+  teal,
+    
+  "cyan"
+  cyan,
+    
+  "sky"
+  sky,
+    
+  "blue"
+  blue,
+    
+  "indigo"
+  indigo,
+    
+  "violet"
+  violet,
+    
+  "purple"
+  purple,
+    
+  "fuchsia"
+  fuchsia,
+    
+  "pink"
+  pink,
+    
+  "rose"
+  rose,
+}
+
   type SelectedClass {
     class: Class!
     selectedSections: [Section!]!
-    color: String
+    color: Color
   }
 
   type Event {
@@ -15,7 +85,7 @@ const typedef = gql`
     location: String
     title: String!
     description: String
-    color: String
+    color: Color
   }
 
   type Schedule @cacheControl(maxAge: 1) {
@@ -43,7 +113,7 @@ const typedef = gql`
     location: String
     title: String!
     description: String
-    color: String
+    color: Color
   }
 
   input SelectedClassInput {
@@ -51,7 +121,7 @@ const typedef = gql`
     courseNumber: CourseNumber!
     number: ClassNumber!
     sectionIds: [SectionIdentifier!]!
-    color: String
+    color: Color
   }
 
   input UpdateScheduleInput {
@@ -73,8 +143,8 @@ const typedef = gql`
 
   type Mutation {
     deleteSchedule(id: ID!): ID @auth
-    createSchedule(schedule: CreateScheduleInput!): Schedule @auth
-    updateSchedule(id: ID!, schedule: UpdateScheduleInput!): Schedule @auth
+    createSchedule(schedule: CreateScheduleInput!): Schedule! @auth
+    updateSchedule(id: ID!, schedule: UpdateScheduleInput!): Schedule! @auth
   }
 `;
 

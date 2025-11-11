@@ -3,11 +3,11 @@ import { useEffect, useMemo, useRef } from "react";
 import { Plugins, Sortable } from "@shopify/draggable";
 import { Plus } from "iconoir-react";
 
-import { Button, Color } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
 import useSchedule from "@/hooks/useSchedule";
-import { IClass, IScheduleEvent } from "@/lib/api";
+import { IClass, IScheduleClass, IScheduleEvent } from "@/lib/api";
 
 import { getUnits } from "../../schedule";
 import EventDialog from "../EventDialog";
@@ -15,6 +15,7 @@ import Catalog from "./Catalog";
 import Class from "./Class";
 import Event from "./Event";
 import styles from "./SideBar.module.scss";
+import { Color } from "@/lib/generated/graphql";
 
 interface SideBarProps {
   expanded: boolean[];
@@ -38,7 +39,7 @@ interface SideBarProps {
   ) => void;
   onSectionMouseOut: () => void;
   onExpandedChange: (index: number, expanded: boolean) => void;
-  onDeleteClass: (cls: IClass) => void;
+  onDeleteClass: (cls: IScheduleClass["class"]) => void;
   onDeleteEvent: (event: IScheduleEvent) => void;
   onColorChange: (
     subject: string,

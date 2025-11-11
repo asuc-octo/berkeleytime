@@ -22,6 +22,7 @@ import {
 } from "./browser";
 import BrowserContext from "./browserContext";
 import { searchAndSortClasses } from "./searchAndSort";
+import { GetCatalogDocument } from "@/lib/generated/graphql";
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Relevance]: "asc",
@@ -80,7 +81,7 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
+  const { data, loading } = useQuery(GetCatalogDocument, {
     variables: {
       semester: currentSemester,
       year: currentYear,

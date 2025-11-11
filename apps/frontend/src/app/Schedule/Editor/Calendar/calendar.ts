@@ -1,4 +1,4 @@
-import { Color } from "@repo/theme";
+import { Color } from "@/lib/generated/graphql";
 
 export interface IEvent {
   subject: string;

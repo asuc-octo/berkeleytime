@@ -45,6 +45,7 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./metricsUtil";
+import { GetCourseRatingsDocument, GetSemestersWithRatingsDocument, GetUserRatingsDocument } from "@/lib/generated/graphql";
 
 // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
 // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
@@ -74,7 +75,7 @@ export function RatingsContainer() {
   const { data: termsData } = useReadTerms();
 
   // Get user's existing ratings
-  const { data: userRatingsData } = useQuery(GET_USER_RATINGS, {
+  const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
     skip: !user,
   });
 
@@ -118,7 +119,7 @@ export function RatingsContainer() {
   ]);
 
   // Get aggregated ratings for display
-  const { data: aggregatedRatings } = useQuery(GET_COURSE_RATINGS, {
+  const { data: aggregatedRatings } = useQuery(GetCourseRatingsDocument, {
     variables:
       currentClass?.subject && currentClass?.courseNumber
         ? {
@@ -155,7 +156,7 @@ export function RatingsContainer() {
 
   // Get semesters with ratings
   const { data: semestersWithRatingsData } =
-    useQuery<SemestersWithRatingsResponse>(GET_SEMESTERS_WITH_RATINGS, {
+    useQuery(GetSemestersWithRatingsDocument, {
       variables:
         currentClass?.subject && currentClass?.courseNumber
           ? {

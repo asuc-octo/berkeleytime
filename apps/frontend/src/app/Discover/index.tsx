@@ -11,6 +11,7 @@ import { GET_COURSES, GetCoursesResponse, ICourse } from "@/lib/api";
 
 import styles from "./Discover.module.scss";
 import Placeholder from "./Placeholder";
+import { GetCoursesDocument } from "@/lib/generated/graphql";
 
 interface RawResult {
   model: string;
@@ -31,7 +32,7 @@ interface Result {
 export default function Discover() {
   const [input, setInput] = useState("");
 
-  const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
+  const { data } = useQuery(GetCoursesDocument);
 
   const courses = useMemo(() => data?.courses ?? [], [data]);
 

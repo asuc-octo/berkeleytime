@@ -40,7 +40,7 @@ export default function CuratedClassEditor({
   const { data: terms, loading: termsLoading } = useReadTerms();
 
   const { data: classes, loading: classesLoading } =
-    useQuery<GetCatalogResponse>(GET_CATALOG, {
+    useQuery(GET_CATALOG, {
       variables: {
         semester: localValue.semester,
         year: localValue.year,

@@ -10,6 +10,7 @@ import { Recent, RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
 import { initialize } from "./browser";
+import { GetCourseNamesDocument } from "@/lib/generated/graphql";
 
 interface CourseSearchProps {
   onSelect?: (course: ICourse) => void;
@@ -32,7 +33,7 @@ export default function CourseSearch({
     Recent<RecentType.Course>[]
   >([]);
 
-  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
+  const { data, loading } = useQuery(GetCourseNamesDocument);
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];

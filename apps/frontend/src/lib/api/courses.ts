@@ -47,7 +47,7 @@ export interface ReadCourseResponse {
 }
 
 export const READ_COURSE_TITLE = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseTitle($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -58,7 +58,7 @@ export const READ_COURSE_TITLE = gql`
 `;
 
 export const READ_COURSE_UNITS = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseUnits($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       classes {
         unitsMax
@@ -70,7 +70,7 @@ export const READ_COURSE_UNITS = gql`
 `;
 
 export const READ_COURSE = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -113,7 +113,7 @@ export const READ_COURSE = gql`
 `;
 
 export const READ_COURSE_FOR_CLASS = gql`
-  query GetCourseForClass($subject: String!, $number: CourseNumber!) {
+  query ReadCourseForClass($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -159,7 +159,7 @@ export const READ_COURSE_FOR_CLASS = gql`
 `;
 
 export const READ_COURSE_GRADE_DIST = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseGradeDist($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       gradeDistribution {
         average
@@ -173,7 +173,7 @@ export const READ_COURSE_GRADE_DIST = gql`
 `;
 
 export const READ_COURSE_WITH_INSTRUCTOR = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseWithInstructor($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -229,7 +229,7 @@ export interface GetCoursesResponse {
 }
 
 export const GET_COURSE_NAMES = gql`
-  query GetCourses {
+  query GetCourseNames {
     courses {
       subject
       number

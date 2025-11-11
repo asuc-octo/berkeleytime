@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Color } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
-import { Component, IClass, ISection, componentMap } from "@/lib/api";
+import { Component, IClass, IScheduleClass, ISection, componentMap } from "@/lib/api";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
@@ -11,7 +11,7 @@ import Section from "./Section";
 interface ClassProps {
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
-  class: IClass;
+  class: IScheduleClass["class"];
   color: Color;
   selectedSections: ISection[];
   onSectionSelect: (
@@ -27,7 +27,7 @@ interface ClassProps {
     number: string
   ) => void;
   onSectionMouseOut: () => void;
-  onDelete: (cls: IClass) => void;
+  onDelete: (cls: IScheduleClass["class"]) => void;
   onColorChange: (
     subject: string,
     courseNumber: string,

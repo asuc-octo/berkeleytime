@@ -1,40 +1,9 @@
 import { gql } from "@apollo/client";
+import { GetTermsQuery } from "../generated/graphql";
 
-export type SessionIdentifier = string;
+export type ISession = NonNullable<GetTermsQuery["terms"][number]["sessions"]>[number];
 
-export enum Semester {
-  Fall = "Fall",
-  Spring = "Spring",
-  Summer = "Summer",
-  Winter = "Winter",
-}
-
-export enum TemporalPosition {
-  Current = "Current",
-  Future = "Future",
-  Past = "Past",
-}
-
-export interface ISession {
-  id: SessionIdentifier;
-  name: string;
-  startDate?: string;
-  endDate?: string;
-  temporalPosition: TemporalPosition;
-}
-
-export interface ITerm {
-  year: number;
-  semester: Semester;
-  temporalPosition: TemporalPosition;
-  sessions: ISession[];
-  startDate?: string;
-  endDate?: string;
-}
-
-export interface ReadTermsResponse {
-  terms: ITerm[];
-}
+export type ITerm = NonNullable<GetTermsQuery>["terms"][number];
 
 export const READ_TERMS = gql`
   query GetTerms {
@@ -54,10 +23,6 @@ export const READ_TERMS = gql`
     }
   }
 `;
-
-export interface ReadTermResponse {
-  term: ITerm;
-}
 
 export const READ_TERM = gql`
   query GetTerm($year: Int!, $semester: Semester!) {

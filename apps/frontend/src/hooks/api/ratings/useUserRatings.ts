@@ -3,10 +3,11 @@ import { useMemo } from "react";
 import { useQuery } from "@apollo/client/react";
 
 import { GET_USER_RATINGS, UserRatingsResponse } from "@/lib/api/ratings";
+import { GetUserRatingsDocument } from "@/lib/generated/graphql";
 
 export const useUserRatings = () => {
-  const { data, loading, error } = useQuery<UserRatingsResponse>(
-    GET_USER_RATINGS,
+  const { data, loading, error } = useQuery(
+    GetUserRatingsDocument,
     {
       fetchPolicy: "cache-and-network",
     }
@@ -17,7 +18,7 @@ export const useUserRatings = () => {
 
     return [...data.userRatings.classes].sort(
       (a, b) =>
-        new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
+        new Date(b.lastUpdated ?? 0).getTime() - new Date(a.lastUpdated ?? 0).getTime()
     );
   }, [data]);
 
