@@ -106,6 +106,8 @@ export default function Enrollment() {
   const [hoveredDuration, setHoveredDuration] =
     useState<moment.Duration | null>(null);
 
+  const [showWaitlist, setShowWaitlist] = useState<boolean>(false);
+
   // Memoized tooltip content renderer
   const tooltipContent: ContentType<number, string> = useCallback(
     (props: TooltipContentProps) => {
@@ -302,11 +304,26 @@ export default function Enrollment() {
     );
   };
 
+  const resetToLatest = useCallback(() => {
+    if (data && data.length > 0) {
+      const latestTimeDelta = data[data.length - 1].timeDelta;
+      setHoveredDuration(moment.duration(latestTimeDelta, "minutes"));
+    }
+  }, [data]);
+
   useEffect(() => {
     if (outputs.length > 0) {
       if (!hoveredSeries) setHoveredSeries(0);
     } else setHoveredSeries(null);
   }, [hoveredSeries, outputs]);
+
+  // Set initial hover duration to latest time when data is available
+  useEffect(() => {
+    if (data && data.length > 0 && !hoveredDuration) {
+      const latestTimeDelta = data[data.length - 1].timeDelta;
+      setHoveredDuration(moment.duration(latestTimeDelta, "minutes"));
+    }
+  }, [data, hoveredDuration]);
 
   const dataMax = useMemo(() => {
     if (!data) return 0;
@@ -321,6 +338,16 @@ export default function Enrollment() {
       }, 0) * 1.2
     );
   }, [data]);
+
+  const toggleWaitlist = useCallback(() => {
+    setShowWaitlist((prev) => !prev);
+  }, []);
+
+  const isLatest = useMemo(() => {
+    if (!data || data.length === 0 || !hoveredDuration) return false;
+    const latestTimeDelta = data[data.length - 1].timeDelta;
+    return Math.abs(hoveredDuration.asMinutes() - latestTimeDelta) < 1; // Within 1 minute tolerance
+  }, [data, hoveredDuration]);
 
   return (
     <Box p="5" className={styles.root}>
@@ -340,6 +367,7 @@ export default function Enrollment() {
                   height={200}
                   data={data}
                   onMouseMove={updateGraphHover}
+                  onMouseLeave={resetToLatest}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -379,34 +407,25 @@ export default function Enrollment() {
                   {outputs?.length && <Tooltip content={tooltipContent} />}
                   {filteredOutputs?.map((output, index) => {
                     const originalIndex = outputs.indexOf(output);
+                    const dataKey = showWaitlist
+                      ? `waitlist_${originalIndex}`
+                      : `enroll_${originalIndex}`;
+                    const name = showWaitlist
+                      ? `${output.input.subject} ${output.input.courseNumber} (Waitlist)`
+                      : `${output.input.subject} ${output.input.courseNumber}`;
                     return (
                       <React.Fragment key={index}>
                         <Line
-                          dataKey={`enroll_${originalIndex}`}
+                          dataKey={dataKey}
                           stroke={
                             activeOutput && !output.active
                               ? DARK_COLORS[originalIndex]
                               : LIGHT_COLORS[originalIndex]
                           }
-                          name={`${output.input.subject} ${output.input.courseNumber}`}
+                          name={name}
                           isAnimationActive={shouldAnimate.current}
                           dot={false}
                           strokeWidth={3}
-                          type="monotone"
-                          connectNulls
-                        />
-                        <Line
-                          dataKey={`waitlist_${originalIndex}`}
-                          stroke={
-                            activeOutput && !output.active
-                              ? DARK_COLORS[originalIndex]
-                              : LIGHT_COLORS[originalIndex]
-                          }
-                          name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                          isAnimationActive={shouldAnimate.current}
-                          dot={false}
-                          strokeWidth={2}
-                          strokeDasharray="5 5"
                           type="monotone"
                           connectNulls
                         />
@@ -427,19 +446,31 @@ export default function Enrollment() {
             </div>
             <div className={styles.hoverInfoContainer}>
               {outputs?.[0] ? (
-                outputs.map((output: Output, i: number) => (
-                  <div key={i} className={styles.hoverInfoCard}>
-                    <HoverInfo
-                      color={LIGHT_COLORS[i]}
-                      subject={output.input.subject}
-                      courseNumber={output.input.courseNumber}
-                      enrollmentHistory={output.enrollmentHistory}
-                      hoveredDuration={hoveredDuration}
-                      semester={output.input.semester}
-                      year={output.input.year}
-                    />
-                  </div>
-                ))
+                <>
+                  {outputs.map((output: Output, i: number) => (
+                    <div key={i} className={styles.hoverInfoCard}>
+                      <HoverInfo
+                        color={LIGHT_COLORS[i]}
+                        subject={output.input.subject}
+                        courseNumber={output.input.courseNumber}
+                        enrollmentHistory={output.enrollmentHistory}
+                        hoveredDuration={hoveredDuration}
+                        semester={output.input.semester}
+                        year={output.input.year}
+                        isLatest={isLatest}
+                      />
+                    </div>
+                  ))}
+                  <button
+                    className={styles.toggleWaitlistButton}
+                    onClick={toggleWaitlist}
+                    type="button"
+                  >
+                    <span>
+                      {showWaitlist ? "Show Enrollment" : "Show Waitlist"}
+                    </span>
+                  </button>
+                </>
               ) : (
                 <div className={styles.hoverInfoCard}>
                   <HoverInfo

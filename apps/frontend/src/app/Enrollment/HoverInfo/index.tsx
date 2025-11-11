@@ -17,6 +17,7 @@ interface HoverInfoProps {
   semester?: Semester;
   year?: number;
   hoveredDuration: moment.Duration | null;
+  isLatest?: boolean;
 }
 
 const DisplayCount = (count: number, capacity: number) => {
@@ -35,6 +36,7 @@ export default function HoverInfo({
   semester,
   year,
   hoveredDuration,
+  isLatest = false,
 }: HoverInfoProps) {
   const { enrollmentSingular, timeString } = useMemo(() => {
     if (!enrollmentHistory || !hoveredDuration) {
@@ -99,24 +101,29 @@ export default function HoverInfo({
       ) : (
         <div className={styles.distType}>No data</div>
       )}
-      <div className={styles.label}>{timeString}</div>
-      {enrollmentSingular ? (
-        <div className={styles.value}>
-          Enrolled:{" "}
-          {DisplayCount(
-            enrollmentSingular.enrolledCount,
-            enrollmentSingular.maxEnroll
+      {enrollmentHistory && hoveredDuration && (
+        <>
+          <div className={styles.label}>
+            {isLatest && "Latest • "}
+            {timeString}
+          </div>
+          {enrollmentSingular && (
+            <div className={styles.value}>
+              Enrolled:{" "}
+              {DisplayCount(
+                enrollmentSingular.enrolledCount,
+                enrollmentSingular.maxEnroll
+              )}
+              <br />
+              Waitlisted:{" "}
+              {DisplayCount(
+                enrollmentSingular.waitlistedCount,
+                enrollmentSingular.maxWaitlist
+              )}
+              <br />
+            </div>
           )}
-          <br />
-          Waitlisted:{" "}
-          {DisplayCount(
-            enrollmentSingular.waitlistedCount,
-            enrollmentSingular.maxWaitlist
-          )}
-          <br />
-        </div>
-      ) : (
-        <div className={styles.value}>No data</div>
+        </>
       )}
     </div>
   );
