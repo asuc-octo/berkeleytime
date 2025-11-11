@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: [master, gql]
+    branches: [main]
     paths-ignore: ["docs/**"]
 
 jobs:

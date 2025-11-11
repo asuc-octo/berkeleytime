@@ -2,7 +2,7 @@ name: Deploy Storybook
 
 on:
   push:
-    branches: [master, gql]
+    branches: [main]
     paths:
       [
         "packages/theme/**",
