@@ -200,7 +200,7 @@ const checkEnrollmentThresholds = async (config: Config) => {
           maxEnroll: latestData.maxEnroll,
           waitlistedCount: latestData.waitlistedCount || 0,
           maxWaitlist: latestData.maxWaitlist || 0,
-          timestamp: latestData.time,
+          timestamp: latestData.endTime.toString(),
           previousPercentage,
         });
       }
