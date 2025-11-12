@@ -55,7 +55,7 @@ export default function Footer({ invert }: FooterProps) {
               <IconButton
                 className={styles.iconButton}
                 as="a"
-                href="https://www.instagram.com/"
+                href="https://www.instagram.com/berkeleytimeofficial/"
                 target="_blank"
               >
                 <Instagram />
