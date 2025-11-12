@@ -71,8 +71,8 @@ const Home = () => {
     <div className={styles.root}>
       <Hero step={step} milliseconds={milliseconds} />
       <Features />
-      <img style={{ backgroundColor: step.colors[1] }} src={bottomWave} />
-      <Organization step={step} />
+      <img style={{ backgroundColor: "var(--neutral-900)" }} src={bottomWave} />
+      <Organization />
     </div>
   );
 };
