@@ -12,9 +12,13 @@ import SideBar from "./SideBar";
 
 interface NavigationBarProps {
   invert?: boolean;
+  accentColor?: string;
 }
 
-export default function NavigationBar({ invert }: NavigationBarProps) {
+export default function NavigationBar({
+  invert,
+  accentColor,
+}: NavigationBarProps) {
   const { user } = useUser();
 
   return (
@@ -79,12 +83,21 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
         </NavLink> */}
       </div>
       {user ? (
-        <Button as={Link} to={"/profile"} className={styles.button}>
+        <Button
+          as={Link}
+          to={"/profile"}
+          className={styles.button}
+          style={{ color: accentColor }}
+        >
           {user.email}
           <User />
         </Button>
       ) : (
-        <Button onClick={() => signIn()} className={styles.button}>
+        <Button
+          onClick={() => signIn()}
+          className={styles.button}
+          style={{ color: accentColor }}
+        >
           Sign in
           <ArrowRight />
         </Button>
