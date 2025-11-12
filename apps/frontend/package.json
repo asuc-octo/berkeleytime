@@ -34,6 +34,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^6.0.1",
     "@repo/eslint-config": "*",
+    "@repo/gql-typedefs": "*",
     "@repo/typescript-config": "*",
     "@types/lodash": "^4.17.20",
     "@types/mapbox-gl": "^3.4.1",
