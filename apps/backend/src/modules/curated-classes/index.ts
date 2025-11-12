@@ -1,7 +1,8 @@
+import { curatedClassesTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/curated-classes";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: curatedClassesTypeDef,
 };

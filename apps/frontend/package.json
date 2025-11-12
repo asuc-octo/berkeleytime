@@ -8,7 +8,7 @@
     "lint": "eslint src/",
     "start": "serve -s dist -p 3000",
     "test": "vitest run",
-    "generate": "graphql-codegen"
+    "generate": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@apollo/client": "4.0.7",
@@ -32,6 +32,7 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^6.0.1",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/lodash": "^4.17.20",

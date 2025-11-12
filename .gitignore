@@ -23,6 +23,7 @@ dist/
 db/
 data/
 generated-types/
+generated-typedefs/
 
 # others
 *.cert

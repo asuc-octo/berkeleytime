@@ -1,7 +1,8 @@
+import { catalogTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/catalog";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: catalogTypeDef,
 };

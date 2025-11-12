@@ -5,13 +5,13 @@
     "start": "tsx src/main.ts",
     "dev": "tsx watch src/main.ts",
     "build": "tsc --noEmit",
-    "generate": "graphql-codegen"
+    "generate": "node scripts/prepare-typedefs.js && graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-typescript": "^7.27.1",
-    "@graphql-codegen/cli": "6.0.0",
+    "@graphql-codegen/cli": "^6.0.0",
     "@graphql-codegen/graphql-modules-preset": "^5.0.3",
     "@graphql-codegen/introspection": "5.0.0",
     "@graphql-codegen/typescript": "^5.0.2",
@@ -39,6 +39,7 @@
     "@graphql-tools/utils": "^10.9.1",
     "@keyv/redis": "^5.1.2",
     "@repo/common": "*",
+    "@repo/gql-typedefs": "*",
     "@repo/shared": "*",
     "@repo/sis-api": "*",
     "compression": "^1.8.1",

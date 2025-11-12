@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-export default gql`
+export const courseTypeDef = gql`
   scalar CourseIdentifier
   scalar CourseNumber
 

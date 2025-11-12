@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-const typedef = gql`
+export const userTypeDef = gql`
   type User @cacheControl(scope: PRIVATE) {
     _id: ID!
     email: String!
@@ -42,5 +42,3 @@ const typedef = gql`
     updateUser(user: UpdateUserInput!): User @auth
   }
 `;
-
-export default typedef;

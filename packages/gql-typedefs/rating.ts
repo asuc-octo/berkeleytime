@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-const typedef = gql`
+export const ratingTypeDef = gql`
   enum MetricName {
     Usefulness
     Difficulty
@@ -131,5 +131,3 @@ const typedef = gql`
     ): Boolean! @auth
   }
 `;
-
-export default typedef;

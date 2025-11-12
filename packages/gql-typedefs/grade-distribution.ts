@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-export default gql`
+export const gradeDistributionTypeDef = gql`
   type GradeDistribution {
     average: Float
     distribution: [Grade!]

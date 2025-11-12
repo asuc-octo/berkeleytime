@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-const typedef = gql`
+export const curatedClassesTypeDef = gql`
   type CuratedClass @cacheControl(maxAge: 1) {
     _id: ID!
 
@@ -62,5 +62,3 @@ const typedef = gql`
     deleteCuratedClass(id: ID!): ID! @auth
   }
 `;
-
-export default typedef;

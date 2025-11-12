@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-const typedef = gql`
+export const scheduleTypeDef = gql`
   enum Color {
     "slate"
     slate
@@ -145,5 +145,3 @@ const typedef = gql`
     updateSchedule(id: ID!, schedule: UpdateScheduleInput!): Schedule! @auth
   }
 `;
-
-export default typedef;

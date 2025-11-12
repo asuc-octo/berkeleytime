@@ -1,7 +1,7 @@
 // TODO: Write major prereq
 import { gql } from "graphql-tag";
 
-const typeDef = gql`
+export const planTypeDef = gql`
   enum Terms {
     Fall
     Spring
@@ -255,5 +255,3 @@ const typeDef = gql`
     deletePlan: String @auth
   }
 `;
-
-export default typeDef;

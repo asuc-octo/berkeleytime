@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-const typedef = gql`
+export const termTypeDef = gql`
   enum Semester {
     Summer
     Fall
@@ -82,5 +82,3 @@ const typedef = gql`
     term(year: Int!, semester: Semester!): Term
   }
 `;
-
-export default typedef;

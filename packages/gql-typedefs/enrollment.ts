@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-export default gql`
+export const enrollmentTypeDef = gql`
   type Query {
     enrollment(
       year: Int!
