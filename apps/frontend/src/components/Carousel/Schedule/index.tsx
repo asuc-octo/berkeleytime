@@ -7,9 +7,9 @@ import styles from "./Schedule.module.scss";
 
 interface ScheduleProps {
   _id: string;
-  name: String;
+  name: string;
   classes: IScheduleClass[];
-  semester?: String;
+  semester?: string;
 }
 
 export default function Schedule({

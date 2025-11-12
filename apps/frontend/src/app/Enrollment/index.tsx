@@ -27,7 +27,6 @@ import type { ContentType } from "recharts/types/component/Tooltip";
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
-import { READ_ENROLLMENT } from "@/lib/api";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 
 import CourseManager from "./CourseManager";

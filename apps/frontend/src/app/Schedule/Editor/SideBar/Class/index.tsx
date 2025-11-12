@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
-import { IScheduleClass, ISection, componentMap } from "@/lib/api";
+import { IScheduleClass, componentMap } from "@/lib/api";
 import { Color, Component, Semester } from "@/lib/generated/graphql";
 
 import styles from "./Class.module.scss";

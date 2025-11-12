@@ -1,16 +1,7 @@
 import { useCallback } from "react";
 
-import { QueryHookOptions, useLazyQuery, useQuery } from "@apollo/client/react";
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 
-import {
-  READ_COURSE,
-  READ_COURSE_FOR_CLASS,
-  READ_COURSE_GRADE_DIST,
-  READ_COURSE_TITLE,
-  READ_COURSE_UNITS,
-  READ_COURSE_WITH_INSTRUCTOR,
-  ReadCourseResponse,
-} from "@/lib/api";
 import {
   ReadCourseDocument,
   ReadCourseForClassDocument,

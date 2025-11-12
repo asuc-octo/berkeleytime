@@ -1,4 +1,3 @@
-import { ICourse } from "@/lib/api";
 import { subjects } from "@/lib/course";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { GetPlanQuery, GetPlansQuery } from "../generated/graphql";
+import { GetPlanQuery } from "../generated/graphql";
 
 export type ILabel = NonNullable<
   GetPlanQuery["planByUser"][number]["labels"]

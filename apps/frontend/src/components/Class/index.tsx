@@ -35,7 +35,7 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
-import { IClass, IClassCourse, ICourse } from "@/lib/api";
+import { IClass, IClassCourse } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";

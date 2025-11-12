@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import { Tooltip } from "radix-ui";
 
-import { IGradeDistribution } from "@/lib/api";
 import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";

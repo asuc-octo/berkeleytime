@@ -204,14 +204,14 @@ export default function Editor() {
       previousIndex -= schedule.events.length;
       currentIndex -= schedule.events.length;
 
+      if (previousIndex < 0 || currentIndex < 0) return;
+
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
       const [removed] = _schedule.classes.splice(previousIndex, 1);
 
       _schedule.classes.splice(currentIndex, 0, removed);
-
-      console.log(_schedule.classes);
 
       // Update the schedule
       updateSchedule(

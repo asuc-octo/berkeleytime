@@ -15,7 +15,6 @@ import Header from "../Header";
 import {
   Breadth,
   Day,
-  GradingBasis,
   GradingFilter,
   Level,
   SortBy,

@@ -7,17 +7,12 @@ import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { IClass, ICourse, ICourseWithInstructorClass } from "@/lib/api";
+import { ICourse, ICourseWithInstructorClass } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import {
-  LIGHT_COLORS,
-  Output,
-  getInputSearchParam,
-  isInputEqual,
-} from "../../types";
+import { Output, getInputSearchParam, isInputEqual } from "../../types";
 import styles from "./CourseInput.module.scss";
 
 interface CourseInputProps {

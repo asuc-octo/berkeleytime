@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client/react";
 
-import { READ_USER, ReadUserResponse } from "@/lib/api";
 import {
   GetUserDocument,
   GetUserQuery,

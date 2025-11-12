@@ -6,10 +6,9 @@ import { Boundary, LoadingIndicator } from "@repo/theme";
 
 import ScheduleContext from "@/contexts/ScheduleContext";
 import { useReadSchedule, useReadUser } from "@/hooks/api";
-import { ISchedule } from "@/lib/api";
-import { Color, Schedule as ScheduleType } from "@/lib/generated/graphql";
+import { Color } from "@/lib/generated/graphql";
 
-import { acceptedColors, getNextClassColor } from "./schedule";
+import { getNextClassColor } from "./schedule";
 
 export default function Schedule() {
   const { scheduleId } = useParams();

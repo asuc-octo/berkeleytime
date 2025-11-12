@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client/react";
 
-import { READ_TERMS, ReadTermsResponse } from "@/lib/api";
 import {
   GetTermsDocument,
   GetTermsQuery,

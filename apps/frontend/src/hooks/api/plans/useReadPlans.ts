@@ -1,6 +1,5 @@
-import { QueryHookOptions, useQuery } from "@apollo/client/react";
+import { useQuery } from "@apollo/client/react";
 
-import { READ_PLANS, ReadPlanResponse } from "@/lib/api";
 import {
   GetPlansDocument,
   GetPlansQuery,

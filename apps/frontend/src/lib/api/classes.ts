@@ -5,13 +5,8 @@ import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
 import {
   AcademicCareer,
   Component,
-  Exam,
   GetCanonicalCatalogQuery,
   GetClassQuery,
-  Instructor,
-  Meeting,
-  SectionAttribute,
-  SectionAttributeInfo,
 } from "../generated/graphql";
 
 export const READ_CLASS = gql`

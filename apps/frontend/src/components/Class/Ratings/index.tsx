@@ -41,7 +41,6 @@ import styles from "./Ratings.module.scss";
 import UserRatingSummary from "./UserRatingSummary";
 import {
   MetricData,
-  UserRating,
   checkConstraint,
   getMetricStatus,
   getStatusColor,

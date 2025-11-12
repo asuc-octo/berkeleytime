@@ -274,7 +274,7 @@ export default function Dashboard() {
 
   // Helper functions to update both local state and backend
   const handleUpdateTermName = async (termId: string, name: string) => {
-    let updatedPlanTerms = [...localPlanTerms];
+    const updatedPlanTerms = [...localPlanTerms];
     const termIndex = localPlanTerms.findIndex((term) => term._id === termId);
     if (termIndex !== -1) {
       const updatedTerm = {

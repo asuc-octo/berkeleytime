@@ -76,27 +76,28 @@ export default function SideBar({
 
     // TODO: Fix sorting
 
-    const sortable = new Sortable(bodyRef.current, {
-      draggable: `[data-draggable]`,
-      distance: 8,
-      mirror: {
-        constrainDimensions: true,
-      },
-      plugins: [Plugins.ResizeMirror],
-    });
+    // const sortable = new Sortable(bodyRef.current, {
+    //   draggable: `[data-draggable]`,
+    //   distance: 8,
+    //   mirror: {
+    //     constrainDimensions: true,
+    //   },
+    //   plugins: [Plugins.ResizeMirror],
+    // });
 
-    sortable.on("drag:stop", (event) => {
-      event.cancel();
-    });
+    // // sortable.on("drag:stop", (event) => {
+    // //   event.cancel();
+    // // });
 
-    sortable.on("sortable:stop", (event) => {
-      const { oldIndex, newIndex } = event;
-      onSortEnd(oldIndex, newIndex);
-    });
+    // sortable.on("sortable:stop", (event) => {
+    //   const { oldIndex, newIndex } = event;
+    //   console.log(oldIndex, newIndex);
+    //   onSortEnd(oldIndex, newIndex);
+    // });
 
-    return () => {
-      sortable.destroy();
-    };
+    // return () => {
+    //   sortable.destroy();
+    // };
   }, [onSortEnd]);
 
   return (

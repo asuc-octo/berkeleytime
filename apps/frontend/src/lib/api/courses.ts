@@ -1,12 +1,9 @@
 import { gql } from "@apollo/client";
 
-import { IClass } from ".";
 import {
   ReadCourseQuery,
   ReadCourseWithInstructorQuery,
-  Semester,
 } from "../generated/graphql";
-import { IAggregatedRatings } from "./ratings";
 
 export type ICourse = NonNullable<ReadCourseQuery["course"]>;
 

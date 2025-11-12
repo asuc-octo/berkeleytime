@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { MinusSquareDashed, MinusSquareSolid } from "iconoir-react";
 import moment from "moment";
 
-import { ISchedule, IScheduleEvent, ITerm } from "@/lib/api";
+import { ISchedule, IScheduleEvent } from "@/lib/api";
 import { Color } from "@/lib/generated/graphql";
 
 import { SectionColor } from "../../schedule";

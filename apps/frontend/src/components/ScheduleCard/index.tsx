@@ -11,7 +11,7 @@ import { Semester } from "@/lib/generated/graphql";
 
 interface ScheduleProps {
   _id: string;
-  name: String;
+  name: string;
   classes: IScheduleListClass[];
   semester?: Semester;
 }

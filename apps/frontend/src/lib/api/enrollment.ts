@@ -1,11 +1,6 @@
 import { gql } from "@apollo/client";
 
-import {
-  EnrollmentSingular,
-  GetEnrollmentQuery,
-  ReservationType,
-  SeatReservationCounts,
-} from "../generated/graphql";
+import { EnrollmentSingular, GetEnrollmentQuery } from "../generated/graphql";
 
 export type IEnrollmentSingular = EnrollmentSingular;
 

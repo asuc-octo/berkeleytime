@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client/react";
 
-import { READ_CLASS, ReadClassResponse, Semester } from "@/lib/api";
+import { Semester } from "@/lib/api";
 import {
   GetClassDocument,
   GetClassQuery,

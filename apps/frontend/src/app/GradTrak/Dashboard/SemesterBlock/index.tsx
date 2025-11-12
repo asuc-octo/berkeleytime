@@ -82,8 +82,6 @@ function SemesterBlock({
     filteredSemesters[semesterId] || []
   );
   const [totalUnits, setTotalUnits] = useState(0);
-  const [_pnpUnits, setPnpUnits] = useState(0);
-  const [_transferUnits, setTransferUnits] = useState(0);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -581,7 +579,7 @@ function SemesterBlock({
                       try {
                         removePlanTermByID(planTerm._id);
                         handleRemoveTerm();
-                      } catch (error) {
+                      } catch {
                         return;
                       }
                       onTotalUnitsChange(0, 0, 0);
