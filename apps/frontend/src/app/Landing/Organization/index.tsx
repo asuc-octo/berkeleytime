@@ -4,9 +4,23 @@ import Footer from "@/components/Footer";
 
 import styles from "./Organization.module.scss";
 
-export default function Organization() {
+interface OrganizationProps {
+  step: {
+    colors: string[];
+    gradient?: string[];
+    angle?: string;
+    image: string;
+  };
+}
+
+export default function Organization({ step }: OrganizationProps) {
   return (
-    <Flex direction="column" className={styles.root} pt="9">
+    <Flex
+      direction="column"
+      className={styles.root}
+      style={{ backgroundColor: step.colors[1] }}
+      pt="9"
+    >
       <Container size="1">
         <h3 className={styles.heading}>Get involved</h3>
         <Accordion.Root>
