@@ -1,8 +1,16 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 
-import { Component, IClass, ITerm, Semester } from "@/lib/api";
+import { IClass, ITerm, Semester } from "@/lib/api";
 
-import { Breadth, Day, Level, SortBy, Unit, UniversityRequirement } from "./browser";
+import {
+  Breadth,
+  Day,
+  GradingFilter,
+  Level,
+  SortBy,
+  UnitRange,
+  UniversityRequirement,
+} from "./browser";
 
 export interface BrowserContextType {
   responsive: boolean;
@@ -15,23 +23,25 @@ export interface BrowserContextType {
   semester: Semester;
   terms?: ITerm[];
   query: string;
-  components: Component[];
-  units: Unit[];
+  units: UnitRange;
   levels: Level[];
   days: Day[];
   breadths: Breadth[];
   universityRequirement: UniversityRequirement | null;
+  gradingFilters: GradingFilter[];
+  department: string | null;
   online: boolean;
   sortBy: SortBy;
   open: boolean;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
-  updateComponents: Dispatch<Component[]>;
-  updateUnits: Dispatch<Unit[]>;
+  updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
   updateBreadths: Dispatch<Breadth[]>;
   updateUniversityRequirement: Dispatch<UniversityRequirement | null>;
+  updateGradingFilters: Dispatch<GradingFilter[]>;
+  updateDepartment: Dispatch<string | null>;
   updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
   updateOpen: Dispatch<boolean>;

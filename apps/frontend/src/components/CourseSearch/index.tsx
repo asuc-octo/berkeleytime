@@ -41,8 +41,7 @@ export default function CourseSearch({
 
   const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
   const currentCourses = useMemo(() => {
-    // Don't search until user types at least 2 characters
-    if (!searchQuery || searchQuery.length < 2) return [];
+    if (!searchQuery) return [];
 
     return index
       .search(searchQuery.slice(0, 24))
@@ -86,12 +85,19 @@ export default function CourseSearch({
               : "")
           }
           onFocus={() => setIsOpen(true)}
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            if (!searchQuery && selectedCourse && onClear) onClear(); // clear on click
+            setIsOpen(true);
+          }}
           onChange={(e) => {
             setSearchQuery(e.target.value);
             if (onClear) onClear();
           }}
-          style={inputStyle}
+          style={{
+            ...inputStyle,
+            cursor:
+              !searchQuery && selectedCourse && onClear ? "pointer" : undefined,
+          }}
         />
       </div>
 
@@ -131,7 +137,7 @@ export default function CourseSearch({
                 </section>
               )}
 
-              {searchQuery && searchQuery.length >= 2 && (
+              {searchQuery && (
                 <section className={styles.section}>
                   <h2>CATALOG</h2>
                   <div className={styles.catalogList}>
