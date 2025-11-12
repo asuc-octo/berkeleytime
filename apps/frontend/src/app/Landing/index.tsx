@@ -44,8 +44,16 @@ const steps = [
 
 const getStep = (milliseconds: number) => {
   const date = new Date(milliseconds);
-  const index = Math.floor(((date.getHours() - 0) / 24) * 6);
-  return steps[index];
+  const hour = date.getHours();
+
+  if (hour >= 6 && hour < 10) return steps[1];
+  if (hour >= 10 && hour < 13) return steps[3];
+  if (hour >= 13 && hour < 16) return steps[2];
+  if (hour >= 16 && hour < 19) return steps[4];
+  if (hour >= 21 || hour < 4) return steps[5];
+
+  // 4am to 6am or 7pm to 9pm
+  return steps[0];
 };
 
 const Home = () => {
