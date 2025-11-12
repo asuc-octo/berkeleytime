@@ -23,20 +23,19 @@ const steps = [
     image: sunrise,
   },
   {
-    colors: ["#26C9A5", "#DFCA6B"],
+    colors: ["#76A6FF", "#4FB4FF"],
     image: morning,
   },
   {
-    gradient: ["var(--blue-500)", "var(--sky-500)"],
-    colors: ["var(--blue-500)", "#0ea5e9"],
+    colors: ["#26C9A5", "#DFCA6B"],
     image: afternoon,
   },
   {
-    colors: ["#D45C72", "#ADA6FD"],
+    colors: ["#E4A70A", "#FF7500"],
     image: sunset,
   },
   {
-    colors: ["#10101B", "#202036"],
+    colors: ["#10101A", "#161646"],
     angle: "to bottom right",
     image: dusk,
   },
