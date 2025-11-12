@@ -75,3 +75,6 @@ datapuller:
     enrollments:
       schedule: "0/15 * * * *"
       args: ["--puller=enrollments"]
+    enrollment-checks:
+      schedule: "5,20,35,50 * * * *"
+      args: ["--puller=enrollment-checks"]

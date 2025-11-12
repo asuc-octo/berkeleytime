@@ -27,3 +27,9 @@ generated-types/
 # others
 *.cert
 *.key
+
+apps/frontend/tsconfig.node.tsbuildinfo
+apps/frontend/tsconfig.tsbuildinfo
+apps/frontend/vite.config.d.ts
+apps/frontend/vite.config.js
+prod-backup.gz

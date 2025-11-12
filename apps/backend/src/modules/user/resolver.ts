@@ -1,6 +1,7 @@
 import {
   getBookmarkedClasses,
   getBookmarkedCourses,
+  getMonitoredClasses,
   getUser,
   updateUser,
 } from "./controller";
@@ -39,6 +40,21 @@ const resolvers: UserModule.Resolvers = {
       const courses = await getBookmarkedCourses(parent.bookmarkedCourses);
 
       return courses as unknown as UserModule.Course[];
+    },
+
+    monitoredClasses: async (parent: UserModule.User | IntermediateUser) => {
+      if (
+        parent.monitoredClasses[0] &&
+        (parent.monitoredClasses[0] as UserModule.MonitoredClass).class
+      ) {
+        return parent.monitoredClasses as UserModule.MonitoredClass[];
+      }
+
+      const monitoredClasses = await getMonitoredClasses(
+        parent.monitoredClasses
+      );
+
+      return monitoredClasses as unknown as UserModule.MonitoredClass[];
     },
   },
 
