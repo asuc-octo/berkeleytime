@@ -46,13 +46,18 @@ const getStep = (milliseconds: number) => {
   const date = new Date(milliseconds);
   const hour = date.getHours();
 
+  // 6am to 10am => sunrise
   if (hour >= 6 && hour < 10) return steps[1];
-  if (hour >= 10 && hour < 13) return steps[3];
-  if (hour >= 13 && hour < 16) return steps[2];
+  // 10am to 1pm => morning
+  if (hour >= 10 && hour < 13) return steps[2];
+  // 1pm to 4pm => afternoon
+  if (hour >= 13 && hour < 16) return steps[3];
+  // 4pm to 7pm => sunset
   if (hour >= 16 && hour < 19) return steps[4];
+  // 9pm to 4am => dusk
   if (hour >= 21 || hour < 4) return steps[5];
 
-  // 4am to 6am or 7pm to 9pm
+  // 4am to 6am or 7pm to 9pm => dawn
   return steps[0];
 };
 
