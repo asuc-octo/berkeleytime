@@ -5,7 +5,7 @@ import { buildings } from "@/lib/location";
 import styles from "./Location.module.scss";
 
 interface LocationProps {
-  location: string | null;
+  location?: string | null;
 }
 
 export default function Location({ location }: LocationProps) {

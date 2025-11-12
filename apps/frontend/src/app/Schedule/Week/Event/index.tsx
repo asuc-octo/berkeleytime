@@ -14,7 +14,6 @@ interface EventProps {
   position: number;
   active: boolean;
   flipPopup: boolean;
-  color: Color;
 }
 
 // TODO: Hover card
@@ -122,7 +121,7 @@ export default function Event({
         style={popupStyle}
       >
         <Card.Root>
-          <Card.LeftBorder color={color} />
+          <Card.LeftBorder color={color as Color} />
           <Card.Body>
             <Card.Heading>{title}</Card.Heading>
             <Card.Description>{description}</Card.Description>

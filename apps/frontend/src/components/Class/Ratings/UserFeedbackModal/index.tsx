@@ -4,9 +4,10 @@ import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { Button, Dialog, Flex, Select } from "@repo/theme";
 
 import { useReadTerms } from "@/hooks/api";
-import { Semester, TemporalPosition } from "@/lib/api";
+import { IUserRatingClass } from "@/lib/api";
+import { Semester, TemporalPosition } from "@/lib/generated/graphql";
 
-import { MetricData, UserRating, toMetricData } from "../metricsUtil";
+import { MetricData, toMetricData } from "../metricsUtil";
 import { SubmitRatingPopup } from "./ConfirmationPopups";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
 import styles from "./UserFeedbackModal.module.scss";
@@ -36,7 +37,7 @@ interface UserFeedbackModalProps {
     metricData: MetricData,
     termInfo: { semester: Semester; year: number }
   ) => Promise<void>;
-  initialUserClass: UserRating | null;
+  initialUserClass: IUserRatingClass | null;
 }
 
 export function UserFeedbackModal({

@@ -1,50 +1,14 @@
 import { gql } from "@apollo/client";
 
-import { GradeDistribution, IClass, InstructionMethod } from ".";
+import { IClass } from ".";
+import {
+  ReadCourseQuery,
+  ReadCourseWithInstructorQuery,
+  Semester,
+} from "../generated/graphql";
 import { IAggregatedRatings } from "./ratings";
-import { Semester } from "./terms";
 
-export enum AcademicCareer {
-  Undergraduate = "UGRD",
-  Graduate = "GRAD",
-  Extension = "UCBX",
-}
-
-export const academicCareers: Record<AcademicCareer, string> = {
-  [AcademicCareer.Undergraduate]: "Undergraduate",
-  [AcademicCareer.Graduate]: "Graduate",
-  [AcademicCareer.Extension]: "Extension",
-};
-
-export interface ICourse {
-  // Identifiers
-  courseId: string;
-  subject: string;
-  number: string;
-
-  // Relationships
-  classes: IClass[];
-  crossListing: ICourse[];
-  requiredCourses: ICourse[];
-  gradeDistribution: GradeDistribution;
-
-  // Attributes
-  requirements: string | null;
-  description: string;
-  fromDate: string;
-  gradingBasis: string;
-  finalExam: string | null;
-  academicCareer: AcademicCareer;
-  title: string;
-  primaryInstructionMethod: InstructionMethod;
-  toDate: string;
-  typicallyOffered: Semester[] | null;
-  aggregatedRatings?: IAggregatedRatings;
-}
-
-export interface ReadCourseResponse {
-  course: ICourse;
-}
+export type ICourse = NonNullable<ReadCourseQuery["course"]>;
 
 export const READ_COURSE_TITLE = gql`
   query ReadCourseTitle($subject: String!, $number: CourseNumber!) {
@@ -115,36 +79,38 @@ export const READ_COURSE = gql`
 export const READ_COURSE_FOR_CLASS = gql`
   query ReadCourseForClass($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
-      courseId
-      subject
-      number
       title
       description
-      academicCareer
-      gradingBasis
-      finalExam
-      requirements
+      aggregatedRatings {
+        metrics {
+          categories {
+            count
+            value
+          }
+          count
+          metricName
+          weightedAverage
+        }
+      }
       gradeDistribution {
         average
+        pnpPercentage
         distribution {
           letter
           count
         }
       }
-      aggregatedRatings {
-        metrics {
-          metricName
-          count
-          weightedAverage
-          categories {
-            value
-            count
-          }
-        }
+      academicCareer
+      requirements
+      requiredCourses {
+        subject
+        number
       }
       classes {
         semester
         year
+        number
+        anyPrintInScheduleOfClasses
         primarySection {
           meetings {
             instructors {
@@ -224,9 +190,9 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
   }
 `;
 
-export interface GetCoursesResponse {
-  courses: ICourse[];
-}
+export type ICourseWithInstructorClass = NonNullable<
+  ReadCourseWithInstructorQuery["course"]
+>["classes"][number];
 
 export const GET_COURSE_NAMES = gql`
   query GetCourseNames {

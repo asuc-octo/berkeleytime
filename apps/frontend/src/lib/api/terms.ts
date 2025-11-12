@@ -1,7 +1,10 @@
 import { gql } from "@apollo/client";
+
 import { GetTermsQuery } from "../generated/graphql";
 
-export type ISession = NonNullable<GetTermsQuery["terms"][number]["sessions"]>[number];
+export type ISession = NonNullable<
+  GetTermsQuery["terms"][number]["sessions"]
+>[number];
 
 export type ITerm = NonNullable<GetTermsQuery>["terms"][number];
 

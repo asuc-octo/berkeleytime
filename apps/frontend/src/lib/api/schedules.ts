@@ -1,20 +1,25 @@
 import { gql } from "@apollo/client";
 
-import { Color } from "@repo/theme";
-
-import { IClass, ISection } from "../api";
-import { ITerm, Semester } from "./terms";
-import { ReadScheduleQuery, SelectedClassInput, UpdateScheduleInput } from "../generated/graphql";
+import {
+  ReadScheduleQuery,
+  ReadSchedulesQuery,
+  SelectedClassInput,
+  UpdateScheduleInput,
+} from "../generated/graphql";
 
 // export type ScheduleIdentifier = string & {
 //   readonly __brand: unique symbol;
 // };
 
-export type IScheduleClass = NonNullable<NonNullable<ReadScheduleQuery["schedule"]>["classes"][number]>;
+export type IScheduleClass = NonNullable<
+  NonNullable<ReadScheduleQuery["schedule"]>["classes"][number]
+>;
 
 export type IScheduleClassInput = SelectedClassInput;
 
-export type IScheduleEvent = NonNullable<NonNullable<ReadScheduleQuery["schedule"]>["events"][number]>;
+export type IScheduleEvent = NonNullable<
+  NonNullable<ReadScheduleQuery["schedule"]>["events"][number]
+>;
 
 export type IScheduleInput = UpdateScheduleInput;
 
@@ -411,3 +416,9 @@ export const READ_SCHEDULES = gql`
     }
   }
 `;
+
+export type IScheduleListSchedule = NonNullable<
+  ReadSchedulesQuery["schedules"]
+>[number];
+export type IScheduleListClass =
+  NonNullable<IScheduleListSchedule>["classes"][number];

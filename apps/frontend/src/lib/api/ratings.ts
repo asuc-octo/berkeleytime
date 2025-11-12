@@ -1,14 +1,23 @@
 import { gql } from "@apollo/client";
 
-import { GetAggregatedRatingsQuery, GetUserRatingsQuery } from "../generated/graphql";
+import {
+  GetAggregatedRatingsQuery,
+  GetUserRatingsQuery,
+} from "../generated/graphql";
 
 export type IAggregatedRatings = GetAggregatedRatingsQuery["aggregatedRatings"];
 
-export type IMetric = NonNullable<NonNullable<IAggregatedRatings>["metrics"]>[number];
+export type IMetric = NonNullable<
+  NonNullable<IAggregatedRatings>["metrics"]
+>[number];
 
-export type IUserRatingClass = NonNullable<NonNullable<GetUserRatingsQuery["userRatings"]>["classes"]>[number];
+export type IUserRatingClass = NonNullable<
+  NonNullable<GetUserRatingsQuery["userRatings"]>["classes"]
+>[number];
 
-export type IUserRatingMetric = NonNullable<NonNullable<IUserRatingClass>["metrics"]>[number];
+export type IUserRatingMetric = NonNullable<
+  NonNullable<IUserRatingClass>["metrics"]
+>[number];
 
 export const GET_AGGREGATED_RATINGS = gql`
   query GetAggregatedRatings(

@@ -11,7 +11,7 @@ import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import { Semester, TemporalPosition } from "@/lib/api";
+import { TemporalPosition } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
@@ -87,7 +87,7 @@ export default function Catalog() {
 
   const { data: _class, loading: classLoading } = useReadClass(
     term?.year as number,
-    term?.semester as Semester,
+    term?.semester,
     subject as string,
     courseNumber as string,
     number as string,

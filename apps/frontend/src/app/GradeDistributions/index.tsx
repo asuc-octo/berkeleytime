@@ -16,10 +16,7 @@ import {
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
-import {
-  READ_GRADE_DISTRIBUTION,
-  ReadGradeDistributionResponse,
-} from "@/lib/api";
+import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
 import { decimalToPercentString } from "@/utils/number-formatter";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
@@ -41,8 +38,8 @@ const fetchGradeDistribution = async (
   i: number
 ): Promise<Output | null> => {
   try {
-    const response = await client.query<ReadGradeDistributionResponse>({
-      query: READ_GRADE_DISTRIBUTION,
+    const response = await client.query({
+      query: GetGradeDistributionDocument,
       variables: input,
     });
 
@@ -74,7 +71,7 @@ const transformGradeDistributionData = (
   });
 
   filteredOutputs?.forEach((output, index) => {
-    output.gradeDistribution.distribution.forEach((grade) => {
+    output.gradeDistribution.distribution?.forEach((grade) => {
       const column = letterMap.get(grade.letter);
       if (!column) return;
 

@@ -11,12 +11,34 @@ import {
   READ_COURSE_WITH_INSTRUCTOR,
   ReadCourseResponse,
 } from "@/lib/api";
-import { ReadCourseDocument, ReadCourseForClassDocument, ReadCourseForClassQuery, ReadCourseForClassQueryVariables, ReadCourseGradeDistDocument, ReadCourseGradeDistQuery, ReadCourseGradeDistQueryVariables, ReadCourseQuery, ReadCourseQueryVariables, ReadCourseTitleDocument, ReadCourseTitleQuery, ReadCourseTitleQueryVariables, ReadCourseUnitsDocument, ReadCourseUnitsQuery, ReadCourseUnitsQueryVariables, ReadCourseWithInstructorDocument, ReadCourseWithInstructorQuery, ReadCourseWithInstructorQueryVariables } from "@/lib/generated/graphql";
+import {
+  ReadCourseDocument,
+  ReadCourseForClassDocument,
+  ReadCourseForClassQuery,
+  ReadCourseForClassQueryVariables,
+  ReadCourseGradeDistDocument,
+  ReadCourseGradeDistQuery,
+  ReadCourseGradeDistQueryVariables,
+  ReadCourseQuery,
+  ReadCourseQueryVariables,
+  ReadCourseTitleDocument,
+  ReadCourseTitleQuery,
+  ReadCourseTitleQueryVariables,
+  ReadCourseUnitsDocument,
+  ReadCourseUnitsQuery,
+  ReadCourseUnitsQueryVariables,
+  ReadCourseWithInstructorDocument,
+  ReadCourseWithInstructorQuery,
+  ReadCourseWithInstructorQueryVariables,
+} from "@/lib/generated/graphql";
 
 export const useReadCourse = (
   subject: string,
   number: string,
-  options?: Omit<useQuery.Options<ReadCourseQuery, ReadCourseQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<ReadCourseQuery, ReadCourseQueryVariables>,
+    "variables"
+  >
 ) => {
   const query = useQuery(ReadCourseDocument, {
     ...options,
@@ -35,7 +57,10 @@ export const useReadCourse = (
 export const useReadCourseForClass = (
   subject: string,
   number: string,
-  options?: Omit<useQuery.Options<ReadCourseForClassQuery, ReadCourseForClassQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<ReadCourseForClassQuery, ReadCourseForClassQueryVariables>,
+    "variables"
+  >
 ) => {
   const query = useQuery(ReadCourseForClassDocument, {
     ...options,
@@ -54,7 +79,13 @@ export const useReadCourseForClass = (
 export const useReadCourseGradeDist = (
   subject: string,
   number: string,
-  options?: Omit<useQuery.Options<ReadCourseGradeDistQuery, ReadCourseGradeDistQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<
+      ReadCourseGradeDistQuery,
+      ReadCourseGradeDistQueryVariables
+    >,
+    "variables"
+  >
 ) => {
   const query = useQuery(ReadCourseGradeDistDocument, {
     ...options,
@@ -73,7 +104,13 @@ export const useReadCourseGradeDist = (
 export const useReadCourseWithInstructor = (
   subject: string,
   number: string,
-  options?: Omit<useQuery.Options<ReadCourseWithInstructorQuery, ReadCourseWithInstructorQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<
+      ReadCourseWithInstructorQuery,
+      ReadCourseWithInstructorQueryVariables
+    >,
+    "variables"
+  >
 ) => {
   const query = useQuery(ReadCourseWithInstructorDocument, {
     ...options,
@@ -92,7 +129,10 @@ export const useReadCourseWithInstructor = (
 export const useReadCourseTitle = (
   subject: string,
   number: string,
-  options?: Omit<useQuery.Options<ReadCourseTitleQuery, ReadCourseTitleQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<ReadCourseTitleQuery, ReadCourseTitleQueryVariables>,
+    "variables"
+  >
 ) => {
   const query = useQuery(ReadCourseTitleDocument, {
     ...options,
@@ -109,8 +149,9 @@ export const useReadCourseTitle = (
 };
 
 export const useReadCourseUnits = () => {
-  const [getCourseUnitsQuery, { loading, error }] =
-    useLazyQuery(ReadCourseUnitsDocument);
+  const [getCourseUnitsQuery, { loading, error }] = useLazyQuery(
+    ReadCourseUnitsDocument
+  );
 
   const getCourseUnits = useCallback(
     async (
@@ -118,7 +159,10 @@ export const useReadCourseUnits = () => {
       number: string,
       semester: string,
       year: number,
-      options?: Omit<useQuery.Options<ReadCourseUnitsQuery, ReadCourseUnitsQueryVariables>, "variables">
+      options?: Omit<
+        useQuery.Options<ReadCourseUnitsQuery, ReadCourseUnitsQueryVariables>,
+        "variables"
+      >
     ) => {
       const result = await getCourseUnitsQuery({
         ...options,

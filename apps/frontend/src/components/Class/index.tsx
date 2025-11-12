@@ -35,7 +35,8 @@ import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
-import { IClass, ICourse, Semester } from "@/lib/api";
+import { IClass, IClassCourse, ICourse } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
@@ -74,7 +75,7 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClass;
-  course?: ICourse;
+  course?: IClassCourse;
   year?: never;
   semester?: never;
   subject?: never;
@@ -283,10 +284,14 @@ export default function Class({
       return true;
     }
 
+    const pnpPercentage = courseGradeDistribution.pnpPercentage;
+    if (typeof pnpPercentage === "number" && Number.isFinite(pnpPercentage)) {
+      return true;
+    }
+
     return courseGradeDistribution.distribution?.some((grade) => {
       const count = grade.count ?? 0;
-      const percentage = grade.percentage ?? 0;
-      return count > 0 || percentage > 0;
+      return count > 0;
     });
   }, [courseGradeDistribution]);
 
@@ -412,12 +417,12 @@ export default function Class({
                   )}
                   <EnrollmentDisplay
                     enrolledCount={
-                      _class.primarySection.enrollment?.latest.enrolledCount
+                      _class.primarySection.enrollment?.latest?.enrolledCount
                     }
                     maxEnroll={
-                      _class.primarySection.enrollment?.latest.maxEnroll
+                      _class.primarySection.enrollment?.latest?.maxEnroll
                     }
-                    time={_class.primarySection.enrollment?.latest.endTime}
+                    time={_class.primarySection.enrollment?.latest?.endTime}
                   >
                     {(content) => (
                       <Link

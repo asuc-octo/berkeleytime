@@ -17,7 +17,8 @@ import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
 import { ISelectedCourse } from "@/lib/api";
-import { ILabel, IPlanTerm, Status, Terms } from "@/lib/api/plans";
+import { ILabel, IPlanTerm } from "@/lib/api/plans";
+import { Status, Terms } from "@/lib/generated/graphql";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SelectedCourse } from "../index";

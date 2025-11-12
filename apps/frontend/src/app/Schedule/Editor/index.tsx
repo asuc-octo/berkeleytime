@@ -9,6 +9,8 @@ import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
 import Week from "@/app/Schedule/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
+import { IScheduleClass, IScheduleEvent } from "@/lib/api";
+import { Color, GetClassDocument } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
 import { SectionColor, getNextClassColor, getY } from "../schedule";
@@ -20,8 +22,6 @@ import styles from "./Editor.module.scss";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
-import { Color, GetClassDocument, GetClassQuery } from "@/lib/generated/graphql";
-import { IScheduleClass, IScheduleEvent } from "@/lib/api";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
@@ -211,6 +211,8 @@ export default function Editor() {
 
       _schedule.classes.splice(currentIndex, 0, removed);
 
+      console.log(_schedule.classes);
+
       // Update the schedule
       updateSchedule(
         schedule._id,
@@ -331,8 +333,8 @@ export default function Editor() {
             courseNumber: _class.courseNumber,
             classNumber: _class.number,
           };
-        })
-      }
+        }),
+      };
 
       const selectedSections = [_class.primarySection];
 
@@ -454,21 +456,12 @@ export default function Editor() {
       // Update the color
       event.color = color;
 
-      console.log(_schedule);
-
       // Update the schedule
       updateSchedule(
         schedule._id,
         {
           events: _schedule.events.map(
-            ({
-              startTime,
-              endTime,
-              title,
-              description,
-              days,
-              color,
-            }) => ({
+            ({ startTime, endTime, title, description, days, color }) => ({
               startTime,
               endTime,
               title,
@@ -505,14 +498,7 @@ export default function Editor() {
         schedule._id,
         {
           events: _schedule.events.map(
-            ({
-              startTime,
-              endTime,
-              title,
-              description,
-              days,
-              color,
-            }) => ({
+            ({ startTime, endTime, title, description, days, color }) => ({
               startTime,
               endTime,
               title,

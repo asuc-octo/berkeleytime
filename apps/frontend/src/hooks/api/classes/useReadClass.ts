@@ -1,7 +1,11 @@
 import { useQuery } from "@apollo/client/react";
 
 import { READ_CLASS, ReadClassResponse, Semester } from "@/lib/api";
-import { GetClassDocument, GetClassQuery, GetClassQueryVariables } from "@/lib/generated/graphql";
+import {
+  GetClassDocument,
+  GetClassQuery,
+  GetClassQueryVariables,
+} from "@/lib/generated/graphql";
 
 export const useReadClass = (
   year: number,
@@ -9,7 +13,10 @@ export const useReadClass = (
   subject: string,
   courseNumber: string,
   number: string,
-  options?: Omit<useQuery.Options<GetClassQuery, GetClassQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<GetClassQuery, GetClassQueryVariables>,
+    "variables"
+  >
 ) => {
   const query = useQuery(GetClassDocument, {
     fetchPolicy: "no-cache",
@@ -29,4 +36,3 @@ export const useReadClass = (
     data: query.data?.class,
   };
 };
-

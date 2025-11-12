@@ -8,13 +8,12 @@ import { Button, Flex } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import {
-  ICourse,
-  READ_GRADE_DISTRIBUTION,
-  ReadGradeDistributionResponse,
-  Semester,
-} from "@/lib/api";
+import { ICourse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
+import {
+  GetGradeDistributionDocument,
+  Semester,
+} from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
 import {
@@ -309,8 +308,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     setLoading(true);
 
     try {
-      const response = await client.query<ReadGradeDistributionResponse>({
-        query: READ_GRADE_DISTRIBUTION,
+      const response = await client.query({
+        query: GetGradeDistributionDocument,
         variables: input,
       });
 

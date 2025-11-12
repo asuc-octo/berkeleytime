@@ -2,21 +2,17 @@ import { gql } from "@apollo/client";
 
 import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
 
-import { Exam, GetCanonicalCatalogQuery, GetClassQuery, Instructor, Meeting, SectionAttribute, SectionAttributeInfo } from "../generated/graphql";
-
-export type IInstructor = Instructor;
-
-export type IExam = Exam;
-
-export type ISectionAttriuteInfo = SectionAttributeInfo;
-
-export type ISectionAttribute = SectionAttribute;
-
-export type ISection = NonNullable<GetClassQuery["class"]>["sections"][number];
-
-export type IMeeting = Meeting;
-
-export type IClass = NonNullable<GetClassQuery["class"]>;
+import {
+  AcademicCareer,
+  Component,
+  Exam,
+  GetCanonicalCatalogQuery,
+  GetClassQuery,
+  Instructor,
+  Meeting,
+  SectionAttribute,
+  SectionAttributeInfo,
+} from "../generated/graphql";
 
 export const READ_CLASS = gql`
   query GetClass(
@@ -38,6 +34,7 @@ export const READ_CLASS = gql`
       year
       semester
       subject
+      sessionId
       courseNumber
       number
       title
@@ -189,7 +186,13 @@ export const READ_CLASS = gql`
   }
 `;
 
-export type ICatalogClass = NonNullable<GetCanonicalCatalogQuery["catalog"]>[number];
+export type IClass = NonNullable<GetClassQuery["class"]>;
+export type ISection = NonNullable<IClass["sections"]>[number];
+export type IClassCourse = IClass["course"];
+
+export type IInstructor = ISection["meetings"][number]["instructors"][number];
+export type IExam = ISection["exams"][number];
+export type IMeeting = ISection["meetings"][number];
 
 /**
  * Canonical catalog query imported from @repo/shared.
@@ -198,3 +201,45 @@ export type ICatalogClass = NonNullable<GetCanonicalCatalogQuery["catalog"]>[num
  * See: packages/shared/queries.ts for query definition and documentation.
  */
 export const GET_CANONICAL_CATALOG = gql(GET_CANONICAL_CATALOG_QUERY);
+
+export type ICatalogClass = NonNullable<
+  GetCanonicalCatalogQuery["catalog"]
+>[number];
+export type ISectionAttriuteInfo = ICatalogClass["requirementDesignation"];
+export type ISectionAttribute = NonNullable<
+  NonNullable<ICatalogClass["primarySection"]>["sectionAttributes"]
+>[number];
+
+export const componentMap: Record<Component, string> = {
+  [Component.Cln]: "Clinic",
+  [Component.Col]: "Colloquium",
+  [Component.Con]: "Conversation",
+  [Component.Dem]: "Demonstration",
+  [Component.Dis]: "Discussion",
+  [Component.Fld]: "Field Work",
+  [Component.Grp]: "Directed Group Study",
+  [Component.Ind]: "Independent Study",
+  [Component.Int]: "Internship",
+  [Component.Lab]: "Laboratory",
+  [Component.Lec]: "Lecture",
+  [Component.Pra]: "Practicum",
+  [Component.Rea]: "Reading",
+  [Component.Rec]: "Recitation",
+  [Component.Sem]: "Seminar",
+  [Component.Ses]: "Session",
+  [Component.Slf]: "Self-paced",
+  [Component.Std]: "Studio",
+  [Component.Sup]: "Supplementary",
+  [Component.Tut]: "Tutorial",
+  [Component.Vol]: "Voluntary",
+  [Component.Wbd]: "Web-Based Discussion",
+  [Component.Wbl]: "Web-Based Lecture",
+  [Component.Wor]: "Workshop",
+};
+
+export const academicCareersMap: Record<AcademicCareer, string> = {
+  [AcademicCareer.Ugrd]: "Undergraduate",
+  [AcademicCareer.Grad]: "Graduate",
+  [AcademicCareer.Ucbx]: "Extension",
+  [AcademicCareer.Law]: "Law",
+};

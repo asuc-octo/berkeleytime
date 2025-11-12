@@ -5,7 +5,7 @@ import { Tooltip } from "radix-ui";
 
 import styles from "./Time.module.scss";
 
-const getTime = (start: string | null, end: string | null) => {
+const getTime = (start?: string | null, end?: string | null) => {
   if (!start || !end) return;
 
   const [startHours, startMinutes] = start
@@ -27,9 +27,9 @@ const getTime = (start: string | null, end: string | null) => {
 };
 
 interface TimeProps {
-  days: boolean[] | null;
-  startTime: string | null;
-  endTime: string | null;
+  days?: boolean[] | null;
+  startTime?: string | null;
+  endTime?: string | null;
   tooltip?: false;
 }
 

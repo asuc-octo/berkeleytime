@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import CCN from "@/components/CCN";
 import Time from "@/components/Time";
-import { ISection } from "@/lib/api";
+import { IScheduleClass } from "@/lib/api";
 
 import styles from "./Section.module.scss";
 
@@ -21,7 +21,7 @@ export default function Section({
   sectionId,
   number,
   meetings,
-}: SectionProps & ISection) {
+}: SectionProps & IScheduleClass["class"]["primarySection"]) {
   const meetingsAdjusted = meetings.length > 0 ? meetings : [null];
   return meetingsAdjusted.map((meeting) => (
     <div

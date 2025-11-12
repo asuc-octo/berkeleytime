@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-import { ReadScheduleQuery, Schedule } from "@/lib/generated/graphql";
+import { ReadScheduleQuery } from "@/lib/generated/graphql";
 
 export interface ScheduleContextType {
   schedule: NonNullable<ReadScheduleQuery["schedule"]>;

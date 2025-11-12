@@ -7,14 +7,14 @@ import { ColoredSquare } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import { useReadCourseTitle } from "@/hooks/api";
-import { GradeDistribution } from "@/lib/api";
+import { IGradeDistribution } from "@/lib/api";
 
 interface GradesCardProps {
   color: string;
   subject: string;
   number: string;
   description: string;
-  gradeDistribution: GradeDistribution;
+  gradeDistribution: IGradeDistribution;
   onClick: () => void;
   onClickDelete: () => void;
   onClickHide: () => void;

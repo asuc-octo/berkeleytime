@@ -6,10 +6,10 @@ import { Boundary, LoadingIndicator } from "@repo/theme";
 
 import ScheduleContext from "@/contexts/ScheduleContext";
 import { useReadSchedule, useReadUser } from "@/hooks/api";
+import { ISchedule } from "@/lib/api";
+import { Color, Schedule as ScheduleType } from "@/lib/generated/graphql";
 
 import { acceptedColors, getNextClassColor } from "./schedule";
-import { Schedule as ScheduleType, Color } from "@/lib/generated/graphql";
-import { ISchedule } from "@/lib/api";
 
 export default function Schedule() {
   const { scheduleId } = useParams();
@@ -34,7 +34,7 @@ export default function Schedule() {
           color: ev.color ?? Color.Gray,
         };
       }),
-    }
+    };
   }, [scheduleData]);
 
   useEffect(() => {

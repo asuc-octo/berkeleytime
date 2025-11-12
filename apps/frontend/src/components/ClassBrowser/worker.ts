@@ -16,7 +16,7 @@ const DEFAULT_SORT_ORDER: Record<SortBy, SortOrder> = {
 
 const initializeFuse = (classes: IClass[]) => {
   const list = classes.map((_class) => {
-    const { title, subject, number } = _class.course;
+    const { title, subject, courseNumber: number } = _class;
 
     // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);

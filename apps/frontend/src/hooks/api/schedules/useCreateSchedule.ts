@@ -2,10 +2,13 @@ import { useCallback } from "react";
 
 import { useMutation } from "@apollo/client/react";
 
-import { CreateScheduleDocument, CreateScheduleInput } from "@/lib/generated/graphql";
+import {
+  CreateScheduleDocument,
+  CreateScheduleInput,
+} from "@/lib/generated/graphql";
 
 export const useCreateSchedule = () => {
-  const mutation = useMutation(CreateScheduleDocument); 
+  const mutation = useMutation(CreateScheduleDocument);
 
   const createSchedule = useCallback(
     async (schedule: CreateScheduleInput) => {

@@ -1,4 +1,4 @@
-import { IClass } from "@/lib/api";
+import { ICatalogClass } from "@/lib/api";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SortBy } from "./browser";
@@ -12,7 +12,7 @@ const EPSILON = 1e-6;
 // We achieve this by bucketing fuzzy score into categories of different confidences, then sorting within each bucket
 
 interface SearchAndSortParams {
-  classes: readonly IClass[];
+  classes: readonly ICatalogClass[];
   index: FuzzySearch<unknown>;
   query: string;
   sortBy: SortBy;
@@ -21,7 +21,7 @@ interface SearchAndSortParams {
 }
 
 interface Hit {
-  item: IClass;
+  item: ICatalogClass;
   score: number;
   refIndex: number;
   order: number;
@@ -92,7 +92,7 @@ export const searchAndSortClasses = ({
   sortBy,
   order,
   maxQueryLength = MAX_QUERY_LENGTH,
-}: SearchAndSortParams): IClass[] => {
+}: SearchAndSortParams): ICatalogClass[] => {
   const trimmedQuery = query.trim();
 
   if (trimmedQuery.length === 0) {
@@ -106,7 +106,7 @@ export const searchAndSortClasses = ({
     return [];
   }
 
-  const relevanceScores = new Map<IClass, number>();
+  const relevanceScores = new Map<ICatalogClass, number>();
   const hits: Hit[] = [];
 
   results.forEach(({ refIndex, score }, orderIndex) => {
@@ -158,7 +158,7 @@ export const searchAndSortClasses = ({
   });
 
   const orderedBuckets = [...buckets.keys()].sort((a, b) => a - b);
-  const rankedClasses: IClass[] = [];
+  const rankedClasses: ICatalogClass[] = [];
 
   if (bestHit) {
     const sortedBest = sortClasses([bestHit.item], sortBy, order, {

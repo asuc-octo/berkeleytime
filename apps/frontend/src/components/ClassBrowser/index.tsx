@@ -4,12 +4,8 @@ import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import {
-  GET_CANONICAL_CATALOG,
-  GetCanonicalCatalogResponse,
-  ITerm,
-  Semester,
-} from "@/lib/api";
+import { ITerm } from "@/lib/api";
+import { GetCanonicalCatalogDocument, Semester } from "@/lib/generated/graphql";
 
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
@@ -27,7 +23,6 @@ import {
 } from "./browser";
 import BrowserContext from "./browserContext";
 import { searchAndSortClasses } from "./searchAndSort";
-import { GetCatalogDocument } from "@/lib/generated/graphql";
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Relevance]: "asc",

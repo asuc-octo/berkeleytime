@@ -20,18 +20,20 @@ import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/
 import { useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import {
-  CREATE_RATING,
-  DELETE_RATING,
-  GET_AGGREGATED_RATINGS,
-  GET_COURSE_RATINGS,
-  GET_SEMESTERS_WITH_RATINGS,
-  GET_USER_RATINGS,
-  IAggregatedRatings,
-  SemestersWithRatingsResponse,
-} from "@/lib/api";
-import { Semester, TemporalPosition } from "@/lib/api/terms";
+import { IAggregatedRatings, IUserRatingClass } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
+import {
+  CreateRatingDocument,
+  DeleteRatingDocument,
+  GetAggregatedRatingsDocument,
+  Semester,
+  TemporalPosition,
+} from "@/lib/generated/graphql";
+import {
+  GetCourseRatingsDocument,
+  GetSemestersWithRatingsDocument,
+  GetUserRatingsDocument,
+} from "@/lib/generated/graphql";
 
 import { RatingButton } from "./RatingButton";
 import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
@@ -45,7 +47,6 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./metricsUtil";
-import { GetCourseRatingsDocument, GetSemestersWithRatingsDocument, GetUserRatingsDocument } from "@/lib/generated/graphql";
 
 // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
 // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
@@ -120,18 +121,15 @@ export function RatingsContainer() {
 
   // Get aggregated ratings for display
   const { data: aggregatedRatings } = useQuery(GetCourseRatingsDocument, {
-    variables:
-      currentClass?.subject && currentClass?.courseNumber
-        ? {
-            subject: currentClass.subject,
-            number: currentClass.courseNumber,
-          }
-        : undefined,
+    variables: {
+      subject: currentClass?.subject,
+      number: currentClass?.courseNumber,
+    },
     skip: !currentClass?.subject || !currentClass?.courseNumber,
   });
 
   // Create rating mutation
-  const [createRating] = useMutation(CREATE_RATING, {
+  const [createRating] = useMutation(CreateRatingDocument, {
     refetchQueries: [
       "GetUserRatings",
       "GetCourseRatings",
@@ -139,7 +137,7 @@ export function RatingsContainer() {
     ],
   });
 
-  const [deleteRating] = useMutation(DELETE_RATING, {
+  const [deleteRating] = useMutation(DeleteRatingDocument, {
     refetchQueries: [
       "GetUserRatings",
       "GetCourseRatings",
@@ -148,24 +146,23 @@ export function RatingsContainer() {
   });
 
   const [getAggregatedRatings, { data: aggregatedRatingsData }] =
-    useLazyQuery<IAggregatedRatings>(GET_AGGREGATED_RATINGS);
+    useLazyQuery<IAggregatedRatings>(GetAggregatedRatingsDocument);
 
   useEffect(() => {
     setTermRatings(aggregatedRatingsData as IAggregatedRatings | null);
   }, [aggregatedRatingsData]);
 
   // Get semesters with ratings
-  const { data: semestersWithRatingsData } =
-    useQuery(GetSemestersWithRatingsDocument, {
-      variables:
-        currentClass?.subject && currentClass?.courseNumber
-          ? {
-              subject: currentClass.subject,
-              courseNumber: currentClass.courseNumber,
-            }
-          : undefined,
+  const { data: semestersWithRatingsData } = useQuery(
+    GetSemestersWithRatingsDocument,
+    {
+      variables: {
+        subject: currentClass.subject,
+        courseNumber: currentClass.courseNumber,
+      },
       skip: !currentClass?.subject || !currentClass?.courseNumber,
-    });
+    }
+  );
 
   const semestersWithRatings = useMemo(() => {
     if (!semestersWithRatingsData) return [];
@@ -207,10 +204,8 @@ export function RatingsContainer() {
   }, [currentClass]);
 
   const userRatings = useMemo(() => {
-    // @ts-expect-error - need to fix types
     if (!userRatingsData?.userRatings?.classes) return null;
 
-    // @ts-expect-error - need to fix types
     const matchedRating = userRatingsData.userRatings.classes.find(
       (classRating: {
         subject: string;
@@ -222,15 +217,14 @@ export function RatingsContainer() {
         classRating.subject === currentClass.subject &&
         classRating.courseNumber === currentClass.courseNumber
     );
-    return matchedRating as UserRating;
+    return matchedRating as IUserRatingClass;
   }, [userRatingsData, currentClass]);
 
   const ratingsData = useMemo(() => {
     const metrics =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
-        : // @ts-expect-error - need to fix types
-          aggregatedRatings?.course?.aggregatedRatings?.metrics;
+        : aggregatedRatings?.course?.aggregatedRatings?.metrics;
     if (
       !metrics ||
       !metrics.some(
@@ -274,7 +268,6 @@ export function RatingsContainer() {
 
   const hasRatings = useMemo(() => {
     const totalRatings =
-      // @ts-expect-error - need to fix types
       aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
         (total: number, metric: any) => total + metric.count,
         0
@@ -419,7 +412,7 @@ export function RatingsContainer() {
   };
 
   const ratingDelete = async (
-    userRating: UserRating,
+    userRating: IUserRatingClass,
     currentClass: any,
     deleteRating: any
   ) => {

@@ -9,7 +9,7 @@ import Footer from "@/components/Footer";
 import ScheduleCard from "@/components/ScheduleCard";
 import { useReadSchedules } from "@/hooks/api";
 import useUser from "@/hooks/useUser";
-import { ISchedule, signIn } from "@/lib/api";
+import { IScheduleListSchedule, signIn } from "@/lib/api";
 
 // import { RecentType, getRecents } from "@/lib/recent";
 
@@ -29,14 +29,15 @@ export default function Schedules() {
     return schedules
       ? schedules.reduce(
           (acc, schedule) => {
+            if (!schedule) return acc;
             const term = `${schedule.semester} ${schedule.year}`;
             if (!acc[term]) acc[term] = [];
             acc[term].push(schedule);
             return acc;
           },
-          {} as { [key: string]: ISchedule[] }
+          {} as { [key: string]: IScheduleListSchedule[] }
         )
-      : ({} as { [key: string]: ISchedule[] });
+      : ({} as { [key: string]: IScheduleListSchedule[] });
   }, [schedules]);
 
   // const recentSchedules = getRecents(RecentType.Schedule);
@@ -96,6 +97,8 @@ export default function Schedules() {
           )} */}
           {Object.keys(schedulesBySemester)
             .sort((a, b) => {
+              if (!schedulesBySemester[a][0]) return -1;
+              if (!schedulesBySemester[b][0]) return 1;
               return schedulesBySemester[a][0].year ==
                 schedulesBySemester[b][0].year
                 ? SEMESTER_ORDER.indexOf(schedulesBySemester[b][0].semester) -
@@ -106,16 +109,19 @@ export default function Schedules() {
             .map((sem) => {
               return (
                 <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
-                  {schedulesBySemester[sem].map(({ _id, name, classes }, i) => (
-                    <Carousel.Item key={i}>
-                      <ScheduleCard
-                        key={i}
-                        _id={_id}
-                        name={name}
-                        classes={classes}
-                      />
-                    </Carousel.Item>
-                  ))}
+                  {schedulesBySemester[sem].map((schedule, i) => {
+                    if (!schedule) return null;
+                    return (
+                      <Carousel.Item key={i}>
+                        <ScheduleCard
+                          key={i}
+                          _id={schedule._id}
+                          name={schedule.name}
+                          classes={schedule.classes}
+                        />
+                      </Carousel.Item>
+                    );
+                  })}
                 </Carousel.Root>
               );
             })}

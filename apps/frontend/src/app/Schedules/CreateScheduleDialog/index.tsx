@@ -18,8 +18,8 @@ import {
 } from "@repo/theme";
 
 import { useCreateSchedule, useReadTerms } from "@/hooks/api";
-import { Semester, TemporalPosition } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
+import { Semester, TemporalPosition } from "@/lib/generated/graphql";
 
 interface CreateScheduleDialogProps {
   defaultName: string;
@@ -102,7 +102,7 @@ export default function CreateScheduleDialog({
       name: name,
       year: Number(year),
       semester: semester as Semester,
-      sessionId: _term.sessions[0].id,
+      sessionId: _term.sessions?.[0]?.id ?? "",
     });
 
     setLoading(false);

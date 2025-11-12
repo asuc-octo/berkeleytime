@@ -11,7 +11,7 @@ import ClassDrawer from "@/components/ClassDrawer";
 import ScheduleCard from "@/components/ScheduleCard";
 import { useReadSchedules } from "@/hooks/api";
 import useUser from "@/hooks/useUser";
-import { ISchedule } from "@/lib/api";
+import { IScheduleListSchedule } from "@/lib/api";
 
 import styles from "./Account.module.scss";
 
@@ -28,14 +28,15 @@ export default function Account() {
     return schedules
       ? schedules.reduce(
           (acc, schedule) => {
+            if (!schedule) return acc;
             const term = `${schedule.semester} ${schedule.year}`;
             if (!acc[term]) acc[term] = [];
             acc[term].push(schedule);
             return acc;
           },
-          {} as { [key: string]: ISchedule[] }
+          {} as { [key: string]: IScheduleListSchedule[] }
         )
-      : ({} as { [key: string]: ISchedule[] });
+      : ({} as { [key: string]: IScheduleListSchedule[] });
   }, [schedules]);
 
   return (
@@ -107,6 +108,8 @@ export default function Account() {
               <Flex direction="column" gap="5">
                 {Object.keys(schedulesBySemester)
                   .sort((a, b) => {
+                    if (!schedulesBySemester[a][0]) return -1;
+                    if (!schedulesBySemester[b][0]) return 1;
                     return schedulesBySemester[a][0].year ==
                       schedulesBySemester[b][0].year
                       ? SEMESTER_ORDER.indexOf(
@@ -121,20 +124,20 @@ export default function Account() {
                   .map((sem) => {
                     return (
                       <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
-                        {schedulesBySemester[sem].map(
-                          ({ _id, name, classes }, i) => {
+                        {schedulesBySemester[sem] &&
+                          schedulesBySemester[sem].map((schedule, i) => {
+                            if (!schedule) return null;
                             return (
                               <Carousel.Item>
                                 <ScheduleCard
                                   key={i}
-                                  _id={_id}
-                                  name={name}
-                                  classes={classes}
+                                  _id={schedule._id}
+                                  name={schedule.name}
+                                  classes={schedule.classes}
                                 />
                               </Carousel.Item>
                             );
-                          }
-                        )}
+                          })}
                       </Carousel.Root>
                     );
                   })}

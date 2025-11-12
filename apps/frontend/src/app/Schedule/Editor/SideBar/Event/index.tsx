@@ -2,10 +2,11 @@ import { useState } from "react";
 
 import { Xmark } from "iconoir-react";
 
-import { Color, Flex, IconButton, Input } from "@repo/theme";
+import { Flex, IconButton, Input } from "@repo/theme";
 
 import ColorSelector from "@/components/ColorSelector";
 import { IScheduleEvent } from "@/lib/api";
+import { Color } from "@/lib/generated/graphql";
 
 import styles from "./Event.module.scss";
 

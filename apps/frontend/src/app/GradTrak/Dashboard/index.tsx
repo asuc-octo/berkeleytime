@@ -36,18 +36,15 @@ import {
   useReadPlan,
   useReadUser,
 } from "@/hooks/api";
+import { ILabel, IPlanTerm, ISelectedCourse } from "@/lib/api";
+import { convertStringsToRequirementEnum } from "@/lib/course";
 import {
   Colleges,
-  GET_COURSE_NAMES,
-  GetCoursesResponse,
-  ILabel,
-  IPlanTerm,
-  ISelectedCourse,
+  GetCourseNamesDocument,
   PlanInput,
   PlanTermInput,
   Status,
-} from "@/lib/api";
-import { convertStringsToRequirementEnum } from "@/lib/course";
+} from "@/lib/generated/graphql";
 
 import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
@@ -56,7 +53,6 @@ import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
 import { useGradTrakSettings } from "./settings";
-import { GetCourseNamesDocument } from "@/lib/generated/graphql";
 
 const FILTER_OPTIONS = [
   {
@@ -107,10 +103,12 @@ export default function Dashboard() {
   }
 
   const hasLoadedRef = useRef(false);
-  const { data: courses, loading: courseLoading } =
-    useQuery(GetCourseNamesDocument, {
+  const { data: courses, loading: courseLoading } = useQuery(
+    GetCourseNamesDocument,
+    {
       skip: hasLoadedRef.current,
-    });
+    }
+  );
 
   useEffect(() => {
     if (courses && !hasLoadedRef.current) {
@@ -251,7 +249,6 @@ export default function Dashboard() {
   const handleNewPlanTerm = async (planTerm: PlanTermInput) => {
     const tmp: IPlanTerm = {
       _id: "",
-      userEmail: gradTrak ? gradTrak.userEmail : "",
       name: planTerm.name,
       year: planTerm.year,
       term: planTerm.term,

@@ -7,11 +7,10 @@ import { Button } from "@repo/theme";
 
 import CourseDrawer from "@/components/CourseDrawer";
 import NavigationBar from "@/components/NavigationBar";
-import { GET_COURSES, GetCoursesResponse, ICourse } from "@/lib/api";
+import { GetCoursesDocument, GetCoursesQuery } from "@/lib/generated/graphql";
 
 import styles from "./Discover.module.scss";
 import Placeholder from "./Placeholder";
-import { GetCoursesDocument } from "@/lib/generated/graphql";
 
 interface RawResult {
   model: string;
@@ -26,7 +25,7 @@ interface RawResult {
 
 interface Result {
   model: string;
-  courses: ICourse[];
+  courses: GetCoursesQuery["courses"];
 }
 
 export default function Discover() {
@@ -60,17 +59,20 @@ export default function Discover() {
 
                 return 0;
               })
-              .reduce((acc, c) => {
-                const course = courses.find(
-                  ({ subject, number }) =>
-                    subject.replaceAll(" ", "") === c.subject &&
-                    number === c.number
-                );
+              .reduce(
+                (acc, c) => {
+                  const course = courses.find(
+                    ({ subject, number }) =>
+                      subject.replaceAll(" ", "") === c.subject &&
+                      number === c.number
+                  );
 
-                if (course) return [...acc, course];
+                  if (course) return [...acc, course];
 
-                return acc;
-              }, [] as ICourse[]),
+                  return acc;
+                },
+                [] as GetCoursesQuery["courses"]
+              ),
           };
         });
 

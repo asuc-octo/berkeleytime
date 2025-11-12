@@ -1,5 +1,5 @@
 import { ISchedule, IScheduleClass } from "@/lib/api";
-import { Section, Event, Schedule, Color } from "@/lib/generated/graphql";
+import { Color, Event, Schedule, Section } from "@/lib/generated/graphql";
 
 interface BaseEvent {
   days: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];

@@ -1,13 +1,20 @@
 import { gql } from "@apollo/client";
+
 import { GetPlanQuery, GetPlansQuery } from "../generated/graphql";
 
-export type ILabel = NonNullable<GetPlanQuery["planByUser"][number]["labels"]>[number];
+export type ILabel = NonNullable<
+  GetPlanQuery["planByUser"][number]["labels"]
+>[number];
 
 export type IPlan = NonNullable<GetPlanQuery["planByUser"]>[number];
 
-export type IPlanTerm = NonNullable<GetPlanQuery["planByUser"]>[number]["planTerms"][number];
+export type IPlanTerm = NonNullable<
+  GetPlanQuery["planByUser"]
+>[number]["planTerms"][number];
 
-export type ISelectedCourse = NonNullable<GetPlanQuery["planByUser"]>[number]["planTerms"][number]["courses"][number];
+export type ISelectedCourse = NonNullable<
+  GetPlanQuery["planByUser"]
+>[number]["planTerms"][number]["courses"][number];
 
 export const CREATE_NEW_PLAN = gql`
   mutation CreateNewPlan(

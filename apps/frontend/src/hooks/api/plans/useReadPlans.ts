@@ -1,10 +1,17 @@
 import { QueryHookOptions, useQuery } from "@apollo/client/react";
 
 import { READ_PLANS, ReadPlanResponse } from "@/lib/api";
-import { GetPlansDocument, GetPlansQuery, GetPlansQueryVariables } from "@/lib/generated/graphql";
+import {
+  GetPlansDocument,
+  GetPlansQuery,
+  GetPlansQueryVariables,
+} from "@/lib/generated/graphql";
 
 export const useReadPlans = (
-  options?: Omit<useQuery.Options<GetPlansQuery, GetPlansQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<GetPlansQuery, GetPlansQueryVariables>,
+    "variables"
+  >
 ) => {
   const query = useQuery(GetPlansDocument, options);
 

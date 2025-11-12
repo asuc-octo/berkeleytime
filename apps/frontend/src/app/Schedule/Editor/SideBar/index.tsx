@@ -7,7 +7,8 @@ import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
 import useSchedule from "@/hooks/useSchedule";
-import { IClass, IScheduleClass, IScheduleEvent } from "@/lib/api";
+import { IScheduleClass, IScheduleEvent } from "@/lib/api";
+import { Color } from "@/lib/generated/graphql";
 
 import { getUnits } from "../../schedule";
 import EventDialog from "../EventDialog";
@@ -15,7 +16,6 @@ import Catalog from "./Catalog";
 import Class from "./Class";
 import Event from "./Event";
 import styles from "./SideBar.module.scss";
-import { Color } from "@/lib/generated/graphql";
 
 interface SideBarProps {
   expanded: boolean[];
@@ -74,6 +74,8 @@ export default function SideBar({
   useEffect(() => {
     if (!bodyRef.current) return;
 
+    // TODO: Fix sorting
+
     const sortable = new Sortable(bodyRef.current, {
       draggable: `[data-draggable]`,
       distance: 8,
@@ -89,7 +91,6 @@ export default function SideBar({
 
     sortable.on("sortable:stop", (event) => {
       const { oldIndex, newIndex } = event;
-
       onSortEnd(oldIndex, newIndex);
     });
 
@@ -154,7 +155,8 @@ export default function SideBar({
           return (
             <Class
               key={`${selectedClass.class.subject}${selectedClass.class.courseNumber}${selectedClass.class.number}`}
-              {...selectedClass}
+              class={selectedClass.class}
+              selectedSections={selectedClass.selectedSections}
               semester={schedule.semester}
               year={schedule.year}
               color={selectedClass.color!}

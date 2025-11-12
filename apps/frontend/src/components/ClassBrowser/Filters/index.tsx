@@ -9,6 +9,7 @@ import type { Option, OptionItem } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
 import { subjects } from "@/lib/course";
+import { ClassGradingBasis } from "@/lib/generated/graphql";
 
 import Header from "../Header";
 import {
@@ -200,7 +201,7 @@ export default function Filters() {
     const counts = new Map<Breadth, number>();
     classesWithoutRequirements.forEach((_class) => {
       const breadthList = getBreadthRequirements(
-        _class.primarySection.sectionAttributes
+        _class.primarySection.sectionAttributes ?? []
       );
       breadthList.forEach((breadth) => {
         counts.set(breadth, (counts.get(breadth) ?? 0) + 1);
@@ -252,7 +253,7 @@ export default function Filters() {
   const gradingCounts = useMemo<Record<GradingFilter, number>>(() => {
     return classesWithoutGrading.reduce<Record<GradingFilter, number>>(
       (acc, _class) => {
-        const basis = (_class.gradingBasis ?? "") as GradingBasis;
+        const basis = (_class.gradingBasis ?? "") as ClassGradingBasis;
         const category = gradingBasisCategoryMap[basis] ?? GradingFilter.Other;
         acc[category] += 1;
         return acc;

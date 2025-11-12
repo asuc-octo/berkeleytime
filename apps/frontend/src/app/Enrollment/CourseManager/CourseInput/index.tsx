@@ -7,14 +7,9 @@ import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
 
 import CourseSearch from "@/components/CourseSearch";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import {
-  IClass,
-  ICourse,
-  READ_ENROLLMENT,
-  ReadEnrollmentResponse,
-  Semester,
-} from "@/lib/api";
+import { IClass, ICourse, ICourseWithInstructorClass } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
+import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
 import {
@@ -50,9 +45,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     selectedCourse?.number ?? ""
   );
 
-  const [selectedClass, setSelectedClass] = useState<IClass | null>(
-    DEFAULT_SELECTED_CLASS.value
-  );
+  const [selectedClass, setSelectedClass] =
+    useState<ICourseWithInstructorClass | null>(DEFAULT_SELECTED_CLASS.value);
   const [selectedSemester, setSelectedSemester] = useState<string | null>();
 
   const semesterOptions = useMemo(() => {
@@ -96,7 +90,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     const localSelectedSemester = semester ? semester : selectedSemester;
 
     const classStrings: string[] = [];
-    const classes: IClass[] = [];
+    const classes: ICourseWithInstructorClass[] = [];
     courseData?.classes
       .filter(
         (c) =>
@@ -173,19 +167,18 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     setLoading(true);
 
     try {
-      const response = await client.query<ReadEnrollmentResponse>({
-        query: READ_ENROLLMENT,
+      const response = await client.query({
+        query: GetEnrollmentDocument,
         variables: input,
       });
 
-      if (!response.data) {
+      if (!response.data || !response.data.enrollment) {
         throw response.error;
       }
 
       const output: Output = {
         hidden: false,
         active: false,
-        color: LIGHT_COLORS[outputs.length],
         // TODO: Error handling
         enrollmentHistory: response.data!.enrollment,
         input,

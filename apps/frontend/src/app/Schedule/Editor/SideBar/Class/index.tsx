@@ -1,10 +1,9 @@
 import { useMemo, useState } from "react";
 
-import { Color } from "@repo/theme";
-
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
-import { Component, IClass, IScheduleClass, ISection, Semester, componentMap } from "@/lib/api";
+import { IScheduleClass, ISection, componentMap } from "@/lib/api";
+import { Color, Component, Semester } from "@/lib/generated/graphql";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
@@ -16,7 +15,7 @@ interface ClassProps {
   semester: Semester;
   year: number;
   color: Color;
-  selectedSections: ISection[];
+  selectedSections: IScheduleClass["selectedSections"];
   onSectionSelect: (
     subject: string,
     courseNumber: string,

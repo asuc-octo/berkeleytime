@@ -46,7 +46,7 @@ const LabelRow = ({
         className={styles.labelRow}
       >
         <ColorSelector
-          selectedColor={label ? (label.color as Color) : Color.gray}
+          selectedColor={label ? (label.color as Color) : Color.Gray}
           onColorSelect={onColorSelect}
           usePortal={false}
         />
@@ -83,7 +83,7 @@ export default function LabelMenu({
   const [editingLabels, setEditingLabels] = useState<ILabel[]>(labels);
   const [tmpLabel, setTmpLabel] = useState<ILabel>({
     name: "",
-    color: Color.gray,
+    color: Color.Gray,
   });
   const [duplicateError, setDuplicateError] = useState<boolean>(false);
 
@@ -95,7 +95,7 @@ export default function LabelMenu({
     const tmpEditingLabels = editingLabels;
     if (tmpLabel.name.trim()) {
       tmpEditingLabels.push(tmpLabel);
-      setTmpLabel({ name: "", color: Color.gray });
+      setTmpLabel({ name: "", color: Color.Gray });
     }
     onLabelsChange(
       tmpEditingLabels
@@ -113,13 +113,13 @@ export default function LabelMenu({
   const handleCancel = () => {
     setEditingLabels(labels);
     onOpenChange(false);
-    setTmpLabel({ name: "", color: Color.gray });
+    setTmpLabel({ name: "", color: Color.Gray });
   };
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       setEditingLabels(labels);
-      setTmpLabel({ name: "", color: Color.gray });
+      setTmpLabel({ name: "", color: Color.Gray });
     }
     onOpenChange(open);
   };
@@ -181,7 +181,7 @@ export default function LabelMenu({
 
                   if (!labelExists) {
                     setEditingLabels((prev) => [...prev, tmpLabel]);
-                    setTmpLabel({ name: "", color: Color.gray });
+                    setTmpLabel({ name: "", color: Color.Gray });
                     setDuplicateError(false);
                   } else {
                     setDuplicateError(true);

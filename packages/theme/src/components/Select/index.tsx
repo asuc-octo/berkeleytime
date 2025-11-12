@@ -178,7 +178,7 @@ export function Select<T>({
                   <Badge
                     key={el.label}
                     label={el.label}
-                    color={el.color ? el.color : Color.blue}
+                    color={el.color ? el.color : Color.Blue}
                     icon={
                       <Xmark
                         style={{ zIndex: 100 }}

@@ -2,7 +2,12 @@ import { useCallback } from "react";
 
 import { useMutation } from "@apollo/client/react";
 
-import { UpdateScheduleDocument, UpdateScheduleInput, UpdateScheduleMutation, UpdateScheduleMutationVariables } from "@/lib/generated/graphql";
+import {
+  UpdateScheduleDocument,
+  UpdateScheduleInput,
+  UpdateScheduleMutation,
+  UpdateScheduleMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useUpdateSchedule = () => {
   const mutation = useMutation(UpdateScheduleDocument);
@@ -11,7 +16,13 @@ export const useUpdateSchedule = () => {
     async (
       id: string,
       schedule: UpdateScheduleInput,
-      options?: Omit<useMutation.Options<UpdateScheduleMutation, UpdateScheduleMutationVariables>, "variables">
+      options?: Omit<
+        useMutation.Options<
+          UpdateScheduleMutation,
+          UpdateScheduleMutationVariables
+        >,
+        "variables"
+      >
     ) => {
       const mutate = mutation[0];
 

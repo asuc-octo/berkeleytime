@@ -6,13 +6,14 @@ import { Link } from "react-router-dom";
 import { Card } from "@repo/theme";
 
 import { useDeleteSchedule } from "@/hooks/api";
-import { IScheduleClass, ScheduleIdentifier } from "@/lib/api";
+import { IScheduleListClass } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 interface ScheduleProps {
-  _id: ScheduleIdentifier;
+  _id: string;
   name: String;
-  classes: IScheduleClass[];
-  semester?: String;
+  classes: IScheduleListClass[];
+  semester?: Semester;
 }
 
 export default function ScheduleCard({

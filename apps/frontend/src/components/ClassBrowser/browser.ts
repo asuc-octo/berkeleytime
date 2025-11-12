@@ -1,11 +1,11 @@
 import {
-  AcademicCareer,
-  IClass,
+  ICatalogClass,
   ISectionAttribute,
   ISectionAttriuteInfo,
-  academicCareers,
+  academicCareersMap,
 } from "@/lib/api";
 import { subjects } from "@/lib/course";
+import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export enum SortBy {
@@ -62,22 +62,26 @@ export enum GradingFilter {
   Other = "Other",
 }
 
-export const gradingBasisCategoryMap: Record<GradingBasis, GradingFilter> = {
-  [GradingBasis.OPT]: GradingFilter.Graded,
-  [GradingBasis.GRD]: GradingFilter.Graded,
-  [GradingBasis.PNP]: GradingFilter.PassNoPass,
-  [GradingBasis.ESU]: GradingFilter.Other,
-  [GradingBasis.SUS]: GradingFilter.Other,
-  [GradingBasis.BMT]: GradingFilter.Other,
-  [GradingBasis.IOP]: GradingFilter.Other,
-};
+export const gradingBasisCategoryMap: Record<ClassGradingBasis, GradingFilter> =
+  {
+    [ClassGradingBasis.Opt]: GradingFilter.Graded,
+    [ClassGradingBasis.Grd]: GradingFilter.Graded,
+    [ClassGradingBasis.Pnp]: GradingFilter.PassNoPass,
+    [ClassGradingBasis.Esu]: GradingFilter.Other,
+    [ClassGradingBasis.Sus]: GradingFilter.Other,
+    [ClassGradingBasis.Bmt]: GradingFilter.Other,
+    [ClassGradingBasis.Iop]: GradingFilter.Other,
+    [ClassGradingBasis.Cnc]: GradingFilter.Other,
+    [ClassGradingBasis.Law]: GradingFilter.Other,
+    [ClassGradingBasis.Lw1]: GradingFilter.Other,
+  };
 
 export const getLevel = (academicCareer: AcademicCareer, number: string) => {
-  return academicCareer === AcademicCareer.Undergraduate
+  return academicCareer === AcademicCareer.Ugrd
     ? number.match(/(\d)\d\d/)
       ? Level.UpperDivision
       : Level.LowerDivision
-    : (academicCareers[academicCareer] as Level);
+    : (academicCareersMap[academicCareer] as Level);
 };
 
 export const getBreadthRequirements = (
@@ -96,12 +100,14 @@ export const getBreadthRequirements = (
   return breadths;
 };
 
-export const getAllBreadthRequirements = (classes: IClass[]): Breadth[] => {
+export const getAllBreadthRequirements = (
+  classes: ICatalogClass[]
+): Breadth[] => {
   const allBreadths = new Set<Breadth>();
 
   classes.forEach((_class) => {
     const breadths = getBreadthRequirements(
-      _class.primarySection.sectionAttributes
+      _class.primarySection.sectionAttributes ?? []
     );
     breadths.forEach((breadth) => allBreadths.add(breadth));
   });
@@ -118,7 +124,7 @@ export const getUniversityRequirements = (
 };
 
 export const getAllUniversityRequirements = (
-  classes: IClass[]
+  classes: ICatalogClass[]
 ): UniversityRequirement[] => {
   const allRequirements = new Set<UniversityRequirement>();
 
@@ -133,7 +139,7 @@ export const getAllUniversityRequirements = (
 };
 
 export const getFilteredClasses = (
-  classes: IClass[],
+  classes: ICatalogClass[],
   currentUnits: UnitRange,
   currentLevels: Level[],
   currentDays: Day[],
@@ -149,7 +155,7 @@ export const getFilteredClasses = (
       // Filter by open
       if (
         currentOpen &&
-        _class.primarySection.enrollment?.latest.status !== "O"
+        _class.primarySection.enrollment?.latest?.status !== "O"
       ) {
         acc.excludedClasses.push(_class);
 
@@ -198,7 +204,7 @@ export const getFilteredClasses = (
       // Filter by days
       if (currentDays.length > 0) {
         const includesDays = currentDays.some(
-          (day) => _class.primarySection.meetings?.[0]?.days[parseInt(day)]
+          (day) => _class.primarySection.meetings?.[0]?.days?.[parseInt(day)]
         );
 
         if (!includesDays) {
@@ -211,7 +217,7 @@ export const getFilteredClasses = (
       // Filter by breadth requirements
       if (currentBreadths.length > 0) {
         const classBreadths = getBreadthRequirements(
-          _class.primarySection.sectionAttributes
+          _class.primarySection.sectionAttributes ?? []
         );
         const matchesAnyBreadth = currentBreadths.some((breadth) =>
           classBreadths.includes(breadth)
@@ -241,7 +247,7 @@ export const getFilteredClasses = (
       }
 
       if (currentGradingFilters.length > 0) {
-        const basis = (_class.gradingBasis ?? "") as GradingBasis;
+        const basis = _class.gradingBasis ?? "";
         const category = gradingBasisCategoryMap[basis] ?? GradingFilter.Other;
 
         if (!currentGradingFilters.includes(category)) {
@@ -265,13 +271,13 @@ export const getFilteredClasses = (
       return acc;
     },
     { includedClasses: [], excludedClasses: [] } as {
-      includedClasses: IClass[];
-      excludedClasses: IClass[];
+      includedClasses: ICatalogClass[];
+      excludedClasses: ICatalogClass[];
     }
   );
 };
 
-export const getIndex = (classes: IClass[]) => {
+export const getIndex = (classes: ICatalogClass[]) => {
   const list = classes.map((_class) => {
     const subject = _class.subject;
     const number = _class.courseNumber;

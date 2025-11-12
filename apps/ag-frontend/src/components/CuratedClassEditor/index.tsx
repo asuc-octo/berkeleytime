@@ -39,14 +39,13 @@ export default function CuratedClassEditor({
 
   const { data: terms, loading: termsLoading } = useReadTerms();
 
-  const { data: classes, loading: classesLoading } =
-    useQuery(GET_CATALOG, {
-      variables: {
-        semester: localValue.semester,
-        year: localValue.year,
-      },
-      skip: !(localValue.semester && localValue.year),
-    });
+  const { data: classes, loading: classesLoading } = useQuery(GET_CATALOG, {
+    variables: {
+      semester: localValue.semester,
+      year: localValue.year,
+    },
+    skip: !(localValue.semester && localValue.year),
+  });
 
   const handleChange = (updatedState: Partial<ICuratedClassInput>) => {
     const updatedValue = { ...localValue, ...updatedState };

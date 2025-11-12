@@ -1,9 +1,16 @@
 import { useQuery } from "@apollo/client/react";
 
-import { ReadSchedulesQueryVariables, ReadSchedulesDocument, ReadSchedulesQuery } from "@/lib/generated/graphql";
+import {
+  ReadSchedulesDocument,
+  ReadSchedulesQuery,
+  ReadSchedulesQueryVariables,
+} from "@/lib/generated/graphql";
 
 export const useReadSchedules = (
-  options?: Omit<useQuery.Options<ReadSchedulesQuery, ReadSchedulesQueryVariables>, "variables">
+  options?: Omit<
+    useQuery.Options<ReadSchedulesQuery, ReadSchedulesQueryVariables>,
+    "variables"
+  >
 ) => {
   const query = useQuery(ReadSchedulesDocument, options);
 

@@ -1,4 +1,4 @@
-import { GradeDistribution, IClass } from "@/lib/api";
+import { ICatalogClass, IGradeDistribution } from "@/lib/api";
 import { LETTER_GRADES as LETTER_GRADE_ORDER } from "@/lib/grades";
 
 import { SortBy } from "./browser";
@@ -6,18 +6,22 @@ import { SortBy } from "./browser";
 export type SortOrder = "asc" | "desc";
 
 interface SorterContext {
-  classes: readonly IClass[];
+  classes: readonly ICatalogClass[];
   order: SortOrder;
-  relevanceScores?: Map<IClass, number>;
+  relevanceScores?: Map<ICatalogClass, number>;
 }
 
 interface SortOptions {
-  relevanceScores?: Map<IClass, number>;
+  relevanceScores?: Map<ICatalogClass, number>;
 }
 
-type Comparator = (a: IClass, b: IClass, direction: number) => number;
+type Comparator = (
+  a: ICatalogClass,
+  b: ICatalogClass,
+  direction: number
+) => number;
 
-type Sorter = (context: SorterContext) => IClass[];
+type Sorter = (context: SorterContext) => ICatalogClass[];
 
 const directionFromOrder = (order: SortOrder) => (order === "asc" ? 1 : -1);
 
@@ -26,9 +30,9 @@ const LETTER_GRADES = new Set(LETTER_GRADE_ORDER);
 const PASS_GRADES = new Set(["P", "S"]);
 
 const compareByRelevance = (
-  a: IClass,
-  b: IClass,
-  scores: Map<IClass, number> | undefined,
+  a: ICatalogClass,
+  b: ICatalogClass,
+  scores: Map<ICatalogClass, number> | undefined,
   order: SortOrder
 ) => {
   if (!scores || scores.size === 0) return 0;
@@ -51,13 +55,17 @@ const compareByRelevance = (
   return 0;
 };
 
-const compareAlphabetical = (a: IClass, b: IClass, direction: number) => {
-  const subjectComparison = a.course.subject.localeCompare(b.course.subject);
+const compareAlphabetical = (
+  a: ICatalogClass,
+  b: ICatalogClass,
+  direction: number
+) => {
+  const subjectComparison = a.subject.localeCompare(b.subject);
   if (subjectComparison !== 0) {
     return subjectComparison * direction;
   }
 
-  const courseNumberComparison = a.course.number.localeCompare(b.course.number);
+  const courseNumberComparison = a.number.localeCompare(b.number);
   if (courseNumberComparison !== 0) {
     return courseNumberComparison * direction;
   }
@@ -66,13 +74,16 @@ const compareAlphabetical = (a: IClass, b: IClass, direction: number) => {
 };
 
 const getPassFailPercentage = (
-  gradeDistribution: GradeDistribution | null | undefined
+  gradeDistribution: IGradeDistribution | null | undefined
 ) => {
   const distribution = gradeDistribution?.distribution ?? [];
 
   if (
     distribution.some(
-      (grade) => LETTER_GRADES.has(grade.letter) && (grade.count ?? 0) > 0
+      (grade) =>
+        LETTER_GRADES.has(
+          grade.letter as (typeof LETTER_GRADE_ORDER)[number]
+        ) && (grade.count ?? 0) > 0
     )
   ) {
     return null;
@@ -195,8 +206,8 @@ const compareUnits: Comparator = (a, b, direction) => {
   return compareAlphabetical(a, b, direction);
 };
 
-const getOpenSeats = ({ primarySection: { enrollment } }: IClass) =>
-  enrollment
+const getOpenSeats = ({ primarySection: { enrollment } }: ICatalogClass) =>
+  enrollment && enrollment.latest
     ? enrollment.latest.maxEnroll - enrollment.latest.enrolledCount
     : 0;
 
@@ -210,8 +221,10 @@ const compareOpenSeats: Comparator = (a, b, direction) => {
   return compareAlphabetical(a, b, direction);
 };
 
-const getPercentOpenSeats = ({ primarySection: { enrollment } }: IClass) => {
-  if (!enrollment?.latest.maxEnroll) return 0;
+const getPercentOpenSeats = ({
+  primarySection: { enrollment },
+}: ICatalogClass) => {
+  if (!enrollment?.latest?.maxEnroll) return 0;
 
   return (
     (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
@@ -290,7 +303,7 @@ const sorters: Record<SortBy, Sorter> = {
 };
 
 export const sortClasses = (
-  classes: readonly IClass[],
+  classes: readonly ICatalogClass[],
   sortBy: SortBy,
   order: SortOrder,
   options: SortOptions = {}

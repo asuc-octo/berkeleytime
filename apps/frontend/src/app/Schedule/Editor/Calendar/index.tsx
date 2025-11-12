@@ -4,12 +4,12 @@ import { MinusSquareDashed, MinusSquareSolid } from "iconoir-react";
 import moment from "moment";
 
 import { ISchedule, IScheduleEvent, ITerm } from "@/lib/api";
+import { Color } from "@/lib/generated/graphql";
 
 import { SectionColor } from "../../schedule";
 import styles from "./Calendar.module.scss";
 import Week from "./Week";
 import { IDay, IEvent } from "./calendar";
-import { Color } from "@/lib/generated/graphql";
 
 interface CalendarProps {
   selectedSections: SectionColor[];

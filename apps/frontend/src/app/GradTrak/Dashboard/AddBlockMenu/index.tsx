@@ -4,7 +4,7 @@ import { ArrowLeft, LongArrowDownLeft, NavArrowRight } from "iconoir-react";
 
 import { Button, Input, Select } from "@repo/theme";
 
-import { PlanTermInput, Status, Terms } from "@/lib/api";
+import { PlanTermInput, Status, Terms } from "@/lib/generated/graphql";
 
 import styles from "./AddBlockMenu.module.scss";
 
