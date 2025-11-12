@@ -68,7 +68,7 @@ services:
     networks:
       - bt
     ports:
-      - 3001:8080
+      - 8080:8080
       - 8081:8081
     restart: always
     volumes:
