@@ -38,6 +38,7 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import NotificationButton from "@/components/NotificationButton";
+import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
@@ -311,8 +312,11 @@ export default function Class({
   }, [userRatingsData]);
 
   // Notification management
-  const [notificationThresholds, setNotificationThresholds] = useState<number[]>([]);
-  const [isNotificationToastVisible, setNotificationToastVisible] = useState(false);
+  const [notificationThresholds, setNotificationThresholds] = useState<
+    number[]
+  >([]);
+  const [isNotificationToastVisible, setNotificationToastVisible] =
+    useState(false);
   const [notificationToastMessage, setNotificationToastMessage] = useState("");
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevThresholdsRef = useRef<number[]>([]);
@@ -335,7 +339,10 @@ export default function Class({
         setNotificationToastVisible(true);
       };
 
-      if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+      if (
+        typeof window !== "undefined" &&
+        typeof window.requestAnimationFrame === "function"
+      ) {
         window.requestAnimationFrame(showToast);
       } else {
         showToast();
@@ -362,7 +369,9 @@ export default function Class({
         mc.class.semester === _class.semester
     );
 
-    const thresholds = [...(monitoredClass?.thresholds || [])].sort((a, b) => a - b);
+    const thresholds = [...(monitoredClass?.thresholds || [])].sort(
+      (a, b) => a - b
+    );
     setNotificationThresholds(thresholds);
     prevThresholdsRef.current = thresholds;
     hasInitializedToastRef.current = true;
@@ -383,7 +392,9 @@ export default function Class({
 
       setNotificationThresholds((prev) => {
         if (checked) {
-          return Array.from(new Set([...prev, threshold])).sort((a, b) => a - b);
+          return Array.from(new Set([...prev, threshold])).sort(
+            (a, b) => a - b
+          );
         }
         return prev.filter((t) => t !== threshold).sort((a, b) => a - b);
       });
@@ -425,7 +436,9 @@ export default function Class({
       sortedThresholds.some((value, index) => value !== prevSorted[index]);
 
     if (hasChanged && sortedThresholds.length > 0) {
-      const thresholdsText = sortedThresholds.map((threshold) => `${threshold}%`).join(", ");
+      const thresholdsText = sortedThresholds
+        .map((threshold) => `${threshold}%`)
+        .join(", ");
       triggerNotificationToast(
         `You'll be notified about ${_class.subject} ${_class.courseNumber} enrollment milestones (${thresholdsText}).`
       );
@@ -435,7 +448,12 @@ export default function Class({
     }
 
     prevThresholdsRef.current = sortedThresholds;
-  }, [notificationThresholds, _class, triggerNotificationToast, closeNotificationToast]);
+  }, [
+    notificationThresholds,
+    _class,
+    triggerNotificationToast,
+    closeNotificationToast,
+  ]);
 
   useEffect(() => {
     return () => {

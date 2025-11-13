@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+
 import classNames from "classnames";
 import {
   BellNotification,
   BellNotificationSolid,
-  NavArrowDown,
   Check,
+  NavArrowDown,
   WarningTriangleSolid,
 } from "iconoir-react";
-import { Popover, Checkbox } from "radix-ui";
-import { Flex, IconButton, Text, Tooltip, Button, Dialog } from "@repo/theme";
+import { Checkbox, Popover } from "radix-ui";
+
+import { Button, Dialog, Flex, IconButton, Text, Tooltip } from "@repo/theme";
 
 import {
   NOTIFICATION_THRESHOLDS,
@@ -82,15 +84,18 @@ export default function NotificationButton({
     setTempThresholds(thresholds);
   }, [thresholds]);
 
-  const handleTempThresholdChange = useCallback((threshold: number, checked: boolean) => {
-    setTempThresholds((prev) => {
-      if (checked) {
-        return [...prev, threshold].sort((a, b) => a - b);
-      } else {
-        return prev.filter((t) => t !== threshold);
-      }
-    });
-  }, []);
+  const handleTempThresholdChange = useCallback(
+    (threshold: number, checked: boolean) => {
+      setTempThresholds((prev) => {
+        if (checked) {
+          return [...prev, threshold].sort((a, b) => a - b);
+        } else {
+          return prev.filter((t) => t !== threshold);
+        }
+      });
+    },
+    []
+  );
 
   const applyThresholdChanges = useCallback(() => {
     // Add new thresholds
@@ -164,14 +169,24 @@ export default function NotificationButton({
               >
                 <Flex align="center" gap="1">
                   {isActive ? (
-                    <BellNotificationSolid width={16} height={16} aria-hidden="true" />
+                    <BellNotificationSolid
+                      width={16}
+                      height={16}
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <BellNotification width={16} height={16} aria-hidden="true" />
+                    <BellNotification
+                      width={16}
+                      height={16}
+                      aria-hidden="true"
+                    />
                   )}
                   <NavArrowDown
                     width={14}
                     height={14}
-                    className={classNames(styles.arrow, { [styles.arrowRotated]: showPopup })}
+                    className={classNames(styles.arrow, {
+                      [styles.arrowRotated]: showPopup,
+                    })}
                     aria-hidden="true"
                   />
                 </Flex>
@@ -191,14 +206,20 @@ export default function NotificationButton({
                 }}
               >
                 {isActive ? (
-                  <BellNotificationSolid width={16} height={16} aria-hidden="true" />
+                  <BellNotificationSolid
+                    width={16}
+                    height={16}
+                    aria-hidden="true"
+                  />
                 ) : (
                   <BellNotification width={16} height={16} aria-hidden="true" />
                 )}
                 <NavArrowDown
                   width={14}
                   height={14}
-                  className={classNames(styles.arrow, { [styles.arrowRotated]: showPopup })}
+                  className={classNames(styles.arrow, {
+                    [styles.arrowRotated]: showPopup,
+                  })}
                   aria-hidden="true"
                 />
               </div>
