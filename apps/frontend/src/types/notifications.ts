@@ -1,7 +1,6 @@
 /**
  * Notification-related types for course enrollment tracking
  */
-
 import { IClass } from "@/lib/api/classes";
 
 /**
@@ -12,7 +11,9 @@ export type NotificationThreshold = 50 | 75 | 90;
 /**
  * All possible threshold values as a const array for validation
  */
-export const NOTIFICATION_THRESHOLDS: readonly NotificationThreshold[] = [50, 75, 90] as const;
+export const NOTIFICATION_THRESHOLDS: readonly NotificationThreshold[] = [
+  50, 75, 90,
+] as const;
 
 /**
  * Monitored class with notification thresholds
@@ -42,7 +43,10 @@ export type NotificationButtonVariant = "iconButton" | "card";
 /**
  * Threshold change callback type
  */
-export type OnThresholdChange = (threshold: number, checked: boolean) => void | Promise<void>;
+export type OnThresholdChange = (
+  threshold: number,
+  checked: boolean
+) => void | Promise<void>;
 
 /**
  * Remove class callback type

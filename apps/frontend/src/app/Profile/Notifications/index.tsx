@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import classNames from "classnames";
+
 import { Text } from "@repo/theme";
 
-import { useReadUser } from "@/hooks/api";
-import { IMonitoredClass } from "@/lib/api/users";
-import { IClass } from "@/lib/api/classes";
 import ClassCard from "@/components/ClassCard";
 import NotificationButton from "@/components/NotificationButton";
+import { useReadUser } from "@/hooks/api";
+import { IClass } from "@/lib/api/classes";
+import { IMonitoredClass } from "@/lib/api/users";
 
 import styles from "./Notifications.module.scss";
 
@@ -141,7 +143,9 @@ export default function Notifications() {
   const [toastMessage, setToastMessage] = useState("");
   const [isToastVisible, setToastVisible] = useState(false);
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const toastHideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const toastHideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
   const prevThresholdMapRef = useRef<Map<string, number[]>>(new Map());
   const currentToastKeyRef = useRef<string | null>(null);
 
@@ -248,21 +252,30 @@ export default function Notifications() {
       const key = getClassKey(monitoredClass);
       seenKeys.add(key);
 
-      const sortedThresholds = [...monitoredClass.thresholds].sort((a, b) => a - b);
+      const sortedThresholds = [...monitoredClass.thresholds].sort(
+        (a, b) => a - b
+      );
       const prevThresholds = prevThresholdMapRef.current.get(key);
 
       const hasChanged =
         !prevThresholds ||
         sortedThresholds.length !== prevThresholds.length ||
-        sortedThresholds.some((value, thresholdIndex) => value !== prevThresholds[thresholdIndex]);
+        sortedThresholds.some(
+          (value, thresholdIndex) => value !== prevThresholds[thresholdIndex]
+        );
 
       if (hasChanged) {
         prevThresholdMapRef.current.set(key, sortedThresholds);
 
         if (sortedThresholds.length > 0) {
-          const thresholdsText = sortedThresholds.map((threshold) => `${threshold}%`).join(", ");
+          const thresholdsText = sortedThresholds
+            .map((threshold) => `${threshold}%`)
+            .join(", ");
           const courseLabel = `${monitoredClass.class.subject} ${monitoredClass.class.courseNumber}`;
-          showToast(key, `You'll be notified about ${courseLabel} enrollment milestones (${thresholdsText}).`);
+          showToast(
+            key,
+            `You'll be notified about ${courseLabel} enrollment milestones (${thresholdsText}).`
+          );
         } else if (currentToastKeyRef.current === key) {
           hideToast(() => {
             currentToastKeyRef.current = null;
@@ -349,9 +362,9 @@ export default function Notifications() {
       <div className={styles.section}>
         <h2>Add/Drop Deadline Notifications</h2>
         <Text className={styles.sectionDescription}>
-  Get notified about key academic deadlines, including add/drop and late
-  change of class schedule for the semester.
-</Text>
+          Get notified about key academic deadlines, including add/drop and late
+          change of class schedule for the semester.
+        </Text>
 
         <div className={styles.toggleOptions}>
           <label className={styles.toggleOption}>
