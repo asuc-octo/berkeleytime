@@ -1,59 +1,85 @@
-.root {
-  background-color: var(--background-color);
+:global(.rt-Container) .bellWrapper {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  gap: 2px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  z-index: 100 !important;
+  padding: 0 6px !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 4px !important;
+  transition: background-color 150ms ease-in-out !important;
+  cursor: pointer !important;
+
+  &:hover {
+    background-color: var(--background-color) !important;
+  }
+
+  &.active {
+    color: var(--blue-500) !important;
+  }
 }
 
-.header {
+.popup {
   background-color: var(--foreground-color);
-  border-bottom: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px; 
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  position: absolute; 
+  top: 40px;     /* You will probably need to adjust this 'top' value */
+  right: -15px; /* You will probably need to adjust this 'right' value */
 
-  .bookmark.active {
-    color: var(--blue-500);
-    border-color: color-mix(in srgb, currentColor 10%, transparent);
-    background-color: color-mix(in srgb, currentColor 10%, transparent);
-  }
-
-  .heading {
-    font-size: 24px;
-    font-weight: 660;
-    font-feature-settings:
-      "cv05" on,
-      "cv13" on,
-      "ss07" on,
-      "cv12" on,
-      "cv06" on;
-    color: var(--heading-color);
-
-    .sectionNumber {
-      color: var(--paragraph-color);
-    }
-  }
-
-  .description {
-    font-size: 16px;
-    line-height: 1.5;
-    color: var(--paragraph-color);
-  }
-
-  .badge {
-    position: relative;
-    display: inline;
-    padding: 2px 6px;
-    border-radius: 10px;
-    background-color: var(--blue-500);
-    color: white;
-    font-size: 11px;
-    line-height: 1.5;
-    right: -5px;
-    z-index: 999;
-  }
-  .dot {
-    position: relative;
-    display: inline-block;
-    width: 6px;
-    height: 6px;
+  .checkboxOption {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    padding: 6px 8px; 
     border-radius: 6px;
-    right: -6px;
-    top: 1px;
-    background-color: var(--blue-500);
-  }
+    cursor: pointer;
+
+    &:hover {
+      label {
+        color: var(--heading-color); 
+      }
+    } 
+
+    label {
+      font-size: 14px;
+      color: var(--paragraph-color);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: color 100ms ease-in-out; 
+    } 
+
+  
+
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 4px;
+      flex-shrink: 0; 
+
+      &[data-state="checked"] {
+        background-color: var(--blue-500);
+        color: white;
+      }
+
+      &[data-state="unchecked"] {
+        border: 2px solid var(--paragraph-color);
+      }
+    }
+  } 
+}
+
+.arrowRotated {
+  transform: rotate(180deg);
 }
