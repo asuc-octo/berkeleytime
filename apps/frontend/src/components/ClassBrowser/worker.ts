@@ -1,5 +1,6 @@
+import { subjects } from "@repo/shared";
+
 import { IClass } from "@/lib/api";
-import { subjects } from "@/lib/course";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SortBy } from "./browser";
