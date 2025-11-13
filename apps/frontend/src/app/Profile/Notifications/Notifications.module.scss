@@ -121,3 +121,29 @@
 .noMarginHeading {
   margin: 0;
 }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: -120px;
+  transform: translateX(-50%);
+  width: min(720px, calc(100% - 32px));
+  background-color: var(--blue-500);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    bottom 250ms ease,
+    opacity 200ms ease;
+  z-index: 11000;
+}
+
+.toastVisible {
+  bottom: 32px;
+  opacity: 1;
+  pointer-events: auto;
+}

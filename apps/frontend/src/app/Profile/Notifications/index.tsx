@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import classNames from "classnames";
 import { Text } from "@repo/theme";
 
 import { useReadUser } from "@/hooks/api";
@@ -8,6 +9,14 @@ import ClassCard from "@/components/ClassCard";
 import NotificationButton from "@/components/NotificationButton";
 
 import styles from "./Notifications.module.scss";
+
+const TOAST_DURATION_MS = 3000;
+const TOAST_TRANSITION_MS = 250;
+
+const getClassKey = (monitoredClass: IMonitoredClass) => {
+  const cls = monitoredClass.class;
+  return `${cls.subject}-${cls.courseNumber}-${cls.number}-${cls.year}-${cls.semester}`;
+};
 
 // Test data for development
 const TEST_DATA: IMonitoredClass[] = [
@@ -129,6 +138,70 @@ export default function Notifications() {
   const [addDropDeadline, setAddDropDeadline] = useState(false);
   const [lateChangeSchedule, setLateChangeSchedule] = useState(false);
   const [receiveEmails, setReceiveEmails] = useState(true);
+  const [toastMessage, setToastMessage] = useState("");
+  const [isToastVisible, setToastVisible] = useState(false);
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const toastHideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevThresholdMapRef = useRef<Map<string, number[]>>(new Map());
+  const currentToastKeyRef = useRef<string | null>(null);
+
+  const clearToastTimeout = useCallback(() => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+      toastTimeoutRef.current = null;
+    }
+  }, []);
+
+  const clearToastHideTimeout = useCallback(() => {
+    if (toastHideTimeoutRef.current) {
+      clearTimeout(toastHideTimeoutRef.current);
+      toastHideTimeoutRef.current = null;
+    }
+  }, []);
+
+  const hideToast = useCallback(
+    (onHidden?: () => void) => {
+      clearToastTimeout();
+      if (!isToastVisible) {
+        onHidden?.();
+        return;
+      }
+
+      setToastVisible(false);
+      clearToastHideTimeout();
+      toastHideTimeoutRef.current = setTimeout(() => {
+        toastHideTimeoutRef.current = null;
+        onHidden?.();
+      }, TOAST_TRANSITION_MS);
+    },
+    [clearToastTimeout, clearToastHideTimeout, isToastVisible]
+  );
+
+  const showToast = useCallback(
+    (toastKey: string, message: string) => {
+      const display = () => {
+        currentToastKeyRef.current = toastKey;
+        setToastMessage(message);
+        setToastVisible(true);
+        clearToastTimeout();
+        toastTimeoutRef.current = setTimeout(() => {
+          hideToast(() => {
+            if (currentToastKeyRef.current === toastKey) {
+              currentToastKeyRef.current = null;
+              setToastMessage("");
+            }
+          });
+        }, TOAST_DURATION_MS);
+      };
+
+      if (isToastVisible) {
+        hideToast(display);
+      } else {
+        display();
+      }
+    },
+    [clearToastTimeout, hideToast, isToastVisible]
+  );
 
   const handleThresholdChange = (
     classIndex: number,
@@ -159,6 +232,69 @@ export default function Notifications() {
     // TODO: Call backend mutation to update user.monitoredClasses
     // await updateUser({ monitoredClasses: updated });
   };
+
+  useEffect(() => {
+    if (monitoredClasses.length === 0) {
+      prevThresholdMapRef.current.clear();
+      currentToastKeyRef.current = null;
+      hideToast(() => setToastMessage(""));
+      return;
+    }
+
+    const seenKeys = new Set<string>();
+
+    for (let index = 0; index < monitoredClasses.length; index += 1) {
+      const monitoredClass = monitoredClasses[index];
+      const key = getClassKey(monitoredClass);
+      seenKeys.add(key);
+
+      const sortedThresholds = [...monitoredClass.thresholds].sort((a, b) => a - b);
+      const prevThresholds = prevThresholdMapRef.current.get(key);
+
+      const hasChanged =
+        !prevThresholds ||
+        sortedThresholds.length !== prevThresholds.length ||
+        sortedThresholds.some((value, thresholdIndex) => value !== prevThresholds[thresholdIndex]);
+
+      if (hasChanged) {
+        prevThresholdMapRef.current.set(key, sortedThresholds);
+
+        if (sortedThresholds.length > 0) {
+          const thresholdsText = sortedThresholds.map((threshold) => `${threshold}%`).join(", ");
+          const courseLabel = `${monitoredClass.class.subject} ${monitoredClass.class.courseNumber}`;
+          showToast(key, `You'll be notified about ${courseLabel} enrollment milestones (${thresholdsText}).`);
+        } else if (currentToastKeyRef.current === key) {
+          hideToast(() => {
+            currentToastKeyRef.current = null;
+            setToastMessage("");
+          });
+        }
+
+        return;
+      }
+
+      prevThresholdMapRef.current.set(key, sortedThresholds);
+    }
+
+    prevThresholdMapRef.current.forEach((_value, key) => {
+      if (!seenKeys.has(key)) {
+        prevThresholdMapRef.current.delete(key);
+        if (currentToastKeyRef.current === key) {
+          hideToast(() => {
+            currentToastKeyRef.current = null;
+            setToastMessage("");
+          });
+        }
+      }
+    });
+  }, [monitoredClasses, showToast, hideToast]);
+
+  useEffect(() => {
+    return () => {
+      clearToastTimeout();
+      clearToastHideTimeout();
+    };
+  }, [clearToastTimeout, clearToastHideTimeout]);
 
   return (
     <div className={styles.container}>
@@ -237,6 +373,16 @@ export default function Notifications() {
             <span>Late change of class schedule</span>
           </label>
         </div>
+      </div>
+      <div
+        className={classNames(styles.toast, {
+          [styles.toastVisible]: isToastVisible && !!toastMessage,
+        })}
+        role="status"
+        aria-live="polite"
+        aria-hidden={!isToastVisible}
+      >
+        {toastMessage}
       </div>
     </div>
   );

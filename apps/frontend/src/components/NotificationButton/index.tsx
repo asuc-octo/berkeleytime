@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
-import { BellNotification, BellNotificationSolid, NavArrowDown, Check } from "iconoir-react";
+import {
+  BellNotification,
+  BellNotificationSolid,
+  NavArrowDown,
+  Check,
+  WarningTriangleSolid,
+} from "iconoir-react";
 import { Popover, Checkbox } from "radix-ui";
-import { Flex, IconButton, Text, Tooltip, Button } from "@repo/theme";
+import { Flex, IconButton, Text, Tooltip, Button, Dialog } from "@repo/theme";
 
 import {
   NOTIFICATION_THRESHOLDS,
@@ -134,6 +140,17 @@ export default function NotificationButton({
     className
   );
 
+  const handleCloseRemoveConfirmation = useCallback(() => {
+    setTempThresholds(thresholds);
+    setShowRemoveConfirmation(false);
+  }, [thresholds]);
+
+  const handleConfirmRemove = useCallback(async () => {
+    if (!onRemove) return;
+    await onRemove();
+    setShowRemoveConfirmation(false);
+  }, [onRemove]);
+
   return (
     <>
       <Popover.Root open={showPopup} onOpenChange={handleOpenChange}>
@@ -224,37 +241,42 @@ export default function NotificationButton({
         </Popover.Portal>
       </Popover.Root>
 
-      {onRemove && showRemoveConfirmation && (
-        <div className={styles.confirmationOverlay}>
-          <div className={styles.confirmationDialog}>
-            <Text className={styles.confirmationTitle}>
-              Stop tracking this class?
-            </Text>
-            <Text className={styles.confirmationMessage}>
-              This will remove all notification thresholds for this class.
-            </Text>
-            <Flex gap="2" justify="end" style={{ marginTop: 16 }}>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setTempThresholds(thresholds); // Reset to original thresholds
-                  setShowRemoveConfirmation(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={async () => {
-                  await onRemove();
-                  setShowRemoveConfirmation(false);
-                }}
-              >
-                Stop Tracking
-              </Button>
-            </Flex>
-          </div>
-        </div>
+      {onRemove && (
+        <Dialog.Root
+          open={showRemoveConfirmation}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseRemoveConfirmation();
+            }
+          }}
+        >
+          <Dialog.Portal>
+            <Dialog.Overlay />
+            <Dialog.Card>
+              <Dialog.Body className={styles.confirmationBody}>
+                <WarningTriangleSolid className={styles.confirmationIcon} />
+                <div className={styles.confirmationTitle}>
+                  Stop tracking this class?
+                </div>
+                <div className={styles.confirmationMessage}>
+                  You will no longer receive any notifications for this course.
+                </div>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Button
+                  variant="tertiary"
+                  style={{ color: "var(--paragraph-color)" }}
+                  onClick={handleCloseRemoveConfirmation}
+                >
+                  Cancel
+                </Button>
+                <Button isDelete onClick={handleConfirmRemove}>
+                  Stop Notification
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Card>
+          </Dialog.Portal>
+        </Dialog.Root>
       )}
     </>
   );
