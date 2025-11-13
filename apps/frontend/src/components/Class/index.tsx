@@ -1,4 +1,4 @@
-import { ReactNode, lazy, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, lazy, useCallback, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import {
@@ -30,6 +30,7 @@ import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
+import NotificationButton from "@/components/NotificationButton";
 import ClassContext from "@/contexts/ClassContext";
 import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
@@ -224,6 +225,95 @@ export default function Class({
     );
   }, [_class, bookmarked, updateUser, user]);
 
+  // Notification management
+  const [notificationThresholds, setNotificationThresholds] = useState<number[]>([]);
+
+  // Sync notification thresholds from user.monitoredClasses
+  useEffect(() => {
+    if (!user?.monitoredClasses || !_class) return;
+
+    const monitoredClass = user.monitoredClasses.find(
+      (mc) =>
+        mc.class.subject === _class.subject &&
+        mc.class.courseNumber === _class.courseNumber &&
+        mc.class.number === _class.number &&
+        mc.class.year === _class.year &&
+        mc.class.semester === _class.semester
+    );
+
+    setNotificationThresholds(monitoredClass?.thresholds || []);
+  }, [user, _class]);
+
+  const handleNotificationChange = useCallback(
+    async (threshold: number, checked: boolean) => {
+      if (!user || !_class) return;
+
+      const monitoredClasses = user.monitoredClasses || [];
+      const existingIndex = monitoredClasses.findIndex(
+        (mc) =>
+          mc.class.subject === _class.subject &&
+          mc.class.courseNumber === _class.courseNumber &&
+          mc.class.number === _class.number &&
+          mc.class.year === _class.year &&
+          mc.class.semester === _class.semester
+      );
+
+      let updatedMonitoredClasses;
+
+      if (existingIndex >= 0) {
+        // Class already monitored, update thresholds
+        const existingClass = monitoredClasses[existingIndex];
+        const updatedThresholds = checked
+          ? [...existingClass.thresholds, threshold].sort((a, b) => a - b)
+          : existingClass.thresholds.filter((t) => t !== threshold);
+
+        updatedMonitoredClasses = [...monitoredClasses];
+        updatedMonitoredClasses[existingIndex] = {
+          ...existingClass,
+          thresholds: updatedThresholds,
+        };
+
+        // Update local state
+        setNotificationThresholds(updatedThresholds);
+      } else {
+        // New monitored class
+        updatedMonitoredClasses = [
+          ...monitoredClasses,
+          {
+            class: _class,
+            thresholds: [threshold],
+          },
+        ];
+
+        setNotificationThresholds([threshold]);
+      }
+
+      // TODO: Call backend mutation to update user.monitoredClasses when backend is ready
+      // await updateUser({ monitoredClasses: updatedMonitoredClasses });
+    },
+    [user, _class]
+  );
+
+  const handleRemoveNotification = useCallback(async () => {
+    if (!user || !_class) return;
+
+    const updatedMonitoredClasses = (user.monitoredClasses || []).filter(
+      (mc) =>
+        !(
+          mc.class.subject === _class.subject &&
+          mc.class.courseNumber === _class.courseNumber &&
+          mc.class.number === _class.number &&
+          mc.class.year === _class.year &&
+          mc.class.semester === _class.semester
+        )
+    );
+
+    setNotificationThresholds([]);
+
+    // TODO: Call backend mutation to update user.monitoredClasses when backend is ready
+    // await updateUser({ monitoredClasses: updatedMonitoredClasses });
+  }, [user, _class]);
+
   useEffect(() => {
     if (!_class) return;
 
@@ -347,6 +437,15 @@ export default function Class({
                       <CalendarPlus />
                     </IconButton>
                   </Tooltip>
+                  {_class && (
+                    <NotificationButton
+                      thresholds={notificationThresholds}
+                      onThresholdsChange={handleNotificationChange}
+                      onRemove={handleRemoveNotification}
+                      uniqueId={`${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                      variant="iconButton"
+                    />
+                  )}
                 </Flex>
                 <Flex gap="3">
                   <Tooltip content="Open in Berkeley Catalog">

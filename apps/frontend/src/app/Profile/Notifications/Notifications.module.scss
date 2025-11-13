@@ -1,3 +1,8 @@
+/**
+ * Notifications page styles
+ * Cleaned up - removed unused classes
+ */
+
 .container {
   max-width: 100%;
 }
@@ -6,16 +11,16 @@
   margin-bottom: 32px;
 
   h1 {
-    font-size: 32px; 
-    font-weight: 700; 
-    margin: 0 0 24px 0; 
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 24px 0;
     color: var(--heading-color);
   }
 }
 
 .subtitle {
-  font-size: 16px; 
-  color: #64748B; 
+  font-size: 16px;
+  color: var(--paragraph-color);
   line-height: 1.6;
   margin: 0 0 40px 0;
   max-width: 80%;
@@ -34,184 +39,27 @@
 }
 
 .sectionDescription {
-  font-size: 16px; 
-  color: #64748B;  
-  /* Remaining styles */
+  font-size: 16px;
+  color: var(--paragraph-color);
   line-height: 1.6;
   margin: 0 0 20px 0;
 }
 
-.emptyState {
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--foreground-color);
-  height: 200px;
-  color: var(--label-color);
-}
-
 .classGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 326px); 
+  grid-template-columns: repeat(auto-fill, 326px);
   gap: 20px;
-  /* ... */
 }
 
-.classCard {
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--foreground-color);
-  overflow: hidden;
-  transition: box-shadow 150ms ease-in-out;
-  padding: 16px; 
-  /* ... */
-}
-
-.cardHeader {
-}
-
-.classTitle {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 8px;
-
-  h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--paragraph-color);
-  }
-}
-
-.classActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.grade {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  height: 24px;
-  padding: 0 8px;
-  background-color: var(--green-100);
-  color: var(--green-700);
-  border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.bookmarkIcon {
-  width: 20px;
-  height: 20px;
-  color: var(--paragraph-color);
-  cursor: pointer;
-  transition: color 100ms ease-in-out;
-
-  &:hover {
-    color: var(--blue-500);
-  }
-}
-
-.dropdown {
+.classCardWrapper {
   position: relative;
 }
 
-.bellIcon {
-  width: 20px;
-  height: 20px;
-  color: var(--blue-500);
-  cursor: pointer;
-  transition: color 100ms ease-in-out;
-
-  &:hover {
-    color: var(--blue-600);
-  }
-}
-
-.courseName {
-  margin: 0 0 8px 0;
-  font-size: 14px;
-  color: #64748B !important;     
-  line-height: 1.4;
-  white-space: nowrap !important; 
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-}
-
-.enrollment {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--paragraph-color);
-}
-
-.enrollmentIcon {
-  font-size: 14px;
-}
-
-.units {
-  margin-left: auto;
-  color: var(--paragraph-color);
-}
-
-.notificationOptions {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.checkboxOption {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: var(--paragraph-color);
-  cursor: pointer;
-  user-select: none;
-
-  input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  span {
-    line-height: 1.4;
-  }
-
-  &:hover {
-    color: var(--paragraph-color);
-  }
-}
-
-.stopTrackingContainer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-.stopTrackingButton {
-  padding: 10px 20px;
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  color: var(--red-500);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 100ms ease-in-out;
-
-  &:hover {
-    background-color: var(--red-50);
-    border-color: var(--red-500);
-  }
+.notificationButtonOverlay {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
 }
 
 .toggleOptions {
@@ -225,7 +73,7 @@
   align-items: center;
   gap: 12px;
   font-size: 16px;
-  color: #64748B;
+  color: var(--paragraph-color);
   cursor: pointer;
   user-select: none;
 
@@ -264,59 +112,12 @@
   span {
     line-height: 1.4;
   }
-}
-
-.toggleHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 
   h2 {
     margin: 0;
   }
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-
-  input[type="checkbox"] {
-    opacity: 0;
-    width: 0;
-    height: 0;
-
-    &:checked + .slider {
-      background-color: var(--blue-500);
-
-      &::before {
-        transform: translateX(20px);
-      }
-    }
-  }
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--border-color);
-  border-radius: 12px;
-  transition: background-color 150ms ease-in-out;
-
-  &::before {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: white;
-    top: 2px;
-    left: 2px;
-    transition: transform 150ms ease-in-out;
-  }
+.noMarginHeading {
+  margin: 0;
 }
