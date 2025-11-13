@@ -1,4 +1,4 @@
-import { ReactNode, lazy, useCallback, useEffect, useMemo, useState } from "react";
+import { ReactNode, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import classNames from "classnames";
 import {
@@ -227,6 +227,42 @@ export default function Class({
 
   // Notification management
   const [notificationThresholds, setNotificationThresholds] = useState<number[]>([]);
+  const [isNotificationToastVisible, setNotificationToastVisible] = useState(false);
+  const [notificationToastMessage, setNotificationToastMessage] = useState("");
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevThresholdsRef = useRef<number[]>([]);
+  const hasInitializedToastRef = useRef(false);
+
+  const closeNotificationToast = useCallback(() => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+      toastTimeoutRef.current = null;
+    }
+    setNotificationToastVisible(false);
+  }, []);
+
+  const triggerNotificationToast = useCallback(
+    (message: string) => {
+      closeNotificationToast();
+      setNotificationToastMessage(message);
+
+      const showToast = () => {
+        setNotificationToastVisible(true);
+      };
+
+      if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(showToast);
+      } else {
+        showToast();
+      }
+
+      toastTimeoutRef.current = setTimeout(() => {
+        setNotificationToastVisible(false);
+        toastTimeoutRef.current = null;
+      }, 3000);
+    },
+    [closeNotificationToast]
+  );
 
   // Sync notification thresholds from user.monitoredClasses
   useEffect(() => {
@@ -241,52 +277,31 @@ export default function Class({
         mc.class.semester === _class.semester
     );
 
-    setNotificationThresholds(monitoredClass?.thresholds || []);
-  }, [user, _class]);
+    const thresholds = [...(monitoredClass?.thresholds || [])].sort((a, b) => a - b);
+    setNotificationThresholds(thresholds);
+    prevThresholdsRef.current = thresholds;
+    hasInitializedToastRef.current = true;
+    closeNotificationToast();
+    setNotificationToastMessage("");
+  }, [user, _class, closeNotificationToast]);
+
+  useEffect(() => {
+    if (_class && !hasInitializedToastRef.current) {
+      hasInitializedToastRef.current = true;
+      prevThresholdsRef.current = notificationThresholds;
+    }
+  }, [_class, notificationThresholds]);
 
   const handleNotificationChange = useCallback(
     async (threshold: number, checked: boolean) => {
       if (!user || !_class) return;
 
-      const monitoredClasses = user.monitoredClasses || [];
-      const existingIndex = monitoredClasses.findIndex(
-        (mc) =>
-          mc.class.subject === _class.subject &&
-          mc.class.courseNumber === _class.courseNumber &&
-          mc.class.number === _class.number &&
-          mc.class.year === _class.year &&
-          mc.class.semester === _class.semester
-      );
-
-      let updatedMonitoredClasses;
-
-      if (existingIndex >= 0) {
-        // Class already monitored, update thresholds
-        const existingClass = monitoredClasses[existingIndex];
-        const updatedThresholds = checked
-          ? [...existingClass.thresholds, threshold].sort((a, b) => a - b)
-          : existingClass.thresholds.filter((t) => t !== threshold);
-
-        updatedMonitoredClasses = [...monitoredClasses];
-        updatedMonitoredClasses[existingIndex] = {
-          ...existingClass,
-          thresholds: updatedThresholds,
-        };
-
-        // Update local state
-        setNotificationThresholds(updatedThresholds);
-      } else {
-        // New monitored class
-        updatedMonitoredClasses = [
-          ...monitoredClasses,
-          {
-            class: _class,
-            thresholds: [threshold],
-          },
-        ];
-
-        setNotificationThresholds([threshold]);
-      }
+      setNotificationThresholds((prev) => {
+        if (checked) {
+          return Array.from(new Set([...prev, threshold])).sort((a, b) => a - b);
+        }
+        return prev.filter((t) => t !== threshold).sort((a, b) => a - b);
+      });
 
       // TODO: Call backend mutation to update user.monitoredClasses when backend is ready
       // await updateUser({ monitoredClasses: updatedMonitoredClasses });
@@ -313,6 +328,35 @@ export default function Class({
     // TODO: Call backend mutation to update user.monitoredClasses when backend is ready
     // await updateUser({ monitoredClasses: updatedMonitoredClasses });
   }, [user, _class]);
+
+  useEffect(() => {
+    if (!hasInitializedToastRef.current || !_class) return;
+
+    const sortedThresholds = [...notificationThresholds].sort((a, b) => a - b);
+    const prevSorted = prevThresholdsRef.current;
+
+    const hasChanged =
+      sortedThresholds.length !== prevSorted.length ||
+      sortedThresholds.some((value, index) => value !== prevSorted[index]);
+
+    if (hasChanged && sortedThresholds.length > 0) {
+      const thresholdsText = sortedThresholds.map((threshold) => `${threshold}%`).join(", ");
+      triggerNotificationToast(
+        `You'll be notified about ${_class.subject} ${_class.courseNumber} enrollment milestones (${thresholdsText}).`
+      );
+    } else if (sortedThresholds.length === 0) {
+      closeNotificationToast();
+      setNotificationToastMessage("");
+    }
+
+    prevThresholdsRef.current = sortedThresholds;
+  }, [notificationThresholds, _class, triggerNotificationToast, closeNotificationToast]);
+
+  useEffect(() => {
+    return () => {
+      closeNotificationToast();
+    };
+  }, [closeNotificationToast]);
 
   useEffect(() => {
     if (!_class) return;
@@ -641,6 +685,16 @@ export default function Class({
             )}
           </Body>
         </ClassContext>
+        <div
+          className={classNames(styles.notificationToast, {
+            [styles.notificationToastVisible]: isNotificationToastVisible && !!notificationToastMessage,
+          })}
+          role="status"
+          aria-live="polite"
+          aria-hidden={!isNotificationToastVisible}
+        >
+          {notificationToastMessage}
+        </div>
       </Flex>
     </Root>
   );

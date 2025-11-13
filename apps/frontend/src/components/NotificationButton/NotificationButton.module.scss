@@ -148,36 +148,30 @@
 }
 
 /* Confirmation Dialog */
-.confirmationOverlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
+.confirmationBody {
   align-items: center;
-  justify-content: center;
-  z-index: 10001;
-  animation: fadeIn 150ms ease-out;
+  text-align: center;
+  color: var(--heading-color);
 }
 
-.confirmationDialog {
-  background-color: var(--foreground-color);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 24px;
-  min-width: 400px;
-  max-width: 500px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.confirmationIcon {
+  margin-top: 40px;
+  width: 70px;
+  height: 70px;
+  color: var(--red-500);
 }
 
 .confirmationTitle {
-  font-size: 18px;
+  margin-top: 28px;
+  margin-bottom: 14px;
+  font-size: 28px;
   font-weight: 600;
-  color: var(--heading-color);
-  margin-bottom: 8px;
 }
 
 .confirmationMessage {
-  font-size: 14px;
+  margin: 0 20px 28px;
   color: var(--paragraph-color);
+  font-size: 15px;
   line-height: 1.5;
+  text-align: center;
 }
