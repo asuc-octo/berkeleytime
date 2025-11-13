@@ -61,14 +61,13 @@
 
 .notificationToast {
   position: absolute;
-  left: 50%;
+  right: 32px;
   bottom: -120px;
-  transform: translateX(-50%);
-  width: min(720px, calc(100% - 32px));
+  width: min(720px, calc(100% - 64px));
   background-color: var(--blue-500);
   color: white;
   padding: 16px 24px;
-  border-radius: 12px;
+  border-radius: 4px;
   font-size: 15px;
   line-height: 1.5;
   opacity: 0;
