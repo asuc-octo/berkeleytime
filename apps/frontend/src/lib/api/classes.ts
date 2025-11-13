@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
+
 import { GradeDistribution, ICourse, IEnrollment } from ".";
 import { IAggregatedRatings } from "./ratings";
 import { ITerm, Semester } from "./terms";
@@ -387,71 +389,16 @@ export const READ_CLASS = gql`
   }
 `;
 
-export interface GetCatalogResponse {
+export interface GetCanonicalCatalogResponse {
   catalog: IClass[];
 }
 
-export const GET_CATALOG = gql`
-  query GetCatalog($year: Int!, $semester: Semester!) {
-    catalog(year: $year, semester: $semester) {
-      number
-      subject
-      courseNumber
-      courseId
-      title
-      unitsMax
-      unitsMin
-      finalExam
-      gradingBasis
-      primarySection {
-        component
-        online
-        instructionMode
-        attendanceRequired
-        lecturesRecorded
-        sectionAttributes {
-          attribute {
-            code
-            description
-            formalDescription
-          }
-          value {
-            code
-            description
-            formalDescription
-          }
-        }
-        enrollment {
-          latest {
-            startTime
-            endTime
-            granularitySeconds
-            status
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
-          }
-        }
-        meetings {
-          days
-        }
-      }
-      course {
-        subject
-        number
-        title
-        gradeDistribution {
-          average
-          pnpPercentage
-        }
-        academicCareer
-      }
-      requirementDesignation {
-        code
-        description
-        formalDescription
-      }
-    }
-  }
+/**
+ * Canonical catalog query imported from @repo/shared.
+ * Ensures parity between frontend and backend cache warming.
+ *
+ * See: packages/shared/queries.ts for query definition and documentation.
+ */
+export const GET_CANONICAL_CATALOG = gql`
+  ${GET_CANONICAL_CATALOG_QUERY}
 `;

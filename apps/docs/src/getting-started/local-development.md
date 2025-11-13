@@ -17,11 +17,11 @@ Next:
 pre-commit install
 ```
 
-Currently, the main development occurs on the `gql` branch. Please make sure you are on this branch!
+Currently, the main development occurs on the `main` branch. Please make sure you are on this branch!
 
 ```sh
 # ./berkeleytime
-git switch gql
+git switch main
 
 # Create .env from template file
 cp .env.template .env

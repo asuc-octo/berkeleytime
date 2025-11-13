@@ -113,9 +113,13 @@ export default function Catalog() {
     [navigate, location, term]
   );
 
-  // TODO: Loading state
   if (termsLoading) {
-    return <></>;
+    return (
+      <div className={styles.loading}>
+        <div className={styles.loadingHeader} />
+        <div className={styles.loadingBody} />
+      </div>
+    );
   }
 
   // TODO: Error state
@@ -151,7 +155,10 @@ export default function Catalog() {
       </div>
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
-          <></>
+          <div className={styles.loading}>
+            <div className={styles.loadingHeader} />
+            <div className={styles.loadingBody} />
+          </div>
         ) : _class && _course ? (
           <Class
             class={_class}

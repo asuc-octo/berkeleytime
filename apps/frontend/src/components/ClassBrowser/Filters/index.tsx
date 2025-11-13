@@ -4,11 +4,11 @@ import classNames from "classnames";
 import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
+import { subjects } from "@repo/shared";
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option, OptionItem } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
-import { subjects } from "@/lib/course";
 
 import Header from "../Header";
 import {
@@ -485,28 +485,6 @@ export default function Filters() {
             Clear
           </button>
         </div>
-        <div className={styles.sortControls}>
-          <Select
-            value={sortBy}
-            onChange={(value) => updateSortBy(value as SortBy)}
-            options={Object.values(SortBy).map((sortOption) => {
-              return { value: sortOption, label: sortOption };
-            })}
-          />
-          <IconButton
-            className={styles.sortToggleButton}
-            onClick={() => updateReverse((previous) => !previous)}
-            aria-label={`Switch to ${nextOrderLabel} order`}
-            title={`Switch to ${nextOrderLabel} order`}
-            aria-pressed={reverse}
-          >
-            {isAscending ? (
-              <SortUp width={16} height={16} />
-            ) : (
-              <SortDown width={16} height={16} />
-            )}
-          </IconButton>
-        </div>
         {terms && terms.length > 0 && (
           <div className={styles.formControl}>
             <p className={styles.label}>Semester</p>
@@ -529,6 +507,31 @@ export default function Filters() {
             />
           </div>
         )}
+        <div className={styles.formControl}>
+          <p className={styles.label}>Sort By</p>
+          <div className={styles.sortControls}>
+            <Select
+              value={sortBy}
+              onChange={(value) => updateSortBy(value as SortBy)}
+              options={Object.values(SortBy).map((sortOption) => {
+                return { value: sortOption, label: sortOption };
+              })}
+            />
+            <IconButton
+              className={styles.sortToggleButton}
+              onClick={() => updateReverse((previous) => !previous)}
+              aria-label={`Switch to ${nextOrderLabel} order`}
+              title={`Switch to ${nextOrderLabel} order`}
+              aria-pressed={reverse}
+            >
+              {isAscending ? (
+                <SortUp width={16} height={16} />
+              ) : (
+                <SortDown width={16} height={16} />
+              )}
+            </IconButton>
+          </div>
+        </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Department</p>
           <Select<string>

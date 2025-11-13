@@ -460,7 +460,12 @@ export default function Class({
   }, [_class, navigate, onClose]);
 
   if (loading || courseLoading) {
-    return <></>;
+    return (
+      <div className={styles.loading}>
+        <div className={styles.loadingHeader} />
+        <div className={styles.loadingBody} />
+      </div>
+    );
   }
 
   // TODO: Error state

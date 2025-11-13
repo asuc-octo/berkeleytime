@@ -1,8 +1,8 @@
 # Deployment with CI/CD
 
 The deployment process is different for [development](#development), [staging](#staging), and [production](#production) environments.
-- **Development**: Best for short-term deployments to simulate a production environment as closely as possible. Useful for deploying feature branches before merging into `master`.
-- **Staging**: The last "testing" environment to catch bugs before reaching production. Reserved for the latest commit on `master`.
+- **Development**: Best for short-term deployments to simulate a production environment as closely as possible. Useful for deploying feature branches before merging into `main`.
+- **Staging**: The last "testing" environment to catch bugs before reaching production. Reserved for the latest commit on `main`.
 - **Production**: User facing website! Changes being pushed to production should be thoroughly tested on a developer's local machine and in development and staging environments.
 
 ## Development
@@ -74,8 +74,8 @@ The deployment process is different for [development](#development), [staging](#
 
 ## Staging
 
-The staging CI/CD pipeline is automatically run on every push to `master` (currently `gql`). The staging website can be viewed at `staging.stanfurdtime.com`.
+The staging CI/CD pipeline is automatically run on every push to `main`. The staging website can be viewed at `staging.stanfurdtime.com`.
 
 ## Production
 
-The production CI/CD pipeline is manually run with a process similar to the development pipeline. However, the production pipeline can only be run on `master` and `gql`.
+The production CI/CD pipeline is manually run with a process similar to the development pipeline. However, the production pipeline can only be run on `main`.

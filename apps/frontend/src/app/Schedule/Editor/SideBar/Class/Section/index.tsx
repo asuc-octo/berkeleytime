@@ -29,7 +29,10 @@ export default function Section({
         [styles.active]: active,
       })}
       key={sectionId}
-      onClick={() => onSectionSelect?.()}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSectionSelect?.();
+      }}
       onMouseOver={() => onSectionMouseOver()}
       onMouseOut={() => onSectionMouseOut()}
     >

@@ -6,7 +6,12 @@ import styles from "./Organization.module.scss";
 
 export default function Organization() {
   return (
-    <Flex direction="column" className={styles.root} pt="9">
+    <Flex
+      direction="column"
+      className={styles.root}
+      pt="9"
+      style={{ backgroundColor: "var(--neutral-900)" }}
+    >
       <Container size="1">
         <h3 className={styles.heading}>Get involved</h3>
         <Accordion.Root>

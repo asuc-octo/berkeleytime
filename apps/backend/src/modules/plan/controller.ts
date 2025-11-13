@@ -281,8 +281,6 @@ export async function editPlan(plan: PlanInput, context: any): Promise<Plan> {
 
 export async function deletePlan(context: any): Promise<string> {
   if (!context.user.email) throw new Error("Unauthorized");
-  await PlanModel.deleteOne({ userEmail: context.user.email }).catch((err) => {
-    return err;
-  });
+  await PlanModel.deleteOne({ userEmail: context.user.email });
   return context.user.email;
 }
