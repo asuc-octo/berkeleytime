@@ -5,7 +5,7 @@ import {
   ISectionAttriuteInfo,
   academicCareers,
 } from "@/lib/api";
-import { subjects } from "@/lib/course";
+import { subjects } from "@repo/shared";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export enum SortBy {

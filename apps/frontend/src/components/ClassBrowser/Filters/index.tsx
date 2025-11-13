@@ -8,7 +8,7 @@ import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option, OptionItem } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
-import { subjects } from "@/lib/course";
+import { subjects } from "@repo/shared";
 
 import Header from "../Header";
 import {
