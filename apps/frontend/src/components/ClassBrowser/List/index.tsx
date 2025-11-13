@@ -1,8 +1,7 @@
-import { RefObject, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
-import { useSearchParams } from "react-router-dom";
 
 import { LoadingIndicator } from "@repo/theme";
 
@@ -10,13 +9,6 @@ import ClassCard from "@/components/ClassCard";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
-import {
-  isInputElement,
-  useAutoLoadOnFocus,
-  useContainerFocus,
-  useFocusRingTimer,
-  useKeyboardNavigation,
-} from "../keyboardHelpers";
 import useBrowser from "../useBrowser";
 import styles from "./List.module.scss";
 
@@ -26,12 +18,10 @@ interface ListProps {
 
 export default function List({ onSelect }: ListProps) {
   const { classes, loading, year, semester, query } = useBrowser();
-  const [focusedIndex, setFocusedIndex] = useState<number>(0);
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
-  const [focusedByKeyboard, setFocusedByKeyboard] = useState<boolean>(false);
 
   const rootRef = useRef<HTMLDivElement>(null);
-  const [searchParams] = useSearchParams();
+  const recentlyViewedSectionRef = useRef<HTMLDivElement>(null);
 
   const recentlyViewed = useMemo(() => {
     const allRecents = getRecents(RecentType.Class);
@@ -78,13 +68,6 @@ export default function List({ onSelect }: ListProps) {
     };
   }, []);
 
-  // Keyboard navigation helpers
-  const { showFocusRing, showFocusRingTemporarily, hideFocusRing } =
-    useFocusRingTimer();
-  const isListFocused = useContainerFocus(
-    rootRef as RefObject<HTMLElement | null>
-  );
-
   const virtualizer = useVirtualizer({
     count: classes.length,
     getScrollElement: () => rootRef.current,
@@ -95,87 +78,21 @@ export default function List({ onSelect }: ListProps) {
     overscan: 5, // Keep extra items rendered for smoother scrolling
   });
 
-  useEffect(() => {
-    hideFocusRing();
-  }, [searchParams, hideFocusRing]);
-
-  // Reset focus when classes change (filters, search, etc.)
-  useEffect(() => {
-    setFocusedIndex(0);
-    hideFocusRing();
-  }, [classes, hideFocusRing]);
-
-  // Scroll focused item into view
-  useEffect(() => {
-    if (focusedIndex >= 0 && focusedIndex < classes.length) {
-      virtualizer.scrollToIndex(focusedIndex, { align: "auto" });
-    }
-  }, [focusedIndex, virtualizer, classes.length]);
-
-  // Keyboard navigation
-  useKeyboardNavigation({
-    items: classes,
-    containerRef: rootRef as RefObject<HTMLElement | null>,
-    focusedIndex,
-    setFocusedIndex: (index) => {
-      setFocusedIndex(index);
-      setFocusedByKeyboard(true);
-    },
-    onSelect: (focusedClass) => {
-      onSelect(
-        focusedClass.subject,
-        focusedClass.courseNumber,
-        focusedClass.number
-      );
-    },
-    isContainerFocused: isListFocused,
-    showFocusRing: showFocusRingTemporarily,
-  });
-
-  // Auto-load focused item after debounce (only for keyboard navigation)
-  useAutoLoadOnFocus(
-    classes,
-    focusedIndex,
-    isListFocused && focusedByKeyboard,
-    (focusedClass) => {
-      onSelect(
-        focusedClass.subject,
-        focusedClass.courseNumber,
-        focusedClass.number
-      );
-    },
-    300
-  );
-
   const items = virtualizer.getVirtualItems();
 
   const handleClassClick = (index: number) => {
-    setFocusedIndex(index);
-    hideFocusRing();
-    const _class = classes[index];
-    onSelect(_class.subject, _class.courseNumber, _class.number);
-  };
-
-  const handleListClick = (e: React.MouseEvent) => {
-    // Don't focus the list if clicking on an input or textarea
-    if (isInputElement(e.target)) {
-      return;
-    }
-    // Mark as mouse focus to prevent auto-load
-    setFocusedByKeyboard(false);
-    // Ensure list is focused when clicked so keyboard nav works
-    rootRef.current?.focus();
+    const selected = classes[index];
+    if (!selected) return;
+    onSelect(selected.subject, selected.courseNumber, selected.number);
   };
 
   return (
-    <div
-      ref={rootRef}
-      className={styles.root}
-      tabIndex={0}
-      onClick={handleListClick}
-    >
+    <div ref={rootRef} className={styles.root}>
       <Header />
-      <div className={styles.recentlyViewedSection}>
+      <div
+        ref={recentlyViewedSectionRef}
+        className={styles.recentlyViewedSection}
+      >
         {showRecentlyViewed && (
           <div className={styles.recentlyViewed}>
             <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
@@ -237,7 +154,6 @@ export default function List({ onSelect }: ListProps) {
                   data-index={index}
                   key={key}
                   ref={virtualizer.measureElement}
-                  active={showFocusRing && index === focusedIndex}
                   onClick={() => handleClassClick(index)}
                 />
               );

@@ -1,10 +1,11 @@
+import { subjects } from "@repo/shared";
+
 import {
   ICatalogClass,
   ISectionAttribute,
   ISectionAttriuteInfo,
   academicCareersMap,
 } from "@/lib/api";
-import { subjects } from "@/lib/course";
 import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
