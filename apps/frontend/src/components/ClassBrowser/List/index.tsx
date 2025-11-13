@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
@@ -92,10 +87,7 @@ export default function List({ onSelect }: ListProps) {
   };
 
   return (
-    <div
-      ref={rootRef}
-      className={styles.root}
-    >
+    <div ref={rootRef} className={styles.root}>
       <Header />
       <div
         ref={recentlyViewedSectionRef}

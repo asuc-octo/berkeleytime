@@ -12,7 +12,7 @@ import {
   SectionModel,
   TermModel,
 } from "@repo/common";
-import { Subject, subjects } from "@repo/shared";
+import { subjects } from "@repo/shared";
 
 import { getFields } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";

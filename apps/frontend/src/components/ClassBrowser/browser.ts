@@ -1,3 +1,5 @@
+import { subjects } from "@repo/shared";
+
 import {
   AcademicCareer,
   IClass,
@@ -5,7 +7,6 @@ import {
   ISectionAttriuteInfo,
   academicCareers,
 } from "@/lib/api";
-import { subjects } from "@repo/shared";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export enum SortBy {

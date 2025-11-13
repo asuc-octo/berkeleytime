@@ -4,11 +4,11 @@ import classNames from "classnames";
 import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
+import { subjects } from "@repo/shared";
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option, OptionItem } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
-import { subjects } from "@repo/shared";
 
 import Header from "../Header";
 import {
