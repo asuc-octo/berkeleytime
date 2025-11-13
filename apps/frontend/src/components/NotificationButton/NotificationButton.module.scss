@@ -1,0 +1,183 @@
+/**
+ * NotificationButton styles
+ * Supports two variants: iconButton (for Class header) and card (for NotificationClassCard)
+ */
+
+/* Base button styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 4px;
+  transition: all 150ms ease-in-out;
+  cursor: pointer;
+  position: relative;
+
+  &:focus-visible {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Icon button variant - for Class component header */
+.iconButton {
+  width: auto;
+  padding-left: 6.78px;
+  padding-right: 7.75px;
+
+  &.active {
+    color: var(--blue-500);
+    border-color: color-mix(in srgb, currentColor 10%, transparent);
+    background-color: color-mix(in srgb, currentColor 10%, transparent);
+  }
+}
+
+/* Card variant - for NotificationClassCard */
+.card {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  margin-top: -3.5px;
+  border: 1px solid var(--border-color);
+  z-index: 100;
+
+  &:hover {
+    background-color: var(--background-color);
+  }
+
+  &.active {
+    color: var(--blue-500);
+  }
+}
+
+/* Arrow icon animation */
+.arrow {
+  transition: transform 200ms ease-in-out;
+  color: currentColor;
+}
+
+.arrowRotated {
+  transform: rotate(180deg);
+}
+
+/* Popover content */
+.popoverContent {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 280px;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+
+  /* Radix Popover arrow styling */
+  [data-radix-popper-content-wrapper] & {
+    animation: fadeIn 150ms ease-out;
+  }
+}
+
+/* Popover arrow - matches background color */
+.popoverArrow {
+  fill: var(--foreground-color);
+}
+
+/* Checkbox label */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+
+  span {
+    font-size: 14px;
+    color: var(--paragraph-color);
+    white-space: nowrap;
+    user-select: none;
+  }
+}
+
+/* Checkbox styles */
+.checkbox {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: all 100ms ease-in-out;
+  cursor: pointer;
+
+  &[data-state="checked"] {
+    background-color: var(--blue-500);
+    color: white;
+    border: none;
+  }
+
+  &[data-state="unchecked"] {
+    background-color: transparent;
+    border: 2px solid var(--paragraph-color);
+  }
+
+  &:hover {
+    border-color: var(--heading-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Confirmation Dialog */
+.confirmationOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 150ms ease-out;
+}
+
+.confirmationDialog {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.confirmationTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--heading-color);
+  margin-bottom: 8px;
+}
+
+.confirmationMessage {
+  font-size: 14px;
+  color: var(--paragraph-color);
+  line-height: 1.5;
+}

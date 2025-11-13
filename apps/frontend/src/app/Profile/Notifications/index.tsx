@@ -1,10 +1,12 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Text } from "@repo/theme";
 
-import { useReadUser, useUpdateUser } from "@/hooks/api";
+import { useReadUser } from "@/hooks/api";
 import { IMonitoredClass } from "@/lib/api/users";
+import { IClass } from "@/lib/api/classes";
+import ClassCard from "@/components/ClassCard";
+import NotificationButton from "@/components/NotificationButton";
 
-import NotificationClassCard from "./NotificationClassCard";
 import styles from "./Notifications.module.scss";
 
 // Test data for development
@@ -41,7 +43,7 @@ const TEST_DATA: IMonitoredClass[] = [
       gradeDistribution: {
         average: "A+",
       },
-    } as any,
+    } as unknown as IClass,
     thresholds: [50],
   },
   {
@@ -75,7 +77,7 @@ const TEST_DATA: IMonitoredClass[] = [
       gradeDistribution: {
         average: "B+",
       },
-    } as any,
+    } as unknown as IClass,
     thresholds: [50, 75, 90],
   },
   {
@@ -108,14 +110,15 @@ const TEST_DATA: IMonitoredClass[] = [
       gradeDistribution: {
         average: "B",
       },
-    } as any,
+    } as unknown as IClass,
     thresholds: [75, 100],
   },
 ];
 
 export default function Notifications() {
   const { data: user } = useReadUser();
-  const [updateUser] = useUpdateUser();
+  // TODO: Uncomment when backend mutations are implemented
+  // const [updateUser] = useUpdateUser();
 
   const [monitoredClasses, setMonitoredClasses] = useState<IMonitoredClass[]>(
     user?.monitoredClasses && user.monitoredClasses.length > 0
@@ -146,62 +149,16 @@ export default function Notifications() {
     }
 
     setMonitoredClasses(updated);
-    // TODO: Call mutation to update user preferences
-    console.log(
-      "Update thresholds for class:",
-      classIndex,
-      updated[classIndex].thresholds
-    );
+    // TODO: Call backend mutation to update user.monitoredClasses
+    // await updateUser({ monitoredClasses: updated });
   };
 
   const handleRemoveClass = async (classIndex: number) => {
     const updated = monitoredClasses.filter((_, index) => index !== classIndex);
     setMonitoredClasses(updated);
-    // TODO: Call mutation to update user monitoredClasses
-    console.log("Removed class at index:", classIndex);
+    // TODO: Call backend mutation to update user.monitoredClasses
+    // await updateUser({ monitoredClasses: updated });
   };
-
-  const bookmark = useCallback(
-    async (classToBookmark: any) => {
-      if (!user || !classToBookmark) return;
-
-      const bookmarked = user.bookmarkedClasses.some(
-        (bookmarkedClass) =>
-          bookmarkedClass.subject === classToBookmark.subject &&
-          bookmarkedClass.courseNumber === classToBookmark.courseNumber &&
-          bookmarkedClass.number === classToBookmark.number &&
-          bookmarkedClass.year === classToBookmark.year &&
-          bookmarkedClass.semester === classToBookmark.semester
-      );
-
-      const bookmarkedClasses = bookmarked
-        ? user.bookmarkedClasses.filter(
-            (bookmarkedClass) =>
-              !(
-                bookmarkedClass.subject === classToBookmark.subject &&
-                bookmarkedClass.courseNumber === classToBookmark.courseNumber &&
-                bookmarkedClass.number === classToBookmark.number &&
-                bookmarkedClass.year === classToBookmark.year &&
-                bookmarkedClass.semester === classToBookmark.semester
-              )
-          )
-        : [...user.bookmarkedClasses, classToBookmark];
-
-      const payload = {
-        bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
-          subject: bookmarkedClass.subject,
-          number: bookmarkedClass.number,
-          courseNumber: bookmarkedClass.courseNumber,
-          year: bookmarkedClass.year,
-          semester: bookmarkedClass.semester,
-          sessionId: bookmarkedClass.sessionId || "1", // Default to "1" if null
-        })),
-      };
-
-      await updateUser(payload);
-    },
-    [user, updateUser]
-  );
 
   return (
     <div className={styles.container}>
@@ -221,9 +178,9 @@ export default function Notifications() {
               type="checkbox"
               checked={receiveEmails}
               onChange={(e) => setReceiveEmails(e.target.checked)}
-              className={styles.toggle}
+              className={styles.toggleOption}
             />
-            <h2 style={{ margin: 0 }}>Receive Emails</h2>
+            <h2 className={styles.noMarginHeading}>Receive Emails</h2>
           </label>
         </div>
       </div>
@@ -233,38 +190,29 @@ export default function Notifications() {
 
         {monitoredClasses.length === 0 ? null : (
           <div className={styles.classGrid}>
-            {monitoredClasses.map((monitoredClass, index) => {
-              const isBookmarked = user?.bookmarkedClasses.some(
-                (bookmarkedClass) =>
-                  bookmarkedClass.subject === monitoredClass.class.subject &&
-                  bookmarkedClass.courseNumber ===
-                    monitoredClass.class.courseNumber &&
-                  bookmarkedClass.number === monitoredClass.class.number &&
-                  bookmarkedClass.year === monitoredClass.class.year &&
-                  bookmarkedClass.semester === monitoredClass.class.semester
-              );
-
-              return (
-                <NotificationClassCard
-                  key={index}
-                  class={monitoredClass.class}
-                  thresholds={monitoredClass.thresholds}
-                  onThresholdChange={(threshold, checked) =>
-                    handleThresholdChange(index, threshold, checked)
-                  }
-                  onRemoveClass={async () => await handleRemoveClass(index)}
-                  bookmarked={isBookmarked}
-                  bookmarkToggle={() => bookmark(monitoredClass.class)}
-                />
-              );
-            })}
+            {monitoredClasses.map((monitoredClass, index) => (
+              <div key={index} className={styles.classCardWrapper}>
+                <ClassCard class={monitoredClass.class} showGrades={false} />
+                <div className={styles.notificationButtonOverlay}>
+                  <NotificationButton
+                    thresholds={monitoredClass.thresholds}
+                    onThresholdsChange={(threshold, checked) =>
+                      handleThresholdChange(index, threshold, checked)
+                    }
+                    onRemove={() => handleRemoveClass(index)}
+                    uniqueId={`${monitoredClass.class.subject}-${monitoredClass.class.number}-${index}`}
+                    variant="iconButton"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
 
       <div className={styles.section}>
         <h2>Add/Drop Deadline Notifications</h2>
-        <Text size="md" className={styles.sectionDescription}>
+        <Text className={styles.sectionDescription}>
   Get notified about key academic deadlines, including add/drop and late
   change of class schedule for the semester.
 </Text>
@@ -275,7 +223,7 @@ export default function Notifications() {
               type="checkbox"
               checked={addDropDeadline}
               onChange={(e) => setAddDropDeadline(e.target.checked)}
-              className={styles.toggle}
+              className={styles.toggleOption}
             />
             <span>Add/drop deadline</span>
           </label>
@@ -284,7 +232,7 @@ export default function Notifications() {
               type="checkbox"
               checked={lateChangeSchedule}
               onChange={(e) => setLateChangeSchedule(e.target.checked)}
-              className={styles.toggle}
+              className={styles.toggleOption}
             />
             <span>Late change of class schedule</span>
           </label>
