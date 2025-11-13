@@ -5,14 +5,15 @@ import { Search } from "iconoir-react";
 
 import { Badge, Color, LoadingIndicator } from "@repo/theme";
 
-import { GET_COURSE_NAMES, GetCoursesResponse, ICourse } from "@/lib/api";
+import { ICourse } from "@/lib/api";
+import { GetCourseNamesDocument } from "@/lib/generated/graphql";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./CourseSearch.module.scss";
 import { initialize } from "./browser";
 
 interface CourseSearchProps {
-  onSelect?: (course: ICourse) => void;
+  onSelect?: (course: Pick<ICourse, "subject" | "number">) => void;
   onClear?: () => void;
   selectedCourse: ICourse | null;
   inputStyle?: React.CSSProperties;
@@ -32,7 +33,7 @@ export default function CourseSearch({
     Recent<RecentType.Course>[]
   >([]);
 
-  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSE_NAMES);
+  const { data, loading } = useQuery(GetCourseNamesDocument);
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];
@@ -127,7 +128,7 @@ export default function CourseSearch({
                           setIsOpen(false);
                         }}
                         label={`${course.subject} ${course.number}`}
-                        color={Color.zinc}
+                        color={Color.Zinc}
                         style={{
                           cursor: "pointer",
                         }}

@@ -9,7 +9,8 @@ import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import Details from "@/components/Details";
 import useClass from "@/hooks/useClass";
-import { Component, componentMap } from "@/lib/api";
+import { componentMap } from "@/lib/api";
+import { Component } from "@/lib/generated/graphql";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Sections.module.scss";
@@ -126,10 +127,12 @@ export default function Sections() {
                     <CCN sectionId={section.sectionId} />
                   </div>
                   <Capacity
-                    enrolledCount={section.enrollment?.latest.enrolledCount}
-                    maxEnroll={section.enrollment?.latest.maxEnroll}
-                    waitlistedCount={section.enrollment?.latest.waitlistedCount}
-                    maxWaitlist={section.enrollment?.latest.maxWaitlist}
+                    enrolledCount={section.enrollment?.latest?.enrolledCount}
+                    maxEnroll={section.enrollment?.latest?.maxEnroll}
+                    waitlistedCount={
+                      section.enrollment?.latest?.waitlistedCount
+                    }
+                    maxWaitlist={section.enrollment?.latest?.maxWaitlist}
                   />
                   <Tooltip content="Berkeley Catalog">
                     <a

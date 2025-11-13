@@ -8,18 +8,47 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card, Color } from "@repo/theme";
+import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
-import { IClass } from "@/lib/api";
+import { IClass, IClassCourse } from "@/lib/api";
+import { IEnrollmentSingular } from "@/lib/api/enrollment";
+import { Color } from "@/lib/generated/graphql";
 
 import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
 
+type BaseClassFields = Pick<
+  IClass,
+  | "subject"
+  | "courseNumber"
+  | "number"
+  | "title"
+  | "unitsMax"
+  | "unitsMin"
+  | "gradeDistribution"
+>;
+
+type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
+
+type EnrollmentSnapshot = Pick<
+  IEnrollmentSingular,
+  "enrolledCount" | "maxEnroll" | "endTime"
+>;
+
+type ClassCardClass = Partial<BaseClassFields> & {
+  course?: Partial<CourseSummary> | null;
+  primarySection?: {
+    enrollment?: {
+      latest?: Partial<EnrollmentSnapshot> | null;
+    } | null;
+  } | null;
+};
+
 interface ClassProps {
-  class?: IClass;
+  class?: ClassCardClass;
   expandable?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
@@ -60,8 +89,7 @@ export default function ClassCard({
         {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
         <Card.Body>
           <Card.Heading>
-            {_class?.subject ?? _class?.course?.subject}{" "}
-            {_class?.courseNumber ?? _class?.course?.number}{" "}
+            {_class?.subject} {_class?.courseNumber}{" "}
             <span className={styles.sectionNumber}>#{_class?.number}</span>
           </Card.Heading>
           <Card.Description wrapDescription={wrapDescription}>
@@ -70,10 +98,10 @@ export default function ClassCard({
           <Card.Footer>
             <EnrollmentDisplay
               enrolledCount={
-                _class?.primarySection?.enrollment?.latest.enrolledCount
+                _class?.primarySection?.enrollment?.latest?.enrolledCount
               }
-              maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
-              time={_class?.primarySection?.enrollment?.latest.endTime}
+              maxEnroll={_class?.primarySection?.enrollment?.latest?.maxEnroll}
+              time={_class?.primarySection?.enrollment?.latest?.endTime}
             />
             {_class?.unitsMin !== undefined &&
               _class.unitsMax !== undefined && (

@@ -1,10 +1,9 @@
 import { useMemo, useState } from "react";
 
-import { Color } from "@repo/theme";
-
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
-import { Component, IClass, ISection, Semester, componentMap } from "@/lib/api";
+import { IScheduleClass, componentMap } from "@/lib/api";
+import { Color, Component, Semester } from "@/lib/generated/graphql";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
@@ -12,11 +11,11 @@ import Section from "./Section";
 interface ClassProps {
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
-  class: IClass;
+  class: IScheduleClass["class"];
   semester: Semester;
   year: number;
   color: Color;
-  selectedSections: ISection[];
+  selectedSections: IScheduleClass["selectedSections"];
   onSectionSelect: (
     subject: string,
     courseNumber: string,
@@ -30,7 +29,7 @@ interface ClassProps {
     number: string
   ) => void;
   onSectionMouseOut: () => void;
-  onDelete: (cls: IClass) => void;
+  onDelete: (cls: IScheduleClass["class"]) => void;
   onColorChange: (
     subject: string,
     courseNumber: string,

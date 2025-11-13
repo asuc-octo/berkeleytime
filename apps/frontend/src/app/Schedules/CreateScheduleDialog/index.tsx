@@ -18,8 +18,8 @@ import {
 } from "@repo/theme";
 
 import { useCreateSchedule, useReadTerms } from "@/hooks/api";
-import { Semester, TemporalPosition } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
+import { Semester, TemporalPosition } from "@/lib/generated/graphql";
 
 interface CreateScheduleDialogProps {
   defaultName: string;
@@ -98,18 +98,18 @@ export default function CreateScheduleDialog({
     setLoading(true);
 
     // TODO: Error handling, loading state
-    const { data } = await createSchedule({
+    const { data: { createSchedule: schedule } = {} } = await createSchedule({
       name: name,
       year: Number(year),
       semester: semester as Semester,
-      sessionId: _term.sessions[0].id,
+      sessionId: _term.sessions?.[0]?.id ?? "",
     });
 
     setLoading(false);
 
-    if (!data) return;
+    if (!schedule) return;
 
-    navigate(data.createSchedule._id);
+    navigate(schedule._id);
   };
 
   const handleOpenChange = (open: boolean) => {

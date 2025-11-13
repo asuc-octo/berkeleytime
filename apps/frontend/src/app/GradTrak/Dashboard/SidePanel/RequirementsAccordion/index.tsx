@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Check, MoreHoriz, NavArrowDown, NavArrowRight } from "iconoir-react";
 
 import { useEditPlan } from "@/hooks/api";
-import { CollegeReqs, PlanInput, UniReqs } from "@/lib/api/plans";
 import { RequirementEnum, convertRequirementEnumToStrings } from "@/lib/course";
+import { CollegeReqs, PlanInput, UniReqs } from "@/lib/generated/graphql";
 
 import styles from "./RequirementsAccordion.module.scss";
 

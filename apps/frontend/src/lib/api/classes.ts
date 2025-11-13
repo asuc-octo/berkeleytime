@@ -2,221 +2,12 @@ import { gql } from "@apollo/client";
 
 import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
 
-import { GradeDistribution, ICourse, IEnrollment } from ".";
-import { IAggregatedRatings } from "./ratings";
-import { ITerm, Semester } from "./terms";
-
-export enum InstructionMethod {
-  Unknown = "UNK",
-  DirectedGroupStudy = "GRP",
-  Workshop = "WOR",
-  WebBasedDiscussion = "WBD",
-  Tutorial = "TUT",
-  Seminar = "SEM",
-  FieldWork = "FLD",
-  Recitation = "REC",
-  IndependentStudy = "IND",
-  Session = "SES",
-  Colloquium = "COL",
-  Clinic = "CLC",
-  Studio = "STD",
-  Lecture = "LEC",
-  Reading = "REA",
-  Internship = "INT",
-  Discussion = "DIS",
-  Demonstration = "DEM",
-  Conversation = "CON",
-  SelfPaced = "SLF",
-  WebBasedLecture = "WBL",
-  Laboratory = "LAB",
-}
-
-export enum Component {
-  Workshop = "WOR",
-  WebBasedDiscussion = "WBD",
-  Clinic = "CLN",
-  Practicum = "PRA",
-  DirectedGroupStudy = "GRP",
-  Discussion = "DIS",
-  Voluntary = "VOL",
-  Tutorial = "TUT",
-  FieldWork = "FLD",
-  Lecture = "LEC",
-  Supplementary = "SUP",
-  Laboratory = "LAB",
-  Session = "SES",
-  Studio = "STD",
-  SelfPaced = "SLF",
-  Colloquium = "COL",
-  WebBasedLecture = "WBL",
-  IndependentStudy = "IND",
-  Internship = "INT",
-  Reading = "REA",
-  Recitation = "REC",
-  Seminar = "SEM",
-}
-
-export const instructionMethodMap: Record<InstructionMethod, string> = {
-  [InstructionMethod.Lecture]: "Lecture",
-  [InstructionMethod.Seminar]: "Seminar",
-  [InstructionMethod.IndependentStudy]: "Independent Study",
-  [InstructionMethod.DirectedGroupStudy]: "Directed Group Study",
-  [InstructionMethod.Studio]: "Studio",
-  [InstructionMethod.Laboratory]: "Laboratory",
-  [InstructionMethod.Workshop]: "Workshop",
-  [InstructionMethod.WebBasedDiscussion]: "Web-Based Discussion",
-  [InstructionMethod.Clinic]: "Clinic",
-  [InstructionMethod.Discussion]: "Discussion",
-  [InstructionMethod.Tutorial]: "Tutorial",
-  [InstructionMethod.FieldWork]: "Field Work",
-  [InstructionMethod.Session]: "Session",
-  [InstructionMethod.SelfPaced]: "Self-paced",
-  [InstructionMethod.Colloquium]: "Colloquium",
-  [InstructionMethod.WebBasedLecture]: "Web-Based Lecture",
-  [InstructionMethod.Internship]: "Internship",
-  [InstructionMethod.Reading]: "Reading",
-  [InstructionMethod.Recitation]: "Recitation",
-  [InstructionMethod.Unknown]: "Unknown",
-  [InstructionMethod.Demonstration]: "Demonstration",
-  [InstructionMethod.Conversation]: "Conversation",
-};
-
-export const componentMap: Record<Component, string> = {
-  [Component.Lecture]: "Lecture",
-  [Component.Seminar]: "Seminar",
-  [Component.IndependentStudy]: "Independent Study",
-  [Component.DirectedGroupStudy]: "Directed Group Study",
-  [Component.Studio]: "Studio",
-  [Component.Laboratory]: "Laboratory",
-  [Component.Workshop]: "Workshop",
-  [Component.WebBasedDiscussion]: "Web-Based Discussion",
-  [Component.Clinic]: "Clinic",
-  [Component.Practicum]: "Practicum",
-  [Component.Discussion]: "Discussion",
-  [Component.Voluntary]: "Voluntary",
-  [Component.Tutorial]: "Tutorial",
-  [Component.FieldWork]: "Field Work",
-  [Component.Supplementary]: "Supplementary",
-  [Component.Session]: "Session",
-  [Component.SelfPaced]: "Self-paced",
-  [Component.Colloquium]: "Colloquium",
-  [Component.WebBasedLecture]: "Web-Based Lecture",
-  [Component.Internship]: "Internship",
-  [Component.Reading]: "Reading",
-  [Component.Recitation]: "Recitation",
-};
-
-export enum FinalExam {
-  Written = "Y",
-  Common = "C",
-  None = "N",
-  Alternate = "A",
-  Undecided = "D",
-}
-
-export enum ExamType {
-  Final = "FIN",
-  Midterm = "MID",
-  Alternate = "ALT",
-  MakeUp = "MAK",
-}
-
-export interface IInstructor {
-  familyName: string;
-  givenName: string;
-}
-
-export interface IExam {
-  date: string;
-  location?: string;
-  type: ExamType;
-  startTime: string;
-  endTime: string;
-}
-
-export interface ISectionAttriuteInfo {
-  code?: string;
-  description?: string;
-  formalDescription?: string;
-}
-
-export interface ISectionAttribute {
-  attribute: ISectionAttriuteInfo;
-  value: ISectionAttriuteInfo;
-}
-
-export interface ISection {
-  enrollment: IEnrollment;
-  // Identifiers
-  termId: string;
-  sessionId: string;
-  sectionId: string;
-
-  // Relationships (what is relationships?)
-  term: ITerm;
-  course: ICourse;
-  class: IClass;
-
-  // Attributes
-  year: number;
-  semester: Semester;
-  subject: string;
-  courseNumber: string;
-  classNumber: string;
-  number: string;
-  startDate: string;
-  endDate: string;
-  primary: boolean;
-  instructionMode: string;
-  component: Component;
-  meetings: IMeeting[];
-  exams: IExam[];
-  online: boolean;
-  attendanceRequired: boolean;
-  lecturesRecorded: boolean;
-  sectionAttributes: ISectionAttribute[];
-}
-
-export interface IMeeting {
-  days: boolean[];
-  endTime: string;
-  location: string;
-  startTime: string;
-  instructors: IInstructor[];
-}
-
-export interface IClass {
-  // Identifiers
-  termId: string;
-  sessionId: string;
-  courseId: string;
-  subject: string;
-  courseNumber: string;
-  number: string;
-
-  // Relationships
-  term: ITerm;
-  course: ICourse;
-  primarySection: ISection;
-  sections: ISection[];
-  gradeDistribution: GradeDistribution;
-  aggregatedRatings: IAggregatedRatings;
-
-  // Attributes
-  year: number;
-  semester: Semester;
-  gradingBasis: string;
-  finalExam: string;
-  description: string | null;
-  title: string | null;
-  unitsMax: number;
-  unitsMin: number;
-  requirementDesignation?: ISectionAttriuteInfo;
-}
-
-export interface ReadClassResponse {
-  class: IClass;
-}
+import {
+  AcademicCareer,
+  Component,
+  GetCanonicalCatalogQuery,
+  GetClassQuery,
+} from "../generated/graphql";
 
 export const READ_CLASS = gql`
   query GetClass(
@@ -238,6 +29,7 @@ export const READ_CLASS = gql`
       year
       semester
       subject
+      sessionId
       courseNumber
       number
       title
@@ -389,9 +181,13 @@ export const READ_CLASS = gql`
   }
 `;
 
-export interface GetCanonicalCatalogResponse {
-  catalog: IClass[];
-}
+export type IClass = NonNullable<GetClassQuery["class"]>;
+export type ISection = NonNullable<IClass["sections"]>[number];
+export type IClassCourse = IClass["course"];
+
+export type IInstructor = ISection["meetings"][number]["instructors"][number];
+export type IExam = ISection["exams"][number];
+export type IMeeting = ISection["meetings"][number];
 
 /**
  * Canonical catalog query imported from @repo/shared.
@@ -399,6 +195,46 @@ export interface GetCanonicalCatalogResponse {
  *
  * See: packages/shared/queries.ts for query definition and documentation.
  */
-export const GET_CANONICAL_CATALOG = gql`
-  ${GET_CANONICAL_CATALOG_QUERY}
-`;
+export const GET_CANONICAL_CATALOG = gql(GET_CANONICAL_CATALOG_QUERY);
+
+export type ICatalogClass = NonNullable<
+  GetCanonicalCatalogQuery["catalog"]
+>[number];
+export type ISectionAttriuteInfo = ICatalogClass["requirementDesignation"];
+export type ISectionAttribute = NonNullable<
+  NonNullable<ICatalogClass["primarySection"]>["sectionAttributes"]
+>[number];
+
+export const componentMap: Record<Component, string> = {
+  [Component.Cln]: "Clinic",
+  [Component.Col]: "Colloquium",
+  [Component.Con]: "Conversation",
+  [Component.Dem]: "Demonstration",
+  [Component.Dis]: "Discussion",
+  [Component.Fld]: "Field Work",
+  [Component.Grp]: "Directed Group Study",
+  [Component.Ind]: "Independent Study",
+  [Component.Int]: "Internship",
+  [Component.Lab]: "Laboratory",
+  [Component.Lec]: "Lecture",
+  [Component.Pra]: "Practicum",
+  [Component.Rea]: "Reading",
+  [Component.Rec]: "Recitation",
+  [Component.Sem]: "Seminar",
+  [Component.Ses]: "Session",
+  [Component.Slf]: "Self-paced",
+  [Component.Std]: "Studio",
+  [Component.Sup]: "Supplementary",
+  [Component.Tut]: "Tutorial",
+  [Component.Vol]: "Voluntary",
+  [Component.Wbd]: "Web-Based Discussion",
+  [Component.Wbl]: "Web-Based Lecture",
+  [Component.Wor]: "Workshop",
+};
+
+export const academicCareersMap: Record<AcademicCareer, string> = {
+  [AcademicCareer.Ugrd]: "Undergraduate",
+  [AcademicCareer.Grad]: "Graduate",
+  [AcademicCareer.Ucbx]: "Extension",
+  [AcademicCareer.Law]: "Law",
+};

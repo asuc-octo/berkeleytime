@@ -1,6 +1,5 @@
-import { Color } from "@repo/theme";
-
-import { ISchedule, IScheduleEvent, ISection } from "@/lib/api";
+import { ISchedule, IScheduleClass } from "@/lib/api";
+import { Color, Event, Section } from "@/lib/generated/graphql";
 
 interface BaseEvent {
   days: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];
@@ -12,17 +11,17 @@ interface BaseEvent {
 
 interface SectionEvent extends BaseEvent {
   type: "section";
-  section: ISection;
+  section: Section;
 }
 
 interface CustomEvent extends BaseEvent {
   type: "custom";
-  event: IScheduleEvent;
+  event: Event;
 }
 
 export interface SectionColor {
   color: Color;
-  section: ISection;
+  section: IScheduleClass["class"]["sections"][number];
 }
 
 export type ScheduleEvent = SectionEvent | CustomEvent;
@@ -61,7 +60,7 @@ export const getSelectedSections = (schedule?: ISchedule) => {
               ...acc,
               {
                 section: _section,
-                color: color!,
+                color: color as Color,
               },
             ]
           : acc;
@@ -74,14 +73,14 @@ export const acceptedColors = Object.values(Color);
 
 // DARK_MODE colors from grades mapped to Color enum
 const COLOR_ORDER: Color[] = [
-  Color.blue,
-  Color.green,
-  Color.red,
-  Color.teal,
-  Color.orange,
-  Color.emerald,
-  Color.sky,
-  Color.violet,
+  Color.Blue,
+  Color.Green,
+  Color.Red,
+  Color.Teal,
+  Color.Orange,
+  Color.Emerald,
+  Color.Sky,
+  Color.Violet,
 ];
 
 export const getNextClassColor = (classIndex: number): Color => {

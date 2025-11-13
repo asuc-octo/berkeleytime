@@ -3,11 +3,12 @@ import { useEffect, useMemo, useRef } from "react";
 import { Plugins, Sortable } from "@shopify/draggable";
 import { Plus } from "iconoir-react";
 
-import { Button, Color } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
 import useSchedule from "@/hooks/useSchedule";
-import { IClass, IScheduleEvent } from "@/lib/api";
+import { IScheduleClass, IScheduleEvent } from "@/lib/api";
+import { Color } from "@/lib/generated/graphql";
 
 import { getUnits } from "../../schedule";
 import EventDialog from "../EventDialog";
@@ -38,7 +39,7 @@ interface SideBarProps {
   ) => void;
   onSectionMouseOut: () => void;
   onExpandedChange: (index: number, expanded: boolean) => void;
-  onDeleteClass: (cls: IClass) => void;
+  onDeleteClass: (cls: IScheduleClass["class"]) => void;
   onDeleteEvent: (event: IScheduleEvent) => void;
   onColorChange: (
     subject: string,
@@ -73,28 +74,30 @@ export default function SideBar({
   useEffect(() => {
     if (!bodyRef.current) return;
 
-    const sortable = new Sortable(bodyRef.current, {
-      draggable: `[data-draggable]`,
-      distance: 8,
-      mirror: {
-        constrainDimensions: true,
-      },
-      plugins: [Plugins.ResizeMirror],
-    });
+    // TODO: Fix sorting
 
-    sortable.on("drag:stop", (event) => {
-      event.cancel();
-    });
+    // const sortable = new Sortable(bodyRef.current, {
+    //   draggable: `[data-draggable]`,
+    //   distance: 8,
+    //   mirror: {
+    //     constrainDimensions: true,
+    //   },
+    //   plugins: [Plugins.ResizeMirror],
+    // });
 
-    sortable.on("sortable:stop", (event) => {
-      const { oldIndex, newIndex } = event;
+    // // sortable.on("drag:stop", (event) => {
+    // //   event.cancel();
+    // // });
 
-      onSortEnd(oldIndex, newIndex);
-    });
+    // sortable.on("sortable:stop", (event) => {
+    //   const { oldIndex, newIndex } = event;
+    //   console.log(oldIndex, newIndex);
+    //   onSortEnd(oldIndex, newIndex);
+    // });
 
-    return () => {
-      sortable.destroy();
-    };
+    // return () => {
+    //   sortable.destroy();
+    // };
   }, [onSortEnd]);
 
   return (
@@ -153,7 +156,8 @@ export default function SideBar({
           return (
             <Class
               key={`${selectedClass.class.subject}${selectedClass.class.courseNumber}${selectedClass.class.number}`}
-              {...selectedClass}
+              class={selectedClass.class}
+              selectedSections={selectedClass.selectedSections}
               semester={schedule.semester}
               year={schedule.year}
               color={selectedClass.color!}

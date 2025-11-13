@@ -4,12 +4,8 @@ import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import {
-  GET_CANONICAL_CATALOG,
-  GetCanonicalCatalogResponse,
-  ITerm,
-  Semester,
-} from "@/lib/api";
+import { ITerm } from "@/lib/api";
+import { GetCanonicalCatalogDocument, Semester } from "@/lib/generated/graphql";
 
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
@@ -85,17 +81,14 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetCanonicalCatalogResponse>(
-    GET_CANONICAL_CATALOG,
-    {
-      variables: {
-        semester: currentSemester,
-        year: currentYear,
-      },
-      fetchPolicy: "no-cache",
-      nextFetchPolicy: "no-cache",
-    }
-  );
+  const { data, loading } = useQuery(GetCanonicalCatalogDocument, {
+    variables: {
+      semester: currentSemester,
+      year: currentYear,
+    },
+    fetchPolicy: "no-cache",
+    nextFetchPolicy: "no-cache",
+  });
 
   const classes = useMemo(() => data?.catalog ?? [], [data]);
 

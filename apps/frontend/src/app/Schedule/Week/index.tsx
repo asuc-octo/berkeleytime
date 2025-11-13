@@ -2,7 +2,7 @@ import { MouseEvent, useMemo, useRef, useState } from "react";
 
 import { Color } from "@repo/theme";
 
-import { IScheduleEvent, ISection } from "@/lib/api";
+import { IScheduleEvent } from "@/lib/api";
 
 import { ScheduleEvent, SectionColor, getY } from "../schedule";
 import Event from "./Event";
@@ -107,7 +107,7 @@ export default function Week({
             section.meetings
               .filter(
                 (meeting) =>
-                  meeting.days[day] &&
+                  meeting.days?.[day] &&
                   meeting.startTime &&
                   getY(meeting.startTime) > 0
               )
@@ -261,7 +261,7 @@ export default function Week({
                   key={`${event.id}-${event.position}-${event.active}`}
                   {...event}
                   flipPopup={day >= 5}
-                  color={event.color}
+                  color={event.color as Color}
                 />
               ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}

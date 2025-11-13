@@ -1,4 +1,5 @@
-import { IEnrollment, Semester } from "@/lib/api";
+import { IEnrollment } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 export interface Input {
   subject: string;

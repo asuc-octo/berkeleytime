@@ -1,4 +1,5 @@
-import { GradeDistribution, Semester } from "@/lib/api";
+import { IGradeDistribution } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 export enum InputType {
   Term = "T",
@@ -49,6 +50,7 @@ export interface TermInstructorInput extends BaseInstructorInput {
 export interface NoTermInstructorInput extends BaseInstructorInput {
   year?: never;
   semester?: never;
+  sessionId?: never;
 }
 
 export type InstructorInput = TermInstructorInput | NoTermInstructorInput;
@@ -57,7 +59,7 @@ export type Input = CourseInput | TermInput | InstructorInput;
 
 export interface Output {
   color: string;
-  gradeDistribution: GradeDistribution;
+  gradeDistribution: IGradeDistribution;
   input: Input;
   hidden: boolean;
   active: boolean;

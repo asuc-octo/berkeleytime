@@ -9,7 +9,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { Button, IconButton, useColorScheme, useTheme } from "@repo/theme";
 
-import { ISection } from "@/lib/api";
 import { buildings } from "@/lib/location";
 
 import { SectionColor } from "../../schedule";

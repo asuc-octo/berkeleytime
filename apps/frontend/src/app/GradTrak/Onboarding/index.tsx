@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import { useCreatePlan, useReadPlans, useReadUser } from "@/hooks/api";
-import { Colleges, DegreeOption, signIn } from "@/lib/api";
+import { signIn } from "@/lib/api";
+import { Colleges } from "@/lib/generated/graphql";
 
+import { DegreeOption } from "../types";
 import AddColleges from "./AddColleges";
 import AddDegree from "./AddDegree";
 import styles from "./Onboarding.module.scss";

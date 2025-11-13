@@ -27,7 +27,7 @@ import type { ContentType } from "recharts/types/component/Tooltip";
 import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
 
 import Footer from "@/components/Footer";
-import { READ_ENROLLMENT, ReadEnrollmentResponse, Semester } from "@/lib/api";
+import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 
 import CourseManager from "./CourseManager";
 import styles from "./Enrollment.module.scss";
@@ -143,9 +143,16 @@ export default function Enrollment() {
     const responses = await Promise.all(
       initialInputs.map(async (input) => {
         try {
-          const response = await client.query<ReadEnrollmentResponse>({
-            query: READ_ENROLLMENT,
-            variables: input,
+          const response = await client.query({
+            query: GetEnrollmentDocument,
+            variables: {
+              year: input.year,
+              semester: input.semester,
+              sessionId: input.sessionId,
+              subject: input.subject,
+              courseNumber: input.courseNumber,
+              sectionNumber: input.sectionNumber,
+            },
             fetchPolicy: "no-cache",
           });
 
@@ -160,10 +167,10 @@ export default function Enrollment() {
       // Filter out failed queries and set any initial state
       .reduce(
         (acc, response, index) =>
-          response?.data
+          response?.data?.enrollment
             ? acc.concat({
                 // TODO: Error handling
-                enrollmentHistory: response.data!.enrollment,
+                enrollmentHistory: response.data.enrollment,
                 input: initialInputs[index],
                 active: false,
                 hidden: false,
@@ -257,19 +264,15 @@ export default function Enrollment() {
           map.set(timeDelta, {
             enrolledCount:
               (enrollment.enrolledCount /
-                (output.enrollmentHistory.latest?.maxEnroll ??
-                  output.enrollmentHistory.history[
-                    output.enrollmentHistory.history.length - 1
-                  ].maxEnroll ??
-                  1)) *
+                (output.enrollmentHistory.history[
+                  output.enrollmentHistory.history.length - 1
+                ].maxEnroll ?? 1)) *
               100,
             waitlistedCount:
               (enrollment.waitlistedCount /
-                (output.enrollmentHistory.latest?.maxWaitlist ??
-                  output.enrollmentHistory.history[
-                    output.enrollmentHistory.history.length - 1
-                  ].maxWaitlist ??
-                  1)) *
+                (output.enrollmentHistory.history[
+                  output.enrollmentHistory.history.length - 1
+                ].maxWaitlist ?? 1)) *
               100,
           });
         }

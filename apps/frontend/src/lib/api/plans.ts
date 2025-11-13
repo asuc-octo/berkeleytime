@@ -1,122 +1,20 @@
 import { gql } from "@apollo/client";
 
-export enum Colleges {
-  LnS = "LnS",
-  CoE = "CoE",
-  HAAS = "HAAS",
-  OTHER = "OTHER",
-}
+import { GetPlanQuery } from "../generated/graphql";
 
-export enum Terms {
-  Fall = "Fall",
-  Spring = "Spring",
-  Summer = "Summer",
-  Misc = "Misc",
-}
+export type ILabel = NonNullable<
+  GetPlanQuery["planByUser"][number]["labels"]
+>[number];
 
-export enum Status {
-  Complete = "Complete",
-  InProgress = "InProgress",
-  Incomplete = "Incomplete",
-  None = "None",
-}
+export type IPlan = NonNullable<GetPlanQuery["planByUser"]>[number];
 
-export enum CollegeReqs {
-  LnS_AL = "LnS_AL",
-  LnS_BS = "LnS_BS",
-  LnS_HS = "LnS_HS",
-  LnS_IS = "LnS_IS",
-  LnS_PV = "LnS_PV",
-  LnS_PS = "LnS_PS",
-  LnS_SBS = "LnS_SBS",
-  CoE_HSS = "CoE_HSS",
-  HAAS_AL = "HAAS_AL",
-  HAAS_BS = "HAAS_BS",
-  HAAS_HS = "HAAS_HS",
-  HAAS_IS = "HAAS_IS",
-  HAAS_PV = "HAAS_PV",
-  HAAS_PS = "HAAS_PS",
-  HAAS_SBS = "HAAS_SBS",
-}
+export type IPlanTerm = NonNullable<
+  GetPlanQuery["planByUser"]
+>[number]["planTerms"][number];
 
-export enum UniReqs {
-  AC = "AC",
-  AH = "AH",
-  AI = "AI",
-  CW = "CW",
-  QR = "QR",
-  RCA = "RCA",
-  RCB = "RCB",
-}
-
-export type DegreeOption = {
-  label: string;
-  value: string;
-};
-
-export interface ILabel {
-  name: string;
-  color: string;
-}
-
-export interface IPlan {
-  _id: string;
-  userEmail: string;
-  planTerms: IPlanTerm[];
-  majorReqs: IMajorReq[];
-  majors: string[];
-  minors: string[];
-  created: string;
-  revised: string;
-  colleges: string[];
-  labels: ILabel[];
-  uniReqsSatisfied: string[];
-  collegeReqsSatisfied: string[];
-}
-
-export interface IPlanTerm {
-  _id: string;
-  name: string;
-  userEmail: string;
-  year: number;
-  term: string;
-  courses: ISelectedCourse[];
-  hidden: boolean;
-  status: string;
-  pinned: boolean;
-}
-
-export interface ISelectedCourse {
-  courseID: string;
-  courseName: string;
-  courseTitle: string;
-  courseUnits: number;
-  uniReqs: UniReqs[];
-  collegeReqs: CollegeReqs[];
-  pnp: boolean;
-  transfer: boolean;
-  labels: ILabel[];
-}
-
-export interface IMajorReq {
-  name: string;
-  major: string;
-  numCoursesRequired: number;
-  satisfyingCourseIds: string[];
-  isMinor: boolean;
-}
-
-export interface CreatePlanResponse {
-  createNewPlan: IPlan;
-}
-
-export interface ReadPlanResponse {
-  planByUser: IPlan[];
-}
-
-export interface ReadPlansResponse {
-  planByUser: string[];
-}
+export type ISelectedCourse = NonNullable<
+  GetPlanQuery["planByUser"]
+>[number]["planTerms"][number]["courses"][number];
 
 export const CREATE_NEW_PLAN = gql`
   mutation CreateNewPlan(
@@ -218,40 +116,6 @@ export const READ_PLANS = gql`
   }
 `;
 
-export interface PlanInput {
-  colleges?: Colleges[];
-  uniReqsSatisfied?: UniReqs[];
-  collegeReqsSatisfied?: CollegeReqs[];
-  labels?: LabelInput[];
-  majors?: string[];
-  minors?: string[];
-  majorReqs?: IMajorReq[];
-}
-
-export interface PlanTermInput {
-  courses: SelectedCourseInput[];
-  hidden: boolean;
-  name: string;
-  pinned: boolean;
-  term: Terms;
-  year: number;
-  status: Status;
-}
-
-export interface EditPlanTermInput {
-  name?: string;
-  year?: number;
-  term?: Terms;
-  courses?: SelectedCourseInput[];
-  hidden?: boolean;
-  status?: Status;
-  pinned?: boolean;
-}
-
-export interface EditPlanResponse {
-  editPlan: IPlan;
-}
-
 export const EDIT_PLAN = gql`
   mutation EditPlan($plan: PlanInput!) {
     editPlan(plan: $plan) {
@@ -267,27 +131,6 @@ export const EDIT_PLAN = gql`
   }
 `;
 
-export interface SelectedCourseInput {
-  courseID: string;
-  courseName: string;
-  courseTitle: string;
-  courseUnits: number;
-  uniReqs: string[];
-  collegeReqs: string[];
-  pnp: boolean;
-  transfer: boolean;
-  labels: LabelInput[];
-}
-
-export interface LabelInput {
-  name: string;
-  color: string;
-}
-
-export interface SetSelectedCoursesResponse {
-  setSelectedCourses: IPlanTerm;
-}
-
 export const SET_SELECTED_COURSES = gql`
   mutation SetSelectedCourses($id: ID!, $courses: [SelectedCourseInput!]!) {
     setSelectedCourses(id: $id, courses: $courses) {
@@ -295,10 +138,6 @@ export const SET_SELECTED_COURSES = gql`
     }
   }
 `;
-
-export interface CreateNewPlanTermResponse {
-  createNewPlanTerm: IPlanTerm;
-}
 
 export const CREATE_NEW_PLAN_TERM = gql`
   mutation CreateNewPlanTerm($planTerm: PlanTermInput!) {
@@ -320,10 +159,6 @@ export const REMOVE_PLAN_TERM_BY_ID = gql`
     removePlanTermByID(id: $removePlanTermByIdId)
   }
 `;
-
-export interface EditPlanTermResponse {
-  editPlanTerm: IPlanTerm;
-}
 
 export const EDIT_PLAN_TERM = gql`
   mutation EditPlanTerm($id: ID!, $planTerm: EditPlanTermInput!) {

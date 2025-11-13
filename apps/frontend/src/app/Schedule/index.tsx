@@ -2,24 +2,22 @@ import { useEffect, useMemo } from "react";
 
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
-import { Boundary, Color, LoadingIndicator } from "@repo/theme";
+import { Boundary, LoadingIndicator } from "@repo/theme";
 
 import ScheduleContext from "@/contexts/ScheduleContext";
 import { useReadSchedule, useReadUser } from "@/hooks/api";
-import { ISchedule, ScheduleIdentifier } from "@/lib/api";
+import { Color } from "@/lib/generated/graphql";
 
-import { acceptedColors, getNextClassColor } from "./schedule";
+import { getNextClassColor } from "./schedule";
 
 export default function Schedule() {
   const { scheduleId } = useParams();
   const navigate = useNavigate();
   const { data: user } = useReadUser();
 
-  const { data: scheduleData, loading } = useReadSchedule(
-    scheduleId as ScheduleIdentifier
-  );
+  const { data: scheduleData, loading } = useReadSchedule(scheduleId ?? "");
 
-  const schedule: ISchedule | undefined = useMemo(() => {
+  const schedule = useMemo(() => {
     if (!scheduleData) return undefined;
     return {
       ...scheduleData,
@@ -32,7 +30,7 @@ export default function Schedule() {
       events: scheduleData.events.map((ev) => {
         return {
           ...ev,
-          color: ev.color ?? Color.gray,
+          color: ev.color ?? Color.Gray,
         };
       }),
     };

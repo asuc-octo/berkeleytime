@@ -39,14 +39,14 @@ export default meta;
 export const Tag: StoryObj = {
   args: {
     label: "Very Easy",
-    color: Color.lime,
+    color: Color.Lime,
   },
 };
 
 export const Class: StoryObj = {
   args: {
     label: "COMPSCI 61A",
-    color: Color.blue,
+    color: Color.Blue,
     icon: <Xmark style={{ cursor: "pointer" }} onClick={fn()} />,
   },
 };

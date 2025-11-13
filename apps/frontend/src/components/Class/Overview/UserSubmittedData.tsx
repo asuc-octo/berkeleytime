@@ -7,7 +7,6 @@ import {
   VideoCamera,
   VideoCameraOff,
 } from "iconoir-react";
-import _ from "lodash";
 import { Link } from "react-router-dom";
 
 import {
@@ -20,8 +19,7 @@ import { Flex } from "@repo/theme";
 
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import { signIn } from "@/lib/api";
-import { ICourse } from "@/lib/api";
+import { IClassCourse, signIn } from "@/lib/api";
 
 import styles from "./Overview.module.scss";
 
@@ -150,7 +148,7 @@ export function UserSubmittedData() {
   );
 }
 
-function getResponse(course: ICourse, metricName: MetricName): Consensus {
+function getResponse(course: IClassCourse, metricName: MetricName): Consensus {
   if (METRIC_MAPPINGS[metricName].isRating) {
     throw new Error("getConsensus should not be called for rating metrics");
   }

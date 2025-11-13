@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { NavArrowDown } from "iconoir-react";
 import { createPortal } from "react-dom";
 
-import { Color } from "@repo/theme";
+import { Color } from "@/lib/generated/graphql";
 
 import styles from "./ColorSelector.module.scss";
 

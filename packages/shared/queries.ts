@@ -14,7 +14,7 @@
  *
  * This query is cached with key: catalog:{year}-{semester}
  */
-export const GET_CANONICAL_CATALOG_QUERY = `
+export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
   query GetCanonicalCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
       termId

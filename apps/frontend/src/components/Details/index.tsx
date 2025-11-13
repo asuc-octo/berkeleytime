@@ -7,11 +7,11 @@ import Time from "../Time";
 import styles from "./Details.module.scss";
 
 interface DetailsProps {
-  days: boolean[] | null;
-  startTime: string | null;
-  endTime: string | null;
-  location: string | null;
-  instructors: IInstructor[] | null;
+  days?: boolean[] | null;
+  startTime?: string | null;
+  endTime?: string | null;
+  location?: string | null;
+  instructors?: IInstructor[] | null;
 }
 
 export default function Details({

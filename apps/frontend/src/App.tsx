@@ -14,8 +14,6 @@ import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
 
-// import PinsProvider from "@/components/PinsProvider";
-
 const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
@@ -47,13 +45,11 @@ const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
-const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
 const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 // const Map = lazy(() => import("@/app/Map"));
-const Plans = lazy(() => import("@/app/Plans"));
 const GradTrak = lazy(() => import("@/app/GradTrak"));
 const GradTrakOnboarding = lazy(() => import("@/app/GradTrak/Onboarding"));
 const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
@@ -342,22 +338,6 @@ const router = createBrowserRouter([
         ),
         path: "schedules",
       },
-      {
-        element: (
-          <SuspenseBoundary key="plans">
-            <Plans />
-          </SuspenseBoundary>
-        ),
-        path: "plans",
-      },
-      {
-        element: (
-          <SuspenseBoundary key="plans/:planId">
-            <Plan />
-          </SuspenseBoundary>
-        ),
-        path: "plans/:planId",
-      },
     ],
   },
   {
@@ -405,9 +385,7 @@ export default function App() {
     <ApolloProvider client={client}>
       <UserProvider>
         <ThemeProvider>
-          {/* <PinsProvider> */}
           <RouterProvider router={router} />
-          {/* </PinsProvider> */}
         </ThemeProvider>
       </UserProvider>
     </ApolloProvider>

@@ -1,7 +1,8 @@
+import { enrollmentTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/enrollment";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: enrollmentTypeDef,
 };

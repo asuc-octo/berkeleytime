@@ -3,8 +3,9 @@ import { EditPencil, Trash } from "iconoir-react";
 import { METRIC_ORDER, MetricName } from "@repo/shared";
 import { Badge, Color, Flex, IconButton, Tooltip } from "@repo/theme";
 
+import { IUserRatingClass } from "@/lib/api";
+
 import {
-  UserRating,
   formatDate,
   getMetricStatus,
   getStatusColor,
@@ -17,7 +18,7 @@ export default function UserRatingSummary({
   onOpenModal,
   ratingDelete,
 }: {
-  userRatings: UserRating;
+  userRatings: IUserRatingClass;
   onOpenModal: (open: boolean) => void;
   ratingDelete: () => void;
 }) {
@@ -33,7 +34,9 @@ export default function UserRatingSummary({
       <div className={styles.title}>
         <div>
           <h3>Your Rating Summary</h3>
-          <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
+          {userRatings.lastUpdated && (
+            <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
+          )}
         </div>
         <Flex gap="2">
           <Tooltip content="Edit rating">

@@ -4,7 +4,7 @@ import { Separator } from "@radix-ui/themes";
 
 import { Box, Button, Container, Flex, Select } from "@repo/theme";
 
-import { Colleges } from "@/lib/api";
+import { Colleges } from "@/lib/generated/graphql";
 
 import DotsIndicator from "../DotsIndicator";
 import styles from "./AddCollege.module.scss";
@@ -34,13 +34,13 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
     const output = colleges.map((college) => {
       switch (college.value) {
         case "Business":
-          return Colleges.HAAS;
+          return Colleges.Haas;
         case "Letters & Science":
           return Colleges.LnS;
         case "Engineering":
           return Colleges.CoE;
         default:
-          return Colleges.OTHER;
+          return Colleges.Other;
       }
     });
     // prune duplicates

@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 
-import { IClass, ITerm, Semester } from "@/lib/api";
+import { ICatalogClass, ITerm } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 import {
   Breadth,
@@ -16,9 +17,9 @@ export interface BrowserContextType {
   responsive: boolean;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
-  classes: IClass[];
-  includedClasses: IClass[];
-  excludedClasses: IClass[];
+  classes: ICatalogClass[];
+  includedClasses: ICatalogClass[];
+  excludedClasses: ICatalogClass[];
   year: number;
   semester: Semester;
   terms?: ITerm[];

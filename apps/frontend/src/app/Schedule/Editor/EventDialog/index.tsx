@@ -61,7 +61,7 @@ export default function EventDialog({ children }: EventDialogProps) {
       startTime,
       endTime,
       days,
-      color: Color.gray,
+      color: Color.Gray,
     };
 
     updateSchedule(
@@ -90,14 +90,12 @@ export default function EventDialog({ children }: EventDialogProps) {
                   {
                     ...event,
                     _id: temporaryIdentifier,
-                    __typename: "ScheduleEvent",
                   },
                 ]
               : [
                   {
                     ...event,
                     _id: temporaryIdentifier,
-                    __typename: "ScheduleEvent",
                   },
                 ],
           },

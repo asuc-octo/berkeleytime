@@ -1,7 +1,8 @@
+import { classTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/class";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: classTypeDef,
 };

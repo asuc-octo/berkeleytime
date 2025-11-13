@@ -5,7 +5,8 @@ import moment from "moment";
 import { ColoredSquare } from "@repo/theme";
 
 import { getEnrollmentColor } from "@/components/Capacity";
-import { IEnrollment, Semester } from "@/lib/api";
+import { IEnrollment } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./HoverInfo.module.scss";
 

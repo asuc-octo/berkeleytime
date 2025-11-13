@@ -1,0 +1,11 @@
+{
+  "name": "@repo/gql-typedefs",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "^5.9.3"
+  }
+}

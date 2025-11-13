@@ -1,41 +1,23 @@
 import { gql } from "@apollo/client";
 
-import { Semester } from "./terms";
+import {
+  GetAggregatedRatingsQuery,
+  GetUserRatingsQuery,
+} from "../generated/graphql";
 
-export interface IMetric {
-  categories: {
-    count: number;
-    value: number;
-  }[];
-  count: number;
-  metricName: string;
-  weightedAverage: number;
-}
+export type IAggregatedRatings = GetAggregatedRatingsQuery["aggregatedRatings"];
 
-export interface IAggregatedRatings {
-  metrics: IMetric[];
-}
+export type IMetric = NonNullable<
+  NonNullable<IAggregatedRatings>["metrics"]
+>[number];
 
-export interface UserRatingMetric {
-  metricName: string;
-  value: number;
-}
+export type IUserRatingClass = NonNullable<
+  NonNullable<GetUserRatingsQuery["userRatings"]>["classes"]
+>[number];
 
-export interface UserRatingClass {
-  subject: string;
-  courseNumber: string;
-  semester: Semester;
-  year: number;
-  classNumber: string;
-  metrics: UserRatingMetric[];
-  lastUpdated: string;
-}
-
-export interface UserRatingsResponse {
-  userRatings: {
-    classes: UserRatingClass[];
-  };
-}
+export type IUserRatingMetric = NonNullable<
+  NonNullable<IUserRatingClass>["metrics"]
+>[number];
 
 export const GET_AGGREGATED_RATINGS = gql`
   query GetAggregatedRatings(
@@ -64,14 +46,6 @@ export const GET_AGGREGATED_RATINGS = gql`
     }
   }
 `;
-
-export interface SemestersWithRatingsResponse {
-  semestersWithRatings: {
-    semester: Semester;
-    year: number;
-    maxMetricCount: number;
-  }[];
-}
 
 export const GET_SEMESTERS_WITH_RATINGS = gql`
   query GetSemestersWithRatings($subject: String!, $courseNumber: String!) {

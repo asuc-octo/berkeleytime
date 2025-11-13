@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { MinusSquareDashed, MinusSquareSolid } from "iconoir-react";
 import moment from "moment";
 
-import { IScheduleEvent, ITerm } from "@/lib/api";
+import { ISchedule, IScheduleEvent } from "@/lib/api";
+import { Color } from "@/lib/generated/graphql";
 
 import { SectionColor } from "../../schedule";
 import styles from "./Calendar.module.scss";
@@ -13,7 +14,7 @@ import { IDay, IEvent } from "./calendar";
 interface CalendarProps {
   selectedSections: SectionColor[];
   currentSection: SectionColor | null;
-  term: ITerm;
+  term: ISchedule["term"];
   customEvents?: IScheduleEvent[];
 }
 
@@ -66,7 +67,7 @@ export default function Calendar({
           subject,
           number,
           active: currentSection?.section.sectionId === sectionId,
-          days,
+          days: days ?? undefined,
           startTime,
           endTime,
           color,
@@ -112,7 +113,7 @@ export default function Calendar({
       days: event.days,
       startTime: event.startTime,
       endTime: event.endTime,
-      color: event.color,
+      color: event.color ?? Color.Gray,
     }));
 
     return [...sectionEvents, ...customEventItems];

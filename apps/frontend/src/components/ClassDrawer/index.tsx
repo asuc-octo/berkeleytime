@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { Dialog } from "@repo/theme";
 
 import Class from "@/components/Class";
-import { Semester } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./ClassDrawer.module.scss";
 
