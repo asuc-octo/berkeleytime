@@ -23,7 +23,7 @@ const steps = [
     image: sunrise,
   },
   {
-    colors: ["#76A6FF", "#4FB4FF"],
+    colors: ["#408FF7", "#48C3F1"],
     image: morning,
   },
   {
