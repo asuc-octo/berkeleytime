@@ -12,19 +12,12 @@ const TERMS_PER_API_BATCH = 4;
 
 const checkTermHasCatalogData = async (
   year: number,
-  semester: string,
-  academicCareerCode: string
+  semester: string
 ): Promise<boolean> => {
-  const termExists = await TermModel.exists({
-    name: `${year} ${semester}`,
-    academicCareerCode,
-  });
-
-  if (!termExists) return false;
-
   const classExists = await ClassModel.exists({
     year,
     semester,
+    anyPrintInScheduleOfClasses: true,
   });
 
   return !!classExists;
@@ -38,11 +31,12 @@ const updateTermsCatalogDataFlags = async (log: any) => {
   log.trace("Updating hasCatalogData flags for all terms...");
 
   const allTerms = await TermModel.find({})
-    .select({ name: 1, academicCareerCode: 1 })
+    .select({ _id: 1, name: 1 })
     .lean();
 
   const BATCH_SIZE = 50;
   const bulkOps = [];
+  let termsWithCatalogData = 0;
 
   for (let i = 0; i < allTerms.length; i += BATCH_SIZE) {
     const batch = allTerms.slice(i, i + BATCH_SIZE);
@@ -51,16 +45,14 @@ const updateTermsCatalogDataFlags = async (log: any) => {
         const [year, semester] = term.name.split(" ");
         const hasCatalogData = await checkTermHasCatalogData(
           parseInt(year),
-          semester,
-          term.academicCareerCode
+          semester
         );
+
+        if (hasCatalogData) termsWithCatalogData++;
 
         return {
           updateOne: {
-            filter: {
-              name: term.name,
-              academicCareerCode: term.academicCareerCode,
-            },
+            filter: { _id: term._id },
             update: { $set: { hasCatalogData } },
           },
         };
@@ -73,6 +65,9 @@ const updateTermsCatalogDataFlags = async (log: any) => {
     const result = await TermModel.bulkWrite(bulkOps);
     log.info(
       `Updated hasCatalogData flag for ${result.modifiedCount.toLocaleString()} / ${allTerms.length.toLocaleString()} terms.`
+    );
+    log.info(
+      `Found ${termsWithCatalogData.toLocaleString()} terms with catalog data.`
     );
   }
 };

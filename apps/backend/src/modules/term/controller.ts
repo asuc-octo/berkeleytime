@@ -1,4 +1,4 @@
-import { ClassModel, TermModel } from "@repo/common";
+import { TermModel } from "@repo/common";
 
 import { AcademicCareerCode, Semester } from "../../generated-types/graphql";
 import { formatTerm } from "./formatter";
@@ -43,24 +43,4 @@ export const getTerm = async (
   if (!term) return null;
 
   return formatTerm(term);
-};
-
-export const checkTermHasCatalogData = async (
-  year: number,
-  semester: Semester,
-  academicCareerCode: AcademicCareerCode = "UGRD"
-): Promise<boolean> => {
-  const termExists = await TermModel.exists({
-    name: `${year} ${semester}`,
-    academicCareerCode,
-  });
-
-  if (!termExists) return false;
-
-  const classExists = await ClassModel.exists({
-    year,
-    semester,
-  });
-
-  return !!classExists;
 };

@@ -17,10 +17,10 @@ import styles from "./Catalog.module.scss";
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
 const SEMESTER_ORDER: Record<Semester, number> = {
-  [Semester.Winter]: 3,
-  [Semester.Fall]: 2,
-  [Semester.Summer]: 1,
   [Semester.Spring]: 0,
+  [Semester.Summer]: 1,
+  [Semester.Fall]: 2,
+  [Semester.Winter]: 3,
 };
 
 export default function Catalog() {
