@@ -15,19 +15,19 @@ import bottomWave from "./bottom_wave.svg";
 // TODO: Tailwind color gradients
 const steps = [
   {
-    colors: ["#D45C72", "#ADA6FD"],
+    colors: ["#F33754", "#7C87F9"],
     image: dawn,
   },
   {
-    colors: ["#FFAE74", "#FF9EB0"],
+    colors: ["#F1A848", "#F55998"],
     image: sunrise,
   },
   {
-    colors: ["#408FF7", "#48C3F1"],
+    colors: ["#408FF7", "#0DD0DA"],
     image: morning,
   },
   {
-    colors: ["#26C9A5", "#DFCA6B"],
+    colors: ["#4FC351", "#CAC638"],
     image: afternoon,
   },
   {
@@ -35,7 +35,7 @@ const steps = [
     image: sunset,
   },
   {
-    colors: ["#10101A", "#161646"],
+    colors: ["#082D65", "#0E1B3B"],
     angle: "to bottom right",
     image: dusk,
   },
