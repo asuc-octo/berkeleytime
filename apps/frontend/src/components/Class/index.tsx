@@ -1,10 +1,4 @@
-import {
-  ReactNode,
-  lazy,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import { ReactNode, lazy, useCallback, useEffect, useMemo } from "react";
 
 import classNames from "classnames";
 import {
