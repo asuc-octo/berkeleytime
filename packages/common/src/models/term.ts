@@ -55,6 +55,7 @@ export interface ITermItem {
   selfServiceEnrollBeginDate?: string;
   selfServiceEnrollEndDate?: string;
   sessions?: ISessionItem[];
+  hasCatalogData: boolean;
 }
 
 const termSchema = new Schema<ITermItem>({
@@ -119,6 +120,7 @@ const termSchema = new Schema<ITermItem>({
       },
     ],
   },
+  hasCatalogData: { type: Boolean, required: true, default: false },
 });
 
 // for catalog, grade distribution by semester, scheduler, and terms controllers

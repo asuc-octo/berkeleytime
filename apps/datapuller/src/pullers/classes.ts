@@ -1,4 +1,4 @@
-import { ClassModel } from "@repo/common";
+import { ClassModel, TermModel } from "@repo/common";
 
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
@@ -9,6 +9,73 @@ import {
 } from "../shared/term-selectors";
 
 const TERMS_PER_API_BATCH = 4;
+
+const checkTermHasCatalogData = async (
+  year: number,
+  semester: string,
+  academicCareerCode: string
+): Promise<boolean> => {
+  const termExists = await TermModel.exists({
+    name: `${year} ${semester}`,
+    academicCareerCode,
+  });
+
+  if (!termExists) return false;
+
+  const classExists = await ClassModel.exists({
+    year,
+    semester,
+  });
+
+  return !!classExists;
+};
+
+// Note: We scan ALL terms in the database rather than just the affected ones.
+// This is intentional to ensure data consistency, as class data may be modified
+// by sources other than the datapuller. Since the query is fast, the overhead
+// is minimal. Future optimization could track only affected terms if needed.
+const updateTermsCatalogDataFlags = async (log: any) => {
+  log.trace("Updating hasCatalogData flags for all terms...");
+
+  const allTerms = await TermModel.find({})
+    .select({ name: 1, academicCareerCode: 1 })
+    .lean();
+
+  const BATCH_SIZE = 50;
+  const bulkOps = [];
+
+  for (let i = 0; i < allTerms.length; i += BATCH_SIZE) {
+    const batch = allTerms.slice(i, i + BATCH_SIZE);
+    const batchOps = await Promise.all(
+      batch.map(async (term) => {
+        const [year, semester] = term.name.split(" ");
+        const hasCatalogData = await checkTermHasCatalogData(
+          parseInt(year),
+          semester,
+          term.academicCareerCode
+        );
+
+        return {
+          updateOne: {
+            filter: {
+              name: term.name,
+              academicCareerCode: term.academicCareerCode,
+            },
+            update: { $set: { hasCatalogData } },
+          },
+        };
+      })
+    );
+    bulkOps.push(...batchOps);
+  }
+
+  if (bulkOps.length > 0) {
+    const result = await TermModel.bulkWrite(bulkOps);
+    log.info(
+      `Updated hasCatalogData flag for ${result.modifiedCount.toLocaleString()} / ${allTerms.length.toLocaleString()} terms.`
+    );
+  }
+};
 
 const updateClasses = async (
   { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
@@ -77,6 +144,8 @@ const updateClasses = async (
   log.info(
     `Completed updating database with ${totalClasses.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
   );
+
+  await updateTermsCatalogDataFlags(log);
 };
 
 const activeTerms = async (config: Config) => {

@@ -68,6 +68,7 @@ export const termTypeDef = gql`
     startDate: String!
     endDate: String!
     sessions: [Session!]
+    hasCatalogData: Boolean!
   }
 
   type Query {
