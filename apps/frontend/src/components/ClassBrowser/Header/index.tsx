@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Filter, Search } from "iconoir-react";
+import { Filter, FilterSolid, Search } from "iconoir-react";
 
 import { Button } from "@repo/theme";
 
@@ -48,7 +48,7 @@ export default function Header() {
         })}
         onClick={() => setExpanded(!expanded)}
       >
-        <Filter />
+        {hasActiveFilters ? <FilterSolid /> : <Filter />}
         {expanded ? "Close Filters" : "Open Filters"}
       </Button>
     </div>

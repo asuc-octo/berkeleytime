@@ -255,7 +255,18 @@ export default function ClassBrowser({
       online ||
       sortBy !== SortBy.Relevance
     );
-  }, [units, levels, days, breadths, universityRequirement, gradingFilters, department, open, online, sortBy]);
+  }, [
+    units,
+    levels,
+    days,
+    breadths,
+    universityRequirement,
+    gradingFilters,
+    department,
+    open,
+    online,
+    sortBy,
+  ]);
 
   const updateArray = <T,>(
     key: string,
