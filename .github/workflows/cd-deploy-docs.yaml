@@ -96,7 +96,7 @@ jobs:
             fi
 
             # Check container status
-            kubectl rollout status --timeout=180s deployment bt-prod-docs-docs
+            kubectl rollout status --timeout=300s deployment bt-prod-docs-docs
 
       - name: Output Summary
         run: |
