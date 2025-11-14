@@ -81,12 +81,29 @@ export default function ClassCard({
 
   return (
     <Card.RootColumn
-      style={{ overflow: "visible", ...props?.style }}
+      style={{ overflow: "visible", position: "relative", ...props?.style }}
       active={active}
       {...props}
     >
-      <Card.ColumnHeader style={{ overflow: "visible" }}>
-        {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
+      {leftBorderColor && (
+        <Card.LeftBorder
+          color={leftBorderColor}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            height: "100%",
+            backgroundColor: `var(--${leftBorderColor}-500)`,
+          }}
+        />
+      )}
+      <Card.ColumnHeader
+        style={{
+          overflow: "visible",
+          marginLeft: leftBorderColor ? "8px" : undefined,
+        }}
+      >
         <Card.Body>
           <Card.Heading>
             {_class?.subject} {_class?.courseNumber}{" "}

@@ -24,7 +24,6 @@ export default function Day({ date, events, active }: DayProps) {
     <div key={date.format("YYYY-MM-DD")} className={styles.root}>
       {active && (
         <div className={styles.date}>
-          {date.format("D") === "1" && date.format("MMMM")}
           <p className={styles.number}>{date.format("D")}</p>
         </div>
       )}

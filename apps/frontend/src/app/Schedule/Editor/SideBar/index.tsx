@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
 
-import { Plugins, Sortable } from "@shopify/draggable";
 import { Plus } from "iconoir-react";
 
 import { Button } from "@repo/theme";

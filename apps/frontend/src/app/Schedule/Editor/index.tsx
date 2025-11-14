@@ -68,9 +68,10 @@ export default function Editor() {
       if (!selectedClass) return;
 
       // Find the associated section
-      const section = selectedClass.class.sections.find(
-        (section) => section.number === number
-      );
+      const section = [
+        ...selectedClass.class.sections,
+        selectedClass.class.primarySection,
+      ].find((section) => section.number === number);
 
       if (!section) return;
 
@@ -79,20 +80,23 @@ export default function Editor() {
         (selectedSection) => {
           // return selectedSection.sectionId == section.sectionId
 
-          const currentSection = selectedClass.class.sections.find(
-            (section) => section.sectionId === selectedSection.sectionId
-          );
+          const currentSection = [
+            ...selectedClass.class.sections,
+            selectedClass.class.primarySection,
+          ].find((section) => section.sectionId === selectedSection.sectionId);
 
           return (
-            !currentSection ||
-            currentSection.component !== section.component ||
-            currentSection.sectionId == section.sectionId
+            !currentSection || currentSection.component !== section.component
           );
         }
       );
 
-      // Add the selected section
-      selectedClass.selectedSections = [...selectedSections, section];
+      // Add the selected section, unless it already exists (then remove)
+      selectedClass.selectedSections = selectedClass.selectedSections.find(
+        (s) => s.sectionId === section.sectionId
+      )
+        ? selectedSections
+        : [...selectedSections, section];
 
       setCurrentSection(null);
 
@@ -338,18 +342,19 @@ export default function Editor() {
 
       const selectedSections = [_class.primarySection];
 
-      const kinds = Array.from(
-        new Set(_classClone.sections.map((section) => section.component))
-      );
+      // DISABLED: Don't select by default?
+      // const kinds = Array.from(
+      //   new Set(_classClone.sections.map((section) => section.component))
+      // );
 
       // Add the first section of each kind to selected sections
-      for (const kind of kinds) {
-        const section = _class.sections
-          .filter((section) => section.component === kind)
-          .sort((a, b) => a.number.localeCompare(b.number))[0];
+      // for (const kind of kinds) {
+      //   const section = _class.sections
+      //     .filter((section) => section.component === kind)
+      //     .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        selectedSections.push(section);
-      }
+      //   selectedSections.push(section);
+      // }
 
       _schedule.classes.push({
         class: _class,
