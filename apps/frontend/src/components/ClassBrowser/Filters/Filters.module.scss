@@ -5,6 +5,10 @@
   background-color: var(--foreground-color);
   scrollbar-color: var(--label-color) var(--foreground-color);
 
+  @media (width <= 992px) {
+    width: 384px;
+  }
+
   .body {
     display: flex;
     flex-direction: column;
@@ -101,7 +105,7 @@
 
   @media (992px < width <= 1400px) {
     &.responsive {
-      width: 340px;
+      width: 384px;
 
       .body {
         padding-top: 12px;

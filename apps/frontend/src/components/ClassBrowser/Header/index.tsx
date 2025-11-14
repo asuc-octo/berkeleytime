@@ -1,7 +1,7 @@
 import classNames from "classnames";
-import { Filter, FilterSolid, Search } from "iconoir-react";
+import { Filter, Search } from "iconoir-react";
 
-import { IconButton } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import useBrowser from "../useBrowser";
 import styles from "./Header.module.scss";
@@ -16,6 +16,7 @@ export default function Header() {
     semester,
     year,
     responsive,
+    hasActiveFilters,
   } = useBrowser();
 
   return (
@@ -40,10 +41,16 @@ export default function Header() {
           autoComplete="off"
         />
         <div className={styles.label}>{classes.length.toLocaleString()}</div>
-        <IconButton onClick={() => setExpanded(!expanded)}>
-          {expanded ? <FilterSolid /> : <Filter />}
-        </IconButton>
       </div>
+      <Button
+        className={classNames(styles.filterButton, {
+          [styles.active]: hasActiveFilters,
+        })}
+        onClick={() => setExpanded(!expanded)}
+      >
+        <Filter />
+        {expanded ? "Close Filters" : "Open Filters"}
+      </Button>
     </div>
   );
 }

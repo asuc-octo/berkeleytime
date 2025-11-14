@@ -53,6 +53,10 @@
       flex-grow: 1;
     }
 
+    .panel .header {
+      display: none;
+    }
+
     &.open .panel {
       display: none;
     }
