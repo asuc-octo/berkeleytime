@@ -22,7 +22,9 @@ const fields = {
 };
 
 export const getTerms = async () => {
-  const terms = await TermModel.find({}).select(fields).lean();
+  const terms = await TermModel.find({ hasCatalogData: true })
+    .select(fields)
+    .lean();
 
   return terms.map(formatTerm);
 };

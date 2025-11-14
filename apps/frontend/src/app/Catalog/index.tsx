@@ -11,7 +11,6 @@ import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import { TemporalPosition } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
@@ -49,16 +48,10 @@ export default function Catalog() {
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
-    // Default to the current term
-    const currentTerm = terms.find(
-      (term) => term.temporalPosition === TemporalPosition.Current
-    );
-
-    // Fall back to the next term when the current term has ended
-    const nextTerm = terms
+    // Default to the latest term chronologically (all terms have data due to backend filtering)
+    const latestTerm = terms
       .filter((term) => term.startDate)
-      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
-      .find((term) => term.temporalPosition === TemporalPosition.Future);
+      .toSorted((a, b) => moment(b.startDate).diff(moment(a.startDate)))[0];
 
     const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??
@@ -67,8 +60,7 @@ export default function Catalog() {
           term.year === recentTerm?.year &&
           term.semester === recentTerm?.semester
       ) ??
-      currentTerm ??
-      nextTerm;
+      latestTerm;
 
     if (selectedTerm) {
       addRecent(RecentType.CatalogTerm, {

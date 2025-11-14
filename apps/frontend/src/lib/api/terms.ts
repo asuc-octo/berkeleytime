@@ -14,6 +14,7 @@ export const READ_TERMS = gql`
       year
       semester
       temporalPosition
+      hasCatalogData
       sessions {
         id
         name
