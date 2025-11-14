@@ -30,7 +30,6 @@ interface ClassProps {
   bookmarkToggle?: () => void;
   active?: boolean;
   wrapDescription?: boolean;
-  showGrades?: boolean;
 }
 
 export default function ClassCard({
@@ -46,12 +45,10 @@ export default function ClassCard({
   bookmarkToggle,
   active = false,
   wrapDescription = false,
-  showGrades = true,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
-  const gradeDistribution = showGrades
-    ? (_class?.course?.gradeDistribution ?? _class?.gradeDistribution)
-    : undefined;
+  const gradeDistribution =
+    _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
   return (
     <Card.RootColumn

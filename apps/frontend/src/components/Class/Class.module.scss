@@ -1,6 +1,5 @@
 .root {
   background-color: var(--background-color);
-  position: relative;
 }
 
 .header {
@@ -57,31 +56,6 @@
     top: 1px;
     background-color: var(--blue-500);
   }
-}
-
-.notificationToast {
-  position: absolute;
-  right: 32px;
-  bottom: -120px;
-  width: min(720px, calc(100% - 64px));
-  background-color: var(--blue-500);
-  color: white;
-  padding: 16px 24px;
-  border-radius: 4px;
-  font-size: 15px;
-  line-height: 1.5;
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    bottom 250ms ease,
-    opacity 200ms ease;
-  z-index: 11000;
-}
-
-.notificationToastVisible {
-  bottom: 32px;
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .loading {
