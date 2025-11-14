@@ -38,7 +38,7 @@ interface RecentCourse {
 interface RecentCatalogTerm {
   semester: Semester;
   year: number;
-  timestamp?: number; // Unix timestamp in milliseconds
+  timestamp?: number; 
 }
 
 export type Recent<T extends RecentType> = T extends RecentType.Class
@@ -59,14 +59,12 @@ export const getRecents = <T extends RecentType>(
 
     let recents = JSON.parse(item) as Recent<T>[];
 
-    // Filter out catalog terms older than 1 hour
     if (type === RecentType.CatalogTerm) {
-      const ONE_HOUR = 60 * 60 * 1000; // 1 hour in milliseconds
+      const ONE_HOUR = 60 * 60 * 1000;
       const now = Date.now();
 
       recents = recents.filter((recent) => {
         const catalogTerm = recent as RecentCatalogTerm;
-        // Keep if no timestamp (legacy data) or if less than 1 hour old
         return !catalogTerm.timestamp || now - catalogTerm.timestamp < ONE_HOUR;
       }) as Recent<T>[];
     }
@@ -101,7 +99,6 @@ export const addRecent = <T extends RecentType>(
 ) => {
   const recents = getRecents(type, recent);
 
-  // Add timestamp for catalog terms to support expiry
   if (type === RecentType.CatalogTerm) {
     (recent as RecentCatalogTerm).timestamp = Date.now();
   }

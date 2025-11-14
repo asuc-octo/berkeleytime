@@ -10,56 +10,60 @@ import {
 
 const TERMS_PER_API_BATCH = 4;
 
-const checkTermHasCatalogData = async (
-  year: number,
-  semester: string
-): Promise<boolean> => {
-  const classExists = await ClassModel.exists({
-    year,
-    semester,
-    anyPrintInScheduleOfClasses: true,
-  });
-
-  return !!classExists;
-};
-
 // Note: We scan ALL terms in the database rather than just the affected ones.
 // This is intentional to ensure data consistency, as class data may be modified
 // by sources other than the datapuller. Since the query is fast, the overhead
 // is minimal. Future optimization could track only affected terms if needed.
-const updateTermsCatalogDataFlags = async (log: any) => {
+const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   log.trace("Updating hasCatalogData flags for all terms...");
 
-  const allTerms = await TermModel.find({})
-    .select({ _id: 1, name: 1 })
-    .lean();
+  const allTerms = await TermModel.find({}).select({ _id: 1, name: 1 }).lean();
 
-  const BATCH_SIZE = 50;
-  const bulkOps = [];
-  let termsWithCatalogData = 0;
+  // Single aggregation query to get all year+semester combinations with catalog data
+  const termsWithClasses = await ClassModel.aggregate<{
+    _id: { year: number; semester: string };
+  }>([
+    {
+      $match: {
+        anyPrintInScheduleOfClasses: true,
+      },
+    },
+    {
+      $group: {
+        _id: { year: "$year", semester: "$semester" },
+      },
+    },
+  ]);
 
-  for (let i = 0; i < allTerms.length; i += BATCH_SIZE) {
-    const batch = allTerms.slice(i, i + BATCH_SIZE);
-    const batchOps = await Promise.all(
-      batch.map(async (term) => {
-        const [year, semester] = term.name.split(" ");
-        const hasCatalogData = await checkTermHasCatalogData(
-          parseInt(year),
-          semester
-        );
+  const catalogDataSet = new Set(
+    termsWithClasses.map((t) => `${t._id.year} ${t._id.semester}`)
+  );
 
-        if (hasCatalogData) termsWithCatalogData++;
+  const bulkOps = allTerms
+    .map((term) => {
+      const parts = term.name.split(" ");
+      if (parts.length !== 2) {
+        log.warn(`Invalid term name format: ${term.name}`);
+        return null;
+      }
 
-        return {
-          updateOne: {
-            filter: { _id: term._id },
-            update: { $set: { hasCatalogData } },
-          },
-        };
-      })
-    );
-    bulkOps.push(...batchOps);
-  }
+      const [yearStr, semester] = parts;
+      const year = parseInt(yearStr, 10);
+      if (isNaN(year)) {
+        log.warn(`Invalid year in term name: ${term.name}`);
+        return null;
+      }
+
+      const hasCatalogData = catalogDataSet.has(`${year} ${semester}`);
+
+      return {
+        updateOne: {
+          filter: { _id: term._id },
+          update: { $set: { hasCatalogData } },
+        },
+      };
+    })
+    .filter((op): op is NonNullable<typeof op> => op !== null);
 
   if (bulkOps.length > 0) {
     const result = await TermModel.bulkWrite(bulkOps);
@@ -67,7 +71,7 @@ const updateTermsCatalogDataFlags = async (log: any) => {
       `Updated hasCatalogData flag for ${result.modifiedCount.toLocaleString()} / ${allTerms.length.toLocaleString()} terms.`
     );
     log.info(
-      `Found ${termsWithCatalogData.toLocaleString()} terms with catalog data.`
+      `Found ${catalogDataSet.size.toLocaleString()} terms with catalog data.`
     );
   }
 };
