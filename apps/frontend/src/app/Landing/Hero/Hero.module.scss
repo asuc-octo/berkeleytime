@@ -13,7 +13,7 @@
   .wave {
     display: block;
     width: 100%;
-    height: clamp(175px, 35vw, 350px);
+    height: clamp(175px, 15vw, 350px);
     margin-top: auto;
     color: var(--light-background-color);
     position: relative;
@@ -92,7 +92,7 @@
     .clock {
       position: absolute;
       right: 272px;
-      bottom: 128px;
+      bottom: 64px;
       text-align: right;
       font-size: 16px;
       line-height: 1.5;
