@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { Xmark } from "iconoir-react";
-import moment from "moment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Flex, IconButton } from "@repo/theme";
@@ -11,9 +10,18 @@ import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
+
+// Semester hierarchy for chronological ordering (latest to earliest in year)
+const SEMESTER_ORDER: Record<Semester, number> = {
+  [Semester.Winter]: 3,
+  [Semester.Fall]: 2,
+  [Semester.Summer]: 1,
+  [Semester.Spring]: 0,
+};
 
 export default function Catalog() {
   const {
@@ -48,10 +56,13 @@ export default function Catalog() {
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
-    // Default to the latest term chronologically (all terms have data due to backend filtering)
-    const latestTerm = terms
-      .filter((term) => term.startDate)
-      .toSorted((a, b) => moment(b.startDate).diff(moment(a.startDate)))[0];
+    // Default to the latest term by year + semester hierarchy
+    const latestTerm = terms.toSorted((a, b) => {
+      // Sort by year DESC first
+      if (a.year !== b.year) return b.year - a.year;
+      // Then by semester hierarchy DESC
+      return SEMESTER_ORDER[b.semester] - SEMESTER_ORDER[a.semester];
+    })[0];
 
     const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??

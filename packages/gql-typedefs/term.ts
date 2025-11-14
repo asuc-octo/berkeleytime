@@ -75,7 +75,7 @@ export const termTypeDef = gql`
     """
     Query for terms.
     """
-    terms: [Term!]!
+    terms(withCatalogData: Boolean): [Term!]!
 
     """
     Query for a term.

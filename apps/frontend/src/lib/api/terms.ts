@@ -10,7 +10,7 @@ export type ITerm = NonNullable<GetTermsQuery>["terms"][number];
 
 export const READ_TERMS = gql`
   query GetTerms {
-    terms {
+    terms(withCatalogData: true) {
       year
       semester
       temporalPosition

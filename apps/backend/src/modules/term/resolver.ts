@@ -33,7 +33,7 @@ const resolvers: TermModule.Resolvers = {
   }),
 
   Query: {
-    terms: () => getTerms(),
+    terms: (_, { withCatalogData }) => getTerms(withCatalogData ?? undefined),
 
     term: (_, { year, semester }) => getTerm(year, semester),
   },
