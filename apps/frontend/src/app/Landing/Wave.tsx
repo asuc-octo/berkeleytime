@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 type Point = { x: number; y: number };
 
 const BASE_CURVE_DIMENSIONS = {
-  height: 120,
+  height: 150,
 };
 
 const CURVE_POINTS: Record<"start" | "cp1" | "cp2" | "end", Point> = {
-  start: { x: 0, y: 10 },
+  start: { x: 0, y: 20 },
   cp1: { x: 150, y: 0 },
   cp2: { x: 200, y: 150 },
-  end: { x: 300, y: 100 },
+  end: { x: 300, y: 130 },
 };
 
 const CURVE_X_RANGE = CURVE_POINTS.end.x - CURVE_POINTS.start.x;
