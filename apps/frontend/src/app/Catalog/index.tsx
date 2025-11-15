@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
-import { Xmark } from "iconoir-react";
+import { NavArrowRight, Xmark } from "iconoir-react";
+
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { Flex, IconButton } from "@repo/theme";
+import { Dialog, Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
@@ -36,6 +37,8 @@ export default function Catalog() {
   const location = useLocation();
 
   const [open, setOpen] = useState(false);
+  const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(false);
+  const [showFloatingButton, setShowFloatingButton] = useState(false);
 
   const { data: terms, loading: termsLoading } = useReadTerms();
 
@@ -107,6 +110,7 @@ export default function Catalog() {
       if (!term) return;
 
       setOpen(true);
+      setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({
         ...location,
@@ -115,6 +119,23 @@ export default function Catalog() {
     },
     [navigate, location, term]
   );
+
+  // Handle mouse movement for floating button on mobile
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Only show on mobile
+      if (window.innerWidth > 992) {
+        setShowFloatingButton(false);
+        return;
+      }
+
+      // Expand button when cursor is within 60px of left edge (covers peeking button)
+      setShowFloatingButton(e.clientX < 60);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   if (termsLoading) {
     return (
@@ -137,6 +158,7 @@ export default function Catalog() {
         [styles.open]: open,
       })}
     >
+      {/* Desktop: Static panel */}
       <div className={styles.panel}>
         <div className={styles.header}>
           <p className={styles.title}>
@@ -156,6 +178,34 @@ export default function Catalog() {
           />
         </div>
       </div>
+
+      {/* Mobile: Drawer overlay */}
+      <Dialog.Root open={catalogDrawerOpen} onOpenChange={setCatalogDrawerOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className={styles.overlay} />
+          <Dialog.Drawer align="start" className={styles.catalogDrawer}>
+            <ClassBrowser
+              onSelect={handleSelect}
+              semester={term.semester}
+              year={term.year}
+              terms={terms}
+              persistent
+            />
+          </Dialog.Drawer>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* Floating button to open catalog on mobile */}
+      <button
+        className={classNames(styles.floatingButton, {
+          [styles.visible]: showFloatingButton,
+        })}
+        onClick={() => setCatalogDrawerOpen(true)}
+        aria-label="Open catalog"
+      >
+        <NavArrowRight />
+      </button>
+
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
           <div className={styles.loading}>

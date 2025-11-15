@@ -465,6 +465,7 @@ export default function Filters() {
     updateUnits([0, 5]);
     setDaysArray([...EMPTY_DAYS]);
     updateDays([]);
+    updateSortBy(SortBy.Relevance);
   };
 
   return (
