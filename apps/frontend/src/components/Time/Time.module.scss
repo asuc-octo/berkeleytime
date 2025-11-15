@@ -1,7 +1,8 @@
 .trigger {
-  font-size: 14px;
-  line-height: 1.5;
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
   color: var(--paragraph-color);
+  line-height: 1.5;
   width: fit-content;
 }
 
