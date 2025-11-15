@@ -43,6 +43,7 @@ const formatTerm = (term: Term) => {
     academicYear: academicYear!,
     beginDate: beginDate!,
     endDate: endDate!,
+    hasCatalogData: false,
     weeksOfInstruction: term.weeksOfInstruction,
     holidayScheduleCode: term.holidaySchedule?.code,
     censusDate: term.censusDate,

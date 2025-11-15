@@ -11,6 +11,7 @@ const fields = {
   name: 1,
   beginDate: 1,
   endDate: 1,
+  hasCatalogData: 1,
   sessions: {
     temporalPosition: 1,
     id: 1,
@@ -20,8 +21,9 @@ const fields = {
   },
 };
 
-export const getTerms = async () => {
-  const terms = await TermModel.find({}).select(fields).lean();
+export const getTerms = async (withCatalogData?: boolean) => {
+  const filter = withCatalogData === true ? { hasCatalogData: true } : {};
+  const terms = await TermModel.find(filter).select(fields).lean();
 
   return terms.map(formatTerm);
 };

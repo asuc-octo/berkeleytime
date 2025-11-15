@@ -1,5 +1,11 @@
 import classNames from "classnames";
-import { Filter, FilterSolid, Search, Sparks, SparksSolid } from "iconoir-react";
+import {
+  Filter,
+  FilterSolid,
+  Search,
+  Sparks,
+  SparksSolid,
+} from "iconoir-react";
 
 import { Button, IconButton } from "@repo/theme";
 
@@ -24,12 +30,12 @@ export default function Header() {
   const handleAiSearchSubmit = () => {
     if (aiSearchActive && query.trim()) {
       // TODO: Submit AI search request
-      console.log('Natural Language Search submitted:', query);
+      console.log("Natural Language Search submitted:", query);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && aiSearchActive) {
+    if (e.key === "Enter" && aiSearchActive) {
       e.preventDefault();
       handleAiSearchSubmit();
     }

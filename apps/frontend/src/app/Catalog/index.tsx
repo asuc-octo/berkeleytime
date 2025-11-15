@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { NavArrowRight, Xmark } from "iconoir-react";
-import moment from "moment";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Dialog, Flex, IconButton } from "@repo/theme";
@@ -11,10 +10,18 @@ import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import { TemporalPosition } from "@/lib/generated/graphql";
+import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
+
+// Semester hierarchy for chronological ordering (latest to earliest in year)
+const SEMESTER_ORDER: Record<Semester, number> = {
+  [Semester.Spring]: 0,
+  [Semester.Summer]: 1,
+  [Semester.Fall]: 2,
+  [Semester.Winter]: 3,
+};
 
 export default function Catalog() {
   const {
@@ -51,16 +58,13 @@ export default function Catalog() {
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
-    // Default to the current term
-    const currentTerm = terms.find(
-      (term) => term.temporalPosition === TemporalPosition.Current
-    );
-
-    // Fall back to the next term when the current term has ended
-    const nextTerm = terms
-      .filter((term) => term.startDate)
-      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
-      .find((term) => term.temporalPosition === TemporalPosition.Future);
+    // Default to the latest term by year + semester hierarchy
+    const latestTerm = terms.toSorted((a, b) => {
+      // Sort by year DESC first
+      if (a.year !== b.year) return b.year - a.year;
+      // Then by semester hierarchy DESC
+      return SEMESTER_ORDER[b.semester] - SEMESTER_ORDER[a.semester];
+    })[0];
 
     const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??
@@ -69,8 +73,7 @@ export default function Catalog() {
           term.year === recentTerm?.year &&
           term.semester === recentTerm?.semester
       ) ??
-      currentTerm ??
-      nextTerm;
+      latestTerm;
 
     if (selectedTerm) {
       addRecent(RecentType.CatalogTerm, {

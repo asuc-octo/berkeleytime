@@ -17,7 +17,8 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query, aiSearchActive } = useBrowser();
+  const { classes, loading, year, semester, query, aiSearchActive } =
+    useBrowser();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -124,7 +125,8 @@ export default function List({ onSelect }: ListProps) {
               <LoadingIndicator size="lg" />
               <p className={styles.heading}>Fetching courses...</p>
               <p className={styles.description}>
-                Search for, filter, and sort courses to narrow down your results.
+                Search for, filter, and sort courses to narrow down your
+                results.
               </p>
             </div>
           ) : classes.length === 0 ? (
