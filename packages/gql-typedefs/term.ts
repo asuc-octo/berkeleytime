@@ -68,13 +68,14 @@ export const termTypeDef = gql`
     startDate: String!
     endDate: String!
     sessions: [Session!]
+    hasCatalogData: Boolean!
   }
 
   type Query {
     """
     Query for terms.
     """
-    terms: [Term!]!
+    terms(withCatalogData: Boolean): [Term!]!
 
     """
     Query for a term.
