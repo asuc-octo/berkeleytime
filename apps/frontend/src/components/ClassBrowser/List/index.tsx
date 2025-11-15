@@ -17,7 +17,7 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query } = useBrowser();
+  const { classes, loading, year, semester, query, aiSearchActive } = useBrowser();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -89,77 +89,81 @@ export default function List({ onSelect }: ListProps) {
   return (
     <div ref={rootRef} className={styles.root}>
       <Header />
-      <div
-        ref={recentlyViewedSectionRef}
-        className={styles.recentlyViewedSection}
-      >
-        {showRecentlyViewed && (
-          <div className={styles.recentlyViewed}>
-            <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
-            <div className={styles.recentlyViewedList}>
-              {recentlyViewedClasses.map((_class) => (
-                <ClassCard
-                  class={_class}
-                  key={`recent-${_class.subject}-${_class.courseNumber}-${_class.number}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    rootRef.current?.blur();
-                    onSelect(
-                      _class.subject,
-                      _class.courseNumber,
-                      _class.number
-                    );
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-        <p className={styles.catalogTitle}>CATALOG</p>
-      </div>
-      {loading && classes.length === 0 ? (
-        <div className={styles.placeholder}>
-          <LoadingIndicator size="lg" />
-          <p className={styles.heading}>Fetching courses...</p>
-          <p className={styles.description}>
-            Search for, filter, and sort courses to narrow down your results.
-          </p>
-        </div>
-      ) : classes.length === 0 ? (
-        <div className={styles.placeholder}>
-          <FrameAltEmpty width={32} height={32} />
-          <p className={styles.heading}>No courses found</p>
-          <p className={styles.description}>
-            Find courses by broadening your search or entering a different
-            query.
-          </p>
-        </div>
-      ) : (
-        <div
-          className={styles.view}
-          style={{
-            height: `${virtualizer.getTotalSize()}px`,
-          }}
-        >
+      {!aiSearchActive && (
+        <>
           <div
-            className={styles.body}
-            style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
+            ref={recentlyViewedSectionRef}
+            className={styles.recentlyViewedSection}
           >
-            {items.map(({ key, index }) => {
-              const _class = classes[index];
-
-              return (
-                <ClassCard
-                  class={_class}
-                  data-index={index}
-                  key={key}
-                  ref={virtualizer.measureElement}
-                  onClick={() => handleClassClick(index)}
-                />
-              );
-            })}
+            {showRecentlyViewed && (
+              <div className={styles.recentlyViewed}>
+                <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
+                <div className={styles.recentlyViewedList}>
+                  {recentlyViewedClasses.map((_class) => (
+                    <ClassCard
+                      class={_class}
+                      key={`recent-${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        rootRef.current?.blur();
+                        onSelect(
+                          _class.subject,
+                          _class.courseNumber,
+                          _class.number
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            <p className={styles.catalogTitle}>CATALOG</p>
           </div>
-        </div>
+          {loading && classes.length === 0 ? (
+            <div className={styles.placeholder}>
+              <LoadingIndicator size="lg" />
+              <p className={styles.heading}>Fetching courses...</p>
+              <p className={styles.description}>
+                Search for, filter, and sort courses to narrow down your results.
+              </p>
+            </div>
+          ) : classes.length === 0 ? (
+            <div className={styles.placeholder}>
+              <FrameAltEmpty width={32} height={32} />
+              <p className={styles.heading}>No courses found</p>
+              <p className={styles.description}>
+                Find courses by broadening your search or entering a different
+                query.
+              </p>
+            </div>
+          ) : (
+            <div
+              className={styles.view}
+              style={{
+                height: `${virtualizer.getTotalSize()}px`,
+              }}
+            >
+              <div
+                className={styles.body}
+                style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
+              >
+                {items.map(({ key, index }) => {
+                  const _class = classes[index];
+
+                  return (
+                    <ClassCard
+                      class={_class}
+                      data-index={index}
+                      key={key}
+                      ref={virtualizer.measureElement}
+                      onClick={() => handleClassClick(index)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
       )}
       {/* <div className={styles.footer}>
         <Link to="/discover" className={styles.button}>

@@ -80,6 +80,7 @@ export default function ClassBrowser({
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
+  const [aiSearchActive, setAiSearchActive] = useState<boolean>(false);
 
   const { data, loading } = useQuery(GetCanonicalCatalogDocument, {
     variables: {
@@ -231,14 +232,16 @@ export default function ClassBrowser({
 
   const filteredClasses = useMemo(
     () =>
-      searchAndSortClasses({
-        classes: includedClasses,
-        index,
-        query,
-        sortBy,
-        order: effectiveOrder,
-      }),
-    [includedClasses, index, query, sortBy, effectiveOrder]
+      aiSearchActive
+        ? []
+        : searchAndSortClasses({
+            classes: includedClasses,
+            index,
+            query,
+            sortBy,
+            order: effectiveOrder,
+          }),
+    [aiSearchActive, includedClasses, index, query, sortBy, effectiveOrder]
   );
 
   const hasActiveFilters = useMemo(() => {
@@ -371,6 +374,7 @@ export default function ClassBrowser({
         open,
         reverse: localReverse,
         effectiveOrder,
+        aiSearchActive,
         updateQuery,
         updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
@@ -401,6 +405,7 @@ export default function ClassBrowser({
         setExpanded,
         loading,
         updateReverse: setLocalReverse,
+        setAiSearchActive,
       }}
     >
       <div
