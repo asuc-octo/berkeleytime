@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { NavArrowRight, Xmark } from "iconoir-react";
-import moment from "moment";
+
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Dialog, Flex, IconButton } from "@repo/theme";
