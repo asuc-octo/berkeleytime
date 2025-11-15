@@ -289,16 +289,35 @@
   --rose-900: #881337;
   --rose-950: #4c0519;
 
+  // Font sizes (rem based on 16px base)
+  --text-14: 0.875rem; // 14px
+  --text-16: 1rem; // 16px
+  --text-18: 1.125rem; // 18px
+  --text-28: 1.75rem; // 28px
+
+  // Font weights
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  // Semantic text tokens
+  --heading-large: var(--font-bold) var(--text-28);
+  --heading-medium: var(--font-medium) var(--text-18);
+  --heading-small: var(--font-semibold) var(--text-16);
+  --heading-caps: var(--font-medium) var(--text-14);
+  --body-medium: var(--font-normal) var(--text-14);
+
   --light-foreground-color: white;
   --light-background-color: var(--slate-50);
   --light-backdrop-color: var(--slate-100);
 
   --light-border-color: rgb(0 0 0 / 10%);
 
-  --light-heading-color: var(--slate-900);
-  --light-paragraph-color: var(--slate-500);
-  --light-paragraph-color-50: var(--slate-500-50);
-  --light-label-color: var(--slate-400);
+  --light-heading-color: var(--neutral-w900);
+  --light-paragraph-color: var(--neutral-500);
+  --light-paragraph-color-50: var(--neutral-500-50);
+  --light-label-color: var(--neutral-400);
 
   // --light-button-color: white;
   --light-button-hover-color: var(--slate-100);
