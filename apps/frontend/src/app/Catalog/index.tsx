@@ -1,20 +1,28 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
-import { Xmark } from "iconoir-react";
-import moment from "moment";
+import { NavArrowRight, Xmark } from "iconoir-react";
+
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { Flex, IconButton } from "@repo/theme";
+import { Dialog, Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import { TemporalPosition } from "@/lib/generated/graphql";
+import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
+
+// Semester hierarchy for chronological ordering (latest to earliest in year)
+const SEMESTER_ORDER: Record<Semester, number> = {
+  [Semester.Spring]: 0,
+  [Semester.Summer]: 1,
+  [Semester.Fall]: 2,
+  [Semester.Winter]: 3,
+};
 
 export default function Catalog() {
   const {
@@ -29,6 +37,8 @@ export default function Catalog() {
   const location = useLocation();
 
   const [open, setOpen] = useState(false);
+  const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(false);
+  const [showFloatingButton, setShowFloatingButton] = useState(false);
 
   const { data: terms, loading: termsLoading } = useReadTerms();
 
@@ -49,16 +59,13 @@ export default function Catalog() {
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
-    // Default to the current term
-    const currentTerm = terms.find(
-      (term) => term.temporalPosition === TemporalPosition.Current
-    );
-
-    // Fall back to the next term when the current term has ended
-    const nextTerm = terms
-      .filter((term) => term.startDate)
-      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
-      .find((term) => term.temporalPosition === TemporalPosition.Future);
+    // Default to the latest term by year + semester hierarchy
+    const latestTerm = terms.toSorted((a, b) => {
+      // Sort by year DESC first
+      if (a.year !== b.year) return b.year - a.year;
+      // Then by semester hierarchy DESC
+      return SEMESTER_ORDER[b.semester] - SEMESTER_ORDER[a.semester];
+    })[0];
 
     const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??
@@ -67,8 +74,7 @@ export default function Catalog() {
           term.year === recentTerm?.year &&
           term.semester === recentTerm?.semester
       ) ??
-      currentTerm ??
-      nextTerm;
+      latestTerm;
 
     if (selectedTerm) {
       addRecent(RecentType.CatalogTerm, {
@@ -104,6 +110,7 @@ export default function Catalog() {
       if (!term) return;
 
       setOpen(true);
+      setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({
         ...location,
@@ -112,6 +119,23 @@ export default function Catalog() {
     },
     [navigate, location, term]
   );
+
+  // Handle mouse movement for floating button on mobile
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      // Only show on mobile
+      if (window.innerWidth > 992) {
+        setShowFloatingButton(false);
+        return;
+      }
+
+      // Expand button when cursor is within 60px of left edge (covers peeking button)
+      setShowFloatingButton(e.clientX < 60);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   if (termsLoading) {
     return (
@@ -134,6 +158,7 @@ export default function Catalog() {
         [styles.open]: open,
       })}
     >
+      {/* Desktop: Static panel */}
       <div className={styles.panel}>
         <div className={styles.header}>
           <p className={styles.title}>
@@ -153,6 +178,34 @@ export default function Catalog() {
           />
         </div>
       </div>
+
+      {/* Mobile: Drawer overlay */}
+      <Dialog.Root open={catalogDrawerOpen} onOpenChange={setCatalogDrawerOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className={styles.overlay} />
+          <Dialog.Drawer align="start" className={styles.catalogDrawer}>
+            <ClassBrowser
+              onSelect={handleSelect}
+              semester={term.semester}
+              year={term.year}
+              terms={terms}
+              persistent
+            />
+          </Dialog.Drawer>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* Floating button to open catalog on mobile */}
+      <button
+        className={classNames(styles.floatingButton, {
+          [styles.visible]: showFloatingButton,
+        })}
+        onClick={() => setCatalogDrawerOpen(true)}
+        aria-label="Open catalog"
+      >
+        <NavArrowRight />
+      </button>
+
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {classLoading ? (
           <div className={styles.loading}>

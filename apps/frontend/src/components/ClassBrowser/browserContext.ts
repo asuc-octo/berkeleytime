@@ -23,6 +23,7 @@ export interface BrowserContextType {
   year: number;
   semester: Semester;
   terms?: ITerm[];
+  hasActiveFilters: boolean;
   query: string;
   units: UnitRange;
   levels: Level[];
