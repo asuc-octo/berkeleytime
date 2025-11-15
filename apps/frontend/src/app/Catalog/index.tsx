@@ -2,10 +2,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { NavArrowRight, Xmark } from "iconoir-react";
-
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { Dialog, Flex, IconButton } from "@repo/theme";
+import { Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
@@ -36,7 +35,6 @@ export default function Catalog() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [open, setOpen] = useState(false);
   const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(false);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
 
@@ -109,7 +107,6 @@ export default function Catalog() {
     (subject: string, courseNumber: string, number: string) => {
       if (!term) return;
 
-      setOpen(true);
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({
@@ -153,18 +150,14 @@ export default function Catalog() {
 
   // TODO: Class error state, class loading state
   return (
-    <div
-      className={classNames(styles.root, {
-        [styles.open]: open,
-      })}
-    >
+    <div className={styles.root}>
       {/* Desktop: Static panel */}
       <div className={styles.panel}>
         <div className={styles.header}>
           <p className={styles.title}>
             {term.semester} {term.year}
           </p>
-          <IconButton onClick={() => setOpen(true)}>
+          <IconButton onClick={() => {}}>
             <Xmark />
           </IconButton>
         </div>
@@ -180,20 +173,25 @@ export default function Catalog() {
       </div>
 
       {/* Mobile: Drawer overlay */}
-      <Dialog.Root open={catalogDrawerOpen} onOpenChange={setCatalogDrawerOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className={styles.overlay} />
-          <Dialog.Drawer align="start" className={styles.catalogDrawer}>
-            <ClassBrowser
-              onSelect={handleSelect}
-              semester={term.semester}
-              year={term.year}
-              terms={terms}
-              persistent
-            />
-          </Dialog.Drawer>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <div
+        className={classNames(styles.catalogDrawer, {
+          [styles.drawerOpen]: catalogDrawerOpen,
+        })}
+      >
+        <ClassBrowser
+          onSelect={handleSelect}
+          semester={term.semester}
+          year={term.year}
+          terms={terms}
+          persistent
+        />
+      </div>
+      {catalogDrawerOpen && (
+        <div
+          className={styles.overlay}
+          onClick={() => setCatalogDrawerOpen(false)}
+        />
+      )}
 
       {/* Floating button to open catalog on mobile */}
       <button
@@ -213,11 +211,7 @@ export default function Catalog() {
             <div className={styles.loadingBody} />
           </div>
         ) : _class && _course ? (
-          <Class
-            class={_class}
-            course={_course}
-            onClose={() => setOpen(false)}
-          />
+          <Class class={_class} course={_course} onClose={() => {}} />
         ) : null}
       </Flex>
     </div>
