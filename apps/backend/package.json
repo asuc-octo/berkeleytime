@@ -42,6 +42,7 @@
     "@repo/gql-typedefs": "*",
     "@repo/shared": "*",
     "@repo/sis-api": "*",
+    "undici": "^6.20.1",
     "compression": "^1.8.1",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.5",
