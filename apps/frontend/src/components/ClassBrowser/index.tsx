@@ -327,7 +327,6 @@ export default function ClassBrowser({
     }
   };
 
-
   const updateArray = <T,>(
     key: string,
     setState: (state: T[]) => void,
