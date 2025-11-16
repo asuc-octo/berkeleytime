@@ -20,6 +20,17 @@ services:
       - ./.env:/backend/apps/backend/.env
       - ./apps/backend:/backend/apps/backend
       - ./packages:/backend/packages
+  semantic-search:
+    build:
+      context: ./apps/semantic-search
+      dockerfile: Dockerfile
+    networks:
+      - bt
+    ports:
+      - 8000:8000
+    restart: always
+    volumes:
+      - ./apps/semantic-search/app:/app/app
   frontend:
     build:
       context: .
