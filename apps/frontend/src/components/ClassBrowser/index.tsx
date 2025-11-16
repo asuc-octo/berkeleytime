@@ -80,6 +80,11 @@ export default function ClassBrowser({
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
+  const [aiSearchActive, setAiSearchActive] = useState<boolean>(false);
+  const [semanticResults, setSemanticResults] = useState<
+    Array<{ subject: string; courseNumber: string }>
+  >([]);
+  const [semanticLoading, setSemanticLoading] = useState(false);
 
   const { data, loading } = useQuery(GetCanonicalCatalogDocument, {
     variables: {
@@ -229,17 +234,39 @@ export default function ClassBrowser({
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
-  const filteredClasses = useMemo(
-    () =>
-      searchAndSortClasses({
-        classes: includedClasses,
-        index,
-        query,
-        sortBy,
-        order: effectiveOrder,
-      }),
-    [includedClasses, index, query, sortBy, effectiveOrder]
-  );
+  const filteredClasses = useMemo(() => {
+    // If AI search is active and we have semantic results, filter by those
+    if (aiSearchActive && semanticResults.length > 0) {
+      const semanticMap = new Set(
+        semanticResults.map((r) => `${r.subject}-${r.courseNumber}`)
+      );
+
+      const filtered = includedClasses.filter((cls) =>
+        semanticMap.has(`${cls.subject}-${cls.courseNumber}`)
+      );
+
+      return filtered;
+    }
+
+    // Otherwise use normal fuzzy search
+    const result = searchAndSortClasses({
+      classes: includedClasses,
+      index,
+      query,
+      sortBy,
+      order: effectiveOrder,
+    });
+
+    return result;
+  }, [
+    aiSearchActive,
+    semanticResults,
+    includedClasses,
+    index,
+    query,
+    sortBy,
+    effectiveOrder,
+  ]);
 
   const hasActiveFilters = useMemo(() => {
     return (
@@ -267,6 +294,39 @@ export default function ClassBrowser({
     online,
     sortBy,
   ]);
+
+  // Semantic search handler
+  const handleSemanticSearch = async () => {
+    if (!query.trim()) {
+      setSemanticResults([]);
+      return;
+    }
+
+    setSemanticLoading(true);
+    try {
+      const params = new URLSearchParams({
+        query: query.trim(),
+        year: String(currentYear),
+        semester: currentSemester,
+        top_k: "50",
+      });
+
+      const response = await fetch(`/api/semantic-search/courses?${params}`);
+
+      if (!response.ok) {
+        throw new Error("Semantic search failed");
+      }
+
+      const data = await response.json();
+      setSemanticResults(data.results || []);
+    } catch (error) {
+      console.error("Semantic search error:", error);
+      setSemanticResults([]);
+    } finally {
+      setSemanticLoading(false);
+    }
+  };
+
 
   const updateArray = <T,>(
     key: string,
@@ -382,6 +442,7 @@ export default function ClassBrowser({
         open,
         reverse: localReverse,
         effectiveOrder,
+        aiSearchActive,
         updateQuery,
         updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
@@ -412,6 +473,9 @@ export default function ClassBrowser({
         setExpanded,
         loading,
         updateReverse: setLocalReverse,
+        setAiSearchActive,
+        handleSemanticSearch,
+        semanticLoading,
       }}
     >
       <div

@@ -1,7 +1,13 @@
 import classNames from "classnames";
-import { Filter, FilterSolid, Search } from "iconoir-react";
+import {
+  Filter,
+  FilterSolid,
+  Search,
+  Sparks,
+  SparksSolid,
+} from "iconoir-react";
 
-import { Button } from "@repo/theme";
+import { Button, IconButton } from "@repo/theme";
 
 import useBrowser from "../useBrowser";
 import styles from "./Header.module.scss";
@@ -17,7 +23,24 @@ export default function Header() {
     year,
     responsive,
     hasActiveFilters,
+    aiSearchActive,
+    setAiSearchActive,
+    handleSemanticSearch,
+    semanticLoading,
   } = useBrowser();
+
+  const handleAiSearchSubmit = () => {
+    if (aiSearchActive && query.trim()) {
+      handleSemanticSearch();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && aiSearchActive) {
+      e.preventDefault();
+      handleAiSearchSubmit();
+    }
+  };
 
   return (
     <div
@@ -35,13 +58,35 @@ export default function Header() {
           value={query}
           name="search"
           onChange={(event) => updateQuery(event.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder={`Search ${semester} ${year} classes...`}
           onFocus={() => setExpanded(false)}
           autoFocus
           autoComplete="off"
         />
-        <div className={styles.label}>{classes.length.toLocaleString()}</div>
+        {!aiSearchActive && (
+          <div className={styles.label}>{classes.length.toLocaleString()}</div>
+        )}
+        <IconButton
+          className={classNames(styles.sparksButton, {
+            [styles.active]: aiSearchActive,
+          })}
+          onClick={() => setAiSearchActive(!aiSearchActive)}
+          aria-label="AI Search"
+        >
+          {aiSearchActive ? <SparksSolid /> : <Sparks />}
+        </IconButton>
       </div>
+      {aiSearchActive && (
+        <Button
+          className={styles.aiSearchButton}
+          onClick={handleAiSearchSubmit}
+          disabled={semanticLoading || !query.trim()}
+        >
+          <SparksSolid />
+          {semanticLoading ? "Searching..." : "Natural Language Search"}
+        </Button>
+      )}
       <Button
         className={classNames(styles.filterButton, {
           [styles.active]: hasActiveFilters,
