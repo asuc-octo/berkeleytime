@@ -2,7 +2,7 @@
 
 <!-- toc -->
 
-## Manually run `datapuller`
+## Manually Run `datapuller` (and Other CronJobs)
 
 1. First, list all cronjob instances:
 
@@ -20,7 +20,34 @@
     ```sh
     k create job --from cronjob/bt-prod-datapuller-courses bt-prod-datapuller-courses-manual-01
     ```
-## Previewing Infra Changes with `/helm-diff` before deployment
+
+## Deploying a New Environment Variable with sealed-secrets
+
+Useful when adding new environment variables to `.env`. To ensure our env variables can be deployed to GitHub without their true value being leaked, they should be encrypted before being pushed to GitHub.
+
+1. SSH into `hozer-51`.
+2. Create a new secret manifest with the key-value pairs and save into `my_secret.yaml`:
+
+    ```sh
+    k create secret generic my_secret -n bt --dry-run=client --output=yaml \
+        --from-literal=key1=value1 \
+        --from-literal=key2=value2 > my_secret.yaml
+    ```
+
+3. Create a sealed secret from the previously created manifest:
+
+    ```sh
+    kubeseal --controller-name bt-sealed-secrets --controller-namespace bt \
+        --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
+    ```
+
+    If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
+
+4. The newly created sealed secret encrypts the key-value pairs, allowing it to be safely pushed to GitHub.
+
+Steps 2 and 3 are derived from [the sealed-secrets docs](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#usage).
+
+## Previewing Infra Changes with `/helm-diff` Before Deployment
 
 The `/helm-diff` command can be used in pull request comments to preview Helm changes before they are deployed. This is particularly useful when:
 
@@ -54,29 +81,6 @@ helm list --all-namespaces --all | grep 'uninstalling' | awk '{print $1}' | xarg
 
 Sometimes, releases will be stuck in an `uninstalling` state. This command quickly force uninstalls all such stuck helm releases.
 
-## New sealed secret deployment
-
-1. SSH into `hozer-51`.
-2. Create a new secret manifest with the key-value pairs and save into `my_secret.yaml`:
-
-    ```sh
-    k create secret generic my_secret -n bt --dry-run=client --output=yaml \
-        --from-literal=key1=value1 \
-        --from-literal=key2=value2 > my_secret.yaml
-    ```
-
-3. Create a sealed secret from the previously created manifest:
-
-    ```sh
-    kubeseal --controller-name bt-sealed-secrets --controller-namespace bt \
-        --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
-    ```
-
-    If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
-
-4. The newly create sealed secret encrypts the key-value pairs, allowing it to be safely pushed to GitHub.
-
-Steps 2 and 3 are derived from [the sealed-secrets docs](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#usage).
 
 ## Kubernetes Cluster Initialization
 

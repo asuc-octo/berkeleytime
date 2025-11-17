@@ -1,7 +1,5 @@
 # Datapuller
 
-Welcome to the `datapuller` section.
-
 ## What is the `datapuller`?
 
 The `datapuller` is a modular collection of data-pulling scripts responsible for populating Berkeleytime's databases with course, class, section, grades, and enrollment data from the official university-provided APIs. This collection of pullers are unified through a singular entrypoint, making it incredibly easy for new pullers to be developed. The original proposal can be found [here](https://docs.google.com/document/d/1EdfI5Cmsk91LwZtUN0VSC5HEKy4RRuMhLhw8TRKRQrM/edit?tab=t.0#heading=h.c6lfrfjeglpv)[^1].
