@@ -1,27 +1,24 @@
 """
 author: Max Wang
 
-migrates enrollment from MongoDB (pre-enrollment ranges & granularity) to MongoDB (post-enrollment ranges & granularity)
- - only does for 2026 Spring term
+compresses enrollment history entries that are equal and within 1 hour of each other
+ - only does for 2026 Spring and 2025 Fall terms
 
-dependencies:
-1. running local MongoDB server with (old) enrollmenthistories collection
 
-after:
-db.enrollmenthistories.renameCollection("enrollmenthistories_old")
-db.enrollmenthistories_new.renameCollection("enrollmenthistories")
+port forward local port & hozer-51 mongo port
 """
 
 from datetime import datetime, timedelta, timezone
 from math import floor
 import pymongo
+from pymongo import ReplaceOne
 import copy
 
 FROM_COLLECTION = "enrollmenthistories"
-TO_COLLECTION = "enrollmenthistories_new"
+TO_COLLECTION = "enrollmenthistories"
+QUERY = { "$or": [ { "year": 2026, "semester": "Spring" }, { "year": 2025, "semester": "Fall" } ] }
 
 mongo_db = pymongo.MongoClient("mongodb://localhost:27017/?directConnection=true")["bt"]
-mongo_db[TO_COLLECTION].drop()
 
 
 def enrollment_singulars_equal(a, b):
@@ -81,7 +78,7 @@ def batch_get_enrollments():
         nonlocal i
         nonlocal db_i
         if i >= len(batch):
-            batch = list(mongo_db[FROM_COLLECTION].find({ "year": 2026, "semester": "Spring" }).skip(db_i).limit(5000))
+            batch = list(mongo_db[FROM_COLLECTION].find(QUERY).skip(db_i).limit(5000))
             i = 0
             db_i += len(batch)
             if len(batch) == 0:
@@ -100,7 +97,7 @@ def batch_write(batch_size=5000):
         if doc:
             batch.append(doc)
         if len(batch) == batch_size or (force and len(batch) > 0):
-            mongo_db[TO_COLLECTION].insert_many(batch)
+            mongo_db[TO_COLLECTION].bulk_write(batch)
             batch.clear()
 
     return write
@@ -108,7 +105,7 @@ def batch_write(batch_size=5000):
 get_next_enrollment = batch_get_enrollments()
 write = batch_write()
 
-total = mongo_db[FROM_COLLECTION].count_documents({ "year": 2026, "semester": "Spring" })
+total = mongo_db[FROM_COLLECTION].count_documents(QUERY)
 print_interval = max(1, total // 10)  # Avoid division by zero
 processed = 0
 
@@ -130,10 +127,8 @@ while True:
         else:
             new_doc["history"].append(entry)
 
-    write(new_doc)
+    write(ReplaceOne({"_id": new_doc["_id"]}, new_doc))
 
 
 write(None, force=True)  # Force write the last batch
 
-
-kubectl patch cronjobs bt-prod-app-datapuller-enrollments  -p '{"spec" : {"suspend" : true }}'
