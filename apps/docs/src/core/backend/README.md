@@ -1,12 +1,14 @@
 # Backend
 
-Welcome to the backend section.
-
 <!-- toc -->
 
 ## What is the backend?
 
-The backend application service is the user-facing API server responsible for serving data to the frontend. Communication between the backend and frontend is done with HTTPS, as do most websites on the modern internet. To see more on how the backend service interacts with other components in the Berkeleytime system, view the [architecture page](../infrastructure/onboarding.md#architecture)
+The backend application service is the user-facing API server responsible for serving data to the frontend. Communication between the backend and frontend is done with HTTPS, as do most websites on the modern internet.
+
+In addition to the user-facing API server, the backend application service also has an internal HTTP server used mainly by the [`datapuller`](../datapuller/README.md).
+
+To see more on how the backend service interacts with other components in the Berkeleytime system, view the [architecture page](../infrastructure/onboarding.md#architecture)
 
 ## The Berkeleytime Backend Service
 
@@ -73,7 +75,7 @@ The bulk of the application logic is split into separate modules within the `src
 
 The above diagram shows a simplified request-to-response pipeline within a module.
 
-1. A [GraphQL request](https://graphql.org/learn/queries/) is sent to the backend server. A request looks like a JSON skeleton, containing only keys but no values. The request is "routed" to the specific module.[^1]
+1. A [GraphQL request](https://graphql.org/learn/queries/) is sent to the backend server. A request looks like a JSON skeleton, containing only keys but no values. The request is "routed" to the specific module.[^2]
 
 2. The **resolver** handles the request by calling the specific controller method necessary.
 
@@ -81,19 +83,19 @@ The above diagram shows a simplified request-to-response pipeline within a modul
 
 3. The **controller** queries the Mongo database, using user input to filter documents.
 
-    - We use [Mongoose](https://mongoosejs.com/) as an abstraction layer between our application logic and MongoDB queries.[^2] Both [Mongoose docs](https://mongoosejs.com/docs/index.html) and [MongoDB docs](https://www.mongodb.com/docs/manual/crud/) on queries are valuable resources.
+    - We use [Mongoose](https://mongoosejs.com/) as an abstraction layer between our application logic and MongoDB queries.[^3] Both [Mongoose docs](https://mongoosejs.com/docs/index.html) and [MongoDB docs](https://www.mongodb.com/docs/manual/crud/) on queries are valuable resources.
 
 4. The **formatter** translates the DB response from a database type, from `berkeleytime/packages/common/src/models`, into a GraphQL type, from `[module]/generated_types/module-types.ts`.
 
     - Note that not all modules have a formatter because the database type and GraphQL type are sometimes identical.
 
-5. Finally, the result is returned as a [GraphQL response](https://graphql.org/learn/response/) in the shape of a JSON, matching the query from step 1.[^3]
+5. Finally, the result is returned as a [GraphQL response](https://graphql.org/learn/response/) in the shape of a JSON, matching the query from step 1.[^4]
 
-[^1]: In runtime, all of the modules and type definitions are merged into one by `src/modules/index.ts`, so there isn't any explicit "routing" in our application code.
+[^2]: In runtime, all of the modules and type definitions are merged into one by `src/modules/index.ts`, so there isn't any explicit "routing" in our application code.
 
-[^2]: The Mongoose abstraction is very similar to the built-in MongoDB query language.
+[^3]: The Mongoose abstraction is very similar to the built-in MongoDB query language.
 
-[^3]: Fields not requested are automatically removed.
+[^4]: Fields not requested are automatically removed.
 
 #### Database Models
 
@@ -142,3 +144,10 @@ API testing is mainly done through the [Apollo GraphQL Sandbox](https://www.apol
 - [schemas and types](https://graphql.org/learn/schema/)
 - [queries](https://graphql.org/learn/queries/)
 - [mutations](https://graphql.org/learn/mutations/)
+
+
+## Internal HTTP Service
+
+The backend also serves an HTTP server[^5] mainly used by the [`datapuller`](../datapuller/README.md), which communicates with the backend service to rehydrate the cache via an HTTP request.
+
+[^5]: In modern microservice systems, non-publicly-exposed services typically use a more efficient protocol, such as [gRPC](https://en.wikipedia.org/wiki/GRPC). For simplicity, we just use an HTTP server instead.
