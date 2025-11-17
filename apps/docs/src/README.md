@@ -10,6 +10,8 @@ Welcome to the Berkeleytime Docs! This is the primary documentation source for d
 > [!NOTE]
 > The following are instructions to set up the documentation locally. To set up the Berkeleytime app locally, go to the [Local Development](./getting-started/local-development.md) section.
 
+The docs are provided as a service with the root `docker-compose.yml` file, so if you have the Berkeleytime app running locally, you can access the docs at `http://localhost:3000/`. Below are (mainly deprecated) ways of running the docs without the Berkeleytime app.
+
 ### Developing and Building Locally
 
 There are two options: with and without containerization (ie. Docker).

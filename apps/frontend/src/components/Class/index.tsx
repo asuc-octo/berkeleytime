@@ -6,7 +6,6 @@ import {
   BookmarkSolid,
   CalendarPlus,
   OpenNewWindow,
-  Xmark,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
 import {
@@ -321,16 +320,6 @@ export default function Class({
     });
   }, [courseGradeDistribution]);
 
-  const handleClose = useCallback(() => {
-    if (!_class) return;
-
-    navigate(`/catalog/${_class.year}/${_class.semester}`);
-
-    if (onClose) {
-      onClose();
-    }
-  }, [_class, navigate, onClose]);
-
   if (loading || courseLoading) {
     return (
       <div className={styles.loading}>
@@ -353,20 +342,6 @@ export default function Class({
             <Flex direction="column" gap="5">
               <Flex justify="between" align="start">
                 <Flex gap="3">
-                  {/* TODO: Reusable bookmark button */}
-                  <Tooltip
-                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
-                  >
-                    <IconButton
-                      className={classNames(styles.bookmark, {
-                        [styles.active]: bookmarked,
-                      })}
-                      onClick={() => bookmark()}
-                      disabled={userLoading}
-                    >
-                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                    </IconButton>
-                  </Tooltip>
                   {/* TODO: Reusable pin button
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
@@ -385,6 +360,20 @@ export default function Class({
                   </Tooltip>
                 </Flex>
                 <Flex gap="3">
+                  {/* TODO: Reusable bookmark button */}
+                  <Tooltip
+                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
+                  >
+                    <IconButton
+                      className={classNames(styles.bookmark, {
+                        [styles.active]: bookmarked,
+                      })}
+                      onClick={() => bookmark()}
+                      disabled={userLoading}
+                    >
+                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
@@ -402,13 +391,6 @@ export default function Class({
                       <OpenNewWindow />
                     </IconButton>
                   </Tooltip>
-                  {onClose && (
-                    <Tooltip content="Close">
-                      <IconButton onClick={handleClose}>
-                        <Xmark />
-                      </IconButton>
-                    </Tooltip>
-                  )}
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
@@ -424,23 +406,6 @@ export default function Class({
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  {hasCourseGradeSummary && (
-                    <Link
-                      to={`/grades?input=${encodeURIComponent(
-                        `${_class.subject};${_class.courseNumber}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "inline-flex",
-                        textDecoration: "none",
-                      }}
-                    >
-                      <AverageGrade
-                        gradeDistribution={_class.course.gradeDistribution}
-                      />
-                    </Link>
-                  )}
                   <EnrollmentDisplay
                     enrolledCount={
                       _class.primarySection.enrollment?.latest?.enrolledCount
@@ -466,6 +431,23 @@ export default function Class({
                       </Link>
                     )}
                   </EnrollmentDisplay>
+                  {hasCourseGradeSummary && (
+                    <Link
+                      to={`/grades?input=${encodeURIComponent(
+                        `${_class.subject};${_class.courseNumber}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <AverageGrade
+                        gradeDistribution={_class.course.gradeDistribution}
+                      />
+                    </Link>
+                  )}
                   <Units
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
