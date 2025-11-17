@@ -22,8 +22,6 @@
   }
 
   &.disabled {
-    color: var(--paragraph-color-50);
-    border-color: var(--border-color);
     cursor: default;
   }
 }
