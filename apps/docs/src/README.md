@@ -1,9 +1,9 @@
 # Introduction
 
-> [!WARNING]
-> The Berkeleytime Documentation is currently under construction.
+Welcome to the Berkeleytime Docs! This is the documentation source for developers.
 
-Welcome to the Berkeleytime Docs! This is the primary documentation source for developers.
+> [!TIP]
+> If you are looking for instructions to setup your local environment, go to the [Local Development page](./getting-started/local-development.md)
 
 ## Getting Started
 

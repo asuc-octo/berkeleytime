@@ -7,7 +7,7 @@
 # Getting Started
 
 - [Local Development](./getting-started/local-development.md)
-- [Deployment with CI/CD](./getting-started/deployment-with-cicd.md)
+- [Deploying with CI/CD](./getting-started/deploying-with-cicd.md)
 
 ---
 
@@ -28,7 +28,7 @@
   - [CI/CD Workflow](./core/infrastructure/cicd-workflow.md)
   - [DNS & Certificates](./core/infrastructure/dns-certificates.md)
   - [Runbooks](./core/infrastructure/runbooks.md)
-
+<!--
 ---
 
 # Fall 2024 Pods
@@ -39,4 +39,4 @@
 
 - [GradTrak](./fa24/gradtrak/README.md)
 
-- [Semantic Search](./fa24/semantic-search/README.md)
+- [Semantic Search](./fa24/semantic-search/README.md) -->

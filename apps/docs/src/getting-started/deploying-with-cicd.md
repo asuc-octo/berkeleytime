@@ -1,9 +1,11 @@
-# Deployment with CI/CD
+# Deploying with CI/CD
 
 The deployment process is different for [development](#development), [staging](#staging), and [production](#production) environments.
 - **Development**: Best for short-term deployments to simulate a production environment as closely as possible. Useful for deploying feature branches before merging into `main`.
 - **Staging**: The last "testing" environment to catch bugs before reaching production. Reserved for the latest commit on `main`.
 - **Production**: User facing website! Changes being pushed to production should be thoroughly tested on a developer's local machine and in development and staging environments.
+
+To learn more about how our CI/CD pipelines work, head to the [infra section's overview of CI/CD](../core/infrastructure/cicd-workflow.md).
 
 ## Development
 
@@ -21,7 +23,7 @@ The deployment process is different for [development](#development), [staging](#
 
     </details>
 
-3. Navigate to the "Run workflow" dropdown on the right. Select your branch and input a time to live in hours. Please keep this value a reasonable number.
+3. Navigate to the "Run workflow" dropdown on the right. Select your branch and input a time to live in hours. Please keep this value a reasonable number. If you need to login, for example you want to test a scheduler feature, select "Enable authentication support".
     <details><summary>Image</summary>
 
     ![Deploy to Development Action Menu](./assets/cicd-dev-3.png)
