@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 
+import SunCalc from "suncalc";
+
 import Features from "./Features";
 import Hero from "./Hero";
-import afternoon from "./Hero/afternoon.svg";
 import dawn from "./Hero/dawn.svg";
 import dusk from "./Hero/dusk.svg";
 import morning from "./Hero/morning.svg";
@@ -37,20 +38,26 @@ const steps = {
   },
 };
 
+// UC Berkeley coordinates
+const BERKELEY_LAT = 37.8719;
+const BERKELEY_LNG = -122.2585;
+
 const getStep = (milliseconds: number) => {
   const date = new Date(milliseconds);
-  const hour = date.getHours();
+  const times = SunCalc.getTimes(date, BERKELEY_LAT, BERKELEY_LNG);
 
-  // 5am to 8am => sunrise
-  if (hour >= 5 && hour < 8) return steps.sunrise;
-  // 8am to 11am => early morning
-  if (hour >= 8 && hour < 11) return steps.earlyMorning;
-  // 11am to 5pm => daytime
-  if (hour >= 11 && hour < 17) return steps.daytime;
-  // 5pm to 9pm => sunset
-  if (hour >= 17 && hour < 21) return steps.sunset;
+  const now = date.getTime();
+  const dawnTime = times.dawn.getTime();
+  const sunriseEndTime = times.sunriseEnd.getTime();
+  const goldenHourEndTime = times.goldenHourEnd.getTime();
+  const goldenHourTime = times.goldenHour.getTime();
+  const duskTime = times.dusk.getTime();
 
-  // 9pm to 5am => night
+  if (now >= dawnTime && now < sunriseEndTime) return steps.sunrise;
+  if (now >= sunriseEndTime && now < goldenHourEndTime)
+    return steps.earlyMorning;
+  if (now >= goldenHourEndTime && now < goldenHourTime) return steps.daytime;
+  if (now >= goldenHourTime && now < duskTime) return steps.sunset;
   return steps.night;
 };
 
@@ -61,7 +68,7 @@ const Home = () => {
   );
 
   const step = useMemo(() => {
-    return steps.daytime;
+    return getStep(milliseconds);
   }, [milliseconds]);
 
   useEffect(() => {
