@@ -13,51 +13,45 @@ import Organization from "./Organization";
 import Wave from "./Wave";
 
 // TODO: Tailwind color gradients
-const steps = [
-  {
-    colors: ["#F33754", "#7C87F9"],
-    image: dawn,
-  },
-  {
-    colors: ["#F1A848", "#F55998"],
-    image: sunrise,
-  },
-  {
-    colors: ["#408FF7", "#0DD0DA"],
-    image: morning,
-  },
-  {
-    colors: ["#4FC351", "#CAC638"],
-    image: afternoon,
-  },
-  {
-    colors: ["#E4A70A", "#FF7500"],
-    image: sunset,
-  },
-  {
+const steps = {
+  night: {
     colors: ["#082D65", "#0E1B3B"],
     angle: "to bottom right",
     image: dusk,
   },
-];
+  sunrise: {
+    colors: ["#F1A848", "#F55998"],
+    image: sunrise,
+  },
+  earlyMorning: {
+    colors: ["#E4A70A", "#FF7500"],
+    image: sunset,
+  },
+  daytime: {
+    colors: ["#408FF7", "#0DD0DA"],
+    image: morning,
+  },
+  sunset: {
+    colors: ["#F33754", "#7C87F9"],
+    image: dawn,
+  },
+};
 
 const getStep = (milliseconds: number) => {
   const date = new Date(milliseconds);
   const hour = date.getHours();
 
-  // 6am to 10am => sunrise
-  if (hour >= 6 && hour < 10) return steps[1];
-  // 10am to 1pm => morning
-  if (hour >= 10 && hour < 13) return steps[2];
-  // 1pm to 4pm => afternoon
-  if (hour >= 13 && hour < 16) return steps[3];
-  // 4pm to 7pm => sunset
-  if (hour >= 16 && hour < 19) return steps[4];
-  // 9pm to 4am => dusk
-  if (hour >= 21 || hour < 4) return steps[5];
+  // 5am to 8am => sunrise
+  if (hour >= 5 && hour < 8) return steps.sunrise;
+  // 8am to 11am => early morning
+  if (hour >= 8 && hour < 11) return steps.earlyMorning;
+  // 11am to 5pm => daytime
+  if (hour >= 11 && hour < 17) return steps.daytime;
+  // 5pm to 9pm => sunset
+  if (hour >= 17 && hour < 21) return steps.sunset;
 
-  // 4am to 6am or 7pm to 9pm => dawn
-  return steps[0];
+  // 9pm to 5am => night
+  return steps.night;
 };
 
 const Home = () => {
@@ -67,7 +61,7 @@ const Home = () => {
   );
 
   const step = useMemo(() => {
-    return getStep(milliseconds);
+    return steps.daytime;
   }, [milliseconds]);
 
   useEffect(() => {
