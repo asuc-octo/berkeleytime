@@ -4,9 +4,9 @@ import SunCalc from "suncalc";
 
 import Features from "./Features";
 import Hero from "./Hero";
-import dawn from "./Hero/dawn.svg";
-import dusk from "./Hero/dusk.svg";
-import morning from "./Hero/morning.svg";
+import daytime from "./Hero/daytime.svg";
+import earlyMorning from "./Hero/early-morning.svg";
+import night from "./Hero/night.svg";
 import sunrise from "./Hero/sunrise.svg";
 import sunset from "./Hero/sunset.svg";
 import styles from "./Landing.module.scss";
@@ -18,7 +18,7 @@ const steps = {
   night: {
     colors: ["#082D65", "#0E1B3B"],
     angle: "to bottom right",
-    image: dusk,
+    image: night,
   },
   sunrise: {
     colors: ["#F1A848", "#F55998"],
@@ -26,15 +26,15 @@ const steps = {
   },
   earlyMorning: {
     colors: ["#E4A70A", "#FF7500"],
-    image: sunset,
+    image: earlyMorning,
   },
   daytime: {
     colors: ["#408FF7", "#0DD0DA"],
-    image: morning,
+    image: daytime,
   },
   sunset: {
     colors: ["#F33754", "#7C87F9"],
-    image: dawn,
+    image: sunset,
   },
 };
 
