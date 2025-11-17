@@ -1,5 +1,6 @@
 import { ClassModel, TermModel } from "@repo/common";
 
+import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
 import {
@@ -77,7 +78,7 @@ const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
 };
 
 const updateClasses = async (
-  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
+  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY }, backend: { url: BACKEND_URL } }: Config,
   termSelector: TermSelector
 ) => {
   log.trace(`Fetching terms....`);
@@ -145,6 +146,19 @@ const updateClasses = async (
   );
 
   await updateTermsCatalogDataFlags(log);
+
+  // Warm catalog cache for all terms with catalog data
+  const distinctTermNames = await TermModel.distinct("name", {
+    hasCatalogData: true,
+  });
+  const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
+
+  log.info(
+    `Found ${termsWithCatalogData.length.toLocaleString()} unique term(s) with catalog data.`
+  );
+
+  // Process sequentially to avoid overwhelming the server
+  await warmCatalogCacheForTerms(termsWithCatalogData, BACKEND_URL, log);
 };
 
 const activeTerms = async (config: Config) => {

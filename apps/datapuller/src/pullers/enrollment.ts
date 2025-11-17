@@ -6,6 +6,7 @@ import {
   TermModel,
 } from "@repo/common";
 
+import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
 
@@ -257,39 +258,7 @@ const updateEnrollmentHistories = async ({
   );
 
   // Warm catalog cache for all terms we just updated
-  log.info("Warming catalog cache for updated terms...");
-  for (const term of terms) {
-    const [yearStr, semester] = term.name.split(" ");
-    const year = parseInt(yearStr);
-
-    if (!year || !semester) {
-      log.warn(`Failed to parse term name: ${term.name}`);
-      continue;
-    }
-
-    try {
-      log.trace(`Warming cache for ${term.name}...`);
-
-      const response = await fetch(`${BACKEND_URL}/cache/warm-catalog`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ year, semester }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        log.warn(
-          `Failed to warm cache for ${term.name}: HTTP ${response.status} - ${errorText}`
-        );
-      } else {
-        const result = await response.json();
-        log.info(`Warmed cache for ${term.name}: ${result.key}`);
-      }
-    } catch (error: any) {
-      log.warn(`Failed to warm cache for ${term.name}: ${error.message}`);
-    }
-  }
-  log.info("Completed catalog cache warming.");
+  await warmCatalogCacheForTerms(terms, BACKEND_URL, log);
 };
 
 export default { updateEnrollmentHistories };
