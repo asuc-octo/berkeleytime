@@ -34,7 +34,7 @@ classesAPI.v1.getClassesUsingGet(...);
 
 The [Class API](https://developers.api.berkeley.edu/api/18) provides data about classes, sections, and enrollment.
 
-- **Classes** are offerings of a course in a specific term. There can be many classes for a given course, and even multiple classes for a given course in the same semester. Not all classes for the a course need to include the same content either. An example of a class would be COMPSCI 61A Lecture 001 offered in Spring 2024. Classes themselves do not have facilitators, locations, or times associated with them. Instead, they are most always associated with a primary section.
+- **Classes** are offerings of a course in a specific term. There can be many classes for a given course, and even multiple classes for a given course in the same semester. Not all classes for a course need to include the same content either. An example of a class would be COMPSCI 61A Lecture 001 offered in Spring 2024. Classes themselves do not have facilitators, locations, or times associated with them. Instead, they are most always associated with a primary section.
 - **Sections** are associated with classes and are combinations of meetings, locations, and facilitators. There are many types of sections, such as lectures, labs, discussions, and seminars. Each class most always has a primary section and can have any number of secondary sections.
 
 Students don't necessarily enroll only in classes, but also a combination of sections.
@@ -43,7 +43,7 @@ Students don't necessarily enroll only in classes, but also a combination of sec
 
 The [Course API](https://developers.api.berkeley.edu/api/100) provides data about courses.
 
-- **Courses** are subject offerings that satisfy specific requirements or include certain curriculum. An example of a course would be COMPSCI 61A. However, multiple COMPSCI 61A courses might exist historically changing requirements and curriculum requires new courses to be created and old courses to be deprecated. Only one course may be active for any given subject and number at a time.
+- **Courses** are subject offerings that satisfy specific requirements or include certain curriculum. An example of a course would be COMPSCI 61A. However, multiple COMPSCI 61A courses might exist historically changing requirements and curriculum require new courses to be created and old courses to be deprecated. Only one course may be active for any given subject and number at a time.
 
 ### Term API v2
 

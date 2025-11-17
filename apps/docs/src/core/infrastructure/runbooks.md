@@ -43,7 +43,7 @@ Useful when adding new environment variables to `.env`. To ensure our env variab
 
     If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
 
-4. The newly create sealed secret encrypts the key-value pairs, allowing it to be safely pushed to GitHub.
+4. The newly created sealed secret encrypts the key-value pairs, allowing it to be safely pushed to GitHub.
 
 Steps 2 and 3 are derived from [the sealed-secrets docs](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#usage).
 

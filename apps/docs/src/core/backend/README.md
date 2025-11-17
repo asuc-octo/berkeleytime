@@ -8,7 +8,7 @@ The backend application service is the user-facing API server responsible for se
 
 In addition to the user-facing API server, the backend application service also has an internal HTTP server used mainly by the [`datapuller`](../datapuller/README.md).
 
-To see more on how the backend service interacts with other components in the Berkeleytime system, view the [architecture page](../infrastructure/onboarding.md#architecture)
+To see more on how the backend service interacts with other components in the Berkeleytime system, view the [architecture page](../infrastructure/onboarding.md#architecture).
 
 ## The Berkeleytime Backend Service
 
