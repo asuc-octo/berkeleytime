@@ -33,7 +33,7 @@
 
   .divider {
     height: 1px;
-    background-color: var(--neutral-700);
+    background-color: var(--border-color);
     margin: 12px 0;
   }
 
@@ -45,8 +45,8 @@
     color: var(--neutral-400);
 
     .key {
-      font-weight: 500;
-      color: white;
+      font-weight: 600;
+      color: var(--heading-color);
     }
   }
 }
