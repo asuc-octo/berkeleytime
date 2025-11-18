@@ -332,10 +332,13 @@ export default function Class({
     });
   }, [courseGradeDistribution]);
 
-  const hasReservedSeating = useMemo(() => {
+  const reservedSeatingMaxCount = useMemo(() => {
     const seatReservationCount =
       _class?.primarySection?.enrollment?.latest?.seatReservationCount ?? [];
-    return seatReservationCount.length > 0;
+    return seatReservationCount.reduce(
+      (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
+      0
+    );
   }, [_class]);
 
   if (loading || courseLoading) {
@@ -473,7 +476,7 @@ export default function Class({
                   {_class && (
                     <CCN sectionId={_class.primarySection.sectionId} />
                   )}
-                  {hasReservedSeating && (
+                  {reservedSeatingMaxCount > 0 && (
                     <Badge
                       label="Reserved Seating"
                       color={Color.Orange}
