@@ -38,6 +38,7 @@ interface RecentCourse {
 interface RecentCatalogTerm {
   semester: Semester;
   year: number;
+  timestamp?: number; 
 }
 
 export type Recent<T extends RecentType> = T extends RecentType.Class
@@ -56,7 +57,18 @@ export const getRecents = <T extends RecentType>(
     const item = localStorage.getItem(type);
     if (!item) return [];
 
-    const recents = JSON.parse(item) as Recent<T>[];
+    let recents = JSON.parse(item) as Recent<T>[];
+
+    if (type === RecentType.CatalogTerm) {
+      const ONE_HOUR = 60 * 60 * 1000;
+      const now = Date.now();
+
+      recents = recents.filter((recent) => {
+        const catalogTerm = recent as RecentCatalogTerm;
+        return !catalogTerm.timestamp || now - catalogTerm.timestamp < ONE_HOUR;
+      }) as Recent<T>[];
+    }
+
     if (!value) return recents;
 
     return recents.filter((recent) => {
@@ -86,6 +98,11 @@ export const addRecent = <T extends RecentType>(
   recent: Recent<T>
 ) => {
   const recents = getRecents(type, recent);
+
+  if (type === RecentType.CatalogTerm) {
+    (recent as RecentCatalogTerm).timestamp = Date.now();
+  }
+
   recents.unshift(recent);
 
   const item = JSON.stringify(recents.slice(0, MaxLength[type]));

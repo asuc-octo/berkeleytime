@@ -10,7 +10,7 @@ import sunrise from "./Hero/sunrise.svg";
 import sunset from "./Hero/sunset.svg";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
-import bottomWave from "./bottom_wave.svg";
+import Wave from "./Wave";
 
 // TODO: Tailwind color gradients
 const steps = [
@@ -82,8 +82,10 @@ const Home = () => {
   return (
     <div className={styles.root}>
       <Hero step={step} milliseconds={milliseconds} />
-      <Features />
-      <img style={{ backgroundColor: "var(--neutral-900)" }} src={bottomWave} />
+      <div className={styles.features}>
+        <Features />
+      </div>
+      <Wave className={styles.bottomWave} fill="var(--neutral-900)" />
       <Organization />
     </div>
   );

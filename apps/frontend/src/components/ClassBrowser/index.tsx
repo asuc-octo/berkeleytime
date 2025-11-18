@@ -241,6 +241,33 @@ export default function ClassBrowser({
     [includedClasses, index, query, sortBy, effectiveOrder]
   );
 
+  const hasActiveFilters = useMemo(() => {
+    return (
+      units[0] !== 0 ||
+      units[1] !== 5 ||
+      levels.length > 0 ||
+      days.length > 0 ||
+      breadths.length > 0 ||
+      universityRequirement !== null ||
+      gradingFilters.length > 0 ||
+      department !== null ||
+      open ||
+      online ||
+      sortBy !== SortBy.Relevance
+    );
+  }, [
+    units,
+    levels,
+    days,
+    breadths,
+    universityRequirement,
+    gradingFilters,
+    department,
+    open,
+    online,
+    sortBy,
+  ]);
+
   const updateArray = <T,>(
     key: string,
     setState: (state: T[]) => void,
@@ -342,6 +369,7 @@ export default function ClassBrowser({
         year: currentYear,
         semester: currentSemester,
         terms,
+        hasActiveFilters,
         query,
         units,
         levels,

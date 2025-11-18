@@ -175,7 +175,7 @@ const updateEnrollmentHistories = async ({
           if (existingDoc.history.length === 0) {
             bulkOps.push({
               updateOne: {
-                filter: identifier,
+                filter: { _id: existingDoc._id },
                 update: {
                   $push: { history: enrollmentSingular.data },
                 },
@@ -189,7 +189,7 @@ const updateEnrollmentHistories = async ({
                  2. Latest enrollment entry's granularity matches incoming granularity
                  3. Latest enrollment entry's endTime is less than DATAGAP_THRESHOLD ago
 
-              Then: Extend the last entry's endTime using atomic $set.
+              Then: Extend the last entry's endTime using $set.
 
               Else: Append a new entry with incoming startTime and endTime using $push.
             */
@@ -208,7 +208,7 @@ const updateEnrollmentHistories = async ({
               lastEntry.granularitySeconds ===
               enrollmentSingular.data.granularitySeconds;
 
-            // true if duration from last entry's end time to current time exceeds DATAGAP_THRESHOLD
+            // true if duration from last entry's end time to current time is less than DATAGAP_THRESHOLD
             const incomingEndTime = DateTime.fromJSDate(
               enrollmentSingular.data.endTime
             );
@@ -218,10 +218,10 @@ const updateEnrollmentHistories = async ({
               DATAGAP_THRESHOLD;
 
             if (dataMatches && granularityMatches && withinDatagapThreshold) {
-              // Extend the endTime of the last entry using atomic update
+              // Extend the endTime of the last entry using update
               bulkOps.push({
                 updateOne: {
-                  filter: identifier,
+                  filter: { _id: existingDoc._id },
                   update: {
                     $set: { [`history.${lastIndex}.endTime`]: now.toJSDate() },
                   },
@@ -231,7 +231,7 @@ const updateEnrollmentHistories = async ({
               // Append a new entry
               bulkOps.push({
                 updateOne: {
-                  filter: identifier,
+                  filter: { _id: existingDoc._id },
                   update: {
                     $push: { history: enrollmentSingular.data },
                   },

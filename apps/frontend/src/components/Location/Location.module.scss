@@ -18,7 +18,8 @@
 
 .root,
 .placeholder {
-  font-size: 14px;
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
   line-height: 1.5;
   width: fit-content;
 }

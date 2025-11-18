@@ -104,5 +104,5 @@ services:
       - bt
     restart: always
     volumes:
-      - ./apps/docs:/storybook/apps/docs
+      - ./apps/docs:/apps/docs
 
