@@ -8,110 +8,110 @@ import NotificationClassCard from "./NotificationClassCard";
 import styles from "./Notifications.module.scss";
 
 // Test data for development
-// const TEST_DATA: IMonitoredClass[] = [
-//   {
-//     class: {
-//       title: "Foundations of the U.S Air Force",
-//       subject: "AEROSPC",
-//       number: "1A",
-//       courseNumber: "1A",
-//       year: 2024,
-//       semester: "Spring",
-//       sessionId: null,
-//       unitsMin: 1,
-//       unitsMax: 1,
-//       course: {
-//         title: "Foundations of U.S Air Force",
-//         subject: "AEROSPC",
-//         number: "1A",
-//         gradeDistribution: {
-//           average: "A+",
-//         },
-//       },
-//       primarySection: {
-//         enrollment: {
-//           latest: {
-//             enrolledCount: 0,
-//             maxEnroll: 60,
-//             waitlistedCount: 0,
-//             maxWaitlist: 0,
-//           },
-//         },
-//       },
-//       gradeDistribution: {
-//         average: "A+",
-//       },
-//     } as any,
-//     thresholds: [50],
-//   },
-//   {
-//     class: {
-//       title: "Intro to Computer Science",
-//       subject: "COMPSCI",
-//       number: "61A",
-//       year: 2024,
-//       semester: "Fall",
-//       sessionId: null,
-//       unitsMin: 4,
-//       unitsMax: 4,
-//       course: {
-//         title: "Intro to Computer Science",
-//         subject: "COMPSCI",
-//         number: "61A",
-//         gradeDistribution: {
-//           average: "B+",
-//         },
-//       },
-//       primarySection: {
-//         enrollment: {
-//           latest: {
-//             enrolledCount: 450,
-//             maxEnroll: 500,
-//             waitlistedCount: 25,
-//             maxWaitlist: 50,
-//           },
-//         },
-//       },
-//       gradeDistribution: {
-//         average: "B+",
-//       },
-//     } as any,
-//     thresholds: [50, 75, 90],
-//   },
-//   {
-//     class: {
-//       title: "Calculus",
-//       subject: "MATH",
-//       number: "1A",
-//       year: 2024,
-//       semester: "Spring",
-//       sessionId: null,
-//       unitsMin: 4,
-//       unitsMax: 4,
-//       course: {
-//         title: "Calculus",
-//         subject: "MATH",
-//         gradeDistribution: {
-//           average: "B",
-//         },
-//       },
-//       primarySection: {
-//         enrollment: {
-//           latest: {
-//             enrolledCount: 200,
-//             maxEnroll: 250,
-//             waitlistedCount: 10,
-//             maxWaitlist: 30,
-//           },
-//         },
-//       },
-//       gradeDistribution: {
-//         average: "B",
-//       },
-//     } as any,
-//     thresholds: [75, 100],
-//   },
-// ];
+const TEST_DATA: IMonitoredClass[] = [
+  {
+    class: {
+      title: "Foundations of the U.S Air Force",
+      subject: "AEROSPC",
+      number: "1A",
+      courseNumber: "1A",
+      year: 2024,
+      semester: "Spring",
+      sessionId: null,
+      unitsMin: 1,
+      unitsMax: 1,
+      course: {
+        title: "Foundations of U.S Air Force",
+        subject: "AEROSPC",
+        number: "1A",
+        gradeDistribution: {
+          average: "A+",
+        },
+      },
+      primarySection: {
+        enrollment: {
+          latest: {
+            enrolledCount: 0,
+            maxEnroll: 60,
+            waitlistedCount: 0,
+            maxWaitlist: 0,
+          },
+        },
+      },
+      gradeDistribution: {
+        average: "A+",
+      },
+    } as any,
+    thresholds: [50],
+  },
+  {
+    class: {
+      title: "Intro to Computer Science",
+      subject: "COMPSCI",
+      number: "61A",
+      year: 2024,
+      semester: "Fall",
+      sessionId: null,
+      unitsMin: 4,
+      unitsMax: 4,
+      course: {
+        title: "Intro to Computer Science",
+        subject: "COMPSCI",
+        number: "61A",
+        gradeDistribution: {
+          average: "B+",
+        },
+      },
+      primarySection: {
+        enrollment: {
+          latest: {
+            enrolledCount: 450,
+            maxEnroll: 500,
+            waitlistedCount: 25,
+            maxWaitlist: 50,
+          },
+        },
+      },
+      gradeDistribution: {
+        average: "B+",
+      },
+    } as any,
+    thresholds: [50, 75, 90],
+  },
+  {
+    class: {
+      title: "Calculus",
+      subject: "MATH",
+      number: "1A",
+      year: 2024,
+      semester: "Spring",
+      sessionId: null,
+      unitsMin: 4,
+      unitsMax: 4,
+      course: {
+        title: "Calculus",
+        subject: "MATH",
+        gradeDistribution: {
+          average: "B",
+        },
+      },
+      primarySection: {
+        enrollment: {
+          latest: {
+            enrolledCount: 200,
+            maxEnroll: 250,
+            waitlistedCount: 10,
+            maxWaitlist: 30,
+          },
+        },
+      },
+      gradeDistribution: {
+        average: "B",
+      },
+    } as any,
+    thresholds: [75, 100],
+  },
+];
 
 export default function Notifications() {
   const { data: user } = useReadUser();
