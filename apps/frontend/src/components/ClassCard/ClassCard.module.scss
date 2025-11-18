@@ -2,17 +2,24 @@
   color: var(--paragraph-color);
 }
 
+.reservedSeating {
+  font-size: 14px;
+  color: var(--paragraph-color);
+  line-height: 1;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
 .reservedSeatingIcon {
   color: var(--paragraph-color);
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  margin-left: 8px;
   vertical-align: baseline;
   display: inline-block;
-  position: relative;
-  top: 0.1em;
-  cursor: pointer;
 }
 
 .tooltipContent {

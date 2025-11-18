@@ -121,10 +121,29 @@ export default function ClassCard({
             <span className={styles.sectionNumber}>
               #{formatClassNumber(_class?.number)}
             </span>
+          </Card.Heading>
+          <Card.Description wrapDescription={wrapDescription}>
+            {_class?.title ?? _class?.course?.title}
+          </Card.Description>
+          <Card.Footer>
+            <EnrollmentDisplay
+              enrolledCount={
+                _class?.primarySection?.enrollment?.latest?.enrolledCount
+              }
+              maxEnroll={_class?.primarySection?.enrollment?.latest?.maxEnroll}
+              time={_class?.primarySection?.enrollment?.latest?.endTime}
+            />
+            {_class?.unitsMin !== undefined &&
+              _class.unitsMax !== undefined && (
+                <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
+              )}
             {_class?.primarySection?.enrollment?.latest?.hasReservedSeating && (
               <Tooltip.Root disableHoverableContent>
                 <Tooltip.Trigger asChild>
-                  <InfoCircle className={styles.reservedSeatingIcon} />
+                  <span className={styles.reservedSeating}>
+                    <InfoCircle className={styles.reservedSeatingIcon} />
+                    Reserved
+                  </span>
                 </Tooltip.Trigger>
                 <Tooltip.Portal>
                   <Tooltip.Content
@@ -145,22 +164,6 @@ export default function ClassCard({
                 </Tooltip.Portal>
               </Tooltip.Root>
             )}
-          </Card.Heading>
-          <Card.Description wrapDescription={wrapDescription}>
-            {_class?.title ?? _class?.course?.title}
-          </Card.Description>
-          <Card.Footer>
-            <EnrollmentDisplay
-              enrolledCount={
-                _class?.primarySection?.enrollment?.latest?.enrolledCount
-              }
-              maxEnroll={_class?.primarySection?.enrollment?.latest?.maxEnroll}
-              time={_class?.primarySection?.enrollment?.latest?.endTime}
-            />
-            {_class?.unitsMin !== undefined &&
-              _class.unitsMax !== undefined && (
-                <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
-              )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 data-action-icon
