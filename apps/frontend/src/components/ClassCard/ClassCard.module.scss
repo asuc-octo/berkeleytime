@@ -3,7 +3,7 @@
 }
 
 .reservedSeating {
-  font-size: 14px;
+  font-size: var(--text-14);
   color: var(--paragraph-color);
   line-height: 1;
   margin: 0;
@@ -26,9 +26,9 @@
   border-radius: 4px;
   padding: 12px;
   background-color: var(--tooltip-color);
-  color: var(--neutral-400);
+  color: var(--description-color);
   max-width: 256px;
-  font-size: 14px;
+  font-size: var(--text-14);
   animation: fadeIn 100ms ease-in;
   z-index: 998;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);

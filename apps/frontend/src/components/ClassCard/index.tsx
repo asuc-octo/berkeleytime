@@ -93,8 +93,7 @@ export default function ClassCard({
 
   const reservedSeatingMaxCount =
     _class?.primarySection?.enrollment?.latest?.reservedSeatingMaxCount ?? 0;
-  const maxEnroll =
-    _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
+  const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
   const reservedSeatingColor = getEnrollmentColor(
     reservedSeatingMaxCount,
     maxEnroll
