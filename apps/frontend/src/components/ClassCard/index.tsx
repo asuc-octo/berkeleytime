@@ -21,6 +21,15 @@ import { Color } from "@/lib/generated/graphql";
 import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
 
+const formatClassNumber = (number: string | undefined | null): string => {
+  if (!number) return "";
+  const num = parseInt(number, 10);
+  if (isNaN(num)) return number;
+  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+  if (num > 99) return num.toString();
+  return num.toString().padStart(2, "0");
+};
+
 type BaseClassFields = Pick<
   IClass,
   | "subject"
@@ -108,7 +117,26 @@ export default function ClassCard({
         <Card.Body>
           <Card.Heading>
             {_class?.subject} {_class?.courseNumber}{" "}
-            <span className={styles.sectionNumber}>#{_class?.number}</span>
+            <span className={styles.sectionNumber}>
+              #{formatClassNumber(_class?.number)}
+            </span>
+            {_class?.primarySection?.enrollment?.latest?.hasReservedSeating && (
+              <Tooltip content="This class has seating reserved for specific student groups.">
+                <InfoCircle
+                  style={{
+                    color: "var(--paragraph-color)",
+                    width: 16,
+                    height: 16,
+                    flexShrink: 0,
+                    marginLeft: 6,
+                    verticalAlign: "baseline",
+                    display: "inline-block",
+                    position: "relative",
+                    top: "0.1em",
+                  }}
+                />
+              </Tooltip>
+            )}
           </Card.Heading>
           <Card.Description wrapDescription={wrapDescription}>
             {_class?.title ?? _class?.course?.title}
@@ -125,18 +153,6 @@ export default function ClassCard({
               _class.unitsMax !== undefined && (
                 <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
               )}
-            {_class?.primarySection?.enrollment?.latest?.hasReservedSeating && (
-              <Tooltip content="This class has seating reserved for specific student groups.">
-                <InfoCircle
-                  style={{
-                    color: "var(--orange-500)",
-                    width: 16,
-                    height: 16,
-                    flexShrink: 0,
-                  }}
-                />
-              </Tooltip>
-            )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 data-action-icon
