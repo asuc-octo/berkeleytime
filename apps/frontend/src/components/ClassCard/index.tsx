@@ -13,6 +13,7 @@ import { Tooltip } from "radix-ui";
 import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
+import { getEnrollmentColor } from "@/components/Capacity";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -90,6 +91,15 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
+  const reservedSeatingMaxCount =
+    _class?.primarySection?.enrollment?.latest?.reservedSeatingMaxCount ?? 0;
+  const maxEnroll =
+    _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
+  const reservedSeatingColor = getEnrollmentColor(
+    reservedSeatingMaxCount,
+    maxEnroll
+  );
+
   return (
     <Card.RootColumn
       style={{ overflow: "visible", position: "relative", ...props?.style }}
@@ -157,11 +167,9 @@ export default function ClassCard({
                       <Tooltip.Arrow className={styles.tooltipArrow} />
                       <p className={styles.tooltipTitle}>Reserved Seating</p>
                       <p className={styles.tooltipDescription}>
-                        {_class?.primarySection?.enrollment?.latest
-                          ?.reservedSeatingMaxCount ?? 0}{" "}
-                        out of{" "}
-                        {_class?.primarySection?.enrollment?.latest
-                          ?.maxEnroll ?? 0}{" "}
+                        <span style={{ color: reservedSeatingColor }}>
+                          {reservedSeatingMaxCount}/{maxEnroll}
+                        </span>{" "}
                         seats for this class are reserved.
                       </p>
                     </div>
