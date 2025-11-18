@@ -333,9 +333,9 @@ export default function Editor() {
         sections: _classClone.sections.map((s) => {
           return {
             ...s,
-            subject: _class.subject,
-            courseNumber: _class.courseNumber,
-            classNumber: _class.number,
+            subject: _classClone.subject,
+            courseNumber: _classClone.courseNumber,
+            classNumber: _classClone.number,
           };
         }),
       };
