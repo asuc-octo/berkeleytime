@@ -8,8 +8,9 @@ import {
   InfoCircle,
   Trash,
 } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
-import { Card, Tooltip } from "@repo/theme";
+import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
@@ -121,21 +122,28 @@ export default function ClassCard({
               #{formatClassNumber(_class?.number)}
             </span>
             {_class?.primarySection?.enrollment?.latest?.hasReservedSeating && (
-              <Tooltip content="This class has seating reserved for specific student groups.">
-                <InfoCircle
-                  style={{
-                    color: "var(--paragraph-color)",
-                    width: 16,
-                    height: 16,
-                    flexShrink: 0,
-                    marginLeft: 6,
-                    verticalAlign: "baseline",
-                    display: "inline-block",
-                    position: "relative",
-                    top: "0.1em",
-                  }}
-                />
-              </Tooltip>
+              <Tooltip.Root disableHoverableContent>
+                <Tooltip.Trigger asChild>
+                  <InfoCircle className={styles.reservedSeatingIcon} />
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    asChild
+                    side="bottom"
+                    sideOffset={8}
+                    collisionPadding={8}
+                  >
+                    <div className={styles.tooltipContent}>
+                      <Tooltip.Arrow className={styles.tooltipArrow} />
+                      <p className={styles.tooltipTitle}>Reserved Seating</p>
+                      <p className={styles.tooltipDescription}>
+                        This class has seating reserved for specific student
+                        groups.
+                      </p>
+                    </div>
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
             )}
           </Card.Heading>
           <Card.Description wrapDescription={wrapDescription}>
