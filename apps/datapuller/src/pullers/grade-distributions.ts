@@ -11,9 +11,14 @@ import {
 const TERMS_PER_API_BATCH = 100;
 
 const updateGradeDistributions = async (
-  { aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP }, log }: Config,
+  config: Config,
   termSelector: TermSelector
 ) => {
+  const {
+    aws: { DATABASE, S3_OUTPUT, REGION_NAME, WORKGROUP },
+    log,
+  } = config;
+
   log.trace("Fetching terms...");
 
   const terms = await termSelector();

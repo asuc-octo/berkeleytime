@@ -77,10 +77,12 @@ const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   }
 };
 
-const updateClasses = async (
-  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
-  termSelector: TermSelector
-) => {
+const updateClasses = async (config: Config, termSelector: TermSelector) => {
+  const {
+    log,
+    sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms....`);
 
   const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
@@ -154,7 +156,7 @@ const updateClasses = async (
   const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
 
   // Process sequentially to avoid overwhelming the server
-  await warmCatalogCacheForTerms(termsWithCatalogData, log);
+  await warmCatalogCacheForTerms(config, termsWithCatalogData);
 };
 
 const activeTerms = async (config: Config) => {
