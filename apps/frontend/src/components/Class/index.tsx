@@ -109,6 +109,15 @@ interface DialogClassProps {
 type ClassProps = (CatalogClassProps | DialogClassProps) &
   (ControlledProps | UncontrolledProps);
 
+const formatClassNumber = (number: string | undefined | null): string => {
+  if (!number) return "";
+  const num = parseInt(number, 10);
+  if (isNaN(num)) return number;
+  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+  if (num > 99) return num.toString();
+  return num.toString().padStart(2, "0");
+};
+
 export default function Class({
   year,
   semester,
@@ -407,7 +416,7 @@ export default function Class({
                   <h1 className={styles.heading}>
                     {_class.subject} {_class.courseNumber}{" "}
                     <span className={styles.sectionNumber}>
-                      #{_class.number}
+                      #{formatClassNumber(_class.number)}
                     </span>
                   </h1>
                   <p className={styles.description}>
