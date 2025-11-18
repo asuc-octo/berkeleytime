@@ -84,7 +84,7 @@ export default function Header() {
           disabled={semanticLoading || !query.trim()}
         >
           <SparksSolid />
-          {semanticLoading ? "Searching..." : "Natural Language Search"}
+          {semanticLoading ? "Searching..." : "AI-Native Course Search (Beta)"}
         </Button>
       )}
       <Button
