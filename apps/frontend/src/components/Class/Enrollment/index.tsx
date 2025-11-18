@@ -90,7 +90,13 @@ export default function Enrollment() {
     }
 
     return `http://localhost:8080/enrollment?${params.toString()}`;
-  }, [_class.subject, _class.courseNumber, _class.year, _class.semester, _class.number]);
+  }, [
+    _class.subject,
+    _class.courseNumber,
+    _class.year,
+    _class.semester,
+    _class.number,
+  ]);
 
   if (data.length === 0) {
     return (
@@ -170,9 +176,7 @@ export default function Enrollment() {
                           return {
                             key: `${name}-${index}`,
                             label:
-                              name === "enrolled"
-                                ? "Enrolled"
-                                : "Waitlisted",
+                              name === "enrolled" ? "Enrolled" : "Waitlisted",
                             value:
                               typeof v.value === "number"
                                 ? toPercent(v.value)
