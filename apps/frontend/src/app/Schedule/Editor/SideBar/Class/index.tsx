@@ -116,7 +116,10 @@ export default function Class({
               <p className={styles.time}>Time</p>
             </div>
             <Section
-              active
+              active={selectedSections.some(
+                (selectedSection) =>
+                  selectedSection.sectionId === _class.primarySection.sectionId
+              )}
               {..._class.primarySection}
               onSectionMouseOver={() =>
                 onSectionMouseOver(
@@ -127,6 +130,14 @@ export default function Class({
                 )
               }
               onSectionMouseOut={onSectionMouseOut}
+              onSectionSelect={() =>
+                onSectionSelect(
+                  _class.subject,
+                  _class.courseNumber,
+                  _class.number,
+                  _class.primarySection.number
+                )
+              }
             />
           </div>
           {Object.keys(groups).map((component) => {
