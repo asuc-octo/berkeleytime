@@ -9,6 +9,7 @@ import {
   ICourseItem,
   IGradeDistributionItem,
   ISectionItem,
+  NewEnrollmentHistoryModel,
   SectionModel,
   TermModel,
 } from "@repo/common";
@@ -18,6 +19,8 @@ import { getFields } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
+import { formatEnrollment } from "../enrollment/formatter";
+import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import {
   getAverageGrade,
   getDistribution,
@@ -233,6 +236,30 @@ export const getCatalog = async (
     parsedGradeDistributions = reducedGradeDistributions;
   }
 
+  // Batch-fetch enrollment data to avoid N+1 queries
+  let enrollmentMap = {} as Record<string, EnrollmentModule.Enrollment | null>;
+
+  const includesEnrollment = children.includes("enrollment");
+
+  if (includesEnrollment) {
+    const sectionIds = sections.map((section) => section.sectionId);
+
+    // Batch fetch all enrollment records for the term
+    const enrollments = await NewEnrollmentHistoryModel.find({
+      termId: term._id,
+      sectionId: { $in: sectionIds },
+    }).lean();
+
+    // Build lookup map by sectionId
+    enrollmentMap = enrollments.reduce(
+      (acc, enrollment) => {
+        acc[enrollment.sectionId] = formatEnrollment(enrollment);
+        return acc;
+      },
+      {} as Record<string, EnrollmentModule.Enrollment | null>
+    );
+  }
+
   // Turn courses into a map to decrease time complexity for filtering
   const reducedCourses = courses.reduce(
     (accumulator, course) => {
@@ -271,8 +298,17 @@ export const getCatalog = async (
     const index = sections.findIndex((section) => section.primary);
     if (index === -1) return accumulator;
 
-    const formattedPrimarySection = formatSection(sections.splice(index, 1)[0]);
-    const formattedSections = sections.map(formatSection);
+    const primarySection = sections.splice(index, 1)[0];
+    const formattedPrimarySection = formatSection(
+      primarySection,
+      includesEnrollment ? enrollmentMap[primarySection.sectionId] : undefined
+    );
+    const formattedSections = sections.map((section) =>
+      formatSection(
+        section,
+        includesEnrollment ? enrollmentMap[section.sectionId] : undefined
+      )
+    );
 
     const formattedCourse = formatCourse(
       course
