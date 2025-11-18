@@ -5,6 +5,7 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  InfoCircle,
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
@@ -17,7 +18,9 @@ import {
 } from "react-router-dom";
 
 import {
+  Badge,
   Box,
+  Color,
   Container,
   Flex,
   IconButton,
@@ -320,6 +323,12 @@ export default function Class({
     });
   }, [courseGradeDistribution]);
 
+  const hasReservedSeating = useMemo(() => {
+    const seatReservationCount =
+      _class?.primarySection?.enrollment?.latest?.seatReservationCount ?? [];
+    return seatReservationCount.length > 0;
+  }, [_class]);
+
   if (loading || courseLoading) {
     return (
       <div className={styles.loading}>
@@ -454,6 +463,13 @@ export default function Class({
                   />
                   {_class && (
                     <CCN sectionId={_class.primarySection.sectionId} />
+                  )}
+                  {hasReservedSeating && (
+                    <Badge
+                      label="Reserved Seating"
+                      color={Color.Orange}
+                      icon={<InfoCircle />}
+                    />
                   )}
                 </Flex>
               </Flex>
