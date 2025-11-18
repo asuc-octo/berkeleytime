@@ -120,7 +120,7 @@
 .tooltipTitle {
   color: var(--tooltip-heading-color);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   padding-bottom: 10px;
   padding-top: 8px;
   border-bottom: 1px solid var(--border-color);
