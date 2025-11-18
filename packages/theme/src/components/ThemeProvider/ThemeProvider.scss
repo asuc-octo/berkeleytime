@@ -316,6 +316,7 @@
   --light-heading-color: var(--neutral-w900);
   --light-paragraph-color: var(--neutral-500);
   --light-paragraph-color-50: var(--neutral-500-50);
+  --light-description-color: var(--neutral-700);
   --light-label-color: var(--neutral-400);
 
   // --light-button-color: white;
@@ -338,6 +339,7 @@
   --dark-heading-color: white;
   --dark-paragraph-color: var(--zinc-400);
   --dark-paragraph-color-50: var(--zinc-400-50);
+  --dark-description-color: var(--zinc-300);
   --dark-label-color: var(--zinc-500);
 
   // --dark-button-color: var(--zinc-800);
@@ -362,6 +364,7 @@
   --heading-color: var(--light-heading-color);
   --paragraph-color: var(--light-paragraph-color);
   --paragraph-color-50: var(--light-paragraph-color-50);
+  --description-color: var(--light-description-color);
   --label-color: var(--light-label-color);
 
   // --button-color: var(--light-button-color);
@@ -410,6 +413,7 @@
   --heading-color: var(--dark-heading-color);
   --paragraph-color: var(--dark-paragraph-color);
   --paragraph-color-50: var(--dark-paragraph-color-50);
+  --description-color: var(--dark-description-color);
   --label-color: var(--dark-label-color);
 
   // --button-color: var(--dark-button-color);
