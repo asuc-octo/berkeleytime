@@ -67,7 +67,6 @@ const enrollmentSingularsEqual = (
 const updateEnrollmentHistories = async ({
   log,
   sis: { CLASS_APP_ID, CLASS_APP_KEY },
-  backend: { url: BACKEND_URL },
 }: Config) => {
   log.trace(`Fetching terms...`);
 
@@ -258,7 +257,7 @@ const updateEnrollmentHistories = async ({
   );
 
   // Warm catalog cache for all terms we just updated
-  await warmCatalogCacheForTerms(terms, BACKEND_URL, log);
+  await warmCatalogCacheForTerms(terms, log);
 };
 
 export default { updateEnrollmentHistories };

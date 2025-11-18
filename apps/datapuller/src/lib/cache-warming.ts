@@ -2,13 +2,18 @@ import { ITermItem } from "@repo/common";
 
 import { Config } from "../shared/config";
 
+const BACKEND_URL = process.env.BACKEND_URL;
+
+if (!BACKEND_URL) {
+  throw new Error("Missing: process.env['BACKEND_URL'].");
+}
+
 /**
  * Warms the catalog cache for a single term by making a POST request to the backend.
  * Returns true if successful, false otherwise.
  */
 const warmCacheForTerm = async (
   term: Pick<ITermItem, "name">,
-  backendUrl: string,
   log: Config["log"]
 ): Promise<boolean> => {
   const [yearStr, semester] = term.name.split(" ");
@@ -22,7 +27,7 @@ const warmCacheForTerm = async (
   try {
     log.info(`Warming cache for ${term.name}...`);
 
-    const response = await fetch(`${backendUrl}/cache/warm-catalog`, {
+    const response = await fetch(`${BACKEND_URL}/cache/warm-catalog`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ year, semester }),
@@ -50,12 +55,10 @@ const warmCacheForTerm = async (
  * Processes terms sequentially, one at a time.
  *
  * @param terms - Array of terms to warm cache for
- * @param backendUrl - URL of the backend server
  * @param log - Logger instance
  */
 export const warmCatalogCacheForTerms = async (
   terms: Pick<ITermItem, "name">[],
-  backendUrl: string,
   log: Config["log"]
 ) => {
   if (terms.length === 0) {
@@ -67,7 +70,7 @@ export const warmCatalogCacheForTerms = async (
 
   let successCount = 0;
   for (const term of terms) {
-    const success = await warmCacheForTerm(term, backendUrl, log);
+    const success = await warmCacheForTerm(term, log);
     if (success) {
       successCount++;
     }

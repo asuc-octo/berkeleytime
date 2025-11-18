@@ -78,11 +78,7 @@ const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
 };
 
 const updateClasses = async (
-  {
-    log,
-    sis: { CLASS_APP_ID, CLASS_APP_KEY },
-    backend: { url: BACKEND_URL },
-  }: Config,
+  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
   termSelector: TermSelector
 ) => {
   log.trace(`Fetching terms....`);
@@ -158,7 +154,7 @@ const updateClasses = async (
   const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
 
   // Process sequentially to avoid overwhelming the server
-  await warmCatalogCacheForTerms(termsWithCatalogData, BACKEND_URL, log);
+  await warmCatalogCacheForTerms(termsWithCatalogData, log);
 };
 
 const activeTerms = async (config: Config) => {
