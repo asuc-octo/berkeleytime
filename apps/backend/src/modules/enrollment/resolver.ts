@@ -18,8 +18,12 @@ const resolvers: EnrollmentModule.Resolvers = {
     },
   },
   EnrollmentSingular: {
-    hasReservedSeating: (parent) => {
-      return (parent.seatReservationCount?.length ?? 0) > 0;
+    reservedSeatingMaxCount: (parent) => {
+      const seatReservations = parent.seatReservationCount ?? [];
+      return seatReservations.reduce(
+        (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
+        0
+      );
     },
   },
 };

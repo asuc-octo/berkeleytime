@@ -50,7 +50,7 @@ export const enrollmentTypeDef = gql`
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
     seatReservationCount: [SeatReservationCounts!]
-    hasReservedSeating: Boolean!
+    reservedSeatingMaxCount: Int!
   }
 
   type SeatReservationCounts {

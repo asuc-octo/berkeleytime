@@ -46,7 +46,7 @@ type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
-  "enrolledCount" | "maxEnroll" | "endTime" | "hasReservedSeating"
+  "enrolledCount" | "maxEnroll" | "endTime" | "reservedSeatingMaxCount"
 >;
 
 type ClassCardClass = Partial<BaseClassFields> & {
@@ -137,7 +137,8 @@ export default function ClassCard({
               _class.unitsMax !== undefined && (
                 <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
               )}
-            {_class?.primarySection?.enrollment?.latest?.hasReservedSeating && (
+            {(_class?.primarySection?.enrollment?.latest
+              ?.reservedSeatingMaxCount ?? 0) > 0 && (
               <Tooltip.Root disableHoverableContent>
                 <Tooltip.Trigger asChild>
                   <span className={styles.reservedSeating}>
@@ -156,8 +157,12 @@ export default function ClassCard({
                       <Tooltip.Arrow className={styles.tooltipArrow} />
                       <p className={styles.tooltipTitle}>Reserved Seating</p>
                       <p className={styles.tooltipDescription}>
-                        This class has seating reserved for specific student
-                        groups.
+                        {_class?.primarySection?.enrollment?.latest
+                          ?.reservedSeatingMaxCount ?? 0}{" "}
+                        out of{" "}
+                        {_class?.primarySection?.enrollment?.latest
+                          ?.maxEnroll ?? 0}{" "}
+                        seats for this class are reserved.
                       </p>
                     </div>
                   </Tooltip.Content>
