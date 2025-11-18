@@ -33,7 +33,14 @@ query Catalog($year: Int!, $semester: Semester!) {
 # But semantic-search needs internal Docker network access (port 5001)
 BACKEND_INTERNAL_URL = "http://backend:5001"
 DEFAULT_CATALOG_URL = f"{BACKEND_INTERNAL_URL}/api/graphql"
-MODEL_NAME = os.getenv("SEMANTIC_SEARCH_MODEL", "BAAI/bge-base-en-v1.5")
+
+# Semantic search embedding model options:
+#   BAAI/bge-base-en-v1.5        (Current - best for retrieval, 109M params)
+#   BAAI/bge-small-en-v1.5       (Faster, smaller, 33M params)
+#   BAAI/bge-large-en-v1.5       (Most accurate, slower, 335M params)
+#   sentence-transformers/all-mpnet-base-v2   (Good general purpose, 110M params)
+#   sentence-transformers/all-MiniLM-L6-v2    (Fastest, lightweight, 22M params)
+MODEL_NAME = "BAAI/bge-base-en-v1.5"
 QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 DEFAULT_YEAR_ENV = os.getenv("SEMANTIC_SEARCH_YEAR")
 DEFAULT_SEMESTER_ENV = os.getenv("SEMANTIC_SEARCH_SEMESTER")

@@ -29,8 +29,6 @@ services:
     ports:
       - 8000:8000
     restart: always
-    environment:
-      - SEMANTIC_SEARCH_MODEL=${SEMANTIC_SEARCH_MODEL:-BAAI/bge-base-en-v1.5}
     volumes:
       - ./apps/semantic-search/app:/app/app
   frontend:
