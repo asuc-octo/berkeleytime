@@ -105,6 +105,7 @@
   animation: fadeIn 100ms ease-in;
   z-index: 998;
   white-space: pre-line;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
   .arrow {
     fill: var(--tooltip-color);
