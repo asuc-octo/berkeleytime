@@ -174,7 +174,7 @@ export const getFilteredClasses = (
       if (currentLevels.length > 0) {
         const level = getLevel(
           _class.course.academicCareer,
-          _class.course.number
+          _class.courseNumber
         );
 
         if (!currentLevels.includes(level)) {

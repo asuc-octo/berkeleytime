@@ -17,44 +17,29 @@
 export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
   query GetCanonicalCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
-      termId
-      sessionId
-      courseId
       subject
       courseNumber
       number
       title
       unitsMax
       unitsMin
-      finalExam
       gradingBasis
       primarySection {
-        component
         online
-        instructionMode
-        attendanceRequired
-        lecturesRecorded
-        sectionAttributes {
+        sectionAttributes(attributeCode: "GE") {
           attribute {
             code
-            description
-            formalDescription
           }
           value {
-            code
             description
-            formalDescription
           }
         }
         enrollment {
           latest {
-            startTime
             endTime
             status
             enrolledCount
             maxEnroll
-            waitlistedCount
-            maxWaitlist
             hasReservedSeating
           }
         }
@@ -63,8 +48,6 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
         }
       }
       course {
-        subject
-        number
         title
         gradeDistribution {
           average

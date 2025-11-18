@@ -1,5 +1,6 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
+import { SectionSectionAttributesArgs } from "../../generated-types/graphql";
 import { getCourseById } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
@@ -224,6 +225,21 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return enrollmentHistory;
+    },
+
+    sectionAttributes: (
+      parent: IntermediateSection | ClassModule.Section,
+      args: SectionSectionAttributesArgs
+    ) => {
+      const attributes = parent.sectionAttributes ?? [];
+
+      if (!args.attributeCode) {
+        return attributes;
+      }
+
+      return attributes.filter(
+        (attr) => attr.attribute?.code === args.attributeCode
+      );
     },
   },
 
