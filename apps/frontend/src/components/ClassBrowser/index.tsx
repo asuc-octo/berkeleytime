@@ -242,7 +242,7 @@ export default function ClassBrowser({
       const classMap = new Map(
         includedClasses.map((cls) => [
           `${cls.subject}-${cls.courseNumber}`,
-          cls
+          cls,
         ])
       );
 
