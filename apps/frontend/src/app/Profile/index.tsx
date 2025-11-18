@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import {
+  Bell,
   ChatBubbleQuestion,
   LogOut,
   ProfileCircle,
@@ -38,6 +39,18 @@ export default function Root() {
               >
                 <ProfileCircle />
                 <span>Your Account</span>
+              </div>
+            )}
+          </NavLink>
+          <NavLink to={{ ...location, pathname: "notifications" }} end>
+            {({ isActive }) => (
+              <div
+                className={classNames(styles.navItem, {
+                  [styles.active]: isActive,
+                })}
+              >
+                <Bell />
+                <span>Notifications</span>
               </div>
             )}
           </NavLink>
