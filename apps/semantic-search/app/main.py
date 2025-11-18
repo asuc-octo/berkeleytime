@@ -15,8 +15,6 @@ from sentence_transformers import SentenceTransformer
 logger = logging.getLogger("semantic-search")
 logging.basicConfig(level=os.getenv("SEMANTIC_SEARCH_LOG_LEVEL", "INFO"))
 
-AI_KEYWORDS = {"artificial intelligence", "ai", "machine learning", "ml", "deep learning", "neural", "nlp"}
-
 COURSE_QUERY = """
 query Catalog($year: Int!, $semester: Semester!) {
   catalog(year: $year, semester: $semester) {
@@ -31,13 +29,12 @@ query Catalog($year: Int!, $semester: Semester!) {
 }
 """
 
-def keyword_boost(text: str) -> int:
-    lowered = text.lower()
-    return sum(1 for kw in AI_KEYWORDS if kw in lowered)
-
-
-DEFAULT_CATALOG_URL = os.getenv("SEMANTIC_SEARCH_CATALOG_URL", "http://backend:5001/api/graphql")
-MODEL_NAME = os.getenv("SEMANTIC_SEARCH_MODEL", "all-MiniLM-L6-v2")
+# BACKEND_URL from env is for external access (http://backend:8080)
+# But semantic-search needs internal Docker network access (port 5001)
+BACKEND_INTERNAL_URL = "http://backend:5001"
+DEFAULT_CATALOG_URL = f"{BACKEND_INTERNAL_URL}/api/graphql"
+MODEL_NAME = os.getenv("SEMANTIC_SEARCH_MODEL", "BAAI/bge-base-en-v1.5")
+QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 DEFAULT_YEAR_ENV = os.getenv("SEMANTIC_SEARCH_YEAR")
 DEFAULT_SEMESTER_ENV = os.getenv("SEMANTIC_SEARCH_SEMESTER")
 DEFAULT_ALLOWED_SUBJECTS = {
@@ -79,7 +76,7 @@ class TermIndex:
 class SemanticSearchEngine:
     def __init__(self) -> None:
         self.model = SentenceTransformer(MODEL_NAME)
-        self.catalog_url = DEFAULT_CATALOG_URL.rstrip("/")
+        self.catalog_url = DEFAULT_CATALOG_URL
         self.default_allowed_subjects = set(DEFAULT_ALLOWED_SUBJECTS) if DEFAULT_ALLOWED_SUBJECTS else None
         self._indices: Dict[str, TermIndex] = {}
         self._lock = threading.RLock()
@@ -145,22 +142,30 @@ class SemanticSearchEngine:
         query: str,
         year: int,
         semester: str,
-        top_k: int = 5,
+        threshold: float = 0.3,
         allowed_subjects: Optional[Iterable[str]] = None,
     ) -> Tuple[List[Dict], TermIndex]:
         entry = self._get_or_build_index(year, semester, allowed_subjects)
         embeddings = entry.embeddings
 
-        overfetch = min(top_k * 5, len(embeddings))
-        if overfetch == 0:
+        # Search top 500 candidates, then filter by threshold
+        # This balances performance vs completeness
+        search_k = min(len(embeddings), 500)
+        if search_k == 0:
             return [], entry
 
-        query_vec = np.asarray(self.model.encode([query], convert_to_numpy=True), dtype="float32")
+        # BGE models work better with instruction prefix for queries
+        prefixed_query = QUERY_PREFIX + query
+        query_vec = np.asarray(self.model.encode([prefixed_query], convert_to_numpy=True), dtype="float32")
         faiss.normalize_L2(query_vec)
-        sims, idxs = entry.index.search(query_vec, overfetch)
+        sims, idxs = entry.index.search(query_vec, search_k)
 
         results = []
         for score, local_idx in zip(sims[0], idxs[0]):
+            # Apply threshold filter
+            if score < threshold:
+                continue
+
             original = entry.courses[entry.kept_idx[local_idx]]
             title = ((original.get("course") or {}).get("title") or "")
             desc = ((original.get("course") or {}).get("description") or "")
@@ -172,13 +177,15 @@ class SemanticSearchEngine:
                     "title": title,
                     "description": desc,
                     "score": float(score),
-                    "kw_boost": keyword_boost(title + " " + desc),
                     "text": text,
                 }
             )
 
-        results.sort(key=lambda r: (r["kw_boost"], r["score"]), reverse=True)
-        return results[:top_k], entry
+        # Sort by score only - semantic similarity is more accurate than keyword matching
+        results.sort(key=lambda r: r["score"], reverse=True)
+
+        # Return all results above threshold
+        return results, entry
 
     def describe_indices(self) -> List[Dict]:
         with self._lock:
@@ -344,7 +351,7 @@ def refresh_index(payload: RefreshRequest):
 @app.get("/search")
 def search(
     query: str,
-    top_k: int = Query(5, ge=1, le=50),
+    threshold: float = Query(0.3, ge=0.0, le=1.0),
     year: Optional[int] = None,
     semester: Optional[str] = None,
     allowed_subjects: List[str] = Query(default_factory=list),
@@ -358,7 +365,7 @@ def search(
             query,
             resolved_year,
             resolved_semester,
-            top_k=top_k,
+            threshold=threshold,
             allowed_subjects=allowed_subjects or None,
         )
     except HTTPException:
@@ -368,7 +375,8 @@ def search(
 
     return {
         "query": query,
-        "top_k": top_k,
+        "threshold": threshold,
+        "count": len(results),
         "year": resolved_year,
         "semester": resolved_semester,
         "allowed_subjects": entry.allowed_subjects,
