@@ -1,0 +1,135 @@
+{
+  "query": "Public health statistics and epidemiology",
+  "results": [
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "250W",
+        "score": 0.7306160926818848
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "250W",
+        "title": "Epidemiologic Methods I",
+        "description": "This introductory graduate course presents principles & methods of epidemiology, including descriptive & analytic approaches to assessing the distributions of health, disease & injury in the population & factors influencing those distributions. Emphasis is on developing an understanding of concepts, rather than quantitative methods. Basic calculations are involved. Course consists of readings, critical review of epidemiology papers, brief video lectures to explain\nkey concepts, quizzes & exams that allow students to practice applying epidemiological concepts. Students without prior coursework in epidemiology will acquire the core competencies in epidemiology expected of all MPH graduates. Course shares the same content & learning of PH 250A"
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "142",
+        "score": 0.7224901914596558
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "142",
+        "title": "Introduction to Probability and Statistics in Biology and Public Health",
+        "description": "Descriptive statistics, probability, probability distributions, point and interval estimation, hypothesis testing, chi-square, correlation and regression with biomedical applications. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "142W",
+        "score": 0.7208445072174072
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "142W",
+        "title": "Introduction to Probability and Statistics in Biology and Public Health",
+        "description": "Descriptive statistics, probability, probability distributions, point and interval estimation, hypothesis testing, chi-square, correlation, and regression with biomedical applications. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "210D",
+        "score": 0.7017089128494263
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "210D",
+        "title": "Reproductive and Perinatal Epidemiology",
+        "description": "This course will focus on research methods and issues in perinatal and reproductive epidemiology with an emphasis on methodologies and specific case studies. Specific adverse reproductive outcomes, risk factors, and prevalence will be discussed. The course will include critiques of published studies, methods of conducting epidemiologic research and data collection, and techniques of proposal writing."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "150A",
+        "score": 0.6969737410545349
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "150A",
+        "title": "Introduction to Epidemiology and Human Disease",
+        "description": "This course introduces epidemiological methods with the goal of teaching students to read critically and interpret published epidemiologic studies in humans. The course also exposes students to the epidemiology of diseases and conditions of current public health importance in the United States and internationally. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "250B",
+        "score": 0.6938643455505371
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "250B",
+        "title": "Epidemiologic Methods II",
+        "description": "This course is intended as an intermediate level course in the field of epidemiology. Topics include causal inference; measurement of disease rates; inferential reasoning; and research study designs including ecologic, case-control, cohort, intervention trials, and meta-analytic designs (potential sources of bias, confounding, and effect modification in each research design are explored in depth); topics in clinical epidemiology including the use of likelihood ratios, receiver operator curves, and the sensitivity, specificity, predictive value of a test; and a brief introduction to logistic regression, survival analysis, and decision analysis. The readings from this course are drawn primarily from advanced epidemiology textbooks (Kleinbuam, Rothman, Miettinen). The course is intended to provide a firm foundation for students who will subsequently enroll in 250C."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "253B",
+        "score": 0.6934623718261719
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "253B",
+        "title": "Epidemiology and Control of Infectious Diseases",
+        "description": "A discussion of major infectious diseases with emphasis on disease surveillance, investigative procedures, and prevention programs. Emphasis is on current problems in health agencies at a state, national, and international level."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "255A",
+        "score": 0.6903810501098633
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "255A",
+        "title": "Social Epidemiology",
+        "description": "This is a breadth course intended to provide an overview of the field of social edpidemiology and its role in understanding the social determinants of population health and health disparities. Given the breadth of social epidemiology, 255A provides a systematic and selective overview of literature covering the history and development of the field, theoretical perspectives and conceptual approaches, major topical areas and current controversies related to theory, research methods and research findings. Principles emphasized throughout the course (ecological model, measurement and causality) will provide a framework for critical analysis and synthesis across content areas. This is not a methods course."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "252AW",
+        "score": 0.687557578086853
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "252AW",
+        "title": "Introduction to Causal Inference and the Causal Roadmap",
+        "description": "With the ongoing \u201cdata explosion\u201d, methods to delineate causation from correlation are perhaps more pressing now than ever. This course will introduce a general framework for Causal Inference in Public Health: 1) clear statement of the research question, 2) definition of the causal model and effect of interest, 3) assessment of identifiability, 4) choice and implementation of estimators including parametric and non-parametric methods, and 5) appropriate interpretation of findings. The statistical methods include G-computation, inverse probability weighting (IPW), and targeted minimum loss-based estimation (TMLE) with machine learning."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "C240A",
+        "score": 0.6866226196289062
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "C240A",
+        "title": "Introduction to Modern Biostatistical Theory and Practice",
+        "description": "Course covers major topics in general statistical theory, with a focus on statistical methods in epidemiology.  The course provides a broad theoretical framework for understanding the properties of commonly-used and more advanced methods.  Emphasis is on estimation in nonparametric models in the context of contingency tables, regression (e.g., linear, logistic), density estimation and more.  Topics include maximum likelihood and loss-based estimation, asymptotic linearity/normality, the delta method, bootstrapping, machine learning, targeted maximum likelihood estimation.  Comprehension of broad concepts is the main goal, but practical implementation in R is also emphasized.  Basic knowledge of probability/statistics and calculus are assume"
+      }
+    }
+  ]
+}

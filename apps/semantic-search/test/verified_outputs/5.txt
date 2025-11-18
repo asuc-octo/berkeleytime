@@ -1,0 +1,10 @@
+- PUBPOL 138: Game Changer? An Introduction to A.I. and Public Policy, Reasonable
+- COMPSCI 188: Introduction to Artificial Intelligence, Not reasonable
+- ENGIN 125: Ethics, Engineering, and Society, Not reasonable
+- VISSCI 230: Ethics in Scientific Research, Not reasonable
+- BIOENG 100: Ethics in Science and Engineering, Not reasonable
+- ENGIN 184: Writing Robots, Reasonable
+- DATASCI 221: Modern Artificial Intelligence (AI) Strategy and Applications, Not reasonable
+- DATASCI 267: Fundamentals of Generative Artificial Intelligence (AI), Reasonable
+- POLSCI 124C: Ethics and Justice in International Affairs, Not reasonable
+- CYBER 207: Artificial Intelligence (AI) and Machine Learning (ML) in Cybersecurity, Not reasonable

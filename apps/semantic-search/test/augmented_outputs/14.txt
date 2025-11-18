@@ -1,0 +1,135 @@
+{
+  "query": "Principles of full-stack web development",
+  "results": [
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "253B",
+        "score": 0.6497458815574646
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "253B",
+        "title": "Back-End Web Architecture",
+        "description": "This course is a survey of web technologies that are used to build back-end systems that enable rich web applications. Utilizing technologies such as Python, Flask, Docker, RDBMS/NoSQL databases, and Spark, this class aims to cover the foundational concepts that drive the web today. This class focuses on building APIs using micro-services that power everything from content management systems to data engineering pipelines that provide insights by processing large amounts of data. The goal of this course is to provide an overview of the technical issues surrounding back-end systems today, and to provide a solid and comprehensive perspective of the web's constantly evolving landscape."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "153B",
+        "score": 0.6396645307540894
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "153B",
+        "title": "Back-End Web Architecture",
+        "description": "This course is a survey of web technologies that are used to build back-end systems that enable rich web applications. Utilizing technologies such as Python, FastAPI, Docker, RDBMS/NoSQL databases, and Celery/Redis, this class aims to cover the foundational concepts that drive the web today. This class focuses on building APIs using microservices that power everything from content management systems to data engineering pipelines that provide insights by processing large amounts of data. The goal of this course is to provide an overview of the technical issues surrounding back-end systems today and to provide a solid and comprehensive perspective of the web\u2019s constantly evolving landscape."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61B",
+        "score": 0.6173312664031982
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61B",
+        "title": "Data Structures",
+        "description": "Fundamental dynamic data structures, including linear lists, queues, trees, and other linked structures; arrays strings, and hash tables. Storage management. Elementary principles of software engineering. Abstract data types. Algorithms for sorting and searching. Introduction to the Java programming language. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "284",
+        "score": 0.5876553058624268
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "284",
+        "title": "Web Application Security Assessment",
+        "description": "Web applications play a vital role in every modern organization. If an organization does not properly test its web applications to identify security flaws, adversaries may be able to compromise these applications damaging functionality and accessing sensitive data. The focus of this course is on developing practical web application security testing skills required to assess a web application's security posture and convincingly demonstrate the business impact of discovered vulnerabilities, if exploited. The course includes both lectures and a variety of demonstrations and hands-on exercises in finding web application security vulnerabilities. During the course, students learn about assessment tools and methodologies."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENGIN",
+        "courseNumber": "234",
+        "score": 0.5856912136077881
+      },
+      "course": {
+        "subject": "ENGIN",
+        "number": "234",
+        "title": "Introduction to Data Structures and Software Engineering",
+        "description": "The Introduction to Java and Software Engineering course provides important principles and\ntechniques that you can use to minimize overall development and maintenance time when\nwriting computer programs. To that end, we introduce the Java programming language, a widely used programming language that supports these best practices, though these practices can be applied in other languages as well. The course assumes familiarity with at least one\nprogramming language, not necessarily Java."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "164",
+        "score": 0.5841479301452637
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "164",
+        "title": "Programming Languages and Compilers",
+        "description": "Survey of programming languages. The design of modern programming languages. Principles and techniques of scanning, parsing, semantic analysis, and code generation. Implementation of compilers, interpreters, and assemblers. Overview of run-time organization and error handling. "
+      }
+    },
+    {
+      "result": {
+        "subject": "DATA",
+        "courseNumber": "C200",
+        "score": 0.5803691148757935
+      },
+      "course": {
+        "subject": "DATA",
+        "number": "C200",
+        "title": "Principles and Techniques of Data Science",
+        "description": "Explores the data science lifecycle: question formulation, data collection and cleaning, exploratory, analysis, visualization, statistical inference, prediction, and decision-making. Focuses on quantitative critical thinking and key principles and techniques: languages for transforming, querying and analyzing data; algorithms for machine learning methods: regression, classification and clustering; principles of informative visualization; measurement error and prediction; and techniques for scalable data processing. Research term project."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "263",
+        "score": 0.5743509531021118
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "263",
+        "title": "Design of Programming Languages",
+        "description": "Selected topics from: analysis, comparison, and design of programming languages, formal description of syntax and semantics, advanced programming techniques, structured programming, debugging, verification of programs and compilers, and proofs of correctness. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61A",
+        "score": 0.5731966495513916
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61A",
+        "title": "The Structure and Interpretation of Computer Programs",
+        "description": "An introduction to programming and computer science focused on abstraction techniques as means to manage program complexity. Techniques include procedural abstraction; control abstraction using recursion, higher-order functions, generators, and streams; data abstraction using interfaces, objects, classes, and generic operators; and language abstraction using interpreters and macros. The course exposes students to programming paradigms, including functional, object-oriented, and declarative approaches. It includes an introduction to asymptotic analysis of algorithms. There are several significant programming projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "DATA",
+        "courseNumber": "C88C",
+        "score": 0.5717313885688782
+      },
+      "course": {
+        "subject": "DATA",
+        "number": "C88C",
+        "title": "Computational Structures in Data Science",
+        "description": "Development of Computer Science topics appearing in Foundations of Data Science (C8); expands computational concepts and techniques of abstraction. Understanding  the structures that underlie the programs, algorithms, and languages used in data science and elsewhere.   Mastery of a particular programming language while studying general techniques for managing program complexity, e.g., functional, object-oriented, and declarative programming. Provides practical experience with composing larger systems through several significant programming projects."
+      }
+    }
+  ]
+}

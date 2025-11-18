@@ -1,0 +1,10 @@
+PHYSICS 137A, Reasonable
+CHEM C191B, Reasonable
+PHYSICS C191B, Reasonable
+EECS C191B, Reasonable
+ENGIN 281A, Reasonable
+PHYSICS 221B, Not reasonable
+PHYSICS 137B, Not reasonable
+MATSCI 111, Not reasonable
+NUCENG C235, Not reasonable
+BIOENG C265, Not reasonable

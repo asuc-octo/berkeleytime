@@ -1,0 +1,135 @@
+{
+  "query": "Molecular genetics of cancer",
+  "results": [
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "104",
+        "score": 0.6667035222053528
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "104",
+        "title": "Genetics, Genomics, and Cell Biology",
+        "description": "This course will introduce students to key concepts in genetic analysis, eukaryotic cell biology, and state-of-the-art approaches in genomic medicine. Lectures will highlight basic knowledge of cellular processes with the basis for human diseases, particularly cancer. Prerequisite courses will have introduced students to the concepts of cells, the central dogma of molecular biology, and gene regulation. Emphasis in this course will be on eukaryotic cell processes, including cellular organization, dynamics, and signaling. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PLANTBI",
+        "courseNumber": "160",
+        "score": 0.6601207256317139
+      },
+      "course": {
+        "subject": "PLANTBI",
+        "number": "160",
+        "title": "Plant Molecular Genetics",
+        "description": "A consideration of plant genetics and molecular biology. Principles of nuclear and organellar genome structure and function: regulation of gene expression in response to environmental and developmental stimuli; clonal analysis; investigation of the molecular and genetic bases for the exceptional cellular and developmental strategies adopted by plants."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "249O",
+        "score": 0.6523204445838928
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "249O",
+        "title": "Research Review in Genetics and Development: Genome Sequences",
+        "description": "Biochemistry, cancer biology and virology, cell biology, computational biology, genetics, microbiology, molecular and cell physiology."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "239M",
+        "score": 0.6452346444129944
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "239M",
+        "title": "Research Review in Cell & Dev Bio: MicroRNA Functions in Cancer Development, Mouse Tumor Models",
+        "description": "Malignant transformation represents the endpoint of successive genetic lesions that confer uncontrolled proliferation and survival, unlimited replicative potential, and invasive growth."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "239O",
+        "score": 0.6375433206558228
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "239O",
+        "title": "Research Review in Cell and Developmental Biology: Cancer Biology",
+        "description": "Inheritance, chromatin structure, gene expression, and the organization of chromosomes in the nucleus."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "239FF",
+        "score": 0.6343891024589539
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "239FF",
+        "title": "Research Review in Cell and Developmental Biology: Signal Transduction and Tumor Suppressor Genes",
+        "description": "Review of current literature and discussion of original research."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "140",
+        "score": 0.6315501928329468
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "140",
+        "title": "General Genetics",
+        "description": "An in depth introduction to genes, their sexual and asexual transmission in individuals and populations, and gene regulation in prokaryotes and eukaryotes. Gene manipulation by recombination, molecular cloning and genome editing is presented in contexts ranging from fundamental mechanisms of chromosome biology to applications in development, aging and disease. Human genetic variation and quantitative evaluation are illuminated. Non-Mendelian and epigenetic modes of inheritance of transposable elements, prions and chromatin states are paired with discussions of groundbreaking technology rewriting the rules of how the genome is analyzed, with attention to the ethical considerations ranging from the history of eugenics to modern controversies."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "110",
+        "score": 0.6271774768829346
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "110",
+        "title": "Molecular Biology: Macromolecular Synthesis and Cellular Function",
+        "description": "Molecular biology of prokaryotic and eukaryotic cells and their viruses. Mechanisms of DNA replication, transcription, translation. Structure of genes and chromosomes. Regulation of gene expression. Biochemical processes and principles in membrane structure and function, intracellular trafficking and subcellular compartmentation, cytoskeletal architecture, nucleocytoplasmic transport, signal transduction mechanisms, and cell cycle control. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "150",
+        "score": 0.6238106489181519
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "150",
+        "title": "Molecular Immunology",
+        "description": "Fundamentals of immunology with emphasis on biochemical and molecular approaches to study of the immune system and its application in medicine and biotechnology. Topics covered include description of the immune system, antibody and T-cell receptor structure and function, genes of the immunoglobulin superfamily, cells and molecular mediators that regulate the immune response, allergy, autoimmunity, immunodeficiency, tissue and organ transplants, and tumor immunology."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "259K",
+        "score": 0.6196556091308594
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "259K",
+        "title": "Research Review in Immunology and Pathogenesis: Epigenetic Control for Regulatory T Cell Function in",
+        "description": "Intersecting the fields of cancer biology, immunology, and epigenetics to strengthen our own immune defense mechanisms against our own cancers by reprogramming T cell function specifically within the tumor microenvironment."
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+- STAT 33B: Introduction to Advanced Programming in R, Not reasonable
+- CHEM 281: Software Engineering for Scientific Computing, Reasonable
+- COMPSCI 47A: Completion of Work in Computer Science 61A, Not reasonable
+- COMPSCI 61A: The Structure and Interpretation of Computer Programs, Not reasonable
+- COMPSCI 375: Teaching Techniques for Computer Science, Not reasonable
+- COMPSCI 370: Adaptive Instruction Methods in Computer Science, Not reasonable
+- ART 117: Advanced Drawing: Research and Methods, Not reasonable
+- COMPSCI 263: Design of Programming Languages, Reasonable
+- PORTUG 103: Advanced Grammar and Composition, Not reasonable
+- DATA C88C: Computational Structures in Data Science, Not reasonable

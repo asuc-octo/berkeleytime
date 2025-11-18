@@ -1,0 +1,10 @@
+PUBPOL 283, Reasonable
+ELENG 108, Reasonable
+CIVENG 215, Reasonable
+CIVENG 107, Reasonable
+CIVENG 207, Reasonable
+CIVENG 295, Reasonable
+ENVECON 147, Not reasonable
+ENGIN 215A, Not reasonable
+ELENG 234A, Reasonable
+ELENG 134, Reasonable

@@ -1,0 +1,10 @@
+- PUBPOL 267, Reasonable
+- SOCIOL 180I, Reasonable
+- SOCIOL 148, Reasonable
+- EDUC 40AC, Reasonable
+- POLECON 165, Reasonable
+- GPP 115, Not reasonable
+- EDUC 163, Reasonable
+- GPP 196, Not reasonable
+- CYPLAN 130, Reasonable
+- DEVENG 210, Reasonable

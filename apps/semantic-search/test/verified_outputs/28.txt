@@ -1,0 +1,10 @@
+- CYBER 211: Operating System Security, Reasonable
+- COMPSCI 162: Operating Systems and System Programming, Reasonable
+- COMPSCI 61C: Great Ideas of Computer Architecture (Machine Structures), Reasonable
+- CHEM 281: Software Engineering for Scientific Computing, Not reasonable
+- COMPSCI 286: Implementation of Data Base Systems, Reasonable
+- EECS 251LA: Introduction to Digital Design and Integrated Circuits Lab, Not reasonable
+- DATASCI 255: Machine Learning Systems Engineering, Not reasonable
+- COMPSCI 302: Designing Computer Science Education, Not reasonable
+- EECS 151LA: Application Specific Integrated Circuits Laboratory, Not reasonable
+- COMPSCI 263: Design of Programming Languages, Not reasonable

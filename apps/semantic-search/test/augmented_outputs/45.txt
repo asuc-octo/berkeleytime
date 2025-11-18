@@ -1,0 +1,135 @@
+{
+  "query": "Financial derivatives and risk modeling",
+  "results": [
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "222",
+        "score": 0.7110855579376221
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "222",
+        "title": "Financial Engineering Systems I",
+        "description": "Introductory graduate level course, focusing on applications of operations research techniques, e.g., probability, statistics, and optimization, to financial engineering. The course starts with a quick review of 221, including no-arbitrage theory, complete market, risk-neutral pricing, and hedging in discrete model, as well as basic probability and statistical tools. It then covers Brownian motion, martingales, and Ito's calculus, and deals with risk-neutral pricing in continuous time models. Standard topics include Girsanov transformation, martingale representation theorem, Feyman-Kac formula, and American and exotic option pricings. Simulation techniques will be discussed at the end of the semester, and MATLAB (or C or S-Plus) will be used for computation."
+      }
+    },
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "223",
+        "score": 0.6786612868309021
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "223",
+        "title": "Financial Engineering Systems II",
+        "description": "Advanced graduate course for Ph.D. students interested in pursuing a professional/research career in financial engineering. The course will start with a quick review of 222: the basics of Brownian motion, martingales, Ito's calculus, risk-neutral pricing in continuous time models. It then covers rigorously and in depth the most fundamental probability concepts for financial engineers, including stochastic integral, stochastic differential equations, and semi-martingales. The second half of the course will discuss the most recent topics in financial engineering, such as credit risk and analysis, risk measures and portfolio optimization, and liquidity risk and models. "
+      }
+    },
+    {
+      "result": {
+        "subject": "XMBA",
+        "courseNumber": "203",
+        "score": 0.6368846893310547
+      },
+      "course": {
+        "subject": "XMBA",
+        "number": "203",
+        "title": "Introduction to Finance",
+        "description": "This core course examines the wide menu of available assets, the institutional structure of U.S. and international financial markets, and the market mechanisms for trading securities. Topics include discounting, capital budgeting, historical behavior of asset returns, and diversification and portfolio theory. The course will also provide introductions to asset pricing theory for primary and derivative assets and to the principles governing corporate financial arrangements and contracting. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "138",
+        "score": 0.6343827247619629
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "138",
+        "title": "Financial and Behavioral Economics",
+        "description": "This course is an advanced class in Financial Economics. Topics include moral hazard (principal-agent problems, free cash flow), asymmetric Information (security issurance, dividends), mergers and acquisitions (theory, managerial incentives), corporate governance (separation of ownership and control, internal capital markets, superstar CEOs), corporate fraud (earnings manipulations). This class emphasizes the economic underpinning of financial decision-making and is mathematically and technically demanding. You will be required to do some empirical homework using STATA."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "131A",
+        "score": 0.6317631602287292
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "131A",
+        "title": "Corporate Strategy and Valuation",
+        "description": "The course is designed to cover advanced corporate finance issues. Its purpose is two-fold. First, it will help students develop a tool-box, both conceptual and quantitative, to address real-world corporate financial issues that they will likely use immediately in any finance-related career. Second, the course is designed to give the \u201cthe big picture,\u201d i.e., sharpen understanding of how corporate financial strategy helps increase a firm\u2019s value in a dynamic environment. The course examines qualitative factors that help determine financial strategy, including the costs of financial distress and the value of financial flexibility, as well as quantitative techniques, such as option pricing, that will be helpful in various analyses."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "158",
+        "score": 0.6297904849052429
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "158",
+        "title": "Corporate and Personal Finance",
+        "description": "This course provides an integrated introduction to both corporate and personal finance, examining how financial principles apply across individual and institutional decision-making. Four main objectives. First, to give participants a foundation in core financial concepts including valuation, risk management, and capital structure decisions. Second, to develop financial literacy skills for personal financial management including saving, investing, borrowing, and retirement planning. Third, to analyze how behavioral biases affect both corporate managers and individual investors. Fourth, to explore how financial markets and institutions serve both corporate and household needs, and how policy interventions can improve financial outcomes."
+      }
+    },
+    {
+      "result": {
+        "subject": "RDEV",
+        "courseNumber": "235",
+        "score": 0.6210039854049683
+      },
+      "course": {
+        "subject": "RDEV",
+        "number": "235",
+        "title": "Real Estate Capital Markets",
+        "description": "This course seeks to acquaint the student with the structure, instruments, and institutions of real estate\ncapital markets. In so doing, the course considers the linkages between real estate and general capital\nmarkets. The course also reviews the major features of both residential and non-residential primary and\nsecondary mortgage markets, including the structure and performance of residential and commercial\nmortgage-backed securities, and exposes students to public sources of real estate equity finance,\nincluding real estate investment trusts (REITs). Finally, the course examines recent developments in\nglobal real estate capital markets."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "183",
+        "score": 0.6194918155670166
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "183",
+        "title": "Introduction to Real Estate Finance",
+        "description": "Real estate debt and equity financing; mortgage market structure; effects of credit on demand; equity investment criteria; public policies in real estate finance and urban development."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "136",
+        "score": 0.6167731285095215
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "136",
+        "title": "Financial Economics",
+        "description": "Analysis of financial assets and institutions. The course emphasizes modern asset valuation theory and the role of financial intermediaries, and their regulation, in the financial system."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "145",
+        "score": 0.615017294883728
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "145",
+        "title": "Digital Finance and Financial Inclusion",
+        "description": "This course dives into the world of digital finance, exploring how it\u2019s transforming payments, credit, and financial inclusion in both advanced and emerging markets."
+      }
+    }
+  ]
+}

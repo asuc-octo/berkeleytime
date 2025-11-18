@@ -1,0 +1,10 @@
+- GERMAN 184, Reasonable
+- JOURN 213, Not reasonable
+- FILM 125, Reasonable
+- GEOG 127, Reasonable
+- JOURN 284, Reasonable
+- FILM 85, Reasonable
+- FILM R1A, Not reasonable
+- MUSIC 244A, Reasonable
+- JOURN 260, Not reasonable
+- FILM 201, Not reasonable

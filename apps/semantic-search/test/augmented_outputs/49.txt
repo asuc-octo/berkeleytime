@@ -1,0 +1,135 @@
+{
+  "query": "Sociological theory: Marx and Weber",
+  "results": [
+    {
+      "result": {
+        "subject": "ISF",
+        "courseNumber": "100A",
+        "score": 0.7268749475479126
+      },
+      "course": {
+        "subject": "ISF",
+        "number": "100A",
+        "title": "Introduction to Social Theory and Cultural Analysis",
+        "description": "This course, required of all ISF majors but open to all students, provides an introduction to the works of foundational social theorists of the nineteenth century, including Karl Marx and Max Weber.  Writing in what might be called the \u201cpre disciplinary\u201d period of the modern social sciences, their works cross  the boundaries of anthropology, economics, history, political science, sociology, and are today claimed by these and other disciplines as essential texts.  We will read intensively and critically from their respective works, situating their intellectual contributions in the history of social transformations wrought by industrialization and urbanization, political revolution, and the development of modern consumer society."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "201B",
+        "score": 0.6320701837539673
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "201B",
+        "title": "Modern Social Theory",
+        "description": "This course is a continuation of our required graduate theory course. We separate modern and classical social theory by considering modern social theory to consist of works published after World War II. Modern sociological theory uses classical social theory both as a source and a foil. There have been continuities in social thought whereby more contemporary theorists view themselves as using elements of classical social theory, sometimes in combination and at other times to understand different kinds of phenomena, such as micro-interaction or gender relations. Contemporary theory has also been critical of classical theory. This has caused different theorists to construct entirely new ideas or rely on new sources for their theories. The course considers a wide variety of authors and perspectives to illustrate the current breadth of social thought."
+      }
+    },
+    {
+      "result": {
+        "subject": "LEGALST",
+        "courseNumber": "103",
+        "score": 0.6225951313972473
+      },
+      "course": {
+        "subject": "LEGALST",
+        "number": "103",
+        "title": "Theories of Law and Society",
+        "description": "An historical examination of major interpretations of law, morals and social development, with special emphasis on the social thought of the 18th and 19th centuries and including the writings of Marx, Maine, Durkheim, Weber and other contemporary figures."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "101",
+        "score": 0.6037641763687134
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "101",
+        "title": "Sociological Theory I",
+        "description": "First half of a year-long course on the history of social thought as a source of present-day problems and hypotheses."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "102",
+        "score": 0.599331796169281
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "102",
+        "title": "Sociological Theory II",
+        "description": "Second half of a year-long course on the history of social thought as a source of present-day problems and hypotheses."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "280Z",
+        "score": 0.5952311158180237
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "280Z",
+        "title": "Advanced Study in Substantive Sociological Fields: Sociol Policy",
+        "description": "This course will examine the major theoretical arguments that seek to account for the development of social policy, including arguments about the pwoer of social forces such as business and labor, the role of racial and ethnic division, the influence of ideas, and the organizational features of the state. The course readings examine developments in the United States with some comparision to other countries. "
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "150",
+        "score": 0.5766239762306213
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "150",
+        "title": "Social Psychology",
+        "description": "This survey course examines many theoretical approaches to social psychology. The approaches may include: symbolic interactionism, neo-behaviorism, psychodynamic analyses, cognitive theories, interpersonal processes and theories of exchange. "
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "100",
+        "score": 0.5765215754508972
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "100",
+        "title": "Classical Theories of Political Economy",
+        "description": "One-semester lecture course offered each semester. In-depth analysis of the classical political economy literature, including such authors as Locke, Smith, Marx, Mills, and Weber to Veblen and Polanyi. Strong emphasis is placed on providing appropriate background for understanding the evolution of the literature that has emanated from the various social science disciplines which forms the basis of modern political economy."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "106",
+        "score": 0.5754627585411072
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "106",
+        "title": "Quantitative Sociological Methods",
+        "description": "This course will cover more technical issues in quantitative research methods, and will include, according to discretion of instructor, a practicum in data collection and/or analysis. Recommended for students interested in graduate work in sociology or research careers."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "R1B",
+        "score": 0.5701623558998108
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "R1B",
+        "title": "Sociological Reading & Composition",
+        "description": "This course aims to; assist you in developing a clear, persuasive and personal prose style in English, to refine and build upon the close reading techniques you practiced in R1A and to equip you with the skills necessary for writing a research paper_a standard requirement of many upper-division (100-level) courses. Since our readings mostly cover social science, this course also introduces concepts useful for reading texts in these fields."
+      }
+    }
+  ]
+}

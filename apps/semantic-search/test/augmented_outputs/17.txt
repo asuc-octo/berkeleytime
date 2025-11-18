@@ -1,0 +1,135 @@
+{
+  "query": "Computational neuroscience models",
+  "results": [
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "151",
+        "score": 0.7489748001098633
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "151",
+        "title": "Models of Decision-Making from Brain to Behavior",
+        "description": "This course offers an interdisciplinary exploration of how decisions are made by individuals and organizations. We will explore theories and models from psychology, neuroscience, economics, and their applications to fields such as medicine, business, public policy, and technology. You will learn about the cognitive biases, societal factors, and neural mechanisms which shape our decision making processes, and how computational models can be designed to explain and inform decision making in different aspects of life. The course will focus on the concepts underlying computational models and will not cover fitting models to data, but will develop your ability to interpret graphs, understand computational models, and assess statistical results."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "269P",
+        "score": 0.736987829208374
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "269P",
+        "title": "Research Review in Neurobiology: Visual Neuroscience",
+        "description": "Mechanisms for visual object representation including recognition, memory, segmentation, tracking, 3D representation, and embedding into meaningful scenes. Understanding the function of feedforward and feedback pathways in vision."
+      }
+    },
+    {
+      "result": {
+        "subject": "PSYCH",
+        "courseNumber": "C123",
+        "score": 0.7354530096054077
+      },
+      "course": {
+        "subject": "PSYCH",
+        "number": "C123",
+        "title": "Computational Models of Cognition",
+        "description": "This course will provide advanced students in cognitive science and computer science with the skills to develop computational models of human cognition, giving insight into how people solve challenging computational problems, as well as how to bring computers closer to human performance. The course will explore three ways in which researchers have attempted to formalize cognition -- symbolic approaches, neural networks, and probability and statistics -- considering the strengths and weaknesses of each. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "C131",
+        "score": 0.7343889474868774
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "C131",
+        "title": "Computational Models of Cognition",
+        "description": "This course will provide advanced students in cognitive science and computer science with the skills to develop computational models of human cognition, giving insight into how people solve challenging computational problems, as well as how to bring computers closer to human performance. The course will explore three ways in which researchers have attempted to formalize cognition -- symbolic approaches, neural networks, and probability and statistics -- considering the strengths and weaknesses of each. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "131",
+        "score": 0.7343889474868774
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "131",
+        "title": "Computational Models of Cognition",
+        "description": "This course will provide advanced students in cognitive science and computer science with the skills to develop computational models of human cognition, giving insight into how people solve challenging computational problems, as well as how to bring computers closer to human performance. The course will explore three ways in which researchers have attempted to formalize cognition -- symbolic approaches, neural networks, and probability and statistics -- considering the strengths and weaknesses of each. "
+      }
+    },
+    {
+      "result": {
+        "subject": "NEU",
+        "courseNumber": "100B",
+        "score": 0.7134233713150024
+      },
+      "course": {
+        "subject": "NEU",
+        "number": "100B",
+        "title": "Circuit, Systems and Behavioral Neuroscience",
+        "description": "This course is a comprehensive survey of circuits and systems neuroscience, including how brain function underlies behavior. Students will learn how brain circuits are organized, how the brain processes sensory information, how it plans and executes movement, and how it stores information during learning.  We will discuss brain rhythms and sleep, and brain systems for emotion, reward, attention, and other higher functions. The major focus is on the mammalian brain, but we will also discuss principles from other organisms. By the end of the course, students will have a strong understanding of the biological and computational principles for neural circuit function, and the neurobiological basis of behavior."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "269K",
+        "score": 0.7077902555465698
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "269K",
+        "title": "Research Review in Neurobiology: Instructive Cues for Neural Form and Function",
+        "description": "Molecular and circuit studies of the mechanisms that specify synaptic properties and how these properties bias the timescales of neuronal computation."
+      }
+    },
+    {
+      "result": {
+        "subject": "NEU",
+        "courseNumber": "250",
+        "score": 0.7033812403678894
+      },
+      "course": {
+        "subject": "NEU",
+        "number": "250",
+        "title": "Circuit and Systems Neuroscience",
+        "description": "This is a graduate-level course on current topics in circuit and systems neuroscience. Topics include sensory coding, neural circuit computations, plasticity and learning, hippocampal function, motor control, and circuits for innate behaviors."
+      }
+    },
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "132",
+        "score": 0.6910434365272522
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "132",
+        "title": "Rhythms of the Brain: from Neuronal Communication to Function",
+        "description": "This course provides advanced students in cognitive science, psychology, computer science, and biology with the skills to develop numerical methods used in the study of neuroscience and cognition. We will study several main areas in neuroscience and cognition: memory and the underlying communication between hippocampus and cortical areas; movement control through the study of the cortico-basal-thalamic loops. Modulation of mesolimbic and nigrostriatal pathways by dopamine. Modulation of cortico-hippocampal circuits by acetylcholine and the role of these circuits in the onset of Alzheimer disease. We will study the coherence of electrical oscillations in different parts of the brain and how that coherence can be disturbed in disease. "
+      }
+    },
+    {
+      "result": {
+        "subject": "NEU",
+        "courseNumber": "77",
+        "score": 0.6908323764801025
+      },
+      "course": {
+        "subject": "NEU",
+        "number": "77",
+        "title": "Survey of Neuroscience Research",
+        "description": "This course provides a survey of neuroscience research areas represented by faculty members in the Department of Neuroscience. Each week a different faculty member will give a one hour lecture on how their research field contributes to our understanding of the brain and behavior. The course will span molecular, cellular, circuits, systems, behavioral, cognitive, and computational neuroscience, to illustrate how different approaches fit into the overall field of neuroscience. Faculty will also inform students about courses that they teach in neuroscience and related areas. This course gives undergraduates an opportunity to learn about the spectrum of research within the field of neuroscience."
+      }
+    }
+  ]
+}

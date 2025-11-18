@@ -1,0 +1,135 @@
+{
+  "query": "Data visualization with R and ggplot2",
+  "results": [
+    {
+      "result": {
+        "subject": "DATASCI",
+        "courseNumber": "209",
+        "score": 0.7315778732299805
+      },
+      "course": {
+        "subject": "DATASCI",
+        "number": "209",
+        "title": "Data Visualization",
+        "description": "Visualization enhances exploratory analysis as well as efficient communication of data results. This course focuses on the design of visual representations of data in order to discover patterns, answer questions, convey findings, drive decisions, and provide persuasive evidence. The goal is to give you the practical knowledge you need to create effective tools for both exploring and explaining your data. Exercises throughout the course provide a hands-on experience using relevant programming libraries and software tools to apply research and design concepts learned."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "133",
+        "score": 0.6722974181175232
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "133",
+        "title": "Concepts in Computing with Data",
+        "description": "An introduction to computationally intensive applied statistics. Topics will include organization and use of databases, visualization and graphics, statistical learning and data mining, model validation procedures, and the presentation of results. This course uses R as its primary computing language; details are determined by the instructor."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSS",
+        "courseNumber": "221",
+        "score": 0.670154869556427
+      },
+      "course": {
+        "subject": "COMPSS",
+        "number": "221",
+        "title": "Data Visualization",
+        "description": "In this course, students will learn to create charts that effectively communicate insights, to ensure that their data science work has impact."
+      }
+    },
+    {
+      "result": {
+        "subject": "DATASCI",
+        "courseNumber": "203",
+        "score": 0.660033643245697
+      },
+      "course": {
+        "subject": "DATASCI",
+        "number": "203",
+        "title": "Statistics for Data Science",
+        "description": "This course provides students with a foundational understanding of classical statistics within the broader context of data science. Topics include exploratory analysis and descriptive statistics, probability theory and the foundations of statistical modeling, estimators, hypothesis testing, and classical linear regression. Causal inference and reproducibility issues are treated briefly. Students will learn to apply the most common statistical procedures correctly, checking assumptions and responding appropriately when they appear violated; to evaluate the design of a study and how the variables being measured relate to research questions; and to analyze real-world data using the open-source language R."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "33A",
+        "score": 0.6585038900375366
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "33A",
+        "title": "Introduction to Programming in R",
+        "description": "An introduction to the R statistical software for students with minimal prior experience with programming. This course prepares students for data analysis with R. The focus is on the computational model that underlies the R language with the goal of providing a foundation for coding. Topics include data types and structures, such as vectors, data frames and lists; the REPL evaluation model; function calls, argument matching, and environments; writing simple functions and control flow. Tools for reading, analyzing, and plotting data are covered, such as data input/output, reshaping data, the formula language, and graphics models.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "LDARCH",
+        "courseNumber": "287",
+        "score": 0.6492026448249817
+      },
+      "course": {
+        "subject": "LDARCH",
+        "number": "287",
+        "title": "Representation as Research: Contemporary Topics in Landscape Visualization",
+        "description": "Representations typically demonstrate two different forms of landscape analysis\u2014empirical data and personal perception/aesthetics\u2014but landscape provides opportunities for their overlaps in order to advance and synthesize robust research. Through lectures, technical tutorials, and reading discussions, this course will profile contemporary landscape research practices and representational techniques. We will use visualization to advance landscape research, theory, and site analysis, focusing specifically on methods that tackle issues of temporality and ephemerality. We will generate original media that communicates spatial, ecological, and cultural complexities."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "C131A",
+        "score": 0.6441870927810669
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "C131A",
+        "title": "Statistical Methods for Data Science",
+        "description": "This course teaches a broad range of statistical methods that are used to solve data problems. Topics include group comparisons and ANOVA, standard parametric statistical models, multivariate data visualization, multiple linear regression, logistic regression and classification, regression trees and random forests. An important focus of the course is on statistical computing and reproducible statistical analysis. The course and lab include hands-on experience in analyzing real world data from the social, life, and physical sciences. The R statistical language is used.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "158",
+        "score": 0.6362037658691406
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "158",
+        "title": "Experimental Design",
+        "description": "This course will review the statistical foundations of randomized experiments and study principles for addressing common setbacks in experimental design and analysis in practice. We will cover the notion of potential outcomes for causal inference and the Fisherian principles for experimentation (randomization, blocking, and replications). We will also cover experiments with complex structures (clustering in units, factorial design, hierarchy in treatments, sequential assignment, etc). We will also address practical complications in experiments, including noncompliance, missing data, and measurement error. This course uses R as its primary computing language; details are determined by the instructor.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "DATA",
+        "courseNumber": "89",
+        "score": 0.6253739595413208
+      },
+      "course": {
+        "subject": "DATA",
+        "number": "89",
+        "title": "Mathematical and Graphical Foundations of Probability",
+        "description": "How do we reason about data using mathematical models of random events? This course will complement the computational and conceptual toolkit students develop in Data C8. Students will build the mathematical and graphical problem-solving skills needed for upper-division courses in data science. The course will integrate and rehearse key proficiencies developed in prerequisite math classes while offering a focused introduction to specific multivariate concepts expected in following courses. It will fold this practice into a narrative motivated by the introduction to reasoning with uncertainty provided by Data C8, while providing a basic foundation in probability."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "201",
+        "score": 0.6248101592063904
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "201",
+        "title": "Research Design and Applications for Data and Analysis",
+        "description": "This course introduces students to the data sciences landscape, focusing on learning how to apply data science techniques to uncover, enrich, and answer the questions you will encounter and originate in the industry. After an introduction to data science and an overview of the course, students will explore decision-making in organizations and big data's emerging role in guiding tactical and strategic decisions. Lectures, readings, discussions, and assignments will teach how to apply disciplined, creative methods to ask better questions, gather data, interpret results, and convey findings to various audiences in ways that change minds and behaviors."
+      }
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "query": "Supply chain risk management",
+  "results": [
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "220",
+        "score": 0.6501635909080505
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "220",
+        "title": "Managing Cyber Risk",
+        "description": "This course offers valuable perspective for both the non-technical business manager and the technical cybersecurity or IT manager. It is the vital connector between the technical world of threats, vulnerabilities, and exploits, and the business world of board-level objectives, enterprise risk management, and organizational leadership. Now more than ever, managers have a need and responsibility to understand cyber risk. Just as financial risks and other operational risks have to be effectively managed within an organization, cyber risk has to be managed. It spans far beyond information technology, with broad implications in the areas of organizational behavior, financial risk modeling, legal issues, and executive leadership. "
+      }
+    },
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "C253",
+        "score": 0.6357207298278809
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "C253",
+        "title": "Supply Chain and Logistics Management",
+        "description": "Supply chain analysis is the study of quantitative models that characterize various economic trade-offs in the supply chain. The field has made significant strides on both theoretical and practical fronts. On the theoretical front, supply chain analysis inspires new research ventures that blend operations research, game theory, and microeconomics. These ventures result in an unprecedented amalgamation of prescriptive, descriptive, and predictive models characteristic of each subfield. On the practical front, supply chain analysis offers solid foundations for strategic positioning, policy setting, and decision making."
+      }
+    },
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "230",
+        "score": 0.6321125030517578
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "230",
+        "title": "Economics of Supply Chains",
+        "description": "This course is geared towards understanding operational, strategic, and tactical aspects of supply chain man agement. Topics covered are from a broad range that includes demand modeling, inventory management, facility location as well as process flexibility, contracting, and auctions. Important models (both centralized and decentralized) for understanding the design, operation, and evaluation of supply chains will be discussed with the goal of developing a holistic understanding of supply chain management. Students will be exposed to the key concepts through a mixture of foundational theory and case studies from a variety of businesses. The course is intended for graduate students at the Masters level looking for a concrete introduction"
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "268B",
+        "score": 0.6294523477554321
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "268B",
+        "title": "Lean Construction and Supply Chain Management",
+        "description": "Principles and practices of \"lean\" production are applied to project delivery in the AEC industry. Case studies illustrate the concepts. Project delivery is viewed holistically with a focus on work structuring and supply chain management. Topics include systems dynamics, uncertainty, and variation; materials management; logistics; e-commerce; building information modeling (BIM); and integrated product and process design. Students use process simulation to assess performance of different system configurations and develop a case study applying concepts on a real project."
+      }
+    },
+    {
+      "result": {
+        "subject": "DEVP",
+        "courseNumber": "226",
+        "score": 0.5917849540710449
+      },
+      "course": {
+        "subject": "DEVP",
+        "number": "226",
+        "title": "Economics and Policy of Innovation and Supply Chains",
+        "description": "This course explores how innovation shapes evolving economies and the supply chains that bring innovations to life. Students will gain a conceptual and practical understanding of how supply chains are designed, operate, and respond to policy, environmental, and market factors. The course includes lectures on innovation and supply chain theory, followed by student-led case study presentations on real-world examples across sectors like food, energy, and digital services. Emphasis is placed on interdisciplinary analysis, resilience, and the role of supply chains in sustainable development."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "183",
+        "score": 0.5448355674743652
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "183",
+        "title": "Forest Ecosystem Management and Planning",
+        "description": "Introduces students to concepts and quantitative tools needed for the sustainable management and planning of multi-use forest ecosystems. Topics covered include: forest regulation; estimation of ecological, economic, and social values; construction of dynamic forest models; methods for optimal decision-making; development of forest management plans; and ethics of natural resource management. Application to current issues in temperate and tropical forest management are discussed. Quantitative, analytical, and communication skills are emphasized. Oral presentation required."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "220C",
+        "score": 0.5436578989028931
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "220C",
+        "title": "Health Risk Assessment",
+        "description": "This course introduces the basic scientific principles of environmental health risk assessment, develops the understanding necessary to carry out and interpret quantitative risk assessments, and describes the context in which decisions manage environmental health risks are made. The course presents the quantitative methods used to assess the human health risks associated with exposure to microbial and chemical agents, focusing on the four major components of risk assessment: hazard identification, dose-response assessment, exposure assessment and risk characterization. The course examines the application of environmental health risk assessment to contemporary issues including the associated complexities, challenges and controversies."
+      }
+    },
+    {
+      "result": {
+        "subject": "XMBA",
+        "courseNumber": "236E",
+        "score": 0.5426270961761475
+      },
+      "course": {
+        "subject": "XMBA",
+        "number": "236E",
+        "title": "Mergers and Acquisitions: A Focus on Creating Value",
+        "description": "Survey of the day-to-day practices and techniques used in change of control transaction. Topics include valuation, financing, deal structuring, tax and accounting considerations, agreements, closing documents, practices used in management buyouts, divestitures, hostile takeovers, and takeover defenses. Also covers distinctions in technology M&A, detecting corruption in cross border transaction attempts, and betting on deals through risk arbitrage. Blend of lecture, case study, and guest lectures."
+      }
+    },
+    {
+      "result": {
+        "subject": "NUSCTX",
+        "courseNumber": "235",
+        "score": 0.5398341417312622
+      },
+      "course": {
+        "subject": "NUSCTX",
+        "number": "235",
+        "title": "Food Systems Management",
+        "description": "Principles of organization and management applied to institutional food service systems will be discussed and applied in this graduate level course. Topics will range from production and delivery systems, management of resources, quality assurance, equipment, layout, marketing, personnel management and fiscal management. Students will apply concepts through laboratory experiences, projects and engagement with institutional settings. ServSafe certification exam must be completed by the end of the semester."
+      }
+    },
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "172",
+        "score": 0.5389470458030701
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "172",
+        "title": "Probability and Risk Analysis for Engineers",
+        "description": "This is an introductory course in probability designed to develop a good understanding of uncertain phenomena and the mathematical tools used to model and analyze it. Applications will be given in such areas as reliability theory, risk theory, inventory theory, financial models, and computer science, among others.  This course is a probability course and cannot be used to fulfill any engineering unit or elective requirements.\n"
+      }
+    }
+  ]
+}

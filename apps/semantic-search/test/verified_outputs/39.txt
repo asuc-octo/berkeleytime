@@ -1,0 +1,10 @@
+- BIOENG 100, Reasonable
+- EALANG 110, Reasonable
+- MCELLBI 38, Reasonable
+- BIOENG 201, Reasonable
+- BIOENG C171, Reasonable
+- BIOENG 271, Reasonable
+- PHILOS 106, Reasonable
+- BIOENG 25, Not reasonable
+- MCELLBI 140, Reasonable
+- MCELLBI 229M, Reasonable

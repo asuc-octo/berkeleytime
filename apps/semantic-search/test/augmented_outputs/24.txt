@@ -1,0 +1,135 @@
+{
+  "query": "Philosophy of mind and consciousness",
+  "results": [
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "C158",
+        "score": 0.626441240310669
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "C158",
+        "title": "Introduction to Buddhist Philosophy",
+        "description": "This is an introduction to Buddhist philosophy, extending from its origins (as preserved in the early s\u016btra literature), down through its evolution into multiple competing philosophical traditions (Abhidharma, Madhyamaka, Yog\u0101c\u0101ra, Pram\u0101\u1e47av\u0101da, and so on). We will explore Buddhist approaches to issues in epistemology, metaphysics, philosophy of mind, language, and ethics. One theme running through the course will be radical skepticism; we will explore how Buddhist philosophers questioned not only the existence of an enduring or essential self but also the existence of an external (mind-independent) world, and how their analyses impacted their understandings of meaning in language, their accounts of the nature and function of consciousness."
+      }
+    },
+    {
+      "result": {
+        "subject": "PSYCH",
+        "courseNumber": "C61",
+        "score": 0.6261180639266968
+      },
+      "course": {
+        "subject": "PSYCH",
+        "number": "C61",
+        "title": "Brain, Mind, and Behavior",
+        "description": "The human brain is the most complex structure in the known universe. The study of its structure and function and how it figures into our actions and mental experience is among the most exciting projects of modern science. This class begins with molecules and cells, builds up to brains and nervous systems, encompasses neural signaling, sensory perception, memory, language, and emotion, and culminates with the great mystery of how brain processes relate to consciousness and mental experience \u2014 that is, how mind may be related to brain. This is a comprehensive introduction to the exciting subject of contemporary neuroscience, open to all interested students."
+      }
+    },
+    {
+      "result": {
+        "subject": "NEU",
+        "courseNumber": "C61",
+        "score": 0.6257071495056152
+      },
+      "course": {
+        "subject": "NEU",
+        "number": "C61",
+        "title": "Brain, Mind, and Behavior",
+        "description": "The human brain is the most complex structure in the known universe. The study of its structure and function and how it figures into our actions and mental experience is among the most exciting projects of modern science. This class begins with molecules and cells, builds up to brains and nervous systems, encompasses neural signaling, sensory perception, memory, language, and emotion, and culminates with the great mystery of how brain processes relate to consciousness and mental experience \u2014 that is, how mind may be related to brain. This is a comprehensive introduction to the exciting subject of contemporary neuroscience, open to all interested students."
+      }
+    },
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "180",
+        "score": 0.6221001148223877
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "180",
+        "title": "Mind, Brain, and Identity",
+        "description": "Do you have a self or are you one?  How is the self related to brain structure and function?  Is the self, for example, identical to some part of the brain or part of the brain\u2019s function?  Can you damage the self by damaging the brain?  In this course we will look at these questions from conceptual, psychological, and neuroscientific perspectives.  We will study both normal and injured brains to help shed light on what is a deeply philosophical and personal issue: What is the human the self.  We will read various papers pertaining to these issues as well as the books listed under required reading.  "
+      }
+    },
+    {
+      "result": {
+        "subject": "BUDDSTD",
+        "courseNumber": "C158",
+        "score": 0.6189268827438354
+      },
+      "course": {
+        "subject": "BUDDSTD",
+        "number": "C158",
+        "title": "Introduction to Buddhist Philosophy",
+        "description": "This is an introduction to Buddhist philosophy, extending from its origins (as preserved in the early s\u016btra literature), down through its evolution into multiple competing philosophical traditions (Abhidharma, Madhyamaka, Yog\u0101c\u0101ra, Pram\u0101\u1e47av\u0101da, and so on). We will explore Buddhist approaches to issues in epistemology, metaphysics, philosophy of mind, language, and ethics. One theme running through the course will be radical skepticism; we will explore how Buddhist philosophers questioned not only the existence of an enduring or essential self but also the existence of an external (mind-independent) world, and how their analyses impacted their understandings of meaning in language, their accounts of the nature and function of consciousness."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "R1B",
+        "score": 0.6060394644737244
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "R1B",
+        "title": "Reading and Composition Through Philosophy",
+        "description": "Training in writing expository prose in conjunction with reading philosophical texts. Satisfies the second half of the Reading and Composition requirement."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "125",
+        "score": 0.603439450263977
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "125",
+        "title": "Metaphysics",
+        "description": "An advanced introduction to contemporary metaphysics, focusing on the ideas of objectivity, existence, naturalness, identity, time, causation, and possibility."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "2",
+        "score": 0.5928807854652405
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "2",
+        "title": "Individual Morality and Social Justice",
+        "description": "Introduction to ethical and political philosophy."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "5",
+        "score": 0.5910895466804504
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "5",
+        "title": "Science and Human Understanding",
+        "description": "Introduction to the Philosophy of Science."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "119",
+        "score": 0.5898525714874268
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "119",
+        "title": "Feminism and Philosophy",
+        "description": "This course will introduce students to a range of historical and contemporary feminist issues."
+      }
+    }
+  ]
+}

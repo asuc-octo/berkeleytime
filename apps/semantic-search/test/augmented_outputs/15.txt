@@ -1,0 +1,135 @@
+{
+  "query": "Cold War espionage and diplomacy",
+  "results": [
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "154",
+        "score": 0.518779993057251
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "154",
+        "title": "Global Trade and Finance",
+        "description": "This is an interdisciplinary course in international trade and finance focused on the dynamic interaction between economics and politics in the global arena. The course provides students a systematic method of evaluating international economic policies, while developing critical thinking skills through case studies and critical analysis. More specifically, the course focuses on the impact of flows of trade, capital, and people across borders and the role played by: (1) states and their political actors, (2) non-governmental groups, e.g., multinational corporations and labor unions, and (3) domestic and international institutions that all establish the \u201crules of the game\u201d, in shaping the global economy.  "
+      }
+    },
+    {
+      "result": {
+        "subject": "NUCENG",
+        "courseNumber": "130",
+        "score": 0.5034958124160767
+      },
+      "course": {
+        "subject": "NUCENG",
+        "number": "130",
+        "title": "Analytical Methods for Non-proliferation",
+        "description": "Use of nuclear measurement techniques to detect clandestine movement and/or possession of nuclear materials by third parties. Nuclear detection, forensics, signatures, and active and passive interrogation methodologies will be explored. Techniques currently deployed for arms control and treaty verification will be discussed. Emphasis will be placed on common elements of detection technology from the viewpoint of resolution of threat signatures from false positives due to naturally occurring radioactive material. Topics include passive and active neutron signals, gamma ray detection, fission neutron multiplicity, and U and Pu isotopic identification and age determination."
+      }
+    },
+    {
+      "result": {
+        "subject": "NUCENG",
+        "courseNumber": "230",
+        "score": 0.5029597282409668
+      },
+      "course": {
+        "subject": "NUCENG",
+        "number": "230",
+        "title": "Analytical Methods for Non-Proliferation",
+        "description": "Use of nuclear measurement techniques to detect clandestine movement and/or possession of nuclear materials by third parties. Nuclear detection, forensics,signatures, and active and passive interrogation methodologies will be explored. Techniques currently deployed for arms control and treaty verification will be discussed.  Emphasis will be placed on common elements of detection technology from the viewpoint of resolution of threat signatures from false positives due to naturally occurring radioactive material. Topics include passive and active neutron signals, gamma ray detection, fission neutron multiplicity, and U and Puisotopic identification and age determination."
+      }
+    },
+    {
+      "result": {
+        "subject": "NAVSCI",
+        "courseNumber": "2",
+        "score": 0.49988147616386414
+      },
+      "course": {
+        "subject": "NAVSCI",
+        "number": "2",
+        "title": "Sea Power and Maritime Affairs",
+        "description": "Traces the U.S. historical evolution of sea power, its concepts, theories and applications. Emphasizes the impact of world situation, U.S. national interest, changing technology, and naval leadership on the evolving concept of sea power. Relates historical developments to current trends. Examines briefly the U.S. Merchant Marine's and the former Soviet Navy's impact on sea power policy formulation."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "123Y",
+        "score": 0.49718743562698364
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "123Y",
+        "title": "Special Topics in International Relations",
+        "description": "See department web site for specific course offerings."
+      }
+    },
+    {
+      "result": {
+        "subject": "GLOBAL",
+        "courseNumber": "133",
+        "score": 0.4937056005001068
+      },
+      "course": {
+        "subject": "GLOBAL",
+        "number": "133",
+        "title": "International Conflict",
+        "description": "Inspired by the changed meaning of international conflict and the expanding mission of conflict resolution in the post-cold war era, this course will study the contemporary context and issues of conflict by examining the evolution in thinking about conflict, the resolution, and their application in practice. "
+      }
+    },
+    {
+      "result": {
+        "subject": "NUCENG",
+        "courseNumber": "C285",
+        "score": 0.4931824803352356
+      },
+      "course": {
+        "subject": "NUCENG",
+        "number": "C285",
+        "title": "Nuclear Security: The Nexus Between Policy and Technology",
+        "description": "The course will review the origins and evolution of nuclear energy, how it has been applied for both peaceful and military purposes, and the current and prospective challenges it presents. The purpose of the course is to educate students on the policy roots and technological foundations of nuclear energy and nuclear weapons so they are positioned to make original contributions to the field in their scholarly and professional careers."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "291IR",
+        "score": 0.49108225107192993
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "291IR",
+        "title": "Research Workshop in International Relations",
+        "description": "A forum for the presentation and discussion of research in progress by graduate students (second year and above). To receive credit for the course, the students will make at least one presentation of work-in-progress per semester and to serve as a discussant for another student's work. Appropriate works-in-progress include (but not limited to) a paper in preparation for submission to a journal a dissertation prospectus (including early drafts), dissertation chapter, or a job market paper. Anyone working on International Relations is welcome."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "124C",
+        "score": 0.48990485072135925
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "124C",
+        "title": "Ethics and Justice in International Affairs",
+        "description": "Should nations intervene in other countries to prevent human rights abuses or famine? On what principles should immigration be based? Should wealthy states aid poorer states, and if so, how much? Who should pay for global environmental damage? Answers to these moral questions depend to a great degree on who we believe we have an obligation to: Ourselves? Nationals of our country? Residents of our country? Everyone in the world equally? We will examine different traditions of moral thought including skeptics, communitarians, cosmopolitans, and use these traditions as tools to make reasoned judgments about difficult moral problems in world politics. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PUBPOL",
+        "courseNumber": "C285",
+        "score": 0.48923611640930176
+      },
+      "course": {
+        "subject": "PUBPOL",
+        "number": "C285",
+        "title": "Nuclear Security: The Nexus Between Policy and Technology",
+        "description": "The course will review the origins and evolution of nuclear energy, how it has been applied for both peaceful and military purposes, and the current and prospective challenges it presents. The purpose of the course is to educate students on the policy roots and technological foundations of nuclear energy and nuclear weapons so they are positioned to make original contributions to the field in their scholarly and professional careers."
+      }
+    }
+  ]
+}

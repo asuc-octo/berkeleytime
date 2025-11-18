@@ -1,0 +1,10 @@
+- HISTART 11, Reasonable
+- ARCH 170B, Reasonable
+- ENGLISH 115B, Reasonable
+- HISTART 192G, Not reasonable
+- ITALIAN 215, Reasonable
+- HISTART 132AC, Not reasonable
+- LDARCH 170, Not reasonable
+- MELC C120B, Not reasonable
+- ARCH 279, Not reasonable
+- HISTART C120B, Not reasonable

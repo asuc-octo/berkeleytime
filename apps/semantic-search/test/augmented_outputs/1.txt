@@ -1,0 +1,135 @@
+{
+  "query": "Memory models in concurrent programming",
+  "results": [
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "281",
+        "score": 0.6651363372802734
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "281",
+        "title": "Software Engineering for Scientific Computing",
+        "description": "The course covers computer architecture and software features that have the\ngreatest impact on performance. It addresses debugging and performance tunning, detecting\nmemory and stack overwrites, malloc corruption, hotspot, paging, cache misses. A toolbox with\ncommon algorithms: sorting, searching, hashing, trees, graph traversing, is followed by common\npatterns used in object-oriented design. It describes programming paradigms, dynamic libraries,\ndistributed architectures, and services. Lectures on linear algebra and performance libraries are\nprovided as background for future courses. HPC paradigms and GPU programming are introduced.\nSoftware packaging, extensibility, and interactivity is followed by team development, testing and\nhardening."
+      }
+    },
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "C131",
+        "score": 0.651459813117981
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "C131",
+        "title": "Computational Models of Cognition",
+        "description": "This course will provide advanced students in cognitive science and computer science with the skills to develop computational models of human cognition, giving insight into how people solve challenging computational problems, as well as how to bring computers closer to human performance. The course will explore three ways in which researchers have attempted to formalize cognition -- symbolic approaches, neural networks, and probability and statistics -- considering the strengths and weaknesses of each. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "131",
+        "score": 0.651459813117981
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "131",
+        "title": "Computational Models of Cognition",
+        "description": "This course will provide advanced students in cognitive science and computer science with the skills to develop computational models of human cognition, giving insight into how people solve challenging computational problems, as well as how to bring computers closer to human performance. The course will explore three ways in which researchers have attempted to formalize cognition -- symbolic approaches, neural networks, and probability and statistics -- considering the strengths and weaknesses of each. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61B",
+        "score": 0.6465431451797485
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61B",
+        "title": "Data Structures",
+        "description": "Fundamental dynamic data structures, including linear lists, queues, trees, and other linked structures; arrays strings, and hash tables. Storage management. Elementary principles of software engineering. Abstract data types. Algorithms for sorting and searching. Introduction to the Java programming language. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PSYCH",
+        "courseNumber": "C123",
+        "score": 0.627768337726593
+      },
+      "course": {
+        "subject": "PSYCH",
+        "number": "C123",
+        "title": "Computational Models of Cognition",
+        "description": "This course will provide advanced students in cognitive science and computer science with the skills to develop computational models of human cognition, giving insight into how people solve challenging computational problems, as well as how to bring computers closer to human performance. The course will explore three ways in which researchers have attempted to formalize cognition -- symbolic approaches, neural networks, and probability and statistics -- considering the strengths and weaknesses of each. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "186",
+        "score": 0.6257639527320862
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "186",
+        "title": "Introduction to Database Systems",
+        "description": "Access methods and file systems to facilitate data access. Hierarchical, network, relational, and object-oriented data models. Query languages for models. Embedding query languages in programming languages. Database services including protection, integrity control, and alternative views of data. High-level interfaces including application generators, browsers, and report writers. Introduction to transaction processing. Database system implementation to be done as term project. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61A",
+        "score": 0.6252326965332031
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61A",
+        "title": "The Structure and Interpretation of Computer Programs",
+        "description": "An introduction to programming and computer science focused on abstraction techniques as means to manage program complexity. Techniques include procedural abstraction; control abstraction using recursion, higher-order functions, generators, and streams; data abstraction using interfaces, objects, classes, and generic operators; and language abstraction using interpreters and macros. The course exposes students to programming paradigms, including functional, object-oriented, and declarative approaches. It includes an introduction to asymptotic analysis of algorithms. There are several significant programming projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "170",
+        "score": 0.6177747249603271
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "170",
+        "title": "Efficient Algorithms and Intractable Problems",
+        "description": "Concept and basic techniques in the design and analysis of algorithms; models of computation; lower bounds; algorithms for optimum search trees, balanced trees and UNION-FIND algorithms; numerical and algebraic algorithms; combinatorial algorithms. Turing machines, how to count steps, deterministic and nondeterministic Turing machines, NP-completeness. Unsolvable and intractable problems. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "162",
+        "score": 0.6152548789978027
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "162",
+        "title": "Operating Systems and System Programming",
+        "description": "Basic concepts of operating systems and system programming. Utility programs, subsystems, multiple-program systems. Processes, interprocess communication, and synchronization. Memory allocation, segmentation, paging. Loading and linking, libraries. Resource allocation, scheduling, performance evaluation. File systems, storage devices, I/O systems. Protection, security, and privacy. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61C",
+        "score": 0.6102792024612427
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61C",
+        "title": "Great Ideas of Computer Architecture (Machine Structures)",
+        "description": "The internal organization and operation of digital computers. Machine architecture, support for high-level languages (logic, arithmetic, instruction sequencing) and operating systems (I/O, interrupts, memory management, process switching). Elements of computer logic design. Tradeoffs involved in fundamental architectural design decisions."
+      }
+    }
+  ]
+}

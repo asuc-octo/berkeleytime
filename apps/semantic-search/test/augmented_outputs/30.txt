@@ -1,0 +1,135 @@
+{
+  "query": "Documentary filmmaking techniques",
+  "results": [
+    {
+      "result": {
+        "subject": "GERMAN",
+        "courseNumber": "184",
+        "score": 0.717799186706543
+      },
+      "course": {
+        "subject": "GERMAN",
+        "number": "184",
+        "title": "Documentary Cinema",
+        "description": "This course surveys the history, theory and practice of the genre called documentary cinema in a transnational horizon. We will explore what this amorphous and vague term means and examine the ways its forms and ethics have changed from the beginning of cinema to recent digital production and online exhibition. Major modes of documentary filmmaking will be covered, including cinema verit\u00e9, direct cinema, investigative documentary, ethnographic and travel film, agit-prop and activist media, autobiography and the personal essay as well as recent post-modern forms that question relationships between fact and fiction such as docudrama, archival film, and \"mockumentary.\" "
+      }
+    },
+    {
+      "result": {
+        "subject": "JOURN",
+        "courseNumber": "213",
+        "score": 0.6915881633758545
+      },
+      "course": {
+        "subject": "JOURN",
+        "number": "213",
+        "title": "Documentary Photography",
+        "description": "An exploration of magazine photography as applied to photo essay, day assignments and book projects, as well as content based lectures (location lighting, environmental portraiture, etc.) and critiques. Students work on in-depth assignments that include research, reporting, and photographing. Legal/ethical and business issues are explored, including fund-raising and grant writing to support extended projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "125",
+        "score": 0.6872594356536865
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "125",
+        "title": "Documentary Forms",
+        "description": "This course will focus on topics in documentary cinema, television, video, photography, and/or new media. "
+      }
+    },
+    {
+      "result": {
+        "subject": "GEOG",
+        "courseNumber": "127",
+        "score": 0.6764198541641235
+      },
+      "course": {
+        "subject": "GEOG",
+        "number": "127",
+        "title": "Geographic Film Production",
+        "description": "What makes a film geographical? How can we explore humans\u2019 relationships to their environment through sound and image? How might we make nonfiction films which foreground place and give it actual agency and voice? How can we use documentary film practices to depict place, culture, society, gesture, movement, rhythm and \ufb02ow in new and exciting ways? This is a production workshop where each student will conceptualize, shoot, and edit one short documentary film project that centralizes some aspect/s of geographic thought. This course is geared towards first time filmmakers. All film projects must fit the theme designated by the instructor, per term."
+      }
+    },
+    {
+      "result": {
+        "subject": "JOURN",
+        "courseNumber": "284",
+        "score": 0.6257362365722656
+      },
+      "course": {
+        "subject": "JOURN",
+        "number": "284",
+        "title": "Documentary Production",
+        "description": "Production of television documentary news programs. "
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "85",
+        "score": 0.623504638671875
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "85",
+        "title": "Introduction to Moving Image Production",
+        "description": "The objective of this class is to provide a basic technical foundation for digital media production while emphasizing the techniques and languages of creative moving image media from traditional story genres to more contemporary experimental forms. Training will move from pre-production scripting to production -- including image capture, lighting and sound recording -- to post-production with non-linear digital applications."
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "R1A",
+        "score": 0.6164124011993408
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "R1A",
+        "title": "The Craft of Writing - Film Focus",
+        "description": "Rhetorical approach to reading and writing argumentative discourse with a film focus. Close reading of selected texts; written themes developed from class discussion and analysis of rhetorical strategies. Satisfies the first half of the Reading and Composition requirement. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "244A",
+        "score": 0.6148762702941895
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "244A",
+        "title": "Research Methods in Ethnomusicology",
+        "description": "Exploration of the conceptual and practical issues around research methods used in ethnomusicology, including onsite and digital fieldwork, transcription, interview techniques, recording, audio/visual documentary production, and ethnographic writing. Focus on skills to conduct original research in ethnomusicology through short-term local ethnographic projects during the semester."
+      }
+    },
+    {
+      "result": {
+        "subject": "JOURN",
+        "courseNumber": "260",
+        "score": 0.6128144264221191
+      },
+      "course": {
+        "subject": "JOURN",
+        "number": "260",
+        "title": "Investigative Reporting for TV and Print",
+        "description": "Students will be required to investigate leads that are received by the faculty, and prepare briefing papers for the class to introduce guest speakers. They will work on researching and reporting assignments related to documentary productions and print stories for different outlets. \"Sources,\" people with informtion critical to developing a story, need to be developed. The responsibilites of a reporter engaged in developing sourses will be a constant theme of the seminar. "
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "201",
+        "score": 0.606961727142334
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "201",
+        "title": "Graduate Film Historiography",
+        "description": "The theoretical and methodological issues raised by the recent practice of film history are the focus of this seminar. Intended primarily for first-year film studies graduate students and other students interested in starting work on film history, the seminar provides both a theoretical overview of film historiography and an introduction to the practice of historically oriented film research. The first part of the course uses both overtly historiographic readings and film history examples to raise historical questions of technology, institution-formation, exhibition, cultural history, and spectatorship."
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+ESPM 109B, Reasonable
+NATAMST 102, Not reasonable
+ASAMST 143B, Reasonable
+SEASIAN 168AC, Reasonable
+ASAMST 145AC, Not reasonable
+NATAMST 175, Not reasonable
+ESPM 109D, Reasonable
+SEASIAN 101B, Reasonable
+PBHLTH 206B, Not reasonable
+PBHLTH 222A, Not reasonable

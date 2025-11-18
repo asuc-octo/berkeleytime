@@ -1,0 +1,135 @@
+{
+  "query": "Microeconomics of innovation",
+  "results": [
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "208",
+        "score": 0.6921506524085999
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "208",
+        "title": "Microeconomic Theory Seminar",
+        "description": ""
+      }
+    },
+    {
+      "result": {
+        "subject": "DEVP",
+        "courseNumber": "226",
+        "score": 0.6860945224761963
+      },
+      "course": {
+        "subject": "DEVP",
+        "number": "226",
+        "title": "Economics and Policy of Innovation and Supply Chains",
+        "description": "This course explores how innovation shapes evolving economies and the supply chains that bring innovations to life. Students will gain a conceptual and practical understanding of how supply chains are designed, operate, and respond to policy, environmental, and market factors. The course includes lectures on innovation and supply chain theory, followed by student-led case study presentations on real-world examples across sectors like food, energy, and digital services. Emphasis is placed on interdisciplinary analysis, resilience, and the role of supply chains in sustainable development."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVECON",
+        "courseNumber": "100",
+        "score": 0.6651621460914612
+      },
+      "course": {
+        "subject": "ENVECON",
+        "number": "100",
+        "title": "Intermediate Microeconomics with Applications to Sustainability",
+        "description": "Covers the basic microeconomic tools for further study of natural resource problems. Theory of consumption, production, theory of the firm, industrial organization, general equilibrium, public goods and externalities. Applications to agriculture and natural resources. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PUBPOL",
+        "courseNumber": "210B",
+        "score": 0.663414478302002
+      },
+      "course": {
+        "subject": "PUBPOL",
+        "number": "210B",
+        "title": "The Economics of Public Policy Analysis",
+        "description": "Theories of microeconomic behavior of consumers, producers, and bureaucrats are developed and applied to specific policy areas. Ability to analyze the effects of alternative policy actions in terms of 1) the efficiency of resource allocation and 2) equity is stressed. Policy areas are selected to show a broad range of actual applications of theory and a variety of policy strategies."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "101A",
+        "score": 0.6575958728790283
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "101A",
+        "title": "Microeconomics (Quantitative)",
+        "description": "This course introduces students to the main tools and concepts of microeconomics. These tools and concepts will serve as a foundation for many upper level economics courses. Topics covered include consumer theory, producer theory, equilibrium in a competitive market, monopoly, general equilibrium, game theory, and asymmetric information. Topics covered are similar to those in 100A, but this course uses calculus more intensively and is intended for students seeking a more mathematical approach."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "100A",
+        "score": 0.6572877764701843
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "100A",
+        "title": "Microeconomics",
+        "description": "This course introduces students to the main tools and concepts of microeconomics. These tools and concepts will serve as a foundation for many upper level economics courses. Topics covered include consumer theory, producer theory, equilibrium in a competitive market, monopoly, general equilibrium, and asymmetric information. This course makes use of calculus. Topics covered are similar to those in 101A. "
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "106",
+        "score": 0.6485440135002136
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "106",
+        "title": "Intermediate Microeconomic Theory",
+        "description": "This course is designed as a comprehensive overview of intermediate microeconomic theory. It covers the basic supply and demand model. Topics include consumer choice, choice under uncertainty and information, demand theory, firm, production and cost theory, competitive market theory, imperfect competition, and market failure. The course is structured for majors in Political Economy and other non-economic social science majors."
+      }
+    },
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "207",
+        "score": 0.6398638486862183
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "207",
+        "title": "Land and Housing Market Economics",
+        "description": "Using microeconomics as its platform, course explores the process and pattern of land utilization from a variety of perspectives: the neighborhood, the city, and the metropolis. The approach blends real estate, descriptive urban geography, and urban history with economics. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "201B",
+        "score": 0.6333510875701904
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "201B",
+        "title": "Economic Theory",
+        "description": "Basic preparation for the Ph.D. program including agency theory and mechanism design, general equilibrium theory."
+      }
+    },
+    {
+      "result": {
+        "subject": "LEGALST",
+        "courseNumber": "145",
+        "score": 0.6318854689598083
+      },
+      "course": {
+        "subject": "LEGALST",
+        "number": "145",
+        "title": "Law and Economics I",
+        "description": "The course will apply microeconomic theory analysis to legal rules and procedures. Emphasis will be given to the economic consequences of various sorts of liability rules, remedies for breach of contract and the allocation of property rights. The jurisprudential significance of the analysis will be discussed."
+      }
+    }
+  ]
+}

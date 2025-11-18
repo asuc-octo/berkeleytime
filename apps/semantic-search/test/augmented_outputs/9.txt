@@ -1,0 +1,135 @@
+{
+  "query": "Introduction to financial accounting",
+  "results": [
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "103",
+        "score": 0.7390480041503906
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "103",
+        "title": "Introduction to Finance",
+        "description": "Analysis and management of the flow of funds through an enterprise. Cash management, source and application of funds, term loans, types and sources of long-term capital. Capital budgeting, cost of capital, and financial structure. Introduction to capital markets. "
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "102A",
+        "score": 0.7100374698638916
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "102A",
+        "title": "Financial Accounting",
+        "description": "The identification, measurement, and reporting of financial effects of events on enterprises, with a particular emphasis on business organization. Preparation and interpretation of balance sheets, income statements, and statements of cash flows. "
+      }
+    },
+    {
+      "result": {
+        "subject": "XMBA",
+        "courseNumber": "203",
+        "score": 0.6854053735733032
+      },
+      "course": {
+        "subject": "XMBA",
+        "number": "203",
+        "title": "Introduction to Finance",
+        "description": "This core course examines the wide menu of available assets, the institutional structure of U.S. and international financial markets, and the market mechanisms for trading securities. Topics include discounting, capital budgeting, historical behavior of asset returns, and diversification and portfolio theory. The course will also provide introductions to asset pricing theory for primary and derivative assets and to the principles governing corporate financial arrangements and contracting. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "158",
+        "score": 0.6722310781478882
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "158",
+        "title": "Corporate and Personal Finance",
+        "description": "This course provides an integrated introduction to both corporate and personal finance, examining how financial principles apply across individual and institutional decision-making. Four main objectives. First, to give participants a foundation in core financial concepts including valuation, risk management, and capital structure decisions. Second, to develop financial literacy skills for personal financial management including saving, investing, borrowing, and retirement planning. Third, to analyze how behavioral biases affect both corporate managers and individual investors. Fourth, to explore how financial markets and institutions serve both corporate and household needs, and how policy interventions can improve financial outcomes."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "183",
+        "score": 0.6637438535690308
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "183",
+        "title": "Introduction to Real Estate Finance",
+        "description": "Real estate debt and equity financing; mortgage market structure; effects of credit on demand; equity investment criteria; public policies in real estate finance and urban development."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "122",
+        "score": 0.6604472398757935
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "122",
+        "title": "Financial Information Analysis",
+        "description": "This course is designed to: 1) develop basic skills in financial statement analysis; 2) teach students to identify the relevant financial data used in a variety of decision contexts, such as equity valuation, forecasting firm-level economic variables, distress prediction and credit analysis; 3) help students appreciate the factors that influence the outcome of the financial reporting process, such as the incentives of reporting parties, regulatory rules, and a firm's competitive environment. "
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "120AB",
+        "score": 0.6588172316551208
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "120AB",
+        "title": "Intermediate Financial Accounting 2",
+        "description": "This course expands students' knowledge of the concepts, theory, and application of financial accounting. It continues the technical accounting sequence, which also includes UGBA 120AA, Intermediate Accounting 1 and UGBA 120B, Advanced Financial Accounting. Topics include an in-depth treatment of the financing elements of the balance sheet and the income statement, as well as a detailed examination of the statement of cash flows."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "131",
+        "score": 0.6531226634979248
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "131",
+        "title": "Corporate Finance and Financial Statement Analysis",
+        "description": "This course will cover the principles and practice of business finance. It will focus on project evaluation, capital structure, and corporate governance. Firms' policies toward debt, equity, and dividends are explored. The incentives and conflicts facing managers and owners are also discussed."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "1",
+        "score": 0.6449772119522095
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "1",
+        "title": "Introduction to Economics",
+        "description": "A survey of economics designed to give an overview of the field. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "136",
+        "score": 0.6379820108413696
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "136",
+        "title": "Financial Economics",
+        "description": "Analysis of financial assets and institutions. The course emphasizes modern asset valuation theory and the role of financial intermediaries, and their regulation, in the financial system."
+      }
+    }
+  ]
+}

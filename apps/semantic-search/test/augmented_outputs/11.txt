@@ -1,0 +1,135 @@
+{
+  "query": "Advanced organic chemistry synthesis",
+  "results": [
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "114",
+        "score": 0.7872670888900757
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "114",
+        "title": "Advanced Synthetic Organic Chemistry",
+        "description": "Advanced topics in synthetic organic chemistry with a focus on selectivity. Topics include reductions, oxidations, enolate chemistry and the aldol reaction, reactions of non-stablized anions, olefination reactions, pericyclic reactions and application to the synthesis of complex structures."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "115",
+        "score": 0.7833970785140991
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "115",
+        "title": "Organic Chemistry--Advanced Laboratory Methods",
+        "description": "Advanced synthetic methods, chemical and spectroscopic structural methods, designed as a preparation for experimental research. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "214",
+        "score": 0.7151665091514587
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "214",
+        "title": "Heterocyclic Chemistry",
+        "description": "Advanced topics in organic chemistry with a focus on the reactivity and synthesis of aromatic heterocycles. Classic and modern methods for the synthesis of indoles, pyridines, furans, pyrroles, and quinolines will be covered, as well as complex, multi-heteroatom ring systems. Applications to medicinal and bioorganic chemistry will be included where appropriate."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "3BL",
+        "score": 0.7142118215560913
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "3BL",
+        "title": "Organic Chemistry Laboratory",
+        "description": "The synthesis and purification of organic compounds will be explored. Natural product chemistry will be introduced. Advanced spectroscopic methods including infrared, ultraviolet, and nuclear magnetic resonance spectroscopy and mass spectrometry will be used to analyze products prepared and/or isolated. Qualitative analysis of organic compounds will be covered."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "259",
+        "score": 0.7026758193969727
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "259",
+        "title": "Polymer Organic Chemistry",
+        "description": "This course will introduce concepts pertaining to the synthesis of modern polymers. We will focus on the major polymerization methods including step-growth, radical, anionic, cationic, ring-opening, and organometallic polymerizations with emphasis given to the mechanisms, kinetics, and thermodynamics of each polymerization method. More specialized topics such as \u201cliving\u201d and \u201ccontrolled\u201d polymerizations, stereochemistry, and polymer sustainability will also be discussed in detail. Throughout the course we will emphasize the historical developments and people behind the advancements in the field of polymer science.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "159",
+        "score": 0.7026758193969727
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "159",
+        "title": "Polymer Organic Chemistry",
+        "description": "This course will introduce concepts pertaining to the synthesis of modern polymers. We will focus on the major polymerization methods including step-growth, radical, anionic, cationic, ring-opening, and organometallic polymerizations with emphasis given to the mechanisms, kinetics, and thermodynamics of each polymerization method. More specialized topics such as \u201cliving\u201d and \u201ccontrolled\u201d polymerizations, stereochemistry, and polymer sustainability will also be discussed in detail. Throughout the course we will emphasize the historical developments and people behind the advancements in the field of polymer science.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "12B",
+        "score": 0.6593407988548279
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "12B",
+        "title": "Organic Chemistry",
+        "description": "A study of all aspects of fundamental organic chemistry, including nomenclature, chemical and physical properties, reactions and syntheses of the major classes of organic compounds. The study includes theoretical aspects, reaction mechanisms, multistep syntheses, and the chemistry of polycyclic and heterocyclic compounds. This course is more extensive and intensive than 3A-3B and includes a greater emphasis on reaction mechanisms and multistep syntheses. 12A (F); 12B (SP) "
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "263A",
+        "score": 0.6491594314575195
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "263A",
+        "title": "Synthetic Design I",
+        "description": "This course will provide an exposure to the range of catalytic reactions of organometallic systems, the identity of the catalysts for these reactions, and the scope and limitations of these reactions. Emphasis will be placed on understanding the mechanisms of homogeneous catalytic processes. Students will see the types of molecular fragments generated by catalytic organometallic chemistry and see the synthetic disconnections made possible by these reactions. The scope of transformations will encompass those forming commodity chemicals on large scale, pharmaceuticals on small scale, and both commodity and specialty polymers"
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "263B",
+        "score": 0.6465152502059937
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "263B",
+        "title": "Synthetic Design II",
+        "description": "This course will provide an exposure to the range of catalytic reactions of organometallic systems, the identity of the catalysts for these reactions, and the scope and limitations of these reactions. Emphasis will be placed on understanding the mechanisms of homogeneous catalytic processes. Students will see the types of molecular fragments generated by catalytic organometallic chemistry and see the synthetic disconnections made possible by these reactions. The scope of transformations will encompass those forming commodity chemicals on large scale, pharmaceuticals on small scale, and both commodity and specialty polymers."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "262",
+        "score": 0.6374486684799194
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "262",
+        "title": "Metals in Organic Synthesis",
+        "description": "Transition metal-mediated reactions occupy a central role in asymmetric catalysis and the synthesis of complex molecules. This course will describe the general principles of transition metal reactivity, coordination chemistry, and stereoselection. This module will also emphasize useful methods for the analysis of these reactions."
+      }
+    }
+  ]
+}

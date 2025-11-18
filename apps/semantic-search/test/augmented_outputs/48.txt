@@ -1,0 +1,135 @@
+{
+  "query": "Cryptography and network security",
+  "results": [
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "202",
+        "score": 0.7336676716804504
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "202",
+        "title": "Cryptography for Cyber and Network Security",
+        "description": "This course focuses on both mathematical and practical foundations of cryptography. The course discusses asymmetric and symmetric cryptography, Kerchkoff\u2019s Principle, chosen and known plaintext attacks, public key infrastructure, X.509, SSL/TLS (https), and authentication protocols. The course will include an in-depth discussion of many different cryptosystems including the RSA, Rabin, DES, AES, Elliptic Curve, and SHA family cryptosystems. This course also introduces advanced topics of applied cryptography, including a brief introduction to homomorphic encrypted computation and secure multi-party computation to protect sensitive data during arbitrary computation, cryptocurrency and its cryptographic building blocks, and quantum computing."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "276",
+        "score": 0.7147334814071655
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "276",
+        "title": "Cryptography",
+        "description": "Graduate survey of modern topics on theory, foundations, and applications of modern cryptography. One-way functions; pseudorandomness; encryption; authentication; public-key cryptosystems; notions of security. May also cover zero-knowledge proofs, multi-party cryptographic protocols, practical applications, and/or other topics, as time permits. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "210",
+        "score": 0.6757677793502808
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "210",
+        "title": "Network Security",
+        "description": "Introduction to networking and security as applied to networks. Exercises cover network programming in a language of the student's choice, understanding and analyzing packet traces using tools like wireshark and mitmproxy, as well as applying security principles to analyze and determine network security. After this course, the student will have a fundamental understanding of networking, TLS and security as it applies to networked systems. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "161",
+        "score": 0.670805037021637
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "161",
+        "title": "Computer Security",
+        "description": "Introduction to computer security. Cryptography, including encryption, authentication, hash functions, cryptographic protocols, and applications. Operating system security, access control. Network security, firewalls, viruses, and worms. Software security, defensive programming, and language-based security. Case studies from real-world systems. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "206",
+        "score": 0.6511167287826538
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "206",
+        "title": "Mathematics and Programming for Cybersecurity",
+        "description": "This course is designed to provide students with the foundational math and programming skills required to be successful in the Master of Information and Cybersecurity (MICS) program. Upon completion of this course, students will be able to write programs in Python and will gain experience reading and interpreting C programs. Students will receive a comprehensive overview of algebraic principles and will explore quantitative concepts needed for cryptography. Additionally, this course will prepare students to apply logical thinking and decompose complex problems to create programmatic solutions."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "261",
+        "score": 0.648028552532196
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "261",
+        "title": "Security in Computer Systems",
+        "description": "Graduate survey of modern topics in computer security, including protection, access control, distributed access security, firewalls, secure coding practices, safe languages, mobile code, and case studies from real-world systems. May also cover cryptographic protocols, privacy and anonymity, and/or other topics as time permits. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "70",
+        "score": 0.6450804471969604
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "70",
+        "title": "Discrete Mathematics and Probability Theory",
+        "description": "Logic, infinity, and induction; applications include undecidability and stable marriage problem. Modular arithmetic and GCDs; applications include primality testing and cryptography. Polynomials; examples include error correcting codes and interpolation. Probability including sample spaces, independence, random variables, law of large numbers; examples include load balancing, existence arguments, Bayesian inference."
+      }
+    },
+    {
+      "result": {
+        "subject": "LEGALST",
+        "courseNumber": "122",
+        "score": 0.6119917631149292
+      },
+      "course": {
+        "subject": "LEGALST",
+        "number": "122",
+        "title": "Prudence and Law",
+        "description": "Selected views of prudence, often called practical wisdom, from ancient to modern times, in philosophical, theological, literary, and historical writings. Some relating of these views to typical legal work."
+      }
+    },
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "207",
+        "score": 0.6100685000419617
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "207",
+        "title": "Artificial Intelligence (AI) and Machine Learning (ML) in Cybersecurity",
+        "description": "Artificial intelligence and machine learning is a rapidly growing field at the intersection of computer science and statistics concerned with finding patterns in data. It is responsible for tremendous advances in technology, from personalized product recommendations to speech recognition in cell phones. This course provides a broad introduction to the key ideas in machine learning, with a focus on applications and concepts relevant to cybersecurity. The emphasis will be on intuition and practical examples rather than theoretical results, though some experience with probability, statistics, and linear algebra will be important. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "168",
+        "score": 0.6092015504837036
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "168",
+        "title": "Introduction to the Internet: Architecture and Protocols",
+        "description": "This course is an introduction to the Internet architecture. We will focus on the concepts and fundamental design principles that have contributed to the Internet's scalability and robustness and survey the various protocols and algorithms used within this architecture. Topics include layering, addressing, intradomain routing, interdomain routing, reliable delivery, congestion control, and the core protocols (e.g., TCP, UDP, IP, DNS, and HTTP) and network technologies (e.g., Ethernet, wireless)."
+      }
+    }
+  ]
+}

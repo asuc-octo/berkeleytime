@@ -1,0 +1,10 @@
+CYPLAN 214, Reasonable
+CYPLAN 254, Reasonable
+CIVENG 254G, Not reasonable
+LDARCH 277, Reasonable
+ENVDES R3B, Reasonable
+CYPLAN 140, Not reasonable
+ESPM 189A, Reasonable
+ENVDES 5, Not reasonable
+CYPLAN 290, Not reasonable
+UGBA 171, Reasonable

@@ -1,0 +1,135 @@
+{
+  "query": "Renaissance art and architecture",
+  "results": [
+    {
+      "result": {
+        "subject": "HISTART",
+        "courseNumber": "11",
+        "score": 0.5975612998008728
+      },
+      "course": {
+        "subject": "HISTART",
+        "number": "11",
+        "title": "Introduction to European and American Art from the Renaissance to the Present",
+        "description": "Teaching you how to see; how to see historically; how to see like others see; how to see art\u2019s politics of gender and race and class. Teaching you how to describe what you see with words. An introduction to the history of art in Europe and the U.S. since the 14th century focusing primarily on painting and sculpture. Explores how art can function as a stabilizing force but also how it can contribute to social and political transformation, even revolution."
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "170B",
+        "score": 0.5950168371200562
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "170B",
+        "title": "An Historical Survey of Architecture and Urbanism",
+        "description": "The first part of this sequence studies the ancient and medieval periods; the second part studies the period since 1400; the aim is to look at architecture and urbanism in their social and historical context."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENGLISH",
+        "courseNumber": "115B",
+        "score": 0.5693337321281433
+      },
+      "course": {
+        "subject": "ENGLISH",
+        "number": "115B",
+        "title": "The English Renaissance",
+        "description": "Literature of the 17th century. "
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTART",
+        "courseNumber": "192G",
+        "score": 0.561826229095459
+      },
+      "course": {
+        "subject": "HISTART",
+        "number": "192G",
+        "title": "Undergraduate Seminar: Problems in Research and Interpretation: American Art, Architecture, & Design",
+        "description": "Problems in American and British art, architecture, design of the 17th, 18th, 19th, 20th, or 21st centuries; art institutions, collecting, or related topics. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ITALIAN",
+        "courseNumber": "215",
+        "score": 0.5617830753326416
+      },
+      "course": {
+        "subject": "ITALIAN",
+        "number": "215",
+        "title": "Seminar in Renaissance Literature and Culture",
+        "description": "Investigation of major topics, genres, and authors in Italian literature and culture of the 15th and 16th centuries."
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTART",
+        "courseNumber": "132AC",
+        "score": 0.5614153146743774
+      },
+      "course": {
+        "subject": "HISTART",
+        "number": "132AC",
+        "title": "AsiaAmerica: Asian American Art and Architecture",
+        "description": "This course focuses on modern and contemporary Asian American art and architecture from the mid-1800s to the present. Using a comparative perspective, each week utilizes case studies\u2014works by particular artists, architects, or art groups\u2014to examine what Asian American art looked like at specific historical junctures and what it meant to be an Asian American artist. A range of material practices, including painting, sculpture, installation, performance, new media, architecture, and graphic illustration are considered."
+      }
+    },
+    {
+      "result": {
+        "subject": "LDARCH",
+        "courseNumber": "170",
+        "score": 0.5606393218040466
+      },
+      "course": {
+        "subject": "LDARCH",
+        "number": "170",
+        "title": "History and Literature of Landscape Architecture",
+        "description": "This course surveys the history of landscape architecture in four realms: 1) gardens; 2) urban open space, that is, plazas, parks, and recreation systems; 3) urban and suburban design; and 4) regional and environmental planning. The course will review the cultural and social contexts which have shaped and informed landscape architecture practice and aesthetics, as well as the environmental concerns, horticultural practices, and technological innovations of historic landscapes."
+      }
+    },
+    {
+      "result": {
+        "subject": "MELC",
+        "courseNumber": "C120B",
+        "score": 0.5565935969352722
+      },
+      "course": {
+        "subject": "MELC",
+        "number": "C120B",
+        "title": "The Art of Ancient Mesopotamia: 1000-330 BCE",
+        "description": "The royal art and architecture of later Mesopotamia will be explored in terms of the social, political, and cultural context of the great empires of Assyria, Babylon, and Persia. The course provides an integrated picture of the arts of Mesopotamia and neighboring regions from 1000-330 BCE with an emphasis on the development of visual narrative, the use of art in the expression of authority and legitimacy, and artistic interconnections between cultures. Collections on campus or in the area will be incorporated whenever possible. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "279",
+        "score": 0.556260883808136
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "279",
+        "title": "Special Topics in the History of Architecture",
+        "description": "Selected topics in the history of architecture. For current offerings, see department website."
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTART",
+        "courseNumber": "C120B",
+        "score": 0.5559302568435669
+      },
+      "course": {
+        "subject": "HISTART",
+        "number": "C120B",
+        "title": "The Art of Ancient Mesopotamia: 1000-330 BCE",
+        "description": "The royal art and architecture of later Mesopotamia will be explored in terms of the social, political, and cultural context of the great empires of Assyria, Babylon, and Persia. The course provides an integrated picture of the arts of Mesopotamia and neighboring regions from 1000-330 BCE with an emphasis on the development of visual narrative, the use of art in the expression of authority and legitimacy, and artistic interconnections between cultures. Collections on campus or in the area will be incorporated whenever possible. "
+      }
+    }
+  ]
+}

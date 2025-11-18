@@ -1,0 +1,135 @@
+{
+  "query": "Advanced C++ programming practices",
+  "results": [
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "33B",
+        "score": 0.62326979637146
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "33B",
+        "title": "Introduction to Advanced Programming in R",
+        "description": "The course is designed primarily for those who are already familiar with programming in another language, such as python, and want to understand how R works, and for those who already know the basics of R programming and want to gain a more in-depth understanding of the language in order to improve their coding. The focus is on the underlying paradigms in R, such as functional programming, atomic vectors, complex data structures, environments, and object systems. The goal of this course is to better understand programming principles in general and to write better R code that capitalizes on the language's design.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "281",
+        "score": 0.6078088283538818
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "281",
+        "title": "Software Engineering for Scientific Computing",
+        "description": "The course covers computer architecture and software features that have the\ngreatest impact on performance. It addresses debugging and performance tunning, detecting\nmemory and stack overwrites, malloc corruption, hotspot, paging, cache misses. A toolbox with\ncommon algorithms: sorting, searching, hashing, trees, graph traversing, is followed by common\npatterns used in object-oriented design. It describes programming paradigms, dynamic libraries,\ndistributed architectures, and services. Lectures on linear algebra and performance libraries are\nprovided as background for future courses. HPC paradigms and GPU programming are introduced.\nSoftware packaging, extensibility, and interactivity is followed by team development, testing and\nhardening."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "47A",
+        "score": 0.6014649271965027
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "47A",
+        "title": "Completion of Work in Computer Science 61A",
+        "description": "Implementation of generic operations. Streams and iterators. Implementation techniques for supporting functional, object-oriented, and constraint-based programming in the Scheme programming language. Together with 9D, 47A constitutes an abbreviated, self-paced version of 61A for students who have already taken a course equivalent to 61B. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61A",
+        "score": 0.5980055332183838
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61A",
+        "title": "The Structure and Interpretation of Computer Programs",
+        "description": "An introduction to programming and computer science focused on abstraction techniques as means to manage program complexity. Techniques include procedural abstraction; control abstraction using recursion, higher-order functions, generators, and streams; data abstraction using interfaces, objects, classes, and generic operators; and language abstraction using interpreters and macros. The course exposes students to programming paradigms, including functional, object-oriented, and declarative approaches. It includes an introduction to asymptotic analysis of algorithms. There are several significant programming projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "375",
+        "score": 0.5897465348243713
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "375",
+        "title": "Teaching Techniques for Computer Science",
+        "description": "Discussion and practice of techniques for effective teaching, focusing on issues most relevant to teaching assistants in computer science courses. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "370",
+        "score": 0.5892046689987183
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "370",
+        "title": "Adaptive Instruction Methods in Computer Science",
+        "description": "This is a course for aspiring teachers or those who want to instruct with expertise from evidence-based research and proven equity-oriented practices. It provides pedagogical training by introducing the big ideas of teaching and learning, and illustrating how to put them into practice. The course is divided into three sections\u2014instructing the individual; a group; and psycho-social factors that affect learning at any level. These sections are designed to enhance any intern\u2019s, tutor\u2019s, or TA\u2019s teaching skillset. Class is discussion based, and covers theoretical and practical pedagogical aspects to teaching in STEM. An integral feature of the course involves providing weekly tutoring sessions."
+      }
+    },
+    {
+      "result": {
+        "subject": "ART",
+        "courseNumber": "117",
+        "score": 0.5876055955886841
+      },
+      "course": {
+        "subject": "ART",
+        "number": "117",
+        "title": "Advanced Drawing: Research and Methods",
+        "description": "This advanced studio class extends drawing through its varied contemporary processes and methods. Students will enhance their skills and explore materials through self-generated projects and critical engagement with the instructor and peers. In-class critiques and open discussion will reinforce and challenge the students as a vital part of their technical, conceptual, and professional development. Students will attend library tours, field trips and learn how professional artists use research in support of artistic investigations. Students will also learn how to explore media and materials to generate research for later investigations and interrogations of mark-making."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "263",
+        "score": 0.5830527544021606
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "263",
+        "title": "Design of Programming Languages",
+        "description": "Selected topics from: analysis, comparison, and design of programming languages, formal description of syntax and semantics, advanced programming techniques, structured programming, debugging, verification of programs and compilers, and proofs of correctness. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PORTUG",
+        "courseNumber": "103",
+        "score": 0.5816379189491272
+      },
+      "course": {
+        "subject": "PORTUG",
+        "number": "103",
+        "title": "Advanced Grammar and Composition",
+        "description": "Advanced work in Portuguese grammatical structures. Practice in writing. "
+      }
+    },
+    {
+      "result": {
+        "subject": "DATA",
+        "courseNumber": "C88C",
+        "score": 0.579820454120636
+      },
+      "course": {
+        "subject": "DATA",
+        "number": "C88C",
+        "title": "Computational Structures in Data Science",
+        "description": "Development of Computer Science topics appearing in Foundations of Data Science (C8); expands computational concepts and techniques of abstraction. Understanding  the structures that underlie the programs, algorithms, and languages used in data science and elsewhere.   Mastery of a particular programming language while studying general techniques for managing program complexity, e.g., functional, object-oriented, and declarative programming. Provides practical experience with composing larger systems through several significant programming projects."
+      }
+    }
+  ]
+}

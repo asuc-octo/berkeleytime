@@ -1,0 +1,135 @@
+{
+  "query": "Human-computer interaction (HCI)",
+  "results": [
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "170",
+        "score": 0.6469302177429199
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "170",
+        "title": "Industrial Design and Human Factors",
+        "description": "This course surveys topics related to the design of products and interfaces ranging from alarm clocks, cell phones, and dashboards to logos, presentations, and web sites. Design of such systems requires familiarity with human factors and ergonomics, including the physics and perception of color, sound, and touch, as well as familiarity with case studies and contemporary practices in interface design and usability testing. Students will solve a series of design problems individually and in teams."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "114",
+        "score": 0.6086729764938354
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "114",
+        "title": "User Experience Research",
+        "description": "Methods and concepts of creating design requirements and evaluating prototypes and existing systems. Emphasis on computer-based systems, including mobile system and ubiquitous computing, but may be suitable for students interested in other domains of design for end-users. Includes quantitative and qualitative methods as applied to design, usually for short-term term studies intended to provide guidance for designers."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "214",
+        "score": 0.5856194496154785
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "214",
+        "title": "User Experience Research",
+        "description": "This course addresses concepts and methods of user experience research, from understanding and identifying needs, to evaluating concepts and designs, to assessing the usability of products and solutions. We emphasize methods of collecting and interpreting qualitative data about user activities, working both individually and in teams, and translating them into design decisions. Students gain hands-on practice with observation, interview, survey, focus groups, and expert review. Team activities and group work are required during class and for most assignments. Additional topics include research in enterprise, consulting, and startup organizations, lean/agile techniques, mobile research approaches, and strategies for communicating findings."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "247",
+        "score": 0.5851564407348633
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "247",
+        "title": "Information Visualization and Presentation",
+        "description": "The design and presentation of digital information. Use of graphics, animation, sound, visualization software, and hypermedia in presenting information to the user. Methods of presenting complex information to enhance comprehension and analysis. Incorporation of visualization techniques into human-computer interfaces. Course must be completed for a letter grade to fulfill degree requirements."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "C265",
+        "score": 0.5655854940414429
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "C265",
+        "title": "Interface Aesthetics",
+        "description": "This course will cover new interface metaphors beyond desktops (e.g., for mobile devices, computationally enhanced environments, tangible user interfaces) but will also cover visual design basics (e.g., color, layout, typography, iconography) so that we have systematic and critical understanding of aesthetically engaging interfaces. Students will get a hands-on learning experience on these topics through course projects, design critiques, and discussions, in addition to lectures and readings."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "233",
+        "score": 0.5654913783073425
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "233",
+        "title": "Social Psychology and Information Technology",
+        "description": "Discusses application of social psychological theory and research to information technologies and systems; we focus on sociological social psychology, which largely focuses on group processes, networks, and interpersonal relationships. Information technologies considered include software systems used on the internet such as social networks, email, and social games, as well as specific hardware technologies such as mobile devices, computers, wearables, and virtual/augmented reality devices. We examine human communication practices, through the lens of different social psychology theories, including: symbolic interaction, identity theories, social exchange theory, status construction theory, and social networks and social structure theory."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "243C",
+        "score": 0.5569928884506226
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "243C",
+        "title": "Information Systems in Public Health",
+        "description": "An introduction to new information systems, such as the Internet and interactive television, and how they may be used to improve human health. The course has three objectives: first, to familiarize students with new information technologies; second, to review how these technologies will be used by public health professionals, consumers, health care providers, and others; and third, to study related ethical and legal issues such as privacy, access, and liability. The course is designed for people with minimal understanding of interactive technologies."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "10",
+        "score": 0.5563865900039673
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "10",
+        "title": "The Beauty and Joy of Computing",
+        "description": "An introductory course for students with minimal prior exposure to computer science. Prepares students for future computer science courses and empowers them to utilize programming to solve problems in their field of study. Presents an overview of the history, great principles, and transformative applications of computer science, as well as a comprehensive introduction to programming. Topics include abstraction, recursion, algorithmic complexity, higher-order functions, concurrency, social implications of computing (privacy, education, algorithmic bias), and engaging research areas (data science, AI, HCI). Students will program in Snap! (a friendly graphical language) and Python, and will design and implement two projects of their choice."
+      }
+    },
+    {
+      "result": {
+        "subject": "NWMEDIA",
+        "courseNumber": "C265",
+        "score": 0.5476808547973633
+      },
+      "course": {
+        "subject": "NWMEDIA",
+        "number": "C265",
+        "title": "Interface Aesthetics",
+        "description": "This course will cover new interface metaphors beyond desktops (e.g., for mobile devices, computationally enhanced environments, tangible user interfaces) but will also cover visual design basics (e.g., color, layout, typography, iconography) so that we have systematic and critical understanding of aesthetically engaging interfaces. Students will get a hands-on learning experience on these topics through course projects, design critiques, and discussions, in addition to lectures and readings."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "302",
+        "score": 0.5473243594169617
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "302",
+        "title": "Designing Computer Science Education",
+        "description": "Discussion and review of research and practice relating to the teaching of computer science: knowledge organization and misconceptions, curriculum and topic organization, evaluation, collaborative learning, technology use, and administrative issues. As part of a semester-long project to design a computer science course, participants invent and refine a variety of homework and exam activities, and evaluate alternatives for textbooks, grading and other administrative policies, and innovative uses of technology. "
+      }
+    }
+  ]
+}

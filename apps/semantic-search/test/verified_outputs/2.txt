@@ -1,0 +1,10 @@
+COMPSCI 47A, Reasonable
+COMPSCI 61A, Reasonable
+STAT 33B, Reasonable
+DATA C88C, Reasonable
+LINGUIS 121, Reasonable
+COMPSCI 164, Not reasonable
+MCELLBI 249A, Not reasonable
+COMPSCI 10, Reasonable
+CHEM 281, Not reasonable
+STAT 33A, Not reasonable

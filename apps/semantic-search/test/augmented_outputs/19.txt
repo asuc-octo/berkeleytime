@@ -1,0 +1,135 @@
+{
+  "query": "Urban planning and sustainable cities",
+  "results": [
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "214",
+        "score": 0.6871825456619263
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "214",
+        "title": "Infrastructure Planning and Policy: Climate Change Planning and Urban Systems",
+        "description": "This course introduces students to city planning and climate change. Its focuses on urban systems that are affected by climate change and that define urban vulnerability or resilience to climate change. For students interested in sustainable environmental design, the course situates design problems in a broader policy, regulatory, financial, and infrastructural context. We will cover topics such as green infrastructure, flood protection, networked infrastructure such as water and electricity, insurance, and post-disaster finance, as well as selected topics in land use and spatial planning. In addressing all these topics, emphasis is placed on political and normative issues that arise in the context of urban adaptation to climate change."
+      }
+    },
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "254",
+        "score": 0.6845501065254211
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "254",
+        "title": "Sustainable Communities",
+        "description": "This course examines and explores the concept of sustainable development at the community level. The course has three sections: (1) an introduction to the discourse on sustainable development; (2) an exploration of several leading attempts to incorporate sustainability principles into plans, planning, and urban design; (3) a comparative examination of several attempts to modify urban form and address the multiple goals (social, economic, environmental) of sustainable urbanism."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "254G",
+        "score": 0.6518568396568298
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "254G",
+        "title": "Global Metropolitan Studies: Introduction to Theories, Histories & Methods",
+        "description": "Implications of increasing urbanization are widespread: from environmental challenges, to segregation, to new political and social movements. This course provides an overview of different disciplinary approaches to understanding urban systems, drawing on engineering, the social sciences, urban planning, and the natural sciences. Students will learn from other disciplines to enrich the study of cities within their own field and be better prepared for interdisciplinary collaborations."
+      }
+    },
+    {
+      "result": {
+        "subject": "LDARCH",
+        "courseNumber": "277",
+        "score": 0.651005744934082
+      },
+      "course": {
+        "subject": "LDARCH",
+        "number": "277",
+        "title": "Resilience and Urban Development",
+        "description": "Methods for increasing urban sustainability and resilience through decentralized infrastructure design and appropriate development site design, with a focus on flooding and fire as drivers of urban adaptation at the block and district scales. Comparative frameworks for urban infrastructure systems analysis and resilience. Basic quantitative skills for flooding-related block, street and district design. Lessons-learned from key international and regional design adaptations for fire, flooding and sea level rise."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVDES",
+        "courseNumber": "R3B",
+        "score": 0.6429475545883179
+      },
+      "course": {
+        "subject": "ENVDES",
+        "number": "R3B",
+        "title": "Reading and Composition in Energy, Society, and Environmental Design",
+        "description": "This course will expose students to key literature that examines, primarily, the relationship between sustainability and environmental design disciplines. Our goal will be not only to investigate the central ideas that inform the design of sustainable landscapes, cities, and buildings, but also to understand how competing arguments are presented in writing. Satisfies the second half of the Reading and Composition Requirement. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "140",
+        "score": 0.6376082897186279
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "140",
+        "title": "Urban Design: City-Building and Place-Making",
+        "description": "The course is concerned with the multidisciplinary field and practice of urban design. It includes a review of historical approaches to urban design and current movements in the field, as well as discussion of the elements of urban form, theories of good city form, scales of urban design, implementation approaches, and challenges and opportunities for the discipline. Learning from cities via fieldwork is an integral part of the course."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "189A",
+        "score": 0.637223482131958
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "189A",
+        "title": "Urban Ecology and Evolution",
+        "description": "This course examines the complex, coupled and heterogeneous interactions that occur among organisms, humans, and the urban environment. We will emphasize foundational concepts in urban ecology spanning the organismal, population, community, and ecosystem levels, with special focus on the role of social-ecological dynamics in shaping the emergent properties of urban biological systems. We will also discuss how such interactions lead to rapid evolutionary change in cities and discuss what that means for urban biodiversity and conservation. Finally, we will address how cities regionally and globally have similar and dissimilar properties, and how we can apply urban ecological principles to urban planning, design, conservation, wildlife manage."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVDES",
+        "courseNumber": "5",
+        "score": 0.6343052983283997
+      },
+      "course": {
+        "subject": "ENVDES",
+        "number": "5",
+        "title": "Cities and Sites",
+        "description": "This course explores cities and landscapes as layered repositories of history, both ecological and human. Examining environmental design history and practice, it highlights how deep time legacies are acknowledged or ignored in placemaking, including racialized spatial histories. In addressing the role of architecture, city planning, and landscape design in shaping places and giving them meaning, the course explores the diversity of spatially defined experiences and the ways in which they are shaped by policy and professional practice. Case studies on Bay Area urban and social geography are linked with transnational histories and design movements to highlight the larger forces that have shaped the local historical and social landscape."
+      }
+    },
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "290",
+        "score": 0.631476879119873
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "290",
+        "title": "Topics in City and Metropolitan Planning",
+        "description": "Analysis of selected topics in city and metropolitan planning with emphasis on implications for planning practice and urban policy formation. In some semesters, optional five-week, 1-unit modules may be offered, taking advantage of guest visitors. Check department for modules at start of semester."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "171",
+        "score": 0.6301218271255493
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "171",
+        "title": "Tech and the City: How to Get Urban Innovation Right",
+        "description": "This course critically examines how new technologies and business models impact cities, and identifies the approaches that produce not only the best business outcomes, but also the most equitable and sustainable outcomes. To begin, we explore what makes cities such compelling laboratories for technology innovation, learn from past attempts at \u201csmart city\u201d interventions, and discuss how technologists can identify more effective solutions to today\u2019s urban challenges. We\u2019ll then hear from a variety of cutting edge practitioners, including venture investors, startup founders, government officials, tech journalists and community organizers about the unique opportunities and challenges of building an urban tech startup today."
+      }
+    }
+  ]
+}

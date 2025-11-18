@@ -1,0 +1,135 @@
+{
+  "query": "Environmental law and policy",
+  "results": [
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "60",
+        "score": 0.7387433648109436
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "60",
+        "title": "Environmental Policy, Administration, and Law",
+        "description": "Introduction to U.S. environmental policy process focuses on history and evolution of political institutions, importance of property, federal and state roles in decision making, and challenges of environmental policy. Emphasis is on use of science in decision making, choices between regulations and incentives, and role of bureaucracy in resource policy. Case studies on natural resource management, risk management, environmental regulation, and environmental justice."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVECON",
+        "courseNumber": "141",
+        "score": 0.7118668556213379
+      },
+      "course": {
+        "subject": "ENVECON",
+        "number": "141",
+        "title": "Agricultural and Environmental Policy",
+        "description": "This course considers the formation, implementation, and impact of public policies affecting agriculture and the environment. Economic approaches to public lawmaking, including theories of legislation, interest group activity, and congressional control of bureaucracies. Case studies include water allocation, endangered species protection, water quality, food safety, drainage, wetlands, pesticides, and farmworker safety. Emphasis on examples from California."
+      }
+    },
+    {
+      "result": {
+        "subject": "DEVP",
+        "courseNumber": "233",
+        "score": 0.6988499164581299
+      },
+      "course": {
+        "subject": "DEVP",
+        "number": "233",
+        "title": "Law, Politics, and Policymaking",
+        "description": "Law, Politics, and Policymaking will introduce students to principles of law, the mechanisms of politics, political economy, and policymaking delving into fundamentals of business, as well as environmental, international, and human rights law in the context of development. This course will provide students with insights into real-world contexts in which sustainable development practice takes place. It will consist of case studies of political economic and legal analysis."
+      }
+    },
+    {
+      "result": {
+        "subject": "LDARCH",
+        "courseNumber": "C231",
+        "score": 0.6555648446083069
+      },
+      "course": {
+        "subject": "LDARCH",
+        "number": "C231",
+        "title": "Environmental Planning and Regulation",
+        "description": "This course will examine emerging trends in environmental planning and policy and the basic regulatory framework for environmental planning encountered in the U.S. We will also relate the institutional and policy framework of California and the United States to other nations and emerging international institutions. The emphasis of the course will be on regulating \"residuals\" as they affect three media: air, water, and land. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "C251",
+        "score": 0.6510450839996338
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "C251",
+        "title": "Environmental Planning and Regulation",
+        "description": "This course will examine emerging trends in environmental planning and policy and the basic regulatory framework for environmental planning encountered in the U.S. We will also relate the institutional and policy framework of California and the United States to other nations and emerging international institutions. The emphasis of the course will be on regulating \"residuals\" as they affect three media: air, water, and land. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "271E",
+        "score": 0.6416400671005249
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "271E",
+        "title": "Science and Policy for Environment and Health",
+        "description": "Scientific knowledge and analyses are important to the development of public policies that address the impact of the environment on health. The limits of existing knowledge and uncertainties in research results create significant challenges in applying science to answer critical questions. This course critically examines how scientific information is used in policy decisions. Case studies of current issues address characterization of scientific knowledge, interpretation of science in policy contexts, scientific integrity, and factors in addition to science that influence decisions. Assignments prepare students to effectively translate technical knowledge for multi-disciplinary and lay audiences and to participate in public policy proceedings. Core materials address differences between regulatory and market-based approaches; emerging paradigms including the precautionary principle and environmental justice; and key elements of risk assessment and cost-benefit analysis."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "102D",
+        "score": 0.6388116478919983
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "102D",
+        "title": "Climate and Energy Policy",
+        "description": "This intermediate level course engages with both the politics and the design of climate and clean energy policy, with a focus on the United States. Key themes include political strategies to climate change, the choice of policy instruments, the role of various state actors and interest groups in policy making, the interaction of policy and low-carbon technology markets, and the US and global politics. The course combines the study of analytical concepts with in-depth case studies. "
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "205",
+        "score": 0.6205978989601135
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "205",
+        "title": "Information Law and Policy",
+        "description": "This course uses examples from various commercial domains\u2014retail, health, credit, entertainment, social media, and biosensing/quantified self\u2014to explore legal and ethical issues including freedom of expression, privacy, research ethics, consumer protection, information and cybersecurity, and copyright. The class emphasizes how existing legal and policy frameworks constrain, inform, and enable the architecture, interfaces, data practices, and consumer facing policies and documentation of such offerings; and, fosters reflection on the ethical impact of information and communication technologies and the role of information professionals in legal and ethical work.  "
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVECON",
+        "courseNumber": "C132",
+        "score": 0.6123559474945068
+      },
+      "course": {
+        "subject": "ENVECON",
+        "number": "C132",
+        "title": "International Environmental Economics",
+        "description": "This course studies the following question:How should policymakers and scholars design and analyze environmental policy in a globalized world where much economic activity and pollution crosses political borders? The course addresses issues including climate change, air and water pollution, deforestation, species extinction, and others. The course also analyzes a variety of ways that countries and regions interact, including trade, foreign direct investment, outsourcing, international agreements and treaties, and others. The course also teaches a range of tools used to analyze these issues, including life-cycle(also called environmental footprint) analysis, simple econometrics, environmental market design, non-market valuation, and the data."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVECON",
+        "courseNumber": "170",
+        "score": 0.6105403304100037
+      },
+      "course": {
+        "subject": "ENVECON",
+        "number": "170",
+        "title": "Energy and Climate Policy in China",
+        "description": "The course will present scholarly review of historical and on-going energy and climate policy topics in China, with a broad goal of gaining understanding the relationship between energy, economic development, and climate change in the largest emerging economy, China. "
+      }
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "query": "Poverty and inequality in the United States",
+  "results": [
+    {
+      "result": {
+        "subject": "PUBPOL",
+        "courseNumber": "267",
+        "score": 0.7595008611679077
+      },
+      "course": {
+        "subject": "PUBPOL",
+        "number": "267",
+        "title": "The Social Safety Net, Poverty and Income Inequality",
+        "description": "We will examine the nature and extent of poverty and inequality in the U.S., its causes and consequences, and the effects of government programs and policies. The first unit covers the measurement of poverty and inequality and reviews the evidence for the trends in the U.S. and other developed countries. The next unit covers the causes of poverty and inequality, particularly the influences of the labor market and education. The course also surveys the government policies and programs such as taxes, government transfers, active labor market policies, and labor market institutions such as unions and minimum wages. Throughout the course, policy context is highlighted, in terms of reviewing prior reforms and the potential prospective changes."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "180I",
+        "score": 0.6809706687927246
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "180I",
+        "title": "Comparative Perspectives on U.S. and European Societies: Inequality",
+        "description": "This survey course explores differences between modern societies through systematic comparisons of inequality in the U.S. and European countries. It analyzes central social changes, social problems and institutions in the societies, addressing gender inequality, immigration, and rising inequality."
+      }
+    },
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "148",
+        "score": 0.6570442914962769
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "148",
+        "title": "Social Policy",
+        "description": "In this course, we will examine American policy responses to poverty and inequality and evaluate various theories. We will pay particular attention to the role of pulic opinion, interest groups, race and class relations, social movements, and the state in explaining the American social welfare provision. "
+      }
+    },
+    {
+      "result": {
+        "subject": "EDUC",
+        "courseNumber": "40AC",
+        "score": 0.6311467289924622
+      },
+      "course": {
+        "subject": "EDUC",
+        "number": "40AC",
+        "title": "From Macro to Micro:  Experiencing Education (In)equality in and beyond Schools",
+        "description": "The goal of equality has long dominated social and political discourse in the United States. This goal has struggled alongside our nation\u2019s professed commitment to diversity \u2013 diversity of race, ethnicity, class, language, culture, ability, and religion (among many others). Public schools are arguably the primary arena within which efforts to nurture equality and diversity have been focused and challenged. The schools, and the myriad educational contexts beyond them, play a central role in the organization of inequality. At the same time, they also offer the potential for increased opportunity and equity. "
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "165",
+        "score": 0.6153189539909363
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "165",
+        "title": "Power and Opportunity in American Capitalism",
+        "description": "This course examines how institutions, ideologies, and social actors have shaped political and economic opportunity in the United States from the colonial era to the present. Through interdisciplinary readings and collaborative projects, students explore how American capitalism has simultaneously opened and obstructed pathways to opportunity\u2014especially for marginalized communities. The course interrogates the enduring effects of systemic discrimination on social mobility and highlights how communities have resisted exclusion and demanded change. Students will build skills in research, public speaking, teamwork, and critical analysis as they challenge dominant narratives and develop solutions to contemporary inequalities."
+      }
+    },
+    {
+      "result": {
+        "subject": "GPP",
+        "courseNumber": "115",
+        "score": 0.6061527729034424
+      },
+      "course": {
+        "subject": "GPP",
+        "number": "115",
+        "title": "Global Poverty: Challenges and Hopes",
+        "description": "This class seeks to provide a rigorous understanding of 20th century development and thus 21st century poverty alleviation. Students will take a look at popular ideas of poverty alleviation, the institutional framework of poverty ideas and practices, and the social and political mobilizations that seek to transform the structures of poverty. "
+      }
+    },
+    {
+      "result": {
+        "subject": "EDUC",
+        "courseNumber": "163",
+        "score": 0.5991997122764587
+      },
+      "course": {
+        "subject": "EDUC",
+        "number": "163",
+        "title": "Contemporary Issues in U.S. Education",
+        "description": "This course surveys the major events, as well as broader social, political, and economic forces, that have coalesced to shape U.S. public schools today and the contemporary reforms that policy makers have designed to improve them. We accomplish this by exploring the scholarship on the roots of educational inequality, the history of school reform, and the most prominent reforms that are present in American schools today. We engage with primary research, historical artifacts, advocacy documents, and guest speakers who represent a range of ideological and political perspectives.           "
+      }
+    },
+    {
+      "result": {
+        "subject": "GPP",
+        "courseNumber": "196",
+        "score": 0.5965374708175659
+      },
+      "course": {
+        "subject": "GPP",
+        "number": "196",
+        "title": "Global Poverty and Practice Capstone Course",
+        "description": "This course is intended to provide students with a forum for reflection on the Practice Experience component of the Global Poverty and Practice minor. Lessons learned in the minor will be applied to the realm of public discourse through various forms of public scholarship. Issues of power and privilege, civic engagement, and tensions between tourism vs. travel and community service vs. engagement will be addressed. Students will also explore academic and professional post-graduation options."
+      }
+    },
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "130",
+        "score": 0.5951420068740845
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "130",
+        "title": "U.S. Housing, Planning, and Policy",
+        "description": "Introduction to housing policy in the United States, including housing affordability, the interaction between demand and supply, housing finance, zoning and land use, gentrification and displacement, and the role that housing plays in promoting household well-being. "
+      }
+    },
+    {
+      "result": {
+        "subject": "DEVENG",
+        "courseNumber": "210",
+        "score": 0.5822170376777649
+      },
+      "course": {
+        "subject": "DEVENG",
+        "number": "210",
+        "title": "Development Engineering Research and Practice Seminar",
+        "description": "Development Engineering represents a new interdisciplinary field that integrates engineering, economics, business, natural resource development and social sciences to develop, implement, and evaluate new technological interventions that address the needs of people living in poverty in developing regions and low-income areas of the United States. This seminar, offered each spring term, will focus on work-in-progress presentations by the students, as well as faculty and guest lecturers. This seminar is a required course for the Designated Emphasis in Development Engineering."
+      }
+    }
+  ]
+}
