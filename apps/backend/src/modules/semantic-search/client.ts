@@ -6,13 +6,13 @@ interface SemanticSearchResult {
   title: string;
   description: string;
   score: number;
-  kw_boost: number;
   text: string;
 }
 
 interface SemanticSearchResponse {
   query: string;
-  top_k: number;
+  threshold: number;
+  count: number;
   year: number;
   semester: string;
   allowed_subjects: string[] | null;
@@ -25,11 +25,11 @@ export async function searchSemantic(
   year: number,
   semester: string,
   allowedSubjects?: string[],
-  topK: number = 100
+  threshold: number = 0.3
 ): Promise<SemanticSearchResponse> {
   const params = new URLSearchParams({
     query,
-    top_k: String(topK),
+    threshold: String(threshold),
     year: String(year),
     semester,
   });
@@ -55,7 +55,8 @@ export async function searchSemantic(
     // Return empty results on error, gracefully falling back
     return {
       query,
-      top_k: topK,
+      threshold,
+      count: 0,
       year,
       semester,
       allowed_subjects: allowedSubjects || null,

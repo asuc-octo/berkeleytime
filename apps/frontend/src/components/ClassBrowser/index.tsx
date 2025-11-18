@@ -82,7 +82,7 @@ export default function ClassBrowser({
   const [localOnline, setLocalOnline] = useState<boolean>(false);
   const [aiSearchActive, setAiSearchActive] = useState<boolean>(false);
   const [semanticResults, setSemanticResults] = useState<
-    Array<{ subject: string; courseNumber: string }>
+    Array<{ subject: string; courseNumber: string; score: number }>
   >([]);
   const [semanticLoading, setSemanticLoading] = useState(false);
 
@@ -237,13 +237,19 @@ export default function ClassBrowser({
   const filteredClasses = useMemo(() => {
     // If AI search is active and we have semantic results, filter by those
     if (aiSearchActive && semanticResults.length > 0) {
-      const semanticMap = new Set(
-        semanticResults.map((r) => `${r.subject}-${r.courseNumber}`)
+      // Backend already applies threshold filtering and sorting
+      // We need to maintain the order from API response
+      const classMap = new Map(
+        includedClasses.map((cls) => [
+          `${cls.subject}-${cls.courseNumber}`,
+          cls
+        ])
       );
 
-      const filtered = includedClasses.filter((cls) =>
-        semanticMap.has(`${cls.subject}-${cls.courseNumber}`)
-      );
+      // Map semantic results to actual class objects, preserving order
+      const filtered = semanticResults
+        .map((r) => classMap.get(`${r.subject}-${r.courseNumber}`))
+        .filter((cls) => cls !== undefined);
 
       return filtered;
     }
@@ -308,7 +314,7 @@ export default function ClassBrowser({
         query: query.trim(),
         year: String(currentYear),
         semester: currentSemester,
-        top_k: "50",
+        threshold: "0.45",
       });
 
       const response = await fetch(`/api/semantic-search/courses?${params}`);

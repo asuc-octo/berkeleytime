@@ -7,7 +7,7 @@ import { searchSemantic } from "./client";
  * Frontend will use these to filter the already-loaded catalog
  */
 export async function searchCourses(req: Request, res: Response) {
-  const { query, year, semester, top_k } = req.query;
+  const { query, year, semester, threshold } = req.query;
 
   if (!query || typeof query !== "string") {
     return res.status(400).json({ error: "query parameter is required" });
@@ -15,7 +15,7 @@ export async function searchCourses(req: Request, res: Response) {
 
   const yearNum = year ? parseInt(year as string, 10) : undefined;
   const semesterStr = semester as string | undefined;
-  const topK = top_k ? parseInt(top_k as string, 10) : 50;
+  const thresholdNum = threshold ? parseFloat(threshold as string) : 0.3;
 
   try {
     const results = await searchSemantic(
@@ -23,7 +23,7 @@ export async function searchCourses(req: Request, res: Response) {
       yearNum!,
       semesterStr!,
       undefined,
-      Math.min(topK, 50) // Max 50
+      thresholdNum
     );
 
     // Return lightweight response: only subject + courseNumber + score
@@ -35,6 +35,7 @@ export async function searchCourses(req: Request, res: Response) {
 
     return res.json({
       query,
+      threshold: thresholdNum,
       results: courseIds,
       count: courseIds.length,
     });
