@@ -17,6 +17,11 @@ const resolvers: EnrollmentModule.Resolvers = {
       );
     },
   },
+  EnrollmentSingular: {
+    hasReservedSeating: (parent) => {
+      return (parent.seatReservationCount?.length ?? 0) > 0;
+    },
+  },
 };
 
 export default resolvers;
