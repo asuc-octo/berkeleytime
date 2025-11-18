@@ -1,3 +1,52 @@
 .sectionNumber {
   color: var(--paragraph-color);
 }
+
+.reservedSeatingIcon {
+  color: var(--paragraph-color);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  vertical-align: baseline;
+  display: inline-block;
+  position: relative;
+  top: 0.1em;
+  cursor: pointer;
+}
+
+.tooltipContent {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--tooltip-color);
+  color: var(--neutral-400);
+  max-width: 256px;
+  font-size: 14px;
+  animation: fadeIn 100ms ease-in;
+  z-index: 998;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  .tooltipArrow {
+    fill: var(--tooltip-color);
+  }
+
+  .tooltipTitle {
+    font-weight: var(--font-semibold);
+    color: var(--tooltip-heading-color);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .tooltipDescription {
+    line-height: 1.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
