@@ -5,10 +5,11 @@ import {
   ArrowUnionVertical,
   Bookmark,
   BookmarkSolid,
+  InfoCircle,
   Trash,
 } from "iconoir-react";
 
-import { Card } from "@repo/theme";
+import { Card, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
@@ -35,7 +36,7 @@ type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
-  "enrolledCount" | "maxEnroll" | "endTime"
+  "enrolledCount" | "maxEnroll" | "endTime" | "hasReservedSeating"
 >;
 
 type ClassCardClass = Partial<BaseClassFields> & {
@@ -124,6 +125,18 @@ export default function ClassCard({
               _class.unitsMax !== undefined && (
                 <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
               )}
+            {_class?.primarySection?.enrollment?.latest?.hasReservedSeating && (
+              <Tooltip content="This class has seating reserved for specific student groups.">
+                <InfoCircle
+                  style={{
+                    color: "var(--orange-500)",
+                    width: 16,
+                    height: 16,
+                    flexShrink: 0,
+                  }}
+                />
+              </Tooltip>
+            )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 data-action-icon
