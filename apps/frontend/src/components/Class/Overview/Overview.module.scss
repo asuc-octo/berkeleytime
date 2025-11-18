@@ -49,3 +49,18 @@
     }
   }
 }
+
+.classNoteHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  .expandIcon {
+    color: var(--paragraph-color);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 100ms ease-in-out;
+  }
+}

@@ -98,6 +98,18 @@ export const READ_CLASS = gql`
         lecturesRecorded
         startDate
         endDate
+        sectionAttributes(attributeCode: "NOTE") {
+          attribute {
+            code
+            description
+            formalDescription
+          }
+          value {
+            code
+            description
+            formalDescription
+          }
+        }
         enrollment {
           latest {
             startTime
@@ -147,6 +159,18 @@ export const READ_CLASS = gql`
         lecturesRecorded
         startDate
         endDate
+        sectionAttributes(attributeCode: "NOTE") {
+          attribute {
+            code
+            description
+            formalDescription
+          }
+          value {
+            code
+            description
+            formalDescription
+          }
+        }
         enrollment {
           latest {
             startTime

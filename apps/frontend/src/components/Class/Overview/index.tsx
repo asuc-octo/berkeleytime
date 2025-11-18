@@ -10,6 +10,7 @@ import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
   const { class: _class } = useClass();
+
   const prereqs = useMemo(() => {
     if (_class.course.requirements && _class.course.requirements.trim()) {
       return _class.course.requirements;
@@ -22,6 +23,28 @@ export default function Overview() {
       .map((course) => `${course.subject} ${course.number}`)
       .join(", ");
   }, [_class]);
+
+  const classNoteLines = useMemo(() => {
+    const attributes = _class.primarySection.sectionAttributes ?? [];
+    if (!attributes.length) return null;
+
+    const noteAttribute = attributes.find(
+      (attribute) => attribute.attribute?.code === "NOTE"
+    );
+
+    const text =
+      noteAttribute?.value?.formalDescription?.trim() ??
+      noteAttribute?.value?.description?.trim() ??
+      null;
+
+    if (!text) return null;
+
+    return text
+      .split(/\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+  }, [_class.primarySection.sectionAttributes]);
+
   return (
     <Box p="5">
       <Container size="3">
@@ -39,6 +62,19 @@ export default function Overview() {
               {_class.description ?? _class.course.description}
             </p>
           </Flex>
+          {classNoteLines && classNoteLines.length > 0 && (
+            <Flex direction="column" gap="2">
+              <p className={styles.label}>Class Note</p>
+              <p className={styles.description}>
+                {classNoteLines.map((line, index) => (
+                  <span key={`${line}-${index}`}>
+                    {line}
+                    {index < classNoteLines.length - 1 && <br />}
+                  </span>
+                ))}
+              </p>
+            </Flex>
+          )}
           <UserSubmittedData />
         </Flex>
       </Container>
