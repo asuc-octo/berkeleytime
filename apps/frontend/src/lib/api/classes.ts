@@ -99,6 +99,16 @@ export const READ_CLASS = gql`
         startDate
         endDate
         enrollment {
+          history {
+            startTime
+            endTime
+            granularitySeconds
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
           latest {
             startTime
             endTime
