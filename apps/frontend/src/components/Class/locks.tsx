@@ -82,9 +82,7 @@ function RatingsTabLinkBase({
       aria-disabled={locked || undefined}
       tabIndex={locked ? -1 : undefined}
     >
-      {dialog
-        ? renderMenuItem()
-        : ({ isActive }) => renderMenuItem(isActive)}
+      {dialog ? renderMenuItem() : ({ isActive }) => renderMenuItem(isActive)}
     </NavLink>
   );
 
@@ -92,7 +90,8 @@ function RatingsTabLinkBase({
     return navLink;
   }
 
-  const tooltipDescription = "Click and add your experience to view ratings others have made";
+  const tooltipDescription =
+    "Click and add your experience to view ratings others have made";
 
   return (
     <Tooltip.Root disableHoverableContent>
@@ -106,9 +105,7 @@ function RatingsTabLinkBase({
         >
           <div className={classes.tooltipContent}>
             <Tooltip.Arrow className={classes.tooltipArrow} />
-            {!dialog && (
-              <p className={classes.tooltipTitle}>Locked Content</p>
-            )}
+            {!dialog && <p className={classes.tooltipTitle}>Locked Content</p>}
             <p className={classes.tooltipDescription}>{tooltipDescription}</p>
           </div>
         </Tooltip.Content>

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { ArrowUpRight, FrameAltEmpty } from "iconoir-react";
+import { ArrowUpRight, GraphUp } from "iconoir-react";
 import moment from "moment";
 import {
   CartesianGrid,
@@ -144,7 +144,7 @@ export default function Enrollment() {
   if (data.length === 0) {
     return (
       <div className={styles.placeholder}>
-        <FrameAltEmpty width={32} height={32} />
+        <GraphUp width={32} height={32} />
         <p className={styles.heading}>No Enrollment Data Available</p>
         <p className={styles.paragraph}>
           This class doesn't have enrollment history data yet.

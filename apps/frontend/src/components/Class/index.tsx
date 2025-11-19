@@ -9,7 +9,13 @@ import {
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import {
   Badge,
@@ -37,7 +43,7 @@ import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
-import { RatingsTabLink, type RatingsTabClasses } from "./locks";
+import { type RatingsTabClasses, RatingsTabLink } from "./locks";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -244,13 +250,8 @@ export default function Class({
     return Math.max(...metrics.map((metric) => metric.count));
   }, [_course]);
 
-  const ratingsLockContext = useMemo(
-    () => ({ user }),
-    [user]
-  );
-  const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(
-    ratingsLockContext
-  );
+  const ratingsLockContext = useMemo(() => ({ user }), [user]);
+  const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(ratingsLockContext);
   const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
 
   useEffect(() => {

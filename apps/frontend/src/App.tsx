@@ -10,6 +10,7 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
+import { isRatingsLocked } from "@/components/Class/locks";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
@@ -318,15 +319,32 @@ const router = createBrowserRouter([
             path: "grades",
           },
           {
-            element: <Class.Ratings />,
+            element: (
+              <SuspenseBoundary key="ratings">
+                <Class.Ratings />
+              </SuspenseBoundary>
+            ),
             path: "ratings",
+            loader: ({ request }) => {
+              if (!isRatingsLocked()) {
+                return null;
+              }
+
+              const url = new URL(request.url);
+              const pathname = url.pathname.replace(/\/?ratings\/?$/, "");
+              const targetPath = pathname.length > 0 ? pathname : "/catalog";
+
+              return redirect(`${targetPath}${url.search}${url.hash}`);
+            },
           },
           {
             path: "*",
-            loader: ({ params: { year, semester, subject, courseNumber } }) =>
-              redirect(
-                `/catalog/${year}/${semester}/${subject}/${courseNumber}`
-              ),
+            loader: ({
+              params: { year, semester, subject, courseNumber, number },
+            }) => {
+              const basePath = `/catalog/${year}/${semester}/${subject}/${courseNumber}`;
+              return redirect(number ? `${basePath}/${number}` : basePath);
+            },
           },
         ],
       },

@@ -67,9 +67,7 @@ interface Term {
   label: string;
 }
 
-type MetricCategory = NonNullable<
-  NonNullable<IMetric["categories"]>[number]
->;
+type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
 
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 const METRIC_NAMES = Object.values(MetricName) as MetricName[];
@@ -238,7 +236,8 @@ export function RatingsContainer() {
         : aggregatedRatings?.course?.aggregatedRatings?.metrics;
 
     const metrics =
-      metricsSource?.filter((metric): metric is IMetric => Boolean(metric)) ?? [];
+      metricsSource?.filter((metric): metric is IMetric => Boolean(metric)) ??
+      [];
 
     if (
       !metrics.some(
@@ -250,8 +249,8 @@ export function RatingsContainer() {
 
     return metrics.map((metric) => {
       const categories =
-        metric.categories?.filter(
-          (category): category is MetricCategory => Boolean(category)
+        metric.categories?.filter((category): category is MetricCategory =>
+          Boolean(category)
         ) ?? [];
 
       let maxCount = 1;
@@ -358,67 +357,66 @@ export function RatingsContainer() {
       await Promise.all(
         METRIC_NAMES.map((metric) => {
           const value = metricValues[metric];
-            // If metric is not in populated metrics but was in current ratings, delete
-            if (!populatedMetrics.includes(metric)) {
-              const metricExists = currentRatings?.metrics?.some(
-                (m) => m.metricName === metric
-              );
-              if (metricExists) {
-                return deleteRatingMutation({
-                  variables: {
-                    subject: currentClassData.subject,
-                    courseNumber: currentClassData.courseNumber,
-                    semester: termInfo.semester,
-                    year: termInfo.year,
-                    classNumber: currentClassData.number,
-                    metricName: metric,
-                  },
-                  refetchQueries: [
-                    "GetClass",
-                    "GetUserRatings",
-                    "GetCourseRatings",
-                    "GetSemestersWithRatings",
-                  ],
-                });
-              }
-              // Skip if metric doesn't exist in current ratings
-              return Promise.resolve();
+          // If metric is not in populated metrics but was in current ratings, delete
+          if (!populatedMetrics.includes(metric)) {
+            const metricExists = currentRatings?.metrics?.some(
+              (m) => m.metricName === metric
+            );
+            if (metricExists) {
+              return deleteRatingMutation({
+                variables: {
+                  subject: currentClassData.subject,
+                  courseNumber: currentClassData.courseNumber,
+                  semester: termInfo.semester,
+                  year: termInfo.year,
+                  classNumber: currentClassData.number,
+                  metricName: metric,
+                },
+                refetchQueries: [
+                  "GetClass",
+                  "GetUserRatings",
+                  "GetCourseRatings",
+                  "GetSemestersWithRatings",
+                ],
+              });
             }
-            // Check if the current rating value is different from the new value
-            if (
-              currentRatings?.semester === termInfo.semester &&
-              currentRatings?.year === termInfo.year
-            ) {
-              const currentMetric = currentRatings?.metrics.find(
-                (m) => m.metricName === metric
-              );
-              if (currentMetric?.value === value) {
-                return Promise.resolve();
-              }
-            }
-            if (value === undefined) {
-              return Promise.resolve();
-            }
-            return createRatingMutation({
-              variables: {
-                subject: currentClassData.subject,
-                courseNumber: currentClassData.courseNumber,
-                semester: termInfo.semester,
-                year: termInfo.year,
-                classNumber: currentClassData.number,
-                metricName: metric,
-                value,
-              },
-              refetchQueries: [
-                "GetClass",
-                "GetUserRatings",
-                "GetCourseRatings",
-                "GetSemestersWithRatings",
-              ],
-              awaitRefetchQueries: true,
-            });
+            // Skip if metric doesn't exist in current ratings
+            return Promise.resolve();
           }
-        )
+          // Check if the current rating value is different from the new value
+          if (
+            currentRatings?.semester === termInfo.semester &&
+            currentRatings?.year === termInfo.year
+          ) {
+            const currentMetric = currentRatings?.metrics.find(
+              (m) => m.metricName === metric
+            );
+            if (currentMetric?.value === value) {
+              return Promise.resolve();
+            }
+          }
+          if (value === undefined) {
+            return Promise.resolve();
+          }
+          return createRatingMutation({
+            variables: {
+              subject: currentClassData.subject,
+              courseNumber: currentClassData.courseNumber,
+              semester: termInfo.semester,
+              year: termInfo.year,
+              classNumber: currentClassData.number,
+              metricName: metric,
+              value,
+            },
+            refetchQueries: [
+              "GetClass",
+              "GetUserRatings",
+              "GetCourseRatings",
+              "GetSemestersWithRatings",
+            ],
+            awaitRefetchQueries: true,
+          });
+        })
       );
 
       setModalOpen(false);
