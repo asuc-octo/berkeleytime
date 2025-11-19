@@ -12,6 +12,7 @@ import {
   SectionModel,
   TermModel,
 } from "@repo/common";
+
 import { getFields } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
