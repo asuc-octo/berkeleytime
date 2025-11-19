@@ -80,7 +80,7 @@ export default function Sections() {
       <div className={styles.table}>
         {/* Table Header */}
         <div className={styles.header}>
-          <p className={`${styles.headerCell} ${styles.cnn}`}>CNN</p>
+          <p className={`${styles.headerCell} ${styles.ccn}`}>CCN</p>
           <p className={`${styles.headerCell} ${styles.time}`}>Time</p>
           <p className={`${styles.headerCell} ${styles.location}`}>Location</p>
           <p className={`${styles.headerCell} ${styles.waitlist}`}>Waitlist</p>
@@ -115,7 +115,7 @@ export default function Sections() {
 
           return (
             <div key={section.sectionId} className={styles.row}>
-              <p className={`${styles.cell} ${styles.cnn}`}>
+              <p className={`${styles.cell} ${styles.ccn}`}>
                 {section.sectionId}
               </p>
               <div className={`${styles.cell} ${styles.time}`}>
@@ -138,19 +138,18 @@ export default function Sections() {
                   ? waitlistedCount
                   : NO_DATA_LABEL}
               </p>
-              <div className={`${styles.enrollment} ${styles.enrolled}`}>
-                <p
-                  style={
-                    enrollmentPercentage !== null
-                      ? { color: enrollmentColor }
-                      : undefined
-                  }
-                >
-                  {enrollmentPercentage !== null
-                    ? `${enrollmentPercentage}% enrolled`
-                    : NO_DATA_LABEL}
-                </p>
-              </div>
+              <p
+                className={`${styles.cell} ${styles.enrolled}`}
+                style={
+                  enrollmentPercentage !== null
+                    ? { color: enrollmentColor }
+                    : undefined
+                }
+              >
+                {enrollmentPercentage !== null
+                  ? `${enrollmentPercentage}% enrolled`
+                  : NO_DATA_LABEL}
+              </p>
             </div>
           );
         })}

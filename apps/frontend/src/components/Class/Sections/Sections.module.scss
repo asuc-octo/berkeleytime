@@ -53,8 +53,8 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  column-gap: 8px;
+  justify-content: space-between;
+  column-gap: clamp(8px, 2vw, 32px);
   padding: 8px;
   border-bottom: 1px solid var(--border-color);
   font-weight: var(--font-semibold);
@@ -75,8 +75,8 @@
 .row {
   display: flex;
   align-items: flex-start;
-  justify-content: flex-start;
-  column-gap: 8px;
+  justify-content: space-between;
+  column-gap: clamp(8px, 2vw, 32px);
   min-height: 120px;
   padding: 12px 8px;
   border-bottom: 1px solid var(--border-color);
@@ -96,20 +96,7 @@
   word-break: break-word;
 }
 
-.enrollment {
-  flex-shrink: 0;
-
-  p {
-    margin: 0;
-    font-weight: var(--font-normal);
-    font-size: var(--text-14);
-    line-height: 20px;
-    letter-spacing: -0.1px;
-    color: var(--paragraph-color);
-  }
-}
-
-.cnn {
+.ccn {
   width: 50px;
 }
 
