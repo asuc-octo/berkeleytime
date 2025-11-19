@@ -1,142 +1,97 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 24px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
 .placeholder {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
-  color: var(--label-color);
-  height: 100%;
-  font-size: 16px;
-  line-height: 1.5;
-  padding: 24px 0;
-  padding-top: 150px;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
   text-align: center;
 
   .heading {
+    font-weight: 600;
+    font-size: 16px;
     color: var(--heading-color);
-    font-weight: 500;
-    margin-top: 24px;
+    margin: 0;
   }
 
   .paragraph {
+    font-size: 14px;
     color: var(--paragraph-color);
-    margin-top: 8px;
-    max-width: 448px;
+    max-width: 400px;
+    margin: 0;
   }
 }
 
-.root {
-  background-color: var(--background-color);
-  padding: 24px 0 0;
+.content {
   display: flex;
-  gap: 24px;
+  flex-direction: column;
+  width: 100%;
+}
 
-  @media (width <= 992px) {
-    flex-direction: column;
-  }
+.table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
-  @media (width > 992px) {
-    align-items: flex-start;
-  }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-14);
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--heading-color);
+}
 
-  .view {
-    flex-grow: 1;
+.headerCell {
+  flex-shrink: 0;
+  margin: 0;
+  white-space: pre-wrap;
+}
 
-    .group {
-      scroll-margin-top: 24px;
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 120px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border-color);
+  box-sizing: border-box;
+}
 
-      .section {
-        padding: 24px;
-        background-color: var(--foreground-color);
-        border-radius: 8px;
-        box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-        margin-bottom: 24px;
-        border: 1px solid var(--border-color);
+.cell {
+  flex-shrink: 0;
+  margin: 0;
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--paragraph-color);
+  white-space: pre-wrap;
+}
 
-        .header {
-          display: flex;
-          margin-bottom: 24px;
-          gap: 12px;
+.enrollment {
+  flex-shrink: 0;
+  width: 90px;
 
-          .text {
-            flex-grow: 1;
-
-            .heading {
-              color: var(--heading-color);
-              font-size: 14px;
-              margin-bottom: 8px;
-              line-height: 1;
-              font-weight: 500;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .menu {
-    position: sticky;
-    top: 24px;
-    width: 192px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    .item {
-      height: 32px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      gap: 12px;
-      padding: 0 12px;
-      line-height: 1;
-      font-size: 14px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: var(--button-hover-color);
-
-        .component {
-          color: var(--heading-color);
-        }
-      }
-
-      &:active {
-        background-color: var(--button-active-color);
-      }
-
-      &.active .component {
-        color: var(--heading-color);
-      }
-
-      &.active::after {
-        opacity: 1;
-      }
-
-      &::after {
-        content: "";
-        width: 2px;
-        height: 100%;
-        background-color: var(--blue-500);
-        position: absolute;
-        opacity: 0;
-        left: -12px;
-        transition: all 100ms ease-in-out;
-      }
-
-      .component {
-        font-weight: 500;
-        color: var(--paragraph-color);
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-      }
-
-      .count {
-        color: var(--label-color);
-      }
-    }
+  p {
+    margin: 0;
+    font-weight: var(--font-normal);
+    font-size: var(--text-14);
+    line-height: 20px;
+    letter-spacing: -0.1px;
   }
 }

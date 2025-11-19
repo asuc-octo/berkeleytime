@@ -1,27 +1,22 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
-import classNames from "classnames";
-import { FrameAltEmpty, OpenNewWindow } from "iconoir-react";
+import { FrameAltEmpty } from "iconoir-react";
+import { Tabs } from "radix-ui";
 
-import { IconButton, Tooltip } from "@repo/theme";
+import { PillSwitcher } from "@repo/theme";
 
-import CCN from "@/components/CCN";
-import Capacity from "@/components/Capacity";
-import Details from "@/components/Details";
+import { getEnrollmentColor } from "@/components/Capacity";
+import Time from "@/components/Time";
 import useClass from "@/hooks/useClass";
 import { componentMap } from "@/lib/api";
 import { Component } from "@/lib/generated/graphql";
-import { getExternalLink } from "@/lib/section";
 
 import styles from "./Sections.module.scss";
 
 export default function Sections() {
   const { class: _class } = useClass();
 
-  const viewRef = useRef<HTMLDivElement>(null);
-  const [group, setGroup] = useState<Component | null>(null);
-
-  // TODO: Include primarySection
+  // Group sections by component type
   const groups = useMemo(() => {
     const sortedSections = _class.sections.toSorted((a, b) =>
       a.number.localeCompare(b.number)
@@ -30,136 +25,119 @@ export default function Sections() {
     return Object.groupBy(sortedSections, (section) => section.component);
   }, [_class]);
 
-  useEffect(() => {
-    const element = viewRef.current;
-    if (!element) return;
-
-    let currentElement: HTMLElement | null = element;
-
-    while (currentElement) {
-      const overflowY = window.getComputedStyle(currentElement).overflowY;
-
-      if (overflowY === "auto") {
-        break;
-      }
-
-      currentElement = currentElement.parentElement;
-    }
-
-    if (!currentElement) return;
-
-    const updateGroup = () => {
-      const view = viewRef.current;
-      if (!view) return;
-
-      // element is a div that can scroll, find the child with the most pixels within the viewport
-      const children = Array.from(view.children) as HTMLElement[];
-
-      const visibleIndexes = children.map((child) => {
-        const rect = child.getBoundingClientRect();
-        const top = Math.max(rect.top, 0);
-        const bottom = Math.min(rect.bottom, window.innerHeight);
-
-        return bottom - top;
-      });
-
-      const maxVisibleIndex = visibleIndexes.reduce(
-        (maxIndex, visible, index) =>
-          visible > visibleIndexes[maxIndex] ? index : maxIndex,
-        0
-      );
-
-      const group = Object.keys(groups)[maxVisibleIndex] as Component;
-      setGroup(group);
-    };
-
-    updateGroup();
-
-    currentElement.addEventListener("scroll", updateGroup);
-
-    return () => {
-      currentElement.removeEventListener("scroll", updateGroup);
-    };
+  // Generate tab items from available component types
+  const tabItems = useMemo(() => {
+    return Object.keys(groups).map((component) => ({
+      value: component,
+      label: componentMap[component as Component],
+    }));
   }, [groups]);
 
-  const handleClick = (index: number) => {
-    viewRef.current?.children[index].scrollIntoView({ behavior: "smooth" });
-  };
+  const [activeTab, setActiveTab] = useState(tabItems[0]?.value || "");
 
-  return _class.sections.length === 0 ? (
-    <div className={styles.placeholder}>
-      <FrameAltEmpty width={32} height={32} />
-      <p className={styles.heading}>No associated sections</p>
-      <p className={styles.paragraph}>
-        Please refer to the class syllabus or instructor for the most accurate
-        information regarding class attendance requirements.
-      </p>
-    </div>
-  ) : (
+  // Get sections for the active tab
+  const activeSections = groups[activeTab as Component] || [];
+
+  if (_class.sections.length === 0) {
+    return (
+      <div className={styles.placeholder}>
+        <FrameAltEmpty width={32} height={32} />
+        <p className={styles.heading}>No associated sections</p>
+        <p className={styles.paragraph}>
+          Please refer to the class syllabus or instructor for the most accurate
+          information regarding class attendance requirements.
+        </p>
+      </div>
+    );
+  }
+
+  return (
     <div className={styles.root}>
-      <div className={styles.menu}>
-        {Object.keys(groups).map((component, index) => (
-          <div
-            className={classNames(styles.item, {
-              [styles.active]: group === component,
-            })}
-            onClick={() => handleClick(index)}
-          >
-            <p className={styles.component}>
-              {componentMap[component as Component]}
-            </p>
-            <p className={styles.count}>
-              {groups[component as Component]?.length.toLocaleString()}
-            </p>
-          </div>
-        ))}
-      </div>
-      <div className={styles.view} ref={viewRef}>
-        {Object.values(groups).map((sections) => (
-          <div className={styles.group}>
-            {sections.map((section) => (
-              <div className={styles.section} key={section.sectionId}>
-                <div className={styles.header}>
-                  <div className={styles.text}>
-                    <p className={styles.heading}>
-                      {componentMap[section.component]} {section.number}
-                    </p>
-                    <CCN sectionId={section.sectionId} />
-                  </div>
-                  <Capacity
-                    enrolledCount={section.enrollment?.latest?.enrolledCount}
-                    maxEnroll={section.enrollment?.latest?.maxEnroll}
-                    waitlistedCount={
-                      section.enrollment?.latest?.waitlistedCount
-                    }
-                    maxWaitlist={section.enrollment?.latest?.maxWaitlist}
-                  />
-                  <Tooltip content="Berkeley Catalog">
-                    <a
-                      href={getExternalLink(
-                        _class.year,
-                        _class.semester,
-                        _class.courseNumber,
-                        _class.number,
-                        section.number,
-                        section.component
-                      )}
-                      target="_blank"
-                    >
-                      <IconButton>
-                        <OpenNewWindow />
-                      </IconButton>
-                    </a>
-                  </Tooltip>
-                </div>
-                {section.meetings.map((meeting, i) => (
-                  <Details {...meeting} key={i} />
-                ))}
+      <PillSwitcher
+        items={tabItems}
+        value={activeTab}
+        onValueChange={setActiveTab}
+      />
+
+      <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
+        {tabItems.map((tab) => (
+          <Tabs.Content key={tab.value} value={tab.value} className={styles.content}>
+            <div className={styles.table}>
+              {/* Table Header */}
+              <div className={styles.header}>
+                <p className={styles.headerCell} style={{ width: "44px" }}>
+                  CNN
+                </p>
+                <p className={styles.headerCell} style={{ width: "138px" }}>
+                  Time
+                </p>
+                <p className={styles.headerCell} style={{ width: "62px" }}>
+                  Location
+                </p>
+                <p className={styles.headerCell}>Waitlist</p>
+                <p className={styles.headerCell} style={{ width: "87px" }}>
+                  Enrolled
+                </p>
               </div>
-            ))}
-          </div>
+
+              {/* Table Rows */}
+              {groups[tab.value as Component]?.map((section) => {
+                const enrolledCount = section.enrollment?.latest?.enrolledCount;
+                const maxEnroll = section.enrollment?.latest?.maxEnroll;
+                const waitlistedCount =
+                  section.enrollment?.latest?.waitlistedCount || 0;
+
+                // Calculate enrollment percentage
+                const enrollmentPercentage =
+                  typeof enrolledCount === "number" &&
+                  typeof maxEnroll === "number" &&
+                  maxEnroll > 0
+                    ? Math.round((enrolledCount / maxEnroll) * 100)
+                    : null;
+
+                const enrollmentColor = getEnrollmentColor(
+                  enrolledCount,
+                  maxEnroll
+                );
+
+                return (
+                  <div key={section.sectionId} className={styles.row}>
+                    <p className={styles.cell} style={{ width: "44px" }}>
+                      {section.sectionId}
+                    </p>
+                    <p className={styles.cell} style={{ width: "138px" }}>
+                      {section.meetings[0] ? (
+                        <Time
+                          days={section.meetings[0].days}
+                          startTime={section.meetings[0].startTime}
+                          endTime={section.meetings[0].endTime}
+                        />
+                      ) : (
+                        "—"
+                      )}
+                    </p>
+                    <p className={styles.cell}>
+                      {section.meetings[0]?.location || "—"}
+                    </p>
+                    <p className={styles.cell} style={{ width: "50px" }}>
+                      {waitlistedCount}
+                    </p>
+                    <div className={styles.enrollment}>
+                      {enrollmentPercentage !== null ? (
+                        <p style={{ color: enrollmentColor }}>
+                          {enrollmentPercentage}% enrolled
+                        </p>
+                      ) : (
+                        <p>—</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Tabs.Content>
         ))}
-      </div>
+      </Tabs.Root>
     </div>
   );
 }
