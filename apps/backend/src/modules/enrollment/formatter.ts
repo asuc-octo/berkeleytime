@@ -23,12 +23,8 @@ const normalizeEnrollmentSingular = (singular: EnrollmentHistorySingular) => {
 };
 
 export const formatEnrollment = (enrollment: IEnrollmentHistoryItem) => {
-  // Add this line to filter out entries without valid timestamps before normalizing
-  const validHistoryEntries =
-    enrollment.history?.filter((entry) => entry.startTime && entry.endTime) ??
-    [];
-
-  const history = validHistoryEntries.map(normalizeEnrollmentSingular);
+  const history =
+    enrollment.history?.map(normalizeEnrollmentSingular) ?? [];
 
   const output = {
     ...enrollment,
