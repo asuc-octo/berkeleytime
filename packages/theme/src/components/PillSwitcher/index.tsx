@@ -1,4 +1,5 @@
 import { Tabs } from "radix-ui";
+
 import styles from "./PillSwitcher.module.scss";
 
 export interface PillSwitcherItem {
@@ -27,7 +28,11 @@ export function PillSwitcher({
     >
       <Tabs.List className={styles.list}>
         {items.map((item) => (
-          <Tabs.Trigger key={item.value} value={item.value} className={styles.trigger}>
+          <Tabs.Trigger
+            key={item.value}
+            value={item.value}
+            className={styles.trigger}
+          >
             {item.label}
           </Tabs.Trigger>
         ))}

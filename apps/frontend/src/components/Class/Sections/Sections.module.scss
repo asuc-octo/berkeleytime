@@ -47,6 +47,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  column-gap: 4px;
   padding: 8px;
   border-bottom: 1px solid var(--border-color);
   font-weight: var(--font-semibold);
@@ -59,13 +60,16 @@
 .headerCell {
   flex-shrink: 0;
   margin: 0;
-  white-space: pre-wrap;
+  text-align: left;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  column-gap: 8px;
   height: 120px;
   padding: 12px 8px;
   border-bottom: 1px solid var(--border-color);
@@ -80,12 +84,13 @@
   line-height: 20px;
   letter-spacing: -0.1px;
   color: var(--paragraph-color);
-  white-space: pre-wrap;
+  text-align: left;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .enrollment {
   flex-shrink: 0;
-  width: 90px;
 
   p {
     margin: 0;
@@ -93,5 +98,32 @@
     font-size: var(--text-14);
     line-height: 20px;
     letter-spacing: -0.1px;
+    color: var(--paragraph-color);
   }
+}
+
+.cnn {
+  width: 50px;
+}
+
+.time {
+  width: 180px;
+}
+
+.location {
+  width: 120px;
+}
+
+.waitlist {
+  width: 60px;
+}
+
+.enrolled {
+  width: 90px;
+}
+
+.timeText {
+  width: 100%;
+  white-space: normal;
+  word-break: break-word;
 }

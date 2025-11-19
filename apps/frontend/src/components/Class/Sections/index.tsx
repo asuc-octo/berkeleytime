@@ -1,7 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { FrameAltEmpty } from "iconoir-react";
-import { Tabs } from "radix-ui";
 
 import { PillSwitcher } from "@repo/theme";
 
@@ -12,6 +11,19 @@ import { componentMap } from "@/lib/api";
 import { Component } from "@/lib/generated/graphql";
 
 import styles from "./Sections.module.scss";
+
+const NO_DATA_LABEL = "No Data";
+
+const hasValidStartTime = (time?: string | null) => {
+  if (!time) {
+    return false;
+  }
+
+  const [hoursPart] = time.split(":");
+  const hours = Number.parseInt(hoursPart ?? "", 10);
+
+  return Number.isFinite(hours) && hours > 0;
+};
 
 export default function Sections() {
   const { class: _class } = useClass();
@@ -38,6 +50,12 @@ export default function Sections() {
   // Get sections for the active tab
   const activeSections = groups[activeTab as Component] || [];
 
+  useEffect(() => {
+    if (!tabItems.find((tab) => tab.value === activeTab)) {
+      setActiveTab(tabItems[0]?.value || "");
+    }
+  }, [tabItems, activeTab]);
+
   if (_class.sections.length === 0) {
     return (
       <div className={styles.placeholder}>
@@ -58,86 +76,84 @@ export default function Sections() {
         value={activeTab}
         onValueChange={setActiveTab}
       />
+      <div className={styles.table}>
+        {/* Table Header */}
+        <div className={styles.header}>
+          <p className={`${styles.headerCell} ${styles.cnn}`}>CNN</p>
+          <p className={`${styles.headerCell} ${styles.time}`}>Time</p>
+          <p className={`${styles.headerCell} ${styles.location}`}>Location</p>
+          <p className={`${styles.headerCell} ${styles.waitlist}`}>Waitlist</p>
+          <p className={`${styles.headerCell} ${styles.enrolled}`}>Enrolled</p>
+        </div>
 
-      <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
-        {tabItems.map((tab) => (
-          <Tabs.Content key={tab.value} value={tab.value} className={styles.content}>
-            <div className={styles.table}>
-              {/* Table Header */}
-              <div className={styles.header}>
-                <p className={styles.headerCell} style={{ width: "44px" }}>
-                  CNN
-                </p>
-                <p className={styles.headerCell} style={{ width: "138px" }}>
-                  Time
-                </p>
-                <p className={styles.headerCell} style={{ width: "62px" }}>
-                  Location
-                </p>
-                <p className={styles.headerCell}>Waitlist</p>
-                <p className={styles.headerCell} style={{ width: "87px" }}>
-                  Enrolled
+        {/* Table Rows */}
+        {activeSections.map((section) => {
+          const enrolledCount = section.enrollment?.latest?.enrolledCount;
+          const maxEnroll = section.enrollment?.latest?.maxEnroll;
+          const waitlistedCount = section.enrollment?.latest?.waitlistedCount;
+          const firstMeeting = section.meetings[0];
+          const hasTimeData = Boolean(
+            firstMeeting?.days?.some((day) => day) &&
+              firstMeeting?.endTime &&
+              hasValidStartTime(firstMeeting?.startTime)
+          );
+          const locationValue =
+            typeof firstMeeting?.location === "string"
+              ? firstMeeting.location.trim()
+              : "";
+
+          // Calculate enrollment percentage
+          const enrollmentPercentage =
+            typeof enrolledCount === "number" &&
+            typeof maxEnroll === "number" &&
+            maxEnroll > 0
+              ? Math.round((enrolledCount / maxEnroll) * 100)
+              : null;
+
+          const enrollmentColor = getEnrollmentColor(enrolledCount, maxEnroll);
+
+          return (
+            <div key={section.sectionId} className={styles.row}>
+              <p className={`${styles.cell} ${styles.cnn}`}>
+                {section.sectionId}
+              </p>
+              <div className={`${styles.cell} ${styles.time}`}>
+                {hasTimeData ? (
+                  <Time
+                    days={firstMeeting?.days}
+                    startTime={firstMeeting?.startTime}
+                    endTime={firstMeeting?.endTime}
+                    className={styles.timeText}
+                  />
+                ) : (
+                  NO_DATA_LABEL
+                )}
+              </div>
+              <p className={`${styles.cell} ${styles.location}`}>
+                {locationValue || NO_DATA_LABEL}
+              </p>
+              <p className={`${styles.cell} ${styles.waitlist}`}>
+                {typeof waitlistedCount === "number"
+                  ? waitlistedCount
+                  : NO_DATA_LABEL}
+              </p>
+              <div className={`${styles.enrollment} ${styles.enrolled}`}>
+                <p
+                  style={
+                    enrollmentPercentage !== null
+                      ? { color: enrollmentColor }
+                      : undefined
+                  }
+                >
+                  {enrollmentPercentage !== null
+                    ? `${enrollmentPercentage}% enrolled`
+                    : NO_DATA_LABEL}
                 </p>
               </div>
-
-              {/* Table Rows */}
-              {groups[tab.value as Component]?.map((section) => {
-                const enrolledCount = section.enrollment?.latest?.enrolledCount;
-                const maxEnroll = section.enrollment?.latest?.maxEnroll;
-                const waitlistedCount =
-                  section.enrollment?.latest?.waitlistedCount || 0;
-
-                // Calculate enrollment percentage
-                const enrollmentPercentage =
-                  typeof enrolledCount === "number" &&
-                  typeof maxEnroll === "number" &&
-                  maxEnroll > 0
-                    ? Math.round((enrolledCount / maxEnroll) * 100)
-                    : null;
-
-                const enrollmentColor = getEnrollmentColor(
-                  enrolledCount,
-                  maxEnroll
-                );
-
-                return (
-                  <div key={section.sectionId} className={styles.row}>
-                    <p className={styles.cell} style={{ width: "44px" }}>
-                      {section.sectionId}
-                    </p>
-                    <p className={styles.cell} style={{ width: "138px" }}>
-                      {section.meetings[0] ? (
-                        <Time
-                          days={section.meetings[0].days}
-                          startTime={section.meetings[0].startTime}
-                          endTime={section.meetings[0].endTime}
-                        />
-                      ) : (
-                        "—"
-                      )}
-                    </p>
-                    <p className={styles.cell}>
-                      {section.meetings[0]?.location || "—"}
-                    </p>
-                    <p className={styles.cell} style={{ width: "50px" }}>
-                      {waitlistedCount}
-                    </p>
-                    <div className={styles.enrollment}>
-                      {enrollmentPercentage !== null ? (
-                        <p style={{ color: enrollmentColor }}>
-                          {enrollmentPercentage}% enrolled
-                        </p>
-                      ) : (
-                        <p>—</p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
             </div>
-          </Tabs.Content>
-        ))}
-      </Tabs.Root>
+          );
+        })}
+      </div>
     </div>
   );
 }
