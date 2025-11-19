@@ -17,7 +17,6 @@
 export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
   query GetCanonicalCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
-      courseId
       subject
       courseNumber
       number
@@ -49,8 +48,6 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
         }
       }
       course {
-        subject
-        number
         title
         gradeDistribution {
           average
