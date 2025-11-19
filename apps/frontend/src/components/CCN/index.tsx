@@ -69,7 +69,7 @@ export default function CCN({ sectionId, tooltip }: CCNProps) {
         >
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
-            <p className={styles.title}>Class number</p>
+            <p className={styles.title}>Class Number</p>
             <p className={styles.description}>
               Use this number to search for and enroll in this class within the
               CalCentral Enrollment Center.

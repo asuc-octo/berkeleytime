@@ -316,6 +316,7 @@
   --light-heading-color: var(--neutral-w900);
   --light-paragraph-color: var(--neutral-500);
   --light-paragraph-color-50: var(--neutral-500-50);
+  --light-description-color: var(--neutral-700);
   --light-label-color: var(--neutral-400);
 
   // --light-button-color: white;
@@ -323,6 +324,7 @@
   --light-button-active-color: var(--slate-200);
 
   --light-tooltip-color: white;
+  --light-tooltip-heading-color: var(--neutral-700);
 
   --light-cancel-color: var(--red-500);
   --light-cancel-hover-color: var(--red-600);
@@ -337,6 +339,7 @@
   --dark-heading-color: white;
   --dark-paragraph-color: var(--zinc-400);
   --dark-paragraph-color-50: var(--zinc-400-50);
+  --dark-description-color: var(--zinc-300);
   --dark-label-color: var(--zinc-500);
 
   // --dark-button-color: var(--zinc-800);
@@ -344,6 +347,7 @@
   --dark-button-active-color: var(--zinc-600);
 
   --dark-tooltip-color: var(--zinc-950);
+  --dark-tooltip-heading-color: white;
 
   --dark-cancel-color: var(--red-950);
   --dark-cancel-hover-color: var(--red-900);
@@ -360,6 +364,7 @@
   --heading-color: var(--light-heading-color);
   --paragraph-color: var(--light-paragraph-color);
   --paragraph-color-50: var(--light-paragraph-color-50);
+  --description-color: var(--light-description-color);
   --label-color: var(--light-label-color);
 
   // --button-color: var(--light-button-color);
@@ -367,6 +372,7 @@
   --button-active-color: var(--light-button-active-color);
 
   --tooltip-color: var(--light-tooltip-color);
+  --tooltip-heading-color: var(--light-tooltip-heading-color);
 
   --cancel-color: var(--light-cancel-color);
   --cancel-hover-color: var(--light-cancel-hover-color);
@@ -407,6 +413,7 @@
   --heading-color: var(--dark-heading-color);
   --paragraph-color: var(--dark-paragraph-color);
   --paragraph-color-50: var(--dark-paragraph-color-50);
+  --description-color: var(--dark-description-color);
   --label-color: var(--dark-label-color);
 
   // --button-color: var(--dark-button-color);
@@ -414,6 +421,7 @@
   --button-active-color: var(--dark-button-active-color);
 
   --tooltip-color: var(--dark-tooltip-color);
+  --tooltip-heading-color: var(--dark-tooltip-heading-color);
 
   --cancel-color: var(--dark-cancel-color);
   --cancel-hover-color: var(--dark-cancel-hover-color);

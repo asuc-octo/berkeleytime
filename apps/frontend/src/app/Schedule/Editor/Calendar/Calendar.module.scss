@@ -60,4 +60,19 @@
     flex-direction: column;
     z-index: 1;
   }
+
+  .monthHeader {
+    position: sticky;
+    top: 64px; // Below the Calendar header (32px legend + 32px week header)
+    z-index: 10;
+    font-size: 14px;
+    line-height: 1;
+    height: 32px;
+    color: var(--label-color);
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    background-color: var(--backdrop-color);
+    border-bottom: 1px solid var(--border-color);
+  }
 }

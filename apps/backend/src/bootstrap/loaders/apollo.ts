@@ -123,8 +123,7 @@ export default async (redis: RedisClientType) => {
             requestContext.operationName === "GetCanonicalCatalog" &&
             operationName === "catalog" &&
             variables?.year &&
-            variables?.semester &&
-            !variables?.query // No search parameter
+            variables?.semester
           ) {
             const semester = String(variables.semester).toLowerCase();
             const isWarmingStaging =

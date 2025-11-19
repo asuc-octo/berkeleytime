@@ -46,6 +46,14 @@ export default function EventDialog({ children }: EventDialogProps) {
     false,
   ]);
 
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setStartTime("11:30");
+    setEndTime("15:50");
+    setDays([false, false, false, false, false, false, false]);
+  };
+
   const save = () => {
     if (title === "") return;
     if (
@@ -103,6 +111,7 @@ export default function EventDialog({ children }: EventDialogProps) {
       }
     );
 
+    resetForm();
     setOpen(false);
   };
 

@@ -120,7 +120,7 @@ const termSchema = new Schema<ITermItem>({
       },
     ],
   },
-  hasCatalogData: { type: Boolean, required: true, default: false },
+  hasCatalogData: { type: Boolean, required: true, default: true },
 });
 
 // for catalog, grade distribution by semester, scheduler, and terms controllers

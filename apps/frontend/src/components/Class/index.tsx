@@ -5,19 +5,16 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  InfoCircle,
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import {
-  Link,
-  NavLink,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
+  Badge,
   Box,
+  Color,
   Container,
   Flex,
   IconButton,
@@ -30,7 +27,6 @@ import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
@@ -92,19 +88,17 @@ interface UncontrolledProps {
   number: string;
 }
 
-interface CatalogClassProps {
-  dialog?: never;
-  onClose: () => void;
-}
-
-interface DialogClassProps {
-  dialog: true;
-  onClose?: never;
-}
-
 // TODO: Determine whether a controlled input is even necessary
-type ClassProps = (CatalogClassProps | DialogClassProps) &
-  (ControlledProps | UncontrolledProps);
+type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
+
+const formatClassNumber = (number: string | undefined | null): string => {
+  if (!number) return "";
+  const num = parseInt(number, 10);
+  if (isNaN(num)) return number;
+  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+  if (num > 99) return num.toString();
+  return num.toString().padStart(2, "0");
+};
 
 export default function Class({
   year,
@@ -114,12 +108,10 @@ export default function Class({
   number,
   class: providedClass,
   course: providedCourse,
-  onClose,
   dialog,
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
@@ -147,6 +139,23 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
 
+  useEffect(() => {
+    if (!_class?.primarySection?.enrollment) return;
+
+    const enrollment = _class.primarySection.enrollment;
+    const seatReservationTypes = enrollment.seatReservationTypes ?? [];
+    const seatReservationCounts = enrollment.latest?.seatReservationCount ?? [];
+
+    if (seatReservationCounts.length === 0) {
+      return;
+    }
+
+    const typeMap = new Map<number, string>();
+    seatReservationTypes.forEach((type) => {
+      typeMap.set(type.number, type.requirementGroup);
+    });
+  }, [_class]);
+
   const _course = useMemo(
     () => providedCourse ?? course,
     [course, providedCourse]
@@ -164,28 +173,6 @@ export default function Class({
       ),
     [user, _class]
   );
-
-  const pin = useMemo(() => {
-    if (!_class) return;
-
-    const { year, semester, subject, courseNumber, number } = _class;
-
-    const id = `${year}-${semester}-${subject}-${courseNumber}-${number}`;
-
-    return {
-      id,
-      type: "class",
-      data: {
-        year,
-        semester,
-        subject,
-        courseNumber,
-        number,
-      },
-    } as ClassPin;
-  }, [_class]);
-
-  // const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
   const bookmark = useCallback(async () => {
     if (!user || !_class) return;
@@ -294,6 +281,15 @@ export default function Class({
     });
   }, [courseGradeDistribution]);
 
+  const reservedSeatingMaxCount = useMemo(() => {
+    const seatReservationCount =
+      _class?.primarySection?.enrollment?.latest?.seatReservationCount ?? [];
+    return seatReservationCount.reduce(
+      (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
+      0
+    );
+  }, [_class]);
+
   if (loading || courseLoading) {
     return (
       <div className={styles.loading}>
@@ -304,7 +300,7 @@ export default function Class({
   }
 
   // TODO: Error state
-  if (!_course || !_class || !pin) {
+  if (!_course || !_class) {
     return <></>;
   }
 
@@ -372,7 +368,7 @@ export default function Class({
                   <h1 className={styles.heading}>
                     {_class.subject} {_class.courseNumber}{" "}
                     <span className={styles.sectionNumber}>
-                      #{_class.number}
+                      #{formatClassNumber(_class.number)}
                     </span>
                   </h1>
                   <p className={styles.description}>
@@ -428,6 +424,13 @@ export default function Class({
                   />
                   {_class && (
                     <CCN sectionId={_class.primarySection.sectionId} />
+                  )}
+                  {reservedSeatingMaxCount > 0 && (
+                    <Badge
+                      label="Reserved Seating"
+                      color={Color.Orange}
+                      icon={<InfoCircle />}
+                    />
                   )}
                 </Flex>
               </Flex>

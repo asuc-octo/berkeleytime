@@ -1,5 +1,6 @@
 import { ClassModel, TermModel } from "@repo/common";
 
+import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
 import {
@@ -76,10 +77,12 @@ const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   }
 };
 
-const updateClasses = async (
-  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
-  termSelector: TermSelector
-) => {
+const updateClasses = async (config: Config, termSelector: TermSelector) => {
+  const {
+    log,
+    sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms....`);
 
   const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
@@ -145,6 +148,15 @@ const updateClasses = async (
   );
 
   await updateTermsCatalogDataFlags(log);
+
+  // Warm catalog cache for all terms with catalog data
+  const distinctTermNames = await TermModel.distinct("name", {
+    hasCatalogData: true,
+  });
+  const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
+
+  // Process sequentially to avoid overwhelming the server
+  await warmCatalogCacheForTerms(config, termsWithCatalogData);
 };
 
 const activeTerms = async (config: Config) => {
