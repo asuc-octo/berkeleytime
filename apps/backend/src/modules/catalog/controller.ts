@@ -60,17 +60,18 @@ export const getCatalog = async (
 
   // Filtering by identifiers reduces the amount of data returned for courses and sections
   const courseIds = classes.map((_class) => _class.courseId);
+  const uniqueCourseIds = [...new Set(courseIds)];
 
   // Fetch courses and sections in parallel
   const [courses, sections] = await Promise.all([
     CourseModel.find({
-      courseId: { $in: courseIds },
+      courseId: { $in: uniqueCourseIds },
       printInCatalog: true,
     }).lean(),
     SectionModel.find({
       year,
       semester,
-      courseId: { $in: courseIds },
+      courseId: { $in: uniqueCourseIds },
       printInScheduleOfClasses: true,
     }).lean(),
   ]);
