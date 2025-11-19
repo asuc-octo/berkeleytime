@@ -34,7 +34,7 @@ export const classTypeDef = gql`
     "Relationships"
     term: Term!
     course: Course!
-    primarySection: Section!
+    primarySection: Section
     sections: [Section!]!
     gradeDistribution: GradeDistribution!
     aggregatedRatings: AggregatedRatings!
