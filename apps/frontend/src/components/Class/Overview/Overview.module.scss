@@ -63,37 +63,3 @@
     }
   }
 }
-
-.classNoteHeader {
-  .label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .expandIcon {
-    color: var(--paragraph-color);
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    transition: transform 200ms ease-in-out;
-    vertical-align: middle;
-    display: inline-block;
-  }
-}
-
-.classNoteContent {
-  animation: slideDown 200ms ease-in-out;
-  overflow: hidden;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
