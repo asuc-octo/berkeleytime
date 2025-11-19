@@ -1,63 +1,51 @@
 import { useEffect, useMemo, useState } from "react";
 
+import SunCalc from "suncalc";
+
 import Features from "./Features";
 import Hero from "./Hero";
-import afternoon from "./Hero/afternoon.svg";
-import dawn from "./Hero/dawn.svg";
-import dusk from "./Hero/dusk.svg";
-import morning from "./Hero/morning.svg";
-import sunrise from "./Hero/sunrise.svg";
-import sunset from "./Hero/sunset.svg";
+import daytime from "./Hero/daytime.svg";
+import night from "./Hero/night.svg";
+import sunrise_sunset from "./Hero/sunrise_sunset.svg";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
 import Wave from "./Wave";
 
 // TODO: Tailwind color gradients
-const steps = [
-  {
-    colors: ["#F33754", "#7C87F9"],
-    image: dawn,
-  },
-  {
-    colors: ["#F1A848", "#F55998"],
-    image: sunrise,
-  },
-  {
-    colors: ["#408FF7", "#0DD0DA"],
-    image: morning,
-  },
-  {
-    colors: ["#4FC351", "#CAC638"],
-    image: afternoon,
-  },
-  {
-    colors: ["#E4A70A", "#FF7500"],
-    image: sunset,
-  },
-  {
+const steps = {
+  night: {
     colors: ["#082D65", "#0E1B3B"],
     angle: "to bottom right",
-    image: dusk,
+    image: night,
   },
-];
+  sunrise_sunset: {
+    colors: ["#F1A848", "#F55998"],
+    image: sunrise_sunset,
+  },
+  daytime: {
+    colors: ["#408FF7", "#0DD0DA"],
+    image: daytime,
+  },
+};
+
+// UC Berkeley coordinates
+const BERKELEY_LAT = 37.8719;
+const BERKELEY_LNG = -122.2585;
 
 const getStep = (milliseconds: number) => {
   const date = new Date(milliseconds);
-  const hour = date.getHours();
+  const times = SunCalc.getTimes(date, BERKELEY_LAT, BERKELEY_LNG);
 
-  // 6am to 10am => sunrise
-  if (hour >= 6 && hour < 10) return steps[1];
-  // 10am to 1pm => morning
-  if (hour >= 10 && hour < 13) return steps[2];
-  // 1pm to 4pm => afternoon
-  if (hour >= 13 && hour < 16) return steps[3];
-  // 4pm to 7pm => sunset
-  if (hour >= 16 && hour < 19) return steps[4];
-  // 9pm to 4am => dusk
-  if (hour >= 21 || hour < 4) return steps[5];
+  const now = date.getTime();
+  const dawnTime = times.dawn.getTime();
+  const goldenHourEndTime = times.goldenHourEnd.getTime();
+  const goldenHourTime = times.goldenHour.getTime();
+  const duskTime = times.dusk.getTime();
 
-  // 4am to 6am or 7pm to 9pm => dawn
-  return steps[0];
+  if (now >= dawnTime && now < goldenHourEndTime) return steps.sunrise_sunset;
+  if (now >= goldenHourEndTime && now < goldenHourTime) return steps.daytime;
+  if (now >= goldenHourTime && now < duskTime) return steps.sunrise_sunset;
+  return steps.night;
 };
 
 const Home = () => {
