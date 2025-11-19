@@ -9,6 +9,7 @@ import Time from "@/components/Time";
 import useClass from "@/hooks/useClass";
 import { componentMap } from "@/lib/api";
 import { Component } from "@/lib/generated/graphql";
+import { buildings } from "@/lib/location";
 
 import styles from "./Sections.module.scss";
 
@@ -23,6 +24,30 @@ const hasValidStartTime = (time?: string | null) => {
   const hours = Number.parseInt(hoursPart ?? "", 10);
 
   return Number.isFinite(hours) && hours > 0;
+};
+
+const getLocationLink = (location?: string) => {
+  if (!location) {
+    return null;
+  }
+
+  const parts = location.trim().split(/\s+/);
+  if (parts.length < 2) {
+    return null;
+  }
+
+  const room = parts.pop();
+  const buildingKey = parts.join(" ");
+  const building = buildings[buildingKey];
+
+  if (!building?.link || !room) {
+    return null;
+  }
+
+  return {
+    label: `${building.name} ${room}`,
+    href: building.link,
+  };
 };
 
 export default function Sections() {
@@ -86,13 +111,22 @@ export default function Sections() {
             <th scope="col" className={`${styles.headerCell} ${styles.time}`}>
               Time
             </th>
-            <th scope="col" className={`${styles.headerCell} ${styles.location}`}>
+            <th
+              scope="col"
+              className={`${styles.headerCell} ${styles.location}`}
+            >
               Location
             </th>
-            <th scope="col" className={`${styles.headerCell} ${styles.waitlist}`}>
+            <th
+              scope="col"
+              className={`${styles.headerCell} ${styles.waitlist}`}
+            >
               Waitlist
             </th>
-            <th scope="col" className={`${styles.headerCell} ${styles.enrolled}`}>
+            <th
+              scope="col"
+              className={`${styles.headerCell} ${styles.enrolled}`}
+            >
               Enrolled
             </th>
           </tr>
@@ -104,24 +138,28 @@ export default function Sections() {
             const waitlistedCount = section.enrollment?.latest?.waitlistedCount;
             const firstMeeting = section.meetings[0];
             const hasTimeData = Boolean(
-            firstMeeting?.days?.some((day) => day) &&
-              firstMeeting?.endTime &&
-              hasValidStartTime(firstMeeting?.startTime)
-          );
-          const locationValue =
-            typeof firstMeeting?.location === "string"
-              ? firstMeeting.location.trim()
-              : "";
+              firstMeeting?.days?.some((day) => day) &&
+                firstMeeting?.endTime &&
+                hasValidStartTime(firstMeeting?.startTime)
+            );
+            const locationValue =
+              typeof firstMeeting?.location === "string"
+                ? firstMeeting.location.trim()
+                : "";
+            const locationLink = getLocationLink(locationValue);
 
-          // Calculate enrollment percentage
-          const enrollmentPercentage =
-            typeof enrolledCount === "number" &&
-            typeof maxEnroll === "number" &&
-            maxEnroll > 0
-              ? Math.round((enrolledCount / maxEnroll) * 100)
-              : null;
+            // Calculate enrollment percentage
+            const enrollmentPercentage =
+              typeof enrolledCount === "number" &&
+              typeof maxEnroll === "number" &&
+              maxEnroll > 0
+                ? Math.round((enrolledCount / maxEnroll) * 100)
+                : null;
 
-          const enrollmentColor = getEnrollmentColor(enrolledCount, maxEnroll);
+            const enrollmentColor = getEnrollmentColor(
+              enrolledCount,
+              maxEnroll
+            );
 
             return (
               <tr key={section.sectionId} className={styles.row}>
@@ -141,7 +179,18 @@ export default function Sections() {
                   )}
                 </td>
                 <td className={`${styles.cell} ${styles.location}`}>
-                  {locationValue || NO_DATA_LABEL}
+                  {locationLink ? (
+                    <a
+                      href={locationLink.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className={styles.locationLink}
+                    >
+                      {locationLink.label}
+                    </a>
+                  ) : (
+                    locationValue || NO_DATA_LABEL
+                  )}
                 </td>
                 <td className={`${styles.cell} ${styles.waitlist}`}>
                   {typeof waitlistedCount === "number"
