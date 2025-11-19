@@ -167,21 +167,12 @@ export default function Class({
     const seatReservationCounts = enrollment.latest?.seatReservationCount ?? [];
 
     if (seatReservationCounts.length === 0) {
-      console.log("no reservation group");
       return;
     }
 
     const typeMap = new Map<number, string>();
     seatReservationTypes.forEach((type) => {
       typeMap.set(type.number, type.requirementGroup);
-    });
-
-    seatReservationCounts.forEach((count) => {
-      const requirementGroup =
-        typeMap.get(count.number) || `Unknown (${count.number})`;
-      console.log(
-        `${requirementGroup}: ${count.enrolledCount}/${count.maxEnroll}`
-      );
     });
   }, [_class]);
 
