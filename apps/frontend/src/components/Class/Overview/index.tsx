@@ -18,7 +18,7 @@ export default function Overview() {
     }
     const requiredCourses = _class.course.requiredCourses;
     if (requiredCourses == null || requiredCourses.length === 0) {
-      return "No Prerequisites Listed.";
+      return null;
     }
     return requiredCourses
       .map((course) => `${course.subject} ${course.number}`)
@@ -71,10 +71,12 @@ export default function Overview() {
           {_class.primarySection.meetings.map((meeting, i) => (
             <Details {...meeting} key={i} />
           ))}
-          <Flex direction="column" gap="2">
-            <p className={styles.label}>Prerequisites</p>
-            <p className={styles.description}>{prereqs}</p>
-          </Flex>
+          {prereqs && (
+            <Flex direction="column" gap="2">
+              <p className={styles.label}>Prerequisites</p>
+              <p className={styles.description}>{prereqs}</p>
+            </Flex>
+          )}
           <Flex direction="column" gap="2">
             <p className={styles.label}>Description</p>
             <p className={styles.description}>
