@@ -5,10 +5,8 @@ import SunCalc from "suncalc";
 import Features from "./Features";
 import Hero from "./Hero";
 import daytime from "./Hero/daytime.svg";
-import earlyMorning from "./Hero/early-morning.svg";
 import night from "./Hero/night.svg";
-import sunrise from "./Hero/sunrise.svg";
-import sunset from "./Hero/sunset.svg";
+import sunrise_sunset from "./Hero/sunrise_sunset.svg";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
 import Wave from "./Wave";
@@ -20,21 +18,13 @@ const steps = {
     angle: "to bottom right",
     image: night,
   },
-  sunrise: {
+  sunrise_sunset: {
     colors: ["#F1A848", "#F55998"],
-    image: sunrise,
-  },
-  earlyMorning: {
-    colors: ["#E4A70A", "#FF7500"],
-    image: earlyMorning,
+    image: sunrise_sunset,
   },
   daytime: {
     colors: ["#408FF7", "#0DD0DA"],
     image: daytime,
-  },
-  sunset: {
-    colors: ["#F33754", "#7C87F9"],
-    image: sunset,
   },
 };
 
@@ -48,16 +38,13 @@ const getStep = (milliseconds: number) => {
 
   const now = date.getTime();
   const dawnTime = times.dawn.getTime();
-  const sunriseEndTime = times.sunriseEnd.getTime();
   const goldenHourEndTime = times.goldenHourEnd.getTime();
   const goldenHourTime = times.goldenHour.getTime();
   const duskTime = times.dusk.getTime();
 
-  if (now >= dawnTime && now < sunriseEndTime) return steps.sunrise;
-  if (now >= sunriseEndTime && now < goldenHourEndTime)
-    return steps.earlyMorning;
+  if (now >= dawnTime && now < goldenHourEndTime) return steps.sunrise_sunset;
   if (now >= goldenHourEndTime && now < goldenHourTime) return steps.daytime;
-  if (now >= goldenHourTime && now < duskTime) return steps.sunset;
+  if (now >= goldenHourTime && now < duskTime) return steps.sunrise_sunset;
   return steps.night;
 };
 
