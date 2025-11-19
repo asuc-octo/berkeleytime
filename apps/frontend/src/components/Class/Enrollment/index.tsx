@@ -179,80 +179,84 @@ export default function Enrollment() {
             </Button>
           </div>
           <div className={styles.chart}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                width={730}
-                height={450}
-                data={data}
-                margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="var(--border-color)"
-                />
-                <XAxis
-                  dataKey="timeDelta"
-                  type="number"
-                  stroke="var(--label-color)"
-                  tickMargin={8}
-                  tick={{ fill: "var(--paragraph-color)", fontSize: 12 }}
-                  tickFormatter={(timeDelta) =>
-                    String(
-                      Math.floor(
-                        moment.duration(timeDelta as number, "minutes").asDays()
-                      ) + 1
-                    )
-                  }
-                  label={{
-                    value: "Days since enrollment opened",
-                    position: "insideBottom",
-                    offset: -5,
-                    fill: "var(--label-color)",
-                    fontSize: 12,
-                  }}
-                />
-                <YAxis
-                  stroke="var(--label-color)"
-                  tickFormatter={toPercent}
-                  tick={{ fill: "var(--paragraph-color)", fontSize: 12 }}
-                  domain={[0, dataMax || 100]}
-                />
-                <Tooltip content={renderTooltip} />
-                <ReferenceLine
-                  y={100}
-                  stroke="var(--label-color)"
-                  strokeDasharray="5 5"
-                  strokeOpacity={0.5}
-                  label={{
-                    value: "100% Capacity",
-                    position: "insideTopLeft",
-                    fill: "var(--label-color)",
-                    fontSize: 12,
-                    offset: 10,
-                  }}
-                />
-                <Line
-                  type="linear"
-                  dataKey="enrolled"
-                  stroke="var(--blue-500)"
-                  dot={false}
-                  strokeWidth={3}
-                  name="enrolled"
-                  connectNulls
-                />
-                <Line
-                  type="linear"
-                  dataKey="waitlisted"
-                  stroke="var(--orange-500)"
-                  dot={false}
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  name="waitlisted"
-                  connectNulls
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className={styles.chartContainer}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  width={730}
+                  height={450}
+                  data={data}
+                  margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="var(--border-color)"
+                  />
+                  <XAxis
+                    dataKey="timeDelta"
+                    type="number"
+                    stroke="var(--label-color)"
+                    tickMargin={8}
+                    tick={{
+                      fill: "var(--paragraph-color)",
+                      fontSize: "var(--text-14)",
+                    }}
+                    tickFormatter={(timeDelta) =>
+                      String(
+                        Math.floor(
+                          moment
+                            .duration(timeDelta as number, "minutes")
+                            .asDays()
+                        ) + 1
+                      )
+                    }
+                  />
+                  <YAxis
+                    stroke="var(--label-color)"
+                    tickFormatter={toPercent}
+                    tick={{
+                      fill: "var(--paragraph-color)",
+                      fontSize: "var(--text-14)",
+                    }}
+                    domain={[0, dataMax || 100]}
+                  />
+                  <Tooltip content={renderTooltip} />
+                  <ReferenceLine
+                    y={100}
+                    stroke="var(--label-color)"
+                    strokeDasharray="5 5"
+                    strokeOpacity={0.5}
+                    label={{
+                      value: "100% Capacity",
+                      position: "insideTopLeft",
+                      fill: "var(--paragraph-color)",
+                      fontSize: "var(--text-14)",
+                      offset: 10,
+                    }}
+                  />
+                  <Line
+                    type="linear"
+                    dataKey="enrolled"
+                    stroke="var(--blue-500)"
+                    dot={false}
+                    strokeWidth={3}
+                    name="enrolled"
+                    connectNulls
+                  />
+                  <Line
+                    type="linear"
+                    dataKey="waitlisted"
+                    stroke="var(--orange-500)"
+                    dot={false}
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name="waitlisted"
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <p className={styles.axisLabel}>Days since enrollment opened</p>
           </div>
         </div>
       </Container>

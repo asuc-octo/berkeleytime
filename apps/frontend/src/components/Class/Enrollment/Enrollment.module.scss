@@ -47,6 +47,21 @@
 
 .chart {
   height: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chartContainer {
+  flex: 1;
+  min-height: 0;
+}
+
+.axisLabel {
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
 }
 
 .placeholder {
