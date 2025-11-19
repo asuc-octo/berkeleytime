@@ -89,7 +89,9 @@ export const getCatalog = async (
         : false
     );
 
-  const includesClassGradeDistribution = selectionIncludes(["gradeDistribution"]);
+  const includesClassGradeDistribution = selectionIncludes([
+    "gradeDistribution",
+  ]);
   const includesCourseGradeDistribution = selectionIncludes([
     "course",
     "gradeDistribution",
@@ -101,33 +103,35 @@ export const getCatalog = async (
   ]);
 
   const shouldLoadGradeDistributions =
-    includesClassGradeDistribution || includesCourseGradeDistributionDistribution;
+    includesClassGradeDistribution ||
+    includesCourseGradeDistributionDistribution;
 
   if (shouldLoadGradeDistributions) {
     const sectionIds = sections.map((section) => section.sectionId);
 
     // Fetch class-level and course-level grade distributions in parallel when needed
-    const [classGradeDistributions, courseGradeDistributions] = await Promise.all([
-      includesClassGradeDistribution
-        ? GradeDistributionModel.find({
-            sectionId: { $in: sectionIds },
-          }).lean()
-        : Promise.resolve([] as IGradeDistributionItem[]),
-      includesCourseGradeDistributionDistribution
-        ? GradeDistributionModel.find({
-            $or: [
-              ...courses.map((course) => ({
-                subject: course.subject,
-                courseNumber: course.number,
-              })),
-              ...classes.map((_class) => ({
-                subject: _class.subject,
-                courseNumber: _class.courseNumber,
-              })),
-            ],
-          }).lean()
-        : Promise.resolve([] as IGradeDistributionItem[]),
-    ]);
+    const [classGradeDistributions, courseGradeDistributions] =
+      await Promise.all([
+        includesClassGradeDistribution
+          ? GradeDistributionModel.find({
+              sectionId: { $in: sectionIds },
+            }).lean()
+          : Promise.resolve([] as IGradeDistributionItem[]),
+        includesCourseGradeDistributionDistribution
+          ? GradeDistributionModel.find({
+              $or: [
+                ...courses.map((course) => ({
+                  subject: course.subject,
+                  courseNumber: course.number,
+                })),
+                ...classes.map((_class) => ({
+                  subject: _class.subject,
+                  courseNumber: _class.courseNumber,
+                })),
+              ],
+            }).lean()
+          : Promise.resolve([] as IGradeDistributionItem[]),
+      ]);
 
     // Separate processing for class-level and course-level distributions
     const reducedGradeDistributions = {} as Record<

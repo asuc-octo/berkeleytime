@@ -1,7 +1,4 @@
-import {
-  FragmentDefinitionNode,
-  SelectionNode,
-} from "graphql";
+import { FragmentDefinitionNode, SelectionNode } from "graphql";
 
 // Recursively retrieve all fields from a GraphQL query
 export const getFields = (nodes: readonly SelectionNode[]): string[] => {

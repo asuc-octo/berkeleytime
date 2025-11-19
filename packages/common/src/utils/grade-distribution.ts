@@ -143,7 +143,8 @@ export const getDistribution = (distributions: GradeCounts[]) => {
 
 export const getAverageGrade = (distribution: Grade[]) => {
   const total = distribution.reduce((acc, { letter, count }) => {
-    if (Object.prototype.hasOwnProperty.call(points, letter)) return acc + count;
+    if (Object.prototype.hasOwnProperty.call(points, letter))
+      return acc + count;
 
     // Ignore letters not included in GPA
     return acc;
