@@ -9,7 +9,7 @@ import {
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import {
   Badge,
@@ -122,6 +122,7 @@ export default function Class({
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
@@ -251,6 +252,16 @@ export default function Class({
     ratingsLockContext
   );
   const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
+
+  useEffect(() => {
+    if (dialog || !ratingsLocked) return;
+    if (!location.pathname.endsWith("/ratings")) return;
+
+    const redirectPath = location.pathname.replace(/\/ratings$/, "");
+    navigate(`${redirectPath}${location.search}${location.hash}`, {
+      replace: true,
+    });
+  }, [dialog, ratingsLocked, location, navigate]);
 
   // seat reservation logic pending design + consideration for performance.
   // const seatReservationTypeMap = useMemo(() => {
@@ -528,11 +539,13 @@ export default function Class({
                     <Grades />
                   </SuspenseBoundary>
                 </Tabs.Content>
-                <Tabs.Content value="ratings" asChild>
-                  <SuspenseBoundary>
-                    <Ratings />
-                  </SuspenseBoundary>
-                </Tabs.Content>
+                {!ratingsLocked && (
+                  <Tabs.Content value="ratings" asChild>
+                    <SuspenseBoundary>
+                      <Ratings />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                )}
                 <Tabs.Content value="enrollment" asChild>
                   <SuspenseBoundary>
                     <Enrollment />

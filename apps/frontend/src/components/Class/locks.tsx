@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { MouseEvent, ReactNode } from "react";
 
 import { Lock } from "iconoir-react";
 import { Tooltip } from "radix-ui";
@@ -43,7 +43,7 @@ const shouldDisplayRatingsTab = (context?: RatingsLockContext) => {
   return true;
 };
 
-const isRatingsLocked = (context?: RatingsLockContext) => {
+export const isRatingsLocked = (context?: RatingsLockContext) => {
   void context;
   return RATINGS_LOCK_ENABLED;
 };
@@ -61,6 +61,12 @@ function RatingsTabLinkBase({
     <div className={classes.dot}></div>
   );
 
+  const handleLockedClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!locked) return;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   const renderMenuItem = (isActive = false): ReactNode => (
     <MenuItem {...(dialog ? { styl: true } : { active: isActive })}>
       {locked && <Lock />}
@@ -70,7 +76,12 @@ function RatingsTabLinkBase({
   );
 
   const navLink = (
-    <NavLink to={to}>
+    <NavLink
+      to={to}
+      onClick={locked ? handleLockedClick : undefined}
+      aria-disabled={locked || undefined}
+      tabIndex={locked ? -1 : undefined}
+    >
       {dialog
         ? renderMenuItem()
         : ({ isActive }) => renderMenuItem(isActive)}
@@ -81,9 +92,7 @@ function RatingsTabLinkBase({
     return navLink;
   }
 
-  const tooltipDescription = dialog
-    ? "Add your experience to unlock ratings others have made"
-    : "Add your experience to view ratings others have made";
+  const tooltipDescription = "Click and add your experience to view ratings others have made";
 
   return (
     <Tooltip.Root disableHoverableContent>
