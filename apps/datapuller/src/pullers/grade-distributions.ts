@@ -75,7 +75,7 @@ const rebuildCourseGradeSummaries = async (log: Config["log"]) => {
 
       return {
         updateMany: {
-          filter: { subject: _id.subject, number: _id.courseNumber },
+          filter: { subject: _id.subject, courseNumber: _id.courseNumber },
           update: {
             $set: {
               averageGrade,

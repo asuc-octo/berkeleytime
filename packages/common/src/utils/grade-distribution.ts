@@ -143,8 +143,7 @@ export const getDistribution = (distributions: GradeCounts[]) => {
 
 export const getAverageGrade = (distribution: Grade[]) => {
   const total = distribution.reduce((acc, { letter, count }) => {
-    if (Object.prototype.hasOwnProperty.call(points, letter))
-      return acc + count;
+    if (letter in points) return acc + count;
 
     // Ignore letters not included in GPA
     return acc;
@@ -154,8 +153,7 @@ export const getAverageGrade = (distribution: Grade[]) => {
   if (total === 0) return null;
 
   const weightedTotal = distribution.reduce((acc, { letter, count }) => {
-    if (Object.prototype.hasOwnProperty.call(points, letter))
-      return points[letter] * count + acc;
+    if (letter in points) return points[letter] * count + acc;
 
     return acc;
   }, 0);

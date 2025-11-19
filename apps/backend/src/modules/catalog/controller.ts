@@ -24,6 +24,8 @@ import { formatEnrollment } from "../enrollment/formatter";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 
+const EMPTY_GRADE_DISTRIBUTIONS: IGradeDistributionItem[] = [];
+
 // TODO: Pagination, filtering
 export const getCatalog = async (
   year: number,
@@ -116,7 +118,7 @@ export const getCatalog = async (
           ? GradeDistributionModel.find({
               sectionId: { $in: sectionIds },
             }).lean()
-          : Promise.resolve([] as IGradeDistributionItem[]),
+          : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
         includesCourseGradeDistributionDistribution
           ? GradeDistributionModel.find({
               $or: [
@@ -130,7 +132,7 @@ export const getCatalog = async (
                 })),
               ],
             }).lean()
-          : Promise.resolve([] as IGradeDistributionItem[]),
+          : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
       ]);
 
     // Separate processing for class-level and course-level distributions
