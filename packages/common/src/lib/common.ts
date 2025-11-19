@@ -5,3 +5,5 @@ export const schemaOptions = {
     updatedAt: "_updatedAt",
   },
 };
+
+export const SEMESTER_ENUM = ["Spring", "Summer", "Fall", "Winter"] as const;
