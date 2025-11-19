@@ -77,23 +77,33 @@ export default function Sections() {
         value={activeTab}
         onValueChange={setActiveTab}
       />
-      <div className={styles.table}>
-        {/* Table Header */}
-        <div className={styles.header}>
-          <p className={`${styles.headerCell} ${styles.ccn}`}>CCN</p>
-          <p className={`${styles.headerCell} ${styles.time}`}>Time</p>
-          <p className={`${styles.headerCell} ${styles.location}`}>Location</p>
-          <p className={`${styles.headerCell} ${styles.waitlist}`}>Waitlist</p>
-          <p className={`${styles.headerCell} ${styles.enrolled}`}>Enrolled</p>
-        </div>
-
-        {/* Table Rows */}
-        {activeSections.map((section) => {
-          const enrolledCount = section.enrollment?.latest?.enrolledCount;
-          const maxEnroll = section.enrollment?.latest?.maxEnroll;
-          const waitlistedCount = section.enrollment?.latest?.waitlistedCount;
-          const firstMeeting = section.meetings[0];
-          const hasTimeData = Boolean(
+      <table className={styles.table}>
+        <thead className={styles.header}>
+          <tr>
+            <th scope="col" className={`${styles.headerCell} ${styles.ccn}`}>
+              CCN
+            </th>
+            <th scope="col" className={`${styles.headerCell} ${styles.time}`}>
+              Time
+            </th>
+            <th scope="col" className={`${styles.headerCell} ${styles.location}`}>
+              Location
+            </th>
+            <th scope="col" className={`${styles.headerCell} ${styles.waitlist}`}>
+              Waitlist
+            </th>
+            <th scope="col" className={`${styles.headerCell} ${styles.enrolled}`}>
+              Enrolled
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {activeSections.map((section) => {
+            const enrolledCount = section.enrollment?.latest?.enrolledCount;
+            const maxEnroll = section.enrollment?.latest?.maxEnroll;
+            const waitlistedCount = section.enrollment?.latest?.waitlistedCount;
+            const firstMeeting = section.meetings[0];
+            const hasTimeData = Boolean(
             firstMeeting?.days?.some((day) => day) &&
               firstMeeting?.endTime &&
               hasValidStartTime(firstMeeting?.startTime)
@@ -113,47 +123,48 @@ export default function Sections() {
 
           const enrollmentColor = getEnrollmentColor(enrolledCount, maxEnroll);
 
-          return (
-            <div key={section.sectionId} className={styles.row}>
-              <p className={`${styles.cell} ${styles.ccn}`}>
-                {section.sectionId}
-              </p>
-              <div className={`${styles.cell} ${styles.time}`}>
-                {hasTimeData ? (
-                  <Time
-                    days={firstMeeting?.days}
-                    startTime={firstMeeting?.startTime}
-                    endTime={firstMeeting?.endTime}
-                    className={styles.timeText}
-                  />
-                ) : (
-                  NO_DATA_LABEL
-                )}
-              </div>
-              <p className={`${styles.cell} ${styles.location}`}>
-                {locationValue || NO_DATA_LABEL}
-              </p>
-              <p className={`${styles.cell} ${styles.waitlist}`}>
-                {typeof waitlistedCount === "number"
-                  ? waitlistedCount
-                  : NO_DATA_LABEL}
-              </p>
-              <p
-                className={`${styles.cell} ${styles.enrolled}`}
-                style={
-                  enrollmentPercentage !== null
-                    ? { color: enrollmentColor }
-                    : undefined
-                }
-              >
-                {enrollmentPercentage !== null
-                  ? `${enrollmentPercentage}% enrolled`
-                  : NO_DATA_LABEL}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+            return (
+              <tr key={section.sectionId} className={styles.row}>
+                <td className={`${styles.cell} ${styles.ccn}`}>
+                  {section.sectionId}
+                </td>
+                <td className={`${styles.cell} ${styles.time}`}>
+                  {hasTimeData ? (
+                    <Time
+                      days={firstMeeting?.days}
+                      startTime={firstMeeting?.startTime}
+                      endTime={firstMeeting?.endTime}
+                      className={styles.timeText}
+                    />
+                  ) : (
+                    NO_DATA_LABEL
+                  )}
+                </td>
+                <td className={`${styles.cell} ${styles.location}`}>
+                  {locationValue || NO_DATA_LABEL}
+                </td>
+                <td className={`${styles.cell} ${styles.waitlist}`}>
+                  {typeof waitlistedCount === "number"
+                    ? waitlistedCount
+                    : NO_DATA_LABEL}
+                </td>
+                <td
+                  className={`${styles.cell} ${styles.enrolled}`}
+                  style={
+                    enrollmentPercentage !== null
+                      ? { color: enrollmentColor }
+                      : undefined
+                  }
+                >
+                  {enrollmentPercentage !== null
+                    ? `${enrollmentPercentage}% enrolled`
+                    : NO_DATA_LABEL}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
