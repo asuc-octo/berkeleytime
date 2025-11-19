@@ -1,3 +1,12 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 24px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
 .placeholder {
   display: flex;
   flex-direction: column;
@@ -5,7 +14,8 @@
   align-items: center;
   color: var(--label-color);
   height: 100%;
-  font-size: 16px;
+  font-size: var(--text-16);
+  font-weight: var(--font-normal);
   line-height: 1.5;
   padding: 24px 0;
   padding-top: 150px;
@@ -13,130 +23,99 @@
 
   .heading {
     color: var(--heading-color);
-    font-weight: 500;
+    font-weight: var(--font-medium);
+    font-size: var(--text-16);
     margin-top: 24px;
+    margin-bottom: 0;
   }
 
   .paragraph {
     color: var(--paragraph-color);
-    margin-top: 8px;
+    margin: 8px 0 0;
     max-width: 448px;
+    font-size: var(--text-14);
+    font-weight: var(--font-normal);
   }
 }
 
-.root {
-  background-color: var(--background-color);
-  padding: 24px 0 0;
-  display: flex;
-  gap: 24px;
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
 
-  @media (width <= 992px) {
-    flex-direction: column;
-  }
+.header {
+  border-bottom: 1px solid var(--border-color);
+}
 
-  @media (width > 992px) {
-    align-items: flex-start;
-  }
+.headerCell {
+  padding: 8px;
+  font-weight: var(--font-semibold);
+  font-size: var(--text-14);
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--heading-color);
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+  word-break: break-word;
+}
 
-  .view {
-    flex-grow: 1;
+.row {
+  height: 120px;
+  border-bottom: 1px solid var(--border-color);
+}
 
-    .group {
-      scroll-margin-top: 24px;
+.cell {
+  padding: 12px 8px;
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--paragraph-color);
+  vertical-align: top;
+  text-align: left;
+  white-space: normal;
+  word-break: break-word;
+}
 
-      .section {
-        padding: 24px;
-        background-color: var(--foreground-color);
-        border-radius: 8px;
-        box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-        margin-bottom: 24px;
-        border: 1px solid var(--border-color);
+.ccn {
+  width: 50px;
+}
 
-        .header {
-          display: flex;
-          margin-bottom: 24px;
-          gap: 12px;
+.time {
+  width: 180px;
+}
 
-          .text {
-            flex-grow: 1;
+.location {
+  width: 120px;
+}
 
-            .heading {
-              color: var(--heading-color);
-              font-size: 14px;
-              margin-bottom: 8px;
-              line-height: 1;
-              font-weight: 500;
-            }
-          }
-        }
-      }
-    }
-  }
+.waitlist {
+  width: 60px;
+}
 
-  .menu {
-    position: sticky;
-    top: 24px;
-    width: 192px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.enrolled {
+  width: 90px;
+}
 
-    .item {
-      height: 32px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      gap: 12px;
-      padding: 0 12px;
-      line-height: 1;
-      font-size: 14px;
-      cursor: pointer;
+.timeText {
+  width: 100%;
+  white-space: normal;
+  word-break: break-word;
+}
 
-      &:hover {
-        background-color: var(--button-hover-color);
+.locationLink {
+  color: var(--blue-500);
+  text-decoration: none;
+  transition: color 100ms ease-in-out;
+  font-weight: var(--font-medium);
 
-        .component {
-          color: var(--heading-color);
-        }
-      }
+  &:hover {
+    color: var(--blue-600);
 
-      &:active {
-        background-color: var(--button-active-color);
-      }
-
-      &.active .component {
-        color: var(--heading-color);
-      }
-
-      &.active::after {
-        opacity: 1;
-      }
-
-      &::after {
-        content: "";
-        width: 2px;
-        height: 100%;
-        background-color: var(--blue-500);
-        position: absolute;
-        opacity: 0;
-        left: -12px;
-        transition: all 100ms ease-in-out;
-      }
-
-      .component {
-        font-weight: 500;
-        color: var(--paragraph-color);
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-      }
-
-      .count {
-        color: var(--label-color);
-      }
+    @media (prefers-color-scheme: dark) {
+      color: var(--blue-400);
     }
   }
 }
