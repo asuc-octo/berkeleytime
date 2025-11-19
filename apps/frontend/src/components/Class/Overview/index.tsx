@@ -1,6 +1,4 @@
-import { useMemo, useState } from "react";
-
-import { NavArrowDown } from "iconoir-react";
+import { useMemo } from "react";
 
 import { Box, Container, Flex } from "@repo/theme";
 
@@ -13,7 +11,6 @@ import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
   const { class: _class } = useClass();
-  const [isClassNoteExpanded, setIsClassNoteExpanded] = useState(false);
 
   const prereqs = useMemo(() => {
     if (_class.course.requirements && _class.course.requirements.trim()) {
@@ -86,35 +83,15 @@ export default function Overview() {
           </Flex>
           {classNoteLines && classNoteLines.length > 0 && (
             <Flex direction="column" gap="2">
-              <div
-                className={styles.classNoteHeader}
-                onClick={() => setIsClassNoteExpanded(!isClassNoteExpanded)}
-                style={{ cursor: "pointer" }}
-              >
-                <p className={styles.label}>
-                  Class Note
-                  <NavArrowDown
-                    className={styles.expandIcon}
-                    style={{
-                      transform: isClassNoteExpanded
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                    }}
-                  />
-                </p>
-              </div>
-              {isClassNoteExpanded && (
-                <div className={styles.classNoteContent}>
-                  <p className={styles.description}>
-                    {classNoteLines.map((line, index) => (
-                      <span key={`${line}-${index}`}>
-                        {linkify(line, styles.link)}
-                        {index < classNoteLines.length - 1 && <br />}
-                      </span>
-                    ))}
-                  </p>
-                </div>
-              )}
+              <p className={styles.label}>Class Note</p>
+              <p className={styles.description}>
+                {classNoteLines.map((line, index) => (
+                  <span key={`${line}-${index}`}>
+                    {linkify(line, styles.link)}
+                    {index < classNoteLines.length - 1 && <br />}
+                  </span>
+                ))}
+              </p>
             </Flex>
           )}
           <UserSubmittedData />
