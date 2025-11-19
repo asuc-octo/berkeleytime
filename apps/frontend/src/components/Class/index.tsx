@@ -19,7 +19,7 @@ import {
   Flex,
   IconButton,
   MenuItem,
-  Tooltip,
+  Tooltip as ThemeTooltip,
 } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
@@ -37,6 +37,11 @@ import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
+import {
+  RatingsTabLink,
+  isRatingsLocked,
+  shouldDisplayRatingsTab,
+} from "./locks";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -234,6 +239,13 @@ export default function Class({
     );
   }, [_course]);
 
+  const ratingsLockContext = useMemo(
+    () => ({ user }),
+    [user]
+  );
+  const shouldShowRatingsTab = shouldDisplayRatingsTab(ratingsLockContext);
+  const ratingsLocked = isRatingsLocked(ratingsLockContext);
+
   // seat reservation logic pending design + consideration for performance.
   // const seatReservationTypeMap = useMemo(() => {
   //   const reservationTypes =
@@ -323,15 +335,15 @@ export default function Class({
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
                   </Tooltip> */}
-                  <Tooltip content="Add to schedule">
+                  <ThemeTooltip content="Add to schedule">
                     <IconButton>
                       <CalendarPlus />
                     </IconButton>
-                  </Tooltip>
+                  </ThemeTooltip>
                 </Flex>
                 <Flex gap="3">
                   {/* TODO: Reusable bookmark button */}
-                  <Tooltip
+                  <ThemeTooltip
                     content={bookmarked ? "Remove bookmark" : "Bookmark"}
                   >
                     <IconButton
@@ -343,8 +355,8 @@ export default function Class({
                     >
                       {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                     </IconButton>
-                  </Tooltip>
-                  <Tooltip content="Open in Berkeley Catalog">
+                  </ThemeTooltip>
+                  <ThemeTooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
                       href={getExternalLink(
@@ -360,7 +372,7 @@ export default function Class({
                     >
                       <OpenNewWindow />
                     </IconButton>
-                  </Tooltip>
+                  </ThemeTooltip>
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
@@ -443,18 +455,14 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    <NavLink
-                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
-                    >
-                      <MenuItem styl>
-                        Ratings
-                        {ratingsCount ? (
-                          <div className={styles.badge}>{ratingsCount}</div>
-                        ) : (
-                          <div className={styles.dot}></div>
-                        )}
-                      </MenuItem>
-                    </NavLink>
+                    {shouldShowRatingsTab && (
+                      <RatingsTabLink
+                        dialog
+                        locked={ratingsLocked}
+                        ratingsCount={ratingsCount}
+                        to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                      />
+                    )}
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
@@ -475,18 +483,13 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  <NavLink to={{ ...location, pathname: "ratings" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>
-                        Ratings
-                        {ratingsCount ? (
-                          <div className={styles.badge}>{ratingsCount}</div>
-                        ) : (
-                          <div className={styles.dot}></div>
-                        )}
-                      </MenuItem>
-                    )}
-                  </NavLink>
+                  {shouldShowRatingsTab && (
+                    <RatingsTabLink
+                      locked={ratingsLocked}
+                      ratingsCount={ratingsCount}
+                      to={{ ...location, pathname: "ratings" }}
+                    />
+                  )}
                   <NavLink to={{ ...location, pathname: "grades" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
