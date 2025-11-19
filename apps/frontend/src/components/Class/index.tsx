@@ -9,13 +9,7 @@ import {
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import {
-  Link,
-  NavLink,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
   Badge,
@@ -33,7 +27,6 @@ import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
@@ -95,19 +88,8 @@ interface UncontrolledProps {
   number: string;
 }
 
-interface CatalogClassProps {
-  dialog?: never;
-  onClose: () => void;
-}
-
-interface DialogClassProps {
-  dialog: true;
-  onClose?: never;
-}
-
 // TODO: Determine whether a controlled input is even necessary
-type ClassProps = (CatalogClassProps | DialogClassProps) &
-  (ControlledProps | UncontrolledProps);
+type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
 
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
@@ -126,12 +108,10 @@ export default function Class({
   number,
   class: providedClass,
   course: providedCourse,
-  onClose,
   dialog,
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
@@ -193,28 +173,6 @@ export default function Class({
       ),
     [user, _class]
   );
-
-  const pin = useMemo(() => {
-    if (!_class) return;
-
-    const { year, semester, subject, courseNumber, number } = _class;
-
-    const id = `${year}-${semester}-${subject}-${courseNumber}-${number}`;
-
-    return {
-      id,
-      type: "class",
-      data: {
-        year,
-        semester,
-        subject,
-        courseNumber,
-        number,
-      },
-    } as ClassPin;
-  }, [_class]);
-
-  // const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
   const bookmark = useCallback(async () => {
     if (!user || !_class) return;
@@ -342,7 +300,7 @@ export default function Class({
   }
 
   // TODO: Error state
-  if (!_course || !_class || !pin) {
+  if (!_course || !_class) {
     return <></>;
   }
 
