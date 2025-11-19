@@ -37,11 +37,7 @@ import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
-import {
-  RatingsTabLink,
-  isRatingsLocked,
-  shouldDisplayRatingsTab,
-} from "./locks";
+import { RatingsTabLink, type RatingsTabClasses } from "./locks";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -96,6 +92,15 @@ interface UncontrolledProps {
 // TODO: Determine whether a controlled input is even necessary
 type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
 
+const ratingsTabClasses: RatingsTabClasses = {
+  badge: styles.badge,
+  dot: styles.dot,
+  tooltipArrow: styles.tooltipArrow,
+  tooltipContent: styles.tooltipContent,
+  tooltipDescription: styles.tooltipDescription,
+  tooltipTitle: styles.tooltipTitle,
+};
+
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
   const num = parseInt(number, 10);
@@ -143,6 +148,7 @@ export default function Class({
   );
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+  const primarySection = _class?.primarySection ?? null;
 
   useEffect(() => {
     if (!_class?.primarySection?.enrollment) return;
@@ -228,23 +234,23 @@ export default function Class({
     });
   }, [_class]);
 
-  const ratingsCount = useMemo(() => {
-    return (
-      _course &&
-      _course.aggregatedRatings &&
-      _course.aggregatedRatings.metrics.length > 0 &&
-      Math.max(
-        ...Object.values(_course.aggregatedRatings.metrics.map((v) => v.count))
-      )
-    );
+  const ratingsCount = useMemo<number | false>(() => {
+    const metrics = _course?.aggregatedRatings?.metrics;
+    if (!metrics || metrics.length === 0) {
+      return false;
+    }
+
+    return Math.max(...metrics.map((metric) => metric.count));
   }, [_course]);
 
   const ratingsLockContext = useMemo(
     () => ({ user }),
     [user]
   );
-  const shouldShowRatingsTab = shouldDisplayRatingsTab(ratingsLockContext);
-  const ratingsLocked = isRatingsLocked(ratingsLockContext);
+  const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(
+    ratingsLockContext
+  );
+  const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
 
   // seat reservation logic pending design + consideration for performance.
   // const seatReservationTypeMap = useMemo(() => {
@@ -359,14 +365,7 @@ export default function Class({
                   <ThemeTooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
-                      href={getExternalLink(
-                        _class.year,
-                        _class.semester,
-                        _class.subject,
-                        _class.courseNumber,
-                        _class.primarySection.number,
-                        _class.primarySection.component
-                      )}
+                      href={getExternalLink(_class)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -390,12 +389,10 @@ export default function Class({
                 <Flex gap="3" align="center">
                   <EnrollmentDisplay
                     enrolledCount={
-                      _class.primarySection.enrollment?.latest?.enrolledCount
+                      primarySection?.enrollment?.latest?.enrolledCount
                     }
-                    maxEnroll={
-                      _class.primarySection.enrollment?.latest?.maxEnroll
-                    }
-                    time={_class.primarySection.enrollment?.latest?.endTime}
+                    maxEnroll={primarySection?.enrollment?.latest?.maxEnroll}
+                    time={primarySection?.enrollment?.latest?.endTime}
                   >
                     {(content) => (
                       <Link
@@ -434,8 +431,8 @@ export default function Class({
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
                   />
-                  {_class && (
-                    <CCN sectionId={_class.primarySection.sectionId} />
+                  {primarySection?.sectionId && (
+                    <CCN sectionId={primarySection.sectionId} />
                   )}
                   {reservedSeatingMaxCount > 0 && (
                     <Badge
@@ -458,6 +455,7 @@ export default function Class({
                     {shouldShowRatingsTab && (
                       <RatingsTabLink
                         dialog
+                        classes={ratingsTabClasses}
                         locked={ratingsLocked}
                         ratingsCount={ratingsCount}
                         to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
@@ -485,6 +483,7 @@ export default function Class({
                   </NavLink>
                   {shouldShowRatingsTab && (
                     <RatingsTabLink
+                      classes={ratingsTabClasses}
                       locked={ratingsLocked}
                       ratingsCount={ratingsCount}
                       to={{ ...location, pathname: "ratings" }}

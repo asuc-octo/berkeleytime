@@ -20,7 +20,12 @@ import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/
 import { useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import { IAggregatedRatings, IUserRatingClass } from "@/lib/api";
+import {
+  IAggregatedRatings,
+  IClass,
+  IMetric,
+  IUserRatingClass,
+} from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingDocument,
@@ -61,6 +66,13 @@ interface Term {
   value: string;
   label: string;
 }
+
+type MetricCategory = NonNullable<
+  NonNullable<IMetric["categories"]>[number]
+>;
+
+const RATING_VALUES = [5, 4, 3, 2, 1] as const;
+const METRIC_NAMES = Object.values(MetricName) as MetricName[];
 
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -173,34 +185,34 @@ export function RatingsContainer() {
   const availableTerms = useMemo(() => {
     if (!currentCourse.classes) return [];
 
-    return _.chain(currentCourse.classes.toSorted(sortByTermDescending))
-      .filter((c) => {
-        // Filter out ghost classes that shouldn't appear in schedule (quick fix for ghost classes -> after database level fix can delete!)
-        return c.anyPrintInScheduleOfClasses !== false;
-      })
+    const courseTerms: Term[] = currentCourse.classes
+      .toSorted(sortByTermDescending)
+      .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .map((c) => {
         let allInstructors = "";
         if (c.primarySection) {
-          c.primarySection.meetings.forEach((m) => {
-            m.instructors.forEach((i) => {
-              if (!i.familyName || !i.givenName) return;
-              allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName.charAt(0)};`;
+          c.primarySection.meetings.forEach((meeting) => {
+            meeting.instructors.forEach((instructor) => {
+              if (!instructor.familyName || !instructor.givenName) return;
+              allInstructors = `${allInstructors} ${instructor.familyName}, ${instructor.givenName.charAt(0)};`;
             });
           });
-          if (allInstructors.length === 0) allInstructors = "(No instructor)";
-          else
+          if (allInstructors.length === 0) {
+            allInstructors = "(No instructor)";
+          } else {
             allInstructors = `(${allInstructors.substring(1, allInstructors.length - 1)})`;
+          }
         }
         return {
           value: `${c.semester} ${c.year} ${c.number}`,
           label: `${c.semester} ${c.year} ${allInstructors}`,
           semester: c.semester as Semester,
           year: c.year,
-        };
-      })
-      .uniqBy((term: any) => `${term.label}`)
-      .value();
-  }, [currentClass]);
+        } satisfies Term;
+      });
+
+    return _.uniqBy(courseTerms, (term) => term.label);
+  }, [currentCourse]);
 
   const userRatings = useMemo(() => {
     if (!userRatingsData?.userRatings?.classes) return null;
@@ -219,41 +231,48 @@ export function RatingsContainer() {
     return matchedRating as IUserRatingClass;
   }, [userRatingsData, currentClass]);
 
-  const ratingsData = useMemo(() => {
-    const metrics =
+  const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
+    const metricsSource =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
         : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+
+    const metrics =
+      metricsSource?.filter((metric): metric is IMetric => Boolean(metric)) ?? [];
+
     if (
-      !metrics ||
       !metrics.some(
-        (metric: any) => isMetricRating(metric.metricName) && metric.count !== 0
+        (metric) => isMetricRating(metric.metricName) && metric.count !== 0
       )
     ) {
       return null;
     }
-    return metrics.map((metric: any) => {
+
+    return metrics.map((metric) => {
+      const categories =
+        metric.categories?.filter(
+          (category): category is MetricCategory => Boolean(category)
+        ) ?? [];
+
       let maxCount = 1;
-      [5, 4, 3, 2, 1].map((rating) => {
-        const category = metric.categories.find(
-          (cat: any) => cat.value === rating
-        );
-        maxCount = Math.max(maxCount, category ? category.count : 0);
+      RATING_VALUES.forEach((rating) => {
+        const category = categories.find((cat) => cat.value === rating);
+        maxCount = Math.max(maxCount, category?.count ?? 0);
       });
 
-      const allCategories = [5, 4, 3, 2, 1].map((rating) => {
-        const category = metric.categories.find(
-          (cat: any) => cat.value === rating
-        );
+      const stats = RATING_VALUES.map((rating) => {
+        const category = categories.find((cat) => cat.value === rating);
+        const count = category?.count ?? 0;
         return {
           rating,
-          count: category ? category.count : 0,
-          barPercentage: category ? (category.count / maxCount) * 100 : 0,
+          count,
+          barPercentage: maxCount > 0 ? (count / maxCount) * 100 : 0,
         };
       });
+
       return {
         metric: metric.metricName,
-        stats: allCategories,
+        stats,
         status: getMetricStatus(metric.metricName, metric.weightedAverage),
         statusColor: getStatusColor(
           metric.metricName,
@@ -261,16 +280,19 @@ export function RatingsContainer() {
         ) as Color,
         reviewCount: metric.count,
         weightedAverage: metric.weightedAverage,
-      };
-    }) as RatingDetailProps[];
+      } satisfies RatingDetailProps;
+    });
   }, [aggregatedRatings, selectedTerm, termRatings]);
 
   const hasRatings = useMemo(() => {
-    const totalRatings =
-      aggregatedRatings?.course?.aggregatedRatings?.metrics?.reduce(
-        (total: number, metric: any) => total + metric.count,
-        0
-      ) ?? 0;
+    const metrics =
+      aggregatedRatings?.course?.aggregatedRatings?.metrics?.filter(
+        (metric): metric is IMetric => Boolean(metric)
+      ) ?? [];
+    const totalRatings = metrics.reduce(
+      (total, metric) => total + (metric.count ?? 0),
+      0
+    );
     return totalRatings > 0;
   }, [aggregatedRatings]);
 
@@ -301,7 +323,7 @@ export function RatingsContainer() {
     return withDuplicates.filter(
       (v) => withDuplicates.find((v2) => v2.value === v.value) === v
     );
-  }, [availableTerms, semestersWithRatings]);
+  }, [availableTerms, semestersWithRatings, termsData]);
 
   // const ratingsCount = useMemo(
   //   () => (ratingsData ? ratingsData.reduce((acc, v) => acc + v.reviewCount, 0) : 0),
@@ -311,24 +333,17 @@ export function RatingsContainer() {
   const ratingSubmit = async (
     metricValues: MetricData,
     termInfo: { semester: Semester; year: number },
-    createRating: any,
-    deleteRating: any,
-    currentClass: any,
+    createRatingMutation: typeof createRating,
+    deleteRatingMutation: typeof deleteRating,
+    currentClassData: IClass,
     setModalOpen: Dispatch<SetStateAction<boolean>>,
-    currentRatings?: {
-      semester: string;
-      year: number;
-      metrics: Array<{ metricName: string; value: number }>;
-    } | null
+    currentRatings?: IUserRatingClass | null
   ) => {
     try {
-      const populatedMetrics = Object.keys(MetricName).filter(
-        (metric) =>
-          metricValues[MetricName[metric as keyof typeof MetricName]] !==
-            null &&
-          metricValues[MetricName[metric as keyof typeof MetricName]] !==
-            undefined
-      );
+      const populatedMetrics = METRIC_NAMES.filter((metricName) => {
+        const value = metricValues[metricName];
+        return value !== null && value !== undefined;
+      });
       if (populatedMetrics.length === 0) {
         throw new Error(`No populated metrics`);
       }
@@ -341,22 +356,21 @@ export function RatingsContainer() {
         );
       }
       await Promise.all(
-        (Object.keys(MetricName) as Array<keyof typeof MetricName>).map(
-          (metric) => {
-            const value = metricValues[MetricName[metric]];
+        METRIC_NAMES.map((metric) => {
+          const value = metricValues[metric];
             // If metric is not in populated metrics but was in current ratings, delete
             if (!populatedMetrics.includes(metric)) {
               const metricExists = currentRatings?.metrics?.some(
                 (m) => m.metricName === metric
               );
               if (metricExists) {
-                return deleteRating({
+                return deleteRatingMutation({
                   variables: {
-                    subject: currentClass.subject,
-                    courseNumber: currentClass.courseNumber,
+                    subject: currentClassData.subject,
+                    courseNumber: currentClassData.courseNumber,
                     semester: termInfo.semester,
                     year: termInfo.year,
-                    classNumber: currentClass.number,
+                    classNumber: currentClassData.number,
                     metricName: metric,
                   },
                   refetchQueries: [
@@ -382,13 +396,16 @@ export function RatingsContainer() {
                 return Promise.resolve();
               }
             }
-            return createRating({
+            if (value === undefined) {
+              return Promise.resolve();
+            }
+            return createRatingMutation({
               variables: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
+                subject: currentClassData.subject,
+                courseNumber: currentClassData.courseNumber,
                 semester: termInfo.semester,
                 year: termInfo.year,
-                classNumber: currentClass.number,
+                classNumber: currentClassData.number,
                 metricName: metric,
                 value,
               },
@@ -412,17 +429,17 @@ export function RatingsContainer() {
 
   const ratingDelete = async (
     userRating: IUserRatingClass,
-    currentClass: any,
-    deleteRating: any
+    currentClassData: IClass,
+    deleteRatingMutation: typeof deleteRating
   ) => {
     const deletePromises = userRating.metrics.map((metric) =>
-      deleteRating({
+      deleteRatingMutation({
         variables: {
-          subject: currentClass.subject,
-          courseNumber: currentClass.courseNumber,
+          subject: currentClassData.subject,
+          courseNumber: currentClassData.courseNumber,
           semester: userRating.semester,
           year: userRating.year,
-          classNumber: currentClass.number,
+          classNumber: currentClassData.number,
           metricName: metric.metricName,
         },
         refetchQueries: [
@@ -536,15 +553,6 @@ export function RatingsContainer() {
                   </div>
                 ))}
             </div>
-            {/* // TODO: [CROWD-SOURCED-DATA] add rating count for semester instance */}
-            {/* <div>
-              {hasRatings && ratingsData && (
-                <div className={styles.ratingsCountContainer}>
-                  This semester has been rated by {ratingsCount} user
-                  {ratingsCount !== 1 ? "s" : ""}
-                </div>
-              )}
-            </div> */}
           </Container>
         </div>
       )}

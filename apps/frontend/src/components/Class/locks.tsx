@@ -6,36 +6,59 @@ import { NavLink, NavLinkProps } from "react-router-dom";
 
 import { MenuItem } from "@repo/theme";
 
-import styles from "./Class.module.scss";
-
 const RATINGS_LOCK_ENABLED = true;
 
 export interface RatingsLockContext {
   user?: unknown;
 }
 
-export const shouldDisplayRatingsTab = (_?: RatingsLockContext) => true;
-
-export const isRatingsLocked = (_?: RatingsLockContext) =>
-  RATINGS_LOCK_ENABLED;
+interface RatingsTabClasses {
+  badge: string;
+  dot: string;
+  tooltipArrow: string;
+  tooltipContent: string;
+  tooltipTitle: string;
+  tooltipDescription: string;
+}
 
 interface RatingsTabLinkProps {
   to: NavLinkProps["to"];
   dialog?: boolean;
   ratingsCount?: number | false;
   locked?: boolean;
+  classes: RatingsTabClasses;
 }
 
-export function RatingsTabLink({
+type RatingsTabLinkComponent = (props: RatingsTabLinkProps) => JSX.Element;
+
+interface RatingsTabLinkStatics {
+  shouldDisplay: (context?: RatingsLockContext) => boolean;
+  isLocked: (context?: RatingsLockContext) => boolean;
+}
+
+type RatingsTabLinkType = RatingsTabLinkComponent & RatingsTabLinkStatics;
+
+const shouldDisplayRatingsTab = (context?: RatingsLockContext) => {
+  void context;
+  return true;
+};
+
+const isRatingsLocked = (context?: RatingsLockContext) => {
+  void context;
+  return RATINGS_LOCK_ENABLED;
+};
+
+function RatingsTabLinkBase({
   to,
   dialog = false,
   ratingsCount,
   locked = isRatingsLocked(),
+  classes,
 }: RatingsTabLinkProps) {
   const badge = ratingsCount ? (
-    <div className={styles.badge}>{ratingsCount}</div>
+    <div className={classes.badge}>{ratingsCount}</div>
   ) : (
-    <div className={styles.dot}></div>
+    <div className={classes.dot}></div>
   );
 
   const renderMenuItem = (isActive = false): ReactNode => (
@@ -72,15 +95,25 @@ export function RatingsTabLink({
           sideOffset={8}
           collisionPadding={8}
         >
-          <div className={styles.tooltipContent}>
-            <Tooltip.Arrow className={styles.tooltipArrow} />
+          <div className={classes.tooltipContent}>
+            <Tooltip.Arrow className={classes.tooltipArrow} />
             {!dialog && (
-              <p className={styles.tooltipTitle}>Locked Content</p>
+              <p className={classes.tooltipTitle}>Locked Content</p>
             )}
-            <p className={styles.tooltipDescription}>{tooltipDescription}</p>
+            <p className={classes.tooltipDescription}>{tooltipDescription}</p>
           </div>
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>
   );
 }
+
+export const RatingsTabLink: RatingsTabLinkType = Object.assign(
+  RatingsTabLinkBase,
+  {
+    shouldDisplay: shouldDisplayRatingsTab,
+    isLocked: isRatingsLocked,
+  }
+);
+
+export type { RatingsTabClasses };

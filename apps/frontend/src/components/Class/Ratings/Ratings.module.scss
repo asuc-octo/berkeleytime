@@ -2,138 +2,33 @@
   background-color: var(--background-color);
   padding: 24px 0;
   height: 100%;
-
-  .header {
-    margin-bottom: 16px;
-
-    .termSelectWrapper {
-      margin-left: auto;
-      max-width: 300px;
-      min-width: 200px;
-    }
-  }
-
-  .ratingsBody {
-    background-color: var(--foreground-color);
-    border-radius: 8px;
-    padding: 0 24px;
-    border: 1px solid var(--border-color);
-    min-width: 450px;
-
-    .ratingSection {
-      padding: 24px 0;
-      border-bottom: 1px solid var(--border-color);
-      &:last-child {
-        border-bottom: none;
-      }
-    }
-  }
 }
 
-.tooltipContent {
-  background-color: var(--tooltip-color);
-  border-radius: 4px;
-  max-width: 256px;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-  padding-left: 12px;
-  padding-right: 12px;
+.header {
+  margin-bottom: 16px;
 }
 
-.tooltipTitle {
-  color: var(--light-foreground-color);
-  font-size: 14px;
-  font-weight: 500;
-  padding-bottom: 10px;
-  padding-top: 8px;
-  border-bottom: 1px solid var(--neutral-600);
+.termSelectWrapper {
+  margin-left: auto;
+  max-width: 300px;
+  min-width: 200px;
 }
 
-.tooltipDescription {
-  color: var(--light-foreground-color);
-  font-size: 13px;
-  line-height: 1.4;
-  padding-bottom: 10px;
-}
-
-.arrow {
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2;
-  width: 25px;
-  height: 25px;
-}
-
-.reviewCount {
-  color: var(--paragraph-color);
-  font-size: 14px;
-}
-
-.ratingsCountContainer {
-  margin: 10px 20px;
-  text-align: right;
-  color: var(--label-color);
-  font-size: 14px;
-  animation: fadeIn 0.2s ease-in;
-}
-
-.ratingsCountText {
-  color: var(--label-color);
-  font-size: 14px;
-  animation: fadeIn 0.2s ease-in;
-}
-
-.userRatingActionIcon {
-  display: inline-block;
-  padding: 6px;
-  padding-bottom: 4px;
-  margin: 0 4px;
+.ratingsBody {
+  background-color: var(--foreground-color);
+  border-radius: 8px;
+  padding: 0 24px;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  cursor: pointer;
+  min-width: 450px;
 }
 
-.info {
-  display: inline-flex;
-  cursor: pointer;
-}
-
-.content {
-  border-radius: 4px;
-  padding: 12px;
-  background-color: var(--tooltip-color);
-  width: 256px;
-  animation: fadeIn 100ms ease-in;
-  z-index: 998;
-  white-space: pre-line;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-  .arrow {
-    fill: var(--tooltip-color);
-    height: 10px; // Makes it a straight line
-    width: 12px; // Adjust width as needed
-    // Remove any default triangle styling
-    transform: translateY(-1px); // Adjust positioning if needed
-    border: 1px solid;
-  }
-}
-
-.tooltipTitle {
-  color: var(--tooltip-heading-color);
-  font-size: 14px;
-  font-weight: var(--font-semibold);
-  padding-bottom: 10px;
-  padding-top: 8px;
+.ratingSection {
+  padding: 24px 0;
   border-bottom: 1px solid var(--border-color);
-  margin: 0;
-}
 
-.tooltipDescription {
-  color: var(--neutral-400);
-  font-size: 13px;
-  line-height: 1.4;
-  padding-bottom: 10px;
-  margin: 0;
-  padding-top: 8px;
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .placeholder {
@@ -149,22 +44,22 @@
   justify-content: flex-start;
   padding-top: 150px;
 
-  .heading {
-    color: var(--heading-color);
-    font-weight: 500;
-    margin-top: 24px;
-    margin-bottom: 0;
-  }
-
-  p + p {
-    color: var(--paragraph-color);
-    margin-top: 8px;
-    max-width: 448px;
-  }
-
   button {
     margin-top: 24px;
     background-color: var(--foreground-color);
     font-weight: 400;
   }
+}
+
+.heading {
+  color: var(--heading-color);
+  font-weight: 500;
+  margin-top: 24px;
+  margin-bottom: 0;
+}
+
+.paragraph {
+  color: var(--paragraph-color);
+  margin-top: 8px;
+  max-width: 448px;
 }
