@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import type { TooltipProps } from "recharts";
 
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
@@ -21,6 +22,42 @@ import styles from "./Enrollment.module.scss";
 
 const toPercent = (decimal: number) => {
   return `${decimal.toFixed(0)}%`;
+};
+
+const timeFormatter = new Intl.DateTimeFormat("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Los_Angeles",
+});
+
+const renderTooltip = ({
+  label,
+  payload,
+}: TooltipProps<number, string>) => {
+  if (typeof label !== "number" || !payload || payload.length === 0) {
+    return null;
+  }
+
+  const duration = moment.duration(label, "minutes");
+  const day = Math.floor(duration.asDays()) + 1;
+  const time = timeFormatter.format(moment.utc(0).add(duration).toDate());
+
+  return (
+    <HoverCard
+      content={`Day ${day} ${time}`}
+      data={payload.map((value, index) => {
+        const name = value.name?.valueOf();
+        return {
+          key: `${name}-${index}`,
+          label: name === "enrolled" ? "Enrolled" : "Waitlisted",
+          value:
+            typeof value.value === "number" ? toPercent(value.value) : "N/A",
+          color: value.stroke,
+        };
+      })}
+    />
+  );
 };
 
 export default function Enrollment() {
@@ -49,10 +86,9 @@ export default function Enrollment() {
         !cur.isAfter(end);
         cur.add(granularity, "seconds")
       ) {
-        const dayOffset =
-          Math.floor(moment.duration(cur.diff(firstTime)).asDays()) + 1;
+        const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
 
-        timeToEnrollmentMap.set(dayOffset, {
+        timeToEnrollmentMap.set(timeDelta, {
           enrolledPercent: (enrollment.enrolledCount / maxEnroll) * 100,
           waitlistedPercent: (enrollment.waitlistedCount / maxWaitlist) * 100,
         });
@@ -60,13 +96,23 @@ export default function Enrollment() {
     }
 
     return Array.from(timeToEnrollmentMap.entries())
-      .map(([day, data]) => ({
-        day,
-        enrolled: data.enrolledPercent,
-        waitlisted: data.waitlistedPercent,
+      .map(([timeDelta, values]) => ({
+        timeDelta,
+        enrolled: values.enrolledPercent,
+        waitlisted: values.waitlistedPercent,
       }))
-      .sort((a, b) => a.day - b.day);
+      .sort((a, b) => a.timeDelta - b.timeDelta);
   }, [_class.primarySection.enrollment]);
+
+  const dataMax = useMemo(() => {
+    if (data.length === 0) return 0;
+    const maxValue = data.reduce(
+      (acc, point) => Math.max(acc, point.enrolled, point.waitlisted),
+      0
+    );
+
+    return maxValue * 1.2;
+  }, [data]);
 
   const enrollmentExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
@@ -149,10 +195,18 @@ export default function Enrollment() {
                   stroke="var(--border-color)"
                 />
                 <XAxis
-                  dataKey="day"
+                  dataKey="timeDelta"
+                  type="number"
                   stroke="var(--label-color)"
                   tickMargin={8}
                   tick={{ fill: "var(--paragraph-color)", fontSize: 12 }}
+                  tickFormatter={(timeDelta) =>
+                    String(
+                      Math.floor(
+                        moment.duration(timeDelta as number, "minutes").asDays()
+                      ) + 1
+                    )
+                  }
                   label={{
                     value: "Days since enrollment opened",
                     position: "insideBottom",
@@ -165,29 +219,9 @@ export default function Enrollment() {
                   stroke="var(--label-color)"
                   tickFormatter={toPercent}
                   tick={{ fill: "var(--paragraph-color)", fontSize: 12 }}
+                  domain={[0, dataMax || 100]}
                 />
-                <Tooltip
-                  content={(props) => {
-                    return (
-                      <HoverCard
-                        content={`Day ${props.label}`}
-                        data={props.payload?.map((v, index) => {
-                          const name = v.name?.valueOf();
-                          return {
-                            key: `${name}-${index}`,
-                            label:
-                              name === "enrolled" ? "Enrolled" : "Waitlisted",
-                            value:
-                              typeof v.value === "number"
-                                ? toPercent(v.value)
-                                : "N/A",
-                            color: v.stroke,
-                          };
-                        })}
-                      />
-                    );
-                  }}
-                />
+                <Tooltip content={renderTooltip} />
                 <ReferenceLine
                   y={100}
                   stroke="var(--label-color)"
@@ -202,21 +236,23 @@ export default function Enrollment() {
                   }}
                 />
                 <Line
-                  type="monotone"
+                  type="linear"
                   dataKey="enrolled"
                   stroke="var(--blue-500)"
                   dot={false}
                   strokeWidth={3}
                   name="enrolled"
+                  connectNulls
                 />
                 <Line
-                  type="monotone"
+                  type="linear"
                   dataKey="waitlisted"
                   stroke="var(--orange-500)"
                   dot={false}
                   strokeWidth={2}
                   strokeDasharray="5 5"
                   name="waitlisted"
+                  connectNulls
                 />
               </LineChart>
             </ResponsiveContainer>
