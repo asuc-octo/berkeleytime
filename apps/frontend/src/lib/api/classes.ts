@@ -111,6 +111,16 @@ export const READ_CLASS = gql`
           }
         }
         enrollment {
+          history {
+            startTime
+            endTime
+            granularitySeconds
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
           latest {
             startTime
             endTime
