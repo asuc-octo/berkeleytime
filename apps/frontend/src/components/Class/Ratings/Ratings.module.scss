@@ -142,7 +142,8 @@
   align-items: center;
   color: var(--label-color);
   height: 100%;
-  font-size: 16px;
+  font-size: var(--text-16);
+  font-weight: var(--font-normal);
   line-height: 1.5;
   padding: 24px 0;
   text-align: center;
@@ -151,7 +152,8 @@
 
   .heading {
     color: var(--heading-color);
-    font-weight: 500;
+    font-weight: var(--font-medium);
+    font-size: var(--text-16);
     margin-top: 24px;
     margin-bottom: 0;
   }
@@ -160,11 +162,13 @@
     color: var(--paragraph-color);
     margin-top: 8px;
     max-width: 448px;
+    font-size: var(--text-14);
+    font-weight: var(--font-normal);
   }
 
   button {
     margin-top: 24px;
     background-color: var(--foreground-color);
-    font-weight: 400;
+    font-weight: var(--font-normal);
   }
 }
