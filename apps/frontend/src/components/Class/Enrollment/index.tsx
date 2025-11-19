@@ -31,10 +31,7 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
-const renderTooltip = ({
-  label,
-  payload,
-}: TooltipProps<number, string>) => {
+const renderTooltip = ({ label, payload }: TooltipProps<number, string>) => {
   if (typeof label !== "number" || !payload || payload.length === 0) {
     return null;
   }
