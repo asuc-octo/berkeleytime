@@ -6,6 +6,7 @@ import { Box, Container, Flex } from "@repo/theme";
 
 import Details from "@/components/Details";
 import useClass from "@/hooks/useClass";
+import { linkify } from "@/utils/linkify";
 
 import styles from "./Overview.module.scss";
 import { UserSubmittedData } from "./UserSubmittedData";
@@ -107,7 +108,7 @@ export default function Overview() {
                   <p className={styles.description}>
                     {classNoteLines.map((line, index) => (
                       <span key={`${line}-${index}`}>
-                        {line}
+                        {linkify(line, styles.link)}
                         {index < classNoteLines.length - 1 && <br />}
                       </span>
                     ))}
