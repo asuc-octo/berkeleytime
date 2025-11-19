@@ -32,14 +32,6 @@ export const getCatalog = async (
   semester: string,
   info: GraphQLResolveInfo
 ) => {
-  const term = await TermModel.findOne({
-    name: `${year} ${semester}`,
-  })
-    .select({ _id: 1 })
-    .lean();
-
-  if (!term) throw new Error("Invalid term");
-
   /**
    * TODO:
    * Basic pagination can be introduced by using skip and limit
@@ -52,29 +44,38 @@ export const getCatalog = async (
    * in-memory filtering for fields from courses and sections
    */
 
-  // Fetch available classes for the term
-  const classes = await ClassModel.find({
-    year,
-    semester,
-    anyPrintInScheduleOfClasses: true,
-  }).lean();
+  // Fetch term and classes in parallel
+  const [term, classes] = await Promise.all([
+    TermModel.findOne({
+      name: `${year} ${semester}`,
+    })
+      .select({ _id: 1 })
+      .lean(),
+    ClassModel.find({
+      year,
+      semester,
+      anyPrintInScheduleOfClasses: true,
+    }).lean(),
+  ]);
+
+  if (!term) throw new Error("Invalid term");
 
   // Filtering by identifiers reduces the amount of data returned for courses and sections
   const courseIds = classes.map((_class) => _class.courseId);
 
-  // Fetch available courses for the term
-  const courses = await CourseModel.find({
-    courseId: { $in: courseIds },
-    printInCatalog: true,
-  }).lean();
-
-  // Fetch available sections for the term
-  const sections = await SectionModel.find({
-    year,
-    semester,
-    courseId: { $in: courseIds },
-    printInScheduleOfClasses: true,
-  }).lean();
+  // Fetch courses and sections in parallel
+  const [courses, sections] = await Promise.all([
+    CourseModel.find({
+      courseId: { $in: courseIds },
+      printInCatalog: true,
+    }).lean(),
+    SectionModel.find({
+      year,
+      semester,
+      courseId: { $in: courseIds },
+      printInScheduleOfClasses: true,
+    }).lean(),
+  ]);
 
   let parsedGradeDistributions = {} as Record<
     string,
@@ -87,25 +88,27 @@ export const getCatalog = async (
   if (includesGradeDistribution) {
     const sectionIds = sections.map((section) => section.sectionId);
 
-    // Get class-level grade distributions (current semester only)
-    const classGradeDistributions = await GradeDistributionModel.find({
-      sectionId: { $in: sectionIds },
-    }).lean();
-
-    // Get course-level grade distributions (all semesters/history)
-    // Include both the cross-listed parent courses AND the classes themselves
-    const courseGradeDistributions = await GradeDistributionModel.find({
-      $or: [
-        ...courses.map((course) => ({
-          subject: course.subject,
-          courseNumber: course.number,
-        })),
-        ...classes.map((_class) => ({
-          subject: _class.subject,
-          courseNumber: _class.courseNumber,
-        })),
-      ],
-    }).lean();
+    // Fetch class-level and course-level grade distributions in parallel
+    const [classGradeDistributions, courseGradeDistributions] = await Promise.all([
+      // Get class-level grade distributions (current semester only)
+      GradeDistributionModel.find({
+        sectionId: { $in: sectionIds },
+      }).lean(),
+      // Get course-level grade distributions (all semesters/history)
+      // Include both the cross-listed parent courses AND the classes themselves
+      GradeDistributionModel.find({
+        $or: [
+          ...courses.map((course) => ({
+            subject: course.subject,
+            courseNumber: course.number,
+          })),
+          ...classes.map((_class) => ({
+            subject: _class.subject,
+            courseNumber: _class.courseNumber,
+          })),
+        ],
+      }).lean(),
+    ]);
 
     // Separate processing for class-level and course-level distributions
     const reducedGradeDistributions = {} as Record<
