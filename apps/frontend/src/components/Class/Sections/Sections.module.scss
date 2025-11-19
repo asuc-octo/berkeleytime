@@ -10,24 +10,31 @@
 .placeholder {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 48px 24px;
+  color: var(--label-color);
+  height: 100%;
+  font-size: var(--text-16);
+  font-weight: var(--font-normal);
+  line-height: 1.5;
+  padding: 24px 0;
+  padding-top: 150px;
   text-align: center;
 
   .heading {
-    font-weight: 600;
-    font-size: 16px;
     color: var(--heading-color);
-    margin: 0;
+    font-weight: var(--font-medium);
+    font-size: var(--text-16);
+    margin-top: 24px;
+    margin-bottom: 0;
   }
 
   .paragraph {
-    font-size: 14px;
     color: var(--paragraph-color);
-    max-width: 400px;
-    margin: 0;
+    margin: 8px 0 0;
+    max-width: 448px;
+    font-size: var(--text-14);
+    font-weight: var(--font-normal);
   }
 }
 
@@ -46,8 +53,8 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  column-gap: 4px;
+  justify-content: flex-start;
+  column-gap: 8px;
   padding: 8px;
   border-bottom: 1px solid var(--border-color);
   font-weight: var(--font-semibold);
@@ -68,7 +75,7 @@
 .row {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-start;
   column-gap: 8px;
   height: 120px;
   padding: 12px 8px;

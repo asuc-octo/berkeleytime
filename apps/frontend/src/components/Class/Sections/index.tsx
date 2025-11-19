@@ -60,10 +60,11 @@ export default function Sections() {
     return (
       <div className={styles.placeholder}>
         <FrameAltEmpty width={32} height={32} />
-        <p className={styles.heading}>No associated sections</p>
+        <p className={styles.heading}>No Associated Sections</p>
         <p className={styles.paragraph}>
-          Please refer to the class syllabus or instructor for the most accurate
-          information regarding class attendance requirements.
+          This class doesn&apos;t list any sections yet.
+          <br />
+          Section details will appear here once they&apos;re available.
         </p>
       </div>
     );
