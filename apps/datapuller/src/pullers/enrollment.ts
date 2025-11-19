@@ -64,10 +64,12 @@ const enrollmentSingularsEqual = (
   return true;
 };
 
-const updateEnrollmentHistories = async ({
-  log,
-  sis: { CLASS_APP_ID, CLASS_APP_KEY },
-}: Config) => {
+const updateEnrollmentHistories = async (config: Config) => {
+  const {
+    log,
+    sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms...`);
 
   const now = DateTime.now();
@@ -241,6 +243,33 @@ const updateEnrollmentHistories = async ({
             totalUpdated += 1;
           }
         }
+
+        /*
+          Start Migration 11/18/2025: Fix missing seatReservationTypes
+        */
+        if (
+          existingDoc &&
+          (existingDoc.seatReservationTypes === undefined ||
+            existingDoc.seatReservationTypes === null ||
+            existingDoc.seatReservationTypes.length === 0) &&
+          enrollmentSingular.seatReservationTypes !== undefined &&
+          enrollmentSingular.seatReservationTypes !== null &&
+          enrollmentSingular.seatReservationTypes.length !== 0
+        ) {
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: existingDoc._id },
+              update: {
+                $set: {
+                  seatReservationTypes: enrollmentSingular.seatReservationTypes,
+                },
+              },
+            },
+          });
+        }
+        /*
+          End Migration 11/18/2025
+        */
       }
 
       // Execute bulk operations for this batch
@@ -257,7 +286,7 @@ const updateEnrollmentHistories = async ({
   );
 
   // Warm catalog cache for all terms we just updated
-  await warmCatalogCacheForTerms(terms, log);
+  await warmCatalogCacheForTerms(config, terms);
 };
 
 export default { updateEnrollmentHistories };
