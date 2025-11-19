@@ -1,5 +1,6 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
+import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import { getCourseAggregatedRatings } from "../rating/controller";
 import {
@@ -99,9 +100,35 @@ const resolvers: CourseModule.Resolvers = {
     },
 
     gradeDistribution: async (
-      parent: IntermediateCourse | CourseModule.Course
+      parent: IntermediateCourse | CourseModule.Course,
+      _args,
+      _context,
+      info
     ) => {
-      if (parent.gradeDistribution) return parent.gradeDistribution;
+      const requestedFields = getFields(info.fieldNodes);
+      const needsDistribution = requestedFields.includes("distribution");
+
+      if (!needsDistribution) {
+        if (parent.gradeDistribution) {
+          return {
+            ...parent.gradeDistribution,
+            distribution: [],
+          };
+        }
+
+        return {
+          average: (parent as IntermediateCourse).averageGrade ?? null,
+          distribution: [],
+          pnpPercentage: (parent as IntermediateCourse).pnpPercentage ?? null,
+        };
+      }
+
+      if (
+        parent.gradeDistribution &&
+        parent.gradeDistribution.distribution &&
+        parent.gradeDistribution.distribution.length > 0
+      )
+        return parent.gradeDistribution;
 
       const gradeDistribution = await getGradeDistributionByCourse(
         parent.subject,

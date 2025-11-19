@@ -111,6 +111,8 @@ export interface ICourseItem {
   formerDisplayName?: string;
   // createdDate?: string;
   updatedDate?: string;
+  averageGrade?: number | null;
+  pnpPercentage?: number | null;
 }
 
 export interface ICourseItemDocument extends ICourseItem, Document {}
@@ -205,6 +207,8 @@ const courseSchema = new Schema<ICourseItem>({
   formerDisplayName: { type: String },
   // createdDate: { type: String },
   updatedDate: { type: String },
+  averageGrade: { type: Number, default: null },
+  pnpPercentage: { type: Number, default: null },
 });
 
 // for catalog, associated courses by id, curated class controllers

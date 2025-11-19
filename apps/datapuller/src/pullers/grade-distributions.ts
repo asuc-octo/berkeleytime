@@ -1,4 +1,11 @@
-import { GradeDistributionModel } from "@repo/common";
+import {
+  CourseModel,
+  GradeCounts,
+  GradeDistributionModel,
+  getAverageGrade,
+  getDistribution,
+  getPnpPercentage,
+} from "@repo/common";
 
 import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
 import { Config } from "../shared/config";
@@ -9,6 +16,94 @@ import {
 } from "../shared/term-selectors";
 
 const TERMS_PER_API_BATCH = 100;
+
+interface AggregatedCourseGradeSummary extends GradeCounts {
+  _id: {
+    subject: string;
+    courseNumber: string;
+  };
+}
+
+const rebuildCourseGradeSummaries = async (log: Config["log"]) => {
+  log.info("Recomputing course grade summaries...");
+
+  await CourseModel.updateMany(
+    {
+      $or: [{ averageGrade: { $ne: null } }, { pnpPercentage: { $ne: null } }],
+    },
+    { $set: { averageGrade: null, pnpPercentage: null } }
+  );
+
+  const aggregatedSummaries =
+    await GradeDistributionModel.aggregate<AggregatedCourseGradeSummary>([
+      {
+        $group: {
+          _id: { subject: "$subject", courseNumber: "$courseNumber" },
+          countAPlus: { $sum: "$countAPlus" },
+          countA: { $sum: "$countA" },
+          countAMinus: { $sum: "$countAMinus" },
+          countBPlus: { $sum: "$countBPlus" },
+          countB: { $sum: "$countB" },
+          countBMinus: { $sum: "$countBMinus" },
+          countCPlus: { $sum: "$countCPlus" },
+          countC: { $sum: "$countC" },
+          countCMinus: { $sum: "$countCMinus" },
+          countDPlus: { $sum: "$countDPlus" },
+          countD: { $sum: "$countD" },
+          countDMinus: { $sum: "$countDMinus" },
+          countF: { $sum: "$countF" },
+          countNP: { $sum: "$countNP" },
+          countP: { $sum: "$countP" },
+          countU: { $sum: "$countU" },
+          countS: { $sum: "$countS" },
+        },
+      },
+    ]);
+
+  if (aggregatedSummaries.length === 0) {
+    log.warn("No grade distributions found when rebuilding summaries.");
+    return;
+  }
+
+  const operations = aggregatedSummaries
+    .map(({ _id, ...counts }) => {
+      const distribution = getDistribution([counts as GradeCounts]);
+      const averageGrade = getAverageGrade(distribution);
+      const pnpPercentage = getPnpPercentage(distribution);
+
+      if (averageGrade === null && pnpPercentage === null) return null;
+
+      return {
+        updateMany: {
+          filter: { subject: _id.subject, number: _id.courseNumber },
+          update: {
+            $set: {
+              averageGrade,
+              pnpPercentage,
+            },
+          },
+        },
+      };
+    })
+    .filter((op): op is NonNullable<typeof op> => op !== null);
+
+  if (operations.length === 0) {
+    log.warn("No course summaries to update.");
+    return;
+  }
+
+  const BULK_BATCH_SIZE = 500;
+  let processed = 0;
+  for (let i = 0; i < operations.length; i += BULK_BATCH_SIZE) {
+    const batch = operations.slice(i, i + BULK_BATCH_SIZE);
+    await CourseModel.bulkWrite(batch, { ordered: false });
+    processed += batch.length;
+  }
+
+  log.info(
+    `Updated grade summaries for ${processed.toLocaleString()} course combinations.`
+  );
+};
 
 const updateGradeDistributions = async (
   config: Config,
@@ -84,6 +179,8 @@ const updateGradeDistributions = async (
   log.info(
     `Completed updating database with ${totalGradeDistributions.toLocaleString()} grade distributions, inserted ${totalInserted.toLocaleString()} documents.`
   );
+
+  await rebuildCourseGradeSummaries(log);
 };
 
 const recentPastTerms = async (config: Config) => {

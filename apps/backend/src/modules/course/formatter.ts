@@ -9,11 +9,17 @@ interface CourseRelationships {
   requiredCourses: string[];
 }
 
+interface CourseComputedFields {
+  averageGrade: number | null;
+  pnpPercentage: number | null;
+}
+
 export type IntermediateCourse = Omit<
   CourseModule.Course,
   keyof CourseRelationships
 > &
-  CourseRelationships;
+  CourseRelationships &
+  CourseComputedFields;
 
 export function formatCourse(course: ICourseItem) {
   const output = {
@@ -26,6 +32,8 @@ export function formatCourse(course: ICourseItem) {
     crossListing: course.crossListing ?? [],
     requiredCourses: course.preparation?.requiredCourses ?? [],
     requirements: course.preparation?.requiredText ?? null,
+    averageGrade: course.averageGrade ?? null,
+    pnpPercentage: course.pnpPercentage ?? null,
   } as IntermediateCourse;
 
   return output;
