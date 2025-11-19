@@ -314,6 +314,11 @@ export const getCatalog = async (
       course
     ) as unknown as ClassModule.Course;
 
+    // Override course subject/number with class values for cross-listed courses
+    // This ensures search indexing and display use the correct subject
+    formattedCourse.subject = _class.subject;
+    formattedCourse.number = _class.courseNumber;
+
     // Add grade distribution to course
     // Use the class's subject and courseNumber to get the correct grades for cross-listed courses
     if (includesGradeDistribution) {
