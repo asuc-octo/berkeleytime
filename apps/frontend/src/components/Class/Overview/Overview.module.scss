@@ -12,34 +12,10 @@
   line-height: 1.5;
 }
 
-.userSubmissionRequirements {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  .dataGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .icon {
-    margin-right: 8px;
-    font-size: 1.2rem;
-    color: var(--paragraph-color);
-    vertical-align: middle;
-  }
-}
-
-.suggestEdit {
+.link {
   color: var(--blue-500);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  transition: all 100ms ease-in-out;
-  width: fit-content;
+  text-decoration: underline;
+  transition: color 100ms ease-in-out;
 
   &:hover {
     color: var(--blue-600);

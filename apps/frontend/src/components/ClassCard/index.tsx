@@ -5,12 +5,15 @@ import {
   ArrowUnionVertical,
   Bookmark,
   BookmarkSolid,
+  InfoCircle,
   Trash,
 } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
 import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
+import { getEnrollmentColor } from "@/components/Capacity";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -19,6 +22,15 @@ import { Color } from "@/lib/generated/graphql";
 
 import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
+
+const formatClassNumber = (number: string | undefined | null): string => {
+  if (!number) return "";
+  const num = parseInt(number, 10);
+  if (isNaN(num)) return number;
+  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+  if (num > 99) return num.toString();
+  return num.toString().padStart(2, "0");
+};
 
 type BaseClassFields = Pick<
   IClass,
@@ -35,7 +47,7 @@ type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
-  "enrolledCount" | "maxEnroll" | "endTime"
+  "enrolledCount" | "maxEnroll" | "endTime" | "reservedSeatingMaxCount"
 >;
 
 type ClassCardClass = Partial<BaseClassFields> & {
@@ -79,6 +91,14 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
+  const reservedSeatingMaxCount =
+    _class?.primarySection?.enrollment?.latest?.reservedSeatingMaxCount ?? 0;
+  const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
+  const reservedSeatingColor = getEnrollmentColor(
+    reservedSeatingMaxCount,
+    maxEnroll
+  );
+
   return (
     <Card.RootColumn
       style={{ overflow: "visible", position: "relative", ...props?.style }}
@@ -107,7 +127,9 @@ export default function ClassCard({
         <Card.Body>
           <Card.Heading>
             {_class?.subject} {_class?.courseNumber}{" "}
-            <span className={styles.sectionNumber}>#{_class?.number}</span>
+            <span className={styles.sectionNumber}>
+              #{formatClassNumber(_class?.number)}
+            </span>
           </Card.Heading>
           <Card.Description wrapDescription={wrapDescription}>
             {_class?.title ?? _class?.course?.title}
@@ -124,6 +146,36 @@ export default function ClassCard({
               _class.unitsMax !== undefined && (
                 <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
               )}
+            {(_class?.primarySection?.enrollment?.latest
+              ?.reservedSeatingMaxCount ?? 0) > 0 && (
+              <Tooltip.Root disableHoverableContent>
+                <Tooltip.Trigger asChild>
+                  <span className={styles.reservedSeating}>
+                    <InfoCircle className={styles.reservedSeatingIcon} />
+                    Reserved
+                  </span>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    asChild
+                    side="bottom"
+                    sideOffset={8}
+                    collisionPadding={8}
+                  >
+                    <div className={styles.tooltipContent}>
+                      <Tooltip.Arrow className={styles.tooltipArrow} />
+                      <p className={styles.tooltipTitle}>Reserved Seating</p>
+                      <p className={styles.tooltipDescription}>
+                        <span style={{ color: reservedSeatingColor }}>
+                          {reservedSeatingMaxCount}/{maxEnroll}
+                        </span>{" "}
+                        seats for this class are reserved.
+                      </p>
+                    </div>
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 data-action-icon

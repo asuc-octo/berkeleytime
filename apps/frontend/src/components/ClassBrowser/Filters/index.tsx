@@ -126,7 +126,7 @@ export default function Filters() {
       (acc, _class) => {
         const level = getLevel(
           _class.course.academicCareer,
-          _class.course.number
+          _class.courseNumber
         );
 
         acc[level] += 1;
