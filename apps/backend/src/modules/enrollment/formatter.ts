@@ -23,8 +23,7 @@ const normalizeEnrollmentSingular = (singular: EnrollmentHistorySingular) => {
 };
 
 export const formatEnrollment = (enrollment: IEnrollmentHistoryItem) => {
-  const history =
-    enrollment.history?.map(normalizeEnrollmentSingular) ?? [];
+  const history = enrollment.history?.map(normalizeEnrollmentSingular) ?? [];
 
   const output = {
     ...enrollment,
