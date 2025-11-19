@@ -2,20 +2,16 @@ import { ITermItem } from "@repo/common";
 
 import { Config } from "../shared/config";
 
-const BACKEND_URL = process.env.BACKEND_URL;
-
-if (!BACKEND_URL) {
-  throw new Error("Missing: process.env['BACKEND_URL'].");
-}
-
 /**
  * Warms the catalog cache for a single term by making a POST request to the backend.
  * Returns true if successful, false otherwise.
  */
 const warmCacheForTerm = async (
-  term: Pick<ITermItem, "name">,
-  log: Config["log"]
+  config: Config,
+  term: Pick<ITermItem, "name">
 ): Promise<boolean> => {
+  const { log, BACKEND_URL } = config;
+
   const [yearStr, semester] = term.name.split(" ");
   const year = parseInt(yearStr);
 
@@ -58,9 +54,11 @@ const warmCacheForTerm = async (
  * @param log - Logger instance
  */
 export const warmCatalogCacheForTerms = async (
-  terms: Pick<ITermItem, "name">[],
-  log: Config["log"]
+  config: Config,
+  terms: Pick<ITermItem, "name">[]
 ) => {
+  const { log } = config;
+
   if (terms.length === 0) {
     log.info("No terms to warm cache for.");
     return;
@@ -70,7 +68,7 @@ export const warmCatalogCacheForTerms = async (
 
   let successCount = 0;
   for (const term of terms) {
-    const success = await warmCacheForTerm(term, log);
+    const success = await warmCacheForTerm(config, term);
     if (success) {
       successCount++;
     }

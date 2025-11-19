@@ -3,10 +3,12 @@ import { CourseModel } from "@repo/common";
 import { getCourses } from "../lib/courses";
 import { Config } from "../shared/config";
 
-const updateCourses = async ({
-  sis: { COURSE_APP_ID, COURSE_APP_KEY },
-  log,
-}: Config) => {
+const updateCourses = async (config: Config) => {
+  const {
+    sis: { COURSE_APP_ID, COURSE_APP_KEY },
+    log,
+  } = config;
+
   log.trace(`Fetching courses...`);
 
   const courses = await getCourses(log, COURSE_APP_ID, COURSE_APP_KEY);
