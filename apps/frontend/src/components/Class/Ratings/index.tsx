@@ -173,24 +173,41 @@ export function RatingsContainer() {
     const courseTerms: Term[] = currentCourse.classes
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
+      .filter((c) => {
+        // Filter out classes that haven't started yet
+        if (c.primarySection?.startDate) {
+          const startDate = new Date(c.primarySection.startDate);
+          const today = new Date();
+          return startDate <= today;
+        }
+        // If no startDate, include the class (backward compatibility)
+        return true;
+      })
       .map((c) => {
-        let allInstructors = "";
+        let instructorText = "";
         if (c.primarySection) {
+          // Collect all instructors from all meetings
+          const allInstructors: Array<{ givenName: string; familyName: string }> = [];
           c.primarySection.meetings.forEach((meeting) => {
             meeting.instructors.forEach((instructor) => {
-              if (!instructor.familyName || !instructor.givenName) return;
-              allInstructors = `${allInstructors} ${instructor.familyName}, ${instructor.givenName.charAt(0)};`;
+              if (instructor.familyName && instructor.givenName) {
+                allInstructors.push(instructor);
+              }
             });
           });
+
+          // Format like the Details component: show first instructor, add "et al." if multiple
           if (allInstructors.length === 0) {
-            allInstructors = "(No instructor)";
+            instructorText = "(No instructor)";
+          } else if (allInstructors.length === 1) {
+            instructorText = `(${allInstructors[0].givenName} ${allInstructors[0].familyName})`;
           } else {
-            allInstructors = `(${allInstructors.substring(1, allInstructors.length - 1)})`;
+            instructorText = `(${allInstructors[0].givenName} ${allInstructors[0].familyName}, et al.)`;
           }
         }
         return {
           value: `${c.semester} ${c.year} ${c.number}`,
-          label: `${c.semester} ${c.year} ${allInstructors}`,
+          label: `${c.semester} ${c.year} ${instructorText}`,
           semester: c.semester as Semester,
           year: c.year,
         } satisfies Term;
