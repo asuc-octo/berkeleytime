@@ -25,7 +25,8 @@ import { formatEnrollment } from "../enrollment/formatter";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 
-const EMPTY_GRADE_DISTRIBUTIONS: IGradeDistributionItem[] = [];
+const EMPTY_GRADE_DISTRIBUTIONS: readonly IGradeDistributionItem[] =
+  [] as const;
 
 // TODO: Pagination, filtering
 export const getCatalog = async (
