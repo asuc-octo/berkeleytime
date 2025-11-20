@@ -1,3 +1,5 @@
+import { connection } from "mongoose";
+
 import { ClassModel, TermModel } from "@repo/common";
 
 import { warmCatalogCacheForTerms } from "../lib/cache-warming";
@@ -8,7 +10,6 @@ import {
   getActiveTerms,
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
-import { connection } from "mongoose";
 
 // Note: We scan ALL terms in the database rather than just the affected ones.
 // This is intentional to ensure data consistency, as class data may be modified
@@ -138,8 +139,10 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
         });
 
         // avoid replacing data if a non-negligible amount is deleted
-        if (insertedCount / deletedCount <= 0.90) {
-          throw new Error(`Deleted ${deletedCount} classes and inserted only ${insertedCount} in term ${currentTerm}; aborting data insertion process`);
+        if (insertedCount / deletedCount <= 0.9) {
+          throw new Error(
+            `Deleted ${deletedCount} classes and inserted only ${insertedCount} in term ${currentTerm}; aborting data insertion process`
+          );
         }
 
         totalDeleted += deletedCount;
