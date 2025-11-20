@@ -133,7 +133,7 @@ export const classTypeDef = gql`
     online: Boolean!
     attendanceRequired: Boolean
     lecturesRecorded: Boolean
-    sectionAttributes: [SectionAttribute!]
+    sectionAttributes(attributeCode: String): [SectionAttribute!]
   }
 
   enum Component {

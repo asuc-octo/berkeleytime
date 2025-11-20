@@ -17,6 +17,15 @@ const resolvers: EnrollmentModule.Resolvers = {
       );
     },
   },
+  EnrollmentSingular: {
+    reservedSeatingMaxCount: (parent) => {
+      const seatReservations = parent.seatReservationCount ?? [];
+      return seatReservations.reduce(
+        (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
+        0
+      );
+    },
+  },
 };
 
 export default resolvers;

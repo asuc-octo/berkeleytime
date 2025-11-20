@@ -6,6 +6,7 @@ import {
   TermModel,
 } from "@repo/common";
 
+import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
 
@@ -63,11 +64,12 @@ const enrollmentSingularsEqual = (
   return true;
 };
 
-const updateEnrollmentHistories = async ({
-  log,
-  sis: { CLASS_APP_ID, CLASS_APP_KEY },
-  backend: { url: BACKEND_URL },
-}: Config) => {
+const updateEnrollmentHistories = async (config: Config) => {
+  const {
+    log,
+    sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms...`);
 
   const now = DateTime.now();
@@ -241,6 +243,33 @@ const updateEnrollmentHistories = async ({
             totalUpdated += 1;
           }
         }
+
+        /*
+          Start Migration 11/18/2025: Fix missing seatReservationTypes
+        */
+        if (
+          existingDoc &&
+          (existingDoc.seatReservationTypes === undefined ||
+            existingDoc.seatReservationTypes === null ||
+            existingDoc.seatReservationTypes.length === 0) &&
+          enrollmentSingular.seatReservationTypes !== undefined &&
+          enrollmentSingular.seatReservationTypes !== null &&
+          enrollmentSingular.seatReservationTypes.length !== 0
+        ) {
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: existingDoc._id },
+              update: {
+                $set: {
+                  seatReservationTypes: enrollmentSingular.seatReservationTypes,
+                },
+              },
+            },
+          });
+        }
+        /*
+          End Migration 11/18/2025
+        */
       }
 
       // Execute bulk operations for this batch
@@ -257,39 +286,7 @@ const updateEnrollmentHistories = async ({
   );
 
   // Warm catalog cache for all terms we just updated
-  log.info("Warming catalog cache for updated terms...");
-  for (const term of terms) {
-    const [yearStr, semester] = term.name.split(" ");
-    const year = parseInt(yearStr);
-
-    if (!year || !semester) {
-      log.warn(`Failed to parse term name: ${term.name}`);
-      continue;
-    }
-
-    try {
-      log.trace(`Warming cache for ${term.name}...`);
-
-      const response = await fetch(`${BACKEND_URL}/cache/warm-catalog`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ year, semester }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        log.warn(
-          `Failed to warm cache for ${term.name}: HTTP ${response.status} - ${errorText}`
-        );
-      } else {
-        const result = await response.json();
-        log.info(`Warmed cache for ${term.name}: ${result.key}`);
-      }
-    } catch (error: any) {
-      log.warn(`Failed to warm cache for ${term.name}: ${error.message}`);
-    }
-  }
-  log.info("Completed catalog cache warming.");
+  await warmCatalogCacheForTerms(config, terms);
 };
 
 export default { updateEnrollmentHistories };

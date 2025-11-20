@@ -1,3 +1,59 @@
 .sectionNumber {
   color: var(--paragraph-color);
 }
+
+.reservedSeating {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  line-height: 1;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.reservedSeatingIcon {
+  color: var(--paragraph-color);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  vertical-align: baseline;
+  display: inline-block;
+}
+
+.tooltipContent {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--tooltip-color);
+  color: var(--description-color);
+  max-width: 256px;
+  font-size: var(--text-14);
+  animation: fadeIn 100ms ease-in;
+  z-index: 998;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  .tooltipArrow {
+    fill: var(--tooltip-color);
+  }
+
+  .tooltipTitle {
+    font-weight: var(--font-semibold);
+    color: var(--tooltip-heading-color);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .tooltipDescription {
+    line-height: 1.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

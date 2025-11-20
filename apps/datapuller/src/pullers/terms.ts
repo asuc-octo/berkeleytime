@@ -3,10 +3,12 @@ import { TermModel } from "@repo/common";
 import { getAllTerms, getNearbyTerms } from "../lib/terms";
 import { Config } from "../shared/config";
 
-const updateTerms = async (
-  { sis: { TERM_APP_ID, TERM_APP_KEY }, log }: Config,
-  allTerms: boolean
-) => {
+const updateTerms = async (config: Config, allTerms: boolean) => {
+  const {
+    log,
+    sis: { TERM_APP_ID, TERM_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms...`);
 
   const terms = allTerms

@@ -3,7 +3,7 @@
   gap: 4px;
   align-items: center;
   color: var(--label-color);
-  font-size: 14px;
+  font-size: var(--text-14);
   line-height: 1;
   cursor: pointer;
   max-width: fit-content;
@@ -13,19 +13,20 @@
   border-radius: 4px;
   padding: 12px;
   background-color: var(--tooltip-color);
-  color: var(--neutral-400);
+  color: var(--description-color);
   max-width: 256px;
-  font-size: 14px;
+  font-size: var(--text-14);
   animation: fadeIn 100ms ease-in;
   z-index: 998;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
   .arrow {
     fill: var(--tooltip-color);
   }
 
   .title {
-    font-weight: 500;
-    color: white;
+    font-weight: var(--font-semibold);
+    color: var(--tooltip-heading-color);
     margin-bottom: 8px;
     line-height: 1;
   }

@@ -93,7 +93,7 @@ export function AverageGrade({
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>
-              {isPnp ? "Pass rate" : "Average grade"}
+              {isPnp ? "Pass Rate" : "Average Grade"}
             </p>
             <p className={styles.description}>
               {isPnp ? (

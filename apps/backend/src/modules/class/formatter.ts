@@ -5,6 +5,7 @@ import {
   ISectionItem,
 } from "@repo/common";
 
+import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import { ClassModule } from "./generated-types/module-types";
 
 interface ClassRelationships {
@@ -64,7 +65,10 @@ export type IntermediateSection = Omit<
 > &
   SectionRelationships;
 
-export const formatSection = (section: ISectionItem) => {
+export const formatSection = (
+  section: ISectionItem,
+  enrollment: EnrollmentModule.Enrollment | null | undefined = null
+) => {
   const output = {
     ...section,
 
@@ -75,7 +79,7 @@ export const formatSection = (section: ISectionItem) => {
 
     term: null,
     class: null,
-    enrollment: null,
+    enrollment: enrollment ?? null,
   } as IntermediateSection;
 
   return output;

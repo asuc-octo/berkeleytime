@@ -1,4 +1,3 @@
-import Fuse from "fuse.js";
 import { GraphQLResolveInfo } from "graphql";
 
 import {
@@ -9,15 +8,17 @@ import {
   ICourseItem,
   IGradeDistributionItem,
   ISectionItem,
+  NewEnrollmentHistoryModel,
   SectionModel,
   TermModel,
 } from "@repo/common";
-import { subjects } from "@repo/shared";
 
 import { getFields } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
+import { formatEnrollment } from "../enrollment/formatter";
+import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import {
   getAverageGrade,
   getDistribution,
@@ -25,87 +26,11 @@ import {
 } from "../grade-distribution/controller";
 import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 
-export const getIndex = (classes: ClassModule.Class[]) => {
-  const list = classes.map((_class) => {
-    const { title, subject, number } = _class.course;
-
-    // For prefixed courses, prefer the number and add an abbreviation with the prefix
-    const containsPrefix = /^[a-zA-Z].*/.test(number);
-    const alternateNumber = number.slice(1);
-
-    const term = subject.toLowerCase();
-
-    const alternateNames = subjects[term]?.abbreviations.reduce(
-      (acc, abbreviation) => {
-        // Add alternate names for abbreviations
-        const abbreviations = [
-          `${abbreviation}${number}`,
-          `${abbreviation} ${number}`,
-        ];
-
-        if (containsPrefix) {
-          abbreviations.push(
-            `${abbreviation}${alternateNumber}`,
-            `${abbreviation} ${alternateNumber}`
-          );
-        }
-
-        return [...acc, ...abbreviations];
-      },
-      // Add alternate names
-      containsPrefix
-        ? [
-            `${subject}${number}`,
-            `${subject} ${alternateNumber}`,
-            `${subject}${alternateNumber}`,
-          ]
-        : [`${subject}${number}`]
-    );
-
-    return {
-      title: _class.title ?? title,
-      // subject,
-      // number,
-      name: `${subject} ${number}`,
-      alternateNames,
-    };
-  });
-
-  // Attempt to increase performance by dropping unnecessary fields
-  const options = {
-    includeScore: true,
-    // ignoreLocation: true,
-    threshold: 0.25,
-    keys: [
-      // { name: "number", weight: 1.2 },
-      "name",
-      "title",
-      {
-        name: "alternateNames",
-        weight: 2,
-      },
-      // { name: "subject", weight: 1.5 },
-    ],
-    // TODO: Fuse types are wrong for sortFn
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // sortFn: (a: any, b: any) => {
-    //   // First, sort by score
-    //   if (a.score - b.score) return a.score - b.score;
-
-    //   // Otherwise, sort by number
-    //   return a.item[0].v.toLowerCase().localeCompare(b.item[0].v.toLowerCase());
-    // },
-  };
-
-  return new Fuse(list, options);
-};
-
 // TODO: Pagination, filtering
 export const getCatalog = async (
   year: number,
   semester: string,
-  info: GraphQLResolveInfo,
-  query?: string | null
+  info: GraphQLResolveInfo
 ) => {
   const term = await TermModel.findOne({
     name: `${year} ${semester}`,
@@ -233,6 +158,30 @@ export const getCatalog = async (
     parsedGradeDistributions = reducedGradeDistributions;
   }
 
+  // Batch-fetch enrollment data to avoid N+1 queries
+  let enrollmentMap = {} as Record<string, EnrollmentModule.Enrollment | null>;
+
+  const includesEnrollment = children.includes("enrollment");
+
+  if (includesEnrollment) {
+    const sectionIds = sections.map((section) => section.sectionId);
+
+    // Batch fetch all enrollment records for the term
+    const enrollments = await NewEnrollmentHistoryModel.find({
+      termId: term._id,
+      sectionId: { $in: sectionIds },
+    }).lean();
+
+    // Build lookup map by sectionId
+    enrollmentMap = enrollments.reduce(
+      (acc, enrollment) => {
+        acc[enrollment.sectionId] = formatEnrollment(enrollment);
+        return acc;
+      },
+      {} as Record<string, EnrollmentModule.Enrollment | null>
+    );
+  }
+
   // Turn courses into a map to decrease time complexity for filtering
   const reducedCourses = courses.reduce(
     (accumulator, course) => {
@@ -271,8 +220,17 @@ export const getCatalog = async (
     const index = sections.findIndex((section) => section.primary);
     if (index === -1) return accumulator;
 
-    const formattedPrimarySection = formatSection(sections.splice(index, 1)[0]);
-    const formattedSections = sections.map(formatSection);
+    const primarySection = sections.splice(index, 1)[0];
+    const formattedPrimarySection = formatSection(
+      primarySection,
+      includesEnrollment ? enrollmentMap[primarySection.sectionId] : undefined
+    );
+    const formattedSections = sections.map((section) =>
+      formatSection(
+        section,
+        includesEnrollment ? enrollmentMap[section.sectionId] : undefined
+      )
+    );
 
     const formattedCourse = formatCourse(
       course
@@ -316,20 +274,6 @@ export const getCatalog = async (
     accumulator.push(formattedClass);
     return accumulator;
   }, [] as ClassModule.Class[]);
-
-  query = query?.trim();
-
-  if (query) {
-    const index = getIndex(reducedClasses);
-
-    // TODO: Limit query because Fuse performance decreases linearly by
-    // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-    const filteredClasses = index
-      .search(query)
-      .map(({ refIndex }) => reducedClasses[refIndex]);
-
-    return filteredClasses;
-  }
 
   return reducedClasses;
 };

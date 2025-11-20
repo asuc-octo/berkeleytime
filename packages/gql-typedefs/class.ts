@@ -34,7 +34,7 @@ export const classTypeDef = gql`
     "Relationships"
     term: Term!
     course: Course!
-    primarySection: Section!
+    primarySection: Section
     sections: [Section!]!
     gradeDistribution: GradeDistribution!
     aggregatedRatings: AggregatedRatings!
@@ -133,7 +133,7 @@ export const classTypeDef = gql`
     online: Boolean!
     attendanceRequired: Boolean
     lecturesRecorded: Boolean
-    sectionAttributes: [SectionAttribute!]
+    sectionAttributes(attributeCode: String): [SectionAttribute!]
   }
 
   enum Component {

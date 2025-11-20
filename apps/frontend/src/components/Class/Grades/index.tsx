@@ -167,10 +167,19 @@ export default function Grades() {
                 <XAxis
                   dataKey="letter"
                   tickMargin={8}
-                  tick={{ fill: "var(--paragraph-color)", fontSize: 12 }}
+                  tick={{
+                    fill: "var(--paragraph-color)",
+                    fontSize: "var(--text-14)",
+                  }}
                   stroke="var(--label-color)"
                 />
-                <YAxis tickFormatter={toPercent} />
+                <YAxis
+                  tickFormatter={toPercent}
+                  tick={{
+                    fill: "var(--paragraph-color)",
+                    fontSize: "var(--text-14)",
+                  }}
+                />
                 <Tooltip
                   cursor={{
                     fill: "var(--border-color)",
