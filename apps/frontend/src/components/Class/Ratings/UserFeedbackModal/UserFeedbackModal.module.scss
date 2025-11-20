@@ -75,6 +75,14 @@
     color: var(--paragraph-color);
     font-size: 14px;
     min-width: 80px;
+
+    &:first-child {
+      text-align: right;
+    }
+
+    &:last-child {
+      text-align: left;
+    }
   }
 }
 
