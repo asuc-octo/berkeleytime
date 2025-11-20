@@ -111,6 +111,9 @@ export interface ICourseItem {
   formerDisplayName?: string;
   // createdDate?: string;
   updatedDate?: string;
+  allTimeAverageGrade?: number | null;
+  allTimePassCount?: number | null;
+  allTimeNoPassCount?: number | null;
 }
 
 export interface ICourseItemDocument extends ICourseItem, Document {}
@@ -205,10 +208,14 @@ const courseSchema = new Schema<ICourseItem>({
   formerDisplayName: { type: String },
   // createdDate: { type: String },
   updatedDate: { type: String },
+  allTimeAverageGrade: { type: Number, default: null },
+  allTimePassCount: { type: Number, default: null },
+  allTimeNoPassCount: { type: Number, default: null },
 });
 
 // for catalog, associated courses by id, curated class controllers
 courseSchema.index({ courseId: 1 });
+courseSchema.index({ courseId: 1, printInCatalog: 1 });
 
 // for associated courses by subject number and bookmarked courses controllers
 courseSchema.index({

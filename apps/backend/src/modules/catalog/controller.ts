@@ -11,20 +11,22 @@ import {
   NewEnrollmentHistoryModel,
   SectionModel,
   TermModel,
+  getAverageGrade,
+  getDistribution,
+  getPnpPercentage,
+  getPnpPercentageFromCounts,
 } from "@repo/common";
 
-import { getFields } from "../../utils/graphql";
+import { getFields, hasFieldPath } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";
-import {
-  getAverageGrade,
-  getDistribution,
-  getPnpPercentage,
-} from "../grade-distribution/controller";
 import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
+
+const EMPTY_GRADE_DISTRIBUTIONS: readonly IGradeDistributionItem[] =
+  [] as const;
 
 // TODO: Pagination, filtering
 export const getCatalog = async (
@@ -32,14 +34,6 @@ export const getCatalog = async (
   semester: string,
   info: GraphQLResolveInfo
 ) => {
-  const term = await TermModel.findOne({
-    name: `${year} ${semester}`,
-  })
-    .select({ _id: 1 })
-    .lean();
-
-  if (!term) throw new Error("Invalid term");
-
   /**
    * TODO:
    * Basic pagination can be introduced by using skip and limit
@@ -52,29 +46,39 @@ export const getCatalog = async (
    * in-memory filtering for fields from courses and sections
    */
 
-  // Fetch available classes for the term
-  const classes = await ClassModel.find({
-    year,
-    semester,
-    anyPrintInScheduleOfClasses: true,
-  }).lean();
+  // Fetch term and classes in parallel
+  const [term, classes] = await Promise.all([
+    TermModel.findOne({
+      name: `${year} ${semester}`,
+    })
+      .select({ _id: 1 })
+      .lean(),
+    ClassModel.find({
+      year,
+      semester,
+      anyPrintInScheduleOfClasses: true,
+    }).lean(),
+  ]);
+
+  if (!term) throw new Error("Invalid term");
 
   // Filtering by identifiers reduces the amount of data returned for courses and sections
   const courseIds = classes.map((_class) => _class.courseId);
+  const uniqueCourseIds = [...new Set(courseIds)];
 
-  // Fetch available courses for the term
-  const courses = await CourseModel.find({
-    courseId: { $in: courseIds },
-    printInCatalog: true,
-  }).lean();
-
-  // Fetch available sections for the term
-  const sections = await SectionModel.find({
-    year,
-    semester,
-    courseId: { $in: courseIds },
-    printInScheduleOfClasses: true,
-  }).lean();
+  // Fetch courses and sections in parallel
+  const [courses, sections] = await Promise.all([
+    CourseModel.find({
+      courseId: { $in: uniqueCourseIds },
+      printInCatalog: true,
+    }).lean(),
+    SectionModel.find({
+      year,
+      semester,
+      courseId: { $in: uniqueCourseIds },
+      printInScheduleOfClasses: true,
+    }).lean(),
+  ]);
 
   let parsedGradeDistributions = {} as Record<
     string,
@@ -82,30 +86,56 @@ export const getCatalog = async (
   >;
 
   const children = getFields(info.fieldNodes);
-  const includesGradeDistribution = children.includes("gradeDistribution");
+  const selectionIncludes = (path: string[]) =>
+    info.fieldNodes.some((node) =>
+      node.selectionSet
+        ? hasFieldPath(node.selectionSet.selections, info.fragments, path)
+        : false
+    );
 
-  if (includesGradeDistribution) {
+  const includesClassGradeDistribution = selectionIncludes([
+    "gradeDistribution",
+  ]);
+  const includesCourseGradeDistribution = selectionIncludes([
+    "course",
+    "gradeDistribution",
+  ]);
+  const includesCourseGradeDistributionDistribution = selectionIncludes([
+    "course",
+    "gradeDistribution",
+    "distribution",
+  ]);
+
+  const shouldLoadGradeDistributions =
+    includesClassGradeDistribution ||
+    includesCourseGradeDistributionDistribution;
+
+  if (shouldLoadGradeDistributions) {
     const sectionIds = sections.map((section) => section.sectionId);
 
-    // Get class-level grade distributions (current semester only)
-    const classGradeDistributions = await GradeDistributionModel.find({
-      sectionId: { $in: sectionIds },
-    }).lean();
-
-    // Get course-level grade distributions (all semesters/history)
-    // Include both the cross-listed parent courses AND the classes themselves
-    const courseGradeDistributions = await GradeDistributionModel.find({
-      $or: [
-        ...courses.map((course) => ({
-          subject: course.subject,
-          courseNumber: course.number,
-        })),
-        ...classes.map((_class) => ({
-          subject: _class.subject,
-          courseNumber: _class.courseNumber,
-        })),
-      ],
-    }).lean();
+    // Fetch class-level and course-level grade distributions in parallel when needed
+    const [classGradeDistributions, courseGradeDistributions] =
+      await Promise.all([
+        includesClassGradeDistribution
+          ? GradeDistributionModel.find({
+              sectionId: { $in: sectionIds },
+            }).lean()
+          : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
+        includesCourseGradeDistributionDistribution
+          ? GradeDistributionModel.find({
+              $or: [
+                ...courses.map((course) => ({
+                  subject: course.subject,
+                  courseNumber: course.number,
+                })),
+                ...classes.map((_class) => ({
+                  subject: _class.subject,
+                  courseNumber: _class.courseNumber,
+                })),
+              ],
+            }).lean()
+          : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
+      ]);
 
     // Separate processing for class-level and course-level distributions
     const reducedGradeDistributions = {} as Record<
@@ -113,46 +143,50 @@ export const getCatalog = async (
       GradeDistributionModule.GradeDistribution
     >;
 
-    // Process class-level distributions (by sectionId)
-    const classBySection = classGradeDistributions.reduce(
-      (acc, gradeDistribution) => {
-        const sectionId = gradeDistribution.sectionId;
-        acc[sectionId] = acc[sectionId]
-          ? [...acc[sectionId], gradeDistribution]
-          : [gradeDistribution];
-        return acc;
-      },
-      {} as Record<string, IGradeDistributionItem[]>
-    );
+    if (includesClassGradeDistribution) {
+      // Process class-level distributions (by sectionId)
+      const classBySection = classGradeDistributions.reduce(
+        (acc, gradeDistribution) => {
+          const sectionId = gradeDistribution.sectionId;
+          acc[sectionId] = acc[sectionId]
+            ? [...acc[sectionId], gradeDistribution]
+            : [gradeDistribution];
+          return acc;
+        },
+        {} as Record<string, IGradeDistributionItem[]>
+      );
 
-    for (const [sectionId, distributions] of Object.entries(classBySection)) {
-      const distribution = getDistribution(distributions);
-      reducedGradeDistributions[sectionId] = {
-        average: getAverageGrade(distribution),
-        distribution,
-        pnpPercentage: getPnpPercentage(distribution),
-      } as GradeDistributionModule.GradeDistribution;
+      for (const [sectionId, distributions] of Object.entries(classBySection)) {
+        const distribution = getDistribution(distributions);
+        reducedGradeDistributions[sectionId] = {
+          average: getAverageGrade(distribution),
+          distribution,
+          pnpPercentage: getPnpPercentage(distribution),
+        } as GradeDistributionModule.GradeDistribution;
+      }
     }
 
-    // Process course-level distributions (by subject-number, all history)
-    const courseByCourse = courseGradeDistributions.reduce(
-      (acc, gradeDistribution) => {
-        const key = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
-        acc[key] = acc[key]
-          ? [...acc[key], gradeDistribution]
-          : [gradeDistribution];
-        return acc;
-      },
-      {} as Record<string, IGradeDistributionItem[]>
-    );
+    if (includesCourseGradeDistributionDistribution) {
+      // Process course-level distributions (by subject-number, all history)
+      const courseByCourse = courseGradeDistributions.reduce(
+        (acc, gradeDistribution) => {
+          const key = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
+          acc[key] = acc[key]
+            ? [...acc[key], gradeDistribution]
+            : [gradeDistribution];
+          return acc;
+        },
+        {} as Record<string, IGradeDistributionItem[]>
+      );
 
-    for (const [key, distributions] of Object.entries(courseByCourse)) {
-      const distribution = getDistribution(distributions);
-      reducedGradeDistributions[key] = {
-        average: getAverageGrade(distribution),
-        distribution,
-        pnpPercentage: getPnpPercentage(distribution),
-      } as GradeDistributionModule.GradeDistribution;
+      for (const [key, distributions] of Object.entries(courseByCourse)) {
+        const distribution = getDistribution(distributions);
+        reducedGradeDistributions[key] = {
+          average: getAverageGrade(distribution),
+          distribution,
+          pnpPercentage: getPnpPercentage(distribution),
+        } as GradeDistributionModule.GradeDistribution;
+      }
     }
 
     parsedGradeDistributions = reducedGradeDistributions;
@@ -238,16 +272,25 @@ export const getCatalog = async (
 
     // Add grade distribution to course
     // Use the class's subject and courseNumber to get the correct grades for cross-listed courses
-    if (includesGradeDistribution) {
-      const key = `${_class.subject}-${_class.courseNumber}`;
-      const gradeDistribution = parsedGradeDistributions[key];
-
-      // Fall back to an empty grade distribution to prevent resolving the field again
-      formattedCourse.gradeDistribution = gradeDistribution ?? {
-        average: null,
+    if (includesCourseGradeDistribution) {
+      const courseFallback = {
+        average: course.allTimeAverageGrade ?? null,
         distribution: [],
-        pnpPercentage: null,
+        pnpPercentage: getPnpPercentageFromCounts(
+          course.allTimePassCount,
+          course.allTimeNoPassCount
+        ),
       };
+
+      if (includesCourseGradeDistributionDistribution) {
+        const key = `${_class.subject}-${_class.courseNumber}`;
+        const gradeDistribution =
+          parsedGradeDistributions[key] ?? courseFallback;
+
+        formattedCourse.gradeDistribution = gradeDistribution;
+      } else {
+        formattedCourse.gradeDistribution = courseFallback;
+      }
     }
 
     const formattedClass = {
@@ -258,7 +301,7 @@ export const getCatalog = async (
     } as unknown as ClassModule.Class;
 
     // Add grade distribution to class
-    if (includesGradeDistribution) {
+    if (includesClassGradeDistribution) {
       const sectionId = formattedPrimarySection.sectionId;
 
       // Fall back to an empty grade distribution to prevent resolving the field again
