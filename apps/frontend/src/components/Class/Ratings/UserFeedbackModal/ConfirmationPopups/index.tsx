@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { VisuallyHidden } from "@radix-ui/themes";
 import classNames from "classnames";
 import {
   ArrowRight,
@@ -8,7 +9,6 @@ import {
 } from "iconoir-react";
 
 import { Button, Dialog } from "@repo/theme";
-import { VisuallyHidden } from "@radix-ui/themes";
 
 import styles from "./ConfirmationPopups.module.scss";
 

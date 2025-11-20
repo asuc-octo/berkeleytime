@@ -55,7 +55,9 @@ export function AttendanceForm({
           <BooleanOptions
             name="lectureAttendance"
             value={metricData["Attendance"] ?? null}
-            onChange={(v) => handleAttendanceClickClick(MetricName.Attendance, v)}
+            onChange={(v) =>
+              handleAttendanceClickClick(MetricName.Attendance, v)
+            }
             yesLabel="Yes, lecture attendance was required."
             noLabel="No, lecture attendance was not required."
           />
@@ -69,7 +71,9 @@ export function AttendanceForm({
           <BooleanOptions
             name="lecturesRecorded"
             value={metricData["Recording"] ?? null}
-            onChange={(v) => handleAttendanceClickClick(MetricName.Recording, v)}
+            onChange={(v) =>
+              handleAttendanceClickClick(MetricName.Recording, v)
+            }
             yesLabel="Yes, lectures were recorded."
             noLabel="No, lectures were not recorded."
           />
