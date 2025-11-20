@@ -31,6 +31,7 @@ export interface Config {
     REGION_NAME: string;
     WORKGROUP: string;
   };
+  BACKEND_URL: string;
 }
 
 export function loadConfig(): Config {
@@ -62,5 +63,6 @@ export function loadConfig(): Config {
       REGION_NAME: env("AWS_REGION_NAME"),
       WORKGROUP: env("AWS_WORKGROUP"),
     },
+    BACKEND_URL: env("BACKEND_URL"),
   };
 }

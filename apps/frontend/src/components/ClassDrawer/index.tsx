@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { Dialog } from "@repo/theme";
 
 import Class from "@/components/Class";
-import { Semester } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./ClassDrawer.module.scss";
 
@@ -44,7 +44,11 @@ export default function ClassDrawer({
 }: ClassDrawerProps) {
   return (
     <Dialog.Root onOpenChange={onOpenChange} open={open}>
-      {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
+      {children && open !== undefined ? (
+        <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      ) : (
+        children
+      )}
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Drawer className={styles.drawer}>

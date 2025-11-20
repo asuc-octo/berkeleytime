@@ -1,5 +1,7 @@
 # Frontend
 
+<!-- toc -->
+
 We maintain a static, single-page application (SPA) at [berkeleytime.com](https://berkeleytime.com). Once compiled, the application consists only of HTML, JavaScript, and CSS files served to visitors. No server generates responses at request time. Instead, the SPA utilizes the browser to fetch data from the backend service hosted at [berkeleytime.com/api/graphql](https://berkeleytime.com/api/graphql).
 
 We originally chose this pattern because most developers are familiar with React, Vue, Svelte, or other SPA frameworks and we did not want to opt for a more opinionated meta-framework like Next.js or Remix for now. However, there are always trade-offs.
@@ -151,11 +153,11 @@ body:not([data-theme]) {
 
 ### Berkeleytime-specific Components
 
-A number of the Radix primitives and other commonly-used components have since also been adapted to specifically fit Berkeleytime's needs by the design team. These components should be used whenever possible. A full list of components can be found in `packages/theme/src/components`. 
+A number of the Radix primitives and other commonly-used components have since also been adapted to specifically fit Berkeleytime's needs by the design team. These components should be used whenever possible. A full list of components can be found in `packages/theme/src/components`.
 
 #### Storybook
 
-To view some of these components and common applications, you can go to our Storybook. When running with `docker compose`, this will automatically be hosted at `localhost:6006`. 
+To view some of these components and common applications, you can go to our Storybook. When running with `docker compose`, this will automatically be hosted at `localhost:6006`.
 
 ### Application
 

@@ -1,7 +1,8 @@
+import { scheduleTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/schedule";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: scheduleTypeDef,
 };

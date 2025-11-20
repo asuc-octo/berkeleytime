@@ -16,7 +16,8 @@
     },
     "generate": {
       "outputs": [
-        "*/**/generated-types/**"
+        "*/**/generated-types/**",
+        "*/**/generated/**"
       ]
     },
     "lint": {},

@@ -7,7 +7,8 @@
     "build": "vite build",
     "lint": "eslint src/",
     "start": "serve -s dist -p 3000",
-    "test": "vitest run"
+    "test": "vitest run",
+    "generate": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@apollo/client": "4.0.7",
@@ -17,6 +18,7 @@
     "@repo/theme": "*",
     "@shopify/draggable": "^1.1.4",
     "@tanstack/react-virtual": "^3.13.12",
+    "@types/suncalc": "^1.9.2",
     "classnames": "^2.5.1",
     "graphql": "^16.11.0",
     "iconoir-react": "^7.11.0",
@@ -25,13 +27,17 @@
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-is": "^19.0.0",
     "react-router-dom": "^7.9.3",
     "react-select": "^5.10.2",
     "recharts": "^3.2.1",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "suncalc": "^1.9.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^6.0.2",
     "@repo/eslint-config": "*",
+    "@repo/gql-typedefs": "*",
     "@repo/typescript-config": "*",
     "@types/lodash": "^4.17.20",
     "@types/mapbox-gl": "^3.4.1",

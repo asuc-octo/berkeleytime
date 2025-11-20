@@ -1,7 +1,8 @@
+import { userTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/user";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: userTypeDef,
 };

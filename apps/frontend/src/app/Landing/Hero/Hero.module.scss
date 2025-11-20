@@ -2,6 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  isolation: isolate;
   overflow: hidden;
   background: linear-gradient(
     var(--landing-gradient-angle, to top right),
@@ -10,18 +11,13 @@
   );
 
   .wave {
-    position: absolute;
+    display: block;
     width: 100%;
-    bottom: 0px;
-    left: 0;
-    z-index: 2;
-    filter: drop-shadow(0 -8px 0 rgb(255 255 255 / 10%));
-    color: var(--background-color);
-  }
-
-  @media (width > 992px) {
-    height: 100dvh;
-    max-height: 992px;
+    height: clamp(175px, 15vw, 350px);
+    margin-top: auto;
+    color: var(--light-background-color);
+    position: relative;
+    z-index: 3;
   }
 
   .container {
@@ -29,12 +25,13 @@
     z-index: 1;
 
     .text {
-      margin: 96px 0 192px;
+      margin: 96px 0 120px;
       position: relative;
       z-index: 2;
 
       @media (width <= 992px) {
         margin-top: 64px;
+        margin-bottom: 48px;
       }
 
       @media (width > 992px) {
@@ -63,7 +60,7 @@
 
       .description {
         font-size: 24px;
-        color: var(--blue-200);
+        color: #eee;
         line-height: 1.5;
         font-weight: 500;
         margin-bottom: 64px;
@@ -95,11 +92,11 @@
     .clock {
       position: absolute;
       right: 272px;
-      bottom: 128px;
+      bottom: 64px;
       text-align: right;
       font-size: 16px;
       line-height: 1.5;
-      color: var(--blue-200);
+      color: #eee;
       z-index: 1;
 
       @media (width <= 992px) {
@@ -119,7 +116,7 @@
 
     img.campanile {
       position: absolute;
-      z-index: 1;
+      z-index: 0;
       right: 24px;
       top: 0;
 

@@ -1,7 +1,5 @@
 # Infrastructure
 
-Welcome to the infrastructure section.
-
 > [!NOTE]
 > Infrastructure concepts tend to be more complex than application concepts. Don't be discouraged if a large amount of content in the infrastructure section is confusing!
 

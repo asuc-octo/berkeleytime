@@ -1,15 +1,15 @@
 import { ArrowRight } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { IScheduleClass, ScheduleIdentifier } from "@/lib/api";
+import { IScheduleClass } from "@/lib/api";
 
 import styles from "./Schedule.module.scss";
 
 interface ScheduleProps {
-  _id: ScheduleIdentifier;
-  name: String;
+  _id: string;
+  name: string;
   classes: IScheduleClass[];
-  semester?: String;
+  semester?: string;
 }
 
 export default function Schedule({

@@ -1,53 +1,14 @@
 import { gql } from "@apollo/client";
 
-import { GradeDistribution, IClass, InstructionMethod } from ".";
-import { IAggregatedRatings } from "./ratings";
-import { Semester } from "./terms";
+import {
+  ReadCourseQuery,
+  ReadCourseWithInstructorQuery,
+} from "../generated/graphql";
 
-export enum AcademicCareer {
-  Undergraduate = "UGRD",
-  Graduate = "GRAD",
-  Extension = "UCBX",
-}
-
-export const academicCareers: Record<AcademicCareer, string> = {
-  [AcademicCareer.Undergraduate]: "Undergraduate",
-  [AcademicCareer.Graduate]: "Graduate",
-  [AcademicCareer.Extension]: "Extension",
-};
-
-export interface ICourse {
-  // Identifiers
-  courseId: string;
-  subject: string;
-  number: string;
-
-  // Relationships
-  classes: IClass[];
-  crossListing: ICourse[];
-  requiredCourses: ICourse[];
-  gradeDistribution: GradeDistribution;
-
-  // Attributes
-  requirements: string | null;
-  description: string;
-  fromDate: string;
-  gradingBasis: string;
-  finalExam: string | null;
-  academicCareer: AcademicCareer;
-  title: string;
-  primaryInstructionMethod: InstructionMethod;
-  toDate: string;
-  typicallyOffered: Semester[] | null;
-  aggregatedRatings?: IAggregatedRatings;
-}
-
-export interface ReadCourseResponse {
-  course: ICourse;
-}
+export type ICourse = NonNullable<ReadCourseQuery["course"]>;
 
 export const READ_COURSE_TITLE = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseTitle($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -58,7 +19,7 @@ export const READ_COURSE_TITLE = gql`
 `;
 
 export const READ_COURSE_UNITS = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseUnits($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       classes {
         unitsMax
@@ -70,7 +31,7 @@ export const READ_COURSE_UNITS = gql`
 `;
 
 export const READ_COURSE = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -113,38 +74,40 @@ export const READ_COURSE = gql`
 `;
 
 export const READ_COURSE_FOR_CLASS = gql`
-  query GetCourseForClass($subject: String!, $number: CourseNumber!) {
+  query ReadCourseForClass($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
-      courseId
-      subject
-      number
       title
       description
-      academicCareer
-      gradingBasis
-      finalExam
-      requirements
+      aggregatedRatings {
+        metrics {
+          categories {
+            count
+            value
+          }
+          count
+          metricName
+          weightedAverage
+        }
+      }
       gradeDistribution {
         average
+        pnpPercentage
         distribution {
           letter
           count
         }
       }
-      aggregatedRatings {
-        metrics {
-          metricName
-          count
-          weightedAverage
-          categories {
-            value
-            count
-          }
-        }
+      academicCareer
+      requirements
+      requiredCourses {
+        subject
+        number
       }
       classes {
         semester
         year
+        number
+        anyPrintInScheduleOfClasses
         primarySection {
           meetings {
             instructors {
@@ -159,7 +122,7 @@ export const READ_COURSE_FOR_CLASS = gql`
 `;
 
 export const READ_COURSE_GRADE_DIST = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseGradeDist($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       gradeDistribution {
         average
@@ -173,7 +136,7 @@ export const READ_COURSE_GRADE_DIST = gql`
 `;
 
 export const READ_COURSE_WITH_INSTRUCTOR = gql`
-  query GetCourse($subject: String!, $number: CourseNumber!) {
+  query ReadCourseWithInstructor($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -224,12 +187,12 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
   }
 `;
 
-export interface GetCoursesResponse {
-  courses: ICourse[];
-}
+export type ICourseWithInstructorClass = NonNullable<
+  ReadCourseWithInstructorQuery["course"]
+>["classes"][number];
 
 export const GET_COURSE_NAMES = gql`
-  query GetCourses {
+  query GetCourseNames {
     courses {
       subject
       number

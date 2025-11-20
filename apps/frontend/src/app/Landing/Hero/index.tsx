@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef } from "react";
 
 import { ArrowRight, Clock } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
@@ -7,72 +7,22 @@ import { Box, Button, Container } from "@repo/theme";
 
 import NavigationBar from "@/components/NavigationBar";
 
+import Wave from "../Wave";
 import styles from "./Hero.module.scss";
-import afternoon from "./afternoon.svg";
-import dawn from "./dawn.svg";
-import dusk from "./dusk.svg";
-import morning from "./morning.svg";
-import sunrise from "./sunrise.svg";
-import sunset from "./sunset.svg";
-import wave from "./wave.svg";
 
-// TODO: Tailwind color gradients
-const steps = [
-  {
-    colors: ["#CFADD4", "#B5B2D9"],
-    // gradient: ["var(--purple-400)", "var(--violet-400)"],
-    // color: "var(--violet-500)",
-    image: dawn,
-  },
-  {
-    colors: ["#D3A4BF", "#EEC9C1"],
-    // gradient: ["var(--fuchsia-400)", "var(--purple-400)"],
-    // color: "var(--purple-500)",
-    image: sunrise,
-  },
-  {
-    colors: ["#DCD6C4", "#C8DCD9"],
-    image: morning,
-  },
-  {
-    gradient: ["var(--blue-500)", "var(--sky-500)"],
-    colors: ["var(--blue-500)", "#0ea5e9"],
-    image: afternoon,
-  },
-  {
-    colors: ["#D25950", "#EE8A1F"],
-    image: sunset,
-  },
-  {
-    colors: ["#10101B", "#202036"],
-    angle: "to bottom right",
-    image: dusk,
-  },
-];
+interface HeroProps {
+  step: {
+    colors: string[];
+    gradient?: string[];
+    angle?: string;
+    image: string;
+  };
+  milliseconds: number;
+}
 
-export default function Hero() {
+export default function Hero({ step, milliseconds }: HeroProps) {
   const navigate = useNavigate();
   const root = useRef<HTMLDivElement>(null);
-
-  // Berkeley time
-  const [milliseconds, setMilliseconds] = useState(
-    () => Date.now() - 10 * 60 * 1000
-  );
-
-  const step = useMemo(() => {
-    // const date = new Date(milliseconds);
-    // const index = Math.floor(((date.getHours() - 0) / 24) * 6);
-    return steps[3];
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setMilliseconds((milliseconds) => milliseconds + 1000),
-      1000
-    );
-
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const element = root.current;
@@ -103,7 +53,7 @@ export default function Hero() {
 
   return (
     <div className={styles.root} ref={root}>
-      <NavigationBar invert />
+      <NavigationBar invert accentColor={step.colors[1]} />
       <Box px="5">
         <Container flexGrow="1" className={styles.container}>
           <div className={styles.text}>
@@ -143,7 +93,7 @@ export default function Hero() {
           <img className={styles.campanile} src={step.image} />
         </Container>
       </Box>
-      <img className={styles.wave} src={wave} />
+      <Wave className={styles.wave} />
     </div>
   );
 }

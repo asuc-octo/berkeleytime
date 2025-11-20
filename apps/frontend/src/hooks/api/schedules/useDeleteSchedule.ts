@@ -4,13 +4,13 @@ import { Reference } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  DELETE_SCHEDULE,
-  DeleteScheduleResponse,
-  ScheduleIdentifier,
-} from "@/lib/api";
+  DeleteCuratedClassMutationVariables,
+  DeleteScheduleDocument,
+  DeleteScheduleMutation,
+} from "@/lib/generated/graphql";
 
 export const useDeleteSchedule = () => {
-  const mutation = useMutation<DeleteScheduleResponse>(DELETE_SCHEDULE, {
+  const mutation = useMutation(DeleteScheduleDocument, {
     update(cache, { data }) {
       const id = data?.deleteSchedule;
 
@@ -29,8 +29,14 @@ export const useDeleteSchedule = () => {
 
   const deleteSchedule = useCallback(
     async (
-      id: ScheduleIdentifier,
-      options?: Omit<useMutation.Options<DeleteScheduleResponse>, "variables">
+      id: string,
+      options?: Omit<
+        useMutation.Options<
+          DeleteScheduleMutation,
+          DeleteCuratedClassMutationVariables
+        >,
+        "variables"
+      >
     ) => {
       const mutate = mutation[0];
 

@@ -82,7 +82,7 @@ export default function ShareDialog({ children }: ShareDialogProps) {
       return days[dayIndex];
     };
 
-    let icsContent = [
+    const icsContent = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
       "PRODID:-//BerkeleyTime//Schedule Export//EN",

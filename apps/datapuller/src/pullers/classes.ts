@@ -1,5 +1,6 @@
-import { ClassModel } from "@repo/common";
+import { ClassModel, TermModel } from "@repo/common";
 
+import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
 import {
@@ -10,10 +11,78 @@ import {
 
 const TERMS_PER_API_BATCH = 4;
 
-const updateClasses = async (
-  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
-  termSelector: TermSelector
-) => {
+// Note: We scan ALL terms in the database rather than just the affected ones.
+// This is intentional to ensure data consistency, as class data may be modified
+// by sources other than the datapuller. Since the query is fast, the overhead
+// is minimal. Future optimization could track only affected terms if needed.
+const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
+  log.trace("Updating hasCatalogData flags for all terms...");
+
+  const allTerms = await TermModel.find({}).select({ _id: 1, name: 1 }).lean();
+
+  // Single aggregation query to get all year+semester combinations with catalog data
+  const termsWithClasses = await ClassModel.aggregate<{
+    _id: { year: number; semester: string };
+  }>([
+    {
+      $match: {
+        anyPrintInScheduleOfClasses: true,
+      },
+    },
+    {
+      $group: {
+        _id: { year: "$year", semester: "$semester" },
+      },
+    },
+  ]);
+
+  const catalogDataSet = new Set(
+    termsWithClasses.map((t) => `${t._id.year} ${t._id.semester}`)
+  );
+
+  const bulkOps = allTerms
+    .map((term) => {
+      const parts = term.name.split(" ");
+      if (parts.length !== 2) {
+        log.warn(`Invalid term name format: ${term.name}`);
+        return null;
+      }
+
+      const [yearStr, semester] = parts;
+      const year = parseInt(yearStr, 10);
+      if (isNaN(year)) {
+        log.warn(`Invalid year in term name: ${term.name}`);
+        return null;
+      }
+
+      const hasCatalogData = catalogDataSet.has(`${year} ${semester}`);
+
+      return {
+        updateOne: {
+          filter: { _id: term._id },
+          update: { $set: { hasCatalogData } },
+        },
+      };
+    })
+    .filter((op): op is NonNullable<typeof op> => op !== null);
+
+  if (bulkOps.length > 0) {
+    const result = await TermModel.bulkWrite(bulkOps);
+    log.info(
+      `Updated hasCatalogData flag for ${result.modifiedCount.toLocaleString()} / ${allTerms.length.toLocaleString()} terms.`
+    );
+    log.info(
+      `Found ${catalogDataSet.size.toLocaleString()} terms with catalog data.`
+    );
+  }
+};
+
+const updateClasses = async (config: Config, termSelector: TermSelector) => {
+  const {
+    log,
+    sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms....`);
 
   const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate
@@ -77,6 +146,17 @@ const updateClasses = async (
   log.info(
     `Completed updating database with ${totalClasses.toLocaleString()} classes, inserted ${totalInserted.toLocaleString()} documents.`
   );
+
+  await updateTermsCatalogDataFlags(log);
+
+  // Warm catalog cache for all terms with catalog data
+  const distinctTermNames = await TermModel.distinct("name", {
+    hasCatalogData: true,
+  });
+  const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
+
+  // Process sequentially to avoid overwhelming the server
+  await warmCatalogCacheForTerms(config, termsWithCatalogData);
 };
 
 const activeTerms = async (config: Config) => {

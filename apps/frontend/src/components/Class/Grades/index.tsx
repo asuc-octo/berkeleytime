@@ -34,14 +34,16 @@ export default function Grades() {
   } = useClass();
 
   const hasNoGradeData = useMemo(() => {
-    const classTotal = gradeDistribution.distribution.reduce(
-      (acc, grade) => acc + (grade.count ?? 0),
-      0
-    );
-    const courseTotal = courseGradeDistribution.distribution.reduce(
-      (acc, grade) => acc + (grade.count ?? 0),
-      0
-    );
+    const classTotal =
+      gradeDistribution.distribution?.reduce(
+        (acc, grade) => acc + (grade.count ?? 0),
+        0
+      ) ?? 0;
+    const courseTotal =
+      courseGradeDistribution.distribution?.reduce(
+        (acc, grade) => acc + (grade.count ?? 0),
+        0
+      ) ?? 0;
 
     return (
       classTotal === 0 &&
@@ -53,32 +55,30 @@ export default function Grades() {
 
   const { data, courseTotal } = useMemo(() => {
     const getTotal = (distribution: typeof gradeDistribution.distribution) =>
-      distribution.reduce((acc, grade) => acc + (grade.count ?? 0), 0);
+      distribution?.reduce((acc, grade) => acc + (grade.count ?? 0), 0) ?? 0;
 
     const classTotalCount = getTotal(gradeDistribution.distribution);
-    const courseTotalCount = getTotal(courseGradeDistribution.distribution);
+    const courseTotalCount = getTotal(
+      courseGradeDistribution.distribution ?? []
+    );
 
     const mapped = GRADES.map((letter) => {
-      const classGrade = gradeDistribution.distribution.find(
+      const classGrade = gradeDistribution.distribution?.find(
         (grade) => grade.letter === letter
       );
-      const courseGrade = courseGradeDistribution.distribution.find(
+      const courseGrade = courseGradeDistribution.distribution?.find(
         (grade) => grade.letter === letter
       );
 
       const classPercent =
         classTotalCount > 0 && classGrade
           ? Math.round(((classGrade.count ?? 0) / classTotalCount) * 1000) / 10
-          : classGrade?.percentage
-            ? Math.round(classGrade.percentage * 1000) / 10
-            : 0;
+          : 0;
       const coursePercent =
         courseTotalCount > 0 && courseGrade
           ? Math.round(((courseGrade.count ?? 0) / courseTotalCount) * 1000) /
             10
-          : courseGrade?.percentage
-            ? Math.round(courseGrade.percentage * 1000) / 10
-            : 0;
+          : 0;
 
       return {
         letter,
@@ -167,10 +167,19 @@ export default function Grades() {
                 <XAxis
                   dataKey="letter"
                   tickMargin={8}
-                  tick={{ fill: "var(--paragraph-color)", fontSize: 12 }}
+                  tick={{
+                    fill: "var(--paragraph-color)",
+                    fontSize: "var(--text-14)",
+                  }}
                   stroke="var(--label-color)"
                 />
-                <YAxis tickFormatter={toPercent} />
+                <YAxis
+                  tickFormatter={toPercent}
+                  tick={{
+                    fill: "var(--paragraph-color)",
+                    fontSize: "var(--text-14)",
+                  }}
+                />
                 <Tooltip
                   cursor={{
                     fill: "var(--border-color)",

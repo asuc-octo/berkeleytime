@@ -20,9 +20,10 @@ mdb.archive
 .turbo
 node_modules
 dist/
-db/
-data/
+/db
+/data
 generated-types/
+generated-typedefs/
 
 # others
 *.cert

@@ -7,7 +7,6 @@ import {
   VideoCamera,
   VideoCameraOff,
 } from "iconoir-react";
-import _ from "lodash";
 import { Link } from "react-router-dom";
 
 import {
@@ -20,10 +19,10 @@ import { Flex } from "@repo/theme";
 
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import { signIn } from "@/lib/api";
-import { ICourse } from "@/lib/api";
+import { IClassCourse, signIn } from "@/lib/api";
 
-import styles from "./Overview.module.scss";
+import overviewStyles from "./Overview.module.scss";
+import styles from "./UserSubmittedData.module.scss";
 
 enum Consensus {
   Yes = "Yes",
@@ -53,10 +52,10 @@ export function UserSubmittedData() {
 
   return (
     <Flex direction="column" gap="2">
-      <p className={styles.label}>User-Submitted Class Requirements</p>
+      <p className={overviewStyles.label}>User-Submitted Class Requirements</p>
       {!atLeastOneConsensus ? (
         <>
-          <p className={styles.description}>
+          <p className={overviewStyles.description}>
             No user-submitted information is available for this course yet.
           </p>
           <Link
@@ -74,7 +73,7 @@ export function UserSubmittedData() {
               {responses.Attendance === Consensus.Yes && (
                 <>
                   <User className={styles.icon} />
-                  <span className={styles.description}>
+                  <span className={overviewStyles.description}>
                     Attendance Required
                   </span>
                 </>
@@ -82,7 +81,7 @@ export function UserSubmittedData() {
               {responses.Attendance === Consensus.No && (
                 <>
                   <UserXmark className={styles.icon} />
-                  <span className={styles.description}>
+                  <span className={overviewStyles.description}>
                     Attendance Not Required
                   </span>
                 </>
@@ -95,7 +94,7 @@ export function UserSubmittedData() {
                     style={{ color: "var(--label-color)" }}
                   />
                   <span
-                    className={styles.description}
+                    className={overviewStyles.description}
                     style={{ color: "var(--label-color)" }}
                   >
                     Unknown Attendance Requirement
@@ -107,13 +106,15 @@ export function UserSubmittedData() {
               {responses.Recording === Consensus.Yes && (
                 <>
                   <VideoCamera className={styles.icon} />
-                  <span className={styles.description}>Lectures Recorded</span>
+                  <span className={overviewStyles.description}>
+                    Lectures Recorded
+                  </span>
                 </>
               )}
               {responses.Recording === Consensus.No && (
                 <>
                   <VideoCameraOff className={styles.icon} />
-                  <span className={styles.description}>
+                  <span className={overviewStyles.description}>
                     Lectures Not Recorded
                   </span>
                 </>
@@ -126,7 +127,7 @@ export function UserSubmittedData() {
                     style={{ color: "var(--label-color)" }}
                   />
                   <span
-                    className={styles.description}
+                    className={overviewStyles.description}
                     style={{ color: "var(--label-color)" }}
                   >
                     Unknown Recording Status
@@ -150,7 +151,7 @@ export function UserSubmittedData() {
   );
 }
 
-function getResponse(course: ICourse, metricName: MetricName): Consensus {
+function getResponse(course: IClassCourse, metricName: MetricName): Consensus {
   if (METRIC_MAPPINGS[metricName].isRating) {
     throw new Error("getConsensus should not be called for rating metrics");
   }

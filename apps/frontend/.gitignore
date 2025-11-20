@@ -7,3 +7,5 @@ tmpaddon
 
 .vscode/*
 !.vscode/launch.json
+
+src/lib/generated/*

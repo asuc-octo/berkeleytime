@@ -20,6 +20,7 @@
   .column {
     padding: 16px;
     padding-left: 0;
+    height: min-content;
     .icon {
       color: var(--paragraph-color);
       transition: all 100ms ease-in-out;
@@ -37,7 +38,7 @@
 
   .body {
     flex: 1 1 auto;
-    font-size: 14px;
+    font-size: var(--text-14);
     justify-content: space-between;
     display: flex;
     flex-direction: column;
@@ -51,7 +52,7 @@
       margin-bottom: 8px;
       line-height: 1;
       font-weight: 660;
-      font-size: 16px;
+      font-size: var(--text-16);
       font-feature-settings:
         "cv05" on,
         "cv13" on,
@@ -61,7 +62,7 @@
     }
 
     .description {
-      color: var(--paragraph-color);
+      color: var(--description-color);
       line-height: 1.5;
       overflow: hidden;
       text-overflow: ellipsis;

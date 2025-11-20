@@ -20,6 +20,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.backend.port }}
+            - containerPort: {{ .Values.backend.cacheWarmingPort }}
           envFrom:
             - configMapRef:
                 name: {{ include "bt-app.backendName" . }}-env
@@ -42,6 +43,7 @@ metadata:
     {{- include "bt-app.backendLabels" . | nindent 4 }}
 data:
   PORT: {{ .Values.backend.port | quote }}
+  CACHE_WARMING_PORT: {{ .Values.backend.cacheWarmingPort | quote }}
   URL: "http://localhost:5001"
   BACKEND_PATH: {{ .Values.backend.path }}
   GRAPHQL_PATH: "/graphql"
@@ -90,6 +92,11 @@ spec:
   selector:
     {{- include "bt-app.backendLabels" . | nindent 4 }}
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: {{ .Values.port }}
       targetPort: {{ .Values.backend.port }}
+    - name: cache-warming
+      protocol: TCP
+      port: {{ .Values.backend.cacheWarmingPort }}
+      targetPort: {{ .Values.backend.cacheWarmingPort }}

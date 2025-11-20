@@ -1,21 +1,8 @@
 import { gql } from "@apollo/client";
 
-import { IClass } from "./classes";
-import { ICourse } from "./courses";
-import { Semester } from "./terms";
+import { GetUserQuery } from "../generated/graphql";
 
-export interface IUser {
-  _id: string;
-  name: string;
-  email: string;
-  student: boolean;
-  bookmarkedCourses: ICourse[];
-  bookmarkedClasses: IClass[];
-}
-
-export interface ReadUserResponse {
-  user: IUser;
-}
+export type IUser = GetUserQuery["user"];
 
 export const READ_USER = gql`
   query GetUser {
@@ -59,29 +46,6 @@ export const READ_USER = gql`
     }
   }
 `;
-
-export interface IBookmarkedCourseInput {
-  subject: string;
-  number: string;
-}
-
-export interface IBookmarkedClassInput {
-  subject: string;
-  number: string;
-  courseNumber: string;
-  year: number;
-  semester: Semester;
-  sessionId: string | null;
-}
-
-export interface IUserInput {
-  bookmarkedCourses?: IBookmarkedCourseInput[];
-  bookmarkedClasses?: IBookmarkedClassInput[];
-}
-
-export interface UpdateUserResponse {
-  updateUser: IUser;
-}
 
 export const UPDATE_USER = gql`
   mutation UpdateUser($user: UpdateUserInput!) {

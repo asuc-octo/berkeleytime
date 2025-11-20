@@ -1,8 +1,14 @@
-import { ICourse } from "@/lib/api";
-import { subjects } from "@/lib/course";
+import { subjects } from "@repo/shared";
+
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
-export const initialize = (courses: ICourse[]) => {
+export const initialize = (
+  courses: {
+    title: string;
+    subject: string;
+    number: string;
+  }[]
+) => {
   const list = courses.map((course) => {
     const { title, subject, number } = course;
 

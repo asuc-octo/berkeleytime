@@ -4,7 +4,8 @@ import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import { GET_CATALOG, GetCatalogResponse, ITerm, Semester } from "@/lib/api";
+import { ITerm } from "@/lib/api";
+import { GetCanonicalCatalogDocument, Semester } from "@/lib/generated/graphql";
 
 import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
@@ -80,7 +81,7 @@ export default function ClassBrowser({
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
-  const { data, loading } = useQuery<GetCatalogResponse>(GET_CATALOG, {
+  const { data, loading } = useQuery(GetCanonicalCatalogDocument, {
     variables: {
       semester: currentSemester,
       year: currentYear,
@@ -240,6 +241,33 @@ export default function ClassBrowser({
     [includedClasses, index, query, sortBy, effectiveOrder]
   );
 
+  const hasActiveFilters = useMemo(() => {
+    return (
+      units[0] !== 0 ||
+      units[1] !== 5 ||
+      levels.length > 0 ||
+      days.length > 0 ||
+      breadths.length > 0 ||
+      universityRequirement !== null ||
+      gradingFilters.length > 0 ||
+      department !== null ||
+      open ||
+      online ||
+      sortBy !== SortBy.Relevance
+    );
+  }, [
+    units,
+    levels,
+    days,
+    breadths,
+    universityRequirement,
+    gradingFilters,
+    department,
+    open,
+    online,
+    sortBy,
+  ]);
+
   const updateArray = <T,>(
     key: string,
     setState: (state: T[]) => void,
@@ -341,6 +369,7 @@ export default function ClassBrowser({
         year: currentYear,
         semester: currentSemester,
         terms,
+        hasActiveFilters,
         query,
         units,
         levels,

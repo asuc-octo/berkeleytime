@@ -6,6 +6,7 @@ import {
   TermModel,
 } from "@repo/common";
 
+import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
 
@@ -63,10 +64,12 @@ const enrollmentSingularsEqual = (
   return true;
 };
 
-const updateEnrollmentHistories = async ({
-  log,
-  sis: { CLASS_APP_ID, CLASS_APP_KEY },
-}: Config) => {
+const updateEnrollmentHistories = async (config: Config) => {
+  const {
+    log,
+    sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms...`);
 
   const now = DateTime.now();
@@ -174,7 +177,7 @@ const updateEnrollmentHistories = async ({
           if (existingDoc.history.length === 0) {
             bulkOps.push({
               updateOne: {
-                filter: identifier,
+                filter: { _id: existingDoc._id },
                 update: {
                   $push: { history: enrollmentSingular.data },
                 },
@@ -188,7 +191,7 @@ const updateEnrollmentHistories = async ({
                  2. Latest enrollment entry's granularity matches incoming granularity
                  3. Latest enrollment entry's endTime is less than DATAGAP_THRESHOLD ago
 
-              Then: Extend the last entry's endTime using atomic $set.
+              Then: Extend the last entry's endTime using $set.
 
               Else: Append a new entry with incoming startTime and endTime using $push.
             */
@@ -207,7 +210,7 @@ const updateEnrollmentHistories = async ({
               lastEntry.granularitySeconds ===
               enrollmentSingular.data.granularitySeconds;
 
-            // true if duration from last entry's end time to current time exceeds DATAGAP_THRESHOLD
+            // true if duration from last entry's end time to current time is less than DATAGAP_THRESHOLD
             const incomingEndTime = DateTime.fromJSDate(
               enrollmentSingular.data.endTime
             );
@@ -217,10 +220,10 @@ const updateEnrollmentHistories = async ({
               DATAGAP_THRESHOLD;
 
             if (dataMatches && granularityMatches && withinDatagapThreshold) {
-              // Extend the endTime of the last entry using atomic update
+              // Extend the endTime of the last entry using update
               bulkOps.push({
                 updateOne: {
-                  filter: identifier,
+                  filter: { _id: existingDoc._id },
                   update: {
                     $set: { [`history.${lastIndex}.endTime`]: now.toJSDate() },
                   },
@@ -230,7 +233,7 @@ const updateEnrollmentHistories = async ({
               // Append a new entry
               bulkOps.push({
                 updateOne: {
-                  filter: identifier,
+                  filter: { _id: existingDoc._id },
                   update: {
                     $push: { history: enrollmentSingular.data },
                   },
@@ -240,6 +243,33 @@ const updateEnrollmentHistories = async ({
             totalUpdated += 1;
           }
         }
+
+        /*
+          Start Migration 11/18/2025: Fix missing seatReservationTypes
+        */
+        if (
+          existingDoc &&
+          (existingDoc.seatReservationTypes === undefined ||
+            existingDoc.seatReservationTypes === null ||
+            existingDoc.seatReservationTypes.length === 0) &&
+          enrollmentSingular.seatReservationTypes !== undefined &&
+          enrollmentSingular.seatReservationTypes !== null &&
+          enrollmentSingular.seatReservationTypes.length !== 0
+        ) {
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: existingDoc._id },
+              update: {
+                $set: {
+                  seatReservationTypes: enrollmentSingular.seatReservationTypes,
+                },
+              },
+            },
+          });
+        }
+        /*
+          End Migration 11/18/2025
+        */
       }
 
       // Execute bulk operations for this batch
@@ -254,6 +284,9 @@ const updateEnrollmentHistories = async ({
   log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`
   );
+
+  // Warm catalog cache for all terms we just updated
+  await warmCatalogCacheForTerms(config, terms);
 };
 
 export default { updateEnrollmentHistories };

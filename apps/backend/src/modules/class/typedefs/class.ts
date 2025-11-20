@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-export default gql`
+export const classTypeDef = gql`
   scalar ClassNumber
 
   type Query {
@@ -133,7 +133,7 @@ export default gql`
     online: Boolean!
     attendanceRequired: Boolean
     lecturesRecorded: Boolean
-    sectionAttributes: [SectionAttribute!]
+    sectionAttributes(attributeCode: String): [SectionAttribute!]
   }
 
   enum Component {

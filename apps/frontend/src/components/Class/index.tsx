@@ -5,20 +5,16 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  InfoCircle,
   OpenNewWindow,
-  Xmark,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import {
-  Link,
-  NavLink,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
+  Badge,
   Box,
+  Color,
   Container,
   Flex,
   IconButton,
@@ -31,11 +27,11 @@ import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { ClassPin } from "@/contexts/PinsContext";
 import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
-import { IClass, ICourse, Semester } from "@/lib/api";
+import { IClass, IClassCourse } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
@@ -74,7 +70,7 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClass;
-  course?: ICourse;
+  course?: IClassCourse;
   year?: never;
   semester?: never;
   subject?: never;
@@ -92,19 +88,17 @@ interface UncontrolledProps {
   number: string;
 }
 
-interface CatalogClassProps {
-  dialog?: never;
-  onClose: () => void;
-}
-
-interface DialogClassProps {
-  dialog: true;
-  onClose?: never;
-}
-
 // TODO: Determine whether a controlled input is even necessary
-type ClassProps = (CatalogClassProps | DialogClassProps) &
-  (ControlledProps | UncontrolledProps);
+type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
+
+const formatClassNumber = (number: string | undefined | null): string => {
+  if (!number) return "";
+  const num = parseInt(number, 10);
+  if (isNaN(num)) return number;
+  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+  if (num > 99) return num.toString();
+  return num.toString().padStart(2, "0");
+};
 
 export default function Class({
   year,
@@ -114,12 +108,10 @@ export default function Class({
   number,
   class: providedClass,
   course: providedCourse,
-  onClose,
   dialog,
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
@@ -147,6 +139,23 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
 
+  useEffect(() => {
+    if (!_class?.primarySection?.enrollment) return;
+
+    const enrollment = _class.primarySection.enrollment;
+    const seatReservationTypes = enrollment.seatReservationTypes ?? [];
+    const seatReservationCounts = enrollment.latest?.seatReservationCount ?? [];
+
+    if (seatReservationCounts.length === 0) {
+      return;
+    }
+
+    const typeMap = new Map<number, string>();
+    seatReservationTypes.forEach((type) => {
+      typeMap.set(type.number, type.requirementGroup);
+    });
+  }, [_class]);
+
   const _course = useMemo(
     () => providedCourse ?? course,
     [course, providedCourse]
@@ -164,28 +173,6 @@ export default function Class({
       ),
     [user, _class]
   );
-
-  const pin = useMemo(() => {
-    if (!_class) return;
-
-    const { year, semester, subject, courseNumber, number } = _class;
-
-    const id = `${year}-${semester}-${subject}-${courseNumber}-${number}`;
-
-    return {
-      id,
-      type: "class",
-      data: {
-        year,
-        semester,
-        subject,
-        courseNumber,
-        number,
-      },
-    } as ClassPin;
-  }, [_class]);
-
-  // const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
 
   const bookmark = useCallback(async () => {
     if (!user || !_class) return;
@@ -283,29 +270,37 @@ export default function Class({
       return true;
     }
 
+    const pnpPercentage = courseGradeDistribution.pnpPercentage;
+    if (typeof pnpPercentage === "number" && Number.isFinite(pnpPercentage)) {
+      return true;
+    }
+
     return courseGradeDistribution.distribution?.some((grade) => {
       const count = grade.count ?? 0;
-      const percentage = grade.percentage ?? 0;
-      return count > 0 || percentage > 0;
+      return count > 0;
     });
   }, [courseGradeDistribution]);
 
-  const handleClose = useCallback(() => {
-    if (!_class) return;
-
-    navigate(`/catalog/${_class.year}/${_class.semester}`);
-
-    if (onClose) {
-      onClose();
-    }
-  }, [_class, navigate, onClose]);
+  const reservedSeatingMaxCount = useMemo(() => {
+    const seatReservationCount =
+      _class?.primarySection?.enrollment?.latest?.seatReservationCount ?? [];
+    return seatReservationCount.reduce(
+      (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
+      0
+    );
+  }, [_class]);
 
   if (loading || courseLoading) {
-    return <></>;
+    return (
+      <div className={styles.loading}>
+        <div className={styles.loadingHeader} />
+        <div className={styles.loadingBody} />
+      </div>
+    );
   }
 
   // TODO: Error state
-  if (!_course || !_class || !pin) {
+  if (!_course || !_class) {
     return <></>;
   }
 
@@ -317,20 +312,6 @@ export default function Class({
             <Flex direction="column" gap="5">
               <Flex justify="between" align="start">
                 <Flex gap="3">
-                  {/* TODO: Reusable bookmark button */}
-                  <Tooltip
-                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
-                  >
-                    <IconButton
-                      className={classNames(styles.bookmark, {
-                        [styles.active]: bookmarked,
-                      })}
-                      onClick={() => bookmark()}
-                      disabled={userLoading}
-                    >
-                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                    </IconButton>
-                  </Tooltip>
                   {/* TODO: Reusable pin button
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
@@ -349,6 +330,20 @@ export default function Class({
                   </Tooltip>
                 </Flex>
                 <Flex gap="3">
+                  {/* TODO: Reusable bookmark button */}
+                  <Tooltip
+                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
+                  >
+                    <IconButton
+                      className={classNames(styles.bookmark, {
+                        [styles.active]: bookmarked,
+                      })}
+                      onClick={() => bookmark()}
+                      disabled={userLoading}
+                    >
+                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
@@ -366,13 +361,6 @@ export default function Class({
                       <OpenNewWindow />
                     </IconButton>
                   </Tooltip>
-                  {onClose && (
-                    <Tooltip content="Close">
-                      <IconButton onClick={handleClose}>
-                        <Xmark />
-                      </IconButton>
-                    </Tooltip>
-                  )}
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
@@ -380,7 +368,7 @@ export default function Class({
                   <h1 className={styles.heading}>
                     {_class.subject} {_class.courseNumber}{" "}
                     <span className={styles.sectionNumber}>
-                      #{_class.number}
+                      #{formatClassNumber(_class.number)}
                     </span>
                   </h1>
                   <p className={styles.description}>
@@ -388,31 +376,14 @@ export default function Class({
                   </p>
                 </Flex>
                 <Flex gap="3" align="center">
-                  {hasCourseGradeSummary && (
-                    <Link
-                      to={`/grades?input=${encodeURIComponent(
-                        `${_class.subject};${_class.courseNumber}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "inline-flex",
-                        textDecoration: "none",
-                      }}
-                    >
-                      <AverageGrade
-                        gradeDistribution={_class.course.gradeDistribution}
-                      />
-                    </Link>
-                  )}
                   <EnrollmentDisplay
                     enrolledCount={
-                      _class.primarySection.enrollment?.latest.enrolledCount
+                      _class.primarySection.enrollment?.latest?.enrolledCount
                     }
                     maxEnroll={
-                      _class.primarySection.enrollment?.latest.maxEnroll
+                      _class.primarySection.enrollment?.latest?.maxEnroll
                     }
-                    time={_class.primarySection.enrollment?.latest.endTime}
+                    time={_class.primarySection.enrollment?.latest?.endTime}
                   >
                     {(content) => (
                       <Link
@@ -430,12 +401,36 @@ export default function Class({
                       </Link>
                     )}
                   </EnrollmentDisplay>
+                  {hasCourseGradeSummary && (
+                    <Link
+                      to={`/grades?input=${encodeURIComponent(
+                        `${_class.subject};${_class.courseNumber}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <AverageGrade
+                        gradeDistribution={_class.course.gradeDistribution}
+                      />
+                    </Link>
+                  )}
                   <Units
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
                   />
                   {_class && (
                     <CCN sectionId={_class.primarySection.sectionId} />
+                  )}
+                  {reservedSeatingMaxCount > 0 && (
+                    <Badge
+                      label="Reserved Seating"
+                      color={Color.Orange}
+                      icon={<InfoCircle />}
+                    />
                   )}
                 </Flex>
               </Flex>
@@ -447,9 +442,6 @@ export default function Class({
                     </Tabs.Trigger>
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
-                    </Tabs.Trigger>
-                    <Tabs.Trigger value="grades" asChild>
-                      <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
                     <NavLink
                       to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
@@ -463,6 +455,12 @@ export default function Class({
                         )}
                       </MenuItem>
                     </NavLink>
+                    <Tabs.Trigger value="grades" asChild>
+                      <MenuItem>Grades</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="enrollment" asChild>
+                      <MenuItem>Enrollment</MenuItem>
+                    </Tabs.Trigger>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -477,16 +475,6 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  <NavLink to={{ ...location, pathname: "grades" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Grades</MenuItem>
-                    )}
-                  </NavLink>
-                  {/* <NavLink to={{ ...location, pathname: "enrollment" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Enrollment</MenuItem>
-                    )}
-                  </NavLink> */}
                   <NavLink to={{ ...location, pathname: "ratings" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>
@@ -497,6 +485,16 @@ export default function Class({
                           <div className={styles.dot}></div>
                         )}
                       </MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "grades" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Grades</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
                     )}
                   </NavLink>
                 </Flex>
@@ -523,11 +521,6 @@ export default function Class({
                     <Sections />
                   </SuspenseBoundary>
                 </Tabs.Content>
-                <Tabs.Content value="enrollment" asChild>
-                  <SuspenseBoundary>
-                    <Enrollment />
-                  </SuspenseBoundary>
-                </Tabs.Content>
                 <Tabs.Content value="grades" asChild>
                   <SuspenseBoundary>
                     <Grades />
@@ -536,6 +529,11 @@ export default function Class({
                 <Tabs.Content value="ratings" asChild>
                   <SuspenseBoundary>
                     <Ratings />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="enrollment" asChild>
+                  <SuspenseBoundary>
+                    <Enrollment />
                   </SuspenseBoundary>
                 </Tabs.Content>
               </>

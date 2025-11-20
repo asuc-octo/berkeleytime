@@ -55,6 +55,7 @@ export interface ITermItem {
   selfServiceEnrollBeginDate?: string;
   selfServiceEnrollEndDate?: string;
   sessions?: ISessionItem[];
+  hasCatalogData: boolean;
 }
 
 const termSchema = new Schema<ITermItem>({
@@ -119,10 +120,14 @@ const termSchema = new Schema<ITermItem>({
       },
     ],
   },
+  hasCatalogData: { type: Boolean, required: true, default: true },
 });
 
 // for catalog, grade distribution by semester, scheduler, and terms controllers
 termSchema.index({ name: 1 });
+
+// for efficiently querying terms with catalog data
+termSchema.index({ hasCatalogData: 1, temporalPosition: 1 });
 
 // below is a valid uniqueness constraint, but the index is not needed for
 // any queries, so we don't use it

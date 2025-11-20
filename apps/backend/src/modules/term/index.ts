@@ -1,7 +1,8 @@
+import { termTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/term";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: termTypeDef,
 };

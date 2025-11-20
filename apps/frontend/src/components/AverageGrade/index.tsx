@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import { Tooltip } from "radix-ui";
 
-import { GradeDistribution } from "@/lib/api";
 import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
@@ -13,7 +12,10 @@ interface ColoredGradeProps {
 }
 
 interface AverageGradeProps {
-  gradeDistribution: GradeDistribution;
+  gradeDistribution: {
+    average?: number | null;
+    pnpPercentage?: number | null;
+  };
   style?: React.CSSProperties;
   tooltip?: string;
 }
@@ -91,7 +93,7 @@ export function AverageGrade({
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>
-              {isPnp ? "Pass rate" : "Average grade"}
+              {isPnp ? "Pass Rate" : "Average Grade"}
             </p>
             <p className={styles.description}>
               {isPnp ? (

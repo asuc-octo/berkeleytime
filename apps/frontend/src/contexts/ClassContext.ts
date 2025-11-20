@@ -1,10 +1,10 @@
 import { createContext } from "react";
 
-import { IClass, ICourse } from "@/lib/api";
+import { IClass, IClassCourse } from "@/lib/api";
 
 export interface ClassContextType {
   class: IClass;
-  course: ICourse;
+  course: IClassCourse;
 }
 
 const ClassContext = createContext<ClassContextType | null>(null);

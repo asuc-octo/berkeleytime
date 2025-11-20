@@ -1,7 +1,8 @@
+import { planTypeDef } from "@repo/gql-typedefs";
+
 import resolver from "./resolver";
-import typeDef from "./typedefs/plan";
 
 export default {
   resolver,
-  typeDef,
+  typeDef: planTypeDef,
 };

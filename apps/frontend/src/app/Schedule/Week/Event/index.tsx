@@ -5,7 +5,6 @@ import classNames from "classnames";
 import { Card, Color } from "@repo/theme";
 
 import { componentMap } from "@/lib/api";
-import { getColor } from "@/lib/section";
 
 import { ScheduleEvent, getY } from "../../schedule";
 import styles from "./Event.module.scss";
@@ -15,7 +14,6 @@ interface EventProps {
   position: number;
   active: boolean;
   flipPopup: boolean;
-  color: Color;
 }
 
 // TODO: Hover card
@@ -123,7 +121,7 @@ export default function Event({
         style={popupStyle}
       >
         <Card.Root>
-          <Card.LeftBorder color={color} />
+          <Card.LeftBorder color={color as Color} />
           <Card.Body>
             <Card.Heading>{title}</Card.Heading>
             <Card.Description>{description}</Card.Description>
@@ -136,7 +134,7 @@ export default function Event({
             {props.type === "section" && props.section.meetings.length > 0 && (
               <Card.Description>
                 {props.section.meetings[0].instructors
-                  .map((i) => `${i.givenName}, ${i.familyName}; `)
+                  .map((i) => `${i.familyName}, ${i.givenName}; `)
                   .join("")
                   .slice(0, -2)}
               </Card.Description>

@@ -36,18 +36,15 @@ import {
   useReadPlan,
   useReadUser,
 } from "@/hooks/api";
+import { ILabel, IPlanTerm, ISelectedCourse } from "@/lib/api";
+import { convertStringsToRequirementEnum } from "@/lib/course";
 import {
   Colleges,
-  GET_COURSE_NAMES,
-  GetCoursesResponse,
-  ILabel,
-  IPlanTerm,
-  ISelectedCourse,
+  GetCourseNamesDocument,
   PlanInput,
   PlanTermInput,
   Status,
-} from "@/lib/api";
-import { convertStringsToRequirementEnum } from "@/lib/course";
+} from "@/lib/generated/graphql";
 
 import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
@@ -106,10 +103,12 @@ export default function Dashboard() {
   }
 
   const hasLoadedRef = useRef(false);
-  const { data: courses, loading: courseLoading } =
-    useQuery<GetCoursesResponse>(GET_COURSE_NAMES, {
+  const { data: courses, loading: courseLoading } = useQuery(
+    GetCourseNamesDocument,
+    {
       skip: hasLoadedRef.current,
-    });
+    }
+  );
 
   useEffect(() => {
     if (courses && !hasLoadedRef.current) {
@@ -250,7 +249,6 @@ export default function Dashboard() {
   const handleNewPlanTerm = async (planTerm: PlanTermInput) => {
     const tmp: IPlanTerm = {
       _id: "",
-      userEmail: gradTrak ? gradTrak.userEmail : "",
       name: planTerm.name,
       year: planTerm.year,
       term: planTerm.term,
@@ -276,7 +274,7 @@ export default function Dashboard() {
 
   // Helper functions to update both local state and backend
   const handleUpdateTermName = async (termId: string, name: string) => {
-    let updatedPlanTerms = [...localPlanTerms];
+    const updatedPlanTerms = [...localPlanTerms];
     const termIndex = localPlanTerms.findIndex((term) => term._id === termId);
     if (termIndex !== -1) {
       const updatedTerm = {

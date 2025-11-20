@@ -46,6 +46,14 @@ export default function EventDialog({ children }: EventDialogProps) {
     false,
   ]);
 
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setStartTime("11:30");
+    setEndTime("15:50");
+    setDays([false, false, false, false, false, false, false]);
+  };
+
   const save = () => {
     if (title === "") return;
     if (
@@ -61,7 +69,7 @@ export default function EventDialog({ children }: EventDialogProps) {
       startTime,
       endTime,
       days,
-      color: Color.gray,
+      color: Color.Gray,
     };
 
     updateSchedule(
@@ -90,14 +98,12 @@ export default function EventDialog({ children }: EventDialogProps) {
                   {
                     ...event,
                     _id: temporaryIdentifier,
-                    __typename: "ScheduleEvent",
                   },
                 ]
               : [
                   {
                     ...event,
                     _id: temporaryIdentifier,
-                    __typename: "ScheduleEvent",
                   },
                 ],
           },
@@ -105,6 +111,7 @@ export default function EventDialog({ children }: EventDialogProps) {
       }
     );
 
+    resetForm();
     setOpen(false);
   };
 

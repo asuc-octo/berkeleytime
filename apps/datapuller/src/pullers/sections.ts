@@ -10,10 +10,12 @@ import {
 
 const TERMS_PER_API_BATCH = 4;
 
-const updateSections = async (
-  { log, sis: { CLASS_APP_ID, CLASS_APP_KEY } }: Config,
-  termSelector: TermSelector
-) => {
+const updateSections = async (config: Config, termSelector: TermSelector) => {
+  const {
+    log,
+    sis: { CLASS_APP_ID, CLASS_APP_KEY },
+  } = config;
+
   log.trace(`Fetching terms...`);
 
   const allTerms = await termSelector(); // includes LAW, Graduate, etc. which are duplicates of Undergraduate

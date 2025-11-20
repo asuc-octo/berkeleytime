@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 import { WarningCircle } from "iconoir-react";
 
-import { Colleges } from "@/lib/api";
 import {
   CoEReqs,
   HaasReqs,
@@ -11,6 +10,7 @@ import {
   RequirementEnum,
   UniReqs,
 } from "@/lib/course";
+import { Colleges } from "@/lib/generated/graphql";
 
 import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
@@ -42,7 +42,7 @@ export default function SidePanel({
   useEffect(() => {
     const reqs: RequirementEnum[] = [];
     colleges.forEach((college) => {
-      if (college == Colleges.HAAS) {
+      if (college == Colleges.Haas) {
         reqs.push(...Object.values(HaasReqs));
       } else if (college == Colleges.CoE) {
         reqs.push(...Object.values(CoEReqs));

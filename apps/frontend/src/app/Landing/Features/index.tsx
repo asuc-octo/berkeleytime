@@ -91,7 +91,7 @@ export default function Features() {
                 Berkeley course catalog, instantly filter and sort courses by
                 average grade, number of open seats, and more.
               </p>
-              <Link to="/schedules" className={styles.link}>
+              <Link to="/catalog" className={styles.link}>
                 Browse courses
                 <ArrowRight />
               </Link>
@@ -126,7 +126,7 @@ export default function Features() {
                 professor. Stop worrying about the A, and make informed
                 decisions about your schedule.
               </p>
-              <Link to="/schedules" className={styles.link}>
+              <Link to="/grades" className={styles.link}>
                 Go to Grades
                 <ArrowRight />
               </Link>
@@ -161,7 +161,7 @@ export default function Features() {
                 enrollment history over time and know when to enroll, and when
                 you can wait.
               </p>
-              <Link to="/schedules" className={styles.link}>
+              <Link to="/enrollment" className={styles.link}>
                 Go to Enrollment
                 <ArrowRight />
               </Link>

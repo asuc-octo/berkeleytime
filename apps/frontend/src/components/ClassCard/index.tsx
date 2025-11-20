@@ -5,21 +5,62 @@ import {
   ArrowUnionVertical,
   Bookmark,
   BookmarkSolid,
+  InfoCircle,
   Trash,
 } from "iconoir-react";
+import { Tooltip } from "radix-ui";
 
-import { Card, Color } from "@repo/theme";
+import { Card } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
+import { getEnrollmentColor } from "@/components/Capacity";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
-import { IClass } from "@/lib/api";
+import { IClass, IClassCourse } from "@/lib/api";
+import { IEnrollmentSingular } from "@/lib/api/enrollment";
+import { Color } from "@/lib/generated/graphql";
 
 import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
 
+const formatClassNumber = (number: string | undefined | null): string => {
+  if (!number) return "";
+  const num = parseInt(number, 10);
+  if (isNaN(num)) return number;
+  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+  if (num > 99) return num.toString();
+  return num.toString().padStart(2, "0");
+};
+
+type BaseClassFields = Pick<
+  IClass,
+  | "subject"
+  | "courseNumber"
+  | "number"
+  | "title"
+  | "unitsMax"
+  | "unitsMin"
+  | "gradeDistribution"
+>;
+
+type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
+
+type EnrollmentSnapshot = Pick<
+  IEnrollmentSingular,
+  "enrolledCount" | "maxEnroll" | "endTime" | "reservedSeatingMaxCount"
+>;
+
+type ClassCardClass = Partial<BaseClassFields> & {
+  course?: Partial<CourseSummary> | null;
+  primarySection?: {
+    enrollment?: {
+      latest?: Partial<EnrollmentSnapshot> | null;
+    } | null;
+  } | null;
+};
+
 interface ClassProps {
-  class?: IClass;
+  class?: ClassCardClass;
   expandable?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
@@ -50,19 +91,45 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
+  const reservedSeatingMaxCount =
+    _class?.primarySection?.enrollment?.latest?.reservedSeatingMaxCount ?? 0;
+  const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
+  const reservedSeatingColor = getEnrollmentColor(
+    reservedSeatingMaxCount,
+    maxEnroll
+  );
+
   return (
     <Card.RootColumn
-      style={{ overflow: "visible", ...props?.style }}
+      style={{ overflow: "visible", position: "relative", ...props?.style }}
       active={active}
       {...props}
     >
-      <Card.ColumnHeader style={{ overflow: "visible" }}>
-        {leftBorderColor && <Card.LeftBorder color={leftBorderColor} />}
+      {leftBorderColor && (
+        <Card.LeftBorder
+          color={leftBorderColor}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            height: "100%",
+            backgroundColor: `var(--${leftBorderColor}-500)`,
+          }}
+        />
+      )}
+      <Card.ColumnHeader
+        style={{
+          overflow: "visible",
+          marginLeft: leftBorderColor ? "8px" : undefined,
+        }}
+      >
         <Card.Body>
           <Card.Heading>
-            {_class?.subject ?? _class?.course?.subject}{" "}
-            {_class?.courseNumber ?? _class?.course?.number}{" "}
-            <span className={styles.sectionNumber}>#{_class?.number}</span>
+            {_class?.subject} {_class?.courseNumber}{" "}
+            <span className={styles.sectionNumber}>
+              #{formatClassNumber(_class?.number)}
+            </span>
           </Card.Heading>
           <Card.Description wrapDescription={wrapDescription}>
             {_class?.title ?? _class?.course?.title}
@@ -70,18 +137,51 @@ export default function ClassCard({
           <Card.Footer>
             <EnrollmentDisplay
               enrolledCount={
-                _class?.primarySection?.enrollment?.latest.enrolledCount
+                _class?.primarySection?.enrollment?.latest?.enrolledCount
               }
-              maxEnroll={_class?.primarySection?.enrollment?.latest.maxEnroll}
-              time={_class?.primarySection?.enrollment?.latest.endTime}
+              maxEnroll={_class?.primarySection?.enrollment?.latest?.maxEnroll}
+              time={_class?.primarySection?.enrollment?.latest?.endTime}
             />
             {_class?.unitsMin !== undefined &&
               _class.unitsMax !== undefined && (
                 <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
               )}
+            {(_class?.primarySection?.enrollment?.latest
+              ?.reservedSeatingMaxCount ?? 0) > 0 && (
+              <Tooltip.Root disableHoverableContent>
+                <Tooltip.Trigger asChild>
+                  <span className={styles.reservedSeating}>
+                    <InfoCircle className={styles.reservedSeatingIcon} />
+                    Reserved
+                  </span>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    asChild
+                    side="bottom"
+                    sideOffset={8}
+                    collisionPadding={8}
+                  >
+                    <div className={styles.tooltipContent}>
+                      <Tooltip.Arrow className={styles.tooltipArrow} />
+                      <p className={styles.tooltipTitle}>Reserved Seating</p>
+                      <p className={styles.tooltipDescription}>
+                        <span style={{ color: reservedSeatingColor }}>
+                          {reservedSeatingMaxCount}/{maxEnroll}
+                        </span>{" "}
+                        seats for this class are reserved.
+                      </p>
+                    </div>
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
-                onClick={() => {
+                data-action-icon
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
                   onExpandedChange(!expanded);
                 }}
                 style={{ position: "absolute", right: 16 }}
@@ -91,7 +191,7 @@ export default function ClassCard({
             )}
           </Card.Footer>
         </Card.Body>
-        <Card.Actions>
+        <Card.Actions data-actions>
           {gradeDistribution && (
             <AverageGrade
               gradeDistribution={gradeDistribution}
@@ -105,7 +205,14 @@ export default function ClassCard({
             />
           )}
           {bookmarked && bookmarkToggle && (
-            <Card.ActionIcon onClick={bookmarkToggle}>
+            <Card.ActionIcon
+              data-action-icon
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                bookmarkToggle();
+              }}
+            >
               {bookmarked ? (
                 <BookmarkSolid width={16} height={16} />
               ) : (
@@ -120,7 +227,15 @@ export default function ClassCard({
             />
           )}
           {onDelete && (
-            <Card.ActionIcon isDelete onClick={onDelete}>
+            <Card.ActionIcon
+              data-action-icon
+              isDelete
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onDelete();
+              }}
+            >
               <Trash />
             </Card.ActionIcon>
           )}

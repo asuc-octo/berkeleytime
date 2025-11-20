@@ -4,7 +4,8 @@ import { ColoredSquare } from "@repo/theme";
 
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
 import { useReadCourseGradeDist } from "@/hooks/api";
-import { GradeDistribution, Semester } from "@/lib/api";
+import { IGradeDistribution } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
 
 import styles from "./HoverInfo.module.scss";
@@ -13,7 +14,7 @@ interface HoverInfoProps {
   color: string;
   subject: string;
   courseNumber: string;
-  gradeDistribution?: GradeDistribution;
+  gradeDistribution?: IGradeDistribution;
   givenName?: string;
   familyName?: string;
   semester?: Semester;
@@ -69,18 +70,16 @@ export default function HoverInfo({
       total: number;
     } = { lower: null, upper: null, count: null, total: 0 };
     if (!gradeDistribution || !hoveredLetter) return ret;
-    ret.total = gradeDistribution.distribution.reduce(
-      (acc, g) => acc + g.count,
-      0
-    );
+    ret.total =
+      gradeDistribution.distribution?.reduce((acc, g) => acc + g.count, 0) ?? 0;
     GRADES.reduce((acc, grade) => {
       if (grade === hoveredLetter)
         ret.upper = addOrdinalSuffix(
           (((ret.total - acc) * 100) / ret.total).toFixed(0)
         );
       const count =
-        gradeDistribution.distribution.find((g) => g.letter === grade)?.count ??
-        0;
+        gradeDistribution.distribution?.find((g) => g.letter === grade)
+          ?.count ?? 0;
       acc += count;
       if (grade === hoveredLetter) {
         ret.lower = addOrdinalSuffix(

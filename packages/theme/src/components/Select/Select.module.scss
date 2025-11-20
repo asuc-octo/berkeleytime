@@ -2,8 +2,9 @@
   border: solid 1px var(--border-color);
   border-radius: 4px;
   padding: 12px 16px;
-  font-size: 14px;
-  color: var(--paragraph-color);
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
+  color: var(--label-color);
   cursor: pointer;
   outline: none;
 
@@ -21,8 +22,6 @@
   }
 
   &.disabled {
-    color: var(--paragraph-color-50);
-    border-color: var(--border-color);
     cursor: default;
   }
 }

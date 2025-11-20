@@ -6,12 +6,12 @@ import { Badge, Button, Card, Color } from "@repo/theme";
 
 import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
 import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
-import { UserRatingClass } from "@/lib/api";
+import { IUserRatingClass } from "@/lib/api";
 
 import styles from "./RatingCard.module.scss";
 
 interface RatingCardProps {
-  rating: UserRatingClass;
+  rating: IUserRatingClass;
 }
 
 export function RatingCard({ rating }: RatingCardProps) {
@@ -80,9 +80,11 @@ export function RatingCard({ rating }: RatingCardProps) {
             );
           })}
         </div>
-        <p className={styles.lastUpdated}>
-          Last updated on {new Date(rating.lastUpdated).toLocaleDateString()}
-        </p>
+        {rating.lastUpdated && (
+          <p className={styles.lastUpdated}>
+            Last updated on {new Date(rating.lastUpdated).toLocaleDateString()}
+          </p>
+        )}
       </Card.ColumnBody>
     </Card.RootColumn>
   );
