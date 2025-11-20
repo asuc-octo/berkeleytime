@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { Button, Dialog, Flex, Select } from "@repo/theme";
+import { Progress } from "radix-ui";
 
 import { useReadTerms } from "@/hooks/api";
 import { IUserRatingClass } from "@/lib/api";
@@ -110,6 +111,32 @@ export function UserFeedbackModal({
     return isTermValid && areRatingsValid && hasChanges;
   }, [selectedTerm, metricData, hasChanges]);
 
+  // Calculate progress: 6 fields total, each field = 1/6 (16.67%)
+  const progress = useMemo(() => {
+    let filledFields = 0;
+    const totalFields = 6;
+
+    // Field 1: Semester selection
+    if (selectedTerm && selectedTerm.length > 0) filledFields++;
+
+    // Field 2: Usefulness
+    if (typeof metricData[MetricName.Usefulness] === "number") filledFields++;
+
+    // Field 3: Difficulty
+    if (typeof metricData[MetricName.Difficulty] === "number") filledFields++;
+
+    // Field 4: Workload
+    if (typeof metricData[MetricName.Workload] === "number") filledFields++;
+
+    // Field 5: Attendance
+    if (typeof metricData[MetricName.Attendance] === "number") filledFields++;
+
+    // Field 6: Recording
+    if (typeof metricData[MetricName.Recording] === "number") filledFields++;
+
+    return (filledFields / totalFields) * 100;
+  }, [selectedTerm, metricData]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
@@ -179,12 +206,24 @@ export function UserFeedbackModal({
         <Dialog.Portal>
           <Dialog.Overlay />
           <Dialog.Card style={{ width: "auto" }}>
-            <Dialog.Header
-              title={title}
-              subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
-              hasCloseButton
-              className={styles.modalHeader}
-            />
+            <div className={styles.modalHeaderWrapper}>
+              <Dialog.Header
+                title={title}
+                subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
+                hasCloseButton
+                className={styles.modalHeader}
+              />
+              <Progress.Root
+                className={styles.progressBar}
+                value={progress}
+                max={100}
+              >
+                <Progress.Indicator
+                  className={styles.progressIndicator}
+                  style={{ transform: `translateX(-${100 - progress}%)` }}
+                />
+              </Progress.Root>
+            </div>
             <Dialog.Body className={styles.modalBody}>
               <Flex direction="column">
                 <div className={styles.formGroup}>
