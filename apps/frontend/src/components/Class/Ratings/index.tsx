@@ -31,12 +31,13 @@ import {
   CreateRatingDocument,
   DeleteRatingDocument,
   GetAggregatedRatingsDocument,
-  GetClassDocument,
+  Semester,
+  TemporalPosition,
+} from "@/lib/generated/graphql";
+import {
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
   GetUserRatingsDocument,
-  Semester,
-  TemporalPosition,
 } from "@/lib/generated/graphql";
 
 import { RatingButton } from "./RatingButton";
@@ -46,6 +47,7 @@ import UserRatingSummary from "./UserRatingSummary";
 import {
   MetricData,
   checkConstraint,
+  formatInstructorText,
   getMetricStatus,
   getStatusColor,
   isMetricRating,
@@ -137,9 +139,21 @@ export function RatingsContainer() {
   });
 
   // Create rating mutation
-  const [createRating] = useMutation(CreateRatingDocument);
+  const [createRating] = useMutation(CreateRatingDocument, {
+    refetchQueries: [
+      "GetUserRatings",
+      "GetCourseRatings",
+      "GetSemestersWithRatings",
+    ],
+  });
 
-  const [deleteRating] = useMutation(DeleteRatingDocument);
+  const [deleteRating] = useMutation(DeleteRatingDocument, {
+    refetchQueries: [
+      "GetUserRatings",
+      "GetCourseRatings",
+      "GetSemestersWithRatings",
+    ],
+  });
 
   const [getAggregatedRatings, { data: aggregatedRatingsData }] =
     useLazyQuery<IAggregatedRatings>(GetAggregatedRatingsDocument);
@@ -174,37 +188,15 @@ export function RatingsContainer() {
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
-        // Filter out classes that haven't started yet
         if (c.primarySection?.startDate) {
           const startDate = new Date(c.primarySection.startDate);
           const today = new Date();
           return startDate <= today;
         }
-        // If no startDate, include the class (backward compatibility)
         return true;
       })
       .map((c) => {
-        let instructorText = "";
-        if (c.primarySection) {
-          // Collect all instructors from all meetings
-          const allInstructors: Array<{ givenName: string; familyName: string }> = [];
-          c.primarySection.meetings.forEach((meeting) => {
-            meeting.instructors.forEach((instructor) => {
-              if (instructor.familyName && instructor.givenName) {
-                allInstructors.push(instructor);
-              }
-            });
-          });
-
-          // Format like the Details component: show first instructor, add "et al." if multiple
-          if (allInstructors.length === 0) {
-            instructorText = "(No instructor)";
-          } else if (allInstructors.length === 1) {
-            instructorText = `(${allInstructors[0].givenName} ${allInstructors[0].familyName})`;
-          } else {
-            instructorText = `(${allInstructors[0].givenName} ${allInstructors[0].familyName}, et al.)`;
-          }
-        }
+        const instructorText = formatInstructorText(c.primarySection);
         return {
           value: `${c.semester} ${c.year} ${c.number}`,
           label: `${c.semester} ${c.year} ${instructorText}`,
@@ -333,49 +325,13 @@ export function RatingsContainer() {
   //   [ratingsData]
   // );
 
-  const getRefetchQueries = (classData: IClass) => {
-    const queries = [
-      {
-        query: GetClassDocument,
-        variables: {
-          year: classData.year,
-          semester: classData.semester,
-          subject: classData.subject,
-          courseNumber: classData.courseNumber,
-          number: classData.number,
-          sessionId: classData.sessionId ?? null,
-        },
-      },
-      {
-        query: GetCourseRatingsDocument,
-        variables: {
-          subject: classData.subject,
-          number: classData.courseNumber,
-        },
-      },
-      {
-        query: GetSemestersWithRatingsDocument,
-        variables: {
-          subject: classData.subject,
-          courseNumber: classData.courseNumber,
-        },
-      },
-    ];
-
-    if (user) {
-      queries.push({ query: GetUserRatingsDocument });
-    }
-
-    return queries;
-  };
-
   const ratingSubmit = async (
     metricValues: MetricData,
     termInfo: { semester: Semester; year: number },
     createRatingMutation: typeof createRating,
     deleteRatingMutation: typeof deleteRating,
     currentClassData: IClass,
-    setModalOpen: Dispatch<SetStateAction<boolean>>,
+    _setModalOpen: Dispatch<SetStateAction<boolean>>, // Not used - modal handles its own closing
     currentRatings?: IUserRatingClass | null
   ) => {
     try {
@@ -394,8 +350,6 @@ export function RatingsContainer() {
           `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
         );
       }
-      const refetchQueries = getRefetchQueries(currentClassData);
-
       await Promise.all(
         METRIC_NAMES.map((metric) => {
           const value = metricValues[metric];
@@ -414,8 +368,12 @@ export function RatingsContainer() {
                   classNumber: currentClassData.number,
                   metricName: metric,
                 },
-                refetchQueries,
-                awaitRefetchQueries: true,
+                refetchQueries: [
+                  "GetClass",
+                  "GetUserRatings",
+                  "GetCourseRatings",
+                  "GetSemestersWithRatings",
+                ],
               });
             }
             // Skip if metric doesn't exist in current ratings
@@ -446,13 +404,17 @@ export function RatingsContainer() {
               metricName: metric,
               value,
             },
-            refetchQueries,
+            refetchQueries: [
+              "GetClass",
+              "GetUserRatings",
+              "GetCourseRatings",
+              "GetSemestersWithRatings",
+            ],
             awaitRefetchQueries: true,
           });
         })
       );
 
-      setModalOpen(false);
     } catch (error) {
       console.error("Error submitting ratings:", error);
     }
@@ -463,7 +425,6 @@ export function RatingsContainer() {
     currentClassData: IClass,
     deleteRatingMutation: typeof deleteRating
   ) => {
-    const refetchQueries = getRefetchQueries(currentClassData);
     const deletePromises = userRating.metrics.map((metric) =>
       deleteRatingMutation({
         variables: {
@@ -474,7 +435,12 @@ export function RatingsContainer() {
           classNumber: currentClassData.number,
           metricName: metric.metricName,
         },
-        refetchQueries,
+        refetchQueries: [
+          "GetClass",
+          "GetUserRatings",
+          "GetCourseRatings",
+          "GetSemestersWithRatings",
+        ],
         awaitRefetchQueries: true,
       })
     );
@@ -590,14 +556,22 @@ export function RatingsContainer() {
         title={userRatings ? "Edit Rating" : "Rate Course"}
         currentClass={currentClass}
         availableTerms={availableTerms}
-        onSubmit={async (metricValues, termInfo) => {
+        onSubmit={async (metricValues, termInfo, classInfo) => {
           try {
+            const classToUse = classInfo
+              ? {
+                  ...currentClass,
+                  subject: classInfo.subject,
+                  courseNumber: classInfo.courseNumber,
+                  number: classInfo.number,
+                }
+              : currentClass;
             await ratingSubmit(
               metricValues,
               termInfo,
               createRating,
               deleteRating,
-              currentClass,
+              classToUse,
               setIsModalOpen,
               userRatings
             );

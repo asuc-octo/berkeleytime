@@ -165,12 +165,14 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         sessionId
         subject
         courseNumber
+        anyPrintInScheduleOfClasses
         primarySection {
           enrollment {
             latest {
               enrolledCount
             }
           }
+          startDate
           meetings {
             instructors {
               familyName

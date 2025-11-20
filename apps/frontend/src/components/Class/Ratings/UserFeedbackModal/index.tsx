@@ -1,18 +1,31 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { Progress } from "radix-ui";
+import _ from "lodash";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { Button, Dialog, Flex, Select } from "@repo/theme";
 
-import { useReadTerms } from "@/hooks/api";
-import { IUserRatingClass } from "@/lib/api";
+import CourseSearch from "@/components/CourseSearch";
+import { useReadCourseWithInstructor, useReadTerms } from "@/hooks/api";
+import { ICourse, IUserRatingClass } from "@/lib/api";
 import { Semester, TemporalPosition } from "@/lib/generated/graphql";
+import { sortByTermDescending } from "@/lib/classes";
 
-import { MetricData, toMetricData } from "../metricsUtil";
+import {
+  MetricData,
+  formatInstructorText,
+  toMetricData,
+} from "../metricsUtil";
 import { SubmitRatingPopup } from "./ConfirmationPopups";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
 import styles from "./UserFeedbackModal.module.scss";
+
+// Feature flag for user feedback modal changes
+const TEST = true;
+
+// Number of ratings required to unlock ratings view (TEST mode only)
+const REQUIRED_RATINGS_COUNT = 3;
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 
@@ -37,7 +50,8 @@ interface UserFeedbackModalProps {
   availableTerms: Term[];
   onSubmit: (
     metricData: MetricData,
-    termInfo: { semester: Semester; year: number }
+    termInfo: { semester: Semester; year: number },
+    classInfo?: { subject: string; courseNumber: string; number: string }
   ) => Promise<void>;
   initialUserClass: IUserRatingClass | null;
 }
@@ -83,6 +97,18 @@ export function UserFeedbackModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const hasAutoSelected = useRef(false);
 
+  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [currentRatingIndex, setCurrentRatingIndex] = useState(0);
+
+  const shouldFetchCourseData = TEST && !!selectedCourse;
+  const { data: courseData } = useReadCourseWithInstructor(
+    selectedCourse?.subject ?? "",
+    selectedCourse?.number ?? "",
+    {
+      skip: !shouldFetchCourseData,
+    }
+  );
+
   useEffect(() => {
     if (initialUserClass?.semester && initialUserClass?.year) {
       // Match by semester and year only, find the first matching option
@@ -95,13 +121,11 @@ export function UserFeedbackModal({
         setSelectedTerm(matchingTerm.value);
       }
     } else {
-      // Reset to null when initialUserClass is null (after deletion)
       setSelectedTerm(null);
     }
     if (initialUserClass?.metrics) {
       setMetricData(toMetricData(initialUserClass.metrics));
     } else {
-      // Reset to initial empty state when initialUserClass is null (after deletion)
       setMetricData(initialMetricData);
     }
   }, [initialUserClass, availableTerms, initialMetricData]);
@@ -119,39 +143,56 @@ export function UserFeedbackModal({
   }, [selectedTerm, metricData, initialTermValue, initialMetricData]);
 
   const isFormValid = useMemo(() => {
+    const isClassValid = TEST ? selectedCourse !== null : true;
     const isTermValid = selectedTerm && selectedTerm.length > 0;
     const areRatingsValid =
       typeof metricData[MetricName.Usefulness] === "number" &&
       typeof metricData[MetricName.Difficulty] === "number" &&
       typeof metricData[MetricName.Workload] === "number";
-    return isTermValid && areRatingsValid && hasChanges;
-  }, [selectedTerm, metricData, hasChanges]);
 
-  // Calculate progress: 6 fields total, each field = 1/6 (16.67%)
+    // In TEST mode, we don't need to check hasChanges since we're collecting new ratings
+    if (TEST) {
+      return isClassValid && isTermValid && areRatingsValid;
+    }
+
+    return isTermValid && areRatingsValid && hasChanges;
+  }, [selectedCourse, selectedTerm, metricData, hasChanges]);
+
+  // Calculate progress: 6 fields total (7 in TEST mode), each field contributes proportionally
   const progress = useMemo(() => {
     let filledFields = 0;
-    const totalFields = 6;
+    const totalFields = TEST ? 7 : 6;
 
-    // Field 1: Semester selection
+    // Field 1 (TEST mode only): Class selection
+    if (TEST && selectedCourse) filledFields++;
+
+    // Field 2 (or 1 in non-TEST): Semester selection
     if (selectedTerm && selectedTerm.length > 0) filledFields++;
 
-    // Field 2: Usefulness
+    // Field 3 (or 2): Usefulness
     if (typeof metricData[MetricName.Usefulness] === "number") filledFields++;
 
-    // Field 3: Difficulty
+    // Field 4 (or 3): Difficulty
     if (typeof metricData[MetricName.Difficulty] === "number") filledFields++;
 
-    // Field 4: Workload
+    // Field 5 (or 4): Workload
     if (typeof metricData[MetricName.Workload] === "number") filledFields++;
 
-    // Field 5: Attendance
+    // Field 6 (or 5): Attendance
     if (typeof metricData[MetricName.Attendance] === "number") filledFields++;
 
-    // Field 6: Recording
+    // Field 7 (or 6): Recording
     if (typeof metricData[MetricName.Recording] === "number") filledFields++;
 
+    // In TEST mode, calculate progress across all n ratings
+    if (TEST) {
+      const currentFormProgress = (filledFields / totalFields);
+      const overallProgress = ((currentRatingIndex + currentFormProgress) / REQUIRED_RATINGS_COUNT) * 100;
+      return overallProgress;
+    }
+
     return (filledFields / totalFields) * 100;
-  }, [selectedTerm, metricData]);
+  }, [selectedTerm, metricData, selectedCourse, currentRatingIndex]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -159,22 +200,81 @@ export function UserFeedbackModal({
     setIsSubmitting(true);
 
     try {
-      const selectedTermInfo = availableTerms.find(
+      // In TEST mode, use filteredSemesters; otherwise use availableTerms
+      const termsToSearch = TEST ? filteredSemesters : availableTerms;
+      const selectedTermInfo = termsToSearch.find(
         (t) => t.value === selectedTerm
       );
       if (!selectedTermInfo) throw new Error("Invalid term selected");
 
-      await onSubmit(metricData, {
-        semester: selectedTermInfo.semester,
-        year: selectedTermInfo.year,
-      });
+      if (TEST) {
+        if (!selectedCourse) {
+          throw new Error("A course must be selected.");
+        }
 
-      onClose();
-      setIsSubmitRatingPopupOpen(true);
+        // Extract class number from selectedTerm value (format: "Semester Year Number")
+        const termParts = selectedTerm?.split(" ") || [];
+        const classNumber = termParts[termParts.length - 1] || "";
+
+        // Find the matching class from courseData
+        const matchingClass = courseData?.classes?.find(
+          (c) =>
+            c.semester === selectedTermInfo.semester &&
+            c.year === selectedTermInfo.year &&
+            c.number === classNumber
+        );
+
+        if (!matchingClass) {
+          throw new Error("Could not find matching class for selected term");
+        }
+
+        // Submit the rating immediately with the selected course's class information
+        await onSubmit(
+          metricData,
+          {
+            semester: selectedTermInfo.semester,
+            year: selectedTermInfo.year,
+          },
+          {
+            subject: selectedCourse.subject,
+            courseNumber: selectedCourse.number,
+            number: classNumber,
+          }
+        );
+
+        // Check if this is the last rating
+        if (currentRatingIndex < REQUIRED_RATINGS_COUNT - 1) {
+          setCurrentRatingIndex(currentRatingIndex + 1);
+          setSelectedCourse(null);
+          setSelectedTerm(null);
+          setMetricData(initialMetricData);
+          setIsSubmitting(false);
+        } else {
+          setCurrentRatingIndex(0);
+          setSelectedCourse(null);
+          setSelectedTerm(null);
+          setMetricData(initialMetricData);
+
+          onClose();
+          setIsSubmitRatingPopupOpen(true);
+        }
+      } else {
+        // Original single-rating flow
+        await onSubmit(metricData, {
+          semester: selectedTermInfo.semester,
+          year: selectedTermInfo.year,
+        });
+
+        onClose();
+        setIsSubmitRatingPopupOpen(true);
+      }
     } catch (error) {
       console.error("Error submitting ratings:", error);
-    } finally {
       setIsSubmitting(false);
+    } finally {
+      if (!TEST || currentRatingIndex >= REQUIRED_RATINGS_COUNT - 1) {
+        setIsSubmitting(false);
+      }
     }
   };
   const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
@@ -200,21 +300,76 @@ export function UserFeedbackModal({
     });
   }, [availableTerms, termsData]);
 
-  // Auto-select term if only one option is available
+  const filteredSemesters = useMemo(() => {
+    if (!TEST || !selectedCourse || !courseData) return pastTerms;
+
+    const courseTerms: Term[] = (courseData.classes ?? [])
+      .toSorted(sortByTermDescending)
+      .filter((c) => c.anyPrintInScheduleOfClasses !== false)
+      .filter((c) => {
+        if (c.primarySection?.startDate) {
+          const startDate = new Date(c.primarySection.startDate);
+          const today = new Date();
+          return startDate <= today;
+        }
+        return true;
+      })
+      .map((c) => {
+        const instructorText = formatInstructorText(c.primarySection);
+        return {
+          value: `${c.semester} ${c.year} ${c.number}`,
+          label: `${c.semester} ${c.year} ${instructorText}`,
+          semester: c.semester as Semester,
+          year: c.year,
+        } satisfies Term;
+      });
+
+    const uniqueTerms = _.uniqBy(courseTerms, (term) => term.label);
+
+    return uniqueTerms.length > 0 ? uniqueTerms : pastTerms;
+  }, [TEST, selectedCourse, courseData, pastTerms]);
+
   useEffect(() => {
-    if (pastTerms.length === 1 && !selectedTerm && !hasAutoSelected.current) {
-      setSelectedTerm(pastTerms[0].value);
+    // Don't auto-select in TEST mode since semester selection depends on choosing a class first
+    if (TEST) return;
+    
+    if (
+      filteredSemesters.length === 1 &&
+      !selectedTerm &&
+      !hasAutoSelected.current
+    ) {
+      setSelectedTerm(filteredSemesters[0].value);
       hasAutoSelected.current = true;
     }
-  }, [pastTerms, selectedTerm]);
+  }, [filteredSemesters, selectedTerm, TEST]);
+
+  useEffect(() => {
+    if (!TEST) return;
+    hasAutoSelected.current = false;
+    if (selectedCourse) {
+      setSelectedTerm(null);
+    }
+  }, [selectedCourse]);
 
   const handleClose = () => {
-    // Reset form state to initial values when closing
     setMetricData(initialMetricData);
     setSelectedTerm(initialTermValue);
-    hasAutoSelected.current = false; // Reset the auto-selection flag when closing
+    hasAutoSelected.current = false;
+
+    if (TEST) {
+      setSelectedCourse(null);
+      setCurrentRatingIndex(0);
+    }
+
     onClose();
   };
+
+  // Calculate modal title and subtitle
+  const modalTitle = TEST ? "Unlock Ratings Information" : title;
+  const ratingsLeft = REQUIRED_RATINGS_COUNT - currentRatingIndex;
+  const modalSubtitle = TEST
+    ? `You have ${ratingsLeft} rating${ratingsLeft !== 1 ? "s" : ""} left to view the ratings. It only takes a minute!`
+    : `${currentClass.subject} ${currentClass.courseNumber}`;
 
   return (
     <>
@@ -224,8 +379,8 @@ export function UserFeedbackModal({
           <Dialog.Card style={{ width: "auto" }}>
             <div className={styles.modalHeaderWrapper}>
               <Dialog.Header
-                title={title}
-                subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
+                title={modalTitle}
+                subtitle={modalSubtitle}
                 hasCloseButton
                 className={styles.modalHeader}
               />
@@ -242,10 +397,43 @@ export function UserFeedbackModal({
             </div>
             <Dialog.Body className={styles.modalBody}>
               <Flex direction="column">
+                {TEST && (
+                  <div className={styles.formGroup}>
+                    <div className={styles.questionPair}>
+                      <h3>
+                        1. Which class are you rating?{" "}
+                        <RequiredAsterisk />
+                      </h3>
+                      <div
+                        style={{
+                          width: 350,
+                          margin: "0 auto",
+                        }}
+                      >
+                        <CourseSearch
+                          selectedCourse={selectedCourse}
+                          onSelect={(course) => {
+                            setSelectedCourse(course as ICourse);
+                          }}
+                          onClear={() => {
+                            setSelectedCourse(null);
+                            setSelectedTerm(null);
+                          }}
+                          minimal={true}
+                          inputStyle={{
+                            height: 44,
+                            width: "100%",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className={styles.formGroup}>
                   <div className={styles.questionPair}>
                     <h3>
-                      1. What semester did you take this course?{" "}
+                      {TEST ? "2" : "1"}. What semester did you take this course?{" "}
                       <RequiredAsterisk />
                     </h3>
                     <div
@@ -255,10 +443,11 @@ export function UserFeedbackModal({
                       }}
                     >
                       <Select
-                        options={pastTerms.map((term) => ({
+                        options={filteredSemesters.map((term) => ({
                           value: term.value,
                           label: term.label,
                         }))}
+                        disabled={TEST && !selectedCourse}
                         value={selectedTerm}
                         onChange={(selectedOption) => {
                           if (Array.isArray(selectedOption))
@@ -305,9 +494,13 @@ export function UserFeedbackModal({
               >
                 {isSubmitting
                   ? "Submitting..."
-                  : initialUserClass
-                    ? "Submit Edit"
-                    : "Submit Rating"}
+                  : TEST
+                    ? currentRatingIndex < REQUIRED_RATINGS_COUNT - 1
+                      ? `Submit & Continue (${REQUIRED_RATINGS_COUNT - currentRatingIndex - 1} left)`
+                      : "Submit"
+                    : initialUserClass
+                      ? "Submit Edit"
+                      : "Submit Rating"}
               </Button>
             </Dialog.Footer>
           </Dialog.Card>

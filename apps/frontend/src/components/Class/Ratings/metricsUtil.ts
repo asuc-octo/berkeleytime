@@ -126,3 +126,42 @@ export const checkConstraint = (
   );
   return otherClasses.length <= USER_MAX_ALL_RATINGS;
 };
+
+/**
+ * Formats instructor names from a course class's primary section.
+ * Returns formatted text like "(John Doe)" for single instructor or "(John Doe, et al.)" for multiple.
+ */
+export function formatInstructorText(
+  primarySection: {
+    meetings: Array<{
+      instructors: Array<{
+        givenName?: string | null;
+        familyName?: string | null;
+      }>;
+    }>;
+  } | null | undefined
+): string {
+  if (!primarySection) {
+    return "(No instructor)";
+  }
+
+  const allInstructors: Array<{ givenName: string; familyName: string }> = [];
+  primarySection.meetings.forEach((meeting) => {
+    meeting.instructors.forEach((instructor) => {
+      if (instructor.familyName && instructor.givenName) {
+        allInstructors.push({
+          givenName: instructor.givenName,
+          familyName: instructor.familyName,
+        });
+      }
+    });
+  });
+
+  if (allInstructors.length === 0) {
+    return "(No instructor)";
+  } else if (allInstructors.length === 1) {
+    return `(${allInstructors[0].givenName} ${allInstructors[0].familyName})`;
+  } else {
+    return `(${allInstructors[0].givenName} ${allInstructors[0].familyName}, et al.)`;
+  }
+}
