@@ -10,9 +10,6 @@ import {
 } from "../shared/term-selectors";
 import { connection } from "mongoose";
 
-//const TERMS_PER_API_BATCH = 4;
-//const CLASSES_PER_BATCH = 5000;
-
 // Note: We scan ALL terms in the database rather than just the affected ones.
 // This is intentional to ensure data consistency, as class data may be modified
 // by sources other than the datapuller. Since the query is fast, the overhead
@@ -127,7 +124,7 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
         // const batch = classes.slice(i, i + CLASSES_PER_BATCH);
         const batch = classes.filter((x) => x.termId == currentTerm);
 
-        log.trace(`Deleting classes to be replaced in term ${currentTerm}...`);
+        log.trace(`Deleting classes in term ${currentTerm}...`);
 
         const { deletedCount } = await ClassModel.deleteMany({
           termId: currentTerm,
@@ -139,6 +136,11 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
           ordered: false,
           rawResult: true,
         });
+
+        // avoid replacing data if a non-negligible amount is deleted
+        if (insertedCount / deletedCount <= 0.90) {
+          throw new Error(`Deleted ${deletedCount} classes and inserted only ${insertedCount} in term ${currentTerm}; aborting data insertion process`);
+        }
 
         totalDeleted += deletedCount;
         totalInserted += insertedCount;
