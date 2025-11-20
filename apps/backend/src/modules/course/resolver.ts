@@ -118,11 +118,8 @@ const resolvers: CourseModule.Resolvers = {
           };
         }
 
-        const {
-          allTimeAverageGrade,
-          allTimePassCount,
-          allTimeNoPassCount,
-        } = parent as IntermediateCourse;
+        const { allTimeAverageGrade, allTimePassCount, allTimeNoPassCount } =
+          parent as IntermediateCourse;
 
         return {
           average: allTimeAverageGrade ?? null,
