@@ -31,13 +31,12 @@ import {
   CreateRatingDocument,
   DeleteRatingDocument,
   GetAggregatedRatingsDocument,
-  Semester,
-  TemporalPosition,
-} from "@/lib/generated/graphql";
-import {
+  GetClassDocument,
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
   GetUserRatingsDocument,
+  Semester,
+  TemporalPosition,
 } from "@/lib/generated/graphql";
 
 import { RatingButton } from "./RatingButton";
@@ -139,21 +138,9 @@ export function RatingsContainer() {
   });
 
   // Create rating mutation
-  const [createRating] = useMutation(CreateRatingDocument, {
-    refetchQueries: [
-      "GetUserRatings",
-      "GetCourseRatings",
-      "GetSemestersWithRatings",
-    ],
-  });
+  const [createRating] = useMutation(CreateRatingDocument);
 
-  const [deleteRating] = useMutation(DeleteRatingDocument, {
-    refetchQueries: [
-      "GetUserRatings",
-      "GetCourseRatings",
-      "GetSemestersWithRatings",
-    ],
-  });
+  const [deleteRating] = useMutation(DeleteRatingDocument);
 
   const [getAggregatedRatings, { data: aggregatedRatingsData }] =
     useLazyQuery<IAggregatedRatings>(GetAggregatedRatingsDocument);
@@ -325,6 +312,63 @@ export function RatingsContainer() {
   //   [ratingsData]
   // );
 
+  const getRefetchQueries = (classData: IClass) => {
+    const queries: Array<
+      | {
+          query: typeof GetClassDocument;
+          variables: {
+            year: number;
+            semester: Semester;
+            subject: string;
+            courseNumber: string;
+            number: string;
+            sessionId: string | null;
+          };
+        }
+      | {
+          query: typeof GetCourseRatingsDocument;
+          variables: { subject: string; number: string };
+        }
+      | {
+          query: typeof GetSemestersWithRatingsDocument;
+          variables: { subject: string; courseNumber: string };
+        }
+      | { query: typeof GetUserRatingsDocument }
+    > = [
+      {
+        query: GetClassDocument,
+        variables: {
+          year: classData.year,
+          semester: classData.semester,
+          subject: classData.subject,
+          courseNumber: classData.courseNumber,
+          number: classData.number,
+          sessionId: classData.sessionId ?? null,
+        },
+      },
+      {
+        query: GetCourseRatingsDocument,
+        variables: {
+          subject: classData.subject,
+          number: classData.courseNumber,
+        },
+      },
+      {
+        query: GetSemestersWithRatingsDocument,
+        variables: {
+          subject: classData.subject,
+          courseNumber: classData.courseNumber,
+        },
+      },
+    ];
+
+    if (user) {
+      queries.push({ query: GetUserRatingsDocument });
+    }
+
+    return queries;
+  };
+
   const ratingSubmit = async (
     metricValues: MetricData,
     termInfo: { semester: Semester; year: number },
@@ -350,6 +394,8 @@ export function RatingsContainer() {
           `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
         );
       }
+      const refetchQueries = getRefetchQueries(currentClassData);
+
       await Promise.all(
         METRIC_NAMES.map((metric) => {
           const value = metricValues[metric];
@@ -368,12 +414,8 @@ export function RatingsContainer() {
                   classNumber: currentClassData.number,
                   metricName: metric,
                 },
-                refetchQueries: [
-                  "GetClass",
-                  "GetUserRatings",
-                  "GetCourseRatings",
-                  "GetSemestersWithRatings",
-                ],
+                refetchQueries,
+                awaitRefetchQueries: true,
               });
             }
             // Skip if metric doesn't exist in current ratings
@@ -404,12 +446,7 @@ export function RatingsContainer() {
               metricName: metric,
               value,
             },
-            refetchQueries: [
-              "GetClass",
-              "GetUserRatings",
-              "GetCourseRatings",
-              "GetSemestersWithRatings",
-            ],
+            refetchQueries,
             awaitRefetchQueries: true,
           });
         })
@@ -426,6 +463,7 @@ export function RatingsContainer() {
     currentClassData: IClass,
     deleteRatingMutation: typeof deleteRating
   ) => {
+    const refetchQueries = getRefetchQueries(currentClassData);
     const deletePromises = userRating.metrics.map((metric) =>
       deleteRatingMutation({
         variables: {
@@ -436,12 +474,7 @@ export function RatingsContainer() {
           classNumber: currentClassData.number,
           metricName: metric.metricName,
         },
-        refetchQueries: [
-          "GetClass",
-          "GetUserRatings",
-          "GetCourseRatings",
-          "GetSemestersWithRatings",
-        ],
+        refetchQueries,
         awaitRefetchQueries: true,
       })
     );

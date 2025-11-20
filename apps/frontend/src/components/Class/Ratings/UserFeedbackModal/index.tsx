@@ -121,11 +121,13 @@ export function UserFeedbackModal({
         setSelectedTerm(matchingTerm.value);
       }
     } else {
+      // Reset to null when initialUserClass is null (after deletion)
       setSelectedTerm(null);
     }
     if (initialUserClass?.metrics) {
       setMetricData(toMetricData(initialUserClass.metrics));
     } else {
+      // Reset to initial empty state when initialUserClass is null (after deletion)
       setMetricData(initialMetricData);
     }
   }, [initialUserClass, availableTerms, initialMetricData]);
@@ -354,7 +356,7 @@ export function UserFeedbackModal({
   const handleClose = () => {
     setMetricData(initialMetricData);
     setSelectedTerm(initialTermValue);
-    hasAutoSelected.current = false;
+    hasAutoSelected.current = false; // Reset the auto-selection flag when closing
 
     if (TEST) {
       setSelectedCourse(null);
