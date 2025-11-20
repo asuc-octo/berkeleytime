@@ -31,6 +31,9 @@ export function SubmitRatingPopup({ isOpen, onClose }: SubmitRatingPopupProps) {
         <Dialog.Card>
           <VisuallyHidden>
             <Dialog.Title>Thank you for your input!</Dialog.Title>
+            <Dialog.Description>
+              Your rating helps other students make better decisions.
+            </Dialog.Description>
           </VisuallyHidden>
           <Dialog.Body className={styles.body}>
             <CheckCircleSolid className={styles.icon} />
@@ -76,6 +79,9 @@ export function DeleteRatingPopup({
         <Dialog.Card>
           <VisuallyHidden>
             <Dialog.Title>Delete Rating</Dialog.Title>
+            <Dialog.Description>
+              Removing this rating also removes it from the class aggregate.
+            </Dialog.Description>
           </VisuallyHidden>
           <Dialog.Body className={styles.body}>
             <WarningTriangleSolid
