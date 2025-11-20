@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { VisuallyHidden } from "@radix-ui/themes";
 import classNames from "classnames";
 import {
   ArrowRight,
@@ -28,6 +29,12 @@ export function SubmitRatingPopup({ isOpen, onClose }: SubmitRatingPopupProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
+          <VisuallyHidden>
+            <Dialog.Title>Thank you for your input!</Dialog.Title>
+            <Dialog.Description>
+              Your rating helps other students make better decisions.
+            </Dialog.Description>
+          </VisuallyHidden>
           <Dialog.Body className={styles.body}>
             <CheckCircleSolid className={styles.icon} />
             <div className={styles.title}>Thank you for your input!</div>
@@ -70,6 +77,12 @@ export function DeleteRatingPopup({
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
+          <VisuallyHidden>
+            <Dialog.Title>Delete Rating</Dialog.Title>
+            <Dialog.Description>
+              Removing this rating also removes it from the class aggregate.
+            </Dialog.Description>
+          </VisuallyHidden>
           <Dialog.Body className={styles.body}>
             <WarningTriangleSolid
               className={classNames(styles.icon, styles.red)}

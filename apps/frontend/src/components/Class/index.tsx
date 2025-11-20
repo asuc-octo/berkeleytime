@@ -9,7 +9,13 @@ import {
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 import {
   Badge,
@@ -19,7 +25,7 @@ import {
   Flex,
   IconButton,
   MenuItem,
-  Tooltip,
+  Tooltip as ThemeTooltip,
 } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
@@ -37,6 +43,7 @@ import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
+import { type RatingsTabClasses, RatingsTabLink } from "./locks";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -91,6 +98,15 @@ interface UncontrolledProps {
 // TODO: Determine whether a controlled input is even necessary
 type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
 
+const ratingsTabClasses: RatingsTabClasses = {
+  badge: styles.badge,
+  dot: styles.dot,
+  tooltipArrow: styles.tooltipArrow,
+  tooltipContent: styles.tooltipContent,
+  tooltipDescription: styles.tooltipDescription,
+  tooltipTitle: styles.tooltipTitle,
+};
+
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
   const num = parseInt(number, 10);
@@ -112,6 +128,7 @@ export default function Class({
 }: ClassProps) {
   // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
@@ -138,6 +155,7 @@ export default function Class({
   );
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+  const primarySection = _class?.primarySection ?? null;
 
   useEffect(() => {
     if (!_class?.primarySection?.enrollment) return;
@@ -223,16 +241,28 @@ export default function Class({
     });
   }, [_class]);
 
-  const ratingsCount = useMemo(() => {
-    return (
-      _course &&
-      _course.aggregatedRatings &&
-      _course.aggregatedRatings.metrics.length > 0 &&
-      Math.max(
-        ...Object.values(_course.aggregatedRatings.metrics.map((v) => v.count))
-      )
-    );
+  const ratingsCount = useMemo<number | false>(() => {
+    const metrics = _course?.aggregatedRatings?.metrics;
+    if (!metrics || metrics.length === 0) {
+      return false;
+    }
+
+    return Math.max(...metrics.map((metric) => metric.count));
   }, [_course]);
+
+  const ratingsLockContext = useMemo(() => ({ user }), [user]);
+  const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(ratingsLockContext);
+  const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
+
+  useEffect(() => {
+    if (dialog || !ratingsLocked) return;
+    if (!location.pathname.endsWith("/ratings")) return;
+
+    const redirectPath = location.pathname.replace(/\/ratings$/, "");
+    navigate(`${redirectPath}${location.search}${location.hash}`, {
+      replace: true,
+    });
+  }, [dialog, ratingsLocked, location, navigate]);
 
   // seat reservation logic pending design + consideration for performance.
   // const seatReservationTypeMap = useMemo(() => {
@@ -323,15 +353,15 @@ export default function Class({
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
                   </Tooltip> */}
-                  <Tooltip content="Add to schedule">
+                  <ThemeTooltip content="Add to schedule">
                     <IconButton>
                       <CalendarPlus />
                     </IconButton>
-                  </Tooltip>
+                  </ThemeTooltip>
                 </Flex>
                 <Flex gap="3">
                   {/* TODO: Reusable bookmark button */}
-                  <Tooltip
+                  <ThemeTooltip
                     content={bookmarked ? "Remove bookmark" : "Bookmark"}
                   >
                     <IconButton
@@ -343,24 +373,17 @@ export default function Class({
                     >
                       {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                     </IconButton>
-                  </Tooltip>
-                  <Tooltip content="Open in Berkeley Catalog">
+                  </ThemeTooltip>
+                  <ThemeTooltip content="Open in Berkeley Catalog">
                     <IconButton
                       as="a"
-                      href={getExternalLink(
-                        _class.year,
-                        _class.semester,
-                        _class.subject,
-                        _class.courseNumber,
-                        _class.primarySection.number,
-                        _class.primarySection.component
-                      )}
+                      href={getExternalLink(_class)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
                       <OpenNewWindow />
                     </IconButton>
-                  </Tooltip>
+                  </ThemeTooltip>
                 </Flex>
               </Flex>
               <Flex direction="column" gap="4">
@@ -378,12 +401,10 @@ export default function Class({
                 <Flex gap="3" align="center">
                   <EnrollmentDisplay
                     enrolledCount={
-                      _class.primarySection.enrollment?.latest?.enrolledCount
+                      primarySection?.enrollment?.latest?.enrolledCount
                     }
-                    maxEnroll={
-                      _class.primarySection.enrollment?.latest?.maxEnroll
-                    }
-                    time={_class.primarySection.enrollment?.latest?.endTime}
+                    maxEnroll={primarySection?.enrollment?.latest?.maxEnroll}
+                    time={primarySection?.enrollment?.latest?.endTime}
                   >
                     {(content) => (
                       <Link
@@ -422,8 +443,8 @@ export default function Class({
                     unitsMax={_class.unitsMax}
                     unitsMin={_class.unitsMin}
                   />
-                  {_class && (
-                    <CCN sectionId={_class.primarySection.sectionId} />
+                  {primarySection?.sectionId && (
+                    <CCN sectionId={primarySection.sectionId} />
                   )}
                   {reservedSeatingMaxCount > 0 && (
                     <Badge
@@ -443,18 +464,15 @@ export default function Class({
                     <Tabs.Trigger value="sections" asChild>
                       <MenuItem>Sections</MenuItem>
                     </Tabs.Trigger>
-                    <NavLink
-                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
-                    >
-                      <MenuItem styl>
-                        Ratings
-                        {ratingsCount ? (
-                          <div className={styles.badge}>{ratingsCount}</div>
-                        ) : (
-                          <div className={styles.dot}></div>
-                        )}
-                      </MenuItem>
-                    </NavLink>
+                    {shouldShowRatingsTab && (
+                      <RatingsTabLink
+                        dialog
+                        classes={ratingsTabClasses}
+                        locked={ratingsLocked}
+                        ratingsCount={ratingsCount}
+                        to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                      />
+                    )}
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
@@ -475,18 +493,14 @@ export default function Class({
                       <MenuItem active={isActive}>Sections</MenuItem>
                     )}
                   </NavLink>
-                  <NavLink to={{ ...location, pathname: "ratings" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>
-                        Ratings
-                        {ratingsCount ? (
-                          <div className={styles.badge}>{ratingsCount}</div>
-                        ) : (
-                          <div className={styles.dot}></div>
-                        )}
-                      </MenuItem>
-                    )}
-                  </NavLink>
+                  {shouldShowRatingsTab && (
+                    <RatingsTabLink
+                      classes={ratingsTabClasses}
+                      locked={ratingsLocked}
+                      ratingsCount={ratingsCount}
+                      to={{ ...location, pathname: "ratings" }}
+                    />
+                  )}
                   <NavLink to={{ ...location, pathname: "grades" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
@@ -526,11 +540,13 @@ export default function Class({
                     <Grades />
                   </SuspenseBoundary>
                 </Tabs.Content>
-                <Tabs.Content value="ratings" asChild>
-                  <SuspenseBoundary>
-                    <Ratings />
-                  </SuspenseBoundary>
-                </Tabs.Content>
+                {!ratingsLocked && (
+                  <Tabs.Content value="ratings" asChild>
+                    <SuspenseBoundary>
+                      <Ratings />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                )}
                 <Tabs.Content value="enrollment" asChild>
                   <SuspenseBoundary>
                     <Enrollment />

@@ -50,26 +50,34 @@ export function AttendanceForm({
     <div>
       {/* Question 5 */}
       <div className={styles.formGroup}>
-        <h3>5. Is lecture attendance required?</h3>
-        <BooleanOptions
-          name="lectureAttendance"
-          value={metricData["Attendance"] ?? null}
-          onChange={(v) => handleAttendanceClickClick(MetricName.Attendance, v)}
-          yesLabel="Yes, lecture attendance was required."
-          noLabel="No, lecture attendance was not required."
-        />
+        <div className={styles.questionPair}>
+          <h3>5. Is lecture attendance required?</h3>
+          <BooleanOptions
+            name="lectureAttendance"
+            value={metricData["Attendance"] ?? null}
+            onChange={(v) =>
+              handleAttendanceClickClick(MetricName.Attendance, v)
+            }
+            yesLabel="Yes, lecture attendance was required."
+            noLabel="No, lecture attendance was not required."
+          />
+        </div>
       </div>
 
       {/* Question 6 */}
       <div className={styles.formGroup}>
-        <h3>6. Were lectures recorded?</h3>
-        <BooleanOptions
-          name="lecturesRecorded"
-          value={metricData["Recording"] ?? null}
-          onChange={(v) => handleAttendanceClickClick(MetricName.Recording, v)}
-          yesLabel="Yes, lectures were recorded."
-          noLabel="No, lectures were not recorded."
-        />
+        <div className={styles.questionPair}>
+          <h3>6. Were lectures recorded?</h3>
+          <BooleanOptions
+            name="lecturesRecorded"
+            value={metricData["Recording"] ?? null}
+            onChange={(v) =>
+              handleAttendanceClickClick(MetricName.Recording, v)
+            }
+            yesLabel="Yes, lectures were recorded."
+            noLabel="No, lectures were not recorded."
+          />
+        </div>
       </div>
     </div>
   );
@@ -128,24 +136,26 @@ const RatingScale = ({
   onRatingClick,
 }: RatingScaleProps) => (
   <div className={styles.formGroup}>
-    <h3>
-      {question} <RequiredAsterisk />
-    </h3>
-    <div className={styles.ratingScale}>
-      <span>{leftLabel}</span>
-      <div className={styles.ratingButtons}>
-        {[1, 2, 3, 4, 5].map((value) => (
-          <button
-            key={value}
-            className={`${styles.ratingButton} ${metricData[type] === value ? styles.selected : ""}`}
-            onClick={() => onRatingClick(type, value)}
-            type="button"
-          >
-            {value}
-          </button>
-        ))}
+    <div className={styles.questionPair}>
+      <h3>
+        {question} <RequiredAsterisk />
+      </h3>
+      <div className={styles.ratingScale}>
+        <span>{leftLabel}</span>
+        <div className={styles.ratingButtons}>
+          {[1, 2, 3, 4, 5].map((value) => (
+            <button
+              key={value}
+              className={`${styles.ratingButton} ${metricData[type] === value ? styles.selected : ""}`}
+              onClick={() => onRatingClick(type, value)}
+              type="button"
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+        <span>{rightLabel}</span>
       </div>
-      <span>{rightLabel}</span>
     </div>
   </div>
 );

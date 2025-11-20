@@ -211,7 +211,7 @@ export default function Catalog() {
             <div className={styles.loadingBody} />
           </div>
         ) : _class && _course ? (
-          <Class class={_class} course={_course} onClose={() => {}} />
+          <Class class={_class} course={_course} />
         ) : null}
       </Flex>
     </div>

@@ -1,5 +1,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
+import { Progress } from "radix-ui";
+
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { Button, Dialog, Flex, Select } from "@repo/theme";
 
@@ -61,13 +63,18 @@ export function UserFeedbackModal({
     [initialUserClass?.metrics]
   );
 
-  const initialTermValue = useMemo(
-    () =>
-      initialUserClass?.semester && initialUserClass?.year
-        ? `${initialUserClass.semester} ${initialUserClass.year}`
-        : null,
-    [initialUserClass?.semester, initialUserClass?.year]
-  );
+  const initialTermValue = useMemo(() => {
+    if (initialUserClass?.semester && initialUserClass?.year) {
+      // Match by semester and year only, find the first matching option
+      const matchingTerm = availableTerms.find(
+        (term) =>
+          term.semester === initialUserClass.semester &&
+          term.year === initialUserClass.year
+      );
+      return matchingTerm ? matchingTerm.value : null;
+    }
+    return null;
+  }, [initialUserClass?.semester, initialUserClass?.year, availableTerms]);
 
   const [selectedTerm, setSelectedTerm] = useState<string | null>(
     initialTermValue
@@ -77,17 +84,27 @@ export function UserFeedbackModal({
   const hasAutoSelected = useRef(false);
 
   useEffect(() => {
-    if (
-      initialUserClass?.semester &&
-      initialUserClass?.year &&
-      initialUserClass?.classNumber
-    )
-      setSelectedTerm(
-        `${initialUserClass.semester} ${initialUserClass.year} ${initialUserClass.classNumber}`
+    if (initialUserClass?.semester && initialUserClass?.year) {
+      // Match by semester and year only, find the first matching option
+      const matchingTerm = availableTerms.find(
+        (term) =>
+          term.semester === initialUserClass.semester &&
+          term.year === initialUserClass.year
       );
-    if (initialUserClass?.metrics)
+      if (matchingTerm) {
+        setSelectedTerm(matchingTerm.value);
+      }
+    } else {
+      // Reset to null when initialUserClass is null (after deletion)
+      setSelectedTerm(null);
+    }
+    if (initialUserClass?.metrics) {
       setMetricData(toMetricData(initialUserClass.metrics));
-  }, [initialUserClass]);
+    } else {
+      // Reset to initial empty state when initialUserClass is null (after deletion)
+      setMetricData(initialMetricData);
+    }
+  }, [initialUserClass, availableTerms, initialMetricData]);
 
   const hasChanges = useMemo(() => {
     const termChanged = selectedTerm !== initialTermValue;
@@ -109,6 +126,32 @@ export function UserFeedbackModal({
       typeof metricData[MetricName.Workload] === "number";
     return isTermValid && areRatingsValid && hasChanges;
   }, [selectedTerm, metricData, hasChanges]);
+
+  // Calculate progress: 6 fields total, each field = 1/6 (16.67%)
+  const progress = useMemo(() => {
+    let filledFields = 0;
+    const totalFields = 6;
+
+    // Field 1: Semester selection
+    if (selectedTerm && selectedTerm.length > 0) filledFields++;
+
+    // Field 2: Usefulness
+    if (typeof metricData[MetricName.Usefulness] === "number") filledFields++;
+
+    // Field 3: Difficulty
+    if (typeof metricData[MetricName.Difficulty] === "number") filledFields++;
+
+    // Field 4: Workload
+    if (typeof metricData[MetricName.Workload] === "number") filledFields++;
+
+    // Field 5: Attendance
+    if (typeof metricData[MetricName.Attendance] === "number") filledFields++;
+
+    // Field 6: Recording
+    if (typeof metricData[MetricName.Recording] === "number") filledFields++;
+
+    return (filledFields / totalFields) * 100;
+  }, [selectedTerm, metricData]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -168,7 +211,7 @@ export function UserFeedbackModal({
   const handleClose = () => {
     // Reset form state to initial values when closing
     setMetricData(initialMetricData);
-    setSelectedTerm(null);
+    setSelectedTerm(initialTermValue);
     hasAutoSelected.current = false; // Reset the auto-selection flag when closing
     onClose();
   };
@@ -179,38 +222,53 @@ export function UserFeedbackModal({
         <Dialog.Portal>
           <Dialog.Overlay />
           <Dialog.Card style={{ width: "auto" }}>
-            <Dialog.Header
-              title={title}
-              subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
-              hasCloseButton
-            />
+            <div className={styles.modalHeaderWrapper}>
+              <Dialog.Header
+                title={title}
+                subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
+                hasCloseButton
+                className={styles.modalHeader}
+              />
+              <Progress.Root
+                className={styles.progressBar}
+                value={progress}
+                max={100}
+              >
+                <Progress.Indicator
+                  className={styles.progressIndicator}
+                  style={{ transform: `translateX(-${100 - progress}%)` }}
+                />
+              </Progress.Root>
+            </div>
             <Dialog.Body className={styles.modalBody}>
               <Flex direction="column">
                 <div className={styles.formGroup}>
-                  <h3>
-                    1. What semester did you take this course?{" "}
-                    <RequiredAsterisk />
-                  </h3>
-                  <div
-                    style={{
-                      maxWidth: 350,
-                      marginLeft: "18px",
-                    }}
-                  >
-                    <Select
-                      options={pastTerms.map((term) => ({
-                        value: term.value,
-                        label: term.label,
-                      }))}
-                      value={selectedTerm}
-                      onChange={(selectedOption) => {
-                        if (Array.isArray(selectedOption))
-                          setSelectedTerm(null);
-                        else setSelectedTerm(selectedOption || null);
+                  <div className={styles.questionPair}>
+                    <h3>
+                      1. What semester did you take this course?{" "}
+                      <RequiredAsterisk />
+                    </h3>
+                    <div
+                      style={{
+                        width: 350,
+                        margin: "0 auto",
                       }}
-                      placeholder="Select semester"
-                      clearable={true}
-                    />
+                    >
+                      <Select
+                        options={pastTerms.map((term) => ({
+                          value: term.value,
+                          label: term.label,
+                        }))}
+                        value={selectedTerm}
+                        onChange={(selectedOption) => {
+                          if (Array.isArray(selectedOption))
+                            setSelectedTerm(null);
+                          else setSelectedTerm(selectedOption || null);
+                        }}
+                        placeholder="Select semester"
+                        clearable={true}
+                      />
+                    </div>
                   </div>
                 </div>
 
