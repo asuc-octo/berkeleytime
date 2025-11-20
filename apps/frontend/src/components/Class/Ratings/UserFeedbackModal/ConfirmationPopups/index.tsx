@@ -8,6 +8,7 @@ import {
 } from "iconoir-react";
 
 import { Button, Dialog } from "@repo/theme";
+import { VisuallyHidden } from "@radix-ui/themes";
 
 import styles from "./ConfirmationPopups.module.scss";
 
@@ -28,6 +29,9 @@ export function SubmitRatingPopup({ isOpen, onClose }: SubmitRatingPopupProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
+          <VisuallyHidden>
+            <Dialog.Title>Thank you for your input!</Dialog.Title>
+          </VisuallyHidden>
           <Dialog.Body className={styles.body}>
             <CheckCircleSolid className={styles.icon} />
             <div className={styles.title}>Thank you for your input!</div>
@@ -70,6 +74,9 @@ export function DeleteRatingPopup({
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
+          <VisuallyHidden>
+            <Dialog.Title>Delete Rating</Dialog.Title>
+          </VisuallyHidden>
           <Dialog.Body className={styles.body}>
             <WarningTriangleSolid
               className={classNames(styles.icon, styles.red)}
