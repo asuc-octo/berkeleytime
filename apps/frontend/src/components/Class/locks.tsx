@@ -6,7 +6,7 @@ import { NavLink, NavLinkProps } from "react-router-dom";
 
 import { MenuItem } from "@repo/theme";
 
-const RATINGS_LOCK_ENABLED = true;
+const RATINGS_LOCK_ENABLED = false;
 
 export interface RatingsLockContext {
   user?: unknown;

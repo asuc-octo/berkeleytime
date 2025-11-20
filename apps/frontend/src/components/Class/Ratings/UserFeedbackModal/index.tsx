@@ -183,34 +183,37 @@ export function UserFeedbackModal({
               title={title}
               subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
               hasCloseButton
+              className={styles.modalHeader}
             />
             <Dialog.Body className={styles.modalBody}>
               <Flex direction="column">
                 <div className={styles.formGroup}>
-                  <h3>
-                    1. What semester did you take this course?{" "}
-                    <RequiredAsterisk />
-                  </h3>
-                  <div
-                    style={{
-                      maxWidth: 350,
-                      marginLeft: "18px",
-                    }}
-                  >
-                    <Select
-                      options={pastTerms.map((term) => ({
-                        value: term.value,
-                        label: term.label,
-                      }))}
-                      value={selectedTerm}
-                      onChange={(selectedOption) => {
-                        if (Array.isArray(selectedOption))
-                          setSelectedTerm(null);
-                        else setSelectedTerm(selectedOption || null);
+                  <div className={styles.questionPair}>
+                    <h3>
+                      1. What semester did you take this course?{" "}
+                      <RequiredAsterisk />
+                    </h3>
+                    <div
+                      style={{
+                        width: 350,
+                        margin: "0 auto",
                       }}
-                      placeholder="Select semester"
-                      clearable={true}
-                    />
+                    >
+                      <Select
+                        options={pastTerms.map((term) => ({
+                          value: term.value,
+                          label: term.label,
+                        }))}
+                        value={selectedTerm}
+                        onChange={(selectedOption) => {
+                          if (Array.isArray(selectedOption))
+                            setSelectedTerm(null);
+                          else setSelectedTerm(selectedOption || null);
+                        }}
+                        placeholder="Select semester"
+                        clearable={true}
+                      />
+                    </div>
                   </div>
                 </div>
 

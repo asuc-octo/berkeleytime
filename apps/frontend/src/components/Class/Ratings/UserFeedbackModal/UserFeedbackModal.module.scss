@@ -1,20 +1,32 @@
+.modalHeader {
+  position: relative;
+  border-bottom: solid 1px var(--border-color);
+
+  // Target the close button (IconButton) within the header
+  // The Dialog.Close wrapper is the last child, and it contains the IconButton
+  > :global(:last-child) {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    margin: 0;
+  }
+}
+
 .modalBody {
-  max-height: 418px;
+  max-height: 70vh;
   overflow-y: scroll;
 }
 
 .formGroup {
-  margin-bottom: 20px;
   padding: 0 84px;
-  padding-top: 20px;
 
   h3,
   p {
     color: var(--paragraph-color);
     font-size: 14px;
     font-weight: 400;
-    margin-bottom: 12px;
-    padding-bottom: 5px;
+    margin: 0;
+    padding: 0;
   }
 
   .requiredAsterisk {
@@ -25,14 +37,19 @@
   }
 }
 
+.questionPair {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 0;
+}
+
 .ratingScale {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 5px;
   max-width: 500px;
-  margin-left: clamp(4px, 4%, 18px);
-  margin-right: auto;
+  margin: 0 auto;
 
   span {
     color: var(--paragraph-color);
