@@ -5,7 +5,6 @@ import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
 import enrollmentCalendarPuller from "./pullers/enrollment-calendar";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
-import schedulePuller from "./pullers/schedule";
 import sectionsPuller from "./pullers/sections";
 import termsPuller from "./pullers/terms";
 import setup from "./shared";

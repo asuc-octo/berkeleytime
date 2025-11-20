@@ -1,2 +1,0 @@
-Enrollment manually updated using script of Google Calendar API
-Most Recently Updated Nov 3, 2025
