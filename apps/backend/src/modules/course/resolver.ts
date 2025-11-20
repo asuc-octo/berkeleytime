@@ -1,5 +1,7 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
+import { getPnpPercentageFromCounts } from "@repo/common";
+
 import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import { getCourseAggregatedRatings } from "../rating/controller";
@@ -116,10 +118,19 @@ const resolvers: CourseModule.Resolvers = {
           };
         }
 
+        const {
+          allTimeAverageGrade,
+          allTimePassCount,
+          allTimeNoPassCount,
+        } = parent as IntermediateCourse;
+
         return {
-          average: (parent as IntermediateCourse).averageGrade ?? null,
+          average: allTimeAverageGrade ?? null,
           distribution: [],
-          pnpPercentage: (parent as IntermediateCourse).pnpPercentage ?? null,
+          pnpPercentage: getPnpPercentageFromCounts(
+            allTimePassCount,
+            allTimeNoPassCount
+          ),
         };
       }
 

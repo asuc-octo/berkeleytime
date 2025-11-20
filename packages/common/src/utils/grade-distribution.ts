@@ -186,3 +186,22 @@ export const getPnpPercentage = (distribution: Grade[]) => {
   const passingPnp = pnpGrades.pass + pnpGrades.satisfactory;
   return passingPnp / totalPnp;
 };
+
+export const getPnpPercentageFromCounts = (
+  passCount?: number | null,
+  noPassCount?: number | null
+) => {
+  const hasPass = typeof passCount === "number" && Number.isFinite(passCount);
+  const hasNoPass =
+    typeof noPassCount === "number" && Number.isFinite(noPassCount);
+
+  if (!hasPass && !hasNoPass) return null;
+
+  const safePass = hasPass ? (passCount as number) : 0;
+  const safeNoPass = hasNoPass ? (noPassCount as number) : 0;
+  const total = safePass + safeNoPass;
+
+  if (total === 0) return null;
+
+  return safePass / total;
+};

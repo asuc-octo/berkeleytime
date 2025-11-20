@@ -10,8 +10,9 @@ interface CourseRelationships {
 }
 
 interface CourseComputedFields {
-  averageGrade: number | null;
-  pnpPercentage: number | null;
+  allTimeAverageGrade: number | null;
+  allTimePassCount: number | null;
+  allTimeNoPassCount: number | null;
 }
 
 export type IntermediateCourse = Omit<
@@ -32,8 +33,9 @@ export function formatCourse(course: ICourseItem) {
     crossListing: course.crossListing ?? [],
     requiredCourses: course.preparation?.requiredCourses ?? [],
     requirements: course.preparation?.requiredText ?? null,
-    averageGrade: course.averageGrade ?? null,
-    pnpPercentage: course.pnpPercentage ?? null,
+    allTimeAverageGrade: course.allTimeAverageGrade ?? null,
+    allTimePassCount: course.allTimePassCount ?? null,
+    allTimeNoPassCount: course.allTimeNoPassCount ?? null,
   } as IntermediateCourse;
 
   return output;

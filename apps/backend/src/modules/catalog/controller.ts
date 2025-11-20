@@ -14,6 +14,7 @@ import {
   getAverageGrade,
   getDistribution,
   getPnpPercentage,
+  getPnpPercentageFromCounts,
 } from "@repo/common";
 
 import { getFields, hasFieldPath } from "../../utils/graphql";
@@ -272,9 +273,12 @@ export const getCatalog = async (
     // Use the class's subject and courseNumber to get the correct grades for cross-listed courses
     if (includesCourseGradeDistribution) {
       const courseFallback = {
-        average: course.averageGrade ?? null,
+        average: course.allTimeAverageGrade ?? null,
         distribution: [],
-        pnpPercentage: course.pnpPercentage ?? null,
+        pnpPercentage: getPnpPercentageFromCounts(
+          course.allTimePassCount,
+          course.allTimeNoPassCount
+        ),
       };
 
       if (includesCourseGradeDistributionDistribution) {
