@@ -331,7 +331,7 @@ export function RatingsContainer() {
     createRatingMutation: typeof createRating,
     deleteRatingMutation: typeof deleteRating,
     currentClassData: IClass,
-    _setModalOpen: Dispatch<SetStateAction<boolean>>, // Not used - modal handles its own closing
+    setModalOpen: Dispatch<SetStateAction<boolean>>,
     currentRatings?: IUserRatingClass | null
   ) => {
     try {
@@ -415,6 +415,7 @@ export function RatingsContainer() {
         })
       );
 
+      setModalOpen(false);
     } catch (error) {
       console.error("Error submitting ratings:", error);
     }
