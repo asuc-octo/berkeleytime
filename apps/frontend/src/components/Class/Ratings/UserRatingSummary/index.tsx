@@ -33,7 +33,7 @@ export default function UserRatingSummary({
     <div className={styles.root}>
       <div className={styles.title}>
         <div>
-          <h3>Your Rating Summary</h3>
+          <h3>Your Rating</h3>
           {userRatings.lastUpdated && (
             <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
           )}
