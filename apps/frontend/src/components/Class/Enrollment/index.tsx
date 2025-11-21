@@ -16,6 +16,7 @@ import type { TooltipContentProps } from "recharts";
 
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
+import EmptyState from "@/components/Class/EmptyState";
 import { useReadClassEnrollment } from "@/hooks/api/classes/useReadClass";
 import useClass from "@/hooks/useClass";
 
@@ -165,28 +166,22 @@ export default function Enrollment() {
   ]);
 
   if (loading) {
-    return (
-      <div className={styles.placeholder}>
-        <GraphUp width={32} height={32} />
-        <p className={styles.heading}>Loading Enrollment Data</p>
-        <p className={styles.paragraph}>
-          Fetching enrollment history for this class.
-        </p>
-      </div>
-    );
+    return <EmptyState heading="Loading Enrollment Data" loading />;
   }
 
   if (data.length === 0) {
     return (
-      <div className={styles.placeholder}>
-        <GraphUp width={32} height={32} />
-        <p className={styles.heading}>No Enrollment Data Available</p>
-        <p className={styles.paragraph}>
-          This class doesn't have enrollment history data yet.
-          <br />
-          Enrollment trends will appear here once data is available.
-        </p>
-      </div>
+      <EmptyState
+        icon={<GraphUp width={32} height={32} />}
+        heading="No Enrollment Data Available"
+        paragraph={
+          <>
+            This class doesn't have enrollment history data yet.
+            <br />
+            Enrollment trends will appear here once data is available.
+          </>
+        }
+      />
     );
   }
 

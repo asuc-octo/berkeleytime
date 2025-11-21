@@ -12,6 +12,7 @@ import {
   DeleteRatingPopup,
   ErrorDialog,
 } from "@/components/Class/Ratings/RatingDialog";
+import EmptyState from "@/components/Class/EmptyState";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
@@ -87,20 +88,23 @@ export function RatingsContainer() {
   const { data: termsData } = useReadTerms();
 
   // Get user's existing ratings
-  const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
-    skip: !user,
-  });
-
-  const { data: courseClassesData } = useQuery(
-    ReadCourseClassesForRatingsDocument,
+  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(
+    GetUserRatingsDocument,
     {
-      variables: {
-        subject: currentClass.subject,
-        number: currentClass.courseNumber,
-      },
-      skip: !currentClass?.subject || !currentClass?.courseNumber,
+      skip: !user,
     }
   );
+
+  const {
+    data: courseClassesData,
+    loading: courseClassesLoading,
+  } = useQuery(ReadCourseClassesForRatingsDocument, {
+    variables: {
+      subject: currentClass.subject,
+      number: currentClass.courseNumber,
+    },
+    skip: !currentClass?.subject || !currentClass?.courseNumber,
+  });
 
   const courseClasses =
     courseClassesData?.course?.classes?.filter(
@@ -148,7 +152,10 @@ export function RatingsContainer() {
   ]);
 
   // Get aggregated ratings for display
-  const { data: aggregatedRatings } = useQuery(GetCourseRatingsDocument, {
+  const {
+    data: aggregatedRatings,
+    loading: aggregatedRatingsLoading,
+  } = useQuery(GetCourseRatingsDocument, {
     variables: {
       subject: currentClass?.subject,
       number: currentClass?.courseNumber,
@@ -169,16 +176,16 @@ export function RatingsContainer() {
   }, [aggregatedRatingsData]);
 
   // Get semesters with ratings
-  const { data: semestersWithRatingsData } = useQuery(
-    GetSemestersWithRatingsDocument,
-    {
-      variables: {
-        subject: currentClass.subject,
-        courseNumber: currentClass.courseNumber,
-      },
-      skip: !currentClass?.subject || !currentClass?.courseNumber,
-    }
-  );
+  const {
+    data: semestersWithRatingsData,
+    loading: semestersWithRatingsLoading,
+  } = useQuery(GetSemestersWithRatingsDocument, {
+    variables: {
+      subject: currentClass.subject,
+      courseNumber: currentClass.courseNumber,
+    },
+    skip: !currentClass?.subject || !currentClass?.courseNumber,
+  });
 
   const semestersWithRatings = useMemo(() => {
     if (!semestersWithRatingsData) return [];
@@ -388,24 +395,37 @@ export function RatingsContainer() {
     return queries;
   };
 
+  const isLoading =
+    courseClassesLoading ||
+    aggregatedRatingsLoading ||
+    semestersWithRatingsLoading ||
+    (user && userRatingsLoading);
+
+  if (isLoading) {
+    return <EmptyState heading="Loading Ratings Data" loading />;
+  }
+
   return (
     <>
       {!hasRatings ? (
-        <div className={styles.placeholder}>
-          <UserStar width={32} height={32} strokeWidth={1.5} />
-          <p className={styles.heading}>No Course Ratings</p>
-          <p className={styles.paragraph}>
-            This course doesn't have any reviews yet.
-            <br />
-            Be the first to share your experience!
-          </p>
+        <EmptyState
+          icon={<UserStar width={32} height={32} strokeWidth={1.5} />}
+          heading="No Course Ratings"
+          paragraph={
+            <>
+              This course doesn't have any reviews yet.
+              <br />
+              Be the first to share your experience!
+            </>
+          }
+        >
           <RatingButton
             user={user}
             onOpenModal={handleModalStateChange}
             userRatingData={userRatingsData}
             currentClass={currentClass}
           />
-        </div>
+        </EmptyState>
       ) : (
         <div className={styles.root}>
           <Container size="2">

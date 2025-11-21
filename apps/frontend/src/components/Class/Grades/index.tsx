@@ -13,6 +13,7 @@ import {
 
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
+import EmptyState from "@/components/Class/EmptyState";
 import { useReadClassGrades } from "@/hooks/api/classes/useReadClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
@@ -113,29 +114,23 @@ export default function Grades() {
   }, [courseTotal]);
 
   if (loading || !courseGradeDistribution) {
-    return (
-      <div className={styles.placeholder}>
-        <Reports width={32} height={32} />
-        <p className={styles.heading}>Loading Grade Data</p>
-        <p className={styles.paragraph}>
-          Gathering grade distribution information for this class.
-        </p>
-      </div>
-    );
+    return <EmptyState heading="Loading Grade Data" loading />;
   }
 
   if (hasNoGradeData) {
     return (
-      <div className={styles.placeholder}>
-        <Reports width={32} height={32} />
-        <p className={styles.heading}>No Grade Data Available</p>
-        <p className={styles.paragraph}>
-          This course doesn't have any historical grade data yet.
-          <br />
-          Grade distributions will appear here once students complete the
-          course.
-        </p>
-      </div>
+      <EmptyState
+        icon={<Reports width={32} height={32} />}
+        heading="No Grade Data Available"
+        paragraph={
+          <>
+            This course doesn't have any historical grade data yet.
+            <br />
+            Grade distributions will appear here once students complete the
+            course.
+          </>
+        }
+      />
     );
   }
 
