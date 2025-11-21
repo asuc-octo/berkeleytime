@@ -13,6 +13,7 @@ import {
 
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
+import { useReadClassGrades } from "@/hooks/api/classes/useReadClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
 import { decimalToPercentString } from "@/utils/number-formatter";
@@ -25,55 +26,47 @@ const toPercent = (decimal: number) => {
 
 export default function Grades() {
   const {
-    class: {
-      subject,
-      courseNumber,
-      gradeDistribution,
-      course: { gradeDistribution: courseGradeDistribution },
-    },
+    class: { subject, courseNumber, number, semester, year },
   } = useClass();
+  const { data, loading } = useReadClassGrades(
+    year,
+    semester,
+    subject,
+    courseNumber,
+    number
+  );
+  const courseGradeDistribution = data?.course?.gradeDistribution;
 
   const hasNoGradeData = useMemo(() => {
-    const classTotal =
-      gradeDistribution.distribution?.reduce(
-        (acc, grade) => acc + (grade.count ?? 0),
-        0
-      ) ?? 0;
+    if (!courseGradeDistribution) return true;
     const courseTotal =
       courseGradeDistribution.distribution?.reduce(
         (acc, grade) => acc + (grade.count ?? 0),
         0
       ) ?? 0;
 
-    return (
-      classTotal === 0 &&
-      courseTotal === 0 &&
-      !gradeDistribution.average &&
-      !courseGradeDistribution.average
-    );
-  }, [gradeDistribution, courseGradeDistribution]);
+    return courseTotal === 0 && !courseGradeDistribution.average;
+  }, [courseGradeDistribution]);
 
-  const { data, courseTotal } = useMemo(() => {
-    const getTotal = (distribution: typeof gradeDistribution.distribution) =>
-      distribution?.reduce((acc, grade) => acc + (grade.count ?? 0), 0) ?? 0;
+  const { data: chartData, courseTotal } = useMemo(() => {
+    if (!courseGradeDistribution) {
+      return {
+        data: [],
+        courseTotal: 0,
+      };
+    }
 
-    const classTotalCount = getTotal(gradeDistribution.distribution);
-    const courseTotalCount = getTotal(
-      courseGradeDistribution.distribution ?? []
-    );
+    const courseTotalCount =
+      courseGradeDistribution.distribution?.reduce(
+        (acc, grade) => acc + (grade.count ?? 0),
+        0
+      ) ?? 0;
 
     const mapped = GRADES.map((letter) => {
-      const classGrade = gradeDistribution.distribution?.find(
-        (grade) => grade.letter === letter
-      );
       const courseGrade = courseGradeDistribution.distribution?.find(
         (grade) => grade.letter === letter
       );
 
-      const classPercent =
-        classTotalCount > 0 && classGrade
-          ? Math.round(((classGrade.count ?? 0) / classTotalCount) * 1000) / 10
-          : 0;
       const coursePercent =
         courseTotalCount > 0 && courseGrade
           ? Math.round(((courseGrade.count ?? 0) / courseTotalCount) * 1000) /
@@ -82,7 +75,6 @@ export default function Grades() {
 
       return {
         letter,
-        class: classPercent,
         course: coursePercent,
       };
     });
@@ -91,7 +83,7 @@ export default function Grades() {
       data: mapped,
       courseTotal: courseTotalCount,
     };
-  }, [gradeDistribution, courseGradeDistribution]);
+  }, [courseGradeDistribution]);
 
   const gradeExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
@@ -119,6 +111,18 @@ export default function Grades() {
     const gradesLabel = courseTotal === 1 ? "grade" : "grades";
     return `From ${courseTotal.toLocaleString()} course ${gradesLabel}`;
   }, [courseTotal]);
+
+  if (loading || !courseGradeDistribution) {
+    return (
+      <div className={styles.placeholder}>
+        <Reports width={32} height={32} />
+        <p className={styles.heading}>Loading Grade Data</p>
+        <p className={styles.paragraph}>
+          Gathering grade distribution information for this class.
+        </p>
+      </div>
+    );
+  }
 
   if (hasNoGradeData) {
     return (
@@ -158,7 +162,7 @@ export default function Grades() {
           </div>
           <div className={styles.chart}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart width={730} height={450} data={data}>
+              <BarChart width={730} height={450} data={chartData}>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
@@ -189,28 +193,24 @@ export default function Grades() {
                     return (
                       <HoverCard
                         content={props.label}
-                        data={props.payload?.map((v, index) => {
-                          const name = v.name?.valueOf();
-                          return {
-                            key: `${name}-${index}`,
-                            label:
-                              name === "class" ? "This Class" : "All semesters",
-                            value:
-                              typeof v.value === "number"
-                                ? toPercent(v.value)
-                                : "N/A",
-                            color: v.fill,
-                          };
-                        })}
+                        data={props.payload?.map((v, index) => ({
+                          key: `${v.name}-${index}`,
+                          label: "All semesters",
+                          value:
+                            typeof v.value === "number"
+                              ? toPercent(v.value)
+                              : "N/A",
+                          color: v.fill,
+                        }))}
                       />
                     );
                   }}
                 />
                 <Bar
                   dataKey="course"
-                  stackId="grade"
                   fill="var(--blue-500)"
                   radius={[5, 5, 0, 0]}
+                  name="All semesters"
                 />
               </BarChart>
             </ResponsiveContainer>

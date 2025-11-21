@@ -18,7 +18,7 @@ import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
 import {
   IAggregatedRatings,
-  IClass,
+  IClassDetails,
   IMetric,
   IUserRatingClass,
 } from "@/lib/api";
@@ -31,6 +31,7 @@ import {
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
   GetUserRatingsDocument,
+  ReadCourseClassesForRatingsDocument,
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
@@ -76,7 +77,7 @@ export function RatingsContainer() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
-  const { class: currentClass, course: currentCourse } = useClass();
+  const { class: currentClass } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
   const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
     null
@@ -89,6 +90,23 @@ export function RatingsContainer() {
   const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
     skip: !user,
   });
+
+  const { data: courseClassesData } = useQuery(
+    ReadCourseClassesForRatingsDocument,
+    {
+      variables: {
+        subject: currentClass.subject,
+        number: currentClass.courseNumber,
+      },
+      skip: !currentClass?.subject || !currentClass?.courseNumber,
+    }
+  );
+
+  const courseClasses =
+    courseClassesData?.course?.classes?.filter(
+      (courseClass): courseClass is NonNullable<typeof courseClass> =>
+        Boolean(courseClass)
+    ) ?? [];
 
   const handleModalStateChange = useCallback(
     (open: boolean) => {
@@ -170,10 +188,10 @@ export function RatingsContainer() {
   }, [semestersWithRatingsData]);
 
   const availableTerms = useMemo(() => {
-    if (!currentCourse.classes) return [];
+    if (!courseClasses.length) return [];
 
     const today = new Date();
-    const courseTerms: Term[] = currentCourse.classes
+    const courseTerms: Term[] = courseClasses
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
@@ -194,7 +212,7 @@ export function RatingsContainer() {
       });
 
     return _.uniqBy(courseTerms, (term) => term.label);
-  }, [currentCourse]);
+  }, [courseClasses]);
 
   const userRatings = useMemo(() => {
     if (!userRatingsData?.userRatings?.classes) return null;
@@ -313,7 +331,7 @@ export function RatingsContainer() {
   //   [ratingsData]
   // );
 
-  const getRefetchQueries = (classData: IClass) => {
+  const getRefetchQueries = (classData: IClassDetails) => {
     const queries: Array<
       | {
           query: typeof GetClassDocument;

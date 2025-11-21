@@ -100,9 +100,6 @@ export default function Catalog() {
     }
   );
 
-  // Course data is already included in _class via the backend resolver
-  const _course = _class?.course;
-
   const handleSelect = useCallback(
     (subject: string, courseNumber: string, number: string) => {
       if (!term) return;
@@ -210,8 +207,8 @@ export default function Catalog() {
             <div className={styles.loadingHeader} />
             <div className={styles.loadingBody} />
           </div>
-        ) : _class && _course ? (
-          <Class class={_class} course={_course} />
+        ) : _class ? (
+          <Class class={_class} />
         ) : null}
       </Flex>
     </div>

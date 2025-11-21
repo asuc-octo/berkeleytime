@@ -79,12 +79,10 @@ export const READ_COURSE = gql`
 export const READ_COURSE_FOR_CLASS = gql`
   query ReadCourseForClass($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
-      courseId
-      subject
-      number
       title
       description
-      aggregatedRatings {
+      requirements
+      aggregatedRatings(metricNames: [Recording, Attendance]) {
         metrics {
           categories {
             count
@@ -98,31 +96,6 @@ export const READ_COURSE_FOR_CLASS = gql`
       gradeDistribution {
         average
         pnpPercentage
-        distribution {
-          letter
-          count
-        }
-      }
-      academicCareer
-      requirements
-      requiredCourses {
-        subject
-        number
-      }
-      classes {
-        semester
-        year
-        number
-        anyPrintInScheduleOfClasses
-        primarySection {
-          startDate
-          meetings {
-            instructors {
-              familyName
-              givenName
-            }
-          }
-        }
       }
     }
   }
@@ -193,6 +166,31 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         }
         gradeDistribution {
           average
+        }
+      }
+    }
+  }
+`;
+
+export const READ_COURSE_CLASSES_FOR_RATINGS = gql`
+  query ReadCourseClassesForRatings(
+    $subject: String!
+    $number: CourseNumber!
+  ) {
+    course(subject: $subject, number: $number) {
+      classes {
+        semester
+        year
+        number
+        anyPrintInScheduleOfClasses
+        primarySection {
+          startDate
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
+          }
         }
       }
     }

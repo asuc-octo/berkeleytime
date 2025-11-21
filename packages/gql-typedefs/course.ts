@@ -19,7 +19,7 @@ export const courseTypeDef = gql`
     classes: [Class!]!
     crossListing: [Course!]!
     requiredCourses: [Course!]!
-    aggregatedRatings: AggregatedRatings!
+    aggregatedRatings(metricNames: [MetricName!]): AggregatedRatings!
     gradeDistribution: GradeDistribution!
 
     "Attributes"

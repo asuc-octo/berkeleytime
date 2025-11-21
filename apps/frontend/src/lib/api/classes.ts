@@ -7,6 +7,8 @@ import {
   Component,
   GetCanonicalCatalogQuery,
   GetClassQuery,
+  ReadClassDetailsQuery,
+  ReadCourseForClassQuery,
 } from "../generated/graphql";
 
 export const READ_CLASS = gql`
@@ -216,9 +218,198 @@ export const READ_CLASS = gql`
   }
 `;
 
+export const READ_CLASS_DETAILS = gql`
+  query ReadClassDetails(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      year
+      semester
+      subject
+      sessionId
+      courseNumber
+      number
+      unitsMax
+      unitsMin
+      primarySection {
+        sectionId
+        number
+        component
+        sectionAttributes(attributeCode: "NOTE") {
+          attribute {
+            code
+            description
+            formalDescription
+          }
+          value {
+            code
+            description
+            formalDescription
+          }
+        }
+        enrollment {
+          latest {
+            endTime
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+            seatReservationCount {
+              enrolledCount
+              maxEnroll
+              number
+            }
+          }
+          seatReservationTypes {
+            fromDate
+            number
+            requirementGroup
+          }
+        }
+        meetings {
+          days
+          location
+          endTime
+          startTime
+          instructors {
+            familyName
+            givenName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const READ_CLASS_SECTIONS = gql`
+  query ReadClassSections(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      sections {
+        sectionId
+        number
+        component
+        meetings {
+          days
+          location
+          endTime
+          startTime
+        }
+        enrollment {
+          latest {
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const READ_CLASS_GRADES = gql`
+  query ReadClassGrades(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      course {
+        gradeDistribution {
+          average
+          distribution {
+            letter
+            count
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const READ_CLASS_ENROLLMENT = gql`
+  query ReadClassEnrollment(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      primarySection {
+        enrollment {
+          history {
+            startTime
+            endTime
+            granularitySeconds
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+          latest {
+            startTime
+            endTime
+            granularitySeconds
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+        }
+      }
+    }
+  }
+`;
+
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
-export type IClassCourse = IClass["course"];
+export type IClassDetails = NonNullable<ReadClassDetailsQuery["class"]>;
+export type IClassCourse = NonNullable<ReadCourseForClassQuery["course"]>;
 
 export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];

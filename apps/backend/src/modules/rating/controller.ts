@@ -326,12 +326,30 @@ export const getUserRatings = async (context: RequestContext) => {
   return formatUserRatings(userRatings[0]);
 };
 
+const filterAggregatedMetrics = (
+  aggregated: ReturnType<typeof formatAggregatedRatings>,
+  metricNames?: InputMaybe<MetricName[]>
+) => {
+  if (!metricNames || metricNames.length === 0) {
+    return aggregated;
+  }
+
+  const allowedMetrics = new Set(metricNames);
+  return {
+    ...aggregated,
+    metrics: aggregated.metrics.filter((metric) =>
+      allowedMetrics.has(metric.metricName as MetricName)
+    ),
+  };
+};
+
 export const getClassAggregatedRatings = async (
   year: number,
   semester: Semester,
   subject: string,
   courseNumber: string,
-  classNumber?: InputMaybe<string>
+  classNumber?: InputMaybe<string>,
+  metricNames?: InputMaybe<MetricName[]>
 ) => {
   const aggregated = classNumber
     ? await ratingAggregator({
@@ -352,12 +370,16 @@ export const getClassAggregatedRatings = async (
       metrics: [],
     };
 
-  return formatAggregatedRatings(aggregated[0]);
+  return filterAggregatedMetrics(
+    formatAggregatedRatings(aggregated[0]),
+    metricNames
+  );
 };
 
 export const getCourseAggregatedRatings = async (
   subject: string,
-  courseNumber: string
+  courseNumber: string,
+  metricNames?: InputMaybe<MetricName[]>
 ) => {
   const aggregated = await courseRatingAggregator(subject, courseNumber);
 
@@ -373,7 +395,7 @@ export const getCourseAggregatedRatings = async (
   }
 
   const formattedResult = formatAggregatedRatings(aggregated[0]);
-  return formattedResult;
+  return filterAggregatedMetrics(formattedResult, metricNames);
 };
 
 export const getSemestersWithRatings = async (

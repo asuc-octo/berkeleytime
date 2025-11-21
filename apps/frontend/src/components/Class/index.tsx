@@ -45,7 +45,7 @@ import ClassContext from "@/contexts/ClassContext";
 import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
-import { IClass, IClassCourse, signIn } from "@/lib/api";
+import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
 import {
   CreateRatingDocument,
   GetUserRatingsDocument,
@@ -91,7 +91,7 @@ function Root({ dialog, children }: RootProps) {
 }
 
 interface ControlledProps {
-  class: IClass;
+  class: IClassDetails;
   course?: IClassCourse;
   year?: never;
   semester?: never;
@@ -179,7 +179,7 @@ export default function Class({
     }
   );
 
-  const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
 
   useEffect(() => {
@@ -241,6 +241,19 @@ export default function Class({
   const bookmark = useCallback(async () => {
     if (!user || !_class) return;
 
+    const bookmarkEntry: typeof user.bookmarkedClasses[number] = {
+      __typename: "Class",
+      ..._class,
+      course: {
+        __typename: "Course",
+        title: _course?.title ?? "",
+      },
+      gradeDistribution: {
+        __typename: "GradeDistribution",
+        average: _course?.gradeDistribution?.average ?? null,
+      },
+    };
+
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
           (bookmarkedClass) =>
@@ -252,7 +265,7 @@ export default function Class({
               bookmarkedClass.semester === _class?.semester
             )
         )
-      : user.bookmarkedClasses.concat(_class);
+      : user.bookmarkedClasses.concat(bookmarkEntry);
     await updateUser(
       {
         bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
@@ -273,7 +286,7 @@ export default function Class({
         },
       }
     );
-  }, [_class, bookmarked, updateUser, user]);
+  }, [_class, _course, bookmarked, updateUser, user]);
 
   useEffect(() => {
     if (!_class) return;
@@ -427,7 +440,7 @@ export default function Class({
   // const seatReservationCount =
   //   _class?.primarySection.enrollment?.latest?.seatReservationCount ?? [];
 
-  const courseGradeDistribution = _class?.course.gradeDistribution;
+  const courseGradeDistribution = _course?.gradeDistribution;
 
   const hasCourseGradeSummary = useMemo(() => {
     if (!courseGradeDistribution) return false;
@@ -442,10 +455,7 @@ export default function Class({
       return true;
     }
 
-    return courseGradeDistribution.distribution?.some((grade) => {
-      const count = grade.count ?? 0;
-      return count > 0;
-    });
+    return false;
   }, [courseGradeDistribution]);
 
   const reservedSeatingMaxCount = useMemo(() => {
@@ -486,9 +496,7 @@ export default function Class({
                         #{formatClassNumber(_class.number)}
                       </span>
                     </h1>
-                    <p className={styles.description}>
-                      {_class.title || _class.course.title}
-                    </p>
+                    <p className={styles.description}>{_course?.title}</p>
                   </Flex>
                   <Flex gap="3">
                     {/* TODO: Reusable bookmark button */}
@@ -554,7 +562,7 @@ export default function Class({
                       }}
                     >
                       <AverageGrade
-                        gradeDistribution={_class.course.gradeDistribution}
+                        gradeDistribution={_course?.gradeDistribution}
                       />
                     </Link>
                   )}

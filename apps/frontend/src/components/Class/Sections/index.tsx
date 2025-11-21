@@ -6,6 +6,7 @@ import { Box, Container, PillSwitcher } from "@repo/theme";
 
 import { getEnrollmentColor } from "@/components/Capacity";
 import Time from "@/components/Time";
+import { useReadClassSections } from "@/hooks/api/classes/useReadClass";
 import useClass from "@/hooks/useClass";
 import { componentMap } from "@/lib/api";
 import { Component } from "@/lib/generated/graphql";
@@ -52,15 +53,24 @@ const getLocationLink = (location?: string) => {
 
 export default function Sections() {
   const { class: _class } = useClass();
+  const { data, loading } = useReadClassSections(
+    _class.year,
+    _class.semester,
+    _class.subject,
+    _class.courseNumber,
+    _class.number
+  );
+
+  const sections = data?.sections ?? [];
 
   // Group sections by component type
   const groups = useMemo(() => {
-    const sortedSections = _class.sections.toSorted((a, b) =>
+    const sortedSections = sections.toSorted((a, b) =>
       a.number.localeCompare(b.number)
     );
 
     return Object.groupBy(sortedSections, (section) => section.component);
-  }, [_class]);
+  }, [sections]);
 
   // Generate tab items from available component types
   const tabItems = useMemo(() => {
@@ -81,8 +91,24 @@ export default function Sections() {
     }
   }, [tabItems, activeTab]);
 
+  if (loading) {
+    return (
+      <Box p="5">
+        <Container size="3">
+          <div className={styles.placeholder}>
+            <FrameAltEmpty width={32} height={32} />
+            <p className={styles.heading}>Loading Sections</p>
+            <p className={styles.paragraph}>
+              Hang tight while we fetch section details.
+            </p>
+          </div>
+        </Container>
+      </Box>
+    );
+  }
+
   const content =
-    _class.sections.length === 0 ? (
+    sections.length === 0 ? (
       <div className={styles.placeholder}>
         <FrameAltEmpty width={32} height={32} />
         <p className={styles.heading}>No Associated Sections</p>
