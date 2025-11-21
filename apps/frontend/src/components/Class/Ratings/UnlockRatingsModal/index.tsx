@@ -5,8 +5,9 @@ import { Button } from "@repo/theme";
 
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { Semester } from "@/lib/generated/graphql";
+import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
-import { SubmitRatingPopup } from "../UserFeedbackModal/ConfirmationPopups";
+import { ErrorDialog, SubmitRatingPopup } from "../RatingDialog";
 import { RatingFormBody } from "../UserFeedbackModal/RatingFormBody";
 import { RatingModalLayout } from "../UserFeedbackModal/RatingModalLayout";
 import { useRatingFormState } from "../UserFeedbackModal/useRatingFormState";
@@ -71,6 +72,8 @@ export function UnlockRatingsModal({
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationClass, setAnimationClass] = useState("");
   const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
   const shouldFetchCourseData = !!selectedCourse;
   const { data: courseData } = useReadCourseWithInstructor(
@@ -169,7 +172,9 @@ export function UnlockRatingsModal({
         onSubmitPopupChange?.(true);
       }
     } catch (error) {
-      console.error("Error submitting ratings:", error);
+      const message = getRatingErrorMessage(error);
+      setErrorMessage(message);
+      setIsErrorDialogOpen(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -280,6 +285,11 @@ export function UnlockRatingsModal({
           setIsSubmitRatingPopupOpen(false);
           onSubmitPopupChange?.(false);
         }}
+      />
+      <ErrorDialog
+        isOpen={isErrorDialogOpen}
+        onClose={() => setIsErrorDialogOpen(false)}
+        errorMessage={errorMessage}
       />
     </>
   );

@@ -6,8 +6,11 @@ import _ from "lodash";
 
 import { Grid } from "@repo/theme";
 
+import {
+  DeleteRatingPopup,
+  ErrorDialog,
+} from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
-import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
 import {
   MetricData,
   formatInstructorText,
@@ -29,6 +32,7 @@ import {
   GetUserRatingsDocument,
   Semester,
 } from "@/lib/generated/graphql";
+import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import { RatingCard } from "./RatingCard";
 import styles from "./Ratings.module.scss";
@@ -43,6 +47,8 @@ export default function Ratings() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditThankYouOpen, setIsEditThankYouOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [courseQuery, setCourseQuery] = useState<{
     subject: string;
     courseNumber: string;
@@ -201,7 +207,9 @@ export default function Ratings() {
           refetchQueries: buildRefetchQueries(ratingForEdit),
         });
       } catch (err) {
-        console.error("Error editing rating:", err);
+        const message = getRatingErrorMessage(err);
+        setErrorMessage(message);
+        setIsErrorDialogOpen(true);
       }
     },
     [
@@ -234,7 +242,9 @@ export default function Ratings() {
       });
       closeDeleteModal();
     } catch (err) {
-      console.error("Error deleting rating:", err);
+      const message = getRatingErrorMessage(err);
+      setErrorMessage(message);
+      setIsErrorDialogOpen(true);
     }
   }, [
     ratingForDelete,
@@ -301,6 +311,11 @@ export default function Ratings() {
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}
         onConfirmDelete={handleConfirmDelete}
+      />
+      <ErrorDialog
+        isOpen={isErrorDialogOpen}
+        onClose={() => setIsErrorDialogOpen(false)}
+        errorMessage={errorMessage}
       />
     </div>
   );

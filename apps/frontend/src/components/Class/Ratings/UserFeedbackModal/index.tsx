@@ -7,8 +7,8 @@ import { useReadTerms } from "@/hooks/api";
 import { IUserRatingClass } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
+import { SubmitRatingPopup } from "../RatingDialog";
 import { MetricData, toMetricData } from "../metricsUtil";
-import { SubmitRatingPopup } from "./ConfirmationPopups";
 import { RatingFormBody } from "./RatingFormBody";
 import { RatingModalLayout } from "./RatingModalLayout";
 // eslint-disable-next-line css-modules/no-unused-class

@@ -8,8 +8,11 @@ import { useSearchParams } from "react-router-dom";
 import { METRIC_ORDER } from "@repo/shared";
 import { Color, Container, Select } from "@repo/theme";
 
+import {
+  DeleteRatingPopup,
+  ErrorDialog,
+} from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
-import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
 import { useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
@@ -31,6 +34,7 @@ import {
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
+import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import { RatingButton } from "./RatingButton";
 import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
@@ -70,6 +74,8 @@ const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const { class: currentClass, course: currentCourse } = useClass();
   const [selectedTerm, setSelectedTerm] = useState("all");
   const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
@@ -506,7 +512,9 @@ export function RatingsContainer() {
             });
             setIsModalOpen(false);
           } catch (error) {
-            console.error("Error submitting rating:", error);
+            const message = getRatingErrorMessage(error);
+            setErrorMessage(message);
+            setIsErrorDialogOpen(true);
           }
         }}
         initialUserClass={userRatings}
@@ -519,19 +527,31 @@ export function RatingsContainer() {
         }}
         onConfirmDelete={async () => {
           if (userRatings) {
-            await deleteRatingHelper({
-              userRating: userRatings,
-              deleteRatingMutation,
-              classIdentifiers: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                number: currentClass.number,
-              },
-              refetchQueries: getRefetchQueries(currentClass),
-            });
-            setIsDeleteModalOpen(false);
+            try {
+              await deleteRatingHelper({
+                userRating: userRatings,
+                deleteRatingMutation,
+                classIdentifiers: {
+                  subject: currentClass.subject,
+                  courseNumber: currentClass.courseNumber,
+                  number: currentClass.number,
+                },
+                refetchQueries: getRefetchQueries(currentClass),
+              });
+              setIsDeleteModalOpen(false);
+            } catch (error) {
+              const message = getRatingErrorMessage(error);
+              setErrorMessage(message);
+              setIsErrorDialogOpen(true);
+            }
           }
         }}
+      />
+
+      <ErrorDialog
+        isOpen={isErrorDialogOpen}
+        onClose={() => setIsErrorDialogOpen(false)}
+        errorMessage={errorMessage}
       />
     </>
   );
