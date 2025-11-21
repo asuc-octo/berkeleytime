@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef } from "react";
 import _ from "lodash";
 
 import { ICourse } from "@/lib/api";
-import { Semester, TemporalPosition } from "@/lib/generated/graphql";
 import { sortByTermDescending } from "@/lib/classes";
+import { Semester, TemporalPosition } from "@/lib/generated/graphql";
 
 import { formatInstructorText } from "../metricsUtil";
 
@@ -71,7 +71,8 @@ export function useTermFiltering({
       if (!position) return true;
 
       return (
-        position === TemporalPosition.Past || position === TemporalPosition.Current
+        position === TemporalPosition.Past ||
+        position === TemporalPosition.Current
       );
     });
   }, [availableTerms, termsData]);
@@ -94,14 +95,16 @@ export function useTermFiltering({
       .map((c) => {
         // Format instructor text only if primarySection has meetings structure
         const instructorText = c.primarySection?.meetings
-          ? formatInstructorText(c.primarySection as {
-              meetings: {
-                instructors: {
-                  givenName?: string | null;
-                  familyName?: string | null;
+          ? formatInstructorText(
+              c.primarySection as {
+                meetings: {
+                  instructors: {
+                    givenName?: string | null;
+                    familyName?: string | null;
+                  }[];
                 }[];
-              }[];
-            })
+              }
+            )
           : "";
         return {
           value: `${c.semester} ${c.year} ${c.number}`,

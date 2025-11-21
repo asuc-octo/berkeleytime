@@ -85,7 +85,11 @@ export function AttendanceForm({
   );
 }
 
-export function RatingsForm({ metricData, setMetricData, startQuestionNumber }: RatingsFormProps) {
+export function RatingsForm({
+  metricData,
+  setMetricData,
+  startQuestionNumber,
+}: RatingsFormProps) {
   const handleRatingClick = (type: MetricName, value: number) => {
     setMetricData((prev) => ({
       ...prev,

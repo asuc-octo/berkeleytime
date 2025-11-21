@@ -1,17 +1,64 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useMutation } from "@apollo/client/react";
 import { Search } from "iconoir-react";
+import _ from "lodash";
 
 import { Grid } from "@repo/theme";
 
+import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
+import { DeleteRatingPopup } from "@/components/Class/Ratings/UserFeedbackModal/ConfirmationPopups";
+import {
+  MetricData,
+  formatInstructorText,
+} from "@/components/Class/Ratings/metricsUtil";
+import {
+  deleteRating as deleteRatingHelper,
+  submitRating as submitRatingHelper,
+} from "@/components/Class/Ratings/ratingMutations";
+import { useReadCourseWithInstructor } from "@/hooks/api";
 import { useUserRatings } from "@/hooks/api/ratings";
+import { IUserRatingClass } from "@/lib/api";
+import { sortByTermDescending } from "@/lib/classes";
+import {
+  CreateRatingDocument,
+  DeleteRatingDocument,
+  GetClassDocument,
+  GetCourseRatingsDocument,
+  GetSemestersWithRatingsDocument,
+  GetUserRatingsDocument,
+  Semester,
+} from "@/lib/generated/graphql";
 
 import { RatingCard } from "./RatingCard";
 import styles from "./Ratings.module.scss";
 
 export default function Ratings() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [ratingForEdit, setRatingForEdit] = useState<IUserRatingClass | null>(
+    null
+  );
+  const [ratingForDelete, setRatingForDelete] =
+    useState<IUserRatingClass | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditThankYouOpen, setIsEditThankYouOpen] = useState(false);
+  const [courseQuery, setCourseQuery] = useState<{
+    subject: string;
+    courseNumber: string;
+  } | null>(null);
+
   const { ratings, loading, error } = useUserRatings();
+  const [createRatingMutation] = useMutation(CreateRatingDocument);
+  const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
+
+  const { data: selectedCourse } = useReadCourseWithInstructor(
+    courseQuery?.subject ?? "",
+    courseQuery?.courseNumber ?? "",
+    {
+      skip: !courseQuery,
+    }
+  );
 
   // Preload rating links when ratings are available
   useEffect(() => {
@@ -42,6 +89,159 @@ export default function Ratings() {
       return searchableText.includes(query);
     });
   }, [ratings, searchQuery]);
+
+  const availableTerms = useMemo(() => {
+    if (!selectedCourse?.classes) return [];
+
+    const courseTerms = selectedCourse.classes
+      .toSorted(sortByTermDescending)
+      .filter((c) => c.anyPrintInScheduleOfClasses !== false)
+      .filter((c) => {
+        if (c.primarySection?.startDate) {
+          const startDate = new Date(c.primarySection.startDate);
+          return startDate <= new Date();
+        }
+        return true;
+      })
+      .map((c) => {
+        return {
+          value: `${c.semester} ${c.year} ${c.number}`,
+          label: `${c.semester} ${c.year} ${formatInstructorText(c.primarySection)}`,
+          semester: c.semester as Semester,
+          year: c.year,
+        };
+      });
+
+    return _.uniqBy(courseTerms, (term) => term.label);
+  }, [selectedCourse]);
+
+  const currentClassForModal = useMemo(() => {
+    if (!ratingForEdit) return null;
+    return {
+      subject: ratingForEdit.subject,
+      courseNumber: ratingForEdit.courseNumber,
+      number: ratingForEdit.classNumber,
+      semester: ratingForEdit.semester,
+      year: ratingForEdit.year,
+    };
+  }, [ratingForEdit]);
+
+  const handleEditClick = useCallback((rating: IUserRatingClass) => {
+    setRatingForEdit(rating);
+    setCourseQuery({
+      subject: rating.subject,
+      courseNumber: rating.courseNumber,
+    });
+    setIsEditModalOpen(true);
+  }, []);
+
+  const handleDeleteClick = useCallback((rating: IUserRatingClass) => {
+    setRatingForDelete(rating);
+    setIsDeleteModalOpen(true);
+  }, []);
+
+  const closeEditModal = useCallback(() => {
+    setIsEditModalOpen(false);
+  }, []);
+
+  const closeDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(false);
+    setRatingForDelete(null);
+  }, []);
+
+  const buildRefetchQueries = useCallback((rating: IUserRatingClass) => {
+    return [
+      {
+        query: GetClassDocument,
+        variables: {
+          year: rating.year,
+          semester: rating.semester,
+          subject: rating.subject,
+          courseNumber: rating.courseNumber,
+          number: rating.classNumber,
+          sessionId: null,
+        },
+      },
+      {
+        query: GetCourseRatingsDocument,
+        variables: {
+          subject: rating.subject,
+          number: rating.courseNumber,
+        },
+      },
+      {
+        query: GetSemestersWithRatingsDocument,
+        variables: {
+          subject: rating.subject,
+          courseNumber: rating.courseNumber,
+        },
+      },
+      { query: GetUserRatingsDocument },
+    ];
+  }, []);
+
+  const handleSubmitEdit = useCallback(
+    async (
+      metricValues: MetricData,
+      termInfo: { semester: Semester; year: number }
+    ) => {
+      if (!ratingForEdit) return;
+      try {
+        await submitRatingHelper({
+          metricValues,
+          termInfo,
+          createRatingMutation,
+          deleteRatingMutation,
+          classIdentifiers: {
+            subject: ratingForEdit.subject,
+            courseNumber: ratingForEdit.courseNumber,
+            number: ratingForEdit.classNumber,
+          },
+          currentRatings: ratingForEdit,
+          refetchQueries: buildRefetchQueries(ratingForEdit),
+        });
+      } catch (err) {
+        console.error("Error editing rating:", err);
+      }
+    },
+    [
+      ratingForEdit,
+      createRatingMutation,
+      deleteRatingMutation,
+      buildRefetchQueries,
+    ]
+  );
+
+  useEffect(() => {
+    if (!isEditModalOpen && !isEditThankYouOpen) {
+      setRatingForEdit(null);
+      setCourseQuery(null);
+    }
+  }, [isEditModalOpen, isEditThankYouOpen]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!ratingForDelete) return;
+    try {
+      await deleteRatingHelper({
+        userRating: ratingForDelete,
+        deleteRatingMutation,
+        classIdentifiers: {
+          subject: ratingForDelete.subject,
+          courseNumber: ratingForDelete.courseNumber,
+          number: ratingForDelete.classNumber,
+        },
+        refetchQueries: buildRefetchQueries(ratingForDelete),
+      });
+      closeDeleteModal();
+    } catch (err) {
+      console.error("Error deleting rating:", err);
+    }
+  }, [
+    ratingForDelete,
+    deleteRatingMutation,
+    buildRefetchQueries,
+    closeDeleteModal,
+  ]);
 
   return (
     <div>
@@ -75,11 +275,33 @@ export default function Ratings() {
             style={{ marginBottom: 40 }}
           >
             {filteredRatings.map((rating) => (
-              <RatingCard rating={rating} />
+              <RatingCard
+                key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
+                rating={rating}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+              />
             ))}
           </Grid>
         )}
       </div>
+      {ratingForEdit && currentClassForModal && (
+        <UserFeedbackModal
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          title="Edit Rating"
+          currentClass={currentClassForModal}
+          availableTerms={availableTerms}
+          onSubmit={handleSubmitEdit}
+          initialUserClass={ratingForEdit}
+          onSubmitPopupChange={setIsEditThankYouOpen}
+        />
+      )}
+      <DeleteRatingPopup
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirmDelete={handleConfirmDelete}
+      />
     </div>
   );
 }

@@ -132,14 +132,17 @@ export const checkConstraint = (
  * Returns formatted text like "(John Doe)" for single instructor or "(John Doe, et al.)" for multiple.
  */
 export function formatInstructorText(
-  primarySection: {
-    meetings: Array<{
-      instructors: Array<{
-        givenName?: string | null;
-        familyName?: string | null;
-      }>;
-    }>;
-  } | null | undefined
+  primarySection:
+    | {
+        meetings: Array<{
+          instructors: Array<{
+            givenName?: string | null;
+            familyName?: string | null;
+          }>;
+        }>;
+      }
+    | null
+    | undefined
 ): string {
   if (!primarySection) {
     return "(No instructor)";

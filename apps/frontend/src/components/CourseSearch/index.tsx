@@ -162,7 +162,10 @@ export default function CourseSearch({
                   {!minimal && <h2>CATALOG</h2>}
                   <div className={styles.catalogList}>
                     {currentCourses.map((course) => {
-                      const isRated = isCourseRated(course.subject, course.number);
+                      const isRated = isCourseRated(
+                        course.subject,
+                        course.number
+                      );
                       return (
                         <button
                           key={`${course.subject}-${course.number}`}
@@ -178,14 +181,20 @@ export default function CourseSearch({
                         >
                           <span>
                             {course.subject} {course.number}
-                            {isRated && <span className={styles.ratedLabel}> (Rated)</span>}
+                            {isRated && (
+                              <span className={styles.ratedLabel}>
+                                {" "}
+                                (Rated)
+                              </span>
+                            )}
                           </span>
                         </button>
                       );
                     })}
                     {!searchQuery && catalogCourses.length > 50 && (
                       <div className={styles.moreCoursesHint}>
-                        +{catalogCourses.length - 50} more courses. Search and narrow results.
+                        +{catalogCourses.length - 50} more courses. Search and
+                        narrow results.
                       </div>
                     )}
                   </div>

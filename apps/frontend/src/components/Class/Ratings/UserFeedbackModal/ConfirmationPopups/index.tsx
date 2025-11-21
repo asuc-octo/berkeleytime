@@ -2,11 +2,7 @@ import { useState } from "react";
 
 import { VisuallyHidden } from "@radix-ui/themes";
 import classNames from "classnames";
-import {
-  ArrowRight,
-  CheckCircleSolid,
-  WarningTriangleSolid,
-} from "iconoir-react";
+import { CheckCircleSolid, WarningTriangleSolid } from "iconoir-react";
 
 import { Button, Dialog } from "@repo/theme";
 
@@ -44,10 +40,7 @@ export function SubmitRatingPopup({ isOpen, onClose }: SubmitRatingPopupProps) {
             </div>
           </Dialog.Body>
           <Dialog.Footer>
-            <Button onClick={onClose}>
-              Done
-              <ArrowRight />
-            </Button>
+            <Button onClick={onClose}>Done</Button>
           </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>

@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 
+import { useMutation, useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import {
   Bookmark,
@@ -24,6 +25,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import {
   Badge,
   Box,
@@ -35,8 +37,6 @@ import {
   Tooltip as ThemeTooltip,
 } from "@repo/theme";
 
-import { useMutation, useQuery } from "@apollo/client/react";
-import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
@@ -161,6 +161,7 @@ export default function Class({
   const [updateUser] = useUpdateUser();
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
+  const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
 
   const { data: course, loading: courseLoading } = useReadCourseForClass(
     providedClass?.subject ?? (subject as string),
@@ -308,8 +309,7 @@ export default function Class({
   }, [user, userRatingsCount]);
   const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(ratingsLockContext);
   const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
-  const ratingsNeeded =
-    RatingsTabLink.ratingsNeeded(ratingsLockContext) ?? 0;
+  const ratingsNeeded = RatingsTabLink.ratingsNeeded(ratingsLockContext) ?? 0;
 
   useEffect(() => {
     if (dialog || !ratingsLocked) return;
@@ -328,11 +328,13 @@ export default function Class({
 
     setUnlockModalGoalCount(ratingsNeeded);
     setIsUnlockModalOpen(true);
+    setIsUnlockThankYouOpen(false);
   }, [ratingsLocked, ratingsNeeded, user]);
 
   const handleUnlockModalClose = useCallback(() => {
     setIsUnlockModalOpen(false);
     setUnlockModalGoalCount(0);
+    setIsUnlockThankYouOpen(false);
   }, []);
 
   const handleUnlockRatingSubmit = useCallback(
@@ -464,9 +466,9 @@ export default function Class({
           <Box className={styles.header} pt="5" px="5">
             <Container size="3">
               <Flex direction="column" gap="5">
-              <Flex justify="between" align="start">
-                <Flex gap="3">
-                  {/* TODO: Reusable pin button
+                <Flex justify="between" align="start">
+                  <Flex gap="3">
+                    {/* TODO: Reusable pin button
               <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
@@ -477,63 +479,79 @@ export default function Class({
                   {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
                   </Tooltip> */}
-                  <ThemeTooltip content="Add to schedule">
-                    <IconButton>
-                      <CalendarPlus />
-                    </IconButton>
-                  </ThemeTooltip>
-                </Flex>
-                <Flex gap="3">
-                  {/* TODO: Reusable bookmark button */}
-                  <ThemeTooltip
-                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
-                  >
-                    <IconButton
-                      className={classNames(styles.bookmark, {
-                        [styles.active]: bookmarked,
-                      })}
-                      onClick={() => bookmark()}
-                      disabled={userLoading}
+                    <ThemeTooltip content="Add to schedule">
+                      <IconButton>
+                        <CalendarPlus />
+                      </IconButton>
+                    </ThemeTooltip>
+                  </Flex>
+                  <Flex gap="3">
+                    {/* TODO: Reusable bookmark button */}
+                    <ThemeTooltip
+                      content={bookmarked ? "Remove bookmark" : "Bookmark"}
                     >
-                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                    </IconButton>
-                  </ThemeTooltip>
-                  <ThemeTooltip content="Open in Berkeley Catalog">
-                    <IconButton
-                      as="a"
-                      href={getExternalLink(_class)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      <IconButton
+                        className={classNames(styles.bookmark, {
+                          [styles.active]: bookmarked,
+                        })}
+                        onClick={() => bookmark()}
+                        disabled={userLoading}
+                      >
+                        {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                      </IconButton>
+                    </ThemeTooltip>
+                    <ThemeTooltip content="Open in Berkeley Catalog">
+                      <IconButton
+                        as="a"
+                        href={getExternalLink(_class)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <OpenNewWindow />
+                      </IconButton>
+                    </ThemeTooltip>
+                  </Flex>
+                </Flex>
+                <Flex direction="column" gap="4">
+                  <Flex direction="column" gap="1">
+                    <h1 className={styles.heading}>
+                      {_class.subject} {_class.courseNumber}{" "}
+                      <span className={styles.sectionNumber}>
+                        #{formatClassNumber(_class.number)}
+                      </span>
+                    </h1>
+                    <p className={styles.description}>
+                      {_class.title || _class.course.title}
+                    </p>
+                  </Flex>
+                  <Flex gap="3" align="center">
+                    <EnrollmentDisplay
+                      enrolledCount={
+                        primarySection?.enrollment?.latest?.enrolledCount
+                      }
+                      maxEnroll={primarySection?.enrollment?.latest?.maxEnroll}
+                      time={primarySection?.enrollment?.latest?.endTime}
                     >
-                      <OpenNewWindow />
-                    </IconButton>
-                  </ThemeTooltip>
-                </Flex>
-              </Flex>
-              <Flex direction="column" gap="4">
-                <Flex direction="column" gap="1">
-                  <h1 className={styles.heading}>
-                    {_class.subject} {_class.courseNumber}{" "}
-                    <span className={styles.sectionNumber}>
-                      #{formatClassNumber(_class.number)}
-                    </span>
-                  </h1>
-                  <p className={styles.description}>
-                    {_class.title || _class.course.title}
-                  </p>
-                </Flex>
-                <Flex gap="3" align="center">
-                  <EnrollmentDisplay
-                    enrolledCount={
-                      primarySection?.enrollment?.latest?.enrolledCount
-                    }
-                    maxEnroll={primarySection?.enrollment?.latest?.maxEnroll}
-                    time={primarySection?.enrollment?.latest?.endTime}
-                  >
-                    {(content) => (
+                      {(content) => (
+                        <Link
+                          to={`/enrollment?input=${encodeURIComponent(
+                            `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            textDecoration: "none",
+                          }}
+                        >
+                          {content}
+                        </Link>
+                      )}
+                    </EnrollmentDisplay>
+                    {hasCourseGradeSummary && (
                       <Link
-                        to={`/enrollment?input=${encodeURIComponent(
-                          `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                        to={`/grades?input=${encodeURIComponent(
+                          `${_class.subject};${_class.courseNumber}`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -542,157 +560,145 @@ export default function Class({
                           textDecoration: "none",
                         }}
                       >
-                        {content}
+                        <AverageGrade
+                          gradeDistribution={_class.course.gradeDistribution}
+                        />
                       </Link>
                     )}
-                  </EnrollmentDisplay>
-                  {hasCourseGradeSummary && (
-                    <Link
-                      to={`/grades?input=${encodeURIComponent(
-                        `${_class.subject};${_class.courseNumber}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "inline-flex",
-                        textDecoration: "none",
-                      }}
-                    >
-                      <AverageGrade
-                        gradeDistribution={_class.course.gradeDistribution}
-                      />
-                    </Link>
-                  )}
-                  <Units
-                    unitsMax={_class.unitsMax}
-                    unitsMin={_class.unitsMin}
-                  />
-                  {primarySection?.sectionId && (
-                    <CCN sectionId={primarySection.sectionId} />
-                  )}
-                  {reservedSeatingMaxCount > 0 && (
-                    <Badge
-                      label="Reserved Seating"
-                      color={Color.Orange}
-                      icon={<InfoCircle />}
+                    <Units
+                      unitsMax={_class.unitsMax}
+                      unitsMin={_class.unitsMin}
                     />
-                  )}
+                    {primarySection?.sectionId && (
+                      <CCN sectionId={primarySection.sectionId} />
+                    )}
+                    {reservedSeatingMaxCount > 0 && (
+                      <Badge
+                        label="Reserved Seating"
+                        color={Color.Orange}
+                        icon={<InfoCircle />}
+                      />
+                    )}
+                  </Flex>
                 </Flex>
-              </Flex>
-              {dialog ? (
-                <Tabs.List asChild defaultValue="overview">
+                {dialog ? (
+                  <Tabs.List asChild defaultValue="overview">
+                    <Flex mx="-3" mb="3">
+                      <Tabs.Trigger value="overview" asChild>
+                        <MenuItem>Overview</MenuItem>
+                      </Tabs.Trigger>
+                      <Tabs.Trigger value="sections" asChild>
+                        <MenuItem>Sections</MenuItem>
+                      </Tabs.Trigger>
+                      {shouldShowRatingsTab && (
+                        <RatingsTabLink
+                          dialog
+                          classes={ratingsTabClasses}
+                          locked={ratingsLocked}
+                          onLockedClick={handleLockedTabClick}
+                          ratingsCount={ratingsCount}
+                          to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                        />
+                      )}
+                      <Tabs.Trigger value="grades" asChild>
+                        <MenuItem>Grades</MenuItem>
+                      </Tabs.Trigger>
+                      <Tabs.Trigger value="enrollment" asChild>
+                        <MenuItem>Enrollment</MenuItem>
+                      </Tabs.Trigger>
+                    </Flex>
+                  </Tabs.List>
+                ) : (
                   <Flex mx="-3" mb="3">
-                    <Tabs.Trigger value="overview" asChild>
-                      <MenuItem>Overview</MenuItem>
-                    </Tabs.Trigger>
-                    <Tabs.Trigger value="sections" asChild>
-                      <MenuItem>Sections</MenuItem>
-                    </Tabs.Trigger>
+                    <NavLink to={{ ...location, pathname: "." }} end>
+                      {({ isActive }) => (
+                        <MenuItem active={isActive}>Overview</MenuItem>
+                      )}
+                    </NavLink>
+                    <NavLink to={{ ...location, pathname: "sections" }}>
+                      {({ isActive }) => (
+                        <MenuItem active={isActive}>Sections</MenuItem>
+                      )}
+                    </NavLink>
                     {shouldShowRatingsTab && (
                       <RatingsTabLink
-                        dialog
                         classes={ratingsTabClasses}
                         locked={ratingsLocked}
                         onLockedClick={handleLockedTabClick}
                         ratingsCount={ratingsCount}
-                        to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                        to={{ ...location, pathname: "ratings" }}
                       />
                     )}
-                    <Tabs.Trigger value="grades" asChild>
-                      <MenuItem>Grades</MenuItem>
-                    </Tabs.Trigger>
-                    <Tabs.Trigger value="enrollment" asChild>
-                      <MenuItem>Enrollment</MenuItem>
-                    </Tabs.Trigger>
+                    <NavLink to={{ ...location, pathname: "grades" }}>
+                      {({ isActive }) => (
+                        <MenuItem active={isActive}>Grades</MenuItem>
+                      )}
+                    </NavLink>
+                    <NavLink to={{ ...location, pathname: "enrollment" }}>
+                      {({ isActive }) => (
+                        <MenuItem active={isActive}>Enrollment</MenuItem>
+                      )}
+                    </NavLink>
                   </Flex>
-                </Tabs.List>
-              ) : (
-                <Flex mx="-3" mb="3">
-                  <NavLink to={{ ...location, pathname: "." }} end>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Overview</MenuItem>
-                    )}
-                  </NavLink>
-                  <NavLink to={{ ...location, pathname: "sections" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Sections</MenuItem>
-                    )}
-                  </NavLink>
-                  {shouldShowRatingsTab && (
-                    <RatingsTabLink
-                      classes={ratingsTabClasses}
-                      locked={ratingsLocked}
-                      onLockedClick={handleLockedTabClick}
-                      ratingsCount={ratingsCount}
-                      to={{ ...location, pathname: "ratings" }}
-                    />
-                  )}
-                  <NavLink to={{ ...location, pathname: "grades" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Grades</MenuItem>
-                    )}
-                  </NavLink>
-                  <NavLink to={{ ...location, pathname: "enrollment" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Enrollment</MenuItem>
-                    )}
-                  </NavLink>
-                </Flex>
-              )}
-            </Flex>
-          </Container>
-        </Box>
-        <ClassContext
-          value={{
-            class: _class,
-            course: _course,
-          }}
-        >
-          <Body dialog={dialog}>
-            {dialog && (
-              <>
-                <Tabs.Content value="overview" asChild>
-                  <SuspenseBoundary>
-                    <Overview />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                <Tabs.Content value="sections" asChild>
-                  <SuspenseBoundary>
-                    <Sections />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                <Tabs.Content value="grades" asChild>
-                  <SuspenseBoundary>
-                    <Grades />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                {!ratingsLocked && (
-                  <Tabs.Content value="ratings" asChild>
+                )}
+              </Flex>
+            </Container>
+          </Box>
+          <ClassContext
+            value={{
+              class: _class,
+              course: _course,
+            }}
+          >
+            <Body dialog={dialog}>
+              {dialog && (
+                <>
+                  <Tabs.Content value="overview" asChild>
                     <SuspenseBoundary>
-                      <Ratings />
+                      <Overview />
                     </SuspenseBoundary>
                   </Tabs.Content>
-                )}
-                <Tabs.Content value="enrollment" asChild>
-                  <SuspenseBoundary>
-                    <Enrollment />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-              </>
-            )}
-          </Body>
-        </ClassContext>
-      </Flex>
-    </Root>
-    {user && ratingsLocked && unlockModalGoalCount > 0 && (
-      <UnlockRatingsModal
-        isOpen={isUnlockModalOpen}
-        onClose={handleUnlockModalClose}
-        onSubmit={handleUnlockRatingSubmit}
-        userRatedClasses={userRatedClasses}
-        requiredRatingsCount={unlockModalGoalCount}
-      />
-    )}
-  </>
+                  <Tabs.Content value="sections" asChild>
+                    <SuspenseBoundary>
+                      <Sections />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                  <Tabs.Content value="grades" asChild>
+                    <SuspenseBoundary>
+                      <Grades />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                  {!ratingsLocked && (
+                    <Tabs.Content value="ratings" asChild>
+                      <SuspenseBoundary>
+                        <Ratings />
+                      </SuspenseBoundary>
+                    </Tabs.Content>
+                  )}
+                  <Tabs.Content value="enrollment" asChild>
+                    <SuspenseBoundary>
+                      <Enrollment />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                </>
+              )}
+            </Body>
+          </ClassContext>
+        </Flex>
+      </Root>
+      {user &&
+        ((ratingsLocked && unlockModalGoalCount > 0) ||
+          isUnlockModalOpen ||
+          isUnlockThankYouOpen) && (
+          <UnlockRatingsModal
+            isOpen={isUnlockModalOpen}
+            onClose={handleUnlockModalClose}
+            onSubmit={handleUnlockRatingSubmit}
+            userRatedClasses={userRatedClasses}
+            requiredRatingsCount={unlockModalGoalCount}
+            onSubmitPopupChange={setIsUnlockThankYouOpen}
+          />
+        )}
+    </>
   );
 }

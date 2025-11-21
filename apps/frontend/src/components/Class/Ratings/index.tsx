@@ -51,6 +51,10 @@ import {
   getStatusColor,
   isMetricRating,
 } from "./metricsUtil";
+import {
+  deleteRating as deleteRatingHelper,
+  submitRating as submitRatingMutation,
+} from "./ratingMutations";
 
 // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
 // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
@@ -70,7 +74,6 @@ interface Term {
 type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
 
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
-const METRIC_NAMES = Object.values(MetricName) as MetricName[];
 
 export function RatingsContainer() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -138,9 +141,9 @@ export function RatingsContainer() {
   });
 
   // Create rating mutation
-  const [createRating] = useMutation(CreateRatingDocument);
+  const [createRatingMutation] = useMutation(CreateRatingDocument);
 
-  const [deleteRating] = useMutation(DeleteRatingDocument);
+  const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
 
   const [getAggregatedRatings, { data: aggregatedRatingsData }] =
     useLazyQuery<IAggregatedRatings>(GetAggregatedRatingsDocument);
@@ -385,121 +388,6 @@ export function RatingsContainer() {
     return queries;
   };
 
-  const ratingSubmit = async (
-    metricValues: MetricData,
-    termInfo: { semester: Semester; year: number },
-    createRatingMutation: typeof createRating,
-    deleteRatingMutation: typeof deleteRating,
-    currentClassData: IClass,
-    setModalOpen: Dispatch<SetStateAction<boolean>>,
-    currentRatings?: IUserRatingClass | null,
-    skipClose?: boolean
-  ) => {
-    try {
-      const populatedMetrics = METRIC_NAMES.filter((metricName) => {
-        const value = metricValues[metricName];
-        return value !== null && value !== undefined;
-      });
-      if (populatedMetrics.length === 0) {
-        throw new Error(`No populated metrics`);
-      }
-      const missingRequiredMetrics = REQUIRED_METRICS.filter(
-        (metric) => !populatedMetrics.includes(metric)
-      );
-      if (missingRequiredMetrics.length > 0) {
-        throw new Error(
-          `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
-        );
-      }
-      const refetchQueries = getRefetchQueries(currentClassData);
-
-      await Promise.all(
-        METRIC_NAMES.map((metric) => {
-          const value = metricValues[metric];
-          // If metric is not in populated metrics but was in current ratings, delete
-          if (!populatedMetrics.includes(metric)) {
-            const metricExists = currentRatings?.metrics?.some(
-              (m) => m.metricName === metric
-            );
-            if (metricExists) {
-              return deleteRatingMutation({
-                variables: {
-                  subject: currentClassData.subject,
-                  courseNumber: currentClassData.courseNumber,
-                  semester: termInfo.semester,
-                  year: termInfo.year,
-                  classNumber: currentClassData.number,
-                  metricName: metric,
-                },
-                refetchQueries,
-                awaitRefetchQueries: true,
-              });
-            }
-            // Skip if metric doesn't exist in current ratings
-            return Promise.resolve();
-          }
-          // Check if the current rating value is different from the new value
-          if (
-            currentRatings?.semester === termInfo.semester &&
-            currentRatings?.year === termInfo.year
-          ) {
-            const currentMetric = currentRatings?.metrics.find(
-              (m) => m.metricName === metric
-            );
-            if (currentMetric?.value === value) {
-              return Promise.resolve();
-            }
-          }
-          if (value === undefined) {
-            return Promise.resolve();
-          }
-          return createRatingMutation({
-            variables: {
-              subject: currentClassData.subject,
-              courseNumber: currentClassData.courseNumber,
-              semester: termInfo.semester,
-              year: termInfo.year,
-              classNumber: currentClassData.number,
-              metricName: metric,
-              value,
-            },
-            refetchQueries,
-            awaitRefetchQueries: true,
-          });
-        })
-      );
-
-      if (!skipClose) {
-        setModalOpen(false);
-      }
-    } catch (error) {
-      console.error("Error submitting ratings:", error);
-    }
-  };
-
-  const ratingDelete = async (
-    userRating: IUserRatingClass,
-    currentClassData: IClass,
-    deleteRatingMutation: typeof deleteRating
-  ) => {
-    const refetchQueries = getRefetchQueries(currentClassData);
-    const deletePromises = userRating.metrics.map((metric) =>
-      deleteRatingMutation({
-        variables: {
-          subject: currentClassData.subject,
-          courseNumber: currentClassData.courseNumber,
-          semester: userRating.semester,
-          year: userRating.year,
-          classNumber: currentClassData.number,
-          metricName: metric.metricName,
-        },
-        refetchQueries,
-        awaitRefetchQueries: true,
-      })
-    );
-    await Promise.all(deletePromises);
-  };
-
   return (
     <>
       {!hasRatings ? (
@@ -611,15 +499,20 @@ export function RatingsContainer() {
         availableTerms={availableTerms}
         onSubmit={async (metricValues, termInfo) => {
           try {
-            await ratingSubmit(
+            await submitRatingMutation({
               metricValues,
               termInfo,
-              createRating,
-              deleteRating,
-              currentClass,
-              setIsModalOpen,
-              userRatings
-            );
+              createRatingMutation,
+              deleteRatingMutation,
+              classIdentifiers: {
+                subject: currentClass.subject,
+                courseNumber: currentClass.courseNumber,
+                number: currentClass.number,
+              },
+              currentRatings: userRatings,
+              refetchQueries: getRefetchQueries(currentClass),
+            });
+            setIsModalOpen(false);
           } catch (error) {
             console.error("Error submitting rating:", error);
           }
@@ -634,7 +527,17 @@ export function RatingsContainer() {
         }}
         onConfirmDelete={async () => {
           if (userRatings) {
-            await ratingDelete(userRatings, currentClass, deleteRating);
+            await deleteRatingHelper({
+              userRating: userRatings,
+              deleteRatingMutation,
+              classIdentifiers: {
+                subject: currentClass.subject,
+                courseNumber: currentClass.courseNumber,
+                number: currentClass.number,
+              },
+              refetchQueries: getRefetchQueries(currentClass),
+            });
+            setIsDeleteModalOpen(false);
           }
         }}
       />

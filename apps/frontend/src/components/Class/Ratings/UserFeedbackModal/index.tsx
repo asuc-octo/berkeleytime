@@ -7,17 +7,14 @@ import { useReadTerms } from "@/hooks/api";
 import { IUserRatingClass } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
-import {
-  MetricData,
-  toMetricData,
-} from "../metricsUtil";
+import { MetricData, toMetricData } from "../metricsUtil";
 import { SubmitRatingPopup } from "./ConfirmationPopups";
 import { RatingFormBody } from "./RatingFormBody";
 import { RatingModalLayout } from "./RatingModalLayout";
-import { useRatingFormState } from "./useRatingFormState";
-import { useTermFiltering } from "./useTermFiltering";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
+import { useRatingFormState } from "./useRatingFormState";
+import { useTermFiltering } from "./useTermFiltering";
 
 interface Term {
   value: string;
@@ -43,6 +40,7 @@ interface UserFeedbackModalProps {
     termInfo: { semester: Semester; year: number }
   ) => Promise<void>;
   initialUserClass: IUserRatingClass | null;
+  onSubmitPopupChange?: (isOpen: boolean) => void;
 }
 
 export function UserFeedbackModal({
@@ -53,6 +51,7 @@ export function UserFeedbackModal({
   availableTerms = [],
   onSubmit,
   initialUserClass,
+  onSubmitPopupChange,
 }: UserFeedbackModalProps) {
   const { data: termsData } = useReadTerms();
   const initialMetricData = useMemo(
@@ -124,7 +123,13 @@ export function UserFeedbackModal({
       // Reset to initial empty state when initialUserClass is null (after deletion)
       setMetricData(initialMetricData);
     }
-  }, [initialUserClass, availableTerms, initialMetricData, setMetricData, setSelectedTerm]);
+  }, [
+    initialUserClass,
+    availableTerms,
+    initialMetricData,
+    setMetricData,
+    setSelectedTerm,
+  ]);
 
   const hasChanges = useMemo(() => {
     const termChanged = selectedTerm !== initialTermValue;
@@ -154,9 +159,7 @@ export function UserFeedbackModal({
     setIsSubmitting(true);
 
     try {
-      const selectedTermInfo = pastTerms.find(
-        (t) => t.value === selectedTerm
-      );
+      const selectedTermInfo = pastTerms.find((t) => t.value === selectedTerm);
       if (!selectedTermInfo) throw new Error("Invalid term selected");
 
       await onSubmit(metricData, {
@@ -166,6 +169,7 @@ export function UserFeedbackModal({
 
       onClose();
       setIsSubmitRatingPopupOpen(true);
+      onSubmitPopupChange?.(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
       setIsSubmitting(false);
@@ -175,11 +179,7 @@ export function UserFeedbackModal({
   };
 
   useEffect(() => {
-    if (
-      pastTerms.length === 1 &&
-      !selectedTerm &&
-      !hasAutoSelected.current
-    ) {
+    if (pastTerms.length === 1 && !selectedTerm && !hasAutoSelected.current) {
       setSelectedTerm(pastTerms[0].value);
       hasAutoSelected.current = true;
     }
@@ -214,11 +214,7 @@ export function UserFeedbackModal({
 
   const footer = (
     <>
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={handleClose}
-      >
+      <Button type="button" variant="secondary" onClick={handleClose}>
         Cancel
       </Button>
       <Button
@@ -270,6 +266,7 @@ export function UserFeedbackModal({
         onClose={() => {
           setIsSubmitRatingPopupOpen(false);
           hasAutoSelected.current = false;
+          onSubmitPopupChange?.(false);
         }}
       />
     </>

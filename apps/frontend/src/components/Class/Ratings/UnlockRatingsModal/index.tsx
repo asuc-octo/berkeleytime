@@ -7,12 +7,12 @@ import { useReadCourseWithInstructor } from "@/hooks/api";
 import { ICourse } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
-import { MetricData, toMetricData } from "../metricsUtil";
+import { SubmitRatingPopup } from "../UserFeedbackModal/ConfirmationPopups";
 import { RatingFormBody } from "../UserFeedbackModal/RatingFormBody";
 import { RatingModalLayout } from "../UserFeedbackModal/RatingModalLayout";
-import { SubmitRatingPopup } from "../UserFeedbackModal/ConfirmationPopups";
 import { useRatingFormState } from "../UserFeedbackModal/useRatingFormState";
 import { useTermFiltering } from "../UserFeedbackModal/useTermFiltering";
+import { MetricData, toMetricData } from "../metricsUtil";
 import styles from "./UnlockRatingsModal.module.scss";
 
 // Number of ratings required to unlock ratings view
@@ -35,6 +35,7 @@ interface UnlockRatingsModalProps {
   ) => Promise<void>;
   userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
   requiredRatingsCount?: number;
+  onSubmitPopupChange?: (isOpen: boolean) => void;
 }
 
 export function UnlockRatingsModal({
@@ -43,6 +44,7 @@ export function UnlockRatingsModal({
   onSubmit,
   userRatedClasses = [],
   requiredRatingsCount = DEFAULT_REQUIRED_RATINGS_COUNT,
+  onSubmitPopupChange,
 }: UnlockRatingsModalProps) {
   const initialMetricData = useMemo(
     () =>
@@ -96,7 +98,9 @@ export function UnlockRatingsModal({
   // Calculate progress across all n ratings
   const overallProgress = useMemo(() => {
     const currentFormProgress = progress / 100;
-    return ((currentRatingIndex + currentFormProgress) / requiredRatingsCount) * 100;
+    return (
+      ((currentRatingIndex + currentFormProgress) / requiredRatingsCount) * 100
+    );
   }, [progress, currentRatingIndex, requiredRatingsCount]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -170,6 +174,7 @@ export function UnlockRatingsModal({
 
         onClose();
         setIsSubmitRatingPopupOpen(true);
+        onSubmitPopupChange?.(true);
       }
     } catch (error) {
       console.error("Error submitting ratings:", error);
@@ -228,11 +233,7 @@ export function UnlockRatingsModal({
 
   const footer = (
     <>
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={handleClose}
-      >
+      <Button type="button" variant="secondary" onClick={handleClose}>
         Cancel
       </Button>
       <Button
@@ -288,6 +289,7 @@ export function UnlockRatingsModal({
         isOpen={isSubmitRatingPopupOpen}
         onClose={() => {
           setIsSubmitRatingPopupOpen(false);
+          onSubmitPopupChange?.(false);
         }}
       />
     </>

@@ -89,8 +89,8 @@ export function RatingFormBody({
       <div className={styles.formGroup}>
         <div className={styles.questionPair}>
           <h3>
-            {questionNumbers.semesterQuestionNumber}. What semester did you take this course?{" "}
-            <RequiredAsterisk />
+            {questionNumbers.semesterQuestionNumber}. What semester did you take
+            this course? <RequiredAsterisk />
           </h3>
           <div
             style={{
