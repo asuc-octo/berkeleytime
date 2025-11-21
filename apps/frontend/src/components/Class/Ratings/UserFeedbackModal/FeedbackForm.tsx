@@ -16,16 +16,19 @@ interface BooleanInputProps {
 interface AttendanceFormProps {
   metricData: MetricData;
   setMetricData: Dispatch<SetStateAction<MetricData>>;
+  startQuestionNumber: number;
 }
 
 interface RatingsFormProps {
   metricData: MetricData;
   setMetricData: Dispatch<SetStateAction<MetricData>>;
+  startQuestionNumber: number;
 }
 
 interface RatingScaleProps {
   type: MetricName;
   question: string;
+  questionNumber: number;
   leftLabel: string;
   rightLabel: string;
   metricData: MetricData;
@@ -35,6 +38,7 @@ interface RatingScaleProps {
 export function AttendanceForm({
   metricData,
   setMetricData,
+  startQuestionNumber,
 }: AttendanceFormProps) {
   const handleAttendanceClickClick = (
     type: MetricName,
@@ -48,10 +52,9 @@ export function AttendanceForm({
 
   return (
     <div>
-      {/* Question 5 */}
       <div className={styles.formGroup}>
         <div className={styles.questionPair}>
-          <h3>5. Is lecture attendance required?</h3>
+          <h3>{startQuestionNumber}. Is lecture attendance required?</h3>
           <BooleanOptions
             name="lectureAttendance"
             value={metricData["Attendance"] ?? null}
@@ -64,10 +67,9 @@ export function AttendanceForm({
         </div>
       </div>
 
-      {/* Question 6 */}
       <div className={styles.formGroup}>
         <div className={styles.questionPair}>
-          <h3>6. Were lectures recorded?</h3>
+          <h3>{startQuestionNumber + 1}. Were lectures recorded?</h3>
           <BooleanOptions
             name="lecturesRecorded"
             value={metricData["Recording"] ?? null}
@@ -83,7 +85,7 @@ export function AttendanceForm({
   );
 }
 
-export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
+export function RatingsForm({ metricData, setMetricData, startQuestionNumber }: RatingsFormProps) {
   const handleRatingClick = (type: MetricName, value: number) => {
     setMetricData((prev) => ({
       ...prev,
@@ -95,7 +97,8 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
     <div>
       <RatingScale
         type={MetricName.Usefulness}
-        question="2. How would you rate the usefulness of this course?"
+        question="How would you rate the usefulness of this course?"
+        questionNumber={startQuestionNumber}
         leftLabel="Not useful"
         rightLabel="Very useful"
         metricData={metricData}
@@ -104,7 +107,8 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
 
       <RatingScale
         type={MetricName.Difficulty}
-        question="3. How would you rate the difficulty of this course?"
+        question="How would you rate the difficulty of this course?"
+        questionNumber={startQuestionNumber + 1}
         leftLabel="Very easy"
         rightLabel="Very hard"
         metricData={metricData}
@@ -113,7 +117,8 @@ export function RatingsForm({ metricData, setMetricData }: RatingsFormProps) {
 
       <RatingScale
         type={MetricName.Workload}
-        question="4. How would you rate the workload of this course?"
+        question="How would you rate the workload of this course?"
+        questionNumber={startQuestionNumber + 2}
         leftLabel="Very light"
         rightLabel="Very heavy"
         metricData={metricData}
@@ -130,6 +135,7 @@ const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 const RatingScale = ({
   type,
   question,
+  questionNumber,
   leftLabel,
   rightLabel,
   metricData,
@@ -138,7 +144,7 @@ const RatingScale = ({
   <div className={styles.formGroup}>
     <div className={styles.questionPair}>
       <h3>
-        {question} <RequiredAsterisk />
+        {questionNumber}. {question} <RequiredAsterisk />
       </h3>
       <div className={styles.ratingScale}>
         <span>{leftLabel}</span>

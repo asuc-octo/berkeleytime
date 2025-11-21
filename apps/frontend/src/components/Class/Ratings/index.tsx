@@ -212,6 +212,21 @@ export function RatingsContainer() {
     return matchedRating as IUserRatingClass;
   }, [userRatingsData, currentClass]);
 
+  // Extract unique courses that the user has rated (for CourseSearch filtering)
+  const userRatedCourses = useMemo(() => {
+    if (!userRatingsData?.userRatings?.classes) return [];
+
+    const uniqueCourses = _.uniqBy(
+      userRatingsData.userRatings.classes.map((c: { subject: string; courseNumber: string }) => ({
+        subject: c.subject,
+        courseNumber: c.courseNumber,
+      })),
+      (c) => `${c.subject}-${c.courseNumber}`
+    );
+
+    return uniqueCourses;
+  }, [userRatingsData]);
+
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
     const metricsSource =
       selectedTerm !== "all" && termRatings?.metrics
@@ -376,7 +391,8 @@ export function RatingsContainer() {
     deleteRatingMutation: typeof deleteRating,
     currentClassData: IClass,
     setModalOpen: Dispatch<SetStateAction<boolean>>,
-    currentRatings?: IUserRatingClass | null
+    currentRatings?: IUserRatingClass | null,
+    skipClose?: boolean
   ) => {
     try {
       const populatedMetrics = METRIC_NAMES.filter((metricName) => {
@@ -452,7 +468,9 @@ export function RatingsContainer() {
         })
       );
 
-      setModalOpen(false);
+      if (!skipClose) {
+        setModalOpen(false);
+      }
     } catch (error) {
       console.error("Error submitting ratings:", error);
     }
@@ -590,7 +608,8 @@ export function RatingsContainer() {
         title={userRatings ? "Edit Rating" : "Rate Course"}
         currentClass={currentClass}
         availableTerms={availableTerms}
-        onSubmit={async (metricValues, termInfo, classInfo) => {
+        userRatedClasses={userRatedCourses}
+        onSubmit={async (metricValues, termInfo, classInfo, skipClose) => {
           try {
             const classToUse = classInfo
               ? {
@@ -607,7 +626,8 @@ export function RatingsContainer() {
               deleteRating,
               classToUse,
               setIsModalOpen,
-              userRatings
+              userRatings,
+              skipClose
             );
           } catch (error) {
             console.error("Error submitting rating:", error);

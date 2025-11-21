@@ -82,6 +82,21 @@
   span {
     font-weight: 500;
   }
+
+  &.ratedItem {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
+.ratedLabel {
+  color: var(--label-color);
+  font-weight: 400;
+  font-style: italic;
 }
 
 .dropdownPanel {

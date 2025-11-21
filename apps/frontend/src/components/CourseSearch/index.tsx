@@ -18,6 +18,7 @@ interface CourseSearchProps {
   selectedCourse: ICourse | null;
   inputStyle?: React.CSSProperties;
   minimal?: boolean;
+  ratedCourses?: Array<{ subject: string; courseNumber: string }>;
 }
 
 export default function CourseSearch({
@@ -26,6 +27,7 @@ export default function CourseSearch({
   selectedCourse,
   inputStyle,
   minimal = false,
+  ratedCourses = [],
 }: CourseSearchProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -78,6 +80,12 @@ export default function CourseSearch({
       setSearchQuery("");
     }
   }, [selectedCourse, isOpen]);
+
+  const isCourseRated = (subject: string, number: string) => {
+    return ratedCourses.some(
+      (rated) => rated.subject === subject && rated.courseNumber === number
+    );
+  };
 
   const handleFocus = () => {
     if (!searchQuery && selectedCourse) {
@@ -153,21 +161,28 @@ export default function CourseSearch({
                 >
                   {!minimal && <h2>CATALOG</h2>}
                   <div className={styles.catalogList}>
-                    {currentCourses.map((course) => (
-                      <button
-                        key={`${course.subject}-${course.number}`}
-                        className={styles.catalogItem}
-                        onClick={() => {
-                          onSelect?.(course);
-                          setSearchQuery("");
-                          setIsOpen(false);
-                        }}
-                      >
-                        <span>
-                          {course.subject} {course.number}
-                        </span>
-                      </button>
-                    ))}
+                    {currentCourses.map((course) => {
+                      const isRated = isCourseRated(course.subject, course.number);
+                      return (
+                        <button
+                          key={`${course.subject}-${course.number}`}
+                          className={`${styles.catalogItem} ${isRated ? styles.ratedItem : ""}`}
+                          onClick={() => {
+                            if (!isRated) {
+                              onSelect?.(course);
+                              setSearchQuery("");
+                              setIsOpen(false);
+                            }
+                          }}
+                          disabled={isRated}
+                        >
+                          <span>
+                            {course.subject} {course.number}
+                            {isRated && <span className={styles.ratedLabel}> (Rated)</span>}
+                          </span>
+                        </button>
+                      );
+                    })}
                     {!searchQuery && catalogCourses.length > 50 && (
                       <div className={styles.moreCoursesHint}>
                         +{catalogCourses.length - 50} more courses. Search and narrow results.
