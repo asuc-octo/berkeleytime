@@ -125,7 +125,6 @@ export const checkConstraint = (
 
 /**
  * Formats instructor names from a course class's primary section.
- * Returns formatted text like "(John Doe)" for single instructor or "(John Doe, et al.)" for multiple.
  */
 export function formatInstructorText(
   primarySection:
@@ -158,9 +157,11 @@ export function formatInstructorText(
 
   if (allInstructors.length === 0) {
     return "(No instructor)";
-  } else if (allInstructors.length === 1) {
-    return `(${allInstructors[0].givenName} ${allInstructors[0].familyName})`;
-  } else {
-    return `(${allInstructors[0].givenName} ${allInstructors[0].familyName}, et al.)`;
   }
+
+  // Show all instructors (now that we filter to professors only)
+  const names = allInstructors
+    .map((i) => `${i.givenName} ${i.familyName}`)
+    .join(", ");
+  return `(${names})`;
 }

@@ -130,8 +130,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         )
           return;
       }
+      if (!c.primarySection) return;
       c.primarySection.meetings.forEach((m) => {
-        // instructor for current class lecture
         m.instructors.forEach((i) => {
           instructorSet.add(`${i.familyName}, ${i.givenName}`);
         });
@@ -172,7 +172,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         : localSelectedInstructor === "all"
           ? []
           : course.classes.filter((c) =>
-              c.primarySection.meetings.find((m) =>
+              c.primarySection?.meetings.find((m) =>
                 m.instructors.find(
                   (i) =>
                     localSelectedInstructor ===
@@ -351,8 +351,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     [loading, outputs]
   );
 
-  const handleCourseSelect = (course: ICourse) => {
-    setSelectedCourse(course);
+  const handleCourseSelect = (course: Pick<ICourse, "subject" | "number">) => {
+    setSelectedCourse(course as ICourse);
 
     setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
     setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);
