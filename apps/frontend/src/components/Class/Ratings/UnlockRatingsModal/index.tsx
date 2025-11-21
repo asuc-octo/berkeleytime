@@ -170,11 +170,8 @@ export function UnlockRatingsModal({
       }
     } catch (error) {
       console.error("Error submitting ratings:", error);
-      setIsSubmitting(false);
     } finally {
-      if (currentRatingIndex >= requiredRatingsCount - 1) {
-        setIsSubmitting(false);
-      }
+      setIsSubmitting(false);
     }
   };
 

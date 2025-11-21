@@ -172,7 +172,6 @@ export function UserFeedbackModal({
       onSubmitPopupChange?.(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
-      setIsSubmitting(false);
     } finally {
       setIsSubmitting(false);
     }

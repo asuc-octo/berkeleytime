@@ -1,4 +1,4 @@
-export const RATINGS_REQUIRED_REVIEWS = 3;
+import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
 
 export interface RatingsLockContext {
   userRatingsCount?: number;
@@ -12,7 +12,7 @@ export const shouldDisplayRatingsTab = (context?: RatingsLockContext) => {
 };
 
 export const getRequiredRatingsTarget = (context?: RatingsLockContext) =>
-  context?.requiredRatingsCount ?? RATINGS_REQUIRED_REVIEWS;
+  context?.requiredRatingsCount ?? USER_REQUIRED_RATINGS_TO_UNLOCK;
 
 export const getRatingsNeeded = (context?: RatingsLockContext) => {
   if (!context) return 0;

@@ -25,6 +25,7 @@ import {
 } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
+import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
 import {
   Badge,
   Box,
@@ -38,6 +39,7 @@ import {
 
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
+import { CatalogTooltip } from "@/components/CatalogTooltip";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
@@ -58,7 +60,6 @@ import styles from "./Class.module.scss";
 import UnlockRatingsModal from "./Ratings/UnlockRatingsModal";
 import { MetricData } from "./Ratings/metricsUtil";
 import { type RatingsTabClasses, RatingsTabLink } from "./locks";
-import { RATINGS_REQUIRED_REVIEWS } from "./locks.helpers";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -300,12 +301,12 @@ export default function Class({
     if (!user) {
       return {
         requiresLogin: true,
-        requiredRatingsCount: RATINGS_REQUIRED_REVIEWS,
+        requiredRatingsCount: USER_REQUIRED_RATINGS_TO_UNLOCK,
       };
     }
     return {
       userRatingsCount,
-      requiredRatingsCount: RATINGS_REQUIRED_REVIEWS,
+      requiredRatingsCount: USER_REQUIRED_RATINGS_TO_UNLOCK,
     };
   }, [user, userRatingsCount]);
   const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(ratingsLockContext);
@@ -331,7 +332,7 @@ export default function Class({
     }
 
     const goalCount =
-      ratingsNeeded <= 0 ? RATINGS_REQUIRED_REVIEWS : ratingsNeeded;
+      ratingsNeeded <= 0 ? USER_REQUIRED_RATINGS_TO_UNLOCK : ratingsNeeded;
     setUnlockModalGoalCount(goalCount);
     setIsUnlockModalOpen(true);
     setIsUnlockThankYouOpen(false);

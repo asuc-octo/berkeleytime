@@ -56,7 +56,7 @@ export function UserSubmittedData() {
       {!atLeastOneConsensus ? (
         <>
           <p className={overviewStyles.description}>
-            No user-submitted information is available for this course yet.
+            More user-submitted information is required to show this content.
           </p>
           <Link
             to="ratings?feedbackModal=true"
