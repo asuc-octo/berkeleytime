@@ -41,7 +41,25 @@ export default function CourseSearch({
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];
-    return data.courses; // no transformation
+
+    // Deduplicate: keep course with highest courseId for each subject-number
+    // Not ideal behavior. This only happen if data is wrong.
+    const seen = new Map<string, (typeof data.courses)[0]>();
+    for (const course of data.courses) {
+      const key = `${course.subject}-${course.number}`;
+      const existing = seen.get(key);
+      if (!existing || course.courseId > existing.courseId) {
+        seen.set(key, course);
+      }
+    }
+
+    if (seen.size < data.courses.length) {
+      console.error(
+        `[CourseSearch] Deduplicated ${data.courses.length - seen.size} duplicate courses`
+      );
+    }
+
+    return Array.from(seen.values());
   }, [data]);
 
   const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
@@ -168,7 +186,7 @@ export default function CourseSearch({
                       );
                       return (
                         <button
-                          key={`${course.subject}-${course.number}`}
+                          key={course.courseId}
                           className={`${styles.catalogItem} ${isRated ? styles.ratedItem : ""}`}
                           onClick={() => {
                             if (!isRated) {
