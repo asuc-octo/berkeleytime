@@ -21,6 +21,9 @@ export const READ_COURSE_TITLE = gql`
 export const READ_COURSE_UNITS = gql`
   query ReadCourseUnits($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
+      courseId
+      subject
+      number
       classes {
         unitsMax
         semester
@@ -76,6 +79,9 @@ export const READ_COURSE = gql`
 export const READ_COURSE_FOR_CLASS = gql`
   query ReadCourseForClass($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
+      courseId
+      subject
+      number
       title
       description
       aggregatedRatings {
@@ -109,6 +115,7 @@ export const READ_COURSE_FOR_CLASS = gql`
         number
         anyPrintInScheduleOfClasses
         primarySection {
+          startDate
           meetings {
             instructors {
               familyName
@@ -124,6 +131,9 @@ export const READ_COURSE_FOR_CLASS = gql`
 export const READ_COURSE_GRADE_DIST = gql`
   query ReadCourseGradeDist($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
+      courseId
+      subject
+      number
       gradeDistribution {
         average
         distribution {
@@ -165,12 +175,14 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
         sessionId
         subject
         courseNumber
+        anyPrintInScheduleOfClasses
         primarySection {
           enrollment {
             latest {
               enrolledCount
             }
           }
+          startDate
           meetings {
             instructors {
               familyName
@@ -194,6 +206,7 @@ export type ICourseWithInstructorClass = NonNullable<
 export const GET_COURSE_NAMES = gql`
   query GetCourseNames {
     courses {
+      courseId
       subject
       number
       title
@@ -204,6 +217,7 @@ export const GET_COURSE_NAMES = gql`
 export const GET_COURSES = gql`
   query GetCourses {
     courses {
+      courseId
       subject
       number
       title

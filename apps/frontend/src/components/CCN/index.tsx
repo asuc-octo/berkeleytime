@@ -1,7 +1,8 @@
 import { MouseEvent, useRef, useState } from "react";
 
 import { ClipboardCheck, Hashtag, PasteClipboard } from "iconoir-react";
-import { Tooltip } from "radix-ui";
+
+import { CatalogTooltip } from "@/components/CatalogTooltip";
 
 import styles from "./CCN.module.scss";
 
@@ -42,8 +43,8 @@ export default function CCN({ sectionId, tooltip }: CCNProps) {
   };
 
   return (
-    <Tooltip.Root disableHoverableContent open={tooltip}>
-      <Tooltip.Trigger asChild>
+    <CatalogTooltip
+      trigger={
         <div
           className={styles.trigger}
           onClick={handleClick}
@@ -59,23 +60,10 @@ export default function CCN({ sectionId, tooltip }: CCNProps) {
           )}
           <span ref={textRef}>{sectionId}</span>
         </div>
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          asChild
-          side="bottom"
-          sideOffset={8}
-          collisionPadding={8}
-        >
-          <div className={styles.content}>
-            <p className={styles.title}>Class Number</p>
-            <p className={styles.description}>
-              Use this number to search for and enroll in this class within the
-              CalCentral Enrollment Center
-            </p>
-          </div>
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+      }
+      title="Class Number"
+      description="Use this number to search for and enroll in this class within the CalCentral Enrollment Center."
+      open={tooltip}
+    />
   );
 }

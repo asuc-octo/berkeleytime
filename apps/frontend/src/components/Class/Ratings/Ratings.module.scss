@@ -47,7 +47,7 @@
 
   .heading {
     color: var(--heading-color);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     margin-top: 24px;
     margin-bottom: 0;
   }
@@ -67,7 +67,7 @@
 
 .heading {
   color: var(--heading-color);
-  font-weight: 500;
+  font-weight: var(--font-medium);
   margin-top: 24px;
   margin-bottom: 0;
 }

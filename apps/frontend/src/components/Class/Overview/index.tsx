@@ -26,7 +26,7 @@ export default function Overview() {
   }, [_class]);
 
   const classNoteLines = useMemo(() => {
-    const attributes = _class.primarySection.sectionAttributes ?? [];
+    const attributes = _class.primarySection?.sectionAttributes ?? [];
     if (!attributes.length) return null;
 
     const noteAttribute = attributes.find(
@@ -40,35 +40,43 @@ export default function Overview() {
 
     if (!text) return null;
 
-    // Get the description for comparison
+    // Get the description and title for comparison
     const description = (
       _class.description ??
       _class.course.description ??
       ""
     ).trim();
 
-    // Normalize both texts for comparison (remove extra whitespace, normalize newlines)
+    const title = (_class.title ?? _class.course.title ?? "").trim();
+
     const normalizedNoteText = text.replace(/\s+/g, " ").trim();
     const normalizedDescription = description.replace(/\s+/g, " ").trim();
+    const normalizedTitle = title.replace(/\s+/g, " ").trim();
 
-    // If they match exactly, don't show the class note
-    if (normalizedNoteText === normalizedDescription) return null;
+    if (
+      normalizedNoteText === normalizedDescription ||
+      normalizedNoteText === normalizedTitle
+    ) {
+      return null;
+    }
 
     return text
       .split(/\n+/)
       .map((line) => line.trim())
       .filter(Boolean);
   }, [
-    _class.primarySection.sectionAttributes,
+    _class.primarySection?.sectionAttributes,
     _class.description,
     _class.course.description,
+    _class.title,
+    _class.course.title,
   ]);
 
   return (
     <Box p="5">
       <Container size="3">
         <Flex direction="column" gap="5">
-          {_class.primarySection.meetings.map((meeting, i) => (
+          {_class.primarySection?.meetings.map((meeting, i) => (
             <Details {...meeting} key={i} />
           ))}
           {prereqs && (
@@ -85,7 +93,7 @@ export default function Overview() {
           </Flex>
           {classNoteLines && classNoteLines.length > 0 && (
             <Flex direction="column" gap="2">
-              <p className={styles.label}>Class Note</p>
+              <p className={styles.label}>Class Notes</p>
               <p className={styles.description}>
                 {classNoteLines.map((line, index) => (
                   <span key={`${line}-${index}`}>

@@ -18,19 +18,8 @@
     }
   }
 }
-
-.content {
-  border-radius: 4px;
-  padding: 12px;
-  background-color: var(--tooltip-color);
+.card {
   width: 256px;
-  animation: fadeIn 100ms ease-in;
-  z-index: 998;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-  .arrow {
-    fill: var(--tooltip-color);
-  }
 
   .divider {
     height: 1px;
@@ -42,21 +31,12 @@
     display: flex;
     justify-content: space-between;
     font-size: 14px;
-    line-height: 1;
+    line-height: 1.4;
     color: var(--neutral-400);
 
     .key {
       font-weight: var(--font-semibold);
       color: var(--tooltip-heading-color);
     }
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }

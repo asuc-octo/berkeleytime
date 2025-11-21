@@ -1,16 +1,18 @@
-import { MouseEvent, ReactNode } from "react";
+import { MouseEvent, ReactElement, ReactNode } from "react";
 
 import { Lock } from "iconoir-react";
-import { Tooltip } from "radix-ui";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
 import { MenuItem } from "@repo/theme";
 
-const RATINGS_LOCK_ENABLED = false;
+import { CatalogTooltip } from "@/components/CatalogTooltip";
 
-export interface RatingsLockContext {
-  user?: unknown;
-}
+import {
+  RatingsLockContext,
+  getRatingsNeeded,
+  isRatingsLocked,
+  shouldDisplayRatingsTab,
+} from "./locks.helpers";
 
 interface RatingsTabClasses {
   badge: string;
@@ -26,33 +28,30 @@ interface RatingsTabLinkProps {
   dialog?: boolean;
   ratingsCount?: number | false;
   locked?: boolean;
+  onLockedClick?: () => void;
+  loginRequired?: boolean;
+  ratingsNeededValue?: number;
   classes: RatingsTabClasses;
 }
 
-type RatingsTabLinkComponent = (props: RatingsTabLinkProps) => JSX.Element;
+type RatingsTabLinkComponent = (props: RatingsTabLinkProps) => ReactElement;
 
 interface RatingsTabLinkStatics {
   shouldDisplay: (context?: RatingsLockContext) => boolean;
   isLocked: (context?: RatingsLockContext) => boolean;
+  ratingsNeeded: (context?: RatingsLockContext) => number;
 }
 
 type RatingsTabLinkType = RatingsTabLinkComponent & RatingsTabLinkStatics;
-
-const shouldDisplayRatingsTab = (context?: RatingsLockContext) => {
-  void context;
-  return true;
-};
-
-export const isRatingsLocked = (context?: RatingsLockContext) => {
-  void context;
-  return RATINGS_LOCK_ENABLED;
-};
 
 function RatingsTabLinkBase({
   to,
   dialog = false,
   ratingsCount,
   locked = isRatingsLocked(),
+  onLockedClick,
+  loginRequired = false,
+  ratingsNeededValue = 0,
   classes,
 }: RatingsTabLinkProps) {
   const badge = ratingsCount ? (
@@ -65,11 +64,12 @@ function RatingsTabLinkBase({
     if (!locked) return;
     event.preventDefault();
     event.stopPropagation();
+    onLockedClick?.();
   };
 
   const renderMenuItem = (isActive = false): ReactNode => (
     <MenuItem {...(dialog ? { styl: true } : { active: isActive })}>
-      {locked && <Lock />}
+      {locked && <Lock style={{ marginRight: 4 }} />}
       Ratings
       {badge}
     </MenuItem>
@@ -90,27 +90,16 @@ function RatingsTabLinkBase({
     return navLink;
   }
 
-  const tooltipDescription =
-    "Click and add your experience to view ratings others have made";
+  const tooltipDescription = loginRequired
+    ? "Log in to view ratings from other students."
+    : `Share ${ratingsNeededValue} class rating${ratingsNeededValue !== 1 ? "s" : ""} to unlock everyone else's`;
 
   return (
-    <Tooltip.Root disableHoverableContent>
-      <Tooltip.Trigger asChild>{navLink}</Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          asChild
-          side="bottom"
-          sideOffset={8}
-          collisionPadding={8}
-        >
-          <div className={classes.tooltipContent}>
-            <Tooltip.Arrow className={classes.tooltipArrow} />
-            {!dialog && <p className={classes.tooltipTitle}>Locked Content</p>}
-            <p className={classes.tooltipDescription}>{tooltipDescription}</p>
-          </div>
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+    <CatalogTooltip
+      trigger={navLink}
+      title={!dialog ? "Locked Content" : undefined}
+      description={tooltipDescription}
+    />
   );
 }
 
@@ -119,6 +108,7 @@ export const RatingsTabLink: RatingsTabLinkType = Object.assign(
   {
     shouldDisplay: shouldDisplayRatingsTab,
     isLocked: isRatingsLocked,
+    ratingsNeeded: getRatingsNeeded,
   }
 );
 
