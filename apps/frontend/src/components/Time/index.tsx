@@ -2,7 +2,6 @@ import { ComponentPropsWithRef, Fragment, useMemo } from "react";
 
 import classNames from "classnames";
 
-import { CatalogTooltip } from "@/components/CatalogTooltip";
 
 import styles from "./Time.module.scss";
 
