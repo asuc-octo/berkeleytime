@@ -4,7 +4,6 @@ import classNames from "classnames";
 import {
   Bookmark,
   BookmarkSolid,
-  CalendarPlus,
   InfoCircle,
   OpenNewWindow,
 } from "iconoir-react";
@@ -339,25 +338,18 @@ export default function Class({
       <Flex direction="column" flexGrow="1" className={styles.root}>
         <Box className={styles.header} pt="5" px="5">
           <Container size="3">
-            <Flex direction="column" gap="5">
-              <Flex justify="between" align="start">
-                <Flex gap="3">
-                  {/* TODO: Reusable pin button
-              <Tooltip content={pinned ? "Remove pin" : "Pin"}>
-                <IconButton
-                  className={classNames(styles.bookmark, {
-                    [styles.active]: pinned,
-                  })}
-                  onClick={() => (pinned ? removePin(pin) : addPin(pin))}
-                >
-                  {pinned ? <PinSolid /> : <Pin />}
-                </IconButton>
-                  </Tooltip> */}
-                  <ThemeTooltip content="Add to schedule">
-                    <IconButton>
-                      <CalendarPlus />
-                    </IconButton>
-                  </ThemeTooltip>
+            <Flex direction="column" gap="4">
+              <Flex justify="between" align="start" mt="2">
+                <Flex direction="column" gap="2">
+                  <h1 className={styles.heading}>
+                    {_class.subject} {_class.courseNumber}{" "}
+                    <span className={styles.sectionNumber}>
+                      #{formatClassNumber(_class.number)}
+                    </span>
+                  </h1>
+                  <p className={styles.description}>
+                    {_class.title || _class.course.title}
+                  </p>
                 </Flex>
                 <Flex gap="3">
                   {/* TODO: Reusable bookmark button */}
@@ -386,46 +378,18 @@ export default function Class({
                   </ThemeTooltip>
                 </Flex>
               </Flex>
-              <Flex direction="column" gap="4">
-                <Flex direction="column" gap="1">
-                  <h1 className={styles.heading}>
-                    {_class.subject} {_class.courseNumber}{" "}
-                    <span className={styles.sectionNumber}>
-                      #{formatClassNumber(_class.number)}
-                    </span>
-                  </h1>
-                  <p className={styles.description}>
-                    {_class.title || _class.course.title}
-                  </p>
-                </Flex>
-                <Flex gap="3" align="center">
-                  <EnrollmentDisplay
-                    enrolledCount={
-                      primarySection?.enrollment?.latest?.enrolledCount
-                    }
-                    maxEnroll={primarySection?.enrollment?.latest?.maxEnroll}
-                    time={primarySection?.enrollment?.latest?.endTime}
-                  >
-                    {(content) => (
-                      <Link
-                        to={`/enrollment?input=${encodeURIComponent(
-                          `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: "inline-flex",
-                          textDecoration: "none",
-                        }}
-                      >
-                        {content}
-                      </Link>
-                    )}
-                  </EnrollmentDisplay>
-                  {hasCourseGradeSummary && (
+              <Flex gap="3" align="center" mb="5">
+                <EnrollmentDisplay
+                  enrolledCount={
+                    primarySection?.enrollment?.latest?.enrolledCount
+                  }
+                  maxEnroll={primarySection?.enrollment?.latest?.maxEnroll}
+                  time={primarySection?.enrollment?.latest?.endTime}
+                >
+                  {(content) => (
                     <Link
-                      to={`/grades?input=${encodeURIComponent(
-                        `${_class.subject};${_class.courseNumber}`
+                      to={`/enrollment?input=${encodeURIComponent(
+                        `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -434,28 +398,44 @@ export default function Class({
                         textDecoration: "none",
                       }}
                     >
-                      <AverageGrade
-                        gradeDistribution={_class.course.gradeDistribution}
-                      />
+                      {content}
                     </Link>
                   )}
-                  <Units
-                    unitsMax={_class.unitsMax}
-                    unitsMin={_class.unitsMin}
-                  />
-                  {primarySection?.sectionId && (
-                    <CCN sectionId={primarySection.sectionId} />
-                  )}
-                  {reservedSeatingMaxCount > 0 && (
-                    <Badge
-                      label="Reserved Seating"
-                      color={Color.Orange}
-                      icon={<InfoCircle />}
+                </EnrollmentDisplay>
+                {hasCourseGradeSummary && (
+                  <Link
+                    to={`/grades?input=${encodeURIComponent(
+                      `${_class.subject};${_class.courseNumber}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-flex",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <AverageGrade
+                      gradeDistribution={_class.course.gradeDistribution}
                     />
-                  )}
-                </Flex>
+                  </Link>
+                )}
+                <Units
+                  unitsMax={_class.unitsMax}
+                  unitsMin={_class.unitsMin}
+                />
+                {primarySection?.sectionId && (
+                  <CCN sectionId={primarySection.sectionId} />
+                )}
+                {reservedSeatingMaxCount > 0 && (
+                  <Badge
+                    label="Reserved Seating"
+                    color={Color.Orange}
+                    icon={<InfoCircle />}
+                  />
+                )}
               </Flex>
-              {dialog ? (
+            </Flex>
+            {dialog ? (
                 <Tabs.List asChild defaultValue="overview">
                   <Flex mx="-3" mb="3">
                     <Tabs.Trigger value="overview" asChild>
@@ -513,7 +493,6 @@ export default function Class({
                   </NavLink>
                 </Flex>
               )}
-            </Flex>
           </Container>
         </Box>
         <ClassContext

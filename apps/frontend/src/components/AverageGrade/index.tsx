@@ -91,7 +91,6 @@ export function AverageGrade({
           collisionPadding={8}
         >
           <div className={styles.content}>
-            <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>
               {isPnp ? "Pass Rate" : "Average Grade"}
             </p>

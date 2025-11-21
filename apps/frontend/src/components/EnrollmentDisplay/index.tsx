@@ -49,7 +49,6 @@ export default function EnrollmentDisplay({
           collisionPadding={8}
         >
           <div className={styles.content}>
-            <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Enrollment</p>
             <p className={styles.description}>
               <span style={{ color }}>
