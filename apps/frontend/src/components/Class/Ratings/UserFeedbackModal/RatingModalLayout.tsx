@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, RefObject } from "react";
 
 import { Progress } from "radix-ui";
 
@@ -15,6 +15,7 @@ interface RatingModalLayoutProps {
   children: ReactNode;
   footer: ReactNode;
   modalBodyClassName?: string;
+  modalBodyRef?: RefObject<HTMLDivElement | null>;
 }
 
 export function RatingModalLayout({
@@ -26,6 +27,7 @@ export function RatingModalLayout({
   children,
   footer,
   modalBodyClassName,
+  modalBodyRef,
 }: RatingModalLayoutProps) {
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -50,7 +52,10 @@ export function RatingModalLayout({
               />
             </Progress.Root>
           </div>
-          <Dialog.Body className={modalBodyClassName || styles.modalBody}>
+          <Dialog.Body
+            ref={modalBodyRef}
+            className={modalBodyClassName || styles.modalBody}
+          >
             {children}
           </Dialog.Body>
           <Dialog.Footer>{footer}</Dialog.Footer>

@@ -20,7 +20,6 @@ interface BaseRatingDialogProps {
   variant: DialogVariant;
   title: string;
   message: string | ReactNode;
-  hideVisualTitle?: boolean;
 }
 
 interface ConfirmDialogProps extends BaseRatingDialogProps {
@@ -56,7 +55,7 @@ const VARIANT_CONFIG = {
 } as const;
 
 export function RatingDialog(props: RatingDialogProps) {
-  const { isOpen, onClose, variant, title, message, hideVisualTitle } = props;
+  const { isOpen, onClose, variant, title, message } = props;
   const [isProcessing, setIsProcessing] = useState(false);
 
   const config = VARIANT_CONFIG[variant];
@@ -86,14 +85,12 @@ export function RatingDialog(props: RatingDialogProps) {
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>
-          {hideVisualTitle ? (
-            <VisuallyHidden>
-              <Dialog.Title>{title}</Dialog.Title>
-              <Dialog.Description>
-                {typeof message === "string" ? message : title}
-              </Dialog.Description>
-            </VisuallyHidden>
-          ) : null}
+          <VisuallyHidden>
+            <Dialog.Title>{title}</Dialog.Title>
+            <Dialog.Description>
+              {typeof message === "string" ? message : title}
+            </Dialog.Description>
+          </VisuallyHidden>
           <Dialog.Body className={styles.body}>
             <IconComponent
               className={classNames(styles.icon, config.iconClassName)}
@@ -172,7 +169,6 @@ export function SubmitRatingPopup({ isOpen, onClose }: SubmitRatingPopupProps) {
           informed decisions when selecting their courses.
         </>
       }
-      hideVisualTitle
     />
   );
 }
@@ -203,7 +199,6 @@ export function DeleteRatingPopup({
       onConfirm={onConfirmDelete}
       confirmText="Yes, delete"
       cancelText="No, keep my rating"
-      hideVisualTitle
     />
   );
 }

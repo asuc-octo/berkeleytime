@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { MetricName } from "@repo/shared";
 import { Button } from "@repo/theme";
@@ -74,6 +74,7 @@ export function UnlockRatingsModal({
   const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const modalBodyRef = useRef<HTMLDivElement>(null);
 
   const shouldFetchCourseData = !!selectedCourse;
   const { data: courseData } = useReadCourseWithInstructor(
@@ -116,6 +117,11 @@ export function UnlockRatingsModal({
       // Extract class number from selectedTerm value (format: "Semester Year Number")
       const termParts = selectedTerm?.split(" ") || [];
       const classNumber = termParts[termParts.length - 1] || "";
+
+      // Validate extracted class number
+      if (!classNumber || !/^\d+$/.test(classNumber)) {
+        throw new Error("Invalid term format - unable to extract class number");
+      }
 
       // Find the matching class from courseData
       const matchingClass = courseData?.classes?.find(
@@ -182,13 +188,10 @@ export function UnlockRatingsModal({
 
   // Reset scroll position when moving to next rating
   useEffect(() => {
-    if (isOpen) {
-      const modalBody = document.querySelector(`.${styles.modalBody}`);
-      if (modalBody) {
-        modalBody.scrollTop = 0;
-      }
+    if (isOpen && modalBodyRef.current) {
+      modalBodyRef.current.scrollTop = 0;
     }
-  }, [currentRatingIndex, isOpen]);
+  }, [currentRatingIndex, isOpen, modalBodyRef]);
 
   // Reset course selection when it changes
   useEffect(() => {
@@ -259,6 +262,7 @@ export function UnlockRatingsModal({
         progress={overallProgress}
         footer={footer}
         modalBodyClassName={styles.modalBody}
+        modalBodyRef={modalBodyRef}
       >
         <div className={`${styles.formContentWrapper} ${animationClass}`}>
           <RatingFormBody

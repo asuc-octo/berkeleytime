@@ -395,6 +395,12 @@ export default function Class({
     [createUnlockRating]
   );
 
+  const shouldShowUnlockModal =
+    !!user &&
+    ((ratingsLocked && unlockModalGoalCount > 0) ||
+      isUnlockModalOpen ||
+      isUnlockThankYouOpen);
+
   // seat reservation logic pending design + consideration for performance.
   // const seatReservationTypeMap = useMemo(() => {
   //   const reservationTypes =
@@ -676,19 +682,16 @@ export default function Class({
           </ClassContext>
         </Flex>
       </Root>
-      {user &&
-        ((ratingsLocked && unlockModalGoalCount > 0) ||
-          isUnlockModalOpen ||
-          isUnlockThankYouOpen) && (
-          <UnlockRatingsModal
-            isOpen={isUnlockModalOpen}
-            onClose={handleUnlockModalClose}
-            onSubmit={handleUnlockRatingSubmit}
-            userRatedClasses={userRatedClasses}
-            requiredRatingsCount={unlockModalGoalCount}
-            onSubmitPopupChange={setIsUnlockThankYouOpen}
-          />
-        )}
+      {shouldShowUnlockModal && (
+        <UnlockRatingsModal
+          isOpen={isUnlockModalOpen}
+          onClose={handleUnlockModalClose}
+          onSubmit={handleUnlockRatingSubmit}
+          userRatedClasses={userRatedClasses}
+          requiredRatingsCount={unlockModalGoalCount}
+          onSubmitPopupChange={setIsUnlockThankYouOpen}
+        />
+      )}
     </>
   );
 }

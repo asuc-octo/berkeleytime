@@ -97,7 +97,7 @@ function RatingsTabLinkBase({
   return (
     <CatalogTooltip
       trigger={navLink}
-      title="Locked Content"
+      title={!dialog ? "Locked Content" : undefined}
       description={tooltipDescription}
     />
   );

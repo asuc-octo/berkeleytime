@@ -172,13 +172,13 @@ export function RatingsContainer() {
   const availableTerms = useMemo(() => {
     if (!currentCourse.classes) return [];
 
+    const today = new Date();
     const courseTerms: Term[] = currentCourse.classes
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
         if (c.primarySection?.startDate) {
           const startDate = new Date(c.primarySection.startDate);
-          const today = new Date();
           return startDate <= today;
         }
         return true;
@@ -212,22 +212,6 @@ export function RatingsContainer() {
     );
     return matchedRating as IUserRatingClass;
   }, [userRatingsData, currentClass]);
-
-  // Extract unique courses that the user has rated (for CourseSearch filtering in RatingGrowthModal)
-  // Commented out for now since it's only needed when RatingGrowthModal is enabled
-  // const userRatedCourses = useMemo(() => {
-  //   if (!userRatingsData?.userRatings?.classes) return [];
-  //
-  //   const uniqueCourses = _.uniqBy(
-  //     userRatingsData.userRatings.classes.map((c: { subject: string; courseNumber: string }) => ({
-  //       subject: c.subject,
-  //       courseNumber: c.courseNumber,
-  //     })),
-  //     (c) => `${c.subject}-${c.courseNumber}`
-  //   );
-  //
-  //   return uniqueCourses;
-  // }, [userRatingsData]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
     const metricsSource =
