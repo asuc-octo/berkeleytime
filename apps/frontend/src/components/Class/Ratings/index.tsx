@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
 import { UserStar } from "iconoir-react";

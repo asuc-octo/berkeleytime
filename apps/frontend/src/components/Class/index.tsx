@@ -57,11 +57,8 @@ import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
 import UnlockRatingsModal from "./Ratings/UnlockRatingsModal";
 import { MetricData } from "./Ratings/metricsUtil";
-import {
-  RATINGS_REQUIRED_REVIEWS,
-  type RatingsTabClasses,
-  RatingsTabLink,
-} from "./locks";
+import { type RatingsTabClasses, RatingsTabLink } from "./locks";
+import { RATINGS_REQUIRED_REVIEWS } from "./locks.helpers";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -538,103 +535,103 @@ export default function Class({
                       </Link>
                     )}
                   </EnrollmentDisplay>
-                    {hasCourseGradeSummary && (
-                      <Link
-                        to={`/grades?input=${encodeURIComponent(
-                          `${_class.subject};${_class.courseNumber}`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: "inline-flex",
-                          textDecoration: "none",
-                        }}
-                      >
-                        <AverageGrade
-                          gradeDistribution={_class.course.gradeDistribution}
-                        />
-                      </Link>
-                    )}
-                    <Units
-                      unitsMax={_class.unitsMax}
-                      unitsMin={_class.unitsMin}
-                    />
-                    {primarySection?.sectionId && (
-                      <CCN sectionId={primarySection.sectionId} />
-                    )}
-                    {reservedSeatingMaxCount > 0 && (
-                      <Badge
-                        label="Reserved Seating"
-                        color={Color.Orange}
-                        icon={<InfoCircle />}
+                  {hasCourseGradeSummary && (
+                    <Link
+                      to={`/grades?input=${encodeURIComponent(
+                        `${_class.subject};${_class.courseNumber}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <AverageGrade
+                        gradeDistribution={_class.course.gradeDistribution}
                       />
-                    )}
-                  </Flex>
+                    </Link>
+                  )}
+                  <Units
+                    unitsMax={_class.unitsMax}
+                    unitsMin={_class.unitsMin}
+                  />
+                  {primarySection?.sectionId && (
+                    <CCN sectionId={primarySection.sectionId} />
+                  )}
+                  {reservedSeatingMaxCount > 0 && (
+                    <Badge
+                      label="Reserved Seating"
+                      color={Color.Orange}
+                      icon={<InfoCircle />}
+                    />
+                  )}
                 </Flex>
-                {dialog ? (
-                  <Tabs.List asChild defaultValue="overview">
-                    <Flex mx="-3" mb="3">
-                      <Tabs.Trigger value="overview" asChild>
-                        <MenuItem>Overview</MenuItem>
-                      </Tabs.Trigger>
-                      <Tabs.Trigger value="sections" asChild>
-                        <MenuItem>Sections</MenuItem>
-                      </Tabs.Trigger>
-                      {shouldShowRatingsTab && (
-                        <RatingsTabLink
-                          dialog
-                          classes={ratingsTabClasses}
-                          locked={ratingsLocked}
-                          onLockedClick={handleLockedTabClick}
-                          loginRequired={!user}
-                          ratingsNeededValue={ratingsNeeded}
-                          ratingsCount={ratingsCount}
-                          to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
-                        />
-                      )}
-                      <Tabs.Trigger value="grades" asChild>
-                        <MenuItem>Grades</MenuItem>
-                      </Tabs.Trigger>
-                      <Tabs.Trigger value="enrollment" asChild>
-                        <MenuItem>Enrollment</MenuItem>
-                      </Tabs.Trigger>
-                    </Flex>
-                  </Tabs.List>
-                ) : (
+              </Flex>
+              {dialog ? (
+                <Tabs.List asChild defaultValue="overview">
                   <Flex mx="-3" mb="3">
-                    <NavLink to={{ ...location, pathname: "." }} end>
-                      {({ isActive }) => (
-                        <MenuItem active={isActive}>Overview</MenuItem>
-                      )}
-                    </NavLink>
-                    <NavLink to={{ ...location, pathname: "sections" }}>
-                      {({ isActive }) => (
-                        <MenuItem active={isActive}>Sections</MenuItem>
-                      )}
-                    </NavLink>
+                    <Tabs.Trigger value="overview" asChild>
+                      <MenuItem>Overview</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="sections" asChild>
+                      <MenuItem>Sections</MenuItem>
+                    </Tabs.Trigger>
                     {shouldShowRatingsTab && (
                       <RatingsTabLink
+                        dialog
                         classes={ratingsTabClasses}
                         locked={ratingsLocked}
                         onLockedClick={handleLockedTabClick}
                         loginRequired={!user}
                         ratingsNeededValue={ratingsNeeded}
                         ratingsCount={ratingsCount}
-                        to={{ ...location, pathname: "ratings" }}
+                        to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                       />
                     )}
-                    <NavLink to={{ ...location, pathname: "grades" }}>
-                      {({ isActive }) => (
-                        <MenuItem active={isActive}>Grades</MenuItem>
-                      )}
-                    </NavLink>
-                    <NavLink to={{ ...location, pathname: "enrollment" }}>
-                      {({ isActive }) => (
-                        <MenuItem active={isActive}>Enrollment</MenuItem>
-                      )}
-                    </NavLink>
+                    <Tabs.Trigger value="grades" asChild>
+                      <MenuItem>Grades</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="enrollment" asChild>
+                      <MenuItem>Enrollment</MenuItem>
+                    </Tabs.Trigger>
                   </Flex>
-                )}
+                </Tabs.List>
+              ) : (
+                <Flex mx="-3" mb="3">
+                  <NavLink to={{ ...location, pathname: "." }} end>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Overview</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "sections" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Sections</MenuItem>
+                    )}
+                  </NavLink>
+                  {shouldShowRatingsTab && (
+                    <RatingsTabLink
+                      classes={ratingsTabClasses}
+                      locked={ratingsLocked}
+                      onLockedClick={handleLockedTabClick}
+                      loginRequired={!user}
+                      ratingsNeededValue={ratingsNeeded}
+                      ratingsCount={ratingsCount}
+                      to={{ ...location, pathname: "ratings" }}
+                    />
+                  )}
+                  <NavLink to={{ ...location, pathname: "grades" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Grades</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "enrollment" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                </Flex>
+              )}
             </Container>
           </Box>
           <ClassContext

@@ -1,18 +1,18 @@
 import { MouseEvent, ReactElement, ReactNode } from "react";
 
 import { Lock } from "iconoir-react";
-import { Tooltip } from "radix-ui";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
 import { MenuItem } from "@repo/theme";
 
-export const RATINGS_REQUIRED_REVIEWS = 3;
+import { CatalogTooltip } from "@/components/CatalogTooltip";
 
-export interface RatingsLockContext {
-  userRatingsCount?: number;
-  requiredRatingsCount?: number;
-  requiresLogin?: boolean;
-}
+import {
+  RatingsLockContext,
+  getRatingsNeeded,
+  isRatingsLocked,
+  shouldDisplayRatingsTab,
+} from "./locks.helpers";
 
 interface RatingsTabClasses {
   badge: string;
@@ -43,29 +43,6 @@ interface RatingsTabLinkStatics {
 }
 
 type RatingsTabLinkType = RatingsTabLinkComponent & RatingsTabLinkStatics;
-
-const shouldDisplayRatingsTab = (context?: RatingsLockContext) => {
-  void context;
-  return true;
-};
-
-const getRequiredRatingsTarget = (context?: RatingsLockContext) =>
-  context?.requiredRatingsCount ?? RATINGS_REQUIRED_REVIEWS;
-
-const getRatingsNeeded = (context?: RatingsLockContext) => {
-  if (!context) return 0;
-  if (context.requiresLogin) {
-    return getRequiredRatingsTarget(context);
-  }
-  if (typeof context.userRatingsCount !== "number") return 0;
-  return Math.max(
-    0,
-    getRequiredRatingsTarget(context) - context.userRatingsCount
-  );
-};
-
-export const isRatingsLocked = (context?: RatingsLockContext) =>
-  context?.requiresLogin ? true : getRatingsNeeded(context) > 0;
 
 function RatingsTabLinkBase({
   to,
@@ -118,23 +95,11 @@ function RatingsTabLinkBase({
     : `Share ${ratingsNeededValue} class rating${ratingsNeededValue !== 1 ? "s" : ""} to unlock everyone else's`;
 
   return (
-    <Tooltip.Root disableHoverableContent>
-      <Tooltip.Trigger asChild>{navLink}</Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          asChild
-          side="bottom"
-          sideOffset={8}
-          collisionPadding={8}
-        >
-          <div className={classes.tooltipContent}>
-            <Tooltip.Arrow className={classes.tooltipArrow} />
-            {!dialog && <p className={classes.tooltipTitle}>Locked Content</p>}
-            <p className={classes.tooltipDescription}>{tooltipDescription}</p>
-          </div>
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+    <CatalogTooltip
+      trigger={navLink}
+      title="Locked Content"
+      description={tooltipDescription}
+    />
   );
 }
 

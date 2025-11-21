@@ -10,7 +10,7 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import { isRatingsLocked } from "@/components/Class/locks";
+import { isRatingsLocked } from "@/components/Class/locks.helpers";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
