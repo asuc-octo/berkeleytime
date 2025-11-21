@@ -1,0 +1,135 @@
+{
+  "query": "Pacific Islander policies and history",
+  "results": [
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "109B",
+        "score": 0.5882701873779297
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "109B",
+        "title": "Polynesian Culture and Society",
+        "description": "This course is based at the Atitia Community Center adjacent to the Gump Station and on Tetiaroa. Students will learn about the history of the peopling of Oceania, and the waves of exploration and interaction that have shaped the Pacific. Students will be immersed into the way in which the first peoples of these islands understand and interact with their island homes, from a traditional to modern perspective, and with insights on human-environment interactions. Students will be presented with necessary historical and cultural context including basic language training, archeological field trips and interactions with local youth and elders at the Atitia Center and beyond to learn about local customs, traditions and attitude. "
+      }
+    },
+    {
+      "result": {
+        "subject": "NATAMST",
+        "courseNumber": "102",
+        "score": 0.5851974487304688
+      },
+      "course": {
+        "subject": "NATAMST",
+        "number": "102",
+        "title": "Critical Native American Legal and Policy Studies",
+        "description": "Key contemporary issues in the critical study of tribal and federal policy pertaining to American Indians and Alaska Natives in the U.S. Topics include political and cultural sovereignty; religious, gendered, sexual, racial, and other tribal minorities, and civil rights within tribes; Native legal identity and tribal enrollment; the role of violence against women in the history of colonialism, and the struggle for justice and healing; and the movement for traditional or other culturally appropriate forms for tribal self-governance."
+      }
+    },
+    {
+      "result": {
+        "subject": "ASAMST",
+        "courseNumber": "143B",
+        "score": 0.5693202018737793
+      },
+      "course": {
+        "subject": "ASAMST",
+        "number": "143B",
+        "title": "Advancing Health Equity for Asian American, Native Hawaiian, and Pacific Islander Communities",
+        "description": "This course examines community health theories, contemporary issues, and culturally responsive approaches to advance health equity for Asian American, Native Hawaiian, and Pacific Islander communities. Students will gain foundational knowledge on structural discrimination and racism as the root cause of poor community health; and explore contemporary issues such as gentrification, incarceration, human trafficking, community trauma, mental health, and stigmatized chronic/infectious diseases. The course will include guest presentations, case studies, professional skills training, and field trips to Asian American and Native Hawaiian/Pacific Islander-serving clinics and community-based organizations. "
+      }
+    },
+    {
+      "result": {
+        "subject": "SEASIAN",
+        "courseNumber": "168AC",
+        "score": 0.5686205625534058
+      },
+      "course": {
+        "subject": "SEASIAN",
+        "number": "168AC",
+        "title": "US Imperialism in the Philippines",
+        "description": "This course considers a period in American and Philippine history when the two countries were formally intertwined through law and violence. It begins with the Philippine-American War of 1898 and ends at the start of the postwar Philippine Republic in 1946. The Philippines is the only former formal colony of the US. Yet its history is understudied, mainly because it is inconvenient to think of the US as a European-style colonial power. This course\u2019s primary goal is to help write the colonialism of the Philippines back into US history. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ASAMST",
+        "courseNumber": "145AC",
+        "score": 0.5643388032913208
+      },
+      "course": {
+        "subject": "ASAMST",
+        "number": "145AC",
+        "title": "Politics, Public Policy, and Asian American Communities",
+        "description": "An examination of the purpose, power, and function of the executive, legislative and judicial branches of the federal government and their relationship to the Asian American community. The course presents a range of contemporary issues to illustrate how government institutions and the Asian community define issues and respond to political challenges."
+      }
+    },
+    {
+      "result": {
+        "subject": "NATAMST",
+        "courseNumber": "175",
+        "score": 0.5616870522499084
+      },
+      "course": {
+        "subject": "NATAMST",
+        "number": "175",
+        "title": "History of Native Americans in California",
+        "description": "History of the Native Americans of California with emphasis on the lifeways, mores, warfare, and relations with the United States government. Attention will be given to the background and evolution of acculturation up to the present."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "109D",
+        "score": 0.548715353012085
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "109D",
+        "title": "Environmental Planning, Management, and Policy",
+        "description": "Students will be given an overview of the state of the field, as well as an understanding of current theory and practice; including western approaches and indigenous environmental management of terrestrial and marine resources. Rahui, a traditional Polynesian marine conservation practice will be examined through interaction with local communities that use it. Students will also learn about EU, Pacific-wide and international funding and conservation management initiatives affecting the lives and environment of Polynesians and people worldwide. "
+      }
+    },
+    {
+      "result": {
+        "subject": "SEASIAN",
+        "courseNumber": "101B",
+        "score": 0.5464853644371033
+      },
+      "course": {
+        "subject": "SEASIAN",
+        "number": "101B",
+        "title": "Introduction to the History, Religion, and Culture of Insular Southeast Asia",
+        "description": "This course is a survey of the histories, cultures, and religions of insular Southeast Asia from the\nearly modern period until the 2000s. It surveys the countries of Indonesia, the Philippines, Malaysia,\nBrunei, East Timor, and Singapore. By the end of the course, students are expected to: (a) explain\nthe broad patterns of historical change in insular Southeast Asia from the early modern period to the\npresent, (b) explain the major cultural shifts and religious formations that have shaped insular\nSoutheast Asia over the period covered, (c) discuss cultural texts that reflect the history of insular\nSoutheast Asia, and (d) explain insular Southeast Asia\u2019s shifting relations with the world over the\nlongue dur\u00e9e."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "206B",
+        "score": 0.5419061779975891
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "206B",
+        "title": "Food and Nutrition Policies and Programs",
+        "description": "This course examines the historical origins of food and nutrition improvement programs in the United States, including the political and administrative conditions that led to the development of these programs. It also examines the goals, design, operations, and effectiveness of some of these programs: Food Stamp Program, the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC), the National School Lunch Program, the School Breakfast Program, Head Start, the Child Care Food Program, and the Elderly Nutrition Program."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "222A",
+        "score": 0.5248540043830872
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "222A",
+        "title": "Biomedical Innovation Policy",
+        "description": "Course examines the policy framework for biomedical technology, including medical devices, drugs, diagnostics, digital therapeutics and algorithms.  Emphasis will be placed on the funding of research and development, the protection of intellectual property, FDA market authorization, insurance coverage and algorithm design. Focus will be on the US but will examine industrial policy and innovation nationalism within a global context. Students are required to read peer-reviewed articles, keep up with journalistic reports and participate in classroom discussions. Lectures will be pre-recorded and posted on bCourses and it is expected that students will have watched these lectures and done the readings prior to class.  "
+      }
+    }
+  ]
+}

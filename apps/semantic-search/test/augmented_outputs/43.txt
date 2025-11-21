@@ -1,0 +1,135 @@
+{
+  "query": "Ancient Greek philosophy: Plato and Aristotle",
+  "results": [
+    {
+      "result": {
+        "subject": "CLASSIC",
+        "courseNumber": "218",
+        "score": 0.7198288440704346
+      },
+      "course": {
+        "subject": "CLASSIC",
+        "number": "218",
+        "title": "Greek Philosophers",
+        "description": "Study of PreSocratics, Plato, Aristotle, Hellenistic Philosophy, or other topics in ancient Greek philosophy through Plotinus."
+      }
+    },
+    {
+      "result": {
+        "subject": "AGRS",
+        "courseNumber": "36",
+        "score": 0.7165720462799072
+      },
+      "course": {
+        "subject": "AGRS",
+        "number": "36",
+        "title": "Greek Philosophy",
+        "description": "Introduction to the philosophies of Socrates, Plato and Aristotle. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "160",
+        "score": 0.6495243310928345
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "160",
+        "title": "Plato",
+        "description": ""
+      }
+    },
+    {
+      "result": {
+        "subject": "AGRS",
+        "courseNumber": "130C",
+        "score": 0.6358861327171326
+      },
+      "course": {
+        "subject": "AGRS",
+        "number": "130C",
+        "title": "Ancient Greek Political Thought",
+        "description": "In this course we will investigate the political thought of ancient Greece by discussing some of its most important and influential texts.  All texts are to be read in translation."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "114",
+        "score": 0.6329867839813232
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "114",
+        "title": "History of Political Philosophy",
+        "description": "A survey of the major political philosophers, including some or all of Plato, Aristotle, Hobbes, Locke, Rousseau, Kant, Bentham, Mill, and Marx."
+      }
+    },
+    {
+      "result": {
+        "subject": "AGRS",
+        "courseNumber": "28",
+        "score": 0.6137980818748474
+      },
+      "course": {
+        "subject": "AGRS",
+        "number": "28",
+        "title": "Greek and Roman Myths",
+        "description": "The society, culture, values and outlook on life of the ancient Greeks as expressed in their mythology; their views on life, birth, marriage, death, sex and sexuality; on culture and civilization, the origin and meaning of the world. Their use of myth to think about, and give order to human experience. The course includes some of the most important works of Western literature in English translation (the 'Odyssey', the 'Theogony', twelve plays by leading Greek dramatists (Aeschylus, Sophocles and Euripides), along with their historical and religious context, as well as drawing on material evidence (vase paintings, sculpture, archaeological sites). "
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "104",
+        "score": 0.5903850793838501
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "104",
+        "title": "Ethical Theories",
+        "description": "The fundamental concepts and problems of morality examined through the study of classical and contemporary philosophical theories of ethics."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "100",
+        "score": 0.5886639356613159
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "100",
+        "title": "Philosophical Methods",
+        "description": "The course is designed to acquaint students with the techniques of philosophical reasoning through detailed study of selected philosophical texts and through extensive training in philosophical writing, based on those texts. Should be taken as early as possible after declaring the major."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "R1B",
+        "score": 0.5884886980056763
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "R1B",
+        "title": "Reading and Composition Through Philosophy",
+        "description": "Training in writing expository prose in conjunction with reading philosophical texts. Satisfies the second half of the Reading and Composition requirement."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "119",
+        "score": 0.5849538445472717
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "119",
+        "title": "Feminism and Philosophy",
+        "description": "This course will introduce students to a range of historical and contemporary feminist issues."
+      }
+    }
+  ]
+}

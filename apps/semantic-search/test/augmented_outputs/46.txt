@@ -1,0 +1,135 @@
+{
+  "query": "Wildlife ecology and conservation biology",
+  "results": [
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "114",
+        "score": 0.7044739127159119
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "114",
+        "title": "Wildlife Ecology",
+        "description": "Introduction to wildlife ecology and its relationship to management programs. Includes population, community, and ecosystem levels of organization, followed by selected case studies."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "106",
+        "score": 0.6698448657989502
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "106",
+        "title": "American Wildlife: Management and Policy in the 21st Century",
+        "description": "This course will introduce the history of key wildlife management and policy paradigms, such as parks and protected areas, threatened and endangered species protections, and state wildlife management. We will then explore in depth a number of species case studies in the Greater Yellowstone Ecosystem, a major laboratory for wildlife science, management and policy. The course will draw on lectures, readings, discussions, and guest perspectives. The course will help students majoring in related fields to prepare for careers in wildlife science and related conservation, management, and policy efforts; but students of any major should come away with a better understanding of key issues facing iconic American wildlife species."
+      }
+    },
+    {
+      "result": {
+        "subject": "INTEGBI",
+        "courseNumber": "C153",
+        "score": 0.6660350561141968
+      },
+      "course": {
+        "subject": "INTEGBI",
+        "number": "C153",
+        "title": "Ecology",
+        "description": "Ecology is a scientific discipline that focuses on the interactions between organisms and theirenvironment. This class will provide an overview of core concepts and applications, and will also provide practice with writing, small-group work, critical thinking, and data analysis.The class will specifically cover principles of population ecology, illustrated with examples from marine, freshwater, and terrestrial habitats. It will consider the roles of physical and biological processes in structuring natural communities. Observational, experimental, and theoretical approaches will be discussed. Topics will include quantitative approaches relying on algebra, visual analysis of graphs, and elementary calculus."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "C153",
+        "score": 0.6577678322792053
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "C153",
+        "title": "Ecology",
+        "description": "Ecology is a scientific discipline that focuses on the interactions between organisms and theirenvironment. This class will provide an overview of core concepts and applications, and will also provide practice with writing, small-group work, critical thinking, and data analysis.The class will specifically cover principles of population ecology, illustrated with examples from marine, freshwater, and terrestrial habitats. It will consider the roles of physical and biological processes in structuring natural communities. Observational, experimental, and theoretical approaches will be discussed. Topics will include quantitative approaches relying on algebra, visual analysis of graphs, and elementary calculus."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "281",
+        "score": 0.6473438143730164
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "281",
+        "title": "Seminar in Wildlife Biology and Management",
+        "description": "Reading, conference, and discussion. Reports and discussion of recent studies in wildlife biology and management. Open to qualified graduate students from other departments."
+      }
+    },
+    {
+      "result": {
+        "subject": "INTEGBI",
+        "courseNumber": "108",
+        "score": 0.6361536979675293
+      },
+      "course": {
+        "subject": "INTEGBI",
+        "number": "108",
+        "title": "Marine Biology",
+        "description": "This course focus on the interactions among marine organisms and on their relationship to the environment. Topics include an overview of marine organisms, functioning of marine ecosystems, anthropogenic impacts, climate change impacts, and conservation. Lectures consist of discussions of primary literature, videos, and student presentations; and discussion sections review and expand on topics covered in lecture. By the end of\nthe course, you should be able to compare marine ecosystems, identify the major marine organisms and explain their role within a community, explain the main abiotic factors affecting the dynamics and distribution of marine species, and discuss how human communities and marine organisms and ecosystem affect one another."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "152",
+        "score": 0.6300537586212158
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "152",
+        "title": "Global Change Biology",
+        "description": "The course will focus on understanding how anthropogenic changes to the global environment (e.g., climate change, habitat destruction, global trade) impact organisms. We will evaluate responses to global change in a wide diversity of organisms (from microbes to mammals) and ecosystems (from arctic to temperate to tropical). We will also explore conservation and mitigation strategies in the face of global change. Discussions will draw on recent primary research and case studies. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "186",
+        "score": 0.6290369033813477
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "186",
+        "title": "Grassland and Woodland Management and Conservation",
+        "description": "California\u2019s woodlands, grasslands, and shrublands provide abundant environmental benefits including extensive wildlife habitat. Most is used for ranching and managed through grazing animals. Ecosystem stewardship and ecological dynamics meet in rangeland management, including new institutional arrangements for conservation and restoration, management for carbon sequestration, and Indigenous partnerships. Origins of grazing animals and methods for assessing management outcomes. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "189A",
+        "score": 0.6287161707878113
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "189A",
+        "title": "Urban Ecology and Evolution",
+        "description": "This course examines the complex, coupled and heterogeneous interactions that occur among organisms, humans, and the urban environment. We will emphasize foundational concepts in urban ecology spanning the organismal, population, community, and ecosystem levels, with special focus on the role of social-ecological dynamics in shaping the emergent properties of urban biological systems. We will also discuss how such interactions lead to rapid evolutionary change in cities and discuss what that means for urban biodiversity and conservation. Finally, we will address how cities regionally and globally have similar and dissimilar properties, and how we can apply urban ecological principles to urban planning, design, conservation, wildlife manage."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "90",
+        "score": 0.6201198101043701
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "90",
+        "title": "Introduction to Conservation and Resource Studies Major",
+        "description": "Introduction to the major, emphasizing each student's educational goals. Overview of ecological problems and contrasting approaches to solutions through institutional and community-based efforts. Required of all CRS sophomore majors and all entering off-campus transfer students to CRS major. Restricted to CRS majors. One field trip is normally required. "
+      }
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "query": "Climate change awareness and communication",
+  "results": [
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "176A",
+        "score": 0.6480602622032166
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "176A",
+        "title": "Climate Change, Ecosystems, and Solutions",
+        "description": "Cars, power plants, deforestation, and other human sources pump greenhouse gases into the\natmosphere, causing anthropogenic climate change, which has driven two animal species\nextinct and caused tree mortality, wildfire increases, sea level rise, ocean acidification, and\nother impacts. Scientific research shows that the world can cut carbon pollution to avoid the\nmost severe risks. This course aims to teach (1) the science of anthropogenic climate change,\n(2) applications to biodiversity conservation in national parks and other protected areas, (3)\ncarbon solutions. Students will produce a climate change assessment for a protected area of\ntheir choice. The course welcomes students interested in advancing meaningful action on\nclimate change."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENERES",
+        "courseNumber": "C160",
+        "score": 0.6432485580444336
+      },
+      "course": {
+        "subject": "ENERES",
+        "number": "C160",
+        "title": "CLIMATE JUSTICE",
+        "description": "  Climate change is transforming our world in ways we are only\nbeginning to understand, and in many ways we cannot yet imagine.\nThe emerging theoretical and practical lenses of social and\nenvironmental justice (EJ) provide tools with which to examine and\nunderstand this new world. Using literature, media, and engaged field\nexperiences, this course brings together the scholarship, scientific and\nengineering innovation, policy, literature and media, and activism\naround the interacting themes of climate change and social justice."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "C176",
+        "score": 0.6411799788475037
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "C176",
+        "title": "CLIMATE JUSTICE",
+        "description": "  Climate change is transforming our world in ways we are only\nbeginning to understand, and in many ways we cannot yet imagine.\nThe emerging theoretical and practical lenses of social and\nenvironmental justice (EJ) provide tools with which to examine and\nunderstand this new world. Using literature, media, and engaged field\nexperiences, this course brings together the scholarship, scientific and\nengineering innovation, policy, literature and media, and activism\naround the interacting themes of climate change and social justice."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "207",
+        "score": 0.6343263983726501
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "207",
+        "title": "Climate Change Mitigation",
+        "description": "Assessment of technological options for responding to climate change. Overview of climate-change science; sources, sinks, and atmospheric dynamics of greenhouse gases. Current systems for energy supply and use. Renewable energy resources, transport, storage, and transformation technologies. Technological opportunities for improving end-use energy efficiency. Recovery, sequestration, and disposal of greenhouse gases. Societal context for implementing engineered responses. Weekly seminar will provide additional focus on science communication, discussion of the scientific/technical literature, and advanced research topics."
+      }
+    },
+    {
+      "result": {
+        "subject": "CYPLAN",
+        "courseNumber": "214",
+        "score": 0.6237870454788208
+      },
+      "course": {
+        "subject": "CYPLAN",
+        "number": "214",
+        "title": "Infrastructure Planning and Policy: Climate Change Planning and Urban Systems",
+        "description": "This course introduces students to city planning and climate change. Its focuses on urban systems that are affected by climate change and that define urban vulnerability or resilience to climate change. For students interested in sustainable environmental design, the course situates design problems in a broader policy, regulatory, financial, and infrastructural context. We will cover topics such as green infrastructure, flood protection, networked infrastructure such as water and electricity, insurance, and post-disaster finance, as well as selected topics in land use and spatial planning. In addressing all these topics, emphasis is placed on political and normative issues that arise in the context of urban adaptation to climate change."
+      }
+    },
+    {
+      "result": {
+        "subject": "NATRES",
+        "courseNumber": "190",
+        "score": 0.6180196404457092
+      },
+      "course": {
+        "subject": "NATRES",
+        "number": "190",
+        "title": "Special Topics in Climate Change",
+        "description": " Description: Special topics in Climate Change. Topics may vary from semester to semester."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "107",
+        "score": 0.6141644716262817
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "107",
+        "title": "Climate Change Mitigation",
+        "description": "Assessment of technological options for responding to climate change.  Overview of climate-change science; sources, sinks, and atmospheric dynamics of greenhouse gases.  Current systems for energy supply and use.  Renewable energy resources, transport, storage, and transformation technologies.  Technological opportunities for improving end-use energy efficiency. Recovery, sequestration, and disposal of greenhouse gases.  Societal context for implementing engineered responses."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "271G",
+        "score": 0.6128889918327332
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "271G",
+        "title": "Health Implications of Climate Change",
+        "description": "This course explores the Public Health effects of global climate change: physical basis of climate change, including causes & projections; burden of disease stemming from global climate change, emphasis on impacts in the developing world, global & local equity issues, interaction between climate change mitigation/adaptation activities & existing global health initiatives; direct exposures (extreme heat, drought, precipitation, sea-level rise), indirect exposures (vector-borne & zoonotic diseases, ecosystem disruption, water quantity & quality, land arability & food production, population displacement). After taking this course, students will be well positioned for further work on global environmental change and health."
+      }
+    },
+    {
+      "result": {
+        "subject": "INTEGBI",
+        "courseNumber": "82",
+        "score": 0.6125503182411194
+      },
+      "course": {
+        "subject": "INTEGBI",
+        "number": "82",
+        "title": "Introduction to Field Research in Global Change Biology",
+        "description": "A field-based course with overnight and day trips to natural areas in the Bay Area and coastal California. Field trips and lectures emphasize natural history of California organisms and field research methods to study global climate change as well as preparing students for careers in ecology, evolutionary biology and conservation. There will be four field trips. Two of these field trips are day trips and two of these trips will involve weekends. Vans to transport students to field trips which will be driven by the instructors and the GSI. Camping equipment will be provided."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "152",
+        "score": 0.5973243713378906
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "152",
+        "title": "Global Change Biology",
+        "description": "The course will focus on understanding how anthropogenic changes to the global environment (e.g., climate change, habitat destruction, global trade) impact organisms. We will evaluate responses to global change in a wide diversity of organisms (from microbes to mammals) and ecosystems (from arctic to temperate to tropical). We will also explore conservation and mitigation strategies in the face of global change. Discussions will draw on recent primary research and case studies. "
+      }
+    }
+  ]
+}

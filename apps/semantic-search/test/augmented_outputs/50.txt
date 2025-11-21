@@ -1,0 +1,135 @@
+{
+  "query": "Experimental physics laboratory techniques",
+  "results": [
+    {
+      "result": {
+        "subject": "PHYSICS",
+        "courseNumber": "5BL",
+        "score": 0.6910431981086731
+      },
+      "course": {
+        "subject": "PHYSICS",
+        "number": "5BL",
+        "title": "Introduction to Experimental Physics I",
+        "description": "Part one of a two-semester laboratory sequence to introduce students to experimental physics and prepare them for research. Covers a variety of modern and historical experiments, emphasizing data analysis, clear scientific communication, and development of skills on modern equipment. Successor to the Physics H7 series."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHYSICS",
+        "courseNumber": "111B",
+        "score": 0.6747645139694214
+      },
+      "course": {
+        "subject": "PHYSICS",
+        "number": "111B",
+        "title": "Advanced Experimentation Laboratory",
+        "description": "In the advanced experimentation lab students complete four of 20+ advanced experiments. These include many experiments in atomic, nuclear, particle physics, biophysics, and solid-state physics, among others."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHYSICS",
+        "courseNumber": "5CL",
+        "score": 0.6746906638145447
+      },
+      "course": {
+        "subject": "PHYSICS",
+        "number": "5CL",
+        "title": "Introduction to Experimental Physics II",
+        "description": "Part two of a two-semester laboratory sequence to introduce students to experimental physics and prepare them for research. Covers a variety of modern and historical experiments, emphasizing iterative experimental design, clear scientific communication, and development of skills on modern equipment. Successor to the Physics H7 series."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATSCI",
+        "courseNumber": "241B",
+        "score": 0.652500569820404
+      },
+      "course": {
+        "subject": "MATSCI",
+        "number": "241B",
+        "title": "Electron Microscopy Laboratory",
+        "description": "This course covers the basic principles of techniques used in the characterization of engineering materials by electron microscopy, diffraction, and spectroscopy. In addition to lectures on the theory of electron diffraction and microscopy, there is a hands-on laboratory that offers detailed practical training in the operation of the transmission electron microscope (TEM) in all of its major functional diffraction and imaging modes."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "1AL",
+        "score": 0.651707112789154
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "1AL",
+        "title": "General Chemistry Laboratory",
+        "description": "An experimental approach to chemical sciences with emphasis on developing fundamental, reproducible laboratory technique and a goal of understanding and achieving precision and accuracy in laboratory experiments. Proper use of laboratory equipment and standard wet chemical methods are practiced. Areas of investigations include chemical equilibria, spectroscopy, nanotechnology, green chemistry, and thermochemistry. Completion of, or concurrent enrollment in 1A is required."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "140L",
+        "score": 0.6459376811981201
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "140L",
+        "title": "Genetics Laboratory",
+        "description": "Experimental techniques in classical and molecular genetics."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHMENG",
+        "courseNumber": "154",
+        "score": 0.6452534198760986
+      },
+      "course": {
+        "subject": "CHMENG",
+        "number": "154",
+        "title": "Chemical Engineering Laboratory",
+        "description": "Experiments in physical measurements, fluid mechanics, heat and mass transfer, kinetics, and separation processes. Emphasis on investigation of basic relationships important in engineering. Experimental design, analysis of results, and preparation of engineering reports are stressed."
+      }
+    },
+    {
+      "result": {
+        "subject": "MECENG",
+        "courseNumber": "103",
+        "score": 0.6430693864822388
+      },
+      "course": {
+        "subject": "MECENG",
+        "number": "103",
+        "title": "Experimentation and Measurements",
+        "description": "This course introduces students to modern experimental techniques for mechanical engineering, and improves students\u2019 teamwork and communication skills. Students will work in a laboratory setting on systems ranging in complexity from desktop experiments with only a few instruments up to systems such as an internal combustion engine with a wide variety of sensors. State-of-the-art software for data acquisition and analysis will be introduced and used throughout the course. The role of error and uncertainty, and uncertainty propagation, in measurements and analysis will be examined. Design of experiments will be addressed through examples and homework.  The role and limitations of spectral analysis of digital data will be discussed."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "125",
+        "score": 0.6419625282287598
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "125",
+        "title": "Physical Chemistry Laboratory",
+        "description": "Experiments in thermodynamics, kinetics, molecular structure, and general physical chemistry. "
+      }
+    },
+    {
+      "result": {
+        "subject": "EPS",
+        "courseNumber": "C182",
+        "score": 0.6344783902168274
+      },
+      "course": {
+        "subject": "EPS",
+        "number": "C182",
+        "title": "Atmospheric Chemistry and Physics Laboratory",
+        "description": "Fluid dynamics, radiative transfer, and the kinetics, spectroscopy, and measurement of atmospherically relevant species are explored through laboratory experiments, numerical simulations, and field observations. "
+      }
+    }
+  ]
+}

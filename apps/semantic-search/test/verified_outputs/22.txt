@@ -1,0 +1,10 @@
+COMPSCI 61B, Not reasonable
+DATA C88C, Not reasonable
+STAT 33B, Not reasonable
+COMPSCI 61A, Not reasonable
+COMPSCI 170, Reasonable
+CHEM 281, Reasonable
+CHEM 277A, Not reasonable
+PORTUG 103, Not reasonable
+INFO 251, Not reasonable
+HEBREW 100B, Not reasonable

@@ -1,0 +1,10 @@
+FILM 181, Reasonable
+FILM R1A, Not reasonable
+FILM R1B, Not reasonable
+JOURN 283, Reasonable
+FILM 20, Not reasonable
+FILM 85, Reasonable
+ETHSTD 303, Not reasonable
+GEOG 127, Reasonable
+JOURN 260, Reasonable
+ESPM 257, Not reasonable

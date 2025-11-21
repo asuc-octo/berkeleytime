@@ -1,0 +1,10 @@
+POLECON 154, Not reasonable
+NUCENG 130, Reasonable
+NUCENG 230, Reasonable
+NAVSCI 2, Reasonable
+POLSCI 123Y, Not reasonable
+GLOBAL 133, Reasonable
+NUCENG C285, Reasonable
+POLSCI 291IR, Not reasonable
+POLSCI 124C, Not reasonable
+PUBPOL C285, Reasonable

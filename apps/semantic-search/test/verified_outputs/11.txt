@@ -1,0 +1,10 @@
+CHEM 114, Reasonable
+CHEM 115, Reasonable
+CHEM 214, Reasonable
+CHEM 3BL, Not reasonable
+CHEM 259, Reasonable
+CHEM 159, Reasonable
+CHEM 12B, Not reasonable
+CHEM 263A, Reasonable
+CHEM 263B, Reasonable
+CHEM 262, Reasonable

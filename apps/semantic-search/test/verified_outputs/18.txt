@@ -1,0 +1,10 @@
+SOCIOL 141, Reasonable
+RHETOR 250, Not reasonable
+UGBA 192AC, Reasonable
+RHETOR 137, Not reasonable
+RHETOR 114, Not reasonable
+RHETOR 205, Reasonable
+RHETOR 123, Reasonable
+RHETOR 240G, Reasonable
+GLOBAL 178, Reasonable
+RHETOR R1A, Not reasonable

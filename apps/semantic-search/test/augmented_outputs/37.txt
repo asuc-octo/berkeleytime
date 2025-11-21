@@ -1,0 +1,135 @@
+{
+  "query": "Data mining for business intelligence",
+  "results": [
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "142A",
+        "score": 0.6777926683425903
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "142A",
+        "title": "Introduction to Machine Learning and Data Analytics",
+        "description": "This course introduces students to key techniques in machine learning and data analytics through a diverse set of examples using real datasets from domains such as e-commerce, healthcare, social media, finance, the Internet, and more. Through these examples, conceptual exercises, data analysis exercises in Python, and a comprehensive team project, students will gain experience understanding and applying techniques such as linear regression, logistic regression, classification and regression trees, random forests, boosting, text mining, data cleaning and manipulation, data visualization, time series modeling, clustering, principal component analysis, regularization, and large-scale learning with neural networks."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "142",
+        "score": 0.67735755443573
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "142",
+        "title": "Advanced Business Analytics",
+        "description": "Successful business analysts, managers, and executives are increasingly required to make data-driven decisions to run their businesses, rather than rely on experience and intuition alone. This course teaches the latest data analytic methods and decision methods now used by leading-edge business practitioners, going deep to understand their technical inner workings and going broad to realize their practical business applications. Topics include: data analysis/business decision methodology; data analytic methods, including machine learning and other approaches; introduction to R software for data analysis; real-world/real-data business practicum across a variety of industries."
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "201",
+        "score": 0.6455309987068176
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "201",
+        "title": "Research Design and Applications for Data and Analysis",
+        "description": "This course introduces students to the data sciences landscape, focusing on learning how to apply data science techniques to uncover, enrich, and answer the questions you will encounter and originate in the industry. After an introduction to data science and an overview of the course, students will explore decision-making in organizations and big data's emerging role in guiding tactical and strategic decisions. Lectures, readings, discussions, and assignments will teach how to apply disciplined, creative methods to ask better questions, gather data, interpret results, and convey findings to various audiences in ways that change minds and behaviors."
+      }
+    },
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "242B",
+        "score": 0.6446681022644043
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "242B",
+        "title": "Machine Learning and Data Analytics II",
+        "description": "Following IEOR 142A/242A, this course further introduces students to essential\nmethodologies and recent trends in machine learning and data analytics. The\ncourse will bridge theoretical foundations with applied data analytics by using\nexamples and real datasets from domains such as e-commerce, social media, finance,\nand more. Students will gain experience with various data analytics packages in\nPython and will deliver a comprehensive team project. Topics include: deep\nlearning, time series and survival analysis, end-to-end learning, causal inference,\nreinforcement learning, and ethics, fairness and safety in artificial intelligence."
+      }
+    },
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "142B",
+        "score": 0.6446681022644043
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "142B",
+        "title": "Machine Learning and Data Analytics II",
+        "description": "Following IEOR 142A/242A, this course further introduces students to essential\nmethodologies and recent trends in machine learning and data analytics. The\ncourse will bridge theoretical foundations with applied data analytics by using\nexamples and real datasets from domains such as e-commerce, social media, finance,\nand more. Students will gain experience with various data analytics packages in\nPython and will deliver a comprehensive team project. Topics include: deep\nlearning, time series and survival analysis, end-to-end learning, causal inference,\nreinforcement learning, and ethics, fairness and safety in artificial intelligence."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "104",
+        "score": 0.6429555416107178
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "104",
+        "title": "Introduction to Business Analytics",
+        "description": "This course provides an introduction to several quantitative methods used to facilitate complex decision-making in business, with applications in many different industries, at different levels in the organization, and with different scopes of decisions. The power of the methods covered in this class is further enhanced by implementing them in spreadsheet software, which allows complex problems to be approached and solved in a straightforward and understandable manner. "
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "214",
+        "score": 0.6426810026168823
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "214",
+        "title": "Data Analysis and Machine Learning for Real-World Decision Making",
+        "description": "This is an MA class in statistics. Students will be engaged in open-ended data projects for decision making to solve domain problems. It mirrors the entire data science life cycle in practice, including problem formulation, data cleaning, exploratory data analysis, statistical and machine learning modeling and computational techniques, and interpretation of results in context. It is guided by the Predictability-Computability-Stability (PCS) framework for veridical data science and emphasizes critical thinking and documenting human judgment calls and code. It coaches not only the technical but also communication and teamwork skills in order to obtain responsible and reliable data-driven conclusions for solving complex real world problems."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "154",
+        "score": 0.6410703659057617
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "154",
+        "title": "Modern Statistical Prediction and Machine Learning",
+        "description": "Theory and practice of statistical prediction. Contemporary methods as extensions of classical methods. Topics: optimal prediction rules, the curse of dimensionality, empirical risk, linear regression and classification, basis expansions, regularization, splines, the bootstrap, model selection, classification and regression trees, boosting, support vector machines. Computational efficiency versus predictive performance. Emphasis on experience with real data and assessing statistical assumptions. This course uses Python as its primary computing language; details are determined by the instructor."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "254",
+        "score": 0.6398873329162598
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "254",
+        "title": "Modern Statistical Prediction and Machine Learning",
+        "description": "This course is about statistical learning methods and their use for data analysis. Upon completion, students will be able to build baseline models for real world data analysis problems, implement models using programming languages and draw conclusions from models. The course will cover principled statistical methodology for basic machine learning tasks such as regression, classification, dimension reduction and clustering. Methods discussed will include linear regression, subset selection, ridge regression, LASSO, logistic regression, kernel smoothing methods, tree based methods, bagging and boosting, neural networks, Bayesian methods, as well as inference techniques based on resampling, cross validation and sample splitting."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "189",
+        "score": 0.6375629901885986
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "189",
+        "title": "Introduction to Machine Learning",
+        "description": "Theoretical foundations, algorithms, methodologies, and applications for machine learning. Topics may include supervised methods for regression and classication (linear models, trees, neural networks, ensemble methods, instance-based methods); generative and discriminative probabilistic models; Bayesian parametric learning; density estimation and clustering; Bayesian networks; time series models; dimensionality reduction; programming projects covering a variety of real-world applications. "
+      }
+    }
+  ]
+}

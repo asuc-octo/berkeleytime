@@ -1,0 +1,10 @@
+ARCH 11B, Not reasonable
+INFO C265, Reasonable
+NWMEDIA C265, Reasonable
+CHMENG 160, Not reasonable
+DESINV 10, Not reasonable
+DESINV 21, Not reasonable
+DESINV 15, Not reasonable
+HISTART R1B, Not reasonable
+ARCH 100B, Not reasonable
+INDENG 170, Reasonable

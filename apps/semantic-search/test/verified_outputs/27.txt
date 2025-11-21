@@ -1,0 +1,10 @@
+BIOENG 104, Not reasonable
+MECENG 120, Reasonable
+BIOENG 211, Reasonable
+EDUC 203, Reasonable
+PHYSED 32, Reasonable
+BIOENG 282, Reasonable
+THEATER 148, Reasonable
+THEATER 141, Reasonable
+MCELLBI 239BB, Reasonable
+INTEGBI 132, Reasonable

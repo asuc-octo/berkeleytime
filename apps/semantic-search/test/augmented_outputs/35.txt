@@ -1,0 +1,135 @@
+{
+  "query": "Jazz harmony and improvisation",
+  "results": [
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "116",
+        "score": 0.7292170524597168
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "116",
+        "title": "Improvisation in the Jazz Tradition",
+        "description": "Theory and practical experience in the art of musical improvisation, through study and internalization of the Black American music known as jazz.\n\nThis is a class for acquiring knowledge and skills necessary for improvising in the jazz tradition, with the goal of creating a personal and ensemble language. Areas of study include transcription, harmonic analysis, melodic research, and composition.\n\nWe will study the work of practitioners from across the history of jazz, such as Louis Armstrong, Duke Ellington, Charlie Parker, Mary Lou Williams, Thelonious Monk, Sun Ra, and Steve Lacy.\n\nOpen to both music majors and non-majors by audition at the start of term."
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "164",
+        "score": 0.692475438117981
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "164",
+        "title": "Creative Jazz and Improvised Music Performance Workshop",
+        "description": "Creative Jazz and Improvised Music Performance Workshop is an intermediate-level performance course in which we\u2019ll explore many approaches to making improvisational music including, jazz, blues, and experimental practices, along with a study of the music of innovative improvising musicians/composers from around the world. Class projects and activities include: deepening our ability to \u201clisten,\u201d developing a lexicon of musical materials and strategies for improvising in small and large ensembles, studying graphic scores and alternative notation, playing game pieces, and improvising film scores. Students with technical instrumental facility and some knowledge of music theory, from diverse musical backgrounds, are welcome to audition."
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "165",
+        "score": 0.6340590715408325
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "165",
+        "title": "Berkeley Nu Jazz Collective",
+        "description": "This advanced small ensemble of improvisers (The Berkeley Nu Jazz Collective) will explore a range of repertoire including music by innovative jazz composers of the 1960s and 70s, as well as contemporary works and original student compositions and arrangements. Students will be expected to practice, compose, and arrange music for the bi-weekly rehearsals outside of class time, and will be given individual guidance on composing and arranging by appointment."
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "151A",
+        "score": 0.606587827205658
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "151A",
+        "title": "Harmony I",
+        "description": "Diatonic harmony, chorale harmonization, and analytical studies. Emphasis on written exercises. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "151B",
+        "score": 0.6006278991699219
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "151B",
+        "title": "Harmony II",
+        "description": "Introduction to chromatic harmony and analytical studies. Emphasis on written exercises. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "151D",
+        "score": 0.6001542806625366
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "151D",
+        "title": "Twentieth-Century Harmony",
+        "description": "Materials and techniques of 20th-century music. Analytical studies. Emphasis on written exercises. "
+      }
+    },
+    {
+      "result": {
+        "subject": "THEATER",
+        "courseNumber": "148",
+        "score": 0.5929861068725586
+      },
+      "course": {
+        "subject": "THEATER",
+        "number": "148",
+        "title": "Movement Improvisation",
+        "description": "This course is an introduction to the foundational principles of movement improvisation. Through guided movement exercises and experiences, readings, discussions, observations, and journaling students will broaden their ability to move expressively and in the moment. They will learn skills that explore concepts of time, space, energy, shape and dynamics. The course will develop students\u2019 choreographic tools and performance abilities, and it will challenge students to take creative risks. The readings will allow for critical and historical understandings of dance improvisation and how improvisation has impacted choreographic trends."
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "20",
+        "score": 0.5655410885810852
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "20",
+        "title": "Introduction to Musicianship",
+        "description": "Fundamentals of musicianship, including musical time and pitch space. Conducting, singing, listening, and beginning linear analysis."
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "90",
+        "score": 0.5557407140731812
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "90",
+        "title": "Making Music",
+        "description": "Introduction to creative music research, theory and practice."
+      }
+    },
+    {
+      "result": {
+        "subject": "MUSIC",
+        "courseNumber": "168AS",
+        "score": 0.5434192419052124
+      },
+      "course": {
+        "subject": "MUSIC",
+        "number": "168AS",
+        "title": "Classical Ensembles Performance Studio",
+        "description": "By audition. The course will be a conservatory-style performance option for instrumentalists, offering instruction in performance of small group ensemble work (duos, trios, quartets, octets). Participants receive some coaching from faculty, and share their work in public performance.  "
+      }
+    }
+  ]
+}

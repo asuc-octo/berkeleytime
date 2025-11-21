@@ -1,0 +1,10 @@
+MCELLBI 104, Reasonable
+PLANTBI 160, Not reasonable
+MCELLBI 249O, Reasonable
+MCELLBI 239M, Reasonable
+MCELLBI 239O, Reasonable
+MCELLBI 239FF, Reasonable
+MCELLBI 140, Not reasonable
+MCELLBI 110, Not reasonable
+MCELLBI 150, Not reasonable
+MCELLBI 259K, Reasonable

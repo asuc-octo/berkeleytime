@@ -1,0 +1,10 @@
+PHYSICS 5BL, Reasonable
+PHYSICS 111B, Reasonable
+PHYSICS 5CL, Reasonable
+MATSCI 241B, Not reasonable
+CHEM 1AL, Not reasonable
+MCELLBI 140L, Not reasonable
+CHMENG 154, Not reasonable
+MECENG 103, Not reasonable
+CHEM 125, Not reasonable
+EPS C182, Not reasonable

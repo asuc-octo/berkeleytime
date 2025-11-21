@@ -1,0 +1,10 @@
+DATASCI 207, Reasonable
+COMPSCI 189, Reasonable
+CHEM 277B, Reasonable
+COMPSCI 289A, Reasonable
+DATASCI 281, Reasonable
+INFO 251, Reasonable
+COMPSCI C280, Reasonable
+VISSCI C280, Reasonable
+BIOENG C242, Reasonable
+BIOENG C142, Reasonable

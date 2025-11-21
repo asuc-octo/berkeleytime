@@ -1,0 +1,135 @@
+{
+  "query": "Abstract algebra and group theory",
+  "results": [
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "113",
+        "score": 0.7326534986495972
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "113",
+        "title": "Introduction to Abstract Algebra",
+        "description": "Sets and relations. The integers, congruences, and the Fundamental Theorem of Arithmetic. Groups and their factor groups. Commutative rings, ideals, and quotient fields. The theory of polynomials: Euclidean algorithm and unique factorizations. The Fundamental Theorem of Algebra. Fields and field extensions. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "114",
+        "score": 0.7188922166824341
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "114",
+        "title": "Second Course in Abstract Algebra",
+        "description": "Further topics on groups, rings, and fields not covered in Math 113. Possible topics include the Sylow Theorems and their applications to group theory; classical groups; abelian groups and modules over a principal ideal domain; algebraic field extensions; splitting fields and Galois theory; construction and classification of finite fields."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "250B",
+        "score": 0.6706382632255554
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "250B",
+        "title": "Commutative Algebra",
+        "description": "Development of the main tools of commutative and homological algebra applicable to algebraic geometry, number theory and combinatorics."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "215B",
+        "score": 0.6552252769470215
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "215B",
+        "title": "Algebraic Topology",
+        "description": "Fundamental group and covering spaces, simplicial and singular homology theory with applications, cohomology theory, duality theorem. Homotopy theory, fibrations, relations between homotopy and homology, obstruction theory, and topics from spectral sequences, cohomology operations, and characteristic classes. Sequence begins fall."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "261B",
+        "score": 0.6461037993431091
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "261B",
+        "title": "Lie Groups",
+        "description": "Lie groups and Lie algebras, fundamental theorems of Lie, general structure theory; compact, nilpotent, solvable, semi-simple Lie groups; classification theory and representation theory of semi-simple Lie algebras and Lie groups, further topics such as symmetric spaces, Lie transformation groups, etc., if time permits. In view of its simplicity and its wide range of applications, it is preferable to cover compact Lie groups and their representations in 261A. Sequence begins Fall."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "208",
+        "score": 0.6380695700645447
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "208",
+        "title": "C*-algebras",
+        "description": "Basic theory of C*-algebras. Positivity, spectrum, GNS construction. Group C*-algebras and connection with group representations. Additional topics, for example, C*-dynamical systems, K-theory."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "252",
+        "score": 0.6242732405662537
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "252",
+        "title": "Representation Theory",
+        "description": "Structure of finite dimensional algebras, applications to representations of finite groups, the classical linear groups."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "110",
+        "score": 0.624150276184082
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "110",
+        "title": "Abstract Linear Algebra",
+        "description": "Matrices, vector spaces, linear transformations, inner products, determinants. Eigenvectors. QR factorization. Quadratic forms and Rayleigh's principle. Jordan canonical form, applications. Linear functionals. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "143",
+        "score": 0.6097824573516846
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "143",
+        "title": "Elementary Algebraic Geometry",
+        "description": "Introduction to basic commutative algebra, algebraic geometry, and computational techniques. Main focus on curves, surfaces and Grassmannian varieties."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATH",
+        "courseNumber": "256B",
+        "score": 0.6048071384429932
+      },
+      "course": {
+        "subject": "MATH",
+        "number": "256B",
+        "title": "Algebraic Geometry",
+        "description": "Affine and projective algebraic varieties. Theory of schemes and morphisms of schemes. Smoothness and differentials in algebraic geometry. Coherent sheaves and their cohomology. Riemann-Roch theorem and selected applications. Sequence begins fall."
+      }
+    }
+  ]
+}

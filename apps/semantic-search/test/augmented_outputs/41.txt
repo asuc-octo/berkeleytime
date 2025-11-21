@@ -1,0 +1,135 @@
+{
+  "query": "Screenwriting for film and television",
+  "results": [
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "181",
+        "score": 0.6892154216766357
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "181",
+        "title": "Screenwriting",
+        "description": "The course explores the art and craft of writing a feature-length narrative screenplay. Participants begin with a detailed outline of a narrative script and a portion of the script in proper form and develop it into a completed screenplay. The focus is on rewriting, with regular presentations of scenes to fellow writers. Participants also write short scripts and explore alternative story structure. The emphasis is on characterization, scene structure, visual story telling, dialogue, and creating a unified script. The class culminates with reading of completed scripts."
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "R1A",
+        "score": 0.6153411865234375
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "R1A",
+        "title": "The Craft of Writing - Film Focus",
+        "description": "Rhetorical approach to reading and writing argumentative discourse with a film focus. Close reading of selected texts; written themes developed from class discussion and analysis of rhetorical strategies. Satisfies the first half of the Reading and Composition requirement. "
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "R1B",
+        "score": 0.6066024303436279
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "R1B",
+        "title": "The Craft of Writing - Film Focus",
+        "description": "Intensive argumentative writing stimulated through selected readings, films, and class discussion. Satisfies the second half of the Reading and Composition requirement. "
+      }
+    },
+    {
+      "result": {
+        "subject": "JOURN",
+        "courseNumber": "283",
+        "score": 0.5667800307273865
+      },
+      "course": {
+        "subject": "JOURN",
+        "number": "283",
+        "title": "Reporting for Television",
+        "description": "Producing, directing, writing, and videotaping of live weekly television news program."
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "20",
+        "score": 0.5667446255683899
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "20",
+        "title": "Film and Media Theory",
+        "description": "This course is intended to introduce undergraduates to the study of a range of media, including photography, film, television, video, and print and digital media. The course will focus on questions of medium \"specificity\" or the key technological/material, formal and aesthetic features of different media and modes of address and representation that define them. Also considered is the relationship of individual media to time and space, how individual media construct their audiences or spectators, and the kinds of looking or viewing they enable or encourage. The course will discuss the ideological effects of various media, particularly around questions of racial and sexual difference, national identity, capitalism, and power."
+      }
+    },
+    {
+      "result": {
+        "subject": "FILM",
+        "courseNumber": "85",
+        "score": 0.5485867857933044
+      },
+      "course": {
+        "subject": "FILM",
+        "number": "85",
+        "title": "Introduction to Moving Image Production",
+        "description": "The objective of this class is to provide a basic technical foundation for digital media production while emphasizing the techniques and languages of creative moving image media from traditional story genres to more contemporary experimental forms. Training will move from pre-production scripting to production -- including image capture, lighting and sound recording -- to post-production with non-linear digital applications."
+      }
+    },
+    {
+      "result": {
+        "subject": "ETHSTD",
+        "courseNumber": "303",
+        "score": 0.5448811054229736
+      },
+      "course": {
+        "subject": "ETHSTD",
+        "number": "303",
+        "title": "Professional Writing",
+        "description": "This course trains graduate students in writing for professional purposes, such as preparing conference presentations, articles for publication in journals, applications for funding, prequalifying exam position papers, dissertation prospectuses, dissertation chapters, book prospectuses, job applications, etc. Students bring in drafts of their writing for intensive critique by the instructor and fellow students. "
+      }
+    },
+    {
+      "result": {
+        "subject": "GEOG",
+        "courseNumber": "127",
+        "score": 0.5403000116348267
+      },
+      "course": {
+        "subject": "GEOG",
+        "number": "127",
+        "title": "Geographic Film Production",
+        "description": "What makes a film geographical? How can we explore humans\u2019 relationships to their environment through sound and image? How might we make nonfiction films which foreground place and give it actual agency and voice? How can we use documentary film practices to depict place, culture, society, gesture, movement, rhythm and \ufb02ow in new and exciting ways? This is a production workshop where each student will conceptualize, shoot, and edit one short documentary film project that centralizes some aspect/s of geographic thought. This course is geared towards first time filmmakers. All film projects must fit the theme designated by the instructor, per term."
+      }
+    },
+    {
+      "result": {
+        "subject": "JOURN",
+        "courseNumber": "260",
+        "score": 0.5402859449386597
+      },
+      "course": {
+        "subject": "JOURN",
+        "number": "260",
+        "title": "Investigative Reporting for TV and Print",
+        "description": "Students will be required to investigate leads that are received by the faculty, and prepare briefing papers for the class to introduce guest speakers. They will work on researching and reporting assignments related to documentary productions and print stories for different outlets. \"Sources,\" people with informtion critical to developing a story, need to be developed. The responsibilites of a reporter engaged in developing sourses will be a constant theme of the seminar. "
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "257",
+        "score": 0.5376580953598022
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "257",
+        "title": "Creative Writing in Environmental Science",
+        "description": "Writing is one of the most compelling skills we learn as environmental scientists and communicators. Yet, the formulaic and monotonous nature of composing scientific peer-reviewed publications can constrain creative and imaginative prose, features of our writing that draw in audiences outside academia. The goal of this graduate seminar is to provide a broad, introductory exploration to creative and environmental science writing. We will explore, discuss, and workshop multiple literary genres \u2013 from poetry to creative fiction and nonfiction \u2013 as both a means of diversifying our writing craft and improving narrative structure in academic writing."
+      }
+    }
+  ]
+}

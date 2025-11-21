@@ -36,6 +36,24 @@ process. Instead use `make down` to safely kill the cluster.
 If you modify the source code, you will not have to do anything to restart the cluster or services.
 Django will automatically detect a change and restart itself. 
 
+### Semantic search (Python) service
+The semantic search prototype that currently lives in `berkeleytime_semanticsearchipynb.py` runs inside its own Python container.
+
+1. Put reusable code inside `apps/semantic-search/app/` (the default FastAPI stub lives in `app/main.py`).
+2. Install dependencies by editing `apps/semantic-search/requirements.txt`; the Docker image will `pip install` them during build.
+3. Build and start just this service with `docker compose up semantic-search --build`. The container exposes FastAPI on http://localhost:8000 and shares code via a bind mount, so edits to `app/` hot-reload with Uvicorn.
+4. The service builds its FAISS index on demand (or eagerly at startup when a default term is configured). `/health` reports which terms are currently indexed. Query it with `GET /search?query=ai&top_k=5&year=2024&semester=Fall`, or rebuild a specific term with `POST /refresh`.
+5. Other services (e.g., the Node backend or frontend) can call it through `http://semantic-search:8000/...` on the Docker network, or via the proxied route `http://localhost:8080/api/semantic-search/...` once nginx + backend are up.
+
+Environment knobs (override with container env vars):
+
+- `SEMANTIC_SEARCH_CATALOG_URL` – GraphQL endpoint (defaults to `http://backend:5001/api/graphql` inside Docker)
+- `SEMANTIC_SEARCH_YEAR` / `SEMANTIC_SEARCH_SEMESTER` – optional defaults to prewarm a specific term; otherwise indexes are built the first time `/refresh` or `/search` is called.
+- `SEMANTIC_SEARCH_ALLOWED_SUBJECTS` – optional comma-separated whitelist; leave empty to ingest every subject.
+- `SEMANTIC_SEARCH_MODEL` – HuggingFace sentence-transformer name (defaults to `all-MiniLM-L6-v2`)
+
+The Node backend expects `SEMANTIC_SEARCH_URL` (default `http://semantic-search:8000`) so it can proxy the FastAPI service at `/api/semantic-search/...` for the frontend.
+
 ## For Maintainers
 
 The Makefile provides some descriptions of how the commands work together. `make base`, `make prod`, 

@@ -1,0 +1,135 @@
+{
+  "query": "Lambda functions and functional programming",
+  "results": [
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "47A",
+        "score": 0.631759524345398
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "47A",
+        "title": "Completion of Work in Computer Science 61A",
+        "description": "Implementation of generic operations. Streams and iterators. Implementation techniques for supporting functional, object-oriented, and constraint-based programming in the Scheme programming language. Together with 9D, 47A constitutes an abbreviated, self-paced version of 61A for students who have already taken a course equivalent to 61B. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61A",
+        "score": 0.607858419418335
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61A",
+        "title": "The Structure and Interpretation of Computer Programs",
+        "description": "An introduction to programming and computer science focused on abstraction techniques as means to manage program complexity. Techniques include procedural abstraction; control abstraction using recursion, higher-order functions, generators, and streams; data abstraction using interfaces, objects, classes, and generic operators; and language abstraction using interpreters and macros. The course exposes students to programming paradigms, including functional, object-oriented, and declarative approaches. It includes an introduction to asymptotic analysis of algorithms. There are several significant programming projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "33B",
+        "score": 0.6009713411331177
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "33B",
+        "title": "Introduction to Advanced Programming in R",
+        "description": "The course is designed primarily for those who are already familiar with programming in another language, such as python, and want to understand how R works, and for those who already know the basics of R programming and want to gain a more in-depth understanding of the language in order to improve their coding. The focus is on the underlying paradigms in R, such as functional programming, atomic vectors, complex data structures, environments, and object systems. The goal of this course is to better understand programming principles in general and to write better R code that capitalizes on the language's design.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "DATA",
+        "courseNumber": "C88C",
+        "score": 0.5909589529037476
+      },
+      "course": {
+        "subject": "DATA",
+        "number": "C88C",
+        "title": "Computational Structures in Data Science",
+        "description": "Development of Computer Science topics appearing in Foundations of Data Science (C8); expands computational concepts and techniques of abstraction. Understanding  the structures that underlie the programs, algorithms, and languages used in data science and elsewhere.   Mastery of a particular programming language while studying general techniques for managing program complexity, e.g., functional, object-oriented, and declarative programming. Provides practical experience with composing larger systems through several significant programming projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "LINGUIS",
+        "courseNumber": "121",
+        "score": 0.5832415819168091
+      },
+      "course": {
+        "subject": "LINGUIS",
+        "number": "121",
+        "title": "Formal Semantics",
+        "description": "This course provides an introduction to the study of linguistic meaning. It focuses on the application of formal tools drawn from set theory and logic (including the lambda calculus) to make explicit claims about the meaning of words and sentences."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "164",
+        "score": 0.5684648156166077
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "164",
+        "title": "Programming Languages and Compilers",
+        "description": "Survey of programming languages. The design of modern programming languages. Principles and techniques of scanning, parsing, semantic analysis, and code generation. Implementation of compilers, interpreters, and assemblers. Overview of run-time organization and error handling. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "249A",
+        "score": 0.5602142810821533
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "249A",
+        "title": "Research in Genetics and Development: From Sequence to Function in Transcription Factors",
+        "description": "This course explores experimental and computational approaches to studying the sequence to function relationships of intrinsically disordered proteins. Emphasis on the activation domains of transcription factors. High-throughput experiments, machine learning, evolutionary comparisons, and all atom simulations will be discussed. Additional emphasis will be placed on characterizing the functional consequences of patient mutations in activation domains."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "10",
+        "score": 0.5601021647453308
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "10",
+        "title": "The Beauty and Joy of Computing",
+        "description": "An introductory course for students with minimal prior exposure to computer science. Prepares students for future computer science courses and empowers them to utilize programming to solve problems in their field of study. Presents an overview of the history, great principles, and transformative applications of computer science, as well as a comprehensive introduction to programming. Topics include abstraction, recursion, algorithmic complexity, higher-order functions, concurrency, social implications of computing (privacy, education, algorithmic bias), and engaging research areas (data science, AI, HCI). Students will program in Snap! (a friendly graphical language) and Python, and will design and implement two projects of their choice."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "281",
+        "score": 0.5565425157546997
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "281",
+        "title": "Software Engineering for Scientific Computing",
+        "description": "The course covers computer architecture and software features that have the\ngreatest impact on performance. It addresses debugging and performance tunning, detecting\nmemory and stack overwrites, malloc corruption, hotspot, paging, cache misses. A toolbox with\ncommon algorithms: sorting, searching, hashing, trees, graph traversing, is followed by common\npatterns used in object-oriented design. It describes programming paradigms, dynamic libraries,\ndistributed architectures, and services. Lectures on linear algebra and performance libraries are\nprovided as background for future courses. HPC paradigms and GPU programming are introduced.\nSoftware packaging, extensibility, and interactivity is followed by team development, testing and\nhardening."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "33A",
+        "score": 0.5564268827438354
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "33A",
+        "title": "Introduction to Programming in R",
+        "description": "An introduction to the R statistical software for students with minimal prior experience with programming. This course prepares students for data analysis with R. The focus is on the computational model that underlies the R language with the goal of providing a foundation for coding. Topics include data types and structures, such as vectors, data frames and lists; the REPL evaluation model; function calls, argument matching, and environments; writing simple functions and control flow. Tools for reading, analyzing, and plotting data are covered, such as data input/output, reshaping data, the formula language, and graphics models.\n"
+      }
+    }
+  ]
+}

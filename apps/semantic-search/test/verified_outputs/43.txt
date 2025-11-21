@@ -1,0 +1,10 @@
+CLASSIC 218, Reasonable
+AGRS 36, Reasonable
+PHILOS 160, Reasonable
+AGRS 130C, Reasonable
+PHILOS 114, Reasonable
+AGRS 28, Not reasonable
+PHILOS 104, Not reasonable
+PHILOS 100, Not reasonable
+PHILOS R1B, Not reasonable
+PHILOS 119, Not reasonable

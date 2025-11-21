@@ -1,0 +1,135 @@
+{
+  "query": "Game theory and strategic decision making",
+  "results": [
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "C110",
+        "score": 0.6951553821563721
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "C110",
+        "title": "Game Theory in the Social Sciences",
+        "description": "A non-technical introduction to game theory. Basic principle, and models of interaction among players, with a strong emphasis on applications to political science, economics, and other social sciences."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "C135",
+        "score": 0.6871733665466309
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "C135",
+        "title": "Game Theory in the Social Sciences",
+        "description": "A non-technical introduction to game theory. Basic principle, and models of interaction among players, with a strong emphasis on applications to political science, economics, and other social sciences."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "155",
+        "score": 0.6844611167907715
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "155",
+        "title": "Game Theory",
+        "description": "General theory of zero-sum, two-person games, including games in extensive form and continuous games, and illustrated by detailed study of examples."
+      }
+    },
+    {
+      "result": {
+        "subject": "XMBA",
+        "courseNumber": "211",
+        "score": 0.6587133407592773
+      },
+      "course": {
+        "subject": "XMBA",
+        "number": "211",
+        "title": "Game Theory",
+        "description": ""
+      }
+    },
+    {
+      "result": {
+        "subject": "COGSCI",
+        "courseNumber": "151",
+        "score": 0.628200113773346
+      },
+      "course": {
+        "subject": "COGSCI",
+        "number": "151",
+        "title": "Models of Decision-Making from Brain to Behavior",
+        "description": "This course offers an interdisciplinary exploration of how decisions are made by individuals and organizations. We will explore theories and models from psychology, neuroscience, economics, and their applications to fields such as medicine, business, public policy, and technology. You will learn about the cognitive biases, societal factors, and neural mechanisms which shape our decision making processes, and how computational models can be designed to explain and inform decision making in different aspects of life. The course will focus on the concepts underlying computational models and will not cover fitting models to data, but will develop your ability to interpret graphs, understand computational models, and assess statistical results."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "206",
+        "score": 0.6149214506149292
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "206",
+        "title": "Mechanism Design and Agency Theory",
+        "description": "This course will study the optimal design of mechanisms in the presence of incomplete information and imperfect observability. The course will begin with the \"classic\" principal-agent problem and will then develop its applications to the \"implicit contracts\" theory of agency and to the choice of government policies for regulated industries. The second half of the course will treat the design of auctions, regulation with costly or imperfect monitoring, mechanism design with limited contracts."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "232A",
+        "score": 0.6020703315734863
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "232A",
+        "title": "Formal Models of Political Science",
+        "description": "Mathematical models of politics with applications to political learning, bargaining, and democratic theory. Topics from game theory, collective choice theory, and mathematical psychology. This course emphasizes the application of the formal analytic tools to current or significant research in political science."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "173",
+        "score": 0.6016097068786621
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "173",
+        "title": "Competitive Strategy",
+        "description": "This course takes the perspective of the executive responsible for developing a firm's strategy, and focuses on forms of competitive advantage at the firm level. Topics include industry and competitive analysis; business scope (horizontal and vertical scope); make vs buy decision-making and related tradeoffs; network effects and complementors; disruption and response; non-market factors such as regulatory barriers to entry; and risks to sustaining returns. This course will build on concepts covered in various UGBA Core classes."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "88",
+        "score": 0.5925015807151794
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "88",
+        "title": "Data and Decisions",
+        "description": "The goal of this connector course is to provide an understanding of how data and statistical analysis can improve managerial decision-making. We will explore statistical methods for gleaning insights from economic and social data, with an emphasis on approaches to identifying causal relationships. We will discuss how to design and analyze randomized experiments and introduce econometric methods for estimating causal effects in non-experimental data. The course draws on a variety of business and social science applications, including advertising, management, online marketplaces, labor markets, and education. This course, in combination with the Data 8 Foundations course, satisfies the statistics prerequisite for admission to Haas."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "201B",
+        "score": 0.5883466601371765
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "201B",
+        "title": "Economic Theory",
+        "description": "Basic preparation for the Ph.D. program including agency theory and mechanism design, general equilibrium theory."
+      }
+    }
+  ]
+}

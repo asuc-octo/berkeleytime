@@ -1,0 +1,135 @@
+{
+  "query": "Operating systems kernel design",
+  "results": [
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "211",
+        "score": 0.6562396287918091
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "211",
+        "title": "Operating System Security",
+        "description": "This survey of operating system security compares approaches to security taken among several modern operating systems. The course will teach how to conceptualize design issues, principles, and good practices in securing systems in today\u2019s increasingly diverse and complex computing ecosystem, which extends from things and personal devices to enterprises, with processing increasingly in the cloud. We will approach operating systems individually and then build on them so that students learn techniques for establishing trust across a set of interoperating systems."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "162",
+        "score": 0.6464965343475342
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "162",
+        "title": "Operating Systems and System Programming",
+        "description": "Basic concepts of operating systems and system programming. Utility programs, subsystems, multiple-program systems. Processes, interprocess communication, and synchronization. Memory allocation, segmentation, paging. Loading and linking, libraries. Resource allocation, scheduling, performance evaluation. File systems, storage devices, I/O systems. Protection, security, and privacy. "
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61C",
+        "score": 0.6126333475112915
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61C",
+        "title": "Great Ideas of Computer Architecture (Machine Structures)",
+        "description": "The internal organization and operation of digital computers. Machine architecture, support for high-level languages (logic, arithmetic, instruction sequencing) and operating systems (I/O, interrupts, memory management, process switching). Elements of computer logic design. Tradeoffs involved in fundamental architectural design decisions."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "281",
+        "score": 0.5922778844833374
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "281",
+        "title": "Software Engineering for Scientific Computing",
+        "description": "The course covers computer architecture and software features that have the\ngreatest impact on performance. It addresses debugging and performance tunning, detecting\nmemory and stack overwrites, malloc corruption, hotspot, paging, cache misses. A toolbox with\ncommon algorithms: sorting, searching, hashing, trees, graph traversing, is followed by common\npatterns used in object-oriented design. It describes programming paradigms, dynamic libraries,\ndistributed architectures, and services. Lectures on linear algebra and performance libraries are\nprovided as background for future courses. HPC paradigms and GPU programming are introduced.\nSoftware packaging, extensibility, and interactivity is followed by team development, testing and\nhardening."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "286",
+        "score": 0.5878411531448364
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "286",
+        "title": "Implementation of Data Base Systems",
+        "description": "Implementation of data base systems on modern hardware systems. Considerations concerning operating system design, including buffering, page size, prefetching, etc. Query processing algorithms, design of crash recovery and concurrency control systems. Implementation of distributed data bases and data base machines. "
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "251LA",
+        "score": 0.5529711842536926
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "251LA",
+        "title": "Introduction to Digital Design and Integrated Circuits Lab",
+        "description": "This lab lays the foundation of modern digital design by first presenting the scripting and hardware description language base for specification of digital systems and interactions with tool flows. The labs are centered on a large design with the focus on rapid design space exploration. The lab exercises culminate with a project design, e.g. implementation of a 3-stage RISC-V processor with a register file and caches. The design is mapped to simulation and layout specification."
+      }
+    },
+    {
+      "result": {
+        "subject": "DATASCI",
+        "courseNumber": "255",
+        "score": 0.5488280057907104
+      },
+      "course": {
+        "subject": "DATASCI",
+        "number": "255",
+        "title": "Machine Learning Systems Engineering",
+        "description": "This course provides learners hands-on data management and systems engineering experience using containers, cloud, and Kubernetes ecosystems based on current industry practice. The course will be project-based with an emphasis on how production systems are used at leading technology-focused companies and organizations. During the course, learners will build a body of knowledge around data management, architectural design, developing batch and streaming data pipelines, scheduling, and security around data including access management and auditability. We\u2019ll also cover how these tools are changing the technology landscape.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "302",
+        "score": 0.5474902391433716
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "302",
+        "title": "Designing Computer Science Education",
+        "description": "Discussion and review of research and practice relating to the teaching of computer science: knowledge organization and misconceptions, curriculum and topic organization, evaluation, collaborative learning, technology use, and administrative issues. As part of a semester-long project to design a computer science course, participants invent and refine a variety of homework and exam activities, and evaluate alternatives for textbooks, grading and other administrative policies, and innovative uses of technology. "
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "151LA",
+        "score": 0.5455649495124817
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "151LA",
+        "title": "Application Specific Integrated Circuits Laboratory",
+        "description": "This lab lays the foundation of modern digital design by first presenting the scripting and hardware description language base for specification of digital systems and interactions with tool flows. The labs are centered on a large design with the focus on rapid design space exploration. The lab exercises culminate with a project design, e.g., implementation of a three-stage RISC-V processor with a register file and caches. The design is mapped to simulation and layout specification."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "263",
+        "score": 0.5451996922492981
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "263",
+        "title": "Design of Programming Languages",
+        "description": "Selected topics from: analysis, comparison, and design of programming languages, formal description of syntax and semantics, advanced programming techniques, structured programming, debugging, verification of programs and compilers, and proofs of correctness. "
+      }
+    }
+  ]
+}

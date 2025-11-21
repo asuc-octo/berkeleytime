@@ -1,0 +1,10 @@
+ECON C110, Reasonable
+POLSCI C135, Reasonable
+STAT 155, Reasonable
+XMBA 211, Reasonable
+COGSCI 151, Not reasonable
+ECON 206, Reasonable
+POLSCI 232A, Reasonable
+UGBA 173, Not reasonable
+UGBA 88, Not reasonable
+ECON 201B, Reasonable

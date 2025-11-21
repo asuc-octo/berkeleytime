@@ -1,0 +1,10 @@
+NATAMST 175, Not reasonable
+ASAMST 20A, Reasonable
+ESPM C22AC, Not reasonable
+NATAMST C22AC, Not reasonable
+ARCH 277, Not reasonable
+ARCH 177, Not reasonable
+POLSCI 171, Not reasonable
+HISTORY 129A, Not reasonable
+PUBPOL C164A, Reasonable
+JOURN 267, Not reasonable

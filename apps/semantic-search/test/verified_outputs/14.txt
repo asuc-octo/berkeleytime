@@ -1,0 +1,10 @@
+INFO 253B, Reasonable
+INFO 153B, Reasonable
+COMPSCI 61B, Not reasonable
+CYBER 284, Not reasonable
+ENGIN 234, Not reasonable
+COMPSCI 164, Not reasonable
+DATA C200, Not reasonable
+COMPSCI 263, Not reasonable
+COMPSCI 61A, Not reasonable
+DATA C88C, Not reasonable

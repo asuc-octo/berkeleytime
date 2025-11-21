@@ -1,0 +1,135 @@
+{
+  "query": "Graphic design principles and typography",
+  "results": [
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "11B",
+        "score": 0.6620194911956787
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "11B",
+        "title": "Introduction to Design",
+        "description": "Introduction to design concepts and conventions of graphic representation and model building as related to the study of architecture, landscape architecture, urban design, and city planning. Students draw in plan, section, elevation, axonometric, and perspective and are introduced to digital media. Design projects address concepts of order, site analysis, scale, structure, rhythm, detail, culture, and landscape. "
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "C265",
+        "score": 0.6428773403167725
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "C265",
+        "title": "Interface Aesthetics",
+        "description": "This course will cover new interface metaphors beyond desktops (e.g., for mobile devices, computationally enhanced environments, tangible user interfaces) but will also cover visual design basics (e.g., color, layout, typography, iconography) so that we have systematic and critical understanding of aesthetically engaging interfaces. Students will get a hands-on learning experience on these topics through course projects, design critiques, and discussions, in addition to lectures and readings."
+      }
+    },
+    {
+      "result": {
+        "subject": "NWMEDIA",
+        "courseNumber": "C265",
+        "score": 0.6305627822875977
+      },
+      "course": {
+        "subject": "NWMEDIA",
+        "number": "C265",
+        "title": "Interface Aesthetics",
+        "description": "This course will cover new interface metaphors beyond desktops (e.g., for mobile devices, computationally enhanced environments, tangible user interfaces) but will also cover visual design basics (e.g., color, layout, typography, iconography) so that we have systematic and critical understanding of aesthetically engaging interfaces. Students will get a hands-on learning experience on these topics through course projects, design critiques, and discussions, in addition to lectures and readings."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHMENG",
+        "courseNumber": "160",
+        "score": 0.6255592703819275
+      },
+      "course": {
+        "subject": "CHMENG",
+        "number": "160",
+        "title": "Chemical Process Design",
+        "description": "Design principles of chemical process equipment. Design of integrated chemical processes with emphasis upon economic considerations."
+      }
+    },
+    {
+      "result": {
+        "subject": "DESINV",
+        "courseNumber": "10",
+        "score": 0.6070016622543335
+      },
+      "course": {
+        "subject": "DESINV",
+        "number": "10",
+        "title": "Discovering Design",
+        "description": "This course, ideal for students who are looking for an introduction to the broad world of design, covers design careers, design fields, histories of design and ethics in design. Students will gain language for analyzing and characterizing designs. In this course you will be learning design both from theoretical and historical perspectives, and from studio-based design exercises and projects. The weekly assignments and final projects will emphasize foundational design skills in  bservation, ideation, problem finding and problem solving, formgiving,  ommunication, and critique."
+      }
+    },
+    {
+      "result": {
+        "subject": "DESINV",
+        "courseNumber": "21",
+        "score": 0.6007916927337646
+      },
+      "course": {
+        "subject": "DESINV",
+        "number": "21",
+        "title": "Visual Communication & Sketching",
+        "description": "Good ideas alone are not the key to being a great designer or innovator. Rather, it is the strong process and communication skills that will make you stand out as a design practitioner and leader. In today\u2019s landscape of product design and innovation, great visual communicators must know how to 1) effectively and confidently sketch by hand, 2) understand and utilize the basics of visual design, and 3) tell captivating and compelling stories. This course, offered in a project-based learning format, will give participants practice and confidence in their ability to communicate visually."
+      }
+    },
+    {
+      "result": {
+        "subject": "DESINV",
+        "courseNumber": "15",
+        "score": 0.5999873876571655
+      },
+      "course": {
+        "subject": "DESINV",
+        "number": "15",
+        "title": "Design Methodology",
+        "description": "This introductory course aims to expose you to the mindset, skillset and toolset associated with design. It does so through guided applications to framing and solving problems in design, business and engineering. Specifically, you will learn approaches to noticing and observing, framing and reframing, imagining and designing, and experimenting and testing as well as for critique and reflection. You will also have a chance to apply those approaches in various sectors. This course may be used to fulfill undergraduate technical elective requirements for some College of Engineering majors; students should refer to their Engineering Student Services advisors for more details."
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTART",
+        "courseNumber": "R1B",
+        "score": 0.5953898429870605
+      },
+      "course": {
+        "subject": "HISTART",
+        "number": "R1B",
+        "title": "Reading and Writing about Visual Experience",
+        "description": "How do mechanisms of perception structure responses to visual art? What is at stake when words describe images? By means of intensive looking, thinking, speaking, and writing, this course introduces the student to a series of problems and issues in the description and analysis of works of art. Because the course is also an introduction to the historical study of art, it is intended for students with no previous course work in the field. Satisfies the second half of the Reading and Composition requirement."
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "100B",
+        "score": 0.588066041469574
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "100B",
+        "title": "Fundamentals of Architectural Design",
+        "description": "Introductory courses in the design of buildings. Problems emphasize conceptual strategies of form and space, site relationships and social, technological and environmental determinants.   100B stresses tectonics, materials, and energy considerations. Studio work is supplemented by lectures, discussions, readings and field trips."
+      }
+    },
+    {
+      "result": {
+        "subject": "INDENG",
+        "courseNumber": "170",
+        "score": 0.584984302520752
+      },
+      "course": {
+        "subject": "INDENG",
+        "number": "170",
+        "title": "Industrial Design and Human Factors",
+        "description": "This course surveys topics related to the design of products and interfaces ranging from alarm clocks, cell phones, and dashboards to logos, presentations, and web sites. Design of such systems requires familiarity with human factors and ergonomics, including the physics and perception of color, sound, and touch, as well as familiarity with case studies and contemporary practices in interface design and usability testing. Students will solve a series of design problems individually and in teams."
+      }
+    }
+  ]
+}
