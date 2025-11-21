@@ -67,10 +67,10 @@ export default function Details({
             WebkitBoxOrient: "vertical",
           }}
         >
-          {instructors?.[0]
-            ? instructors.length === 1
-              ? `${instructors[0].givenName} ${instructors[0].familyName}`
-              : `${instructors[0].givenName} ${instructors[0].familyName}, et al.`
+          {instructors && instructors.length > 0
+            ? instructors
+                .map((i) => `${i.givenName} ${i.familyName}`)
+                .join(", ")
             : "To be determined"}
         </p>
       </Flex>

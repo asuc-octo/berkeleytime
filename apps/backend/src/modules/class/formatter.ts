@@ -65,6 +65,38 @@ export type IntermediateSection = Omit<
 > &
   SectionRelationships;
 
+/**
+ * Raw instructor data from database, including the role field.
+ * The role field is not exposed in GraphQL but used for filtering.
+ */
+interface RawInstructor {
+  printInScheduleOfClasses?: boolean;
+  familyName?: string | null;
+  givenName?: string | null;
+  role?: string | null;
+}
+
+/**
+ * Filters instructors to only show Primary Instructors (PI = professors)
+ * and sorts them alphabetically by last name for consistent ordering.
+ * This ensures TAs don't appear in instructor lists across the application.
+ *
+ * This is the single source of truth for instructor filtering logic.
+ */
+export const filterAndSortInstructors = (
+  instructors: RawInstructor[] | undefined
+): ClassModule.Instructor[] => {
+  if (!instructors) return [];
+
+  return instructors
+    .filter((instructor) => instructor.role === "PI")
+    .sort((a, b) => {
+      const lastNameA = a.familyName || "";
+      const lastNameB = b.familyName || "";
+      return lastNameA.localeCompare(lastNameB);
+    });
+};
+
 export const formatSection = (
   section: ISectionItem,
   enrollment: EnrollmentModule.Enrollment | null | undefined = null
@@ -80,6 +112,12 @@ export const formatSection = (
     term: null,
     class: null,
     enrollment: enrollment ?? null,
+
+    // Filter meetings to only show professors (PI), not TAs
+    meetings: section.meetings?.map((meeting) => ({
+      ...meeting,
+      instructors: filterAndSortInstructors(meeting.instructors),
+    })),
   } as IntermediateSection;
 
   return output;
