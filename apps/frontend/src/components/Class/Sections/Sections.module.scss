@@ -62,6 +62,10 @@
 .row {
   height: 120px;
   border-bottom: 1px solid var(--border-color);
+
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .cell {
