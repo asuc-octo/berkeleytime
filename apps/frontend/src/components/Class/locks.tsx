@@ -11,6 +11,7 @@ export const RATINGS_REQUIRED_REVIEWS = 3;
 export interface RatingsLockContext {
   userRatingsCount?: number;
   requiredRatingsCount?: number;
+  requiresLogin?: boolean;
 }
 
 interface RatingsTabClasses {
@@ -28,6 +29,8 @@ interface RatingsTabLinkProps {
   ratingsCount?: number | false;
   locked?: boolean;
   onLockedClick?: () => void;
+  loginRequired?: boolean;
+  ratingsNeededValue?: number;
   classes: RatingsTabClasses;
 }
 
@@ -50,7 +53,11 @@ const getRequiredRatingsTarget = (context?: RatingsLockContext) =>
   context?.requiredRatingsCount ?? RATINGS_REQUIRED_REVIEWS;
 
 const getRatingsNeeded = (context?: RatingsLockContext) => {
-  if (!context || typeof context.userRatingsCount !== "number") return 0;
+  if (!context) return 0;
+  if (context.requiresLogin) {
+    return getRequiredRatingsTarget(context);
+  }
+  if (typeof context.userRatingsCount !== "number") return 0;
   return Math.max(
     0,
     getRequiredRatingsTarget(context) - context.userRatingsCount
@@ -58,7 +65,7 @@ const getRatingsNeeded = (context?: RatingsLockContext) => {
 };
 
 export const isRatingsLocked = (context?: RatingsLockContext) =>
-  getRatingsNeeded(context) > 0;
+  context?.requiresLogin ? true : getRatingsNeeded(context) > 0;
 
 function RatingsTabLinkBase({
   to,
@@ -66,6 +73,8 @@ function RatingsTabLinkBase({
   ratingsCount,
   locked = isRatingsLocked(),
   onLockedClick,
+  loginRequired = false,
+  ratingsNeededValue = 0,
   classes,
 }: RatingsTabLinkProps) {
   const badge = ratingsCount ? (
@@ -83,7 +92,7 @@ function RatingsTabLinkBase({
 
   const renderMenuItem = (isActive = false): ReactNode => (
     <MenuItem {...(dialog ? { styl: true } : { active: isActive })}>
-      {locked && <Lock />}
+      {locked && <Lock style={{ marginRight: 4 }} />}
       Ratings
       {badge}
     </MenuItem>
@@ -104,8 +113,9 @@ function RatingsTabLinkBase({
     return navLink;
   }
 
-  const tooltipDescription =
-    "Click and add your experience to view ratings others have made";
+  const tooltipDescription = loginRequired
+    ? "Log in to view ratings from other students."
+    : `We still need ${ratingsNeededValue} ratings from you before showing everyone else's`;
 
   return (
     <Tooltip.Root disableHoverableContent>

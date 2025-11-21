@@ -18,13 +18,6 @@ import styles from "./UnlockRatingsModal.module.scss";
 // Number of ratings required to unlock ratings view
 const DEFAULT_REQUIRED_RATINGS_COUNT = 3;
 
-interface Term {
-  value: string;
-  label: string;
-  semester: Semester;
-  year: number;
-}
-
 interface UnlockRatingsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -210,9 +203,9 @@ export function UnlockRatingsModal({
   };
 
   // Calculate modal title and subtitle
-  const modalTitle = "Unlock Ratings Information";
+  const modalTitle = "Unlock Ratings";
   const ratingsLeft = requiredRatingsCount - currentRatingIndex;
-  const modalSubtitle = `You have ${ratingsLeft} rating${ratingsLeft !== 1 ? "s" : ""} left to view the ratings. It only takes a minute!`;
+  const modalSubtitle = `Share ${ratingsLeft} more reviews to unlock this feature.`;
 
   // Calculate question numbers
   const questionNumbers = useMemo(() => {
