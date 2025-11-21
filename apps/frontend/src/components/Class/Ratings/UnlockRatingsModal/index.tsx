@@ -4,7 +4,6 @@ import { MetricName } from "@repo/shared";
 import { Button } from "@repo/theme";
 
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { ICourse } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
 import { SubmitRatingPopup } from "../UserFeedbackModal/ConfirmationPopups";
@@ -85,7 +84,7 @@ export function UnlockRatingsModal({
   const { filteredSemesters } = useTermFiltering({
     availableTerms: [],
     selectedCourse,
-    courseData,
+    courseData: courseData ?? undefined,
   });
 
   // Calculate progress across all n ratings

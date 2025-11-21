@@ -115,6 +115,7 @@ export const READ_COURSE_FOR_CLASS = gql`
         number
         anyPrintInScheduleOfClasses
         primarySection {
+          startDate
           meetings {
             instructors {
               familyName

@@ -10,12 +10,13 @@
   border-radius: 4px;
   padding: 12px;
   background-color: var(--tooltip-color);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   color: var(--description-color);
   max-width: 256px;
   font-size: var(--text-14);
   animation: fadeIn 100ms ease-in;
   z-index: 998;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06);
 
   .arrow {
     fill: var(--tooltip-color);

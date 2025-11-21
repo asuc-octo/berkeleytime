@@ -1,6 +1,4 @@
 import {
-  Dispatch,
-  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -12,7 +10,7 @@ import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 
-import { METRIC_ORDER, MetricName, REQUIRED_METRICS } from "@repo/shared";
+import { METRIC_ORDER } from "@repo/shared";
 import { Color, Container, Select } from "@repo/theme";
 
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
@@ -44,7 +42,6 @@ import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
 import styles from "./Ratings.module.scss";
 import UserRatingSummary from "./UserRatingSummary";
 import {
-  MetricData,
   checkConstraint,
   formatInstructorText,
   getMetricStatus,

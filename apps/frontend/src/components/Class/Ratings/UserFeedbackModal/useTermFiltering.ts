@@ -31,7 +31,7 @@ interface UseTermFilteringOptions {
       semester: string;
       year: number;
       number: string;
-      anyPrintInScheduleOfClasses?: boolean;
+      anyPrintInScheduleOfClasses?: boolean | null;
       primarySection?: {
         startDate?: string;
         meetings?: Array<{
@@ -40,7 +40,7 @@ interface UseTermFilteringOptions {
             familyName?: string | null;
           }>;
         }>;
-      };
+      } | null;
     }>;
   };
 }

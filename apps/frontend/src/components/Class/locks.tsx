@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode } from "react";
+import { MouseEvent, ReactElement, ReactNode } from "react";
 
 import { Lock } from "iconoir-react";
 import { Tooltip } from "radix-ui";
@@ -34,7 +34,7 @@ interface RatingsTabLinkProps {
   classes: RatingsTabClasses;
 }
 
-type RatingsTabLinkComponent = (props: RatingsTabLinkProps) => JSX.Element;
+type RatingsTabLinkComponent = (props: RatingsTabLinkProps) => ReactElement;
 
 interface RatingsTabLinkStatics {
   shouldDisplay: (context?: RatingsLockContext) => boolean;

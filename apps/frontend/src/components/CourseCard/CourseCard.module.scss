@@ -9,6 +9,8 @@
   gap: 16px;
   align-items: flex-start;
   cursor: pointer;
+  width: 360px;
+  height: 110px;
 
   &:hover .column .icon {
     color: var(--heading-color);
@@ -32,7 +34,7 @@
 
     .heading {
       color: var(--heading-color);
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       line-height: 1;
       font-weight: 660;
       font-feature-settings:
@@ -44,7 +46,7 @@
     }
 
     .description {
-      color: var(--paragraph-color);
+      color: var(--secondary-color);
       line-height: 1.5;
     }
 
