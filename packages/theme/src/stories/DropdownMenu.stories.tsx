@@ -162,7 +162,7 @@ export const CourseActions: StoryObj = {
           <DropdownMenu.Item onClick={fn()}>Add to Schedule</DropdownMenu.Item>
           <DropdownMenu.Item onClick={fn()}>Bookmark</DropdownMenu.Item>
           <DropdownMenu.Separator />
-          <DropdownMenu.Item onClick={fn()}>
+          <DropdownMenu.Item onClick={fn()}>b
             <ShareIos
               style={{ marginRight: "8px", width: "16px", height: "16px" }}
             />
