@@ -21,27 +21,23 @@ export function isMetricRating(metricName: MetricName) {
   return METRIC_MAPPINGS[metricName]?.isRating ?? false;
 }
 
+const COLOR_THRESHOLDS = [
+  { min: 4.3, inverse: "red", normal: "green" },
+  { min: 3.5, inverse: "orange", normal: "lime" },
+  { min: 2.7, inverse: "yellow", normal: "yellow" },
+  { min: 1.9, inverse: "lime", normal: "orange" },
+  { min: 0, inverse: "green", normal: "red" },
+];
+
 export function getStatusColor(
   metricName: MetricName,
   weightedAverage: number
 ): string {
-  // For usefulness (not inverse relationship), high numbers should be green
-  // For difficulty and workload (inverse relationship), high numbers should be red
-  if (weightedAverage >= 4.3) {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "red" : "green";
-  } else if (weightedAverage >= 3.5) {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "orange"
-      : "lime";
-  } else if (weightedAverage >= 2.7) {
-    return "yellow";
-  } else if (weightedAverage >= 1.9) {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship
-      ? "lime"
-      : "orange";
-  } else {
-    return METRIC_MAPPINGS[metricName]?.isInverseRelationship ? "green" : "red";
-  }
+  const isInverse = METRIC_MAPPINGS[metricName]?.isInverseRelationship;
+  const threshold =
+    COLOR_THRESHOLDS.find((t) => weightedAverage >= t.min) ??
+    COLOR_THRESHOLDS[COLOR_THRESHOLDS.length - 1];
+  return isInverse ? threshold.inverse : threshold.normal;
 }
 
 export function formatDate(date: Date): string {
