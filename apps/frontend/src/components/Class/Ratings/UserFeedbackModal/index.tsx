@@ -1,33 +1,23 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
-import { Progress } from "radix-ui";
-import _ from "lodash";
-
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { Button, Dialog, Flex, Select } from "@repo/theme";
+import { Button } from "@repo/theme";
 
-import CourseSearch from "@/components/CourseSearch";
-import { useReadCourseWithInstructor, useReadTerms } from "@/hooks/api";
-import { ICourse, IUserRatingClass } from "@/lib/api";
-import { Semester, TemporalPosition } from "@/lib/generated/graphql";
-import { sortByTermDescending } from "@/lib/classes";
+import { useReadTerms } from "@/hooks/api";
+import { IUserRatingClass } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 import {
   MetricData,
-  formatInstructorText,
   toMetricData,
 } from "../metricsUtil";
 import { SubmitRatingPopup } from "./ConfirmationPopups";
-import { AttendanceForm, RatingsForm } from "./FeedbackForm";
+import { RatingFormBody } from "./RatingFormBody";
+import { RatingModalLayout } from "./RatingModalLayout";
+import { useRatingFormState } from "./useRatingFormState";
+import { useTermFiltering } from "./useTermFiltering";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
-
-// Feature flag for user feedback modal changes
-const TEST = true;
-
-// Number of ratings required to unlock ratings view (TEST mode only)
-const REQUIRED_RATINGS_COUNT = 3;
-
-const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 
 interface Term {
   value: string;
@@ -50,12 +40,9 @@ interface UserFeedbackModalProps {
   availableTerms: Term[];
   onSubmit: (
     metricData: MetricData,
-    termInfo: { semester: Semester; year: number },
-    classInfo?: { subject: string; courseNumber: string; number: string },
-    skipClose?: boolean
+    termInfo: { semester: Semester; year: number }
   ) => Promise<void>;
   initialUserClass: IUserRatingClass | null;
-  userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
 }
 
 export function UserFeedbackModal({
@@ -66,7 +53,6 @@ export function UserFeedbackModal({
   availableTerms = [],
   onSubmit,
   initialUserClass,
-  userRatedClasses = [],
 }: UserFeedbackModalProps) {
   const { data: termsData } = useReadTerms();
   const initialMetricData = useMemo(
@@ -93,53 +79,52 @@ export function UserFeedbackModal({
     return null;
   }, [initialUserClass?.semester, initialUserClass?.year, availableTerms]);
 
-  const [selectedTerm, setSelectedTerm] = useState<string | null>(
-    TEST ? null : initialTermValue
-  );
-  const [metricData, setMetricData] = useState(initialMetricData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formState = useRatingFormState({
+    initialMetricData,
+    showCourseSelection: false,
+  });
+
+  const {
+    metricData,
+    setMetricData,
+    selectedTerm,
+    setSelectedTerm,
+    isSubmitting,
+    setIsSubmitting,
+    progress,
+  } = formState;
+
+  const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
   const hasAutoSelected = useRef(false);
 
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
-  const [currentRatingIndex, setCurrentRatingIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [animationClass, setAnimationClass] = useState("");
-
-  const shouldFetchCourseData = TEST && !!selectedCourse;
-  const { data: courseData } = useReadCourseWithInstructor(
-    selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? "",
-    {
-      skip: !shouldFetchCourseData,
-    }
-  );
+  const { pastTerms } = useTermFiltering({
+    availableTerms,
+    termsData,
+  });
 
   useEffect(() => {
-    if (!TEST) {
-      if (initialUserClass?.semester && initialUserClass?.year) {
-        // Match by semester and year only, find the first matching option
-        const matchingTerm = availableTerms.find(
-          (term) =>
-            term.semester === initialUserClass.semester &&
-            term.year === initialUserClass.year
-        );
-        if (matchingTerm) {
-          setSelectedTerm(matchingTerm.value);
-        }
-      } else {
-        // Reset to null when initialUserClass is null (after deletion)
-        setSelectedTerm(null);
+    if (initialUserClass?.semester && initialUserClass?.year) {
+      // Match by semester and year only, find the first matching option
+      const matchingTerm = availableTerms.find(
+        (term) =>
+          term.semester === initialUserClass.semester &&
+          term.year === initialUserClass.year
+      );
+      if (matchingTerm) {
+        setSelectedTerm(matchingTerm.value);
       }
     } else {
+      // Reset to null when initialUserClass is null (after deletion)
       setSelectedTerm(null);
     }
+
     if (initialUserClass?.metrics) {
       setMetricData(toMetricData(initialUserClass.metrics));
     } else {
       // Reset to initial empty state when initialUserClass is null (after deletion)
       setMetricData(initialMetricData);
     }
-  }, [initialUserClass, availableTerms, initialMetricData]);
+  }, [initialUserClass, availableTerms, initialMetricData, setMetricData, setSelectedTerm]);
 
   const hasChanges = useMemo(() => {
     const termChanged = selectedTerm !== initialTermValue;
@@ -154,56 +139,14 @@ export function UserFeedbackModal({
   }, [selectedTerm, metricData, initialTermValue, initialMetricData]);
 
   const isFormValid = useMemo(() => {
-    const isClassValid = TEST ? selectedCourse !== null : true;
     const isTermValid = selectedTerm && selectedTerm.length > 0;
     const areRatingsValid =
       typeof metricData[MetricName.Usefulness] === "number" &&
       typeof metricData[MetricName.Difficulty] === "number" &&
       typeof metricData[MetricName.Workload] === "number";
 
-    // In TEST mode, we don't need to check hasChanges since we're collecting new ratings
-    if (TEST) {
-      return isClassValid && isTermValid && areRatingsValid;
-    }
-
     return isTermValid && areRatingsValid && hasChanges;
-  }, [selectedCourse, selectedTerm, metricData, hasChanges]);
-
-  // Calculate progress: 6 fields total (7 in TEST mode), each field contributes proportionally
-  const progress = useMemo(() => {
-    let filledFields = 0;
-    const totalFields = TEST ? 7 : 6;
-
-    // Field 1 (TEST mode only): Class selection
-    if (TEST && selectedCourse) filledFields++;
-
-    // Field 2 (or 1 in non-TEST): Semester selection
-    if (selectedTerm && selectedTerm.length > 0) filledFields++;
-
-    // Field 3 (or 2): Usefulness
-    if (typeof metricData[MetricName.Usefulness] === "number") filledFields++;
-
-    // Field 4 (or 3): Difficulty
-    if (typeof metricData[MetricName.Difficulty] === "number") filledFields++;
-
-    // Field 5 (or 4): Workload
-    if (typeof metricData[MetricName.Workload] === "number") filledFields++;
-
-    // Field 6 (or 5): Attendance
-    if (typeof metricData[MetricName.Attendance] === "number") filledFields++;
-
-    // Field 7 (or 6): Recording
-    if (typeof metricData[MetricName.Recording] === "number") filledFields++;
-
-    // In TEST mode, calculate progress across all n ratings
-    if (TEST) {
-      const currentFormProgress = (filledFields / totalFields);
-      const overallProgress = ((currentRatingIndex + currentFormProgress) / REQUIRED_RATINGS_COUNT) * 100;
-      return overallProgress;
-    }
-
-    return (filledFields / totalFields) * 100;
-  }, [selectedTerm, metricData, selectedCourse, currentRatingIndex]);
+  }, [selectedTerm, metricData, hasChanges]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -211,365 +154,117 @@ export function UserFeedbackModal({
     setIsSubmitting(true);
 
     try {
-      // In TEST mode, use filteredSemesters; otherwise use availableTerms
-      const termsToSearch = TEST ? filteredSemesters : availableTerms;
-      const selectedTermInfo = termsToSearch.find(
+      const selectedTermInfo = pastTerms.find(
         (t) => t.value === selectedTerm
       );
       if (!selectedTermInfo) throw new Error("Invalid term selected");
 
-      if (TEST) {
-        if (!selectedCourse) {
-          throw new Error("A course must be selected.");
-        }
+      await onSubmit(metricData, {
+        semester: selectedTermInfo.semester,
+        year: selectedTermInfo.year,
+      });
 
-        // Extract class number from selectedTerm value (format: "Semester Year Number")
-        const termParts = selectedTerm?.split(" ") || [];
-        const classNumber = termParts[termParts.length - 1] || "";
-
-        // Find the matching class from courseData
-        const matchingClass = courseData?.classes?.find(
-          (c) =>
-            c.semester === selectedTermInfo.semester &&
-            c.year === selectedTermInfo.year &&
-            c.number === classNumber
-        );
-
-        if (!matchingClass) {
-          throw new Error("Could not find matching class for selected term");
-        }
-
-        // Check if this is the last rating
-        const isLastRating = currentRatingIndex >= REQUIRED_RATINGS_COUNT - 1;
-
-        // Submit the rating immediately with the selected course's class information
-        await onSubmit(
-          metricData,
-          {
-            semester: selectedTermInfo.semester,
-            year: selectedTermInfo.year,
-          },
-          {
-            subject: selectedCourse.subject,
-            courseNumber: selectedCourse.number,
-            number: classNumber,
-          },
-          !isLastRating // skipClose = true if NOT the last rating
-        );
-
-        if (!isLastRating) {
-          // Trigger slide-out animation
-          setIsAnimating(true);
-          setAnimationClass(styles.slideOutLeft);
-
-          // Wait for slide-out animation to complete, then update state and slide in
-          setTimeout(() => {
-            setCurrentRatingIndex(currentRatingIndex + 1);
-            setSelectedCourse(null);
-            setSelectedTerm(null);
-            setMetricData(initialMetricData);
-            setIsSubmitting(false);
-            setAnimationClass(styles.slideInRight);
-
-            // Remove animation class after slide-in completes
-            setTimeout(() => {
-              setIsAnimating(false);
-              setAnimationClass("");
-            }, 300);
-          }, 300);
-        } else {
-          setCurrentRatingIndex(0);
-          setSelectedCourse(null);
-          setSelectedTerm(null);
-          setMetricData(initialMetricData);
-
-          onClose();
-          setIsSubmitRatingPopupOpen(true);
-        }
-      } else {
-        // Original single-rating flow
-        await onSubmit(metricData, {
-          semester: selectedTermInfo.semester,
-          year: selectedTermInfo.year,
-        });
-
-        onClose();
-        setIsSubmitRatingPopupOpen(true);
-      }
+      onClose();
+      setIsSubmitRatingPopupOpen(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
       setIsSubmitting(false);
     } finally {
-      if (!TEST || currentRatingIndex >= REQUIRED_RATINGS_COUNT - 1) {
-        setIsSubmitting(false);
-      }
+      setIsSubmitting(false);
     }
   };
-  const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
-
-  // Filter for past terms
-  const pastTerms = useMemo(() => {
-    if (!termsData) return availableTerms;
-
-    const termPositions = termsData.reduce(
-      (acc: Record<string, TemporalPosition>, term: any) => {
-        acc[`${term.semester} ${term.year}`] = term.temporalPosition;
-        return acc;
-      },
-      {}
-    );
-    return availableTerms.filter((term) => {
-      const position = termPositions[term.value];
-      return (
-        position === TemporalPosition.Past ||
-        TemporalPosition.Current ||
-        !position
-      );
-    });
-  }, [availableTerms, termsData]);
-
-  const filteredSemesters = useMemo(() => {
-    if (!TEST) return pastTerms;
-    if (!selectedCourse || !courseData) return [];
-
-    const courseTerms: Term[] = (courseData.classes ?? [])
-      .toSorted(sortByTermDescending)
-      .filter((c) => c.anyPrintInScheduleOfClasses !== false)
-      .filter((c) => {
-        if (c.primarySection?.startDate) {
-          const startDate = new Date(c.primarySection.startDate);
-          const today = new Date();
-          return startDate <= today;
-        }
-        return true;
-      })
-      .map((c) => {
-        const instructorText = formatInstructorText(c.primarySection);
-        return {
-          value: `${c.semester} ${c.year} ${c.number}`,
-          label: `${c.semester} ${c.year} ${instructorText}`,
-          semester: c.semester as Semester,
-          year: c.year,
-        } satisfies Term;
-      });
-
-    return _.uniqBy(courseTerms, (term) => term.label);
-  }, [selectedCourse, courseData, pastTerms]);
 
   useEffect(() => {
-    // Don't auto-select in TEST mode since semester selection depends on choosing a class first
-    if (TEST) return;
-    
     if (
-      filteredSemesters.length === 1 &&
+      pastTerms.length === 1 &&
       !selectedTerm &&
       !hasAutoSelected.current
     ) {
-      setSelectedTerm(filteredSemesters[0].value);
+      setSelectedTerm(pastTerms[0].value);
       hasAutoSelected.current = true;
     }
-  }, [filteredSemesters, selectedTerm, TEST]);
-
-  useEffect(() => {
-    if (!TEST) return;
-    hasAutoSelected.current = false;
-    if (selectedCourse) {
-      setSelectedTerm(null);
-    }
-  }, [selectedCourse]);
-
-  // Reset scroll position when moving to next rating in TEST mode
-  useEffect(() => {
-    if (TEST && isOpen) {
-      const modalBody = document.querySelector(`.${styles.modalBody}`);
-      if (modalBody) {
-        modalBody.scrollTop = 0;
-      }
-    }
-  }, [currentRatingIndex, isOpen]);
+  }, [pastTerms, selectedTerm, setSelectedTerm]);
 
   const handleClose = () => {
     setMetricData(initialMetricData);
-    setSelectedTerm(TEST ? null : initialTermValue);
+    setSelectedTerm(initialTermValue);
     hasAutoSelected.current = false; // Reset the auto-selection flag when closing
-
-    if (TEST) {
-      setSelectedCourse(null);
-      setCurrentRatingIndex(0);
-    }
-
     onClose();
   };
 
   // Calculate modal title and subtitle
-  const modalTitle = TEST ? "Unlock Ratings Information" : title;
-  const ratingsLeft = REQUIRED_RATINGS_COUNT - currentRatingIndex;
-  const modalSubtitle = TEST
-    ? `You have ${ratingsLeft} rating${ratingsLeft !== 1 ? "s" : ""} left to view the ratings. It only takes a minute!`
-    : `${currentClass.subject} ${currentClass.courseNumber}`;
+  const modalTitle = title;
+  const modalSubtitle = `${currentClass.subject} ${currentClass.courseNumber}`;
 
-  // Calculate question numbers based on whether TEST flag is enabled
+  // Calculate question numbers
   const questionNumbers = useMemo(() => {
     let counter = 1;
-    const classQuestion = TEST ? counter++ : null;
     const semesterQuestion = counter++;
     const ratingsStart = counter;
     counter += 3; // 3 rating questions
     const attendanceStart = counter;
 
     return {
-      classQuestionNumber: classQuestion,
+      classQuestionNumber: null,
       semesterQuestionNumber: semesterQuestion,
       ratingsStartNumber: ratingsStart,
       attendanceStartNumber: attendanceStart,
     };
-  }, []); // Empty deps since TEST is a constant
+  }, []);
+
+  const footer = (
+    <>
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={handleClose}
+      >
+        Cancel
+      </Button>
+      <Button
+        disabled={!isFormValid}
+        type="submit"
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.preventDefault();
+          if (isFormValid) {
+            handleSubmit(e);
+          }
+        }}
+      >
+        {isSubmitting
+          ? "Submitting..."
+          : initialUserClass
+            ? "Submit Edit"
+            : "Submit Rating"}
+      </Button>
+    </>
+  );
 
   return (
     <>
-      <Dialog.Root open={isOpen} onOpenChange={handleClose}>
-        <Dialog.Portal>
-          <Dialog.Overlay />
-          <Dialog.Card style={{ width: "auto" }}>
-            <div className={styles.modalHeaderWrapper}>
-              <Dialog.Header
-                title={modalTitle}
-                subtitle={modalSubtitle}
-                hasCloseButton
-                className={styles.modalHeader}
-              />
-              <Progress.Root
-                className={styles.progressBar}
-                value={progress}
-                max={100}
-              >
-                <Progress.Indicator
-                  className={styles.progressIndicator}
-                  style={{ transform: `translateX(-${100 - progress}%)` }}
-                />
-              </Progress.Root>
-            </div>
-            <Dialog.Body className={styles.modalBody}>
-              <div className={`${styles.formContentWrapper} ${animationClass}`}>
-                <Flex direction="column">
-                  {TEST && (
-                    <div className={styles.formGroup}>
-                      <div className={styles.questionPair}>
-                        <h3>
-                          {questionNumbers.classQuestionNumber}. Which class are you rating?{" "}
-                          <RequiredAsterisk />
-                        </h3>
-                        <div
-                          style={{
-                            width: 350,
-                            margin: "0 auto",
-                          }}
-                        >
-                          <CourseSearch
-                            selectedCourse={selectedCourse}
-                            onSelect={(course) => {
-                              setSelectedCourse(course as ICourse);
-                            }}
-                            onClear={() => {
-                              setSelectedCourse(null);
-                              setSelectedTerm(null);
-                            }}
-                            minimal={true}
-                            inputStyle={{
-                              height: 44,
-                              width: "100%",
-                            }}
-                            ratedCourses={userRatedClasses}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className={styles.formGroup}>
-                    <div className={styles.questionPair}>
-                      <h3>
-                        {questionNumbers.semesterQuestionNumber}. What semester did you take this course?{" "}
-                        <RequiredAsterisk />
-                      </h3>
-                      <div
-                        style={{
-                          width: 350,
-                          margin: "0 auto",
-                        }}
-                      >
-                        <Select
-                          options={filteredSemesters.map((term) => ({
-                            value: term.value,
-                            label: term.label,
-                          }))}
-                          disabled={
-                            (TEST && !selectedCourse) ||
-                            (TEST &&
-                              !!selectedCourse &&
-                              filteredSemesters.length === 0)
-                          }
-                          value={selectedTerm}
-                          onChange={(selectedOption) => {
-                            if (Array.isArray(selectedOption))
-                              setSelectedTerm(null);
-                            else setSelectedTerm(selectedOption || null);
-                          }}
-                          placeholder="Select semester"
-                          clearable={true}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <RatingsForm
-                    metricData={metricData}
-                    setMetricData={setMetricData}
-                    startQuestionNumber={questionNumbers.ratingsStartNumber}
-                  />
-                  <AttendanceForm
-                    metricData={metricData}
-                    setMetricData={setMetricData}
-                    startQuestionNumber={questionNumbers.attendanceStartNumber}
-                  />
-                </Flex>
-              </div>
-            </Dialog.Body>
-
-            <Dialog.Footer>
-              <Dialog.Close asChild>
-                <Button
-                  className={styles.cancelButton}
-                  type="button"
-                  variant="secondary"
-                >
-                  Cancel
-                </Button>
-              </Dialog.Close>
-              <Button
-                disabled={!isFormValid || isAnimating}
-                type="submit"
-                onClick={(e: any) => {
-                  e.preventDefault();
-                  if (isFormValid && !isAnimating) {
-                    handleSubmit(e);
-                  }
-                }}
-              >
-                {isSubmitting
-                  ? "Submitting..."
-                  : TEST
-                    ? currentRatingIndex < REQUIRED_RATINGS_COUNT - 1
-                      ? `Submit & Continue (${REQUIRED_RATINGS_COUNT - currentRatingIndex - 1} left)`
-                      : "Submit"
-                    : initialUserClass
-                      ? "Submit Edit"
-                      : "Submit Rating"}
-              </Button>
-            </Dialog.Footer>
-          </Dialog.Card>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <RatingModalLayout
+        isOpen={isOpen}
+        onClose={handleClose}
+        title={modalTitle}
+        subtitle={modalSubtitle}
+        progress={progress}
+        footer={footer}
+      >
+        <div className={styles.formContentWrapper}>
+          <RatingFormBody
+            showCourseSelection={false}
+            selectedCourse={null}
+            onCourseSelect={() => {}}
+            onCourseClear={() => {}}
+            selectedTerm={selectedTerm}
+            onTermSelect={setSelectedTerm}
+            termOptions={pastTerms}
+            metricData={metricData}
+            setMetricData={setMetricData}
+            questionNumbers={questionNumbers}
+          />
+        </div>
+      </RatingModalLayout>
       <SubmitRatingPopup
         isOpen={isSubmitRatingPopupOpen}
         onClose={() => {

@@ -212,20 +212,21 @@ export function RatingsContainer() {
     return matchedRating as IUserRatingClass;
   }, [userRatingsData, currentClass]);
 
-  // Extract unique courses that the user has rated (for CourseSearch filtering)
-  const userRatedCourses = useMemo(() => {
-    if (!userRatingsData?.userRatings?.classes) return [];
-
-    const uniqueCourses = _.uniqBy(
-      userRatingsData.userRatings.classes.map((c: { subject: string; courseNumber: string }) => ({
-        subject: c.subject,
-        courseNumber: c.courseNumber,
-      })),
-      (c) => `${c.subject}-${c.courseNumber}`
-    );
-
-    return uniqueCourses;
-  }, [userRatingsData]);
+  // Extract unique courses that the user has rated (for CourseSearch filtering in RatingGrowthModal)
+  // Commented out for now since it's only needed when RatingGrowthModal is enabled
+  // const userRatedCourses = useMemo(() => {
+  //   if (!userRatingsData?.userRatings?.classes) return [];
+  //
+  //   const uniqueCourses = _.uniqBy(
+  //     userRatingsData.userRatings.classes.map((c: { subject: string; courseNumber: string }) => ({
+  //       subject: c.subject,
+  //       courseNumber: c.courseNumber,
+  //     })),
+  //     (c) => `${c.subject}-${c.courseNumber}`
+  //   );
+  //
+  //   return uniqueCourses;
+  // }, [userRatingsData]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
     const metricsSource =
@@ -608,26 +609,16 @@ export function RatingsContainer() {
         title={userRatings ? "Edit Rating" : "Rate Course"}
         currentClass={currentClass}
         availableTerms={availableTerms}
-        userRatedClasses={userRatedCourses}
-        onSubmit={async (metricValues, termInfo, classInfo, skipClose) => {
+        onSubmit={async (metricValues, termInfo) => {
           try {
-            const classToUse = classInfo
-              ? {
-                  ...currentClass,
-                  subject: classInfo.subject,
-                  courseNumber: classInfo.courseNumber,
-                  number: classInfo.number,
-                }
-              : currentClass;
             await ratingSubmit(
               metricValues,
               termInfo,
               createRating,
               deleteRating,
-              classToUse,
+              currentClass,
               setIsModalOpen,
-              userRatings,
-              skipClose
+              userRatings
             );
           } catch (error) {
             console.error("Error submitting rating:", error);

@@ -1,4 +1,11 @@
-import { ReactNode, lazy, useCallback, useEffect, useMemo } from "react";
+import {
+  ReactNode,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import classNames from "classnames";
 import {
@@ -28,6 +35,8 @@ import {
   Tooltip as ThemeTooltip,
 } from "@repo/theme";
 
+import { useMutation, useQuery } from "@apollo/client/react";
+import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
@@ -37,13 +46,23 @@ import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
 import useUser from "@/hooks/useUser";
 import { IClass, IClassCourse } from "@/lib/api";
-import { Semester } from "@/lib/generated/graphql";
+import {
+  CreateRatingDocument,
+  GetUserRatingsDocument,
+  Semester,
+} from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
-import { type RatingsTabClasses, RatingsTabLink } from "./locks";
+import UnlockRatingsModal from "./Ratings/UnlockRatingsModal";
+import { MetricData } from "./Ratings/metricsUtil";
+import {
+  RATINGS_REQUIRED_REVIEWS,
+  type RatingsTabClasses,
+  RatingsTabLink,
+} from "./locks";
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -107,6 +126,8 @@ const ratingsTabClasses: RatingsTabClasses = {
   tooltipTitle: styles.tooltipTitle,
 };
 
+const METRIC_NAMES = Object.values(MetricName) as MetricName[];
+
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
   const num = parseInt(number, 10);
@@ -132,7 +153,14 @@ export default function Class({
 
   const { user, loading: userLoading } = useUser();
 
+  const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
+    skip: !user,
+  });
+
+  const [createUnlockRating] = useMutation(CreateRatingDocument);
   const [updateUser] = useUpdateUser();
+  const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
+  const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
 
   const { data: course, loading: courseLoading } = useReadCourseForClass(
     providedClass?.subject ?? (subject as string),
@@ -178,6 +206,27 @@ export default function Class({
     () => providedCourse ?? course,
     [course, providedCourse]
   );
+
+  const userRatingsCount = useMemo(
+    () => userRatingsData?.userRatings?.classes?.length ?? 0,
+    [userRatingsData]
+  );
+
+  const userRatedClasses = useMemo(() => {
+    const ratedClasses =
+      userRatingsData?.userRatings?.classes?.map((cls) => ({
+        subject: cls.subject,
+        courseNumber: cls.courseNumber,
+      })) ?? [];
+
+    const seen = new Set<string>();
+    return ratedClasses.filter((cls) => {
+      const key = `${cls.subject}-${cls.courseNumber}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [userRatingsData]);
 
   const bookmarked = useMemo(
     () =>
@@ -250,9 +299,17 @@ export default function Class({
     return Math.max(...metrics.map((metric) => metric.count));
   }, [_course]);
 
-  const ratingsLockContext = useMemo(() => ({ user }), [user]);
+  const ratingsLockContext = useMemo(() => {
+    if (!user) return undefined;
+    return {
+      userRatingsCount,
+      requiredRatingsCount: RATINGS_REQUIRED_REVIEWS,
+    };
+  }, [user, userRatingsCount]);
   const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(ratingsLockContext);
   const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
+  const ratingsNeeded =
+    RatingsTabLink.ratingsNeeded(ratingsLockContext) ?? 0;
 
   useEffect(() => {
     if (dialog || !ratingsLocked) return;
@@ -263,6 +320,72 @@ export default function Class({
       replace: true,
     });
   }, [dialog, ratingsLocked, location, navigate]);
+
+  const handleLockedTabClick = useCallback(() => {
+    if (!user) return;
+    if (!ratingsLocked) return;
+    if (ratingsNeeded <= 0) return;
+
+    setUnlockModalGoalCount(ratingsNeeded);
+    setIsUnlockModalOpen(true);
+  }, [ratingsLocked, ratingsNeeded, user]);
+
+  const handleUnlockModalClose = useCallback(() => {
+    setIsUnlockModalOpen(false);
+    setUnlockModalGoalCount(0);
+  }, []);
+
+  const handleUnlockRatingSubmit = useCallback(
+    async (
+      metricValues: MetricData,
+      termInfo: { semester: Semester; year: number },
+      classInfo?: { subject: string; courseNumber: string; number: string }
+    ) => {
+      if (!classInfo) {
+        throw new Error("Class information is required to submit a rating.");
+      }
+
+      const populatedMetrics = METRIC_NAMES.filter(
+        (metric) => typeof metricValues[metric] === "number"
+      );
+      if (populatedMetrics.length === 0) {
+        throw new Error(`No populated metrics`);
+      }
+
+      const missingRequiredMetrics = REQUIRED_METRICS.filter(
+        (metric) => !populatedMetrics.includes(metric)
+      );
+      if (missingRequiredMetrics.length > 0) {
+        throw new Error(
+          `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
+        );
+      }
+
+      for (let index = 0; index < populatedMetrics.length; index++) {
+        const metric = populatedMetrics[index];
+        const value = metricValues[metric];
+        if (value === undefined) continue;
+
+        const isFinalMutation = index === populatedMetrics.length - 1;
+        await createUnlockRating({
+          variables: {
+            subject: classInfo.subject,
+            courseNumber: classInfo.courseNumber,
+            semester: termInfo.semester,
+            year: termInfo.year,
+            classNumber: classInfo.number,
+            metricName: metric,
+            value,
+          },
+          refetchQueries: isFinalMutation
+            ? [{ query: GetUserRatingsDocument }]
+            : undefined,
+          awaitRefetchQueries: isFinalMutation,
+        });
+      }
+    },
+    [createUnlockRating]
+  );
 
   // seat reservation logic pending design + consideration for performance.
   // const seatReservationTypeMap = useMemo(() => {
@@ -335,11 +458,12 @@ export default function Class({
   }
 
   return (
-    <Root dialog={dialog}>
-      <Flex direction="column" flexGrow="1" className={styles.root}>
-        <Box className={styles.header} pt="5" px="5">
-          <Container size="3">
-            <Flex direction="column" gap="5">
+    <>
+      <Root dialog={dialog}>
+        <Flex direction="column" flexGrow="1" className={styles.root}>
+          <Box className={styles.header} pt="5" px="5">
+            <Container size="3">
+              <Flex direction="column" gap="5">
               <Flex justify="between" align="start">
                 <Flex gap="3">
                   {/* TODO: Reusable pin button
@@ -469,6 +593,7 @@ export default function Class({
                         dialog
                         classes={ratingsTabClasses}
                         locked={ratingsLocked}
+                        onLockedClick={handleLockedTabClick}
                         ratingsCount={ratingsCount}
                         to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                       />
@@ -497,6 +622,7 @@ export default function Class({
                     <RatingsTabLink
                       classes={ratingsTabClasses}
                       locked={ratingsLocked}
+                      onLockedClick={handleLockedTabClick}
                       ratingsCount={ratingsCount}
                       to={{ ...location, pathname: "ratings" }}
                     />
@@ -558,5 +684,15 @@ export default function Class({
         </ClassContext>
       </Flex>
     </Root>
+    {user && ratingsLocked && unlockModalGoalCount > 0 && (
+      <UnlockRatingsModal
+        isOpen={isUnlockModalOpen}
+        onClose={handleUnlockModalClose}
+        onSubmit={handleUnlockRatingSubmit}
+        userRatedClasses={userRatedClasses}
+        requiredRatingsCount={unlockModalGoalCount}
+      />
+    )}
+  </>
   );
 }

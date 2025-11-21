@@ -1,0 +1,129 @@
+import { useEffect, useMemo, useRef } from "react";
+
+import _ from "lodash";
+
+import { ICourse } from "@/lib/api";
+import { Semester, TemporalPosition } from "@/lib/generated/graphql";
+import { sortByTermDescending } from "@/lib/classes";
+
+import { formatInstructorText } from "../metricsUtil";
+
+interface Term {
+  value: string;
+  label: string;
+  semester: Semester;
+  year: number;
+}
+
+interface TermsData {
+  semester: string;
+  year: number;
+  temporalPosition: TemporalPosition;
+}
+
+interface UseTermFilteringOptions {
+  availableTerms: Term[];
+  termsData?: TermsData[];
+  // For course-specific filtering (e.g., in RatingGrowthModal)
+  selectedCourse?: ICourse | null;
+  courseData?: {
+    classes?: Array<{
+      semester: string;
+      year: number;
+      number: string;
+      anyPrintInScheduleOfClasses?: boolean;
+      primarySection?: {
+        startDate?: string;
+        meetings?: Array<{
+          instructors?: Array<{
+            givenName?: string | null;
+            familyName?: string | null;
+          }>;
+        }>;
+      };
+    }>;
+  };
+}
+
+export function useTermFiltering({
+  availableTerms,
+  termsData,
+  selectedCourse,
+  courseData,
+}: UseTermFilteringOptions) {
+  const hasAutoSelected = useRef(false);
+
+  // Filter for past terms
+  const pastTerms = useMemo(() => {
+    if (!termsData) return availableTerms;
+
+    const termPositions = termsData.reduce(
+      (acc: Record<string, TemporalPosition>, term: TermsData) => {
+        acc[`${term.semester} ${term.year}`] = term.temporalPosition;
+        return acc;
+      },
+      {}
+    );
+    return availableTerms.filter((term) => {
+      const key = `${term.semester} ${term.year}`;
+      const position = termPositions[key];
+
+      if (!position) return true;
+
+      return (
+        position === TemporalPosition.Past || position === TemporalPosition.Current
+      );
+    });
+  }, [availableTerms, termsData]);
+
+  // Filter for course-specific terms (when a course is selected)
+  const filteredSemesters = useMemo(() => {
+    if (!selectedCourse || !courseData) return pastTerms;
+
+    const courseTerms: Term[] = (courseData.classes ?? [])
+      .toSorted(sortByTermDescending)
+      .filter((c) => c.anyPrintInScheduleOfClasses !== false)
+      .filter((c) => {
+        if (c.primarySection?.startDate) {
+          const startDate = new Date(c.primarySection.startDate);
+          const today = new Date();
+          return startDate <= today;
+        }
+        return true;
+      })
+      .map((c) => {
+        // Format instructor text only if primarySection has meetings structure
+        const instructorText = c.primarySection?.meetings
+          ? formatInstructorText(c.primarySection as {
+              meetings: {
+                instructors: {
+                  givenName?: string | null;
+                  familyName?: string | null;
+                }[];
+              }[];
+            })
+          : "";
+        return {
+          value: `${c.semester} ${c.year} ${c.number}`,
+          label: `${c.semester} ${c.year} ${instructorText}`,
+          semester: c.semester as Semester,
+          year: c.year,
+        } satisfies Term;
+      });
+
+    return _.uniqBy(courseTerms, (term) => term.label);
+  }, [selectedCourse, courseData, pastTerms]);
+
+  // Reset auto-selection flag when course changes
+  useEffect(() => {
+    if (selectedCourse !== undefined) {
+      hasAutoSelected.current = false;
+    }
+  }, [selectedCourse]);
+
+  return {
+    filteredSemesters,
+    pastTerms,
+    hasAutoSelected,
+  };
+}
