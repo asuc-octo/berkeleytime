@@ -85,27 +85,33 @@ export const getMonitoredClasses = async (
     | UserModule.MonitoredClassInput[]
     | UserModule.MonitoredClass[]
 ) => {
-  const classes = [];
+  const filters = monitoredClasses.map((mc) => {
+    const c = mc.class;
+    return {
+      year: c.year,
+      semester: c.semester,
+      sessionId: c.sessionId ?? "1",
+      subject: c.subject,
+      courseNumber: c.courseNumber,
+      number: c.number,
+    };
+  });
 
-  for (const monitoredClass of monitoredClasses) {
-    const classData = monitoredClass.class;
+  const docs = await ClassModel.find({ $or: filters }).lean();
+  const classKey = (c: any) =>
+    `${c.year}-${c.semester}-${c.sessionId ?? "1"}-${c.subject}-${c.courseNumber}-${c.number}`;
+  const docsByKey = new Map(docs.map((d) => [classKey(d), d]));
 
-    const _class = await ClassModel.findOne({
-      year: classData.year,
-      semester: classData.semester,
-      sessionId: classData.sessionId ? classData.sessionId : "1",
-      subject: classData.subject,
-      courseNumber: classData.courseNumber,
-      number: classData.number,
-    }).lean();
+  return monitoredClasses
+    .map((mc) => {
+      const key = classKey(mc.class);
+      const doc = docsByKey.get(key);
+      if (!doc) return null;
 
-    if (!_class) continue;
-
-    classes.push({
-      class: formatClass(_class),
-      thresholds: monitoredClass.thresholds,
-    });
-  }
-
-  return classes;
+      return {
+        class: formatClass(doc),
+        thresholds: mc.thresholds,
+      };
+    })
+    .filter(Boolean);
 };
