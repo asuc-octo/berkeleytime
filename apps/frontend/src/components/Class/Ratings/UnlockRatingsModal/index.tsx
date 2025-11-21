@@ -205,7 +205,7 @@ export function UnlockRatingsModal({
   // Calculate modal title and subtitle
   const modalTitle = "Unlock Ratings";
   const ratingsLeft = requiredRatingsCount - currentRatingIndex;
-  const modalSubtitle = `Share ${ratingsLeft} more reviews to unlock this feature.`;
+  const modalSubtitle = `Share ${ratingsLeft} more rating${ratingsLeft !== 1 ? "s" : ""} to unlock this feature.`;
 
   // Calculate question numbers
   const questionNumbers = useMemo(() => {

@@ -115,7 +115,7 @@ function RatingsTabLinkBase({
 
   const tooltipDescription = loginRequired
     ? "Log in to view ratings from other students."
-    : `We still need ${ratingsNeededValue} ratings from you before showing everyone else's`;
+    : `Share ${ratingsNeededValue} class rating${ratingsNeededValue !== 1 ? "s" : ""} to unlock everyone else's`;
 
   return (
     <Tooltip.Root disableHoverableContent>

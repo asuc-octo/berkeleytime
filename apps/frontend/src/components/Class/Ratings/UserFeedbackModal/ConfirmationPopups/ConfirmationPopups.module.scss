@@ -15,14 +15,14 @@
 .title {
   margin-top: 28px;
   margin-bottom: 14px;
-  font-size: 28px;
-  font-weight: 600;
+  font-size: var(--text-28);
+  font-weight: var(--font-semibold);
 }
 
 .subtitle {
   margin: 0px 20px;
   color: var(--paragraph-color);
-  font-size: 15px;
+  font-size: var(--text-14);
   line-height: 1.5;
   margin-bottom: 28px;
 }

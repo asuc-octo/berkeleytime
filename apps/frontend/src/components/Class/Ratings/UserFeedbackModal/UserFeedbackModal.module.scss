@@ -50,8 +50,8 @@
   h3,
   p {
     color: var(--paragraph-color);
-    font-size: 14px;
-    font-weight: 400;
+    font-size: var(--text-14);
+    font-weight: var(--font-normal);
     margin: 0;
     padding: 0;
   }
@@ -59,7 +59,7 @@
   .requiredAsterisk {
     color: #dc2626;
     margin-left: 4px;
-    font-size: 16px;
+    font-size: var(--text-16);
     line-height: 1;
   }
 }
@@ -80,7 +80,7 @@
 
   span {
     color: var(--paragraph-color);
-    font-size: 14px;
+    font-size: var(--text-14);
     min-width: 80px;
 
     &:first-child {
@@ -107,7 +107,7 @@
   border-radius: 4px;
   background: none;
   color: var(--heading-color);
-  font-weight: 500;
+  font-weight: var(--font-medium);
   cursor: pointer;
   transition: all 0.2s ease;
 
@@ -140,7 +140,7 @@
     align-items: center;
     gap: 12px;
     color: var(--paragraph-color);
-    font-size: 14px;
+    font-size: var(--text-14);
     cursor: pointer;
     white-space: nowrap;
 
@@ -228,7 +228,7 @@
   background: none;
   color: var(--label-color);
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--text-18);
   padding: 0;
   transition: color 0.2s ease;
 

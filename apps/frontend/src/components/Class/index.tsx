@@ -334,7 +334,8 @@ export default function Class({
       return;
     }
 
-    const goalCount = ratingsNeeded <= 0 ? RATINGS_REQUIRED_REVIEWS : ratingsNeeded;
+    const goalCount =
+      ratingsNeeded <= 0 ? RATINGS_REQUIRED_REVIEWS : ratingsNeeded;
     setUnlockModalGoalCount(goalCount);
     setIsUnlockModalOpen(true);
     setIsUnlockThankYouOpen(false);
@@ -599,18 +600,18 @@ export default function Class({
                       <Tabs.Trigger value="sections" asChild>
                         <MenuItem>Sections</MenuItem>
                       </Tabs.Trigger>
-                    {shouldShowRatingsTab && (
-                      <RatingsTabLink
-                        dialog
-                        classes={ratingsTabClasses}
-                        locked={ratingsLocked}
-                        onLockedClick={handleLockedTabClick}
-                        loginRequired={!user}
-                        ratingsNeededValue={ratingsNeeded}
-                        ratingsCount={ratingsCount}
-                        to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
-                      />
-                    )}
+                      {shouldShowRatingsTab && (
+                        <RatingsTabLink
+                          dialog
+                          classes={ratingsTabClasses}
+                          locked={ratingsLocked}
+                          onLockedClick={handleLockedTabClick}
+                          loginRequired={!user}
+                          ratingsNeededValue={ratingsNeeded}
+                          ratingsCount={ratingsCount}
+                          to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                        />
+                      )}
                       <Tabs.Trigger value="grades" asChild>
                         <MenuItem>Grades</MenuItem>
                       </Tabs.Trigger>
@@ -631,17 +632,17 @@ export default function Class({
                         <MenuItem active={isActive}>Sections</MenuItem>
                       )}
                     </NavLink>
-                  {shouldShowRatingsTab && (
-                    <RatingsTabLink
-                      classes={ratingsTabClasses}
-                      locked={ratingsLocked}
-                      onLockedClick={handleLockedTabClick}
-                      loginRequired={!user}
-                      ratingsNeededValue={ratingsNeeded}
-                      ratingsCount={ratingsCount}
-                      to={{ ...location, pathname: "ratings" }}
-                    />
-                  )}
+                    {shouldShowRatingsTab && (
+                      <RatingsTabLink
+                        classes={ratingsTabClasses}
+                        locked={ratingsLocked}
+                        onLockedClick={handleLockedTabClick}
+                        loginRequired={!user}
+                        ratingsNeededValue={ratingsNeeded}
+                        ratingsCount={ratingsCount}
+                        to={{ ...location, pathname: "ratings" }}
+                      />
+                    )}
                     <NavLink to={{ ...location, pathname: "grades" }}>
                       {({ isActive }) => (
                         <MenuItem active={isActive}>Grades</MenuItem>
