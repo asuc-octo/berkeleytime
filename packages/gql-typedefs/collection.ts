@@ -53,7 +53,6 @@ export const collectionTypeDef = gql`
   type Mutation {
     createCollection(input: CreateCollectionInput!): Collection!
     addClassToCollection(input: AddCollectionClassInput!): Collection!
-    addCommentToCollectionClass(input: modifyCollectionCommentInput!): Collection!
-    deleteCommentFromCollectionClass(input: modifyCollectionCommentInput!): Collection!
+    modifyCollectionComment(input: modifyCollectionCommentInput!): Collection!
   }
 `;
