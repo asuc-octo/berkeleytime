@@ -58,23 +58,6 @@
   }
 }
 
-.loading {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-
-  .loadingHeader {
-    height: 238.5px;
-    background-color: var(--foreground-color);
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .loadingBody {
-    flex-grow: 1;
-    background-color: var(--background-color);
-  }
-}
-
 .tooltipContent {
   border-radius: 4px;
   padding: 12px;

@@ -490,12 +490,7 @@ export default function Class({
   }, [_class]);
 
   if (loading || courseLoading) {
-    return (
-      <div className={styles.loading}>
-        <div className={styles.loadingHeader} />
-        <div className={styles.loadingBody} />
-      </div>
-    );
+    return <></>;
   }
 
   // TODO: Error state
