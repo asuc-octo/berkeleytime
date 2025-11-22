@@ -1,7 +1,7 @@
 // TODO: also import in CoEReqs, HaasReqs
 import { useEffect, useState } from "react";
 
-import { WarningCircle } from "iconoir-react";
+import { WarningCircle, SidebarCollapse, SidebarExpand } from "iconoir-react";
 
 import {
   CoEReqs,
@@ -38,6 +38,7 @@ export default function SidePanel({
   collegeReqsFulfilled,
 }: SidePanelProps) {
   const [collegeReqs, setCollegeReqs] = useState<RequirementEnum[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const reqs: RequirementEnum[] = [];
@@ -58,6 +59,29 @@ export default function SidePanel({
     });
     setCollegeReqs(reqs);
   }, [colleges]);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const Header = (
+    <>
+      <div className={styles.headerContainer}>
+        <h1 className={styles.header}>GradTrak</h1>
+        <button
+          className={styles.collapseButton}
+          onClick={toggleCollapse}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? (
+            <SidebarExpand className={styles.collapseIcon} />
+          ) : (
+            <SidebarCollapse className={styles.collapseIcon} />
+          )}
+        </button>
+      </div>
+    </>
+  );
 
   const UserInfo = (
     <>
@@ -166,31 +190,36 @@ export default function SidePanel({
   );
 
   return (
-    <div className={styles.root}>
-      {UserInfo}
-      {MajorRequirements}
-      {MinorRequirements}
-      <RequirementsAccordion
-        title={"University of California"}
-        uni={true}
-        requirements={[
-          UniReqs.AC,
-          UniReqs.AH,
-          UniReqs.AI,
-          UniReqs.CW,
-          UniReqs.QR,
-          UniReqs.RCA,
-          UniReqs.RCB,
-          UniReqs.FL,
-        ]}
-        finishedRequirements={uniReqsFulfilled}
-      />
-      <RequirementsAccordion
-        title={"College Requirements"}
-        uni={false}
-        requirements={collegeReqs}
-        finishedRequirements={collegeReqsFulfilled}
-      />
+    <div className={`${styles.root} ${isCollapsed ? styles.collapsed : ""}`}>
+      {Header}
+      {!isCollapsed && (
+        <>
+          {UserInfo}
+          {MajorRequirements}
+          {MinorRequirements}
+          <RequirementsAccordion
+            title={"University of California"}
+            uni={true}
+            requirements={[
+              UniReqs.AC,
+              UniReqs.AH,
+              UniReqs.AI,
+              UniReqs.CW,
+              UniReqs.QR,
+              UniReqs.RCA,
+              UniReqs.RCB,
+              UniReqs.FL,
+            ]}
+            finishedRequirements={uniReqsFulfilled}
+          />
+          <RequirementsAccordion
+            title={"College Requirements"}
+            uni={false}
+            requirements={collegeReqs}
+            finishedRequirements={collegeReqsFulfilled}
+          />
+        </>
+      )}
     </div>
   );
 }
