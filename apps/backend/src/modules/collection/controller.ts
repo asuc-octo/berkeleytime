@@ -69,102 +69,51 @@ const formatCollectionClasses = async (collection: CollectionType) => {
   return classes;
 };
 
-export const addClassToCollection = async (input: any) => {
-  const classDoc = await findClassByDescriptor(input.class);
+export const addClassToCollection = async (input: CollectionModel.AddCollectionClassInput) => {
+  const collection = await CollectionModel.findOne({
+    ownerID: input.ownerID,
+    name: input.name,
+  });
+  if (!collection) throw new Error("not found by owner and name");
+  const info = await ClassModel.findOne({
+    year: input.year,
+    semester: input.semester,
+    sessionId: input.sessionId ? input.sessionId : "1",
+    subject: input.subject,
+    courseNumber: input.courseNumber,
+    number: input.number,
+  }).lean();
+  const _class = {info: info as IClassItem, comments: []};
+  collection.classes?.push(_class);
+  await collection.save();
 
-  if (!query) throw new Error("Not found");
-  if (!classDoc) throw new Error("Class not found");
-
-  return formatCollection(query);
-
+  return;
 }
-const formatCollection = async (collections: CollectionType[]) => {
-  const collectionNameNClassesNComments = collections.map((collection) => {
-    name: collection.name,
-    classes: await formatCollectionClasses(collection),
-    comments: await formatCollectionComments(collection),
-const findCollectionClassEntry = (
-  collection: CollectionType,
-  descriptor: CollectionClassInput
-) => {
-  const normalized = normalizeClassInput(descriptor);
 
-  return collection.classes.find((entry) => {
-    const info = entry.info as CollectionClassInput;
+export const modifyCollectionComment = async (input: CollectionModel.modifyCollectionCommentInput) => {
+  const collection = await CollectionModel.findOne({
+    ownerID: input.ownerID,
+    name: input.name,
+  });
+  if (!collection) throw new Error("Collection not found");
 
+  const entry = collection.classes?.find((_class) => {
     return (
-      info.year === normalized.year &&
-      info.semester === normalized.semester &&
-      (info.sessionId ?? "1") === normalized.sessionId &&
-      info.subject === normalized.subject &&
-      info.courseNumber === normalized.courseNumber &&
-      info.number === normalized.number
+      _class.year === input.year &&
+      _class.semester === input.semester &&
+      _class.subject === input.subject &&
+      _class.courseNumber === input.courseNumber &&
+      _class.number === input.number
     );
   });
-  return collectionNameNClassesNComments;
-};
-
-const formatCollectionClasses = async (collection: CollectionType) => {
-  const classes: IClassItem[] = [];
-  if (!collection.classes) return classes;
-  
-  for (const _class of collection.classes) {
-    const __class = await ClassModel.findOne({
-      year: _class.year,
-      semester: _class.semester,
-      // sessionId: _class.sessionId ? _class.sessionId : "1",
-      subject: _class.subject,
-      courseNumber: _class.courseNumber,
-      number: _class.number,
-    }).lean();
-export const addCommentToCollectionClass = async (
-  input: AddCollectionCommentInput
-) => {
-  const collection = await findCollectionOrThrow(
-    input.ownerID,
-    input.collectionName
-  );
-
-    if (!_class) continue;
-  const entry = findCollectionClassEntry(collection as CollectionType, input.class);
-
-    classes.push(__class as IClassItem);
-  }
   if (!entry) throw new Error("Class not found in collection");
 
-  entry.comments = [...(entry.comments ?? []), input.comment];
-
-  return classes;
-  await collection.save();
-
-  return formatCollection(collection as CollectionType);
-};
-
-const formatCollectionComments = async (collection: CollectionType) => {
-  const comments: String[] = [];
-  if (!collection.classes) return comments;
-  for (const _class of collection.classes) {
-    const comment = _class.comments ? _class.comments : [""]
-export const deleteCommentFromCollectionClass = async (
-  input: DeleteCollectionCommentInput
-) => {
-  const collection = await findCollectionOrThrow(
-    input.ownerID,
-    input.collectionName
-  );
-
-  const entry = findCollectionClassEntry(collection as CollectionType, input.class);
-
-  if (!entry) throw new Error("Class not found in collection");
-
-  entry.comments = (entry.comments ?? []).filter(
-    (comment) => comment !== input.comment
-  );
-
-    comments.push(comment);
+  entry.comments = entry.comments ?? [];
+  if (input.add) {
+    entry.comments.push(input.comment);
+  } else {
+    entry.comments = entry.comments.filter((comment) => comment !== input.comment);
   }
-  await collection.save();
 
-  return comments;
-  return formatCollection(collection as CollectionType);
+  await collection.save();
 };
