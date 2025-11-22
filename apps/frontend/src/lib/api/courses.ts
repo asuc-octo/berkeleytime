@@ -172,8 +172,8 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
   }
 `;
 
-export const READ_COURSE_CLASSES_FOR_RATINGS = gql`
-  query ReadCourseClassesForRatings($subject: String!, $number: CourseNumber!) {
+export const GET_ALL_CLASSES_FOR_COURSE = gql`
+  query GetAllClassesForCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       classes {
         semester

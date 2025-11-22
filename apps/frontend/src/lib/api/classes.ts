@@ -406,6 +406,26 @@ export const READ_CLASS_ENROLLMENT = gql`
   }
 `;
 
+export const READ_CLASS_RATINGS = gql`
+  query ReadClassRatings($subject: String!, $courseNumber: CourseNumber!) {
+    course(subject: $subject, number: $courseNumber) {
+      subject
+      number
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
+      }
+    }
+  }
+`;
+
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
 export type IClassDetails = NonNullable<ReadClassDetailsQuery["class"]>;

@@ -14,19 +14,16 @@ import {
   ErrorDialog,
 } from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
-import { useReadRatings, useReadTerms } from "@/hooks/api";
+import { useReadTerms } from "@/hooks/api";
+import { useReadRatings } from "@/hooks/api/ratings/useReadRatings";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import { IAggregatedRatings, IClassDetails, IMetric } from "@/lib/api";
+import { IAggregatedRatings, IMetric } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingDocument,
   DeleteRatingDocument,
   GetAggregatedRatingsDocument,
-  GetClassDocument,
-  GetCourseRatingsDocument,
-  GetSemestersWithRatingsDocument,
-  GetUserRatingsDocument,
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
@@ -82,19 +79,19 @@ export function RatingsContainer() {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-  // Use consolidated hook for all ratings data
+  // Single consolidated query for all ratings data
   const {
-    userRatingsData,
-    userRatings,
     aggregatedRatings: aggregatedRatingsData,
+    userRatings,
+    userRatingsData,
     semestersWithRatings,
     courseClasses,
     hasRatings,
     loading,
+    refetch: refetchAllRatings,
   } = useReadRatings({
     subject: currentClass.subject,
     courseNumber: currentClass.courseNumber,
-    userId: user?._id,
   });
 
   // Simplified modal state - read URL param once on mount for initial state
@@ -259,63 +256,6 @@ export function RatingsContainer() {
   //   [ratingsData]
   // );
 
-  const getRefetchQueries = (classData: IClassDetails) => {
-    const queries: Array<
-      | {
-          query: typeof GetClassDocument;
-          variables: {
-            year: number;
-            semester: Semester;
-            subject: string;
-            courseNumber: string;
-            number: string;
-            sessionId: string | null;
-          };
-        }
-      | {
-          query: typeof GetCourseRatingsDocument;
-          variables: { subject: string; number: string };
-        }
-      | {
-          query: typeof GetSemestersWithRatingsDocument;
-          variables: { subject: string; courseNumber: string };
-        }
-      | { query: typeof GetUserRatingsDocument }
-    > = [
-      {
-        query: GetClassDocument,
-        variables: {
-          year: classData.year,
-          semester: classData.semester,
-          subject: classData.subject,
-          courseNumber: classData.courseNumber,
-          number: classData.number,
-          sessionId: classData.sessionId ?? null,
-        },
-      },
-      {
-        query: GetCourseRatingsDocument,
-        variables: {
-          subject: classData.subject,
-          number: classData.courseNumber,
-        },
-      },
-      {
-        query: GetSemestersWithRatingsDocument,
-        variables: {
-          subject: classData.subject,
-          courseNumber: classData.courseNumber,
-        },
-      },
-    ];
-
-    if (user) {
-      queries.push({ query: GetUserRatingsDocument });
-    }
-
-    return queries;
-  };
-
   if (loading) {
     return <EmptyState heading="Loading Ratings Data" loading />;
   }
@@ -445,8 +385,10 @@ export function RatingsContainer() {
                 number: currentClass.number,
               },
               currentRatings: userRatings,
-              refetchQueries: getRefetchQueries(currentClass),
+              refetchQueries: [],
             });
+            // Refetch ratings data after successful submission
+            refetchAllRatings();
             setIsModalOpen(false);
           } catch (error) {
             const message = getRatingErrorMessage(error);
@@ -473,8 +415,10 @@ export function RatingsContainer() {
                   courseNumber: currentClass.courseNumber,
                   number: currentClass.number,
                 },
-                refetchQueries: getRefetchQueries(currentClass),
+                refetchQueries: [],
               });
+              // Refetch ratings data after successful deletion
+              refetchAllRatings();
               setIsDeleteModalOpen(false);
             } catch (error) {
               const message = getRatingErrorMessage(error);

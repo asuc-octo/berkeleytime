@@ -173,6 +173,7 @@ export default function Class({
     providedClass?.courseNumber ?? (courseNumber as string),
     {
       skip: !!providedCourse,
+      fetchPolicy: 'cache-first',
     }
   );
 

@@ -2,95 +2,54 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
-import {
-  GetCourseRatingsDocument,
-  GetSemestersWithRatingsDocument,
-  GetUserRatingsDocument,
-  ReadCourseClassesForRatingsDocument,
-  Semester,
-} from "@/lib/generated/graphql";
+import { ReadAllRatingsDataDocument, Semester } from "@/lib/generated/graphql";
 
 interface UseReadRatingsOptions {
   subject: string;
   courseNumber: string;
-  userId?: string | null;
 }
 
 /**
- * Hook to fetch all ratings-related data for a course.
+ * Hook to fetch all ratings-related data for a course in a single query.
+ * Eliminates flashing by loading all data upfront in one network request.
  * Follows the same pattern as useReadClassEnrollment, useReadCourseGrades, etc.
  */
 export const useReadRatings = ({
   subject,
   courseNumber,
-  userId,
 }: UseReadRatingsOptions) => {
-  // Get user's existing ratings
-  const {
-    data: userRatingsData,
-    loading: userRatingsLoading,
-    refetch: refetchUserRatings,
-  } = useQuery(GetUserRatingsDocument, {
-    skip: !userId,
-  });
+  // Single consolidated query - fetches everything in one network request
+  const { data, loading, error, refetch } = useQuery(
+    ReadAllRatingsDataDocument,
+    {
+      variables: {
+        subject,
+        courseNumber,
+        courseNumberTyped: courseNumber, // Same value, different type for GraphQL
+      },
+      fetchPolicy: "cache-first",
+    }
+  );
 
-  // Get aggregated ratings for display
-  const {
-    data: aggregatedRatings,
-    loading: aggregatedRatingsLoading,
-    refetch: refetchAggregatedRatings,
-  } = useQuery(GetCourseRatingsDocument, {
-    variables: {
-      subject,
-      number: courseNumber,
-    },
-  });
-
-  // Get semesters with ratings
-  const {
-    data: semestersWithRatingsData,
-    loading: semestersWithRatingsLoading,
-    refetch: refetchSemesters,
-  } = useQuery(GetSemestersWithRatingsDocument, {
-    variables: {
-      subject,
-      courseNumber,
-    },
-  });
-
-  // Get course classes for term selector
-  // Fetch unconditionally to avoid dynamic skip causing re-renders
-  const {
-    data: courseClassesData,
-    loading: courseClassesLoading,
-    refetch: refetchCourseClasses,
-  } = useQuery(ReadCourseClassesForRatingsDocument, {
-    variables: {
-      subject,
-      number: courseNumber,
-    },
-  });
-
+  // Derived state with useMemo
   const courseClasses = useMemo(
     () =>
-      courseClassesData?.course?.classes?.filter(
+      data?.course?.classes?.filter(
         (courseClass): courseClass is NonNullable<typeof courseClass> =>
           Boolean(courseClass)
       ) ?? [],
-    [courseClassesData]
+    [data?.course?.classes]
   );
 
   const semestersWithRatings = useMemo(() => {
-    if (!semestersWithRatingsData) return [];
-    return semestersWithRatingsData.semestersWithRatings.filter(
-      (sem) => sem.maxMetricCount > 0
-    );
-  }, [semestersWithRatingsData]);
+    if (!data?.semestersWithRatings) return [];
+    return data.semestersWithRatings.filter((sem) => sem.maxMetricCount > 0);
+  }, [data?.semestersWithRatings]);
 
   const userRatings = useMemo(() => {
-    if (!userRatingsData?.userRatings?.classes) return null;
+    if (!data?.userRatings?.classes) return null;
 
-    const matchedRating = userRatingsData.userRatings.classes.find(
+    const matchedRating = data.userRatings.classes.find(
       (classRating: {
         subject: string;
         courseNumber: string;
@@ -102,13 +61,11 @@ export const useReadRatings = ({
         classRating.courseNumber === courseNumber
     );
     return matchedRating ?? null;
-  }, [userRatingsData, subject, courseNumber]);
+  }, [data?.userRatings?.classes, subject, courseNumber]);
 
-  // Calculate hasRatings after queries - used for UI logic only, not query execution
-  // This prevents dynamic skip conditions from causing re-renders
   const hasRatings = useMemo(() => {
     const metrics =
-      aggregatedRatings?.course?.aggregatedRatings?.metrics?.filter((metric) =>
+      data?.course?.aggregatedRatings?.metrics?.filter((metric) =>
         Boolean(metric)
       ) ?? [];
     const totalRatings = metrics.reduce(
@@ -116,31 +73,28 @@ export const useReadRatings = ({
       0
     );
     return totalRatings > 0;
-  }, [aggregatedRatings]);
-
-  const loading =
-    aggregatedRatingsLoading ||
-    semestersWithRatingsLoading ||
-    (userId && userRatingsLoading) ||
-    courseClassesLoading;
-
-  const refetchAll = () => {
-    refetchAggregatedRatings();
-    refetchSemesters();
-    refetchCourseClasses();
-    if (userId) {
-      refetchUserRatings();
-    }
-  };
+  }, [data?.course?.aggregatedRatings?.metrics]);
 
   return {
-    userRatingsData,
+    // All user ratings data (for checking constraints)
+    userRatingsData: data?.userRatings
+      ? { userRatings: data.userRatings }
+      : undefined,
+    // User's rating for this specific course
     userRatings,
-    aggregatedRatings: aggregatedRatings?.course?.aggregatedRatings,
+    // Aggregated ratings for the course
+    aggregatedRatings: data?.course?.aggregatedRatings,
+    // Semesters that have ratings
     semestersWithRatings,
+    // All classes for the course (for term selector)
     courseClasses,
+    // Whether course has any ratings
     hasRatings,
+    // Loading state (single source of truth)
     loading,
-    refetch: refetchAll,
+    // Error state
+    error,
+    // Refetch all data (single function)
+    refetch,
   };
 };

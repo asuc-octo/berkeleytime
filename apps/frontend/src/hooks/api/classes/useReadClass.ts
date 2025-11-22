@@ -7,6 +7,9 @@ import {
   ReadClassEnrollmentDocument,
   ReadClassEnrollmentQuery,
   ReadClassEnrollmentQueryVariables,
+  ReadClassRatingsDocument,
+  ReadClassRatingsQuery,
+  ReadClassRatingsQueryVariables,
   ReadClassSectionsDocument,
   ReadClassSectionsQuery,
   ReadClassSectionsQueryVariables,
@@ -128,5 +131,27 @@ export const useReadClassEnrollment = (
   return {
     ...query,
     data: query.data?.class,
+  };
+};
+
+export const useReadClassRatings = (
+  subject: string,
+  courseNumber: string,
+  options?: Omit<
+    useQuery.Options<ReadClassRatingsQuery, ReadClassRatingsQueryVariables>,
+    "variables"
+  >
+) => {
+  const query = useQuery(ReadClassRatingsDocument, {
+    ...options,
+    variables: {
+      subject,
+      courseNumber,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.course,
   };
 };
