@@ -40,7 +40,6 @@ export const collectionTypeDef = gql`
     ownerID: String!
     name: String!
     class: CollectionClassInput!
-    comments: [String!]
   }
 
   input modifyCollectionCommentInput {
@@ -48,6 +47,7 @@ export const collectionTypeDef = gql`
     name: String!
     class: CollectionClassInput!
     comment: String!
+    add: Boolean!
   }
 
   type Mutation {
