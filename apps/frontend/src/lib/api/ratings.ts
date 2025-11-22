@@ -142,38 +142,7 @@ export const GET_ALL_RATINGS_DATA = gql`
   query GetAllRatingsData(
     $subject: String!
     $courseNumber: String!
-    $courseNumberTyped: CourseNumber!
   ) {
-    course(subject: $subject, number: $courseNumberTyped) {
-      subject
-      number
-      aggregatedRatings {
-        metrics {
-          metricName
-          count
-          weightedAverage
-          categories {
-            value
-            count
-          }
-        }
-      }
-      classes {
-        semester
-        year
-        number
-        anyPrintInScheduleOfClasses
-        primarySection {
-          startDate
-          meetings {
-            instructors {
-              familyName
-              givenName
-            }
-          }
-        }
-      }
-    }
     semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
       semester
       year

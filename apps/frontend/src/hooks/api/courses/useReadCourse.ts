@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import { useLazyQuery, useQuery } from "@apollo/client/react";
 
 import {
-  GetCourseForClassDocument,
   GetCourseForClassQuery,
   GetCourseForClassQueryVariables,
   ReadCourseDocument,
@@ -45,6 +44,8 @@ export const useReadCourse = (
   };
 };
 
+import { GET_COURSE_FOR_CLASS } from "@/lib/api/courses";
+
 export const useGetCourseForClass = (
   subject: string,
   number: string,
@@ -53,8 +54,8 @@ export const useGetCourseForClass = (
     "variables"
   >
 ) => {
-  const query = useQuery(GetCourseForClassDocument, {
-    ...options,
+  const query = useQuery<any>(GET_COURSE_FOR_CLASS, {
+    ...(options as any),
     variables: {
       subject,
       number,

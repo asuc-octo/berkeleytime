@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useLazyQuery, useMutation } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
@@ -23,7 +23,6 @@ import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingDocument,
   DeleteRatingDocument,
-  GetAggregatedRatingsDocument,
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
@@ -65,7 +64,7 @@ type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 
 export function RatingsContainer() {
-  const { class: currentClass } = useClass();
+  const { class: currentClass, course } = useClass();
   const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
@@ -90,6 +89,7 @@ export function RatingsContainer() {
   } = useGetRatings({
     subject: currentClass.subject,
     courseNumber: currentClass.courseNumber,
+    course,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(() => {
@@ -127,13 +127,6 @@ export function RatingsContainer() {
   const [createRatingMutation] = useMutation(CreateRatingDocument);
   const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
 
-  const [getAggregatedRatings, { data: lazyAggregatedRatingsData }] =
-    useLazyQuery<IAggregatedRatings>(GetAggregatedRatingsDocument);
-
-  useEffect(() => {
-    setTermRatings(lazyAggregatedRatingsData as IAggregatedRatings | null);
-  }, [lazyAggregatedRatingsData]);
-
   const availableTerms = useMemo(() => {
     if (!courseClasses.length) return [];
 
@@ -141,7 +134,7 @@ export function RatingsContainer() {
     const courseTerms: Term[] = courseClasses
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
-      .filter((c) => {
+      .filter((c: any) => {
         if (c.primarySection?.startDate) {
           const startDate = new Date(c.primarySection.startDate);
           return startDate <= today;
@@ -173,13 +166,13 @@ export function RatingsContainer() {
 
     if (
       !metrics.some(
-        (metric) => isMetricRating(metric.metricName) && metric.count !== 0
+        (metric: IMetric) => isMetricRating(metric.metricName) && metric.count !== 0
       )
     ) {
       return null;
     }
 
-    return metrics.map((metric) => {
+    return metrics.map((metric: IMetric) => {
       const categories =
         metric.categories?.filter((category): category is MetricCategory =>
           Boolean(category)
@@ -187,12 +180,12 @@ export function RatingsContainer() {
 
       let maxCount = 1;
       RATING_VALUES.forEach((rating) => {
-        const category = categories.find((cat) => cat.value === rating);
+        const category = categories.find((cat: MetricCategory) => cat.value === rating);
         maxCount = Math.max(maxCount, category?.count ?? 0);
       });
 
       const stats = RATING_VALUES.map((rating) => {
-        const category = categories.find((cat) => cat.value === rating);
+        const category = categories.find((cat: MetricCategory) => cat.value === rating);
         const count = category?.count ?? 0;
         return {
           rating,
@@ -239,9 +232,14 @@ export function RatingsContainer() {
         value: `${t.semester} ${t.year}`,
         label: `${t.semester} ${t.year}`,
       }));
-    return withDuplicates.filter(
+    const uniqueOptions = withDuplicates.filter(
       (v) => withDuplicates.find((v2) => v2.value === v.value) === v
     );
+
+    return [
+      { value: "all", label: "All Semesters" },
+      ...uniqueOptions,
+    ];
   }, [availableTerms, semestersWithRatings, termsData]);
 
   // const ratingsCount = useMemo(
@@ -301,13 +299,9 @@ export function RatingsContainer() {
                 <div className={styles.termSelectWrapper}>
                   {hasRatings && (
                     <Select
-                      options={[
-                        { value: "all", label: "Overall Ratings" },
-                        ...termSelectOptions,
-                      ]}
+                      options={termSelectOptions}
                       value={selectedTerm}
-                      variant="foreground"
-                      onChange={async (selectedValue) => {
+                      onChange={(selectedValue) => {
                         if (Array.isArray(selectedValue) || !selectedValue)
                           return; // ensure it is string
                         setSelectedTerm(selectedValue);
@@ -315,15 +309,13 @@ export function RatingsContainer() {
                           setTermRatings(null);
                         } else if (isSemester(selectedValue)) {
                           const [semester, year] = selectedValue.split(" ");
-                          const { data } = await getAggregatedRatings({
-                            variables: {
-                              subject: currentClass.subject,
-                              courseNumber: currentClass.courseNumber,
-                              semester: semester,
-                              year: parseInt(year),
-                            },
-                          });
-                          if (data) setTermRatings(data);
+                          const selectedClass = courseClasses.find(
+                            (c: any) =>
+                              c.semester === semester && c.year === parseInt(year)
+                          );
+                          if (selectedClass && selectedClass.aggregatedRatings) {
+                            setTermRatings(selectedClass.aggregatedRatings);
+                          }
                         }
                       }}
                       placeholder="Select term"

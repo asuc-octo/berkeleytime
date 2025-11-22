@@ -2,29 +2,24 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
-import { GetAllRatingsDataDocument, Semester } from "@/lib/generated/graphql";
+import { GET_ALL_RATINGS_DATA, ICourse } from "@/lib/api";
 
 interface UseGetRatingsOptions {
   subject: string;
   courseNumber: string;
 }
 
-/**
- * Hook to fetch all ratings-related data for a course in a single query.
- * Eliminates flashing by loading all data upfront in one network request.
- * Follows the same pattern as useGetClassEnrollment, useGetCourseGrades, etc.
- */
 export const useGetRatings = ({
   subject,
   courseNumber,
-}: UseGetRatingsOptions) => {
-  const { data, loading, error, refetch } = useQuery(
-    GetAllRatingsDataDocument,
+  course,
+}: UseGetRatingsOptions & { course?: ICourse }) => {
+  const { data, loading, error, refetch } = useQuery<any>(
+    GET_ALL_RATINGS_DATA,
     {
       variables: {
         subject,
         courseNumber,
-        courseNumberTyped: courseNumber, // Same value, different type for GraphQL
       },
       fetchPolicy: "cache-first",
     }
@@ -32,29 +27,23 @@ export const useGetRatings = ({
 
   const courseClasses = useMemo(
     () =>
-      data?.course?.classes?.filter(
-        (courseClass): courseClass is NonNullable<typeof courseClass> =>
-          Boolean(courseClass)
+      course?.classes?.filter(
+        (courseClass: any) => Boolean(courseClass)
       ) ?? [],
-    [data?.course?.classes]
+    [course?.classes]
   );
 
   const semestersWithRatings = useMemo(() => {
     if (!data?.semestersWithRatings) return [];
-    return data.semestersWithRatings.filter((sem) => sem.maxMetricCount > 0);
+    return data.semestersWithRatings.filter((sem: any) => sem && sem.maxMetricCount > 0);
   }, [data?.semestersWithRatings]);
 
   const userRatings = useMemo(() => {
     if (!data?.userRatings?.classes) return null;
 
     const matchedRating = data.userRatings.classes.find(
-      (classRating: {
-        subject: string;
-        courseNumber: string;
-        semester: Semester;
-        year: number;
-        classNumber: string;
-      }) =>
+      (classRating: any) =>
+        classRating &&
         classRating.subject === subject &&
         classRating.courseNumber === courseNumber
     );
@@ -63,22 +52,22 @@ export const useGetRatings = ({
 
   const hasRatings = useMemo(() => {
     const metrics =
-      data?.course?.aggregatedRatings?.metrics?.filter((metric) =>
+      course?.aggregatedRatings?.metrics?.filter((metric: any) =>
         Boolean(metric)
       ) ?? [];
     const totalRatings = metrics.reduce(
-      (total, metric) => total + (metric.count ?? 0),
+      (total: number, metric: any) => total + (metric?.count ?? 0),
       0
     );
     return totalRatings > 0;
-  }, [data?.course?.aggregatedRatings?.metrics]);
+  }, [course?.aggregatedRatings?.metrics]);
 
   return {
     userRatingsData: data?.userRatings
       ? { userRatings: data.userRatings }
       : undefined,
     userRatings,
-    aggregatedRatings: data?.course?.aggregatedRatings,
+    aggregatedRatings: course?.aggregatedRatings,
     semestersWithRatings,
     courseClasses,
     hasRatings,

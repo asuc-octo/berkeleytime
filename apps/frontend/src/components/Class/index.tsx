@@ -325,7 +325,7 @@ export default function Class({
       return false;
     }
 
-    return Math.max(...metrics.map((metric) => metric.count));
+    return Math.max(...metrics.map((metric: any) => metric.count));
   }, [_course]);
 
   const ratingsLockContext = useMemo(() => {
