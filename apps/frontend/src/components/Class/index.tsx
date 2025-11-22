@@ -19,7 +19,6 @@ import { Tabs } from "radix-ui";
 import {
   Link,
   NavLink,
-  Outlet,
   useLocation,
   useNavigate,
 } from "react-router-dom";
@@ -65,15 +64,6 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
-
-interface BodyProps {
-  children: ReactNode;
-  dialog?: boolean;
-}
-
-function Body({ children, dialog }: BodyProps) {
-  return dialog ? children : <Outlet />;
-}
 
 interface RootProps {
   dialog?: boolean;
@@ -133,6 +123,15 @@ const formatClassNumber = (number: string | undefined | null): string => {
   return num.toString().padStart(2, "0");
 };
 
+// Helper function to determine current tab from pathname
+const getCurrentTab = (pathname: string): string => {
+  if (pathname.endsWith("/sections")) return "sections";
+  if (pathname.endsWith("/grades")) return "grades";
+  if (pathname.endsWith("/ratings")) return "ratings";
+  if (pathname.endsWith("/enrollment")) return "enrollment";
+  return "overview";
+};
+
 export default function Class({
   year,
   semester,
@@ -148,6 +147,21 @@ export default function Class({
   const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
+
+  // Track which tabs have been visited (lazy mount + keep alive pattern)
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(() => {
+    // Initialize with the current tab already visited
+    return new Set([getCurrentTab(location.pathname)]);
+  });
+
+  // Update visited tabs when route changes
+  useEffect(() => {
+    const currentTab = getCurrentTab(location.pathname);
+    setVisitedTabs((prev) => {
+      if (prev.has(currentTab)) return prev;
+      return new Set(prev).add(currentTab);
+    });
+  }, [location.pathname]);
 
   const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
     skip: !user,
@@ -654,39 +668,107 @@ export default function Class({
               course: _course,
             }}
           >
-            <Body dialog={dialog}>
-              {dialog && (
-                <>
-                  <Tabs.Content value="overview" asChild>
+            {dialog ? (
+              <>
+                <Tabs.Content value="overview" asChild>
+                  <SuspenseBoundary>
+                    <Overview />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="sections" asChild>
+                  <SuspenseBoundary>
+                    <Sections />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="grades" asChild>
+                  <SuspenseBoundary>
+                    <Grades />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                {!ratingsLocked && (
+                  <Tabs.Content value="ratings" asChild>
                     <SuspenseBoundary>
-                      <Overview />
+                      <Ratings />
                     </SuspenseBoundary>
                   </Tabs.Content>
-                  <Tabs.Content value="sections" asChild>
+                )}
+                <Tabs.Content value="enrollment" asChild>
+                  <SuspenseBoundary>
+                    <Enrollment />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+              </>
+            ) : (
+              <>
+                {/* Lazy mount: only render tabs that have been visited, keep them mounted */}
+                {visitedTabs.has("sections") && (
+                  <div
+                    style={{
+                      display: getCurrentTab(location.pathname) === "sections"
+                        ? "block"
+                        : "none",
+                    }}
+                  >
                     <SuspenseBoundary>
                       <Sections />
                     </SuspenseBoundary>
-                  </Tabs.Content>
-                  <Tabs.Content value="grades" asChild>
+                  </div>
+                )}
+                {visitedTabs.has("grades") && (
+                  <div
+                    style={{
+                      display: getCurrentTab(location.pathname) === "grades"
+                        ? "block"
+                        : "none",
+                    }}
+                  >
                     <SuspenseBoundary>
                       <Grades />
                     </SuspenseBoundary>
-                  </Tabs.Content>
-                  {!ratingsLocked && (
-                    <Tabs.Content value="ratings" asChild>
-                      <SuspenseBoundary>
-                        <Ratings />
-                      </SuspenseBoundary>
-                    </Tabs.Content>
-                  )}
-                  <Tabs.Content value="enrollment" asChild>
+                  </div>
+                )}
+                {!ratingsLocked && visitedTabs.has("ratings") && (
+                  <div
+                    style={{
+                      display: getCurrentTab(location.pathname) === "ratings"
+                        ? "block"
+                        : "none",
+                    }}
+                  >
+                    <SuspenseBoundary>
+                      <Ratings />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("enrollment") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "enrollment"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
                     <SuspenseBoundary>
                       <Enrollment />
                     </SuspenseBoundary>
-                  </Tabs.Content>
-                </>
-              )}
-            </Body>
+                  </div>
+                )}
+                {visitedTabs.has("overview") && (
+                  <div
+                    style={{
+                      display: getCurrentTab(location.pathname) === "overview"
+                        ? "block"
+                        : "none",
+                    }}
+                  >
+                    <SuspenseBoundary>
+                      <Overview />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+              </>
+            )}
           </ClassContext>
         </Flex>
       </Root>

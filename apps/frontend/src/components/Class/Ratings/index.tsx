@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
+import { useLazyQuery, useMutation } from "@apollo/client/react";
 import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
@@ -14,14 +14,13 @@ import {
   ErrorDialog,
 } from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
-import { useReadTerms } from "@/hooks/api";
+import { useReadRatings, useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
 import {
   IAggregatedRatings,
   IClassDetails,
   IMetric,
-  IUserRatingClass,
 } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
@@ -32,7 +31,6 @@ import {
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
   GetUserRatingsDocument,
-  ReadCourseClassesForRatingsDocument,
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
@@ -74,123 +72,81 @@ type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 
 export function RatingsContainer() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const { class: currentClass } = useClass();
-  const [selectedTerm, setSelectedTerm] = useState("all");
-  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
-    null
-  );
   const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 
-  // Get user's existing ratings
-  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(
-    GetUserRatingsDocument,
-    {
-      skip: !user,
-    }
+  // State management
+  const [selectedTerm, setSelectedTerm] = useState("all");
+  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
+    null
   );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-  const { data: courseClassesData, loading: courseClassesLoading } = useQuery(
-    ReadCourseClassesForRatingsDocument,
-    {
-      variables: {
-        subject: currentClass.subject,
-        number: currentClass.courseNumber,
-      },
-      skip: !currentClass?.subject || !currentClass?.courseNumber,
-    }
-  );
+  // Use consolidated hook for all ratings data
+  const {
+    userRatingsData,
+    userRatings,
+    aggregatedRatings: aggregatedRatingsData,
+    semestersWithRatings,
+    courseClasses,
+    hasRatings,
+    loading,
+  } = useReadRatings({
+    subject: currentClass.subject,
+    courseNumber: currentClass.courseNumber,
+    userId: user?._id,
+  });
 
-  const courseClasses =
-    courseClassesData?.course?.classes?.filter(
-      (courseClass): courseClass is NonNullable<typeof courseClass> =>
-        Boolean(courseClass)
-    ) ?? [];
+  // Simplified modal state - read URL param once on mount for initial state
+  const [isModalOpen, setIsModalOpen] = useState(() => {
+    return searchParams.get("feedbackModal") === "true";
+  });
 
+  // Update URL when modal opens/closes, but don't create feedback loop
   const handleModalStateChange = useCallback(
     (open: boolean) => {
       setIsModalOpen(open);
+      const newParams = new URLSearchParams(searchParams);
       if (open) {
-        searchParams.set("feedbackModal", "true");
-        setSearchParams(searchParams);
-      } else if (searchParams.get("feedbackModal")) {
-        searchParams.delete("feedbackModal");
-        setSearchParams(searchParams);
+        newParams.set("feedbackModal", "true");
+      } else {
+        newParams.delete("feedbackModal");
       }
+      setSearchParams(newParams, { replace: true });
     },
     [searchParams, setSearchParams]
   );
 
+  // Only sync from URL to state when URL changes externally (e.g., browser back/forward)
   useEffect(() => {
-    // Check if we should open/close the modal based on URL parameter
     const feedbackModalParam = searchParams.get("feedbackModal");
-    if (user && feedbackModalParam === "true") {
-      const canRate = checkConstraint(userRatingsData);
-      if (canRate) {
-        handleModalStateChange(true);
-      } else {
-        // Remove the parameter if user can't rate
-        searchParams.delete("feedbackModal");
-        setSearchParams(searchParams);
-      }
-    } else if (feedbackModalParam !== "true" && isModalOpen) {
-      // Close the modal if the parameter is not present
-      handleModalStateChange(false);
-    }
-  }, [
-    user,
-    searchParams,
-    userRatingsData,
-    handleModalStateChange,
-    setSearchParams,
-    isModalOpen,
-  ]);
+    const shouldBeOpen = feedbackModalParam === "true";
 
-  // Get aggregated ratings for display
-  const { data: aggregatedRatings, loading: aggregatedRatingsLoading } =
-    useQuery(GetCourseRatingsDocument, {
-      variables: {
-        subject: currentClass?.subject,
-        number: currentClass?.courseNumber,
-      },
-      skip: !currentClass?.subject || !currentClass?.courseNumber,
-    });
+    // Only update if there's a mismatch and user is logged in
+    if (shouldBeOpen !== isModalOpen && user) {
+      const canRate = checkConstraint(userRatingsData);
+      if (shouldBeOpen && canRate) {
+        setIsModalOpen(true);
+      } else if (!shouldBeOpen) {
+        setIsModalOpen(false);
+      }
+    }
+  }, [searchParams]); // Deliberately minimal dependencies
 
   // Create rating mutation
   const [createRatingMutation] = useMutation(CreateRatingDocument);
-
   const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
 
-  const [getAggregatedRatings, { data: aggregatedRatingsData }] =
+  const [getAggregatedRatings, { data: lazyAggregatedRatingsData }] =
     useLazyQuery<IAggregatedRatings>(GetAggregatedRatingsDocument);
 
   useEffect(() => {
-    setTermRatings(aggregatedRatingsData as IAggregatedRatings | null);
-  }, [aggregatedRatingsData]);
-
-  // Get semesters with ratings
-  const {
-    data: semestersWithRatingsData,
-    loading: semestersWithRatingsLoading,
-  } = useQuery(GetSemestersWithRatingsDocument, {
-    variables: {
-      subject: currentClass.subject,
-      courseNumber: currentClass.courseNumber,
-    },
-    skip: !currentClass?.subject || !currentClass?.courseNumber,
-  });
-
-  const semestersWithRatings = useMemo(() => {
-    if (!semestersWithRatingsData) return [];
-    return semestersWithRatingsData.semestersWithRatings.filter(
-      (sem) => sem.maxMetricCount > 0
-    );
-  }, [semestersWithRatingsData]);
+    setTermRatings(lazyAggregatedRatingsData as IAggregatedRatings | null);
+  }, [lazyAggregatedRatingsData]);
 
   const availableTerms = useMemo(() => {
     if (!courseClasses.length) return [];
@@ -219,28 +175,11 @@ export function RatingsContainer() {
     return _.uniqBy(courseTerms, (term) => term.label);
   }, [courseClasses]);
 
-  const userRatings = useMemo(() => {
-    if (!userRatingsData?.userRatings?.classes) return null;
-
-    const matchedRating = userRatingsData.userRatings.classes.find(
-      (classRating: {
-        subject: string;
-        courseNumber: string;
-        semester: Semester;
-        year: number;
-        classNumber: string;
-      }) =>
-        classRating.subject === currentClass.subject &&
-        classRating.courseNumber === currentClass.courseNumber
-    );
-    return matchedRating as IUserRatingClass;
-  }, [userRatingsData, currentClass]);
-
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
     const metricsSource =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
-        : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+        : aggregatedRatingsData?.metrics;
 
     const metrics =
       metricsSource?.filter((metric): metric is IMetric => Boolean(metric)) ??
@@ -288,19 +227,7 @@ export function RatingsContainer() {
         weightedAverage: metric.weightedAverage,
       } satisfies RatingDetailProps;
     });
-  }, [aggregatedRatings, selectedTerm, termRatings]);
-
-  const hasRatings = useMemo(() => {
-    const metrics =
-      aggregatedRatings?.course?.aggregatedRatings?.metrics?.filter(
-        (metric): metric is IMetric => Boolean(metric)
-      ) ?? [];
-    const totalRatings = metrics.reduce(
-      (total, metric) => total + (metric.count ?? 0),
-      0
-    );
-    return totalRatings > 0;
-  }, [aggregatedRatings]);
+  }, [aggregatedRatingsData, selectedTerm, termRatings]);
 
   const termSelectOptions = useMemo(() => {
     const withDuplicates = availableTerms
@@ -393,13 +320,7 @@ export function RatingsContainer() {
     return queries;
   };
 
-  const isLoading =
-    courseClassesLoading ||
-    aggregatedRatingsLoading ||
-    semestersWithRatingsLoading ||
-    (user && userRatingsLoading);
-
-  if (isLoading) {
+  if (loading) {
     return <EmptyState heading="Loading Ratings Data" loading />;
   }
 
