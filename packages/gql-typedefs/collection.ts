@@ -14,14 +14,10 @@ export const collectionTypeDef = gql`
   }
 
   type Query {
-    ownerCollection(
-        ownerID: String!
-    ): [Collection!]!
-    viewerCollection(
-        viewerID: String!
-    ): [Collection!]!
+    ownerCollection(ownerID: String!): [Collection!]!
+    viewerCollection(viewerID: String!): [Collection!]!
   }
-    
+
   input CollectionClassInput {
     year: Int!
     semester: Semester!
