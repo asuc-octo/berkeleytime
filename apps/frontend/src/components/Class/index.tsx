@@ -275,15 +275,15 @@ export default function Class({
 
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
-          (bookmarkedClass) =>
-            !(
-              bookmarkedClass.subject === _class?.subject &&
-              bookmarkedClass.courseNumber === _class?.courseNumber &&
-              bookmarkedClass.number === _class?.number &&
-              bookmarkedClass.year === _class?.year &&
-              bookmarkedClass.semester === _class?.semester
-            )
-        )
+        (bookmarkedClass) =>
+          !(
+            bookmarkedClass.subject === _class?.subject &&
+            bookmarkedClass.courseNumber === _class?.courseNumber &&
+            bookmarkedClass.number === _class?.number &&
+            bookmarkedClass.year === _class?.year &&
+            bookmarkedClass.semester === _class?.semester
+          )
+      )
       : user.bookmarkedClasses.concat(bookmarkEntry);
     await updateUser(
       {
@@ -671,29 +671,29 @@ export default function Class({
             {dialog ? (
               <>
                 <Tabs.Content value="overview" asChild>
-                  <SuspenseBoundary>
+                  <SuspenseBoundary fallback={<></>}>
                     <Overview />
                   </SuspenseBoundary>
                 </Tabs.Content>
                 <Tabs.Content value="sections" asChild>
-                  <SuspenseBoundary>
+                  <SuspenseBoundary fallback={<></>}>
                     <Sections />
                   </SuspenseBoundary>
                 </Tabs.Content>
                 <Tabs.Content value="grades" asChild>
-                  <SuspenseBoundary>
+                  <SuspenseBoundary fallback={<></>}>
                     <Grades />
                   </SuspenseBoundary>
                 </Tabs.Content>
                 {!ratingsLocked && (
                   <Tabs.Content value="ratings" asChild>
-                    <SuspenseBoundary>
+                    <SuspenseBoundary fallback={<></>}>
                       <Ratings />
                     </SuspenseBoundary>
                   </Tabs.Content>
                 )}
                 <Tabs.Content value="enrollment" asChild>
-                  <SuspenseBoundary>
+                  <SuspenseBoundary fallback={<></>}>
                     <Enrollment />
                   </SuspenseBoundary>
                 </Tabs.Content>
@@ -710,7 +710,7 @@ export default function Class({
                           : "none",
                     }}
                   >
-                    <SuspenseBoundary>
+                    <SuspenseBoundary fallback={<></>}>
                       <Sections />
                     </SuspenseBoundary>
                   </div>
@@ -724,7 +724,7 @@ export default function Class({
                           : "none",
                     }}
                   >
-                    <SuspenseBoundary>
+                    <SuspenseBoundary fallback={<></>}>
                       <Grades />
                     </SuspenseBoundary>
                   </div>
@@ -738,7 +738,7 @@ export default function Class({
                           : "none",
                     }}
                   >
-                    <SuspenseBoundary>
+                    <SuspenseBoundary fallback={<></>}>
                       <Ratings />
                     </SuspenseBoundary>
                   </div>
@@ -752,7 +752,7 @@ export default function Class({
                           : "none",
                     }}
                   >
-                    <SuspenseBoundary>
+                    <SuspenseBoundary fallback={<></>}>
                       <Enrollment />
                     </SuspenseBoundary>
                   </div>
@@ -766,7 +766,7 @@ export default function Class({
                           : "none",
                     }}
                   >
-                    <SuspenseBoundary>
+                    <SuspenseBoundary fallback={<></>}>
                       <Overview />
                     </SuspenseBoundary>
                   </div>
