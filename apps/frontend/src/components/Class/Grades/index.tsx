@@ -14,7 +14,7 @@ import {
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
 import EmptyState from "@/components/Class/EmptyState";
-import { useReadClassGrades } from "@/hooks/api/classes/useReadClass";
+import { useReadCourseGrades } from "@/hooks/api/classes/useReadClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
 import { decimalToPercentString } from "@/utils/number-formatter";
@@ -29,7 +29,7 @@ export default function Grades() {
   const {
     class: { subject, courseNumber, number, semester, year },
   } = useClass();
-  const { data, loading } = useReadClassGrades(
+  const { data, loading } = useReadCourseGrades(
     year,
     semester,
     subject,

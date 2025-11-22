@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client/react";
 
-import { Semester } from "@/lib/api";
 import {
   ReadClassDetailsDocument,
   ReadClassDetailsQuery,
@@ -8,12 +7,13 @@ import {
   ReadClassEnrollmentDocument,
   ReadClassEnrollmentQuery,
   ReadClassEnrollmentQueryVariables,
-  ReadClassGradesDocument,
-  ReadClassGradesQuery,
-  ReadClassGradesQueryVariables,
+  ReadCourseGradesDocument,
+  ReadCourseGradesQuery,
+  ReadCourseGradesQueryVariables,
   ReadClassSectionsDocument,
   ReadClassSectionsQuery,
   ReadClassSectionsQueryVariables,
+  Semester,
 } from "@/lib/generated/graphql";
 
 export const useReadClass = (
@@ -28,8 +28,6 @@ export const useReadClass = (
   >
 ) => {
   const query = useQuery(ReadClassDetailsDocument, {
-    fetchPolicy: "no-cache",
-    nextFetchPolicy: "no-cache",
     ...options,
     variables: {
       year,
@@ -58,8 +56,6 @@ export const useReadClassSections = (
   >
 ) => {
   const query = useQuery(ReadClassSectionsDocument, {
-    fetchPolicy: "no-cache",
-    nextFetchPolicy: "no-cache",
     ...options,
     variables: {
       year,
@@ -76,20 +72,18 @@ export const useReadClassSections = (
   };
 };
 
-export const useReadClassGrades = (
+export const useReadCourseGrades = (
   year: number,
   semester: Semester,
   subject: string,
   courseNumber: string,
   number: string,
   options?: Omit<
-    useQuery.Options<ReadClassGradesQuery, ReadClassGradesQueryVariables>,
+    useQuery.Options<ReadCourseGradesQuery, ReadCourseGradesQueryVariables>,
     "variables"
   >
 ) => {
-  const query = useQuery(ReadClassGradesDocument, {
-    fetchPolicy: "no-cache",
-    nextFetchPolicy: "no-cache",
+  const query = useQuery(ReadCourseGradesDocument, {
     ...options,
     variables: {
       year,
@@ -118,8 +112,6 @@ export const useReadClassEnrollment = (
   >
 ) => {
   const query = useQuery(ReadClassEnrollmentDocument, {
-    fetchPolicy: "no-cache",
-    nextFetchPolicy: "no-cache",
     ...options,
     variables: {
       year,

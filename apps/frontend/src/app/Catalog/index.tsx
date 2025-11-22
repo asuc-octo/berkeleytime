@@ -202,7 +202,7 @@ export default function Catalog() {
       </button>
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {classLoading ? (
+        {!_class && classLoading ? (
           <div className={styles.loading}>
             <div className={styles.loadingHeader} />
             <div className={styles.loadingBody} />

@@ -122,6 +122,7 @@ const ratingsTabClasses: RatingsTabClasses = {
   tooltipTitle: styles.tooltipTitle,
 };
 
+
 const METRIC_NAMES = Object.values(MetricName) as MetricName[];
 
 const formatClassNumber = (number: string | undefined | null): string => {
@@ -179,8 +180,9 @@ export default function Class({
     }
   );
 
-const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
+  const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
+
 
   useEffect(() => {
     if (!_class?.primarySection?.enrollment) return;
@@ -324,6 +326,7 @@ const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const shouldShowRatingsTab = RatingsTabLink.shouldDisplay(ratingsLockContext);
   const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
   const ratingsNeeded = RatingsTabLink.ratingsNeeded(ratingsLockContext) ?? 0;
+
 
   useEffect(() => {
     if (dialog || !ratingsLocked) return;

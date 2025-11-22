@@ -333,8 +333,8 @@ export const READ_CLASS_SECTIONS = gql`
   }
 `;
 
-export const READ_CLASS_GRADES = gql`
-  query ReadClassGrades(
+export const READ_COURSE_GRADES = gql`
+  query ReadCourseGrades(
     $year: Int!
     $semester: Semester!
     $sessionId: SessionIdentifier
