@@ -26,11 +26,7 @@ export default function EmptyState({
 
   return (
     <div className={styles.placeholder}>
-      {loading ? (
-        <LoadingIndicator size="lg" />
-      ) : (
-        icon && <div>{icon}</div>
-      )}
+      {loading ? <LoadingIndicator size="lg" /> : icon && <div>{icon}</div>}
       <p className={styles.heading}>{heading}</p>
       {displayParagraph && (
         <p className={styles.paragraph}>{displayParagraph}</p>
@@ -39,4 +35,3 @@ export default function EmptyState({
     </div>
   );
 }
-

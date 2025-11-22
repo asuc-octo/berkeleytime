@@ -52,7 +52,11 @@ export default function Overview() {
       .split(/\n+/)
       .map((line) => line.trim())
       .filter(Boolean);
-  }, [_class.primarySection?.sectionAttributes, course.description, course.title]);
+  }, [
+    _class.primarySection?.sectionAttributes,
+    course.description,
+    course.title,
+  ]);
 
   return (
     <Box p="5">

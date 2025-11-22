@@ -5,8 +5,8 @@ import { FrameAltEmpty } from "iconoir-react";
 import { Box, Container, PillSwitcher } from "@repo/theme";
 
 import { getEnrollmentColor } from "@/components/Capacity";
-import Time from "@/components/Time";
 import EmptyState from "@/components/Class/EmptyState";
+import Time from "@/components/Time";
 import { useReadClassSections } from "@/hooks/api/classes/useReadClass";
 import useClass from "@/hooks/useClass";
 import { componentMap } from "@/lib/api";
@@ -124,10 +124,16 @@ export default function Sections() {
           <table className={styles.table}>
             <thead className={styles.header}>
               <tr>
-                <th scope="col" className={`${styles.headerCell} ${styles.ccn}`}>
+                <th
+                  scope="col"
+                  className={`${styles.headerCell} ${styles.ccn}`}
+                >
                   CCN
                 </th>
-                <th scope="col" className={`${styles.headerCell} ${styles.time}`}>
+                <th
+                  scope="col"
+                  className={`${styles.headerCell} ${styles.time}`}
+                >
                   Time
                 </th>
                 <th

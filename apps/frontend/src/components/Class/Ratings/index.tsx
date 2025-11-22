@@ -8,11 +8,11 @@ import { useSearchParams } from "react-router-dom";
 import { METRIC_ORDER } from "@repo/shared";
 import { Color, Container, Select } from "@repo/theme";
 
+import EmptyState from "@/components/Class/EmptyState";
 import {
   DeleteRatingPopup,
   ErrorDialog,
 } from "@/components/Class/Ratings/RatingDialog";
-import EmptyState from "@/components/Class/EmptyState";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
@@ -95,16 +95,16 @@ export function RatingsContainer() {
     }
   );
 
-  const {
-    data: courseClassesData,
-    loading: courseClassesLoading,
-  } = useQuery(ReadCourseClassesForRatingsDocument, {
-    variables: {
-      subject: currentClass.subject,
-      number: currentClass.courseNumber,
-    },
-    skip: !currentClass?.subject || !currentClass?.courseNumber,
-  });
+  const { data: courseClassesData, loading: courseClassesLoading } = useQuery(
+    ReadCourseClassesForRatingsDocument,
+    {
+      variables: {
+        subject: currentClass.subject,
+        number: currentClass.courseNumber,
+      },
+      skip: !currentClass?.subject || !currentClass?.courseNumber,
+    }
+  );
 
   const courseClasses =
     courseClassesData?.course?.classes?.filter(
@@ -152,16 +152,14 @@ export function RatingsContainer() {
   ]);
 
   // Get aggregated ratings for display
-  const {
-    data: aggregatedRatings,
-    loading: aggregatedRatingsLoading,
-  } = useQuery(GetCourseRatingsDocument, {
-    variables: {
-      subject: currentClass?.subject,
-      number: currentClass?.courseNumber,
-    },
-    skip: !currentClass?.subject || !currentClass?.courseNumber,
-  });
+  const { data: aggregatedRatings, loading: aggregatedRatingsLoading } =
+    useQuery(GetCourseRatingsDocument, {
+      variables: {
+        subject: currentClass?.subject,
+        number: currentClass?.courseNumber,
+      },
+      skip: !currentClass?.subject || !currentClass?.courseNumber,
+    });
 
   // Create rating mutation
   const [createRatingMutation] = useMutation(CreateRatingDocument);

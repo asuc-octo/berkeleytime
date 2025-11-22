@@ -7,12 +7,12 @@ import {
   ReadClassEnrollmentDocument,
   ReadClassEnrollmentQuery,
   ReadClassEnrollmentQueryVariables,
-  ReadCourseGradesDocument,
-  ReadCourseGradesQuery,
-  ReadCourseGradesQueryVariables,
   ReadClassSectionsDocument,
   ReadClassSectionsQuery,
   ReadClassSectionsQueryVariables,
+  ReadCourseGradesDocument,
+  ReadCourseGradesQuery,
+  ReadCourseGradesQueryVariables,
   Semester,
 } from "@/lib/generated/graphql";
 
@@ -107,7 +107,10 @@ export const useReadClassEnrollment = (
   courseNumber: string,
   number: string,
   options?: Omit<
-    useQuery.Options<ReadClassEnrollmentQuery, ReadClassEnrollmentQueryVariables>,
+    useQuery.Options<
+      ReadClassEnrollmentQuery,
+      ReadClassEnrollmentQueryVariables
+    >,
     "variables"
   >
 ) => {

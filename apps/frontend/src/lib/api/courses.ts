@@ -173,10 +173,7 @@ export const READ_COURSE_WITH_INSTRUCTOR = gql`
 `;
 
 export const READ_COURSE_CLASSES_FOR_RATINGS = gql`
-  query ReadCourseClassesForRatings(
-    $subject: String!
-    $number: CourseNumber!
-  ) {
+  query ReadCourseClassesForRatings($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       classes {
         semester
