@@ -70,7 +70,6 @@ export function RatingsContainer() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 
-  // State management
   const [selectedTerm, setSelectedTerm] = useState("all");
   const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
     null
@@ -79,7 +78,6 @@ export function RatingsContainer() {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-  // Single consolidated query for all ratings data
   const {
     aggregatedRatings: aggregatedRatingsData,
     userRatings,
@@ -94,12 +92,10 @@ export function RatingsContainer() {
     courseNumber: currentClass.courseNumber,
   });
 
-  // Simplified modal state - read URL param once on mount for initial state
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
   });
 
-  // Update URL when modal opens/closes, but don't create feedback loop
   const handleModalStateChange = useCallback(
     (open: boolean) => {
       setIsModalOpen(open);
@@ -114,12 +110,10 @@ export function RatingsContainer() {
     [searchParams, setSearchParams]
   );
 
-  // Only sync from URL to state when URL changes externally (e.g., browser back/forward)
   useEffect(() => {
     const feedbackModalParam = searchParams.get("feedbackModal");
     const shouldBeOpen = feedbackModalParam === "true";
 
-    // Only update if there's a mismatch and user is logged in
     if (shouldBeOpen !== isModalOpen && user) {
       const canRate = checkConstraint(userRatingsData);
       if (shouldBeOpen && canRate) {
@@ -130,7 +124,6 @@ export function RatingsContainer() {
     }
   }, [searchParams]); // Deliberately minimal dependencies
 
-  // Create rating mutation
   const [createRatingMutation] = useMutation(CreateRatingDocument);
   const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
 
@@ -387,7 +380,6 @@ export function RatingsContainer() {
               currentRatings: userRatings,
               refetchQueries: [],
             });
-            // Refetch ratings data after successful submission
             refetchAllRatings();
             setIsModalOpen(false);
           } catch (error) {
@@ -417,7 +409,6 @@ export function RatingsContainer() {
                 },
                 refetchQueries: [],
               });
-              // Refetch ratings data after successful deletion
               refetchAllRatings();
               setIsDeleteModalOpen(false);
             } catch (error) {

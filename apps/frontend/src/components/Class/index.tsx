@@ -118,7 +118,6 @@ const formatClassNumber = (number: string | undefined | null): string => {
   return num.toString().padStart(2, "0");
 };
 
-// Helper function to determine current tab from pathname
 const getCurrentTab = (pathname: string): string => {
   if (pathname.endsWith("/sections")) return "sections";
   if (pathname.endsWith("/grades")) return "grades";
@@ -143,13 +142,10 @@ export default function Class({
 
   const { user, loading: userLoading } = useUser();
 
-  // Track which tabs have been visited (lazy mount + keep alive pattern)
   const [visitedTabs, setVisitedTabs] = useState<Set<string>>(() => {
-    // Initialize with the current tab already visited
     return new Set([getCurrentTab(location.pathname)]);
   });
 
-  // Update visited tabs when route changes
   useEffect(() => {
     const currentTab = getCurrentTab(location.pathname);
     setVisitedTabs((prev) => {

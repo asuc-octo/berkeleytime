@@ -18,7 +18,6 @@ export const useReadRatings = ({
   subject,
   courseNumber,
 }: UseReadRatingsOptions) => {
-  // Single consolidated query - fetches everything in one network request
   const { data, loading, error, refetch } = useQuery(
     ReadAllRatingsDataDocument,
     {
@@ -31,7 +30,6 @@ export const useReadRatings = ({
     }
   );
 
-  // Derived state with useMemo
   const courseClasses = useMemo(
     () =>
       data?.course?.classes?.filter(
@@ -76,25 +74,16 @@ export const useReadRatings = ({
   }, [data?.course?.aggregatedRatings?.metrics]);
 
   return {
-    // All user ratings data (for checking constraints)
     userRatingsData: data?.userRatings
       ? { userRatings: data.userRatings }
       : undefined,
-    // User's rating for this specific course
     userRatings,
-    // Aggregated ratings for the course
     aggregatedRatings: data?.course?.aggregatedRatings,
-    // Semesters that have ratings
     semestersWithRatings,
-    // All classes for the course (for term selector)
     courseClasses,
-    // Whether course has any ratings
     hasRatings,
-    // Loading state (single source of truth)
     loading,
-    // Error state
     error,
-    // Refetch all data (single function)
     refetch,
   };
 };
