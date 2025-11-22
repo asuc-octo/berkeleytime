@@ -108,8 +108,8 @@ export const useReadRatings = ({
   // This prevents dynamic skip conditions from causing re-renders
   const hasRatings = useMemo(() => {
     const metrics =
-      aggregatedRatings?.course?.aggregatedRatings?.metrics?.filter(
-        (metric) => Boolean(metric)
+      aggregatedRatings?.course?.aggregatedRatings?.metrics?.filter((metric) =>
+        Boolean(metric)
       ) ?? [];
     const totalRatings = metrics.reduce(
       (total, metric) => total + (metric.count ?? 0),

@@ -23,13 +23,15 @@ export default function Overview() {
     const attributes = _class.primarySection?.sectionAttributes ?? [];
     if (!attributes.length) return null;
 
-    const noteAttribute = attributes.find(
-      (attribute) => attribute.attribute?.code === "NOTE"
+    const classDescriptionAttribute = attributes.find(
+      (attribute) =>
+        attribute.attribute?.code === "NOTE" &&
+        attribute.attribute?.formalDescription === "Class Description"
     );
 
     const text =
-      noteAttribute?.value?.formalDescription?.trim() ??
-      noteAttribute?.value?.description?.trim() ??
+      classDescriptionAttribute?.value?.formalDescription?.trim() ??
+      classDescriptionAttribute?.value?.description?.trim() ??
       null;
 
     if (!text) return null;

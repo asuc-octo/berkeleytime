@@ -16,12 +16,7 @@ import {
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import {
-  Link,
-  NavLink,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
@@ -217,6 +212,19 @@ export default function Class({
     () => providedCourse ?? course,
     [course, providedCourse]
   );
+
+  const classTitle = useMemo(() => {
+    const attributes = _class?.primarySection?.sectionAttributes ?? [];
+    const specialTitleAttribute = attributes.find(
+      (attr) => attr.attribute?.formalDescription === "Special Title"
+    );
+
+    if (specialTitleAttribute?.value?.formalDescription) {
+      return specialTitleAttribute.value.formalDescription;
+    }
+
+    return _course?.title ?? "";
+  }, [_class?.primarySection?.sectionAttributes, _course?.title]);
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,
@@ -510,7 +518,7 @@ export default function Class({
                         #{formatClassNumber(_class.number)}
                       </span>
                     </h1>
-                    <p className={styles.description}>{_course?.title}</p>
+                    <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
                     {/* TODO: Reusable bookmark button */}
@@ -704,9 +712,10 @@ export default function Class({
                 {visitedTabs.has("sections") && (
                   <div
                     style={{
-                      display: getCurrentTab(location.pathname) === "sections"
-                        ? "block"
-                        : "none",
+                      display:
+                        getCurrentTab(location.pathname) === "sections"
+                          ? "block"
+                          : "none",
                     }}
                   >
                     <SuspenseBoundary>
@@ -717,9 +726,10 @@ export default function Class({
                 {visitedTabs.has("grades") && (
                   <div
                     style={{
-                      display: getCurrentTab(location.pathname) === "grades"
-                        ? "block"
-                        : "none",
+                      display:
+                        getCurrentTab(location.pathname) === "grades"
+                          ? "block"
+                          : "none",
                     }}
                   >
                     <SuspenseBoundary>
@@ -730,9 +740,10 @@ export default function Class({
                 {!ratingsLocked && visitedTabs.has("ratings") && (
                   <div
                     style={{
-                      display: getCurrentTab(location.pathname) === "ratings"
-                        ? "block"
-                        : "none",
+                      display:
+                        getCurrentTab(location.pathname) === "ratings"
+                          ? "block"
+                          : "none",
                     }}
                   >
                     <SuspenseBoundary>
@@ -757,9 +768,10 @@ export default function Class({
                 {visitedTabs.has("overview") && (
                   <div
                     style={{
-                      display: getCurrentTab(location.pathname) === "overview"
-                        ? "block"
-                        : "none",
+                      display:
+                        getCurrentTab(location.pathname) === "overview"
+                          ? "block"
+                          : "none",
                     }}
                   >
                     <SuspenseBoundary>

@@ -17,11 +17,7 @@ import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { useReadRatings, useReadTerms } from "@/hooks/api";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import {
-  IAggregatedRatings,
-  IClassDetails,
-  IMetric,
-} from "@/lib/api";
+import { IAggregatedRatings, IClassDetails, IMetric } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingDocument,
