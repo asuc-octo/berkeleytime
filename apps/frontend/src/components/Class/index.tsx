@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 
+import ConfirmationToast from "@/app/Bookmark/BookmarkDashboard/ConfirmationToast";
+
 import { useMutation, useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import {
@@ -158,6 +160,7 @@ export default function Class({
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
 
   const { data: course, loading: courseLoading } = useReadCourseForClass(
     providedClass?.subject ?? (subject as string),
@@ -239,7 +242,16 @@ export default function Class({
   );
 
   const bookmark = useCallback(async () => {
-    if (!user || !_class) return;
+    console.log('bookmark function called');
+    console.log('user:', user);
+    console.log('_class:', _class);
+
+    if (!user || !_class) {
+      console.log('returning early - no user or class');
+      return;
+    }
+
+    console.log('bookmarked status:', bookmarked);
 
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
@@ -253,6 +265,8 @@ export default function Class({
             )
         )
       : user.bookmarkedClasses.concat(_class);
+
+    console.log('calling updateUser...');
     await updateUser(
       {
         bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
@@ -273,6 +287,11 @@ export default function Class({
         },
       }
     );
+
+    console.log('updateUser complete, showing toast');
+    // Show toast for 10 seconds
+    setToastOpen(true);
+    setTimeout(() => setToastOpen(false), 10000);
   }, [_class, bookmarked, updateUser, user]);
 
   useEffect(() => {
@@ -692,6 +711,11 @@ export default function Class({
           onSubmitPopupChange={setIsUnlockThankYouOpen}
         />
       )}
+      <ConfirmationToast
+        message="Course bookmarked successfully!"
+        open={toastOpen}
+        onOpenChange={setToastOpen}
+      />
     </>
   );
 }
