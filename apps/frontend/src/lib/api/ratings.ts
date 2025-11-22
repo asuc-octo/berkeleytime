@@ -138,8 +138,8 @@ export const GET_COURSE_RATINGS = gql`
   }
 `;
 
-export const READ_ALL_RATINGS_DATA = gql`
-  query ReadAllRatingsData(
+export const GET_ALL_RATINGS_DATA = gql`
+  query GetAllRatingsData(
     $subject: String!
     $courseNumber: String!
     $courseNumberTyped: CourseNumber!

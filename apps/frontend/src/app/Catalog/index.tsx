@@ -9,7 +9,7 @@ import { Flex, IconButton } from "@repo/theme";
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
-import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
@@ -89,7 +89,7 @@ export default function Catalog() {
     [providedSubject]
   );
 
-  const { data: _class, loading: classLoading } = useReadClass(
+  const { data: _class, loading: classLoading } = useGetClass(
     term?.year as number,
     term?.semester,
     subject as string,

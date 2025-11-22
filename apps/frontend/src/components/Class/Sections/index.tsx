@@ -7,7 +7,7 @@ import { Box, Container, PillSwitcher } from "@repo/theme";
 import { getEnrollmentColor } from "@/components/Capacity";
 import EmptyState from "@/components/Class/EmptyState";
 import Time from "@/components/Time";
-import { useReadClassSections } from "@/hooks/api/classes/useReadClass";
+import { useGetClassSections } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { componentMap } from "@/lib/api";
 import { Component } from "@/lib/generated/graphql";
@@ -54,7 +54,7 @@ const getLocationLink = (location?: string) => {
 
 export default function Sections() {
   const { class: _class } = useClass();
-  const { data, loading } = useReadClassSections(
+  const { data, loading } = useGetClassSections(
     _class.year,
     _class.semester,
     _class.subject,

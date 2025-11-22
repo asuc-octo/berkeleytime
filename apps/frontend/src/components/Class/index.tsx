@@ -36,8 +36,8 @@ import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
-import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { useGetCourseForClass, useUpdateUser } from "@/hooks/api";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
 import {
@@ -164,16 +164,16 @@ export default function Class({
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
 
-  const { data: course, loading: courseLoading } = useReadCourseForClass(
+  const { data: course, loading: courseLoading } = useGetCourseForClass(
     providedClass?.subject ?? (subject as string),
     providedClass?.courseNumber ?? (courseNumber as string),
     {
       skip: !!providedCourse,
-      fetchPolicy: 'cache-first',
+      fetchPolicy: "cache-first",
     }
   );
 
-  const { data, loading } = useReadClass(
+  const { data, loading } = useGetClass(
     year as number,
     semester as Semester,
     subject as string,

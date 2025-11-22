@@ -1,2 +1,2 @@
 export * from "./useUserRatings";
-export * from "./useReadRatings";
+export * from "./useGetRatings";

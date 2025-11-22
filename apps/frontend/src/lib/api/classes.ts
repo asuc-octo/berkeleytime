@@ -6,9 +6,9 @@ import {
   AcademicCareer,
   Component,
   GetCanonicalCatalogQuery,
+  GetClassDetailsQuery,
   GetClassQuery,
-  ReadClassDetailsQuery,
-  ReadCourseForClassQuery,
+  GetCourseForClassQuery,
 } from "../generated/graphql";
 
 export const READ_CLASS = gql`
@@ -218,8 +218,8 @@ export const READ_CLASS = gql`
   }
 `;
 
-export const READ_CLASS_DETAILS = gql`
-  query ReadClassDetails(
+export const GET_CLASS_DETAILS = gql`
+  query GetClassDetails(
     $year: Int!
     $semester: Semester!
     $sessionId: SessionIdentifier
@@ -293,8 +293,8 @@ export const READ_CLASS_DETAILS = gql`
   }
 `;
 
-export const READ_CLASS_SECTIONS = gql`
-  query ReadClassSections(
+export const GET_CLASS_SECTIONS = gql`
+  query GetClassSections(
     $year: Int!
     $semester: Semester!
     $sessionId: SessionIdentifier
@@ -333,8 +333,8 @@ export const READ_CLASS_SECTIONS = gql`
   }
 `;
 
-export const READ_COURSE_GRADES = gql`
-  query ReadCourseGrades(
+export const GET_COURSE_GRADES = gql`
+  query GetCourseGrades(
     $year: Int!
     $semester: Semester!
     $sessionId: SessionIdentifier
@@ -363,8 +363,8 @@ export const READ_COURSE_GRADES = gql`
   }
 `;
 
-export const READ_CLASS_ENROLLMENT = gql`
-  query ReadClassEnrollment(
+export const GET_CLASS_ENROLLMENT = gql`
+  query GetClassEnrollment(
     $year: Int!
     $semester: Semester!
     $sessionId: SessionIdentifier
@@ -406,8 +406,8 @@ export const READ_CLASS_ENROLLMENT = gql`
   }
 `;
 
-export const READ_CLASS_RATINGS = gql`
-  query ReadClassRatings($subject: String!, $courseNumber: CourseNumber!) {
+export const GET_CLASS_RATINGS = gql`
+  query GetClassRatings($subject: String!, $courseNumber: CourseNumber!) {
     course(subject: $subject, number: $courseNumber) {
       subject
       number
@@ -428,8 +428,8 @@ export const READ_CLASS_RATINGS = gql`
 
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
-export type IClassDetails = NonNullable<ReadClassDetailsQuery["class"]>;
-export type IClassCourse = NonNullable<ReadCourseForClassQuery["course"]>;
+export type IClassDetails = NonNullable<GetClassDetailsQuery["class"]>;
+export type IClassCourse = NonNullable<GetCourseForClassQuery["course"]>;
 
 export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];

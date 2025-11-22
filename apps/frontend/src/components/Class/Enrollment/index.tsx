@@ -17,7 +17,7 @@ import type { TooltipContentProps } from "recharts";
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
 import EmptyState from "@/components/Class/EmptyState";
-import { useReadClassEnrollment } from "@/hooks/api/classes/useReadClass";
+import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 
 import styles from "./Enrollment.module.scss";
@@ -75,7 +75,7 @@ const renderTooltip = ({
 
 export default function Enrollment() {
   const { class: _class } = useClass();
-  const { data: enrollmentData, loading } = useReadClassEnrollment(
+  const { data: enrollmentData, loading } = useGetClassEnrollment(
     _class.year,
     _class.semester,
     _class.subject,

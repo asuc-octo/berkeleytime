@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client";
 
 import {
-  ReadCourseQuery,
-  ReadCourseWithInstructorQuery,
+  GetCourseQuery,
+  GetCourseWithInstructorQuery,
 } from "../generated/graphql";
 
-export type ICourse = NonNullable<ReadCourseQuery["course"]>;
+export type ICourse = NonNullable<GetCourseQuery["course"]>;
 
 export const READ_COURSE_TITLE = gql`
   query ReadCourseTitle($subject: String!, $number: CourseNumber!) {
@@ -76,8 +76,8 @@ export const READ_COURSE = gql`
   }
 `;
 
-export const READ_COURSE_FOR_CLASS = gql`
-  query ReadCourseForClass($subject: String!, $number: CourseNumber!) {
+export const GET_COURSE_FOR_CLASS = gql`
+  query GetCourseForClass($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       title
       description
@@ -195,7 +195,7 @@ export const GET_ALL_CLASSES_FOR_COURSE = gql`
 `;
 
 export type ICourseWithInstructorClass = NonNullable<
-  ReadCourseWithInstructorQuery["course"]
+  GetCourseWithInstructorQuery["course"]
 >["classes"][number];
 
 export const GET_COURSE_NAMES = gql`
