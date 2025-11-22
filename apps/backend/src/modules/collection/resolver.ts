@@ -1,8 +1,8 @@
 import {
+  addClassToCollection,
+  createCollection,
   getCollectionOwner,
   getCollectionViewer,
-  createCollection,
-  addClassToCollection,
   modifyCollectionComment,
 } from "./controller";
 import { CollectionModule } from "./generated-types/module-types";
@@ -10,14 +10,14 @@ import { CollectionModule } from "./generated-types/module-types";
 const resolvers: CollectionModule.Resolvers = {
   Query: {
     ownerCollection: async (_, __, context) => {
-        const collection = await getCollectionOwner(context);
-  
-        return collection as unknown as CollectionModule.Collection[];
+      const collection = await getCollectionOwner(context);
+
+      return collection as unknown as CollectionModule.Collection[];
     },
     viewerCollection: async (_, __, context) => {
-        const collection = await getCollectionViewer(context);
-  
-        return collection as unknown as CollectionModule.Collection[];
+      const collection = await getCollectionViewer(context);
+
+      return collection as unknown as CollectionModule.Collection[];
     },
   },
 

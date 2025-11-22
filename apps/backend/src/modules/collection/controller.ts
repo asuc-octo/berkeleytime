@@ -1,12 +1,12 @@
 import {
   ClassModel,
-  IClassItem,
   CollectionModel,
   CollectionType,
+  IClassItem,
 } from "@repo/common";
 
 export const getCollectionOwner = async (context: any) => {
-  const query = await CollectionModel.find({ownerID: context.user._id})
+  const query = await CollectionModel.find({ ownerID: context.user._id });
 
   if (!query) throw new Error("Not found");
 
@@ -14,7 +14,7 @@ export const getCollectionOwner = async (context: any) => {
 };
 
 export const getCollectionViewer = async (context: any) => {
-  const query = await CollectionModel.find({viewerID: context.user._id})
+  const query = await CollectionModel.find({ viewerID: context.user._id });
 
   if (!query) throw new Error("Not found");
 
@@ -38,20 +38,20 @@ const formatCollection = async (collections: CollectionType[]) => {
 
   for (const collection of collections) {
     const collectionInfo = {
-        ownerID: collection.ownerID,
-        viewerID: collection.viewerID,
-        name: collection.name,
-        classes: await formatCollectionClasses(collection),
+      ownerID: collection.ownerID,
+      viewerID: collection.viewerID,
+      name: collection.name,
+      classes: await formatCollectionClasses(collection),
     };
     collectionNameNClassesNComments.push(collectionInfo);
   }
-  return collectionNameNClassesNComments
+  return collectionNameNClassesNComments;
 };
 
 const formatCollectionClasses = async (collection: CollectionType) => {
   const classes = [];
   if (!collection.classes) return [];
-  
+
   for (const item of collection.classes) {
     const _class = await ClassModel.findOne({
       year: item.year,
@@ -65,13 +65,15 @@ const formatCollectionClasses = async (collection: CollectionType) => {
     if (!_class) continue;
 
     const comments = item.comments ? item.comments : [];
-    classes.push({info: _class as IClassItem, comments: comments});
+    classes.push({ info: _class as IClassItem, comments: comments });
   }
 
   return classes;
 };
 
-export const addClassToCollection = async (input: CollectionModel.AddCollectionClassInput) => {
+export const addClassToCollection = async (
+  input: CollectionModel.AddCollectionClassInput
+) => {
   const collection = await CollectionModel.findOne({
     ownerID: input.ownerID,
     name: input.name,
@@ -85,14 +87,16 @@ export const addClassToCollection = async (input: CollectionModel.AddCollectionC
     courseNumber: input.courseNumber,
     number: input.number,
   }).lean();
-  const _class = {info: info as IClassItem, comments: []};
+  const _class = { info: info as IClassItem, comments: [] };
   collection.classes?.push(_class);
   await collection.save();
 
   return;
-}
+};
 
-export const modifyCollectionComment = async (input: CollectionModel.modifyCollectionCommentInput) => {
+export const modifyCollectionComment = async (
+  input: CollectionModel.modifyCollectionCommentInput
+) => {
   const collection = await CollectionModel.findOne({
     ownerID: input.ownerID,
     name: input.name,
@@ -114,7 +118,9 @@ export const modifyCollectionComment = async (input: CollectionModel.modifyColle
   if (input.add) {
     entry.comments.push(input.comment);
   } else {
-    entry.comments = entry.comments.filter((comment) => comment !== input.comment);
+    entry.comments = entry.comments.filter(
+      (comment) => comment !== input.comment
+    );
   }
 
   await collection.save();

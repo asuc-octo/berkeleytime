@@ -65,4 +65,5 @@ collectionSchema.index({ ownerID: 1, name: 1 }, { unique: true });
 
 export const CollectionModel = mongoose.model("collections", collectionSchema);
 
-export type CollectionType = Document & InferSchemaType<typeof collectionSchema>;
+export type CollectionType = Document &
+  InferSchemaType<typeof collectionSchema>;
