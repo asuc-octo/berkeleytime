@@ -13,6 +13,14 @@ export const getCollectionOwner = async (context: any) => {
   return formatCollection(query);
 };
 
+export const getCollectionViewer = async (context: any) => {
+  const query = await CollectionModel.find({viewerID: context.user._id})
+
+  if (!query) throw new Error("Not found");
+
+  return formatCollection(query);
+};
+
 export const createCollection = async (input: any) => {
   const collection = await CollectionModel.create({
     ownerID: input.ownerID,
