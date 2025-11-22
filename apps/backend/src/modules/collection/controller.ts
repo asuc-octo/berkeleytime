@@ -1,15 +1,9 @@
 import {
   ClassModel,
   IClassItem,
-  UserModel,
   CollectionModel,
   CollectionType,
 } from "@repo/common";
-
-import { UpdateUserInput } from "../../generated-types/graphql";
-import { formatClass } from "../class/formatter";
-import { formatCourse } from "../course/formatter";
-import { formatUser } from "../user/formatter";
 
 export const getCollectionOwner = async (context: any) => {
   const query = await CollectionModel.find({ownerID: context.user._id})
