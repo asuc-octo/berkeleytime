@@ -41,3 +41,25 @@
   padding: 20px;
   background-color: var(--foreground-color);
 }
+
+.toggleWaitlistButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--paragraph-color);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--bg-secondary);
+    border-color: var(--blue-500);
+    color: var(--blue-500);
+  }
+}
