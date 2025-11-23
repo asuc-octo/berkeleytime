@@ -336,25 +336,86 @@ export default function Filters() {
     }));
   }, [gradingCounts]);
 
-  const academicOrganizationOptions = useMemo<OptionItem<string>[]>(() => {
-    const orgMap = new Map<string, string>();
+  const academicOrganizationData = useMemo(() => {
+    const orgMap = new Map<string, { name: string; nicknames: Set<string> }>();
+
     classesWithoutAcademicOrganization.forEach((_class) => {
       const org = _class.course.academicOrganization;
       const orgName = _class.course.academicOrganizationName;
-      if (org && orgName) {
-        orgMap.set(org, orgName);
+      const nicknames = _class.course.departmentNicknames;
+
+      if (!org || !orgName) return;
+
+      const nicknameList =
+        nicknames
+          ?.split("!")
+          .map((n) => n.trim())
+          .filter(Boolean) ?? [];
+
+      const existing = orgMap.get(org);
+      if (!existing) {
+        orgMap.set(org, {
+          name: orgName,
+          nicknames: new Set(nicknameList),
+        });
+        return;
       }
+
+      nicknameList.forEach((nickname) => existing.nicknames.add(nickname));
     });
 
-    const options = Array.from(orgMap.entries()).map(([code, name]) => ({
-      value: code,
-      label: name,
-      meta: (academicOrganizationCounts.get(code) ?? 0).toString(),
-      type: "option" as const,
-    }));
+    return new Map(
+      Array.from(orgMap.entries()).map(([code, data]) => [
+        code,
+        {
+          name: data.name,
+          nicknames: data.nicknames.size
+            ? Array.from(data.nicknames)
+            : null,
+        },
+      ])
+    );
+  }, [classesWithoutAcademicOrganization]);
+
+  const academicOrganizationOptions = useMemo<OptionItem<string>[]>(() => {
+    const options = Array.from(academicOrganizationData.entries()).map(
+      ([code, data]) => ({
+        value: code,
+        label: data.name,
+        meta: (academicOrganizationCounts.get(code) ?? 0).toString(),
+        type: "option" as const,
+      })
+    );
 
     return options.sort((a, b) => a.label.localeCompare(b.label));
-  }, [classesWithoutAcademicOrganization, academicOrganizationCounts]);
+  }, [academicOrganizationData, academicOrganizationCounts]);
+
+  const departmentSearchFunction = (
+    query: string,
+    options: Option<string>[]
+  ) => {
+    if (!query || query.trim() === "") return options;
+
+    const searchLower = query.toLowerCase();
+    return options.filter((opt) => {
+      if (opt.type === "label") return true;
+
+      const orgData = academicOrganizationData.get(opt.value);
+      if (!orgData) return false;
+
+      // Search in department name
+      if (orgData.name.toLowerCase().includes(searchLower)) return true;
+
+      // Search in nicknames
+      if (orgData.nicknames) {
+        return orgData.nicknames.some((nickname) =>
+          nickname.toLowerCase().includes(searchLower)
+        );
+      }
+
+      return false;
+    });
+  };
 
   // Disable filters when all options have count 0
   const isAcademicOrganizationDisabled = useMemo(
@@ -555,6 +616,7 @@ export default function Filters() {
             options={academicOrganizationOptions}
             searchPlaceholder="Search departments..."
             emptyMessage="No departments found."
+            customSearch={departmentSearchFunction}
           />
         </div>
         <div className={styles.formControl}>

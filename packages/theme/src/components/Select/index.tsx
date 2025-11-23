@@ -82,6 +82,8 @@ export interface SelectProps<T> {
   searchable?: boolean;
   searchPlaceholder?: string;
   emptyMessage?: string;
+  customSearch?: (query: string, options: Option<T>[]) => Option<T>[];
+  onSearchChange?: (query: string) => void;
 }
 
 const isOptionItem = <T,>(option: Option<T>): option is OptionItem<T> => {
@@ -121,6 +123,8 @@ export function Select<T>({
   searchable = false,
   searchPlaceholder = "Search...",
   emptyMessage = "No results found.",
+  customSearch,
+  onSearchChange,
 }: SelectProps<T>) {
   // If searchable is enabled, use SearchableSelect
   if (searchable) {
@@ -136,6 +140,8 @@ export function Select<T>({
         variant={variant}
         searchPlaceholder={searchPlaceholder}
         emptyMessage={emptyMessage}
+        customSearch={customSearch}
+        onSearchChange={onSearchChange}
       />
     );
   }

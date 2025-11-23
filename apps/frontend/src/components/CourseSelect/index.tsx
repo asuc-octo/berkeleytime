@@ -74,6 +74,16 @@ export default function CourseSelect({
 
   // Build options dynamically based on search query
   const options = useMemo(() => {
+    const courseToOptionValue = (course: {
+      subject: string;
+      number: string;
+      courseId: string;
+    }): CourseOption => ({
+      subject: course.subject,
+      number: course.number,
+      courseId: course.courseId,
+    });
+
     const opts: Option<CourseOption>[] = [];
 
     // If there's a search query, use fuzzy search
@@ -90,8 +100,9 @@ export default function CourseSelect({
 
       for (const course of searchResults) {
         const isRated = isCourseRated(course.subject, course.number);
+        const optionValue = courseToOptionValue(course);
         opts.push({
-          value: course,
+          value: optionValue,
           label: `${course.subject} ${course.number}`,
           meta: isRated ? "Rated" : undefined,
           disabled: isRated,
@@ -111,8 +122,9 @@ export default function CourseSelect({
         );
         if (full) {
           const isRated = isCourseRated(full.subject, full.number);
+          const optionValue = courseToOptionValue(full);
           opts.push({
-            value: full,
+            value: optionValue,
             label: `${full.subject} ${full.number}`,
             meta: isRated ? "Rated" : undefined,
             disabled: isRated,
@@ -127,8 +139,9 @@ export default function CourseSelect({
     const limitedCourses = catalogCourses.slice(0, 20);
     for (const course of limitedCourses) {
       const isRated = isCourseRated(course.subject, course.number);
+      const optionValue = courseToOptionValue(course);
       opts.push({
-        value: course,
+        value: optionValue,
         label: `${course.subject} ${course.number}`,
         meta: isRated ? "Rated" : undefined,
         disabled: isRated,
