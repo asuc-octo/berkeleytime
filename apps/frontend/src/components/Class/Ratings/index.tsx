@@ -12,6 +12,7 @@ import EmptyState from "@/components/Class/EmptyState";
 import {
   DeleteRatingPopup,
   ErrorDialog,
+  SubmitRatingPopup,
 } from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { useReadTerms } from "@/hooks/api";
@@ -57,6 +58,7 @@ interface Term {
   year: number;
   value: string;
   label: string;
+  classNumber?: string;
 }
 
 type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
@@ -76,6 +78,7 @@ export function RatingsContainer() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
 
   const {
     aggregatedRatings: aggregatedRatingsData,
@@ -90,6 +93,22 @@ export function RatingsContainer() {
     subject: currentClass.subject,
     courseNumber: currentClass.courseNumber,
   });
+
+  const userRatedClasses = useMemo(() => {
+    const ratedClasses =
+      userRatingsData?.userRatings?.classes?.map((cls) => ({
+        subject: cls.subject,
+        courseNumber: cls.courseNumber,
+      })) ?? [];
+
+    const seen = new Set<string>();
+    return ratedClasses.filter((cls) => {
+      const key = `${cls.subject}-${cls.courseNumber}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [userRatingsData]);
 
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
@@ -142,15 +161,17 @@ export function RatingsContainer() {
       })
       .map((c) => {
         const instructorText = formatInstructorText(c.primarySection);
+        const value = `${c.semester} ${c.year} ${c.number}`;
         return {
-          value: `${c.semester} ${c.year} ${c.number}`,
+          value,
           label: `${c.semester} ${c.year} ${instructorText}`,
           semester: c.semester as Semester,
           year: c.year,
+          classNumber: c.number,
         } satisfies Term;
       });
 
-    return _.uniqBy(courseTerms, (term) => term.label);
+    return _.uniqBy(courseTerms, (term) => term.value);
   }, [courseClasses]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
@@ -360,9 +381,15 @@ export function RatingsContainer() {
         isOpen={isModalOpen}
         onClose={() => handleModalStateChange(false)}
         title={userRatings ? "Edit Rating" : "Rate Course"}
-        currentClass={currentClass}
+        subtitle=""
+        showSelectedCourseSubtitle={false}
+        initialCourse={{
+          subject: currentClass.subject,
+          number: currentClass.courseNumber,
+          courseId: "",
+        }}
         availableTerms={availableTerms}
-        onSubmit={async (metricValues, termInfo) => {
+        onSubmit={async (metricValues, termInfo, courseInfo) => {
           try {
             await submitRatingMutation({
               metricValues,
@@ -370,9 +397,9 @@ export function RatingsContainer() {
               createRatingMutation,
               deleteRatingMutation,
               classIdentifiers: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                number: currentClass.number,
+                subject: courseInfo.subject,
+                courseNumber: courseInfo.courseNumber,
+                number: courseInfo.classNumber,
               },
               currentRatings: userRatings,
               refetchQueries: [],
@@ -382,10 +409,24 @@ export function RatingsContainer() {
           } catch (error) {
             const message = getRatingErrorMessage(error);
             setErrorMessage(message);
+            setIsModalOpen(false);
             setIsErrorDialogOpen(true);
+            throw error;
           }
         }}
         initialUserClass={userRatings}
+        userRatedClasses={userRatedClasses}
+        disableRatedCourses={!userRatings}
+        lockedCourse={
+          userRatings
+            ? {
+                subject: currentClass.subject,
+                number: currentClass.courseNumber,
+                courseId: "",
+              }
+            : null
+        }
+        onSubmitPopupChange={setIsSubmitRatingPopupOpen}
       />
 
       <DeleteRatingPopup
@@ -421,6 +462,10 @@ export function RatingsContainer() {
         isOpen={isErrorDialogOpen}
         onClose={() => setIsErrorDialogOpen(false)}
         errorMessage={errorMessage}
+      />
+      <SubmitRatingPopup
+        isOpen={isSubmitRatingPopupOpen}
+        onClose={() => setIsSubmitRatingPopupOpen(false)}
       />
     </>
   );

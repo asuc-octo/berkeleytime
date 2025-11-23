@@ -167,11 +167,12 @@ export function SearchableSelect<T>({
       } else {
         // If parent controls search or custom search is used, include all items (already filtered)
         // Otherwise, apply default substring filtering
-        const shouldInclude = onSearchChange || customSearch
-          ? true
-          : !searchValue ||
-            opt.label.toLowerCase().includes(searchLower) ||
-            opt.meta?.toLowerCase().includes(searchLower);
+        const shouldInclude =
+          onSearchChange || customSearch
+            ? true
+            : !searchValue ||
+              opt.label.toLowerCase().includes(searchLower) ||
+              opt.meta?.toLowerCase().includes(searchLower);
 
         if (shouldInclude) {
           currentGroup.items.push(opt);
@@ -217,12 +218,7 @@ export function SearchableSelect<T>({
               [styles.disabled]: opt.disabled,
             })}
           >
-            <Flex
-              direction="row"
-              justify="between"
-              align="center"
-              width="100%"
-            >
+            <Flex direction="row" justify="between" align="center" width="100%">
               <span>{opt.label}</span>
               {opt.meta && <span className={styles.meta}>{opt.meta}</span>}
             </Flex>

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from "react";
 
 import _ from "lodash";
 
-import { ICourse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import { Semester, TemporalPosition } from "@/lib/generated/graphql";
 
@@ -22,10 +21,10 @@ interface TermsData {
 }
 
 interface UseTermFilteringOptions {
-  availableTerms: Term[];
+  availableTerms?: Term[];
   termsData?: TermsData[];
   // For course-specific filtering (e.g., in RatingGrowthModal)
-  selectedCourse?: ICourse | null;
+  selectedCourse?: { subject: string; number: string } | null;
   courseData?: {
     classes?: Array<{
       semester: string;
@@ -46,12 +45,22 @@ interface UseTermFilteringOptions {
 }
 
 export function useTermFiltering({
-  availableTerms,
+  availableTerms = [],
   termsData,
   selectedCourse,
   courseData,
 }: UseTermFilteringOptions) {
   const hasAutoSelected = useRef(false);
+
+  const normalizeTerm = (term: Term): Term => {
+    if (term.classNumber) return term;
+    const parts = term.value.trim().split(" ");
+    const last = parts[parts.length - 1] ?? "";
+    return {
+      ...term,
+      classNumber: last || undefined,
+    };
+  };
 
   // Filter for past terms
   const pastTerms = useMemo(() => {
@@ -64,17 +73,19 @@ export function useTermFiltering({
       },
       {}
     );
-    return availableTerms.filter((term) => {
-      const key = `${term.semester} ${term.year}`;
-      const position = termPositions[key];
+    return availableTerms
+      .filter((term) => {
+        const key = `${term.semester} ${term.year}`;
+        const position = termPositions[key];
 
-      if (!position) return true;
+        if (!position) return true;
 
-      return (
-        position === TemporalPosition.Past ||
-        position === TemporalPosition.Current
-      );
-    });
+        return (
+          position === TemporalPosition.Past ||
+          position === TemporalPosition.Current
+        );
+      })
+      .map(normalizeTerm);
   }, [availableTerms, termsData]);
 
   // Filter for course-specific terms (when a course is selected)
@@ -111,8 +122,10 @@ export function useTermFiltering({
           label: `${c.semester} ${c.year} ${instructorText}`,
           semester: c.semester as Semester,
           year: c.year,
+          classNumber: c.number,
         } satisfies Term;
-      });
+      })
+      .map(normalizeTerm);
 
     return _.uniqBy(courseTerms, (term) => term.label);
   }, [selectedCourse, courseData, pastTerms]);

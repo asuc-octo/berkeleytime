@@ -6,9 +6,8 @@ import { useSearchParams } from "react-router-dom";
 import { Box, Select, SelectHandle } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
-import CourseSelect from "@/components/CourseSelect";
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { ICourse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   GetGradeDistributionDocument,
@@ -86,11 +85,16 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const [loading, setLoading] = useState(false);
 
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
+    null
+  );
 
   const { data: course } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? ""
+    selectedCourse?.number ?? "",
+    {
+      skip: !selectedCourse,
+    }
   );
 
   const [selectedType, setSelectedType] = useState<string | null>(
@@ -351,8 +355,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     [loading, outputs]
   );
 
-  const handleCourseSelect = (course: Pick<ICourse, "subject" | "number">) => {
-    setSelectedCourse(course as ICourse);
+  const handleCourseSelect = (course: CourseOption) => {
+    setSelectedCourse(course);
 
     setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
     setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);

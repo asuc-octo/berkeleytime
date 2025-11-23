@@ -12,14 +12,16 @@ import { Recent, RecentType, getRecents } from "@/lib/recent";
 import { initialize } from "../CourseSearch/browser";
 
 interface CourseSelectProps {
-  onSelect?: (course: Pick<ICourse, "subject" | "number">) => void;
+  onSelect?: (course: CourseOption) => void;
   onClear?: () => void;
-  selectedCourse: ICourse | null;
+  selectedCourse: CourseOption | null;
   minimal?: boolean;
   ratedCourses?: Array<{ subject: string; courseNumber: string }>;
+  disableRatedCourses?: boolean;
+  lockedCourse?: CourseOption | null;
 }
 
-type CourseOption = Pick<ICourse, "subject" | "number" | "courseId">;
+export type CourseOption = Pick<ICourse, "subject" | "number" | "courseId">;
 
 export default function CourseSelect({
   onSelect,
@@ -27,6 +29,8 @@ export default function CourseSelect({
   selectedCourse,
   minimal = false,
   ratedCourses = [],
+  disableRatedCourses = true,
+  lockedCourse = null,
 }: CourseSelectProps) {
   const { data, loading } = useQuery(GetCourseNamesDocument);
 
@@ -74,15 +78,61 @@ export default function CourseSelect({
 
   // Build options dynamically based on search query
   const options = useMemo(() => {
+    if (lockedCourse) {
+      const lockedLabel = `${lockedCourse.subject} ${lockedCourse.number}`;
+      const isRated = isCourseRated(lockedCourse.subject, lockedCourse.number);
+      const lockedCatalogCourse = catalogCourses.find(
+        (c) =>
+          c.subject === lockedCourse.subject && c.number === lockedCourse.number
+      );
+      const lockedValue = {
+        subject: lockedCourse.subject,
+        number: lockedCourse.number,
+        courseId: lockedCatalogCourse?.courseId ?? lockedCourse.courseId ?? "",
+      };
+      return [
+        {
+          value: lockedValue,
+          label: lockedLabel,
+          meta: isRated ? "Rated" : undefined,
+          disabled: false,
+        },
+      ] satisfies Option<CourseOption>[];
+    }
+
+    const resolveCourseOptionValue = (course: {
+      subject: string;
+      number: string;
+      courseId?: string | null;
+    }): CourseOption | null => {
+      const matchingCourse = catalogCourses.find(
+        (c) => c.subject === course.subject && c.number === course.number
+      );
+      const courseId = matchingCourse?.courseId ?? course.courseId;
+      if (!courseId) return null;
+
+      return {
+        subject: course.subject,
+        number: course.number,
+        courseId,
+      };
+    };
+
     const courseToOptionValue = (course: {
       subject: string;
       number: string;
-      courseId: string;
-    }): CourseOption => ({
-      subject: course.subject,
-      number: course.number,
-      courseId: course.courseId,
-    });
+      courseId?: string | null;
+    }): CourseOption => {
+      const resolved = resolveCourseOptionValue(course);
+      if (!resolved) {
+        return {
+          subject: course.subject,
+          number: course.number,
+          courseId: course.courseId ?? "",
+        };
+      }
+      return resolved;
+    };
 
     const opts: Option<CourseOption>[] = [];
 
@@ -105,7 +155,7 @@ export default function CourseSelect({
           value: optionValue,
           label: `${course.subject} ${course.number}`,
           meta: isRated ? "Rated" : undefined,
-          disabled: isRated,
+          disabled: disableRatedCourses && isRated,
         });
       }
 
@@ -127,7 +177,7 @@ export default function CourseSelect({
             value: optionValue,
             label: `${full.subject} ${full.number}`,
             meta: isRated ? "Rated" : undefined,
-            disabled: isRated,
+            disabled: disableRatedCourses && isRated,
           });
         }
       }
@@ -144,26 +194,73 @@ export default function CourseSelect({
         value: optionValue,
         label: `${course.subject} ${course.number}`,
         meta: isRated ? "Rated" : undefined,
-        disabled: isRated,
+        disabled: disableRatedCourses && isRated,
       });
     }
 
+    // Ensure the currently selected course always appears in the list so it stays selected
+    if (selectedCourse) {
+      const selectedValue = resolveCourseOptionValue(selectedCourse);
+      const selectedLabel = `${selectedCourse.subject} ${selectedCourse.number}`;
+      const alreadyPresent = opts.some(
+        (opt) =>
+          opt.type !== "label" &&
+          opt.value.subject === selectedCourse.subject &&
+          opt.value.number === selectedCourse.number
+      );
+
+      if (selectedValue && !alreadyPresent) {
+        const isRated = isCourseRated(
+          selectedCourse.subject,
+          selectedCourse.number
+        );
+        opts.unshift({
+          value: selectedValue,
+          label: selectedLabel,
+          meta: isRated ? "Rated" : undefined,
+          disabled: disableRatedCourses && isRated,
+        });
+      }
+    }
+
     return opts;
-  }, [catalogCourses, recentCourses, minimal, ratedCourses, searchQuery, index]);
+  }, [
+    catalogCourses,
+    recentCourses,
+    minimal,
+    ratedCourses,
+    disableRatedCourses,
+    searchQuery,
+    index,
+    selectedCourse,
+    lockedCourse,
+  ]);
 
   // Convert selected course to value format
-  const value = selectedCourse
-    ? ({
-        subject: selectedCourse.subject,
-        number: selectedCourse.number,
-        courseId: selectedCourse.courseId,
-      } as CourseOption)
-    : null;
+  const normalizedSelectedCourse = useMemo(() => {
+    if (!selectedCourse) return null;
+
+    const matchingCatalogCourse = catalogCourses.find(
+      (course) =>
+        course.subject === selectedCourse.subject &&
+        course.number === selectedCourse.number
+    );
+
+    // Prefer catalog courseId when we only have subject/number
+    const courseId = matchingCatalogCourse?.courseId ?? selectedCourse.courseId;
+    if (!courseId) return null;
+
+    return {
+      subject: selectedCourse.subject,
+      number: selectedCourse.number,
+      courseId,
+    } satisfies CourseOption;
+  }, [selectedCourse, catalogCourses]);
 
   return (
     <SearchableSelect<CourseOption>
       options={options}
-      value={value}
+      value={normalizedSelectedCourse}
       onChange={(newValue) => {
         if (newValue && !Array.isArray(newValue)) {
           onSelect?.(newValue as CourseOption);
@@ -174,9 +271,9 @@ export default function CourseSelect({
       placeholder="Choose a class..."
       searchPlaceholder="Search..."
       emptyMessage="No courses found."
-      clearable={true}
       disabled={loading}
-      onSearchChange={setSearchQuery}
+      onSearchChange={lockedCourse ? undefined : setSearchQuery}
+      clearable={!lockedCourse}
     />
   );
 }

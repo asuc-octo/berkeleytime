@@ -2,7 +2,6 @@ import React from "react";
 
 import { Box, Flex } from "@radix-ui/themes";
 import classNames from "classnames";
-import { Check } from "iconoir-react";
 
 import { Badge } from "../../Badge";
 import { Checkbox } from "../../Checkbox";
@@ -54,7 +53,6 @@ export default function SelectItem({
         </Flex>
         <Flex direction="row" align="center" gap="8px">
           {meta && <span className={styles.meta}>{meta}</span>}
-          {selected && !checkboxMulti && <Check />}
         </Flex>
       </Flex>
     </Box>

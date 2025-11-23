@@ -369,9 +369,7 @@ export default function Filters() {
         code,
         {
           name: data.name,
-          nicknames: data.nicknames.size
-            ? Array.from(data.nicknames)
-            : null,
+          nicknames: data.nicknames.size ? Array.from(data.nicknames) : null,
         },
       ])
     );
