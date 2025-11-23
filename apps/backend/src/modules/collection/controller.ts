@@ -4,7 +4,7 @@ import {
   CollectionType,
   IClassItem,
 } from "@repo/common";
-
+import { CollectionModule } from "./generated-types/module-types";
 export const getCollectionOwner = async (ownerID: string) => {
   const collections = await CollectionModel.find({
     ownerID,
@@ -69,9 +69,8 @@ const formatCollectionClasses = async (collection: CollectionType) => {
 
   return classes;
 };
-
 export const addClassToCollection = async (
-  input: CollectionModel.AddCollectionClassInput
+  input: CollectionModule.AddCollectionClassInput
 ) => {
   const collection = await CollectionModel.findOne({
     ownerID: input.ownerID,
@@ -121,7 +120,7 @@ export const addClassToCollection = async (
 };
 
 export const modifyCollectionComment = async (
-  input: CollectionModel.modifyCollectionCommentInput
+  input: CollectionModule.modifyCollectionCommentInput
 ) => {
   const collection = await CollectionModel.findOne({
     ownerID: input.ownerID,
