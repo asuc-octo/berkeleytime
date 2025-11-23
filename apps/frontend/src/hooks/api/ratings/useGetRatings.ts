@@ -13,29 +13,28 @@ export const useGetRatings = ({
   subject,
   courseNumber,
 }: UseGetRatingsOptions) => {
-  const { data, loading, error, refetch } = useQuery<any>(
-    GET_RATINGS_FOR_TAB,
-    {
-      variables: {
-        subject,
-        courseNumber,
-        courseNumberTyped: courseNumber,
-      },
-      fetchPolicy: "no-cache",
-    }
-  );
+  const { data, loading, error, refetch } = useQuery<any>(GET_RATINGS_FOR_TAB, {
+    variables: {
+      subject,
+      courseNumber,
+      courseNumberTyped: courseNumber,
+    },
+    fetchPolicy: "no-cache",
+  });
 
   const courseClasses = useMemo(
     () =>
-      data?.course?.classes?.filter(
-        (courseClass: any) => Boolean(courseClass)
+      data?.course?.classes?.filter((courseClass: any) =>
+        Boolean(courseClass)
       ) ?? [],
     [data?.course?.classes]
   );
 
   const semestersWithRatings = useMemo(() => {
     if (!data?.semestersWithRatings) return [];
-    return data.semestersWithRatings.filter((sem: any) => sem && sem.maxMetricCount > 0);
+    return data.semestersWithRatings.filter(
+      (sem: any) => sem && sem.maxMetricCount > 0
+    );
   }, [data?.semestersWithRatings]);
 
   const userRatings = useMemo(() => {

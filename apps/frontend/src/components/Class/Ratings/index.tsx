@@ -165,7 +165,8 @@ export function RatingsContainer() {
 
     if (
       !metrics.some(
-        (metric: IMetric) => isMetricRating(metric.metricName) && metric.count !== 0
+        (metric: IMetric) =>
+          isMetricRating(metric.metricName) && metric.count !== 0
       )
     ) {
       return null;
@@ -179,12 +180,16 @@ export function RatingsContainer() {
 
       let maxCount = 1;
       RATING_VALUES.forEach((rating) => {
-        const category = categories.find((cat: MetricCategory) => cat.value === rating);
+        const category = categories.find(
+          (cat: MetricCategory) => cat.value === rating
+        );
         maxCount = Math.max(maxCount, category?.count ?? 0);
       });
 
       const stats = RATING_VALUES.map((rating) => {
-        const category = categories.find((cat: MetricCategory) => cat.value === rating);
+        const category = categories.find(
+          (cat: MetricCategory) => cat.value === rating
+        );
         const count = category?.count ?? 0;
         return {
           rating,
@@ -235,10 +240,7 @@ export function RatingsContainer() {
       (v) => withDuplicates.find((v2) => v2.value === v.value) === v
     );
 
-    return [
-      { value: "all", label: "All Semesters" },
-      ...uniqueOptions,
-    ];
+    return [{ value: "all", label: "All Semesters" }, ...uniqueOptions];
   }, [availableTerms, semestersWithRatings, termsData]);
 
   // const ratingsCount = useMemo(
@@ -310,9 +312,13 @@ export function RatingsContainer() {
                           const [semester, year] = selectedValue.split(" ");
                           const selectedClass = courseClasses.find(
                             (c: any) =>
-                              c.semester === semester && c.year === parseInt(year)
+                              c.semester === semester &&
+                              c.year === parseInt(year)
                           );
-                          if (selectedClass && selectedClass.aggregatedRatings) {
+                          if (
+                            selectedClass &&
+                            selectedClass.aggregatedRatings
+                          ) {
                             setTermRatings(selectedClass.aggregatedRatings);
                           }
                         }

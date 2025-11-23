@@ -139,10 +139,7 @@ export const GET_COURSE_RATINGS = gql`
 `;
 
 export const GET_ALL_RATINGS_DATA = gql`
-  query GetAllRatingsData(
-    $subject: String!
-    $courseNumber: String!
-  ) {
+  query GetAllRatingsData($subject: String!, $courseNumber: String!) {
     semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
       semester
       year

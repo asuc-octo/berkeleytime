@@ -275,15 +275,15 @@ export default function Class({
 
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
-        (bookmarkedClass) =>
-          !(
-            bookmarkedClass.subject === _class?.subject &&
-            bookmarkedClass.courseNumber === _class?.courseNumber &&
-            bookmarkedClass.number === _class?.number &&
-            bookmarkedClass.year === _class?.year &&
-            bookmarkedClass.semester === _class?.semester
-          )
-      )
+          (bookmarkedClass) =>
+            !(
+              bookmarkedClass.subject === _class?.subject &&
+              bookmarkedClass.courseNumber === _class?.courseNumber &&
+              bookmarkedClass.number === _class?.number &&
+              bookmarkedClass.year === _class?.year &&
+              bookmarkedClass.semester === _class?.semester
+            )
+        )
       : user.bookmarkedClasses.concat(bookmarkEntry);
     await updateUser(
       {

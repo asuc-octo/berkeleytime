@@ -2,6 +2,7 @@ import { useCallback } from "react";
 
 import { useLazyQuery, useQuery } from "@apollo/client/react";
 
+import { GET_COURSE_FOR_CLASS } from "@/lib/api/courses";
 import {
   GetCourseForClassQuery,
   GetCourseForClassQueryVariables,
@@ -43,8 +44,6 @@ export const useReadCourse = (
     data: query.data?.course,
   };
 };
-
-import { GET_COURSE_FOR_CLASS } from "@/lib/api/courses";
 
 export const useGetCourseForClass = (
   subject: string,
