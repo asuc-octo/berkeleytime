@@ -3,6 +3,10 @@ import { useMemo } from "react";
 import { useQuery } from "@apollo/client/react";
 
 import { GET_RATINGS_FOR_TAB } from "@/lib/api";
+import {
+  GetRatingsForTabQuery,
+  GetRatingsForTabQueryVariables,
+} from "@/lib/generated/graphql";
 
 interface UseGetRatingsOptions {
   subject: string;
@@ -13,7 +17,10 @@ export const useGetRatings = ({
   subject,
   courseNumber,
 }: UseGetRatingsOptions) => {
-  const { data, loading, error, refetch } = useQuery<any>(GET_RATINGS_FOR_TAB, {
+  const { data, loading, error, refetch } = useQuery<
+    GetRatingsForTabQuery,
+    GetRatingsForTabQueryVariables
+  >(GET_RATINGS_FOR_TAB, {
     variables: {
       subject,
       courseNumber,
@@ -24,16 +31,15 @@ export const useGetRatings = ({
 
   const courseClasses = useMemo(
     () =>
-      data?.course?.classes?.filter((courseClass: any) =>
-        Boolean(courseClass)
-      ) ?? [],
+      data?.course?.classes?.filter((courseClass) => Boolean(courseClass)) ??
+      [],
     [data?.course?.classes]
   );
 
   const semestersWithRatings = useMemo(() => {
     if (!data?.semestersWithRatings) return [];
     return data.semestersWithRatings.filter(
-      (sem: any) => sem && sem.maxMetricCount > 0
+      (sem) => sem.maxMetricCount > 0
     );
   }, [data?.semestersWithRatings]);
 
@@ -41,8 +47,7 @@ export const useGetRatings = ({
     if (!data?.userRatings?.classes) return null;
 
     const matchedRating = data.userRatings.classes.find(
-      (classRating: any) =>
-        classRating &&
+      (classRating) =>
         classRating.subject === subject &&
         classRating.courseNumber === courseNumber
     );
@@ -51,11 +56,11 @@ export const useGetRatings = ({
 
   const hasRatings = useMemo(() => {
     const metrics =
-      data?.course?.aggregatedRatings?.metrics?.filter((metric: any) =>
+      data?.course?.aggregatedRatings?.metrics?.filter((metric) =>
         Boolean(metric)
       ) ?? [];
     const totalRatings = metrics.reduce(
-      (total: number, metric: any) => total + (metric?.count ?? 0),
+      (total, metric) => total + (metric.count ?? 0),
       0
     );
     return totalRatings > 0;

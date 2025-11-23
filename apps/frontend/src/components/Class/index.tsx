@@ -320,12 +320,21 @@ export default function Class({
   }, [_class]);
 
   const ratingsCount = useMemo<number | false>(() => {
-    const metrics = _course?.aggregatedRatings?.metrics;
+    const aggregatedRatings = _course?.aggregatedRatings;
+    if (!aggregatedRatings) {
+      return false;
+    }
+
+    type Metric = NonNullable<
+      IClassCourse["aggregatedRatings"]["metrics"]
+    >[number];
+    const metrics: Metric[] = aggregatedRatings.metrics;
     if (!metrics || metrics.length === 0) {
       return false;
     }
 
-    return Math.max(...metrics.map((metric: any) => metric.count));
+    const counts = metrics.map((metric: Metric) => metric.count);
+    return counts.length > 0 ? Math.max(...counts) : false;
   }, [_course]);
 
   const ratingsLockContext = useMemo(() => {

@@ -11,7 +11,7 @@ import {
   GetCourseForClassQuery,
 } from "../generated/graphql";
 
-export const READ_CLASS = gql`
+export const GET_CLASS = gql`
   query GetClass(
     $year: Int!
     $semester: Semester!

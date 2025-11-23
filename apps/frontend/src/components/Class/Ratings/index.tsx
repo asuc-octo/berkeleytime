@@ -133,7 +133,7 @@ export function RatingsContainer() {
     const courseTerms: Term[] = courseClasses
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
-      .filter((c: any) => {
+      .filter((c) => {
         if (c.primarySection?.startDate) {
           const startDate = new Date(c.primarySection.startDate);
           return startDate <= today;
@@ -311,7 +311,7 @@ export function RatingsContainer() {
                         } else if (isSemester(selectedValue)) {
                           const [semester, year] = selectedValue.split(" ");
                           const selectedClass = courseClasses.find(
-                            (c: any) =>
+                            (c) =>
                               c.semester === semester &&
                               c.year === parseInt(year)
                           );

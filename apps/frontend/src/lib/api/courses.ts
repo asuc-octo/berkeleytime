@@ -1,14 +1,15 @@
 import { gql } from "@apollo/client";
 
 import {
+  GetCourseForClassQuery,
   GetCourseQuery,
   GetCourseWithInstructorQuery,
 } from "../generated/graphql";
 
 export type ICourse = NonNullable<GetCourseQuery["course"]>;
 
-export const READ_COURSE_TITLE = gql`
-  query ReadCourseTitle($subject: String!, $number: CourseNumber!) {
+export const GET_COURSE_TITLE = gql`
+  query GetCourseTitle($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -18,8 +19,8 @@ export const READ_COURSE_TITLE = gql`
   }
 `;
 
-export const READ_COURSE_UNITS = gql`
-  query ReadCourseUnits($subject: String!, $number: CourseNumber!) {
+export const GET_COURSE_UNITS = gql`
+  query GetCourseUnits($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -33,8 +34,8 @@ export const READ_COURSE_UNITS = gql`
   }
 `;
 
-export const READ_COURSE = gql`
-  query ReadCourse($subject: String!, $number: CourseNumber!) {
+export const GET_COURSE = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -101,8 +102,8 @@ export const GET_COURSE_FOR_CLASS = gql`
   }
 `;
 
-export const READ_COURSE_GRADE_DIST = gql`
-  query ReadCourseGradeDist($subject: String!, $number: CourseNumber!) {
+export const GET_COURSE_GRADE_DIST = gql`
+  query GetCourseGradeDist($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
@@ -118,8 +119,8 @@ export const READ_COURSE_GRADE_DIST = gql`
   }
 `;
 
-export const READ_COURSE_WITH_INSTRUCTOR = gql`
-  query ReadCourseWithInstructor($subject: String!, $number: CourseNumber!) {
+export const GET_COURSE_WITH_INSTRUCTOR = gql`
+  query GetCourseWithInstructor($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       courseId
       subject
