@@ -164,7 +164,7 @@ export default function Class({
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
 
-  const { data: course, loading: courseLoading } = useGetCourseForClass(
+  const { data: course } = useGetCourseForClass(
     providedClass?.subject ?? (subject as string),
     providedClass?.courseNumber ?? (courseNumber as string),
     {
@@ -173,7 +173,7 @@ export default function Class({
     }
   );
 
-  const { data, loading } = useGetClass(
+  const { data } = useGetClass(
     year as number,
     semester as Semester,
     subject as string,
@@ -494,10 +494,6 @@ export default function Class({
       0
     );
   }, [_class]);
-
-  if (loading || courseLoading) {
-    return <></>;
-  }
 
   // TODO: Error state
   if (!_course || !_class) {

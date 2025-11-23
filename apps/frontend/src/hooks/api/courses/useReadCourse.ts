@@ -71,10 +71,7 @@ export const useGetCourseGradeDist = (
   subject: string,
   number: string,
   options?: Omit<
-    useQuery.Options<
-      GetCourseGradeDistQuery,
-      GetCourseGradeDistQueryVariables
-    >,
+    useQuery.Options<GetCourseGradeDistQuery, GetCourseGradeDistQueryVariables>,
     "variables"
   >
 ) => {

@@ -38,9 +38,7 @@ export const useGetRatings = ({
 
   const semestersWithRatings = useMemo(() => {
     if (!data?.semestersWithRatings) return [];
-    return data.semestersWithRatings.filter(
-      (sem) => sem.maxMetricCount > 0
-    );
+    return data.semestersWithRatings.filter((sem) => sem.maxMetricCount > 0);
   }, [data?.semestersWithRatings]);
 
   const userRatings = useMemo(() => {
