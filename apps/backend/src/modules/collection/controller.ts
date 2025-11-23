@@ -4,7 +4,9 @@ import {
   CollectionType,
   IClassItem,
 } from "@repo/common";
+
 import { CollectionModule } from "./generated-types/module-types";
+
 export const getCollectionOwner = async (ownerID: string) => {
   const collections = await CollectionModel.find({
     ownerID,
