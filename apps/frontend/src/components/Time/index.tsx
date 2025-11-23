@@ -2,7 +2,6 @@ import { ComponentPropsWithRef, Fragment, useMemo } from "react";
 
 import classNames from "classnames";
 
-
 import styles from "./Time.module.scss";
 
 const getTime = (start?: string | null, end?: string | null) => {

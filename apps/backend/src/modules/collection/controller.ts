@@ -105,12 +105,12 @@ export const addClassToCollection = async (
   const _class = { info: info as IClassItem, comments: [] }; */
   const _class = {
     info: {
-        year: input.class.year,
-        semester: input.class.semester,
-        sessionId: input.class.sessionId ?? "1",
-        subject: input.class.subject,
-        courseNumber: input.class.courseNumber,
-        number: input.class.number,
+      year: input.class.year,
+      semester: input.class.semester,
+      sessionId: input.class.sessionId ?? "1",
+      subject: input.class.subject,
+      courseNumber: input.class.courseNumber,
+      number: input.class.number,
     },
     comments: [],
   };
