@@ -204,6 +204,7 @@ export const GET_COURSE_NAMES = gql`
     courses {
       courseId
       subject
+      departmentNicknames
       number
       title
     }

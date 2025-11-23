@@ -49,11 +49,14 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       }
       course {
         title
+        departmentNicknames
         gradeDistribution {
           average
           pnpPercentage
         }
         academicCareer
+        academicOrganization
+        academicOrganizationName
       }
       requirementDesignation {
         description

@@ -29,6 +29,9 @@ export const courseTypeDef = gql`
     gradingBasis: CourseGradingBasis!
     finalExam: CourseFinalExam
     academicCareer: AcademicCareer!
+    academicOrganization: String
+    academicOrganizationName: String
+    departmentNicknames: String
     title: String!
     primaryInstructionMethod: InstructionMethod!
     toDate: String!
