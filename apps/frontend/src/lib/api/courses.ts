@@ -82,7 +82,7 @@ export const GET_COURSE_FOR_CLASS = gql`
       title
       description
       requirements
-      aggregatedRatings {
+      aggregatedRatings(metricNames: [Attendance, Recording]) {
         metrics {
           metricName
           count
@@ -90,32 +90,6 @@ export const GET_COURSE_FOR_CLASS = gql`
           categories {
             value
             count
-          }
-        }
-      }
-      classes {
-        semester
-        year
-        number
-        anyPrintInScheduleOfClasses
-        primarySection {
-          startDate
-          meetings {
-            instructors {
-              familyName
-              givenName
-            }
-          }
-        }
-        aggregatedRatings {
-          metrics {
-            metricName
-            count
-            weightedAverage
-            categories {
-              value
-              count
-            }
           }
         }
       }

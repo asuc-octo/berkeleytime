@@ -164,3 +164,72 @@ export const GET_ALL_RATINGS_DATA = gql`
     }
   }
 `;
+
+export const GET_RATINGS_FOR_TAB = gql`
+  query GetRatingsForTab(
+    $subject: String!
+    $courseNumber: String!
+    $courseNumberTyped: CourseNumber!
+  ) {
+    course(subject: $subject, number: $courseNumberTyped) {
+      subject
+      number
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
+      }
+      classes {
+        semester
+        year
+        number
+        anyPrintInScheduleOfClasses
+        primarySection {
+          startDate
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
+          }
+        }
+        aggregatedRatings {
+          metrics {
+            metricName
+            count
+            weightedAverage
+            categories {
+              value
+              count
+            }
+          }
+        }
+      }
+    }
+    semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
+      semester
+      year
+      maxMetricCount
+    }
+    userRatings {
+      classes {
+        subject
+        courseNumber
+        semester
+        year
+        classNumber
+        metrics {
+          metricName
+          value
+        }
+        lastUpdated
+      }
+    }
+  }
+`;

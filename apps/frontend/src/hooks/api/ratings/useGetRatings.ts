@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
-import { GET_ALL_RATINGS_DATA, ICourse } from "@/lib/api";
+import { GET_RATINGS_FOR_TAB } from "@/lib/api";
 
 interface UseGetRatingsOptions {
   subject: string;
@@ -12,25 +12,25 @@ interface UseGetRatingsOptions {
 export const useGetRatings = ({
   subject,
   courseNumber,
-  course,
-}: UseGetRatingsOptions & { course?: ICourse }) => {
+}: UseGetRatingsOptions) => {
   const { data, loading, error, refetch } = useQuery<any>(
-    GET_ALL_RATINGS_DATA,
+    GET_RATINGS_FOR_TAB,
     {
       variables: {
         subject,
         courseNumber,
+        courseNumberTyped: courseNumber,
       },
-      fetchPolicy: "cache-first",
+      fetchPolicy: "no-cache",
     }
   );
 
   const courseClasses = useMemo(
     () =>
-      course?.classes?.filter(
+      data?.course?.classes?.filter(
         (courseClass: any) => Boolean(courseClass)
       ) ?? [],
-    [course?.classes]
+    [data?.course?.classes]
   );
 
   const semestersWithRatings = useMemo(() => {
@@ -52,7 +52,7 @@ export const useGetRatings = ({
 
   const hasRatings = useMemo(() => {
     const metrics =
-      course?.aggregatedRatings?.metrics?.filter((metric: any) =>
+      data?.course?.aggregatedRatings?.metrics?.filter((metric: any) =>
         Boolean(metric)
       ) ?? [];
     const totalRatings = metrics.reduce(
@@ -60,14 +60,14 @@ export const useGetRatings = ({
       0
     );
     return totalRatings > 0;
-  }, [course?.aggregatedRatings?.metrics]);
+  }, [data?.course?.aggregatedRatings?.metrics]);
 
   return {
     userRatingsData: data?.userRatings
       ? { userRatings: data.userRatings }
       : undefined,
     userRatings,
-    aggregatedRatings: course?.aggregatedRatings,
+    aggregatedRatings: data?.course?.aggregatedRatings,
     semestersWithRatings,
     courseClasses,
     hasRatings,

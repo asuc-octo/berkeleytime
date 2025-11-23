@@ -64,7 +64,7 @@ type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 
 export function RatingsContainer() {
-  const { class: currentClass, course } = useClass();
+  const { class: currentClass } = useClass();
   const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
@@ -89,7 +89,6 @@ export function RatingsContainer() {
   } = useGetRatings({
     subject: currentClass.subject,
     courseNumber: currentClass.courseNumber,
-    course,
   });
 
   const [isModalOpen, setIsModalOpen] = useState(() => {
