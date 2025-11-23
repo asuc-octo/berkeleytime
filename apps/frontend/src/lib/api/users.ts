@@ -1,8 +1,17 @@
 import { gql } from "@apollo/client";
 
 import { GetUserQuery } from "../generated/graphql";
+import { IClass } from "./classes";
 
-export type IUser = GetUserQuery["user"];
+export interface IMonitoredClass {
+  class: IClass;
+  thresholds: number[];
+}
+
+export type IUser = GetUserQuery["user"] & {
+  monitoredClasses?: IMonitoredClass[];
+  notificationsOn?: boolean;
+};
 
 export const READ_USER = gql`
   query GetUser {
@@ -50,6 +59,7 @@ export const READ_USER = gql`
 export const UPDATE_USER = gql`
   mutation UpdateUser($user: UpdateUserInput!) {
     updateUser(user: $user) {
+      _id
       name
       email
       student
@@ -66,6 +76,24 @@ export const UPDATE_USER = gql`
         year
         semester
         sessionId
+        unitsMin
+        unitsMax
+        course {
+          title
+        }
+        primarySection {
+          enrollment {
+            latest {
+              enrolledCount
+              maxEnroll
+              waitlistedCount
+              maxWaitlist
+            }
+          }
+        }
+        gradeDistribution {
+          average
+        }
       }
     }
   }
