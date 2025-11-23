@@ -75,7 +75,9 @@ export default function ClassBrowser({
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
-  const [localAcademicOrganization, setLocalAcademicOrganization] = useState<string | null>(null);
+  const [localAcademicOrganization, setLocalAcademicOrganization] = useState<
+    string | null
+  >(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);

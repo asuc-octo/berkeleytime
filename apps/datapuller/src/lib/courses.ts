@@ -8,6 +8,8 @@ import { fetchPaginatedData } from "./api/sis-api";
 // Include relevant fields missing from the automically generated type
 type CombinedCourse = Course & {
   gradeReplacement?: ICourseItem["gradeReplacement"];
+  departmentNicknames?: string;
+  subjectName?: string;
 };
 
 const filterCourse = (input: CombinedCourse): boolean => {
@@ -38,6 +40,8 @@ const formatCourse = (input: CombinedCourse) => {
   const output: ICourseItem = {
     courseId: courseId!,
     subject: subject!,
+    subjectName: input.subjectArea?.description,
+    departmentNicknames: input.departmentNicknames,
     number: number!,
     title: input.title,
     description: input.description,
@@ -118,9 +122,7 @@ const formatCourse = (input: CombinedCourse) => {
         discrete: input.credit?.value?.discrete?.units,
         fixed: input.credit?.value?.fixed?.units,
         range: {
-          // minUnits: input.credit?.value?.range?.minUnits,
           minUnits: input.credit?.value?.variable?.minUnits,
-          // maxUnits: input.credit?.value?.range?.maxUnits,
           maxUnits: input.credit?.value?.variable?.maxUnits,
         },
       },

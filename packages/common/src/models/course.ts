@@ -5,6 +5,10 @@ export interface ICourseItem {
   courseId: string;
   // subjectArea.code
   subject: string;
+  // subjectArea.description
+  subjectName?: string;
+  // departmentNicknames
+  departmentNicknames?: string;
   // catalogNumber.formatted
   number: string;
   title?: string;
@@ -123,6 +127,8 @@ export interface ICourseItemDocument extends ICourseItem, Document {}
 const courseSchema = new Schema<ICourseItem>({
   courseId: { type: String, required: true },
   subject: { type: String, required: true },
+  subjectName: { type: String },
+  departmentNicknames: { type: String },
   number: { type: String, required: true },
   title: { type: String },
   description: { type: String },

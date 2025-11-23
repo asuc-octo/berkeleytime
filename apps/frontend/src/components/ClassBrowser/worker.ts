@@ -1,5 +1,3 @@
-import { subjects } from "@repo/shared";
-
 import { IClass } from "@/lib/api";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
@@ -19,43 +17,19 @@ const initializeFuse = (classes: IClass[]) => {
   const list = classes.map((_class) => {
     const { title, subject, courseNumber: number } = _class;
 
-    // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
-    const term = subject.toLowerCase();
-
-    const alternateNames = subjects[term]?.abbreviations.reduce(
-      (acc, abbreviation) => {
-        // Add alternate names for abbreviations
-        const abbreviations = [
-          `${abbreviation}${number}`,
-          `${abbreviation} ${number}`,
-        ];
-
-        if (containsPrefix) {
-          abbreviations.push(
-            `${abbreviation}${alternateNumber}`,
-            `${abbreviation} ${alternateNumber}`
-          );
-        }
-
-        return [...acc, ...abbreviations];
-      },
-      // Add alternate names
-      containsPrefix
-        ? [
-            `${subject}${number}`,
-            `${subject} ${alternateNumber}`,
-            `${subject}${alternateNumber}`,
-          ]
-        : [`${subject}${number}`]
-    );
+    const alternateNames = containsPrefix
+      ? [
+          `${subject}${number}`,
+          `${subject} ${alternateNumber}`,
+          `${subject}${alternateNumber}`,
+        ]
+      : [`${subject}${number}`];
 
     return {
       title: _class.title ?? title,
-      // subject,
-      // number,
       name: `${subject} ${number}`,
       alternateNames,
     };

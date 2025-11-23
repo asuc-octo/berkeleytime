@@ -1,5 +1,3 @@
-import { subjects } from "@repo/shared";
-
 import {
   ICatalogClass,
   ISectionAttribute,
@@ -283,31 +281,34 @@ export const getIndex = (classes: ICatalogClass[]) => {
     const subject = _class.subject;
     const number = _class.courseNumber;
     const title = _class.course.title;
+    const departmentNicknames = _class.course.departmentNicknames;
 
-    // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
-    const term = subject.toLowerCase();
+    const abbreviations = departmentNicknames
+      ? departmentNicknames
+          .split("!")
+          .map((abbr: string) => abbr.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
 
-    const alternateNames = subjects[term]?.abbreviations.reduce(
+    const alternateNames = abbreviations.reduce(
       (acc, abbreviation) => {
-        // Add alternate names for abbreviations
-        const abbreviations = [
+        const abbrevs = [
           `${abbreviation}${number}`,
           `${abbreviation} ${number}`,
         ];
 
         if (containsPrefix) {
-          abbreviations.push(
+          abbrevs.push(
             `${abbreviation}${alternateNumber}`,
             `${abbreviation} ${alternateNumber}`
           );
         }
 
-        return [...acc, ...abbreviations];
+        return [...acc, ...abbrevs];
       },
-      // Add alternate names
       containsPrefix
         ? [
             `${subject}${number}`,

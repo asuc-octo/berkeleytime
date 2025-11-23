@@ -192,7 +192,16 @@ export default function Filters() {
         gradingFilters,
         academicOrganization
       ).includedClasses,
-    [allClasses, units, levels, days, open, online, gradingFilters, academicOrganization]
+    [
+      allClasses,
+      units,
+      levels,
+      days,
+      open,
+      online,
+      gradingFilters,
+      academicOrganization,
+    ]
   );
 
   const breadthCounts = useMemo(() => {
