@@ -5,47 +5,46 @@ import {
   IClassItem,
 } from "@repo/common";
 
-export const getCollectionOwner = async (context: any) => {
-  const query = await CollectionModel.find({ ownerID: context.user._id });
+export const getCollectionOwner = async (ownerID: string) => {
+  const collections = await CollectionModel.find({
+    ownerID,
+  });
 
-  if (!query) throw new Error("Not found");
+  if (!collections?.length) return [];
 
-  return formatCollection(query);
+  return formatCollections(collections as CollectionType[]);
 };
 
-export const getCollectionViewer = async (context: any) => {
-  const query = await CollectionModel.find({ viewerID: context.user._id });
+export const getCollectionViewer = async (viewerID: string) => {
+  const collections = await CollectionModel.find({
+    viewerID,
+  });
 
-  if (!query) throw new Error("Not found");
+  if (!collections?.length) return [];
 
-  return formatCollection(query);
+  return formatCollections(collections as CollectionType[]);
 };
 
 export const createCollection = async (input: any) => {
   const collection = await CollectionModel.create({
     ownerID: input.ownerID,
-    viewerIDs: [],
+    viewerID: [],
     name: input.name,
     classes: [],
   });
 
-  return collection;
+  return (await formatCollections([collection as CollectionType]))[0];
 };
 
-const formatCollection = async (collections: CollectionType[]) => {
-  const collectionNameNClassesNComments = [];
-  if (collections.length < 1) return [];
-
-  for (const collection of collections) {
-    const collectionInfo = {
+const formatCollections = async (collections: CollectionType[]) => {
+  return Promise.all(
+    collections.map(async (collection) => ({
       ownerID: collection.ownerID,
-      viewerID: collection.viewerID,
+      viewerID: collection.viewerID ?? [],
       name: collection.name,
       classes: await formatCollectionClasses(collection),
-    };
-    collectionNameNClassesNComments.push(collectionInfo);
-  }
-  return collectionNameNClassesNComments;
+    }))
+  );
 };
 
 const formatCollectionClasses = async (collection: CollectionType) => {
@@ -54,12 +53,12 @@ const formatCollectionClasses = async (collection: CollectionType) => {
 
   for (const item of collection.classes) {
     const _class = await ClassModel.findOne({
-      year: item.year,
-      semester: item.semester,
-      // sessionId: item.sessionId ? item.sessionId : "1",
-      subject: item.subject,
-      courseNumber: item.courseNumber,
-      number: item.number,
+      year: item.info?.year,
+      semester: item.info?.semester,
+      sessionId: item.info?.sessionId ? item.info?.sessionId : "1",
+      subject: item.info?.subject,
+      courseNumber: item.info?.courseNumber,
+      number: item.info?.number,
     }).lean();
 
     if (!_class) continue;
@@ -79,6 +78,22 @@ export const addClassToCollection = async (
     name: input.name,
   });
   if (!collection) throw new Error("not found by owner and name");
+
+  const alreadyExists = collection.classes?.some((entry) => {
+    const info = entry.info;
+
+    return (
+      info?.year === input.class.year &&
+      info?.semester === input.class.semester &&
+      (info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
+      info?.subject === input.class.subject &&
+      info?.courseNumber === input.class.courseNumber &&
+      info?.number === input.class.number
+    );
+  });
+
+  if (alreadyExists) throw new Error("Class already exists in collection");
+  /*
   const info = await ClassModel.findOne({
     year: input.year,
     semester: input.semester,
@@ -87,11 +102,22 @@ export const addClassToCollection = async (
     courseNumber: input.courseNumber,
     number: input.number,
   }).lean();
-  const _class = { info: info as IClassItem, comments: [] };
+  const _class = { info: info as IClassItem, comments: [] }; */
+  const _class = {
+    info: {
+        year: input.class.year,
+        semester: input.class.semester,
+        sessionId: input.class.sessionId ?? "1",
+        subject: input.class.subject,
+        courseNumber: input.class.courseNumber,
+        number: input.class.number,
+    },
+    comments: [],
+  };
   collection.classes?.push(_class);
   await collection.save();
 
-  return;
+  return (await formatCollections([collection as CollectionType]))[0];
 };
 
 export const modifyCollectionComment = async (
@@ -105,11 +131,12 @@ export const modifyCollectionComment = async (
 
   const entry = collection.classes?.find((_class) => {
     return (
-      _class.year === input.year &&
-      _class.semester === input.semester &&
-      _class.subject === input.subject &&
-      _class.courseNumber === input.courseNumber &&
-      _class.number === input.number
+      _class.info?.year === input.class.year &&
+      _class.info?.semester === input.class.semester &&
+      (_class.info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
+      _class.info?.subject === input.class.subject &&
+      _class.info?.courseNumber === input.class.courseNumber &&
+      _class.info?.number === input.class.number
     );
   });
   if (!entry) throw new Error("Class not found in collection");
@@ -124,4 +151,5 @@ export const modifyCollectionComment = async (
   }
 
   await collection.save();
+  return (await formatCollections([collection as CollectionType]))[0];
 };
