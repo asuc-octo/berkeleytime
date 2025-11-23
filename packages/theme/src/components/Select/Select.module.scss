@@ -32,6 +32,7 @@
   border-radius: 4px;
   max-height: 300px;
   overflow-y: scroll;
+  padding: 4px;
 }
 
 .sectionLabel {
@@ -54,4 +55,101 @@
   border-top: solid 1px var(--button-active-color);
   padding: 12px 24px;
   margin: 2px;
+}
+
+/* Searchable Select Styles */
+.searchableContent {
+  background-color: var(--foreground-color);
+  border: solid 1px var(--border-color);
+  border-radius: 4px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  border-bottom: solid 1px var(--border-color);
+  padding: 8px 12px;
+  gap: 8px;
+}
+
+.searchIcon {
+  color: var(--label-color);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--text-14);
+  color: var(--heading-color);
+  padding: 0;
+
+  &::placeholder {
+    color: var(--label-color);
+  }
+}
+
+.commandList {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px;
+}
+
+.commandItem {
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  user-select: none;
+
+  &:hover:not(.disabled) {
+    background-color: var(--button-hover-color);
+    color: var(--heading-color);
+  }
+
+  &.selected {
+    color: var(--heading-color);
+    font-weight: var(--font-medium);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .meta {
+    color: var(--label-color);
+    font-size: var(--text-12);
+  }
+}
+
+.commandEmpty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--label-color);
+  font-size: var(--text-14);
+}
+
+.commandGroup {
+  overflow: hidden;
+
+  [cmdk-group-heading] {
+    padding: 8px 12px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--label-color);
+    user-select: none;
+    cursor: default;
+    line-height: 1;
+    text-align: left;
+  }
 }

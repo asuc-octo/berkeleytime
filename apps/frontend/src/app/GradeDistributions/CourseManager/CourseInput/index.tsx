@@ -6,7 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import { Box, Select, SelectHandle } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
-import CourseSearch from "@/components/CourseSearch";
+import CourseSelect from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { ICourse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -374,13 +374,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   return (
     <Flex direction="row" gap="3">
       <Box flexGrow="1">
-        <CourseSearch
+        <CourseSelect
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
           selectedCourse={selectedCourse}
-          inputStyle={{
-            height: 44,
-          }}
         />
       </Box>
       <Box flexGrow="1">

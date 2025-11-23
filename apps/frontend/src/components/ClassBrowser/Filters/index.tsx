@@ -490,6 +490,7 @@ export default function Filters() {
           <div className={styles.formControl}>
             <p className={styles.label}>Semester</p>
             <Select
+              searchable
               value={currentTermLabel}
               onChange={(value) => {
                 const selectedTerm = availableTerms.find(
@@ -505,6 +506,8 @@ export default function Filters() {
                 value: `${term.semester} ${term.year}`,
                 label: `${term.semester} ${term.year}`,
               }))}
+              searchPlaceholder="Search semesters..."
+              emptyMessage="No semesters found."
             />
           </div>
         )}
@@ -536,6 +539,7 @@ export default function Filters() {
         <div className={styles.formControl}>
           <p className={styles.label}>Department</p>
           <Select<string>
+            searchable
             value={department}
             placeholder="Select a department"
             clearable
@@ -546,11 +550,14 @@ export default function Filters() {
               }
             }}
             options={departmentOptions}
+            searchPlaceholder="Search departments..."
+            emptyMessage="No departments found."
           />
         </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Requirements</p>
           <Select<RequirementSelection>
+            searchable
             multi
             value={selectedRequirements}
             placeholder="Filter by requirements"
@@ -581,6 +588,8 @@ export default function Filters() {
               updateUniversityRequirement(nextUniversityRequirement);
             }}
             options={requirementOptions}
+            searchPlaceholder="Search requirements..."
+            emptyMessage="No requirements found."
           />
         </div>
         <div className={styles.formControl}>

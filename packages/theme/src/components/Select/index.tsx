@@ -13,6 +13,7 @@ import { DropdownMenu } from "radix-ui";
 
 import { Badge } from "../Badge";
 import { Color } from "../ThemeProvider";
+import { SearchableSelect } from "./SearchableSelect";
 import styles from "./Select.module.scss";
 import SelectItem from "./SelectItem";
 
@@ -38,6 +39,7 @@ const deepEqual = (obj1: any, obj2: any): boolean => {
 };
 
 export * from "./SelectItem";
+export * from "./SearchableSelect";
 
 export type OptionLabel = {
   type: "label";
@@ -77,6 +79,9 @@ export interface SelectProps<T> {
     text: string;
     onClick: () => void;
   };
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
 }
 
 const isOptionItem = <T,>(option: Option<T>): option is OptionItem<T> => {
@@ -113,7 +118,28 @@ export function Select<T>({
   ref,
   variant = "default",
   addOption,
+  searchable = false,
+  searchPlaceholder = "Search...",
+  emptyMessage = "No results found.",
 }: SelectProps<T>) {
+  // If searchable is enabled, use SearchableSelect
+  if (searchable) {
+    return (
+      <SearchableSelect
+        options={options}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        multi={multi}
+        placeholder={placeholder}
+        clearable={clearable}
+        variant={variant}
+        searchPlaceholder={searchPlaceholder}
+        emptyMessage={emptyMessage}
+      />
+    );
+  }
+
   const { triggerRef, triggerWidth } = useMatchTriggerWidth<HTMLDivElement>();
 
   const [open, setOpen] = useState(false);

@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 import { Flex, Select } from "@repo/theme";
 
-import CourseSearch from "@/components/CourseSearch";
+import CourseSelect from "@/components/CourseSelect";
 import { ICourse } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
@@ -68,17 +68,13 @@ export function RatingFormBody({
                 margin: "0 auto",
               }}
             >
-              <CourseSearch
+              <CourseSelect
                 selectedCourse={selectedCourse}
                 onSelect={(course) => {
                   onCourseSelect(course as ICourse);
                 }}
                 onClear={onCourseClear}
                 minimal={true}
-                inputStyle={{
-                  height: 44,
-                  width: "100%",
-                }}
                 ratedCourses={userRatedClasses}
               />
             </div>
@@ -116,6 +112,7 @@ export function RatingFormBody({
               }}
               placeholder="Select semester"
               clearable={true}
+              searchable={true}
             />
           </div>
         </div>
