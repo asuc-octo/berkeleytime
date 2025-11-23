@@ -34,6 +34,20 @@
     color: var(--secondary-color);
   }
 
+  .reservedSeatingBadgeContainer {
+    height: 0;
+    position: relative;
+    align-self: center;
+
+    > * {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translateY(-50%);
+      white-space: nowrap;
+    }
+  }
+
   .badge {
     position: relative;
     display: inline;

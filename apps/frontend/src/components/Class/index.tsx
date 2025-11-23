@@ -593,11 +593,13 @@ export default function Class({
                     <CCN sectionId={primarySection.sectionId} />
                   )}
                   {reservedSeatingMaxCount > 0 && (
-                    <Badge
-                      label="Reserved Seating"
-                      color={Color.Orange}
-                      icon={<InfoCircle />}
-                    />
+                    <div className={styles.reservedSeatingBadgeContainer}>
+                      <Badge
+                        label="Reserved Seating"
+                        color={Color.Orange}
+                        icon={<InfoCircle />}
+                      />
+                    </div>
                   )}
                 </Flex>
               </Flex>
