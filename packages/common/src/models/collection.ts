@@ -24,6 +24,12 @@ export const collectionSchema = new Schema(
       default: [],
       type: [
         {
+        comments: {
+            required: false,
+            default: [],
+            type: [String],
+        },
+        info: {
           year: {
             type: Number,
             required: true,
@@ -31,6 +37,10 @@ export const collectionSchema = new Schema(
           semester: {
             type: String,
             enum: ["Spring", "Summer", "Fall", "Winter"],
+            required: true,
+          },
+          sessionId: {
+            type: String,
             required: true,
           },
           subject: {
@@ -45,15 +55,11 @@ export const collectionSchema = new Schema(
             type: String,
             required: true,
           },
-          comments: {
-            type: [String],
-            default: [],
-            required: false,
-          },
         },
+        }
       ],
     },
-  },
+},
   {
     timestamps: {
       createdAt: "createdAt",

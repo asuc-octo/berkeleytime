@@ -9,13 +9,13 @@ import { CollectionModule } from "./generated-types/module-types";
 
 const resolvers: CollectionModule.Resolvers = {
   Query: {
-    ownerCollection: async (_, __, context) => {
-      const collection = await getCollectionOwner(context);
+    ownerCollection: async (_, { ownerID }) => {
+      const collection = await getCollectionOwner(ownerID);
 
       return collection as unknown as CollectionModule.Collection[];
     },
-    viewerCollection: async (_, __, context) => {
-      const collection = await getCollectionViewer(context);
+    viewerCollection: async (_, { viewerID }) => {
+      const collection = await getCollectionViewer(viewerID);
 
       return collection as unknown as CollectionModule.Collection[];
     },
