@@ -91,7 +91,7 @@ export default function Catalog() {
 
   const { data: _class } = useGetClass(
     term?.year as number,
-    term?.semester,
+    term?.semester as Semester,
     subject as string,
     courseNumber as string,
     number as string,
