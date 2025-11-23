@@ -12,6 +12,7 @@ import { NavArrowDown, Plus, Xmark } from "iconoir-react";
 import { DropdownMenu } from "radix-ui";
 
 import { Badge } from "../Badge";
+import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
 import { SearchableSelect } from "./SearchableSelect";
 import styles from "./Select.module.scss";
@@ -62,6 +63,12 @@ export interface SelectHandle {
   openMenu: () => void;
 }
 
+export type SelectTab<T> = {
+  value: string;
+  label: string;
+  options: Option<T>[];
+};
+
 // TODO: any way to constrain types? Using/not using a list for value
 // when not multi is undefined and causes strange behavior
 export interface SelectProps<T> {
@@ -84,6 +91,10 @@ export interface SelectProps<T> {
   emptyMessage?: string;
   customSearch?: (query: string, options: Option<T>[]) => Option<T>[];
   onSearchChange?: (query: string) => void;
+  tabs?: SelectTab<T>[];
+  defaultTab?: string;
+  tabValue?: string;
+  onTabChange?: (value: string) => void;
 }
 
 const isOptionItem = <T,>(option: Option<T>): option is OptionItem<T> => {
@@ -125,7 +136,35 @@ export function Select<T>({
   emptyMessage = "No results found.",
   customSearch,
   onSearchChange,
+  tabs,
+  defaultTab,
+  tabValue,
+  onTabChange,
 }: SelectProps<T>) {
+  const [internalTab, setInternalTab] = useState<string | undefined>(() =>
+    tabs?.length ? tabValue ?? defaultTab ?? tabs[0]?.value : undefined
+  );
+
+  useEffect(() => {
+    if (!tabs?.length) {
+      setInternalTab(undefined);
+      return;
+    }
+    setInternalTab((prev) => {
+      const tabValues = tabs.map((tab) => tab.value);
+      if (tabValue) return tabValue;
+      if (prev && tabValues.includes(prev)) return prev;
+      const fallback = defaultTab ?? tabs[0]?.value;
+      if (fallback && tabValues.includes(fallback)) return fallback;
+      return prev ?? tabValues[0];
+    });
+  }, [tabValue, defaultTab, tabs]);
+
+  const handleTabChange = (value: string) => {
+    if (!tabValue) setInternalTab(value);
+    onTabChange?.(value);
+  };
+
   // If searchable is enabled, use SearchableSelect
   if (searchable) {
     return (
@@ -142,6 +181,10 @@ export function Select<T>({
         emptyMessage={emptyMessage}
         customSearch={customSearch}
         onSearchChange={onSearchChange}
+        tabs={tabs}
+        defaultTab={defaultTab}
+        tabValue={tabValue ?? internalTab}
+        onTabChange={handleTabChange}
       />
     );
   }
@@ -159,13 +202,37 @@ export function Select<T>({
     },
   }));
 
-  const selectableOptions = useMemo(
-    () => options.filter(isOptionItem),
-    [options]
+  const activeTabValue = useMemo(
+    () =>
+      tabs?.length
+        ? tabValue ?? internalTab ?? defaultTab ?? tabs[0]?.value
+        : undefined,
+    [tabs, tabValue, internalTab, defaultTab]
   );
 
-  // Auto-disable if no options available
-  const hasNoOptions = selectableOptions.length === 0;
+  const currentOptions = useMemo(
+    () =>
+      tabs?.length
+        ? tabs.find((tab) => tab.value === activeTabValue)?.options ??
+          tabs[0]?.options ??
+          []
+        : options,
+    [options, tabs, activeTabValue]
+  );
+
+  const optionUniverse = useMemo(
+    () => (tabs?.length ? tabs.flatMap((tab) => tab.options) : options),
+    [tabs, options]
+  );
+
+  const allSelectableOptions = useMemo(
+    () => optionUniverse.filter(isOptionItem),
+    [optionUniverse]
+  );
+
+  // Auto-disable if no options available in any tab
+  const hasAnyOptions = allSelectableOptions.length > 0;
+  const hasNoOptions = !hasAnyOptions;
   const effectiveDisabled = disabled || hasNoOptions;
   const effectivePlaceholder = effectiveDisabled
     ? "No option available"
@@ -176,11 +243,11 @@ export function Select<T>({
       Array.isArray(value)
         ? value.length === 0
           ? null
-          : selectableOptions.filter((opt) =>
+          : allSelectableOptions.filter((opt) =>
               value.some((v) => deepEqual(v, opt.value))
             )
-        : selectableOptions.find((opt) => deepEqual(opt.value, value)),
-    [value, selectableOptions]
+        : allSelectableOptions.find((opt) => deepEqual(opt.value, value)),
+    [value, allSelectableOptions]
   );
 
   const hasSelection = Array.isArray(activeElem)
@@ -217,7 +284,7 @@ export function Select<T>({
                         onPointerDown={(e) => {
                           e.stopPropagation();
                           if (!Array.isArray(value)) return;
-                          const myV = selectableOptions.find(
+                          const myV = allSelectableOptions.find(
                             (opt) => opt.label === el.label
                           )?.value;
                           onChange(value.filter((v) => !deepEqual(v, myV)));
@@ -254,56 +321,77 @@ export function Select<T>({
           style={{ width: triggerWidth, zIndex: 999 }}
           sideOffset={5}
         >
-          {options.map((opt, i) => {
-            if (!isOptionItem(opt)) {
-              return (
-                <div key={`label-${i}`} className={styles.sectionLabel}>
-                  {opt.label}
-                </div>
-              );
-            }
-
-            return (
-              <DropdownMenu.Item
-                key={`${i}-${opt.label}`}
-                style={{ outline: "none" }}
-                disabled={opt.disabled}
-                onSelect={(e) => {
-                  if (opt.disabled) {
-                    e.preventDefault();
-                    return;
-                  }
-                  if (multi) {
-                    e.preventDefault();
-                    let newValues: T[];
-                    if (Array.isArray(value))
-                      newValues = structuredClone(value);
-                    else newValues = [];
-                    if (!newValues.some((v) => deepEqual(v, opt.value))) {
-                      newValues.push(opt.value);
-                      onChange(newValues);
-                    } else
-                      onChange(
-                        newValues.filter((v) => !deepEqual(v, opt.value))
-                      );
-                  } else onChange(opt.value);
+          {tabs?.length && (
+            <div className={styles.tabsWrapper}>
+              <PillSwitcher
+                value={activeTabValue}
+                defaultValue={defaultTab || tabs[0]?.value}
+                items={tabs.map((tab) => ({
+                  value: tab.value,
+                  label: tab.label,
+                }))}
+                fullWidth
+                onValueChange={(value) => {
+                  handleTabChange(value);
+                  setOpen(true);
                 }}
-              >
-                <SelectItem
-                  label={opt.label}
-                  meta={opt.meta}
-                  checkboxMulti={checkboxMulti}
+              />
+            </div>
+          )}
+          {currentOptions.length === 0 ? (
+            <div className={styles.commandEmpty}>{emptyMessage}</div>
+          ) : (
+            currentOptions.map((opt, i) => {
+              if (!isOptionItem(opt)) {
+                return (
+                  <div key={`label-${i}`} className={styles.sectionLabel}>
+                    {opt.label}
+                  </div>
+                );
+              }
+
+              return (
+                <DropdownMenu.Item
+                  key={`${i}-${opt.label}`}
+                  style={{ outline: "none" }}
                   disabled={opt.disabled}
-                  selected={
-                    Array.isArray(value)
-                      ? value.some((v) => deepEqual(v, opt.value))
-                      : deepEqual(value, opt.value)
-                  }
-                  color={opt.color}
-                />
-              </DropdownMenu.Item>
-            );
-          })}
+                  onSelect={(e) => {
+                    if (opt.disabled) {
+                      e.preventDefault();
+                      return;
+                    }
+                    if (multi) {
+                      e.preventDefault();
+                      let newValues: T[];
+                      if (Array.isArray(value))
+                        newValues = structuredClone(value);
+                      else newValues = [];
+                      if (!newValues.some((v) => deepEqual(v, opt.value))) {
+                        newValues.push(opt.value);
+                        onChange(newValues);
+                      } else
+                        onChange(
+                          newValues.filter((v) => !deepEqual(v, opt.value))
+                        );
+                    } else onChange(opt.value);
+                  }}
+                >
+                  <SelectItem
+                    label={opt.label}
+                    meta={opt.meta}
+                    checkboxMulti={checkboxMulti}
+                    disabled={opt.disabled}
+                    selected={
+                      Array.isArray(value)
+                        ? value.some((v) => deepEqual(v, opt.value))
+                        : deepEqual(value, opt.value)
+                    }
+                    color={opt.color}
+                  />
+                </DropdownMenu.Item>
+              );
+            })
+          )}
           {addOption && (
             <DropdownMenu.Item
               key="add"

@@ -7,6 +7,7 @@
   color: var(--label-color);
   cursor: pointer;
   outline: none;
+  background-color: var(--foreground-color);
 
   &.foreground {
     background-color: var(--foreground-color);
@@ -55,6 +56,24 @@
   border-top: solid 1px var(--button-active-color);
   padding: 12px 24px;
   margin: 2px;
+}
+
+.tabsWrapper,
+.tabsWrapperSearchable {
+  padding: 0;
+  background-color: var(--foreground-color);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+}
+
+.tabsWrapper {
+  border-bottom: solid 1px var(--border-color);
+}
+
+.tabsWrapperSearchable {
+  border-bottom: none;
 }
 
 /* Searchable Select Styles */

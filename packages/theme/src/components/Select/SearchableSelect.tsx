@@ -7,9 +7,10 @@ import { NavArrowDown, Search, Xmark } from "iconoir-react";
 import { Popover } from "radix-ui";
 
 import { Badge } from "../Badge";
+import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
-import type { Option, OptionItem } from "./index";
+import type { Option, OptionItem, SelectTab } from "./index";
 
 // Helper function to compare values
 const deepEqual = (obj1: any, obj2: any): boolean => {
@@ -47,6 +48,10 @@ export interface SearchableSelectProps<T> {
   emptyMessage?: string;
   customSearch?: (query: string, options: Option<T>[]) => Option<T>[];
   onSearchChange?: (query: string) => void;
+  tabs?: SelectTab<T>[];
+  defaultTab?: string;
+  tabValue?: string;
+  onTabChange?: (value: string) => void;
 }
 
 export function SearchableSelect<T>({
@@ -62,11 +67,18 @@ export function SearchableSelect<T>({
   emptyMessage = "No results found.",
   customSearch,
   onSearchChange,
+  tabs,
+  defaultTab,
+  tabValue,
+  onTabChange,
 }: SearchableSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const triggerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | undefined>(undefined);
+  const [internalTab, setInternalTab] = useState<string | undefined>(() =>
+    tabs?.length ? tabValue ?? defaultTab ?? tabs[0]?.value : undefined
+  );
 
   // Notify parent when search changes
   useEffect(() => {
@@ -87,10 +99,41 @@ export function SearchableSelect<T>({
     return () => resizeObserver.disconnect();
   }, []);
 
-  const selectableOptions = options.filter(isOptionItem);
+  useEffect(() => {
+    if (!tabs?.length) {
+      setInternalTab(undefined);
+      return;
+    }
+    setInternalTab((prev) => {
+      const tabValues = tabs.map((tab) => tab.value);
+      if (tabValue) return tabValue;
+      if (prev && tabValues.includes(prev)) return prev;
+      const fallback = defaultTab ?? tabs[0]?.value;
+      if (fallback && tabValues.includes(fallback)) return fallback;
+      return prev ?? tabValues[0];
+    });
+  }, [tabValue, defaultTab, tabs]);
 
-  // Auto-disable if no options available
-  const hasNoOptions = selectableOptions.length === 0;
+  const activeTabValue = tabs?.length
+    ? tabValue ?? internalTab ?? defaultTab ?? tabs[0]?.value
+    : undefined;
+
+  const currentOptions = tabs?.length
+    ? tabs.find((tab) => tab.value === activeTabValue)?.options ??
+      tabs[0]?.options ??
+      []
+    : options;
+
+  const optionUniverse = tabs?.length
+    ? tabs.flatMap((tab) => tab.options)
+    : options;
+
+  const allSelectableOptions = optionUniverse.filter(isOptionItem);
+
+  // Auto-disable if no options available in any tab
+  const hasAnyOptions = allSelectableOptions.length > 0;
+
+  const hasNoOptions = !hasAnyOptions;
   const effectiveDisabled = disabled || hasNoOptions;
   const effectivePlaceholder = effectiveDisabled
     ? "No option available"
@@ -99,11 +142,11 @@ export function SearchableSelect<T>({
   // Find the active element(s) based on value
   const activeElem = multi
     ? Array.isArray(value)
-      ? selectableOptions.filter((opt) =>
+      ? allSelectableOptions.filter((opt) =>
           value.some((v) => deepEqual(v, opt.value))
         )
       : []
-    : selectableOptions.find((opt) => deepEqual(opt.value, value));
+    : allSelectableOptions.find((opt) => deepEqual(opt.value, value));
 
   const hasSelection = Array.isArray(activeElem)
     ? activeElem.length > 0
@@ -145,10 +188,10 @@ export function SearchableSelect<T>({
     // If parent controls search via onSearchChange, use options as-is
     // Otherwise, apply custom search or default filtering
     const filteredOptions = onSearchChange
-      ? options
+      ? currentOptions
       : customSearch && searchValue
-        ? customSearch(searchValue, options)
-        : options;
+        ? customSearch(searchValue, currentOptions)
+        : currentOptions;
 
     // Group structure: { groupLabel: string | null, items: OptionItem[] }[]
     const groups: Array<{ label: string | null; items: OptionItem<T>[] }> = [];
@@ -318,6 +361,24 @@ export function SearchableSelect<T>({
                 className={styles.searchInput}
               />
             </div>
+            {tabs?.length ? (
+              <div className={styles.tabsWrapperSearchable}>
+                <PillSwitcher
+                  value={activeTabValue}
+                  defaultValue={defaultTab || tabs[0]?.value}
+                  items={tabs.map((tab) => ({
+                    value: tab.value,
+                    label: tab.label,
+                  }))}
+                  fullWidth
+                  onValueChange={(value) => {
+                    if (!tabValue) setInternalTab(value);
+                    setSearchValue("");
+                    onTabChange?.(value);
+                  }}
+                />
+              </div>
+            ) : null}
             <Command.List className={styles.commandList}>
               {renderGroupedOptions()}
             </Command.List>
