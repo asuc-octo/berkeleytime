@@ -26,6 +26,8 @@ export interface ICourseItem {
   academicGroup?: string;
   // academicOrganization.code
   academicOrganization?: string;
+  // academicOrganization.description
+  academicOrganizationName?: string;
   instructorAddConsentRequired?: boolean;
   instructorDropConsentRequired?: boolean;
   allowMultipleEnrollments?: boolean;
@@ -134,6 +136,7 @@ const courseSchema = new Schema<ICourseItem>({
   finalExam: { type: String },
   academicGroup: { type: String },
   academicOrganization: { type: String },
+  academicOrganizationName: { type: String },
   instructorAddConsentRequired: { type: Boolean },
   instructorDropConsentRequired: { type: Boolean },
   allowMultipleEnrollments: { type: Boolean },

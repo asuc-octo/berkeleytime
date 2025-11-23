@@ -54,6 +54,8 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
           pnpPercentage
         }
         academicCareer
+        academicOrganization
+        academicOrganizationName
       }
       requirementDesignation {
         description

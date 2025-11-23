@@ -149,7 +149,7 @@ export const getFilteredClasses = (
   currentBreadths: Breadth[] = [],
   currentUniversityRequirement: UniversityRequirement | null = null,
   currentGradingFilters: GradingFilter[] = [],
-  currentDepartment: string | null = null
+  currentAcademicOrganization: string | null = null
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -259,8 +259,8 @@ export const getFilteredClasses = (
       }
 
       if (
-        currentDepartment &&
-        _class.subject.toLowerCase() !== currentDepartment
+        currentAcademicOrganization &&
+        _class.course.academicOrganization !== currentAcademicOrganization
       ) {
         acc.excludedClasses.push(_class);
 

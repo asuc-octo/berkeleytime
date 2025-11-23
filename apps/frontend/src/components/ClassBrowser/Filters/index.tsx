@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { subjects } from "@repo/shared";
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option, OptionItem } from "@repo/theme";
 
@@ -56,8 +55,8 @@ export default function Filters() {
     updateUniversityRequirement,
     gradingFilters,
     updateGradingFilters,
-    department,
-    updateDepartment,
+    academicOrganization,
+    updateAcademicOrganization,
     open,
     // updateOpen,
     online,
@@ -105,7 +104,7 @@ export default function Filters() {
       breadths,
       universityRequirement,
       gradingFilters,
-      department
+      academicOrganization
     ).includedClasses;
   }, [
     allClasses,
@@ -118,7 +117,7 @@ export default function Filters() {
     breadths,
     universityRequirement,
     gradingFilters,
-    department,
+    academicOrganization,
   ]);
 
   const filteredLevels = useMemo(() => {
@@ -142,7 +141,7 @@ export default function Filters() {
     );
   }, [classesForLevelCounts]);
 
-  const classesWithoutDepartment = useMemo(
+  const classesWithoutAcademicOrganization = useMemo(
     () =>
       getFilteredClasses(
         allClasses,
@@ -169,15 +168,15 @@ export default function Filters() {
     ]
   );
 
-  const departmentCounts = useMemo(() => {
+  const academicOrganizationCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    classesWithoutDepartment.forEach((_class) => {
-      const key = _class.subject?.toLowerCase();
-      if (!key) return;
-      counts.set(key, (counts.get(key) ?? 0) + 1);
+    classesWithoutAcademicOrganization.forEach((_class) => {
+      const org = _class.course.academicOrganization;
+      if (!org) return;
+      counts.set(org, (counts.get(org) ?? 0) + 1);
     });
     return counts;
-  }, [classesWithoutDepartment]);
+  }, [classesWithoutAcademicOrganization]);
 
   const classesWithoutRequirements = useMemo(
     () =>
@@ -191,9 +190,9 @@ export default function Filters() {
         [],
         null,
         gradingFilters,
-        department
+        academicOrganization
       ).includedClasses,
-    [allClasses, units, levels, days, open, online, gradingFilters, department]
+    [allClasses, units, levels, days, open, online, gradingFilters, academicOrganization]
   );
 
   const breadthCounts = useMemo(() => {
@@ -234,7 +233,7 @@ export default function Filters() {
         breadths,
         universityRequirement,
         [],
-        department
+        academicOrganization
       ).includedClasses,
     [
       allClasses,
@@ -245,7 +244,7 @@ export default function Filters() {
       online,
       breadths,
       universityRequirement,
-      department,
+      academicOrganization,
     ]
   );
 
@@ -328,37 +327,32 @@ export default function Filters() {
     }));
   }, [gradingCounts]);
 
-  const departmentOptions = useMemo<OptionItem<string>[]>(() => {
-    const allSubjects = new Set<string>();
-    allClasses.forEach((_class) => {
-      if (_class.subject) allSubjects.add(_class.subject);
+  const academicOrganizationOptions = useMemo<OptionItem<string>[]>(() => {
+    const orgMap = new Map<string, string>();
+    classesWithoutAcademicOrganization.forEach((_class) => {
+      const org = _class.course.academicOrganization;
+      const orgName = _class.course.academicOrganizationName;
+      if (org && orgName) {
+        orgMap.set(org, orgName);
+      }
     });
 
-    const options = Array.from(allSubjects).reduce<OptionItem<string>[]>(
-      (acc, code) => {
-        const key = code.toLowerCase();
-        const info = subjects[key];
-        if (!info) return acc;
-        acc.push({
-          value: key,
-          label: info.name,
-          meta: (departmentCounts.get(key) ?? 0).toString(),
-          type: "option",
-        });
-        return acc;
-      },
-      []
-    );
+    const options = Array.from(orgMap.entries()).map(([code, name]) => ({
+      value: code,
+      label: name,
+      meta: (academicOrganizationCounts.get(code) ?? 0).toString(),
+      type: "option" as const,
+    }));
 
     return options.sort((a, b) => a.label.localeCompare(b.label));
-  }, [allClasses, departmentCounts]);
+  }, [classesWithoutAcademicOrganization, academicOrganizationCounts]);
 
   // Disable filters when all options have count 0
-  const isDepartmentDisabled = useMemo(
+  const isAcademicOrganizationDisabled = useMemo(
     () =>
-      departmentOptions.length === 0 ||
-      departmentOptions.every((opt) => opt.meta === "0" || !opt.meta),
-    [departmentOptions]
+      academicOrganizationOptions.length === 0 ||
+      academicOrganizationOptions.every((opt) => opt.meta === "0" || !opt.meta),
+    [academicOrganizationOptions]
   );
 
   const isRequirementsDisabled = useMemo(() => {
@@ -461,7 +455,7 @@ export default function Filters() {
     updateBreadths([]);
     updateUniversityRequirement(null);
     updateGradingFilters([]);
-    updateDepartment(null);
+    updateAcademicOrganization(null);
     updateUnits([0, 5]);
     setDaysArray([...EMPTY_DAYS]);
     updateDays([]);
@@ -536,16 +530,16 @@ export default function Filters() {
         <div className={styles.formControl}>
           <p className={styles.label}>Department</p>
           <Select<string>
-            value={department}
+            value={academicOrganization}
             placeholder="Select a department"
             clearable
-            disabled={isDepartmentDisabled}
+            disabled={isAcademicOrganizationDisabled}
             onChange={(value) => {
               if (typeof value === "string" || value === null) {
-                updateDepartment(value);
+                updateAcademicOrganization(value);
               }
             }}
-            options={departmentOptions}
+            options={academicOrganizationOptions}
           />
         </div>
         <div className={styles.formControl}>

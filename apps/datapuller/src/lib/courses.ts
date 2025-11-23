@@ -51,6 +51,7 @@ const formatCourse = (input: CombinedCourse) => {
     finalExam: input.finalExam?.code,
     academicGroup: input.academicGroup?.code,
     academicOrganization: input.academicOrganization?.code,
+    academicOrganizationName: input.academicOrganization?.description,
     instructorAddConsentRequired: input.instructorAddConsentRequired,
     instructorDropConsentRequired: input.instructorDropConsentRequired,
     allowMultipleEnrollments: input.allowMultipleEnrollments,
