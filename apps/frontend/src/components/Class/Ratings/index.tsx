@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
@@ -8,29 +8,21 @@ import { useSearchParams } from "react-router-dom";
 import { METRIC_ORDER } from "@repo/shared";
 import { Color, Container, Select } from "@repo/theme";
 
+import EmptyState from "@/components/Class/EmptyState";
 import {
   DeleteRatingPopup,
   ErrorDialog,
 } from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { useReadTerms } from "@/hooks/api";
+import { useGetRatings } from "@/hooks/api/ratings/useGetRatings";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import {
-  IAggregatedRatings,
-  IClass,
-  IMetric,
-  IUserRatingClass,
-} from "@/lib/api";
+import { IAggregatedRatings, IMetric } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingDocument,
   DeleteRatingDocument,
-  GetAggregatedRatingsDocument,
-  GetClassDocument,
-  GetCourseRatingsDocument,
-  GetSemestersWithRatingsDocument,
-  GetUserRatingsDocument,
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
@@ -72,108 +64,73 @@ type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 
 export function RatingsContainer() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
-  const { class: currentClass, course: currentCourse } = useClass();
-  const [selectedTerm, setSelectedTerm] = useState("all");
-  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
-    null
-  );
+  const { class: currentClass } = useClass();
   const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 
-  // Get user's existing ratings
-  const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
-    skip: !user,
+  const [selectedTerm, setSelectedTerm] = useState("all");
+  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
+    null
+  );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+
+  const {
+    aggregatedRatings: aggregatedRatingsData,
+    userRatings,
+    userRatingsData,
+    semestersWithRatings,
+    courseClasses,
+    hasRatings,
+    loading,
+    refetch: refetchAllRatings,
+  } = useGetRatings({
+    subject: currentClass.subject,
+    courseNumber: currentClass.courseNumber,
+  });
+
+  const [isModalOpen, setIsModalOpen] = useState(() => {
+    return searchParams.get("feedbackModal") === "true";
   });
 
   const handleModalStateChange = useCallback(
     (open: boolean) => {
       setIsModalOpen(open);
+      const newParams = new URLSearchParams(searchParams);
       if (open) {
-        searchParams.set("feedbackModal", "true");
-        setSearchParams(searchParams);
-      } else if (searchParams.get("feedbackModal")) {
-        searchParams.delete("feedbackModal");
-        setSearchParams(searchParams);
+        newParams.set("feedbackModal", "true");
+      } else {
+        newParams.delete("feedbackModal");
       }
+      setSearchParams(newParams, { replace: true });
     },
     [searchParams, setSearchParams]
   );
 
   useEffect(() => {
-    // Check if we should open/close the modal based on URL parameter
     const feedbackModalParam = searchParams.get("feedbackModal");
-    if (user && feedbackModalParam === "true") {
+    const shouldBeOpen = feedbackModalParam === "true";
+
+    if (shouldBeOpen !== isModalOpen && user) {
       const canRate = checkConstraint(userRatingsData);
-      if (canRate) {
-        handleModalStateChange(true);
-      } else {
-        // Remove the parameter if user can't rate
-        searchParams.delete("feedbackModal");
-        setSearchParams(searchParams);
+      if (shouldBeOpen && canRate) {
+        setIsModalOpen(true);
+      } else if (!shouldBeOpen) {
+        setIsModalOpen(false);
       }
-    } else if (feedbackModalParam !== "true" && isModalOpen) {
-      // Close the modal if the parameter is not present
-      handleModalStateChange(false);
     }
-  }, [
-    user,
-    searchParams,
-    userRatingsData,
-    handleModalStateChange,
-    setSearchParams,
-    isModalOpen,
-  ]);
+  }, [searchParams]); // Deliberately minimal dependencies
 
-  // Get aggregated ratings for display
-  const { data: aggregatedRatings } = useQuery(GetCourseRatingsDocument, {
-    variables: {
-      subject: currentClass?.subject,
-      number: currentClass?.courseNumber,
-    },
-    skip: !currentClass?.subject || !currentClass?.courseNumber,
-  });
-
-  // Create rating mutation
   const [createRatingMutation] = useMutation(CreateRatingDocument);
-
   const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
 
-  const [getAggregatedRatings, { data: aggregatedRatingsData }] =
-    useLazyQuery<IAggregatedRatings>(GetAggregatedRatingsDocument);
-
-  useEffect(() => {
-    setTermRatings(aggregatedRatingsData as IAggregatedRatings | null);
-  }, [aggregatedRatingsData]);
-
-  // Get semesters with ratings
-  const { data: semestersWithRatingsData } = useQuery(
-    GetSemestersWithRatingsDocument,
-    {
-      variables: {
-        subject: currentClass.subject,
-        courseNumber: currentClass.courseNumber,
-      },
-      skip: !currentClass?.subject || !currentClass?.courseNumber,
-    }
-  );
-
-  const semestersWithRatings = useMemo(() => {
-    if (!semestersWithRatingsData) return [];
-    return semestersWithRatingsData.semestersWithRatings.filter(
-      (sem) => sem.maxMetricCount > 0
-    );
-  }, [semestersWithRatingsData]);
-
   const availableTerms = useMemo(() => {
-    if (!currentCourse.classes) return [];
+    if (!courseClasses.length) return [];
 
     const today = new Date();
-    const courseTerms: Term[] = currentCourse.classes
+    const courseTerms: Term[] = courseClasses
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
@@ -194,30 +151,13 @@ export function RatingsContainer() {
       });
 
     return _.uniqBy(courseTerms, (term) => term.label);
-  }, [currentCourse]);
-
-  const userRatings = useMemo(() => {
-    if (!userRatingsData?.userRatings?.classes) return null;
-
-    const matchedRating = userRatingsData.userRatings.classes.find(
-      (classRating: {
-        subject: string;
-        courseNumber: string;
-        semester: Semester;
-        year: number;
-        classNumber: string;
-      }) =>
-        classRating.subject === currentClass.subject &&
-        classRating.courseNumber === currentClass.courseNumber
-    );
-    return matchedRating as IUserRatingClass;
-  }, [userRatingsData, currentClass]);
+  }, [courseClasses]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
     const metricsSource =
       selectedTerm !== "all" && termRatings?.metrics
         ? termRatings.metrics
-        : aggregatedRatings?.course?.aggregatedRatings?.metrics;
+        : aggregatedRatingsData?.metrics;
 
     const metrics =
       metricsSource?.filter((metric): metric is IMetric => Boolean(metric)) ??
@@ -225,13 +165,14 @@ export function RatingsContainer() {
 
     if (
       !metrics.some(
-        (metric) => isMetricRating(metric.metricName) && metric.count !== 0
+        (metric: IMetric) =>
+          isMetricRating(metric.metricName) && metric.count !== 0
       )
     ) {
       return null;
     }
 
-    return metrics.map((metric) => {
+    return metrics.map((metric: IMetric) => {
       const categories =
         metric.categories?.filter((category): category is MetricCategory =>
           Boolean(category)
@@ -239,12 +180,16 @@ export function RatingsContainer() {
 
       let maxCount = 1;
       RATING_VALUES.forEach((rating) => {
-        const category = categories.find((cat) => cat.value === rating);
+        const category = categories.find(
+          (cat: MetricCategory) => cat.value === rating
+        );
         maxCount = Math.max(maxCount, category?.count ?? 0);
       });
 
       const stats = RATING_VALUES.map((rating) => {
-        const category = categories.find((cat) => cat.value === rating);
+        const category = categories.find(
+          (cat: MetricCategory) => cat.value === rating
+        );
         const count = category?.count ?? 0;
         return {
           rating,
@@ -265,19 +210,7 @@ export function RatingsContainer() {
         weightedAverage: metric.weightedAverage,
       } satisfies RatingDetailProps;
     });
-  }, [aggregatedRatings, selectedTerm, termRatings]);
-
-  const hasRatings = useMemo(() => {
-    const metrics =
-      aggregatedRatings?.course?.aggregatedRatings?.metrics?.filter(
-        (metric): metric is IMetric => Boolean(metric)
-      ) ?? [];
-    const totalRatings = metrics.reduce(
-      (total, metric) => total + (metric.count ?? 0),
-      0
-    );
-    return totalRatings > 0;
-  }, [aggregatedRatings]);
+  }, [aggregatedRatingsData, selectedTerm, termRatings]);
 
   const termSelectOptions = useMemo(() => {
     const withDuplicates = availableTerms
@@ -303,9 +236,11 @@ export function RatingsContainer() {
         value: `${t.semester} ${t.year}`,
         label: `${t.semester} ${t.year}`,
       }));
-    return withDuplicates.filter(
+    const uniqueOptions = withDuplicates.filter(
       (v) => withDuplicates.find((v2) => v2.value === v.value) === v
     );
+
+    return [{ value: "all", label: "All Semesters" }, ...uniqueOptions];
   }, [availableTerms, semestersWithRatings, termsData]);
 
   // const ratingsCount = useMemo(
@@ -313,81 +248,31 @@ export function RatingsContainer() {
   //   [ratingsData]
   // );
 
-  const getRefetchQueries = (classData: IClass) => {
-    const queries: Array<
-      | {
-          query: typeof GetClassDocument;
-          variables: {
-            year: number;
-            semester: Semester;
-            subject: string;
-            courseNumber: string;
-            number: string;
-            sessionId: string | null;
-          };
-        }
-      | {
-          query: typeof GetCourseRatingsDocument;
-          variables: { subject: string; number: string };
-        }
-      | {
-          query: typeof GetSemestersWithRatingsDocument;
-          variables: { subject: string; courseNumber: string };
-        }
-      | { query: typeof GetUserRatingsDocument }
-    > = [
-      {
-        query: GetClassDocument,
-        variables: {
-          year: classData.year,
-          semester: classData.semester,
-          subject: classData.subject,
-          courseNumber: classData.courseNumber,
-          number: classData.number,
-          sessionId: classData.sessionId ?? null,
-        },
-      },
-      {
-        query: GetCourseRatingsDocument,
-        variables: {
-          subject: classData.subject,
-          number: classData.courseNumber,
-        },
-      },
-      {
-        query: GetSemestersWithRatingsDocument,
-        variables: {
-          subject: classData.subject,
-          courseNumber: classData.courseNumber,
-        },
-      },
-    ];
-
-    if (user) {
-      queries.push({ query: GetUserRatingsDocument });
-    }
-
-    return queries;
-  };
+  if (loading) {
+    return <EmptyState heading="Loading Ratings Data" loading />;
+  }
 
   return (
     <>
       {!hasRatings ? (
-        <div className={styles.placeholder}>
-          <UserStar width={32} height={32} strokeWidth={1.5} />
-          <p className={styles.heading}>No Course Ratings</p>
-          <p className={styles.paragraph}>
-            This course doesn't have any reviews yet.
-            <br />
-            Be the first to share your experience!
-          </p>
+        <EmptyState
+          icon={<UserStar width={32} height={32} strokeWidth={1.5} />}
+          heading="No Course Ratings"
+          paragraph={
+            <>
+              This course doesn't have any reviews yet.
+              <br />
+              Be the first to share your experience!
+            </>
+          }
+        >
           <RatingButton
             user={user}
             onOpenModal={handleModalStateChange}
             userRatingData={userRatingsData}
             currentClass={currentClass}
           />
-        </div>
+        </EmptyState>
       ) : (
         <div className={styles.root}>
           <Container size="2">
@@ -415,13 +300,9 @@ export function RatingsContainer() {
                 <div className={styles.termSelectWrapper}>
                   {hasRatings && (
                     <Select
-                      options={[
-                        { value: "all", label: "Overall Ratings" },
-                        ...termSelectOptions,
-                      ]}
+                      options={termSelectOptions}
                       value={selectedTerm}
-                      variant="foreground"
-                      onChange={async (selectedValue) => {
+                      onChange={(selectedValue) => {
                         if (Array.isArray(selectedValue) || !selectedValue)
                           return; // ensure it is string
                         setSelectedTerm(selectedValue);
@@ -429,15 +310,17 @@ export function RatingsContainer() {
                           setTermRatings(null);
                         } else if (isSemester(selectedValue)) {
                           const [semester, year] = selectedValue.split(" ");
-                          const { data } = await getAggregatedRatings({
-                            variables: {
-                              subject: currentClass.subject,
-                              courseNumber: currentClass.courseNumber,
-                              semester: semester,
-                              year: parseInt(year),
-                            },
-                          });
-                          if (data) setTermRatings(data);
+                          const selectedClass = courseClasses.find(
+                            (c) =>
+                              c.semester === semester &&
+                              c.year === parseInt(year)
+                          );
+                          if (
+                            selectedClass &&
+                            selectedClass.aggregatedRatings
+                          ) {
+                            setTermRatings(selectedClass.aggregatedRatings);
+                          }
                         }
                       }}
                       placeholder="Select term"
@@ -492,8 +375,9 @@ export function RatingsContainer() {
                 number: currentClass.number,
               },
               currentRatings: userRatings,
-              refetchQueries: getRefetchQueries(currentClass),
+              refetchQueries: [],
             });
+            refetchAllRatings();
             setIsModalOpen(false);
           } catch (error) {
             const message = getRatingErrorMessage(error);
@@ -520,8 +404,9 @@ export function RatingsContainer() {
                   courseNumber: currentClass.courseNumber,
                   number: currentClass.number,
                 },
-                refetchQueries: getRefetchQueries(currentClass),
+                refetchQueries: [],
               });
+              refetchAllRatings();
               setIsDeleteModalOpen(false);
             } catch (error) {
               const message = getRatingErrorMessage(error);

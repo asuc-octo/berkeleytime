@@ -43,7 +43,8 @@ export const useGetClass = (
 
   return {
     ...query,
-    data: query.data?.class,
+    data: query.data?.class ?? query.previousData?.class,
+    isStale: !query.data && !!query.previousData,
   };
 };
 

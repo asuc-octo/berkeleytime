@@ -3,7 +3,6 @@
   flex-shrink: 0;
   overflow-y: auto;
   background-color: var(--foreground-color);
-  scrollbar-color: var(--label-color) var(--foreground-color);
 
   @media (width <= 992px) {
     width: 384px;

@@ -34,6 +34,20 @@
     color: var(--secondary-color);
   }
 
+  .reservedSeatingBadgeContainer {
+    height: 0;
+    position: relative;
+    align-self: center;
+
+    > * {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translateY(-50%);
+      white-space: nowrap;
+    }
+  }
+
   .badge {
     position: relative;
     display: inline;
@@ -55,23 +69,6 @@
     right: -6px;
     top: 1px;
     background-color: var(--blue-500);
-  }
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-
-  .loadingHeader {
-    height: 238.5px;
-    background-color: var(--foreground-color);
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .loadingBody {
-    flex-grow: 1;
-    background-color: var(--background-color);
   }
 }
 

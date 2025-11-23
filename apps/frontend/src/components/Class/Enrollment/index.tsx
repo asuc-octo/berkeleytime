@@ -12,10 +12,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { TooltipProps } from "recharts";
+import type { TooltipContentProps } from "recharts";
 
 import { Box, Button, Container, HoverCard } from "@repo/theme";
 
+import EmptyState from "@/components/Class/EmptyState";
+import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 
 import styles from "./Enrollment.module.scss";
@@ -31,7 +33,16 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
-const renderTooltip = ({ label, payload }: TooltipProps<number, string>) => {
+type EnrollmentTooltipPayload = {
+  name?: string | number;
+  value?: number;
+  stroke?: string;
+};
+
+const renderTooltip = ({
+  label,
+  payload,
+}: TooltipContentProps<number, string>) => {
   if (typeof label !== "number" || !payload || payload.length === 0) {
     return null;
   }
@@ -43,8 +54,13 @@ const renderTooltip = ({ label, payload }: TooltipProps<number, string>) => {
   return (
     <HoverCard
       content={`Day ${day} ${time}`}
-      data={payload.map((value, index) => {
-        const name = value.name?.valueOf();
+      data={payload.map((value: EnrollmentTooltipPayload, index: number) => {
+        const name =
+          typeof value.name === "string"
+            ? value.name
+            : typeof value.name === "number"
+              ? value.name.toString()
+              : "";
         return {
           key: `${name}-${index}`,
           label: name === "enrolled" ? "Enrolled" : "Waitlisted",
@@ -59,9 +75,17 @@ const renderTooltip = ({ label, payload }: TooltipProps<number, string>) => {
 
 export default function Enrollment() {
   const { class: _class } = useClass();
+  const { data: enrollmentData, loading } = useGetClassEnrollment(
+    _class.year,
+    _class.semester,
+    _class.subject,
+    _class.courseNumber,
+    _class.number
+  );
+
+  const history = enrollmentData?.primarySection?.enrollment?.history ?? [];
 
   const data = useMemo(() => {
-    const history = _class.primarySection.enrollment?.history ?? [];
     if (history.length === 0) return [];
 
     const firstTime = moment(history[0].startTime).startOf("minute");
@@ -99,7 +123,7 @@ export default function Enrollment() {
         waitlisted: values.waitlistedPercent,
       }))
       .sort((a, b) => a.timeDelta - b.timeDelta);
-  }, [_class.primarySection.enrollment]);
+  }, [history]);
 
   const dataMax = useMemo(() => {
     if (data.length === 0) return 0;
@@ -141,17 +165,23 @@ export default function Enrollment() {
     _class.number,
   ]);
 
+  if (loading) {
+    return <EmptyState heading="Loading Enrollment Data" loading />;
+  }
+
   if (data.length === 0) {
     return (
-      <div className={styles.placeholder}>
-        <GraphUp width={32} height={32} />
-        <p className={styles.heading}>No Enrollment Data Available</p>
-        <p className={styles.paragraph}>
-          This class doesn't have enrollment history data yet.
-          <br />
-          Enrollment trends will appear here once data is available.
-        </p>
-      </div>
+      <EmptyState
+        icon={<GraphUp width={32} height={32} />}
+        heading="No Enrollment Data Available"
+        paragraph={
+          <>
+            This class doesn't have enrollment history data yet.
+            <br />
+            Enrollment trends will appear here once data is available.
+          </>
+        }
+      />
     );
   }
 
@@ -236,21 +266,21 @@ export default function Enrollment() {
                   />
                   <Line
                     type="linear"
-                    dataKey="enrolled"
-                    stroke="var(--blue-500)"
-                    dot={false}
-                    strokeWidth={3}
-                    name="enrolled"
-                    connectNulls
-                  />
-                  <Line
-                    type="linear"
                     dataKey="waitlisted"
                     stroke="var(--orange-500)"
                     dot={false}
                     strokeWidth={2}
                     strokeDasharray="5 5"
                     name="waitlisted"
+                    connectNulls
+                  />
+                  <Line
+                    type="linear"
+                    dataKey="enrolled"
+                    stroke="var(--blue-500)"
+                    dot={false}
+                    strokeWidth={3}
+                    name="enrolled"
                     connectNulls
                   />
                 </LineChart>

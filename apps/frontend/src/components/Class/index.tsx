@@ -16,13 +16,7 @@ import {
   OpenNewWindow,
 } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import {
-  Link,
-  NavLink,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
@@ -42,10 +36,10 @@ import CCN from "@/components/CCN";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useReadCourseForClass, useUpdateUser } from "@/hooks/api";
-import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { useGetCourseForClass, useUpdateUser } from "@/hooks/api";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
-import { IClass, IClassCourse, signIn } from "@/lib/api";
+import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
 import {
   CreateRatingDocument,
   GetUserRatingsDocument,
@@ -66,15 +60,6 @@ const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
 
-interface BodyProps {
-  children: ReactNode;
-  dialog?: boolean;
-}
-
-function Body({ children, dialog }: BodyProps) {
-  return dialog ? children : <Outlet />;
-}
-
 interface RootProps {
   dialog?: boolean;
   children: ReactNode;
@@ -91,7 +76,7 @@ function Root({ dialog, children }: RootProps) {
 }
 
 interface ControlledProps {
-  class: IClass;
+  class: IClassDetails;
   course?: IClassCourse;
   year?: never;
   semester?: never;
@@ -133,6 +118,14 @@ const formatClassNumber = (number: string | undefined | null): string => {
   return num.toString().padStart(2, "0");
 };
 
+const getCurrentTab = (pathname: string): string => {
+  if (pathname.endsWith("/sections")) return "sections";
+  if (pathname.endsWith("/grades")) return "grades";
+  if (pathname.endsWith("/ratings")) return "ratings";
+  if (pathname.endsWith("/enrollment")) return "enrollment";
+  return "overview";
+};
+
 export default function Class({
   year,
   semester,
@@ -149,6 +142,18 @@ export default function Class({
 
   const { user, loading: userLoading } = useUser();
 
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(() => {
+    return new Set([getCurrentTab(location.pathname)]);
+  });
+
+  useEffect(() => {
+    const currentTab = getCurrentTab(location.pathname);
+    setVisitedTabs((prev) => {
+      if (prev.has(currentTab)) return prev;
+      return new Set(prev).add(currentTab);
+    });
+  }, [location.pathname]);
+
   const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
     skip: !user,
   });
@@ -159,15 +164,16 @@ export default function Class({
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
 
-  const { data: course, loading: courseLoading } = useReadCourseForClass(
+  const { data: course } = useGetCourseForClass(
     providedClass?.subject ?? (subject as string),
     providedClass?.courseNumber ?? (courseNumber as string),
     {
       skip: !!providedCourse,
+      fetchPolicy: "cache-first",
     }
   );
 
-  const { data, loading } = useReadClass(
+  const { data } = useGetClass(
     year as number,
     semester as Semester,
     subject as string,
@@ -203,6 +209,19 @@ export default function Class({
     () => providedCourse ?? course,
     [course, providedCourse]
   );
+
+  const classTitle = useMemo(() => {
+    const attributes = _class?.primarySection?.sectionAttributes ?? [];
+    const specialTitleAttribute = attributes.find(
+      (attr) => attr.attribute?.formalDescription === "Special Title"
+    );
+
+    if (specialTitleAttribute?.value?.formalDescription) {
+      return specialTitleAttribute.value.formalDescription;
+    }
+
+    return _course?.title ?? "";
+  }, [_class?.primarySection?.sectionAttributes, _course?.title]);
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,
@@ -241,6 +260,19 @@ export default function Class({
   const bookmark = useCallback(async () => {
     if (!user || !_class) return;
 
+    const bookmarkEntry: (typeof user.bookmarkedClasses)[number] = {
+      __typename: "Class",
+      ..._class,
+      course: {
+        __typename: "Course",
+        title: _course?.title ?? "",
+      },
+      gradeDistribution: {
+        __typename: "GradeDistribution",
+        average: _course?.gradeDistribution?.average ?? null,
+      },
+    };
+
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
           (bookmarkedClass) =>
@@ -252,7 +284,7 @@ export default function Class({
               bookmarkedClass.semester === _class?.semester
             )
         )
-      : user.bookmarkedClasses.concat(_class);
+      : user.bookmarkedClasses.concat(bookmarkEntry);
     await updateUser(
       {
         bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
@@ -273,7 +305,7 @@ export default function Class({
         },
       }
     );
-  }, [_class, bookmarked, updateUser, user]);
+  }, [_class, _course, bookmarked, updateUser, user]);
 
   useEffect(() => {
     if (!_class) return;
@@ -288,12 +320,21 @@ export default function Class({
   }, [_class]);
 
   const ratingsCount = useMemo<number | false>(() => {
-    const metrics = _course?.aggregatedRatings?.metrics;
+    const aggregatedRatings = _course?.aggregatedRatings;
+    if (!aggregatedRatings) {
+      return false;
+    }
+
+    type Metric = NonNullable<
+      IClassCourse["aggregatedRatings"]["metrics"]
+    >[number];
+    const metrics: Metric[] = aggregatedRatings.metrics;
     if (!metrics || metrics.length === 0) {
       return false;
     }
 
-    return Math.max(...metrics.map((metric) => metric.count));
+    const counts = metrics.map((metric: Metric) => metric.count);
+    return counts.length > 0 ? Math.max(...counts) : false;
   }, [_course]);
 
   const ratingsLockContext = useMemo(() => {
@@ -427,7 +468,7 @@ export default function Class({
   // const seatReservationCount =
   //   _class?.primarySection.enrollment?.latest?.seatReservationCount ?? [];
 
-  const courseGradeDistribution = _class?.course.gradeDistribution;
+  const courseGradeDistribution = _course?.gradeDistribution;
 
   const hasCourseGradeSummary = useMemo(() => {
     if (!courseGradeDistribution) return false;
@@ -442,10 +483,7 @@ export default function Class({
       return true;
     }
 
-    return courseGradeDistribution.distribution?.some((grade) => {
-      const count = grade.count ?? 0;
-      return count > 0;
-    });
+    return false;
   }, [courseGradeDistribution]);
 
   const reservedSeatingMaxCount = useMemo(() => {
@@ -456,15 +494,6 @@ export default function Class({
       0
     );
   }, [_class]);
-
-  if (loading || courseLoading) {
-    return (
-      <div className={styles.loading}>
-        <div className={styles.loadingHeader} />
-        <div className={styles.loadingBody} />
-      </div>
-    );
-  }
 
   // TODO: Error state
   if (!_course || !_class) {
@@ -486,9 +515,7 @@ export default function Class({
                         #{formatClassNumber(_class.number)}
                       </span>
                     </h1>
-                    <p className={styles.description}>
-                      {_class.title || _class.course.title}
-                    </p>
+                    <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
                     {/* TODO: Reusable bookmark button */}
@@ -554,7 +581,7 @@ export default function Class({
                       }}
                     >
                       <AverageGrade
-                        gradeDistribution={_class.course.gradeDistribution}
+                        gradeDistribution={_course?.gradeDistribution}
                       />
                     </Link>
                   )}
@@ -566,11 +593,13 @@ export default function Class({
                     <CCN sectionId={primarySection.sectionId} />
                   )}
                   {reservedSeatingMaxCount > 0 && (
-                    <Badge
-                      label="Reserved Seating"
-                      color={Color.Orange}
-                      icon={<InfoCircle />}
-                    />
+                    <div className={styles.reservedSeatingBadgeContainer}>
+                      <Badge
+                        label="Reserved Seating"
+                        color={Color.Orange}
+                        icon={<InfoCircle />}
+                      />
+                    </div>
                   )}
                 </Flex>
               </Flex>
@@ -646,39 +675,111 @@ export default function Class({
               course: _course,
             }}
           >
-            <Body dialog={dialog}>
-              {dialog && (
-                <>
-                  <Tabs.Content value="overview" asChild>
-                    <SuspenseBoundary>
-                      <Overview />
+            {dialog ? (
+              <>
+                <Tabs.Content value="overview" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Overview />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="sections" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Sections />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="grades" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Grades />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                {!ratingsLocked && (
+                  <Tabs.Content value="ratings" asChild>
+                    <SuspenseBoundary fallback={<></>}>
+                      <Ratings />
                     </SuspenseBoundary>
                   </Tabs.Content>
-                  <Tabs.Content value="sections" asChild>
-                    <SuspenseBoundary>
+                )}
+                <Tabs.Content value="enrollment" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Enrollment />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+              </>
+            ) : (
+              <>
+                {/* Lazy mount: only render tabs that have been visited, keep them mounted */}
+                {visitedTabs.has("sections") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "sections"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
                       <Sections />
                     </SuspenseBoundary>
-                  </Tabs.Content>
-                  <Tabs.Content value="grades" asChild>
-                    <SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("grades") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "grades"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
                       <Grades />
                     </SuspenseBoundary>
-                  </Tabs.Content>
-                  {!ratingsLocked && (
-                    <Tabs.Content value="ratings" asChild>
-                      <SuspenseBoundary>
-                        <Ratings />
-                      </SuspenseBoundary>
-                    </Tabs.Content>
-                  )}
-                  <Tabs.Content value="enrollment" asChild>
-                    <SuspenseBoundary>
+                  </div>
+                )}
+                {!ratingsLocked && visitedTabs.has("ratings") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "ratings"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Ratings />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("enrollment") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "enrollment"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
                       <Enrollment />
                     </SuspenseBoundary>
-                  </Tabs.Content>
-                </>
-              )}
-            </Body>
+                  </div>
+                )}
+                {visitedTabs.has("overview") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "overview"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Overview />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+              </>
+            )}
           </ClassContext>
         </Flex>
       </Root>

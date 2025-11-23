@@ -9,7 +9,7 @@ import { Flex, IconButton } from "@repo/theme";
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
-import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
@@ -89,9 +89,9 @@ export default function Catalog() {
     [providedSubject]
   );
 
-  const { data: _class, loading: classLoading } = useReadClass(
+  const { data: _class } = useGetClass(
     term?.year as number,
-    term?.semester,
+    term?.semester as Semester,
     subject as string,
     courseNumber as string,
     number as string,
@@ -99,9 +99,6 @@ export default function Catalog() {
       skip: !subject || !courseNumber || !number || !term,
     }
   );
-
-  // Course data is already included in _class via the backend resolver
-  const _course = _class?.course;
 
   const handleSelect = useCallback(
     (subject: string, courseNumber: string, number: string) => {
@@ -205,14 +202,7 @@ export default function Catalog() {
       </button>
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {classLoading ? (
-          <div className={styles.loading}>
-            <div className={styles.loadingHeader} />
-            <div className={styles.loadingBody} />
-          </div>
-        ) : _class && _course ? (
-          <Class class={_class} course={_course} />
-        ) : null}
+        {_class ? <Class class={_class} /> : null}
       </Flex>
     </div>
   );

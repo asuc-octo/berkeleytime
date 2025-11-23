@@ -1,7 +1,18 @@
-import { Component, IClass, Semester } from "./api";
+import { Component, Semester } from "./api";
+
+interface ClassLinkable {
+  year: number;
+  semester: Semester;
+  subject: string;
+  courseNumber: string;
+  number: string;
+  primarySection?: {
+    component?: Component | null;
+  } | null;
+}
 
 export const getExternalLink = (
-  yearOrClass: number | IClass,
+  yearOrClass: number | ClassLinkable,
   semester?: Semester,
   subject?: string,
   courseNumber?: string,
