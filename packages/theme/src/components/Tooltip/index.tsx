@@ -27,7 +27,7 @@ export type TooltipProps = Props &
 export function TooltipCard({
   content,
   description,
-  hasArrow = true,
+  hasArrow = false,
   ...props
 }: Omit<Primitive.TooltipContentProps, keyof TooltipCardProps> &
   TooltipCardProps) {
@@ -48,7 +48,7 @@ export function Tooltip({
   card,
   content,
   description,
-  hasArrow = true,
+  hasArrow = false,
   sideOffset = 8,
   collisionPadding = 8,
   side = "bottom",

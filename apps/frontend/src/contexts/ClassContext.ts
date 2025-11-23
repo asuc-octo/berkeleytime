@@ -1,9 +1,9 @@
 import { createContext } from "react";
 
-import { IClass, IClassCourse } from "@/lib/api";
+import { IClassCourse, IClassDetails } from "@/lib/api";
 
 export interface ClassContextType {
-  class: IClass;
+  class: IClassDetails;
   course: IClassCourse;
 }
 

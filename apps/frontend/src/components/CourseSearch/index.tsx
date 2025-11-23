@@ -17,6 +17,8 @@ interface CourseSearchProps {
   onClear?: () => void;
   selectedCourse: ICourse | null;
   inputStyle?: React.CSSProperties;
+  minimal?: boolean;
+  ratedCourses?: Array<{ subject: string; courseNumber: string }>;
 }
 
 export default function CourseSearch({
@@ -24,6 +26,8 @@ export default function CourseSearch({
   onClear,
   selectedCourse,
   inputStyle,
+  minimal = false,
+  ratedCourses = [],
 }: CourseSearchProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +41,25 @@ export default function CourseSearch({
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];
-    return data.courses; // no transformation
+
+    // Deduplicate: keep course with highest courseId for each subject-number
+    // Not ideal behavior. This only happen if data is wrong.
+    const seen = new Map<string, (typeof data.courses)[0]>();
+    for (const course of data.courses) {
+      const key = `${course.subject}-${course.number}`;
+      const existing = seen.get(key);
+      if (!existing || course.courseId > existing.courseId) {
+        seen.set(key, course);
+      }
+    }
+
+    if (seen.size < data.courses.length) {
+      console.error(
+        `[CourseSearch] Deduplicated ${data.courses.length - seen.size} duplicate courses`
+      );
+    }
+
+    return Array.from(seen.values());
   }, [data]);
 
   const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
@@ -71,6 +93,25 @@ export default function CourseSearch({
     setRecentCourses(getRecents(RecentType.Course));
   }, [isOpen]);
 
+  useEffect(() => {
+    if (selectedCourse && !isOpen) {
+      setSearchQuery("");
+    }
+  }, [selectedCourse, isOpen]);
+
+  const isCourseRated = (subject: string, number: string) => {
+    return ratedCourses.some(
+      (rated) => rated.subject === subject && rated.courseNumber === number
+    );
+  };
+
+  const handleFocus = () => {
+    if (!searchQuery && selectedCourse) {
+      setSearchQuery(`${selectedCourse.subject} ${selectedCourse.number}`);
+    }
+    setIsOpen(true);
+  };
+
   return (
     <div ref={wrapperRef} style={{ position: "relative" }}>
       <div className={styles.inputWrapper}>
@@ -85,20 +126,13 @@ export default function CourseSearch({
               ? `${selectedCourse.subject} ${selectedCourse.number}`
               : "")
           }
-          onFocus={() => setIsOpen(true)}
-          onClick={() => {
-            if (!searchQuery && selectedCourse && onClear) onClear(); // clear on click
-            setIsOpen(true);
-          }}
+          onFocus={handleFocus}
+          onClick={() => setIsOpen(true)}
           onChange={(e) => {
             setSearchQuery(e.target.value);
             if (onClear) onClear();
           }}
-          style={{
-            ...inputStyle,
-            cursor:
-              !searchQuery && selectedCourse && onClear ? "pointer" : undefined,
-          }}
+          style={inputStyle}
         />
       </div>
 
@@ -108,7 +142,7 @@ export default function CourseSearch({
             <LoadingIndicator className={styles.loading} size="md" />
           ) : (
             <div>
-              {recentCourses.length > 0 && (
+              {!minimal && recentCourses.length > 0 && (
                 <section className={styles.section}>
                   <h2>RECENT</h2>
                   <div className={styles.recentCourses}>
@@ -139,28 +173,46 @@ export default function CourseSearch({
               )}
 
               {currentCourses.length > 0 && (
-                <section className={styles.section}>
-                  <h2>CATALOG</h2>
+                <section
+                  className={styles.section}
+                  style={minimal ? { paddingTop: 0 } : undefined}
+                >
+                  {!minimal && <h2>CATALOG</h2>}
                   <div className={styles.catalogList}>
-                    {currentCourses.map((course) => (
-                      <button
-                        key={`${course.subject}-${course.number}`}
-                        className={styles.catalogItem}
-                        onClick={() => {
-                          onSelect?.(course);
-                          setSearchQuery("");
-                          setIsOpen(false);
-                        }}
-                      >
-                        <span>
-                          {course.subject} {course.number}
-                        </span>
-                      </button>
-                    ))}
+                    {currentCourses.map((course) => {
+                      const isRated = isCourseRated(
+                        course.subject,
+                        course.number
+                      );
+                      return (
+                        <button
+                          key={course.courseId}
+                          className={`${styles.catalogItem} ${isRated ? styles.ratedItem : ""}`}
+                          onClick={() => {
+                            if (!isRated) {
+                              onSelect?.(course);
+                              setSearchQuery("");
+                              setIsOpen(false);
+                            }
+                          }}
+                          disabled={isRated}
+                        >
+                          <span>
+                            {course.subject} {course.number}
+                            {isRated && (
+                              <span className={styles.ratedLabel}>
+                                {" "}
+                                (Rated)
+                              </span>
+                            )}
+                          </span>
+                        </button>
+                      );
+                    })}
                     {!searchQuery && catalogCourses.length > 50 && (
                       <div className={styles.moreCoursesHint}>
-                        +{catalogCourses.length - 50} more courses. Type to
-                        search and narrow results.
+                        +{catalogCourses.length - 50} more courses. Search and
+                        narrow results.
                       </div>
                     )}
                   </div>

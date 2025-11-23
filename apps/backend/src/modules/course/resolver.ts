@@ -2,6 +2,7 @@ import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
 import { getPnpPercentageFromCounts } from "@repo/common";
 
+import { CourseAggregatedRatingsArgs } from "../../generated-types/graphql";
 import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import { getCourseAggregatedRatings } from "../rating/controller";
@@ -147,11 +148,13 @@ const resolvers: CourseModule.Resolvers = {
     },
 
     aggregatedRatings: async (
-      parent: IntermediateCourse | CourseModule.Course
+      parent: IntermediateCourse | CourseModule.Course,
+      args: CourseAggregatedRatingsArgs
     ) => {
       const aggregatedRatings = await getCourseAggregatedRatings(
         parent.subject,
-        parent.number
+        parent.number,
+        args.metricNames ?? undefined
       );
 
       return aggregatedRatings;

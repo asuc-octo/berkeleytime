@@ -5,9 +5,7 @@ import { useQuery } from "@apollo/client/react";
 import { GetUserRatingsDocument } from "@/lib/generated/graphql";
 
 export const useUserRatings = () => {
-  const { data, loading, error } = useQuery(GetUserRatingsDocument, {
-    fetchPolicy: "cache-and-network",
-  });
+  const { data, loading, error } = useQuery(GetUserRatingsDocument);
 
   const ratings = useMemo(() => {
     if (!data?.userRatings?.classes) return [];

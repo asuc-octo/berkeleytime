@@ -14,8 +14,26 @@ import {
   getSecondarySections,
   getSection,
 } from "./controller";
-import { IntermediateClass, IntermediateSection } from "./formatter";
+import {
+  IntermediateClass,
+  IntermediateSection,
+  filterAndSortInstructors,
+} from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
+
+/**
+ * Type for sections that may have unfiltered instructor data from the database.
+ * Used when sections are embedded in responses and need filtering.
+ */
+type SectionWithRawInstructors = IntermediateSection & {
+  meetings?: Array<{
+    instructors?: Array<{
+      familyName?: string;
+      givenName?: string;
+      role?: string;
+    }>;
+  }>;
+};
 
 const resolvers: ClassModule.Resolvers = {
   ClassNumber: new GraphQLScalarType({
@@ -121,33 +139,63 @@ const resolvers: ClassModule.Resolvers = {
     },
 
     primarySection: async (parent: IntermediateClass | ClassModule.Class) => {
-      if (parent.primarySection) return parent.primarySection;
+      const primarySection = (parent.primarySection ||
+        (await getPrimarySection(
+          parent.year,
+          parent.semester,
+          parent.sessionId,
+          parent.subject,
+          parent.courseNumber,
+          parent.number
+        ))) as IntermediateSection | ClassModule.Section | null;
 
-      const primarySection = await getPrimarySection(
-        parent.year,
-        parent.semester,
-        parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
+      if (!primarySection) {
+        return null as unknown as ClassModule.Section;
+      }
+
+      // Filter instructors in embedded sections (when queried through course.classes)
+      // This ensures filtering works even when primarySection comes from raw DB data
+      const sectionWithRawData = primarySection as SectionWithRawInstructors;
+      if (sectionWithRawData.meetings) {
+        const filteredSection: IntermediateSection = {
+          ...sectionWithRawData,
+          meetings: sectionWithRawData.meetings.map((meeting) => ({
+            ...meeting,
+            instructors: filterAndSortInstructors(meeting.instructors),
+          })),
+        };
+        return filteredSection as unknown as ClassModule.Section;
+      }
 
       return primarySection as unknown as ClassModule.Section;
     },
 
     sections: async (parent: IntermediateClass | ClassModule.Class) => {
-      if (parent.sections) return parent.sections;
+      const sections = (parent.sections ||
+        (await getSecondarySections(
+          parent.year,
+          parent.semester,
+          parent.sessionId,
+          parent.subject,
+          parent.courseNumber,
+          parent.number
+        ))) as (IntermediateSection | ClassModule.Section)[];
 
-      const secondarySections = await getSecondarySections(
-        parent.year,
-        parent.semester,
-        parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
-
-      return secondarySections as unknown as ClassModule.Section[];
+      // Filter instructors in all sections
+      return sections.map((section) => {
+        const sectionWithRawData = section as SectionWithRawInstructors;
+        if (sectionWithRawData.meetings) {
+          const filteredSection: IntermediateSection = {
+            ...sectionWithRawData,
+            meetings: sectionWithRawData.meetings.map((meeting) => ({
+              ...meeting,
+              instructors: filterAndSortInstructors(meeting.instructors),
+            })),
+          };
+          return filteredSection as unknown as ClassModule.Section;
+        }
+        return section as unknown as ClassModule.Section;
+      });
     },
 
     gradeDistribution: async (
@@ -240,6 +288,17 @@ const resolvers: ClassModule.Resolvers = {
       return attributes.filter(
         (attr) => attr.attribute?.code === args.attributeCode
       );
+    },
+
+    meetings: (parent: IntermediateSection | ClassModule.Section) => {
+      const meetings = parent.meetings ?? [];
+
+      // Filter instructors to only show Primary Instructors (PI = professors)
+      // This prevents TAs from appearing in instructor lists across the application
+      return meetings.map((meeting) => ({
+        ...meeting,
+        instructors: filterAndSortInstructors(meeting.instructors),
+      }));
     },
   },
 

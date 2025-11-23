@@ -11,8 +11,6 @@
     flex-grow: 1;
     overflow: hidden;
     max-width: 78%;
-    scrollbar-color: var(--paragraph-color)
-      var(--border-color, rgba(0, 0, 0, 0.1));
 
     .header {
       display: flex;

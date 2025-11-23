@@ -1,18 +1,20 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { Button, Dialog, Flex, Select } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import { useReadTerms } from "@/hooks/api";
 import { IUserRatingClass } from "@/lib/api";
-import { Semester, TemporalPosition } from "@/lib/generated/graphql";
+import { Semester } from "@/lib/generated/graphql";
 
+import { SubmitRatingPopup } from "../RatingDialog";
 import { MetricData, toMetricData } from "../metricsUtil";
-import { SubmitRatingPopup } from "./ConfirmationPopups";
-import { AttendanceForm, RatingsForm } from "./FeedbackForm";
+import { RatingFormBody } from "./RatingFormBody";
+import { RatingModalLayout } from "./RatingModalLayout";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
-
-const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
+import { useRatingFormState } from "./useRatingFormState";
+import { useTermFiltering } from "./useTermFiltering";
 
 interface Term {
   value: string;
@@ -38,6 +40,7 @@ interface UserFeedbackModalProps {
     termInfo: { semester: Semester; year: number }
   ) => Promise<void>;
   initialUserClass: IUserRatingClass | null;
+  onSubmitPopupChange?: (isOpen: boolean) => void;
 }
 
 export function UserFeedbackModal({
@@ -48,6 +51,7 @@ export function UserFeedbackModal({
   availableTerms = [],
   onSubmit,
   initialUserClass,
+  onSubmitPopupChange,
 }: UserFeedbackModalProps) {
   const { data: termsData } = useReadTerms();
   const initialMetricData = useMemo(
@@ -61,33 +65,71 @@ export function UserFeedbackModal({
     [initialUserClass?.metrics]
   );
 
-  const initialTermValue = useMemo(
-    () =>
-      initialUserClass?.semester && initialUserClass?.year
-        ? `${initialUserClass.semester} ${initialUserClass.year}`
-        : null,
-    [initialUserClass?.semester, initialUserClass?.year]
-  );
+  const initialTermValue = useMemo(() => {
+    if (initialUserClass?.semester && initialUserClass?.year) {
+      // Match by semester and year only, find the first matching option
+      const matchingTerm = availableTerms.find(
+        (term) =>
+          term.semester === initialUserClass.semester &&
+          term.year === initialUserClass.year
+      );
+      return matchingTerm ? matchingTerm.value : null;
+    }
+    return null;
+  }, [initialUserClass?.semester, initialUserClass?.year, availableTerms]);
 
-  const [selectedTerm, setSelectedTerm] = useState<string | null>(
-    initialTermValue
-  );
-  const [metricData, setMetricData] = useState(initialMetricData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formState = useRatingFormState({
+    initialMetricData,
+    showCourseSelection: false,
+  });
+
+  const {
+    metricData,
+    setMetricData,
+    selectedTerm,
+    setSelectedTerm,
+    isSubmitting,
+    setIsSubmitting,
+    progress,
+  } = formState;
+
+  const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
   const hasAutoSelected = useRef(false);
 
+  const { pastTerms } = useTermFiltering({
+    availableTerms,
+    termsData,
+  });
+
   useEffect(() => {
-    if (
-      initialUserClass?.semester &&
-      initialUserClass?.year &&
-      initialUserClass?.classNumber
-    )
-      setSelectedTerm(
-        `${initialUserClass.semester} ${initialUserClass.year} ${initialUserClass.classNumber}`
+    if (initialUserClass?.semester && initialUserClass?.year) {
+      // Match by semester and year only, find the first matching option
+      const matchingTerm = availableTerms.find(
+        (term) =>
+          term.semester === initialUserClass.semester &&
+          term.year === initialUserClass.year
       );
-    if (initialUserClass?.metrics)
+      if (matchingTerm) {
+        setSelectedTerm(matchingTerm.value);
+      }
+    } else {
+      // Reset to null when initialUserClass is null (after deletion)
+      setSelectedTerm(null);
+    }
+
+    if (initialUserClass?.metrics) {
       setMetricData(toMetricData(initialUserClass.metrics));
-  }, [initialUserClass]);
+    } else {
+      // Reset to initial empty state when initialUserClass is null (after deletion)
+      setMetricData(initialMetricData);
+    }
+  }, [
+    initialUserClass,
+    availableTerms,
+    initialMetricData,
+    setMetricData,
+    setSelectedTerm,
+  ]);
 
   const hasChanges = useMemo(() => {
     const termChanged = selectedTerm !== initialTermValue;
@@ -107,6 +149,7 @@ export function UserFeedbackModal({
       typeof metricData[MetricName.Usefulness] === "number" &&
       typeof metricData[MetricName.Difficulty] === "number" &&
       typeof metricData[MetricName.Workload] === "number";
+
     return isTermValid && areRatingsValid && hasChanges;
   }, [selectedTerm, metricData, hasChanges]);
 
@@ -116,9 +159,7 @@ export function UserFeedbackModal({
     setIsSubmitting(true);
 
     try {
-      const selectedTermInfo = availableTerms.find(
-        (t) => t.value === selectedTerm
-      );
+      const selectedTermInfo = pastTerms.find((t) => t.value === selectedTerm);
       if (!selectedTermInfo) throw new Error("Invalid term selected");
 
       await onSubmit(metricData, {
@@ -128,138 +169,103 @@ export function UserFeedbackModal({
 
       onClose();
       setIsSubmitRatingPopupOpen(true);
+      onSubmitPopupChange?.(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-  const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
 
-  // Filter for past terms
-  const pastTerms = useMemo(() => {
-    if (!termsData) return availableTerms;
-
-    const termPositions = termsData.reduce(
-      (acc: Record<string, TemporalPosition>, term: any) => {
-        acc[`${term.semester} ${term.year}`] = term.temporalPosition;
-        return acc;
-      },
-      {}
-    );
-    return availableTerms.filter((term) => {
-      const position = termPositions[term.value];
-      return (
-        position === TemporalPosition.Past ||
-        TemporalPosition.Current ||
-        !position
-      );
-    });
-  }, [availableTerms, termsData]);
-
-  // Auto-select term if only one option is available
   useEffect(() => {
     if (pastTerms.length === 1 && !selectedTerm && !hasAutoSelected.current) {
       setSelectedTerm(pastTerms[0].value);
       hasAutoSelected.current = true;
     }
-  }, [pastTerms, selectedTerm]);
+  }, [pastTerms, selectedTerm, setSelectedTerm]);
 
   const handleClose = () => {
-    // Reset form state to initial values when closing
     setMetricData(initialMetricData);
-    setSelectedTerm(null);
+    setSelectedTerm(initialTermValue);
     hasAutoSelected.current = false; // Reset the auto-selection flag when closing
     onClose();
   };
 
+  // Calculate modal title and subtitle
+  const modalTitle = title;
+  const modalSubtitle = `${currentClass.subject} ${currentClass.courseNumber}`;
+
+  // Calculate question numbers
+  const questionNumbers = useMemo(() => {
+    let counter = 1;
+    const semesterQuestion = counter++;
+    const ratingsStart = counter;
+    counter += 3; // 3 rating questions
+    const attendanceStart = counter;
+
+    return {
+      classQuestionNumber: null,
+      semesterQuestionNumber: semesterQuestion,
+      ratingsStartNumber: ratingsStart,
+      attendanceStartNumber: attendanceStart,
+    };
+  }, []);
+
+  const footer = (
+    <>
+      <Button type="button" variant="secondary" onClick={handleClose}>
+        Cancel
+      </Button>
+      <Button
+        disabled={!isFormValid}
+        type="submit"
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+          e.preventDefault();
+          if (isFormValid) {
+            handleSubmit(e);
+          }
+        }}
+      >
+        {isSubmitting
+          ? "Submitting..."
+          : initialUserClass
+            ? "Submit Edit"
+            : "Submit Rating"}
+      </Button>
+    </>
+  );
+
   return (
     <>
-      <Dialog.Root open={isOpen} onOpenChange={handleClose}>
-        <Dialog.Portal>
-          <Dialog.Overlay />
-          <Dialog.Card style={{ width: "auto" }}>
-            <Dialog.Header
-              title={title}
-              subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
-              hasCloseButton
-            />
-            <Dialog.Body className={styles.modalBody}>
-              <Flex direction="column">
-                <div className={styles.formGroup}>
-                  <h3>
-                    1. What semester did you take this course?{" "}
-                    <RequiredAsterisk />
-                  </h3>
-                  <div
-                    style={{
-                      maxWidth: 350,
-                      marginLeft: "18px",
-                    }}
-                  >
-                    <Select
-                      options={pastTerms.map((term) => ({
-                        value: term.value,
-                        label: term.label,
-                      }))}
-                      value={selectedTerm}
-                      onChange={(selectedOption) => {
-                        if (Array.isArray(selectedOption))
-                          setSelectedTerm(null);
-                        else setSelectedTerm(selectedOption || null);
-                      }}
-                      placeholder="Select semester"
-                      clearable={true}
-                    />
-                  </div>
-                </div>
-
-                <RatingsForm
-                  metricData={metricData}
-                  setMetricData={setMetricData}
-                />
-                <AttendanceForm
-                  metricData={metricData}
-                  setMetricData={setMetricData}
-                />
-              </Flex>
-            </Dialog.Body>
-
-            <Dialog.Footer>
-              <Dialog.Close asChild>
-                <Button
-                  className={styles.cancelButton}
-                  type="button"
-                  variant="secondary"
-                >
-                  Cancel
-                </Button>
-              </Dialog.Close>
-              <Button
-                disabled={!isFormValid}
-                type="submit"
-                onClick={(e: any) => {
-                  e.preventDefault();
-                  if (isFormValid) {
-                    handleSubmit(e);
-                  }
-                }}
-              >
-                {isSubmitting
-                  ? "Submitting..."
-                  : initialUserClass
-                    ? "Submit Edit"
-                    : "Submit Rating"}
-              </Button>
-            </Dialog.Footer>
-          </Dialog.Card>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <RatingModalLayout
+        isOpen={isOpen}
+        onClose={handleClose}
+        title={modalTitle}
+        subtitle={modalSubtitle}
+        progress={progress}
+        footer={footer}
+      >
+        <div className={styles.formContentWrapper}>
+          <RatingFormBody
+            showCourseSelection={false}
+            selectedCourse={null}
+            onCourseSelect={() => {}}
+            onCourseClear={() => {}}
+            selectedTerm={selectedTerm}
+            onTermSelect={setSelectedTerm}
+            termOptions={pastTerms}
+            metricData={metricData}
+            setMetricData={setMetricData}
+            questionNumbers={questionNumbers}
+          />
+        </div>
+      </RatingModalLayout>
       <SubmitRatingPopup
         isOpen={isSubmitRatingPopupOpen}
         onClose={() => {
           setIsSubmitRatingPopupOpen(false);
           hasAutoSelected.current = false;
+          onSubmitPopupChange?.(false);
         }}
       />
     </>

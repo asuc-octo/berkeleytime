@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 
-import { Tooltip } from "radix-ui";
-
+import { CatalogTooltip } from "@/components/CatalogTooltip";
 import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
@@ -77,44 +76,29 @@ export function AverageGrade({
   }
 
   return (
-    <Tooltip.Root disableHoverableContent>
-      <Tooltip.Trigger asChild>
+    <CatalogTooltip
+      trigger={
         <div className={styles.trigger} style={{ color, ...style }}>
           {text}
         </div>
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          asChild
-          side="bottom"
-          sideOffset={8}
-          collisionPadding={8}
-        >
-          <div className={styles.content}>
-            <Tooltip.Arrow className={styles.arrow} />
-            <p className={styles.title}>
-              {isPnp ? "Pass Rate" : "Average Grade"}
-            </p>
-            <p className={styles.description}>
-              {isPnp ? (
-                <>
-                  <span>{passRate!}% of students</span> have passed this course{" "}
-                  {tooltip}.
-                </>
-              ) : (
-                <>
-                  Students have received{" "}
-                  {["A", "F"].includes(text[0]) ? "an " : "a "}
-                  <span style={{ color }}>
-                    {text} ({average!.toLocaleString()})
-                  </span>{" "}
-                  in this course on average {tooltip}.
-                </>
-              )}
-            </p>
-          </div>
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+      }
+      title={isPnp ? "Pass Rate" : "Average Grade"}
+      description={
+        isPnp ? (
+          <>
+            <span>{passRate!}% of students</span> have passed this course{" "}
+            {tooltip}.
+          </>
+        ) : (
+          <>
+            Students have received {["A", "F"].includes(text[0]) ? "an " : "a "}
+            <span style={{ color }}>
+              {text} ({average!.toLocaleString()})
+            </span>{" "}
+            in this course on average {tooltip}.
+          </>
+        )
+      }
+    />
   );
 }

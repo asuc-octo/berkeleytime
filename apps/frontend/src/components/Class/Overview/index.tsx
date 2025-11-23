@@ -10,65 +10,61 @@ import styles from "./Overview.module.scss";
 import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
-  const { class: _class } = useClass();
+  const { class: _class, course } = useClass();
 
   const prereqs = useMemo(() => {
-    if (_class.course.requirements && _class.course.requirements.trim()) {
-      return _class.course.requirements;
+    if (course.requirements && course.requirements.trim()) {
+      return course.requirements;
     }
-    const requiredCourses = _class.course.requiredCourses;
-    if (requiredCourses == null || requiredCourses.length === 0) {
-      return null;
-    }
-    return requiredCourses
-      .map((course) => `${course.subject} ${course.number}`)
-      .join(", ");
-  }, [_class]);
+    return null;
+  }, [course.requirements]);
 
   const classNoteLines = useMemo(() => {
-    const attributes = _class.primarySection.sectionAttributes ?? [];
+    const attributes = _class.primarySection?.sectionAttributes ?? [];
     if (!attributes.length) return null;
 
-    const noteAttribute = attributes.find(
-      (attribute) => attribute.attribute?.code === "NOTE"
+    const classDescriptionAttribute = attributes.find(
+      (attribute) =>
+        attribute.attribute?.code === "NOTE" &&
+        attribute.attribute?.formalDescription === "Class Description"
     );
 
     const text =
-      noteAttribute?.value?.formalDescription?.trim() ??
-      noteAttribute?.value?.description?.trim() ??
+      classDescriptionAttribute?.value?.formalDescription?.trim() ??
+      classDescriptionAttribute?.value?.description?.trim() ??
       null;
 
     if (!text) return null;
 
-    // Get the description for comparison
-    const description = (
-      _class.description ??
-      _class.course.description ??
-      ""
-    ).trim();
+    const description = (course.description ?? "").trim();
+    const title = (course.title ?? "").trim();
 
-    // Normalize both texts for comparison (remove extra whitespace, normalize newlines)
     const normalizedNoteText = text.replace(/\s+/g, " ").trim();
     const normalizedDescription = description.replace(/\s+/g, " ").trim();
+    const normalizedTitle = title.replace(/\s+/g, " ").trim();
 
-    // If they match exactly, don't show the class note
-    if (normalizedNoteText === normalizedDescription) return null;
+    if (
+      normalizedNoteText === normalizedDescription ||
+      normalizedNoteText === normalizedTitle
+    ) {
+      return null;
+    }
 
     return text
       .split(/\n+/)
       .map((line) => line.trim())
       .filter(Boolean);
   }, [
-    _class.primarySection.sectionAttributes,
-    _class.description,
-    _class.course.description,
+    _class.primarySection?.sectionAttributes,
+    course.description,
+    course.title,
   ]);
 
   return (
     <Box p="5">
       <Container size="3">
         <Flex direction="column" gap="5">
-          {_class.primarySection.meetings.map((meeting, i) => (
+          {_class.primarySection?.meetings.map((meeting, i) => (
             <Details {...meeting} key={i} />
           ))}
           {prereqs && (
@@ -79,13 +75,11 @@ export default function Overview() {
           )}
           <Flex direction="column" gap="2">
             <p className={styles.label}>Description</p>
-            <p className={styles.description}>
-              {_class.description ?? _class.course.description}
-            </p>
+            <p className={styles.description}>{course.description}</p>
           </Flex>
           {classNoteLines && classNoteLines.length > 0 && (
             <Flex direction="column" gap="2">
-              <p className={styles.label}>Class Note</p>
+              <p className={styles.label}>Class Notes</p>
               <p className={styles.description}>
                 {classNoteLines.map((line, index) => (
                   <span key={`${line}-${index}`}>
