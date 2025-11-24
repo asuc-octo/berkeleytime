@@ -34,6 +34,9 @@
   max-height: 300px;
   overflow-y: scroll;
   padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .sectionLabel {
@@ -58,21 +61,13 @@
   margin: 2px;
 }
 
-.tabsWrapper,
-.tabsWrapperSearchable {
+.tabsWrapper {
   padding: 0;
   background-color: var(--foreground-color);
   position: sticky;
   top: 0;
   z-index: 1;
   width: 100%;
-}
-
-.tabsWrapper {
-  border-bottom: solid 1px var(--border-color);
-}
-
-.tabsWrapperSearchable {
   border-bottom: none;
 }
 
@@ -117,35 +112,13 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 4px;
-}
 
-.commandItem {
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  outline: none;
-  color: var(--paragraph-color);
-  font-size: var(--text-14);
-  user-select: none;
+  [cmdk-item] {
+    margin-bottom: 4px;
 
-  &:hover:not(.disabled) {
-    background-color: var(--button-hover-color);
-    color: var(--heading-color);
-  }
-
-  &.selected {
-    color: var(--heading-color);
-    font-weight: var(--font-medium);
-  }
-
-  &.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .meta {
-    color: var(--label-color);
-    font-size: var(--text-12);
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -170,5 +143,13 @@
     cursor: default;
     line-height: 1;
     text-align: left;
+  }
+
+  [cmdk-item] {
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }

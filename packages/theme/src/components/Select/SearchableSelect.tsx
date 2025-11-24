@@ -10,6 +10,7 @@ import { Badge } from "../Badge";
 import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
+import SelectItem from "./SelectItem";
 import type { Option, OptionItem, SelectTab } from "./index";
 
 // Helper function to compare values
@@ -256,15 +257,14 @@ export function SearchableSelect<T>({
               if (opt.disabled) return;
               handleSelect(opt.value);
             }}
-            className={classNames(styles.commandItem, {
-              [styles.selected]: selected,
-              [styles.disabled]: opt.disabled,
-            })}
+            style={{ outline: "none" }}
           >
-            <Flex direction="row" justify="between" align="center" width="100%">
-              <span>{opt.label}</span>
-              {opt.meta && <span className={styles.meta}>{opt.meta}</span>}
-            </Flex>
+            <SelectItem
+              label={opt.label}
+              meta={opt.meta}
+              selected={selected}
+              disabled={opt.disabled}
+            />
           </Command.Item>
         );
       });
@@ -362,7 +362,7 @@ export function SearchableSelect<T>({
               />
             </div>
             {tabs?.length ? (
-              <div className={styles.tabsWrapperSearchable}>
+              <div className={styles.tabsWrapper}>
                 <PillSwitcher
                   value={activeTabValue}
                   defaultValue={defaultTab || tabs[0]?.value}

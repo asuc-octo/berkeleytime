@@ -28,7 +28,7 @@ export default function SelectItem({
   checkboxMulti = false,
 }: SelectItemProps) {
   return (
-    <Box className={styles.root} data-disabled={disabled}>
+    <Box className={styles.root} data-disabled={disabled} data-selected={selected}>
       <Flex
         direction="row"
         justify="between"

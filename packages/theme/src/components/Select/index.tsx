@@ -12,7 +12,6 @@ import { NavArrowDown, Plus, Xmark } from "iconoir-react";
 import { DropdownMenu } from "radix-ui";
 
 import { Badge } from "../Badge";
-import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
 import { SearchableSelect } from "./SearchableSelect";
 import styles from "./Select.module.scss";
@@ -165,8 +164,9 @@ export function Select<T>({
     onTabChange?.(value);
   };
 
-  // If searchable is enabled, use SearchableSelect
-  if (searchable) {
+  // If searchable is enabled OR tabs are provided, use SearchableSelect
+  // Tabs only work with the searchable variant
+  if (searchable || tabs?.length) {
     return (
       <SearchableSelect
         options={options}
@@ -321,23 +321,6 @@ export function Select<T>({
           style={{ width: triggerWidth, zIndex: 999 }}
           sideOffset={5}
         >
-          {tabs?.length && (
-            <div className={styles.tabsWrapper}>
-              <PillSwitcher
-                value={activeTabValue}
-                defaultValue={defaultTab || tabs[0]?.value}
-                items={tabs.map((tab) => ({
-                  value: tab.value,
-                  label: tab.label,
-                }))}
-                fullWidth
-                onValueChange={(value) => {
-                  handleTabChange(value);
-                  setOpen(true);
-                }}
-              />
-            </div>
-          )}
           {currentOptions.length === 0 ? (
             <div className={styles.commandEmpty}>{emptyMessage}</div>
           ) : (
