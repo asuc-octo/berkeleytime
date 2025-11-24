@@ -117,10 +117,6 @@ export const userSchema = new Schema(
       type: Date,
       required: false,
     },
-    refresh_token: {
-      type: String,
-      required: false,
-    },
     minors: {
       type: [String],
       trim: true,
