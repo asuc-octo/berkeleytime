@@ -88,8 +88,13 @@ export const userSchema = new Schema(
             },
             semester: {
               type: String,
-              enum: ["Spring", "Summer", "Fall", "Winter"],
+              enum: SEMESTER_ENUM,
               required: true,
+            },
+            sessionId: {
+              type: String,
+              required: false,
+              default: "1",
             },
             subject: {
               type: String,

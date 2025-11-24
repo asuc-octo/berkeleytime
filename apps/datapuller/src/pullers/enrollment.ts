@@ -528,6 +528,7 @@ const checkEnrollmentThresholds = async ({ log }: Config) => {
           $elemMatch: {
             "class.year": alert.year,
             "class.semester": alert.semester,
+            "class.sessionId": alert.sessionId ?? "1",
             "class.subject": alert.subject,
             "class.courseNumber": alert.courseNumber,
             "class.number": alert.sectionNumber,
@@ -541,6 +542,7 @@ const checkEnrollmentThresholds = async ({ log }: Config) => {
             mc.class &&
             mc.class.year === alert.year &&
             mc.class.semester === alert.semester &&
+            (mc.class.sessionId ?? "1") === (alert.sessionId ?? "1") &&
             mc.class.subject === alert.subject &&
             mc.class.courseNumber === alert.courseNumber &&
             mc.class.number === alert.sectionNumber
