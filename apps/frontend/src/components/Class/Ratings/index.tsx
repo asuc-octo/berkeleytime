@@ -301,7 +301,7 @@ export function RatingsContainer() {
     );
 
     // Sort chronologically (newest first) for semester dropdown
-    const sortedOptions = uniqueOptions.toSorted((a, b) => {
+    const sortedOptions = [...uniqueOptions].sort((a, b) => {
       const [aSem, aYearStr] = a.value.split(" ");
       const [bSem, bYearStr] = b.value.split(" ");
       const aYear = parseInt(aYearStr, 10);
@@ -352,7 +352,8 @@ export function RatingsContainer() {
             count: getMaxMetricCount(rating.aggregatedRatings?.metrics),
           };
         })
-        ?.toSorted((a, b) => b.count - a.count)
+        ?.slice()
+        .sort((a, b) => b.count - a.count)
         .map((option) => ({
           value: option.value,
           label: option.label,

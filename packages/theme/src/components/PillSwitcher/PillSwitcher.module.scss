@@ -47,7 +47,17 @@
   &[data-state="active"] {
     background-color: var(--foreground-color);
     color: var(--heading-color);
-    box-shadow: none;
+    box-shadow:
+      0px 3px 2px 0px rgba(0, 0, 0, 0.06),
+      0px 3px 8px 0px rgba(0, 0, 0, 0.15),
+      0px 0px 1px 0px rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="dark"] &[data-state="active"] {
+    box-shadow:
+      0px 3px 2px 0px rgba(0, 0, 0, 0.2),
+      0px 3px 8px 0px rgba(0, 0, 0, 0.4),
+      0px 0px 1px 0px rgba(0, 0, 0, 0.15);
   }
 
   &:focus-visible {

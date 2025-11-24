@@ -93,8 +93,8 @@ export function useTermFiltering({
   const filteredSemesters = useMemo(() => {
     if (!selectedCourse || !courseData) return pastTerms;
 
-    const courseTerms: Term[] = (courseData.classes ?? [])
-      .toSorted(sortByTermDescending)
+    const courseTerms: Term[] = [...(courseData.classes ?? [])]
+      .sort(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
         if (c.primarySection?.startDate) {

@@ -1,4 +1,4 @@
-import { IClass } from "@/lib/api";
+import { ICatalogClass } from "@/lib/api";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SortBy } from "./browser";
@@ -13,20 +13,43 @@ const DEFAULT_SORT_ORDER: Record<SortBy, SortOrder> = {
   [SortBy.PercentOpenSeats]: "desc",
 };
 
-const initializeFuse = (classes: IClass[]) => {
+const initializeFuse = (classes: ICatalogClass[]) => {
   const list = classes.map((_class) => {
     const { title, subject, courseNumber: number } = _class;
 
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
-    const alternateNames = containsPrefix
-      ? [
-          `${subject}${number}`,
-          `${subject} ${alternateNumber}`,
-          `${subject}${alternateNumber}`,
-        ]
-      : [`${subject}${number}`];
+    const departmentNicknames = _class.course?.departmentNicknames;
+    const abbreviations: string[] = departmentNicknames
+      ? departmentNicknames
+          .split("!")
+          .map((abbr: string) => abbr.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
+
+    const alternateNames = [
+      ...(containsPrefix
+        ? [
+            `${subject}${number}`,
+            `${subject} ${alternateNumber}`,
+            `${subject}${alternateNumber}`,
+          ]
+        : [`${subject}${number}`]),
+      ...abbreviations.flatMap((abbreviation: string) =>
+        containsPrefix
+          ? [
+              `${abbreviation}${number}`.toLowerCase(),
+              `${abbreviation} ${number}`.toLowerCase(),
+              `${abbreviation}${alternateNumber}`.toLowerCase(),
+              `${abbreviation} ${alternateNumber}`.toLowerCase(),
+            ]
+          : [
+              `${abbreviation}${number}`.toLowerCase(),
+              `${abbreviation} ${number}`.toLowerCase(),
+            ]
+      ),
+    ];
 
     return {
       title: _class.title ?? title,
@@ -63,7 +86,7 @@ const initializeFuse = (classes: IClass[]) => {
 };
 
 interface Data {
-  classes: IClass[];
+  classes: ICatalogClass[];
   query: string;
   sortBy: SortBy;
 }

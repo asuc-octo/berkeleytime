@@ -420,7 +420,7 @@ export const getInstructorAggregatedRatings = async (
   const sections = await SectionModel.find({
     subject,
     courseNumber,
-  }).select("semester year number meetings");
+  }).select("semester year number classNumber meetings");
 
   // Build a map of instructors to the classes they taught
   const instructorMap = new Map<
@@ -455,7 +455,7 @@ export const getInstructorAggregatedRatings = async (
           const classId = {
             semester: section.semester as Semester,
             year: section.year,
-            classNumber: section.number,
+            classNumber: section.classNumber ?? section.number,
           };
 
           // Avoid duplicates

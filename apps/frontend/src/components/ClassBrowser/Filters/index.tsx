@@ -505,7 +505,7 @@ export default function Filters() {
   const availableTerms = useMemo(() => {
     if (!terms) return [];
 
-    return terms
+    return [...terms]
       .filter(
         ({ year, semester }, index) =>
           index ===
@@ -513,7 +513,7 @@ export default function Filters() {
             (term) => term.semester === semester && term.year === year
           )
       )
-      .toSorted(sortByTermDescending);
+      .sort(sortByTermDescending);
   }, [terms]);
 
   const currentTermLabel = `${semester} ${year}`;

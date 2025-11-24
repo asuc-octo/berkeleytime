@@ -102,10 +102,7 @@ export function RatingFormBody({
                 value: term.value,
                 label: term.label,
               }))}
-              disabled={
-                !selectedCourse ||
-                (!!selectedCourse && termOptions.length === 0)
-              }
+              disabled={!selectedCourse || termOptions.length === 0}
               loading={termOptionsLoading}
               value={selectedTerm}
               onChange={(selectedOption) => {
