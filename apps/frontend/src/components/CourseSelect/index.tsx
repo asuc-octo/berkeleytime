@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
-import { SearchableSelect } from "@repo/theme";
+import { Select } from "@repo/theme";
 import type { Option } from "@repo/theme";
 
 import { ICourse } from "@/lib/api";
@@ -258,7 +258,8 @@ export default function CourseSelect({
   }, [selectedCourse, catalogCourses]);
 
   return (
-    <SearchableSelect<CourseOption>
+    <Select<CourseOption>
+      searchable
       options={options}
       value={normalizedSelectedCourse}
       onChange={(newValue) => {
