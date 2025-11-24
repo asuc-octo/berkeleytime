@@ -105,19 +105,8 @@ export function useTermFiltering({
         return true;
       })
       .map((c) => {
-        // Format instructor text only if primarySection has meetings structure
-        const instructorText = c.primarySection?.meetings
-          ? formatInstructorText(
-              c.primarySection as {
-                meetings: {
-                  instructors: {
-                    givenName?: string | null;
-                    familyName?: string | null;
-                  }[];
-                }[];
-              }
-            )
-          : "";
+        // Format instructor text - formatInstructorText handles null/undefined cases
+        const instructorText = formatInstructorText(c.primarySection);
         return {
           value: `${c.semester} ${c.year} ${c.number}`,
           label: `${c.semester} ${c.year} ${instructorText}`,
