@@ -300,7 +300,20 @@ export function RatingsContainer() {
       (v) => withDuplicates.find((v2) => v2.value === v.value) === v
     );
 
-    const sortedOptions = uniqueOptions.toSorted((a, b) => b.count - a.count);
+    // Sort chronologically (newest first) for semester dropdown
+    const sortedOptions = uniqueOptions.toSorted((a, b) => {
+      const [aSem, aYearStr] = a.value.split(" ");
+      const [bSem, bYearStr] = b.value.split(" ");
+      const aYear = parseInt(aYearStr, 10);
+      const bYear = parseInt(bYearStr, 10);
+
+      if (aYear !== bYear) return bYear - aYear;
+
+      return sortByTermDescending(
+        { semester: bSem as Semester, year: bYear },
+        { semester: aSem as Semester, year: aYear }
+      );
+    });
 
     return [
       {
