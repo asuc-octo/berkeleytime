@@ -8,7 +8,7 @@
   user-select: none;
   transition: all 100ms ease-in-out;
 
-  &:hover:not([data-disabled]):not([data-selected="true"]) {
+  &:hover:not([data-disabled="true"]):not([data-selected="true"]) {
     background-color: var(--button-hover-color);
   }
 
@@ -18,7 +18,7 @@
     color: white;
   }
 
-  &[data-disabled] {
+  &[data-disabled="true"] {
     opacity: 0.5;
     cursor: not-allowed;
   }
@@ -27,7 +27,7 @@
     background-color: var(--blue-500);
     color: white;
 
-    &:hover:not([data-disabled]) {
+    &:hover:not([data-disabled="true"]) {
       background-color: var(--blue-600);
 
       @media (prefers-color-scheme: dark) {
