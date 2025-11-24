@@ -78,7 +78,7 @@ export function SearchableSelect<T>({
   const triggerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | undefined>(undefined);
   const [internalTab, setInternalTab] = useState<string | undefined>(() =>
-    tabs?.length ? tabValue ?? defaultTab ?? tabs[0]?.value : undefined
+    tabs?.length ? (tabValue ?? defaultTab ?? tabs[0]?.value) : undefined
   );
 
   // Notify parent when search changes
@@ -116,13 +116,13 @@ export function SearchableSelect<T>({
   }, [tabValue, defaultTab, tabs]);
 
   const activeTabValue = tabs?.length
-    ? tabValue ?? internalTab ?? defaultTab ?? tabs[0]?.value
+    ? (tabValue ?? internalTab ?? defaultTab ?? tabs[0]?.value)
     : undefined;
 
   const currentOptions = tabs?.length
-    ? tabs.find((tab) => tab.value === activeTabValue)?.options ??
+    ? (tabs.find((tab) => tab.value === activeTabValue)?.options ??
       tabs[0]?.options ??
-      []
+      [])
     : options;
 
   const optionUniverse = tabs?.length

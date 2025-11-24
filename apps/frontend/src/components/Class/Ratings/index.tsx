@@ -327,9 +327,8 @@ export function RatingsContainer() {
     const courseRatingCount = getMaxMetricCount(aggregatedRatingsData?.metrics);
     const instructorOptions =
       instructorAggregatedRatings
-        ?.filter(
-          (rating): rating is NonNullable<typeof rating> =>
-            Boolean(rating?.aggregatedRatings?.metrics?.length)
+        ?.filter((rating): rating is NonNullable<typeof rating> =>
+          Boolean(rating?.aggregatedRatings?.metrics?.length)
         )
         .map((rating) => {
           const instructorKey = `${rating.instructor.givenName}_${rating.instructor.familyName}`;
@@ -451,8 +450,7 @@ export function RatingsContainer() {
                         setTermRatings(null);
                       }}
                       onChange={(newValue) => {
-                        if (Array.isArray(newValue) || !newValue)
-                          return; // ensure it is string
+                        if (Array.isArray(newValue) || !newValue) return; // ensure it is string
 
                         setSelectedValue(newValue);
 

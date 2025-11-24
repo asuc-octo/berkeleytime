@@ -141,7 +141,7 @@ export function Select<T>({
   onTabChange,
 }: SelectProps<T>) {
   const [internalTab, setInternalTab] = useState<string | undefined>(() =>
-    tabs?.length ? tabValue ?? defaultTab ?? tabs[0]?.value : undefined
+    tabs?.length ? (tabValue ?? defaultTab ?? tabs[0]?.value) : undefined
   );
 
   useEffect(() => {
@@ -205,7 +205,7 @@ export function Select<T>({
   const activeTabValue = useMemo(
     () =>
       tabs?.length
-        ? tabValue ?? internalTab ?? defaultTab ?? tabs[0]?.value
+        ? (tabValue ?? internalTab ?? defaultTab ?? tabs[0]?.value)
         : undefined,
     [tabs, tabValue, internalTab, defaultTab]
   );
@@ -213,9 +213,9 @@ export function Select<T>({
   const currentOptions = useMemo(
     () =>
       tabs?.length
-        ? tabs.find((tab) => tab.value === activeTabValue)?.options ??
+        ? (tabs.find((tab) => tab.value === activeTabValue)?.options ??
           tabs[0]?.options ??
-          []
+          [])
         : options,
     [options, tabs, activeTabValue]
   );

@@ -12,6 +12,7 @@ interface Term {
   label: string;
   semester: Semester;
   year: number;
+  classNumber?: string;
 }
 
 interface TermsData {

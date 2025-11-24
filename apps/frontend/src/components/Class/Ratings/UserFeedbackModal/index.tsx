@@ -262,8 +262,7 @@ export function UserFeedbackModal({
 
       const termParts = selectedTerm?.trim().split(" ") || [];
       const parsedClassNumber = termParts[termParts.length - 1] || "";
-      const classNumber =
-        (selectedTermInfo as any).classNumber || parsedClassNumber || null;
+      const classNumber = selectedTermInfo.classNumber ?? parsedClassNumber;
       if (!classNumber) {
         throw new Error(
           "Invalid term selection - class number could not be determined."

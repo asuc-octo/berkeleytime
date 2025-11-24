@@ -89,11 +89,23 @@ export const filterAndSortInstructors = (
   if (!instructors) return [];
 
   return instructors
-    .filter((instructor) => instructor.role === "PI")
+    .filter(
+      (
+        instructor
+      ): instructor is RawInstructor & {
+        familyName: string;
+        givenName: string;
+      } =>
+        instructor.role === "PI" &&
+        typeof instructor.familyName === "string" &&
+        typeof instructor.givenName === "string"
+    )
+    .map((instructor) => ({
+      familyName: instructor.familyName,
+      givenName: instructor.givenName,
+    }))
     .sort((a, b) => {
-      const lastNameA = a.familyName || "";
-      const lastNameB = b.familyName || "";
-      return lastNameA.localeCompare(lastNameB);
+      return a.familyName.localeCompare(b.familyName);
     });
 };
 

@@ -5,7 +5,7 @@ import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
-import type { Option, OptionItem, SelectTab } from "@repo/theme";
+import type { Option, OptionItem } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
 import { ClassGradingBasis } from "@/lib/generated/graphql";
@@ -75,9 +75,6 @@ export default function Filters() {
   const navigate = useNavigate();
 
   const [daysArray, setDaysArray] = useState<boolean[]>(() => [...EMPTY_DAYS]);
-  const [tabbedSelectValue, setTabbedSelectValue] = useState<string | null>(
-    null
-  );
 
   useEffect(() => {
     const newDays = daysArray.reduce((acc, v, i) => {
@@ -211,7 +208,7 @@ export default function Filters() {
     const counts = new Map<Breadth, number>();
     classesWithoutRequirements.forEach((_class) => {
       const breadthList = getBreadthRequirements(
-        _class.primarySection.sectionAttributes ?? []
+        _class.primarySection?.sectionAttributes ?? []
       );
       breadthList.forEach((breadth) => {
         counts.set(breadth, (counts.get(breadth) ?? 0) + 1);
@@ -445,29 +442,6 @@ export default function Filters() {
     () => Object.values(gradingCounts).every((count) => count === 0),
     [gradingCounts]
   );
-
-  const tabbedSelectTabs = useMemo<SelectTab<string>[]>(() => {
-    return [
-      {
-        value: "fruits",
-        label: "Fruits",
-        options: [
-          { value: "apple", label: "Apple", meta: "Orchard" },
-          { value: "banana", label: "Banana", meta: "Tropical" },
-          { value: "orange", label: "Orange", meta: "Citrus" },
-        ],
-      },
-      {
-        value: "animals",
-        label: "Animals",
-        options: [
-          { value: "cat", label: "Cat", meta: "Indoor" },
-          { value: "dog", label: "Dog", meta: "Loyal" },
-          { value: "otter", label: "Otter", meta: "River" },
-        ],
-      },
-    ];
-  }, []);
 
   // const filteredDays = useMemo(() => {
   //   const filteredDays = Object.values(Day).reduce(
@@ -732,23 +706,6 @@ export default function Filters() {
               if (Array.isArray(v)) updateGradingFilters(v);
             }}
             options={gradingOptions}
-          />
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Tabbed select demo</p>
-          <Select<string>
-            searchable
-            value={tabbedSelectValue}
-            onChange={(v) => {
-              if (typeof v === "string" || v === null) {
-                setTabbedSelectValue(v);
-              }
-            }}
-            placeholder="Pick a fruit or an animal"
-            clearable
-            tabs={tabbedSelectTabs}
-            searchPlaceholder="Search within this tab"
-            emptyMessage="No options in this tab"
           />
         </div>
       </div>

@@ -479,10 +479,7 @@ export const instructorRatingsAggregator = async (
   }
 
   // Group classes by semester/year for more efficient querying
-  const semesterYearMap = new Map<
-    string,
-    Set<string>
-  >();
+  const semesterYearMap = new Map<string, Set<string>>();
 
   classes.forEach(({ semester, year, classNumber }) => {
     const key = `${semester}_${year}`;
