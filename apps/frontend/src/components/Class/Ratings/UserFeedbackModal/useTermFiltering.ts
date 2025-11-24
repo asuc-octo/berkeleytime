@@ -93,7 +93,13 @@ export function useTermFiltering({
   const filteredSemesters = useMemo(() => {
     if (!selectedCourse || !courseData) return pastTerms;
 
-    const courseTerms: Term[] = [...(courseData.classes ?? [])]
+    // Deduplicate early by semester + year + instructor (before mapping)
+    const uniqueClasses = _.uniqBy(
+      courseData.classes ?? [],
+      (c) => `${c.semester} ${c.year} ${formatInstructorText(c.primarySection)}`
+    );
+
+    const courseTerms: Term[] = uniqueClasses
       .sort(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
@@ -117,7 +123,7 @@ export function useTermFiltering({
       })
       .map(normalizeTerm);
 
-    return _.uniqBy(courseTerms, (term) => term.label);
+    return courseTerms;
   }, [selectedCourse, courseData, pastTerms]);
 
   // Reset auto-selection flag when course changes

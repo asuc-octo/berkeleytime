@@ -571,12 +571,14 @@ export const instructorRatingsAggregator = async (
     },
   ]);
 
-  return result[0] || {
-    subject,
-    courseNumber,
-    semester: null,
-    year: null,
-    classNumber: null,
-    metrics: [],
-  };
+  return (
+    result[0] || {
+      subject,
+      courseNumber,
+      semester: null,
+      year: null,
+      classNumber: null,
+      metrics: [],
+    }
+  );
 };

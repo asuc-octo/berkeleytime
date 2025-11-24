@@ -43,6 +43,7 @@ interface UserFeedbackModalProps {
   onSubmitPopupChange?: (isOpen: boolean) => void;
   disableRatedCourses?: boolean;
   lockedCourse?: CourseOption | null;
+  onError?: (error: unknown) => void;
 }
 
 export function UserFeedbackModal({
@@ -60,6 +61,7 @@ export function UserFeedbackModal({
   onSubmitPopupChange,
   disableRatedCourses = true,
   lockedCourse = null,
+  onError,
 }: UserFeedbackModalProps) {
   const { data: termsData, loading: termsLoading } = useReadTerms();
   const totalRatings = Math.max(1, requiredRatingsCount);
@@ -307,6 +309,7 @@ export function UserFeedbackModal({
       onSubmitPopupChange?.(true);
     } catch (error) {
       console.error("Error submitting ratings:", error);
+      onError?.(error);
     } finally {
       setIsSubmitting(false);
     }

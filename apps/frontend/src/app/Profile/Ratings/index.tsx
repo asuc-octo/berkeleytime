@@ -211,36 +211,29 @@ export default function Ratings() {
       courseInfo: { subject: string; courseNumber: string; classNumber: string }
     ) => {
       if (!ratingForEdit) return;
-      try {
-        const refetchTarget = {
-          ...ratingForEdit,
+
+      const refetchTarget = {
+        ...ratingForEdit,
+        subject: courseInfo.subject,
+        courseNumber: courseInfo.courseNumber,
+        classNumber: courseInfo.classNumber,
+        semester: termInfo.semester,
+        year: termInfo.year,
+      } as IUserRatingClass;
+
+      await submitRatingHelper({
+        metricValues,
+        termInfo,
+        createRatingMutation,
+        deleteRatingMutation,
+        classIdentifiers: {
           subject: courseInfo.subject,
           courseNumber: courseInfo.courseNumber,
-          classNumber: courseInfo.classNumber,
-          semester: termInfo.semester,
-          year: termInfo.year,
-        } as IUserRatingClass;
-
-        await submitRatingHelper({
-          metricValues,
-          termInfo,
-          createRatingMutation,
-          deleteRatingMutation,
-          classIdentifiers: {
-            subject: courseInfo.subject,
-            courseNumber: courseInfo.courseNumber,
-            number: courseInfo.classNumber,
-          },
-          currentRatings: ratingForEdit,
-          refetchQueries: buildRefetchQueries(refetchTarget),
-        });
-      } catch (err) {
-        const message = getRatingErrorMessage(err);
-        setErrorMessage(message);
-        setRatingForEdit(null);
-        setIsErrorDialogOpen(true);
-        throw err;
-      }
+          number: courseInfo.classNumber,
+        },
+        currentRatings: ratingForEdit,
+        refetchQueries: buildRefetchQueries(refetchTarget),
+      });
     },
     [
       ratingForEdit,
@@ -353,6 +346,11 @@ export default function Ratings() {
             subject: currentClassForModal.subject,
             number: currentClassForModal.courseNumber,
             courseId: "",
+          }}
+          onError={(error) => {
+            const message = getRatingErrorMessage(error);
+            setErrorMessage(message);
+            setIsErrorDialogOpen(true);
           }}
         />
       )}

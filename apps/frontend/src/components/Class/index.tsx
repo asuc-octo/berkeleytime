@@ -397,51 +397,43 @@ export default function Class({
       termInfo: { semester: Semester; year: number },
       classInfo: { subject: string; courseNumber: string; classNumber: string }
     ) => {
-      try {
-        const populatedMetrics = METRIC_NAMES.filter(
-          (metric) => typeof metricValues[metric] === "number"
+      const populatedMetrics = METRIC_NAMES.filter(
+        (metric) => typeof metricValues[metric] === "number"
+      );
+      if (populatedMetrics.length === 0) {
+        throw new Error(`No populated metrics`);
+      }
+
+      const missingRequiredMetrics = REQUIRED_METRICS.filter(
+        (metric) => !populatedMetrics.includes(metric)
+      );
+      if (missingRequiredMetrics.length > 0) {
+        throw new Error(
+          `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
         );
-        if (populatedMetrics.length === 0) {
-          throw new Error(`No populated metrics`);
-        }
+      }
 
-        const missingRequiredMetrics = REQUIRED_METRICS.filter(
-          (metric) => !populatedMetrics.includes(metric)
-        );
-        if (missingRequiredMetrics.length > 0) {
-          throw new Error(
-            `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
-          );
-        }
+      for (let index = 0; index < populatedMetrics.length; index++) {
+        const metric = populatedMetrics[index];
+        const value = metricValues[metric] as number;
+        if (value === undefined) continue;
 
-        for (let index = 0; index < populatedMetrics.length; index++) {
-          const metric = populatedMetrics[index];
-          const value = metricValues[metric] as number;
-          if (value === undefined) continue;
-
-          const isFinalMutation = index === populatedMetrics.length - 1;
-          await createUnlockRating({
-            variables: {
-              subject: classInfo.subject,
-              courseNumber: classInfo.courseNumber,
-              semester: termInfo.semester,
-              year: termInfo.year,
-              classNumber: classInfo.classNumber,
-              metricName: metric,
-              value,
-            },
-            refetchQueries: isFinalMutation
-              ? [{ query: GetUserRatingsDocument }]
-              : undefined,
-            awaitRefetchQueries: isFinalMutation,
-          });
-        }
-      } catch (error) {
-        const message = getRatingErrorMessage(error);
-        setErrorMessage(message);
-        setIsUnlockModalOpen(false);
-        setIsErrorDialogOpen(true);
-        throw error;
+        const isFinalMutation = index === populatedMetrics.length - 1;
+        await createUnlockRating({
+          variables: {
+            subject: classInfo.subject,
+            courseNumber: classInfo.courseNumber,
+            semester: termInfo.semester,
+            year: termInfo.year,
+            classNumber: classInfo.classNumber,
+            metricName: metric,
+            value,
+          },
+          refetchQueries: isFinalMutation
+            ? [{ query: GetUserRatingsDocument }]
+            : undefined,
+          awaitRefetchQueries: isFinalMutation,
+        });
       }
     },
     [createUnlockRating]
@@ -805,6 +797,11 @@ export default function Class({
           requiredRatingsCount={unlockModalGoalCount || 1}
           onSubmitPopupChange={setIsUnlockThankYouOpen}
           disableRatedCourses={true}
+          onError={(error) => {
+            const message = getRatingErrorMessage(error);
+            setErrorMessage(message);
+            setIsErrorDialogOpen(true);
+          }}
         />
       )}
       <SubmitRatingPopup

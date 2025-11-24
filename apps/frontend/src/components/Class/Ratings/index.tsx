@@ -164,8 +164,14 @@ export function RatingsContainer() {
   const availableTerms = useMemo(() => {
     if (!courseClasses.length) return [];
 
+    // Deduplicate early by semester + year + instructor (before mapping)
+    const uniqueClasses = _.uniqBy(
+      courseClasses,
+      (c) => `${c.semester} ${c.year} ${formatInstructorText(c.primarySection)}`
+    );
+
     const today = new Date();
-    const courseTerms: Term[] = courseClasses
+    const courseTerms: Term[] = uniqueClasses
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
@@ -187,7 +193,7 @@ export function RatingsContainer() {
         } satisfies Term;
       });
 
-    return _.uniqBy(courseTerms, (term) => term.value);
+    return courseTerms;
   }, [courseClasses]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
@@ -559,29 +565,21 @@ export function RatingsContainer() {
         }}
         availableTerms={availableTerms}
         onSubmit={async (metricValues, termInfo, courseInfo) => {
-          try {
-            await submitRatingMutation({
-              metricValues,
-              termInfo,
-              createRatingMutation,
-              deleteRatingMutation,
-              classIdentifiers: {
-                subject: courseInfo.subject,
-                courseNumber: courseInfo.courseNumber,
-                number: courseInfo.classNumber,
-              },
-              currentRatings: userRatings,
-              refetchQueries: [],
-            });
-            refetchAllRatings();
-            setIsModalOpen(false);
-          } catch (error) {
-            const message = getRatingErrorMessage(error);
-            setErrorMessage(message);
-            setIsModalOpen(false);
-            setIsErrorDialogOpen(true);
-            throw error;
-          }
+          await submitRatingMutation({
+            metricValues,
+            termInfo,
+            createRatingMutation,
+            deleteRatingMutation,
+            classIdentifiers: {
+              subject: courseInfo.subject,
+              courseNumber: courseInfo.courseNumber,
+              number: courseInfo.classNumber,
+            },
+            currentRatings: userRatings,
+            refetchQueries: [],
+          });
+          refetchAllRatings();
+          setIsModalOpen(false);
         }}
         initialUserClass={userRatings}
         userRatedClasses={userRatedClasses}
@@ -596,6 +594,11 @@ export function RatingsContainer() {
             : null
         }
         onSubmitPopupChange={setIsSubmitRatingPopupOpen}
+        onError={(error) => {
+          const message = getRatingErrorMessage(error);
+          setErrorMessage(message);
+          setIsErrorDialogOpen(true);
+        }}
       />
 
       <DeleteRatingPopup
