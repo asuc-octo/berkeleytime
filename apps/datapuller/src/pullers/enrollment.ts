@@ -433,7 +433,7 @@ const checkEnrollmentThresholds = async ({ log }: Config) => {
     const latestData = history.history[history.history.length - 1];
     const previousData = history.history[history.history.length - 2];
 
-    if (!latestData.enrolledCount || !latestData.maxEnroll) {
+    if (latestData.enrolledCount == null || latestData.maxEnroll == null) {
       continue;
     }
 
