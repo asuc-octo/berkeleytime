@@ -61,7 +61,7 @@ export function UserFeedbackModal({
   disableRatedCourses = true,
   lockedCourse = null,
 }: UserFeedbackModalProps) {
-  const { data: termsData } = useReadTerms();
+  const { data: termsData, loading: termsLoading } = useReadTerms();
   const totalRatings = Math.max(1, requiredRatingsCount);
   const [currentRatingIndex, setCurrentRatingIndex] = useState(0);
 
@@ -130,13 +130,14 @@ export function UserFeedbackModal({
     () => ((currentRatingIndex + progress / 100) / totalRatings) * 100,
     [currentRatingIndex, progress, totalRatings]
   );
-  const { data: courseData } = useReadCourseWithInstructor(
-    selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? "",
-    {
-      skip: !selectedCourse,
-    }
-  );
+  const { data: courseData, loading: courseLoading } =
+    useReadCourseWithInstructor(
+      selectedCourse?.subject ?? "",
+      selectedCourse?.number ?? "",
+      {
+        skip: !selectedCourse,
+      }
+    );
 
   const { filteredSemesters, hasAutoSelected } = useTermFiltering({
     availableTerms,
@@ -146,6 +147,12 @@ export function UserFeedbackModal({
   });
 
   const termOptions = filteredSemesters;
+
+  // Show loading when:
+  // 1. Terms data is loading, OR
+  // 2. A course is selected AND (course data is loading OR we don't have course data yet)
+  const isTermOptionsLoading =
+    termsLoading || (!!selectedCourse && (courseLoading || !courseData));
 
   const hasHydratedRef = useRef(false);
   const lastInitialKeyRef = useRef<string | null>(null);
@@ -401,6 +408,7 @@ export function UserFeedbackModal({
             selectedTerm={selectedTerm}
             onTermSelect={setSelectedTerm}
             termOptions={termOptions}
+            termOptionsLoading={isTermOptionsLoading}
             metricData={metricData}
             setMetricData={setMetricData}
             userRatedClasses={userRatedClasses}

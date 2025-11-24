@@ -127,6 +127,7 @@
  * - `tabs`: Tab configuration for organizing options (forces searchable mode)
  * - `clearable`: Show clear button to reset selection (default: false)
  * - `disabled`: Disable the select (default: false)
+ * - `loading`: Show loading state with "Loading content" text and disable interaction (default: false)
  * - `variant`: Visual variant - 'default' or 'foreground' (default: 'default')
  * - `placeholder`: Placeholder text when nothing selected
  * - `searchPlaceholder`: Placeholder for search input (searchable mode only)
@@ -193,6 +194,7 @@ export interface SelectProps<T> {
   value: T | T[] | null;
   onChange: (newValue: T | T[] | null) => void;
   disabled?: boolean;
+  loading?: boolean;
   multi?: boolean;
   checkboxMulti?: boolean;
   placeholder?: string;
@@ -219,6 +221,7 @@ export function Select<T>({
   value,
   onChange,
   disabled = false,
+  loading = false,
   multi = false,
   checkboxMulti = false,
   placeholder = "Select",
@@ -323,10 +326,12 @@ export function Select<T>({
   // Auto-disable if no options available in any tab
   const hasAnyOptions = allSelectableOptions.length > 0;
   const hasNoOptions = !hasAnyOptions;
-  const effectiveDisabled = disabled || hasNoOptions;
-  const effectivePlaceholder = effectiveDisabled
-    ? "No option available"
-    : placeholder;
+  const effectiveDisabled = disabled || hasNoOptions || loading;
+  const effectivePlaceholder = loading
+    ? "Loading content"
+    : effectiveDisabled
+      ? "No option available"
+      : placeholder;
 
   const activeElem = useMemo(
     () =>
@@ -368,34 +373,41 @@ export function Select<T>({
   // Trigger content (shared between searchable and non-searchable)
   const triggerContent = (
     <>
-      {hasSelection ? (
-        Array.isArray(activeElem) ? (
-          <Flex className={styles.badgeContainer}>
-            {activeElem.map((el) => (
-              <Badge
-                key={el.label}
-                label={el.label}
-                color={el.color ? el.color : Color.Blue}
-                icon={
-                  <Xmark
-                    style={{ zIndex: 100 }}
-                    onPointerDown={(e) => {
-                      e.stopPropagation();
-                      handleRemoveBadge(el.value);
-                      e.preventDefault();
-                    }}
-                  />
-                }
-              />
-            ))}
-          </Flex>
+      <div className={styles.triggerLabel}>
+        {hasSelection ? (
+          Array.isArray(activeElem) ? (
+            <Flex className={styles.badgeContainer}>
+              {activeElem.map((el) => (
+                <Badge
+                  key={el.label}
+                  label={el.label}
+                  color={el.color ? el.color : Color.Blue}
+                  icon={
+                    <Xmark
+                      style={{ zIndex: 100 }}
+                      onPointerDown={(e) => {
+                        e.stopPropagation();
+                        handleRemoveBadge(el.value);
+                        e.preventDefault();
+                      }}
+                    />
+                  }
+                />
+              ))}
+            </Flex>
+          ) : (
+            (activeElem as OptionItem<T>).label
+          )
         ) : (
-          (activeElem as OptionItem<T>).label
-        )
-      ) : (
-        effectivePlaceholder
-      )}
-      <Flex direction="row" gap="8px" align="center">
+          effectivePlaceholder
+        )}
+      </div>
+      <Flex
+        direction="row"
+        gap="8px"
+        align="center"
+        className={styles.triggerActions}
+      >
         {clearable && hasSelection && (
           <Xmark
             onPointerDown={(e) => {

@@ -27,6 +27,18 @@
   }
 }
 
+.triggerLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.triggerActions {
+  flex-shrink: 0;
+}
+
 .content {
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);

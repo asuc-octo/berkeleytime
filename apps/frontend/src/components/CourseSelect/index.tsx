@@ -52,12 +52,6 @@ export default function CourseSelect({
       }
     }
 
-    if (seen.size < data.courses.length) {
-      console.error(
-        `[CourseSelect] Deduplicated ${data.courses.length - seen.size} duplicate courses`
-      );
-    }
-
     return Array.from(seen.values());
   }, [data]);
 
@@ -138,15 +132,10 @@ export default function CourseSelect({
 
     // If there's a search query, use fuzzy search
     if (searchQuery && searchQuery.trim() !== "") {
-      console.log(
-        `[CourseSelect] Searching ${catalogCourses.length} courses for "${searchQuery}"`
-      );
       const searchResults = index
         .search(searchQuery.slice(0, 24))
         .slice(0, 50)
         .map(({ refIndex }) => catalogCourses[refIndex]);
-
-      console.log(`[CourseSelect] Found ${searchResults.length} results`);
 
       for (const course of searchResults) {
         const isRated = isCourseRated(course.subject, course.number);
@@ -269,9 +258,10 @@ export default function CourseSelect({
           onClear?.();
         }
       }}
-      placeholder="Choose a class..."
-      searchPlaceholder="Search..."
+      placeholder="Select a class"
+      searchPlaceholder="Search classes"
       emptyMessage="No courses found."
+      loading={loading}
       disabled={loading}
       onSearchChange={lockedCourse ? undefined : setSearchQuery}
       clearable={!lockedCourse}

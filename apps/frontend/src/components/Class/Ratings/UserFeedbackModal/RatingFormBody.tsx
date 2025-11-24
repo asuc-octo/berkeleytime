@@ -32,6 +32,7 @@ interface RatingFormBodyProps {
   selectedTerm: string | null;
   onTermSelect: (term: string | null) => void;
   termOptions: Term[];
+  termOptionsLoading?: boolean;
   metricData: MetricData;
   setMetricData: Dispatch<SetStateAction<MetricData>>;
   userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
@@ -47,6 +48,7 @@ export function RatingFormBody({
   selectedTerm,
   onTermSelect,
   termOptions,
+  termOptionsLoading = false,
   metricData,
   setMetricData,
   userRatedClasses = [],
@@ -104,6 +106,7 @@ export function RatingFormBody({
                 !selectedCourse ||
                 (!!selectedCourse && termOptions.length === 0)
               }
+              loading={termOptionsLoading}
               value={selectedTerm}
               onChange={(selectedOption) => {
                 if (Array.isArray(selectedOption)) onTermSelect(null);
