@@ -68,12 +68,10 @@ export function ChartTooltipContent({
           const dataKey = item.dataKey || item.name;
           const itemConfig = config[dataKey];
 
-          if (!itemConfig) return null;
-
-          // Format name and value
+          // Format name and value, fall back to payload data if config is missing
           const formattedName = nameFormatter
             ? nameFormatter(item.name, item)
-            : itemConfig.label || item.name;
+            : itemConfig?.label || item.name || dataKey;
 
           const formattedValue = valueFormatter
             ? valueFormatter(item.value, item.name, item)
@@ -82,19 +80,22 @@ export function ChartTooltipContent({
           // Get color (support theme-aware colors)
           let color = item.stroke || item.fill || item.color;
 
-          if (itemConfig.theme) {
+          if (itemConfig?.theme) {
             color = getThemeColor(itemConfig.theme);
-          } else if (itemConfig.color) {
+          } else if (itemConfig?.color) {
             color = itemConfig.color;
           }
 
           return (
-            <div key={`${item.name}-${index}`} className={styles.tooltipItem}>
+            <div
+              key={`${item.name ?? dataKey}-${index}`}
+              className={styles.tooltipItem}
+            >
               <span className={styles.tooltipItemLabel}>
                 {!hideIndicator && (
                   <ColoredSquare
                     size="sm"
-                    color={color}
+                    color={color || "var(--border-color)"}
                     variant={indicator}
                     className={styles.tooltipIndicator}
                   />

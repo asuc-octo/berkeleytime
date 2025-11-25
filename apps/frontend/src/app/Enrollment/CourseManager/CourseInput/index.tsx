@@ -189,6 +189,11 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       searchParams.append("input", getInputSearchParam(input));
       setSearchParams(searchParams);
 
+      // Reset selectors back to defaults after adding a course
+      setSelectedCourse(null);
+      setSelectedClass(DEFAULT_SELECTED_CLASS.value);
+      setSelectedSemester(undefined);
+
       setLoading(false);
     } catch {
       // TODO: Error handling

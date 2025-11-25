@@ -1,9 +1,11 @@
 // TODO: refactor to match GradeDistribution/index.tsx
 import React, {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
+  memo,
 } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
@@ -28,6 +30,7 @@ import {
   ChartTooltip,
   createChartConfig,
   formatters,
+  type ChartConfig,
 } from "@/components/Chart";
 import Footer from "@/components/Footer";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
@@ -59,6 +62,156 @@ type TooltipContentProps = Parameters<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Extract<ContentType<number, string>, (...args: any[]) => any>
 >[0];
+
+type EnrollmentChartProps = {
+  data:
+    | { timeDelta: number; [key: string]: number | null }[]
+    | undefined;
+  filteredOutputs: Output[];
+  chartConfig: ChartConfig;
+  activeOutput?: Output;
+  dataMax: number;
+  outputs: Output[];
+  shouldAnimate: boolean;
+  onHoverDuration: (duration: moment.Duration | null) => void;
+};
+
+const EnrollmentChart = memo(function EnrollmentChart({
+  data,
+  filteredOutputs,
+  chartConfig,
+  activeOutput,
+  dataMax,
+  outputs,
+  shouldAnimate,
+  onHoverDuration,
+}: EnrollmentChartProps) {
+  const handleHover: CategoricalChartFunc = useCallback(
+    (payload) => {
+      onHoverDuration(
+        payload?.activeLabel !== undefined && payload?.activeLabel !== null
+          ? moment.duration(payload.activeLabel, "minutes")
+          : null
+      );
+    },
+    [onHoverDuration]
+  );
+
+  return (
+    <div className={styles.view}>
+      <ChartContainer config={chartConfig}>
+        <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+          <LineChart
+            syncId="grade-distributions"
+            width={730}
+            height={200}
+            data={data}
+            onMouseMove={handleHover}
+            onMouseLeave={() => onHoverDuration(null)}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="var(--border-color)"
+            />
+            <XAxis
+              dataKey="timeDelta"
+              fill="var(--label-color)"
+              tickMargin={8}
+              interval={"preserveStartEnd"}
+              type="number"
+              tickFormatter={(timeDelta) =>
+                String(
+                  Math.floor(moment.duration(timeDelta, "minutes").asDays()) + 1
+                )
+              }
+            />
+            <YAxis
+              domain={[0, dataMax]}
+              tickFormatter={(v) => formatters.percentRound(v)}
+            />
+            {dataMax >= 100 && (
+              <ReferenceLine
+                y={100}
+                stroke="var(--label-color)"
+                strokeDasharray="5 5"
+                strokeOpacity={0.5}
+                label={{
+                  value: "100% Capacity",
+                  position: "insideTopLeft",
+                  fill: "var(--label-color)",
+                  fontSize: 12,
+                  offset: 10,
+                }}
+              />
+            )}
+            {outputs?.length > 0 && (
+              <ChartTooltip
+                tooltipConfig={{
+                  labelFormatter: (label) => {
+                    const duration = moment.duration(label, "minutes");
+                    const day = Math.floor(duration.asDays()) + 1;
+                    const time = timeFormatter.format(
+                      moment.utc(0).add(duration).toDate()
+                    );
+                    return `Day ${day} ${time}`;
+                  },
+                  valueFormatter: (value) => formatters.percentRound(value),
+                  indicator: "line",
+                }}
+              />
+            )}
+            {filteredOutputs?.map((output, index) => {
+              const originalIndex = outputs.indexOf(output);
+              return (
+                <React.Fragment key={index}>
+                  <Line
+                    dataKey={`enroll_${originalIndex}`}
+                    stroke={
+                      activeOutput && !output.active
+                        ? DARK_COLORS[originalIndex]
+                        : LIGHT_COLORS[originalIndex]
+                    }
+                    name={`${output.input.subject} ${output.input.courseNumber}`}
+                    isAnimationActive={shouldAnimate}
+                    dot={false}
+                    strokeWidth={3}
+                    type="monotone"
+                    connectNulls
+                  />
+                  <Line
+                    dataKey={`waitlist_${originalIndex}`}
+                    stroke={
+                      activeOutput && !output.active
+                        ? DARK_COLORS[originalIndex]
+                        : LIGHT_COLORS[originalIndex]
+                    }
+                    name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
+                    isAnimationActive={shouldAnimate}
+                    dot={false}
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    type="monotone"
+                    connectNulls
+                  />
+                </React.Fragment>
+              );
+            })}
+          </LineChart>
+        </ResponsiveContainer>
+        {!outputs?.length && (
+          <div className={styles.empty}>
+            <FrameAltEmpty height={24} width={24} />
+            <br />
+            You have not added
+            <br />
+            any classes yet
+          </div>
+        )}
+      </ChartContainer>
+    </div>
+  );
+});
 
 export default function Enrollment() {
   const client = useApolloClient();
@@ -272,14 +425,6 @@ export default function Enrollment() {
       .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
   }, [outputs]);
 
-  const updateGraphHover: CategoricalChartFunc = (data) => {
-    setHoveredDuration(
-      data.activeLabel !== undefined && data.activeLabel !== null
-        ? moment.duration(data.activeLabel, "minutes")
-        : null
-    );
-  };
-
   useEffect(() => {
     if (outputs.length > 0) {
       if (!hoveredSeries) setHoveredSeries(0);
@@ -323,6 +468,13 @@ export default function Enrollment() {
     return createChartConfig(keys, { labels, themes });
   }, [outputs]);
 
+  const handleHoverDuration = useCallback(
+    (duration: moment.Duration | null) => {
+      setHoveredDuration(duration);
+    },
+    []
+  );
+
   return (
     <Box p="5" className={styles.root}>
       <Flex direction="column">
@@ -333,120 +485,16 @@ export default function Enrollment() {
           </Boundary>
         ) : (
           <Flex direction="row">
-            <div className={styles.view}>
-              <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-                  <LineChart
-                    syncId="grade-distributions"
-                    width={730}
-                    height={200}
-                    data={data}
-                    onMouseMove={updateGraphHover}
-                  >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      vertical={false}
-                      stroke="var(--border-color)"
-                    />
-                    <XAxis
-                      dataKey="timeDelta"
-                      fill="var(--label-color)"
-                      tickMargin={8}
-                      interval={"preserveStartEnd"}
-                      type="number"
-                      tickFormatter={(timeDelta) =>
-                        String(
-                          Math.floor(
-                            moment.duration(timeDelta, "minutes").asDays()
-                          ) + 1
-                        )
-                      }
-                    />
-                    <YAxis
-                      domain={[0, dataMax]}
-                      tickFormatter={(v) => formatters.percentRound(v)}
-                    />
-                    {dataMax >= 100 && (
-                      <ReferenceLine
-                        y={100}
-                        stroke="var(--label-color)"
-                        strokeDasharray="5 5"
-                        strokeOpacity={0.5}
-                        label={{
-                          value: "100% Capacity",
-                          position: "insideTopLeft",
-                          fill: "var(--label-color)",
-                          fontSize: 12,
-                          offset: 10,
-                        }}
-                      />
-                    )}
-                    {outputs?.length > 0 && (
-                      <ChartTooltip
-                        tooltipConfig={{
-                          labelFormatter: (label) => {
-                            const duration = moment.duration(label, "minutes");
-                            const day = Math.floor(duration.asDays()) + 1;
-                            const time = timeFormatter.format(
-                              moment.utc(0).add(duration).toDate()
-                            );
-                            return `Day ${day} ${time}`;
-                          },
-                          valueFormatter: (value) =>
-                            formatters.percentRound(value),
-                          indicator: "line",
-                        }}
-                      />
-                    )}
-                  {filteredOutputs?.map((output, index) => {
-                    const originalIndex = outputs.indexOf(output);
-                    return (
-                      <React.Fragment key={index}>
-                        <Line
-                          dataKey={`enroll_${originalIndex}`}
-                          stroke={
-                            activeOutput && !output.active
-                              ? DARK_COLORS[originalIndex]
-                              : LIGHT_COLORS[originalIndex]
-                          }
-                          name={`${output.input.subject} ${output.input.courseNumber}`}
-                          isAnimationActive={shouldAnimate.current}
-                          dot={false}
-                          strokeWidth={3}
-                          type="monotone"
-                          connectNulls
-                        />
-                        <Line
-                          dataKey={`waitlist_${originalIndex}`}
-                          stroke={
-                            activeOutput && !output.active
-                              ? DARK_COLORS[originalIndex]
-                              : LIGHT_COLORS[originalIndex]
-                          }
-                          name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                          isAnimationActive={shouldAnimate.current}
-                          dot={false}
-                          strokeWidth={2}
-                          strokeDasharray="5 5"
-                          type="monotone"
-                          connectNulls
-                        />
-                      </React.Fragment>
-                    );
-                  })}
-                </LineChart>
-              </ResponsiveContainer>
-              {!outputs?.length && (
-                <div className={styles.empty}>
-                  <FrameAltEmpty height={24} width={24} />
-                  <br />
-                  You have not added
-                  <br />
-                  any classes yet
-                </div>
-              )}
-              </ChartContainer>
-            </div>
+            <EnrollmentChart
+              data={data}
+              filteredOutputs={filteredOutputs}
+              chartConfig={chartConfig}
+              activeOutput={activeOutput}
+              dataMax={dataMax}
+              outputs={outputs}
+              shouldAnimate={shouldAnimate.current}
+              onHoverDuration={handleHoverDuration}
+            />
             <div className={styles.hoverInfoContainer}>
               {outputs?.[0] ? (
                 outputs.map((output: Output, i: number) => (

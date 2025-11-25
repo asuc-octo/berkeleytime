@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
@@ -19,6 +19,7 @@ import {
   ChartTooltip,
   createChartConfig,
   formatters,
+  type ChartConfig,
 } from "@/components/Chart";
 import Footer from "@/components/Footer";
 import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
@@ -86,6 +87,94 @@ const transformGradeDistributionData = (
 
   return Array.from(letterMap.values());
 };
+
+type GradeChartProps = {
+  data: Array<{ letter: string; [key: string]: number }>;
+  filteredOutputs: Output[];
+  chartConfig: ChartConfig;
+  activeOutput?: Output;
+  onHoverLetter: (letter: string | null) => void;
+};
+
+const GradeChart = memo(function GradeChart({
+  data,
+  filteredOutputs,
+  chartConfig,
+  activeOutput,
+  onHoverLetter,
+}: GradeChartProps) {
+  return (
+    <div className={styles.view}>
+      <ChartContainer config={chartConfig}>
+        <ResponsiveContainer width="100%" height={550}>
+          <BarChart
+            syncId="grade-distributions"
+            width={730}
+            height={200}
+            data={data}
+            onMouseLeave={() => onHoverLetter(null)}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="var(--border-color)"
+            />
+            <XAxis dataKey="letter" fill="var(--label-color)" tickMargin={8} />
+            <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
+            {filteredOutputs?.length > 0 && (
+              <ChartTooltip
+                tooltipConfig={{
+                  labelFormatter: (label) => {
+                    onHoverLetter(label?.toString() ?? null);
+                    return `Grade: ${label}`;
+                  },
+                  valueFormatter: (value) => formatters.percent(value, 1),
+                  indicator: "square",
+                  sortBy: "value",
+                  sortOrder: "desc",
+                }}
+              />
+            )}
+            {filteredOutputs?.map((output, index) => (
+              <Bar
+                dataKey={index}
+                fill={
+                  activeOutput && !output.active
+                    ? DARK_COLORS[index]
+                    : output.color
+                }
+                key={index}
+                name={`${output.input.subject} ${output.input.courseNumber}`}
+                radius={[
+                  10 / filteredOutputs.length,
+                  10 / filteredOutputs.length,
+                  0,
+                  0,
+                ]}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+        {!filteredOutputs?.length && (
+          <div className={styles.empty}>
+            <FrameAltEmpty height={24} width={24} />
+            <br />
+            You have not added
+            <br />
+            any classes yet
+          </div>
+        )}
+      </ChartContainer>
+    </div>
+  );
+},
+// Avoid re-rendering the chart when only hover state changes
+(prev, next) =>
+  prev.data === next.data &&
+  prev.filteredOutputs === next.filteredOutputs &&
+  prev.chartConfig === next.chartConfig &&
+  prev.activeOutput === next.activeOutput &&
+  prev.onHoverLetter === next.onHoverLetter);
 
 const GradeDistributions = () => {
   const client = useApolloClient();
@@ -175,6 +264,13 @@ const GradeDistributions = () => {
     );
   }, [filteredOutputs]);
 
+  const handleHoverLetter = useCallback(
+    (letter: string | null) => {
+      setHoveredLetter(letter);
+    },
+    []
+  );
+
   return (
     <Box p="5">
       <Flex direction="column">
@@ -185,76 +281,13 @@ const GradeDistributions = () => {
           </Boundary>
         ) : (
           <Flex direction="row">
-            <div className={styles.view}>
-              <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height={550}>
-                  <BarChart
-                    syncId="grade-distributions"
-                    width={730}
-                    height={200}
-                    data={data}
-                    onMouseLeave={() => setHoveredLetter(null)}
-                  >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      vertical={false}
-                      stroke="var(--border-color)"
-                    />
-                    <XAxis
-                      dataKey="letter"
-                      fill="var(--label-color)"
-                      tickMargin={8}
-                    />
-                    <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
-                    {filteredOutputs?.length > 0 && (
-                      <ChartTooltip
-                        tooltipConfig={{
-                          labelFormatter: (label) => {
-                            // Update hovered letter based on tooltip position
-                            const letter = label?.toString() ?? null;
-                            if (letter !== hoveredLetter) {
-                              setHoveredLetter(letter);
-                            }
-                            return `Grade: ${label}`;
-                          },
-                          valueFormatter: (value) => formatters.percent(value, 1),
-                          indicator: "square",
-                          sortBy: "value",
-                          sortOrder: "desc",
-                        }}
-                      />
-                    )}
-                    {filteredOutputs?.map((output, index) => (
-                      <Bar
-                        dataKey={index}
-                        fill={
-                          activeOutput && !output.active
-                            ? DARK_COLORS[index]
-                            : output.color
-                        }
-                        key={index}
-                        name={`${output.input.subject} ${output.input.courseNumber}`}
-                        radius={[
-                          10 / filteredOutputs.length,
-                          10 / filteredOutputs.length,
-                          0,
-                          0,
-                        ]}
-                      />
-                    ))}
-                  </BarChart>
-                </ResponsiveContainer>
-                {!filteredOutputs?.length && (
-                  <div className={styles.empty}>
-                    <FrameAltEmpty height={24} width={24} />
-                    <br />
-                    You have not added
-                    <br />
-                    any classes yet
-                  </div>
-                )}
-              </ChartContainer>
-            </div>
+            <GradeChart
+              data={data}
+              filteredOutputs={filteredOutputs}
+              chartConfig={chartConfig}
+              activeOutput={activeOutput}
+              onHoverLetter={handleHoverLetter}
+            />
             <div className={styles.hoverInfoContainer}>
               {outputs?.[0] ? (
                 outputs.map((output: Output, i: number) => (
