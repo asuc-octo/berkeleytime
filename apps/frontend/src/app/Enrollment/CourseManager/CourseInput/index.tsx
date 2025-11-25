@@ -3,7 +3,15 @@ import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useApolloClient } from "@apollo/client/react";
 import { useSearchParams } from "react-router-dom";
 
-import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
+import {
+  Box,
+  Button,
+  Flex,
+  Option,
+  OptionItem,
+  Select,
+  SelectHandle,
+} from "@repo/theme";
 
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
@@ -21,7 +29,11 @@ interface CourseInputProps {
 }
 
 // called instructor in frontend but actually we're letting users select a class
-const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
+type ClassSelectValue = ICourseWithInstructorClass | "all";
+const DEFAULT_SELECTED_CLASS: OptionItem<ClassSelectValue> = {
+  value: "all",
+  label: "All Instructors",
+};
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
@@ -55,7 +67,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     const list: { value: string; label: string }[] = [];
     if (!courseData) return list;
     const filterHasData = courseData.classes.filter(
-      ({ primarySection: { enrollment } }) => enrollment?.latest
+      ({ primarySection }) => primarySection?.enrollment?.latest
     );
     const filteredOptions = filterHasData
       .filter(
@@ -85,7 +97,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     semester: string | null = null,
     shouldSetSelectedClass = true
   ) => {
-    const list = [DEFAULT_SELECTED_CLASS];
+    const list: Option<ClassSelectValue>[] = [DEFAULT_SELECTED_CLASS];
     if (!courseData) return list;
 
     const localSelectedSemester = semester ? semester : selectedSemester;
@@ -104,21 +116,20 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             )
       )
       .forEach((c) => {
-        if (!c.primarySection.enrollment?.latest) return;
+        const primarySection = c.primarySection;
+        if (!primarySection?.enrollment?.latest) return;
         // only classes from current sem displayed
         let allInstructors = "";
-        c.primarySection.meetings.forEach((m) => {
+        primarySection.meetings?.forEach((m) => {
           m.instructors.forEach((i) => {
             // construct label as "Given Family"
             allInstructors = `${allInstructors} ${i.givenName} ${i.familyName};`;
           });
         });
-        classStrings.push(
-          `${allInstructors.trim()} ${c.primarySection.number}`
-        );
+        classStrings.push(`${allInstructors.trim()} ${primarySection.number}`);
         classes.push(c);
       });
-    const opts = classStrings.map((v, i) => {
+    const opts: OptionItem<ClassSelectValue>[] = classStrings.map((v, i) => {
       return { value: classes[i], label: v };
     });
     if (opts.length === 1) {
@@ -145,6 +156,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     )
       return;
 
+    if (!selectedClass.primarySection) return;
+
     addRecent(RecentType.Course, {
       subject: selectedCourse.subject,
       number: selectedCourse.number,
@@ -157,10 +170,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       courseNumber: selectedCourse.number,
       year: parseInt(year),
       semester: semester as Semester,
-      sectionNumber:
-        selectedClass === null
-          ? undefined
-          : selectedClass.primarySection.number,
+      sectionNumber: selectedClass.primarySection.number,
       sessionId:
         selectedClass?.semester === "Summer"
           ? selectedClass.sessionId
@@ -264,7 +274,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         />
       </Box>
       <Box flexGrow="1">
-        <Select
+        <Select<ClassSelectValue>
           ref={classSelectRef}
           options={classOptions}
           disabled={disabled || !selectedCourse}

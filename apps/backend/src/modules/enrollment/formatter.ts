@@ -24,9 +24,9 @@ const normalizeEnrollmentSingular = (
 
     return {
       ...count,
-      requirementGroup: matchingType?.requirementGroup ?? {
-        code: null,
-        description: "Unknown",
+      requirementGroup: {
+        code: matchingType?.requirementGroup?.code ?? null,
+        description: matchingType?.requirementGroup?.description ?? "Unknown",
       },
       fromDate,
       isValid,
