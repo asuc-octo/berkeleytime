@@ -1,4 +1,5 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
+
 import { SEMESTER_ENUM } from "../lib/common";
 
 export const userSchema = new Schema(

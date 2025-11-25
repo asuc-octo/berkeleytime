@@ -1,9 +1,9 @@
 import {
   ClassModel,
   CourseModel,
+  EnrollmentSubscriptionModel,
   IClassItem,
   ICourseItem,
-  EnrollmentSubscriptionModel,
   UserModel,
 } from "@repo/common";
 
@@ -28,7 +28,7 @@ export const updateUser = async (context: any, user: UpdateUserInput) => {
 
   const { monitoredClasses, ...userFields } = user;
 
-  if (monitoredClasses !== undefined) {
+  if (monitoredClasses != null) {
     // Replace existing subscriptions for this user with the provided list.
     await EnrollmentSubscriptionModel.deleteMany({ userId: context.user._id });
 
@@ -52,9 +52,7 @@ export const updateUser = async (context: any, user: UpdateUserInput) => {
         const key = `${c.year}-${c.semester}-${c.sessionId ?? "1"}-${
           c.subject
         }-${c.courseNumber}-${c.number}`;
-        const thresholds = new Set<number>(
-          deduped.get(key)?.thresholds ?? []
-        );
+        const thresholds = new Set<number>(deduped.get(key)?.thresholds ?? []);
         (mc.thresholds ?? []).forEach((t) => thresholds.add(t));
 
         deduped.set(key, {
@@ -130,9 +128,7 @@ export const getBookmarkedClasses = async (
   return classes.map(formatClass);
 };
 
-export const getMonitoredClasses = async (
-  userId: string
-) => {
+export const getMonitoredClasses = async (userId: string) => {
   const subscriptions = await EnrollmentSubscriptionModel.find({
     userId,
   }).lean();

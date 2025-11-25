@@ -1,11 +1,11 @@
 import sgMail from "@sendgrid/mail";
 import { readFileSync } from "fs";
-import { join, dirname } from "path";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
 import {
-  NewEnrollmentHistoryModel,
   EnrollmentSubscriptionModel,
+  NewEnrollmentHistoryModel,
   UserModel,
 } from "@repo/common";
 
@@ -76,7 +76,10 @@ const generateEnrollmentAlertEmail = (
 
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  const templatePath = join(__dirname, "../templates/enrollment-alert-email.html");
+  const templatePath = join(
+    __dirname,
+    "../templates/enrollment-alert-email.html"
+  );
   const template = readFileSync(templatePath, "utf-8");
 
   const html = template
@@ -204,7 +207,9 @@ export const checkEnrollmentThresholds = async ({ log }: Config) => {
     {} as Record<string, EnrollmentAlert[]>
   );
 
-  for (const [threshold, thresholdAlerts] of Object.entries(alertsByThreshold)) {
+  for (const [threshold, thresholdAlerts] of Object.entries(
+    alertsByThreshold
+  )) {
     log.info(`  ${threshold}: ${thresholdAlerts.length} sections`);
 
     thresholdAlerts.slice(0, 3).forEach((alert) => {
