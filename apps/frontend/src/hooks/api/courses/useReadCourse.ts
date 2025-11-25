@@ -2,11 +2,11 @@ import { useCallback } from "react";
 
 import { useLazyQuery, useQuery } from "@apollo/client/react";
 
-import { GET_COURSE_FOR_CLASS } from "@/lib/api/courses";
+import { GET_CLASS_OVERVIEW } from "@/lib/api/courses";
 import {
+  GetClassOverviewQuery,
+  GetClassOverviewQueryVariables,
   GetCourseDocument,
-  GetCourseForClassQuery,
-  GetCourseForClassQueryVariables,
   GetCourseGradeDistDocument,
   GetCourseGradeDistQuery,
   GetCourseGradeDistQueryVariables,
@@ -45,21 +45,24 @@ export const useGetCourse = (
   };
 };
 
-export const useGetCourseForClass = (
+export const useGetClassOverview = (
   subject: string,
   number: string,
   options?: Omit<
-    useQuery.Options<GetCourseForClassQuery, GetCourseForClassQueryVariables>,
+    useQuery.Options<GetClassOverviewQuery, GetClassOverviewQueryVariables>,
     "variables"
   >
 ) => {
-  const query = useQuery<any>(GET_COURSE_FOR_CLASS, {
-    ...(options as any),
-    variables: {
-      subject,
-      number,
-    },
-  });
+  const query = useQuery<GetClassOverviewQuery, GetClassOverviewQueryVariables>(
+    GET_CLASS_OVERVIEW,
+    {
+      ...options,
+      variables: {
+        subject,
+        number,
+      },
+    }
+  );
 
   return {
     ...query,
@@ -183,7 +186,7 @@ export const useGetCourseUnits = () => {
 
   return [getCourseUnits, { loading, error }] as [
     getCourseUnits: typeof getCourseUnits,
-    result: { loading: boolean; error: any },
+    result: { loading: boolean; error: unknown },
   ];
 };
 

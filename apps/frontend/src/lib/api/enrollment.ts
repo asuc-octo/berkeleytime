@@ -12,10 +12,6 @@ export type ISeatReservationCounts = NonNullable<
   >["history"][number]["seatReservationCount"]
 >[number];
 
-export type IReservationType = NonNullable<
-  NonNullable<GetEnrollmentQuery["enrollment"]>["seatReservationTypes"]
->[number];
-
 export const READ_ENROLLMENT = gql`
   query GetEnrollment(
     $year: Int!
@@ -40,11 +36,6 @@ export const READ_ENROLLMENT = gql`
       subject
       courseNumber
       sectionNumber
-      seatReservationTypes {
-        number
-        requirementGroup
-        fromDate
-      }
       history {
         startTime
         endTime
@@ -57,10 +48,14 @@ export const READ_ENROLLMENT = gql`
         maxEnroll
         maxWaitlist
         openReserved
+        activeReservedMaxCount
         seatReservationCount {
-          number
           maxEnroll
           enrolledCount
+          requirementGroup {
+            description
+          }
+          isValid
         }
       }
     }

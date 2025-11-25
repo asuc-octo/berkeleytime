@@ -102,14 +102,17 @@ export function RatingFormBody({
                 value: term.value,
                 label: term.label,
               }))}
-              disabled={!selectedCourse || termOptions.length === 0}
+              disabled={!selectedCourse || termOptionsLoading}
               loading={termOptionsLoading}
               value={selectedTerm}
               onChange={(selectedOption) => {
                 if (Array.isArray(selectedOption)) onTermSelect(null);
                 else onTermSelect(selectedOption || null);
               }}
-              placeholder="Select semester"
+              placeholder={
+                selectedCourse ? "Select semester" : "Select a class first"
+              }
+              emptyMessage="No semesters found."
               clearable={true}
               searchable={true}
             />

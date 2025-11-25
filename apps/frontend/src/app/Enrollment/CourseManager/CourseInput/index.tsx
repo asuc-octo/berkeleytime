@@ -21,7 +21,7 @@ interface CourseInputProps {
 }
 
 // called instructor in frontend but actually we're letting users select a class
-const DEFAULT_SELECTED_CLASS = { value: null, label: "All Instructors" };
+const DEFAULT_SELECTED_CLASS = { value: "all", label: "All Instructors" };
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
@@ -45,9 +45,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     }
   );
 
-  const [selectedClass, setSelectedClass] =
-    useState<ICourseWithInstructorClass | null>(DEFAULT_SELECTED_CLASS.value);
-  const [selectedSemester, setSelectedSemester] = useState<string | null>();
+  const [selectedClass, setSelectedClass] = useState<
+    ICourseWithInstructorClass | "all" | null
+  >(null);
+  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
 
   const semesterOptions = useMemo(() => {
     // get all semesters
@@ -108,11 +109,13 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         let allInstructors = "";
         c.primarySection.meetings.forEach((m) => {
           m.instructors.forEach((i) => {
-            // construct label
-            allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
+            // construct label as "Given Family"
+            allInstructors = `${allInstructors} ${i.givenName} ${i.familyName};`;
           });
         });
-        classStrings.push(`${allInstructors} ${c.primarySection.number}`);
+        classStrings.push(
+          `${allInstructors.trim()} ${c.primarySection.number}`
+        );
         classes.push(c);
       });
     const opts = classStrings.map((v, i) => {
@@ -134,7 +137,13 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   ]);
 
   const add = async () => {
-    if (!selectedClass || !selectedCourse || !selectedSemester) return;
+    if (
+      !selectedClass ||
+      selectedClass === "all" ||
+      !selectedCourse ||
+      !selectedSemester
+    )
+      return;
 
     addRecent(RecentType.Course, {
       subject: selectedCourse.subject,
@@ -189,6 +198,11 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       searchParams.append("input", getInputSearchParam(input));
       setSearchParams(searchParams);
 
+      // Reset selectors back to defaults after adding a course
+      setSelectedCourse(null);
+      setSelectedClass(null);
+      setSelectedSemester(null);
+
       setLoading(false);
     } catch {
       // TODO: Error handling
@@ -207,7 +221,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
 
-    setSelectedClass(DEFAULT_SELECTED_CLASS.value);
+    setSelectedClass(null);
     setSelectedSemester(null);
     semesterSelectRef.current?.focus();
     semesterSelectRef.current?.openMenu();
@@ -215,7 +229,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedClass(DEFAULT_SELECTED_CLASS.value);
+    setSelectedClass(null);
     setSelectedSemester(null);
   };
 
@@ -233,6 +247,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           ref={semesterSelectRef}
           options={semesterOptions}
           disabled={disabled || !selectedCourse}
+          searchable
+          searchPlaceholder="Search semesters..."
+          placeholder="Select a semester"
           value={selectedSemester}
           onChange={(s) => {
             if (Array.isArray(s)) return;
@@ -251,6 +268,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           ref={classSelectRef}
           options={classOptions}
           disabled={disabled || !selectedCourse}
+          searchable
+          searchPlaceholder="Search instructors..."
+          placeholder="Select a class"
           value={selectedClass}
           onChange={(s) => {
             if (Array.isArray(s)) return;

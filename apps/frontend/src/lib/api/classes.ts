@@ -7,8 +7,8 @@ import {
   Component,
   GetCanonicalCatalogQuery,
   GetClassDetailsQuery,
+  GetClassOverviewQuery,
   GetClassQuery,
-  GetCourseForClassQuery,
 } from "../generated/graphql";
 
 export const GET_CLASS = gql`
@@ -133,16 +133,15 @@ export const GET_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
             seatReservationCount {
               enrolledCount
               maxEnroll
-              number
+              requirementGroup {
+                description
+              }
+              isValid
             }
-          }
-          seatReservationTypes {
-            fromDate
-            number
-            requirementGroup
           }
         }
         meetings {
@@ -194,6 +193,7 @@ export const GET_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
           }
         }
         meetings {
@@ -245,16 +245,12 @@ export const GET_CLASS_DETAILS = gql`
       unitsMin
       primarySection {
         sectionId
-        number
-        component
         sectionAttributes(attributeCode: "NOTE") {
           attribute {
             code
-            description
             formalDescription
           }
           value {
-            code
             description
             formalDescription
           }
@@ -264,18 +260,15 @@ export const GET_CLASS_DETAILS = gql`
             endTime
             enrolledCount
             maxEnroll
-            waitlistedCount
-            maxWaitlist
+            activeReservedMaxCount
             seatReservationCount {
               enrolledCount
               maxEnroll
-              number
+              requirementGroup {
+                description
+              }
+              isValid
             }
-          }
-          seatReservationTypes {
-            fromDate
-            number
-            requirementGroup
           }
         }
         meetings {
@@ -333,8 +326,8 @@ export const GET_CLASS_SECTIONS = gql`
   }
 `;
 
-export const GET_COURSE_GRADES = gql`
-  query GetCourseGrades(
+export const GET_CLASS_GRADES = gql`
+  query GetClassGrades(
     $year: Int!
     $semester: Semester!
     $sessionId: SessionIdentifier
@@ -391,15 +384,6 @@ export const GET_CLASS_ENROLLMENT = gql`
             waitlistedCount
             maxWaitlist
           }
-          latest {
-            startTime
-            endTime
-            granularitySeconds
-            enrolledCount
-            maxEnroll
-            waitlistedCount
-            maxWaitlist
-          }
         }
       }
     }
@@ -429,7 +413,7 @@ export const GET_CLASS_RATINGS = gql`
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
 export type IClassDetails = NonNullable<GetClassDetailsQuery["class"]>;
-export type IClassCourse = NonNullable<GetCourseForClassQuery["course"]>;
+export type IClassCourse = NonNullable<GetClassOverviewQuery["course"]>;
 
 export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];

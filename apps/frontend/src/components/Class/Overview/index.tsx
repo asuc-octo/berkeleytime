@@ -12,6 +12,11 @@ import { UserSubmittedData } from "./UserSubmittedData";
 export default function Overview() {
   const { class: _class, course } = useClass();
 
+  const sectionAttributes = useMemo(
+    () => _class.primarySection?.sectionAttributes ?? [],
+    [_class.primarySection?.sectionAttributes]
+  );
+
   const prereqs = useMemo(() => {
     if (course.requirements && course.requirements.trim()) {
       return course.requirements;
@@ -19,11 +24,8 @@ export default function Overview() {
     return null;
   }, [course.requirements]);
 
-  const classNoteLines = useMemo(() => {
-    const attributes = _class.primarySection?.sectionAttributes ?? [];
-    if (!attributes.length) return null;
-
-    const classDescriptionAttribute = attributes.find(
+  const classDescription = useMemo(() => {
+    const classDescriptionAttribute = sectionAttributes.find(
       (attribute) =>
         attribute.attribute?.code === "NOTE" &&
         attribute.attribute?.formalDescription === "Class Description"
@@ -34,14 +36,31 @@ export default function Overview() {
       classDescriptionAttribute?.value?.description?.trim() ??
       null;
 
+    return text ?? course.description ?? "";
+  }, [course.description, sectionAttributes]);
+
+  const classNoteLines = useMemo(() => {
+    if (!sectionAttributes.length) return null;
+
+    const classNotesAttribute = sectionAttributes.find(
+      (attribute) =>
+        attribute.attribute?.code === "NOTE" &&
+        attribute.attribute?.formalDescription === "Class Notes"
+    );
+
+    const text =
+      classNotesAttribute?.value?.formalDescription?.trim() ??
+      classNotesAttribute?.value?.description?.trim() ??
+      null;
+
     if (!text) return null;
 
-    const description = (course.description ?? "").trim();
-    const title = (course.title ?? "").trim();
+    const normalize = (value: string): string =>
+      value.replace(/\s+/g, " ").trim();
 
-    const normalizedNoteText = text.replace(/\s+/g, " ").trim();
-    const normalizedDescription = description.replace(/\s+/g, " ").trim();
-    const normalizedTitle = title.replace(/\s+/g, " ").trim();
+    const normalizedNoteText = normalize(text);
+    const normalizedDescription = normalize(classDescription ?? "");
+    const normalizedTitle = normalize(course.title ?? "");
 
     if (
       normalizedNoteText === normalizedDescription ||
@@ -54,11 +73,12 @@ export default function Overview() {
       .split(/\n+/)
       .map((line) => line.trim())
       .filter(Boolean);
-  }, [
-    _class.primarySection?.sectionAttributes,
-    course.description,
-    course.title,
-  ]);
+  }, [classDescription, course.title, sectionAttributes]);
+
+  const displayedDescription = useMemo(() => {
+    const trimmed = classDescription.trim();
+    return trimmed.length > 0 ? trimmed : "No description provided.";
+  }, [classDescription]);
 
   return (
     <Box p="5">
@@ -75,7 +95,7 @@ export default function Overview() {
           )}
           <Flex direction="column" gap="2">
             <p className={styles.label}>Description</p>
-            <p className={styles.description}>{course.description}</p>
+            <p className={styles.description}>{displayedDescription}</p>
           </Flex>
           {classNoteLines && classNoteLines.length > 0 && (
             <Flex direction="column" gap="2">
