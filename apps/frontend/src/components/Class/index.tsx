@@ -194,18 +194,28 @@ export default function Class({
     [course, providedCourse]
   );
 
-  const classTitle = useMemo(() => {
-    const attributes = _class?.primarySection?.sectionAttributes ?? [];
-    const specialTitleAttribute = attributes.find(
-      (attr) => attr.attribute?.formalDescription === "Special Title"
-    );
+  const sectionAttributes = useMemo(
+    () => _class?.primarySection?.sectionAttributes ?? [],
+    [_class?.primarySection?.sectionAttributes]
+  );
 
+  const specialTitleAttribute = useMemo(
+    () =>
+      sectionAttributes.find(
+        (attr) =>
+          attr.attribute?.code === "NOTE" &&
+          attr.attribute?.formalDescription === "Special Title"
+      ),
+    [sectionAttributes]
+  );
+
+  const classTitle = useMemo(() => {
     if (specialTitleAttribute?.value?.formalDescription) {
       return specialTitleAttribute.value.formalDescription;
     }
 
     return _course?.title ?? "";
-  }, [_class?.primarySection?.sectionAttributes, _course?.title]);
+  }, [specialTitleAttribute?.value?.formalDescription, _course?.title]);
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,
