@@ -1,0 +1,76 @@
+.card {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0;
+  z-index: 998;
+  max-width: 500px;
+}
+
+.trigger {
+  cursor: default;
+  user-select: none;
+}
+
+.header {
+  padding: 8px 12px;
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  color: var(--heading-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 8px;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  align-items: center;
+  column-gap: 12px;
+}
+
+.description {
+  flex: 1;
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  color: var(--heading-color);
+}
+
+.pillContainer {
+  min-width: 80px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  height: 32px;
+  border-radius: 15px;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+}
+
+.pillAvailable {
+  background-color: var(--button-hover-color);
+  color: var(--paragraph-color);
+}
+
+.pillFull {
+  background-color: var(--red-500-20);
+  color: var(--red-500);
+}
+
+.pillText {
+  line-height: 1;
+}

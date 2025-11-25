@@ -9,21 +9,14 @@ import {
 
 import { useMutation, useQuery } from "@apollo/client/react";
 import classNames from "classnames";
-import {
-  Bookmark,
-  BookmarkSolid,
-  InfoCircle,
-  OpenNewWindow,
-} from "iconoir-react";
+import { Bookmark, BookmarkSolid, OpenNewWindow } from "iconoir-react";
 import { Tabs } from "radix-ui";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
 import {
-  Badge,
   Box,
-  Color,
   Container,
   Flex,
   IconButton,
@@ -38,6 +31,7 @@ import {
   SubmitRatingPopup,
 } from "@/components/Class/Ratings/RatingDialog";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
+import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { useGetCourseForClass, useUpdateUser } from "@/hooks/api";
@@ -195,8 +189,6 @@ export default function Class({
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
 
-
-
   const _course = useMemo(
     () => providedCourse ?? course,
     [course, providedCourse]
@@ -267,15 +259,15 @@ export default function Class({
 
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
-        (bookmarkedClass) =>
-          !(
-            bookmarkedClass.subject === _class?.subject &&
-            bookmarkedClass.courseNumber === _class?.courseNumber &&
-            bookmarkedClass.number === _class?.number &&
-            bookmarkedClass.year === _class?.year &&
-            bookmarkedClass.semester === _class?.semester
-          )
-      )
+          (bookmarkedClass) =>
+            !(
+              bookmarkedClass.subject === _class?.subject &&
+              bookmarkedClass.courseNumber === _class?.courseNumber &&
+              bookmarkedClass.number === _class?.number &&
+              bookmarkedClass.year === _class?.year &&
+              bookmarkedClass.semester === _class?.semester
+            )
+        )
       : user.bookmarkedClasses.concat(bookmarkEntry);
     await updateUser(
       {
@@ -576,10 +568,11 @@ export default function Class({
                   )}
                   {activeReservedMaxCount > 0 && (
                     <div className={styles.reservedSeatingBadgeContainer}>
-                      <Badge
-                        label="Reserved Seating"
-                        color={Color.Orange}
-                        icon={<InfoCircle />}
+                      <ReservedSeatingHoverCard
+                        seatReservationCount={
+                          _class?.primarySection?.enrollment?.latest
+                            ?.seatReservationCount ?? []
+                        }
                       />
                     </div>
                   )}
