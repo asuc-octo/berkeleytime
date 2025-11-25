@@ -423,16 +423,6 @@ export default function Filters() {
     [academicOrganizationOptions]
   );
 
-  const isRequirementsDisabled = useMemo(() => {
-    const optionItems = requirementOptions.filter(
-      (opt): opt is OptionItem<RequirementSelection> => opt.type !== "label"
-    );
-    return (
-      optionItems.length === 0 ||
-      optionItems.every((opt) => opt.meta === "0" || !opt.meta)
-    );
-  }, [requirementOptions]);
-
   const isClassLevelDisabled = useMemo(
     () => Object.values(filteredLevels).every((count) => count === 0),
     [filteredLevels]
@@ -624,7 +614,7 @@ export default function Filters() {
             multi
             value={selectedRequirements}
             placeholder="Filter by requirements"
-            disabled={isRequirementsDisabled}
+            disabled={false}
             onChange={(v) => {
               if (!Array.isArray(v)) return;
               const nextBreadths = v

@@ -323,15 +323,11 @@ export function Select<T>({
     [optionUniverse]
   );
 
-  // Auto-disable if no options available in any tab
-  const hasAnyOptions = allSelectableOptions.length > 0;
-  const hasNoOptions = !hasAnyOptions;
-  const effectiveDisabled = disabled || hasNoOptions || loading;
+  // Keep select usable even when no options match; only disable when explicitly disabled or loading
+  const effectiveDisabled = disabled || loading;
   const effectivePlaceholder = loading
     ? "Loading content"
-    : effectiveDisabled
-      ? "No option available"
-      : placeholder;
+    : placeholder;
 
   const activeElem = useMemo(
     () =>
