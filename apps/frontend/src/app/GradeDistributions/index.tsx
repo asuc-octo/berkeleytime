@@ -8,17 +8,21 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
+import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  createChartConfig,
+  formatters,
+} from "@/components/Chart";
 import Footer from "@/components/Footer";
 import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
-import { decimalToPercentString } from "@/utils/number-formatter";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseManager from "./CourseManager";
@@ -145,6 +149,32 @@ const GradeDistributions = () => {
     [filteredOutputs]
   );
 
+  const chartConfig = useMemo(() => {
+    const labels = filteredOutputs.reduce(
+      (acc, output, index) => {
+        acc[index.toString()] = `${output.input.subject} ${output.input.courseNumber}`;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
+
+    const themes = filteredOutputs.reduce(
+      (acc, output, index) => {
+        acc[index.toString()] = {
+          light: LIGHT_COLORS[index % LIGHT_COLORS.length],
+          dark: DARK_COLORS[index % DARK_COLORS.length],
+        };
+        return acc;
+      },
+      {} as Record<string, { light: string; dark: string }>
+    );
+
+    return createChartConfig(
+      filteredOutputs.map((_, i) => i.toString()),
+      { labels, themes }
+    );
+  }, [filteredOutputs]);
+
   return (
     <Box p="5">
       <Flex direction="column">
@@ -156,87 +186,74 @@ const GradeDistributions = () => {
         ) : (
           <Flex direction="row">
             <div className={styles.view}>
-              <ResponsiveContainer width="100%" height={550}>
-                <BarChart
-                  syncId="grade-distributions"
-                  width={730}
-                  height={200}
-                  data={data}
-                  onMouseLeave={() => setHoveredLetter(null)}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="var(--border-color)"
-                  />
-                  <XAxis
-                    dataKey="letter"
-                    fill="var(--label-color)"
-                    tickMargin={8}
-                  />
-                  <YAxis
-                    tickFormatter={(value) => decimalToPercentString(value, 1)}
-                  />
-                  {filteredOutputs?.length && (
-                    <Tooltip
-                      cursor={{
-                        fill: "var(--border-color)",
-                        fillOpacity: 0.5,
-                      }}
-                      content={(props) => {
-                        // Update hovered letter based on tooltip position
-                        const letter = props.label?.toString() ?? null;
-                        if (letter !== hoveredLetter) {
-                          setHoveredLetter(letter);
+              <ChartContainer config={chartConfig}>
+                <ResponsiveContainer width="100%" height={550}>
+                  <BarChart
+                    syncId="grade-distributions"
+                    width={730}
+                    height={200}
+                    data={data}
+                    onMouseLeave={() => setHoveredLetter(null)}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="var(--border-color)"
+                    />
+                    <XAxis
+                      dataKey="letter"
+                      fill="var(--label-color)"
+                      tickMargin={8}
+                    />
+                    <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
+                    {filteredOutputs?.length > 0 && (
+                      <ChartTooltip
+                        tooltipConfig={{
+                          labelFormatter: (label) => {
+                            // Update hovered letter based on tooltip position
+                            const letter = label?.toString() ?? null;
+                            if (letter !== hoveredLetter) {
+                              setHoveredLetter(letter);
+                            }
+                            return `Grade: ${label}`;
+                          },
+                          valueFormatter: (value) => formatters.percent(value, 1),
+                          indicator: "square",
+                          sortBy: "value",
+                          sortOrder: "desc",
+                        }}
+                      />
+                    )}
+                    {filteredOutputs?.map((output, index) => (
+                      <Bar
+                        dataKey={index}
+                        fill={
+                          activeOutput && !output.active
+                            ? DARK_COLORS[index]
+                            : output.color
                         }
-                        return (
-                          <HoverCard
-                            content={props.label}
-                            data={props.payload?.map((v) => {
-                              const name = v.name?.valueOf();
-                              return {
-                                label: name ? name.toString() : "N/A",
-                                value:
-                                  typeof v.value === "number"
-                                    ? decimalToPercentString(v.value, 1)
-                                    : "N/A",
-                                color: v.fill,
-                              };
-                            })}
-                          />
-                        );
-                      }}
-                    />
-                  )}
-                  {filteredOutputs?.map((output, index) => (
-                    <Bar
-                      dataKey={index}
-                      fill={
-                        activeOutput && !output.active
-                          ? DARK_COLORS[index]
-                          : output.color
-                      }
-                      key={index}
-                      name={`${output.input.subject} ${output.input.courseNumber}`}
-                      radius={[
-                        10 / filteredOutputs.length,
-                        10 / filteredOutputs.length,
-                        0,
-                        0,
-                      ]}
-                    />
-                  ))}
-                </BarChart>
-              </ResponsiveContainer>
-              {!filteredOutputs?.length && (
-                <div className={styles.empty}>
-                  <FrameAltEmpty height={24} width={24} />
-                  <br />
-                  You have not added
-                  <br />
-                  any classes yet
-                </div>
-              )}
+                        key={index}
+                        name={`${output.input.subject} ${output.input.courseNumber}`}
+                        radius={[
+                          10 / filteredOutputs.length,
+                          10 / filteredOutputs.length,
+                          0,
+                          0,
+                        ]}
+                      />
+                    ))}
+                  </BarChart>
+                </ResponsiveContainer>
+                {!filteredOutputs?.length && (
+                  <div className={styles.empty}>
+                    <FrameAltEmpty height={24} width={24} />
+                    <br />
+                    You have not added
+                    <br />
+                    any classes yet
+                  </div>
+                )}
+              </ChartContainer>
             </div>
             <div className={styles.hoverInfoContainer}>
               {outputs?.[0] ? (

@@ -34,7 +34,7 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useGetCourseForClass, useUpdateUser } from "@/hooks/api";
+import { useGetClassOverview, useUpdateUser } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
@@ -165,7 +165,7 @@ export default function Class({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-  const { data: course } = useGetCourseForClass(
+  const { data: course } = useGetClassOverview(
     providedClass?.subject ?? (subject as string),
     providedClass?.courseNumber ?? (courseNumber as string),
     {
@@ -194,7 +194,11 @@ export default function Class({
     [course, providedCourse]
   );
 
-  const sectionAttributes = useMemo(
+  type ClassSectionAttribute = NonNullable<
+    NonNullable<IClassDetails["primarySection"]>["sectionAttributes"]
+  >[number];
+
+  const sectionAttributes = useMemo<ClassSectionAttribute[]>(
     () => _class?.primarySection?.sectionAttributes ?? [],
     [_class?.primarySection?.sectionAttributes]
   );
@@ -320,14 +324,17 @@ export default function Class({
     }
 
     type Metric = NonNullable<
-      IClassCourse["aggregatedRatings"]["metrics"]
+      NonNullable<IClassCourse["aggregatedRatings"]>["metrics"]
     >[number];
-    const metrics: Metric[] = aggregatedRatings.metrics;
-    if (!metrics || metrics.length === 0) {
+    const metrics =
+      (aggregatedRatings.metrics ?? []).filter(
+        (metric): metric is Metric => Boolean(metric)
+      ) ?? [];
+    if (metrics.length === 0) {
       return false;
     }
 
-    const counts = metrics.map((metric: Metric) => metric.count);
+    const counts = metrics.map((metric) => metric.count);
     return counts.length > 0 ? Math.max(...counts) : false;
   }, [_course]);
 
@@ -565,7 +572,12 @@ export default function Class({
                       }}
                     >
                       <AverageGrade
-                        gradeDistribution={_course?.gradeDistribution}
+                        gradeDistribution={
+                          _course?.gradeDistribution ?? {
+                            average: null,
+                            pnpPercentage: null,
+                          }
+                        }
                       />
                     </Link>
                   )}
@@ -656,8 +668,8 @@ export default function Class({
           </Box>
           <ClassContext
             value={{
-              class: _class,
-              course: _course,
+              class: _class as IClassDetails,
+              course: _course as IClassCourse,
             }}
           >
             {dialog ? (

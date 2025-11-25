@@ -16,7 +16,7 @@ import {
 } from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { useReadTerms } from "@/hooks/api";
-import { useGetRatings } from "@/hooks/api/ratings/useGetRatings";
+import { useGetClassRatingsData } from "@/hooks/api/ratings/useGetRatings";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
 import { IAggregatedRatings, IMetric } from "@/lib/api";
@@ -98,7 +98,7 @@ export function RatingsContainer() {
     hasRatings,
     loading,
     refetch: refetchAllRatings,
-  } = useGetRatings({
+  } = useGetClassRatingsData({
     subject: currentClass.subject,
     courseNumber: currentClass.courseNumber,
   });

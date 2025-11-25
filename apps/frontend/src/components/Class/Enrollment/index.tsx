@@ -8,23 +8,23 @@ import {
   LineChart,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import type { TooltipContentProps } from "recharts";
 
-import { Box, Button, Container, HoverCard } from "@repo/theme";
+import { Box, Button, Container } from "@repo/theme";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  createChartConfig,
+  formatters,
+} from "@/components/Chart";
 import EmptyState from "@/components/Class/EmptyState";
 import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 
 import styles from "./Enrollment.module.scss";
-
-const toPercent = (decimal: number) => {
-  return `${decimal.toFixed(0)}%`;
-};
 
 const timeFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "numeric",
@@ -33,45 +33,10 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
-type EnrollmentTooltipPayload = {
-  name?: string | number;
-  value?: number;
-  stroke?: string;
-};
-
-const renderTooltip = ({
-  label,
-  payload,
-}: TooltipContentProps<number, string>) => {
-  if (typeof label !== "number" || !payload || payload.length === 0) {
-    return null;
-  }
-
-  const duration = moment.duration(label, "minutes");
-  const day = Math.floor(duration.asDays()) + 1;
-  const time = timeFormatter.format(moment.utc(0).add(duration).toDate());
-
-  return (
-    <HoverCard
-      content={`Day ${day} ${time}`}
-      data={payload.map((value: EnrollmentTooltipPayload, index: number) => {
-        const name =
-          typeof value.name === "string"
-            ? value.name
-            : typeof value.name === "number"
-              ? value.name.toString()
-              : "";
-        return {
-          key: `${name}-${index}`,
-          label: name === "enrolled" ? "Enrolled" : "Waitlisted",
-          value:
-            typeof value.value === "number" ? toPercent(value.value) : "N/A",
-          color: value.stroke,
-        };
-      })}
-    />
-  );
-};
+const chartConfig = createChartConfig(["enrolled", "waitlisted"], {
+  labels: { enrolled: "Enrolled", waitlisted: "Waitlisted" },
+  colors: { enrolled: "var(--blue-500)", waitlisted: "var(--orange-500)" },
+});
 
 export default function Enrollment() {
   const { class: _class } = useClass();
@@ -209,7 +174,7 @@ export default function Enrollment() {
             </Button>
           </div>
           <div className={styles.chart}>
-            <div className={styles.chartContainer}>
+            <ChartContainer config={chartConfig} className={styles.chartContainer}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   width={730}
@@ -243,14 +208,27 @@ export default function Enrollment() {
                   />
                   <YAxis
                     stroke="var(--label-color)"
-                    tickFormatter={toPercent}
+                    tickFormatter={(v) => formatters.percentRound(v)}
                     tick={{
                       fill: "var(--paragraph-color)",
                       fontSize: "var(--text-14)",
                     }}
                     domain={[0, dataMax || 100]}
                   />
-                  <Tooltip content={renderTooltip} />
+                  <ChartTooltip
+                    tooltipConfig={{
+                      labelFormatter: (label) => {
+                        const duration = moment.duration(label, "minutes");
+                        const day = Math.floor(duration.asDays()) + 1;
+                        const time = timeFormatter.format(
+                          moment.utc(0).add(duration).toDate()
+                        );
+                        return `Day ${day} ${time}`;
+                      },
+                      valueFormatter: (value) => formatters.percentRound(value),
+                      indicator: "line",
+                    }}
+                  />
                   <ReferenceLine
                     y={100}
                     stroke="var(--label-color)"
@@ -285,7 +263,7 @@ export default function Enrollment() {
                   />
                 </LineChart>
               </ResponsiveContainer>
-            </div>
+            </ChartContainer>
             <p className={styles.axisLabel}>Days since enrollment opened</p>
           </div>
         </div>

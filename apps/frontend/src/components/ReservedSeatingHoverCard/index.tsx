@@ -24,7 +24,18 @@ export function ReservedSeatingHoverCard({
 }: ReservedSeatingHoverCardProps) {
   const validReservations = seatReservationCount
     .filter((r) => r.isValid)
-    .sort((a, b) => b.maxEnroll - a.maxEnroll);
+    .sort((a, b) => {
+      const aFull = a.enrolledCount >= a.maxEnroll;
+      const bFull = b.enrolledCount >= b.maxEnroll;
+
+      // First, sort by full status (not full first, then full)
+      if (aFull !== bFull) {
+        return aFull ? 1 : -1;
+      }
+
+      // Within each group, sort by maxEnroll descending
+      return b.maxEnroll - a.maxEnroll;
+    });
 
   return (
     <HoverCard.Root openDelay={200} closeDelay={100}>
