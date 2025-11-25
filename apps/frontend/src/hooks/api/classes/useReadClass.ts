@@ -3,21 +3,21 @@ import { useQuery } from "@apollo/client/react";
 import {
   GET_CLASS_DETAILS,
   GET_CLASS_ENROLLMENT,
+  GET_CLASS_GRADES,
   GET_CLASS_RATINGS,
   GET_CLASS_SECTIONS,
-  GET_CLASS_GRADES,
 } from "@/lib/api/classes";
 import {
   GetClassDetailsQuery,
   GetClassDetailsQueryVariables,
   GetClassEnrollmentQuery,
   GetClassEnrollmentQueryVariables,
+  GetClassGradesQuery,
+  GetClassGradesQueryVariables,
   GetClassRatingsQuery,
   GetClassRatingsQueryVariables,
   GetClassSectionsQuery,
   GetClassSectionsQueryVariables,
-  GetClassGradesQuery,
-  GetClassGradesQueryVariables,
   Semester,
 } from "@/lib/generated/graphql";
 

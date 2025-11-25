@@ -4,9 +4,9 @@ import { useLazyQuery, useQuery } from "@apollo/client/react";
 
 import { GET_CLASS_OVERVIEW } from "@/lib/api/courses";
 import {
-  GetCourseDocument,
   GetClassOverviewQuery,
   GetClassOverviewQueryVariables,
+  GetCourseDocument,
   GetCourseGradeDistDocument,
   GetCourseGradeDistQuery,
   GetCourseGradeDistQueryVariables,

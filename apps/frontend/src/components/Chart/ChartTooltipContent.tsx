@@ -102,9 +102,7 @@ export function ChartTooltipContent({
                 )}
                 {formattedName}
               </span>
-              <span className={styles.tooltipItemValue}>
-                {formattedValue}
-              </span>
+              <span className={styles.tooltipItemValue}>{formattedValue}</span>
             </div>
           );
         })}

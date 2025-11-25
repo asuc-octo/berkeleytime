@@ -327,8 +327,8 @@ export default function Class({
       NonNullable<IClassCourse["aggregatedRatings"]>["metrics"]
     >[number];
     const metrics =
-      (aggregatedRatings.metrics ?? []).filter(
-        (metric): metric is Metric => Boolean(metric)
+      (aggregatedRatings.metrics ?? []).filter((metric): metric is Metric =>
+        Boolean(metric)
       ) ?? [];
     if (metrics.length === 0) {
       return false;

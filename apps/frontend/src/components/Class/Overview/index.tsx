@@ -55,13 +55,17 @@ export default function Overview() {
 
     if (!text) return null;
 
-    const normalize = (value: string): string => value.replace(/\s+/g, " ").trim();
+    const normalize = (value: string): string =>
+      value.replace(/\s+/g, " ").trim();
 
     const normalizedNoteText = normalize(text);
     const normalizedDescription = normalize(classDescription ?? "");
     const normalizedTitle = normalize(course.title ?? "");
 
-    if (normalizedNoteText === normalizedDescription || normalizedNoteText === normalizedTitle) {
+    if (
+      normalizedNoteText === normalizedDescription ||
+      normalizedNoteText === normalizedTitle
+    ) {
       return null;
     }
 
@@ -69,11 +73,7 @@ export default function Overview() {
       .split(/\n+/)
       .map((line) => line.trim())
       .filter(Boolean);
-  }, [
-    classDescription,
-    course.title,
-    sectionAttributes,
-  ]);
+  }, [classDescription, course.title, sectionAttributes]);
 
   const displayedDescription = useMemo(() => {
     const trimmed = classDescription.trim();

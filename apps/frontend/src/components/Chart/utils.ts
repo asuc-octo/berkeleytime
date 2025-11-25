@@ -13,10 +13,7 @@ export const formatters = {
 };
 
 // Get theme-aware color
-export function getThemeColor(theme: {
-  light: string;
-  dark: string;
-}): string {
+export function getThemeColor(theme: { light: string; dark: string }): string {
   if (typeof window === "undefined") return theme.light;
 
   const isDark =

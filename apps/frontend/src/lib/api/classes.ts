@@ -7,8 +7,8 @@ import {
   Component,
   GetCanonicalCatalogQuery,
   GetClassDetailsQuery,
-  GetClassQuery,
   GetClassOverviewQuery,
+  GetClassQuery,
 } from "../generated/graphql";
 
 export const GET_CLASS = gql`

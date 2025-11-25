@@ -15,11 +15,11 @@ import {
 import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   createChartConfig,
   formatters,
-  type ChartConfig,
 } from "@/components/Chart";
 import Footer from "@/components/Footer";
 import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
@@ -96,85 +96,91 @@ type GradeChartProps = {
   onHoverLetter: (letter: string | null) => void;
 };
 
-const GradeChart = memo(function GradeChart({
-  data,
-  filteredOutputs,
-  chartConfig,
-  activeOutput,
-  onHoverLetter,
-}: GradeChartProps) {
-  return (
-    <div className={styles.view}>
-      <ChartContainer config={chartConfig}>
-        <ResponsiveContainer width="100%" height={550}>
-          <BarChart
-            syncId="grade-distributions"
-            width={730}
-            height={200}
-            data={data}
-            onMouseLeave={() => onHoverLetter(null)}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="var(--border-color)"
-            />
-            <XAxis dataKey="letter" fill="var(--label-color)" tickMargin={8} />
-            <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
-            {filteredOutputs?.length > 0 && (
-              <ChartTooltip
-                tooltipConfig={{
-                  labelFormatter: (label) => {
-                    onHoverLetter(label?.toString() ?? null);
-                    return `Grade: ${label}`;
-                  },
-                  valueFormatter: (value) => formatters.percent(value, 1),
-                  indicator: "square",
-                  sortBy: "value",
-                  sortOrder: "desc",
-                }}
+const GradeChart = memo(
+  function GradeChart({
+    data,
+    filteredOutputs,
+    chartConfig,
+    activeOutput,
+    onHoverLetter,
+  }: GradeChartProps) {
+    return (
+      <div className={styles.view}>
+        <ChartContainer config={chartConfig}>
+          <ResponsiveContainer width="100%" height={550}>
+            <BarChart
+              syncId="grade-distributions"
+              width={730}
+              height={200}
+              data={data}
+              onMouseLeave={() => onHoverLetter(null)}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="var(--border-color)"
               />
-            )}
-            {filteredOutputs?.map((output, index) => (
-              <Bar
-                dataKey={index}
-                fill={
-                  activeOutput && !output.active
-                    ? DARK_COLORS[index]
-                    : output.color
-                }
-                key={index}
-                name={`${output.input.subject} ${output.input.courseNumber}`}
-                radius={[
-                  10 / filteredOutputs.length,
-                  10 / filteredOutputs.length,
-                  0,
-                  0,
-                ]}
+              <XAxis
+                dataKey="letter"
+                fill="var(--label-color)"
+                tickMargin={8}
               />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
-        {!filteredOutputs?.length && (
-          <div className={styles.empty}>
-            <FrameAltEmpty height={24} width={24} />
-            <br />
-            You have not added
-            <br />
-            any classes yet
-          </div>
-        )}
-      </ChartContainer>
-    </div>
-  );
-},
-// Avoid re-rendering the chart when only hover state changes
-(prev, next) =>
-  prev.data === next.data &&
-  prev.filteredOutputs === next.filteredOutputs &&
-  prev.chartConfig === next.chartConfig &&
-  prev.activeOutput === next.activeOutput &&
-  prev.onHoverLetter === next.onHoverLetter);
+              <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
+              {filteredOutputs?.length > 0 && (
+                <ChartTooltip
+                  tooltipConfig={{
+                    labelFormatter: (label) => {
+                      onHoverLetter(label?.toString() ?? null);
+                      return `Grade: ${label}`;
+                    },
+                    valueFormatter: (value) => formatters.percent(value, 1),
+                    indicator: "square",
+                    sortBy: "value",
+                    sortOrder: "desc",
+                  }}
+                />
+              )}
+              {filteredOutputs?.map((output, index) => (
+                <Bar
+                  dataKey={index}
+                  fill={
+                    activeOutput && !output.active
+                      ? DARK_COLORS[index]
+                      : output.color
+                  }
+                  key={index}
+                  name={`${output.input.subject} ${output.input.courseNumber}`}
+                  radius={[
+                    10 / filteredOutputs.length,
+                    10 / filteredOutputs.length,
+                    0,
+                    0,
+                  ]}
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+          {!filteredOutputs?.length && (
+            <div className={styles.empty}>
+              <FrameAltEmpty height={24} width={24} />
+              <br />
+              You have not added
+              <br />
+              any classes yet
+            </div>
+          )}
+        </ChartContainer>
+      </div>
+    );
+  },
+  // Avoid re-rendering the chart when only hover state changes
+  (prev, next) =>
+    prev.data === next.data &&
+    prev.filteredOutputs === next.filteredOutputs &&
+    prev.chartConfig === next.chartConfig &&
+    prev.activeOutput === next.activeOutput &&
+    prev.onHoverLetter === next.onHoverLetter
+);
 
 const GradeDistributions = () => {
   const client = useApolloClient();
@@ -241,7 +247,8 @@ const GradeDistributions = () => {
   const chartConfig = useMemo(() => {
     const labels = filteredOutputs.reduce(
       (acc, output, index) => {
-        acc[index.toString()] = `${output.input.subject} ${output.input.courseNumber}`;
+        acc[index.toString()] =
+          `${output.input.subject} ${output.input.courseNumber}`;
         return acc;
       },
       {} as Record<string, string>
@@ -264,12 +271,9 @@ const GradeDistributions = () => {
     );
   }, [filteredOutputs]);
 
-  const handleHoverLetter = useCallback(
-    (letter: string | null) => {
-      setHoveredLetter(letter);
-    },
-    []
-  );
+  const handleHoverLetter = useCallback((letter: string | null) => {
+    setHoveredLetter(letter);
+  }, []);
 
   return (
     <Box p="5">

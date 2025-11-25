@@ -174,7 +174,10 @@ export default function Enrollment() {
             </Button>
           </div>
           <div className={styles.chart}>
-            <ChartContainer config={chartConfig} className={styles.chartContainer}>
+            <ChartContainer
+              config={chartConfig}
+              className={styles.chartContainer}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   width={730}

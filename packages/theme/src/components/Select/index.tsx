@@ -325,9 +325,7 @@ export function Select<T>({
 
   // Keep select usable even when no options match; only disable when explicitly disabled or loading
   const effectiveDisabled = disabled || loading;
-  const effectivePlaceholder = loading
-    ? "Loading content"
-    : placeholder;
+  const effectivePlaceholder = loading ? "Loading content" : placeholder;
 
   const activeElem = useMemo(
     () =>

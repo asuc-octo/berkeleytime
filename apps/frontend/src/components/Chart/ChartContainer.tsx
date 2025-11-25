@@ -21,11 +21,7 @@ export function ChartContainer({
 
   return (
     <ChartContext.Provider value={{ config }}>
-      <div
-        data-chart={chartId}
-        className={className}
-        {...props}
-      >
+      <div data-chart={chartId} className={className} {...props}>
         <ChartStyle id={chartId} config={config} />
         {children}
       </div>

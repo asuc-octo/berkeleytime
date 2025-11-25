@@ -1,11 +1,11 @@
 // TODO: refactor to match GradeDistribution/index.tsx
 import React, {
+  memo,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  memo,
 } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
@@ -26,11 +26,11 @@ import { CategoricalChartFunc } from "recharts/types/chart/types";
 import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   createChartConfig,
   formatters,
-  type ChartConfig,
 } from "@/components/Chart";
 import Footer from "@/components/Footer";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
@@ -64,9 +64,7 @@ type TooltipContentProps = Parameters<
 >[0];
 
 type EnrollmentChartProps = {
-  data:
-    | { timeDelta: number; [key: string]: number | null }[]
-    | undefined;
+  data: { timeDelta: number; [key: string]: number | null }[] | undefined;
   filteredOutputs: Output[];
   chartConfig: ChartConfig;
   activeOutput?: Output;
