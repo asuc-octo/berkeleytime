@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 
 import {
   NewEnrollmentHistoryModel,
+  EnrollmentSubscriptionModel,
   UserModel,
 } from "@repo/common";
 
@@ -218,52 +219,78 @@ export const checkEnrollmentThresholds = async ({ log }: Config) => {
   }
 
   const usersToNotify = new Map<string, Set<EnrollmentAlert>>();
+  const thresholdLookup = ENROLLMENT_THRESHOLDS.reduce(
+    (acc, t) => ({ ...acc, [t.name]: t.percentage }),
+    {} as Record<string, number>
+  );
+  const classKey = (args: {
+    year: number;
+    semester: string;
+    sessionId?: string;
+    subject: string;
+    courseNumber: string;
+    sectionNumber: string;
+  }) =>
+    `${args.year}-${args.semester}-${args.sessionId ?? "1"}-${
+      args.subject
+    }-${args.courseNumber}-${args.sectionNumber}`;
+
+  const alertsByClassKey = new Map<string, EnrollmentAlert[]>();
+  const classFilters: {
+    year: number;
+    semester: string;
+    sessionId: string;
+    subject: string;
+    courseNumber: string;
+    sectionNumber: string;
+  }[] = [];
 
   for (const alert of alerts) {
-    const thresholdPercentage = ENROLLMENT_THRESHOLDS.find(
-      (t) => t.name === alert.threshold
-    )?.percentage;
-
-    if (!thresholdPercentage) {
-      continue;
+    const key = classKey(alert);
+    if (!alertsByClassKey.has(key)) {
+      alertsByClassKey.set(key, []);
+      classFilters.push({
+        year: alert.year,
+        semester: alert.semester,
+        sessionId: alert.sessionId ?? "1",
+        subject: alert.subject,
+        courseNumber: alert.courseNumber,
+        sectionNumber: alert.sectionNumber,
+      });
     }
+    alertsByClassKey.get(key)!.push(alert);
+  }
 
-    const matchingUsers = await UserModel.find({
-      notificationsOn: true,
-      monitoredClasses: {
-        $elemMatch: {
-          "class.year": alert.year,
-          "class.semester": alert.semester,
-          "class.sessionId": alert.sessionId ?? "1",
-          "class.subject": alert.subject,
-          "class.courseNumber": alert.courseNumber,
-          "class.number": alert.sectionNumber,
-        },
-      },
-    }).lean();
+  const matchingSubscriptions = await EnrollmentSubscriptionModel.find({
+    $or: classFilters,
+  }).lean();
 
-    for (const user of matchingUsers) {
-      const monitoredClass = user.monitoredClasses?.find(
-        (mc) =>
-          mc.class &&
-          mc.class.year === alert.year &&
-          mc.class.semester === alert.semester &&
-          (mc.class.sessionId ?? "1") === (alert.sessionId ?? "1") &&
-          mc.class.subject === alert.subject &&
-          mc.class.courseNumber === alert.courseNumber &&
-          mc.class.number === alert.sectionNumber
-      );
+  log.info(
+    `Found ${matchingSubscriptions.length} matching subscriptions across ${classFilters.length} alerting sections`
+  );
 
-      if (
-        monitoredClass &&
-        monitoredClass.thresholds.includes(thresholdPercentage)
-      ) {
-        const userId = user._id.toString();
-        if (!usersToNotify.has(userId)) {
-          usersToNotify.set(userId, new Set());
-        }
-        usersToNotify.get(userId)!.add(alert);
+  for (const subscription of matchingSubscriptions) {
+    const key = classKey({
+      year: subscription.year,
+      semester: subscription.semester,
+      sessionId: subscription.sessionId ?? "1",
+      subject: subscription.subject,
+      courseNumber: subscription.courseNumber,
+      sectionNumber: subscription.sectionNumber,
+    });
+
+    const alertsForClass = alertsByClassKey.get(key) ?? [];
+
+    for (const alert of alertsForClass) {
+      const thresholdPercentage = thresholdLookup[alert.threshold];
+      if (!thresholdPercentage) continue;
+      if (!subscription.thresholds?.includes(thresholdPercentage)) continue;
+
+      const userId = subscription.userId.toString();
+      if (!usersToNotify.has(userId)) {
+        usersToNotify.set(userId, new Set());
       }
+      usersToNotify.get(userId)!.add(alert);
     }
   }
 
@@ -280,10 +307,20 @@ export const checkEnrollmentThresholds = async ({ log }: Config) => {
   let emailsFailed = 0;
   let emailsThrottled = 0;
 
+  const userIds = Array.from(usersToNotify.keys());
+  const usersById = new Map(
+    (
+      await UserModel.find(
+        { _id: { $in: userIds } },
+        "email name notificationsOn lastNotified"
+      ).lean()
+    ).map((user) => [user._id.toString(), user])
+  );
+
   for (const [userId, userAlerts] of usersToNotify.entries()) {
     log.info(`  User ${userId}: ${userAlerts.size} alert(s)`);
 
-    const user = await UserModel.findById(userId).lean();
+    const user = usersById.get(userId);
     if (!user) {
       log.warn(`    User ${userId} not found, skipping`);
       continue;

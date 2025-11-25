@@ -22,7 +22,7 @@ export const formatUser = (user: UserType) => {
     bookmarkedClasses: user.bookmarkedClasses,
     majors: user.majors ? user.majors : [],
     minors: user.minors ? user.minors : [],
-    monitoredClasses: user.monitoredClasses,
+    monitoredClasses: [],
     notificationsOn: user.notificationsOn,
   } as IntermediateUser;
 };

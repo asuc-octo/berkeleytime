@@ -3,6 +3,7 @@ import {
   CourseModel,
   IClassItem,
   ICourseItem,
+  EnrollmentSubscriptionModel,
   UserModel,
 } from "@repo/common";
 
@@ -25,9 +26,58 @@ export const getUser = async (context: any) => {
 export const updateUser = async (context: any, user: UpdateUserInput) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
+  const { monitoredClasses, ...userFields } = user;
+
+  if (monitoredClasses !== undefined) {
+    // Replace existing subscriptions for this user with the provided list.
+    await EnrollmentSubscriptionModel.deleteMany({ userId: context.user._id });
+
+    if (monitoredClasses.length > 0) {
+      const deduped = new Map<
+        string,
+        {
+          userId: string;
+          year: number;
+          semester: string;
+          sessionId: string;
+          subject: string;
+          courseNumber: string;
+          sectionNumber: string;
+          thresholds: number[];
+        }
+      >();
+
+      for (const mc of monitoredClasses) {
+        const c = mc.class;
+        const key = `${c.year}-${c.semester}-${c.sessionId ?? "1"}-${
+          c.subject
+        }-${c.courseNumber}-${c.number}`;
+        const thresholds = new Set<number>(
+          deduped.get(key)?.thresholds ?? []
+        );
+        (mc.thresholds ?? []).forEach((t) => thresholds.add(t));
+
+        deduped.set(key, {
+          userId: context.user._id,
+          year: c.year,
+          semester: c.semester,
+          sessionId: c.sessionId ?? "1",
+          subject: c.subject,
+          courseNumber: c.courseNumber,
+          sectionNumber: c.number,
+          thresholds: Array.from(thresholds),
+        });
+      }
+
+      const docs = Array.from(deduped.values());
+
+      await EnrollmentSubscriptionModel.insertMany(docs, { ordered: false });
+    }
+  }
+
   const updatedUser = await UserModel.findByIdAndUpdate(
     context.user._id,
-    user,
+    userFields,
     { new: true }
   );
 
@@ -81,30 +131,38 @@ export const getBookmarkedClasses = async (
 };
 
 export const getMonitoredClasses = async (
-  monitoredClasses:
-    | UserModule.MonitoredClassInput[]
-    | UserModule.MonitoredClass[]
+  userId: string
 ) => {
-  const filters = monitoredClasses.map((mc) => {
-    const c = mc.class;
-    return {
-      year: c.year,
-      semester: c.semester,
-      sessionId: c.sessionId ?? "1",
-      subject: c.subject,
-      courseNumber: c.courseNumber,
-      number: c.number,
-    };
-  });
+  const subscriptions = await EnrollmentSubscriptionModel.find({
+    userId,
+  }).lean();
+
+  if (!subscriptions.length) return [];
+
+  const filters = subscriptions.map((mc) => ({
+    year: mc.year,
+    semester: mc.semester,
+    sessionId: mc.sessionId ?? "1",
+    subject: mc.subject,
+    courseNumber: mc.courseNumber,
+    number: mc.sectionNumber,
+  }));
 
   const docs = await ClassModel.find({ $or: filters }).lean();
   const classKey = (c: any) =>
     `${c.year}-${c.semester}-${c.sessionId ?? "1"}-${c.subject}-${c.courseNumber}-${c.number}`;
   const docsByKey = new Map(docs.map((d) => [classKey(d), d]));
 
-  return monitoredClasses
+  return subscriptions
     .map((mc) => {
-      const key = classKey(mc.class);
+      const key = classKey({
+        year: mc.year,
+        semester: mc.semester,
+        sessionId: mc.sessionId ?? "1",
+        subject: mc.subject,
+        courseNumber: mc.courseNumber,
+        number: mc.sectionNumber,
+      });
       const doc = docsByKey.get(key);
       if (!doc) return null;
 

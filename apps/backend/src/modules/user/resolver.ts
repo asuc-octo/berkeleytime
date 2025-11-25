@@ -43,16 +43,7 @@ const resolvers: UserModule.Resolvers = {
     },
 
     monitoredClasses: async (parent: UserModule.User | IntermediateUser) => {
-      if (
-        parent.monitoredClasses[0] &&
-        (parent.monitoredClasses[0] as UserModule.MonitoredClass).class
-      ) {
-        return parent.monitoredClasses as UserModule.MonitoredClass[];
-      }
-
-      const monitoredClasses = await getMonitoredClasses(
-        parent.monitoredClasses
-      );
+      const monitoredClasses = await getMonitoredClasses(parent._id);
 
       return monitoredClasses as unknown as UserModule.MonitoredClass[];
     },

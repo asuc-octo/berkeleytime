@@ -58,7 +58,7 @@ const typedef = gql`
     majors: [String!]
     minors: [String!]
     monitoredClasses: [MonitoredClassInput!]
-    notificationsOn: Boolean!
+    notificationsOn: Boolean
   }
 
   type Mutation {
