@@ -88,13 +88,33 @@ export const filterAndSortInstructors = (
 ): ClassModule.Instructor[] => {
   if (!instructors) return [];
 
-  return instructors
-    .filter((instructor) => instructor.role === "PI")
-    .sort((a, b) => {
-      const lastNameA = a.familyName || "";
-      const lastNameB = b.familyName || "";
-      return lastNameA.localeCompare(lastNameB);
-    });
+  const normalize = (
+    list: RawInstructor[],
+    requireRole: boolean
+  ): ClassModule.Instructor[] =>
+    list
+      .filter(
+        (
+          instructor
+        ): instructor is RawInstructor & {
+          familyName: string;
+          givenName: string;
+        } =>
+          (!requireRole || instructor.role === "PI") &&
+          typeof instructor.familyName === "string" &&
+          typeof instructor.givenName === "string"
+      )
+      .map((instructor) => ({
+        familyName: instructor.familyName,
+        givenName: instructor.givenName,
+      }))
+      .sort((a, b) => a.familyName.localeCompare(b.familyName));
+
+  // Prefer PIs; if none present (data gaps), fall back to any instructors with names.
+  const primaryInstructors = normalize(instructors, true);
+  if (primaryInstructors.length > 0) return primaryInstructors;
+
+  return normalize(instructors, false);
 };
 
 export const formatSection = (

@@ -1,4 +1,5 @@
-import { IScheduleClass, ScheduleIdentifier, Semester } from "@/lib/api";
+import { IScheduleClass, ScheduleIdentifier } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 export enum RecentType {
   Class = "recent-classes",
@@ -10,7 +11,7 @@ export enum RecentType {
 const MaxLength = {
   [RecentType.Class]: 10,
   [RecentType.Schedule]: 5,
-  [RecentType.Course]: 5,
+  [RecentType.Course]: 3,
   [RecentType.CatalogTerm]: 1,
 };
 

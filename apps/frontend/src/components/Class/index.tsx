@@ -33,6 +33,10 @@ import {
 
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
+import {
+  ErrorDialog,
+  SubmitRatingPopup,
+} from "@/components/Class/Ratings/RatingDialog";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
@@ -47,10 +51,11 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
+import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
-import UnlockRatingsModal from "./Ratings/UnlockRatingsModal";
+import UserFeedbackModal from "./Ratings/UserFeedbackModal";
 import { MetricData } from "./Ratings/metricsUtil";
 import { type RatingsTabClasses, RatingsTabLink } from "./locks";
 
@@ -163,6 +168,8 @@ export default function Class({
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
   const { data: course } = useGetCourseForClass(
     providedClass?.subject ?? (subject as string),
@@ -388,12 +395,8 @@ export default function Class({
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      classInfo?: { subject: string; courseNumber: string; number: string }
+      classInfo: { subject: string; courseNumber: string; classNumber: string }
     ) => {
-      if (!classInfo) {
-        throw new Error("Class information is required to submit a rating.");
-      }
-
       const populatedMetrics = METRIC_NAMES.filter(
         (metric) => typeof metricValues[metric] === "number"
       );
@@ -412,7 +415,7 @@ export default function Class({
 
       for (let index = 0; index < populatedMetrics.length; index++) {
         const metric = populatedMetrics[index];
-        const value = metricValues[metric];
+        const value = metricValues[metric] as number;
         if (value === undefined) continue;
 
         const isFinalMutation = index === populatedMetrics.length - 1;
@@ -422,7 +425,7 @@ export default function Class({
             courseNumber: classInfo.courseNumber,
             semester: termInfo.semester,
             year: termInfo.year,
-            classNumber: classInfo.number,
+            classNumber: classInfo.classNumber,
             metricName: metric,
             value,
           },
@@ -784,15 +787,32 @@ export default function Class({
         </Flex>
       </Root>
       {shouldShowUnlockModal && (
-        <UnlockRatingsModal
+        <UserFeedbackModal
           isOpen={isUnlockModalOpen}
           onClose={handleUnlockModalClose}
+          title="Unlock Ratings"
+          subtitle={`Share ${Math.max(unlockModalGoalCount, 1)} rating${Math.max(unlockModalGoalCount, 1) === 1 ? "" : "s"} to unlock this feature.`}
           onSubmit={handleUnlockRatingSubmit}
           userRatedClasses={userRatedClasses}
-          requiredRatingsCount={unlockModalGoalCount}
+          requiredRatingsCount={unlockModalGoalCount || 1}
           onSubmitPopupChange={setIsUnlockThankYouOpen}
+          disableRatedCourses={true}
+          onError={(error) => {
+            const message = getRatingErrorMessage(error);
+            setErrorMessage(message);
+            setIsErrorDialogOpen(true);
+          }}
         />
       )}
+      <SubmitRatingPopup
+        isOpen={isUnlockThankYouOpen}
+        onClose={() => setIsUnlockThankYouOpen(false)}
+      />
+      <ErrorDialog
+        isOpen={isErrorDialogOpen}
+        onClose={() => setIsErrorDialogOpen(false)}
+        errorMessage={errorMessage}
+      />
     </>
   );
 }

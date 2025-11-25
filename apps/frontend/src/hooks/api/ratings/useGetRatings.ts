@@ -64,12 +64,20 @@ export const useGetRatings = ({
     return totalRatings > 0;
   }, [data?.course?.aggregatedRatings?.metrics]);
 
+  const instructorAggregatedRatings = useMemo(() => {
+    if (!data?.course?.instructorAggregatedRatings) return [];
+    return data.course.instructorAggregatedRatings.filter((rating) =>
+      Boolean(rating)
+    );
+  }, [data?.course?.instructorAggregatedRatings]);
+
   return {
     userRatingsData: data?.userRatings
       ? { userRatings: data.userRatings }
       : undefined,
     userRatings,
     aggregatedRatings: data?.course?.aggregatedRatings,
+    instructorAggregatedRatings,
     semestersWithRatings,
     courseClasses,
     hasRatings,

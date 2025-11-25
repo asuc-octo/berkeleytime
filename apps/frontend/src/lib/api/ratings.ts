@@ -182,6 +182,28 @@ export const GET_RATINGS_FOR_TAB = gql`
           }
         }
       }
+      instructorAggregatedRatings {
+        instructor {
+          givenName
+          familyName
+        }
+        aggregatedRatings {
+          metrics {
+            metricName
+            count
+            weightedAverage
+            categories {
+              value
+              count
+            }
+          }
+        }
+        classesTaught {
+          semester
+          year
+          classNumber
+        }
+      }
       classes {
         semester
         year

@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { subjects } from "@repo/shared";
 import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
 import type { Option, OptionItem } from "@repo/theme";
 
@@ -56,8 +55,8 @@ export default function Filters() {
     updateUniversityRequirement,
     gradingFilters,
     updateGradingFilters,
-    department,
-    updateDepartment,
+    academicOrganization,
+    updateAcademicOrganization,
     open,
     // updateOpen,
     online,
@@ -105,7 +104,7 @@ export default function Filters() {
       breadths,
       universityRequirement,
       gradingFilters,
-      department
+      academicOrganization
     ).includedClasses;
   }, [
     allClasses,
@@ -118,7 +117,7 @@ export default function Filters() {
     breadths,
     universityRequirement,
     gradingFilters,
-    department,
+    academicOrganization,
   ]);
 
   const filteredLevels = useMemo(() => {
@@ -142,7 +141,7 @@ export default function Filters() {
     );
   }, [classesForLevelCounts]);
 
-  const classesWithoutDepartment = useMemo(
+  const classesWithoutAcademicOrganization = useMemo(
     () =>
       getFilteredClasses(
         allClasses,
@@ -169,15 +168,15 @@ export default function Filters() {
     ]
   );
 
-  const departmentCounts = useMemo(() => {
+  const academicOrganizationCounts = useMemo(() => {
     const counts = new Map<string, number>();
-    classesWithoutDepartment.forEach((_class) => {
-      const key = _class.subject?.toLowerCase();
-      if (!key) return;
-      counts.set(key, (counts.get(key) ?? 0) + 1);
+    classesWithoutAcademicOrganization.forEach((_class) => {
+      const org = _class.course.academicOrganization;
+      if (!org) return;
+      counts.set(org, (counts.get(org) ?? 0) + 1);
     });
     return counts;
-  }, [classesWithoutDepartment]);
+  }, [classesWithoutAcademicOrganization]);
 
   const classesWithoutRequirements = useMemo(
     () =>
@@ -191,16 +190,25 @@ export default function Filters() {
         [],
         null,
         gradingFilters,
-        department
+        academicOrganization
       ).includedClasses,
-    [allClasses, units, levels, days, open, online, gradingFilters, department]
+    [
+      allClasses,
+      units,
+      levels,
+      days,
+      open,
+      online,
+      gradingFilters,
+      academicOrganization,
+    ]
   );
 
   const breadthCounts = useMemo(() => {
     const counts = new Map<Breadth, number>();
     classesWithoutRequirements.forEach((_class) => {
       const breadthList = getBreadthRequirements(
-        _class.primarySection.sectionAttributes ?? []
+        _class.primarySection?.sectionAttributes ?? []
       );
       breadthList.forEach((breadth) => {
         counts.set(breadth, (counts.get(breadth) ?? 0) + 1);
@@ -234,7 +242,7 @@ export default function Filters() {
         breadths,
         universityRequirement,
         [],
-        department
+        academicOrganization
       ).includedClasses,
     [
       allClasses,
@@ -245,7 +253,7 @@ export default function Filters() {
       online,
       breadths,
       universityRequirement,
-      department,
+      academicOrganization,
     ]
   );
 
@@ -328,37 +336,91 @@ export default function Filters() {
     }));
   }, [gradingCounts]);
 
-  const departmentOptions = useMemo<OptionItem<string>[]>(() => {
-    const allSubjects = new Set<string>();
-    allClasses.forEach((_class) => {
-      if (_class.subject) allSubjects.add(_class.subject);
+  const academicOrganizationData = useMemo(() => {
+    const orgMap = new Map<string, { name: string; nicknames: Set<string> }>();
+
+    classesWithoutAcademicOrganization.forEach((_class) => {
+      const org = _class.course.academicOrganization;
+      const orgName = _class.course.academicOrganizationName;
+      const nicknames = _class.course.departmentNicknames;
+
+      if (!org || !orgName) return;
+
+      const nicknameList =
+        nicknames
+          ?.split("!")
+          .map((n) => n.trim())
+          .filter(Boolean) ?? [];
+
+      const existing = orgMap.get(org);
+      if (!existing) {
+        orgMap.set(org, {
+          name: orgName,
+          nicknames: new Set(nicknameList),
+        });
+        return;
+      }
+
+      nicknameList.forEach((nickname) => existing.nicknames.add(nickname));
     });
 
-    const options = Array.from(allSubjects).reduce<OptionItem<string>[]>(
-      (acc, code) => {
-        const key = code.toLowerCase();
-        const info = subjects[key];
-        if (!info) return acc;
-        acc.push({
-          value: key,
-          label: info.name,
-          meta: (departmentCounts.get(key) ?? 0).toString(),
-          type: "option",
-        });
-        return acc;
-      },
-      []
+    return new Map(
+      Array.from(orgMap.entries()).map(([code, data]) => [
+        code,
+        {
+          name: data.name,
+          nicknames: data.nicknames.size ? Array.from(data.nicknames) : null,
+        },
+      ])
+    );
+  }, [classesWithoutAcademicOrganization]);
+
+  const academicOrganizationOptions = useMemo<OptionItem<string>[]>(() => {
+    const options = Array.from(academicOrganizationData.entries()).map(
+      ([code, data]) => ({
+        value: code,
+        label: data.name,
+        meta: (academicOrganizationCounts.get(code) ?? 0).toString(),
+        type: "option" as const,
+      })
     );
 
     return options.sort((a, b) => a.label.localeCompare(b.label));
-  }, [allClasses, departmentCounts]);
+  }, [academicOrganizationData, academicOrganizationCounts]);
+
+  const departmentSearchFunction = (
+    query: string,
+    options: Option<string>[]
+  ) => {
+    if (!query || query.trim() === "") return options;
+
+    const searchLower = query.toLowerCase();
+    return options.filter((opt) => {
+      if (opt.type === "label") return true;
+
+      const orgData = academicOrganizationData.get(opt.value);
+      if (!orgData) return false;
+
+      // Search in department name
+      if (orgData.name.toLowerCase().includes(searchLower)) return true;
+
+      // Search in nicknames
+      if (orgData.nicknames) {
+        return orgData.nicknames.some((nickname) =>
+          nickname.toLowerCase().includes(searchLower)
+        );
+      }
+
+      return false;
+    });
+  };
 
   // Disable filters when all options have count 0
-  const isDepartmentDisabled = useMemo(
+  const isAcademicOrganizationDisabled = useMemo(
     () =>
-      departmentOptions.length === 0 ||
-      departmentOptions.every((opt) => opt.meta === "0" || !opt.meta),
-    [departmentOptions]
+      academicOrganizationOptions.length === 0 ||
+      academicOrganizationOptions.every((opt) => opt.meta === "0" || !opt.meta),
+    [academicOrganizationOptions]
   );
 
   const isRequirementsDisabled = useMemo(() => {
@@ -443,7 +505,7 @@ export default function Filters() {
   const availableTerms = useMemo(() => {
     if (!terms) return [];
 
-    return terms
+    return [...terms]
       .filter(
         ({ year, semester }, index) =>
           index ===
@@ -451,7 +513,7 @@ export default function Filters() {
             (term) => term.semester === semester && term.year === year
           )
       )
-      .toSorted(sortByTermDescending);
+      .sort(sortByTermDescending);
   }, [terms]);
 
   const currentTermLabel = `${semester} ${year}`;
@@ -461,7 +523,7 @@ export default function Filters() {
     updateBreadths([]);
     updateUniversityRequirement(null);
     updateGradingFilters([]);
-    updateDepartment(null);
+    updateAcademicOrganization(null);
     updateUnits([0, 5]);
     setDaysArray([...EMPTY_DAYS]);
     updateDays([]);
@@ -490,6 +552,7 @@ export default function Filters() {
           <div className={styles.formControl}>
             <p className={styles.label}>Semester</p>
             <Select
+              searchable
               value={currentTermLabel}
               onChange={(value) => {
                 const selectedTerm = availableTerms.find(
@@ -505,6 +568,8 @@ export default function Filters() {
                 value: `${term.semester} ${term.year}`,
                 label: `${term.semester} ${term.year}`,
               }))}
+              searchPlaceholder="Search semesters..."
+              emptyMessage="No semesters found."
             />
           </div>
         )}
@@ -536,21 +601,26 @@ export default function Filters() {
         <div className={styles.formControl}>
           <p className={styles.label}>Department</p>
           <Select<string>
-            value={department}
+            searchable
+            value={academicOrganization}
             placeholder="Select a department"
             clearable
-            disabled={isDepartmentDisabled}
+            disabled={isAcademicOrganizationDisabled}
             onChange={(value) => {
               if (typeof value === "string" || value === null) {
-                updateDepartment(value);
+                updateAcademicOrganization(value);
               }
             }}
-            options={departmentOptions}
+            options={academicOrganizationOptions}
+            searchPlaceholder="Search departments..."
+            emptyMessage="No departments found."
+            customSearch={departmentSearchFunction}
           />
         </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Requirements</p>
           <Select<RequirementSelection>
+            searchable
             multi
             value={selectedRequirements}
             placeholder="Filter by requirements"
@@ -581,6 +651,8 @@ export default function Filters() {
               updateUniversityRequirement(nextUniversityRequirement);
             }}
             options={requirementOptions}
+            searchPlaceholder="Search requirements..."
+            emptyMessage="No requirements found."
           />
         </div>
         <div className={styles.formControl}>

@@ -1,7 +1,12 @@
 import { GraphQLError } from "graphql";
 import { connection } from "mongoose";
 
-import { AggregatedMetricsModel, RatingModel, RatingType } from "@repo/common";
+import {
+  AggregatedMetricsModel,
+  RatingModel,
+  RatingType,
+  SectionModel,
+} from "@repo/common";
 import { METRIC_MAPPINGS } from "@repo/shared";
 
 import {
@@ -17,6 +22,7 @@ import {
 } from "./formatter";
 import {
   courseRatingAggregator,
+  instructorRatingsAggregator,
   ratingAggregator,
   semestersWithRatingsAggregator,
   termRatingsAggregator,
@@ -404,6 +410,99 @@ export const getSemestersWithRatings = async (
 ) => {
   const semesters = await semestersWithRatingsAggregator(subject, courseNumber);
   return formatSemesterRatings(semesters);
+};
+
+export const getInstructorAggregatedRatings = async (
+  subject: string,
+  courseNumber: string
+) => {
+  // Find all sections for this course
+  const sections = await SectionModel.find({
+    subject,
+    courseNumber,
+  }).select("semester year number classNumber meetings");
+
+  // Build a map of instructors to the classes they taught
+  const instructorMap = new Map<
+    string,
+    {
+      givenName: string;
+      familyName: string;
+      classes: { semester: Semester; year: number; classNumber: string }[];
+    }
+  >();
+
+  sections.forEach((section) => {
+    section.meetings?.forEach((meeting) => {
+      meeting.instructors?.forEach((instructor) => {
+        // Only include Primary Instructors (PI role)
+        if (
+          instructor.givenName &&
+          instructor.familyName &&
+          instructor.role === "PI"
+        ) {
+          const key = `${instructor.givenName}_${instructor.familyName}`;
+
+          if (!instructorMap.has(key)) {
+            instructorMap.set(key, {
+              givenName: instructor.givenName,
+              familyName: instructor.familyName,
+              classes: [],
+            });
+          }
+
+          const instructorData = instructorMap.get(key)!;
+          const classId = {
+            semester: section.semester as Semester,
+            year: section.year,
+            classNumber: section.classNumber ?? section.number,
+          };
+
+          // Avoid duplicates
+          const exists = instructorData.classes.some(
+            (c) =>
+              c.semester === classId.semester &&
+              c.year === classId.year &&
+              c.classNumber === classId.classNumber
+          );
+
+          if (!exists) {
+            instructorData.classes.push(classId);
+          }
+        }
+      });
+    });
+  });
+
+  // For each instructor, aggregate their ratings
+  const instructorRatings = await Promise.all(
+    Array.from(instructorMap.entries()).map(async ([_key, instructorData]) => {
+      const aggregated = await instructorRatingsAggregator(
+        subject,
+        courseNumber,
+        instructorData.classes
+      );
+
+      return {
+        instructor: {
+          givenName: instructorData.givenName,
+          familyName: instructorData.familyName,
+        },
+        aggregatedRatings: formatAggregatedRatings(aggregated),
+        classesTaught: instructorData.classes,
+      };
+    })
+  );
+
+  // Only return instructors who have ratings
+  const instructorsWithRatings = instructorRatings.filter((rating) => {
+    const hasRatings = rating.aggregatedRatings.metrics.some(
+      (metric) => metric && metric.count > 0
+    );
+    return hasRatings;
+  });
+
+  return instructorsWithRatings;
 };
 
 // Helper functions

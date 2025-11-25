@@ -1,28 +1,51 @@
 .root {
   width: 100%;
   color: var(--paragraph-color);
-  padding: 12px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: var(--text-14);
   cursor: pointer;
-  &:hover {
+  border-radius: 4px;
+  user-select: none;
+  transition: all 100ms ease-in-out;
+
+  &:hover:not([data-disabled="true"]):not([data-selected="true"]) {
     background-color: var(--button-hover-color);
   }
+
   &:active,
   &:focus-visible {
     background-color: var(--blue-500);
     color: white;
   }
-  &[data-disabled] {
-    color: var(--paragraph-color-50);
-    background-color: var(--button-hover-color);
-    cursor: default;
+
+  &[data-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &[data-selected="true"] {
+    background-color: var(--blue-500);
+    color: white;
+
+    &:hover:not([data-disabled="true"]) {
+      background-color: var(--blue-600);
+
+      @media (prefers-color-scheme: dark) {
+        background-color: var(--blue-400);
+      }
+    }
+
+    .meta {
+      color: white;
+    }
   }
 
   .meta {
-    font-size: 12px;
+    font-size: var(--text-12);
     color: var(--label-color);
   }
 }
+
 .selected {
-  color: var(--heading-color);
+  font-weight: var(--font-medium);
 }

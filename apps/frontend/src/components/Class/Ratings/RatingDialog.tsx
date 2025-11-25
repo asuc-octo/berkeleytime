@@ -133,19 +133,21 @@ interface ErrorDialogProps {
   isOpen: boolean;
   onClose: () => void;
   errorMessage?: string;
+  title?: string;
 }
 
 export function ErrorDialog({
   isOpen,
   onClose,
   errorMessage = "An error occurred, please try again later",
+  title = "Error Occurred",
 }: ErrorDialogProps) {
   return (
     <RatingDialog
       isOpen={isOpen}
       onClose={onClose}
       variant="error"
-      title="Error"
+      title={title}
       message={errorMessage}
     />
   );

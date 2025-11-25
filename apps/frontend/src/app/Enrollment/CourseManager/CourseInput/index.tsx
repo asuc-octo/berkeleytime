@@ -5,9 +5,9 @@ import { useSearchParams } from "react-router-dom";
 
 import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
 
-import CourseSearch from "@/components/CourseSearch";
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { ICourse, ICourseWithInstructorClass } from "@/lib/api";
+import { ICourseWithInstructorClass } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
@@ -33,11 +33,16 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const [loading, setLoading] = useState(false);
 
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
+    null
+  );
 
   const { data: courseData } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? ""
+    selectedCourse?.number ?? "",
+    {
+      skip: !selectedCourse,
+    }
   );
 
   const [selectedClass, setSelectedClass] =
@@ -199,7 +204,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     [loading, outputs]
   );
 
-  const handleCourseSelect = (course: ICourse) => {
+  const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
 
     setSelectedClass(DEFAULT_SELECTED_CLASS.value);
@@ -217,13 +222,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   return (
     <Flex direction="row" gap="3">
       <Box flexGrow="1">
-        <CourseSearch
+        <CourseSelect
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
           selectedCourse={selectedCourse}
-          inputStyle={{
-            height: 44,
-          }}
         />
       </Box>
       <Box flexGrow="1">

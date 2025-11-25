@@ -7,6 +7,7 @@
   color: var(--label-color);
   cursor: pointer;
   outline: none;
+  background-color: var(--foreground-color);
 
   &.foreground {
     background-color: var(--foreground-color);
@@ -26,12 +27,28 @@
   }
 }
 
+.triggerLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.triggerActions {
+  flex-shrink: 0;
+}
+
 .content {
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);
   border-radius: 4px;
   max-height: 300px;
   overflow-y: scroll;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .sectionLabel {
@@ -54,4 +71,104 @@
   border-top: solid 1px var(--button-active-color);
   padding: 12px 24px;
   margin: 2px;
+}
+
+.tabsWrapper {
+  padding: 0;
+  background-color: var(--foreground-color);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  border-bottom: none;
+}
+
+/* Searchable Select Styles */
+.searchableContent {
+  background-color: var(--foreground-color);
+  border: solid 1px var(--border-color);
+  border-radius: 4px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.searchInputWrapper {
+  display: flex;
+  align-items: center;
+  border-bottom: solid 1px var(--border-color);
+  padding: 8px 12px;
+  gap: 8px;
+}
+
+.searchIcon {
+  color: var(--label-color);
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--text-14);
+  color: var(--heading-color);
+  padding: 0;
+
+  &::placeholder {
+    color: var(--label-color);
+  }
+}
+
+.commandList {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px;
+
+  [cmdk-item] {
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.commandEmpty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--label-color);
+  font-size: var(--text-14);
+}
+
+.commandGroup {
+  overflow: hidden;
+
+  [cmdk-group-heading] {
+    padding: 8px 12px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--label-color);
+    user-select: none;
+    cursor: default;
+    line-height: 1;
+    text-align: left;
+  }
+
+  [cmdk-item] {
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.badgeContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
 }

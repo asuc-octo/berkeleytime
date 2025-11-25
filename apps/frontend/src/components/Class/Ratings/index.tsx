@@ -12,6 +12,7 @@ import EmptyState from "@/components/Class/EmptyState";
 import {
   DeleteRatingPopup,
   ErrorDialog,
+  SubmitRatingPopup,
 } from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import { useReadTerms } from "@/hooks/api";
@@ -27,6 +28,7 @@ import {
   TemporalPosition,
 } from "@/lib/generated/graphql";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
+import { clampCount } from "@/utils/ratings";
 
 import { RatingButton } from "./RatingButton";
 import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
@@ -57,11 +59,16 @@ interface Term {
   year: number;
   value: string;
   label: string;
+  classNumber?: string;
 }
 
 type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
 
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
+const RATING_TABS = {
+  Instructor: "instructor",
+  Semester: "semester",
+} as const;
 
 export function RatingsContainer() {
   const { class: currentClass } = useClass();
@@ -69,16 +76,21 @@ export function RatingsContainer() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: termsData } = useReadTerms();
 
-  const [selectedTerm, setSelectedTerm] = useState("all");
+  const [activeRatingTab, setActiveRatingTab] = useState<string>(
+    RATING_TABS.Instructor
+  );
+  const [selectedValue, setSelectedValue] = useState("all");
   const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
     null
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
 
   const {
     aggregatedRatings: aggregatedRatingsData,
+    instructorAggregatedRatings,
     userRatings,
     userRatingsData,
     semestersWithRatings,
@@ -91,9 +103,32 @@ export function RatingsContainer() {
     courseNumber: currentClass.courseNumber,
   });
 
+  const userRatedClasses = useMemo(() => {
+    const ratedClasses =
+      userRatingsData?.userRatings?.classes?.map((cls) => ({
+        subject: cls.subject,
+        courseNumber: cls.courseNumber,
+      })) ?? [];
+
+    const seen = new Set<string>();
+    return ratedClasses.filter((cls) => {
+      const key = `${cls.subject}-${cls.courseNumber}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [userRatingsData]);
+
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
   });
+
+  useEffect(() => {
+    // Reset to "all" if aggregated ratings change (e.g., course switch)
+    setSelectedValue("all");
+    setTermRatings(null);
+    setActiveRatingTab(RATING_TABS.Instructor);
+  }, [aggregatedRatingsData]);
 
   const handleModalStateChange = useCallback(
     (open: boolean) => {
@@ -129,8 +164,14 @@ export function RatingsContainer() {
   const availableTerms = useMemo(() => {
     if (!courseClasses.length) return [];
 
+    // Deduplicate early by semester + year + instructor (before mapping)
+    const uniqueClasses = _.uniqBy(
+      courseClasses,
+      (c) => `${c.semester} ${c.year} ${formatInstructorText(c.primarySection)}`
+    );
+
     const today = new Date();
-    const courseTerms: Term[] = courseClasses
+    const courseTerms: Term[] = uniqueClasses
       .toSorted(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
@@ -142,20 +183,25 @@ export function RatingsContainer() {
       })
       .map((c) => {
         const instructorText = formatInstructorText(c.primarySection);
+        const value = `${c.semester} ${c.year} ${c.number}`;
         return {
-          value: `${c.semester} ${c.year} ${c.number}`,
+          value,
           label: `${c.semester} ${c.year} ${instructorText}`,
           semester: c.semester as Semester,
           year: c.year,
+          classNumber: c.number,
         } satisfies Term;
       });
 
-    return _.uniqBy(courseTerms, (term) => term.label);
+    return courseTerms;
   }, [courseClasses]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
     const metricsSource =
-      selectedTerm !== "all" && termRatings?.metrics
+      (activeRatingTab === RATING_TABS.Semester ||
+        activeRatingTab === RATING_TABS.Instructor) &&
+      selectedValue !== "all" &&
+      termRatings?.metrics
         ? termRatings.metrics
         : aggregatedRatingsData?.metrics;
 
@@ -183,14 +229,14 @@ export function RatingsContainer() {
         const category = categories.find(
           (cat: MetricCategory) => cat.value === rating
         );
-        maxCount = Math.max(maxCount, category?.count ?? 0);
+        maxCount = Math.max(maxCount, clampCount(category?.count));
       });
 
       const stats = RATING_VALUES.map((rating) => {
         const category = categories.find(
           (cat: MetricCategory) => cat.value === rating
         );
-        const count = category?.count ?? 0;
+        const count = clampCount(category?.count);
         return {
           rating,
           count,
@@ -206,13 +252,29 @@ export function RatingsContainer() {
           metric.metricName,
           metric.weightedAverage
         ) as Color,
-        reviewCount: metric.count,
+        reviewCount: clampCount(metric.count),
         weightedAverage: metric.weightedAverage,
       } satisfies RatingDetailProps;
     });
-  }, [aggregatedRatingsData, selectedTerm, termRatings]);
+  }, [activeRatingTab, aggregatedRatingsData, selectedValue, termRatings]);
+
+  const formatRatingCount = useCallback((count?: number | null) => {
+    const normalizedCount = clampCount(count);
+    return `${normalizedCount}`;
+  }, []);
+
+  const getMaxMetricCount = useCallback(
+    (metrics?: (IMetric | null | undefined)[]) =>
+      (metrics ?? []).reduce(
+        (max, metric) => Math.max(max, clampCount(metric?.count)),
+        0
+      ),
+    []
+  );
 
   const termSelectOptions = useMemo(() => {
+    const courseRatingCount = getMaxMetricCount(aggregatedRatingsData?.metrics);
+
     const withDuplicates = availableTerms
       .filter((term: Term) => {
         // Filter for past terms
@@ -235,13 +297,89 @@ export function RatingsContainer() {
       .map((t) => ({
         value: `${t.semester} ${t.year}`,
         label: `${t.semester} ${t.year}`,
+        count:
+          semestersWithRatings?.find(
+            (s) => s.semester === t.semester && s.year === t.year
+          )?.maxMetricCount ?? 0,
       }));
     const uniqueOptions = withDuplicates.filter(
       (v) => withDuplicates.find((v2) => v2.value === v.value) === v
     );
 
-    return [{ value: "all", label: "All Semesters" }, ...uniqueOptions];
-  }, [availableTerms, semestersWithRatings, termsData]);
+    // Sort chronologically (newest first) for semester dropdown
+    const sortedOptions = [...uniqueOptions].sort((a, b) => {
+      const [aSem, aYearStr] = a.value.split(" ");
+      const [bSem, bYearStr] = b.value.split(" ");
+      const aYear = parseInt(aYearStr, 10);
+      const bYear = parseInt(bYearStr, 10);
+
+      if (aYear !== bYear) return bYear - aYear;
+
+      return sortByTermDescending(
+        { semester: bSem as Semester, year: bYear },
+        { semester: aSem as Semester, year: aYear }
+      );
+    });
+
+    return [
+      {
+        value: "all",
+        label: "All Results",
+        meta: formatRatingCount(courseRatingCount),
+      },
+      ...sortedOptions.map((option) => ({
+        value: option.value,
+        label: option.label,
+        meta: formatRatingCount(option.count),
+      })),
+    ];
+  }, [
+    aggregatedRatingsData?.metrics,
+    availableTerms,
+    formatRatingCount,
+    getMaxMetricCount,
+    semestersWithRatings,
+    termsData,
+  ]);
+
+  const instructorSelectOptions = useMemo(() => {
+    const courseRatingCount = getMaxMetricCount(aggregatedRatingsData?.metrics);
+    const instructorOptions =
+      instructorAggregatedRatings
+        ?.filter((rating): rating is NonNullable<typeof rating> =>
+          Boolean(rating?.aggregatedRatings?.metrics?.length)
+        )
+        .map((rating) => {
+          const instructorKey = `${rating.instructor.givenName}_${rating.instructor.familyName}`;
+          const displayName = `${rating.instructor.givenName} ${rating.instructor.familyName}`;
+          return {
+            value: instructorKey,
+            label: displayName,
+            count: getMaxMetricCount(rating.aggregatedRatings?.metrics),
+          };
+        })
+        ?.slice()
+        .sort((a, b) => b.count - a.count)
+        .map((option) => ({
+          value: option.value,
+          label: option.label,
+          meta: formatRatingCount(option.count),
+        })) ?? [];
+
+    return [
+      {
+        value: "all",
+        label: "All Results",
+        meta: formatRatingCount(courseRatingCount),
+      },
+      ...instructorOptions,
+    ];
+  }, [
+    aggregatedRatingsData?.metrics,
+    formatRatingCount,
+    getMaxMetricCount,
+    instructorAggregatedRatings,
+  ]);
 
   // const ratingsCount = useMemo(
   //   () => (ratingsData ? ratingsData.reduce((acc, v) => acc + v.reviewCount, 0) : 0),
@@ -300,30 +438,88 @@ export function RatingsContainer() {
                 <div className={styles.termSelectWrapper}>
                   {hasRatings && (
                     <Select
-                      options={termSelectOptions}
-                      value={selectedTerm}
-                      onChange={(selectedValue) => {
-                        if (Array.isArray(selectedValue) || !selectedValue)
-                          return; // ensure it is string
-                        setSelectedTerm(selectedValue);
-                        if (selectedValue === "all") {
-                          setTermRatings(null);
-                        } else if (isSemester(selectedValue)) {
-                          const [semester, year] = selectedValue.split(" ");
-                          const selectedClass = courseClasses.find(
-                            (c) =>
-                              c.semester === semester &&
-                              c.year === parseInt(year)
-                          );
-                          if (
-                            selectedClass &&
-                            selectedClass.aggregatedRatings
-                          ) {
-                            setTermRatings(selectedClass.aggregatedRatings);
+                      variant="foreground"
+                      searchable
+                      searchPlaceholder={
+                        activeRatingTab === RATING_TABS.Instructor
+                          ? "Search instructors"
+                          : "Search semesters"
+                      }
+                      emptyMessage={
+                        activeRatingTab === RATING_TABS.Instructor
+                          ? "No instructors found"
+                          : "No semesters found"
+                      }
+                      tabs={[
+                        {
+                          value: RATING_TABS.Instructor,
+                          label: "By Instructor",
+                          options: instructorSelectOptions,
+                        },
+                        {
+                          value: RATING_TABS.Semester,
+                          label: "By Semester",
+                          options: termSelectOptions,
+                        },
+                      ]}
+                      value={selectedValue}
+                      defaultTab={RATING_TABS.Instructor}
+                      onTabChange={(tabValue) => {
+                        setActiveRatingTab(tabValue);
+                        // Clear displayed ratings data when browsing tabs, but preserve selection
+                        setTermRatings(null);
+                      }}
+                      onChange={(newValue) => {
+                        if (Array.isArray(newValue) || !newValue) return; // ensure it is string
+
+                        setSelectedValue(newValue);
+
+                        // Handle tab-specific data fetching
+                        if (activeRatingTab === RATING_TABS.Semester) {
+                          // Semester tab
+                          if (newValue === "all") {
+                            setTermRatings(null);
+                          } else if (isSemester(newValue)) {
+                            const [semester, year] = newValue.split(" ");
+                            const selectedClass = courseClasses.find(
+                              (c) =>
+                                c.semester === semester &&
+                                c.year === parseInt(year)
+                            );
+                            if (
+                              selectedClass &&
+                              selectedClass.aggregatedRatings
+                            ) {
+                              setTermRatings(selectedClass.aggregatedRatings);
+                            }
+                          }
+                        } else {
+                          // Instructor tab
+                          if (newValue === "all") {
+                            setTermRatings(null);
+                          } else {
+                            const selectedInstructor =
+                              instructorAggregatedRatings?.find((rating) => {
+                                if (!rating) return false;
+                                const key = `${rating.instructor.givenName}_${rating.instructor.familyName}`;
+                                return key === newValue;
+                              });
+                            if (
+                              selectedInstructor &&
+                              selectedInstructor.aggregatedRatings
+                            ) {
+                              setTermRatings(
+                                selectedInstructor.aggregatedRatings
+                              );
+                            }
                           }
                         }
                       }}
-                      placeholder="Select term"
+                      placeholder={
+                        activeRatingTab === RATING_TABS.Instructor
+                          ? "Select instructor"
+                          : "Select term"
+                      }
                     />
                   )}
                 </div>
@@ -360,32 +556,49 @@ export function RatingsContainer() {
         isOpen={isModalOpen}
         onClose={() => handleModalStateChange(false)}
         title={userRatings ? "Edit Rating" : "Rate Course"}
-        currentClass={currentClass}
+        subtitle=""
+        showSelectedCourseSubtitle={false}
+        initialCourse={{
+          subject: currentClass.subject,
+          number: currentClass.courseNumber,
+          courseId: "",
+        }}
         availableTerms={availableTerms}
-        onSubmit={async (metricValues, termInfo) => {
-          try {
-            await submitRatingMutation({
-              metricValues,
-              termInfo,
-              createRatingMutation,
-              deleteRatingMutation,
-              classIdentifiers: {
-                subject: currentClass.subject,
-                courseNumber: currentClass.courseNumber,
-                number: currentClass.number,
-              },
-              currentRatings: userRatings,
-              refetchQueries: [],
-            });
-            refetchAllRatings();
-            setIsModalOpen(false);
-          } catch (error) {
-            const message = getRatingErrorMessage(error);
-            setErrorMessage(message);
-            setIsErrorDialogOpen(true);
-          }
+        onSubmit={async (metricValues, termInfo, courseInfo) => {
+          await submitRatingMutation({
+            metricValues,
+            termInfo,
+            createRatingMutation,
+            deleteRatingMutation,
+            classIdentifiers: {
+              subject: courseInfo.subject,
+              courseNumber: courseInfo.courseNumber,
+              number: courseInfo.classNumber,
+            },
+            currentRatings: userRatings,
+            refetchQueries: [],
+          });
+          refetchAllRatings();
+          setIsModalOpen(false);
         }}
         initialUserClass={userRatings}
+        userRatedClasses={userRatedClasses}
+        disableRatedCourses={!userRatings}
+        lockedCourse={
+          userRatings
+            ? {
+                subject: currentClass.subject,
+                number: currentClass.courseNumber,
+                courseId: "",
+              }
+            : null
+        }
+        onSubmitPopupChange={setIsSubmitRatingPopupOpen}
+        onError={(error) => {
+          const message = getRatingErrorMessage(error);
+          setErrorMessage(message);
+          setIsErrorDialogOpen(true);
+        }}
       />
 
       <DeleteRatingPopup
@@ -421,6 +634,10 @@ export function RatingsContainer() {
         isOpen={isErrorDialogOpen}
         onClose={() => setIsErrorDialogOpen(false)}
         errorMessage={errorMessage}
+      />
+      <SubmitRatingPopup
+        isOpen={isSubmitRatingPopupOpen}
+        onClose={() => setIsSubmitRatingPopupOpen(false)}
       />
     </>
   );
