@@ -19,7 +19,7 @@ import {
   formatters,
 } from "@/components/Chart";
 import EmptyState from "@/components/Class/EmptyState";
-import { useGetCourseGrades } from "@/hooks/api/classes/useGetClass";
+import { useGetClassGrades } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
 
@@ -34,7 +34,7 @@ export default function Grades() {
   const {
     class: { subject, courseNumber, number, semester, year },
   } = useClass();
-  const { data, loading } = useGetCourseGrades(
+  const { data, loading } = useGetClassGrades(
     year,
     semester,
     subject,
@@ -45,11 +45,16 @@ export default function Grades() {
 
   const hasNoGradeData = useMemo(() => {
     if (!courseGradeDistribution) return true;
-    const courseTotal =
-      courseGradeDistribution.distribution?.reduce(
-        (acc, grade) => acc + (grade.count ?? 0),
-        0
-      ) ?? 0;
+    type GradeEntry = NonNullable<
+      NonNullable<typeof courseGradeDistribution>["distribution"]
+    >[number];
+    const distribution: GradeEntry[] =
+      (courseGradeDistribution.distribution?.filter(
+        (grade): grade is GradeEntry => Boolean(grade)
+      ) as GradeEntry[]) ?? [];
+    const courseTotal = distribution.reduce<number>((acc, grade) => {
+      return acc + (grade.count ?? 0);
+    }, 0);
 
     return courseTotal === 0 && !courseGradeDistribution.average;
   }, [courseGradeDistribution]);
@@ -62,15 +67,20 @@ export default function Grades() {
       };
     }
 
-    const courseTotalCount =
-      courseGradeDistribution.distribution?.reduce(
-        (acc, grade) => acc + (grade.count ?? 0),
-        0
-      ) ?? 0;
+    type GradeEntry = NonNullable<
+      NonNullable<typeof courseGradeDistribution>["distribution"]
+    >[number];
+    const distribution: GradeEntry[] =
+      (courseGradeDistribution.distribution?.filter(
+        (grade): grade is GradeEntry => Boolean(grade)
+      ) as GradeEntry[]) ?? [];
+    const courseTotalCount = distribution.reduce<number>((acc, grade) => {
+      return acc + (grade.count ?? 0);
+    }, 0);
 
     const mapped = GRADES.map((letter) => {
-      const courseGrade = courseGradeDistribution.distribution?.find(
-        (grade) => grade.letter === letter
+      const courseGrade = distribution.find(
+        (grade: GradeEntry) => grade.letter === letter
       );
 
       const coursePercent =

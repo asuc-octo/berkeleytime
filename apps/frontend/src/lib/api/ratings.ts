@@ -162,8 +162,8 @@ export const GET_ALL_RATINGS_DATA = gql`
   }
 `;
 
-export const GET_RATINGS_FOR_TAB = gql`
-  query GetRatingsForTab(
+export const GET_CLASS_RATINGS_DATA = gql`
+  query GetClassRatingsData(
     $subject: String!
     $courseNumber: String!
     $courseNumberTyped: CourseNumber!
@@ -197,11 +197,6 @@ export const GET_RATINGS_FOR_TAB = gql`
               count
             }
           }
-        }
-        classesTaught {
-          semester
-          year
-          classNumber
         }
       }
       classes {
