@@ -6,24 +6,29 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { Box, Button, Container, HoverCard } from "@repo/theme";
+import { Box, Button, Container } from "@repo/theme";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  createChartConfig,
+  formatters,
+} from "@/components/Chart";
 import EmptyState from "@/components/Class/EmptyState";
 import { useGetCourseGrades } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
-import { decimalToPercentString } from "@/utils/number-formatter";
 
 import styles from "./Grades.module.scss";
 
-const toPercent = (decimal: number) => {
-  return decimalToPercentString(decimal, 1).replace(/\.0%$/, "%");
-};
+const chartConfig = createChartConfig(["course"], {
+  labels: { course: "All semesters" },
+  colors: { course: "var(--blue-500)" },
+});
 
 export default function Grades() {
   const {
@@ -155,7 +160,7 @@ export default function Grades() {
               <ArrowUpRight height={16} width={16} />
             </Button>
           </div>
-          <div className={styles.chart}>
+          <ChartContainer config={chartConfig} className={styles.chart}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart width={730} height={450} data={chartData}>
                 <CartesianGrid
@@ -173,32 +178,17 @@ export default function Grades() {
                   stroke="var(--label-color)"
                 />
                 <YAxis
-                  tickFormatter={toPercent}
+                  tickFormatter={(v) => formatters.percent(v, 1)}
                   tick={{
                     fill: "var(--paragraph-color)",
                     fontSize: "var(--text-14)",
                   }}
                 />
-                <Tooltip
-                  cursor={{
-                    fill: "var(--border-color)",
-                    fillOpacity: 0.5,
-                  }}
-                  content={(props) => {
-                    return (
-                      <HoverCard
-                        content={props.label}
-                        data={props.payload?.map((v, index) => ({
-                          key: `${v.name}-${index}`,
-                          label: "All semesters",
-                          value:
-                            typeof v.value === "number"
-                              ? toPercent(v.value)
-                              : "N/A",
-                          color: v.fill,
-                        }))}
-                      />
-                    );
+                <ChartTooltip
+                  tooltipConfig={{
+                    labelFormatter: (label) => `Grade: ${label}`,
+                    valueFormatter: (value) => formatters.percent(value, 1),
+                    indicator: "square",
                   }}
                 />
                 <Bar
@@ -209,7 +199,7 @@ export default function Grades() {
                 />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </ChartContainer>
         </div>
       </Container>
     </Box>

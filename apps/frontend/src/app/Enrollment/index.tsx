@@ -1,6 +1,5 @@
 // TODO: refactor to match GradeDistribution/index.tsx
 import React, {
-  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -17,15 +16,19 @@ import {
   LineChart,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { CategoricalChartFunc } from "recharts/types/chart/types";
-import type { ContentType } from "recharts/types/component/Tooltip";
 
-import { Boundary, Box, Flex, HoverCard, LoadingIndicator } from "@repo/theme";
+import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  createChartConfig,
+  formatters,
+} from "@/components/Chart";
 import Footer from "@/components/Footer";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 
@@ -40,10 +43,6 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "./types";
-
-const toPercent = (decimal: number) => {
-  return `${decimal.toFixed(0)}%`;
-};
 
 const CHART_HEIGHT = 450;
 
@@ -105,30 +104,6 @@ export default function Enrollment() {
 
   const [hoveredDuration, setHoveredDuration] =
     useState<moment.Duration | null>(null);
-
-  // Memoized tooltip content renderer
-  const tooltipContent: ContentType<number, string> = useCallback(
-    (props: TooltipContentProps) => {
-      const duration = moment.duration(props.label, "minutes");
-      const day = Math.floor(duration.asDays()) + 1;
-      const time = timeFormatter.format(moment.utc(0).add(duration).toDate());
-
-      return (
-        <HoverCard
-          content={`Day ${day} ${time}`}
-          data={props.payload?.map((v) => {
-            const name = v.name?.valueOf();
-            return {
-              label: name ? name.toString() : "N/A",
-              value: typeof v.value === "number" ? toPercent(v.value) : "N/A",
-              color: v.stroke,
-            };
-          })}
-        />
-      );
-    },
-    []
-  );
 
   const initialize = useCallback(async () => {
     if (!loading) return;
@@ -325,6 +300,29 @@ export default function Enrollment() {
     );
   }, [data]);
 
+  const chartConfig = useMemo(() => {
+    const labels: Record<string, string> = {};
+    const themes: Record<string, { light: string; dark: string }> = {};
+
+    outputs.forEach((output, index) => {
+      const courseName = `${output.input.subject} ${output.input.courseNumber}${output.input.sectionNumber ? ` ${output.input.sectionNumber}` : ""}`;
+      labels[`enroll_${index}`] = `${courseName} - Enrolled`;
+      labels[`waitlist_${index}`] = `${courseName} - Waitlisted`;
+
+      themes[`enroll_${index}`] = {
+        light: LIGHT_COLORS[index % LIGHT_COLORS.length],
+        dark: DARK_COLORS[index % DARK_COLORS.length],
+      };
+      themes[`waitlist_${index}`] = {
+        light: LIGHT_COLORS[index % LIGHT_COLORS.length],
+        dark: DARK_COLORS[index % DARK_COLORS.length],
+      };
+    });
+
+    const keys = outputs.flatMap((_, i) => [`enroll_${i}`, `waitlist_${i}`]);
+    return createChartConfig(keys, { labels, themes });
+  }, [outputs]);
+
   return (
     <Box p="5" className={styles.root}>
       <Flex direction="column">
@@ -336,50 +334,70 @@ export default function Enrollment() {
         ) : (
           <Flex direction="row">
             <div className={styles.view}>
-              <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-                <LineChart
-                  syncId="grade-distributions"
-                  width={730}
-                  height={200}
-                  data={data}
-                  onMouseMove={updateGraphHover}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="var(--border-color)"
-                  />
-                  <XAxis
-                    dataKey="timeDelta"
-                    fill="var(--label-color)"
-                    tickMargin={8}
-                    interval={"preserveStartEnd"}
-                    type="number"
-                    tickFormatter={(timeDelta) =>
-                      String(
-                        Math.floor(
-                          moment.duration(timeDelta, "minutes").asDays()
-                        ) + 1
-                      )
-                    }
-                  />
-                  <YAxis domain={[0, dataMax]} tickFormatter={toPercent} />
-                  {dataMax >= 100 && (
-                    <ReferenceLine
-                      y={100}
-                      stroke="var(--label-color)"
-                      strokeDasharray="5 5"
-                      strokeOpacity={0.5}
-                      label={{
-                        value: "100% Capacity",
-                        position: "insideTopLeft",
-                        fill: "var(--label-color)",
-                        fontSize: 12,
-                        offset: 10,
-                      }}
+              <ChartContainer config={chartConfig}>
+                <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
+                  <LineChart
+                    syncId="grade-distributions"
+                    width={730}
+                    height={200}
+                    data={data}
+                    onMouseMove={updateGraphHover}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="var(--border-color)"
                     />
-                  )}{" "}
-                  {outputs?.length && <Tooltip content={tooltipContent} />}
+                    <XAxis
+                      dataKey="timeDelta"
+                      fill="var(--label-color)"
+                      tickMargin={8}
+                      interval={"preserveStartEnd"}
+                      type="number"
+                      tickFormatter={(timeDelta) =>
+                        String(
+                          Math.floor(
+                            moment.duration(timeDelta, "minutes").asDays()
+                          ) + 1
+                        )
+                      }
+                    />
+                    <YAxis
+                      domain={[0, dataMax]}
+                      tickFormatter={(v) => formatters.percentRound(v)}
+                    />
+                    {dataMax >= 100 && (
+                      <ReferenceLine
+                        y={100}
+                        stroke="var(--label-color)"
+                        strokeDasharray="5 5"
+                        strokeOpacity={0.5}
+                        label={{
+                          value: "100% Capacity",
+                          position: "insideTopLeft",
+                          fill: "var(--label-color)",
+                          fontSize: 12,
+                          offset: 10,
+                        }}
+                      />
+                    )}
+                    {outputs?.length > 0 && (
+                      <ChartTooltip
+                        tooltipConfig={{
+                          labelFormatter: (label) => {
+                            const duration = moment.duration(label, "minutes");
+                            const day = Math.floor(duration.asDays()) + 1;
+                            const time = timeFormatter.format(
+                              moment.utc(0).add(duration).toDate()
+                            );
+                            return `Day ${day} ${time}`;
+                          },
+                          valueFormatter: (value) =>
+                            formatters.percentRound(value),
+                          indicator: "line",
+                        }}
+                      />
+                    )}
                   {filteredOutputs?.map((output, index) => {
                     const originalIndex = outputs.indexOf(output);
                     return (
@@ -427,6 +445,7 @@ export default function Enrollment() {
                   any classes yet
                 </div>
               )}
+              </ChartContainer>
             </div>
             <div className={styles.hoverInfoContainer}>
               {outputs?.[0] ? (
