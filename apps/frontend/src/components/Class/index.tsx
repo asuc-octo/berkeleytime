@@ -195,22 +195,7 @@ export default function Class({
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
 
-  useEffect(() => {
-    if (!_class?.primarySection?.enrollment) return;
 
-    const enrollment = _class.primarySection.enrollment;
-    const seatReservationTypes = enrollment.seatReservationTypes ?? [];
-    const seatReservationCounts = enrollment.latest?.seatReservationCount ?? [];
-
-    if (seatReservationCounts.length === 0) {
-      return;
-    }
-
-    const typeMap = new Map<number, string>();
-    seatReservationTypes.forEach((type) => {
-      typeMap.set(type.number, type.requirementGroup);
-    });
-  }, [_class]);
 
   const _course = useMemo(
     () => providedCourse ?? course,
@@ -282,15 +267,15 @@ export default function Class({
 
     const bookmarkedClasses = bookmarked
       ? user.bookmarkedClasses.filter(
-          (bookmarkedClass) =>
-            !(
-              bookmarkedClass.subject === _class?.subject &&
-              bookmarkedClass.courseNumber === _class?.courseNumber &&
-              bookmarkedClass.number === _class?.number &&
-              bookmarkedClass.year === _class?.year &&
-              bookmarkedClass.semester === _class?.semester
-            )
-        )
+        (bookmarkedClass) =>
+          !(
+            bookmarkedClass.subject === _class?.subject &&
+            bookmarkedClass.courseNumber === _class?.courseNumber &&
+            bookmarkedClass.number === _class?.number &&
+            bookmarkedClass.year === _class?.year &&
+            bookmarkedClass.semester === _class?.semester
+          )
+      )
       : user.bookmarkedClasses.concat(bookmarkEntry);
     await updateUser(
       {
@@ -452,7 +437,7 @@ export default function Class({
 
   //   const reservationMap = new Map<number, string>();
   //   for (const type of reservationTypes) {
-  //     reservationMap.set(type.number, type.requirementGroup);
+  //     reservationMap.set(type.number, type.requirementGroup.description);
   //   }
   //   return reservationMap;
   // }, [_class]);
@@ -489,14 +474,8 @@ export default function Class({
     return false;
   }, [courseGradeDistribution]);
 
-  const reservedSeatingMaxCount = useMemo(() => {
-    const seatReservationCount =
-      _class?.primarySection?.enrollment?.latest?.seatReservationCount ?? [];
-    return seatReservationCount.reduce(
-      (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
-      0
-    );
-  }, [_class]);
+  const activeReservedMaxCount =
+    _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
 
   // TODO: Error state
   if (!_course || !_class) {
@@ -595,7 +574,7 @@ export default function Class({
                   {primarySection?.sectionId && (
                     <CCN sectionId={primarySection.sectionId} />
                   )}
-                  {reservedSeatingMaxCount > 0 && (
+                  {activeReservedMaxCount > 0 && (
                     <div className={styles.reservedSeatingBadgeContainer}>
                       <Badge
                         label="Reserved Seating"

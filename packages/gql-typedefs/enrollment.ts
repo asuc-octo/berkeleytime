@@ -26,13 +26,11 @@ export const enrollmentTypeDef = gql`
     "Attributes"
     history: [EnrollmentSingular!]!
     latest: EnrollmentSingular
-    seatReservationTypes: [ReservationType!]
   }
 
-  type ReservationType {
-    number: Int!
-    requirementGroup: String!
-    fromDate: String!
+  type RequirementGroupDescriptor {
+    code: String
+    description: String!
   }
 
   type EnrollmentSingular {
@@ -50,13 +48,16 @@ export const enrollmentTypeDef = gql`
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
     seatReservationCount: [SeatReservationCounts!]
-    reservedSeatingMaxCount: Int!
+    activeReservedMaxCount: Int!
   }
 
   type SeatReservationCounts {
     number: Int!
     maxEnroll: Int!
     enrolledCount: Int!
+    requirementGroup: RequirementGroupDescriptor!
+    fromDate: String!
+    isValid: Boolean!
   }
 
   enum EnrollmentStatus {

@@ -133,16 +133,15 @@ export const GET_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
             seatReservationCount {
               enrolledCount
               maxEnroll
-              number
+              requirementGroup {
+                description
+              }
+              isValid
             }
-          }
-          seatReservationTypes {
-            fromDate
-            number
-            requirementGroup
           }
         }
         meetings {
@@ -194,6 +193,7 @@ export const GET_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
           }
         }
         meetings {
@@ -266,16 +266,15 @@ export const GET_CLASS_DETAILS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
             seatReservationCount {
               enrolledCount
               maxEnroll
-              number
+              requirementGroup {
+                description
+              }
+              isValid
             }
-          }
-          seatReservationTypes {
-            fromDate
-            number
-            requirementGroup
           }
         }
         meetings {
@@ -390,6 +389,7 @@ export const GET_CLASS_ENROLLMENT = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
           }
           latest {
             startTime
@@ -399,6 +399,7 @@ export const GET_CLASS_ENROLLMENT = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
           }
         }
       }

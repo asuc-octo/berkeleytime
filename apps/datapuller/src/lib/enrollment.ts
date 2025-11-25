@@ -75,7 +75,10 @@ const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
       ?.filter((reservation) => reservation.requirementGroup?.description)
       .map((reservation) => ({
         number: reservation.number ?? 0,
-        requirementGroup: reservation.requirementGroup?.description!,
+        requirementGroup: {
+          code: reservation.requirementGroup?.code ?? "",
+          description: reservation.requirementGroup?.description!,
+        },
         fromDate: reservation.fromDate ?? "",
       })),
   };
