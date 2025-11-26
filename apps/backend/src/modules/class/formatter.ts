@@ -5,6 +5,7 @@ import {
   ISectionItem,
 } from "@repo/common";
 
+import { normalizeSubject } from "../../utils/subject";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import { ClassModule } from "./generated-types/module-types";
 
@@ -34,6 +35,7 @@ export const formatDate = (date?: string | number | Date | null) => {
 export const formatClass = (_class: IClassItem) => {
   const output = {
     ..._class,
+    subject: normalizeSubject(_class.subject),
 
     unitsMax: _class.allowedUnits?.maximum || 0,
     unitsMin: _class.allowedUnits?.minimum || 0,
@@ -123,6 +125,7 @@ export const formatSection = (
 ) => {
   const output = {
     ...section,
+    subject: normalizeSubject(section.subject),
 
     online: section.instructionMode === "O",
     course: section.courseId,

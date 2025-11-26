@@ -1,3 +1,4 @@
+import { CourseOutput } from "@/components/CourseAnalytics/types";
 import { IEnrollment } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
@@ -8,14 +9,10 @@ export interface Input {
   semester: Semester;
   sectionNumber?: string;
   sessionId?: string;
+  instructors?: string[];
 }
 
-export interface Output {
-  enrollmentHistory: IEnrollment;
-  input: Input;
-  hidden: boolean;
-  active: boolean;
-}
+export type Output = CourseOutput<Input, IEnrollment>;
 
 export const getInputSearchParam = (input: Input) => {
   if (!input.sectionNumber) {

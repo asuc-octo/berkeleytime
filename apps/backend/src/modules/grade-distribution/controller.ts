@@ -7,12 +7,16 @@ import {
   getPnpPercentage,
 } from "@repo/common";
 
+import { buildSubjectQuery } from "../../utils/subject";
+
 export const getGradeDistributionByCourse = async (
   subject: string,
   number: string
 ) => {
+  const subjectQuery = buildSubjectQuery(subject);
+
   const distributions = await GradeDistributionModel.find({
-    subject,
+    subject: subjectQuery,
     courseNumber: number,
   });
 
@@ -36,11 +40,13 @@ export const getGradeDistributionByClass = async (
   courseNumber: string,
   sectionNumber: string
 ) => {
+  const subjectQuery = buildSubjectQuery(subject);
+
   const section = await SectionModel.findOne({
     year,
     semester,
     sessionId,
-    subject,
+    subject: subjectQuery,
     courseNumber,
     number: sectionNumber,
     primary: true,
@@ -51,7 +57,7 @@ export const getGradeDistributionByClass = async (
   if (!section) throw new Error("Class not found");
 
   const distributions = await GradeDistributionModel.find({
-    subject,
+    subject: subjectQuery,
     courseNumber,
     sectionId: section.sectionId,
   });
@@ -75,6 +81,8 @@ export const getGradeDistributionBySemester = async (
   subject: string,
   courseNumber: string
 ) => {
+  const subjectQuery = buildSubjectQuery(subject);
+
   const term = await TermModel.findOne({
     name: `${year} ${semester}`,
   })
@@ -86,7 +94,7 @@ export const getGradeDistributionBySemester = async (
   const distributions = await GradeDistributionModel.find({
     termId: term.id,
     sessionId,
-    subject,
+    subject: subjectQuery,
     courseNumber,
   });
 
@@ -108,8 +116,10 @@ export const getGradeDistributionByInstructor = async (
   familyName: string,
   givenName: string
 ) => {
+  const subjectQuery = buildSubjectQuery(subject);
+
   const sections = await SectionModel.find({
-    subject,
+    subject: subjectQuery,
     courseNumber,
     "meetings.instructors.familyName": familyName,
     "meetings.instructors.givenName": givenName,
@@ -146,11 +156,13 @@ export const getGradeDistributionByInstructorAndSemester = async (
   familyName: string,
   givenName: string
 ) => {
+  const subjectQuery = buildSubjectQuery(subject);
+
   const sections = await SectionModel.find({
     year,
     semester,
     sessionId,
-    subject,
+    subject: subjectQuery,
     courseNumber,
     "meetings.instructors.familyName": familyName,
     "meetings.instructors.givenName": givenName,

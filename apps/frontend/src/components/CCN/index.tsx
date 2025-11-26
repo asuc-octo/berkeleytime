@@ -2,7 +2,7 @@ import { MouseEvent, useRef, useState } from "react";
 
 import { ClipboardCheck, Hashtag, PasteClipboard } from "iconoir-react";
 
-import { CatalogTooltip } from "@/components/CatalogTooltip";
+import { Tooltip } from "@repo/theme";
 
 import styles from "./CCN.module.scss";
 
@@ -43,7 +43,7 @@ export default function CCN({ sectionId, tooltip }: CCNProps) {
   };
 
   return (
-    <CatalogTooltip
+    <Tooltip
       trigger={
         <div
           className={styles.trigger}

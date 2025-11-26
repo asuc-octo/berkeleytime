@@ -3,9 +3,7 @@ import { MouseEvent, ReactElement, ReactNode } from "react";
 import { Lock } from "iconoir-react";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
-import { MenuItem } from "@repo/theme";
-
-import { CatalogTooltip } from "@/components/CatalogTooltip";
+import { MenuItem, Tooltip } from "@repo/theme";
 
 import {
   RatingsLockContext,
@@ -95,7 +93,7 @@ function RatingsTabLinkBase({
     : `Share ${ratingsNeededValue} class rating${ratingsNeededValue !== 1 ? "s" : ""} to unlock everyone else's`;
 
   return (
-    <CatalogTooltip
+    <Tooltip
       trigger={navLink}
       title={!dialog ? "Locked Content" : undefined}
       description={tooltipDescription}

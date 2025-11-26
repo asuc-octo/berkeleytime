@@ -9,10 +9,9 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card } from "@repo/theme";
+import { Card, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import { CatalogTooltip } from "@/components/CatalogTooltip";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -143,7 +142,7 @@ export default function ClassCard({
               )}
             {(_class?.primarySection?.enrollment?.latest
               ?.activeReservedMaxCount ?? 0) > 0 && (
-              <CatalogTooltip
+              <Tooltip
                 trigger={
                   <span className={styles.reservedSeating}>
                     <InfoCircle className={styles.reservedSeatingIcon} />

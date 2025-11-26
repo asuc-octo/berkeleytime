@@ -1,14 +1,13 @@
 import { useMemo } from "react";
 
-import { ColoredSquare } from "@repo/theme";
-
 import { AverageGrade, ColoredGrade } from "@/components/AverageGrade";
-import { useReadCourseGradeDist } from "@/hooks/api";
+import CourseSideMetrics, {
+  type CourseMetric,
+} from "@/components/CourseSideMetrics";
+import { useReadCourseGradeDist, useReadCourseTitle } from "@/hooks/api";
 import { IGradeDistribution } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
-
-import styles from "./HoverInfo.module.scss";
 
 interface HoverInfoProps {
   color: string;
@@ -51,6 +50,7 @@ export default function HoverInfo({
   hoveredLetter,
 }: HoverInfoProps) {
   const { data: courseData } = useReadCourseGradeDist(subject, courseNumber);
+  const { data: courseTitleData } = useReadCourseTitle(subject, courseNumber);
 
   const courseGradeDist = useMemo(
     () => courseData?.gradeDistribution ?? null,
@@ -92,65 +92,70 @@ export default function HoverInfo({
     return ret;
   }, [hoveredLetter, gradeDistribution]);
 
-  return (
-    <div className={styles.info}>
-      <div className={styles.heading}>
-        <span className={styles.course}>
-          <ColoredSquare
-            color={color}
-            size="md"
-            style={{ marginRight: 6, position: "relative", top: 2 }}
+  const title = gradeDistribution
+    ? `${subject} ${courseNumber}`
+    : "No Class Selected";
+
+  const metadata = gradeDistribution
+    ? `${semester && year ? `${semester} ${year}` : "All Semesters"} • ${
+        givenName && familyName
+          ? `${givenName} ${familyName}`
+          : "All Instructors"
+      }`
+    : "No Semester or Instructor Data";
+
+  const metrics: CourseMetric[] = [
+    {
+      label: "Course Average",
+      value: courseGradeDist ? (
+        <span>
+          <AverageGrade
+            style={GRADE_STYLE}
+            gradeDistribution={courseGradeDist}
           />
-          {subject} {courseNumber}
+          ({courseGradeDist.average?.toFixed(3)})
         </span>
-      </div>
-      {gradeDistribution && (
-        <div className={styles.distType}>
-          {givenName && familyName
-            ? `${givenName} ${familyName} `
-            : "All Instructors "}
-          •{semester && year ? ` ${semester} ${year}` : " All Semesters"}
-        </div>
-      )}
-      <div className={styles.label}>Course Average</div>
-      <div className={styles.value}>
-        {courseGradeDist ? (
-          <span>
-            <AverageGrade
-              style={GRADE_STYLE}
-              gradeDistribution={courseGradeDist}
-            />
-            ({courseGradeDist.average?.toFixed(3)})
-          </span>
-        ) : (
-          "No data"
-        )}
-      </div>
-      <div className={styles.label}>Section Average</div>
-      <div className={styles.value}>
-        {gradeDistribution && (
+      ) : (
+        "No data"
+      ),
+    },
+    {
+      label: "Section Average",
+      value: gradeDistribution ? (
+        <>
           <AverageGrade
             style={GRADE_STYLE}
             gradeDistribution={gradeDistribution}
             tooltip="for this instructor/semester combination"
           />
-        )}
-        {gradeDistribution
-          ? `(${gradeDistribution.average?.toFixed(3)})`
-          : "No data"}
-      </div>
-      {hoveredLetter && (
-        <div>
-          <div className={styles.label}>
-            {lowerPercentile} - {upperPercentile} Percentile
-          </div>
-          <div className={styles.value}>
-            <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
-            {hoveredCount}/{gradeDistTotal},{" "}
-            {(((hoveredCount ?? 0) / gradeDistTotal) * 100).toFixed(1)}%)
-          </div>
-        </div>
-      )}
-    </div>
+          ({gradeDistribution.average?.toFixed(3)})
+        </>
+      ) : (
+        "No data"
+      ),
+    },
+  ];
+
+  if (hoveredLetter) {
+    metrics.push({
+      label: `${lowerPercentile} - ${upperPercentile} Percentile`,
+      value: (
+        <>
+          <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
+          {hoveredCount}/{gradeDistTotal},{" "}
+          {(((hoveredCount ?? 0) / gradeDistTotal) * 100).toFixed(1)}%)
+        </>
+      ),
+    });
+  }
+
+  return (
+    <CourseSideMetrics
+      color={color}
+      courseTitle={title}
+      classTitle={courseTitleData?.title ?? undefined}
+      metadata={metadata}
+      metrics={metrics}
+    />
   );
 }

@@ -6,8 +6,17 @@ import { useSearchParams } from "react-router-dom";
 import { Box, Select, SelectHandle } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
+import {
+  type CourseOutput,
+  type Input,
+  InputType,
+  LIGHT_COLORS,
+  getInputSearchParam,
+  isInputEqual,
+} from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   GetGradeDistributionDocument,
@@ -15,15 +24,9 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import {
-  Input,
-  InputType,
-  LIGHT_COLORS,
-  Output,
-  getInputSearchParam,
-  isInputEqual,
-} from "../../types";
 import styles from "./CourseInput.module.scss";
+
+type Output = CourseOutput<Input, IGradeDistribution>;
 
 interface CourseInputProps {
   outputs: Output[];
@@ -331,11 +334,16 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         active: false,
         color: availableColor,
         // TODO: Error handling
-        gradeDistribution: response.data!.grade,
+        data: response.data!.grade,
         input,
       };
 
-      setOutputs((outputs) => [...outputs, output]);
+      setOutputs((prev) =>
+        [...prev, output].map((o) => ({
+          ...o,
+          active: false,
+        }))
+      );
 
       searchParams.append("input", getInputSearchParam(input));
       setSearchParams(searchParams);
