@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactElement } from "react";
 
 import { FrameAltEmpty } from "iconoir-react";
 import { ResponsiveContainer } from "recharts";
@@ -13,7 +13,7 @@ import styles from "./ChartContainer.module.scss";
 interface ChartContainerProps {
   config: ChartConfig;
   hasData: boolean;
-  children: (chartWidth: number, chartHeight: number) => ReactNode;
+  children: (chartWidth: number, chartHeight: number) => ReactElement;
 }
 
 export function ChartContainer({

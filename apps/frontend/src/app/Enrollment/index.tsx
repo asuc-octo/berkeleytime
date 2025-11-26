@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import moment from "moment";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   CartesianGrid,
   Line,
@@ -33,6 +33,7 @@ import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/use
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import Footer from "@/components/Footer";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
+import { RecentType, savePageUrl, getPageUrl } from "@/lib/recent";
 
 import CourseInput from "./CourseManager/CourseInput";
 import HoverInfo from "./HoverInfo";
@@ -258,11 +259,38 @@ const fetchEnrollment = async (
 };
 
 export default function Enrollment() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialInputs = useMemo(
-    () => parseInputsFromUrl(searchParams),
-    [searchParams]
-  );
+  const initialInputs = useMemo(() => {
+    // If no current params, check for saved URL and parse it directly
+    if (searchParams.toString().length === 0) {
+      const savedUrl = getPageUrl(RecentType.EnrollmentPage);
+      if (savedUrl) {
+        const savedParams = new URLSearchParams(savedUrl);
+        return parseInputsFromUrl(savedParams);
+      }
+    }
+    return parseInputsFromUrl(searchParams);
+  }, [searchParams]);
+
+  // Save current URL to localStorage whenever it changes
+  useEffect(() => {
+    const currentUrl = location.search;
+    if (currentUrl) {
+      savePageUrl(RecentType.EnrollmentPage, currentUrl);
+    }
+  }, [location.search]);
+
+  // Update URL to match the restored state
+  useEffect(() => {
+    if (searchParams.toString().length === 0 && initialInputs.length > 0) {
+      const savedUrl = getPageUrl(RecentType.EnrollmentPage);
+      if (savedUrl) {
+        navigate({ ...location, search: savedUrl }, { replace: true });
+      }
+    }
+  }, []); // Only on mount
 
   const {
     outputs,

@@ -1,7 +1,7 @@
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Bar,
   BarChart,
@@ -34,6 +34,7 @@ import { type IGradeDistribution } from "@/lib/api";
 import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
+import { RecentType, savePageUrl, getPageUrl } from "@/lib/recent";
 
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import CourseInput from "./CourseManager/CourseInput";
@@ -151,6 +152,7 @@ const GradeChart = memo(
                   const filteredPayload =
                     activeIndex >= 0
                       ? props.payload?.filter(
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           (item: any) =>
                             String(item.dataKey ?? item.name) ===
                             activeIndex.toString()
@@ -210,13 +212,40 @@ const GradeChart = memo(
 );
 
 const GradeDistributions = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
 
-  const initialInputs: Input[] = useMemo(
-    () => parseInputsFromUrl(searchParams),
-    [searchParams]
-  );
+  const initialInputs: Input[] = useMemo(() => {
+    // If no current params, check for saved URL and parse it directly
+    if (searchParams.toString().length === 0) {
+      const savedUrl = getPageUrl(RecentType.GradesPage);
+      if (savedUrl) {
+        const savedParams = new URLSearchParams(savedUrl);
+        return parseInputsFromUrl(savedParams);
+      }
+    }
+    return parseInputsFromUrl(searchParams);
+  }, [searchParams]);
+
+  // Save current URL to localStorage whenever it changes
+  useEffect(() => {
+    const currentUrl = location.search;
+    if (currentUrl) {
+      savePageUrl(RecentType.GradesPage, currentUrl);
+    }
+  }, [location.search]);
+
+  // Update URL to match the restored state
+  useEffect(() => {
+    if (searchParams.toString().length === 0 && initialInputs.length > 0) {
+      const savedUrl = getPageUrl(RecentType.GradesPage);
+      if (savedUrl) {
+        navigate({ ...location, search: savedUrl }, { replace: true });
+      }
+    }
+  }, []); // Only on mount
 
   const {
     outputs,

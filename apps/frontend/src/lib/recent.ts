@@ -6,6 +6,9 @@ export enum RecentType {
   Schedule = "recent-schedules",
   Course = "recent-courses",
   CatalogTerm = "recent-catalog-term",
+  CatalogPage = "recent-catalog-page",
+  GradesPage = "recent-grades-page",
+  EnrollmentPage = "recent-enrollment-page",
 }
 
 const MaxLength = {
@@ -13,6 +16,9 @@ const MaxLength = {
   [RecentType.Schedule]: 5,
   [RecentType.Course]: 3,
   [RecentType.CatalogTerm]: 1,
+  [RecentType.CatalogPage]: 1,
+  [RecentType.GradesPage]: 1,
+  [RecentType.EnrollmentPage]: 1,
 };
 
 interface RecentClass {
@@ -42,13 +48,26 @@ interface RecentCatalogTerm {
   timestamp?: number;
 }
 
+interface RecentPageUrl {
+  url: string;
+  timestamp: number;
+}
+
 export type Recent<T extends RecentType> = T extends RecentType.Class
   ? RecentClass
   : T extends RecentType.Schedule
     ? RecentSchedule
     : T extends RecentType.Course
       ? RecentCourse
-      : RecentCatalogTerm;
+      : T extends RecentType.CatalogTerm
+        ? RecentCatalogTerm
+        : T extends RecentType.CatalogPage
+          ? RecentPageUrl
+          : T extends RecentType.GradesPage
+            ? RecentPageUrl
+            : T extends RecentType.EnrollmentPage
+              ? RecentPageUrl
+              : never;
 
 export const getRecents = <T extends RecentType>(
   type: T,
@@ -67,6 +86,20 @@ export const getRecents = <T extends RecentType>(
       recents = recents.filter((recent) => {
         const catalogTerm = recent as RecentCatalogTerm;
         return !catalogTerm.timestamp || now - catalogTerm.timestamp < ONE_HOUR;
+      }) as Recent<T>[];
+    }
+
+    if (
+      type === RecentType.CatalogPage ||
+      type === RecentType.GradesPage ||
+      type === RecentType.EnrollmentPage
+    ) {
+      const ONE_HOUR = 60 * 60 * 1000;
+      const now = Date.now();
+
+      recents = recents.filter((recent) => {
+        const pageUrl = recent as RecentPageUrl;
+        return !pageUrl.timestamp || now - pageUrl.timestamp < ONE_HOUR;
       }) as Recent<T>[];
     }
 
@@ -104,6 +137,14 @@ export const addRecent = <T extends RecentType>(
     (recent as RecentCatalogTerm).timestamp = Date.now();
   }
 
+  if (
+    type === RecentType.CatalogPage ||
+    type === RecentType.GradesPage ||
+    type === RecentType.EnrollmentPage
+  ) {
+    (recent as RecentPageUrl).timestamp = Date.now();
+  }
+
   recents.unshift(recent);
 
   const item = JSON.stringify(recents.slice(0, MaxLength[type]));
@@ -120,4 +161,22 @@ export const removeRecent = <T extends RecentType>(
 
   const item = JSON.stringify(recents);
   localStorage.setItem(type, item);
+};
+
+// Helper functions for page URL persistence
+export const savePageUrl = (
+  type: RecentType.CatalogPage | RecentType.GradesPage | RecentType.EnrollmentPage,
+  url: string
+) => {
+  addRecent(type, {
+    url,
+    timestamp: Date.now(),
+  });
+};
+
+export const getPageUrl = (
+  type: RecentType.CatalogPage | RecentType.GradesPage | RecentType.EnrollmentPage
+): string | null => {
+  const saved = getRecents(type) as RecentPageUrl[];
+  return saved[0]?.url ?? null;
 };
