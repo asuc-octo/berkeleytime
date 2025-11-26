@@ -1,15 +1,33 @@
 .root {
   flex-shrink: 0;
   height: 32px;
-  background-color: var(--orange-900);
+  background-color: var(--blue-200);
   padding: 12px;
   display: flex;
   align-items: center;
-  color: white;
+  color: var(--blue-800);
   transition: background-color 100ms ease-in-out;
 
   &:hover {
-    background-color: var(--orange-800);
+    background-color: var(--blue-300);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--blue-900);
+    color: var(--blue-200);
+
+    &:hover {
+      background-color: var(--blue-800);
+    }
+  }
+
+  body[data-theme="dark"] & {
+    background-color: var(--blue-900);
+    color: var(--blue-200);
+
+    &:hover {
+      background-color: var(--blue-800);
+    }
   }
 
   @media (width <= 992px) {

@@ -77,14 +77,10 @@
         "ss07" on,
         "cv12" on,
         "cv06" on;
-      color: var(--blue-500);
+      color: var(--heading-color);
       cursor: pointer;
       transition: all 100ms ease-in-out;
       margin-right: auto;
-
-      &:hover {
-        color: var(--blue-600);
-      }
     }
   }
 }

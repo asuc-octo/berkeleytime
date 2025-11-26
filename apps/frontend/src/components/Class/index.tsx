@@ -789,7 +789,7 @@ export default function Class({
           isOpen={isUnlockModalOpen}
           onClose={handleUnlockModalClose}
           title="Unlock Ratings"
-          subtitle={`Share ${Math.max(unlockModalGoalCount, 1)} rating${Math.max(unlockModalGoalCount, 1) === 1 ? "" : "s"} to unlock this feature.`}
+          subtitle={`Rate ${Math.max(unlockModalGoalCount, 1)} classes to unlock all other ratings.`}
           onSubmit={handleUnlockRatingSubmit}
           userRatedClasses={userRatedClasses}
           requiredRatingsCount={unlockModalGoalCount || 1}
