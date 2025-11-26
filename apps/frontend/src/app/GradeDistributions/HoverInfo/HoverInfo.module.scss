@@ -1,22 +1,66 @@
 .info {
-  display: block;
   width: 100%;
   color: var(--paragraph-color);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 
-  .heading {
-    margin-bottom: 8px;
-    font-weight: 500;
+  @media (max-width: 1000px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 48px;
+  }
 
-    .course {
-      color: var(--heading-color);
-      font-size: 18px;
+  .classInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .heading {
+      font-weight: var(--font-medium);
+
+      .course {
+        color: var(--heading-color);
+        font-size: var(--text-18);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .metadata {
+      font-size: var(--text-16);
+      color: var(--paragraph-color);
     }
   }
+
   .label {
-    font-weight: 600;
+    font-weight: var(--font-semibold);
     color: var(--heading-color);
-    margin-top: 10px;
-    margin-bottom: 6px;
-    font-size: 14px;
+    font-size: var(--text-14);
+  }
+
+  .value {
+    font-size: var(--text-14);
+    color: var(--paragraph-color);
+  }
+
+  .metricGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    @media (max-width: 1000px) {
+      flex-direction: row;
+      gap: 24px;
+      align-items: center;
+    }
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 }

@@ -335,7 +335,12 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         input,
       };
 
-      setOutputs((outputs) => [...outputs, output]);
+      setOutputs((prev) =>
+        [...prev, output].map((o) => ({
+          ...o,
+          active: false,
+        }))
+      );
 
       searchParams.append("input", getInputSearchParam(input));
       setSearchParams(searchParams);

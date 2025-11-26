@@ -92,65 +92,76 @@ export default function HoverInfo({
     return ret;
   }, [hoveredLetter, gradeDistribution]);
 
+  const title = gradeDistribution
+    ? `${subject} ${courseNumber}`
+    : "No Class Selected";
+
+  const metadata = gradeDistribution
+    ? `${semester && year ? `${semester} ${year}` : "All Semesters"} • ${
+        givenName && familyName ? `${givenName} ${familyName}` : "All Instructors"
+      }`
+    : "No Semester or Instructor Data";
+
   return (
     <div className={styles.info}>
-      <div className={styles.heading}>
-        <span className={styles.course}>
-          <ColoredSquare
-            color={color}
-            size="md"
-            style={{ marginRight: 6, position: "relative", top: 2 }}
-          />
-          {subject} {courseNumber}
-        </span>
-      </div>
-      {gradeDistribution && (
-        <div className={styles.distType}>
-          {givenName && familyName
-            ? `${givenName} ${familyName} `
-            : "All Instructors "}
-          •{semester && year ? ` ${semester} ${year}` : " All Semesters"}
-        </div>
-      )}
-      <div className={styles.label}>Course Average</div>
-      <div className={styles.value}>
-        {courseGradeDist ? (
-          <span>
-            <AverageGrade
-              style={GRADE_STYLE}
-              gradeDistribution={courseGradeDist}
-            />
-            ({courseGradeDist.average?.toFixed(3)})
+      <div className={styles.classInfo}>
+        <div className={styles.heading}>
+          <span className={styles.course}>
+            <ColoredSquare color={color} size="md" />
+            {title}
           </span>
-        ) : (
-          "No data"
-        )}
+        </div>
+        <div className={styles.metadata}>
+          {metadata}
+        </div>
       </div>
-      <div className={styles.label}>Section Average</div>
-      <div className={styles.value}>
-        {gradeDistribution && (
-          <AverageGrade
-            style={GRADE_STYLE}
-            gradeDistribution={gradeDistribution}
-            tooltip="for this instructor/semester combination"
-          />
-        )}
-        {gradeDistribution
-          ? `(${gradeDistribution.average?.toFixed(3)})`
-          : "No data"}
-      </div>
-      {hoveredLetter && (
-        <div>
-          <div className={styles.label}>
-            {lowerPercentile} - {upperPercentile} Percentile
-          </div>
+      <div className={styles.metricGroup}>
+        <div className={styles.metric}>
+          <div className={styles.label}>Course Average</div>
           <div className={styles.value}>
-            <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
-            {hoveredCount}/{gradeDistTotal},{" "}
-            {(((hoveredCount ?? 0) / gradeDistTotal) * 100).toFixed(1)}%)
+            {courseGradeDist ? (
+              <span>
+                <AverageGrade
+                  style={GRADE_STYLE}
+                  gradeDistribution={courseGradeDist}
+                />
+                ({courseGradeDist.average?.toFixed(3)})
+              </span>
+            ) : (
+              "No data"
+            )}
           </div>
         </div>
-      )}
+
+        <div className={styles.metric}>
+          <div className={styles.label}>Section Average</div>
+          <div className={styles.value}>
+            {gradeDistribution && (
+              <AverageGrade
+                style={GRADE_STYLE}
+                gradeDistribution={gradeDistribution}
+                tooltip="for this instructor/semester combination"
+              />
+            )}
+            {gradeDistribution
+              ? `(${gradeDistribution.average?.toFixed(3)})`
+              : "No data"}
+          </div>
+        </div>
+
+        {hoveredLetter && (
+          <div className={styles.metric}>
+            <div className={styles.label}>
+              {lowerPercentile} - {upperPercentile} Percentile
+            </div>
+            <div className={styles.value}>
+              <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
+              {hoveredCount}/{gradeDistTotal},{" "}
+              {(((hoveredCount ?? 0) / gradeDistTotal) * 100).toFixed(1)}%)
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

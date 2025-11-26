@@ -9,6 +9,8 @@ import { AverageGrade } from "@/components/AverageGrade";
 import { useReadCourseTitle } from "@/hooks/api";
 import { IGradeDistribution } from "@/lib/api";
 
+import styles from "./GradesCard.module.scss";
+
 interface GradesCardProps {
   color: string;
   subject: string;
@@ -41,6 +43,7 @@ export default function GradesCard({
 
   return (
     <Card.Root
+      className={styles.card}
       active={active}
       disabled={hidden}
       onClick={(event) => {
@@ -54,35 +57,48 @@ export default function GradesCard({
         }
       }}
     >
-      <Card.Body style={{ maxWidth: "calc(100% - 44px)" }}>
-        <Card.Heading>
-          <ColoredSquare
-            color={color}
-            size="sm"
-            style={{ marginRight: 4, position: "relative", top: 1 }}
-          />
-          {subject} {number}
-        </Card.Heading>
-        <Card.Description
-          style={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            textWrap: "nowrap",
-          }}
-        >
-          {data?.title ?? "N/A"}
-        </Card.Description>
-        <Card.Footer style={{ marginTop: "2px" }}>{description}</Card.Footer>
-      </Card.Body>
-      <Card.Actions>
-        <AverageGrade gradeDistribution={gradeDistribution} />
-        <Card.ActionIcon onClick={onClickHide} ref={hideRef}>
-          {!hidden ? <Eye /> : <EyeClosed />}
-        </Card.ActionIcon>
-        <Card.ActionIcon onClick={onClickDelete} ref={deleteRef} isDelete>
-          <Trash />
-        </Card.ActionIcon>
-      </Card.Actions>
+      <div className={styles.content}>
+        {/* Header: Course code (left) and Actions (right) */}
+        <div className={styles.header}>
+          {/* Header Title: Colored square and course code */}
+          <div className={styles.headerTitle}>
+            <ColoredSquare
+              color={color}
+              size="lg"
+            />
+            <span className={styles.courseCode}>{subject} {number}</span>
+          </div>
+
+          {/* Header Actions: Grade, eye icon, trash icon */}
+          <div className={styles.headerActions}>
+            <AverageGrade gradeDistribution={gradeDistribution} />
+            <div
+              onClick={onClickHide}
+              ref={hideRef}
+              className={styles.icon}
+            >
+              {!hidden ? <Eye /> : <EyeClosed />}
+            </div>
+            <div
+              onClick={onClickDelete}
+              ref={deleteRef}
+              className={styles.icon}
+            >
+              <Trash />
+            </div>
+          </div>
+        </div>
+
+        {/* Body: Course title and metadata */}
+        <div className={styles.body}>
+          {/* Course title */}
+          <div className={styles.title}>
+            {data?.title ?? "N/A"}
+          </div>
+          {/* Metadata: Prof and semester */}
+          <div className={styles.metadata}>{description}</div>
+        </div>
+      </div>
     </Card.Root>
   );
 }

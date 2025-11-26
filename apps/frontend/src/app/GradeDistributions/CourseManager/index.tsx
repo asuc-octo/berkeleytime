@@ -2,11 +2,10 @@ import { Dispatch, SetStateAction } from "react";
 
 import { useSearchParams } from "react-router-dom";
 
-import { Flex, Grid } from "@repo/theme";
+import { Flex } from "@repo/theme";
 
 import { Output, getInputSearchParam } from "../types";
 import CourseInput from "./CourseInput";
-import styles from "./CourseManage.module.scss";
 import GradesCard from "./GradesCard";
 
 interface CourseManagerProps {
@@ -57,7 +56,7 @@ export default function CourseManager({
   return (
     <Flex direction="column" gap="4">
       <CourseInput outputs={outputs} setOutputs={setOutputs} />
-      <Grid columns="4" gap="4">
+      <Flex wrap="wrap" gap="12px">
         {outputs.map(({ input, ...rest }, index) => {
           const instructor =
             input.type && input.familyName && input.givenName
@@ -74,7 +73,7 @@ export default function CourseManager({
               key={index}
               subject={input.subject}
               number={input.courseNumber}
-              description={`${instructor} • ${semester}`}
+              description={`${semester} • ${instructor}`}
               onClick={() => updateActive(index, !rest.active)}
               onClickDelete={() => remove(index)}
               onClickHide={() => updateHidden(index, !rest.hidden)}
@@ -82,8 +81,8 @@ export default function CourseManager({
             />
           );
         })}
-        {!outputs || (!outputs.length && <div className={styles.blank}></div>)}
-      </Grid>
+        {!outputs || (!outputs.length && <div style={{ height: "85px" }}></div>)}
+      </Flex>
     </Flex>
   );
 }

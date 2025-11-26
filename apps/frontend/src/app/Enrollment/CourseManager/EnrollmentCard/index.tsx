@@ -52,11 +52,13 @@ export default function EnrollmentCard({
       }}
     >
       <Card.Body style={{ maxWidth: "calc(100% - 44px)" }}>
-        <Card.Heading>
+        <Card.Heading
+          style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
+        >
           <ColoredSquare
             color={color}
-            size="sm"
-            style={{ marginRight: 4, position: "relative", top: 1 }}
+            size="md"
+            style={{ width: 16, height: 16 }}
           />
           {subject} {number}
         </Card.Heading>
@@ -75,10 +77,18 @@ export default function EnrollmentCard({
         {data?.gradeDistribution && (
           <AverageGrade gradeDistribution={data.gradeDistribution} />
         )}
-        <Card.ActionIcon onClick={onClickHide} ref={hideRef}>
+        <Card.ActionIcon
+          onClick={onClickHide}
+          ref={hideRef}
+          style={{ color: "var(--label-color)" }}
+        >
           {!hidden ? <Eye /> : <EyeClosed />}
         </Card.ActionIcon>
-        <Card.ActionIcon onClick={onClickDelete} ref={deleteRef} isDelete>
+        <Card.ActionIcon
+          onClick={onClickDelete}
+          ref={deleteRef}
+          style={{ color: "var(--label-color)" }}
+        >
           <Trash />
         </Card.ActionIcon>
       </Card.Actions>

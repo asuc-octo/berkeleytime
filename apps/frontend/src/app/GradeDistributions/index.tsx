@@ -1,4 +1,11 @@
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { FrameAltEmpty } from "iconoir-react";
@@ -18,6 +25,7 @@ import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
+  ChartTooltipContent,
   createChartConfig,
   formatters,
 } from "@/components/Chart";
@@ -36,6 +44,33 @@ import {
   Output,
   getInputSearchParam,
 } from "./types";
+
+const useChartWidth = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(0);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect?.width ?? 0;
+      setChartWidth(width);
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return { containerRef, chartWidth };
+};
+
+const useChartHeight = (chartWidth: number) => {
+  return useMemo(() => {
+    if (chartWidth > 1000) return 550;
+    if (chartWidth >= 600) return 400;
+    return 250;
+  }, [chartWidth]);
+};
 
 const fetchGradeDistribution = async (
   client: ReturnType<typeof useApolloClient>,
@@ -104,10 +139,23 @@ const GradeChart = memo(
     activeOutput,
     onHoverLetter,
   }: GradeChartProps) {
+    const { containerRef, chartWidth } = useChartWidth();
+    const chartHeight = useChartHeight(chartWidth);
+
+    const barRadius = useMemo(() => {
+      const baseRadius = Math.min(
+        6,
+        12 / Math.max(filteredOutputs.length, 1)
+      );
+
+      if (chartWidth && chartWidth < 500) return 0;
+      return Math.max(0, baseRadius);
+    }, [chartWidth, filteredOutputs]);
+
     return (
-      <div className={styles.view}>
-        <ChartContainer config={chartConfig}>
-          <ResponsiveContainer width="100%" height={550}>
+      <div className={styles.view} ref={containerRef}>
+        <ChartContainer config={chartConfig} className={styles.chart}>
+          <ResponsiveContainer width="100%" height={chartHeight || 400}>
             <BarChart
               syncId="grade-distributions"
               width={730}
@@ -126,33 +174,57 @@ const GradeChart = memo(
                 tickMargin={8}
               />
               <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
-              {filteredOutputs?.length > 0 && (
+              {filteredOutputs.length > 0 && (
                 <ChartTooltip
-                  tooltipConfig={{
-                    labelFormatter: (label) => {
-                      onHoverLetter(label?.toString() ?? null);
-                      return `Grade: ${label}`;
-                    },
-                    valueFormatter: (value) => formatters.percent(value, 1),
-                    indicator: "square",
-                    sortBy: "value",
-                    sortOrder: "desc",
+                  content={(props) => {
+                    const activeIndex = activeOutput
+                      ? filteredOutputs.indexOf(activeOutput)
+                      : -1;
+
+                    const filteredPayload =
+                      activeIndex >= 0
+                        ? props.payload?.filter(
+                            (item: any) =>
+                              String(item.dataKey ?? item.name) ===
+                              activeIndex.toString()
+                          )
+                        : props.payload;
+
+                    const tooltipConfig = {
+                      labelFormatter: (label: string | number | undefined) => {
+                        const labelText = label?.toString() ?? null;
+                        onHoverLetter(labelText);
+                        return `Grade: ${labelText}`;
+                      },
+                      valueFormatter: (value: number) => formatters.percent(value, 1),
+                      indicator: "square" as const,
+                      sortBy: "value" as const,
+                      sortOrder: "desc" as const,
+                    };
+
+                    return (
+                      <ChartTooltipContent
+                        {...props}
+                        payload={filteredPayload}
+                        config={chartConfig}
+                        tooltipConfig={tooltipConfig}
+                      />
+                    );
                   }}
                 />
               )}
-              {filteredOutputs?.map((output, index) => (
+              {filteredOutputs.map((output, index) => (
                 <Bar
                   dataKey={index}
-                  fill={
-                    activeOutput && !output.active
-                      ? DARK_COLORS[index]
-                      : output.color
+                  fill={output.color}
+                  fillOpacity={
+                    activeOutput && !output.active ? 0.25 : 1
                   }
                   key={index}
                   name={`${output.input.subject} ${output.input.courseNumber}`}
                   radius={[
-                    10 / filteredOutputs.length,
-                    10 / filteredOutputs.length,
+                    barRadius,
+                    barRadius,
                     0,
                     0,
                   ]}
@@ -199,8 +271,9 @@ const GradeDistributions = () => {
     const initialize = async () => {
       if (!loading) return;
       if (!initialInputs?.[0]) {
-        searchParams.delete("input");
-        setSearchParams(searchParams);
+        const nextParams = new URLSearchParams(searchParams);
+        nextParams.delete("input");
+        setSearchParams(nextParams);
 
         return;
       }
@@ -215,14 +288,15 @@ const GradeDistributions = () => {
         .filter((output): output is Output => output !== null)
         .slice(0, 4);
 
-      setOutputs(outputs);
-      searchParams.delete("input");
+      setOutputs(outputs.map((output) => ({ ...output, active: false })));
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete("input");
 
       outputs.forEach((output) => {
-        searchParams.append("input", getInputSearchParam(output.input));
+        nextParams.append("input", getInputSearchParam(output.input));
       });
 
-      setSearchParams(searchParams);
+      setSearchParams(nextParams);
       setLoading(false);
     };
 
@@ -235,12 +309,12 @@ const GradeDistributions = () => {
   );
 
   const filteredOutputs = useMemo(
-    () => outputs?.filter((output) => !output.hidden),
+    () => outputs.filter((output) => !output.hidden),
     [outputs]
   );
 
   const data = useMemo(
-    () => transformGradeDistributionData(filteredOutputs || []),
+    () => transformGradeDistributionData(filteredOutputs),
     [filteredOutputs]
   );
 
@@ -271,6 +345,13 @@ const GradeDistributions = () => {
     );
   }, [filteredOutputs]);
 
+  const sidebarOutputs = useMemo(() => {
+    const selected = filteredOutputs?.filter((output) => output.active) ?? [];
+    if (selected.length === 1) return selected;
+    if ((filteredOutputs?.length ?? 0) === 1) return filteredOutputs;
+    return [];
+  }, [filteredOutputs]);
+
   const handleHoverLetter = useCallback((letter: string | null) => {
     setHoveredLetter(letter);
   }, []);
@@ -284,7 +365,7 @@ const GradeDistributions = () => {
             <LoadingIndicator size="lg" />
           </Boundary>
         ) : (
-          <Flex direction="row">
+          <div className={styles.content}>
             <GradeChart
               data={data}
               filteredOutputs={filteredOutputs}
@@ -293,8 +374,8 @@ const GradeDistributions = () => {
               onHoverLetter={handleHoverLetter}
             />
             <div className={styles.hoverInfoContainer}>
-              {outputs?.[0] ? (
-                outputs.map((output: Output, i: number) => (
+              {sidebarOutputs?.[0] ? (
+                sidebarOutputs.map((output: Output, i: number) => (
                   <div key={i} className={styles.hoverInfoCard}>
                     <HoverInfo
                       color={output.color}
@@ -317,7 +398,7 @@ const GradeDistributions = () => {
                 </div>
               )}
             </div>
-          </Flex>
+          </div>
         )}
       </Flex>
       <Footer />
