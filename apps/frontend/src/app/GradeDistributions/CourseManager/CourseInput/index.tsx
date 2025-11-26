@@ -16,13 +16,16 @@ import {
 import { RecentType, addRecent } from "@/lib/recent";
 
 import {
-  Input,
+  type Input,
+  type CourseOutput,
   InputType,
   LIGHT_COLORS,
-  Output,
   getInputSearchParam,
   isInputEqual,
-} from "../../types";
+} from "@/components/CourseAnalytics/types";
+import { type IGradeDistribution } from "@/lib/api";
+
+type Output = CourseOutput<Input, IGradeDistribution>;
 import styles from "./CourseInput.module.scss";
 
 interface CourseInputProps {
@@ -331,7 +334,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         active: false,
         color: availableColor,
         // TODO: Error handling
-        gradeDistribution: response.data!.grade,
+        data: response.data!.grade,
         input,
       };
 

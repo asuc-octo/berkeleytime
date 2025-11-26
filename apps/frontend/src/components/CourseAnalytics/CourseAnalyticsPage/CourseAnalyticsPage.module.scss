@@ -3,36 +3,6 @@
   background-color: var(--background-color);
 }
 
-.view {
-  padding: 0;
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: visible;
-  gap: 24px;
-  position: relative;
-  width: 100%;
-  max-width: 1500px;
-}
-
-.chart {
-  width: 100%;
-  margin: 0;
-}
-
-.empty {
-  position: absolute;
-  color: var(--label-color);
-  text-align: center;
-  font-size: var(--text-14);
-  left: 0;
-  right: 0;
-  top: 25vh;
-  margin-inline: auto;
-  width: fit-content;
-}
-
 .content {
   display: flex;
   align-items: flex-start;

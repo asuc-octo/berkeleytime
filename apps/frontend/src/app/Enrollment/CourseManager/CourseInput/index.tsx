@@ -20,7 +20,7 @@ import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import { Output, getInputSearchParam, isInputEqual } from "../../types";
+import { LIGHT_COLORS, Output, getInputSearchParam, isInputEqual } from "../../types";
 import styles from "./CourseInput.module.scss";
 
 interface CourseInputProps {
@@ -61,6 +61,20 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     ICourseWithInstructorClass | "all" | null
   >(null);
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
+
+  const buildInstructorList = (
+    courseClass: ICourseWithInstructorClass | null
+  ) => {
+    if (!courseClass?.primarySection?.meetings) return [];
+    const names = new Set<string>();
+    courseClass.primarySection.meetings.forEach((meeting) => {
+      meeting.instructors.forEach((instructor) => {
+        const name = `${instructor.givenName} ${instructor.familyName}`.trim();
+        if (name) names.add(name);
+      });
+    });
+    return Array.from(names);
+  };
 
   const semesterOptions = useMemo(() => {
     // get all semesters
@@ -119,14 +133,12 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         const primarySection = c.primarySection;
         if (!primarySection?.enrollment?.latest) return;
         // only classes from current sem displayed
-        let allInstructors = "";
-        primarySection.meetings?.forEach((m) => {
-          m.instructors.forEach((i) => {
-            // construct label as "Given Family"
-            allInstructors = `${allInstructors} ${i.givenName} ${i.familyName};`;
-          });
-        });
-        classStrings.push(`${allInstructors.trim()} ${primarySection.number}`);
+        const instructorNames = buildInstructorList(c);
+        const instructorLabel =
+          instructorNames.length > 0
+            ? instructorNames.join(", ")
+            : "All Instructors";
+        classStrings.push(`${instructorLabel} ${primarySection.number}`);
         classes.push(c);
       });
     const opts: OptionItem<ClassSelectValue>[] = classStrings.map((v, i) => {
@@ -165,6 +177,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     const [semester, year] = selectedSemester.split(" ");
 
+    const instructors = buildInstructorList(selectedClass);
+
     const input = {
       subject: selectedCourse.subject,
       courseNumber: selectedCourse.number,
@@ -175,6 +189,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         selectedClass?.semester === "Summer"
           ? selectedClass.sessionId
           : undefined,
+      instructors,
     };
     // Do not fetch duplicates
     const existingOutput = outputs.find((output) =>
@@ -188,18 +203,30 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     try {
       const response = await client.query({
         query: GetEnrollmentDocument,
-        variables: input,
+        variables: {
+          year: input.year,
+          semester: input.semester,
+          sessionId: input.sessionId,
+          subject: input.subject,
+          courseNumber: input.courseNumber,
+          sectionNumber: input.sectionNumber,
+        },
       });
 
       if (!response.data || !response.data.enrollment) {
         throw response.error;
       }
 
+      const usedColors = new Set(outputs.map((output) => output.color));
+      const availableColor =
+        LIGHT_COLORS.find((color) => !usedColors.has(color)) || LIGHT_COLORS[0];
+
       const output: Output = {
         hidden: false,
         active: false,
+        color: availableColor,
         // TODO: Error handling
-        enrollmentHistory: response.data!.enrollment,
+        data: response.data!.enrollment,
         input,
       };
 

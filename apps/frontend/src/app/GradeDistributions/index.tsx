@@ -1,82 +1,50 @@
-import {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 import {
   Bar,
   BarChart,
   CartesianGrid,
-  ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
+import { Boundary, LoadingIndicator } from "@repo/theme";
 
 import {
   type ChartConfig,
-  ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   createChartConfig,
   formatters,
 } from "@/components/Chart";
+import { ChartContainer } from "@/components/CourseAnalytics/ChartContainer";
+import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalyticsPage";
+import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
+import {
+  type Input,
+  type CourseOutput,
+  DARK_COLORS,
+  LIGHT_COLORS,
+  getInputSearchParam,
+} from "@/components/CourseAnalytics/types";
 import Footer from "@/components/Footer";
+import { type IGradeDistribution } from "@/lib/api";
 import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
-import CourseManager from "./CourseManager";
-import styles from "./GradeDistributions.module.scss";
+import CourseSelectionCard from "@/components/CourseSelectionCard";
+import CourseInput from "./CourseManager/CourseInput";
 import HoverInfo from "./HoverInfo";
-import {
-  DARK_COLORS,
-  Input,
-  LIGHT_COLORS,
-  Output,
-  getInputSearchParam,
-} from "./types";
 
-const useChartWidth = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [chartWidth, setChartWidth] = useState(0);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      const width = entries[0]?.contentRect?.width ?? 0;
-      setChartWidth(width);
-    });
-
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return { containerRef, chartWidth };
-};
-
-const useChartHeight = (chartWidth: number) => {
-  return useMemo(() => {
-    if (chartWidth > 1000) return 550;
-    if (chartWidth >= 600) return 400;
-    return 250;
-  }, [chartWidth]);
-};
+type Output = CourseOutput<Input, IGradeDistribution>;
 
 const fetchGradeDistribution = async (
   client: ReturnType<typeof useApolloClient>,
-  input: Input,
-  i: number
-): Promise<Output | null> => {
+  input: Input
+): Promise<{ data: IGradeDistribution; input: Input } | null> => {
   try {
     const response = await client.query({
       query: GetGradeDistributionDocument,
@@ -86,11 +54,8 @@ const fetchGradeDistribution = async (
     if (!response.data?.grade) return null;
 
     return {
-      color: LIGHT_COLORS[i % LIGHT_COLORS.length],
-      gradeDistribution: response.data.grade,
+      data: response.data.grade,
       input,
-      active: false,
-      hidden: false,
     };
   } catch {
     return null;
@@ -111,7 +76,7 @@ const transformGradeDistributionData = (
   });
 
   filteredOutputs?.forEach((output, index) => {
-    output.gradeDistribution.distribution?.forEach((grade) => {
+    output.data.distribution?.forEach((grade) => {
       const column = letterMap.get(grade.letter);
       if (!column) return;
 
@@ -124,7 +89,7 @@ const transformGradeDistributionData = (
 };
 
 type GradeChartProps = {
-  data: Array<{ letter: string; [key: string]: number }>;
+  data: Array<{ letter: string; [key: number]: number }>;
   filteredOutputs: Output[];
   chartConfig: ChartConfig;
   activeOutput?: Output;
@@ -139,110 +104,100 @@ const GradeChart = memo(
     activeOutput,
     onHoverLetter,
   }: GradeChartProps) {
-    const { containerRef, chartWidth } = useChartWidth();
-    const chartHeight = useChartHeight(chartWidth);
+    const barRadius = useCallback(
+      (chartWidth: number) => {
+        const baseRadius = Math.min(
+          6,
+          12 / Math.max(filteredOutputs.length, 1)
+        );
 
-    const barRadius = useMemo(() => {
-      const baseRadius = Math.min(
-        6,
-        12 / Math.max(filteredOutputs.length, 1)
-      );
-
-      if (chartWidth && chartWidth < 500) return 0;
-      return Math.max(0, baseRadius);
-    }, [chartWidth, filteredOutputs]);
+        if (chartWidth && chartWidth < 500) return 0;
+        return Math.max(0, baseRadius);
+      },
+      [filteredOutputs]
+    );
 
     return (
-      <div className={styles.view} ref={containerRef}>
-        <ChartContainer config={chartConfig} className={styles.chart}>
-          <ResponsiveContainer width="100%" height={chartHeight || 400}>
-            <BarChart
-              syncId="grade-distributions"
-              width={730}
-              height={200}
-              data={data}
-              onMouseLeave={() => onHoverLetter(null)}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                vertical={false}
-                stroke="var(--border-color)"
+      <ChartContainer
+        config={chartConfig}
+        hasData={filteredOutputs.length > 0}
+      >
+        {(chartWidth) => (
+          <BarChart
+            syncId="grade-distributions"
+            width={730}
+            height={200}
+            data={data}
+            onMouseLeave={() => onHoverLetter(null)}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="var(--border-color)"
+            />
+            <XAxis
+              dataKey="letter"
+              fill="var(--label-color)"
+              tickMargin={8}
+            />
+            <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
+            {filteredOutputs.length > 0 && (
+              <ChartTooltip
+                content={(props) => {
+                  const activeIndex = activeOutput
+                    ? filteredOutputs.indexOf(activeOutput)
+                    : -1;
+
+                  const filteredPayload =
+                    activeIndex >= 0
+                      ? props.payload?.filter(
+                          (item: any) =>
+                            String(item.dataKey ?? item.name) ===
+                            activeIndex.toString()
+                        )
+                      : props.payload;
+
+                  const tooltipConfig = {
+                    labelFormatter: (label: string | number | undefined) => {
+                      const labelText = label?.toString() ?? null;
+                      onHoverLetter(labelText);
+                      return `Grade: ${labelText}`;
+                    },
+                    valueFormatter: (value: number) => formatters.percent(value, 1),
+                    indicator: "square" as const,
+                    sortBy: "value" as const,
+                    sortOrder: "desc" as const,
+                  };
+
+                  return (
+                    <ChartTooltipContent
+                      {...props}
+                      payload={filteredPayload}
+                      config={chartConfig}
+                      tooltipConfig={tooltipConfig}
+                    />
+                  );
+                }}
               />
-              <XAxis
-                dataKey="letter"
-                fill="var(--label-color)"
-                tickMargin={8}
+            )}
+            {filteredOutputs.map((output, index) => (
+              <Bar
+                dataKey={index}
+                fill={output.color}
+                fillOpacity={activeOutput && !output.active ? 0.25 : 1}
+                key={index}
+                name={`${output.input.subject} ${output.input.courseNumber}`}
+                radius={[
+                  barRadius(chartWidth),
+                  barRadius(chartWidth),
+                  0,
+                  0,
+                ]}
               />
-              <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
-              {filteredOutputs.length > 0 && (
-                <ChartTooltip
-                  content={(props) => {
-                    const activeIndex = activeOutput
-                      ? filteredOutputs.indexOf(activeOutput)
-                      : -1;
-
-                    const filteredPayload =
-                      activeIndex >= 0
-                        ? props.payload?.filter(
-                            (item: any) =>
-                              String(item.dataKey ?? item.name) ===
-                              activeIndex.toString()
-                          )
-                        : props.payload;
-
-                    const tooltipConfig = {
-                      labelFormatter: (label: string | number | undefined) => {
-                        const labelText = label?.toString() ?? null;
-                        onHoverLetter(labelText);
-                        return `Grade: ${labelText}`;
-                      },
-                      valueFormatter: (value: number) => formatters.percent(value, 1),
-                      indicator: "square" as const,
-                      sortBy: "value" as const,
-                      sortOrder: "desc" as const,
-                    };
-
-                    return (
-                      <ChartTooltipContent
-                        {...props}
-                        payload={filteredPayload}
-                        config={chartConfig}
-                        tooltipConfig={tooltipConfig}
-                      />
-                    );
-                  }}
-                />
-              )}
-              {filteredOutputs.map((output, index) => (
-                <Bar
-                  dataKey={index}
-                  fill={output.color}
-                  fillOpacity={
-                    activeOutput && !output.active ? 0.25 : 1
-                  }
-                  key={index}
-                  name={`${output.input.subject} ${output.input.courseNumber}`}
-                  radius={[
-                    barRadius,
-                    barRadius,
-                    0,
-                    0,
-                  ]}
-                />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-          {!filteredOutputs?.length && (
-            <div className={styles.empty}>
-              <FrameAltEmpty height={24} width={24} />
-              <br />
-              You have not added
-              <br />
-              any classes yet
-            </div>
-          )}
-        </ChartContainer>
-      </div>
+            ))}
+          </BarChart>
+        )}
+      </ChartContainer>
     );
   },
   // Avoid re-rendering the chart when only hover state changes
@@ -255,63 +210,28 @@ const GradeChart = memo(
 );
 
 const GradeDistributions = () => {
-  const client = useApolloClient();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null);
 
   const initialInputs: Input[] = useMemo(
     () => parseInputsFromUrl(searchParams),
     [searchParams]
-  ); // if courses are specified in the url, empty array if none
-
-  const [loading, setLoading] = useState<boolean>(initialInputs.length > 0); // true if courses are specified in url
-  const [outputs, setOutputs] = useState<Output[]>([]); // list of course grade information
-  const [hoveredLetter, setHoveredLetter] = useState<string | null>(null); // which grade bucket is hovered
-
-  useEffect(() => {
-    const initialize = async () => {
-      if (!loading) return;
-      if (!initialInputs?.[0]) {
-        const nextParams = new URLSearchParams(searchParams);
-        nextParams.delete("input");
-        setSearchParams(nextParams);
-
-        return;
-      }
-
-      const results = await Promise.all(
-        initialInputs.map((input, i) =>
-          fetchGradeDistribution(client, input, i)
-        )
-      );
-
-      const outputs = results
-        .filter((output): output is Output => output !== null)
-        .slice(0, 4);
-
-      setOutputs(outputs.map((output) => ({ ...output, active: false })));
-      const nextParams = new URLSearchParams(searchParams);
-      nextParams.delete("input");
-
-      outputs.forEach((output) => {
-        nextParams.append("input", getInputSearchParam(output.input));
-      });
-
-      setSearchParams(nextParams);
-      setLoading(false);
-    };
-
-    initialize();
-  }, [client, initialInputs, searchParams, loading]);
-
-  const activeOutput = useMemo(
-    () => outputs?.find((out) => out.active),
-    [outputs]
   );
 
-  const filteredOutputs = useMemo(
-    () => outputs.filter((output) => !output.hidden),
-    [outputs]
-  );
+  const {
+    outputs,
+    setOutputs,
+    loading,
+    activeOutput,
+    filteredOutputs,
+    remove,
+    updateActive,
+    updateHidden,
+  } = useCourseManager({
+    initialInputs,
+    fetchData: fetchGradeDistribution,
+    serializeInput: getInputSearchParam,
+  });
 
   const data = useMemo(
     () => transformGradeDistributionData(filteredOutputs),
@@ -329,7 +249,7 @@ const GradeDistributions = () => {
     );
 
     const themes = filteredOutputs.reduce(
-      (acc, output, index) => {
+      (acc, _, index) => {
         acc[index.toString()] = {
           light: LIGHT_COLORS[index % LIGHT_COLORS.length],
           dark: DARK_COLORS[index % DARK_COLORS.length],
@@ -357,15 +277,52 @@ const GradeDistributions = () => {
   }, []);
 
   return (
-    <Box p="5" className={styles.root}>
-      <Flex direction="column">
-        <CourseManager outputs={outputs} setOutputs={setOutputs} />
-        {loading ? (
-          <Boundary>
-            <LoadingIndicator size="lg" />
-          </Boundary>
-        ) : (
-          <div className={styles.content}>
+    <>
+      <CourseAnalyticsPage
+        courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
+        courseCards={
+          <>
+            {outputs.map((output, index) => {
+              const instructor =
+                output.input.type &&
+                output.input.familyName &&
+                output.input.givenName
+                  ? `${output.input.givenName} ${output.input.familyName}`
+                  : "All instructors";
+
+              const semester =
+                output.input.type &&
+                output.input.semester &&
+                output.input.year
+                  ? `${output.input.semester} ${output.input.year}`
+                  : "All semesters";
+
+              return (
+                <CourseSelectionCard
+                  key={index}
+                  color={output.color}
+                  subject={output.input.subject}
+                  number={output.input.courseNumber}
+                  metadata={`${semester} • ${instructor}`}
+                  gradeDistribution={output.data}
+                  onClick={() => updateActive(index, !output.active)}
+                  onClickDelete={() => remove(index)}
+                  onClickHide={() => updateHidden(index, !output.hidden)}
+                  active={output.active}
+                  hidden={output.hidden}
+                />
+              );
+            })}
+            {!outputs ||
+              (!outputs.length && <div style={{ height: "85px" }}></div>)}
+          </>
+        }
+        chart={
+          loading ? (
+            <Boundary>
+              <LoadingIndicator size="lg" />
+            </Boundary>
+          ) : (
             <GradeChart
               data={data}
               filteredOutputs={filteredOutputs}
@@ -373,36 +330,37 @@ const GradeDistributions = () => {
               activeOutput={activeOutput}
               onHoverLetter={handleHoverLetter}
             />
-            <div className={styles.hoverInfoContainer}>
-              {sidebarOutputs?.[0] ? (
-                sidebarOutputs.map((output: Output, i: number) => (
-                  <div key={i} className={styles.hoverInfoCard}>
-                    <HoverInfo
-                      color={output.color}
-                      subject={output.input.subject}
-                      courseNumber={output.input.courseNumber}
-                      gradeDistribution={output.gradeDistribution}
-                      hoveredLetter={hoveredLetter}
-                    />
-                  </div>
-                ))
-              ) : (
-                <div className={styles.hoverInfoCard}>
-                  <HoverInfo
-                    color={"#aaa"}
-                    subject={"No Class"}
-                    courseNumber={"Selected"}
-                    gradeDistribution={undefined}
-                    hoveredLetter={null}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </Flex>
+          )
+        }
+        hoverInfo={
+          loading ? (
+            <Boundary>
+              <LoadingIndicator size="md" />
+            </Boundary>
+          ) : sidebarOutputs?.[0] ? (
+            sidebarOutputs.map((output: Output, i: number) => (
+              <HoverInfo
+                key={i}
+                color={output.color}
+                subject={output.input.subject}
+                courseNumber={output.input.courseNumber}
+                gradeDistribution={output.data}
+                hoveredLetter={hoveredLetter}
+              />
+            ))
+          ) : (
+            <HoverInfo
+              color={"#aaa"}
+              subject={"No Class"}
+              courseNumber={"Selected"}
+              gradeDistribution={undefined}
+              hoveredLetter={null}
+            />
+          )
+        }
+      />
       <Footer />
-    </Box>
+    </>
   );
 };
 

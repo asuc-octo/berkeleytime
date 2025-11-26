@@ -2,21 +2,25 @@ import { useRef } from "react";
 
 import { Eye, EyeClosed, Trash } from "iconoir-react";
 
-import { Card } from "@repo/theme";
-import { ColoredSquare } from "@repo/theme";
+import { Card, ColoredSquare } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import { useReadCourseTitle } from "@/hooks/api";
+import {
+  useReadCourseGradeDist,
+  useReadCourseTitle,
+} from "@/hooks/api/courses/useReadCourse";
 import { IGradeDistribution } from "@/lib/api";
 
-import styles from "./GradesCard.module.scss";
+import styles from "./CourseSelectionCard.module.scss";
 
-interface GradesCardProps {
+interface CourseSelectionCardProps {
   color: string;
   subject: string;
   number: string;
-  description: string;
-  gradeDistribution: IGradeDistribution;
+  title?: string;
+  metadata: string;
+  gradeDistribution?: IGradeDistribution;
+  loadGradeDistribution?: boolean;
   onClick: () => void;
   onClickDelete: () => void;
   onClickHide: () => void;
@@ -24,22 +28,33 @@ interface GradesCardProps {
   hidden: boolean;
 }
 
-export default function GradesCard({
+export default function CourseSelectionCard({
   color,
   subject,
   number,
-  description,
+  title,
+  metadata,
   gradeDistribution,
+  loadGradeDistribution = true,
   onClick,
   onClickDelete,
   onClickHide,
   active,
   hidden,
-}: GradesCardProps) {
+}: CourseSelectionCardProps) {
   const hideRef = useRef<HTMLDivElement>(null);
   const deleteRef = useRef<HTMLDivElement>(null);
 
-  const { data: data } = useReadCourseTitle(subject, number);
+  const { data: titleData } = useReadCourseTitle(subject, number, {
+    skip: !!title,
+  });
+  const { data: courseGradeData } = useReadCourseGradeDist(subject, number, {
+    skip: !!gradeDistribution || !loadGradeDistribution,
+  });
+
+  const displayTitle = title ?? titleData?.title ?? "N/A";
+  const displayGradeDistribution =
+    gradeDistribution ?? courseGradeData?.gradeDistribution;
 
   return (
     <Card.Root
@@ -58,9 +73,7 @@ export default function GradesCard({
       }}
     >
       <div className={styles.content}>
-        {/* Header: Course code (left) and Actions (right) */}
         <div className={styles.header}>
-          {/* Header Title: Colored square and course code */}
           <div className={styles.headerTitle}>
             <ColoredSquare
               color={color}
@@ -69,9 +82,10 @@ export default function GradesCard({
             <span className={styles.courseCode}>{subject} {number}</span>
           </div>
 
-          {/* Header Actions: Grade, eye icon, trash icon */}
           <div className={styles.headerActions}>
-            <AverageGrade gradeDistribution={gradeDistribution} />
+            {displayGradeDistribution && (
+              <AverageGrade gradeDistribution={displayGradeDistribution} />
+            )}
             <div
               onClick={onClickHide}
               ref={hideRef}
@@ -89,14 +103,11 @@ export default function GradesCard({
           </div>
         </div>
 
-        {/* Body: Course title and metadata */}
         <div className={styles.body}>
-          {/* Course title */}
           <div className={styles.title}>
-            {data?.title ?? "N/A"}
+            {displayTitle}
           </div>
-          {/* Metadata: Prof and semester */}
-          <div className={styles.metadata}>{description}</div>
+          <div className={styles.metadata}>{metadata}</div>
         </div>
       </div>
     </Card.Root>
