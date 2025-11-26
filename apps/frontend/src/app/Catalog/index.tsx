@@ -14,9 +14,7 @@ import { Semester } from "@/lib/generated/graphql";
 import {
   RecentType,
   addRecent,
-  getPageUrl,
   getRecents,
-  savePageUrl,
 } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
@@ -121,28 +119,6 @@ export default function Catalog() {
   );
 
   useEffect(() => {
-    const currentPath = location.pathname;
-    if (
-      currentPath &&
-      currentPath !== "/catalog" &&
-      subject &&
-      courseNumber &&
-      number
-    ) {
-      savePageUrl(RecentType.CatalogPage, currentPath);
-    }
-  }, [location.pathname, subject, courseNumber, number]);
-
-  useEffect(() => {
-    if (!subject && !courseNumber && !number) {
-      const savedPath = getPageUrl(RecentType.CatalogPage);
-      if (savedPath) {
-        navigate({ ...location, pathname: savedPath }, { replace: true });
-      }
-    }
-  }, []); // Only run on mount
-
-  useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (window.innerWidth > 992) {
         setShowFloatingButton(false);
@@ -159,9 +135,9 @@ export default function Catalog() {
 
   if (termsLoading) {
     return (
-      <div className={styles.loading}>
-        <div className={styles.loadingHeader} />
-        <div className={styles.loadingBody} />
+      <div>
+        <div />
+        <div />
       </div>
     );
   }
@@ -180,7 +156,7 @@ export default function Catalog() {
           <p className={styles.title}>
             {term.semester} {term.year}
           </p>
-          <IconButton onClick={() => {}}>
+          <IconButton onClick={() => { }}>
             <Xmark />
           </IconButton>
         </div>

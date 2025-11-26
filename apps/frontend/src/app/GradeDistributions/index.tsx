@@ -59,10 +59,10 @@ const fetchGradeDistribution = async (
 
 const transformGradeDistributionData = (
   filteredOutputs: Output[]
-): Array<{ letter: string; [key: number]: number }> => {
+): Array<{ letter: string;[key: number]: number }> => {
   const letterMap = new Map<
     string,
-    { letter: string; [key: number]: number }
+    { letter: string;[key: number]: number }
   >();
 
   // Initialize map with all grade letters
@@ -84,7 +84,7 @@ const transformGradeDistributionData = (
 };
 
 type GradeChartProps = {
-  data: Array<{ letter: string; [key: number]: number }>;
+  data: Array<{ letter: string;[key: number]: number }>;
   filteredOutputs: Output[];
   chartConfig: ChartConfig;
   activeOutput?: Output;
@@ -139,11 +139,11 @@ const GradeChart = memo(
                   const filteredPayload =
                     activeIndex >= 0
                       ? props.payload?.filter(
-                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          (item: any) =>
-                            String(item.dataKey ?? item.name) ===
-                            activeIndex.toString()
-                        )
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        (item: any) =>
+                          String(item.dataKey ?? item.name) ===
+                          activeIndex.toString()
+                      )
                       : props.payload;
 
                   const tooltipConfig = {
@@ -215,9 +215,7 @@ const GradeDistributions = () => {
   // Save current URL to localStorage whenever it changes
   useEffect(() => {
     const currentUrl = location.search;
-    if (currentUrl) {
-      savePageUrl(RecentType.GradesPage, currentUrl);
-    }
+    savePageUrl(RecentType.GradesPage, currentUrl);
   }, [location.search]);
 
   // Update URL to match the restored state
@@ -297,8 +295,8 @@ const GradeDistributions = () => {
             {outputs.map((output, index) => {
               const instructor =
                 output.input.type &&
-                output.input.familyName &&
-                output.input.givenName
+                  output.input.familyName &&
+                  output.input.givenName
                   ? `${output.input.givenName} ${output.input.familyName}`
                   : "All instructors";
 
