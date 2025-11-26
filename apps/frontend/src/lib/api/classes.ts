@@ -245,6 +245,7 @@ export const GET_CLASS_DETAILS = gql`
       unitsMin
       primarySection {
         sectionId
+        component
         sectionAttributes(attributeCode: "NOTE") {
           attribute {
             code

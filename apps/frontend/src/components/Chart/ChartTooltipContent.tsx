@@ -30,13 +30,12 @@ export function ChartTooltipContent({
     nameFormatter,
     header,
     footer,
-    separator = "",
     sortBy = "none",
     sortOrder = "desc",
   } = tooltipConfig;
 
   // Sort payload if needed
-  let sortedPayload = [...payload];
+  const sortedPayload = [...payload];
   if (sortBy !== "none") {
     sortedPayload.sort((a, b) => {
       const valueA = sortBy === "value" ? a.value : a.name;
@@ -77,13 +76,14 @@ export function ChartTooltipContent({
             ? valueFormatter(item.value, item.name, item)
             : item.value;
 
-          // Get color (support theme-aware colors)
           let color = item.stroke || item.fill || item.color;
 
-          if (itemConfig?.theme) {
-            color = getThemeColor(itemConfig.theme);
-          } else if (itemConfig?.color) {
-            color = itemConfig.color;
+          if (!color) {
+            if (itemConfig?.theme) {
+              color = getThemeColor(itemConfig.theme);
+            } else if (itemConfig?.color) {
+              color = itemConfig.color;
+            }
           }
 
           return (

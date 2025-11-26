@@ -276,7 +276,7 @@ const GradeDistributions = () => {
   }, []);
 
   return (
-    <Box p="5">
+    <Box p="5" className={styles.root}>
       <Flex direction="column">
         <CourseManager outputs={outputs} setOutputs={setOutputs} />
         {loading ? (

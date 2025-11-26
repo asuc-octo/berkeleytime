@@ -1,6 +1,7 @@
 import { ICourseItem } from "@repo/common";
 
 import { CourseModule } from "./generated-types/module-types";
+import { normalizeSubject } from "../../utils/subject";
 
 interface CourseRelationships {
   classes: null;
@@ -25,6 +26,7 @@ export type IntermediateCourse = Omit<
 export function formatCourse(course: ICourseItem) {
   const output = {
     ...course,
+    subject: normalizeSubject(course.subject),
     gradingBasis: course.gradingBasis as CourseModule.CourseGradingBasis,
     finalExam: course.finalExam as CourseModule.CourseFinalExam,
 
