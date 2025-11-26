@@ -16,7 +16,7 @@
   }
 
   &:focus {
-    border-color: var(--blue-500);
+    border: solid 2px var(--blue-500);
     width: 100%;
   }
 
