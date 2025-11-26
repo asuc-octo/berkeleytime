@@ -95,6 +95,7 @@ const updateEnrollmentHistories = async (config: Config) => {
   let totalEnrollmentSingulars = 0;
   let totalInserted = 0;
   let totalUpdated = 0;
+  const requirementGroupStats = { present: 0, missing: 0 };
 
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
@@ -108,7 +109,8 @@ const updateEnrollmentHistories = async (config: Config) => {
       log,
       CLASS_APP_ID,
       CLASS_APP_KEY,
-      termsBatchIds
+      termsBatchIds,
+      requirementGroupStats
     );
 
     log.info(
@@ -280,6 +282,10 @@ const updateEnrollmentHistories = async (config: Config) => {
       }
     }
   }
+
+  log.info(
+    `Seat reservation groups: ${requirementGroupStats.present.toLocaleString()} with descriptions, ${requirementGroupStats.missing.toLocaleString()} missing.`
+  );
 
   log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`

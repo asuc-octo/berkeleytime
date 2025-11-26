@@ -9,7 +9,16 @@ import { filterSection } from "./sections";
 // default enrollments datapuller scheduled interval (15 minutes) in seconds
 export const GRANULARITY = 15 * 60;
 
-const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
+type RequirementGroupStats = {
+  present: number;
+  missing: number;
+};
+
+const formatEnrollmentSingular = (
+  input: ClassSection,
+  time: Date,
+  requirementGroupStats?: RequirementGroupStats
+) => {
   const termId = input.class?.session?.term?.id;
   const year = input.class?.session?.term?.name?.split(" ")[0];
   const semester = input.class?.session?.term?.name?.split(" ")[1];
@@ -37,6 +46,15 @@ const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
   if (missingField)
     throw new Error(`Missing essential section field: ${missingField[0]}`);
 
+  const seatReservations = input.enrollmentStatus?.seatReservations ?? [];
+  seatReservations.forEach((reservation) => {
+    if (reservation.requirementGroup?.description) {
+      requirementGroupStats && (requirementGroupStats.present += 1);
+    } else {
+      requirementGroupStats && (requirementGroupStats.missing += 1);
+    }
+  });
+
   const output: IEnrollmentSingularItem = {
     termId: termId!,
     year: parseInt(year!),
@@ -63,16 +81,14 @@ const formatEnrollmentSingular = (input: ClassSection, time: Date) => {
         input.enrollmentStatus?.instructorAddConsentRequired,
       instructorDropConsentRequired:
         input.enrollmentStatus?.instructorDropConsentRequired,
-      seatReservationCount: input.enrollmentStatus?.seatReservations?.map(
-        (reservation) => ({
-          number: reservation.number ?? 0,
-          maxEnroll: reservation.maxEnroll ?? 0,
-          enrolledCount: reservation.enrolledCount ?? 0,
-        })
-      ),
+      seatReservationCount: seatReservations.map((reservation) => ({
+        number: reservation.number ?? 0,
+        maxEnroll: reservation.maxEnroll ?? 0,
+        enrolledCount: reservation.enrolledCount ?? 0,
+      })),
     },
-    seatReservationTypes: input.enrollmentStatus?.seatReservations
-      ?.filter((reservation) => reservation.requirementGroup?.description)
+    seatReservationTypes: seatReservations
+      .filter((reservation) => reservation.requirementGroup?.description)
       .map((reservation) => ({
         number: reservation.number ?? 0,
         requirementGroup: {
@@ -90,7 +106,8 @@ export const getEnrollmentSingulars = async (
   logger: Logger<unknown>,
   id: string,
   key: string,
-  termIds?: string[]
+  termIds?: string[],
+  requirementGroupStats?: RequirementGroupStats
 ) => {
   const classesAPI = new ClassesAPI();
 
@@ -105,7 +122,8 @@ export const getEnrollmentSingulars = async (
     },
     (data) => data.apiResponse?.response.classSections || [],
     filterSection,
-    (input) => formatEnrollmentSingular(input, new Date())
+    (input) =>
+      formatEnrollmentSingular(input, new Date(), requirementGroupStats)
   );
 
   return sections;
