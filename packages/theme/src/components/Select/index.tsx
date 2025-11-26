@@ -374,7 +374,7 @@ export function Select<T>({
               {activeElem.map((el) => (
                 <Badge
                   key={el.label}
-                  label={el.label}
+                  label={el.label.length > 28 ? el.label.slice(0, 28) + '...' : el.label}
                   color={el.color ? el.color : Color.Blue}
                   icon={
                     <Xmark
