@@ -1,9 +1,9 @@
 import { ClassModel, CourseModel, IClassItem, ICourseItem } from "@repo/common";
 
+import { buildSubjectQuery } from "../../utils/subject";
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
-import { buildSubjectQuery } from "../../utils/subject";
 
 export const getCourse = async (subject: string, number: string) => {
   const course = await CourseModel.findOne({

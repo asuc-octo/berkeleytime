@@ -117,18 +117,22 @@ export function RatingDetailView({
                       setHoveredIndex(null);
                     }}
                   >
-                  <div
-                    className={classNames(styles.bar, {
-                      [styles.inactiveBar]:
-                        hoveredIndex !== null &&
-                        hoveredIndex !== index &&
-                        stat.count > 0,
-                    })}
-                    style={{
-                      width: shouldAnimate ? `${stat.barPercentage}%` : "0%",
-                      "--width-delay": `${index * 60}ms`,
-                    } as CSSProperties}
-                  />
+                    <div
+                      className={classNames(styles.bar, {
+                        [styles.inactiveBar]:
+                          hoveredIndex !== null &&
+                          hoveredIndex !== index &&
+                          stat.count > 0,
+                      })}
+                      style={
+                        {
+                          width: shouldAnimate
+                            ? `${stat.barPercentage}%`
+                            : "0%",
+                          "--width-delay": `${index * 60}ms`,
+                        } as CSSProperties
+                      }
+                    />
                   </div>
                 }
                 content={

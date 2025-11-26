@@ -1,4 +1,3 @@
-import type { ApolloClient } from "@apollo/client";
 import React, {
   memo,
   useCallback,
@@ -7,6 +6,8 @@ import React, {
   useRef,
   useState,
 } from "react";
+
+import type { ApolloClient } from "@apollo/client";
 import moment from "moment";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -33,7 +34,7 @@ import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/use
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import Footer from "@/components/Footer";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
-import { RecentType, savePageUrl, getPageUrl } from "@/lib/recent";
+import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import CourseInput from "./CourseManager/CourseInput";
 import HoverInfo from "./HoverInfo";
@@ -45,7 +46,6 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "./types";
-
 
 // Memoized formatter to avoid recreating on each render
 const timeFormatter = new Intl.DateTimeFormat("en-US", {
@@ -97,104 +97,104 @@ const EnrollmentChart = memo(function EnrollmentChart({
     <ChartContainer config={chartConfig} hasData={filteredOutputs.length > 0}>
       {() => (
         <LineChart
-            syncId="grade-distributions"
-            width={730}
-            height={200}
-            data={data}
-            onMouseMove={handleHover}
-            onMouseLeave={() => onHoverDuration(null)}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="var(--border-color)"
+          syncId="grade-distributions"
+          width={730}
+          height={200}
+          data={data}
+          onMouseMove={handleHover}
+          onMouseLeave={() => onHoverDuration(null)}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="var(--border-color)"
+          />
+          <XAxis
+            dataKey="timeDelta"
+            fill="var(--label-color)"
+            tickMargin={8}
+            interval={"preserveStartEnd"}
+            type="number"
+            tickFormatter={(timeDelta) =>
+              String(
+                Math.floor(moment.duration(timeDelta, "minutes").asDays()) + 1
+              )
+            }
+          />
+          <YAxis
+            domain={[0, dataMax]}
+            tickFormatter={(v) => formatters.percentRound(v)}
+          />
+          {dataMax >= 100 && (
+            <ReferenceLine
+              y={100}
+              stroke="var(--label-color)"
+              strokeDasharray="5 5"
+              strokeOpacity={0.5}
+              label={{
+                value: "100% Capacity",
+                position: "insideTopLeft",
+                fill: "var(--label-color)",
+                fontSize: 12,
+                offset: 10,
+              }}
             />
-            <XAxis
-              dataKey="timeDelta"
-              fill="var(--label-color)"
-              tickMargin={8}
-              interval={"preserveStartEnd"}
-              type="number"
-              tickFormatter={(timeDelta) =>
-                String(
-                  Math.floor(moment.duration(timeDelta, "minutes").asDays()) + 1
-                )
-              }
+          )}
+          {outputs?.length > 0 && (
+            <ChartTooltip
+              tooltipConfig={{
+                labelFormatter: (label) => {
+                  const duration = moment.duration(label, "minutes");
+                  const day = Math.floor(duration.asDays()) + 1;
+                  const time = timeFormatter.format(
+                    moment.utc(0).add(duration).toDate()
+                  );
+                  return `Day ${day} ${time}`;
+                },
+                valueFormatter: (value) => formatters.percentRound(value),
+                indicator: "line",
+              }}
             />
-            <YAxis
-              domain={[0, dataMax]}
-              tickFormatter={(v) => formatters.percentRound(v)}
-            />
-            {dataMax >= 100 && (
-              <ReferenceLine
-                y={100}
-                stroke="var(--label-color)"
-                strokeDasharray="5 5"
-                strokeOpacity={0.5}
-                label={{
-                  value: "100% Capacity",
-                  position: "insideTopLeft",
-                  fill: "var(--label-color)",
-                  fontSize: 12,
-                  offset: 10,
-                }}
-              />
-            )}
-            {outputs?.length > 0 && (
-              <ChartTooltip
-                tooltipConfig={{
-                  labelFormatter: (label) => {
-                    const duration = moment.duration(label, "minutes");
-                    const day = Math.floor(duration.asDays()) + 1;
-                    const time = timeFormatter.format(
-                      moment.utc(0).add(duration).toDate()
-                    );
-                    return `Day ${day} ${time}`;
-                  },
-                  valueFormatter: (value) => formatters.percentRound(value),
-                  indicator: "line",
-                }}
-              />
-            )}
-            {filteredOutputs?.map((output, index) => {
-              const originalIndex = outputs.indexOf(output);
-              return (
-                <React.Fragment key={index}>
-                  <Line
-                    dataKey={`enroll_${originalIndex}`}
-                    stroke={
-                      activeOutput && !output.active
-                        ? DARK_COLORS[originalIndex]
-                        : LIGHT_COLORS[originalIndex]
-                    }
-                    name={`${output.input.subject} ${output.input.courseNumber}`}
-                    isAnimationActive={shouldAnimate}
-                    dot={false}
-                    strokeWidth={3}
-                    type="monotone"
-                    connectNulls
-                  />
-                  <Line
-                    dataKey={`waitlist_${originalIndex}`}
-                    stroke={
-                      activeOutput && !output.active
-                        ? DARK_COLORS[originalIndex]
-                        : LIGHT_COLORS[originalIndex]
-                    }
-                    name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                    isAnimationActive={shouldAnimate}
-                    dot={false}
-                    strokeWidth={2}
-                    strokeDasharray="5 5"
-                    type="monotone"
-                    connectNulls
-                  />
-                </React.Fragment>
-              );
-            })}
-          </LineChart>
-        )}
-      </ChartContainer>
+          )}
+          {filteredOutputs?.map((output, index) => {
+            const originalIndex = outputs.indexOf(output);
+            return (
+              <React.Fragment key={index}>
+                <Line
+                  dataKey={`enroll_${originalIndex}`}
+                  stroke={
+                    activeOutput && !output.active
+                      ? DARK_COLORS[originalIndex]
+                      : LIGHT_COLORS[originalIndex]
+                  }
+                  name={`${output.input.subject} ${output.input.courseNumber}`}
+                  isAnimationActive={shouldAnimate}
+                  dot={false}
+                  strokeWidth={3}
+                  type="monotone"
+                  connectNulls
+                />
+                <Line
+                  dataKey={`waitlist_${originalIndex}`}
+                  stroke={
+                    activeOutput && !output.active
+                      ? DARK_COLORS[originalIndex]
+                      : LIGHT_COLORS[originalIndex]
+                  }
+                  name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
+                  isAnimationActive={shouldAnimate}
+                  dot={false}
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                  type="monotone"
+                  connectNulls
+                />
+              </React.Fragment>
+            );
+          })}
+        </LineChart>
+      )}
+    </ChartContainer>
   );
 });
 
@@ -349,9 +349,9 @@ export default function Enrollment() {
       { enrolledCount: number; waitlistedCount: number }
     >[] = outputs.map((output) => {
       // the first time data point, floored to the nearest minute
-      const firstTime = moment(
-        output.data.history[0].startTime
-      ).startOf("minute");
+      const firstTime = moment(output.data.history[0].startTime).startOf(
+        "minute"
+      );
       const map = new Map<
         number,
         { enrolledCount: number; waitlistedCount: number }
@@ -372,15 +372,13 @@ export default function Enrollment() {
           map.set(timeDelta, {
             enrolledCount:
               (enrollment.enrolledCount /
-                (output.data.history[
-                  output.data.history.length - 1
-                ].maxEnroll ?? 1)) *
+                (output.data.history[output.data.history.length - 1]
+                  .maxEnroll ?? 1)) *
               100,
             waitlistedCount:
               (enrollment.waitlistedCount /
-                (output.data.history[
-                  output.data.history.length - 1
-                ].maxWaitlist ?? 1)) *
+                (output.data.history[output.data.history.length - 1]
+                  .maxWaitlist ?? 1)) *
               100,
           });
         }
@@ -465,9 +463,7 @@ export default function Enrollment() {
   return (
     <>
       <CourseAnalyticsPage
-        courseInput={
-          <CourseInput outputs={outputs} setOutputs={setOutputs} />
-        }
+        courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
         courseCards={
           <>
             {outputs.map(({ input, ...rest }, index) => {

@@ -3,11 +3,13 @@ import { ReactElement } from "react";
 import { FrameAltEmpty } from "iconoir-react";
 import { ResponsiveContainer } from "recharts";
 
-import { ChartContainer as ThemeChartContainer, ChartConfig } from "@/components/Chart";
+import {
+  ChartConfig,
+  ChartContainer as ThemeChartContainer,
+} from "@/components/Chart";
 
 import { useChartHeight } from "../hooks/useChartHeight";
 import { useChartWidth } from "../hooks/useChartWidth";
-
 import styles from "./ChartContainer.module.scss";
 
 interface ChartContainerProps {

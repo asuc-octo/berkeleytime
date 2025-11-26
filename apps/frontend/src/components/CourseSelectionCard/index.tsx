@@ -75,22 +75,17 @@ export default function CourseSelectionCard({
       <div className={styles.content}>
         <div className={styles.header}>
           <div className={styles.headerTitle}>
-            <ColoredSquare
-              color={color}
-              size="lg"
-            />
-            <span className={styles.courseCode}>{subject} {number}</span>
+            <ColoredSquare color={color} size="lg" />
+            <span className={styles.courseCode}>
+              {subject} {number}
+            </span>
           </div>
 
           <div className={styles.headerActions}>
             {displayGradeDistribution && (
               <AverageGrade gradeDistribution={displayGradeDistribution} />
             )}
-            <div
-              onClick={onClickHide}
-              ref={hideRef}
-              className={styles.icon}
-            >
+            <div onClick={onClickHide} ref={hideRef} className={styles.icon}>
               {!hidden ? <Eye /> : <EyeClosed />}
             </div>
             <div
@@ -104,9 +99,7 @@ export default function CourseSelectionCard({
         </div>
 
         <div className={styles.body}>
-          <div className={styles.title}>
-            {displayTitle}
-          </div>
+          <div className={styles.title}>{displayTitle}</div>
           <div className={styles.metadata}>{metadata}</div>
         </div>
       </div>

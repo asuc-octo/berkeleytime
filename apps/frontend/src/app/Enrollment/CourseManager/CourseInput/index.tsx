@@ -20,7 +20,12 @@ import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import { LIGHT_COLORS, Output, getInputSearchParam, isInputEqual } from "../../types";
+import {
+  LIGHT_COLORS,
+  Output,
+  getInputSearchParam,
+  isInputEqual,
+} from "../../types";
 import styles from "./CourseInput.module.scss";
 
 interface CourseInputProps {

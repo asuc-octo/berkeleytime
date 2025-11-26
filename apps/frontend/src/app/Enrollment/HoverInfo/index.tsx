@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import moment from "moment";
 
-import CourseSideMetrics from "@/components/CourseSideMetrics";
 import { getEnrollmentColor } from "@/components/Capacity";
+import CourseSideMetrics from "@/components/CourseSideMetrics";
 import { useReadCourseTitle } from "@/hooks/api";
 import { IEnrollment } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";

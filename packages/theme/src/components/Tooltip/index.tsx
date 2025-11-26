@@ -107,7 +107,9 @@ export function Tooltip({
             ) : (
               <>
                 {title && <div className={styles.title}>{title}</div>}
-                {description && <div className={styles.description}>{description}</div>}
+                {description && (
+                  <div className={styles.description}>{description}</div>
+                )}
               </>
             )}
           </div>

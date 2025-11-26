@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useApolloClient } from "@apollo/client/react";
 import { useSearchParams } from "react-router-dom";
 
-import { LIGHT_COLORS, type CourseOutput } from "../types";
+import { type CourseOutput, LIGHT_COLORS } from "../types";
 
 interface UseCourseManagerProps<Input, T> {
   initialInputs: Input[];
@@ -44,7 +44,9 @@ export function useCourseManager<Input, T>({
       );
 
       const validOutputs = results
-        .filter((output): output is { data: T; input: Input } => output !== null)
+        .filter(
+          (output): output is { data: T; input: Input } => output !== null
+        )
         .slice(0, 4)
         .map((output, index) => ({
           data: output.data,
@@ -67,7 +69,14 @@ export function useCourseManager<Input, T>({
     };
 
     initialize();
-  }, [client, initialInputs, searchParams, loading, fetchData, setSearchParams]);
+  }, [
+    client,
+    initialInputs,
+    searchParams,
+    loading,
+    fetchData,
+    setSearchParams,
+  ]);
 
   const remove = useCallback(
     (index: number) => {

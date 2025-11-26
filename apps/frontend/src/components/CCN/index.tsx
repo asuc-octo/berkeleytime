@@ -1,6 +1,7 @@
 import { MouseEvent, useRef, useState } from "react";
 
 import { ClipboardCheck, Hashtag, PasteClipboard } from "iconoir-react";
+
 import { Tooltip } from "@repo/theme";
 
 import styles from "./CCN.module.scss";

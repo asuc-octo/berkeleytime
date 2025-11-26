@@ -11,7 +11,13 @@ import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { Semester } from "@/lib/generated/graphql";
-import { RecentType, addRecent, getRecents, savePageUrl, getPageUrl } from "@/lib/recent";
+import {
+  RecentType,
+  addRecent,
+  getPageUrl,
+  getRecents,
+  savePageUrl,
+} from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
 
@@ -118,7 +124,13 @@ export default function Catalog() {
   useEffect(() => {
     const currentPath = location.pathname;
     // Only save if we're viewing a specific class (not just /catalog base)
-    if (currentPath && currentPath !== "/catalog" && subject && courseNumber && number) {
+    if (
+      currentPath &&
+      currentPath !== "/catalog" &&
+      subject &&
+      courseNumber &&
+      number
+    ) {
       savePageUrl(RecentType.CatalogPage, currentPath);
     }
   }, [location.pathname, subject, courseNumber, number]);

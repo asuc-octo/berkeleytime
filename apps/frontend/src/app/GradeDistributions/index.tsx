@@ -2,13 +2,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { Boundary, LoadingIndicator } from "@repo/theme";
 
@@ -23,20 +17,20 @@ import { ChartContainer } from "@/components/CourseAnalytics/ChartContainer";
 import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalyticsPage";
 import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
 import {
-  type Input,
   type CourseOutput,
   DARK_COLORS,
+  type Input,
   LIGHT_COLORS,
   getInputSearchParam,
 } from "@/components/CourseAnalytics/types";
+import CourseSelectionCard from "@/components/CourseSelectionCard";
 import Footer from "@/components/Footer";
 import { type IGradeDistribution } from "@/lib/api";
 import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
+import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
-import { RecentType, savePageUrl, getPageUrl } from "@/lib/recent";
 
-import CourseSelectionCard from "@/components/CourseSelectionCard";
 import CourseInput from "./CourseManager/CourseInput";
 import HoverInfo from "./HoverInfo";
 
@@ -119,10 +113,7 @@ const GradeChart = memo(
     );
 
     return (
-      <ChartContainer
-        config={chartConfig}
-        hasData={filteredOutputs.length > 0}
-      >
+      <ChartContainer config={chartConfig} hasData={filteredOutputs.length > 0}>
         {(chartWidth) => (
           <BarChart
             syncId="grade-distributions"
@@ -136,11 +127,7 @@ const GradeChart = memo(
               vertical={false}
               stroke="var(--border-color)"
             />
-            <XAxis
-              dataKey="letter"
-              fill="var(--label-color)"
-              tickMargin={8}
-            />
+            <XAxis dataKey="letter" fill="var(--label-color)" tickMargin={8} />
             <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
             {filteredOutputs.length > 0 && (
               <ChartTooltip
@@ -165,7 +152,8 @@ const GradeChart = memo(
                       onHoverLetter(labelText);
                       return `Grade: ${labelText}`;
                     },
-                    valueFormatter: (value: number) => formatters.percent(value, 1),
+                    valueFormatter: (value: number) =>
+                      formatters.percent(value, 1),
                     indicator: "square" as const,
                     sortBy: "value" as const,
                     sortOrder: "desc" as const,
@@ -189,12 +177,7 @@ const GradeChart = memo(
                 fillOpacity={activeOutput && !output.active ? 0.25 : 1}
                 key={index}
                 name={`${output.input.subject} ${output.input.courseNumber}`}
-                radius={[
-                  barRadius(chartWidth),
-                  barRadius(chartWidth),
-                  0,
-                  0,
-                ]}
+                radius={[barRadius(chartWidth), barRadius(chartWidth), 0, 0]}
               />
             ))}
           </BarChart>
@@ -320,9 +303,7 @@ const GradeDistributions = () => {
                   : "All instructors";
 
               const semester =
-                output.input.type &&
-                output.input.semester &&
-                output.input.year
+                output.input.type && output.input.semester && output.input.year
                   ? `${output.input.semester} ${output.input.year}`
                   : "All semesters";
 

@@ -1,7 +1,7 @@
 import { ICourseItem } from "@repo/common";
 
-import { CourseModule } from "./generated-types/module-types";
 import { normalizeSubject } from "../../utils/subject";
+import { CourseModule } from "./generated-types/module-types";
 
 interface CourseRelationships {
   classes: null;

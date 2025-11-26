@@ -98,7 +98,9 @@ export default function HoverInfo({
 
   const metadata = gradeDistribution
     ? `${semester && year ? `${semester} ${year}` : "All Semesters"} • ${
-        givenName && familyName ? `${givenName} ${familyName}` : "All Instructors"
+        givenName && familyName
+          ? `${givenName} ${familyName}`
+          : "All Instructors"
       }`
     : "No Semester or Instructor Data";
 

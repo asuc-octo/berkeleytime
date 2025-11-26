@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { User } from "iconoir-react";
+
 import { Tooltip } from "@repo/theme";
 
 import styles from "./Capacity.module.scss";

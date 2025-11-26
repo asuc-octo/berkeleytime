@@ -6,8 +6,17 @@ import { useSearchParams } from "react-router-dom";
 import { Box, Select, SelectHandle } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
+import {
+  type CourseOutput,
+  type Input,
+  InputType,
+  LIGHT_COLORS,
+  getInputSearchParam,
+  isInputEqual,
+} from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   GetGradeDistributionDocument,
@@ -15,18 +24,9 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import {
-  type Input,
-  type CourseOutput,
-  InputType,
-  LIGHT_COLORS,
-  getInputSearchParam,
-  isInputEqual,
-} from "@/components/CourseAnalytics/types";
-import { type IGradeDistribution } from "@/lib/api";
+import styles from "./CourseInput.module.scss";
 
 type Output = CourseOutput<Input, IGradeDistribution>;
-import styles from "./CourseInput.module.scss";
 
 interface CourseInputProps {
   outputs: Output[];

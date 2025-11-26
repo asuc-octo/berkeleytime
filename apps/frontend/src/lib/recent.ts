@@ -165,7 +165,10 @@ export const removeRecent = <T extends RecentType>(
 
 // Helper functions for page URL persistence
 export const savePageUrl = (
-  type: RecentType.CatalogPage | RecentType.GradesPage | RecentType.EnrollmentPage,
+  type:
+    | RecentType.CatalogPage
+    | RecentType.GradesPage
+    | RecentType.EnrollmentPage,
   url: string
 ) => {
   addRecent(type, {
@@ -175,7 +178,10 @@ export const savePageUrl = (
 };
 
 export const getPageUrl = (
-  type: RecentType.CatalogPage | RecentType.GradesPage | RecentType.EnrollmentPage
+  type:
+    | RecentType.CatalogPage
+    | RecentType.GradesPage
+    | RecentType.EnrollmentPage
 ): string | null => {
   const saved = getRecents(type) as RecentPageUrl[];
   return saved[0]?.url ?? null;
