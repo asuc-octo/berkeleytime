@@ -104,10 +104,13 @@
           border-radius: 4px;
           width: 0;
           transform-origin: left;
-          transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
-          will-change: width;
+          transition-property: width, background-color;
+          transition-duration: 400ms, 200ms;
+          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1), ease;
+          transition-delay: var(--width-delay, 0ms), 0ms;
+          will-change: width, background-color;
         }
-        .inactive-bar {
+        .inactiveBar {
           background-color: var(--slate-400);
         }
       }
@@ -134,7 +137,7 @@
           .bar {
             background-color: var(--zinc-200);
           }
-          .inactive-bar {
+          .inactiveBar {
             background-color: var(--zinc-500);
           }
         }

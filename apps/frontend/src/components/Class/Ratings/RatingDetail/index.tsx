@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import classNames from "classnames";
 import { InfoCircle, NavArrowDown } from "iconoir-react";
@@ -36,6 +36,7 @@ export function RatingDetailView({
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -49,6 +50,10 @@ export function RatingDetailView({
     }
     return () => {
       if (timer) clearTimeout(timer);
+      // Also clear hover timer on unmount or collapse
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current);
+      }
     };
   }, [isExpanded]);
 
@@ -92,9 +97,23 @@ export function RatingDetailView({
                   <div
                     className={styles.barContainer}
                     onMouseEnter={() => {
-                      setHoveredIndex(index);
+                      // Clear any existing timer
+                      if (hoverTimerRef.current) {
+                        clearTimeout(hoverTimerRef.current);
+                      }
+                      // Set timer to delay defocus effect by 400ms
+                      hoverTimerRef.current = setTimeout(() => {
+                        setHoveredIndex(index);
+                        hoverTimerRef.current = null;
+                      }, 400);
                     }}
                     onMouseLeave={() => {
+                      // Clear timer if hover was less than 400ms
+                      if (hoverTimerRef.current) {
+                        clearTimeout(hoverTimerRef.current);
+                        hoverTimerRef.current = null;
+                      }
+                      // Immediately clear defocus effect
                       setHoveredIndex(null);
                     }}
                   >
@@ -107,8 +126,8 @@ export function RatingDetailView({
                     })}
                     style={{
                       width: shouldAnimate ? `${stat.barPercentage}%` : "0%",
-                      transitionDelay: `${index * 60}ms`,
-                    }}
+                      "--width-delay": `${index * 60}ms`,
+                    } as CSSProperties}
                   />
                   </div>
                 }
