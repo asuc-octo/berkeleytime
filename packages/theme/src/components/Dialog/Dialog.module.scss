@@ -166,8 +166,8 @@
 }
 .headerSubtitle {
   color: var(--paragraph-color);
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
 }
 .footer {
   border-top: solid 1px var(--border-color);

@@ -42,7 +42,7 @@
   h2 {
     padding: 0 1rem;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: var(--font-semibold);
     text-transform: uppercase;
     color: var(--heading-color);
     margin-bottom: 0.25rem;
@@ -84,7 +84,7 @@
   }
 
   span {
-    font-weight: 500;
+    font-weight: var(--font-medium);
   }
 }
 

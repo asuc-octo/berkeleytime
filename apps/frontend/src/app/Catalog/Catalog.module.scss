@@ -21,8 +21,8 @@
       background-color: var(--foreground-color);
 
       .title {
-        font-size: 14px;
-        font-weight: 500;
+        font-size: var(--text-14);
+        font-weight: var(--font-medium);
         color: var(--heading-color);
         line-height: 1;
       }

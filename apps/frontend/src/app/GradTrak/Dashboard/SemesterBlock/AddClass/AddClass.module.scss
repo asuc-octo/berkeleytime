@@ -27,7 +27,7 @@ body {
     input {
       color: var(--heading-color);
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: var(--font-medium);
       background-color: transparent;
       padding: 0;
     }

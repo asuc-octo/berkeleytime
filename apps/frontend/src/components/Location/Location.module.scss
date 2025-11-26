@@ -5,7 +5,7 @@
 .root {
   color: var(--blue-500);
   transition: all 100ms ease-in-out;
-  font-weight: 500;
+  font-weight: var(--font-medium);
 
   &:hover {
     color: var(--blue-600);

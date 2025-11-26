@@ -10,8 +10,8 @@
   .section {
     border-bottom: 1px solid var(--border-color);
     padding: 6px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: var(--text-14);
+    font-weight: var(--font-medium);
     color: var(--heading-color);
 
     &:last-child {

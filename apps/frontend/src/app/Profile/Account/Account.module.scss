@@ -1,6 +1,6 @@
 .afterCarouselLink {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: var(--blue-500);
   line-height: 1;
   display: flex;
@@ -34,7 +34,7 @@
 }
 
 .infoValue {
-  font-size: 16px;
+  font-size: var(--text-16);
 }
 
 .classesPlaceholder {

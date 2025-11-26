@@ -45,7 +45,7 @@
       .text {
         display: flex;
         font-size: 0.75rem;
-        font-weight: 500;
+        font-weight: var(--font-medium);
         line-height: 1rem;
         color: #999;
       }

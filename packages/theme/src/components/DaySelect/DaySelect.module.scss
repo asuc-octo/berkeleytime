@@ -18,7 +18,7 @@
     border-radius: 8px;
     background-color: var(--button-color);
     color: var(--paragraph-color);
-    font-weight: 500;
+    font-weight: var(--font-medium);
     transition: all 0.2s ease;
   }
 
@@ -38,7 +38,7 @@
     label span {
       width: 35px;
       height: 35px;
-      font-size: 14px;
+      font-size: var(--text-14);
     }
   }
 }
