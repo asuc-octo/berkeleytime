@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 
 import { User } from "iconoir-react";
-
-import { CatalogTooltip } from "@/components/CatalogTooltip";
+import { Tooltip } from "@repo/theme";
 
 import styles from "./Capacity.module.scss";
 
@@ -43,7 +42,7 @@ export default function Capacity({
   );
 
   return (
-    <CatalogTooltip
+    <Tooltip
       trigger={
         <div className={styles.trigger}>
           <User />

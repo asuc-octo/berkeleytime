@@ -591,21 +591,27 @@ export default function Editor() {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.group}>
-          <Tooltip content="Back to schedules">
-            <Link to="../schedules">
-              <IconButton>
-                <ArrowLeft />
-              </IconButton>
-            </Link>
-          </Tooltip>
+          <Tooltip
+            trigger={
+              <Link to="../schedules">
+                <IconButton>
+                  <ArrowLeft />
+                </IconButton>
+              </Link>
+            }
+            title="Back to schedules"
+          />
           <p className={styles.heading}>{schedule.name}</p>
           {editing && (
             <EditDialog>
-              <Tooltip content="Edit">
-                <IconButton>
-                  <Edit />
-                </IconButton>
-              </Tooltip>
+              <Tooltip
+                trigger={
+                  <IconButton>
+                    <Edit />
+                  </IconButton>
+                }
+                title="Edit"
+              />
             </EditDialog>
           )}
           <div className={styles.separator} />

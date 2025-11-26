@@ -58,11 +58,14 @@ export function RatingDetailView({
         <div className={styles.titleAndStatusSection}>
           <div className={styles.titleSection}>
             <h3 className={styles.title}>{metric}</h3>
-            <Tooltip content={`${getMetricTooltip(metric)}`}>
-              <span className={styles.info}>
-                <InfoCircle width={14} height={14} />
-              </span>
-            </Tooltip>
+            <Tooltip
+              trigger={
+                <span className={styles.info}>
+                  <InfoCircle width={14} height={14} />
+                </span>
+              }
+              title={`${getMetricTooltip(metric)}`}
+            />
           </div>
           <Badge color={statusColor} label={status} />
           <span className={styles.metricAverage}>
@@ -85,23 +88,16 @@ export function RatingDetailView({
             >
               <span className={styles.metric}>{stat.rating}</span>
               <Tooltip
-                content={
-                  <>
-                    <span
-                      style={{ color: "var(--blue-500)" }}
-                    >{`${Math.round((stat.count * 100) / reviewCount)}%`}</span>
-                    {` of users left this rating`}
-                  </>
-                }
-                hasArrow={false}
-                onMouseEnter={() => {
-                  setHoveredIndex(index);
-                }}
-                onMouseLeave={() => {
-                  setHoveredIndex(null);
-                }}
-              >
-                <div className={styles.barContainer}>
+                trigger={
+                  <div
+                    className={styles.barContainer}
+                    onMouseEnter={() => {
+                      setHoveredIndex(index);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredIndex(null);
+                    }}
+                  >
                   <div
                     className={classNames(styles.bar, {
                       [styles.inactiveBar]:
@@ -114,8 +110,18 @@ export function RatingDetailView({
                       transitionDelay: `${index * 60}ms`,
                     }}
                   />
-                </div>
-              </Tooltip>
+                  </div>
+                }
+                content={
+                  <>
+                    <span
+                      style={{ color: "var(--blue-500)" }}
+                    >{`${Math.round((stat.count * 100) / reviewCount)}%`}</span>
+                    {` of users left this rating`}
+                  </>
+                }
+                hasArrow={false}
+              />
               <span
                 className={`${styles.count} ${stat.count === 0 ? styles.empty : ""}`}
               >
