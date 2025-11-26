@@ -54,16 +54,22 @@ export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
           </Card.Description>
         </Card.Body>
         <Card.Actions>
-          <Tooltip content="Edit rating">
-            <IconButton onClick={() => onEdit(rating)}>
-              <EditPencil />
-            </IconButton>
-          </Tooltip>
-          <Tooltip content="Delete rating">
-            <IconButton onClick={() => onDelete(rating)}>
-              <Trash />
-            </IconButton>
-          </Tooltip>
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => onEdit(rating)}>
+                <EditPencil />
+              </IconButton>
+            }
+            title="Edit rating"
+          />
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => onDelete(rating)}>
+                <Trash />
+              </IconButton>
+            }
+            title="Delete rating"
+          />
         </Card.Actions>
       </Card.ColumnHeader>
       <Card.ColumnBody>

@@ -2,13 +2,11 @@ import { useMemo } from "react";
 
 import moment from "moment";
 
-import { ColoredSquare } from "@repo/theme";
-
 import { getEnrollmentColor } from "@/components/Capacity";
+import CourseSideMetrics from "@/components/CourseSideMetrics";
+import { useReadCourseTitle } from "@/hooks/api";
 import { IEnrollment } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
-
-import styles from "./HoverInfo.module.scss";
 
 interface HoverInfoProps {
   color: string;
@@ -17,6 +15,7 @@ interface HoverInfoProps {
   enrollmentHistory?: IEnrollment;
   semester?: Semester;
   year?: number;
+  instructors?: string[];
   hoveredDuration: moment.Duration | null;
 }
 
@@ -35,8 +34,11 @@ export default function HoverInfo({
   enrollmentHistory,
   semester,
   year,
+  instructors,
   hoveredDuration,
 }: HoverInfoProps) {
+  const { data: courseTitleData } = useReadCourseTitle(subject, courseNumber);
+
   const { enrollmentSingular, timeString } = useMemo(() => {
     if (!enrollmentHistory || !hoveredDuration) {
       return {
@@ -81,44 +83,46 @@ export default function HoverInfo({
   }, [hoveredDuration, enrollmentHistory]);
 
   return (
-    <div className={styles.info}>
-      <div className={styles.heading}>
-        <span className={styles.course}>
-          <ColoredSquare
-            color={color}
-            size="md"
-            style={{ marginRight: 6, position: "relative", top: 2 }}
-          />
-          {subject} {courseNumber}
-        </span>
-      </div>
-      {enrollmentHistory ? (
-        <div className={styles.distType}>
-          {semester && year ? ` ${semester} ${year}` : " All Semesters"} •
-          {` LEC ${enrollmentHistory?.sectionNumber}`}
-        </div>
-      ) : (
-        <div className={styles.distType}>No data</div>
-      )}
-      <div className={styles.label}>{timeString}</div>
-      {enrollmentSingular ? (
-        <div className={styles.value}>
-          Enrolled:{" "}
-          {DisplayCount(
-            enrollmentSingular.enrolledCount,
-            enrollmentSingular.maxEnroll
-          )}
-          <br />
-          Waitlisted:{" "}
-          {DisplayCount(
-            enrollmentSingular.waitlistedCount,
-            enrollmentSingular.maxWaitlist
-          )}
-          <br />
-        </div>
-      ) : (
-        <div className={styles.value}>No data</div>
-      )}
-    </div>
+    <CourseSideMetrics
+      color={color}
+      courseTitle={`${subject} ${courseNumber}`}
+      classTitle={courseTitleData?.title ?? undefined}
+      metadata={
+        enrollmentHistory
+          ? `${semester && year ? `${semester} ${year}` : "All Semesters"} • ${
+              instructors && instructors.length
+                ? instructors.join(", ")
+                : enrollmentHistory.sectionNumber
+                  ? `LEC ${enrollmentHistory.sectionNumber}`
+                  : "All Instructors"
+            }`
+          : "No Semester or Instructor Data"
+      }
+      metrics={[
+        {
+          label: timeString,
+          value: enrollmentSingular ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <div>
+                Enrolled:{" "}
+                {DisplayCount(
+                  enrollmentSingular.enrolledCount,
+                  enrollmentSingular.maxEnroll
+                )}
+              </div>
+              <div>
+                Waitlisted:{" "}
+                {DisplayCount(
+                  enrollmentSingular.waitlistedCount,
+                  enrollmentSingular.maxWaitlist
+                )}
+              </div>
+            </div>
+          ) : (
+            "No data"
+          ),
+        },
+      ]}
+    />
   );
 }

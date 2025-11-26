@@ -11,7 +11,13 @@ import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { Semester } from "@/lib/generated/graphql";
-import { RecentType, addRecent, getRecents } from "@/lib/recent";
+import {
+  RecentType,
+  addRecent,
+  getPageUrl,
+  getRecents,
+  savePageUrl,
+} from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
 
@@ -113,6 +119,32 @@ export default function Catalog() {
     },
     [navigate, location, term]
   );
+
+  // Save current catalog pathname whenever it changes
+  useEffect(() => {
+    const currentPath = location.pathname;
+    // Only save if we're viewing a specific class (not just /catalog base)
+    if (
+      currentPath &&
+      currentPath !== "/catalog" &&
+      subject &&
+      courseNumber &&
+      number
+    ) {
+      savePageUrl(RecentType.CatalogPage, currentPath);
+    }
+  }, [location.pathname, subject, courseNumber, number]);
+
+  // Restore saved catalog URL if navigating to base /catalog
+  useEffect(() => {
+    // Only restore if we're on base /catalog without a specific class
+    if (!subject && !courseNumber && !number) {
+      const savedPath = getPageUrl(RecentType.CatalogPage);
+      if (savedPath) {
+        navigate({ ...location, pathname: savedPath }, { replace: true });
+      }
+    }
+  }, []); // Only run on mount
 
   // Handle mouse movement for floating button on mobile
   useEffect(() => {

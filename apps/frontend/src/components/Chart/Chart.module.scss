@@ -5,23 +5,26 @@
   padding: 0;
   max-width: 350px;
   min-width: 180px;
-  animation: fadeIn 150ms ease-in;
+  animation: fadeIn 100ms ease-in;
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06);
 }
 
 .tooltipHeader {
   padding: 8px 12px;
   border-bottom: 1px solid var(--border-color);
   font-size: var(--text-14);
-  font-weight: var(--font-normal);
+  font-weight: var(--font-medium);
   color: var(--heading-color);
+  line-height: 1.2;
 }
 
 .tooltipLabel {
   padding: 8px 12px;
   border-bottom: 1px solid var(--border-color);
   font-size: var(--text-14);
-  font-weight: var(--font-normal);
+  font-weight: var(--font-medium);
   color: var(--heading-color);
+  line-height: 1.2;
 }
 
 .tooltipItems {
@@ -29,6 +32,7 @@
   flex-direction: column;
   padding: 12px;
   gap: 10px;
+  line-height: 1.5;
 }
 
 .tooltipItem {
@@ -43,7 +47,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--paragraph-color);
+  color: var(--heading-color);
   font-weight: var(--font-normal);
 }
 
@@ -55,11 +59,6 @@
   font-weight: var(--font-medium);
   color: var(--heading-color);
   white-space: nowrap;
-}
-
-.tooltipSeparator {
-  margin: 0 4px;
-  color: var(--label-color);
 }
 
 .tooltipFooter {

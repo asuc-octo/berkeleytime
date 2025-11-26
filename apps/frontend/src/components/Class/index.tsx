@@ -512,27 +512,31 @@ export default function Class({
                     {/* TODO: Reusable bookmark button */}
                     <ThemeTooltip
                       content={bookmarked ? "Remove bookmark" : "Bookmark"}
-                    >
-                      <IconButton
-                        className={classNames(styles.bookmark, {
-                          [styles.active]: bookmarked,
-                        })}
-                        onClick={() => bookmark()}
-                        disabled={userLoading}
-                      >
-                        {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                      </IconButton>
-                    </ThemeTooltip>
-                    <ThemeTooltip content="Open in Berkeley Catalog">
-                      <IconButton
-                        as="a"
-                        href={getExternalLink(_class)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <OpenNewWindow />
-                      </IconButton>
-                    </ThemeTooltip>
+                      trigger={
+                        <IconButton
+                          className={classNames(styles.bookmark, {
+                            [styles.active]: bookmarked,
+                          })}
+                          onClick={() => bookmark()}
+                          disabled={userLoading}
+                        >
+                          {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                        </IconButton>
+                      }
+                    />
+                    <ThemeTooltip
+                      content="Open in Berkeley Catalog"
+                      trigger={
+                        <IconButton
+                          as="a"
+                          href={getExternalLink(_class)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <OpenNewWindow />
+                        </IconButton>
+                      }
+                    />
                   </Flex>
                 </Flex>
                 <Flex gap="3" align="center" mb="5">

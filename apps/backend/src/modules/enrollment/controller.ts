@@ -1,6 +1,7 @@
 import { NewEnrollmentHistoryModel } from "@repo/common";
 
 import { Semester } from "../../generated-types/graphql";
+import { buildSubjectQuery } from "../../utils/subject";
 import { formatEnrollment } from "./formatter";
 
 export const getEnrollment = async (
@@ -11,11 +12,13 @@ export const getEnrollment = async (
   courseNumber: string,
   sectionNumber: string
 ) => {
+  const subjectQuery = buildSubjectQuery(subject);
+
   const enrollment = await NewEnrollmentHistoryModel.findOne({
     year,
     semester,
     sessionId: sessionId ? sessionId : "1",
-    subject,
+    subject: subjectQuery,
     courseNumber,
     sectionNumber,
   }).lean();

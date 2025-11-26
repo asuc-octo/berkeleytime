@@ -1,4 +1,3 @@
-// TODO: refactor to match GradeDistribution/index.tsx
 import React, {
   memo,
   useCallback,
@@ -8,35 +7,36 @@ import React, {
   useState,
 } from "react";
 
-import { useApolloClient } from "@apollo/client/react";
-import { FrameAltEmpty } from "iconoir-react";
+import type { ApolloClient } from "@apollo/client";
 import moment from "moment";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   CartesianGrid,
   Line,
   LineChart,
   ReferenceLine,
-  ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
 import { CategoricalChartFunc } from "recharts/types/chart/types";
 
-import { Boundary, Box, Flex, LoadingIndicator } from "@repo/theme";
+import { Boundary, LoadingIndicator } from "@repo/theme";
 
 import {
   type ChartConfig,
-  ChartContainer,
   ChartTooltip,
   createChartConfig,
   formatters,
 } from "@/components/Chart";
+import { ChartContainer } from "@/components/CourseAnalytics/ChartContainer";
+import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalyticsPage";
+import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
+import CourseSelectionCard from "@/components/CourseSelectionCard";
 import Footer from "@/components/Footer";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
+import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 
-import CourseManager from "./CourseManager";
-import styles from "./Enrollment.module.scss";
+import CourseInput from "./CourseManager/CourseInput";
 import HoverInfo from "./HoverInfo";
 import {
   DARK_COLORS,
@@ -46,8 +46,6 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "./types";
-
-const CHART_HEIGHT = 450;
 
 // Memoized formatter to avoid recreating on each render
 const timeFormatter = new Intl.DateTimeFormat("en-US", {
@@ -96,159 +94,219 @@ const EnrollmentChart = memo(function EnrollmentChart({
   );
 
   return (
-    <div className={styles.view}>
-      <ChartContainer config={chartConfig}>
-        <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-          <LineChart
-            syncId="grade-distributions"
-            width={730}
-            height={200}
-            data={data}
-            onMouseMove={handleHover}
-            onMouseLeave={() => onHoverDuration(null)}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="var(--border-color)"
+    <ChartContainer config={chartConfig} hasData={filteredOutputs.length > 0}>
+      {() => (
+        <LineChart
+          syncId="grade-distributions"
+          width={730}
+          height={200}
+          data={data}
+          onMouseMove={handleHover}
+          onMouseLeave={() => onHoverDuration(null)}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="var(--border-color)"
+          />
+          <XAxis
+            dataKey="timeDelta"
+            fill="var(--label-color)"
+            tickMargin={8}
+            interval={"preserveStartEnd"}
+            type="number"
+            tickFormatter={(timeDelta) =>
+              String(
+                Math.floor(moment.duration(timeDelta, "minutes").asDays()) + 1
+              )
+            }
+          />
+          <YAxis
+            domain={[0, dataMax]}
+            tickFormatter={(v) => formatters.percentRound(v)}
+          />
+          {dataMax >= 100 && (
+            <ReferenceLine
+              y={100}
+              stroke="var(--label-color)"
+              strokeDasharray="5 5"
+              strokeOpacity={0.5}
+              label={{
+                value: "100% Capacity",
+                position: "insideTopLeft",
+                fill: "var(--label-color)",
+                fontSize: 12,
+                offset: 10,
+              }}
             />
-            <XAxis
-              dataKey="timeDelta"
-              fill="var(--label-color)"
-              tickMargin={8}
-              interval={"preserveStartEnd"}
-              type="number"
-              tickFormatter={(timeDelta) =>
-                String(
-                  Math.floor(moment.duration(timeDelta, "minutes").asDays()) + 1
-                )
-              }
+          )}
+          {outputs?.length > 0 && (
+            <ChartTooltip
+              tooltipConfig={{
+                labelFormatter: (label) => {
+                  const duration = moment.duration(label, "minutes");
+                  const day = Math.floor(duration.asDays()) + 1;
+                  const time = timeFormatter.format(
+                    moment.utc(0).add(duration).toDate()
+                  );
+                  return `Day ${day} ${time}`;
+                },
+                valueFormatter: (value) => formatters.percentRound(value),
+                indicator: "line",
+              }}
             />
-            <YAxis
-              domain={[0, dataMax]}
-              tickFormatter={(v) => formatters.percentRound(v)}
-            />
-            {dataMax >= 100 && (
-              <ReferenceLine
-                y={100}
-                stroke="var(--label-color)"
-                strokeDasharray="5 5"
-                strokeOpacity={0.5}
-                label={{
-                  value: "100% Capacity",
-                  position: "insideTopLeft",
-                  fill: "var(--label-color)",
-                  fontSize: 12,
-                  offset: 10,
-                }}
-              />
-            )}
-            {outputs?.length > 0 && (
-              <ChartTooltip
-                tooltipConfig={{
-                  labelFormatter: (label) => {
-                    const duration = moment.duration(label, "minutes");
-                    const day = Math.floor(duration.asDays()) + 1;
-                    const time = timeFormatter.format(
-                      moment.utc(0).add(duration).toDate()
-                    );
-                    return `Day ${day} ${time}`;
-                  },
-                  valueFormatter: (value) => formatters.percentRound(value),
-                  indicator: "line",
-                }}
-              />
-            )}
-            {filteredOutputs?.map((output, index) => {
-              const originalIndex = outputs.indexOf(output);
-              return (
-                <React.Fragment key={index}>
-                  <Line
-                    dataKey={`enroll_${originalIndex}`}
-                    stroke={
-                      activeOutput && !output.active
-                        ? DARK_COLORS[originalIndex]
-                        : LIGHT_COLORS[originalIndex]
-                    }
-                    name={`${output.input.subject} ${output.input.courseNumber}`}
-                    isAnimationActive={shouldAnimate}
-                    dot={false}
-                    strokeWidth={3}
-                    type="monotone"
-                    connectNulls
-                  />
-                  <Line
-                    dataKey={`waitlist_${originalIndex}`}
-                    stroke={
-                      activeOutput && !output.active
-                        ? DARK_COLORS[originalIndex]
-                        : LIGHT_COLORS[originalIndex]
-                    }
-                    name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                    isAnimationActive={shouldAnimate}
-                    dot={false}
-                    strokeWidth={2}
-                    strokeDasharray="5 5"
-                    type="monotone"
-                    connectNulls
-                  />
-                </React.Fragment>
-              );
-            })}
-          </LineChart>
-        </ResponsiveContainer>
-        {!outputs?.length && (
-          <div className={styles.empty}>
-            <FrameAltEmpty height={24} width={24} />
-            <br />
-            You have not added
-            <br />
-            any classes yet
-          </div>
-        )}
-      </ChartContainer>
-    </div>
+          )}
+          {filteredOutputs?.map((output, index) => {
+            const originalIndex = outputs.indexOf(output);
+            return (
+              <React.Fragment key={index}>
+                <Line
+                  dataKey={`enroll_${originalIndex}`}
+                  stroke={
+                    activeOutput && !output.active
+                      ? DARK_COLORS[originalIndex]
+                      : LIGHT_COLORS[originalIndex]
+                  }
+                  name={`${output.input.subject} ${output.input.courseNumber}`}
+                  isAnimationActive={shouldAnimate}
+                  dot={false}
+                  strokeWidth={3}
+                  type="monotone"
+                  connectNulls
+                />
+                <Line
+                  dataKey={`waitlist_${originalIndex}`}
+                  stroke={
+                    activeOutput && !output.active
+                      ? DARK_COLORS[originalIndex]
+                      : LIGHT_COLORS[originalIndex]
+                  }
+                  name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
+                  isAnimationActive={shouldAnimate}
+                  dot={false}
+                  strokeWidth={2}
+                  strokeDasharray="5 5"
+                  type="monotone"
+                  connectNulls
+                />
+              </React.Fragment>
+            );
+          })}
+        </LineChart>
+      )}
+    </ChartContainer>
   );
 });
 
+const parseInputsFromUrl = (searchParams: URLSearchParams): Input[] =>
+  searchParams
+    .getAll("input")
+    .reduce((acc, input) => {
+      const output = input.split(";");
+
+      // Filter out invalid inputs
+      if (output.length < 4) return acc;
+
+      // Filter out invalid inputs
+      if (output[2] !== "T") return acc;
+
+      // COMPSCI;61B;T;2024:Spring;001, COMPSCI;61B;T;2024:Spring
+      const term = output[3]?.split(":");
+
+      const parsedInput: Input = {
+        subject: output[0],
+        courseNumber: output[1],
+        year: parseInt(term?.[0]),
+        semester: term?.[1] as Semester,
+        sectionNumber: output[4],
+      };
+
+      return acc.concat(parsedInput);
+    }, [] as Input[])
+    // Filter out duplicates
+    .filter(
+      (input, index, inputs) =>
+        inputs.findIndex((i) => isInputEqual(input, i)) === index
+    );
+
+const fetchEnrollment = async (
+  client: ApolloClient<unknown>,
+  input: Input
+): Promise<{ data: Output["data"]; input: Input } | null> => {
+  try {
+    const response = await client.query({
+      query: GetEnrollmentDocument,
+      variables: {
+        year: input.year,
+        semester: input.semester,
+        sessionId: input.sessionId,
+        subject: input.subject,
+        courseNumber: input.courseNumber,
+        sectionNumber: input.sectionNumber,
+      },
+      fetchPolicy: "no-cache",
+    });
+
+    if (!response.data?.enrollment) return null;
+
+    return {
+      data: response.data.enrollment,
+      input,
+    };
+  } catch {
+    return null;
+  }
+};
+
 export default function Enrollment() {
-  const client = useApolloClient();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialInputs = useMemo(() => {
+    // If no current params, check for saved URL and parse it directly
+    if (searchParams.toString().length === 0) {
+      const savedUrl = getPageUrl(RecentType.EnrollmentPage);
+      if (savedUrl) {
+        const savedParams = new URLSearchParams(savedUrl);
+        return parseInputsFromUrl(savedParams);
+      }
+    }
+    return parseInputsFromUrl(searchParams);
+  }, [searchParams]);
 
-  const [initialInputs] = useState<Input[]>(() =>
-    searchParams
-      .getAll("input")
-      .reduce((acc, input) => {
-        const output = input.split(";");
+  // Save current URL to localStorage whenever it changes
+  useEffect(() => {
+    const currentUrl = location.search;
+    if (currentUrl) {
+      savePageUrl(RecentType.EnrollmentPage, currentUrl);
+    }
+  }, [location.search]);
 
-        // Filter out invalid inputs
-        if (output.length < 4) return acc;
+  // Update URL to match the restored state
+  useEffect(() => {
+    if (searchParams.toString().length === 0 && initialInputs.length > 0) {
+      const savedUrl = getPageUrl(RecentType.EnrollmentPage);
+      if (savedUrl) {
+        navigate({ ...location, search: savedUrl }, { replace: true });
+      }
+    }
+  }, []); // Only on mount
 
-        // Filter out invalid inputs
-        if (output[2] !== "T") return acc;
-
-        // COMPSCI;61B;T;2024:Spring;001, COMPSCI;61B;T;2024:Spring
-        const term = output[3]?.split(":");
-
-        const parsedInput: Input = {
-          subject: output[0],
-          courseNumber: output[1],
-          year: parseInt(term?.[0]),
-          semester: term?.[1] as Semester,
-          sectionNumber: output[4],
-        };
-
-        return acc.concat(parsedInput);
-      }, [] as Input[])
-      // Filter out duplicates
-      .filter(
-        (input, index, inputs) =>
-          inputs.findIndex((i) => isInputEqual(input, i)) === index
-      )
-  );
-
-  const [loading, setLoading] = useState(initialInputs.length > 0);
-  const [outputs, setOutputs] = useState<Output[]>([]);
+  const {
+    outputs,
+    setOutputs,
+    loading,
+    activeOutput,
+    filteredOutputs,
+    remove,
+    updateActive,
+    updateHidden,
+  } = useCourseManager<Input, Output["data"]>({
+    initialInputs,
+    fetchData: fetchEnrollment,
+    serializeInput: getInputSearchParam,
+    colors: LIGHT_COLORS,
+  });
 
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
   const shouldAnimate = useRef(true);
@@ -256,85 +314,9 @@ export default function Enrollment() {
   const [hoveredDuration, setHoveredDuration] =
     useState<moment.Duration | null>(null);
 
-  const initialize = useCallback(async () => {
-    if (!loading) return;
-
-    if (initialInputs.length === 0) {
-      searchParams.delete("input");
-      setSearchParams(searchParams);
-
-      return;
-    }
-
-    const responses = await Promise.all(
-      initialInputs.map(async (input) => {
-        try {
-          const response = await client.query({
-            query: GetEnrollmentDocument,
-            variables: {
-              year: input.year,
-              semester: input.semester,
-              sessionId: input.sessionId,
-              subject: input.subject,
-              courseNumber: input.courseNumber,
-              sectionNumber: input.sectionNumber,
-            },
-            fetchPolicy: "no-cache",
-          });
-
-          return response;
-        } catch {
-          return null;
-        }
-      })
-    );
-
-    const outputs = responses
-      // Filter out failed queries and set any initial state
-      .reduce(
-        (acc, response, index) =>
-          response?.data?.enrollment
-            ? acc.concat({
-                // TODO: Error handling
-                enrollmentHistory: response.data.enrollment,
-                input: initialInputs[index],
-                active: false,
-                hidden: false,
-              })
-            : acc,
-        [] as Output[]
-      )
-      // Limit to 4 outputs
-      .slice(0, 4);
-
-    setOutputs(outputs);
-
-    searchParams.delete("input");
-
-    for (const output of outputs) {
-      searchParams.append("input", getInputSearchParam(output.input));
-    }
-
-    setLoading(false);
-  }, [client, initialInputs, searchParams, setSearchParams, loading]);
-
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
-
   useEffect(() => {
     shouldAnimate.current = false;
   }, []);
-
-  const activeOutput = useMemo(
-    () => outputs?.find((out) => out.active),
-    [outputs]
-  );
-
-  const filteredOutputs = useMemo(
-    () => outputs?.filter((output) => !output.hidden),
-    [outputs]
-  );
 
   /**
    *
@@ -367,14 +349,14 @@ export default function Enrollment() {
       { enrolledCount: number; waitlistedCount: number }
     >[] = outputs.map((output) => {
       // the first time data point, floored to the nearest minute
-      const firstTime = moment(
-        output.enrollmentHistory.history[0].startTime
-      ).startOf("minute");
+      const firstTime = moment(output.data.history[0].startTime).startOf(
+        "minute"
+      );
       const map = new Map<
         number,
         { enrolledCount: number; waitlistedCount: number }
       >();
-      for (const enrollment of output.enrollmentHistory.history) {
+      for (const enrollment of output.data.history) {
         const start = moment(enrollment.startTime).startOf("minute");
         const end = moment(enrollment.endTime).startOf("minute");
         const granularity = enrollment.granularitySeconds;
@@ -390,15 +372,13 @@ export default function Enrollment() {
           map.set(timeDelta, {
             enrolledCount:
               (enrollment.enrolledCount /
-                (output.enrollmentHistory.history[
-                  output.enrollmentHistory.history.length - 1
-                ].maxEnroll ?? 1)) *
+                (output.data.history[output.data.history.length - 1]
+                  .maxEnroll ?? 1)) *
               100,
             waitlistedCount:
               (enrollment.waitlistedCount /
-                (output.enrollmentHistory.history[
-                  output.enrollmentHistory.history.length - 1
-                ].maxWaitlist ?? 1)) *
+                (output.data.history[output.data.history.length - 1]
+                  .maxWaitlist ?? 1)) *
               100,
           });
         }
@@ -466,6 +446,13 @@ export default function Enrollment() {
     return createChartConfig(keys, { labels, themes });
   }, [outputs]);
 
+  const sidebarOutputs = useMemo(() => {
+    const selected = filteredOutputs?.filter((output) => output.active) ?? [];
+    if (selected.length === 1) return selected;
+    if ((filteredOutputs?.length ?? 0) === 1) return filteredOutputs;
+    return [];
+  }, [filteredOutputs]);
+
   const handleHoverDuration = useCallback(
     (duration: moment.Duration | null) => {
       setHoveredDuration(duration);
@@ -474,15 +461,49 @@ export default function Enrollment() {
   );
 
   return (
-    <Box p="5" className={styles.root}>
-      <Flex direction="column">
-        <CourseManager outputs={outputs} setOutputs={setOutputs} />
-        {loading ? (
-          <Boundary>
-            <LoadingIndicator size="lg" />
-          </Boundary>
-        ) : (
-          <Flex direction="row">
+    <>
+      <CourseAnalyticsPage
+        courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
+        courseCards={
+          <>
+            {outputs.map(({ input, ...rest }, index) => {
+              const instructorNames =
+                input.instructors && input.instructors.length
+                  ? input.instructors.join(", ")
+                  : null;
+              const instructor = instructorNames
+                ? instructorNames
+                : input.sectionNumber
+                  ? `LEC ${input.sectionNumber}`
+                  : "All Instructors";
+              const semester = `${input.semester} ${input.year}`;
+              return (
+                <CourseSelectionCard
+                  key={`${index}-${input.subject}-${input.courseNumber}-${semester} • ${instructor}`}
+                  subject={input.subject}
+                  number={input.courseNumber}
+                  metadata={`${semester} • ${instructor}`}
+                  gradeDistribution={undefined}
+                  loadGradeDistribution={false}
+                  onClick={() => updateActive(index, !rest.active)}
+                  onClickDelete={() => remove(index)}
+                  onClickHide={() => updateHidden(index, !rest.hidden)}
+                  color={rest.color}
+                  active={rest.active}
+                  hidden={rest.hidden}
+                />
+              );
+            })}
+            {!outputs ||
+              (!outputs.length && <div style={{ height: "85px" }}></div>)}
+          </>
+        }
+        chart={
+          loading ? (
+            <Boundary>
+              <LoadingIndicator size="lg" />
+            </Boundary>
+          ) : (
             <EnrollmentChart
               data={data}
               filteredOutputs={filteredOutputs}
@@ -493,36 +514,38 @@ export default function Enrollment() {
               shouldAnimate={shouldAnimate.current}
               onHoverDuration={handleHoverDuration}
             />
-            <div className={styles.hoverInfoContainer}>
-              {outputs?.[0] ? (
-                outputs.map((output: Output, i: number) => (
-                  <div key={i} className={styles.hoverInfoCard}>
-                    <HoverInfo
-                      color={LIGHT_COLORS[i]}
-                      subject={output.input.subject}
-                      courseNumber={output.input.courseNumber}
-                      enrollmentHistory={output.enrollmentHistory}
-                      hoveredDuration={hoveredDuration}
-                      semester={output.input.semester}
-                      year={output.input.year}
-                    />
-                  </div>
-                ))
-              ) : (
-                <div className={styles.hoverInfoCard}>
-                  <HoverInfo
-                    color={"#aaa"}
-                    subject={"No Class"}
-                    courseNumber={"Selected"}
-                    hoveredDuration={null}
-                  />
-                </div>
-              )}
-            </div>
-          </Flex>
-        )}
-      </Flex>
+          )
+        }
+        hoverInfo={
+          loading ? (
+            <Boundary>
+              <LoadingIndicator size="md" />
+            </Boundary>
+          ) : sidebarOutputs?.[0] ? (
+            sidebarOutputs.map((output: Output, i: number) => (
+              <HoverInfo
+                key={i}
+                color={output.color}
+                subject={output.input.subject}
+                courseNumber={output.input.courseNumber}
+                enrollmentHistory={output.data}
+                instructors={output.input.instructors}
+                hoveredDuration={hoveredDuration}
+                semester={output.input.semester}
+                year={output.input.year}
+              />
+            ))
+          ) : (
+            <HoverInfo
+              color={"#aaa"}
+              subject={"No Class"}
+              courseNumber={"Selected"}
+              hoveredDuration={null}
+            />
+          )
+        }
+      />
       <Footer />
-    </Box>
+    </>
   );
 }

@@ -1,0 +1,59 @@
+.root {
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+.content {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  padding-top: 48px;
+  flex-wrap: nowrap;
+  margin-bottom: 80px;
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    padding-top: 24px;
+  }
+
+  @media (max-width: 600px) {
+    padding-top: 16px;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+}
+
+.hoverInfoContainer {
+  flex: 0 1 320px;
+  padding: 0;
+  width: clamp(260px, 24vw, 360px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: none;
+  overflow: visible;
+  align-self: flex-start;
+  min-width: 260px;
+  margin-top: 0;
+
+  @media (max-width: 1000px) {
+    width: 100%;
+    flex: none;
+    min-width: 0;
+    max-width: none;
+    padding: 24px;
+  }
+
+  @media (max-width: 600px) {
+    display: none;
+  }
+}
+
+.hoverInfoCard {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+}
