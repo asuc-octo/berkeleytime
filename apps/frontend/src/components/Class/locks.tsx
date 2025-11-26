@@ -90,7 +90,7 @@ function RatingsTabLinkBase({
 
   const tooltipDescription = loginRequired
     ? "Log in to view ratings from other students."
-    : `Share ${ratingsNeededValue} class rating${ratingsNeededValue !== 1 ? "s" : ""} to unlock everyone else's`;
+    : `Rate ${Math.max(ratingsNeededValue, 1)} classes to unlock all other ratings.`;
 
   return (
     <Tooltip

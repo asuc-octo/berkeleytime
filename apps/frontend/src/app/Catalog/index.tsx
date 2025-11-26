@@ -120,10 +120,8 @@ export default function Catalog() {
     [navigate, location, term]
   );
 
-  // Save current catalog pathname whenever it changes
   useEffect(() => {
     const currentPath = location.pathname;
-    // Only save if we're viewing a specific class (not just /catalog base)
     if (
       currentPath &&
       currentPath !== "/catalog" &&
@@ -135,9 +133,7 @@ export default function Catalog() {
     }
   }, [location.pathname, subject, courseNumber, number]);
 
-  // Restore saved catalog URL if navigating to base /catalog
   useEffect(() => {
-    // Only restore if we're on base /catalog without a specific class
     if (!subject && !courseNumber && !number) {
       const savedPath = getPageUrl(RecentType.CatalogPage);
       if (savedPath) {
@@ -146,10 +142,8 @@ export default function Catalog() {
     }
   }, []); // Only run on mount
 
-  // Handle mouse movement for floating button on mobile
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Only show on mobile
       if (window.innerWidth > 992) {
         setShowFloatingButton(false);
         return;

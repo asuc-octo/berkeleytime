@@ -41,7 +41,7 @@ export function Badge({
       {...props}
     >
       <Flex direction="row" gap="4px">
-        {label}
+        <span className={styles.label}>{label}</span>
         {icon && icon}
       </Flex>
     </span>
