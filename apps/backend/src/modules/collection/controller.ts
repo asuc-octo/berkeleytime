@@ -6,6 +6,7 @@ import {
 } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
+import { info } from "console";
 
 export const getCollectionOwner = async (ownerID: string) => {
   const collections = await CollectionModel.find({
@@ -71,8 +72,8 @@ const formatCollectionClasses = async (collection: CollectionType) => {
 
   return classes;
 };
-export const addClassToCollection = async (
-  input: CollectionModule.AddCollectionClassInput
+export const modifyCollectionClass = async (
+  input: CollectionModule.ModifyCollectionClassInput
 ) => {
   const collection = await CollectionModel.findOne({
     ownerID: input.ownerID,
@@ -80,49 +81,47 @@ export const addClassToCollection = async (
   });
   if (!collection) throw new Error("not found by owner and name");
 
-  const alreadyExists = collection.classes?.some((entry) => {
-    const info = entry.info;
-
+  const alreadyExists = collection.classes?.find((_class) => {
+    const info = _class.info;
     return (
-      info?.year === input.class.year &&
-      info?.semester === input.class.semester &&
-      (info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
-      info?.subject === input.class.subject &&
-      info?.courseNumber === input.class.courseNumber &&
-      info?.number === input.class.number
+        info?.year === input.class.year &&
+        info?.semester === input.class.semester &&
+        (info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
+        info?.subject === input.class.subject &&
+        info?.courseNumber === input.class.courseNumber &&
+        info?.number === input.class.number
     );
   });
 
-  if (alreadyExists) throw new Error("Class already exists in collection");
-  /*
-  const info = await ClassModel.findOne({
-    year: input.year,
-    semester: input.semester,
-    sessionId: input.sessionId ? input.sessionId : "1",
-    subject: input.subject,
-    courseNumber: input.courseNumber,
-    number: input.number,
-  }).lean();
-  const _class = { info: info as IClassItem, comments: [] }; */
-  const _class = {
-    info: {
-      year: input.class.year,
-      semester: input.class.semester,
-      sessionId: input.class.sessionId ?? "1",
-      subject: input.class.subject,
-      courseNumber: input.class.courseNumber,
-      number: input.class.number,
-    },
-    comments: [],
-  };
-  collection.classes?.push(_class);
+
+  if (input.add) {
+    if (alreadyExists) throw new Error("Class already exists in collection");
+
+    const newClass = {
+      info: {
+        year: input.class.year,
+        semester: input.class.semester,
+        sessionId: input.class.sessionId ?? "1",
+        subject: input.class.subject,
+        courseNumber: input.class.courseNumber,
+        number: input.class.number,
+      },
+      comments: [],
+    };
+
+    collection.classes?.push(newClass);
+  } else {
+    if (!alreadyExists) throw new Error("Class does not exist in collection");
+    if (!collection.classes) throw new Error("Class does not exist in collection");
+    collection.classes?.pull(alreadyExists);
+  }
   await collection.save();
 
   return (await formatCollections([collection as CollectionType]))[0];
 };
 
 export const modifyCollectionComment = async (
-  input: CollectionModule.modifyCollectionCommentInput
+  input: CollectionModule.ModifyCollectionCommentInput
 ) => {
   const collection = await CollectionModel.findOne({
     ownerID: input.ownerID,

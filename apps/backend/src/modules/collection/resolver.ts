@@ -1,5 +1,5 @@
 import {
-  addClassToCollection,
+  modifyCollectionClass,
   createCollection,
   getCollectionOwner,
   getCollectionViewer,
@@ -27,8 +27,8 @@ const resolvers: CollectionModule.Resolvers = {
 
       return collection as unknown as CollectionModule.Collection;
     },
-    addClassToCollection: async (_, { input }) => {
-      const collection = await addClassToCollection(input);
+    modifyCollectionClass: async (_, { input }) => {
+      const collection = await modifyCollectionClass(input);
 
       return collection as unknown as CollectionModule.Collection;
     },

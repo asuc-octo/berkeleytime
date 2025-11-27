@@ -32,13 +32,14 @@ export const collectionTypeDef = gql`
     name: String!
   }
 
-  input AddCollectionClassInput {
+  input ModifyCollectionClassInput {
     ownerID: String!
     name: String!
     class: CollectionClassInput!
+    add: Boolean!
   }
 
-  input modifyCollectionCommentInput {
+  input ModifyCollectionCommentInput {
     ownerID: String!
     name: String!
     class: CollectionClassInput!
@@ -48,7 +49,7 @@ export const collectionTypeDef = gql`
 
   type Mutation {
     createCollection(input: CreateCollectionInput!): Collection!
-    addClassToCollection(input: AddCollectionClassInput!): Collection!
-    modifyCollectionComment(input: modifyCollectionCommentInput!): Collection!
+    modifyCollectionClass(input: ModifyCollectionClassInput!): Collection!
+    modifyCollectionComment(input: ModifyCollectionCommentInput!): Collection!
   }
 `;
