@@ -332,11 +332,11 @@
   --light-cancel-hover-color: var(--red-600);
   --light-cancel-accent-color: white;
 
-  --dark-foreground-color: var(--zinc-800);
-  --dark-background-color: var(--zinc-900);
-  --dark-backdrop-color: var(--zinc-950);
+  --dark-foreground-color: #14120B;
+  --dark-background-color: #14120B;
+  --dark-backdrop-color: #14120B;
 
-  --dark-border-color: rgba(255 255 255 / 10%);
+  --dark-border-color: #2A2822;
 
   --dark-heading-color: white;
   --dark-paragraph-color: var(--zinc-400);
@@ -346,8 +346,8 @@
   --dark-label-color: var(--zinc-500);
 
   // --dark-button-color: var(--zinc-800);
-  --dark-button-hover-color: var(--zinc-700);
-  --dark-button-active-color: var(--zinc-600);
+  --dark-button-hover-color: #191710;
+  --dark-button-active-color: #191710;
 
   --dark-tooltip-color: var(--zinc-950);
   --dark-tooltip-heading-color: white;
