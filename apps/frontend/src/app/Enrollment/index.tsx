@@ -474,22 +474,24 @@ export default function Enrollment() {
         courseCards={
           <>
             {outputs.map(({ input, ...rest }, index) => {
-              const instructorNames =
-                input.instructors && input.instructors.length
-                  ? input.instructors.join(", ")
-                  : null;
-              const instructor = instructorNames
-                ? instructorNames
-                : input.sectionNumber
-                  ? `LEC ${input.sectionNumber}`
-                  : "All Instructors";
               const semester = `${input.semester} ${input.year}`;
+              // Format section number like #01, #02
+              const sectionNum = input.sectionNumber
+                ? parseInt(input.sectionNumber, 10)
+                : null;
+              const sectionLabel = sectionNum
+                ? `#${sectionNum.toString().padStart(2, "0")}`
+                : "";
+              const metadata = sectionLabel
+                ? `${semester} • ${sectionLabel}`
+                : semester;
+
               return (
                 <CourseSelectionCard
-                  key={`${index}-${input.subject}-${input.courseNumber}-${semester} • ${instructor}`}
+                  key={`${index}-${input.subject}-${input.courseNumber}-${semester}-${input.sectionNumber}`}
                   subject={input.subject}
                   number={input.courseNumber}
-                  metadata={`${semester} • ${instructor}`}
+                  metadata={metadata}
                   gradeDistribution={undefined}
                   loadGradeDistribution={false}
                   onClick={() => updateActive(index, !rest.active)}
