@@ -3,19 +3,20 @@
   background-color: var(--background-color);
 }
 
+.courseCards {
+  height: 105px;
+}
+
 .content {
   display: flex;
-  align-items: flex-start;
-  gap: 48px;
+  flex-direction: column;
   padding-top: 48px;
-  flex-wrap: nowrap;
-  margin-bottom: 80px;
+  padding-bottom: 80px;
+  gap: 48px;
 
   @media (max-width: 1000px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 24px;
     padding-top: 24px;
+    gap: 24px;
   }
 
   @media (max-width: 600px) {
@@ -25,7 +26,59 @@
   }
 }
 
-.hoverInfoContainer {
+.chartAndDataBoard {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  flex-wrap: nowrap;
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  @media (max-width: 600px) {
+    gap: 16px;
+  }
+}
+
+.bottomComponent {
+  width: 100%;
+  padding-left: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bottomTitle {
+  font-size: var(--text-16);
+  font-weight: var(--font-normal);
+  color: var(--heading-color);
+}
+
+.bottomDescription {
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  color: var(--paragraph-color);
+
+  a {
+    color: var(--blue-500);
+    text-decoration: none;
+    font-weight: var(--font-normal);
+    transition: all 100ms ease-in-out;
+
+    &:hover {
+      color: var(--blue-600);
+
+      @media (prefers-color-scheme: dark) {
+        color: var(--blue-400);
+      }
+    }
+  }
+}
+
+.dataBoardContainer {
   flex: 0 1 320px;
   padding: 0;
   width: clamp(260px, 24vw, 360px);
@@ -43,7 +96,7 @@
     flex: none;
     min-width: 0;
     max-width: none;
-    padding: 24px;
+    padding-left: 64px;
   }
 
   @media (max-width: 600px) {
@@ -51,7 +104,7 @@
   }
 }
 
-.hoverInfoCard {
+.dataBoard {
   border: none;
   border-radius: 0;
   padding: 0;

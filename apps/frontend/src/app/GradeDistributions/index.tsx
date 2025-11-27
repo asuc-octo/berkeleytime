@@ -290,6 +290,20 @@ const GradeDistributions = () => {
     <>
       <CourseAnalyticsPage
         courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
+        bottomTitle="% of Students vs Grade Received"
+        bottomDescription={
+          <>
+            We source our course grade data from Berkeley's official{" "}
+            <a
+              href="https://calanswers.berkeley.edu/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              CalAnswers
+            </a>{" "}
+            database.
+          </>
+        }
         courseCards={
           <>
             {outputs.map((output, index) => {
@@ -340,7 +354,7 @@ const GradeDistributions = () => {
             />
           )
         }
-        hoverInfo={
+        dataBoard={
           loading ? (
             <Boundary>
               <LoadingIndicator size="md" />

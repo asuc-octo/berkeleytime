@@ -55,12 +55,6 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
-// Type alias for tooltip content function props
-type TooltipContentProps = Parameters<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Extract<ContentType<number, string>, (...args: any[]) => any>
->[0];
-
 type EnrollmentChartProps = {
   data: { timeDelta: number;[key: string]: number | null }[] | undefined;
   filteredOutputs: Output[];
@@ -462,6 +456,21 @@ export default function Enrollment() {
     <>
       <CourseAnalyticsPage
         courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
+        bottomTitle="% of Class Filled vs Days After Enrollment Begins"
+        bottomDescription={
+          <>
+            We source our historic course and enrollment data directly from
+            Berkeley{" "}
+            <a
+              href="https://sis.berkeley.edu/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Student Information System's
+            </a>{" "}
+            Course and Class APIs.
+          </>
+        }
         courseCards={
           <>
             {outputs.map(({ input, ...rest }, index) => {
@@ -514,7 +523,7 @@ export default function Enrollment() {
             />
           )
         }
-        hoverInfo={
+        dataBoard={
           loading ? (
             <Boundary>
               <LoadingIndicator size="md" />
