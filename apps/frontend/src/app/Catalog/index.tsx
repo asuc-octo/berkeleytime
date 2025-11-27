@@ -11,11 +11,7 @@ import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { Semester } from "@/lib/generated/graphql";
-import {
-  RecentType,
-  addRecent,
-  getRecents,
-} from "@/lib/recent";
+import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
 
@@ -156,7 +152,7 @@ export default function Catalog() {
           <p className={styles.title}>
             {term.semester} {term.year}
           </p>
-          <IconButton onClick={() => { }}>
+          <IconButton onClick={() => {}}>
             <Xmark />
           </IconButton>
         </div>

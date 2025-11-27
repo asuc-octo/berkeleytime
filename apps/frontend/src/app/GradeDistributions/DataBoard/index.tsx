@@ -9,7 +9,7 @@ import { IGradeDistribution } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
 
-interface HoverInfoProps {
+interface DataBoardProps {
   color: string;
   subject: string;
   courseNumber: string;
@@ -38,7 +38,7 @@ function addOrdinalSuffix(n: string) {
   }
 }
 
-export default function HoverInfo({
+export default function DataBoard({
   color,
   subject,
   courseNumber,
@@ -48,7 +48,7 @@ export default function HoverInfo({
   semester,
   year,
   hoveredLetter,
-}: HoverInfoProps) {
+}: DataBoardProps) {
   const { data: courseData } = useReadCourseGradeDist(subject, courseNumber);
   const { data: courseTitleData } = useReadCourseTitle(subject, courseNumber);
 

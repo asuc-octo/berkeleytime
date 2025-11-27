@@ -37,7 +37,7 @@ import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import CourseInput from "./CourseManager/CourseInput";
-import HoverInfo from "./HoverInfo";
+import DataBoard from "./DataBoard";
 import {
   DARK_COLORS,
   Input,
@@ -56,7 +56,7 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
 });
 
 type EnrollmentChartProps = {
-  data: { timeDelta: number;[key: string]: number | null }[] | undefined;
+  data: { timeDelta: number; [key: string]: number | null }[] | undefined;
   filteredOutputs: Output[];
   chartConfig: ChartConfig;
   activeOutput?: Output;
@@ -328,72 +328,72 @@ export default function Enrollment() {
    * `timeDelta` is in minutes since the first time data point of that selected class
    */
   const data:
-    | { timeDelta: number;[key: string]: number | null }[]
+    | { timeDelta: number; [key: string]: number | null }[]
     | undefined = useMemo(() => {
-      if (!outputs) return undefined;
+    if (!outputs) return undefined;
 
-      // set of all unique time deltas (in minutes). used to generate combined time series
-      const timeDeltas = new Set<number>();
+    // set of all unique time deltas (in minutes). used to generate combined time series
+    const timeDeltas = new Set<number>();
 
-      // list (one for each selected class) of mappings from time (prettified string) to enrollment data
-      const timeToEnrollmentMaps: Map<
+    // list (one for each selected class) of mappings from time (prettified string) to enrollment data
+    const timeToEnrollmentMaps: Map<
+      number,
+      { enrolledCount: number; waitlistedCount: number }
+    >[] = outputs.map((output) => {
+      // the first time data point, floored to the nearest minute
+      const firstTime = moment(output.data.history[0].startTime).startOf(
+        "minute"
+      );
+      const map = new Map<
         number,
         { enrolledCount: number; waitlistedCount: number }
-      >[] = outputs.map((output) => {
-        // the first time data point, floored to the nearest minute
-        const firstTime = moment(output.data.history[0].startTime).startOf(
-          "minute"
-        );
-        const map = new Map<
-          number,
-          { enrolledCount: number; waitlistedCount: number }
-        >();
-        for (const enrollment of output.data.history) {
-          const start = moment(enrollment.startTime).startOf("minute");
-          const end = moment(enrollment.endTime).startOf("minute");
-          const granularity = enrollment.granularitySeconds;
+      >();
+      for (const enrollment of output.data.history) {
+        const start = moment(enrollment.startTime).startOf("minute");
+        const end = moment(enrollment.endTime).startOf("minute");
+        const granularity = enrollment.granularitySeconds;
 
-          for (
-            let cur = start.clone();
-            !cur.isAfter(end);
-            cur.add(granularity, "seconds")
-          ) {
-            const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
-            timeDeltas.add(timeDelta);
+        for (
+          let cur = start.clone();
+          !cur.isAfter(end);
+          cur.add(granularity, "seconds")
+        ) {
+          const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
+          timeDeltas.add(timeDelta);
 
-            map.set(timeDelta, {
-              enrolledCount:
-                (enrollment.enrolledCount /
-                  (output.data.history[output.data.history.length - 1]
-                    .maxEnroll ?? 1)) *
-                100,
-              waitlistedCount:
-                (enrollment.waitlistedCount /
-                  (output.data.history[output.data.history.length - 1]
-                    .maxWaitlist ?? 1)) *
-                100,
-            });
-          }
+          map.set(timeDelta, {
+            enrolledCount:
+              (enrollment.enrolledCount /
+                (output.data.history[output.data.history.length - 1]
+                  .maxEnroll ?? 1)) *
+              100,
+            waitlistedCount:
+              (enrollment.waitlistedCount /
+                (output.data.history[output.data.history.length - 1]
+                  .maxWaitlist ?? 1)) *
+              100,
+          });
         }
-        return map;
-      });
+      }
+      return map;
+    });
 
-      return Array.from(timeDeltas)
-        .map((timeDelta) => {
-          const datapoint: { timeDelta: number;[key: string]: number | null } = {
-            timeDelta,
-          };
-          for (let i = 0; i < outputs.length; i++) {
-            const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[
-              i
-            ].get(timeDelta) || { enrolledCount: null, waitlistedCount: null };
-            datapoint[`enroll_${i}`] = enrolledCount;
-            datapoint[`waitlist_${i}`] = waitlistedCount;
-          }
-          return datapoint;
-        })
-        .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
-    }, [outputs]);
+    return Array.from(timeDeltas)
+      .map((timeDelta) => {
+        const datapoint: { timeDelta: number; [key: string]: number | null } = {
+          timeDelta,
+        };
+        for (let i = 0; i < outputs.length; i++) {
+          const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[
+            i
+          ].get(timeDelta) || { enrolledCount: null, waitlistedCount: null };
+          datapoint[`enroll_${i}`] = enrolledCount;
+          datapoint[`waitlist_${i}`] = waitlistedCount;
+        }
+        return datapoint;
+      })
+      .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
+  }, [outputs]);
 
   useEffect(() => {
     if (outputs.length > 0) {
@@ -530,7 +530,7 @@ export default function Enrollment() {
             </Boundary>
           ) : sidebarOutputs?.[0] ? (
             sidebarOutputs.map((output: Output, i: number) => (
-              <HoverInfo
+              <DataBoard
                 key={i}
                 color={output.color}
                 subject={output.input.subject}
@@ -543,7 +543,7 @@ export default function Enrollment() {
               />
             ))
           ) : (
-            <HoverInfo
+            <DataBoard
               color={"#aaa"}
               subject={"No Class"}
               courseNumber={"Selected"}

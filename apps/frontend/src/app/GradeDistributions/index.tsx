@@ -32,7 +32,7 @@ import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseInput from "./CourseManager/CourseInput";
-import HoverInfo from "./HoverInfo";
+import DataBoard from "./DataBoard";
 
 type Output = CourseOutput<Input, IGradeDistribution>;
 
@@ -59,10 +59,10 @@ const fetchGradeDistribution = async (
 
 const transformGradeDistributionData = (
   filteredOutputs: Output[]
-): Array<{ letter: string;[key: number]: number }> => {
+): Array<{ letter: string; [key: number]: number }> => {
   const letterMap = new Map<
     string,
-    { letter: string;[key: number]: number }
+    { letter: string; [key: number]: number }
   >();
 
   // Initialize map with all grade letters
@@ -84,7 +84,7 @@ const transformGradeDistributionData = (
 };
 
 type GradeChartProps = {
-  data: Array<{ letter: string;[key: number]: number }>;
+  data: Array<{ letter: string; [key: number]: number }>;
   filteredOutputs: Output[];
   chartConfig: ChartConfig;
   activeOutput?: Output;
@@ -139,11 +139,11 @@ const GradeChart = memo(
                   const filteredPayload =
                     activeIndex >= 0
                       ? props.payload?.filter(
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (item: any) =>
-                          String(item.dataKey ?? item.name) ===
-                          activeIndex.toString()
-                      )
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          (item: any) =>
+                            String(item.dataKey ?? item.name) ===
+                            activeIndex.toString()
+                        )
                       : props.payload;
 
                   const tooltipConfig = {
@@ -309,8 +309,8 @@ const GradeDistributions = () => {
             {outputs.map((output, index) => {
               const instructor =
                 output.input.type &&
-                  output.input.familyName &&
-                  output.input.givenName
+                output.input.familyName &&
+                output.input.givenName
                   ? `${output.input.givenName} ${output.input.familyName}`
                   : "All instructors";
 
@@ -361,7 +361,7 @@ const GradeDistributions = () => {
             </Boundary>
           ) : sidebarOutputs?.[0] ? (
             sidebarOutputs.map((output: Output, i: number) => (
-              <HoverInfo
+              <DataBoard
                 key={i}
                 color={output.color}
                 subject={output.input.subject}
@@ -371,7 +371,7 @@ const GradeDistributions = () => {
               />
             ))
           ) : (
-            <HoverInfo
+            <DataBoard
               color={"#aaa"}
               subject={"No Class"}
               courseNumber={"Selected"}

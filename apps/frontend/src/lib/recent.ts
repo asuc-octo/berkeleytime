@@ -54,16 +54,16 @@ interface RecentPageUrl {
 export type Recent<T extends RecentType> = T extends RecentType.Class
   ? RecentClass
   : T extends RecentType.Schedule
-  ? RecentSchedule
-  : T extends RecentType.Course
-  ? RecentCourse
-  : T extends RecentType.CatalogTerm
-  ? RecentCatalogTerm
-  : T extends RecentType.GradesPage
-  ? RecentPageUrl
-  : T extends RecentType.EnrollmentPage
-  ? RecentPageUrl
-  : never;
+    ? RecentSchedule
+    : T extends RecentType.Course
+      ? RecentCourse
+      : T extends RecentType.CatalogTerm
+        ? RecentCatalogTerm
+        : T extends RecentType.GradesPage
+          ? RecentPageUrl
+          : T extends RecentType.EnrollmentPage
+            ? RecentPageUrl
+            : never;
 
 export const getRecents = <T extends RecentType>(
   type: T,
@@ -71,8 +71,7 @@ export const getRecents = <T extends RecentType>(
 ) => {
   try {
     const storage =
-      type === RecentType.GradesPage ||
-      type === RecentType.EnrollmentPage
+      type === RecentType.GradesPage || type === RecentType.EnrollmentPage
         ? sessionStorage
         : localStorage;
 
@@ -91,10 +90,7 @@ export const getRecents = <T extends RecentType>(
       }) as Recent<T>[];
     }
 
-    if (
-      type === RecentType.GradesPage ||
-      type === RecentType.EnrollmentPage
-    ) {
+    if (type === RecentType.GradesPage || type === RecentType.EnrollmentPage) {
       const ONE_HOUR = 60 * 60 * 1000;
       const now = Date.now();
 
@@ -138,10 +134,7 @@ export const addRecent = <T extends RecentType>(
     (recent as RecentCatalogTerm).timestamp = Date.now();
   }
 
-  if (
-    type === RecentType.GradesPage ||
-    type === RecentType.EnrollmentPage
-  ) {
+  if (type === RecentType.GradesPage || type === RecentType.EnrollmentPage) {
     (recent as RecentPageUrl).timestamp = Date.now();
   }
 
@@ -149,8 +142,7 @@ export const addRecent = <T extends RecentType>(
 
   const item = JSON.stringify(recents.slice(0, MaxLength[type]));
   const storage =
-    type === RecentType.GradesPage ||
-    type === RecentType.EnrollmentPage
+    type === RecentType.GradesPage || type === RecentType.EnrollmentPage
       ? sessionStorage
       : localStorage;
 
@@ -167,8 +159,7 @@ export const removeRecent = <T extends RecentType>(
 
   const item = JSON.stringify(recents);
   const storage =
-    type === RecentType.GradesPage ||
-    type === RecentType.EnrollmentPage
+    type === RecentType.GradesPage || type === RecentType.EnrollmentPage
       ? sessionStorage
       : localStorage;
 
@@ -177,9 +168,7 @@ export const removeRecent = <T extends RecentType>(
 
 // Helper functions for page URL persistence
 export const savePageUrl = (
-  type:
-    | RecentType.GradesPage
-    | RecentType.EnrollmentPage,
+  type: RecentType.GradesPage | RecentType.EnrollmentPage,
   url: string
 ) => {
   addRecent(type, {
@@ -189,9 +178,7 @@ export const savePageUrl = (
 };
 
 export const getPageUrl = (
-  type:
-    | RecentType.GradesPage
-    | RecentType.EnrollmentPage
+  type: RecentType.GradesPage | RecentType.EnrollmentPage
 ): string | null => {
   const saved = getRecents(type) as RecentPageUrl[];
   return saved[0]?.url ?? null;

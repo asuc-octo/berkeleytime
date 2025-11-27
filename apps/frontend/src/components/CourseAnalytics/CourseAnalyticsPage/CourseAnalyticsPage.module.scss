@@ -15,11 +15,6 @@
   gap: 48px;
 
   @media (max-width: 1000px) {
-    padding-top: 24px;
-    gap: 24px;
-  }
-
-  @media (max-width: 600px) {
     padding-top: 16px;
     gap: 16px;
     margin-bottom: 48px;
@@ -35,10 +30,6 @@
   @media (max-width: 1000px) {
     flex-direction: column;
     align-items: stretch;
-    gap: 24px;
-  }
-
-  @media (max-width: 600px) {
     gap: 16px;
   }
 }
@@ -48,11 +39,11 @@
   padding-left: 64px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .bottomTitle {
-  font-size: var(--text-16);
+  font-size: var(--text-14);
   font-weight: var(--font-normal);
   color: var(--heading-color);
 }
@@ -93,10 +84,6 @@
     min-width: 0;
     max-width: none;
     padding-left: 64px;
-  }
-
-  @media (max-width: 600px) {
-    display: none;
   }
 }
 
