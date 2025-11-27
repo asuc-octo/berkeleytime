@@ -32,7 +32,7 @@ import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseInput from "./CourseManager/CourseInput";
-import HoverInfo from "./HoverInfo";
+import DataBoard from "./DataBoard";
 
 type Output = CourseOutput<Input, IGradeDistribution>;
 
@@ -215,9 +215,7 @@ const GradeDistributions = () => {
   // Save current URL to localStorage whenever it changes
   useEffect(() => {
     const currentUrl = location.search;
-    if (currentUrl) {
-      savePageUrl(RecentType.GradesPage, currentUrl);
-    }
+    savePageUrl(RecentType.GradesPage, currentUrl);
   }, [location.search]);
 
   // Update URL to match the restored state
@@ -292,6 +290,20 @@ const GradeDistributions = () => {
     <>
       <CourseAnalyticsPage
         courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
+        bottomTitle="% of Students vs Grade Received"
+        bottomDescription={
+          <>
+            We source our course grade data from Berkeley's official{" "}
+            <a
+              href="https://calanswers.berkeley.edu/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              CalAnswers
+            </a>{" "}
+            database.
+          </>
+        }
         courseCards={
           <>
             {outputs.map((output, index) => {
@@ -342,14 +354,14 @@ const GradeDistributions = () => {
             />
           )
         }
-        hoverInfo={
+        dataBoard={
           loading ? (
             <Boundary>
               <LoadingIndicator size="md" />
             </Boundary>
           ) : sidebarOutputs?.[0] ? (
             sidebarOutputs.map((output: Output, i: number) => (
-              <HoverInfo
+              <DataBoard
                 key={i}
                 color={output.color}
                 subject={output.input.subject}
@@ -359,7 +371,7 @@ const GradeDistributions = () => {
               />
             ))
           ) : (
-            <HoverInfo
+            <DataBoard
               color={"#aaa"}
               subject={"No Class"}
               courseNumber={"Selected"}

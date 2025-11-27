@@ -4,18 +4,23 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding-bottom: 12px;
 
   @media (max-width: 1000px) {
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: flex-start;
-    gap: 48px;
+    gap: 0;
   }
 
   .classInfo {
     display: flex;
     flex-direction: column;
     gap: 8px;
+
+    @media (max-width: 1000px) {
+      display: none;
+    }
 
     .heading {
       font-weight: var(--font-medium);
@@ -40,8 +45,37 @@
     }
   }
 
+  .compactTitle {
+    display: none;
+
+    @media (max-width: 1000px) {
+      display: inline-flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+
+      .compactTitleLeft {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .compactCourseTitle {
+        color: var(--heading-color);
+        font-size: var(--text-18);
+        font-weight: var(--font-medium);
+      }
+
+      .compactMetadata {
+        font-size: var(--text-16);
+        color: var(--paragraph-color);
+      }
+    }
+  }
+
   .label {
-    font-weight: var(--font-semibold);
+    font-weight: var(--font-normal);
     color: var(--heading-color);
     font-size: var(--text-14);
   }

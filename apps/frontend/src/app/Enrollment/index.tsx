@@ -37,7 +37,7 @@ import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import CourseInput from "./CourseManager/CourseInput";
-import HoverInfo from "./HoverInfo";
+import DataBoard from "./DataBoard";
 import {
   DARK_COLORS,
   Input,
@@ -54,12 +54,6 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   hour12: true,
   timeZone: "America/Los_Angeles",
 });
-
-// Type alias for tooltip content function props
-type TooltipContentProps = Parameters<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Extract<ContentType<number, string>, (...args: any[]) => any>
->[0];
 
 type EnrollmentChartProps = {
   data: { timeDelta: number; [key: string]: number | null }[] | undefined;
@@ -277,9 +271,7 @@ export default function Enrollment() {
   // Save current URL to localStorage whenever it changes
   useEffect(() => {
     const currentUrl = location.search;
-    if (currentUrl) {
-      savePageUrl(RecentType.EnrollmentPage, currentUrl);
-    }
+    savePageUrl(RecentType.EnrollmentPage, currentUrl);
   }, [location.search]);
 
   // Update URL to match the restored state
@@ -464,6 +456,21 @@ export default function Enrollment() {
     <>
       <CourseAnalyticsPage
         courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
+        bottomTitle="% of Class Filled vs Days After Enrollment Begins"
+        bottomDescription={
+          <>
+            We source our historic course and enrollment data directly from
+            Berkeley{" "}
+            <a
+              href="https://sis.berkeley.edu/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Student Information System's
+            </a>{" "}
+            Course and Class APIs.
+          </>
+        }
         courseCards={
           <>
             {outputs.map(({ input, ...rest }, index) => {
@@ -516,14 +523,14 @@ export default function Enrollment() {
             />
           )
         }
-        hoverInfo={
+        dataBoard={
           loading ? (
             <Boundary>
               <LoadingIndicator size="md" />
             </Boundary>
           ) : sidebarOutputs?.[0] ? (
             sidebarOutputs.map((output: Output, i: number) => (
-              <HoverInfo
+              <DataBoard
                 key={i}
                 color={output.color}
                 subject={output.input.subject}
@@ -536,7 +543,7 @@ export default function Enrollment() {
               />
             ))
           ) : (
-            <HoverInfo
+            <DataBoard
               color={"#aaa"}
               subject={"No Class"}
               courseNumber={"Selected"}

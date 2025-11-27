@@ -8,7 +8,7 @@ import { useReadCourseTitle } from "@/hooks/api";
 import { IEnrollment } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
-interface HoverInfoProps {
+interface DataBoardProps {
   color: string;
   subject: string;
   courseNumber: string;
@@ -27,7 +27,7 @@ const DisplayCount = (count: number, capacity: number) => {
   );
 };
 
-export default function HoverInfo({
+export default function DataBoard({
   color,
   subject,
   courseNumber,
@@ -36,15 +36,12 @@ export default function HoverInfo({
   year,
   instructors,
   hoveredDuration,
-}: HoverInfoProps) {
+}: DataBoardProps) {
   const { data: courseTitleData } = useReadCourseTitle(subject, courseNumber);
 
-  const { enrollmentSingular, timeString } = useMemo(() => {
+  const hoverData = useMemo(() => {
     if (!enrollmentHistory || !hoveredDuration) {
-      return {
-        enrollmentSingular: undefined,
-        timeString: "Select a time",
-      };
+      return null;
     }
 
     const firstTime = moment(enrollmentHistory.history[0].startTime).startOf(
@@ -82,6 +79,38 @@ export default function HoverInfo({
     };
   }, [hoveredDuration, enrollmentHistory]);
 
+  const metrics = useMemo(() => {
+    if (!hoverData || !hoverData.enrollmentSingular) {
+      return [];
+    }
+
+    const { enrollmentSingular, timeString } = hoverData;
+
+    return [
+      {
+        label: timeString,
+        value: (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div>
+              Enrolled:{" "}
+              {DisplayCount(
+                enrollmentSingular.enrolledCount,
+                enrollmentSingular.maxEnroll
+              )}
+            </div>
+            <div>
+              Waitlisted:{" "}
+              {DisplayCount(
+                enrollmentSingular.waitlistedCount,
+                enrollmentSingular.maxWaitlist
+              )}
+            </div>
+          </div>
+        ),
+      },
+    ];
+  }, [hoverData]);
+
   return (
     <CourseSideMetrics
       color={color}
@@ -98,31 +127,7 @@ export default function HoverInfo({
             }`
           : "No Semester or Instructor Data"
       }
-      metrics={[
-        {
-          label: timeString,
-          value: enrollmentSingular ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <div>
-                Enrolled:{" "}
-                {DisplayCount(
-                  enrollmentSingular.enrolledCount,
-                  enrollmentSingular.maxEnroll
-                )}
-              </div>
-              <div>
-                Waitlisted:{" "}
-                {DisplayCount(
-                  enrollmentSingular.waitlistedCount,
-                  enrollmentSingular.maxWaitlist
-                )}
-              </div>
-            </div>
-          ) : (
-            "No data"
-          ),
-        },
-      ]}
+      metrics={metrics}
     />
   );
 }

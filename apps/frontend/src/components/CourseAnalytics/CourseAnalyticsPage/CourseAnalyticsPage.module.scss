@@ -3,29 +3,69 @@
   background-color: var(--background-color);
 }
 
+.courseCards {
+  height: 105px;
+}
+
 .content {
   display: flex;
-  align-items: flex-start;
-  gap: 48px;
+  flex-direction: column;
   padding-top: 48px;
-  flex-wrap: nowrap;
-  margin-bottom: 80px;
+  padding-bottom: 80px;
+  gap: 48px;
 
   @media (max-width: 1000px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 24px;
-    padding-top: 24px;
-  }
-
-  @media (max-width: 600px) {
     padding-top: 16px;
     gap: 16px;
     margin-bottom: 48px;
   }
 }
 
-.hoverInfoContainer {
+.chartAndDataBoard {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  flex-wrap: nowrap;
+
+  @media (max-width: 1000px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+}
+
+.bottomComponent {
+  width: 100%;
+  padding-left: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bottomTitle {
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  color: var(--heading-color);
+}
+
+.bottomDescription {
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  color: var(--paragraph-color);
+
+  a {
+    color: var(--blue-500);
+    text-decoration: none;
+    font-weight: var(--font-normal);
+    transition: all 100ms ease-in-out;
+
+    &:hover {
+      color: var(--blue-hover);
+    }
+  }
+}
+
+.dataBoardContainer {
   flex: 0 1 320px;
   padding: 0;
   width: clamp(260px, 24vw, 360px);
@@ -43,15 +83,11 @@
     flex: none;
     min-width: 0;
     max-width: none;
-    padding: 24px;
-  }
-
-  @media (max-width: 600px) {
-    display: none;
+    padding-left: 64px;
   }
 }
 
-.hoverInfoCard {
+.dataBoard {
   border: none;
   border-radius: 0;
   padding: 0;
