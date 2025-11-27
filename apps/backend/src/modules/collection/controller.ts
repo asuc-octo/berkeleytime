@@ -1,3 +1,5 @@
+import { info } from "console";
+
 import {
   ClassModel,
   CollectionModel,
@@ -6,7 +8,6 @@ import {
 } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
-import { info } from "console";
 
 export const getCollectionOwner = async (ownerID: string) => {
   const collections = await CollectionModel.find({
@@ -84,15 +85,14 @@ export const modifyCollectionClass = async (
   const alreadyExists = collection.classes?.find((_class) => {
     const info = _class.info;
     return (
-        info?.year === input.class.year &&
-        info?.semester === input.class.semester &&
-        (info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
-        info?.subject === input.class.subject &&
-        info?.courseNumber === input.class.courseNumber &&
-        info?.number === input.class.number
+      info?.year === input.class.year &&
+      info?.semester === input.class.semester &&
+      (info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
+      info?.subject === input.class.subject &&
+      info?.courseNumber === input.class.courseNumber &&
+      info?.number === input.class.number
     );
   });
-
 
   if (input.add) {
     if (alreadyExists) throw new Error("Class already exists in collection");
@@ -112,7 +112,8 @@ export const modifyCollectionClass = async (
     collection.classes?.push(newClass);
   } else {
     if (!alreadyExists) throw new Error("Class does not exist in collection");
-    if (!collection.classes) throw new Error("Class does not exist in collection");
+    if (!collection.classes)
+      throw new Error("Class does not exist in collection");
     collection.classes?.pull(alreadyExists);
   }
   await collection.save();

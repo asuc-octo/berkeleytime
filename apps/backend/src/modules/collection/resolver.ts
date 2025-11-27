@@ -1,8 +1,8 @@
 import {
-  modifyCollectionClass,
   createCollection,
   getCollectionOwner,
   getCollectionViewer,
+  modifyCollectionClass,
   modifyCollectionComment,
 } from "./controller";
 import { CollectionModule } from "./generated-types/module-types";
