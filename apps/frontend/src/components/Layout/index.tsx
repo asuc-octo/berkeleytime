@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 
 import Banner from "./Banner";
-import Feedback from "./Feedback";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {
@@ -23,7 +22,6 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
         <Outlet />
       </Flex>
       {footer && <Footer />}
-      <Feedback />
     </Flex>
   );
 }
