@@ -29,7 +29,7 @@
     color: white;
 
     &:hover {
-      background-color: var(--blue-600);
+      background-color: var(--blue-hover);
     }
 
     &:active {
@@ -73,7 +73,7 @@
 
     &:hover {
       background-color: var(--button-hover-color);
-      color: var(--blue-600);
+      color: var(--blue-hover);
     }
 
     &:active {

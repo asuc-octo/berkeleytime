@@ -28,11 +28,7 @@
     color: white;
 
     &:hover:not([data-disabled="true"]) {
-      background-color: var(--blue-600);
-
-      @media (prefers-color-scheme: dark) {
-        background-color: var(--blue-400);
-      }
+      background-color: var(--blue-hover);
     }
 
     .meta {
