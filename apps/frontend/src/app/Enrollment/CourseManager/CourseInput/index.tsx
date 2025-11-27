@@ -33,9 +33,7 @@ const formatSectionNumber = (sectionNumber: string): string => {
 };
 
 // Encode class data into a string value for the select
-const encodeClassValue = (
-  classData: ICourseWithInstructorClass
-): string => {
+const encodeClassValue = (classData: ICourseWithInstructorClass): string => {
   return JSON.stringify({
     semester: classData.semester,
     year: classData.year,
@@ -248,7 +246,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           disabled={disabled || !selectedCourse}
           searchable
           searchPlaceholder="Search semesters..."
-          placeholder={!selectedCourse ? "Select a class first" : "Select a semester"}
+          placeholder={
+            !selectedCourse ? "Select a class first" : "Select a semester"
+          }
           value={!selectedCourse ? null : selectedValue}
           onChange={(s) => {
             if (Array.isArray(s)) return;
