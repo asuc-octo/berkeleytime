@@ -20,6 +20,7 @@ import {
   type CourseOutput,
   DARK_COLORS,
   type Input,
+  InputType,
   LIGHT_COLORS,
   getInputSearchParam,
 } from "@/components/CourseAnalytics/types";
@@ -307,17 +308,13 @@ const GradeDistributions = () => {
         courseCards={
           <>
             {outputs.map((output, index) => {
-              const instructor =
-                output.input.type &&
-                output.input.familyName &&
-                output.input.givenName
-                  ? `${output.input.givenName} ${output.input.familyName}`
-                  : "All instructors";
-
-              const semester =
-                output.input.type && output.input.semester && output.input.year
-                  ? `${output.input.semester} ${output.input.year}`
-                  : "All semesters";
+              // Simplified metadata: show what type of filter is applied
+              let metadata = "All Results";
+              if (output.input.type === InputType.Instructor) {
+                metadata = `${output.input.givenName} ${output.input.familyName}`;
+              } else if (output.input.type === InputType.Term) {
+                metadata = `${output.input.semester} ${output.input.year}`;
+              }
 
               return (
                 <CourseSelectionCard
@@ -325,7 +322,7 @@ const GradeDistributions = () => {
                   color={output.color}
                   subject={output.input.subject}
                   number={output.input.courseNumber}
-                  metadata={`${semester} • ${instructor}`}
+                  metadata={metadata}
                   gradeDistribution={output.data}
                   onClick={() => updateActive(index, !output.active)}
                   onClickDelete={() => remove(index)}

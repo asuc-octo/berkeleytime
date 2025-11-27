@@ -33,17 +33,10 @@ interface CourseInputProps {
   setOutputs: Dispatch<SetStateAction<Output[]>>;
 }
 
-const DEFAULT_SELECTED_INSTRUCTOR = { value: "all", label: "All Instructors" };
-const DEFAULT_SELECTED_SEMESTER = { value: "all", label: "All Semesters" };
-const DEFAULT_BY_OPTION = {
-  value: InputType.Instructor,
-  label: "By Instructor",
-};
-
-const TYPE_OPTIONS = [
-  { value: InputType.Instructor, label: "By Instructor" },
-  { value: InputType.Term, label: "By Semester" },
-];
+const FILTER_TABS = {
+  Instructor: "instructor",
+  Semester: "semester",
+} as const;
 
 const buildSemesterValue = (
   year: number,
@@ -75,16 +68,12 @@ const parseSemesterValue = (
   }
 };
 
-const formatSemesterLabel = (semester: string, year: number) =>
-  `${semester} ${year}`;
-
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const semesterSelectRef = useRef<SelectHandle>(null);
-  const instructorSelectRef = useRef<SelectHandle>(null);
+  const filterSelectRef = useRef<SelectHandle>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -100,95 +89,41 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     }
   );
 
-  const [selectedType, setSelectedType] = useState<string | null>(
-    DEFAULT_BY_OPTION.value
-  );
+  const [activeTab, setActiveTab] = useState<string>(FILTER_TABS.Instructor);
+  const [selectedValue, setSelectedValue] = useState<string | null>("all");
 
-  const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
-    null
-  );
+  // Build instructor options from course data
+  const instructorOptions = useMemo(() => {
+    const allOption = { value: "all", label: "All Results" };
+    if (!course) return [allOption];
 
-  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
-
-  // some crazy cyclic dependencies here, averted by the fact that options changes
-  // depend on the value of the "byData"
-  const getInstructorOptions = (
-    semester: string | null = null,
-    shouldSetSelectedInstructor = true
-  ) => {
-    const list = [DEFAULT_SELECTED_INSTRUCTOR];
-    if (!course) return list;
-
-    const localSelectedSemester = semester ? semester : selectedSemester;
-    const selectedTerm = parseSemesterValue(localSelectedSemester);
-
-    const instructorSet = new Set();
-    course?.classes.forEach((c) => {
-      // get only current semester if getting by semester
+    const instructorMap = new Map<string, string>();
+    course.classes.forEach((c) => {
       if (!c.gradeDistribution.average) return;
-      if (selectedType === InputType.Term) {
-        if (!selectedTerm) return;
-        if (
-          c.year !== selectedTerm.year ||
-          c.semester !== selectedTerm.semester ||
-          c.sessionId !== selectedTerm.sessionId
-        )
-          return;
-      }
       if (!c.primarySection) return;
       c.primarySection.meetings.forEach((m) => {
         m.instructors.forEach((i) => {
-          instructorSet.add(`${i.familyName}, ${i.givenName}`);
+          const key = `${i.familyName}, ${i.givenName}`;
+          const displayName = `${i.givenName} ${i.familyName}`;
+          instructorMap.set(key, displayName);
         });
       });
     });
-    const opts = [...instructorSet].map((v) => {
-      // value remains "Family, Given" for parsing, label is "Given Family" for display
-      const [family, given] = (v as string).split(", ");
-      const label = given && family ? `${given} ${family}` : (v as string);
-      return { value: v as string, label };
-    });
-    if (opts.length === 1 && selectedType === InputType.Term) {
-      // If only one choice, select it
-      if (selectedInstructor !== opts[0].value && shouldSetSelectedInstructor)
-        setSelectedInstructor(opts[0].value);
-      return opts;
-    }
-    return [...list, ...opts];
-  };
 
-  const instructorOptions = useMemo(getInstructorOptions, [
-    course,
-    selectedSemester,
-    selectedType,
-    selectedInstructor,
-  ]);
+    const instructorOpts = Array.from(instructorMap.entries()).map(
+      ([value, label]) => ({ value, label })
+    );
 
-  const getSemesterOptions = (
-    instructor: string | null = null,
-    shouldSetSelectedSemester = true
-  ) => {
-    const list = [DEFAULT_SELECTED_SEMESTER];
-    if (!course) return list;
-    const localSelectedInstructor = instructor
-      ? instructor
-      : selectedInstructor;
-    const filteredClasses =
-      selectedType === InputType.Term
-        ? course.classes // all if by semester
-        : localSelectedInstructor === "all"
-          ? []
-          : course.classes.filter((c) =>
-              c.primarySection?.meetings.find((m) =>
-                m.instructors.find(
-                  (i) =>
-                    localSelectedInstructor ===
-                    `${i.familyName}, ${i.givenName}`
-                )
-              )
-            );
+    return [allOption, ...instructorOpts];
+  }, [course]);
+
+  // Build semester options from course data
+  const semesterOptions = useMemo(() => {
+    const allOption = { value: "all", label: "All Results" };
+    if (!course) return [allOption];
+
     const seen = new Set<string>();
-    const uniqueClasses = filteredClasses
+    const uniqueClasses = course.classes
       .filter(({ sessionId }) => !!sessionId)
       .filter(({ gradeDistribution }) => gradeDistribution.average)
       .filter(({ year, semester }) => {
@@ -198,111 +133,57 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         return true;
       })
       .toSorted(sortByTermDescending);
-    const filteredOptions = uniqueClasses.map((t) => ({
-      value: buildSemesterValue(t.year, t.semester, t.sessionId),
-      label: formatSemesterLabel(t.semester, t.year),
-    }));
-    if (filteredOptions.length == 1) {
-      // if only one option, select it
-      if (
-        selectedSemester != filteredOptions[0].value &&
-        shouldSetSelectedSemester
-      )
-        setSelectedSemester(filteredOptions[0].value);
-      return filteredOptions;
-    }
-    return [...list, ...filteredOptions];
-  };
 
-  const semesterOptions = useMemo(getSemesterOptions, [
-    course,
-    selectedInstructor,
-    selectedType,
-    selectedSemester,
-  ]);
+    const semesterOpts = uniqueClasses.map((t) => ({
+      value: buildSemesterValue(t.year, t.semester, t.sessionId),
+      label: `${t.semester} ${t.year}`,
+    }));
+
+    return [allOption, ...semesterOpts];
+  }, [course]);
 
   const add = async () => {
-    let input: Input;
-
-    if (
-      !selectedInstructor ||
-      !selectedCourse ||
-      !selectedSemester ||
-      !selectedType
-    )
-      return;
+    if (!selectedCourse || !selectedValue) return;
 
     addRecent(RecentType.Course, {
       subject: selectedCourse.subject,
       number: selectedCourse.number,
     });
 
-    // Course input
-    if (selectedInstructor === "all" && selectedSemester === "all") {
+    let input: Input;
+
+    // "All Results" in either tab = course-level aggregate
+    if (selectedValue === "all") {
       input = {
         subject: selectedCourse.subject,
         courseNumber: selectedCourse.number,
       };
     }
-    // Term input
-    else if (selectedType === InputType.Term) {
-      const parsedTerm = parseSemesterValue(selectedSemester);
+    // By Instructor tab - selected specific instructor
+    else if (activeTab === FILTER_TABS.Instructor) {
+      const [familyName, givenName] = selectedValue.split(", ");
+      input = {
+        subject: selectedCourse.subject,
+        courseNumber: selectedCourse.number,
+        type: InputType.Instructor,
+        familyName,
+        givenName,
+      };
+    }
+    // By Semester tab - selected specific semester
+    else {
+      const parsedTerm = parseSemesterValue(selectedValue);
       if (!parsedTerm) return;
       const { semester, year, sessionId } = parsedTerm;
 
-      if (selectedInstructor === "all") {
-        input = {
-          subject: selectedCourse.subject,
-          courseNumber: selectedCourse.number,
-          type: InputType.Term,
-          year,
-          semester: semester as Semester,
-          sessionId,
-        };
-      } else {
-        const [familyName, givenName] = selectedInstructor.split(", ");
-
-        input = {
-          subject: selectedCourse.subject,
-          courseNumber: selectedCourse.number,
-          type: InputType.Term,
-          year,
-          semester: semester as Semester,
-          familyName,
-          givenName,
-          sessionId,
-        };
-      }
-    }
-
-    // Instructor input
-    else {
-      const [familyName, givenName] = selectedInstructor.split(", ");
-
-      if (selectedSemester === "all") {
-        input = {
-          subject: selectedCourse.subject,
-          courseNumber: selectedCourse.number,
-          type: InputType.Instructor,
-          familyName,
-          givenName,
-        };
-      } else {
-        const parsedTerm = parseSemesterValue(selectedSemester);
-        if (!parsedTerm) return;
-        const { semester, year, sessionId } = parsedTerm;
-
-        input = {
-          subject: selectedCourse.subject,
-          courseNumber: selectedCourse.number,
-          type: InputType.Instructor,
-          year,
-          semester: semester as Semester,
-          familyName,
-          givenName,
-          sessionId,
-        };
-      }
+      input = {
+        subject: selectedCourse.subject,
+        courseNumber: selectedCourse.number,
+        type: InputType.Term,
+        year,
+        semester: semester as Semester,
+        sessionId,
+      };
     }
 
     // Do not fetch duplicates
@@ -333,7 +214,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         hidden: false,
         active: false,
         color: availableColor,
-        // TODO: Error handling
         data: response.data!.grade,
         input,
       };
@@ -350,16 +230,12 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
       // Reset selectors back to defaults after adding a course
       setSelectedCourse(null);
-      setSelectedInstructor(null);
-      setSelectedSemester(null);
-      setSelectedType(DEFAULT_BY_OPTION.value);
+      setSelectedValue(null);
+      setActiveTab(FILTER_TABS.Instructor);
 
       setLoading(false);
     } catch {
-      // TODO: Error handling
-
       setLoading(false);
-
       return;
     }
   };
@@ -371,117 +247,69 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
-
-    setSelectedInstructor(null);
-    setSelectedSemester(null);
-    if (selectedType === InputType.Instructor) {
-      instructorSelectRef.current?.focus();
-      instructorSelectRef.current?.openMenu();
-    } else {
-      semesterSelectRef.current?.focus();
-      semesterSelectRef.current?.openMenu();
-    }
+    setSelectedValue("all");
+    filterSelectRef.current?.focus();
+    filterSelectRef.current?.openMenu();
   };
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedInstructor(null);
-    setSelectedSemester(null);
+    setSelectedValue(null);
   };
 
   return (
     <Flex direction="row" gap="3">
-      <Box flexGrow="1">
+      <Box style={{ width: "350px" }}>
         <CourseSelect
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
           selectedCourse={selectedCourse}
         />
       </Box>
-      <Box flexGrow="1">
+      <Box style={{ width: "350px" }}>
         <Select
-          options={TYPE_OPTIONS}
-          disabled={disabled || !selectedCourse}
-          value={selectedType}
-          onChange={(s) => {
-            setSelectedInstructor(null);
-            setSelectedSemester(null);
-            if (!Array.isArray(s)) setSelectedType(s);
-            if (s === InputType.Instructor) {
-              instructorSelectRef.current?.focus();
-              instructorSelectRef.current?.openMenu();
-            } else {
-              semesterSelectRef.current?.focus();
-              semesterSelectRef.current?.openMenu();
-            }
-          }}
+          ref={filterSelectRef}
           variant="foreground"
+          searchable
+          placeholder={!selectedCourse ? "Select a class first" : undefined}
+          searchPlaceholder={
+            activeTab === FILTER_TABS.Instructor
+              ? "Search instructors"
+              : "Search semesters"
+          }
+          emptyMessage={
+            activeTab === FILTER_TABS.Instructor
+              ? "No instructors found"
+              : "No semesters found"
+          }
+          disabled={disabled || !selectedCourse}
+          tabs={[
+            {
+              value: FILTER_TABS.Instructor,
+              label: "By Instructor",
+              options: instructorOptions,
+            },
+            {
+              value: FILTER_TABS.Semester,
+              label: "By Semester",
+              options: semesterOptions,
+            },
+          ]}
+          value={!selectedCourse ? null : selectedValue}
+          defaultTab={FILTER_TABS.Instructor}
+          onTabChange={(tabValue) => {
+            setActiveTab(tabValue);
+            setSelectedValue("all");
+          }}
+          onChange={(newValue) => {
+            if (Array.isArray(newValue) || !newValue) return;
+            setSelectedValue(newValue);
+          }}
         />
       </Box>
-      <Flex
-        direction={
-          selectedType === InputType.Instructor ? "row" : "row-reverse"
-        }
-        flexGrow="1"
-        gap="4"
-      >
-        <Box flexGrow="1">
-          <Select
-            ref={instructorSelectRef}
-            options={instructorOptions}
-            disabled={disabled || !selectedCourse}
-            searchable
-            searchPlaceholder="Search instructors..."
-            placeholder="Select instructors"
-            value={selectedInstructor}
-            onChange={(s) => {
-              if (Array.isArray(s) || !s) return;
-              setSelectedInstructor(s);
-              const localSemesterOptions = getSemesterOptions(s, false);
-              if (
-                selectedType === InputType.Instructor &&
-                localSemesterOptions.length > 1
-              ) {
-                semesterSelectRef.current?.focus();
-                semesterSelectRef.current?.openMenu();
-              }
-            }}
-            variant="foreground"
-          />
-        </Box>
-        <Box flexGrow="1">
-          <Select
-            ref={semesterSelectRef}
-            options={semesterOptions}
-            disabled={disabled || !selectedCourse}
-            searchable
-            searchPlaceholder="Search semesters..."
-            placeholder="Select semesters"
-            value={selectedSemester}
-            onChange={(s) => {
-              if (Array.isArray(s)) return;
-              setSelectedSemester(s);
-              const localInstructorOptions = getInstructorOptions(s, false);
-              if (
-                selectedType === InputType.Term &&
-                localInstructorOptions.length > 1
-              ) {
-                instructorSelectRef.current?.focus();
-                instructorSelectRef.current?.openMenu();
-              }
-            }}
-            variant="foreground"
-          />
-        </Box>
-      </Flex>
       <Button
         onClick={() => add()}
-        disabled={
-          disabled ||
-          !selectedCourse ||
-          !selectedInstructor ||
-          !selectedSemester
-        }
+        disabled={disabled || !selectedCourse || !selectedValue}
         className={styles.addButton}
       >
         Add course
