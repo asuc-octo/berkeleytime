@@ -129,8 +129,8 @@ export const checkConstraint = (
 export function formatInstructorText(
   primarySection:
     | {
-        meetings: Array<{
-          instructors: Array<{
+        meetings?: Array<{
+          instructors?: Array<{
             givenName?: string | null;
             familyName?: string | null;
           }>;
@@ -139,20 +139,22 @@ export function formatInstructorText(
     | null
     | undefined
 ): string {
-  if (!primarySection) {
+  if (!primarySection || !primarySection.meetings) {
     return "(No instructor)";
   }
 
   const allInstructors: Array<{ givenName: string; familyName: string }> = [];
   primarySection.meetings.forEach((meeting) => {
-    meeting.instructors.forEach((instructor) => {
-      if (instructor.familyName && instructor.givenName) {
-        allInstructors.push({
-          givenName: instructor.givenName,
-          familyName: instructor.familyName,
-        });
-      }
-    });
+    if (meeting.instructors) {
+      meeting.instructors.forEach((instructor) => {
+        if (instructor.familyName && instructor.givenName) {
+          allInstructors.push({
+            givenName: instructor.givenName,
+            familyName: instructor.familyName,
+          });
+        }
+      });
+    }
   });
 
   if (allInstructors.length === 0) {

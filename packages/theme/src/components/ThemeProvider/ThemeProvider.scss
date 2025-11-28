@@ -290,6 +290,7 @@
   --rose-950: #4c0519;
 
   // Font sizes (rem based on 16px base)
+  --text-12: 0.75rem; // 12px
   --text-14: 0.875rem; // 14px
   --text-16: 1rem; // 16px
   --text-18: 1.125rem; // 18px
@@ -381,6 +382,8 @@
   --cancel-hover-color: var(--light-cancel-hover-color);
   --cancel-accent-color: var(--light-cancel-accent-color);
 
+  --blue-hover: var(--blue-600);
+
   // badges
   --slate-badge: var(--slate-500);
   --gray-badge: var(--gray-500);
@@ -430,6 +433,8 @@
   --cancel-color: var(--dark-cancel-color);
   --cancel-hover-color: var(--dark-cancel-hover-color);
   --cancel-accent-color: var(--dark-cancel-accent-color);
+
+  --blue-hover: var(--blue-400);
 
   // badges
   --slate-badge: var(--slate-300);

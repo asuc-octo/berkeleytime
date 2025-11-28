@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from "react";
 
 import _ from "lodash";
 
-import { ICourse } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import { Semester, TemporalPosition } from "@/lib/generated/graphql";
 
@@ -13,6 +12,7 @@ interface Term {
   label: string;
   semester: Semester;
   year: number;
+  classNumber?: string;
 }
 
 interface TermsData {
@@ -22,10 +22,10 @@ interface TermsData {
 }
 
 interface UseTermFilteringOptions {
-  availableTerms: Term[];
+  availableTerms?: Term[];
   termsData?: TermsData[];
   // For course-specific filtering (e.g., in RatingGrowthModal)
-  selectedCourse?: ICourse | null;
+  selectedCourse?: { subject: string; number: string } | null;
   courseData?: {
     classes?: Array<{
       semester: string;
@@ -46,12 +46,22 @@ interface UseTermFilteringOptions {
 }
 
 export function useTermFiltering({
-  availableTerms,
+  availableTerms = [],
   termsData,
   selectedCourse,
   courseData,
 }: UseTermFilteringOptions) {
   const hasAutoSelected = useRef(false);
+
+  const normalizeTerm = (term: Term): Term => {
+    if (term.classNumber) return term;
+    const parts = term.value.trim().split(" ");
+    const last = parts[parts.length - 1] ?? "";
+    return {
+      ...term,
+      classNumber: last || undefined,
+    };
+  };
 
   // Filter for past terms
   const pastTerms = useMemo(() => {
@@ -64,25 +74,33 @@ export function useTermFiltering({
       },
       {}
     );
-    return availableTerms.filter((term) => {
-      const key = `${term.semester} ${term.year}`;
-      const position = termPositions[key];
+    return availableTerms
+      .filter((term) => {
+        const key = `${term.semester} ${term.year}`;
+        const position = termPositions[key];
 
-      if (!position) return true;
+        if (!position) return true;
 
-      return (
-        position === TemporalPosition.Past ||
-        position === TemporalPosition.Current
-      );
-    });
+        return (
+          position === TemporalPosition.Past ||
+          position === TemporalPosition.Current
+        );
+      })
+      .map(normalizeTerm);
   }, [availableTerms, termsData]);
 
   // Filter for course-specific terms (when a course is selected)
   const filteredSemesters = useMemo(() => {
     if (!selectedCourse || !courseData) return pastTerms;
 
-    const courseTerms: Term[] = (courseData.classes ?? [])
-      .toSorted(sortByTermDescending)
+    // Deduplicate early by semester + year + instructor (before mapping)
+    const uniqueClasses = _.uniqBy(
+      courseData.classes ?? [],
+      (c) => `${c.semester} ${c.year} ${formatInstructorText(c.primarySection)}`
+    );
+
+    const courseTerms: Term[] = uniqueClasses
+      .sort(sortByTermDescending)
       .filter((c) => c.anyPrintInScheduleOfClasses !== false)
       .filter((c) => {
         if (c.primarySection?.startDate) {
@@ -93,28 +111,19 @@ export function useTermFiltering({
         return true;
       })
       .map((c) => {
-        // Format instructor text only if primarySection has meetings structure
-        const instructorText = c.primarySection?.meetings
-          ? formatInstructorText(
-              c.primarySection as {
-                meetings: {
-                  instructors: {
-                    givenName?: string | null;
-                    familyName?: string | null;
-                  }[];
-                }[];
-              }
-            )
-          : "";
+        // Format instructor text - formatInstructorText handles null/undefined cases
+        const instructorText = formatInstructorText(c.primarySection);
         return {
           value: `${c.semester} ${c.year} ${c.number}`,
           label: `${c.semester} ${c.year} ${instructorText}`,
           semester: c.semester as Semester,
           year: c.year,
+          classNumber: c.number,
         } satisfies Term;
-      });
+      })
+      .map(normalizeTerm);
 
-    return _.uniqBy(courseTerms, (term) => term.label);
+    return courseTerms;
   }, [selectedCourse, courseData, pastTerms]);
 
   // Reset auto-selection flag when course changes

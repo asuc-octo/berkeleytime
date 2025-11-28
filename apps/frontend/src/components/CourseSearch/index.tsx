@@ -119,7 +119,7 @@ export default function CourseSearch({
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="Choose a class..."
+          placeholder="Select a class"
           value={
             searchQuery ||
             (selectedCourse

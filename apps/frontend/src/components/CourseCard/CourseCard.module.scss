@@ -30,7 +30,7 @@
 
   .text {
     flex-grow: 1;
-    font-size: 14px;
+    font-size: var(--text-14);
 
     .heading {
       color: var(--heading-color);

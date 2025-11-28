@@ -34,7 +34,10 @@ export interface IEnrollmentHistoryItem {
   // this assumes that these fields are constant over time.
   seatReservationTypes?: {
     number: number;
-    requirementGroup?: string;
+    requirementGroup?: {
+      code?: string;
+      description: string;
+    };
     fromDate: string;
   }[];
 }
@@ -88,7 +91,11 @@ const enrollmentHistorySchema = new Schema<IEnrollmentHistoryItem>({
     {
       _id: false,
       number: { type: Number },
-      requirementGroup: { type: String },
+      requirementGroup: {
+        _id: false,
+        code: { type: String },
+        description: { type: String },
+      },
       fromDate: { type: String },
     },
   ],

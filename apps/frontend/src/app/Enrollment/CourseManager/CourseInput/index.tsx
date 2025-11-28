@@ -3,16 +3,29 @@ import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useApolloClient } from "@apollo/client/react";
 import { useSearchParams } from "react-router-dom";
 
-import { Box, Button, Flex, Select, SelectHandle } from "@repo/theme";
+import {
+  Box,
+  Button,
+  Flex,
+  Option,
+  OptionItem,
+  Select,
+  SelectHandle,
+} from "@repo/theme";
 
-import CourseSearch from "@/components/CourseSearch";
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { ICourse, ICourseWithInstructorClass } from "@/lib/api";
+import { ICourseWithInstructorClass } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import { Output, getInputSearchParam, isInputEqual } from "../../types";
+import {
+  LIGHT_COLORS,
+  Output,
+  getInputSearchParam,
+  isInputEqual,
+} from "../../types";
 import styles from "./CourseInput.module.scss";
 
 interface CourseInputProps {
@@ -21,7 +34,11 @@ interface CourseInputProps {
 }
 
 // called instructor in frontend but actually we're letting users select a class
-const DEFAULT_SELECTED_CLASS = { value: null, label: "All Instructors" };
+type ClassSelectValue = ICourseWithInstructorClass | "all";
+const DEFAULT_SELECTED_CLASS: OptionItem<ClassSelectValue> = {
+  value: "all",
+  label: "All Instructors",
+};
 
 export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   const client = useApolloClient();
@@ -33,23 +50,43 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const [loading, setLoading] = useState(false);
 
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
+    null
+  );
 
   const { data: courseData } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? ""
+    selectedCourse?.number ?? "",
+    {
+      skip: !selectedCourse,
+    }
   );
 
-  const [selectedClass, setSelectedClass] =
-    useState<ICourseWithInstructorClass | null>(DEFAULT_SELECTED_CLASS.value);
-  const [selectedSemester, setSelectedSemester] = useState<string | null>();
+  const [selectedClass, setSelectedClass] = useState<
+    ICourseWithInstructorClass | "all" | null
+  >(null);
+  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
+
+  const buildInstructorList = (
+    courseClass: ICourseWithInstructorClass | null
+  ) => {
+    if (!courseClass?.primarySection?.meetings) return [];
+    const names = new Set<string>();
+    courseClass.primarySection.meetings.forEach((meeting) => {
+      meeting.instructors.forEach((instructor) => {
+        const name = `${instructor.givenName} ${instructor.familyName}`.trim();
+        if (name) names.add(name);
+      });
+    });
+    return Array.from(names);
+  };
 
   const semesterOptions = useMemo(() => {
     // get all semesters
     const list: { value: string; label: string }[] = [];
     if (!courseData) return list;
     const filterHasData = courseData.classes.filter(
-      ({ primarySection: { enrollment } }) => enrollment?.latest
+      ({ primarySection }) => primarySection?.enrollment?.latest
     );
     const filteredOptions = filterHasData
       .filter(
@@ -79,7 +116,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     semester: string | null = null,
     shouldSetSelectedClass = true
   ) => {
-    const list = [DEFAULT_SELECTED_CLASS];
+    const list: Option<ClassSelectValue>[] = [DEFAULT_SELECTED_CLASS];
     if (!courseData) return list;
 
     const localSelectedSemester = semester ? semester : selectedSemester;
@@ -98,19 +135,18 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             )
       )
       .forEach((c) => {
-        if (!c.primarySection.enrollment?.latest) return;
+        const primarySection = c.primarySection;
+        if (!primarySection?.enrollment?.latest) return;
         // only classes from current sem displayed
-        let allInstructors = "";
-        c.primarySection.meetings.forEach((m) => {
-          m.instructors.forEach((i) => {
-            // construct label
-            allInstructors = `${allInstructors} ${i.familyName}, ${i.givenName};`;
-          });
-        });
-        classStrings.push(`${allInstructors} ${c.primarySection.number}`);
+        const instructorNames = buildInstructorList(c);
+        const instructorLabel =
+          instructorNames.length > 0
+            ? instructorNames.join(", ")
+            : "All Instructors";
+        classStrings.push(`${instructorLabel} ${primarySection.number}`);
         classes.push(c);
       });
-    const opts = classStrings.map((v, i) => {
+    const opts: OptionItem<ClassSelectValue>[] = classStrings.map((v, i) => {
       return { value: classes[i], label: v };
     });
     if (opts.length === 1) {
@@ -129,7 +165,15 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   ]);
 
   const add = async () => {
-    if (!selectedClass || !selectedCourse || !selectedSemester) return;
+    if (
+      !selectedClass ||
+      selectedClass === "all" ||
+      !selectedCourse ||
+      !selectedSemester
+    )
+      return;
+
+    if (!selectedClass.primarySection) return;
 
     addRecent(RecentType.Course, {
       subject: selectedCourse.subject,
@@ -138,19 +182,19 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
     const [semester, year] = selectedSemester.split(" ");
 
+    const instructors = buildInstructorList(selectedClass);
+
     const input = {
       subject: selectedCourse.subject,
       courseNumber: selectedCourse.number,
       year: parseInt(year),
       semester: semester as Semester,
-      sectionNumber:
-        selectedClass === null
-          ? undefined
-          : selectedClass.primarySection.number,
+      sectionNumber: selectedClass.primarySection.number,
       sessionId:
         selectedClass?.semester === "Summer"
           ? selectedClass.sessionId
           : undefined,
+      instructors,
     };
     // Do not fetch duplicates
     const existingOutput = outputs.find((output) =>
@@ -164,18 +208,30 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     try {
       const response = await client.query({
         query: GetEnrollmentDocument,
-        variables: input,
+        variables: {
+          year: input.year,
+          semester: input.semester,
+          sessionId: input.sessionId,
+          subject: input.subject,
+          courseNumber: input.courseNumber,
+          sectionNumber: input.sectionNumber,
+        },
       });
 
       if (!response.data || !response.data.enrollment) {
         throw response.error;
       }
 
+      const usedColors = new Set(outputs.map((output) => output.color));
+      const availableColor =
+        LIGHT_COLORS.find((color) => !usedColors.has(color)) || LIGHT_COLORS[0];
+
       const output: Output = {
         hidden: false,
         active: false,
+        color: availableColor,
         // TODO: Error handling
-        enrollmentHistory: response.data!.enrollment,
+        data: response.data!.enrollment,
         input,
       };
 
@@ -183,6 +239,11 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
       searchParams.append("input", getInputSearchParam(input));
       setSearchParams(searchParams);
+
+      // Reset selectors back to defaults after adding a course
+      setSelectedCourse(null);
+      setSelectedClass(null);
+      setSelectedSemester(null);
 
       setLoading(false);
     } catch {
@@ -199,10 +260,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     [loading, outputs]
   );
 
-  const handleCourseSelect = (course: ICourse) => {
+  const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
 
-    setSelectedClass(DEFAULT_SELECTED_CLASS.value);
+    setSelectedClass(null);
     setSelectedSemester(null);
     semesterSelectRef.current?.focus();
     semesterSelectRef.current?.openMenu();
@@ -210,20 +271,17 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedClass(DEFAULT_SELECTED_CLASS.value);
+    setSelectedClass(null);
     setSelectedSemester(null);
   };
 
   return (
     <Flex direction="row" gap="3">
       <Box flexGrow="1">
-        <CourseSearch
+        <CourseSelect
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
           selectedCourse={selectedCourse}
-          inputStyle={{
-            height: 44,
-          }}
         />
       </Box>
       <Box flexGrow="1">
@@ -231,6 +289,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           ref={semesterSelectRef}
           options={semesterOptions}
           disabled={disabled || !selectedCourse}
+          searchable
+          searchPlaceholder="Search semesters..."
+          placeholder="Select a semester"
           value={selectedSemester}
           onChange={(s) => {
             if (Array.isArray(s)) return;
@@ -245,10 +306,13 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         />
       </Box>
       <Box flexGrow="1">
-        <Select
+        <Select<ClassSelectValue>
           ref={classSelectRef}
           options={classOptions}
           disabled={disabled || !selectedCourse}
+          searchable
+          searchPlaceholder="Search instructors..."
+          placeholder="Select a class"
           value={selectedClass}
           onChange={(s) => {
             if (Array.isArray(s)) return;

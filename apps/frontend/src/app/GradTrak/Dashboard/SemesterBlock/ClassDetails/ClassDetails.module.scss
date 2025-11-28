@@ -49,8 +49,8 @@
     background-color: var(--button-hover-color);
 
     .title {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: var(--text-18);
+      font-weight: var(--font-semibold);
       color: var(--heading-color);
       margin: 0;
     }
@@ -74,7 +74,7 @@
     h3 {
       color: var(--paragraph-color);
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: var(--font-medium);
       text-transform: uppercase;
       padding: 0 0.5rem;
     }

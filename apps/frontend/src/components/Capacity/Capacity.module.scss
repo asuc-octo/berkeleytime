@@ -10,7 +10,7 @@
   user-select: none;
 
   .text {
-    font-size: 14px;
+    font-size: var(--text-14);
     line-height: 1;
 
     .value {
@@ -30,7 +30,7 @@
   .row {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: var(--text-14);
     line-height: 1.4;
     color: var(--neutral-400);
 

@@ -2,8 +2,9 @@ import { ReactNode, useMemo } from "react";
 
 import moment from "moment";
 
+import { Tooltip } from "@repo/theme";
+
 import { getEnrollmentColor } from "@/components/Capacity";
-import { CatalogTooltip } from "@/components/CatalogTooltip";
 
 import styles from "./EnrollmentDisplay.module.scss";
 
@@ -35,7 +36,7 @@ export default function EnrollmentDisplay({
   const color = getEnrollmentColor(enrolledCount, maxEnroll);
 
   const content = (
-    <CatalogTooltip
+    <Tooltip
       trigger={
         <span className={styles.trigger} style={{ color }}>
           {percentage}% enrolled

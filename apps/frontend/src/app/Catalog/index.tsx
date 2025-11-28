@@ -114,10 +114,8 @@ export default function Catalog() {
     [navigate, location, term]
   );
 
-  // Handle mouse movement for floating button on mobile
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // Only show on mobile
       if (window.innerWidth > 992) {
         setShowFloatingButton(false);
         return;
@@ -133,9 +131,9 @@ export default function Catalog() {
 
   if (termsLoading) {
     return (
-      <div className={styles.loading}>
-        <div className={styles.loadingHeader} />
-        <div className={styles.loadingBody} />
+      <div>
+        <div />
+        <div />
       </div>
     );
   }

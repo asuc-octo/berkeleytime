@@ -9,21 +9,14 @@ import {
 
 import { useMutation, useQuery } from "@apollo/client/react";
 import classNames from "classnames";
-import {
-  Bookmark,
-  BookmarkSolid,
-  InfoCircle,
-  OpenNewWindow,
-} from "iconoir-react";
+import { Bookmark, BookmarkSolid, OpenNewWindow } from "iconoir-react";
 import { Tabs } from "radix-ui";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
 import {
-  Badge,
   Box,
-  Color,
   Container,
   Flex,
   IconButton,
@@ -33,10 +26,15 @@ import {
 
 import { AverageGrade } from "@/components/AverageGrade";
 import CCN from "@/components/CCN";
+import {
+  ErrorDialog,
+  SubmitRatingPopup,
+} from "@/components/Class/Ratings/RatingDialog";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
+import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useGetCourseForClass, useUpdateUser } from "@/hooks/api";
+import { useGetClassOverview, useUpdateUser } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
@@ -47,10 +45,11 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
+import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import SuspenseBoundary from "../SuspenseBoundary";
 import styles from "./Class.module.scss";
-import UnlockRatingsModal from "./Ratings/UnlockRatingsModal";
+import UserFeedbackModal from "./Ratings/UserFeedbackModal";
 import { MetricData } from "./Ratings/metricsUtil";
 import { type RatingsTabClasses, RatingsTabLink } from "./locks";
 
@@ -163,8 +162,10 @@ export default function Class({
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-  const { data: course } = useGetCourseForClass(
+  const { data: course } = useGetClassOverview(
     providedClass?.subject ?? (subject as string),
     providedClass?.courseNumber ?? (courseNumber as string),
     {
@@ -188,40 +189,37 @@ export default function Class({
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
 
-  useEffect(() => {
-    if (!_class?.primarySection?.enrollment) return;
-
-    const enrollment = _class.primarySection.enrollment;
-    const seatReservationTypes = enrollment.seatReservationTypes ?? [];
-    const seatReservationCounts = enrollment.latest?.seatReservationCount ?? [];
-
-    if (seatReservationCounts.length === 0) {
-      return;
-    }
-
-    const typeMap = new Map<number, string>();
-    seatReservationTypes.forEach((type) => {
-      typeMap.set(type.number, type.requirementGroup);
-    });
-  }, [_class]);
-
   const _course = useMemo(
     () => providedCourse ?? course,
     [course, providedCourse]
   );
 
-  const classTitle = useMemo(() => {
-    const attributes = _class?.primarySection?.sectionAttributes ?? [];
-    const specialTitleAttribute = attributes.find(
-      (attr) => attr.attribute?.formalDescription === "Special Title"
-    );
+  type ClassSectionAttribute = NonNullable<
+    NonNullable<IClassDetails["primarySection"]>["sectionAttributes"]
+  >[number];
 
+  const sectionAttributes = useMemo<ClassSectionAttribute[]>(
+    () => _class?.primarySection?.sectionAttributes ?? [],
+    [_class?.primarySection?.sectionAttributes]
+  );
+
+  const specialTitleAttribute = useMemo(
+    () =>
+      sectionAttributes.find(
+        (attr) =>
+          attr.attribute?.code === "NOTE" &&
+          attr.attribute?.formalDescription === "Special Title"
+      ),
+    [sectionAttributes]
+  );
+
+  const classTitle = useMemo(() => {
     if (specialTitleAttribute?.value?.formalDescription) {
       return specialTitleAttribute.value.formalDescription;
     }
 
     return _course?.title ?? "";
-  }, [_class?.primarySection?.sectionAttributes, _course?.title]);
+  }, [specialTitleAttribute?.value?.formalDescription, _course?.title]);
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,
@@ -326,14 +324,17 @@ export default function Class({
     }
 
     type Metric = NonNullable<
-      IClassCourse["aggregatedRatings"]["metrics"]
+      NonNullable<IClassCourse["aggregatedRatings"]>["metrics"]
     >[number];
-    const metrics: Metric[] = aggregatedRatings.metrics;
-    if (!metrics || metrics.length === 0) {
+    const metrics =
+      (aggregatedRatings.metrics ?? []).filter((metric): metric is Metric =>
+        Boolean(metric)
+      ) ?? [];
+    if (metrics.length === 0) {
       return false;
     }
 
-    const counts = metrics.map((metric: Metric) => metric.count);
+    const counts = metrics.map((metric) => metric.count);
     return counts.length > 0 ? Math.max(...counts) : false;
   }, [_course]);
 
@@ -388,12 +389,8 @@ export default function Class({
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      classInfo?: { subject: string; courseNumber: string; number: string }
+      classInfo: { subject: string; courseNumber: string; classNumber: string }
     ) => {
-      if (!classInfo) {
-        throw new Error("Class information is required to submit a rating.");
-      }
-
       const populatedMetrics = METRIC_NAMES.filter(
         (metric) => typeof metricValues[metric] === "number"
       );
@@ -412,7 +409,7 @@ export default function Class({
 
       for (let index = 0; index < populatedMetrics.length; index++) {
         const metric = populatedMetrics[index];
-        const value = metricValues[metric];
+        const value = metricValues[metric] as number;
         if (value === undefined) continue;
 
         const isFinalMutation = index === populatedMetrics.length - 1;
@@ -422,7 +419,7 @@ export default function Class({
             courseNumber: classInfo.courseNumber,
             semester: termInfo.semester,
             year: termInfo.year,
-            classNumber: classInfo.number,
+            classNumber: classInfo.classNumber,
             metricName: metric,
             value,
           },
@@ -449,7 +446,7 @@ export default function Class({
 
   //   const reservationMap = new Map<number, string>();
   //   for (const type of reservationTypes) {
-  //     reservationMap.set(type.number, type.requirementGroup);
+  //     reservationMap.set(type.number, type.requirementGroup.description);
   //   }
   //   return reservationMap;
   // }, [_class]);
@@ -486,14 +483,8 @@ export default function Class({
     return false;
   }, [courseGradeDistribution]);
 
-  const reservedSeatingMaxCount = useMemo(() => {
-    const seatReservationCount =
-      _class?.primarySection?.enrollment?.latest?.seatReservationCount ?? [];
-    return seatReservationCount.reduce(
-      (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
-      0
-    );
-  }, [_class]);
+  const activeReservedMaxCount =
+    _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
 
   // TODO: Error state
   if (!_course || !_class) {
@@ -521,27 +512,31 @@ export default function Class({
                     {/* TODO: Reusable bookmark button */}
                     <ThemeTooltip
                       content={bookmarked ? "Remove bookmark" : "Bookmark"}
-                    >
-                      <IconButton
-                        className={classNames(styles.bookmark, {
-                          [styles.active]: bookmarked,
-                        })}
-                        onClick={() => bookmark()}
-                        disabled={userLoading}
-                      >
-                        {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                      </IconButton>
-                    </ThemeTooltip>
-                    <ThemeTooltip content="Open in Berkeley Catalog">
-                      <IconButton
-                        as="a"
-                        href={getExternalLink(_class)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <OpenNewWindow />
-                      </IconButton>
-                    </ThemeTooltip>
+                      trigger={
+                        <IconButton
+                          className={classNames(styles.bookmark, {
+                            [styles.active]: bookmarked,
+                          })}
+                          onClick={() => bookmark()}
+                          disabled={userLoading}
+                        >
+                          {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                        </IconButton>
+                      }
+                    />
+                    <ThemeTooltip
+                      content="Open in Berkeley Catalog"
+                      trigger={
+                        <IconButton
+                          as="a"
+                          href={getExternalLink(_class)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <OpenNewWindow />
+                        </IconButton>
+                      }
+                    />
                   </Flex>
                 </Flex>
                 <Flex gap="3" align="center" mb="5">
@@ -581,7 +576,12 @@ export default function Class({
                       }}
                     >
                       <AverageGrade
-                        gradeDistribution={_course?.gradeDistribution}
+                        gradeDistribution={
+                          _course?.gradeDistribution ?? {
+                            average: null,
+                            pnpPercentage: null,
+                          }
+                        }
                       />
                     </Link>
                   )}
@@ -592,12 +592,13 @@ export default function Class({
                   {primarySection?.sectionId && (
                     <CCN sectionId={primarySection.sectionId} />
                   )}
-                  {reservedSeatingMaxCount > 0 && (
+                  {activeReservedMaxCount > 0 && (
                     <div className={styles.reservedSeatingBadgeContainer}>
-                      <Badge
-                        label="Reserved Seating"
-                        color={Color.Orange}
-                        icon={<InfoCircle />}
+                      <ReservedSeatingHoverCard
+                        seatReservationCount={
+                          _class?.primarySection?.enrollment?.latest
+                            ?.seatReservationCount ?? []
+                        }
                       />
                     </div>
                   )}
@@ -671,8 +672,8 @@ export default function Class({
           </Box>
           <ClassContext
             value={{
-              class: _class,
-              course: _course,
+              class: _class as IClassDetails,
+              course: _course as IClassCourse,
             }}
           >
             {dialog ? (
@@ -784,15 +785,32 @@ export default function Class({
         </Flex>
       </Root>
       {shouldShowUnlockModal && (
-        <UnlockRatingsModal
+        <UserFeedbackModal
           isOpen={isUnlockModalOpen}
           onClose={handleUnlockModalClose}
+          title="Unlock Ratings"
+          subtitle={`Rate ${Math.max(unlockModalGoalCount, 1)} classes to unlock all other ratings.`}
           onSubmit={handleUnlockRatingSubmit}
           userRatedClasses={userRatedClasses}
-          requiredRatingsCount={unlockModalGoalCount}
+          requiredRatingsCount={unlockModalGoalCount || 1}
           onSubmitPopupChange={setIsUnlockThankYouOpen}
+          disableRatedCourses={true}
+          onError={(error) => {
+            const message = getRatingErrorMessage(error);
+            setErrorMessage(message);
+            setIsErrorDialogOpen(true);
+          }}
         />
       )}
+      <SubmitRatingPopup
+        isOpen={isUnlockThankYouOpen}
+        onClose={() => setIsUnlockThankYouOpen(false)}
+      />
+      <ErrorDialog
+        isOpen={isErrorDialogOpen}
+        onClose={() => setIsErrorDialogOpen(false)}
+        errorMessage={errorMessage}
+      />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
-import { CatalogTooltip } from "@/components/CatalogTooltip";
+import { Tooltip } from "@repo/theme";
+
 import { getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
@@ -76,7 +77,7 @@ export function AverageGrade({
   }
 
   return (
-    <CatalogTooltip
+    <Tooltip
       trigger={
         <div className={styles.trigger} style={{ color, ...style }}>
           {text}

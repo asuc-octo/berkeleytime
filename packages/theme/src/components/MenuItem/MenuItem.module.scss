@@ -7,7 +7,7 @@
   cursor: pointer;
   color: var(--paragraph-color);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   transition: all 100ms ease-in-out;
   z-index: 1;
 

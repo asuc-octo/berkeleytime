@@ -1,41 +1,42 @@
-import { subjects } from "@repo/shared";
-
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export const initialize = (
   courses: {
     title: string;
     subject: string;
+    departmentNicknames?: string | null;
     number: string;
   }[]
 ) => {
   const list = courses.map((course) => {
-    const { title, subject, number } = course;
+    const { title, subject, departmentNicknames, number } = course;
 
-    // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
-    const term = subject.toLowerCase();
+    const abbreviations = departmentNicknames
+      ? departmentNicknames
+          .split("!")
+          .map((abbr) => abbr.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
 
-    const alternateNames = subjects[term]?.abbreviations.reduce(
+    const alternateNames = abbreviations.reduce(
       (acc, abbreviation) => {
-        // Add alternate names for abbreviations
-        const abbreviations = [
+        const abbrevs = [
           `${abbreviation}${number}`,
           `${abbreviation} ${number}`,
         ];
 
         if (containsPrefix) {
-          abbreviations.push(
+          abbrevs.push(
             `${abbreviation}${alternateNumber}`,
             `${abbreviation} ${alternateNumber}`
           );
         }
 
-        return [...acc, ...abbreviations];
+        return [...acc, ...abbrevs];
       },
-      // Add alternate names
       containsPrefix
         ? [
             `${subject}${number}`,
@@ -47,8 +48,6 @@ export const initialize = (
 
     return {
       title,
-      // subject,
-      // number,
       name: `${subject} ${number}`,
       alternateNames,
     };

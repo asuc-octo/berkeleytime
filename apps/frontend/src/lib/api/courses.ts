@@ -1,7 +1,6 @@
 import { gql } from "@apollo/client";
 
 import {
-  GetCourseForClassQuery,
   GetCourseQuery,
   GetCourseWithInstructorQuery,
 } from "../generated/graphql";
@@ -77,8 +76,8 @@ export const GET_COURSE = gql`
   }
 `;
 
-export const GET_COURSE_FOR_CLASS = gql`
-  query GetCourseForClass($subject: String!, $number: CourseNumber!) {
+export const GET_CLASS_OVERVIEW = gql`
+  query GetClassOverview($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
       title
       description
@@ -122,33 +121,11 @@ export const GET_COURSE_GRADE_DIST = gql`
 export const GET_COURSE_WITH_INSTRUCTOR = gql`
   query GetCourseWithInstructor($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
-      courseId
-      subject
-      number
-      title
-      description
-      academicCareer
-      gradeDistribution {
-        average
-        distribution {
-          letter
-          count
-        }
-      }
-      gradingBasis
-      finalExam
-      requirements
-      requiredCourses {
-        subject
-        number
-      }
       classes {
         year
         semester
         number
         sessionId
-        subject
-        courseNumber
         anyPrintInScheduleOfClasses
         primarySection {
           enrollment {
@@ -204,6 +181,7 @@ export const GET_COURSE_NAMES = gql`
     courses {
       courseId
       subject
+      departmentNicknames
       number
       title
     }

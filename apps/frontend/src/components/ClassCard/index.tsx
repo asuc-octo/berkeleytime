@@ -9,10 +9,9 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card } from "@repo/theme";
+import { Card, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import { CatalogTooltip } from "@/components/CatalogTooltip";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -46,7 +45,7 @@ type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
-  "enrolledCount" | "maxEnroll" | "endTime" | "reservedSeatingMaxCount"
+  "enrolledCount" | "maxEnroll" | "endTime" | "activeReservedMaxCount"
 >;
 
 type ClassCardClass = Partial<BaseClassFields> & {
@@ -90,8 +89,8 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
-  const reservedSeatingMaxCount =
-    _class?.primarySection?.enrollment?.latest?.reservedSeatingMaxCount ?? 0;
+  const activeReservedMaxCount =
+    _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
 
   return (
@@ -142,8 +141,8 @@ export default function ClassCard({
                 <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
               )}
             {(_class?.primarySection?.enrollment?.latest
-              ?.reservedSeatingMaxCount ?? 0) > 0 && (
-              <CatalogTooltip
+              ?.activeReservedMaxCount ?? 0) > 0 && (
+              <Tooltip
                 trigger={
                   <span className={styles.reservedSeating}>
                     <InfoCircle className={styles.reservedSeatingIcon} />
@@ -151,7 +150,7 @@ export default function ClassCard({
                   </span>
                 }
                 title="Reserved Seating"
-                description={`${reservedSeatingMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
+                description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
               />
             )}
             {expandable && onExpandedChange !== undefined && (

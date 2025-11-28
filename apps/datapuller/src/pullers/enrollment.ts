@@ -64,6 +64,32 @@ const enrollmentSingularsEqual = (
   return true;
 };
 
+const seatReservationTypesEqual = (
+  a: NonNullable<IEnrollmentSingularItem["seatReservationTypes"]>,
+  b: NonNullable<IEnrollmentSingularItem["seatReservationTypes"]>
+) => {
+  if (a.length !== b.length) return false;
+
+  const byNumber = (arr: typeof a) =>
+    arr
+      .map((item) => ({
+        number: item.number,
+        code: item.requirementGroup?.code ?? null,
+        description: item.requirementGroup?.description ?? null,
+      }))
+      .sort((x, y) => (x.number ?? 0) - (y.number ?? 0));
+
+  const aSorted = byNumber(a);
+  const bSorted = byNumber(b);
+
+  return aSorted.every(
+    (item, idx) =>
+      item.number === bSorted[idx].number &&
+      item.code === bSorted[idx].code &&
+      item.description === bSorted[idx].description
+  );
+};
+
 const updateEnrollmentHistories = async (config: Config) => {
   const {
     log,
@@ -95,6 +121,7 @@ const updateEnrollmentHistories = async (config: Config) => {
   let totalEnrollmentSingulars = 0;
   let totalInserted = 0;
   let totalUpdated = 0;
+  const requirementGroupStats = { present: 0, missing: 0 };
 
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
@@ -108,7 +135,8 @@ const updateEnrollmentHistories = async (config: Config) => {
       log,
       CLASS_APP_ID,
       CLASS_APP_KEY,
-      termsBatchIds
+      termsBatchIds,
+      requirementGroupStats
     );
 
     log.info(
@@ -244,32 +272,34 @@ const updateEnrollmentHistories = async (config: Config) => {
           }
         }
 
-        /*
-          Start Migration 11/18/2025: Fix missing seatReservationTypes
-        */
+        // Keep seatReservationTypes fresh if new data differs from stored
         if (
           existingDoc &&
-          (existingDoc.seatReservationTypes === undefined ||
-            existingDoc.seatReservationTypes === null ||
-            existingDoc.seatReservationTypes.length === 0) &&
-          enrollmentSingular.seatReservationTypes !== undefined &&
-          enrollmentSingular.seatReservationTypes !== null &&
-          enrollmentSingular.seatReservationTypes.length !== 0
+          enrollmentSingular.seatReservationTypes &&
+          enrollmentSingular.seatReservationTypes.length > 0
         ) {
-          bulkOps.push({
-            updateOne: {
-              filter: { _id: existingDoc._id },
-              update: {
-                $set: {
-                  seatReservationTypes: enrollmentSingular.seatReservationTypes,
-                },
+          const existingTypes = existingDoc.seatReservationTypes ?? [];
+          const incomingTypes = enrollmentSingular.seatReservationTypes ?? [];
+          const hasUnknown = existingTypes.some(
+            (t) =>
+              !t.requirementGroup?.description ||
+              t.requirementGroup.description === "Unknown"
+          );
+
+          const needsUpdate =
+            hasUnknown ||
+            existingTypes.length === 0 ||
+            !seatReservationTypesEqual(existingTypes, incomingTypes);
+
+          if (needsUpdate) {
+            bulkOps.push({
+              updateOne: {
+                filter: { _id: existingDoc._id },
+                update: { $set: { seatReservationTypes: incomingTypes } },
               },
-            },
-          });
+            });
+          }
         }
-        /*
-          End Migration 11/18/2025
-        */
       }
 
       // Execute bulk operations for this batch
@@ -280,6 +310,10 @@ const updateEnrollmentHistories = async (config: Config) => {
       }
     }
   }
+
+  log.info(
+    `Seat reservation groups: ${requirementGroupStats.present.toLocaleString()} with descriptions, ${requirementGroupStats.missing.toLocaleString()} missing.`
+  );
 
   log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`

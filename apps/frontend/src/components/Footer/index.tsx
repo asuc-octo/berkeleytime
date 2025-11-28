@@ -1,15 +1,8 @@
 import classNames from "classnames";
-import {
-  Discord,
-  Facebook,
-  Github,
-  HalfMoon,
-  Instagram,
-  SunLight,
-} from "iconoir-react";
+import { Discord, Github, Instagram } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { Box, Container, IconButton, useTheme } from "@repo/theme";
+import { Box, Container, IconButton } from "@repo/theme";
 
 import styles from "./Footer.module.scss";
 
@@ -18,8 +11,6 @@ interface FooterProps {
 }
 
 export default function Footer({ invert }: FooterProps) {
-  const { theme, setTheme } = useTheme();
-
   return (
     <Box px="5">
       <Container>
@@ -46,14 +37,6 @@ export default function Footer({ invert }: FooterProps) {
             <div className={styles.row}>
               <IconButton
                 className={styles.iconButton}
-                onClick={() =>
-                  setTheme((theme) => (theme === "dark" ? "light" : "dark"))
-                }
-              >
-                {theme === "dark" ? <SunLight /> : <HalfMoon />}
-              </IconButton>
-              <IconButton
-                className={styles.iconButton}
                 as="a"
                 href="https://www.instagram.com/berkeleytimeofficial/"
                 target="_blank"
@@ -67,14 +50,6 @@ export default function Footer({ invert }: FooterProps) {
                 target="_blank"
               >
                 <Discord />
-              </IconButton>
-              <IconButton
-                className={styles.iconButton}
-                href="https://facebook.com/berkeleytime"
-                target="_blank"
-                as="a"
-              >
-                <Facebook />
               </IconButton>
               <IconButton
                 className={styles.iconButton}

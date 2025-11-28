@@ -5,6 +5,7 @@ import {
   ISectionItem,
 } from "@repo/common";
 
+import { normalizeSubject } from "../../utils/subject";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import { ClassModule } from "./generated-types/module-types";
 
@@ -34,6 +35,7 @@ export const formatDate = (date?: string | number | Date | null) => {
 export const formatClass = (_class: IClassItem) => {
   const output = {
     ..._class,
+    subject: normalizeSubject(_class.subject),
 
     unitsMax: _class.allowedUnits?.maximum || 0,
     unitsMin: _class.allowedUnits?.minimum || 0,
@@ -88,13 +90,33 @@ export const filterAndSortInstructors = (
 ): ClassModule.Instructor[] => {
   if (!instructors) return [];
 
-  return instructors
-    .filter((instructor) => instructor.role === "PI")
-    .sort((a, b) => {
-      const lastNameA = a.familyName || "";
-      const lastNameB = b.familyName || "";
-      return lastNameA.localeCompare(lastNameB);
-    });
+  const normalize = (
+    list: RawInstructor[],
+    requireRole: boolean
+  ): ClassModule.Instructor[] =>
+    list
+      .filter(
+        (
+          instructor
+        ): instructor is RawInstructor & {
+          familyName: string;
+          givenName: string;
+        } =>
+          (!requireRole || instructor.role === "PI") &&
+          typeof instructor.familyName === "string" &&
+          typeof instructor.givenName === "string"
+      )
+      .map((instructor) => ({
+        familyName: instructor.familyName,
+        givenName: instructor.givenName,
+      }))
+      .sort((a, b) => a.familyName.localeCompare(b.familyName));
+
+  // Prefer PIs; if none present (data gaps), fall back to any instructors with names.
+  const primaryInstructors = normalize(instructors, true);
+  if (primaryInstructors.length > 0) return primaryInstructors;
+
+  return normalize(instructors, false);
 };
 
 export const formatSection = (
@@ -103,6 +125,7 @@ export const formatSection = (
 ) => {
   const output = {
     ...section,
+    subject: normalizeSubject(section.subject),
 
     online: section.instructionMode === "O",
     course: section.courseId,

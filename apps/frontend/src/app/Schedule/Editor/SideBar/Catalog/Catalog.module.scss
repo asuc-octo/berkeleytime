@@ -24,10 +24,10 @@
     align-items: center;
     flex-shrink: 0;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: var(--text-14);
     line-height: 1;
     color: var(--heading-color);
-    font-weight: 500;
+    font-weight: var(--font-medium);
 
     @media (width <= 992px) {
       border-width: 0 0 1px;
