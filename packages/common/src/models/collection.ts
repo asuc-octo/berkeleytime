@@ -2,17 +2,11 @@ import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
 export const collectionSchema = new Schema(
   {
-    ownerID: {
+    createdBy: {
       type: String,
       trim: true,
       required: true,
       immutable: true,
-    },
-    viewerID: {
-      type: [String],
-      trim: true,
-      required: false,
-      default: [],
     },
     name: {
       type: String,
@@ -20,41 +14,48 @@ export const collectionSchema = new Schema(
       trim: true,
     },
     classes: {
-      required: false,
+      required: true,
       default: [],
       type: [
         {
-          comments: {
-            required: false,
-            default: [],
-            type: [String],
+          year: {
+            type: Number,
+            required: true,
           },
-          info: {
-            year: {
-              type: Number,
-              required: true,
+          semester: {
+            type: String,
+            enum: ["Spring", "Summer", "Fall", "Winter"],
+            required: true,
+          },
+          sessionId: {
+            type: String,
+            required: true,
+          },
+          subject: {
+            type: String,
+            required: true,
+          },
+          courseNumber: {
+            type: String,
+            required: true,
+          },
+          classNumber: {
+            type: String,
+            required: true,
+          },
+          personalNote: {
+            type: {
+              text: {
+                type: String,
+                required: true,
+              },
+              updatedAt: {
+                type: Date,
+                required: true,
+              },
             },
-            semester: {
-              type: String,
-              enum: ["Spring", "Summer", "Fall", "Winter"],
-              required: true,
-            },
-            sessionId: {
-              type: String,
-              required: true,
-            },
-            subject: {
-              type: String,
-              required: true,
-            },
-            courseNumber: {
-              type: String,
-              required: true,
-            },
-            number: {
-              type: String,
-              required: true,
-            },
+            required: false,
+            default: undefined,
           },
         },
       ],
@@ -67,7 +68,7 @@ export const collectionSchema = new Schema(
     },
   }
 );
-collectionSchema.index({ ownerID: 1, name: 1 }, { unique: true });
+collectionSchema.index({ createdBy: 1, name: 1 }, { unique: true });
 
 export const CollectionModel = mongoose.model("collections", collectionSchema);
 
