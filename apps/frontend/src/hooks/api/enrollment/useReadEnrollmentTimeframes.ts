@@ -2,9 +2,11 @@ import { useQuery } from "@apollo/client/react";
 
 import {
   GetEnrollmentTimeframesDocument,
+  Semester,
+} from "@/lib/generated/graphql";
+import type {
   GetEnrollmentTimeframesQuery,
   GetEnrollmentTimeframesQueryVariables,
-  Semester,
 } from "@/lib/generated/graphql";
 
 export const useReadEnrollmentTimeframes = (
