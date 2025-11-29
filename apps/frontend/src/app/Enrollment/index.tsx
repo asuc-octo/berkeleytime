@@ -185,9 +185,10 @@ const EnrollmentChart = memo(function EnrollmentChart({
           {filteredOutputs?.map((output, index) => {
             const originalIndex = outputs.indexOf(output);
             const shouldAnimateLine = animateIndices.has(originalIndex);
-            const lineColor = activeOutput && !output.active
-              ? getDarkColor(output.color)
-              : output.color;
+            const lineColor =
+              activeOutput && !output.active
+                ? getDarkColor(output.color)
+                : output.color;
             return (
               <React.Fragment key={index}>
                 <Line
@@ -253,7 +254,7 @@ const parseInputsFromUrl = (searchParams: URLSearchParams): Input[] =>
 
 const fetchEnrollment = async (
   client: ReturnType<typeof useApolloClient>,
-  input: Input,
+  input: Input
 ): Promise<{ data: Output["data"]; input: Input } | null> => {
   try {
     const response = await client.query({
