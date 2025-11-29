@@ -9,5 +9,4 @@ export * from "./grade-distribution";
 export * from "./plan";
 export * from "./enrollment-history";
 export * from "./curated-classes";
-export * from "./enrollment-calendar";
 export * from "./enrollment-timeframe";
