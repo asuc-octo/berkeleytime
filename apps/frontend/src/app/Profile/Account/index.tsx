@@ -20,6 +20,8 @@ const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
 export default function Account() {
   const { user } = useUser();
 
+
+
   const { data: schedules, loading: schedulesLoading } = useReadSchedules({
     skip: !user,
   });
@@ -58,6 +60,11 @@ export default function Account() {
             {user?.student ? "Yes" : "No"}
           </span>
         </div>
+      </div>
+      <h2>Bookmarked Classes (Collections Test)</h2>
+      <div>
+
+
       </div>
       <h2>Bookmarked Classes</h2>
       <div>

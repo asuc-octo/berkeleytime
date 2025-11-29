@@ -2,54 +2,59 @@ import { gql } from "graphql-tag";
 
 export const collectionTypeDef = gql`
   type Collection {
-    ownerID: String!
-    viewerID: [String!]!
+    _id: ID!
+    createdBy: String!
     name: String!
     classes: [CollectionClass!]!
+    createdAt: String!
+    updatedAt: String!
   }
 
   type CollectionClass {
-    info: Class!
-    comments: [String!]!
+    class: Class
+    personalNote: PersonalNote
+    error: String
+  }
+
+  type PersonalNote {
+    text: String!
+    updatedAt: String!
   }
 
   type Query {
-    ownerCollection(ownerID: String!): [Collection!]!
-    viewerCollection(viewerID: String!): [Collection!]!
+    myCollections: [Collection!]! @auth
+    myCollection(name: String!): Collection @auth
   }
 
-  input CollectionClassInput {
+  input AddClassInput {
+    collectionName: String!
     year: Int!
     semester: Semester!
-    sessionId: SessionIdentifier
+    sessionId: SessionIdentifier!
     subject: String!
     courseNumber: CourseNumber!
-    number: ClassNumber!
+    classNumber: ClassNumber!
+    personalNote: PersonalNoteInput
   }
 
-  input CreateCollectionInput {
-    ownerID: String!
-    name: String!
+  input PersonalNoteInput {
+    text: String!
   }
 
-  input ModifyCollectionClassInput {
-    ownerID: String!
-    name: String!
-    class: CollectionClassInput!
-    add: Boolean!
-  }
-
-  input ModifyCollectionCommentInput {
-    ownerID: String!
-    name: String!
-    class: CollectionClassInput!
-    comment: String!
-    add: Boolean!
+  input RemoveClassInput {
+    collectionName: String!
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier!
+    subject: String!
+    courseNumber: CourseNumber!
+    classNumber: ClassNumber!
   }
 
   type Mutation {
-    createCollection(input: CreateCollectionInput!): Collection!
-    modifyCollectionClass(input: ModifyCollectionClassInput!): Collection!
-    modifyCollectionComment(input: ModifyCollectionCommentInput!): Collection!
+    renameCollection(oldName: String!, newName: String!): Collection! @auth
+    deleteCollection(name: String!): Boolean! @auth
+    addClassToCollection(input: AddClassInput!): Collection! @auth
+    removeClassFromCollection(input: RemoveClassInput!): Collection! @auth
   }
 `;

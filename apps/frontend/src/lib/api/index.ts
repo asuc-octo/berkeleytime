@@ -8,3 +8,4 @@ export * from "./grade-distributions";
 export * from "./enrollment";
 export * from "./plans";
 export * from "./curated-classes";
+export * from "./collection";

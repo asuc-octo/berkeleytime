@@ -1,154 +1,283 @@
-import {
-  ClassModel,
-  CollectionModel,
-  CollectionType,
-  IClassItem,
-} from "@repo/common";
+import { GraphQLError } from "graphql";
+
+import { ClassModel, CollectionModel } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
 
-export const getCollectionOwner = async (ownerID: string) => {
-  const collections = await CollectionModel.find({
-    ownerID,
-  });
+export interface RequestContext {
+  user: {
+    _id?: string;
+    isAuthenticated: boolean;
+  };
+}
 
-  if (!collections?.length) return [];
+// Collection-Level Operations
 
-  return formatCollections(collections as CollectionType[]);
+export const getAllCollections = async (
+  context: RequestContext
+): Promise<any[]> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  return await CollectionModel.find({
+    createdBy: context.user._id,
+  }).lean();
 };
 
-export const getCollectionViewer = async (viewerID: string) => {
-  const collections = await CollectionModel.find({
-    viewerID,
-  });
+export const getCollection = async (
+  context: RequestContext,
+  name: string
+): Promise<any> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
 
-  if (!collections?.length) return [];
+  const collection = await CollectionModel.findOne({
+    createdBy: context.user._id,
+    name,
+  }).lean();
 
-  return formatCollections(collections as CollectionType[]);
+  if (!collection) {
+    throw new GraphQLError("Collection not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return collection;
 };
 
-export const createCollection = async (input: any) => {
-  const collection = await CollectionModel.create({
-    ownerID: input.ownerID,
-    viewerID: [],
-    name: input.name,
-    classes: [],
+export const renameCollection = async (
+  context: RequestContext,
+  oldName: string,
+  newName: string
+): Promise<any> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Validate new name
+  if (!newName || newName.trim().length === 0) {
+    throw new GraphQLError("New collection name cannot be empty", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
+
+  // Find collection (with ownership verification)
+  const collection = await CollectionModel.findOne({
+    createdBy: context.user._id,
+    name: oldName,
   });
 
-  return (await formatCollections([collection as CollectionType]))[0];
+  if (!collection) {
+    throw new GraphQLError("Collection not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  // Check new name doesn't conflict
+  const existing = await CollectionModel.findOne({
+    createdBy: context.user._id,
+    name: newName,
+  });
+
+  if (existing) {
+    throw new GraphQLError(`Collection "${newName}" already exists`, {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
+
+  // Update name
+  collection.name = newName;
+  await collection.save();
+
+  return collection.toObject();
 };
 
-const formatCollections = async (collections: CollectionType[]) => {
-  return Promise.all(
-    collections.map(async (collection) => ({
-      ownerID: collection.ownerID,
-      viewerID: collection.viewerID ?? [],
-      name: collection.name,
-      classes: await formatCollectionClasses(collection),
-    }))
+export const deleteCollection = async (
+  context: RequestContext,
+  name: string
+): Promise<boolean> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const result = await CollectionModel.deleteOne({
+    createdBy: context.user._id,
+    name,
+  });
+
+  if (result.deletedCount === 0) {
+    throw new GraphQLError("Collection not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return true;
+};
+
+// Class-Level Operations
+
+export const addClassToCollection = async (
+  context: RequestContext,
+  input: CollectionModule.AddClassInput
+): Promise<any> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const {
+    collectionName,
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    classNumber,
+    personalNote,
+  } = input;
+
+  // Validate collection name
+  if (!collectionName || collectionName.trim().length === 0) {
+    throw new GraphQLError("Collection name cannot be empty", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
+
+  // 1. Get or create collection
+  let collection = await CollectionModel.findOne({
+    createdBy: context.user._id,
+    name: collectionName,
+  });
+
+  if (!collection) {
+    // Create collection if doesn't exist
+    collection = await CollectionModel.create({
+      createdBy: context.user._id,
+      name: collectionName,
+      classes: [],
+    });
+  }
+
+  // 2. Verify class exists in catalog
+  const classExists = await ClassModel.findOne({
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    number: classNumber,
+  });
+
+  if (!classExists) {
+    throw new GraphQLError("Class not found in catalog", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
+
+  // 3. UPSERT: Check if class already in collection
+  const existingClassIndex = collection.classes.findIndex(
+    (c) =>
+      c.year === year &&
+      c.semester === semester &&
+      c.sessionId === sessionId &&
+      c.subject === subject &&
+      c.courseNumber === courseNumber &&
+      c.classNumber === classNumber
   );
-};
 
-const formatCollectionClasses = async (collection: CollectionType) => {
-  const classes = [];
-  if (!collection.classes) return [];
+  // Normalize personalNote: treat empty/whitespace text as undefined
+  const normalizedPersonalNote =
+    personalNote && personalNote.text.trim().length > 0
+      ? {
+          text: personalNote.text.trim(),
+          updatedAt: new Date(),
+        }
+      : undefined;
 
-  for (const item of collection.classes) {
-    const _class = await ClassModel.findOne({
-      year: item.info?.year,
-      semester: item.info?.semester,
-      sessionId: item.info?.sessionId ? item.info?.sessionId : "1",
-      subject: item.info?.subject,
-      courseNumber: item.info?.courseNumber,
-      number: item.info?.number,
-    }).lean();
-
-    if (!_class) continue;
-
-    const comments = item.comments ? item.comments : [];
-    classes.push({ info: _class as IClassItem, comments: comments });
-  }
-
-  return classes;
-};
-export const modifyCollectionClass = async (
-  input: CollectionModule.ModifyCollectionClassInput
-) => {
-  const collection = await CollectionModel.findOne({
-    ownerID: input.ownerID,
-    name: input.name,
-  });
-  if (!collection) throw new Error("not found by owner and name");
-
-  const alreadyExists = collection.classes?.find((_class) => {
-    const info = _class.info;
-    return (
-      info?.year === input.class.year &&
-      info?.semester === input.class.semester &&
-      (info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
-      info?.subject === input.class.subject &&
-      info?.courseNumber === input.class.courseNumber &&
-      info?.number === input.class.number
-    );
-  });
-
-  if (input.add) {
-    if (alreadyExists) throw new Error("Class already exists in collection");
-
+  if (existingClassIndex >= 0) {
+    collection.classes[existingClassIndex].personalNote =
+      normalizedPersonalNote as any;
+  } else {
+    // INSERT: Class doesn't exist, add it
     const newClass = {
-      info: {
-        year: input.class.year,
-        semester: input.class.semester,
-        sessionId: input.class.sessionId ?? "1",
-        subject: input.class.subject,
-        courseNumber: input.class.courseNumber,
-        number: input.class.number,
-      },
-      comments: [],
+      year,
+      semester,
+      sessionId,
+      subject,
+      courseNumber,
+      classNumber,
+      personalNote: normalizedPersonalNote,
     };
-
-    collection.classes?.push(newClass);
-  } else {
-    if (!alreadyExists) throw new Error("Class does not exist in collection");
-    if (!collection.classes)
-      throw new Error("Class does not exist in collection");
-    collection.classes?.pull(alreadyExists);
+    collection.classes.push(newClass as any);
   }
-  await collection.save();
 
-  return (await formatCollections([collection as CollectionType]))[0];
+  await collection.save();
+  return collection.toObject();
 };
 
-export const modifyCollectionComment = async (
-  input: CollectionModule.ModifyCollectionCommentInput
-) => {
+export const removeClassFromCollection = async (
+  context: RequestContext,
+  input: CollectionModule.RemoveClassInput
+): Promise<any> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const {
+    collectionName,
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    classNumber,
+  } = input;
+
+  // 1. Verify collection exists and user owns it
   const collection = await CollectionModel.findOne({
-    ownerID: input.ownerID,
-    name: input.name,
+    createdBy: context.user._id,
+    name: collectionName,
   });
-  if (!collection) throw new Error("Collection not found");
 
-  const entry = collection.classes?.find((_class) => {
-    return (
-      _class.info?.year === input.class.year &&
-      _class.info?.semester === input.class.semester &&
-      (_class.info?.sessionId ?? "1") === (input.class.sessionId ?? "1") &&
-      _class.info?.subject === input.class.subject &&
-      _class.info?.courseNumber === input.class.courseNumber &&
-      _class.info?.number === input.class.number
-    );
-  });
-  if (!entry) throw new Error("Class not found in collection");
+  if (!collection) {
+    throw new GraphQLError("Collection not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
 
-  entry.comments = entry.comments ?? [];
-  if (input.add) {
-    entry.comments.push(input.comment);
-  } else {
-    entry.comments = entry.comments.filter(
-      (comment) => comment !== input.comment
-    );
+  // 2. Find and remove class
+  const initialLength = collection.classes.length;
+  collection.classes = collection.classes.filter(
+    (c: any) =>
+      !(
+        c.year === year &&
+        c.semester === semester &&
+        c.sessionId === sessionId &&
+        c.subject === subject &&
+        c.courseNumber === courseNumber &&
+        c.classNumber === classNumber
+      )
+  ) as any;
+
+  if (collection.classes.length === initialLength) {
+    throw new GraphQLError("Class not found in collection", {
+      extensions: { code: "NOT_FOUND" },
+    });
   }
 
   await collection.save();
-  return (await formatCollections([collection as CollectionType]))[0];
+  return collection.toObject();
 };
