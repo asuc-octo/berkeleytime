@@ -29,6 +29,26 @@ export const enrollmentCalendarEventSchema = new Schema(
       type: String,
       required: false,
     },
+    rrule: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    categories: {
+      type: [String],
+      required: false,
+      default: [],
+    },
+    sequence: {
+      type: Number,
+      required: false,
+    },
+    status: {
+      type: String,
+      required: false,
+      trim: true,
+      enum: ["CONFIRMED", "TENTATIVE", "CANCELLED", null],
+    },
     source: {
       type: String,
       required: true,

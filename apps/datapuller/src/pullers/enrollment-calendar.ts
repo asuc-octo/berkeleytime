@@ -12,7 +12,54 @@ type CalendarEvent = {
   end: Date | null;
   location?: string;
   description?: string;
+  rrule?: string;
+  categories?: string[];
+  sequence?: number;
+  status?: string;
 };
+
+const TIMEZONE_OFFSETS: Record<string, number> = {
+  "America/Los_Angeles": -8,
+  "America/New_York": -5,
+  "America/Chicago": -6,
+  "America/Denver": -7,
+  "America/Phoenix": -7,
+  "US/Pacific": -8,
+  "US/Eastern": -5,
+  "US/Central": -6,
+  "US/Mountain": -7,
+  "UTC": 0,
+  "GMT": 0,
+};
+
+function getTimezoneOffset(tzid: string | undefined, date: Date): number {
+  if (!tzid) return 0;
+
+  const baseOffset = TIMEZONE_OFFSETS[tzid];
+  if (baseOffset === undefined) {
+    console.warn(`Unknown timezone: ${tzid}, treating as UTC`);
+    return 0;
+  }
+
+  if (tzid.includes("America/") || tzid.startsWith("US/")) {
+    const month = date.getUTCMonth();
+    const day = date.getUTCDate();
+
+    const marchSecondSunday =
+      14 - new Date(date.getUTCFullYear(), 2, 1).getDay();
+    const novFirstSunday =
+      7 - new Date(date.getUTCFullYear(), 10, 1).getDay();
+
+    const isDST =
+      (month > 2 && month < 10) ||
+      (month === 2 && day >= marchSecondSunday) ||
+      (month === 10 && day < novFirstSunday);
+
+    return isDST ? baseOffset + 1 : baseOffset;
+  }
+
+  return baseOffset;
+}
 
 async function fetchICal(): Promise<string> {
   const response = await fetch(ENROLLMENT_CALENDAR_URL);
@@ -43,7 +90,10 @@ function unfoldLines(raw: string): string[] {
   return unfolded;
 }
 
-function parseICalDate(value: string | undefined): Date | null {
+function parseICalDate(
+  value: string | undefined,
+  tzid?: string
+): Date | null {
   if (!value) return null;
   const s = value.trim();
 
@@ -59,7 +109,21 @@ function parseICalDate(value: string | undefined): Date | null {
   );
   if (match) {
     const [, year, month, day, hour, minute, second, isUTC] = match;
-    const utcDate = new Date(
+
+    if (isUTC) {
+      return new Date(
+        Date.UTC(
+          Number(year),
+          Number(month) - 1,
+          Number(day),
+          Number(hour),
+          Number(minute),
+          Number(second)
+        )
+      );
+    }
+
+    const localDate = new Date(
       Date.UTC(
         Number(year),
         Number(month) - 1,
@@ -69,8 +133,11 @@ function parseICalDate(value: string | undefined): Date | null {
         Number(second)
       )
     );
-    if (isUTC) {
-      return utcDate;
+
+    if (tzid) {
+      const offsetHours = getTimezoneOffset(tzid, localDate);
+      localDate.setUTCHours(localDate.getUTCHours() - offsetHours);
+      return localDate;
     }
 
     return new Date(
@@ -95,12 +162,53 @@ function decodeText(value: string | undefined): string | undefined {
     .trim();
 }
 
+type ParsedProperty = {
+  value: string;
+  params: Record<string, string>;
+};
+
+function parsePropertyLine(line: string): { name: string; prop: ParsedProperty } {
+  const colonIndex = line.indexOf(":");
+  if (colonIndex === -1) {
+    return { name: "", prop: { value: "", params: {} } };
+  }
+
+  const left = line.slice(0, colonIndex);
+  const value = line.slice(colonIndex + 1);
+
+  const parts = left.split(";");
+  const rawName = parts[0].toUpperCase();
+  const params: Record<string, string> = {};
+
+  for (let i = 1; i < parts.length; i++) {
+    const eqIndex = parts[i].indexOf("=");
+    if (eqIndex !== -1) {
+      const paramName = parts[i].slice(0, eqIndex).toUpperCase();
+      let paramValue = parts[i].slice(eqIndex + 1);
+      if (paramValue.startsWith('"') && paramValue.endsWith('"')) {
+        paramValue = paramValue.slice(1, -1);
+      }
+      params[paramName] = paramValue;
+    }
+  }
+
+  return { name: rawName, prop: { value, params } };
+}
+
+function parseCategories(value: string | undefined): string[] {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((c) => c.trim())
+    .filter((c) => c.length > 0);
+}
+
 function parseCal(ics: string): CalendarEvent[] {
   const lines = unfoldLines(ics);
   const events: CalendarEvent[] = [];
 
   let inEvent = false;
-  let current: Record<string, string> = {};
+  let current: Record<string, ParsedProperty> = {};
 
   for (const line of lines) {
     if (line === "BEGIN:VEVENT") {
@@ -111,20 +219,46 @@ function parseCal(ics: string): CalendarEvent[] {
 
     if (line === "END:VEVENT") {
       if (inEvent) {
-        const uid = current["UID"];
-        const summary = current["SUMMARY"];
+        const uid = current["UID"]?.value;
+        const summary = current["SUMMARY"]?.value;
         if (!uid || !summary) {
           inEvent = false;
           current = {};
           continue;
         }
 
-        const start = parseICalDate(current["DTSTART"]);
-        const end = parseICalDate(current["DTEND"]);
-        const location = decodeText(current["LOCATION"]);
-        const description = decodeText(current["DESCRIPTION"]);
+        const dtstart = current["DTSTART"];
+        const dtend = current["DTEND"];
+        const startTzid = dtstart?.params["TZID"];
+        const endTzid = dtend?.params["TZID"];
 
-        events.push({ uid, summary, start, end, location, description });
+        const start = parseICalDate(dtstart?.value, startTzid);
+        const end = parseICalDate(dtend?.value, endTzid);
+        const location = decodeText(current["LOCATION"]?.value);
+        const description = decodeText(current["DESCRIPTION"]?.value);
+        const rrule = current["RRULE"]?.value;
+        const categories = parseCategories(current["CATEGORIES"]?.value);
+        const sequenceStr = current["SEQUENCE"]?.value;
+        const sequence = sequenceStr ? parseInt(sequenceStr, 10) : undefined;
+        const status = current["STATUS"]?.value?.toUpperCase();
+
+        events.push({
+          uid,
+          summary,
+          start,
+          end,
+          location,
+          description,
+          rrule,
+          categories: categories.length > 0 ? categories : undefined,
+          sequence: Number.isNaN(sequence) ? undefined : sequence,
+          status:
+            status === "CONFIRMED" ||
+            status === "TENTATIVE" ||
+            status === "CANCELLED"
+              ? status
+              : undefined,
+        });
       }
 
       inEvent = false;
@@ -134,10 +268,10 @@ function parseCal(ics: string): CalendarEvent[] {
 
     if (!inEvent) continue;
 
-    const [left, value = ""] = line.split(":", 2);
-    const [rawName] = left.split(";", 1);
-    const name = rawName.toUpperCase();
-    current[name] = value;
+    const { name, prop } = parsePropertyLine(line);
+    if (name) {
+      current[name] = prop;
+    }
   }
 
   return events;
@@ -154,35 +288,61 @@ const syncEnrollmentCalendar = async ({ log }: Config) => {
 
   log.info(`Fetched ${events.length} enrollment calendar events.`);
 
-  log.trace("Clearing existing enrollment calendar entries...");
-  const { deletedCount } = await EnrollmentCalendarEventModel.deleteMany({});
-  log.info(`Deleted ${deletedCount?.toLocaleString() ?? 0} existing events.`);
-
   if (events.length === 0) {
     log.warn(
-      "No events returned from the enrollment calendar feed; nothing inserted."
+      "No events returned from the enrollment calendar feed; nothing modified."
     );
     return;
   }
 
   const now = new Date();
-  const documents = events.map((event) => ({
-    uid: event.uid,
-    summary: event.summary,
-    startDate: event.start ?? undefined,
-    endDate: event.end ?? undefined,
-    location: event.location,
-    description: event.description,
-    source: ENROLLMENT_CALENDAR_URL,
-    lastSyncedAt: now,
-  }));
+  const fetchedUids = new Set<string>();
 
-  const inserted = await EnrollmentCalendarEventModel.insertMany(documents, {
+  const bulkOps = events.map((event) => {
+    fetchedUids.add(event.uid);
+    return {
+      updateOne: {
+        filter: { uid: event.uid },
+        update: {
+          $set: {
+            uid: event.uid,
+            summary: event.summary,
+            startDate: event.start ?? undefined,
+            endDate: event.end ?? undefined,
+            location: event.location,
+            description: event.description,
+            rrule: event.rrule,
+            categories: event.categories ?? [],
+            sequence: event.sequence,
+            status: event.status,
+            source: ENROLLMENT_CALENDAR_URL,
+            lastSyncedAt: now,
+          },
+        },
+        upsert: true,
+      },
+    };
+  });
+
+  log.trace("Upserting enrollment calendar events...");
+  const bulkResult = await EnrollmentCalendarEventModel.bulkWrite(bulkOps, {
     ordered: false,
   });
+
   log.info(
-    `Inserted ${inserted.length.toLocaleString()} enrollment calendar events.`
+    `Upserted events: ${bulkResult.upsertedCount} inserted, ${bulkResult.modifiedCount} updated, ${bulkResult.matchedCount} matched.`
   );
+
+  log.trace("Removing stale events no longer in feed...");
+  const deleteResult = await EnrollmentCalendarEventModel.deleteMany({
+    uid: { $nin: Array.from(fetchedUids) },
+  });
+
+  if (deleteResult.deletedCount && deleteResult.deletedCount > 0) {
+    log.info(
+      `Removed ${deleteResult.deletedCount.toLocaleString()} stale events.`
+    );
+  }
 };
 
 export default {
