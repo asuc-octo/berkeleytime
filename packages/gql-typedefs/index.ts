@@ -3,6 +3,7 @@ export * from "./class";
 export * from "./common";
 export * from "./course";
 export * from "./curated-classes";
+export * from "./collection";
 export * from "./enrollment";
 export * from "./grade-distribution";
 export * from "./plan";
