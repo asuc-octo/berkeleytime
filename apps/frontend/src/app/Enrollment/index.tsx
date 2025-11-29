@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 
-import type { ApolloClient } from "@apollo/client";
+import type { useApolloClient } from "@apollo/client/react";
 import moment from "moment";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -25,6 +25,7 @@ import { Boundary, LoadingIndicator } from "@repo/theme";
 import {
   type ChartConfig,
   ChartTooltip,
+  ChartTooltipContent,
   createChartConfig,
   formatters,
 } from "@/components/Chart";
@@ -55,6 +56,12 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
+// Helper function to get the dark version of a color
+const getDarkColor = (lightColor: string): string => {
+  const colorIndex = LIGHT_COLORS.indexOf(lightColor);
+  return colorIndex !== -1 ? DARK_COLORS[colorIndex] : lightColor;
+};
+
 type EnrollmentChartProps = {
   data: { timeDelta: number; [key: string]: number | null }[] | undefined;
   filteredOutputs: Output[];
@@ -62,7 +69,7 @@ type EnrollmentChartProps = {
   activeOutput?: Output;
   dataMax: number;
   outputs: Output[];
-  shouldAnimate: boolean;
+  animateIndices: Set<number>;
   onHoverDuration: (duration: moment.Duration | null) => void;
 };
 
@@ -73,7 +80,7 @@ const EnrollmentChart = memo(function EnrollmentChart({
   activeOutput,
   dataMax,
   outputs,
-  shouldAnimate,
+  animateIndices,
   onHoverDuration,
 }: EnrollmentChartProps) {
   const handleHover: CategoricalChartFunc = useCallback(
@@ -136,33 +143,59 @@ const EnrollmentChart = memo(function EnrollmentChart({
           )}
           {outputs?.length > 0 && (
             <ChartTooltip
-              tooltipConfig={{
-                labelFormatter: (label) => {
-                  const duration = moment.duration(label, "minutes");
-                  const day = Math.floor(duration.asDays()) + 1;
-                  const time = timeFormatter.format(
-                    moment.utc(0).add(duration).toDate()
-                  );
-                  return `Day ${day} ${time}`;
-                },
-                valueFormatter: (value) => formatters.percentRound(value),
-                indicator: "line",
+              content={(props) => {
+                // Filter payload to only show active output when a class is selected
+                let payloadToShow = props.payload;
+                if (props.payload && activeOutput) {
+                  const activeIndex = outputs.findIndex((o) => o.active);
+                  if (activeIndex !== -1) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    payloadToShow = props.payload.filter((item: any) => {
+                      const dataKey = item.dataKey || item.name;
+                      return (
+                        dataKey === `enroll_${activeIndex}` ||
+                        dataKey === `waitlist_${activeIndex}`
+                      );
+                    });
+                  }
+                }
+
+                return (
+                  <ChartTooltipContent
+                    {...props}
+                    payload={payloadToShow}
+                    config={chartConfig}
+                    tooltipConfig={{
+                      labelFormatter: (label) => {
+                        const duration = moment.duration(label, "minutes");
+                        const day = Math.floor(duration.asDays()) + 1;
+                        const time = timeFormatter.format(
+                          moment.utc(0).add(duration).toDate()
+                        );
+                        return `Day ${day} ${time}`;
+                      },
+                      valueFormatter: (value) => formatters.percentRound(value),
+                      indicator: "line",
+                    }}
+                  />
+                );
               }}
             />
           )}
           {filteredOutputs?.map((output, index) => {
             const originalIndex = outputs.indexOf(output);
+            const shouldAnimateLine = animateIndices.has(originalIndex);
+            const lineColor =
+              activeOutput && !output.active
+                ? getDarkColor(output.color)
+                : output.color;
             return (
               <React.Fragment key={index}>
                 <Line
                   dataKey={`enroll_${originalIndex}`}
-                  stroke={
-                    activeOutput && !output.active
-                      ? DARK_COLORS[originalIndex]
-                      : LIGHT_COLORS[originalIndex]
-                  }
+                  stroke={lineColor}
                   name={`${output.input.subject} ${output.input.courseNumber}`}
-                  isAnimationActive={shouldAnimate}
+                  isAnimationActive={shouldAnimateLine}
                   dot={false}
                   strokeWidth={3}
                   type="monotone"
@@ -170,13 +203,9 @@ const EnrollmentChart = memo(function EnrollmentChart({
                 />
                 <Line
                   dataKey={`waitlist_${originalIndex}`}
-                  stroke={
-                    activeOutput && !output.active
-                      ? DARK_COLORS[originalIndex]
-                      : LIGHT_COLORS[originalIndex]
-                  }
+                  stroke={lineColor}
                   name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                  isAnimationActive={shouldAnimate}
+                  isAnimationActive={shouldAnimateLine}
                   dot={false}
                   strokeWidth={2}
                   strokeDasharray="5 5"
@@ -224,7 +253,7 @@ const parseInputsFromUrl = (searchParams: URLSearchParams): Input[] =>
     );
 
 const fetchEnrollment = async (
-  client: ApolloClient<unknown>,
+  client: ReturnType<typeof useApolloClient>,
   input: Input
 ): Promise<{ data: Output["data"]; input: Input } | null> => {
   try {
@@ -301,14 +330,37 @@ export default function Enrollment() {
   });
 
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
-  const shouldAnimate = useRef(true);
+  const [animateIndices, setAnimateIndices] = useState<Set<number>>(new Set());
+  const previousOutputsLength = useRef(0);
 
   const [hoveredDuration, setHoveredDuration] =
     useState<moment.Duration | null>(null);
 
+  // Track newly added classes and animate only their lines
   useEffect(() => {
-    shouldAnimate.current = false;
-  }, []);
+    const currentLength = outputs.length;
+    const previousLength = previousOutputsLength.current;
+
+    if (currentLength > previousLength) {
+      // New class(es) added - find which indices are new
+      const newIndices = new Set<number>();
+      for (let i = previousLength; i < currentLength; i++) {
+        newIndices.add(i);
+      }
+      setAnimateIndices(newIndices);
+
+      // Clear animation after animation completes (recharts default is ~1000ms)
+      const timeout = setTimeout(() => {
+        setAnimateIndices(new Set());
+      }, 1500);
+
+      previousOutputsLength.current = currentLength;
+      return () => clearTimeout(timeout);
+    }
+
+    // Update previous length even if no new classes were added
+    previousOutputsLength.current = currentLength;
+  }, [outputs.length]);
 
   /**
    *
@@ -425,12 +477,12 @@ export default function Enrollment() {
       labels[`waitlist_${index}`] = `${courseName} - Waitlisted`;
 
       themes[`enroll_${index}`] = {
-        light: LIGHT_COLORS[index % LIGHT_COLORS.length],
-        dark: DARK_COLORS[index % DARK_COLORS.length],
+        light: output.color,
+        dark: getDarkColor(output.color),
       };
       themes[`waitlist_${index}`] = {
-        light: LIGHT_COLORS[index % LIGHT_COLORS.length],
-        dark: DARK_COLORS[index % DARK_COLORS.length],
+        light: output.color,
+        dark: getDarkColor(output.color),
       };
     });
 
@@ -518,7 +570,7 @@ export default function Enrollment() {
               activeOutput={activeOutput}
               dataMax={dataMax}
               outputs={outputs}
-              shouldAnimate={shouldAnimate.current}
+              animateIndices={animateIndices}
               onHoverDuration={handleHoverDuration}
             />
           )

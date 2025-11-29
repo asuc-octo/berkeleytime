@@ -155,6 +155,13 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
   });
   const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
 
+  // Sort by year descending (latest first)
+  termsWithCatalogData.sort((a, b) => {
+    const yearA = parseInt(a.name.split(" ")[0], 10);
+    const yearB = parseInt(b.name.split(" ")[0], 10);
+    return yearB - yearA;
+  });
+
   // Process sequentially to avoid overwhelming the server
   await warmCatalogCacheForTerms(config, termsWithCatalogData);
 };

@@ -187,31 +187,6 @@ export default function CourseSelect({
       });
     }
 
-    // Ensure the currently selected course always appears in the list so it stays selected
-    if (selectedCourse) {
-      const selectedValue = resolveCourseOptionValue(selectedCourse);
-      const selectedLabel = `${selectedCourse.subject} ${selectedCourse.number}`;
-      const alreadyPresent = opts.some(
-        (opt) =>
-          opt.type !== "label" &&
-          opt.value.subject === selectedCourse.subject &&
-          opt.value.number === selectedCourse.number
-      );
-
-      if (selectedValue && !alreadyPresent) {
-        const isRated = isCourseRated(
-          selectedCourse.subject,
-          selectedCourse.number
-        );
-        opts.unshift({
-          value: selectedValue,
-          label: selectedLabel,
-          meta: isRated ? "Rated" : undefined,
-          disabled: disableRatedCourses && isRated,
-        });
-      }
-    }
-
     return opts;
   }, [
     catalogCourses,
@@ -221,7 +196,6 @@ export default function CourseSelect({
     disableRatedCourses,
     searchQuery,
     index,
-    selectedCourse,
     lockedCourse,
   ]);
 
@@ -246,11 +220,16 @@ export default function CourseSelect({
     } satisfies CourseOption;
   }, [selectedCourse, catalogCourses]);
 
+  const selectedLabel = selectedCourse
+    ? `${selectedCourse.subject} ${selectedCourse.number}`
+    : undefined;
+
   return (
     <Select<CourseOption>
       searchable
       options={options}
       value={normalizedSelectedCourse}
+      selectedLabel={selectedLabel}
       onChange={(newValue) => {
         if (newValue && !Array.isArray(newValue)) {
           onSelect?.(newValue as CourseOption);
