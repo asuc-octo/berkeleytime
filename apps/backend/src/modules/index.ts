@@ -2,6 +2,7 @@ import { merge } from "lodash";
 
 import Catalog from "./catalog";
 import Class from "./class";
+// import Collection from "./collection"; // TODO: Incomplete module - needs controller
 import Common from "./common";
 import Course from "./course";
 import CuratedClasses from "./curated-classes";
@@ -26,6 +27,7 @@ const modules = [
   Enrollment,
   Plan,
   Rating,
+  // Collection, // TODO: Incomplete module - needs controller
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));

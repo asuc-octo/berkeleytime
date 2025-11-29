@@ -10,6 +10,17 @@ export const enrollmentTypeDef = gql`
       courseNumber: CourseNumber!
       sectionNumber: SectionNumber!
     ): Enrollment
+
+    enrollmentTimeframes(year: Int!, semester: Semester!): [EnrollmentTimeframe!]!
+  }
+
+  type EnrollmentTimeframe {
+    phase: Int
+    isAdjustment: Boolean!
+    group: String!
+    startDate: String!
+    endDate: String
+    startEventSummary: String
   }
 
   type Enrollment @cacheControl(maxAge: 3600) {

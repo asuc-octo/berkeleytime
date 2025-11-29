@@ -1,3 +1,5 @@
+import { EnrollmentTimeframeModel } from "@repo/common";
+
 import { getEnrollment } from "./controller";
 import { EnrollmentModule } from "./generated-types/module-types";
 
@@ -15,6 +17,21 @@ const resolvers: EnrollmentModule.Resolvers = {
         courseNumber,
         sectionNumber
       );
+    },
+    enrollmentTimeframes: async (_, { year, semester }) => {
+      const timeframes = await EnrollmentTimeframeModel.find({
+        year,
+        semester,
+      }).lean();
+
+      return timeframes.map((tf) => ({
+        phase: tf.phase ?? null,
+        isAdjustment: tf.isAdjustment,
+        group: tf.group,
+        startDate: tf.startDate.toISOString(),
+        endDate: tf.endDate?.toISOString() ?? null,
+        startEventSummary: tf.startEventSummary ?? null,
+      }));
     },
   },
   EnrollmentSingular: {
