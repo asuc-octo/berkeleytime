@@ -1,7 +1,9 @@
 import { GraphQLError } from "graphql";
+
 import { ClassModel } from "@repo/common";
-import { CollectionModule } from "./generated-types/module-types";
+
 import * as controller from "./controller";
+import { CollectionModule } from "./generated-types/module-types";
 
 const resolvers: CollectionModule.Resolvers = {
   Query: {

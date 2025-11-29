@@ -75,3 +75,7 @@ datapuller:
     enrollments:
       schedule: "0/15 * * * *"
       args: ["--puller=enrollments"]
+
+    enrollment-timeframe:
+      schedule: "40 4 * * *"
+      args: ["--puller=enrollment-timeframe"]

@@ -1,15 +1,11 @@
-import {
-  EnrollmentTimeframeModel,
-  TermModel,
-  ITermItem,
-} from "@repo/common";
+import { EnrollmentTimeframeModel, ITermItem, TermModel } from "@repo/common";
 
 import { Config } from "../shared/config";
 import {
-  parseEnrollmentEvent,
   type Group,
   type ParsedEnrollmentEvent,
   type Semester,
+  parseEnrollmentEvent,
 } from "./enrollment-calendar-parser";
 
 // =============================================================================

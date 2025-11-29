@@ -11,7 +11,10 @@ export const enrollmentTypeDef = gql`
       sectionNumber: SectionNumber!
     ): Enrollment
 
-    enrollmentTimeframes(year: Int!, semester: Semester!): [EnrollmentTimeframe!]!
+    enrollmentTimeframes(
+      year: Int!
+      semester: Semester!
+    ): [EnrollmentTimeframe!]!
   }
 
   type EnrollmentTimeframe {

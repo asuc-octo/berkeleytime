@@ -129,7 +129,9 @@ export default function Enrollment() {
     return timeframes
       .map((tf) => {
         const phaseStart = moment(tf.startDate);
-        const timeDelta = moment.duration(phaseStart.diff(firstTime)).asMinutes();
+        const timeDelta = moment
+          .duration(phaseStart.diff(firstTime))
+          .asMinutes();
 
         // Only include lines within the chart's data range
         if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
