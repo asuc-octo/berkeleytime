@@ -169,7 +169,7 @@ const EnrollmentChart = memo(function EnrollmentChart({
             <ReferenceLine
               key={line.key}
               x={line.timeDelta}
-              stroke="var(--gray-500)"
+              stroke="var(--paragraph-color)"
               strokeWidth={1}
               strokeDasharray="6 4"
               strokeOpacity={0.8}
