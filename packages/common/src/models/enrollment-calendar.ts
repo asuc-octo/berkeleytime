@@ -49,6 +49,38 @@ export const enrollmentCalendarEventSchema = new Schema(
       trim: true,
       enum: ["CONFIRMED", "TENTATIVE", "CANCELLED", null],
     },
+    parsedEvent: {
+      type: {
+        termCode: { type: String, required: true, trim: true },
+        semester: {
+          type: String,
+          required: true,
+          enum: ["Spring", "Fall", "Summer"],
+        },
+        year: { type: Number, required: true },
+        phase: { type: Number, enum: [1, 2, null], default: null },
+        isAdjustment: { type: Boolean, required: true, default: false },
+        group: {
+          type: String,
+          required: true,
+          enum: [
+            "continuing",
+            "new_transfer",
+            "new_freshman",
+            "new_graduate",
+            "new_student",
+            "all",
+          ],
+        },
+        eventType: {
+          type: String,
+          required: true,
+          enum: ["start", "end"],
+        },
+      },
+      required: false,
+      default: null,
+    },
     source: {
       type: String,
       required: true,
@@ -67,6 +99,12 @@ export const enrollmentCalendarEventSchema = new Schema(
 );
 
 enrollmentCalendarEventSchema.index({ uid: 1 }, { unique: true });
+enrollmentCalendarEventSchema.index({
+  "parsedEvent.termCode": 1,
+  "parsedEvent.phase": 1,
+  "parsedEvent.group": 1,
+  "parsedEvent.eventType": 1,
+});
 
 export type EnrollmentCalendarEventType = Document &
   InferSchemaType<typeof enrollmentCalendarEventSchema>;

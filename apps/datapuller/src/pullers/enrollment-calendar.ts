@@ -1,6 +1,12 @@
-import { EnrollmentCalendarEventModel } from "@repo/common";
+import {
+  EnrollmentCalendarEventModel,
+  TermModel,
+  ITermItem,
+} from "@repo/common";
 
 import { Config } from "../shared/config";
+import { parseEnrollmentEvent } from "./enrollment-calendar-parser";
+import { syncEnrollmentTimeframes } from "./enrollment-timeframe";
 
 const ENROLLMENT_CALENDAR_URL =
   "https://calendar.google.com/calendar/ical/c_lublpqqigfijlbc1l4rudcpi5s%40group.calendar.google.com/public/basic.ics";
@@ -277,7 +283,8 @@ function parseCal(ics: string): CalendarEvent[] {
   return events;
 }
 
-const syncEnrollmentCalendar = async ({ log }: Config) => {
+const syncEnrollmentCalendar = async (config: Config) => {
+  const { log } = config;
   log.trace(
     `Enrollment calendar collection: ${EnrollmentCalendarEventModel.collection.collectionName}`
   );
@@ -295,11 +302,27 @@ const syncEnrollmentCalendar = async ({ log }: Config) => {
     return;
   }
 
+  // Fetch terms for year inference during parsing
+  log.trace("Fetching terms for event parsing...");
+  const terms = (await TermModel.find({}).lean()) as ITermItem[];
+  log.trace(`Loaded ${terms.length} terms for parsing context.`);
+
   const now = new Date();
   const fetchedUids = new Set<string>();
+  let parsedCount = 0;
 
   const bulkOps = events.map((event) => {
     fetchedUids.add(event.uid);
+
+    // Parse the event to extract structured enrollment data
+    const parsedEvent = event.start
+      ? parseEnrollmentEvent(event.summary, event.start, terms)
+      : null;
+
+    if (parsedEvent) {
+      parsedCount++;
+    }
+
     return {
       updateOne: {
         filter: { uid: event.uid },
@@ -315,6 +338,7 @@ const syncEnrollmentCalendar = async ({ log }: Config) => {
             categories: event.categories ?? [],
             sequence: event.sequence,
             status: event.status,
+            parsedEvent: parsedEvent,
             source: ENROLLMENT_CALENDAR_URL,
             lastSyncedAt: now,
           },
@@ -332,6 +356,7 @@ const syncEnrollmentCalendar = async ({ log }: Config) => {
   log.info(
     `Upserted events: ${bulkResult.upsertedCount} inserted, ${bulkResult.modifiedCount} updated, ${bulkResult.matchedCount} matched.`
   );
+  log.info(`Parsed ${parsedCount} enrollment phase events.`);
 
   log.trace("Removing stale events no longer in feed...");
   const deleteResult = await EnrollmentCalendarEventModel.deleteMany({
@@ -343,6 +368,10 @@ const syncEnrollmentCalendar = async ({ log }: Config) => {
       `Removed ${deleteResult.deletedCount.toLocaleString()} stale events.`
     );
   }
+
+  // Automatically sync enrollment timeframes after calendar events are updated
+  log.info("Syncing enrollment timeframes...");
+  await syncEnrollmentTimeframes(config);
 };
 
 export default {
