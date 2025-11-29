@@ -8,23 +8,25 @@ import {
   LineChart,
   ReferenceLine,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
-import type { TooltipProps } from "recharts";
 
-import { Box, Button, Container, HoverCard } from "@repo/theme";
+import { Box, Button, Container } from "@repo/theme";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  createChartConfig,
+  formatters,
+} from "@/components/Chart";
+import EmptyState from "@/components/Class/EmptyState";
 import { useReadEnrollmentTimeframes } from "@/hooks/api";
+import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./Enrollment.module.scss";
-
-const toPercent = (decimal: number) => {
-  return `${decimal.toFixed(0)}%`;
-};
 
 const timeFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "numeric",
@@ -33,31 +35,10 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
-const renderTooltip = ({ label, payload }: TooltipProps<number, string>) => {
-  if (typeof label !== "number" || !payload || payload.length === 0) {
-    return null;
-  }
-
-  const duration = moment.duration(label, "minutes");
-  const day = Math.floor(duration.asDays()) + 1;
-  const time = timeFormatter.format(moment.utc(0).add(duration).toDate());
-
-  return (
-    <HoverCard
-      content={`Day ${day} ${time}`}
-      data={payload.map((value, index) => {
-        const name = value.name?.valueOf();
-        return {
-          key: `${name}-${index}`,
-          label: name === "enrolled" ? "Enrolled" : "Waitlisted",
-          value:
-            typeof value.value === "number" ? toPercent(value.value) : "N/A",
-          color: value.stroke,
-        };
-      })}
-    />
-  );
-};
+const chartConfig = createChartConfig(["enrolled", "waitlisted"], {
+  labels: { enrolled: "Enrolled", waitlisted: "Waitlisted" },
+  colors: { enrolled: "var(--blue-500)", waitlisted: "var(--orange-500)" },
+});
 
 // Map group names to compact labels
 const GROUP_LABELS: Record<string, string> = {
@@ -71,6 +52,15 @@ const GROUP_LABELS: Record<string, string> = {
 
 export default function Enrollment() {
   const { class: _class } = useClass();
+  const { data: enrollmentData, loading } = useGetClassEnrollment(
+    _class.year,
+    _class.semester,
+    _class.subject,
+    _class.courseNumber,
+    _class.number
+  );
+
+  const history = enrollmentData?.primarySection?.enrollment?.history ?? [];
 
   // Fetch enrollment timeframes for this class's semester
   const { data: timeframes } = useReadEnrollmentTimeframes(
@@ -79,7 +69,6 @@ export default function Enrollment() {
   );
 
   const data = useMemo(() => {
-    const history = _class.primarySection.enrollment?.history ?? [];
     if (history.length === 0) return [];
 
     const firstTime = moment(history[0].startTime).startOf("minute");
@@ -117,7 +106,7 @@ export default function Enrollment() {
         waitlisted: values.waitlistedPercent,
       }))
       .sort((a, b) => a.timeDelta - b.timeDelta);
-  }, [_class.primarySection.enrollment]);
+  }, [history]);
 
   const dataMax = useMemo(() => {
     if (data.length === 0) return 0;
@@ -132,8 +121,6 @@ export default function Enrollment() {
   // Calculate phase line positions (x-axis = minutes since first data point)
   const phaseLines = useMemo(() => {
     if (data.length === 0 || timeframes.length === 0) return [];
-
-    const history = _class.primarySection.enrollment?.history ?? [];
     if (history.length === 0) return [];
 
     const firstTime = moment(history[0].startTime);
@@ -157,7 +144,7 @@ export default function Enrollment() {
         };
       })
       .filter((line): line is NonNullable<typeof line> => line !== null);
-  }, [data, timeframes, _class.primarySection.enrollment]);
+  }, [data, timeframes, history]);
 
   const enrollmentExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
@@ -189,17 +176,23 @@ export default function Enrollment() {
     _class.number,
   ]);
 
+  if (loading) {
+    return <EmptyState heading="Loading Enrollment Data" loading />;
+  }
+
   if (data.length === 0) {
     return (
-      <div className={styles.placeholder}>
-        <GraphUp width={32} height={32} />
-        <p className={styles.heading}>No Enrollment Data Available</p>
-        <p className={styles.paragraph}>
-          This class doesn't have enrollment history data yet.
-          <br />
-          Enrollment trends will appear here once data is available.
-        </p>
-      </div>
+      <EmptyState
+        icon={<GraphUp width={32} height={32} />}
+        heading="No Enrollment Data Available"
+        paragraph={
+          <>
+            This class doesn't have enrollment history data yet.
+            <br />
+            Enrollment trends will appear here once data is available.
+          </>
+        }
+      />
     );
   }
 
@@ -227,7 +220,10 @@ export default function Enrollment() {
             </Button>
           </div>
           <div className={styles.chart}>
-            <div className={styles.chartContainer}>
+            <ChartContainer
+              config={chartConfig}
+              className={styles.chartContainer}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   width={730}
@@ -261,14 +257,27 @@ export default function Enrollment() {
                   />
                   <YAxis
                     stroke="var(--label-color)"
-                    tickFormatter={toPercent}
+                    tickFormatter={(v) => formatters.percentRound(v)}
                     tick={{
                       fill: "var(--paragraph-color)",
                       fontSize: "var(--text-14)",
                     }}
                     domain={[0, dataMax || 100]}
                   />
-                  <Tooltip content={renderTooltip} />
+                  <ChartTooltip
+                    tooltipConfig={{
+                      labelFormatter: (label) => {
+                        const duration = moment.duration(label, "minutes");
+                        const day = Math.floor(duration.asDays()) + 1;
+                        const time = timeFormatter.format(
+                          moment.utc(0).add(duration).toDate()
+                        );
+                        return `Day ${day} ${time}`;
+                      },
+                      valueFormatter: (value) => formatters.percentRound(value),
+                      indicator: "line",
+                    }}
+                  />
                   <ReferenceLine
                     y={100}
                     stroke="var(--label-color)"
@@ -300,15 +309,6 @@ export default function Enrollment() {
                   ))}
                   <Line
                     type="linear"
-                    dataKey="enrolled"
-                    stroke="var(--blue-500)"
-                    dot={false}
-                    strokeWidth={3}
-                    name="enrolled"
-                    connectNulls
-                  />
-                  <Line
-                    type="linear"
                     dataKey="waitlisted"
                     stroke="var(--orange-500)"
                     dot={false}
@@ -317,9 +317,18 @@ export default function Enrollment() {
                     name="waitlisted"
                     connectNulls
                   />
+                  <Line
+                    type="linear"
+                    dataKey="enrolled"
+                    stroke="var(--blue-500)"
+                    dot={false}
+                    strokeWidth={3}
+                    name="enrolled"
+                    connectNulls
+                  />
                 </LineChart>
               </ResponsiveContainer>
-            </div>
+            </ChartContainer>
             <p className={styles.axisLabel}>Days since enrollment opened</p>
           </div>
         </div>

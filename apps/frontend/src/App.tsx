@@ -318,15 +318,21 @@ const router = createBrowserRouter([
             path: "grades",
           },
           {
-            element: <Class.Ratings />,
+            element: (
+              <SuspenseBoundary key="ratings">
+                <Class.Ratings />
+              </SuspenseBoundary>
+            ),
             path: "ratings",
           },
           {
             path: "*",
-            loader: ({ params: { year, semester, subject, courseNumber } }) =>
-              redirect(
-                `/catalog/${year}/${semester}/${subject}/${courseNumber}`
-              ),
+            loader: ({
+              params: { year, semester, subject, courseNumber, number },
+            }) => {
+              const basePath = `/catalog/${year}/${semester}/${subject}/${courseNumber}`;
+              return redirect(number ? `${basePath}/${number}` : basePath);
+            },
           },
         ],
       },

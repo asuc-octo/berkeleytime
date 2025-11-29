@@ -1,11 +1,15 @@
 import { ClassModel, CourseModel, IClassItem, ICourseItem } from "@repo/common";
 
+import { buildSubjectQuery } from "../../utils/subject";
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
 export const getCourse = async (subject: string, number: string) => {
-  const course = await CourseModel.findOne({ subject, number })
+  const course = await CourseModel.findOne({
+    subject: buildSubjectQuery(subject),
+    number,
+  })
     .sort({ fromDate: -1 })
     .lean();
 

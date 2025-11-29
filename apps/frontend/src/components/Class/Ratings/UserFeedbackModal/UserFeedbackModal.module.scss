@@ -1,43 +1,121 @@
+.modalHeaderWrapper {
+  position: relative;
+}
+
+.modalHeader {
+  position: relative;
+
+  // Target the close button (IconButton) within the header
+  // The Dialog.Close wrapper is the last child, and it contains the IconButton
+  > :global(:last-child) {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    margin: 0;
+  }
+}
+
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--border-color);
+  overflow: hidden;
+}
+
+.progressIndicator {
+  width: 100%;
+  height: 100%;
+  background-color: var(--blue-500);
+  transition: transform 0.3s ease;
+}
+
 .modalBody {
-  max-height: 418px;
+  max-height: 70vh;
   overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.formContentWrapper {
+  position: relative;
+  width: 100%;
+
+  &.slideTransition {
+    animation: slideOut 0.15s ease-out forwards, slideIn 0.15s 0.15s ease-in forwards;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .formGroup {
-  margin-bottom: 20px;
   padding: 0 84px;
-  padding-top: 20px;
 
   h3,
   p {
-    color: var(--paragraph-color);
-    font-size: 14px;
-    font-weight: 400;
-    margin-bottom: 12px;
-    padding-bottom: 5px;
+    color: var(--secondary-color);
+    font-size: var(--text-14);
+    font-weight: var(--font-normal);
+    margin: 0;
+    padding: 0;
   }
 
   .requiredAsterisk {
     color: #dc2626;
     margin-left: 4px;
-    font-size: 16px;
+    font-size: var(--text-16);
     line-height: 1;
   }
+}
+
+.questionPair {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 0;
 }
 
 .ratingScale {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-top: 5px;
   max-width: 500px;
-  margin-left: clamp(4px, 4%, 18px);
-  margin-right: auto;
+  margin: 0 auto;
 
   span {
     color: var(--paragraph-color);
-    font-size: 14px;
+    font-size: var(--text-14);
     min-width: 80px;
+
+    &:first-child {
+      text-align: right;
+    }
+
+    &:last-child {
+      text-align: left;
+    }
   }
 }
 
@@ -55,7 +133,7 @@
   border-radius: 4px;
   background: none;
   color: var(--heading-color);
-  font-weight: 500;
+  font-weight: var(--font-medium);
   cursor: pointer;
   transition: all 0.2s ease;
 
@@ -88,7 +166,7 @@
     align-items: center;
     gap: 12px;
     color: var(--paragraph-color);
-    font-size: 14px;
+    font-size: var(--text-14);
     cursor: pointer;
     white-space: nowrap;
 
@@ -176,7 +254,7 @@
   background: none;
   color: var(--label-color);
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--text-18);
   padding: 0;
   transition: color 0.2s ease;
 

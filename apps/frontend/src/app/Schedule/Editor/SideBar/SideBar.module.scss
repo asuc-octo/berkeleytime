@@ -29,7 +29,7 @@
       align-items: center;
 
       .data {
-        font-size: 12px;
+        font-size: var(--text-12);
         color: var(--paragraph-color);
         line-height: 1;
       }

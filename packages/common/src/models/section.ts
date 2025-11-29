@@ -160,8 +160,8 @@ sectionSchema.index({
 sectionSchema.index({
   year: 1,
   semester: 1,
-  printInScheduleOfClasses: 1,
   courseId: 1,
+  printInScheduleOfClasses: 1,
 });
 
 export const SectionModel: Model<ISectionItem> = model<ISectionItem>(

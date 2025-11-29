@@ -58,7 +58,7 @@
 .delete-icon {
   cursor: pointer;
   margin-left: 8px;
-  font-size: 16px;
+  font-size: var(--text-16);
   color: var(--Blue, #2f80ed);
 }
 

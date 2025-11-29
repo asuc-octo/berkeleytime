@@ -102,6 +102,13 @@ classSchema.index({
   number: 1,
 });
 
+// for catalog query
+classSchema.index({
+  year: 1,
+  semester: 1,
+  anyPrintInScheduleOfClasses: 1,
+});
+
 // for course controller
 classSchema.index({ courseId: 1 });
 

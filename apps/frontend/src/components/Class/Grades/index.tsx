@@ -6,74 +6,83 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { Box, Button, Container, HoverCard } from "@repo/theme";
+import { Box, Button, Container } from "@repo/theme";
 
+import {
+  ChartContainer,
+  ChartTooltip,
+  createChartConfig,
+  formatters,
+} from "@/components/Chart";
+import EmptyState from "@/components/Class/EmptyState";
+import { useGetClassGrades } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
-import { decimalToPercentString } from "@/utils/number-formatter";
 
 import styles from "./Grades.module.scss";
 
-const toPercent = (decimal: number) => {
-  return decimalToPercentString(decimal, 1).replace(/\.0%$/, "%");
-};
+const chartConfig = createChartConfig(["course"], {
+  labels: { course: "All semesters" },
+  colors: { course: "var(--blue-500)" },
+});
 
 export default function Grades() {
   const {
-    class: {
-      subject,
-      courseNumber,
-      gradeDistribution,
-      course: { gradeDistribution: courseGradeDistribution },
-    },
+    class: { subject, courseNumber, number, semester, year },
   } = useClass();
+  const { data, loading } = useGetClassGrades(
+    year,
+    semester,
+    subject,
+    courseNumber,
+    number
+  );
+  const courseGradeDistribution = data?.course?.gradeDistribution;
 
   const hasNoGradeData = useMemo(() => {
-    const classTotal =
-      gradeDistribution.distribution?.reduce(
-        (acc, grade) => acc + (grade.count ?? 0),
-        0
-      ) ?? 0;
-    const courseTotal =
-      courseGradeDistribution.distribution?.reduce(
-        (acc, grade) => acc + (grade.count ?? 0),
-        0
-      ) ?? 0;
+    if (!courseGradeDistribution) return true;
+    type GradeEntry = NonNullable<
+      NonNullable<typeof courseGradeDistribution>["distribution"]
+    >[number];
+    const distribution: GradeEntry[] =
+      (courseGradeDistribution.distribution?.filter(
+        (grade): grade is GradeEntry => Boolean(grade)
+      ) as GradeEntry[]) ?? [];
+    const courseTotal = distribution.reduce<number>((acc, grade) => {
+      return acc + (grade.count ?? 0);
+    }, 0);
 
-    return (
-      classTotal === 0 &&
-      courseTotal === 0 &&
-      !gradeDistribution.average &&
-      !courseGradeDistribution.average
-    );
-  }, [gradeDistribution, courseGradeDistribution]);
+    return courseTotal === 0 && !courseGradeDistribution.average;
+  }, [courseGradeDistribution]);
 
-  const { data, courseTotal } = useMemo(() => {
-    const getTotal = (distribution: typeof gradeDistribution.distribution) =>
-      distribution?.reduce((acc, grade) => acc + (grade.count ?? 0), 0) ?? 0;
+  const { data: chartData, courseTotal } = useMemo(() => {
+    if (!courseGradeDistribution) {
+      return {
+        data: [],
+        courseTotal: 0,
+      };
+    }
 
-    const classTotalCount = getTotal(gradeDistribution.distribution);
-    const courseTotalCount = getTotal(
-      courseGradeDistribution.distribution ?? []
-    );
+    type GradeEntry = NonNullable<
+      NonNullable<typeof courseGradeDistribution>["distribution"]
+    >[number];
+    const distribution: GradeEntry[] =
+      (courseGradeDistribution.distribution?.filter(
+        (grade): grade is GradeEntry => Boolean(grade)
+      ) as GradeEntry[]) ?? [];
+    const courseTotalCount = distribution.reduce<number>((acc, grade) => {
+      return acc + (grade.count ?? 0);
+    }, 0);
 
     const mapped = GRADES.map((letter) => {
-      const classGrade = gradeDistribution.distribution?.find(
-        (grade) => grade.letter === letter
-      );
-      const courseGrade = courseGradeDistribution.distribution?.find(
-        (grade) => grade.letter === letter
+      const courseGrade = distribution.find(
+        (grade: GradeEntry) => grade.letter === letter
       );
 
-      const classPercent =
-        classTotalCount > 0 && classGrade
-          ? Math.round(((classGrade.count ?? 0) / classTotalCount) * 1000) / 10
-          : 0;
       const coursePercent =
         courseTotalCount > 0 && courseGrade
           ? Math.round(((courseGrade.count ?? 0) / courseTotalCount) * 1000) /
@@ -82,7 +91,6 @@ export default function Grades() {
 
       return {
         letter,
-        class: classPercent,
         course: coursePercent,
       };
     });
@@ -91,7 +99,7 @@ export default function Grades() {
       data: mapped,
       courseTotal: courseTotalCount,
     };
-  }, [gradeDistribution, courseGradeDistribution]);
+  }, [courseGradeDistribution]);
 
   const gradeExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
@@ -120,18 +128,24 @@ export default function Grades() {
     return `From ${courseTotal.toLocaleString()} course ${gradesLabel}`;
   }, [courseTotal]);
 
+  if (loading || !courseGradeDistribution) {
+    return <EmptyState heading="Loading Grade Data" loading />;
+  }
+
   if (hasNoGradeData) {
     return (
-      <div className={styles.placeholder}>
-        <Reports width={32} height={32} />
-        <p className={styles.heading}>No Grade Data Available</p>
-        <p className={styles.paragraph}>
-          This course doesn't have any historical grade data yet.
-          <br />
-          Grade distributions will appear here once students complete the
-          course.
-        </p>
-      </div>
+      <EmptyState
+        icon={<Reports width={32} height={32} />}
+        heading="No Grade Data Available"
+        paragraph={
+          <>
+            This course doesn't have any historical grade data yet.
+            <br />
+            Grade distributions will appear here once students complete the
+            course.
+          </>
+        }
+      />
     );
   }
 
@@ -156,9 +170,9 @@ export default function Grades() {
               <ArrowUpRight height={16} width={16} />
             </Button>
           </div>
-          <div className={styles.chart}>
+          <ChartContainer config={chartConfig} className={styles.chart}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart width={730} height={450} data={data}>
+              <BarChart width={730} height={450} data={chartData}>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
@@ -174,47 +188,28 @@ export default function Grades() {
                   stroke="var(--label-color)"
                 />
                 <YAxis
-                  tickFormatter={toPercent}
+                  tickFormatter={(v) => formatters.percent(v, 1)}
                   tick={{
                     fill: "var(--paragraph-color)",
                     fontSize: "var(--text-14)",
                   }}
                 />
-                <Tooltip
-                  cursor={{
-                    fill: "var(--border-color)",
-                    fillOpacity: 0.5,
-                  }}
-                  content={(props) => {
-                    return (
-                      <HoverCard
-                        content={props.label}
-                        data={props.payload?.map((v, index) => {
-                          const name = v.name?.valueOf();
-                          return {
-                            key: `${name}-${index}`,
-                            label:
-                              name === "class" ? "This Class" : "All semesters",
-                            value:
-                              typeof v.value === "number"
-                                ? toPercent(v.value)
-                                : "N/A",
-                            color: v.fill,
-                          };
-                        })}
-                      />
-                    );
+                <ChartTooltip
+                  tooltipConfig={{
+                    labelFormatter: (label) => `Grade: ${label}`,
+                    valueFormatter: (value) => formatters.percent(value, 1),
+                    indicator: "square",
                   }}
                 />
                 <Bar
                   dataKey="course"
-                  stackId="grade"
                   fill="var(--blue-500)"
                   radius={[5, 5, 0, 0]}
+                  name="All semesters"
                 />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </ChartContainer>
         </div>
       </Container>
     </Box>

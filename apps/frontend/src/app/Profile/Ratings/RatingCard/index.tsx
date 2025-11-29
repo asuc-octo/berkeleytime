@@ -1,8 +1,7 @@
-import { ArrowRight } from "iconoir-react";
-import { Link } from "react-router-dom";
+import { EditPencil, Trash } from "iconoir-react";
 
 import { METRIC_MAPPINGS, METRIC_ORDER, MetricName } from "@repo/shared";
-import { Badge, Button, Card, Color } from "@repo/theme";
+import { Badge, Card, Color, IconButton, Tooltip } from "@repo/theme";
 
 import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
 import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
@@ -12,9 +11,11 @@ import styles from "./RatingCard.module.scss";
 
 interface RatingCardProps {
   rating: IUserRatingClass;
+  onEdit: (rating: IUserRatingClass) => void;
+  onDelete: (rating: IUserRatingClass) => void;
 }
 
-export function RatingCard({ rating }: RatingCardProps) {
+export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
   const { data: course, loading } = useReadCourseTitle(
     rating.subject,
     rating.courseNumber
@@ -53,13 +54,22 @@ export function RatingCard({ rating }: RatingCardProps) {
           </Card.Description>
         </Card.Body>
         <Card.Actions>
-          <Link
-            to={`/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}/ratings`}
-          >
-            <Button variant="tertiary" noFill={true}>
-              View <ArrowRight />
-            </Button>
-          </Link>
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => onEdit(rating)}>
+                <EditPencil />
+              </IconButton>
+            }
+            title="Edit rating"
+          />
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => onDelete(rating)}>
+                <Trash />
+              </IconButton>
+            }
+            title="Delete rating"
+          />
         </Card.Actions>
       </Card.ColumnHeader>
       <Card.ColumnBody>

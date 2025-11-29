@@ -1,35 +1,44 @@
 .card {
   border-radius: 4px;
-  min-height: 32px;
-  background-color: var(--tooltip-color);
-  animation: fadeIn 50ms ease-in;
-  display: flex;
-  align-items: center;
-  z-index: 998;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  max-width: 250px;
-  box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 0;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  max-width: 256px;
+  animation: fadeIn 100ms ease-in;
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06);
+}
 
-  .arrow {
-    fill: var(--tooltip-color);
-  }
-  .content {
-    padding: 8px 12px;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.8;
-    color: var(--heading-color);
-  }
-  .description {
-    width: calc(100% - 24px);
-    border-top: 1px solid var(--border-color);
-    color: var(--paragraph-color);
-    padding: 8px 12px;
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.4;
-  }
+.cardCompact {
+  padding: 8px 12px;
+}
+
+.title {
+  padding: 8px 12px;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  border-bottom: 1px solid var(--border-color);
+  line-height: 1.2;
+}
+
+.simpleTitle {
+  padding: 8px 12px;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 1.2;
+}
+
+.description {
+  padding: 12px;
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  color: var(--secondary-color);
+  line-height: 1.5;
+}
+
+.arrow {
+  fill: var(--tooltip-color);
 }
 
 @keyframes fadeIn {

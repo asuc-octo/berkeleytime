@@ -82,18 +82,18 @@
   align-items: center;
   gap: 8px;
   color: var(--blue-500);
-  font-size: 16px;
-  font-weight: 500;
+  font-size: var(--text-16);
+  font-weight: var(--font-medium);
   line-height: 1;
   transition: all 100ms ease-in-out;
 
   &:hover {
-    color: var(--blue-600);
+    color: var(--blue-hover);
   }
 }
 
 .description {
-  font-size: 16px;
+  font-size: var(--text-16);
   line-height: 1.5;
   margin-bottom: 32px;
   color: var(--light-paragraph-color);
@@ -122,8 +122,8 @@
   background-color: var(--orange-500);
   width: max-content;
   color: white;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
   line-height: 1;
   margin-bottom: 16px;
 }

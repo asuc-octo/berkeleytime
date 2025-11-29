@@ -31,7 +31,7 @@ export interface BrowserContextType {
   breadths: Breadth[];
   universityRequirement: UniversityRequirement | null;
   gradingFilters: GradingFilter[];
-  department: string | null;
+  academicOrganization: string | null;
   online: boolean;
   sortBy: SortBy;
   open: boolean;
@@ -43,7 +43,7 @@ export interface BrowserContextType {
   updateBreadths: Dispatch<Breadth[]>;
   updateUniversityRequirement: Dispatch<UniversityRequirement | null>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
-  updateDepartment: Dispatch<string | null>;
+  updateAcademicOrganization: Dispatch<string | null>;
   updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
   updateOpen: Dispatch<boolean>;

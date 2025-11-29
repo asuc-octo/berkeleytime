@@ -75,7 +75,9 @@ export default function ClassBrowser({
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
-  const [localDepartment, setLocalDepartment] = useState<string | null>(null);
+  const [localAcademicOrganization, setLocalAcademicOrganization] = useState<
+    string | null
+  >(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
@@ -161,13 +163,13 @@ export default function ClassBrowser({
     [searchParams, localGradingFilters, persistent]
   );
 
-  const department = useMemo(() => {
+  const academicOrganization = useMemo(() => {
     const value = persistent
-      ? (searchParams.get("department") ?? null)
-      : localDepartment;
+      ? (searchParams.get("academicOrganization") ?? null)
+      : localAcademicOrganization;
 
-    return value ? value.toLowerCase() : null;
-  }, [searchParams, localDepartment, persistent]);
+    return value;
+  }, [searchParams, localAcademicOrganization, persistent]);
 
   const sortBy = useMemo(() => {
     if (persistent) {
@@ -211,7 +213,7 @@ export default function ClassBrowser({
         breadths,
         universityRequirement,
         gradingFilters,
-        department
+        academicOrganization
       ),
     [
       classes,
@@ -223,7 +225,7 @@ export default function ClassBrowser({
       breadths,
       universityRequirement,
       gradingFilters,
-      department,
+      academicOrganization,
     ]
   );
 
@@ -250,7 +252,7 @@ export default function ClassBrowser({
       breadths.length > 0 ||
       universityRequirement !== null ||
       gradingFilters.length > 0 ||
-      department !== null ||
+      academicOrganization !== null ||
       open ||
       online ||
       sortBy !== SortBy.Relevance
@@ -262,7 +264,7 @@ export default function ClassBrowser({
     breadths,
     universityRequirement,
     gradingFilters,
-    department,
+    academicOrganization,
     open,
     online,
     sortBy,
@@ -377,7 +379,7 @@ export default function ClassBrowser({
         breadths,
         universityRequirement,
         gradingFilters,
-        department,
+        academicOrganization,
         online,
         open,
         reverse: localReverse,
@@ -391,19 +393,18 @@ export default function ClassBrowser({
         updateUniversityRequirement,
         updateGradingFilters: (filters) =>
           updateArray("gradingBases", setLocalGradingFilters, filters),
-        updateDepartment: (dept) => {
+        updateAcademicOrganization: (org) => {
           if (persistent) {
-            const normalized = dept ? dept.toLowerCase() : null;
-            if (normalized) {
-              searchParams.set("department", normalized);
+            if (org) {
+              searchParams.set("academicOrganization", org);
             } else {
-              searchParams.delete("department");
+              searchParams.delete("academicOrganization");
             }
             setSearchParams(searchParams);
             return;
           }
 
-          setLocalDepartment(dept ? dept.toLowerCase() : null);
+          setLocalAcademicOrganization(org);
         },
         updateSortBy,
         updateOpen: (open) => updateBoolean("open", setLocalOpen, open),

@@ -35,12 +35,13 @@ const resolvers: EnrollmentModule.Resolvers = {
     },
   },
   EnrollmentSingular: {
-    reservedSeatingMaxCount: (parent) => {
+    activeReservedMaxCount: (parent) => {
       const seatReservations = parent.seatReservationCount ?? [];
-      return seatReservations.reduce(
-        (sum, reservation) => sum + (reservation.maxEnroll ?? 0),
-        0
-      );
+      return seatReservations.reduce((sum, reservation) => {
+        const isValid = (reservation as any).isValid ?? false;
+        const maxEnroll = reservation.maxEnroll ?? 0;
+        return sum + (isValid ? maxEnroll : 0);
+      }, 0);
     },
   },
 };

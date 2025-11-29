@@ -86,11 +86,11 @@
     left: 0;
 
     &[data-state="open"] {
-      animation: slideInStart 150ms ease-in;
+      animation: slideInStart 300ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     &[data-state="closed"] {
-      animation: slideOutStart 150ms ease-out;
+      animation: slideOutStart 250ms cubic-bezier(0.4, 0, 1, 1);
     }
   }
 
@@ -166,8 +166,8 @@
 }
 .headerSubtitle {
   color: var(--paragraph-color);
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
 }
 .footer {
   border-top: solid 1px var(--border-color);

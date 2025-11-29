@@ -26,8 +26,8 @@
     width: 100%;
     span {
       margin-left: 8px;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: var(--font-semibold);
+      font-size: var(--text-14);
       line-height: 18px;
       white-space: nowrap;
     }

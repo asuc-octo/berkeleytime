@@ -47,11 +47,6 @@ export const READ_ENROLLMENT = gql`
       subject
       courseNumber
       sectionNumber
-      seatReservationTypes {
-        number
-        requirementGroup
-        fromDate
-      }
       history {
         startTime
         endTime
@@ -64,10 +59,14 @@ export const READ_ENROLLMENT = gql`
         maxEnroll
         maxWaitlist
         openReserved
+        activeReservedMaxCount
         seatReservationCount {
-          number
           maxEnroll
           enrolledCount
+          requirementGroup {
+            description
+          }
+          isValid
         }
       }
     }

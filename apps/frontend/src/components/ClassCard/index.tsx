@@ -8,12 +8,10 @@ import {
   InfoCircle,
   Trash,
 } from "iconoir-react";
-import { Tooltip } from "radix-ui";
 
-import { Card } from "@repo/theme";
+import { Card, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
-import { getEnrollmentColor } from "@/components/Capacity";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -47,7 +45,7 @@ type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
-  "enrolledCount" | "maxEnroll" | "endTime" | "reservedSeatingMaxCount"
+  "enrolledCount" | "maxEnroll" | "endTime" | "activeReservedMaxCount"
 >;
 
 type ClassCardClass = Partial<BaseClassFields> & {
@@ -91,13 +89,9 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
-  const reservedSeatingMaxCount =
-    _class?.primarySection?.enrollment?.latest?.reservedSeatingMaxCount ?? 0;
+  const activeReservedMaxCount =
+    _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
-  const reservedSeatingColor = getEnrollmentColor(
-    reservedSeatingMaxCount,
-    maxEnroll
-  );
 
   return (
     <Card.RootColumn
@@ -147,34 +141,17 @@ export default function ClassCard({
                 <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
               )}
             {(_class?.primarySection?.enrollment?.latest
-              ?.reservedSeatingMaxCount ?? 0) > 0 && (
-              <Tooltip.Root disableHoverableContent>
-                <Tooltip.Trigger asChild>
+              ?.activeReservedMaxCount ?? 0) > 0 && (
+              <Tooltip
+                trigger={
                   <span className={styles.reservedSeating}>
                     <InfoCircle className={styles.reservedSeatingIcon} />
                     Reserved
                   </span>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content
-                    asChild
-                    side="bottom"
-                    sideOffset={8}
-                    collisionPadding={8}
-                  >
-                    <div className={styles.tooltipContent}>
-                      <Tooltip.Arrow className={styles.tooltipArrow} />
-                      <p className={styles.tooltipTitle}>Reserved Seating</p>
-                      <p className={styles.tooltipDescription}>
-                        <span style={{ color: reservedSeatingColor }}>
-                          {reservedSeatingMaxCount}/{maxEnroll}
-                        </span>{" "}
-                        seats for this class are reserved.
-                      </p>
-                    </div>
-                  </Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
+                }
+                title="Reserved Seating"
+                description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
+              />
             )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon

@@ -6,7 +6,6 @@
   border-right: 1px var(--border-color);
   background: var(--background-color);
   color: var(--heading-color);
-  scrollbar-color: var(--label-color) var(--foreground-color);
 
   h2 {
     font-size: 1rem;
@@ -46,7 +45,7 @@
       .text {
         display: flex;
         font-size: 0.75rem;
-        font-weight: 500;
+        font-weight: var(--font-medium);
         line-height: 1rem;
         color: #999;
       }

@@ -29,9 +29,23 @@
   }
 
   .description {
-    font-size: 16px;
+    font-size: var(--text-16);
     line-height: 1.5;
-    color: var(--paragraph-color);
+    color: var(--secondary-color);
+  }
+
+  .reservedSeatingBadgeContainer {
+    height: 0;
+    position: relative;
+    align-self: center;
+
+    > * {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translateY(-50%);
+      white-space: nowrap;
+    }
   }
 
   .badge {
@@ -58,19 +72,38 @@
   }
 }
 
-.loading {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+.tooltipContent {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--tooltip-color);
+  color: var(--description-color);
+  max-width: 256px;
+  font-size: var(--text-14);
+  animation: fadeIn 100ms ease-in;
+  z-index: 998;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
-  .loadingHeader {
-    height: 238.5px;
-    background-color: var(--foreground-color);
-    border-bottom: 1px solid var(--border-color);
+  .tooltipArrow {
+    fill: var(--tooltip-color);
   }
 
-  .loadingBody {
-    flex-grow: 1;
-    background-color: var(--background-color);
+  .tooltipTitle {
+    font-weight: var(--font-semibold);
+    color: var(--tooltip-heading-color);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .tooltipDescription {
+    line-height: 1.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

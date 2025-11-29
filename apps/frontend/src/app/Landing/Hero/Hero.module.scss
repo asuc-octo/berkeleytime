@@ -62,7 +62,7 @@
         font-size: 24px;
         color: #eee;
         line-height: 1.5;
-        font-weight: 500;
+        font-weight: var(--font-medium);
         margin-bottom: 64px;
       }
 
@@ -78,7 +78,7 @@
         box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
 
         .input {
-          font-size: 16px;
+          font-size: var(--text-16);
           color: var(--slate-900);
           height: 56px;
 
@@ -94,7 +94,7 @@
       right: 272px;
       bottom: 64px;
       text-align: right;
-      font-size: 16px;
+      font-size: var(--text-16);
       line-height: 1.5;
       color: #eee;
       z-index: 1;
@@ -104,7 +104,7 @@
       }
 
       p.heading {
-        font-weight: 500;
+        font-weight: var(--font-medium);
         color: white;
         margin-top: 16px;
       }

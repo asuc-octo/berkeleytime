@@ -11,7 +11,7 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    font-size: 12px;
+    font-size: var(--text-12);
     line-height: 1;
     z-index: 2;
 
@@ -65,7 +65,7 @@
     position: sticky;
     top: 64px; // Below the Calendar header (32px legend + 32px week header)
     z-index: 10;
-    font-size: 14px;
+    font-size: var(--text-14);
     line-height: 1;
     height: 32px;
     color: var(--label-color);

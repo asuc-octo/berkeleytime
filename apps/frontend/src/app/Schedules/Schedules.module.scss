@@ -7,7 +7,7 @@
 }
 
 .title {
-  font-weight: 700;
+  font-weight: var(--font-bold);
   font-size: 2rem;
   margin-bottom: 1rem;
   color: var(--heading-color);
@@ -16,8 +16,8 @@
 
 .prompt {
   margin-bottom: 2rem;
-  font-weight: 400;
-  font-size: 18px;
+  font-weight: var(--font-normal);
+  font-size: var(--text-18);
   color: var(--paragraph-color);
   text-align: center;
 }

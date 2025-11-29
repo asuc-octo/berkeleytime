@@ -50,8 +50,8 @@
   display: grid;
   place-items: center;
   color: white;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
   line-height: 1;
   border: 1px solid var(--blue-600);
 }

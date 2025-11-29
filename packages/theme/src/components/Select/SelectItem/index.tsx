@@ -2,7 +2,6 @@ import React from "react";
 
 import { Box, Flex } from "@radix-ui/themes";
 import classNames from "classnames";
-import { Check } from "iconoir-react";
 
 import { Badge } from "../../Badge";
 import { Checkbox } from "../../Checkbox";
@@ -29,12 +28,17 @@ export default function SelectItem({
   checkboxMulti = false,
 }: SelectItemProps) {
   return (
-    <Box>
+    <Box
+      className={styles.root}
+      data-disabled={disabled}
+      data-selected={selected}
+    >
       <Flex
         direction="row"
         justify="between"
-        className={classNames(styles.root, { [styles.selected]: selected })}
-        data-disabled={disabled}
+        align="center"
+        width="100%"
+        className={classNames({ [styles.selected]: selected })}
       >
         <Flex direction="row" align="center" gap="8px">
           {checkboxMulti && (
@@ -45,15 +49,15 @@ export default function SelectItem({
               <Badge label={label} color={color} icon={icon} />
             </Flex>
           ) : (
-            <Flex direction="row" gap="12px">
+            <Flex direction="row" align="center" gap="12px">
               {icon && icon}
-              <span>
-                {label} {meta && <span className={styles.meta}>({meta})</span>}
-              </span>
+              <span>{label}</span>
             </Flex>
           )}
         </Flex>
-        {selected && !checkboxMulti && <Check />}
+        <Flex direction="row" align="center" gap="8px">
+          {meta && <span className={styles.meta}>{meta}</span>}
+        </Flex>
       </Flex>
     </Box>
   );

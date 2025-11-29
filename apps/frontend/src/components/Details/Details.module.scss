@@ -18,10 +18,10 @@
 
   a {
     color: var(--blue-500);
-    font-weight: 500;
+    font-weight: var(--font-medium);
 
     &:hover {
-      color: var(--blue-600);
+      color: var(--blue-hover);
     }
   }
 }

@@ -3,7 +3,6 @@
   flex-shrink: 0;
   overflow-y: auto;
   background-color: var(--foreground-color);
-  scrollbar-color: var(--label-color) var(--foreground-color);
 
   @media (width <= 992px) {
     width: 384px;
@@ -29,7 +28,7 @@
     }
 
     .clearButton {
-      font-size: 14px;
+      font-size: var(--text-14);
       color: var(--blue-500);
       line-height: 20px;
       background: none;
@@ -39,11 +38,7 @@
       transition: all 100ms ease-in-out;
 
       &:hover {
-        color: var(--blue-600);
-
-        @media (prefers-color-scheme: dark) {
-          color: var(--blue-400);
-        }
+        color: var(--blue-hover);
       }
     }
 

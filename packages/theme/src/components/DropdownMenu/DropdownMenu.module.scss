@@ -28,7 +28,7 @@
 }
 
 .item {
-  font-size: 14px;
+  font-size: var(--text-14);
   line-height: 1;
   color: var(--paragraph-color);
   border-radius: 3px;

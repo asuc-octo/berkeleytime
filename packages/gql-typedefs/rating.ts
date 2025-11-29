@@ -35,6 +35,29 @@ export const ratingTypeDef = gql`
   }
 
   """
+  Instructor information
+  """
+  type Instructor {
+    givenName: String!
+    familyName: String!
+  }
+
+  """
+  Ratings by instructor
+  """
+  type InstructorRating @cacheControl(maxAge: 1) {
+    instructor: Instructor!
+    aggregatedRatings: AggregatedRatings!
+    classesTaught: [ClassIdentifier!]!
+  }
+
+  type ClassIdentifier {
+    semester: Semester!
+    year: Int!
+    classNumber: String!
+  }
+
+  """
   Ratings by user
   """
   type UserRatings @cacheControl(maxAge: 1) {
