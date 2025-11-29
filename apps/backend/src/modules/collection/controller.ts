@@ -1,5 +1,7 @@
 import { GraphQLError } from "graphql";
+
 import { ClassModel, CollectionModel } from "@repo/common";
+
 import { CollectionModule } from "./generated-types/module-types";
 
 export interface RequestContext {

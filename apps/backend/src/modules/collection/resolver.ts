@@ -1,7 +1,9 @@
 import { GraphQLError } from "graphql";
+
 import { ClassModel } from "@repo/common";
-import { CollectionModule } from "./generated-types/module-types";
+
 import * as controller from "./controller";
+import { CollectionModule } from "./generated-types/module-types";
 
 const resolvers: CollectionModule.Resolvers = {
   Query: {
@@ -224,10 +226,24 @@ const resolvers: CollectionModule.Resolvers = {
             courseNumber: classEntry.courseNumber,
             number: classEntry.classNumber,
           });
+
+          return {
+            class: null,
+            personalNote: classEntry.personalNote
+              ? {
+                  text: classEntry.personalNote.text,
+                  updatedAt:
+                    classEntry.personalNote.updatedAt instanceof Date
+                      ? classEntry.personalNote.updatedAt.toISOString()
+                      : classEntry.personalNote.updatedAt,
+                }
+              : null,
+            error: "CLASS_NOT_FOUND_IN_CATALOG",
+          };
         }
 
         return {
-          class: classData || null,
+          class: classData,
           personalNote: classEntry.personalNote
             ? {
                 text: classEntry.personalNote.text,
@@ -237,11 +253,12 @@ const resolvers: CollectionModule.Resolvers = {
                     : classEntry.personalNote.updatedAt,
               }
             : null,
+          error: null,
         };
       });
 
-      // Step 5: Filter out any classes that couldn't be found
-      return classesWithInfo.filter((c: any) => c.class !== null) as any;
+      // Return all classes (including missing ones with error field)
+      return classesWithInfo as any;
     },
   },
 };

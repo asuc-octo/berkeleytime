@@ -11,8 +11,9 @@ export const collectionTypeDef = gql`
   }
 
   type CollectionClass {
-    class: Class!
+    class: Class
     personalNote: PersonalNote
+    error: String
   }
 
   type PersonalNote {
