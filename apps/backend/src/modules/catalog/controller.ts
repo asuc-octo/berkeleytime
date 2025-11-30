@@ -113,6 +113,35 @@ export const getCatalog = async (
   if (shouldLoadGradeDistributions) {
     const sectionIds = sections.map((section) => section.sectionId);
 
+    // Deduplicate subject-courseNumber pairs to reduce $or clauses
+    const subjectCourseNumberPairs: {
+      subject: string;
+      courseNumber: string;
+    }[] = [];
+    if (includesCourseGradeDistributionDistribution) {
+      const seen = new Set<string>();
+      for (const course of courses) {
+        const key = `${course.subject}|${course.number}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          subjectCourseNumberPairs.push({
+            subject: course.subject,
+            courseNumber: course.number,
+          });
+        }
+      }
+      for (const _class of classes) {
+        const key = `${_class.subject}|${_class.courseNumber}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          subjectCourseNumberPairs.push({
+            subject: _class.subject,
+            courseNumber: _class.courseNumber,
+          });
+        }
+      }
+    }
+
     // Fetch class-level and course-level grade distributions in parallel when needed
     const [classGradeDistributions, courseGradeDistributions] =
       await Promise.all([
@@ -121,18 +150,10 @@ export const getCatalog = async (
               sectionId: { $in: sectionIds },
             }).lean()
           : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
-        includesCourseGradeDistributionDistribution
+        includesCourseGradeDistributionDistribution &&
+        subjectCourseNumberPairs.length > 0
           ? GradeDistributionModel.find({
-              $or: [
-                ...courses.map((course) => ({
-                  subject: course.subject,
-                  courseNumber: course.number,
-                })),
-                ...classes.map((_class) => ({
-                  subject: _class.subject,
-                  courseNumber: _class.courseNumber,
-                })),
-              ],
+              $or: subjectCourseNumberPairs,
             }).lean()
           : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
       ]);
