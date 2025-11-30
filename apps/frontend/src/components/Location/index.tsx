@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { buildings } from "@/lib/location";
 
 import styles from "./Location.module.scss";
+import { LocationHoverCard } from "./LocationHoverCard";
 
 interface LocationProps {
   location?: string | null;
@@ -23,11 +24,25 @@ export default function Location({ location }: LocationProps) {
     return location.split(" ").pop();
   }, [location]);
 
-  return building?.location && building?.link && room ? (
-    <a target="_blank" href={building.link} className={styles.root}>
-      {building.name + " " + room}
-    </a>
-  ) : (
-    <p className={styles.placeholder}>To be determined</p>
+  if (!building?.location || !building?.link || !room) {
+    return <p className={styles.placeholder}>To be determined</p>;
+  }
+
+  return (
+    <LocationHoverCard
+      buildingName={building.name}
+      room={room}
+      link={building.link}
+      coordinates={building.location}
+    >
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={building.link}
+        className={styles.root}
+      >
+        {building.name + " " + room}
+      </a>
+    </LocationHoverCard>
   );
 }

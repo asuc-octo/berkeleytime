@@ -1,0 +1,21 @@
+/// Dark mode mixin that respects both user theme override and system preference.
+/// Usage:
+///   .element {
+///     color: black;
+///     @include dark-mode {
+///       color: white;
+///     }
+///   }
+@mixin dark-mode {
+  // When user explicitly sets dark mode via settings
+  body[data-theme="dark"] & {
+    @content;
+  }
+
+  // When user has "System Default" and system prefers dark
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme]) & {
+      @content;
+    }
+  }
+}
