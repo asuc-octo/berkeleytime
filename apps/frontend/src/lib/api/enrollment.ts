@@ -1,6 +1,10 @@
 import { gql } from "@apollo/client";
 
-import { EnrollmentSingular, GetEnrollmentQuery } from "../generated/graphql";
+import {
+  EnrollmentSingular,
+  GetEnrollmentQuery,
+  GetEnrollmentTimeframesQuery,
+} from "../generated/graphql";
 
 export type IEnrollmentSingular = EnrollmentSingular;
 
@@ -11,6 +15,13 @@ export type ISeatReservationCounts = NonNullable<
     GetEnrollmentQuery["enrollment"]
   >["history"][number]["seatReservationCount"]
 >[number];
+
+export type IReservationType = NonNullable<
+  NonNullable<GetEnrollmentQuery["enrollment"]>["seatReservationTypes"]
+>[number];
+
+export type IEnrollmentTimeframe =
+  GetEnrollmentTimeframesQuery["enrollmentTimeframes"][number];
 
 export const READ_ENROLLMENT = gql`
   query GetEnrollment(
@@ -58,6 +69,19 @@ export const READ_ENROLLMENT = gql`
           isValid
         }
       }
+    }
+  }
+`;
+
+export const READ_ENROLLMENT_TIMEFRAMES = gql`
+  query GetEnrollmentTimeframes($year: Int!, $semester: Semester!) {
+    enrollmentTimeframes(year: $year, semester: $semester) {
+      phase
+      isAdjustment
+      group
+      startDate
+      endDate
+      startEventSummary
     }
   }
 `;

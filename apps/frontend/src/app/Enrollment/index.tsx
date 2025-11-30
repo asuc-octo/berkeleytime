@@ -7,7 +7,8 @@ import React, {
   useState,
 } from "react";
 
-import type { useApolloClient } from "@apollo/client/react";
+import { useApolloClient, useQuery } from "@apollo/client/react";
+import type { useApolloClient as UseApolloClientType } from "@apollo/client/react";
 import moment from "moment";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -34,7 +35,11 @@ import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalytic
 import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import Footer from "@/components/Footer";
-import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
+import {
+  GetEnrollmentDocument,
+  GetEnrollmentTimeframesDocument,
+  Semester,
+} from "@/lib/generated/graphql";
 import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import CourseInput from "./CourseManager/CourseInput";
@@ -47,6 +52,16 @@ import {
   getInputSearchParam,
   isInputEqual,
 } from "./types";
+
+// Map group names to full labels
+const GROUP_LABELS: Record<string, string> = {
+  continuing: "Continuing Students",
+  new_transfer: "New Transfer Students",
+  new_freshman: "New Freshman Students",
+  new_graduate: "New Graduate Students",
+  new_student: "New Students",
+  all: "All Students",
+};
 
 // Memoized formatter to avoid recreating on each render
 const timeFormatter = new Intl.DateTimeFormat("en-US", {
@@ -62,6 +77,12 @@ const getDarkColor = (lightColor: string): string => {
   return colorIndex !== -1 ? DARK_COLORS[colorIndex] : lightColor;
 };
 
+type PhaseLine = {
+  timeDelta: number;
+  label: string;
+  key: string;
+};
+
 type EnrollmentChartProps = {
   data: { timeDelta: number; [key: string]: number | null }[] | undefined;
   filteredOutputs: Output[];
@@ -70,6 +91,7 @@ type EnrollmentChartProps = {
   dataMax: number;
   outputs: Output[];
   animateIndices: Set<number>;
+  phaseLines: PhaseLine[];
   onHoverDuration: (duration: moment.Duration | null) => void;
 };
 
@@ -81,6 +103,7 @@ const EnrollmentChart = memo(function EnrollmentChart({
   dataMax,
   outputs,
   animateIndices,
+  phaseLines,
   onHoverDuration,
 }: EnrollmentChartProps) {
   const handleHover: CategoricalChartFunc = useCallback(
@@ -141,6 +164,26 @@ const EnrollmentChart = memo(function EnrollmentChart({
               }}
             />
           )}
+          {/* Enrollment phase start lines */}
+          {phaseLines.map((line) => (
+            <ReferenceLine
+              key={line.key}
+              x={line.timeDelta}
+              stroke="var(--paragraph-color)"
+              strokeWidth={1}
+              strokeDasharray="6 4"
+              strokeOpacity={0.8}
+              label={{
+                value: line.label,
+                position: "insideBottomLeft",
+                fill: "var(--paragraph-color)",
+                fontSize: 10,
+                angle: -90,
+                dx: 12,
+                dy: -10,
+              }}
+            />
+          ))}
           {outputs?.length > 0 && (
             <ChartTooltip
               content={(props) => {
@@ -467,6 +510,117 @@ export default function Enrollment() {
     );
   }, [data]);
 
+  // Determine the semester to show phase lines for
+  const phaseLinesConfig = useMemo(() => {
+    if (!outputs || outputs.length === 0) return null;
+
+    // Check if all outputs are from the same semester
+    const firstSemester = outputs[0].input.semester;
+    const firstYear = outputs[0].input.year;
+    const allSameSemester = outputs.every(
+      (o) => o.input.semester === firstSemester && o.input.year === firstYear
+    );
+
+    if (allSameSemester) {
+      return { year: firstYear, semester: firstSemester, showAlways: true };
+    }
+
+    // If different semesters, show lines for active output's semester
+    if (activeOutput) {
+      return {
+        year: activeOutput.input.year,
+        semester: activeOutput.input.semester,
+        showAlways: false,
+      };
+    }
+
+    return null;
+  }, [outputs, activeOutput]);
+
+  // Fetch enrollment timeframes for the relevant semester
+  const { data: timeframesData } = useQuery(GetEnrollmentTimeframesDocument, {
+    variables: {
+      year: phaseLinesConfig?.year ?? 0,
+      semester: phaseLinesConfig?.semester ?? Semester.Fall,
+    },
+    skip: !phaseLinesConfig,
+  });
+
+  // Calculate phase line positions
+  const phaseLines = useMemo((): PhaseLine[] => {
+    if (!data || data.length === 0 || !timeframesData?.enrollmentTimeframes)
+      return [];
+    if (!phaseLinesConfig) return [];
+
+    // Find the output that matches the phase lines semester to get its first timestamp
+    const matchingOutput = outputs.find(
+      (o) =>
+        o.input.year === phaseLinesConfig.year &&
+        o.input.semester === phaseLinesConfig.semester
+    );
+
+    if (!matchingOutput) return [];
+
+    const firstTime = moment(matchingOutput.data.history[0].startTime);
+    const lastTimeDelta = data[data.length - 1].timeDelta;
+
+    // Debug logging
+    console.log("Phase lines debug:", {
+      firstTime: firstTime.toISOString(),
+      lastTimeDelta,
+      lastTimeDeltaDays: lastTimeDelta / 1440,
+      timeframes: timeframesData.enrollmentTimeframes.map((tf) => ({
+        group: tf.group,
+        phase: tf.phase,
+        startDate: tf.startDate,
+        calculatedTimeDelta: moment
+          .duration(moment(tf.startDate).diff(firstTime))
+          .asMinutes(),
+        calculatedDay:
+          moment.duration(moment(tf.startDate).diff(firstTime)).asMinutes() /
+            1440 +
+          1,
+      })),
+    });
+
+    // Format semester as FA25, SP24, etc.
+    const semesterPrefix =
+      phaseLinesConfig.semester === "Fall"
+        ? "FA"
+        : phaseLinesConfig.semester === "Spring"
+          ? "SP"
+          : "SU";
+    const yearSuffix = String(phaseLinesConfig.year).slice(-2);
+    const termLabel = `${semesterPrefix}${yearSuffix}`;
+
+    const result = timeframesData.enrollmentTimeframes
+      .filter((tf) => tf.group === "continuing" || tf.group === "all")
+      .map((tf) => {
+        const phaseStart = moment(tf.startDate);
+        const timeDelta = moment
+          .duration(phaseStart.diff(firstTime))
+          .asMinutes();
+
+        // Only include lines within the chart's data range
+        if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
+
+        const phaseLabel = tf.isAdjustment
+          ? "Adjustment Period"
+          : `Phase ${tf.phase}`;
+        const groupLabel = GROUP_LABELS[tf.group] ?? tf.group;
+
+        return {
+          timeDelta,
+          label: `${termLabel} ${phaseLabel} - ${groupLabel}`,
+          key: `${tf.phase}-${tf.group}-${tf.isAdjustment}`,
+        };
+      })
+      .filter((line): line is NonNullable<typeof line> => line !== null);
+
+    console.log("Phase lines result:", result);
+    return result;
+  }, [data, timeframesData, phaseLinesConfig, outputs]);
+
   const chartConfig = useMemo(() => {
     const labels: Record<string, string> = {};
     const themes: Record<string, { light: string; dark: string }> = {};
@@ -571,6 +725,7 @@ export default function Enrollment() {
               dataMax={dataMax}
               outputs={outputs}
               animateIndices={animateIndices}
+              phaseLines={phaseLines}
               onHoverDuration={handleHoverDuration}
             />
           )
