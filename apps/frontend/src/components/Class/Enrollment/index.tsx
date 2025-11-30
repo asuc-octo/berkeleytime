@@ -40,16 +40,6 @@ const chartConfig = createChartConfig(["enrolled", "waitlisted"], {
   colors: { enrolled: "var(--blue-500)", waitlisted: "var(--orange-500)" },
 });
 
-// Map group names to compact labels
-const GROUP_LABELS: Record<string, string> = {
-  continuing: "Cont",
-  new_transfer: "Transfer",
-  new_freshman: "Freshman",
-  new_graduate: "Grad",
-  new_student: "New",
-  all: "All",
-};
-
 export default function Enrollment() {
   const { class: _class } = useClass();
   const { data: enrollmentData, loading } = useGetClassEnrollment(
@@ -127,6 +117,7 @@ export default function Enrollment() {
     const lastTimeDelta = data[data.length - 1].timeDelta;
 
     return timeframes
+      .filter((tf) => tf.phase === 2 && tf.group === "continuing")
       .map((tf) => {
         const phaseStart = moment(tf.startDate);
         const timeDelta = moment
@@ -136,12 +127,9 @@ export default function Enrollment() {
         // Only include lines within the chart's data range
         if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
 
-        const phaseLabel = tf.isAdjustment ? "Adj" : `P${tf.phase}`;
-        const groupLabel = GROUP_LABELS[tf.group] ?? tf.group;
-
         return {
           timeDelta,
-          label: `${phaseLabel} ${groupLabel}`,
+          label: "Phase 2 Continuing",
           key: `${tf.phase}-${tf.group}-${tf.isAdjustment}`,
         };
       })
@@ -298,14 +286,18 @@ export default function Enrollment() {
                     <ReferenceLine
                       key={line.key}
                       x={line.timeDelta}
-                      stroke="var(--label-color)"
-                      strokeDasharray="3 3"
-                      strokeOpacity={0.4}
+                      stroke="var(--paragraph-color)"
+                      strokeWidth={1}
+                      strokeDasharray="6 4"
+                      strokeOpacity={0.8}
                       label={{
                         value: line.label,
-                        position: "top",
+                        position: "insideBottomLeft",
                         fill: "var(--paragraph-color)",
                         fontSize: 10,
+                        angle: -90,
+                        dx: 12,
+                        dy: -10,
                       }}
                     />
                   ))}

@@ -147,9 +147,6 @@ export const ratingTypeDef = gql`
       metrics: [RatingMetricInput!]!
     ): Boolean! @auth
 
-    deleteRatings(
-      subject: String!
-      courseNumber: String!
-    ): Boolean! @auth
+    deleteRatings(subject: String!, courseNumber: String!): Boolean! @auth
   }
 `;

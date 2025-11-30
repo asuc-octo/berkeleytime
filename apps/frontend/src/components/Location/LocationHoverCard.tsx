@@ -1,11 +1,11 @@
 import { useCallback, useRef } from "react";
 
-import { useIsDarkMode } from "@repo/theme";
 import { ArrowRight } from "iconoir-react";
 import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { HoverCard } from "radix-ui";
 
-import "maplibre-gl/dist/maplibre-gl.css";
+import { useIsDarkMode } from "@repo/theme";
 
 import styles from "./LocationHoverCard.module.scss";
 
@@ -36,12 +36,12 @@ export function LocationHoverCard({
         const center = coordinates ?? [-122.258, 37.872];
 
         // Map colors are hardcoded and must be manually updated to match styling changes
-        const bgColor = isDarkMode ? "#18181b" : "#fafafa";
-        const buildingColor = isDarkMode ? "#3f3f46" : "#e4e4e7";
-        const roadColor = isDarkMode ? "#27272a" : "#ffffff";
-        const roadOutline = isDarkMode ? "#3f3f46" : "#d4d4d8";
-        const textColor = isDarkMode ? "#a1a1aa" : "#52525b";
-        const waterColor = isDarkMode ? "#1e3a5f" : "#dbeafe";
+        const bgColor = isDarkMode ? "#18181b" : "#ffffff"; // zinc-900 / white
+        const buildingColor = isDarkMode ? "#27272a" : "#e5e5e5"; // zinc-800 / neutral-200
+        const buildingOutline = isDarkMode ? "#3f3f46" : "#d4d4d4"; // zinc-700 / neutral-300
+        const roadColor = isDarkMode ? "#18181b" : "#ffffff"; // zinc-900 / white
+        const roadOutline = isDarkMode ? "#3f3f46" : "#d4d4d4"; // zinc-700 / neutral-300
+        const textColor = isDarkMode ? "#a1a1aa" : "#525252"; // zinc-400 / neutral-600
 
         const map = new maplibregl.Map({
           container: node,
@@ -58,22 +58,6 @@ export function LocationHoverCard({
                 id: "background",
                 type: "background",
                 paint: { "background-color": bgColor },
-              },
-              {
-                id: "water",
-                type: "fill",
-                source: "openmaptiles",
-                "source-layer": "water",
-                paint: { "fill-color": waterColor },
-              },
-              {
-                id: "landuse",
-                type: "fill",
-                source: "openmaptiles",
-                "source-layer": "landuse",
-                paint: {
-                  "fill-color": isDarkMode ? "#27272a" : "#f4f4f5",
-                },
               },
               {
                 id: "roads-outline",
@@ -102,7 +86,7 @@ export function LocationHoverCard({
                 "source-layer": "building",
                 paint: {
                   "fill-color": buildingColor,
-                  "fill-outline-color": isDarkMode ? "#52525b" : "#d4d4d8",
+                  "fill-outline-color": buildingOutline,
                 },
               },
               {
