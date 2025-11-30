@@ -1,0 +1,10 @@
+- CYBER 202 Cryptography for Cyber and Network Security, Reasonable
+- COMPSCI 276 Cryptography, Reasonable
+- CYBER 210 Network Security, Reasonable
+- COMPSCI 161 Computer Security, Reasonable
+- CYBER 206 Mathematics and Programming for Cybersecurity, Not reasonable
+- COMPSCI 261 Security in Computer Systems, Reasonable
+- COMPSCI 70 Discrete Mathematics and Probability Theory, Reasonable
+- LEGALST 122 Prudence and Law, Not reasonable
+- CYBER 207 Artificial Intelligence (AI) and Machine Learning (ML) in Cybersecurity, Not reasonable
+- COMPSCI 168 Introduction to the Internet: Architecture and Protocols, Not reasonable

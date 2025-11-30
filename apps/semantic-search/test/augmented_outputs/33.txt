@@ -1,0 +1,135 @@
+{
+  "query": "Structural steel design",
+  "results": [
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "247",
+        "score": 0.7299470901489258
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "247",
+        "title": "Design of Steel and Composite Structures",
+        "description": "Behavior and design of steel plate girders and shear walls. Design of bracings for stability. Design of members subjected to torsion. Design of composite beams, columns, and beam-columns. Behavior and design of shear, semi-rigid and moment connections. Concepts used in design of gusset plates and base plates. Selection and design of steel and composite systems. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "120",
+        "score": 0.6748930811882019
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "120",
+        "title": "Structural Engineering",
+        "description": "Introduction to design and analysis of structural systems. Loads and load placement. Proportioning of structural members in steel, reinforced concrete, and timber. Structural analysis theory. Hand and computer analysis methods, validation of results from computer analysis. Applications, including bridges, building frames, and long-span cable structures. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "227",
+        "score": 0.6746694445610046
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "227",
+        "title": "Earthquake-Resistant Design",
+        "description": "Design of structures to resist earthquakes and other dynamic excitations. Characterization of earthquakes for design. Development of design criteria for elastic and inelastic structural response. Seismic performance of various structural systems. Prediction of nonlinear seismic behavior. Basis for code design procedures. Preliminary design of steel and reinforced concrete structures. Evaluation of earthquake vulnerability of existing structures and rehabilitation of seismic deficiencies. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "92B",
+        "score": 0.6511254906654358
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "92B",
+        "title": "Cornerstone Structural Design",
+        "description": "This course introduces students to conceptual structural design, fabrication, and testing. The course aims to provide a hands-on structural engineering design experience and to inspire creativity. Students will learn the design process as well as fundamental principles of structural analysis. Student teams will be given a design challenge with performance objectives and practical constraints that emphasize sustainable design practices. Student teams will use maker space resources (e.g. 3D printing, laser cutting, CNC router, woodshop) to fabricate their structures, which will be tested to failure in the Structural Engineering Lab in Davis Hall."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "123",
+        "score": 0.632282555103302
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "123",
+        "title": "Design of Reinforced Concrete Structures",
+        "description": "Introduction to materials and methods of reinforced concrete design and construction; behavior and design of reinforced concrete beams and one-way slabs considering deflections, moment, shear, and reinforcement development requirements; behavior and design of columns; design of spread footings; design of earthquake-resistant structures; laboratory sessions to illustrate member behavior, to solve problem sets, and to develop and present the preliminary designs for a design project.  "
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "250",
+        "score": 0.6205472946166992
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "250",
+        "title": "Introduction to Structures",
+        "description": "This class focuses on the fundamental principles that affect the structural behavior of buildings. Through digital and hands-on exercises, students will learn analytical techniques for measuring and evaluating the flow of forces through structural systems. Students will also learn to consider the structural behavior of buildings as a fundamental factor in the design of architectural proposals. The goal of the class is to gain a fundamental understanding of the forces, moments, and stresses in typical building elements such as columns, beams,\nframes and walls and to make better informed decisions when designing resource- and environmentally-friendly buildings with lightweight and material-efficient structural systems."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATSCI",
+        "courseNumber": "128",
+        "score": 0.6184908747673035
+      },
+      "course": {
+        "subject": "MATSCI",
+        "number": "128",
+        "title": "Modern Structural Materials and Sustainability",
+        "description": "The course offers a comprehensive overview of processing, characterization, and property testing methods, as well as recycling processes for structural materials, including metals, alloys, and structural ceramics. The objective of this course is to provide foundational knowledge of the relationships between the microstructures of the materials and their mechanical properties that make them suitable for structural applications. This course will also address sustainability challenges in structural materials and discuss how material selection, material design strategies, fabrication, and recycling methods have evolved to meet sustainability goals."
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "160",
+        "score": 0.5914676189422607
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "160",
+        "title": "Introduction to Construction",
+        "description": "This introduction to the materials and processes of construction takes architecture from design to realization. The course will cover four material groups commonly used in two areas of the building assembly (structure and envelope): wood, concrete, steel, and glass. You will understand choices available and how materials are conventionally used. By observing construction, you'll see how our decisions affect the size of materials, connections, and where they are assembled. Architects must understand not only conventions, but also the potential in materials, so we will also study unusual and new developments."
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "100B",
+        "score": 0.5877166986465454
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "100B",
+        "title": "Fundamentals of Architectural Design",
+        "description": "Introductory courses in the design of buildings. Problems emphasize conceptual strategies of form and space, site relationships and social, technological and environmental determinants.   100B stresses tectonics, materials, and energy considerations. Studio work is supplemented by lectures, discussions, readings and field trips."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "229",
+        "score": 0.5862371921539307
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "229",
+        "title": "Structural System Reliability",
+        "description": "Review of probability theory. Multivariate distribution models. Review of classical methods for characterization of systems and assessment of system reliability. Formulation of structural reliability for components and systems. Exact solutions for special cases. Computational reliability methods, including first- and second-order reliability methods (FORM and SORM), response surface, Monte Carlo simulation, and importance sampling. Bounds on system reliability. Reliability sensitivity and importance measures. Bayesian updating and reliability analysis under statistical and model uncertainties. Introductions to reliability-based optimal design, time- and space-variant reliability analysis, and finite-element reliability methods. "
+      }
+    }
+  ]
+}

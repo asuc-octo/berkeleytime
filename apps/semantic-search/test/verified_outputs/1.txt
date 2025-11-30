@@ -1,0 +1,10 @@
+CHEM 281, Reasonable
+COGSCI C131, Not reasonable
+COGSCI 131, Not reasonable
+COMPSCI 61B, Not reasonable
+PSYCH C123, Not reasonable
+COMPSCI 186, Not reasonable
+COMPSCI 61A, Not reasonable
+COMPSCI 170, Not reasonable
+COMPSCI 162, Reasonable
+COMPSCI 61C, Reasonable

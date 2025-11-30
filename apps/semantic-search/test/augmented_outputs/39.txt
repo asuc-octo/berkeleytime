@@ -1,0 +1,135 @@
+{
+  "query": "Bioethics and genetic engineering",
+  "results": [
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "100",
+        "score": 0.666762113571167
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "100",
+        "title": "Ethics in Science and Engineering",
+        "description": "The goal of this semester course is to present the issues of professional conduct in the practice of engineering, research, publication, public and private disclosures, and in managing professional and financial conflicts. The method is through historical didactic presentations, case studies, presentations of methods for problem solving in ethical matters, and classroom debates on contemporary ethical issues. The faculty will be drawn from national experts and faculty from religious studies, journalism, and law from the UC Berkeley campus."
+      }
+    },
+    {
+      "result": {
+        "subject": "EALANG",
+        "courseNumber": "110",
+        "score": 0.6605799198150635
+      },
+      "course": {
+        "subject": "EALANG",
+        "number": "110",
+        "title": "Bioethics in Asian Thought and Culture",
+        "description": "This course will explore some of the most difficult bioethical issues confronting the world today from the perspective of traditional values embedded in the cultural history of India, China, and Japan as evidenced in their religions, legal codes, and political history. Possible topics include population control, abortion, sex-selection, euthanasia, suicide, genetic manipulation, brain-death, and organ transplants. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "38",
+        "score": 0.6597773432731628
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "38",
+        "title": "Stem Cell Biology, Ethics and Societal Impact",
+        "description": "Innovations in bioengineering and use of stem cells will significantly impact our ability to combat human disease, genetic disorders and physiological dysfunction.  An understanding of human stem cell biology will be critical to make informed decisions on our health and public policy."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "201",
+        "score": 0.6582843065261841
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "201",
+        "title": "Responsible Conduct in Bioengineering Research and in Practice",
+        "description": "This course will explore ethical issues likely to be faced by a bioengineer, and consider them in the context of responsible engineering. The content of the class is designed considering the NSF Standards of Ethical Conduct and the NIH Ethical Guidelines & Regulations in mind, and to serve as the Responsible Conduct of Research training for our PhD program."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "C171",
+        "score": 0.6309142112731934
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "C171",
+        "title": "Interface Between Neuroethology & Neural Engineering",
+        "description": "The course will provide students with an overview of the tight interface between neural engineering and neuroethological approaches in the field of neuroscience. This course will also discuss the concepts of causal manipulations, such as the control of brain circuits using optics and genetic engineering. Lastly, students will also inquire and discuss what discoveries have yet to be made and how neuroethological approaches can inform neural engineering designs that will revolutionize the future of neural medicine.\n\n\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "271",
+        "score": 0.6309142112731934
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "271",
+        "title": "Interface Between Neuroethology & Neural Engineering",
+        "description": "The course will provide students with an overview of the tight interface between neural engineering and neuroethological approaches in the field of neuroscience. This course will also discuss the concepts of causal manipulations, such as the control of brain circuits using optics and genetic engineering. Lastly, students will also inquire and discuss what discoveries have yet to be made and how neuroethological approaches can inform neural engineering designs that will revolutionize the future of neural medicine."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHILOS",
+        "courseNumber": "106",
+        "score": 0.6306248307228088
+      },
+      "course": {
+        "subject": "PHILOS",
+        "number": "106",
+        "title": "Bioethics:  Clinical and Population-Level",
+        "description": "This course aims to introduce you to a range of philosophical debates in clinical and population-level bioethics. Among the topics in clinical bioethics that we will discuss are:  abortion; physician-assisted suicide and euthanasia; pre-commitment in bioethics; genetic enhancement; and the Non-Identity Problem.  In population-level bioethics, questions we will discuss include:  the concept of disability; the measurement and valuation of health; cost-effectiveness and disability-discrimination; Bioethics in a Time of Pandemic: Quarantine, Triage, Drug Trials; health inequalities and justice; personal and social responsibility for health; personal and social responsibility for health; standards of care in clinical trials in the US and abroad."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "25",
+        "score": 0.6192545890808105
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "25",
+        "title": "Careers in Biotechnology",
+        "description": "This introductory seminar is designed to give freshmen and sophomores an opportunity to explore specialties related to engineering in the pharmaceutical/biotech field. A series of one-hour seminars will be presented by industry professionals, professors, and researchers. Topics may include biotechnology and pharmaceutical manufacturing; process and control engineering; drug inspection process; research and development; compliance and validation; construction process for a GMP facility; project management; and engineered solutions to environmental challenges. This course is of interest to students in all areas of engineering and biology, including industrial engineering and manufacturing, chemical engineering, and bioengineering."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "140",
+        "score": 0.6164661645889282
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "140",
+        "title": "General Genetics",
+        "description": "An in depth introduction to genes, their sexual and asexual transmission in individuals and populations, and gene regulation in prokaryotes and eukaryotes. Gene manipulation by recombination, molecular cloning and genome editing is presented in contexts ranging from fundamental mechanisms of chromosome biology to applications in development, aging and disease. Human genetic variation and quantitative evaluation are illuminated. Non-Mendelian and epigenetic modes of inheritance of transposable elements, prions and chromatin states are paired with discussions of groundbreaking technology rewriting the rules of how the genome is analyzed, with attention to the ethical considerations ranging from the history of eugenics to modern controversies."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "229M",
+        "score": 0.614115834236145
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "229M",
+        "title": "Research Review in Molecular Therapeutics: CRISPR Enzyme Delivery Technology",
+        "description": "The molecular engineering of novel delivery technology to facilitate therapeutic genome editing. Delivery of pre-formed CRISPR ribonucleoprotein enzymes is a central focus, and progress in the field will be covered via research presentations as well as reviews of recent literature."
+      }
+    }
+  ]
+}

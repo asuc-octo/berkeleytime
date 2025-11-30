@@ -1,0 +1,135 @@
+{
+  "query": "Renewable energy technologies",
+  "results": [
+    {
+      "result": {
+        "subject": "PUBPOL",
+        "courseNumber": "283",
+        "score": 0.6775715351104736
+      },
+      "course": {
+        "subject": "PUBPOL",
+        "number": "283",
+        "title": "Renewable Energy Policy in the United States",
+        "description": "This course will focus on the evolution and current status of renewable energy policy on the federal, state, and local levels. It will explore the context for promoting renewables in a country that has long subsidized fossil production and nuclear power and encouraged greater consumption. We will explore the particular tools and perspectives that governments on different levels bring to the challenge and the ways various governmental bodies have seized that opportunity. We will move beyond consideration of broad policies to examine the specific policy challenges and opportunities faced by proponents of each of the major renewable energy technologies."
+      }
+    },
+    {
+      "result": {
+        "subject": "ELENG",
+        "courseNumber": "108",
+        "score": 0.667033314704895
+      },
+      "course": {
+        "subject": "ELENG",
+        "number": "108",
+        "title": "Introduction to Electric Power and Renewable Energy",
+        "description": "This course is designed to provide an introduction to electric power conversion, distribution, and generation with renewable energy sources. The course will introduce fundamental concepts in the area of electric power, such as complex and reactive power, phasors, impedance, magnetic circuits and transformers, power factor, power quality, three-phase power, ac-dc conversion, and a conceptual overview of renewable energy and the integration of sustainable energy sources on the electric grid. Real world applications, ranging from ground-fault circuit interrupters to residential power distribution and solar photovoltaic dc-ac inverters will be explored in live lecture demonstration."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "215",
+        "score": 0.6630929708480835
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "215",
+        "title": "Emerging Technologies for Water Sustainability",
+        "description": "Overview of technological development to address global challenges on water-energy nexus and water scarcity.  Introduction to emerging technologies, such as membrane filtration, thermal processes, and nanotechnology. Their applications in water purification, wastewater reuse, desalination, and renewable energy production.  Quantitative understanding of energy efficiency, transport mechanisms, and interfacial phenomena involved in the above engineered systems. Group projects on selected topic."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "107",
+        "score": 0.6627978682518005
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "107",
+        "title": "Climate Change Mitigation",
+        "description": "Assessment of technological options for responding to climate change.  Overview of climate-change science; sources, sinks, and atmospheric dynamics of greenhouse gases.  Current systems for energy supply and use.  Renewable energy resources, transport, storage, and transformation technologies.  Technological opportunities for improving end-use energy efficiency. Recovery, sequestration, and disposal of greenhouse gases.  Societal context for implementing engineered responses."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "207",
+        "score": 0.6466321349143982
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "207",
+        "title": "Climate Change Mitigation",
+        "description": "Assessment of technological options for responding to climate change. Overview of climate-change science; sources, sinks, and atmospheric dynamics of greenhouse gases. Current systems for energy supply and use. Renewable energy resources, transport, storage, and transformation technologies. Technological opportunities for improving end-use energy efficiency. Recovery, sequestration, and disposal of greenhouse gases. Societal context for implementing engineered responses. Weekly seminar will provide additional focus on science communication, discussion of the scientific/technical literature, and advanced research topics."
+      }
+    },
+    {
+      "result": {
+        "subject": "CIVENG",
+        "courseNumber": "295",
+        "score": 0.624830961227417
+      },
+      "course": {
+        "subject": "CIVENG",
+        "number": "295",
+        "title": "Data Science for Energy",
+        "description": " This course introduces students to the fundamentals of data science methods for the design and operation of energy systems. The course is oriented towards students pursuing a technical career in cleantech, or a PhD in the energy sciences and engineering. Course contents include: mathematical modeling & analysis, state estimation, optimization, machine learning, and optimal control. Homework assignments are designed around case studies, including lithium-ion batteries, oil & gas systems, renewable power systems, smart buildings, and electrified transportation. Student teams also execute a self-defined project."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVECON",
+        "courseNumber": "147",
+        "score": 0.6094695329666138
+      },
+      "course": {
+        "subject": "ENVECON",
+        "number": "147",
+        "title": "The Economics of the Clean Energy Transition",
+        "description": "The most promising path to deep decarbonization involves decarbonizing the electricity sector and then electrifying as much as we can \u2013 from transportation to buildings to industrial processes. Thus, the electricity sector has a pivotal role to play in our efforts to mitigate -- and adapt to-- climate change.  \nThe clean energy transition will require not only technological innovation, but also energy market reforms, climate policy interventions, and regulatory innovation to ensure that the process is fair, equitable, and affordable. This course draws from the fields of environmental economics, energy economics, public economics, behavioral economics, and industrial organization to introduce the economic models and concepts that will help"
+      }
+    },
+    {
+      "result": {
+        "subject": "ENGIN",
+        "courseNumber": "215A",
+        "score": 0.6083929538726807
+      },
+      "course": {
+        "subject": "ENGIN",
+        "number": "215A",
+        "title": "Nuclear Energy and the Environment",
+        "description": "Electricity production from nuclear energy is highly concentrated and free of green-house\ngasses. The pressure to decarbonize electricity generation is leading many to think of nuclear\nas a near term solution. Nevertheless, public opinion remains in general skeptical of nuclear.\nThis course aims to familiarize students with nuclear energy, the way it is produced, and its\noverall environmental impact. The course will cover fundamental characteristics of nuclear\nenergy, will provide students with a practical understanding of nuclear reactors, and will review\nthe benefits and the challenges that nuclear energy can provide."
+      }
+    },
+    {
+      "result": {
+        "subject": "ELENG",
+        "courseNumber": "234A",
+        "score": 0.6042913794517517
+      },
+      "course": {
+        "subject": "ELENG",
+        "number": "234A",
+        "title": "Fundamentals of Photovoltaic Devices",
+        "description": "This course is designed to give an introduction, and overview of, the fundamentals of photovoltaic devices. Students will learn how solar cells work, understand the concepts and models of\nsolar cell device physics, and formulate and solve relevant physical problems related to photovoltaic devices. Monocrystalline, thin film and third generation solar cells will be discussed and analyzed. Light management and economic considerations in a solar cell system will also be covered."
+      }
+    },
+    {
+      "result": {
+        "subject": "ELENG",
+        "courseNumber": "134",
+        "score": 0.6016843914985657
+      },
+      "course": {
+        "subject": "ELENG",
+        "number": "134",
+        "title": "Fundamentals of Photovoltaic Devices",
+        "description": "This course is designed to give an introduction to, and overview of, the fundamentals of photovoltaic devices. Students will learn how solar cells work, understand the concepts and models of solar cell device physics, and formulate and solve relevant physical problems related to photovoltaic devices. Monocrystalline, thin film and third generation solar cells will be discussed and analyzed. Light management and economic considerations in a solar cell system will also be covered. "
+      }
+    }
+  ]
+}

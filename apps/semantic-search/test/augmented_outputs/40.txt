@@ -1,0 +1,135 @@
+{
+  "query": "Digital circuit design using Verilog",
+  "results": [
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "251A",
+        "score": 0.7646929025650024
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "251A",
+        "title": "Introduction to Digital Design and Integrated Circuits",
+        "description": "An introduction to digital circuit and system design. The material provides a top-down view of the principles, components, and methodologies for large scale digital system design. The underlying CMOS devices and manufacturing technologies are introduced, but quickly abstracted to higher levels to focus the class on design of larger digital modules for both FPGAs (field programmable gate arrays) and ASICs (application specific integrated circuits). The class includes extensive use of industrial grade design automation and verification tools for assignments, labs, and projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "251LB",
+        "score": 0.754332423210144
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "251LB",
+        "title": "Introduction to Digital Design and Integrated Circuits",
+        "description": "This lab covers the design of modern digital systems with Field-Programmable Gate Array (FPGA) platforms.  A series of lab exercises provide the background and practice of digital design using a modern FPGA design tool flow.  Digital synthesis, partitioning, placement, routing, and simulation tools for FPGAs are covered in detail.  The labs exercises culminate with a large design project, e.g. an implementation of a full 3-stage RISC-V processor system, with caches, graphics acceleration, and external peripheral components.  The design is mapped and demonstrated on an FPGA hardware platform."
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "251LA",
+        "score": 0.7424689531326294
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "251LA",
+        "title": "Introduction to Digital Design and Integrated Circuits Lab",
+        "description": "This lab lays the foundation of modern digital design by first presenting the scripting and hardware description language base for specification of digital systems and interactions with tool flows. The labs are centered on a large design with the focus on rapid design space exploration. The lab exercises culminate with a project design, e.g. implementation of a 3-stage RISC-V processor with a register file and caches. The design is mapped to simulation and layout specification."
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "151",
+        "score": 0.7391196489334106
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "151",
+        "title": "Introduction to Digital Design and Integrated Circuits",
+        "description": "An introduction to digital and system design. The material provides a top-down view of the principles, components, and methodologies for large scale digital system design. The underlying CMOS devices and manufacturing technologies are introduced, but quickly abstracted to higher-levels to focus the class on design of larger digital modules for both FPGAs (field programmable gate arrays) and ASICs (application specific integrated circuits). The class includes extensive use of industrial grade design automation and verification tools for assignments, labs and projects.  \nThe class has two lab options: ASIC Lab (EECS 151LA) and FPGA Lab (EECS 151LB). Students must enroll in at least one of the labs concurrently with the class."
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "151LB",
+        "score": 0.7213616371154785
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "151LB",
+        "title": "Field-Programmable Gate Array Laboratory",
+        "description": "This lab covers the design of modern digital systems with Field-Programmable Gate Array (FPGA) platforms.  A series of lab exercises provide the background and practice of digital design using a modern FPGA design tool flow.  Digital synthesis, partitioning, placement, routing, and simulation tools for FPGAs are covered in detail.  The labs exercises culminate with a large design project, e.g., an implementation of a full three-stage RISC-V processor system, with caches, graphics acceleration, and external peripheral components.  The design is mapped and demonstrated on an FPGA hardware platform."
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "151LA",
+        "score": 0.7112074494361877
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "151LA",
+        "title": "Application Specific Integrated Circuits Laboratory",
+        "description": "This lab lays the foundation of modern digital design by first presenting the scripting and hardware description language base for specification of digital systems and interactions with tool flows. The labs are centered on a large design with the focus on rapid design space exploration. The lab exercises culminate with a project design, e.g., implementation of a three-stage RISC-V processor with a register file and caches. The design is mapped to simulation and layout specification."
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "251B",
+        "score": 0.7030301094055176
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "251B",
+        "title": "Advanced Digital Integrated Circuits and Systems",
+        "description": "This course aims to convey a knowledge of advanced concepts of digital circuit and system-on-a-chip design in state-of-the-art technologies. Emphasis is on the circuit and system design and optimization for both energy efficiency and high performance for use in a broad range of applications, from edge computing to datacenters. Special attention will be devoted to the most important challenges facing digital circuit designers in the coming decade. The course is accompanied with practical laboratory exercises that introduce students to modern tool flows."
+      }
+    },
+    {
+      "result": {
+        "subject": "ELENG",
+        "courseNumber": "240C",
+        "score": 0.7012927532196045
+      },
+      "course": {
+        "subject": "ELENG",
+        "number": "240C",
+        "title": "Analysis and Design of VLSI Analog-Digital Interface Integrated Circuits",
+        "description": "Architectural and circuit level design and analysis of integrated analog-to-digital and digital-to-analog interfaces in CMOS and BiCMOS VLSI technology. Analog-digital converters, digital-analog converters, sample/hold amplifiers, continuous and switched-capacitor filters. RF integrated electronics including synthesizers, LNA's, and baseband processing. Low power mixed signal design. Data communications functions including clock recovery. CAD tools for analog design including simulation and synthesis. "
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "219C",
+        "score": 0.6698952317237854
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "219C",
+        "title": "Formal Methods: Specification, Verification, and Synthesis",
+        "description": "Introduction to the theory and practice of formal methods for the design and analysis of systems, with a focus on algorithmic techniques. Covers selected topics in computational logic and automata theory including modeling and specification formalisms, temporal logics, satisfiability solving, model checking, synthesis, learning, and theorem proving. Applications to software and hardware design, cyber-physical systems, robotics, computer security, and other areas will be explored as time permits."
+      }
+    },
+    {
+      "result": {
+        "subject": "ELENG",
+        "courseNumber": "105",
+        "score": 0.6653501987457275
+      },
+      "course": {
+        "subject": "ELENG",
+        "number": "105",
+        "title": "Microelectronic Devices and Circuits",
+        "description": "This course covers the fundamental circuit and device concepts needed to understand analog integrated circuits. After an overview of the basic properties of semiconductors, the p-n junction and MOS capacitors are described and the MOSFET is modeled as a large-signal device. Two port small-signal amplifiers and their realization using single stage and multistage CMOS building blocks are discussed. Sinusoidal steady-state signals are introduced and the techniques of phasor analysis are developed, including impedance and the magnitude and phase response of linear circuits. The frequency responses of single and multi-stage amplifiers are analyzed. Differential amplifiers are introduced. "
+      }
+    }
+  ]
+}

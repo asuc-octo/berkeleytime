@@ -1,0 +1,10 @@
+ESPM 114, Reasonable
+ESPM 106, Reasonable
+INTEGBI C153, Not reasonable
+ESPM C153, Not reasonable
+ESPM 281, Reasonable
+INTEGBI 108, Reasonable
+ESPM 152, Reasonable
+ESPM 186, Reasonable
+ESPM 189A, Reasonable
+ESPM 90, Reasonable

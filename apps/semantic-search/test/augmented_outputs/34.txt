@@ -1,0 +1,135 @@
+{
+  "query": "Developmental psychology and childhood",
+  "results": [
+    {
+      "result": {
+        "subject": "EDUC",
+        "courseNumber": "114A",
+        "score": 0.6918456554412842
+      },
+      "course": {
+        "subject": "EDUC",
+        "number": "114A",
+        "title": "Early Development and Education",
+        "description": "Theory and research on early childhood education and psychological development in early childhood.  Directed field observation of developmental phenomena and educational practices."
+      }
+    },
+    {
+      "result": {
+        "subject": "PSYCH",
+        "courseNumber": "131",
+        "score": 0.6800347566604614
+      },
+      "course": {
+        "subject": "PSYCH",
+        "number": "131",
+        "title": "Developmental Psychopathology",
+        "description": "This course will discuss linkages between developmental processes and child psychopathology. Included will be discussion of cognitive impairments in children, including learning disabilities and mental retardation; internalizing disorders, such as anxiety, withdrawal, and depression; externalizing disorders, such as attention-deficit hyperactivity disorder and conduct disorder; and child abuse and neglect. Psychobiological, familial, legal, and societal factors will be emphasized."
+      }
+    },
+    {
+      "result": {
+        "subject": "EDUC",
+        "courseNumber": "213B",
+        "score": 0.6341396570205688
+      },
+      "course": {
+        "subject": "EDUC",
+        "number": "213B",
+        "title": "Theoretical and Scientific Bases for School Psychology, Part II: Adolescence",
+        "description": "Historical and contemporary overview of the professional specialty of school psychology. Examines the empirical evidence for developmental and learning models in relation to the school curriculum and school organization for birth through pre-adolescence."
+      }
+    },
+    {
+      "result": {
+        "subject": "PSYCH",
+        "courseNumber": "249",
+        "score": 0.6171908378601074
+      },
+      "course": {
+        "subject": "PSYCH",
+        "number": "249",
+        "title": "Developmental Colloquium",
+        "description": "Reports and discussions of original research in the area of developmental psychology. Not all participants need report in any given semester, but all are expected to attend and to enter into the discussions. Required course for all students in the developmental graduate program. "
+      }
+    },
+    {
+      "result": {
+        "subject": "PSYCH",
+        "courseNumber": "C143",
+        "score": 0.5978518724441528
+      },
+      "course": {
+        "subject": "PSYCH",
+        "number": "C143",
+        "title": "Language Acquisition",
+        "description": "An overview of topics and theories in language acquisition: early development of speech perception and production, word learning, generalizing linguistic structure, and differences between first language acquisition, second language acquisition, and bilingualism. We will also compare different theoretical approaches, and address the classic \"nature vs. nurture\" question by examining both traditional generativist approaches and more recent usage based models."
+      }
+    },
+    {
+      "result": {
+        "subject": "PSYCH",
+        "courseNumber": "290H",
+        "score": 0.5975866317749023
+      },
+      "course": {
+        "subject": "PSYCH",
+        "number": "290H",
+        "title": "Seminars: Developmental",
+        "description": ""
+      }
+    },
+    {
+      "result": {
+        "subject": "EDUC",
+        "courseNumber": "215",
+        "score": 0.5929925441741943
+      },
+      "course": {
+        "subject": "EDUC",
+        "number": "215",
+        "title": "Socialization Processes Within the Family",
+        "description": "This course provides an overview of theoretical perspectives on family socialization. We review the literature on parental beliefs and child-rearing practices and study how families affect children's social development. We also examine familes in the context of culture and social class. The course concludes by focusing on the relationship between families and schools. Course requirements: class participation, three short papers, reaction notebook."
+      }
+    },
+    {
+      "result": {
+        "subject": "EDUC",
+        "courseNumber": "207C",
+        "score": 0.5855584144592285
+      },
+      "course": {
+        "subject": "EDUC",
+        "number": "207C",
+        "title": "Assessment of Developmental, Learning, and Socio-emotional-behavioral Disorders in Children",
+        "description": "This is a doctoral seminar in which students learn a variety of assessment techniques and procedures for making diagnostic decisions about the learning strengths and weaknesses and socio-emotional status of children.  They learn how to conduct observations and clinical interviews, administer and interpret standardized tests of cognitive and neuropsychological functioning, and interpret behavior rating scales.  Finally, they become knowledgeable about the criteria for Special Education eligibility and how to present assessment findings orally and in writing."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "207A",
+        "score": 0.5836703777313232
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "207A",
+        "title": "Public Health Aspects of Maternal and Child Nutrition",
+        "description": "Nutrition plays a vital role in human reproduction and child growth and development. This course provides an overview of the major nutritional issues faced by women of childbearing age, infants, children, and adolescents in the United States and around the world, with selected topics explored in greater depth. Nutritional problems are multi-factorial and occur at multiple levels and we will study them from a variety of viewpoints (biological, pyschological, socio-cultural, economic, political, and behavioral) as well as from individual and population perspectives. Participants in the course will become acquainted with nutritional research, policies, and interventions designed to enhance reproduction, growth, and development. This course will also explore health disparities in maternal and child nutrition in both a domestic and international context."
+      }
+    },
+    {
+      "result": {
+        "subject": "ANTHRO",
+        "courseNumber": "109",
+        "score": 0.5709488391876221
+      },
+      "course": {
+        "subject": "ANTHRO",
+        "number": "109",
+        "title": "Psychoneuroendocrinology: Stress, Disease, and Health Inequalities",
+        "description": "This course explores the sophisticated and complex interactions between the brain, hormones, and behavior and their relevance to human development and health \u2013 a growing scientific field known as psychoneuroendocrinology. Topics include the multiple psychological and biological systems that make up psychoneuroendocrinological processes; evolutionary and developmental perspectives on the emergence and function of these mechanisms; the social experiences of stress, trauma, nurturance, and support; the psychoneuroendocrinology of physical, mental, and psychosomatic disease; and how historical, societal, and political dynamics of power structure the patterns of intersectional health inequities."
+      }
+    }
+  ]
+}

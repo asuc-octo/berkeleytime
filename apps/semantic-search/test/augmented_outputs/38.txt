@@ -1,0 +1,135 @@
+{
+  "query": "History of labor in California",
+  "results": [
+    {
+      "result": {
+        "subject": "NATAMST",
+        "courseNumber": "175",
+        "score": 0.6147605776786804
+      },
+      "course": {
+        "subject": "NATAMST",
+        "number": "175",
+        "title": "History of Native Americans in California",
+        "description": "History of the Native Americans of California with emphasis on the lifeways, mores, warfare, and relations with the United States government. Attention will be given to the background and evolution of acculturation up to the present."
+      }
+    },
+    {
+      "result": {
+        "subject": "ASAMST",
+        "courseNumber": "20A",
+        "score": 0.5535016059875488
+      },
+      "course": {
+        "subject": "ASAMST",
+        "number": "20A",
+        "title": "Introduction to the History of Asians in the United States",
+        "description": "Introductory comparative analysis of the Asian American experience from 1848 to present. Topics include an analysis of the Asian American perspective; cultural roots; immigration and settlement patterns; labor, legal, political, and social history."
+      }
+    },
+    {
+      "result": {
+        "subject": "ESPM",
+        "courseNumber": "C22AC",
+        "score": 0.5512818694114685
+      },
+      "course": {
+        "subject": "ESPM",
+        "number": "C22AC",
+        "title": "Fire: Past, Present and Future Interactions with the People and Ecosystems of California",
+        "description": "The course presents a diachronic perspective on human-fire interactions with local ecosystems in California that spans over 10,000 years. The course will provide an historical perspective on human-fire interactions at the landscape scale using a diverse range of data sources drawn from the fields of fire ecology, biology, history, anthropology, and archaeology. An important component includes examining how diverse cultures and ethnicity influenced how people perceived and used fire at the landscape scale in ancient, historical and modern times. The implications of these diverse fire practices and policies will be analyzed and the consequences they have had for transforming habitats and propagating catastrophic fires will be explored."
+      }
+    },
+    {
+      "result": {
+        "subject": "NATAMST",
+        "courseNumber": "C22AC",
+        "score": 0.5481687784194946
+      },
+      "course": {
+        "subject": "NATAMST",
+        "number": "C22AC",
+        "title": "Fire: Past, Present and Future Interactions with the People and Ecosystems of California",
+        "description": "The course presents a diachronic perspective on human-fire interactions with local ecosystems in California that spans over 10,000 years. The course will provide an historical perspective on human-fire interactions at the landscape scale using a diverse range of data sources drawn from the fields of fire ecology, biology, history, anthropology, and archaeology. An important component includes examining how diverse cultures and ethnicity influenced how people perceived and used fire at the landscape scale in ancient, historical and modern times. The implications of these diverse fire practices and policies will be analyzed and the consequences they have had for transforming habitats and propagating catastrophic fires will be explored."
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "277",
+        "score": 0.5459175109863281
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "277",
+        "title": "California Architecture",
+        "description": "Many California architects came from other places: Maybeck from New York via the Ecole des Beaux Arts; Schindler and Neutra from Vienna; Frank Gehry from Chicago. But, once they arrived, their encounters with the Golden State produced new and original forms of architecture. This seminar will examine the qualities of the state\u2019s environment, culture, economy, and population that have produced unique buildings and landscapes during the 20th century. It will look at both Northern and Southern California architecture, starting with canonical designers then moving beyond them to consider lesser-known regional architects whose work embodies local characteristics."
+      }
+    },
+    {
+      "result": {
+        "subject": "ARCH",
+        "courseNumber": "177",
+        "score": 0.5459175109863281
+      },
+      "course": {
+        "subject": "ARCH",
+        "number": "177",
+        "title": "California Architecture",
+        "description": "Many California architects came from other places: Maybeck from New York via the\nEcole des Beaux Arts; Schindler and Neutra from Vienna; Frank Gehry from Chicago.\nBut, once they arrived, their encounters with the Golden State produced new and original\nforms of architecture. This seminar will examine the qualities of the state\u2019s environment,\nculture, economy, and population that have produced unique buildings and landscapes\nduring the 20th century. It will look at both Northern and Southern California architecture,\nstarting with canonical designers then moving beyond them to consider lesser-known\nregional architects whose work embodies local characteristics."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "171",
+        "score": 0.5358408689498901
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "171",
+        "title": "California Politics",
+        "description": "An inquiry into the political environment of the state--historical, economic, geographic, and social; its political institutions--government, parties, interest groups, and citizens; and the policies resulting from the interaction of environment and institutions. "
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTORY",
+        "courseNumber": "129A",
+        "score": 0.5355083346366882
+      },
+      "course": {
+        "subject": "HISTORY",
+        "number": "129A",
+        "title": "United States Legal and Constitutional History since 1850",
+        "description": "This course explores some of the major questions and problems of United States legal history since 1850. The course weaves together historical and legal approaches and materials. Themes include federalism and the evolving nature of constitutional authority; citizenship and rights; law and economic change; law and social movements; and popular understandings of \u2018the law.\u2019 We will look to the \u201chigh\u201d sphere of constitutional jurisprudence and to other legal and extra-legal arenas where law was applied, argued over, and worked out. By the end of this course, you should be able to analyze different kinds of legal texts; understand key legal concepts and doctrines; and make evidence-based arguments about core themes in legal history."
+      }
+    },
+    {
+      "result": {
+        "subject": "PUBPOL",
+        "courseNumber": "C164A",
+        "score": 0.5348067283630371
+      },
+      "course": {
+        "subject": "PUBPOL",
+        "number": "C164A",
+        "title": "Berkeley Changemaker: Labor Research for Action and Policy (L-RAP)",
+        "description": "This course is an introduction to social science research methods that center principles of equity and justice connecting the Berkeley Changemaker L&S 12 to the discipline of public policy in the field of work and employment relations. It is based on the premise that the COVID-19 pandemic presents an opportunity to reshape the economy for a fair, inclusive, and democratic society with the participation of people typically excluded from policy development. Currently, young workers are at the helm of transforming the labor market by leading union organizing at workplaces. This course examines the position, attitudes, and interests of young workers through the lens of critical race theory, feminist and queer theory, and disability justice."
+      }
+    },
+    {
+      "result": {
+        "subject": "JOURN",
+        "courseNumber": "267",
+        "score": 0.532588005065918
+      },
+      "course": {
+        "subject": "JOURN",
+        "number": "267",
+        "title": "Race, Resistance, and Incarceration",
+        "description": "Mass incarceration has affected all of our lives. It costs $55,000 per year to incarcerate a man in a California prison. In the 1960s, tuition was free. There were fewer than 25,000 inmates and eight prisons. Now, there are more than 33 prisons and 115,000 inmates. Tuition for California residents is more than $15,000 at UC. This course will bring UC Berkeley students into a classroom setting inside a prison where their classmates will be graduates of Mt. Tamalpais College, an accredited and award-winning community college for San Quentin prisoners. The Cal students and the SQ students will read, discuss and write about fundamental aspects of incarceration, among them race, resistance, and criminal justice."
+      }
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "query": "Ethical dilemmas in Artificial Intelligence",
+  "results": [
+    {
+      "result": {
+        "subject": "PUBPOL",
+        "courseNumber": "138",
+        "score": 0.6551191806793213
+      },
+      "course": {
+        "subject": "PUBPOL",
+        "number": "138",
+        "title": "Game Changer? An Introduction to A.I. and Public Policy",
+        "description": "This course examines the public policy challenges posed by artificial intelligence (AI). This class offers an interdisciplinary approach to understanding the policy implications of AI. You will engage in key debates surrounding AI ethics and explore regulatory frameworks for AI, comparing national and international approaches to governance. The course assesses AI\u2019s role in exacerbating or mitigating inequalities. You will be challenged to consider how public policy can balance innovation with public safety, democratic values, and human rights. By the end of the course, you will be equipped to analyze the public policy implications of AI technologies and develop informed, actionable strategies for governing their societal impact."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "188",
+        "score": 0.6269866824150085
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "188",
+        "title": "Introduction to Artificial Intelligence",
+        "description": "Ideas and techniques underlying the design of intelligent computer systems. Topics include search, game playing, knowledge representation, inference, planning, reasoning under uncertainty, machine learning, robotics, perception, and language understanding."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENGIN",
+        "courseNumber": "125",
+        "score": 0.6261754631996155
+      },
+      "course": {
+        "subject": "ENGIN",
+        "number": "125",
+        "title": "Ethics, Engineering, and Society",
+        "description": "How should engineers analyze and resolve the ethical issues inherent in engineering? This seminar-style course provides an introduction to how theories, concepts, and methods from the humanities and social science can be applied to ethical problems in engineering. Assignments incorporate group and independent research designed to provide students an opportunity to contribute novel findings to the emerging field of engineering ethics while building their analytical and communication skills. This course cannot be used to fulfill any engineering technical requirements (units or courses)."
+      }
+    },
+    {
+      "result": {
+        "subject": "VISSCI",
+        "courseNumber": "230",
+        "score": 0.6218417882919312
+      },
+      "course": {
+        "subject": "VISSCI",
+        "number": "230",
+        "title": "Ethics in Scientific Research",
+        "description": "This seminar will examine a range of ethical issues that arise in the process of doing science. Beginning with the philosophical and social foundations, we will consider the pathogenesis of fraud, statistics and deception, the ethics of authorship and publication, research with human subjects, the use of animals, the definition(s) of misconduct and the difference between misconduct and questionable research practices, the relationship between industry and science, and finally, the responsibilities and obligations of the scientist in society."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "100",
+        "score": 0.620720624923706
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "100",
+        "title": "Ethics in Science and Engineering",
+        "description": "The goal of this semester course is to present the issues of professional conduct in the practice of engineering, research, publication, public and private disclosures, and in managing professional and financial conflicts. The method is through historical didactic presentations, case studies, presentations of methods for problem solving in ethical matters, and classroom debates on contemporary ethical issues. The faculty will be drawn from national experts and faculty from religious studies, journalism, and law from the UC Berkeley campus."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENGIN",
+        "courseNumber": "184",
+        "score": 0.6089291572570801
+      },
+      "course": {
+        "subject": "ENGIN",
+        "number": "184",
+        "title": "Writing Robots",
+        "description": "This writing-intensive course surveys and analyzes accounts of AI-generated\nwriting, while reflecting on the ramifications of AI for human writing practices. In other\nwords: how do we write about\u2014as well as with\u2014writing machines? How are emergent AI\nwriting technologies reshaping human writing cultures in STEM fields and beyond? How,\nin turn, do accounts of and interactions with writing machines shape cultural conceptions\nof human writers and thinkers, as well as technological frontiers for AI developers? What\ndoes it mean to write for someone else, or to let someone or something else write for us?\nHow do preoccupations fundamental to all writing\u2014audience, context, aims, and\naesthetics\u2014shape both non-human and human writing?"
+      }
+    },
+    {
+      "result": {
+        "subject": "DATASCI",
+        "courseNumber": "221",
+        "score": 0.6045889854431152
+      },
+      "course": {
+        "subject": "DATASCI",
+        "number": "221",
+        "title": "Modern Artificial Intelligence (AI) Strategy and Applications",
+        "description": "This is a multidisciplinary graduate course that synthesizes data management, data economy, and machine learning & AI strategy and research, product innovation, business and enterprise technology strategy, industry analysis, organizational decision-making and data-driven leadership into one course offering. The course provides strategic thinking tools, analytical frameworks, and real-world case examples to help students explore and investigate modern data applications and opportunities in multiple domains and industries. Students are required to participate in weekly sessions and write response pieces as well as a final paper and presentation evaluating one defining application or emerging technology in machine learning/AI end-to-end."
+      }
+    },
+    {
+      "result": {
+        "subject": "DATASCI",
+        "courseNumber": "267",
+        "score": 0.6021754145622253
+      },
+      "course": {
+        "subject": "DATASCI",
+        "number": "267",
+        "title": "Fundamentals of Generative Artificial Intelligence (AI)",
+        "description": "This course focuses on the practical aspects of LLMs to enable students to be effective and responsible users of generative AI technologies. The course has three parts. Introduction section covers the historical aspects, key technical ideas and learnings all the way to Transformer architectures and various LLM training aspects. The Practical Aspects and Techniques section, students learn how to train, deploy, and use LLMs; and discuss core concepts like prompt tuning, quantization, and parameter efficient fine-tuning, and explore use case patterns. Finally, a discussion of challenges & opportunities offered by Generative AI, which includes highlighting critical issues like bias and inclusivity, fake information, safety, and some IP issue"
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "124C",
+        "score": 0.6007287502288818
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "124C",
+        "title": "Ethics and Justice in International Affairs",
+        "description": "Should nations intervene in other countries to prevent human rights abuses or famine? On what principles should immigration be based? Should wealthy states aid poorer states, and if so, how much? Who should pay for global environmental damage? Answers to these moral questions depend to a great degree on who we believe we have an obligation to: Ourselves? Nationals of our country? Residents of our country? Everyone in the world equally? We will examine different traditions of moral thought including skeptics, communitarians, cosmopolitans, and use these traditions as tools to make reasoned judgments about difficult moral problems in world politics. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CYBER",
+        "courseNumber": "207",
+        "score": 0.5994488000869751
+      },
+      "course": {
+        "subject": "CYBER",
+        "number": "207",
+        "title": "Artificial Intelligence (AI) and Machine Learning (ML) in Cybersecurity",
+        "description": "Artificial intelligence and machine learning is a rapidly growing field at the intersection of computer science and statistics concerned with finding patterns in data. It is responsible for tremendous advances in technology, from personalized product recommendations to speech recognition in cell phones. This course provides a broad introduction to the key ideas in machine learning, with a focus on applications and concepts relevant to cybersecurity. The emphasis will be on intuition and practical examples rather than theoretical results, though some experience with probability, statistics, and linear algebra will be important. "
+      }
+    }
+  ]
+}

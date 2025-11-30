@@ -1,0 +1,10 @@
+- POLSCI 226A: International Political Economy, Reasonable
+- ECON 215B: Political Economics, Reasonable
+- POLECON 160: Political Economy in Historical Context, Reasonable
+- POLSCI 126A: International Political Economy, Reasonable
+- POLECON 100: Classical Theories of Political Economy, Reasonable
+- POLECON 101: Contemporary Theories of Political Economy, Reasonable
+- PHDBA 279PA: Political Economy: Frameworks, Reasonable
+- EUST 201: European Institutions and Social Conflicts, Reasonable
+- POLECON 106: Intermediate Microeconomic Theory, Not reasonable
+- POLECON 157: The Political Economy of Finance, Not reasonable

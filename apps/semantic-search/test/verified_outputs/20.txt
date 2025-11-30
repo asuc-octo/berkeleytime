@@ -1,0 +1,10 @@
+MATH 113, Reasonable
+MATH 114, Reasonable
+MATH 250B, Not reasonable
+MATH 215B, Reasonable
+MATH 261B, Reasonable
+MATH 208, Reasonable
+MATH 252, Reasonable
+MATH 110, Not reasonable
+MATH 143, Not reasonable
+MATH 256B, Not reasonable

@@ -1,0 +1,10 @@
+COGSCI 151, Reasonable
+MCELLBI 269P, Not reasonable
+PSYCH C123, Reasonable
+COGSCI C131, Reasonable
+COGSCI 131, Reasonable
+NEU 100B, Reasonable
+MCELLBI 269K, Not reasonable
+NEU 250, Reasonable
+COGSCI 132, Not reasonable
+NEU 77, Reasonable

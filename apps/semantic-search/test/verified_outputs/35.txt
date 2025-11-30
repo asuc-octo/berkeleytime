@@ -1,0 +1,10 @@
+- MUSIC 116, Reasonable
+- MUSIC 164, Reasonable
+- MUSIC 165, Reasonable
+- MUSIC 151A, Reasonable
+- MUSIC 151B, Reasonable
+- MUSIC 151D, Reasonable
+- THEATER 148, Not reasonable
+- MUSIC 20, Not reasonable
+- MUSIC 90, Not reasonable
+- MUSIC 168AS, Not reasonable

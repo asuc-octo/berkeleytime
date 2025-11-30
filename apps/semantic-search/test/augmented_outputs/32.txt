@@ -1,0 +1,135 @@
+{
+  "query": "European Union political economy",
+  "results": [
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "226A",
+        "score": 0.6701709032058716
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "226A",
+        "title": "International Political Economy",
+        "description": "The creation, maintenance, transformation, and decay of international arrangements designed to manage or regulate interstate activities relating to trade, money, resource use, technology, and physical environment."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "215B",
+        "score": 0.6680656671524048
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "215B",
+        "title": "Political Economics",
+        "description": "Tools of political economics: preferences and institutions, electoral competition, agency, partisan politics. Redistributive politics: general interest politics, special interest politics. Comparative politics: electoral rules, separation of powers, political regimes. Dynamic politics: fiscal policy, growth."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "160",
+        "score": 0.6662247180938721
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "160",
+        "title": "Political Economy in Historical Context",
+        "description": "This course focuses specifically on the historical context and perspective of the relationship of politics and economics in modern societies. Students are guided through an interdisciplinary survey of the historical experience of peoples and places who have participated in the ongoing great transformation away from argricultural societies to the rise of the industrial state and onto post-industrialism. Each term provides a different perspective of this transformation."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "126A",
+        "score": 0.6619598269462585
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "126A",
+        "title": "International Political Economy",
+        "description": "Economic concepts in the study of international political behavior. Political concepts influencing the choice of economic policies. "
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "100",
+        "score": 0.63695228099823
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "100",
+        "title": "Classical Theories of Political Economy",
+        "description": "One-semester lecture course offered each semester. In-depth analysis of the classical political economy literature, including such authors as Locke, Smith, Marx, Mills, and Weber to Veblen and Polanyi. Strong emphasis is placed on providing appropriate background for understanding the evolution of the literature that has emanated from the various social science disciplines which forms the basis of modern political economy."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "101",
+        "score": 0.6330584287643433
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "101",
+        "title": "Contemporary Theories of Political Economy",
+        "description": "This course introduces students to theoretical works from prominent intellectual debates in 20th and 21st century political economy. It explores the dynamic relationships among politics, society, and markets, with a focus on how markets are politically and socially embedded. It applies theoretical frameworks to current policy issues, drawing from influential works in sociology, political science, economics, and history. It asks: What is the relationship between markets and societies, and what role should the government play in constructing this relationship?"
+      }
+    },
+    {
+      "result": {
+        "subject": "PHDBA",
+        "courseNumber": "279PA",
+        "score": 0.6157366037368774
+      },
+      "course": {
+        "subject": "PHDBA",
+        "number": "279PA",
+        "title": "Political Economy: Frameworks",
+        "description": "The course focuses on collective action phenomena, their connections to material conditions, their consequences for public policy, and their impact on economic performance and welfare. The focus is broad, covering mainly theory while tracing testable implications and occasionally delving into empirical evidence. Topics include conflict, state formation, state capacity, collective decision-making, voting, lobbying, theories of influence and corruption, the efficiency of democracy, political selection, electoral discipline and political accountability.  "
+      }
+    },
+    {
+      "result": {
+        "subject": "EUST",
+        "courseNumber": "201",
+        "score": 0.5975761413574219
+      },
+      "course": {
+        "subject": "EUST",
+        "number": "201",
+        "title": "European Institutions and Social Conflicts",
+        "description": "This course engages with a reflection on European institutions and social conflicts, either from a historical and/or contemporary perspective. It provides a critical explanatory analysis of issues relating to European Institutions such as the EU Commission, Council, Parliament and Court of Justice, the European Central Bank, the European Investment Bank, the Organization for Security and Co-operation in Europe, as well as general issues relating to the European economy and/or social and political conflicts within Europe."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "106",
+        "score": 0.5882552862167358
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "106",
+        "title": "Intermediate Microeconomic Theory",
+        "description": "This course is designed as a comprehensive overview of intermediate microeconomic theory. It covers the basic supply and demand model. Topics include consumer choice, choice under uncertainty and information, demand theory, firm, production and cost theory, competitive market theory, imperfect competition, and market failure. The course is structured for majors in Political Economy and other non-economic social science majors."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "157",
+        "score": 0.5872247219085693
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "157",
+        "title": "The Political Economy of Finance",
+        "description": "This course examines the history, theory, and operation of the American financial system. Key questions we will consider include: What is money? What is finance? How did the financial system evolve historically in the American context? To answer these questions, we will first look to histories and then canonical theorizations before turning to the operation of money and the nuts-and-bolts of American financial markets. Finally, we examine the global financial crisis of 2008 and its aftermath in light of these considerations. The goal of this course is for students to develop a basic understanding of the historical development, theoretical underpinnings, and actual practice of the American financial system. "
+      }
+    }
+  ]
+}

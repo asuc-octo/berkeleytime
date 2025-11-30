@@ -1,0 +1,135 @@
+{
+  "query": "Quantum computing principles",
+  "results": [
+    {
+      "result": {
+        "subject": "PHYSICS",
+        "courseNumber": "137A",
+        "score": 0.6741622090339661
+      },
+      "course": {
+        "subject": "PHYSICS",
+        "number": "137A",
+        "title": "Quantum Mechanics",
+        "description": "Postulates and principles of quantum mechanics. Basic concepts including Hilbert space and superposition, Dirac notation and wavefunctions, operators and observables, measurements, time evolution and Schroedinger\u2019s equation, Hamiltonians and energy, uncertainty principle, symmetries and conserved quantities. Analysis of two-state systems (qubits), spin-\u00bd particles, Stern-Gerlach experiment. Other basic systems including a free particle, finite and infinite potential wells, the harmonic oscillator, 3D quantum mechanics, angular momentum, and the hydrogen atom. Bipartite systems, density matrix and introduction to quantum entanglement, and interpretation of quantum mechanics. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "C191B",
+        "score": 0.6689865589141846
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "C191B",
+        "title": "Introduction to Quantum Computing II",
+        "description": "This is the second semester of a multidisciplinary two-semester sequence in Quantum Computing. This second semester covers fundamentals of control of qubits, methods of quantum error mitigation, quantum benchmarking, quantum supremacy and tests of quantumness, advanced quantum error correction including fault-tolerant quantum computing and error thresholds, theory/practice of near-term fault fault tolerance, discussions of different physical platforms for quantum computing, and alternative paradigms for quantum computing.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "PHYSICS",
+        "courseNumber": "C191B",
+        "score": 0.6686168909072876
+      },
+      "course": {
+        "subject": "PHYSICS",
+        "number": "C191B",
+        "title": "Introduction to Quantum Computing II",
+        "description": "This is the second semester of a multidisciplinary two-semester sequence in Quantum Computing. This second semester covers fundamentals of control of qubits, methods of quantum error mitigation, quantum benchmarking, quantum supremacy and tests of quantumness, advanced quantum error correction including fault-tolerant quantum computing and error thresholds, theory/practice of near-term fault fault tolerance, discussions of different physical platforms for quantum computing, and alternative paradigms for quantum computing.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "EECS",
+        "courseNumber": "C191B",
+        "score": 0.6655528545379639
+      },
+      "course": {
+        "subject": "EECS",
+        "number": "C191B",
+        "title": "Introduction to Quantum Computing II",
+        "description": "This is the second semester of a multidisciplinary two-semester sequence in Quantum Computing. This second semester covers fundamentals of control of qubits, methods of quantum error mitigation, quantum benchmarking, quantum supremacy and tests of quantumness, advanced quantum error correction including fault-tolerant quantum computing and error thresholds, theory/practice of near-term fault fault tolerance, discussions of different physical platforms for quantum computing, and alternative paradigms for quantum computing.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "ENGIN",
+        "courseNumber": "281A",
+        "score": 0.6617233753204346
+      },
+      "course": {
+        "subject": "ENGIN",
+        "number": "281A",
+        "title": "Quantum Physics for Semiconductor Engineers",
+        "description": "This is an introduction to non-relativistic quantum physics. General quantum mechanics will be taught in the context of technological relevance, including the brief history and introduction to quantum mechanics, the Schrodinger equation and its solution in one and three dimensions, the formalism of quantum mechanics, and the perturbation theory. Connections to basic atomic, laser and materials physics will be highlighted.\n\nThe course will prepare students with the basics of quantum physics for entering the emerging field of quantum computation, quantum communications and other quantum information science and technologies."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHYSICS",
+        "courseNumber": "221B",
+        "score": 0.6318548321723938
+      },
+      "course": {
+        "subject": "PHYSICS",
+        "number": "221B",
+        "title": "Quantum Mechanics",
+        "description": "Many-body methods, radiation field quantization, relativistic quantum mechanics, applications."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHYSICS",
+        "courseNumber": "137B",
+        "score": 0.6304314732551575
+      },
+      "course": {
+        "subject": "PHYSICS",
+        "number": "137B",
+        "title": "Quantum Mechanics",
+        "description": "Complex and dynamical quantum systems with applications to atomic, molecular, and particle physics. Multiparticle systems, bosons and fermions, Pauli exclusion principle. Approximation techniques including time-independent, degenerate and time-dependent perturbation theory, Fermi golden rule, WKB approximation, Born-Oppenheimer approximation, and the variational principle. The Helium atom, Spin-Orbit interaction, fine and hyperfine structure, higher Z atoms, molecules and the Linear Combination of Atomic Orbitals approximation. Atoms in electric and magnetic fields (Stark and Zeeman effects), and radiation (absorption, spontaneous and stimulated emissions). Exchange forces and van der Waals interaction. Introduction to scattering theory."
+      }
+    },
+    {
+      "result": {
+        "subject": "MATSCI",
+        "courseNumber": "111",
+        "score": 0.6165790557861328
+      },
+      "course": {
+        "subject": "MATSCI",
+        "number": "111",
+        "title": "Properties of Electronic Materials",
+        "description": "Introduction to the physical principles underlying the electric properties of modern solids with emphasis on semiconductors; control of defects and impurities through physical purification, bulk and thin film crystal growth and doping processes, materials basis of electronic and optoelectronic devices (diodes, transistors, semiconductor lasers) and optical fibers; properties of metal and oxide superconductors and their applications."
+      }
+    },
+    {
+      "result": {
+        "subject": "NUCENG",
+        "courseNumber": "C235",
+        "score": 0.6083884239196777
+      },
+      "course": {
+        "subject": "NUCENG",
+        "number": "C235",
+        "title": "Principles of Magnetic Resonance Imaging",
+        "description": "Fundamentals of MRI including signal-to-noise ratio, resolution, and contrast as dictated by physics, pulse sequences, and instrumentation. Image reconstruction via 2D FFT methods. Fast imaging reconstruction via convolution-back projection and gridding methods and FFTs. Hardware for modern MRI scanners including main field, gradient fields, RF coils, and shim supplies. Software for MRI including imaging methods such as 2D FT, RARE, SSFP, spiral and echo planar imaging methods."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "C265",
+        "score": 0.6076391339302063
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "C265",
+        "title": "Principles of Magnetic Resonance Imaging",
+        "description": "Fundamentals of MRI including signal-to-noise ratio, resolution, and contrast as dictated by physics, pulse sequences, and instrumentation. Image reconstruction via 2D FFT methods. Fast imaging reconstruction via convolution-back projection and gridding methods and FFTs. Hardware for modern MRI scanners including main field, gradient fields, RF coils, and shim supplies. Software for MRI including imaging methods such as 2D FT, RARE, SSFP, spiral and echo planar imaging methods."
+      }
+    }
+  ]
+}

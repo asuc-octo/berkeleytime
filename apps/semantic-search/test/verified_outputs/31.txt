@@ -1,0 +1,10 @@
+- INDENG 170, Reasonable
+- INFO 114, Reasonable
+- INFO 214, Reasonable
+- INFO 247, Reasonable
+- INFO C265, Reasonable
+- INFO 233, Reasonable
+- PBHLTH 243C, Not reasonable
+- COMPSCI 10, Reasonable
+- NWMEDIA C265, Reasonable
+- COMPSCI 302, Not reasonable

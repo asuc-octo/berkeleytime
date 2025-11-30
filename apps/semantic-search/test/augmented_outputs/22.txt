@@ -1,0 +1,135 @@
+{
+  "query": "Advanced Python data structures",
+  "results": [
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61B",
+        "score": 0.7232796549797058
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61B",
+        "title": "Data Structures",
+        "description": "Fundamental dynamic data structures, including linear lists, queues, trees, and other linked structures; arrays strings, and hash tables. Storage management. Elementary principles of software engineering. Abstract data types. Algorithms for sorting and searching. Introduction to the Java programming language. "
+      }
+    },
+    {
+      "result": {
+        "subject": "DATA",
+        "courseNumber": "C88C",
+        "score": 0.7172856330871582
+      },
+      "course": {
+        "subject": "DATA",
+        "number": "C88C",
+        "title": "Computational Structures in Data Science",
+        "description": "Development of Computer Science topics appearing in Foundations of Data Science (C8); expands computational concepts and techniques of abstraction. Understanding  the structures that underlie the programs, algorithms, and languages used in data science and elsewhere.   Mastery of a particular programming language while studying general techniques for managing program complexity, e.g., functional, object-oriented, and declarative programming. Provides practical experience with composing larger systems through several significant programming projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "STAT",
+        "courseNumber": "33B",
+        "score": 0.6793797016143799
+      },
+      "course": {
+        "subject": "STAT",
+        "number": "33B",
+        "title": "Introduction to Advanced Programming in R",
+        "description": "The course is designed primarily for those who are already familiar with programming in another language, such as python, and want to understand how R works, and for those who already know the basics of R programming and want to gain a more in-depth understanding of the language in order to improve their coding. The focus is on the underlying paradigms in R, such as functional programming, atomic vectors, complex data structures, environments, and object systems. The goal of this course is to better understand programming principles in general and to write better R code that capitalizes on the language's design.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "61A",
+        "score": 0.656714141368866
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "61A",
+        "title": "The Structure and Interpretation of Computer Programs",
+        "description": "An introduction to programming and computer science focused on abstraction techniques as means to manage program complexity. Techniques include procedural abstraction; control abstraction using recursion, higher-order functions, generators, and streams; data abstraction using interfaces, objects, classes, and generic operators; and language abstraction using interpreters and macros. The course exposes students to programming paradigms, including functional, object-oriented, and declarative approaches. It includes an introduction to asymptotic analysis of algorithms. There are several significant programming projects."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "170",
+        "score": 0.6554003357887268
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "170",
+        "title": "Efficient Algorithms and Intractable Problems",
+        "description": "Concept and basic techniques in the design and analysis of algorithms; models of computation; lower bounds; algorithms for optimum search trees, balanced trees and UNION-FIND algorithms; numerical and algebraic algorithms; combinatorial algorithms. Turing machines, how to count steps, deterministic and nondeterministic Turing machines, NP-completeness. Unsolvable and intractable problems. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "281",
+        "score": 0.6497505307197571
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "281",
+        "title": "Software Engineering for Scientific Computing",
+        "description": "The course covers computer architecture and software features that have the\ngreatest impact on performance. It addresses debugging and performance tunning, detecting\nmemory and stack overwrites, malloc corruption, hotspot, paging, cache misses. A toolbox with\ncommon algorithms: sorting, searching, hashing, trees, graph traversing, is followed by common\npatterns used in object-oriented design. It describes programming paradigms, dynamic libraries,\ndistributed architectures, and services. Lectures on linear algebra and performance libraries are\nprovided as background for future courses. HPC paradigms and GPU programming are introduced.\nSoftware packaging, extensibility, and interactivity is followed by team development, testing and\nhardening."
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "277A",
+        "score": 0.6433882713317871
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "277A",
+        "title": "Data Science for the Molecular Sciences",
+        "description": "This class covers key data science topics, principles, and techniques used in the molecular sciences including question formulation, data collection and cleaning, visualization, statistical inference, predictive modeling, and decision making. Students will learn how to use the Python programming language and its libraries for data transformation, querying, analysis, machine learning, visualization, statistical analysis, and scalable data processing."
+      }
+    },
+    {
+      "result": {
+        "subject": "PORTUG",
+        "courseNumber": "103",
+        "score": 0.6410820484161377
+      },
+      "course": {
+        "subject": "PORTUG",
+        "number": "103",
+        "title": "Advanced Grammar and Composition",
+        "description": "Advanced work in Portuguese grammatical structures. Practice in writing. "
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "251",
+        "score": 0.6379983425140381
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "251",
+        "title": "Applied Machine Learning",
+        "description": "Provides a theoretical and practical introduction to modern techniques in applied machine learning. Covers key concepts in supervised and unsupervised machine learning, including the design of machine learning experiments, algorithms for prediction and inference, optimization, and evaluation. Students will learn functional, procedural, and statistical programming techniques for working with real-world data."
+      }
+    },
+    {
+      "result": {
+        "subject": "HEBREW",
+        "courseNumber": "100B",
+        "score": 0.6376574635505676
+      },
+      "course": {
+        "subject": "HEBREW",
+        "number": "100B",
+        "title": "Advanced Hebrew",
+        "description": "Advanced Hebrew, especially designed for those going on to the study of modern Hebrew literature. Vocabulary building, grammar review, and literary analysis of a sampling of modern texts."
+      }
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "query": "Machine learning for image recognition",
+  "results": [
+    {
+      "result": {
+        "subject": "DATASCI",
+        "courseNumber": "207",
+        "score": 0.7391942143440247
+      },
+      "course": {
+        "subject": "DATASCI",
+        "number": "207",
+        "title": "Applied Machine Learning",
+        "description": "Machine learning is a rapidly growing field at the intersection of computer science and statistics concerned with finding patterns in data. It is responsible for tremendous advances in technology, from personalized product recommendations to speech recognition in cell phones. This course provides a broad introduction to the key ideas in machine learning. The emphasis will be on intuition and practical examples rather than theoretical results, though some experience with probability, statistics, and linear algebra will be important. Course must be taken for a letter grade to fulfill degree requirements."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "189",
+        "score": 0.7386436462402344
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "189",
+        "title": "Introduction to Machine Learning",
+        "description": "Theoretical foundations, algorithms, methodologies, and applications for machine learning. Topics may include supervised methods for regression and classication (linear models, trees, neural networks, ensemble methods, instance-based methods); generative and discriminative probabilistic models; Bayesian parametric learning; density estimation and clustering; Bayesian networks; time series models; dimensionality reduction; programming projects covering a variety of real-world applications. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CHEM",
+        "courseNumber": "277B",
+        "score": 0.7209023237228394
+      },
+      "course": {
+        "subject": "CHEM",
+        "number": "277B",
+        "title": "Machine Learning Algorithms",
+        "description": "An introduction to mathematical optimization and statistics and \"non-algorithmic\" computation using machine learning. Machine learning prerequisites are introduced including local and global optimization, various statistical and clustering models, and early meta-heuristic methods such as genetic algorithms and artificial neural networks. Building on this foundation, current machine learning techniques are covered including Deep Learning networks, Convolutional neural networks, Recurrent and long short term memory (LSTM) networks, and support vector machines and Gaussian ridge regression. Various case studies in applying optimization, statistical modeling, and machine learning methods as classification and regression task"
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "289A",
+        "score": 0.7205050587654114
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "289A",
+        "title": "Introduction to Machine Learning",
+        "description": "This course provides an introduction to theoretical foundations, algorithms, and methodologies for machine learning, emphasizing the role of probability and optimization and exploring a variety of real-world applications. Students are expected to have a solid foundation in calculus and linear algebra as well as exposure to the basic tools of logic and probability, and should be familiar with at least one modern, high-level programming language. "
+      }
+    },
+    {
+      "result": {
+        "subject": "DATASCI",
+        "courseNumber": "281",
+        "score": 0.714481770992279
+      },
+      "course": {
+        "subject": "DATASCI",
+        "number": "281",
+        "title": "Computer Vision",
+        "description": "This course introduces the theoretical and practical aspects of computer vision, covering both classical and state of the art deep-learning based approaches. This course covers everything from the basics of the image formation process in digital cameras and biological systems, through a mathematical and practical treatment of basic image processing, space/frequency representations, classical computer vision techniques for making 3-D measurements from images, and modern deep-learning based techniques for image classification and recognition.\n"
+      }
+    },
+    {
+      "result": {
+        "subject": "INFO",
+        "courseNumber": "251",
+        "score": 0.7131232023239136
+      },
+      "course": {
+        "subject": "INFO",
+        "number": "251",
+        "title": "Applied Machine Learning",
+        "description": "Provides a theoretical and practical introduction to modern techniques in applied machine learning. Covers key concepts in supervised and unsupervised machine learning, including the design of machine learning experiments, algorithms for prediction and inference, optimization, and evaluation. Students will learn functional, procedural, and statistical programming techniques for working with real-world data."
+      }
+    },
+    {
+      "result": {
+        "subject": "COMPSCI",
+        "courseNumber": "C280",
+        "score": 0.6918512582778931
+      },
+      "course": {
+        "subject": "COMPSCI",
+        "number": "C280",
+        "title": "Computer Vision",
+        "description": "Paradigms for computational vision. Relation to human visual perception. Mathematical techniques for representing and reasoning, with curves, surfaces and volumes. Illumination and reflectance models. Color perception. Image segmentation and aggregation. Methods for bottom-up three dimensional shape recovery: Line drawing analysis, stereo, shading, motion, texture. Use of object models for prediction and recognition."
+      }
+    },
+    {
+      "result": {
+        "subject": "VISSCI",
+        "courseNumber": "C280",
+        "score": 0.6916863322257996
+      },
+      "course": {
+        "subject": "VISSCI",
+        "number": "C280",
+        "title": "Computer Vision",
+        "description": "Paradigms for computational vision. Relation to human visual perception. Mathematical techniques for representing and reasoning, with curves, surfaces and volumes. Illumination and reflectance models. Color perception. Image segmentation and aggregation. Methods for bottom-up three dimensional shape recovery: Line drawing analysis, stereo, shading, motion, texture. Use of object models for prediction and recognition."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "C242",
+        "score": 0.6827377676963806
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "C242",
+        "title": "Machine Learning, Statistical Models, and Optimization for Molecular Problems",
+        "description": "An introduction to mathematical optimization, statistical models, and advances in machine learning for the physical sciences. Machine learning prerequisites are introduced including local and global optimization, various statistical and clustering models, and early meta-heuristic methods such as genetic algorithms and artificial neural networks. Building on this foundation, current machine learning techniques are covered including deep learning artificial neural networks, Convolutional neural networks, Recurrent and long short term memory (LSTM) networks, graph neural networks, decision trees."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "C142",
+        "score": 0.6827377676963806
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "C142",
+        "title": "Machine Learning, Statistical Models, and Optimization for Molecular Problems",
+        "description": "An introduction to mathematical optimization, statistical models, and advances in machine learning for the physical sciences. Machine learning prerequisites are introduced including local and global optimization, various statistical and clustering models, and early meta-heuristic methods such as genetic algorithms and artificial neural networks. Building on this foundation, current machine learning techniques are covered including deep learning artificial neural networks, Convolutional neural networks, Recurrent and long short term memory (LSTM) networks, graph neural networks, decision trees. "
+      }
+    }
+  ]
+}

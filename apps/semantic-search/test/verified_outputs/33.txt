@@ -1,0 +1,10 @@
+- CIVENG 247: Design of Steel and Composite Structures, Reasonable
+- CIVENG 120: Structural Engineering, Reasonable
+- CIVENG 227: Earthquake-Resistant Design, Reasonable
+- CIVENG 92B: Cornerstone Structural Design, Reasonable
+- CIVENG 123: Design of Reinforced Concrete Structures, Not reasonable
+- ARCH 250: Introduction to Structures, Reasonable
+- MATSCI 128: Modern Structural Materials and Sustainability, Not reasonable
+- ARCH 160: Introduction to Construction, Reasonable
+- ARCH 100B: Fundamentals of Architectural Design, Not reasonable
+- CIVENG 229: Structural System Reliability, Not reasonable

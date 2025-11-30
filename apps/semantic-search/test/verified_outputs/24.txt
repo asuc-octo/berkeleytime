@@ -1,0 +1,10 @@
+PHILOS C158, Reasonable
+PSYCH C61, Reasonable
+NEU C61, Reasonable
+COGSCI 180, Reasonable
+BUDDSTD C158, Reasonable
+PHILOS R1B, Not reasonable
+PHILOS 125, Not reasonable
+PHILOS 2, Not reasonable
+PHILOS 5, Not reasonable
+PHILOS 119, Not reasonable

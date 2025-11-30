@@ -1,0 +1,135 @@
+{
+  "query": "History of modern China after 1949",
+  "results": [
+    {
+      "result": {
+        "subject": "HISTORY",
+        "courseNumber": "116D",
+        "score": 0.6912477016448975
+      },
+      "course": {
+        "subject": "HISTORY",
+        "number": "116D",
+        "title": "China: Twentieth-Century China",
+        "description": "Chinese history from the decline of the Qing empire to the reforms under the Chinese Communist Party in the late 20th century. "
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTORY",
+        "courseNumber": "6B",
+        "score": 0.6678656339645386
+      },
+      "course": {
+        "subject": "HISTORY",
+        "number": "6B",
+        "title": "Introduction to Chinese History: From the Mongols to Post-Mao China",
+        "description": "This is an introduction to Chinese history from the 13th through the 20th centuries -- from the Mongols and Khubilai Khan's conquest of southern China to the amazing turnaround following the death of Mao Zedong in 1976 and the opening of the era of reform that has led to China's emergence as a major economic and strategic power today. The course assumes no prior knowledge of Chinese history. "
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "143C",
+        "score": 0.6466430425643921
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "143C",
+        "title": "Chinese Politics",
+        "description": "An overview of Chinese politics since the fall of the Qing Dynasty. Emphasis on the People's Republic of China and post-Mao reforms."
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTORY",
+        "courseNumber": "167C",
+        "score": 0.6355807781219482
+      },
+      "course": {
+        "subject": "HISTORY",
+        "number": "167C",
+        "title": "Modern Germany: Germany 1914 to the Present",
+        "description": "This course will survey the political, economic, social, and cultural development of Germany since 1914. Special attention will be paid to the impact of World War I; problems of democratization under the impact of defeat, inflation, and depression; National Socialist racism and imperialism; the evolution of the German Federal Republic and the German Democratic Republic; unification and its problems; and modern Germany's role in Europe. "
+      }
+    },
+    {
+      "result": {
+        "subject": "CHINESE",
+        "courseNumber": "188",
+        "score": 0.6208307147026062
+      },
+      "course": {
+        "subject": "CHINESE",
+        "number": "188",
+        "title": "Popular Media in Modern China",
+        "description": "This course is an introduction to media culture in 20th-century China, with an emphasis on photography, cinema, and popular music. The course places these productions in historical and cultural context, examining the complex intertwinement of culture, technology, and politics in China, Hong Kong, and Taiwan from the turn of the last century to the beginning of the 21st. Students will also be introduced to a number of approaches to thinking about and analyzing popular cultural phenomena. "
+      }
+    },
+    {
+      "result": {
+        "subject": "HISTORY",
+        "courseNumber": "8B",
+        "score": 0.6052375435829163
+      },
+      "course": {
+        "subject": "HISTORY",
+        "number": "8B",
+        "title": "Latin American History: Modern Latin America",
+        "description": "This introductory course surveys the history of modern Latin America from independence to the present, with a strong emphasis on the twentieth century. Our focus will be on broad transfomations in politics, place, identity, and work."
+      }
+    },
+    {
+      "result": {
+        "subject": "MELC",
+        "courseNumber": "148",
+        "score": 0.6032947301864624
+      },
+      "course": {
+        "subject": "MELC",
+        "number": "148",
+        "title": "Emergence of the Modern Middle East",
+        "description": "The course provides a chronological and thematic approach using biographies and texts to trace the emergence of the modern Middle East from the late 17th to the early 20th century culminating in the dissolution of the Ottoman dynasty and the advent of the nation-state structure. The course contextualizes the region\u2019s social history, culture, religious, and social stratification, colonization, and Orientalism as a pathway toward understanding the forces that shaped the modern Middle East.  "
+      }
+    },
+    {
+      "result": {
+        "subject": "CHINESE",
+        "courseNumber": "51",
+        "score": 0.5972913503646851
+      },
+      "course": {
+        "subject": "CHINESE",
+        "number": "51",
+        "title": "Chinese Thought in the Han Dynasty",
+        "description": "This course examines the complex worldviews of China's Han period, the centuries that follow its unification and the establishment of its empire. The momentous changes of this period shaped traditional and contemporary views of history and society, philosophy, and religion, and as a result are still relevant today. This course will look at Han \"thought,\" a word chosen for its range, including religion, state ritual, social conventions, moral philosophy, and thinking about the natural world. It covers both elite and popular culture, and pays particular attention to two works of the second century B.C.E.: the Shiji (i.e., Records of the Historian) or the Huainanzi."
+      }
+    },
+    {
+      "result": {
+        "subject": "JEWISH",
+        "courseNumber": "175E",
+        "score": 0.5898069143295288
+      },
+      "course": {
+        "subject": "JEWISH",
+        "number": "175E",
+        "title": "History of Modern Israel: From the Emergence of Zionism to Our Time",
+        "description": "The class explores the history of the Zionist movement and the State of Israel in all its complexity and contradictions. What is Zionism? What are its roots? Is it a liberation movement? A religious cause? A colonial ideology? A set of state policies? And what is the relationship between Zionism and the modern State of Israel? How do Zionism and Israel look different when considered from the standpoint of Jewish,\nPalestinian, European, or Middle Eastern history? Exploring Zionism and Israel from its roots in the nineteenth century to the present, this class offers in-depth knowledge and discussion on all of these topics\nand more."
+      }
+    },
+    {
+      "result": {
+        "subject": "GERMAN",
+        "courseNumber": "160A",
+        "score": 0.5809081792831421
+      },
+      "course": {
+        "subject": "GERMAN",
+        "number": "160A",
+        "title": "Politics and Culture in 20th-Century Germany: A Century of Extremes",
+        "description": "The story of Germany in the 20th century is a dramatic one, comprising two world wars, genocide, Allied occupation, a division into two states on opposing sides of the Cold War, and recently an unexpected unification. This course offers an introduction to the history and culture of contemporary Germany. It aims at a systematic account of German history in the 20th century, and it intends to provide a better understanding of today's German culture and politics. In addition to following a chronological approach, we will frequently stop to explore issues that are crucial to providing insights into current developments."
+      }
+    }
+  ]
+}

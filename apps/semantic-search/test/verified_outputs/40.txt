@@ -1,0 +1,10 @@
+EECS 251A, Reasonable
+EECS 251LB, Reasonable
+EECS 251LA, Reasonable
+EECS 151, Reasonable
+EECS 151LB, Reasonable
+EECS 151LA, Reasonable
+EECS 251B, Reasonable
+ELENG 240C, Not reasonable
+EECS 219C, Reasonable
+ELENG 105, Not reasonable

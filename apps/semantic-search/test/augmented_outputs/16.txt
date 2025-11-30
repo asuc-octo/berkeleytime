@@ -1,0 +1,135 @@
+{
+  "query": "International marketing strategies",
+  "results": [
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "126A",
+        "score": 0.5874813795089722
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "126A",
+        "title": "International Political Economy",
+        "description": "Economic concepts in the study of international political behavior. Political concepts influencing the choice of economic policies. "
+      }
+    },
+    {
+      "result": {
+        "subject": "XMBA",
+        "courseNumber": "206",
+        "score": 0.548923134803772
+      },
+      "course": {
+        "subject": "XMBA",
+        "number": "206",
+        "title": "Marketing",
+        "description": "This core course provides an overview of the marketing system and the marketing concept, buyer behavior, market research, segmentation, marketing decision-making, marketing structures, and evaluation of marketing performance in the economy and society. "
+      }
+    },
+    {
+      "result": {
+        "subject": "POLSCI",
+        "courseNumber": "226A",
+        "score": 0.5458369851112366
+      },
+      "course": {
+        "subject": "POLSCI",
+        "number": "226A",
+        "title": "International Political Economy",
+        "description": "The creation, maintenance, transformation, and decay of international arrangements designed to manage or regulate interstate activities relating to trade, money, resource use, technology, and physical environment."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "173",
+        "score": 0.5375372171401978
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "173",
+        "title": "Competitive Strategy",
+        "description": "This course takes the perspective of the executive responsible for developing a firm's strategy, and focuses on forms of competitive advantage at the firm level. Topics include industry and competitive analysis; business scope (horizontal and vertical scope); make vs buy decision-making and related tradeoffs; network effects and complementors; disruption and response; non-market factors such as regulatory barriers to entry; and risks to sustaining returns. This course will build on concepts covered in various UGBA Core classes."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "106",
+        "score": 0.5374747514724731
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "106",
+        "title": "Marketing",
+        "description": "The evolution of markets and marketing; market structure; marketing cost and efficiency; public and private regulation; the development of marketing programs including decisions involving products, price, promotional distribution."
+      }
+    },
+    {
+      "result": {
+        "subject": "PBHLTH",
+        "courseNumber": "223C",
+        "score": 0.5356452465057373
+      },
+      "course": {
+        "subject": "PBHLTH",
+        "number": "223C",
+        "title": "Strategic Management and the Health Sector",
+        "description": "The overall purpose of this course is to assist the student in managing health care organizations from a strategic perspective. This is accomplished by systematically addressing systemwide, organization-wide, group- and individual-level issues in strategy formulation, content, implementation, and performance. Emphasis is placed upon the manager's role in simultaneously taking into account a wide variety of internal and external factors to improve organization and system performance in meeting the health needs of individuals and communities. Emphasis is also placed on the development and implementation of strategies to meet multiple stakeholder demands, particular attention given to continuous quality improvement/total quality management."
+      }
+    },
+    {
+      "result": {
+        "subject": "ECON",
+        "courseNumber": "C184",
+        "score": 0.5308595895767212
+      },
+      "course": {
+        "subject": "ECON",
+        "number": "C184",
+        "title": "International Environmental Economics",
+        "description": "This course studies the following question:How should policymakers and scholars design and analyze environmental policy in a globalized world where much economic activity and pollution crosses political borders? The course addresses issues including climate change, air and water pollution, deforestation, species extinction, and others. The course also analyzes a variety of ways that countries and regions interact, including trade, foreign direct investment, outsourcing, international agreements and treaties, and others. The course also teaches a range of tools used to analyze these issues, including life-cycle(also called environmental footprint) analysis, simple econometrics, environmental market design, non-market valuation, and the data."
+      }
+    },
+    {
+      "result": {
+        "subject": "ENVECON",
+        "courseNumber": "C132",
+        "score": 0.5283990502357483
+      },
+      "course": {
+        "subject": "ENVECON",
+        "number": "C132",
+        "title": "International Environmental Economics",
+        "description": "This course studies the following question:How should policymakers and scholars design and analyze environmental policy in a globalized world where much economic activity and pollution crosses political borders? The course addresses issues including climate change, air and water pollution, deforestation, species extinction, and others. The course also analyzes a variety of ways that countries and regions interact, including trade, foreign direct investment, outsourcing, international agreements and treaties, and others. The course also teaches a range of tools used to analyze these issues, including life-cycle(also called environmental footprint) analysis, simple econometrics, environmental market design, non-market valuation, and the data."
+      }
+    },
+    {
+      "result": {
+        "subject": "GPP",
+        "courseNumber": "105",
+        "score": 0.5273759961128235
+      },
+      "course": {
+        "subject": "GPP",
+        "number": "105",
+        "title": "The Ethics, Methods, and Pragmatics of Global Practice",
+        "description": "This course is intended to provide students with the necessary background and knowledge to undertake projects and work experience of a global scope. Students will be exposed to a diversity of methodological frameworks, introduced to the basic skills needed to effectively participate in organizations, and to understand the ethics of global service and practice. Students will be required to complete a literature review and a major project proposal."
+      }
+    },
+    {
+      "result": {
+        "subject": "POLECON",
+        "courseNumber": "154",
+        "score": 0.5239721536636353
+      },
+      "course": {
+        "subject": "POLECON",
+        "number": "154",
+        "title": "Global Trade and Finance",
+        "description": "This is an interdisciplinary course in international trade and finance focused on the dynamic interaction between economics and politics in the global arena. The course provides students a systematic method of evaluating international economic policies, while developing critical thinking skills through case studies and critical analysis. More specifically, the course focuses on the impact of flows of trade, capital, and people across borders and the role played by: (1) states and their political actors, (2) non-governmental groups, e.g., multinational corporations and labor unions, and (3) domestic and international institutions that all establish the \u201crules of the game\u201d, in shaping the global economy.  "
+      }
+    }
+  ]
+}

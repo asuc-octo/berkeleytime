@@ -1,0 +1,10 @@
+- DATASCI 209: Data Visualization, Reasonable
+- STAT 133: Concepts in Computing with Data, Reasonable
+- COMPSS 221: Data Visualization, Reasonable
+- DATASCI 203: Statistics for Data Science, Not reasonable
+- STAT 33A: Introduction to Programming in R, Reasonable
+- LDARCH 287: Representation as Research: Contemporary Topics in Landscape Visualization, Not reasonable
+- STAT C131A: Statistical Methods for Data Science, Reasonable
+- STAT 158: Experimental Design, Not reasonable
+- DATA 89: Mathematical and Graphical Foundations of Probability, Not reasonable
+- INFO 201: Research Design and Applications for Data and Analysis, Not reasonable

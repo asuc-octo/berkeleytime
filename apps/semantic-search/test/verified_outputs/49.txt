@@ -1,0 +1,10 @@
+ISF 100A, Reasonable
+SOCIOL 201B, Not reasonable
+LEGALST 103, Reasonable
+SOCIOL 101, Reasonable
+SOCIOL 102, Reasonable
+SOCIOL 280Z, Not reasonable
+SOCIOL 150, Not reasonable
+POLECON 100, Reasonable
+SOCIOL 106, Not reasonable
+SOCIOL R1B, Not reasonable

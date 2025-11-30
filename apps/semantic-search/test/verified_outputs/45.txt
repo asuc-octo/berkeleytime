@@ -1,0 +1,10 @@
+INDENG 222, Reasonable
+INDENG 223, Reasonable
+XMBA 203, Reasonable
+ECON 138, Not reasonable
+UGBA 131A, Reasonable
+ECON 158, Reasonable
+RDEV 235, Not reasonable
+UGBA 183, Not reasonable
+ECON 136, Not reasonable
+ECON 145, Not reasonable

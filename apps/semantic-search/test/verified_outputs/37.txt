@@ -1,0 +1,10 @@
+INDENG 142A, Reasonable
+UGBA 142, Reasonable
+INFO 201, Reasonable
+INDENG 242B, Reasonable
+INDENG 142B, Reasonable
+UGBA 104, Reasonable
+STAT 214, Reasonable
+STAT 154, Reasonable
+STAT 254, Reasonable
+COMPSCI 189, Reasonable

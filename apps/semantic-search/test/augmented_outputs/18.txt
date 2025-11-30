@@ -1,0 +1,135 @@
+{
+  "query": "Rhetoric of social movements",
+  "results": [
+    {
+      "result": {
+        "subject": "SOCIOL",
+        "courseNumber": "141",
+        "score": 0.6602991819381714
+      },
+      "course": {
+        "subject": "SOCIOL",
+        "number": "141",
+        "title": "Social Movements and Political Action",
+        "description": "Social movements, the formation and play of public opinion, and the behavior of interest groups. "
+      }
+    },
+    {
+      "result": {
+        "subject": "RHETOR",
+        "courseNumber": "250",
+        "score": 0.6498157978057861
+      },
+      "course": {
+        "subject": "RHETOR",
+        "number": "250",
+        "title": "Rhetoric of the Image",
+        "description": "A study of the visual image as a mode of discourse, together with an analysis of the terms in which images have been interpreted and criticized. Focus may be on the rhetoric of a particular image or set of images, or on more broadly theoretical writings about image."
+      }
+    },
+    {
+      "result": {
+        "subject": "UGBA",
+        "courseNumber": "192AC",
+        "score": 0.6328200101852417
+      },
+      "course": {
+        "subject": "UGBA",
+        "number": "192AC",
+        "title": "Social Movements and Social Media",
+        "description": "This course provides a survey of innovative social movements and their complex relationships to social media technologies. It will examine the evolution from pre-social-media to present-day mobilizing strategies and the interplay between explicitly policy- and advocacy-focused approaches and related efforts rooted in music, visual arts, popular culture and celebrities. The course will place into comparative relief the discourses of explicitly racially- or ethnically-defined movements and movements that mobilize based on other, sometimes overlapping categories of marginalization including class, immigration status, gender identity and occupational category."
+      }
+    },
+    {
+      "result": {
+        "subject": "RHETOR",
+        "courseNumber": "137",
+        "score": 0.6314621567726135
+      },
+      "course": {
+        "subject": "RHETOR",
+        "number": "137",
+        "title": "Rhetoric of the Image",
+        "description": "This course surveys methods and theories of visual culture, including the rhetorics and discourses of images (still and moving), media (old and new), display, circulation, value, and interpretation. Topics explored will include: spectacle, reproduction, materiality, time, style, genre, archive, truth-value, and affectivity. Students will learn multi- and interdisciplinary uses of visual materials as objects of analysis, evidence, exchange, and argumentation."
+      }
+    },
+    {
+      "result": {
+        "subject": "RHETOR",
+        "courseNumber": "114",
+        "score": 0.6286298036575317
+      },
+      "course": {
+        "subject": "RHETOR",
+        "number": "114",
+        "title": "Rhetoric of New Media",
+        "description": "This course examines a range of digital media practices including hypertext, interactive drama, videogames, literary interactive fiction, and socially constructed narratives in multi-user spaces. Through a mixture of readings, discussion, and project work, we will explore the theoretical positions, debates, and design issues arising from these different practices. Topics will include the rhetorical, ludic, theatrical, narrative political, and legal dimensions of digital media."
+      }
+    },
+    {
+      "result": {
+        "subject": "RHETOR",
+        "courseNumber": "205",
+        "score": 0.6234357953071594
+      },
+      "course": {
+        "subject": "RHETOR",
+        "number": "205",
+        "title": "Contemporary Rhetorical Theory and Practice",
+        "description": "An introduction to the questions around which contemporary rhetorical theory and practice are organized. Through an analysis of materials drawn principally from the 18th century to the present, the course will examine rhetorical inquiry in relation to critique as well as the disciplinary construction of knowledge-domains. The course will attend to rhetoric in relation to a range of fields, including but not limited to philosophy, history, literature, politics, religion, law, science, and the arts."
+      }
+    },
+    {
+      "result": {
+        "subject": "RHETOR",
+        "courseNumber": "123",
+        "score": 0.6166248321533203
+      },
+      "course": {
+        "subject": "RHETOR",
+        "number": "123",
+        "title": "Rhetoric of Performance",
+        "description": "This course introduces students to the interdisciplinary field of performance studies. While themes may vary, the course considers disciplinary genealogies from the performing arts, the social sciences, and speech act theory to investigate the many ways that humans constitute themselves and their world through performance."
+      }
+    },
+    {
+      "result": {
+        "subject": "RHETOR",
+        "courseNumber": "240G",
+        "score": 0.6114769577980042
+      },
+      "course": {
+        "subject": "RHETOR",
+        "number": "240G",
+        "title": "Rhetorical Theory and Criticism: Rhetorical Theory",
+        "description": "Advanced investigation of the rhetorical dimensions of various modes of discourse. Specific topics to be announced. "
+      }
+    },
+    {
+      "result": {
+        "subject": "GLOBAL",
+        "courseNumber": "178",
+        "score": 0.6037325263023376
+      },
+      "course": {
+        "subject": "GLOBAL",
+        "number": "178",
+        "title": "Political Discourse in the Twenty-first Century",
+        "description": "This course situates the civil discourse of democracy in the larger context of political discourse in general. It does so at two levels: one that is academic and philosophical, and another that is personal and experiential. The course offers content for both reflection and practice. The course explains why democracy is currently in the crisis it is in, what the central role of civil/political discourse is in the context of democratic governance, and how the revival and expansion of civil/political discourse is essential to the project of restoring trust in democratic institutions. The course is international and comparative, drawing on an array of examples of world political systems, societies, and cultures, including the US."
+      }
+    },
+    {
+      "result": {
+        "subject": "RHETOR",
+        "courseNumber": "R1A",
+        "score": 0.5987992286682129
+      },
+      "course": {
+        "subject": "RHETOR",
+        "number": "R1A",
+        "title": "The Craft of Writing",
+        "description": "Rhetorical approach to reading and writing argumentative discourse. Close reading of selected texts; written themes developed from class discussion and analysis of rhetorical strategies. Satisfies the first half of the Reading and Composition requirement. "
+      }
+    }
+  ]
+}

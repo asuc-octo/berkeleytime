@@ -1,0 +1,135 @@
+{
+  "query": "Biomechanics and human movement",
+  "results": [
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "104",
+        "score": 0.6495389938354492
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "104",
+        "title": "Biological Transport Phenomena",
+        "description": "The transport of mass, momentum, and energy are critical to the function of living systems and the design of medical devices. Biological transport phenomena are present at a wide range of length scales: molecular, cellular, organ (whole and by functional unit), and organism. This course develops and applies scaling laws and the methods of continuum mechanics to biological transport phenomena over a range of length and time scales. The course is intended for undergraduate students who have taken a course in differential equations and an introductory course in physics. Students should be familiar with basic biology; an understanding of physiology is useful, but not assumed. "
+      }
+    },
+    {
+      "result": {
+        "subject": "MECENG",
+        "courseNumber": "120",
+        "score": 0.6414566040039062
+      },
+      "course": {
+        "subject": "MECENG",
+        "number": "120",
+        "title": "Computational Biomechanics Across Multiple Scales",
+        "description": "This course applies the methods of computational modeling and continuum mechanics to biomedical phenomena spanning various length scales ranging from molecular to cellular to tissue and organ levels. The course is intended for upper level undergraduate students who have been exposed to undergraduate continuum mechanics (statics and strength of materials.) "
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "211",
+        "score": 0.6277058124542236
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "211",
+        "title": "Cell and Tissue Mechanotransduction",
+        "description": "This course will focus on biophysical and bioengineering aspects of mechanotransduction, the process through which living cells sense and respond to their mechanical environment. Students will learn how mechanical inputs to cells influence both subcellular biochemistry and whole-cell behavior. They will also study newly-engineered technologies for force manipulation and measurement in living cells, and synthetic strategies to control the mechanics and chemistry of the extracellular matrix. Finally, students will learn about the role of mechanotransduction in selected human organ systems and how these mechanisms may go awry in the setting of the disease. Instruction will feature lectures, discussions, analysis of relevant research papers, assembly of a literature review and a research proposal, and an oral presentation."
+      }
+    },
+    {
+      "result": {
+        "subject": "EDUC",
+        "courseNumber": "203",
+        "score": 0.6049929857254028
+      },
+      "course": {
+        "subject": "EDUC",
+        "number": "203",
+        "title": "Cultivating Cognitive Development: From Sensorimotor Intelligence to Embodied STEM Concepts",
+        "description": "This Learning Sciences and Human Development graduate program required course provides a foundation for one strand of LS/HD scholarship: the sensorimotor grounding of Science, Technology, Engineering, and Mathematics (STEM) concepts. We will cover seminal work from cognitive developmental psychology as well as a variety of theories of human learning, both of movement and of STEM concepts, that ultimately inform the design of artifacts and activities for equitable STEM learning."
+      }
+    },
+    {
+      "result": {
+        "subject": "PHYSED",
+        "courseNumber": "32",
+        "score": 0.5972594022750854
+      },
+      "course": {
+        "subject": "PHYSED",
+        "number": "32",
+        "title": "Fitness for Life: Physical Adaptations to Exercise",
+        "description": "This course explores the relationship between physical activity, health and fitness. The body\u2019s physiological responses and adaptations to exercise are examined. Principles of training are applied to design safe and appropriate exercise programs for each health-related component of physical fitness at any life stage. Lifestyle factors that affect diet, body composition and stress are discussed in how they relate to the quality of life. Students will have the opportunity to assess their own fitness and health practices."
+      }
+    },
+    {
+      "result": {
+        "subject": "BIOENG",
+        "courseNumber": "282",
+        "score": 0.5944938659667969
+      },
+      "course": {
+        "subject": "BIOENG",
+        "number": "282",
+        "title": "Model-Based Design of Clinical Therapies",
+        "description": "Students will learn how to translate a clinically relevant physical system into a governing equation with boundary conditions, and how to use this mathematical model to test and improve the design of medical devices and therapies. Problems of mass, heat, and momentum transport; the interaction of electromagnetic fields with materials (including tissue); and the mechanics of fluids and solids will be explored."
+      }
+    },
+    {
+      "result": {
+        "subject": "THEATER",
+        "courseNumber": "148",
+        "score": 0.5929418802261353
+      },
+      "course": {
+        "subject": "THEATER",
+        "number": "148",
+        "title": "Movement Improvisation",
+        "description": "This course is an introduction to the foundational principles of movement improvisation. Through guided movement exercises and experiences, readings, discussions, observations, and journaling students will broaden their ability to move expressively and in the moment. They will learn skills that explore concepts of time, space, energy, shape and dynamics. The course will develop students\u2019 choreographic tools and performance abilities, and it will challenge students to take creative risks. The readings will allow for critical and historical understandings of dance improvisation and how improvisation has impacted choreographic trends."
+      }
+    },
+    {
+      "result": {
+        "subject": "THEATER",
+        "courseNumber": "141",
+        "score": 0.5888097286224365
+      },
+      "course": {
+        "subject": "THEATER",
+        "number": "141",
+        "title": "Intermediate Modern Dance Technique",
+        "description": "Continued development of dance techniques. Study of body articulation and control utilizing concepts of time, space, and dynamics."
+      }
+    },
+    {
+      "result": {
+        "subject": "MCELLBI",
+        "courseNumber": "239BB",
+        "score": 0.5876259803771973
+      },
+      "course": {
+        "subject": "MCELLBI",
+        "number": "239BB",
+        "title": "Research Review in Cell and Developmental Biology: Mechanics and Dynamics of Cell Movements",
+        "description": "Research in our laboratory is focused on the mechanics and dynamics of cell movements on the purified protein, single cell, and tissue levels. For these studies, we are developing new instruments to quantify cell and molecular mechanics bases on optical microscopy, force microscopy, and microfabrication."
+      }
+    },
+    {
+      "result": {
+        "subject": "INTEGBI",
+        "courseNumber": "132",
+        "score": 0.5850614309310913
+      },
+      "course": {
+        "subject": "INTEGBI",
+        "number": "132",
+        "title": "Human Physiology",
+        "description": "Mechanisms by which key physiological priorities are maintained in healthy humans. From a basis in elementary theories of information and control, we develop an understanding of homeostasis of cellular composition, structure, and energy metabolism. We then study neural and endocrine signaling in humans, and develop the key concepts of control and homeostasis in all the major organ and multi-organ systems, including cardiovascular, respiratory, renal, metabolic, reproductive, and immune systems, growth and development, and sensory and motor systems. "
+      }
+    }
+  ]
+}
