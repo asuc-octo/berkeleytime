@@ -1,3 +1,5 @@
+@use "../../../../mixins" as *;
+
 .root {
   .header {
     display: flex;
@@ -98,6 +100,10 @@
         border-radius: 4px;
         overflow: hidden;
 
+        @include dark-mode {
+          background-color: var(--zinc-600);
+        }
+
         .bar {
           height: 100%;
           background-color: var(--slate-600);
@@ -109,9 +115,17 @@
           transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1), ease;
           transition-delay: var(--width-delay, 0ms), 0ms;
           will-change: width, background-color;
+
+          @include dark-mode {
+            background-color: var(--zinc-200);
+          }
         }
         .inactiveBar {
           background-color: var(--slate-400);
+
+          @include dark-mode {
+            background-color: var(--zinc-500);
+          }
         }
       }
 
@@ -127,19 +141,6 @@
 
         &.empty {
           color: var(--label-color);
-        }
-      }
-    }
-    @media (prefers-color-scheme: dark) {
-      .statRow {
-        .barContainer {
-          background-color: var(--zinc-600);
-          .bar {
-            background-color: var(--zinc-200);
-          }
-          .inactiveBar {
-            background-color: var(--zinc-500);
-          }
         }
       }
     }
