@@ -2,28 +2,50 @@ import { GraphQLError } from "graphql";
 
 import { ClassModel } from "@repo/common";
 
+import { CollectionDocument, StoredClassEntry } from "./controller";
 import * as controller from "./controller";
 import { CollectionModule } from "./generated-types/module-types";
+
+// Intermediate type for parent passed to Collection field resolvers
+// Note: classes is StoredClassEntry[] here, transformed by Collection.classes resolver
+interface CollectionParent {
+  _id: string;
+  createdBy: string;
+  name: string;
+  classes: StoredClassEntry[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Helper to map Collection document to GraphQL response
+// Returns CollectionParent which will be resolved by field resolvers
+const mapCollectionToGraphQL = (
+  collection: CollectionDocument
+): CollectionModule.Collection => {
+  const parent: CollectionParent = {
+    _id: collection._id.toString(),
+    createdBy: collection.createdBy,
+    name: collection.name,
+    classes: collection.classes,
+    createdAt:
+      collection.createdAt instanceof Date
+        ? collection.createdAt.toISOString()
+        : String(collection.createdAt),
+    updatedAt:
+      collection.updatedAt instanceof Date
+        ? collection.updatedAt.toISOString()
+        : String(collection.updatedAt),
+  };
+  // Cast is safe: Collection.classes resolver transforms StoredClassEntry[] to CollectionClass[]
+  return parent as unknown as CollectionModule.Collection;
+};
 
 const resolvers: CollectionModule.Resolvers = {
   Query: {
     myCollections: async (_, __, context) => {
       try {
         const collections = await controller.getAllCollections(context);
-        return collections.map((collection) => ({
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        }));
+        return collections.map(mapCollectionToGraphQL);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -43,20 +65,7 @@ const resolvers: CollectionModule.Resolvers = {
         if (!collection) {
           return null;
         }
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -79,20 +88,7 @@ const resolvers: CollectionModule.Resolvers = {
           oldName,
           newName
         );
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -128,20 +124,7 @@ const resolvers: CollectionModule.Resolvers = {
           context,
           input
         );
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -161,20 +144,7 @@ const resolvers: CollectionModule.Resolvers = {
           context,
           input
         );
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -191,15 +161,22 @@ const resolvers: CollectionModule.Resolvers = {
 
   Collection: {
     // Resolve classes with their full class info
-    classes: async (parent: any) => {
+    classes: async (parent) => {
+      const typedParent = parent as CollectionParent;
+
+      // Guard: Return early if no classes in collection
+      if (!typedParent.classes || typedParent.classes.length === 0) {
+        return [];
+      }
+
       // Build batch query for all classes
-      const classQueries = parent.classes.map((classEntry: any) => ({
+      const classQueries = typedParent.classes.map((classEntry) => ({
         year: classEntry.year,
         semester: classEntry.semester,
         sessionId: classEntry.sessionId,
         subject: classEntry.subject,
         courseNumber: classEntry.courseNumber,
-        number: classEntry.classNumber,
+        number: classEntry.classNumber, // Note: classNumber -> number
       }));
 
       const allClasses = await ClassModel.find({
@@ -213,38 +190,48 @@ const resolvers: CollectionModule.Resolvers = {
         ])
       );
 
-      // Map back to original order with personalNotes
-      const classesWithInfo = parent.classes.map((classEntry: any) => {
-        const key = `${classEntry.year}|${classEntry.semester}|${classEntry.sessionId}|${classEntry.subject}|${classEntry.courseNumber}|${classEntry.classNumber}`;
-        const classData = classMap.get(key);
+      // Helper to format personal note
+      const formatPersonalNote = (note: StoredClassEntry["personalNote"]) =>
+        note
+          ? {
+              text: note.text,
+              updatedAt:
+                note.updatedAt instanceof Date
+                  ? note.updatedAt.toISOString()
+                  : String(note.updatedAt),
+            }
+          : null;
 
-        if (!classData) {
-          console.warn(`Class not found in catalog:`, {
-            year: classEntry.year,
-            semester: classEntry.semester,
-            sessionId: classEntry.sessionId,
-            subject: classEntry.subject,
-            courseNumber: classEntry.courseNumber,
-            number: classEntry.classNumber,
-          });
+      return typedParent.classes.map(
+        (classEntry): CollectionModule.CollectionClass => {
+          const key = `${classEntry.year}|${classEntry.semester}|${classEntry.sessionId}|${classEntry.subject}|${classEntry.courseNumber}|${classEntry.classNumber}`;
+          const classData = classMap.get(key);
+
+          if (!classData) {
+            console.warn(`Class not found in catalog:`, {
+              year: classEntry.year,
+              semester: classEntry.semester,
+              sessionId: classEntry.sessionId,
+              subject: classEntry.subject,
+              courseNumber: classEntry.courseNumber,
+              number: classEntry.classNumber,
+            });
+
+            return {
+              class: null,
+              personalNote: formatPersonalNote(classEntry.personalNote),
+              error: "CLASS_NOT_FOUND_IN_CATALOG",
+            };
+          }
+
+          return {
+            // Cast to Class - nested fields resolved by Class field resolvers
+            class: classData as unknown as CollectionModule.Class,
+            personalNote: formatPersonalNote(classEntry.personalNote),
+            error: null,
+          };
         }
-
-        return {
-          class: classData || null,
-          personalNote: classEntry.personalNote
-            ? {
-                text: classEntry.personalNote.text,
-                updatedAt:
-                  classEntry.personalNote.updatedAt instanceof Date
-                    ? classEntry.personalNote.updatedAt.toISOString()
-                    : classEntry.personalNote.updatedAt,
-              }
-            : null,
-        };
-      });
-
-      // Filter out any classes that couldn't be found
-      return classesWithInfo.filter((c: any) => c.class !== null) as any;
+      );
     },
   },
 };
