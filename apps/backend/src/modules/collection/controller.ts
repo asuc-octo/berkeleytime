@@ -1,4 +1,5 @@
 import { GraphQLError } from "graphql";
+import { Types } from "mongoose";
 
 import { ClassModel, CollectionModel } from "@repo/common";
 
@@ -13,36 +14,60 @@ export interface RequestContext {
   };
 }
 
+// Type for stored class entries in MongoDB
+export interface StoredClassEntry {
+  year: number;
+  semester: string;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  classNumber: string;
+  personalNote?: {
+    text: string;
+    updatedAt: Date;
+  };
+}
+
+// Type for collection documents returned from MongoDB
+export interface CollectionDocument {
+  _id: Types.ObjectId;
+  createdBy: string;
+  name: string;
+  classes: StoredClassEntry[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Collection-Level Operations
 
 export const getAllCollections = async (
   context: RequestContext
-): Promise<any[]> => {
+): Promise<CollectionDocument[]> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
     });
   }
 
-  return await CollectionModel.find({
+  return (await CollectionModel.find({
     createdBy: context.user._id,
-  }).lean();
+  }).lean()) as unknown as CollectionDocument[];
 };
 
 export const getCollection = async (
   context: RequestContext,
   name: string
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
     });
   }
 
-  const collection = await CollectionModel.findOne({
+  const collection = (await CollectionModel.findOne({
     createdBy: context.user._id,
     name,
-  }).lean();
+  }).lean()) as CollectionDocument | null;
 
   if (!collection) {
     throw new GraphQLError("Collection not found", {
@@ -57,7 +82,7 @@ export const renameCollection = async (
   context: RequestContext,
   oldName: string,
   newName: string
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -99,7 +124,7 @@ export const renameCollection = async (
   collection.name = newName;
   await collection.save();
 
-  return collection.toObject();
+  return collection.toObject() as unknown as CollectionDocument;
 };
 
 export const deleteCollection = async (
@@ -131,7 +156,7 @@ export const deleteCollection = async (
 export const addClassToCollection = async (
   context: RequestContext,
   input: CollectionModule.AddClassInput
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -212,7 +237,7 @@ export const addClassToCollection = async (
   );
 
   if (result) {
-    return result.toObject();
+    return result.toObject() as unknown as CollectionDocument;
   }
 
   // Add class to existing or new collection
@@ -230,13 +255,13 @@ export const addClassToCollection = async (
     { upsert: true, new: true }
   );
 
-  return result!.toObject();
+  return result!.toObject() as unknown as CollectionDocument;
 };
 
 export const removeClassFromCollection = async (
   context: RequestContext,
   input: CollectionModule.RemoveClassInput
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -293,5 +318,5 @@ export const removeClassFromCollection = async (
     });
   }
 
-  return result.toObject();
+  return result.toObject() as unknown as CollectionDocument;
 };
