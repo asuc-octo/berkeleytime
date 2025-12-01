@@ -1,6 +1,7 @@
 .content {
   z-index: 989;
   min-width: 150px;
+  max-height: 300px;
   overflow-y: auto;
   background-color: var(--foreground-color);
   padding: 4px;

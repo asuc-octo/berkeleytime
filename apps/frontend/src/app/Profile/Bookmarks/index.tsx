@@ -6,6 +6,8 @@ import { WarningTriangleSolid } from "iconoir-react";
 
 import { Button, Dialog, Grid } from "@repo/theme";
 
+import { CollectionModal } from "@/components/CollectionModal";
+
 import styles from "../Profile.module.scss";
 import { AddCollectionCard, CollectionCard } from "./CollectionCard";
 import deleteStyles from "./DeleteCollectionDialog.module.scss";
@@ -30,7 +32,21 @@ export default function Bookmarks() {
     useState<Collection[]>(initialCollections);
   const [collectionToDelete, setCollectionToDelete] =
     useState<Collection | null>(null);
+  const [collectionToRename, setCollectionToRename] =
+    useState<Collection | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+
+  const handleCreateCollection = (name: string) => {
+    const newCollection: Collection = {
+      id: Date.now().toString(),
+      name,
+      classCount: 0,
+      isPinned: false,
+    };
+    setCollections((prev) => [...prev, newCollection]);
+  };
 
   const handlePin = (id: string, isPinned: boolean) => {
     setCollections((prev) => {
@@ -47,6 +63,26 @@ export default function Bookmarks() {
   const handleDeleteClick = (collection: Collection) => {
     setCollectionToDelete(collection);
     setIsDeleteModalOpen(true);
+  };
+
+  const handleRenameClick = (collection: Collection) => {
+    setCollectionToRename(collection);
+    setIsRenameModalOpen(true);
+  };
+
+  const handleCloseRenameModal = () => {
+    setIsRenameModalOpen(false);
+    setCollectionToRename(null);
+  };
+
+  const handleRenameCollection = (newName: string) => {
+    if (collectionToRename) {
+      setCollections((prev) =>
+        prev.map((c) =>
+          c.id === collectionToRename.id ? { ...c, name: newName } : c
+        )
+      );
+    }
   };
 
   const handleCloseDeleteModal = () => {
@@ -70,7 +106,12 @@ export default function Bookmarks() {
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Collections</h2>
-            <button className={styles.newCollectionButton}>New Collection</button>
+            <button
+              className={styles.newCollectionButton}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              New Collection
+            </button>
           </div>
           <Grid gap="20px" columns="repeat(auto-fit, 420px)">
             <LayoutGroup>
@@ -88,12 +129,13 @@ export default function Bookmarks() {
                       classCount={collection.classCount}
                       isPinned={collection.isPinned}
                       onPin={(isPinned) => handlePin(collection.id, isPinned)}
+                      onRename={() => handleRenameClick(collection)}
                       onDelete={() => handleDeleteClick(collection)}
                     />
                   </motion.div>
                 ))}
                 <motion.div key="add-collection" layout>
-                  <AddCollectionCard />
+                  <AddCollectionCard onClick={() => setIsCreateModalOpen(true)} />
                 </motion.div>
               </AnimatePresence>
             </LayoutGroup>
@@ -138,6 +180,24 @@ export default function Bookmarks() {
           </Dialog.Card>
         </Dialog.Portal>
       </Dialog.Root>
+
+      <CollectionModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateCollection}
+        existingNames={collections.map((c) => c.name)}
+      />
+
+      <CollectionModal
+        isOpen={isRenameModalOpen}
+        onClose={handleCloseRenameModal}
+        onSubmit={handleRenameCollection}
+        existingNames={collections
+          .filter((c) => c.id !== collectionToRename?.id)
+          .map((c) => c.name)}
+        mode="rename"
+        initialName={collectionToRename?.name}
+      />
     </div>
   );
 }

@@ -21,6 +21,7 @@ interface CollectionCardProps {
   classCount: number;
   isPinned?: boolean;
   onPin?: (isPinned: boolean) => void;
+  onRename?: () => void;
   onDelete?: () => void;
 }
 
@@ -55,6 +56,7 @@ export function CollectionCard({
   classCount,
   isPinned = false,
   onPin,
+  onRename,
   onDelete,
 }: CollectionCardProps) {
   const [bgColor, setBgColor] = useState<string | null>(null);
@@ -76,55 +78,58 @@ export function CollectionCard({
           data-color={bgColor}
         />
       )}
-      <div className={styles.cardsStack}>
-        <motion.div
-          className={styles.stackedCard}
-          animate={{
-            top: isHovered ? 35 : 40,
-            left: 0,
-            rotate: isHovered ? -3 : -3.5,
-          }}
-          transition={springTransition}
-          style={{ zIndex: 2 }}
-        >
-          <div className={styles.cardContent}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitle}>COM LIT 198BC</span>
-              <span className={styles.cardGrade}>A</span>
+      <div
+        className={styles.cardsStack}
+        style={{ opacity: classCount > 0 ? 1 : 0 }}
+      >
+          <motion.div
+            className={styles.stackedCard}
+            animate={{
+              top: isHovered ? 35 : 40,
+              left: 0,
+              rotate: isHovered ? -3 : -3.5,
+            }}
+            transition={springTransition}
+            style={{ zIndex: 2 }}
+          >
+            <div className={styles.cardContent}>
+              <div className={styles.cardHeader}>
+                <span className={styles.cardTitle}>COM LIT 198BC</span>
+                <span className={styles.cardGrade}>A</span>
+              </div>
+              <p className={styles.cardDescription}>Berkeley Connect</p>
+              <div className={styles.cardFooter}>
+                <span className={`${styles.cardPill} ${styles.enrolled}`}>
+                  100% enrolled
+                </span>
+                <span className={styles.cardPill}>4 units</span>
+              </div>
             </div>
-            <p className={styles.cardDescription}>Berkeley Connect</p>
-            <div className={styles.cardFooter}>
-              <span className={`${styles.cardPill} ${styles.enrolled}`}>
-                100% enrolled
-              </span>
-              <span className={styles.cardPill}>4 units</span>
+          </motion.div>
+          <motion.div
+            className={styles.stackedCard}
+            animate={{
+              top: isHovered ? 30 : 20,
+              left: isHovered ? 25 : 17,
+              rotate: isHovered ? 5 : 2.5,
+            }}
+            transition={springTransition}
+            style={{ zIndex: 1 }}
+          >
+            <div className={styles.cardContent}>
+              <div className={styles.cardHeader}>
+                <span className={styles.cardTitle}>COM LIT 198BC</span>
+                <span className={styles.cardGrade}>A</span>
+              </div>
+              <p className={styles.cardDescription}>Berkeley Connect</p>
+              <div className={styles.cardFooter}>
+                <span className={`${styles.cardPill} ${styles.enrolled}`}>
+                  100% enrolled
+                </span>
+                <span className={styles.cardPill}>4 units</span>
+              </div>
             </div>
-          </div>
-        </motion.div>
-        <motion.div
-          className={styles.stackedCard}
-          animate={{
-            top: isHovered ? 30 : 20,
-            left: isHovered ? 25 : 17,
-            rotate: isHovered ? 5 : 2.5,
-          }}
-          transition={springTransition}
-          style={{ zIndex: 1 }}
-        >
-          <div className={styles.cardContent}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitle}>COM LIT 198BC</span>
-              <span className={styles.cardGrade}>A</span>
-            </div>
-            <p className={styles.cardDescription}>Berkeley Connect</p>
-            <div className={styles.cardFooter}>
-              <span className={`${styles.cardPill} ${styles.enrolled}`}>
-                100% enrolled
-              </span>
-              <span className={styles.cardPill}>4 units</span>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
       </div>
       <div className={styles.footer}>
         <div className={styles.footerContent}>
@@ -132,7 +137,9 @@ export function CollectionCard({
             {isPinned && <PinSolid width={14} height={14} color="var(--blue-500)" />}
             {name}
           </p>
-          <p className={styles.classCount}>{classCount} classes</p>
+          <p className={styles.classCount}>
+            {classCount === 0 ? "No class added" : `${classCount} classes`}
+          </p>
         </div>
         <DropdownMenu.Root modal={false}>
           <DropdownMenu.Trigger asChild>
@@ -152,7 +159,7 @@ export function CollectionCard({
                 </>
               )}
             </DropdownMenu.Item>
-            <DropdownMenu.Item>
+            <DropdownMenu.Item onSelect={onRename}>
               <BookStack width={18} height={18} /> Rename collection
             </DropdownMenu.Item>
             <DropdownMenu.Sub>
