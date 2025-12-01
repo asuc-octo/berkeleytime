@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { LayoutGroup, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { WarningTriangleSolid } from "iconoir-react";
 
 import { Button, Dialog, Grid } from "@repo/theme";
@@ -55,7 +55,11 @@ export default function Bookmarks() {
   };
 
   const handleConfirmDelete = async () => {
-    // No-op for now - backend not implemented yet
+    if (collectionToDelete) {
+      setCollections((prev) =>
+        prev.filter((c) => c.id !== collectionToDelete.id)
+      );
+    }
     handleCloseDeleteModal();
   };
 
@@ -67,21 +71,25 @@ export default function Bookmarks() {
           <h2 className={styles.sectionTitle}>Collections</h2>
           <Grid gap="20px" columns="repeat(auto-fit, 420px)">
             <LayoutGroup>
-              {collections.map((collection) => (
-                <motion.div
-                  key={collection.id}
-                  layout
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                >
-                  <CollectionCard
-                    name={collection.name}
-                    classCount={collection.classCount}
-                    isPinned={collection.isPinned}
-                    onPin={(isPinned) => handlePin(collection.id, isPinned)}
-                    onDelete={() => handleDeleteClick(collection)}
-                  />
-                </motion.div>
-              ))}
+              <AnimatePresence mode="popLayout">
+                {collections.map((collection) => (
+                  <motion.div
+                    key={collection.id}
+                    layout
+                    initial={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  >
+                    <CollectionCard
+                      name={collection.name}
+                      classCount={collection.classCount}
+                      isPinned={collection.isPinned}
+                      onPin={(isPinned) => handlePin(collection.id, isPinned)}
+                      onDelete={() => handleDeleteClick(collection)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </LayoutGroup>
           </Grid>
         </div>
@@ -115,10 +123,10 @@ export default function Bookmarks() {
                 variant="tertiary"
                 style={{ color: "var(--paragraph-color)" }}
               >
-                No, keep it
+                Cancel
               </Button>
               <Button onClick={handleConfirmDelete} isDelete>
-                Yes, delete
+                Delete
               </Button>
             </Dialog.Footer>
           </Dialog.Card>

@@ -1,5 +1,5 @@
 .root {
-  background-color: var(--background-color);
+  background-color: var(--zinc-50);
   border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 20px;
@@ -9,6 +9,17 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+
+  :global(body[data-theme="dark"]) &,
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--button-hover-color);
+    }
+  }
+
+  :global(body[data-theme="dark"]) & {
+    background-color: var(--button-hover-color);
+  }
 }
 
 // avoid weird clipping issue with the color background
