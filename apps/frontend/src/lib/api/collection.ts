@@ -3,74 +3,100 @@ import { type Collection } from "../generated/graphql";
 
 export type ICollection = Collection;
 
-export const GET_OWNER_COLLECTION = gql`
-  query OwnerCollection($ownerId: String!) {
-    ownerCollection(ownerID: $ownerId) {
+export const MY_COLLECTIONS = gql`
+  query MyCollections {
+    myCollections {
       name
-      ownerID
-      viewerID
       classes {
-        info {
-          title
-          subject
-          number
-          courseNumber
-          year
-          semester
-          sessionId
-          unitsMin
-          unitsMax
-          course {
+        class {
             title
-          }
-          primarySection {
-            enrollment {
-              latest {
-                enrolledCount
-                maxEnroll
-                waitlistedCount
-                maxWaitlist
-              }
-            }
-          }
-          gradeDistribution {
-            average
-          }
+            subject
+            number
+            courseNumber
+            year
+            semester
+            sessionId
         }
-        comments
+        personalNote {
+            text
+        }
+        error
       }
     }
   }
 `;
 
-export const MODIFY_COLLECTION_CLASS = gql`
-  mutation ModifyCollectionClass($input: ModifyCollectionClassInput!) {
-    modifyCollectionClass(input: $input) {
-      ownerID
+export const MY_COLLECTION = gql`
+  query MyCollection($name: String!) {
+    myCollection(name: $name) {
       name
       classes {
-        info {
-          courseNumber
-          courseId
+        class {
+            title
+            subject
+            number
+            courseNumber
+            year
+            semester
+            sessionId
         }
-        comments
+        personalNote {
+            text
+        }
+        error
       }
     }
   }
 `;
 
-export const MODIFY_COLLECTION_COMMENT = gql`
-  mutation ModifyCollectionComment($input: ModifyCollectionCommentInput!) {
-    modifyCollectionComment(input: $input) {
-      ownerID
-      name
+export const ADD_CLASS = gql`
+  mutation AddClassToCollection($input: AddClassInput!) {
+    addClassToCollection(input: $input) {
+      _id
       classes {
-        info {
-          courseNumber
-          courseId
+          class {
+              subject
+              number
+              courseNumber
+              year
+              semester
+              sessionId
+          }
+          personalNote {
+              text
+          }
+          error
         }
-        comments
-      }
+      name
     }
+  }
+`;
+
+export const REMOVE_CLASS = gql`
+  mutation RemoveClassFromCollection($input: RemoveClassInput!) {
+    removeClassFromCollection(input: $input) {
+      _id
+      classes {
+          class {
+              subject
+              number
+              courseNumber
+              year
+              semester
+              sessionId
+          }
+          personalNote {
+              text
+          }
+          error
+        }
+      name
+    }
+  }
+`;
+
+export const DELETE_COLLECTION = gql`
+  mutation DeleteCollection($name: String!) {
+    deleteCollection(name: $name)
   }
 `;
