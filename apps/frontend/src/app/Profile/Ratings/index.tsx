@@ -273,7 +273,8 @@ export default function Ratings() {
     <div className={profileStyles.contentInner}>
       <h1 className={profileStyles.pageTitle}>Ratings</h1>
       <div className={profileStyles.pageContent}>
-        <div className={styles.root}>
+        <div className={profileStyles.section}>
+          <h2 className={profileStyles.sectionTitle}>Rated classes</h2>
           <div className={styles.searchGroup}>
             <label htmlFor="ratingsSearch" className={styles.searchIcon}>
               <Search />

@@ -2,13 +2,12 @@
   border: 1px solid var(--border-color);
   border-radius: 4px;
   height: 48px;
-  max-width: 430px;
+  max-width: 345px;
   background-color: var(--foreground-color);
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 0 16px;
-  margin: 20px 0;
 
   &:has(.searchInput:focus) {
     outline: 4px solid color-mix(in srgb, var(--blue-500) 25%, transparent);

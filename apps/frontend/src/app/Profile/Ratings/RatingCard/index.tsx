@@ -33,16 +33,16 @@ export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
 
   return (
     <Card.RootColumn hoverColorChange={false}>
-      <Card.ColumnHeader>
-        <Card.Body style={{ paddingBottom: 0 }}>
-          <Card.Heading>
+      <div className={styles.header}>
+        <div className={styles.classInfo}>
+          <span className={styles.className}>
             {rating.subject} {rating.courseNumber}
-          </Card.Heading>
-          <Card.Description className={styles.semester}>
+          </span>
+          <span className={styles.semester}>
             {rating.semester} {rating.year}
-          </Card.Description>
-        </Card.Body>
-        <Card.Actions>
+          </span>
+        </div>
+        <div className={styles.actions}>
           <Tooltip
             trigger={
               <IconButton onClick={() => onEdit(rating)}>
@@ -59,9 +59,9 @@ export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
             }
             title="Delete rating"
           />
-        </Card.Actions>
-      </Card.ColumnHeader>
-      <Card.ColumnBody>
+        </div>
+      </div>
+      <Card.ColumnBody className={styles.body}>
         <div className={styles.metricsBlock}>
           {getRatingMetrics(rating.metrics).map((metric) => {
             const metricConfig =
@@ -81,7 +81,7 @@ export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
         </div>
         {rating.lastUpdated && (
           <p className={styles.lastUpdated}>
-            Last updated on {new Date(rating.lastUpdated).toLocaleDateString()}
+            Last updated on {new Date(rating.lastUpdated).toLocaleString()}
           </p>
         )}
       </Card.ColumnBody>

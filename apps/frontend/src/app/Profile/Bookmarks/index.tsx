@@ -18,7 +18,7 @@ export default function Bookmarks() {
       <h1 className={styles.pageTitle}>Bookmarks</h1>
       <div className={styles.pageContent}>
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Bookmarked Classes</h2>
+          <h2 className={styles.sectionTitle}>Collections</h2>
           {user && (
             <Carousel.CarouselNoTitle>
               {user.bookmarkedClasses.length === 0 ? (

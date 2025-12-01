@@ -27,7 +27,39 @@
     }
   }
 }
+.body {
+  padding-top: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  box-sizing: border-box;
+}
+
+.classInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.className {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+}
+
 .semester {
+  font-size: var(--text-14);
   font-weight: var(--font-normal);
   color: var(--label-color);
 }
