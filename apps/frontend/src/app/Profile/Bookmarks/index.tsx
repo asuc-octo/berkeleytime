@@ -7,7 +7,7 @@ import { WarningTriangleSolid } from "iconoir-react";
 import { Button, Dialog, Grid } from "@repo/theme";
 
 import styles from "../Profile.module.scss";
-import { CollectionCard } from "./CollectionCard";
+import { AddCollectionCard, CollectionCard } from "./CollectionCard";
 import deleteStyles from "./DeleteCollectionDialog.module.scss";
 
 interface Collection {
@@ -68,7 +68,10 @@ export default function Bookmarks() {
       <h1 className={styles.pageTitle}>Bookmarks</h1>
       <div className={styles.pageContent}>
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Collections</h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Collections</h2>
+            <button className={styles.newCollectionButton}>New Collection</button>
+          </div>
           <Grid gap="20px" columns="repeat(auto-fit, 420px)">
             <LayoutGroup>
               <AnimatePresence mode="popLayout">
@@ -89,6 +92,9 @@ export default function Bookmarks() {
                     />
                   </motion.div>
                 ))}
+                <motion.div key="add-collection" layout>
+                  <AddCollectionCard />
+                </motion.div>
               </AnimatePresence>
             </LayoutGroup>
           </Grid>

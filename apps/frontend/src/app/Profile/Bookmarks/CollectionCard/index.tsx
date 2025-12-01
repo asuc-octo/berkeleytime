@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { motion } from "framer-motion";
 import {
   BookStack,
   EditPencil,
@@ -7,6 +8,7 @@ import {
   Pin,
   PinSlash,
   PinSolid,
+  Plus,
   Trash,
 } from "iconoir-react";
 
@@ -31,6 +33,12 @@ const COLORS = {
   purple: "#a855f7",
 } as const;
 
+const springTransition = {
+  type: "spring",
+  stiffness: 500,
+  damping: 30,
+};
+
 export function CollectionCard({
   name,
   classCount,
@@ -39,13 +47,18 @@ export function CollectionCard({
   onDelete,
 }: CollectionCardProps) {
   const [bgColor, setBgColor] = useState<string | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handlePinToggle = () => {
     onPin?.(!isPinned);
   };
 
   return (
-    <div className={styles.root}>
+    <div
+      className={styles.root}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {bgColor && (
         <div
           className={styles.colorBackground}
@@ -53,7 +66,16 @@ export function CollectionCard({
         />
       )}
       <div className={styles.cardsStack}>
-        <div className={styles.stackedCard}>
+        <motion.div
+          className={styles.stackedCard}
+          animate={{
+            top: isHovered ? 35 : 40,
+            left: 0,
+            rotate: isHovered ? -3 : -3.5,
+          }}
+          transition={springTransition}
+          style={{ zIndex: 2 }}
+        >
           <div className={styles.cardContent}>
             <div className={styles.cardHeader}>
               <span className={styles.cardTitle}>COM LIT 198BC</span>
@@ -67,8 +89,17 @@ export function CollectionCard({
               <span className={styles.cardPill}>4 units</span>
             </div>
           </div>
-        </div>
-        <div className={styles.stackedCard}>
+        </motion.div>
+        <motion.div
+          className={styles.stackedCard}
+          animate={{
+            top: isHovered ? 30 : 20,
+            left: isHovered ? 25 : 17,
+            rotate: isHovered ? 5 : 2.5,
+          }}
+          transition={springTransition}
+          style={{ zIndex: 1 }}
+        >
           <div className={styles.cardContent}>
             <div className={styles.cardHeader}>
               <span className={styles.cardTitle}>COM LIT 198BC</span>
@@ -82,7 +113,7 @@ export function CollectionCard({
               <span className={styles.cardPill}>4 units</span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
       <div className={styles.footer}>
         <div className={styles.footerContent}>
@@ -171,6 +202,18 @@ export function CollectionCard({
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </div>
+    </div>
+  );
+}
+
+interface AddCollectionCardProps {
+  onClick?: () => void;
+}
+
+export function AddCollectionCard({ onClick }: AddCollectionCardProps) {
+  return (
+    <div className={styles.addCard} onClick={onClick}>
+      <Plus className={styles.addIcon} />
     </div>
   );
 }

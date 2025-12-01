@@ -92,4 +92,27 @@
     font-weight: var(--font-semibold);
     margin: 0;
   }
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .newCollectionButton {
+    padding: 4px 12px;
+    height: 32px;
+    font-size: var(--text-14);
+    font-weight: var(--font-normal);
+    color: var(--blue-500);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--button-hover-color);
+    }
+  }
 }
