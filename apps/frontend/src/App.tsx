@@ -392,9 +392,9 @@ export default function App() {
     <ApolloProvider client={client}>
       <UserProvider>
         {/*<CollectionProvider>*/}
-          <ThemeProvider>
-            <RouterProvider router={router} />
-          </ThemeProvider>
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
         {/*</CollectionProvider>*/}
       </UserProvider>
     </ApolloProvider>

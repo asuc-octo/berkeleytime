@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+
 import { type Collection } from "../generated/graphql";
 
 export type ICollection = Collection;
@@ -9,16 +10,16 @@ export const MY_COLLECTIONS = gql`
       name
       classes {
         class {
-            title
-            subject
-            number
-            courseNumber
-            year
-            semester
-            sessionId
+          title
+          subject
+          number
+          courseNumber
+          year
+          semester
+          sessionId
         }
         personalNote {
-            text
+          text
         }
         error
       }
@@ -32,16 +33,16 @@ export const MY_COLLECTION = gql`
       name
       classes {
         class {
-            title
-            subject
-            number
-            courseNumber
-            year
-            semester
-            sessionId
+          title
+          subject
+          number
+          courseNumber
+          year
+          semester
+          sessionId
         }
         personalNote {
-            text
+          text
         }
         error
       }
@@ -54,19 +55,19 @@ export const ADD_CLASS = gql`
     addClassToCollection(input: $input) {
       _id
       classes {
-          class {
-              subject
-              number
-              courseNumber
-              year
-              semester
-              sessionId
-          }
-          personalNote {
-              text
-          }
-          error
+        class {
+          subject
+          number
+          courseNumber
+          year
+          semester
+          sessionId
         }
+        personalNote {
+          text
+        }
+        error
+      }
       name
     }
   }
@@ -77,19 +78,19 @@ export const REMOVE_CLASS = gql`
     removeClassFromCollection(input: $input) {
       _id
       classes {
-          class {
-              subject
-              number
-              courseNumber
-              year
-              semester
-              sessionId
-          }
-          personalNote {
-              text
-          }
-          error
+        class {
+          subject
+          number
+          courseNumber
+          year
+          semester
+          sessionId
         }
+        personalNote {
+          text
+        }
+        error
+      }
       name
     }
   }

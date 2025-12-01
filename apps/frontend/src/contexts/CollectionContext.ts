@@ -1,7 +1,6 @@
 import { createContext } from "react";
 
 import { ICollection } from "@/lib/api";
-
 import {
   type AddClassInput,
   type RemoveClassInput,
