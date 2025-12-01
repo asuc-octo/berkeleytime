@@ -1,0 +1,186 @@
+.root {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 20px;
+  width: 420px;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+// avoid weird clipping issue with the color background
+.colorBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  border-radius: 20px 20px 0 0;
+  z-index: 0;
+}
+
+.cardsStack {
+  position: relative;
+  height: 130px;
+  z-index: 1;
+}
+
+.stackedCard {
+  position: absolute;
+  display: flex;
+  width: 360px;
+  padding: 16px;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px 8px 0 0;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: top 0.2s ease, left 0.2s ease, transform 0.2s ease;
+
+  // Front card (on top)
+  &:nth-child(1) {
+    top: 40px;
+    left: 0px;
+    transform: rotate(-3.5deg);
+    z-index: 2;
+  }
+
+  // Back card (behind)
+  &:nth-child(2) {
+    top: 20px;
+    left: 17px;
+    transform: rotate(2.5deg);
+    z-index: 1;
+  }
+}
+
+.root:hover {
+  .stackedCard:nth-child(1) {
+    top: 35px;
+    transform: rotate(-3deg);
+  }
+
+  .stackedCard:nth-child(2) {
+    top: 30px;
+    left: 25px;
+    transform: rotate(5deg);
+  }
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.cardTitle {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  letter-spacing: -0.16px;
+}
+
+.cardGrade {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--emerald-500);
+}
+
+.cardDescription {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  letter-spacing: -0.1px;
+}
+
+.cardFooter {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cardPill {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  letter-spacing: -0.1px;
+
+  &.enrolled {
+    color: var(--red-500);
+  }
+}
+
+.footer {
+  background-color: var(--foreground-color);
+  border-top: 1px solid var(--border-color);
+  padding: 20px;
+  padding-bottom: 40px;
+  margin: 0 -20px -40px -20px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menuButton {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  &[data-state="open"] {
+    opacity: 1;
+  }
+}
+
+.root:hover .menuButton {
+  opacity: 1;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.collectionName {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  letter-spacing: -0.16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.classCount {
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--paragraph-color);
+  letter-spacing: -0.14px;
+}
+
+.colorDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.colorDotOutline {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1.5px solid var(--paragraph-color);
+}

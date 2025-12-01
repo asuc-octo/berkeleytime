@@ -2,8 +2,8 @@ import { PillSwitcher, Theme, useTheme } from "@repo/theme";
 
 import useUser from "@/hooks/useUser";
 
-import styles from "./Account.module.scss";
 import profileStyles from "../Profile.module.scss";
+import styles from "./Account.module.scss";
 
 const themeOptions = [
   { value: "system", label: "System preference" },

@@ -1,15 +1,12 @@
 .content {
-  position: fixed;
-  left: -75px;
   z-index: 989;
   min-width: 150px;
   overflow-y: auto;
   background-color: var(--foreground-color);
   padding: 4px;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow:
-    0px 10px 38px -10px rgba(22, 23, 24, 0.35),
-    0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
@@ -39,6 +36,8 @@
   position: relative;
   user-select: none;
   outline: none;
+  white-space: nowrap;
+  gap: 8px;
 }
 .item:hover {
   background-color: var(--button-active-color);

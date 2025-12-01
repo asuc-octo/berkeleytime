@@ -35,9 +35,9 @@ import {
 } from "@/lib/generated/graphql";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
+import profileStyles from "../Profile.module.scss";
 import { RatingCard } from "./RatingCard";
 import styles from "./Ratings.module.scss";
-import profileStyles from "../Profile.module.scss";
 
 export default function Ratings() {
   const [searchQuery, setSearchQuery] = useState("");

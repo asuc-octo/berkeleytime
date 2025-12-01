@@ -1,7 +1,7 @@
 import { Text } from "@repo/theme";
 
-import styles from "./Support.module.scss";
 import profileStyles from "../Profile.module.scss";
+import styles from "./Support.module.scss";
 
 export default function Support() {
   return (
