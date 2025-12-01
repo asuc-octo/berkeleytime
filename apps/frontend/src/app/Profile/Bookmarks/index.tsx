@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { WarningTriangleSolid } from "iconoir-react";
+import { useNavigate } from "react-router-dom";
 
 import { Button, Dialog, Grid } from "@repo/theme";
 
@@ -28,6 +29,7 @@ const initialCollections: Collection[] = [
 ];
 
 export default function Bookmarks() {
+  const navigate = useNavigate();
   const [collections, setCollections] =
     useState<Collection[]>(initialCollections);
   const [collectionToDelete, setCollectionToDelete] =
@@ -37,9 +39,22 @@ export default function Bookmarks() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const [exitPath, setExitPath] = useState<string | null>(null);
 
   // Track initial collection IDs to skip entrance animation on page load
   const initialIds = useRef(new Set(initialCollections.map((c) => c.id)));
+
+  const handleCollectionClick = useCallback((path: string) => {
+    setExitPath(path);
+    setIsExiting(true);
+  }, []);
+
+  const handleExitComplete = useCallback(() => {
+    if (isExiting && exitPath) {
+      navigate(exitPath);
+    }
+  }, [isExiting, exitPath, navigate]);
 
   const handleCreateCollection = (name: string) => {
     const newCollection: Collection = {
@@ -103,7 +118,12 @@ export default function Bookmarks() {
   };
 
   return (
-    <div className={styles.contentInner}>
+    <motion.div
+      className={styles.contentInner}
+      animate={{ opacity: isExiting ? 0 : 1 }}
+      transition={{ duration: 0.2 }}
+      onAnimationComplete={handleExitComplete}
+    >
       <h1 className={styles.pageTitle}>Bookmarks</h1>
       <div className={styles.pageContent}>
         <div className={styles.section}>
@@ -139,12 +159,14 @@ export default function Bookmarks() {
                       onPin={(isPinned) => handlePin(collection.id, isPinned)}
                       onRename={() => handleRenameClick(collection)}
                       onDelete={() => handleDeleteClick(collection)}
-                      onClick={() => console.log("Clicked:", collection.name)}
+                      onClick={() => handleCollectionClick("/collection/demo")}
                     />
                   </motion.div>
                 ))}
                 <motion.div key="add-collection" layout>
-                  <AddCollectionCard onClick={() => setIsCreateModalOpen(true)} />
+                  <AddCollectionCard
+                    onClick={() => setIsCreateModalOpen(true)}
+                  />
                 </motion.div>
               </AnimatePresence>
             </LayoutGroup>
@@ -207,6 +229,6 @@ export default function Bookmarks() {
         mode="rename"
         initialName={collectionToRename?.name}
       />
-    </div>
+    </motion.div>
   );
 }

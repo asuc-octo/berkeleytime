@@ -30,8 +30,7 @@ export function CollectionModal({
     (existing) => existing.toLowerCase() === name.trim().toLowerCase()
   );
 
-  const isUnchanged =
-    mode === "rename" && name.trim() === originalName;
+  const isUnchanged = mode === "rename" && name.trim() === originalName;
 
   const hasError = hasConflict || isUnchanged;
 
