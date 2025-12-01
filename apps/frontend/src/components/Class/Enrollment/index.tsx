@@ -21,8 +21,10 @@ import {
   formatters,
 } from "@/components/Chart";
 import EmptyState from "@/components/Class/EmptyState";
+import { useReadEnrollmentTimeframes } from "@/hooks/api";
 import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
+import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./Enrollment.module.scss";
 
@@ -49,6 +51,12 @@ export default function Enrollment() {
   );
 
   const history = enrollmentData?.primarySection?.enrollment?.history ?? [];
+
+  // Fetch enrollment timeframes for this class's semester
+  const { data: timeframes } = useReadEnrollmentTimeframes(
+    _class.year,
+    _class.semester as Semester
+  );
 
   const data = useMemo(() => {
     if (history.length === 0) return [];
@@ -99,6 +107,34 @@ export default function Enrollment() {
 
     return maxValue * 1.2;
   }, [data]);
+
+  // Calculate phase line positions (x-axis = minutes since first data point)
+  const phaseLines = useMemo(() => {
+    if (data.length === 0 || timeframes.length === 0) return [];
+    if (history.length === 0) return [];
+
+    const firstTime = moment(history[0].startTime);
+    const lastTimeDelta = data[data.length - 1].timeDelta;
+
+    return timeframes
+      .filter((tf) => tf.phase === 2 && tf.group === "continuing")
+      .map((tf) => {
+        const phaseStart = moment(tf.startDate);
+        const timeDelta = moment
+          .duration(phaseStart.diff(firstTime))
+          .asMinutes();
+
+        // Only include lines within the chart's data range
+        if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
+
+        return {
+          timeDelta,
+          label: "Phase 2 Continuing",
+          key: `${tf.phase}-${tf.group}-${tf.isAdjustment}`,
+        };
+      })
+      .filter((line): line is NonNullable<typeof line> => line !== null);
+  }, [data, timeframes, history]);
 
   const enrollmentExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
@@ -245,6 +281,26 @@ export default function Enrollment() {
                       offset: 10,
                     }}
                   />
+                  {/* Enrollment phase start lines */}
+                  {phaseLines.map((line) => (
+                    <ReferenceLine
+                      key={line.key}
+                      x={line.timeDelta}
+                      stroke="var(--paragraph-color)"
+                      strokeWidth={1}
+                      strokeDasharray="6 4"
+                      strokeOpacity={0.8}
+                      label={{
+                        value: line.label,
+                        position: "insideBottomLeft",
+                        fill: "var(--paragraph-color)",
+                        fontSize: 10,
+                        angle: -90,
+                        dx: 12,
+                        dy: -10,
+                      }}
+                    />
+                  ))}
                   <Line
                     type="linear"
                     dataKey="waitlisted"

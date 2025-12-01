@@ -93,6 +93,11 @@ export const ratingTypeDef = gql`
     classNumber: String!
   }
 
+  input RatingMetricInput {
+    metricName: MetricName!
+    value: Int!
+  }
+
   """
   Get data
   """
@@ -131,7 +136,7 @@ export const ratingTypeDef = gql`
   Modify data
   """
   type Mutation {
-    createRating(
+    createRatings(
       "Class Identifiers"
       year: Int!
       semester: Semester!
@@ -139,18 +144,9 @@ export const ratingTypeDef = gql`
       courseNumber: String!
       classNumber: String!
 
-      metricName: MetricName!
-      value: Int!
+      metrics: [RatingMetricInput!]!
     ): Boolean! @auth
 
-    deleteRating(
-      "Class Identifiers"
-      year: Int!
-      semester: Semester!
-      subject: String!
-      courseNumber: String!
-      classNumber: String!
-      metricName: MetricName!
-    ): Boolean! @auth
+    deleteRatings(subject: String!, courseNumber: String!): Boolean! @auth
   }
 `;

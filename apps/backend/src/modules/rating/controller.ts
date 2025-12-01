@@ -7,7 +7,7 @@ import {
   RatingType,
   SectionModel,
 } from "@repo/common";
-import { METRIC_MAPPINGS } from "@repo/shared";
+import { METRIC_MAPPINGS, REQUIRED_METRICS } from "@repo/shared";
 
 import {
   InputMaybe,
@@ -649,4 +649,170 @@ const handleCategoryCountChange = async (
       }
     );
   }
+};
+
+interface MetricInput {
+  metricName: MetricName;
+  value: number;
+}
+
+export const createRatings = async (
+  context: RequestContext,
+  year: number,
+  semester: Semester,
+  subject: string,
+  courseNumber: string,
+  classNumber: string,
+  metrics: MetricInput[]
+) => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Validate required metrics are present
+  const providedMetrics = new Set(metrics.map((m) => m.metricName));
+  const missingRequired = REQUIRED_METRICS.filter(
+    (m) => !providedMetrics.has(m as MetricName)
+  );
+  if (missingRequired.length > 0) {
+    throw new GraphQLError(
+      `Missing required metrics: ${missingRequired.join(", ")}`,
+      {
+        extensions: { code: "BAD_USER_INPUT" },
+      }
+    );
+  }
+
+  // Validate all metric values
+  for (const metric of metrics) {
+    checkValueConstraint(metric.metricName, metric.value);
+  }
+
+  // Get current user ratings for constraint checking
+  const userRatings = await getUserRatings(context);
+  checkUserMaxRatingsConstraint(
+    userRatings,
+    year,
+    semester as Semester,
+    subject,
+    courseNumber
+  );
+
+  // Find all existing ratings for this course by this user
+  const existingRatings = await RatingModel.find({
+    createdBy: context.user._id,
+    subject,
+    courseNumber,
+  });
+
+  const session = await connection.startSession();
+  try {
+    await session.withTransaction(async () => {
+      // Step 1: Delete all existing ratings and decrement their aggregated counts
+      for (const existingRating of existingRatings) {
+        await Promise.all([
+          RatingModel.deleteOne({ _id: existingRating._id }, { session }),
+          handleCategoryCountChange(
+            Number(existingRating.year),
+            existingRating.semester as Semester,
+            existingRating.subject,
+            existingRating.courseNumber,
+            existingRating.classNumber,
+            existingRating.metricName as MetricName,
+            existingRating.value,
+            false,
+            session
+          ),
+        ]);
+      }
+
+      // Step 2: Create all new ratings and increment their aggregated counts
+      for (const metric of metrics) {
+        await Promise.all([
+          RatingModel.create(
+            [
+              {
+                createdBy: context.user._id,
+                subject,
+                courseNumber,
+                semester,
+                year,
+                classNumber,
+                metricName: metric.metricName,
+                value: metric.value,
+              },
+            ],
+            { session }
+          ),
+          handleCategoryCountChange(
+            year,
+            semester,
+            subject,
+            courseNumber,
+            classNumber,
+            metric.metricName,
+            metric.value,
+            true,
+            session
+          ),
+        ]);
+      }
+    });
+  } finally {
+    await session.endSession();
+  }
+
+  return true;
+};
+
+export const deleteRatings = async (
+  context: RequestContext,
+  subject: string,
+  courseNumber: string
+) => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Find all existing ratings for this course by this user
+  const existingRatings = await RatingModel.find({
+    createdBy: context.user._id,
+    subject,
+    courseNumber,
+  });
+
+  if (existingRatings.length === 0) {
+    return true; // Nothing to delete
+  }
+
+  const session = await connection.startSession();
+  try {
+    await session.withTransaction(async () => {
+      // Delete all ratings and decrement their aggregated counts
+      for (const existingRating of existingRatings) {
+        await Promise.all([
+          RatingModel.deleteOne({ _id: existingRating._id }, { session }),
+          handleCategoryCountChange(
+            Number(existingRating.year),
+            existingRating.semester as Semester,
+            existingRating.subject,
+            existingRating.courseNumber,
+            existingRating.classNumber,
+            existingRating.metricName as MetricName,
+            existingRating.value,
+            false,
+            session
+          ),
+        ]);
+      }
+    });
+  } finally {
+    await session.endSession();
+  }
+
+  return true;
 };

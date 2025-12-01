@@ -1,8 +1,8 @@
 import { GraphQLError } from "graphql";
 
 import {
-  createRating,
-  deleteRating,
+  createRatings,
+  deleteRatings,
   getClassAggregatedRatings,
   getSemestersWithRatings,
   getUserClassRatings,
@@ -121,21 +121,20 @@ const resolvers: RatingModule.Resolvers = {
     },
   },
   Mutation: {
-    createRating: async (
+    createRatings: async (
       _,
-      { year, semester, subject, courseNumber, classNumber, metricName, value },
+      { year, semester, subject, courseNumber, classNumber, metrics },
       context
     ) => {
       try {
-        return await createRating(
+        return await createRatings(
           context,
           Number(year),
           semester,
           subject,
           courseNumber,
           classNumber,
-          metricName,
-          value
+          metrics
         );
       } catch (error: unknown) {
         // Re-throw GraphQLErrors as is
@@ -154,21 +153,9 @@ const resolvers: RatingModule.Resolvers = {
       }
     },
 
-    deleteRating: async (
-      _,
-      { year, semester, subject, courseNumber, classNumber, metricName },
-      context
-    ) => {
+    deleteRatings: async (_, { subject, courseNumber }, context) => {
       try {
-        return await deleteRating(
-          context,
-          Number(year),
-          semester,
-          subject,
-          courseNumber,
-          classNumber,
-          metricName
-        );
+        return await deleteRatings(context, subject, courseNumber);
       } catch (error: unknown) {
         // Re-throw GraphQLErrors as is
         if (error instanceof GraphQLError) {

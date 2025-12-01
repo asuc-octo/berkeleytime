@@ -214,6 +214,7 @@ export interface SelectProps<T> {
   defaultTab?: string;
   tabValue?: string;
   onTabChange?: (value: string) => void;
+  selectedLabel?: string;
 }
 
 export function Select<T>({
@@ -238,6 +239,7 @@ export function Select<T>({
   defaultTab,
   tabValue,
   onTabChange,
+  selectedLabel,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -341,7 +343,7 @@ export function Select<T>({
 
   const hasSelection = Array.isArray(activeElem)
     ? activeElem.length > 0
-    : Boolean(activeElem);
+    : Boolean(activeElem) || (value !== null && Boolean(selectedLabel));
 
   const handleSelect = (optValue: T) => {
     if (multi) {
@@ -389,8 +391,10 @@ export function Select<T>({
                 />
               ))}
             </Flex>
-          ) : (
+          ) : activeElem ? (
             (activeElem as OptionItem<T>).label
+          ) : (
+            selectedLabel
           )
         ) : (
           effectivePlaceholder

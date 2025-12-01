@@ -22,8 +22,8 @@ import useUser from "@/hooks/useUser";
 import { IAggregatedRatings, IMetric } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
-  CreateRatingDocument,
-  DeleteRatingDocument,
+  CreateRatingsDocument,
+  DeleteRatingsDocument,
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
@@ -158,8 +158,8 @@ export function RatingsContainer() {
     }
   }, [searchParams]); // Deliberately minimal dependencies
 
-  const [createRatingMutation] = useMutation(CreateRatingDocument);
-  const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
+  const [createRatingsMutation] = useMutation(CreateRatingsDocument);
+  const [deleteRatingsMutation] = useMutation(DeleteRatingsDocument);
 
   const availableTerms = useMemo(() => {
     if (!courseClasses.length) return [];
@@ -568,14 +568,12 @@ export function RatingsContainer() {
           await submitRatingMutation({
             metricValues,
             termInfo,
-            createRatingMutation,
-            deleteRatingMutation,
+            createRatingsMutation,
             classIdentifiers: {
               subject: courseInfo.subject,
               courseNumber: courseInfo.courseNumber,
               number: courseInfo.classNumber,
             },
-            currentRatings: userRatings,
             refetchQueries: [],
           });
           refetchAllRatings();
@@ -610,8 +608,7 @@ export function RatingsContainer() {
           if (userRatings) {
             try {
               await deleteRatingHelper({
-                userRating: userRatings,
-                deleteRatingMutation,
+                deleteRatingsMutation,
                 classIdentifiers: {
                   subject: currentClass.subject,
                   courseNumber: currentClass.courseNumber,
