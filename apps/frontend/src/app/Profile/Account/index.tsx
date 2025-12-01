@@ -25,7 +25,7 @@ export default function Account() {
   const { data, loading, error, refetch } = useQuery(MY_COLLECTIONS, {
     fetchPolicy: "cache-and-network",
   });
-  console.log(data, loading, error, refetch) // to get rid of an error about not using them
+  console.log(data, loading, error, refetch); // to get rid of an error about not using them
 
   const { data: schedules, loading: schedulesLoading } = useReadSchedules({
     skip: !user,

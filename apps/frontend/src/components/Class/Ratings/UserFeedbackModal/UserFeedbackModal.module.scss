@@ -44,7 +44,9 @@
   width: 100%;
 
   &.slideTransition {
-    animation: slideOut 0.15s ease-out forwards, slideIn 0.15s 0.15s ease-in forwards;
+    animation:
+      slideOut 0.15s ease-out forwards,
+      slideIn 0.15s 0.15s ease-in forwards;
   }
 }
 
