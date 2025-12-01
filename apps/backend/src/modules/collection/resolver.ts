@@ -2,10 +2,7 @@ import { GraphQLError } from "graphql";
 
 import { ClassModel } from "@repo/common";
 
-import {
-  CollectionDocument,
-  StoredClassEntry,
-} from "./controller";
+import { CollectionDocument, StoredClassEntry } from "./controller";
 import * as controller from "./controller";
 import { CollectionModule } from "./generated-types/module-types";
 
@@ -205,34 +202,36 @@ const resolvers: CollectionModule.Resolvers = {
             }
           : null;
 
-      return typedParent.classes.map((classEntry): CollectionModule.CollectionClass => {
-        const key = `${classEntry.year}|${classEntry.semester}|${classEntry.sessionId}|${classEntry.subject}|${classEntry.courseNumber}|${classEntry.classNumber}`;
-        const classData = classMap.get(key);
+      return typedParent.classes.map(
+        (classEntry): CollectionModule.CollectionClass => {
+          const key = `${classEntry.year}|${classEntry.semester}|${classEntry.sessionId}|${classEntry.subject}|${classEntry.courseNumber}|${classEntry.classNumber}`;
+          const classData = classMap.get(key);
 
-        if (!classData) {
-          console.warn(`Class not found in catalog:`, {
-            year: classEntry.year,
-            semester: classEntry.semester,
-            sessionId: classEntry.sessionId,
-            subject: classEntry.subject,
-            courseNumber: classEntry.courseNumber,
-            number: classEntry.classNumber,
-          });
+          if (!classData) {
+            console.warn(`Class not found in catalog:`, {
+              year: classEntry.year,
+              semester: classEntry.semester,
+              sessionId: classEntry.sessionId,
+              subject: classEntry.subject,
+              courseNumber: classEntry.courseNumber,
+              number: classEntry.classNumber,
+            });
+
+            return {
+              class: null,
+              personalNote: formatPersonalNote(classEntry.personalNote),
+              error: "CLASS_NOT_FOUND_IN_CATALOG",
+            };
+          }
 
           return {
-            class: null,
+            // Cast to Class - nested fields resolved by Class field resolvers
+            class: classData as unknown as CollectionModule.Class,
             personalNote: formatPersonalNote(classEntry.personalNote),
-            error: "CLASS_NOT_FOUND_IN_CATALOG",
+            error: null,
           };
         }
-
-        return {
-          // Cast to Class - nested fields resolved by Class field resolvers
-          class: classData as unknown as CollectionModule.Class,
-          personalNote: formatPersonalNote(classEntry.personalNote),
-          error: null,
-        };
-      });
+      );
     },
   },
 };
