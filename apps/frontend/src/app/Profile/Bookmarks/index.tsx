@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -37,6 +37,9 @@ export default function Bookmarks() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+
+  // Track initial collection IDs to skip entrance animation on page load
+  const initialIds = useRef(new Set(initialCollections.map((c) => c.id)));
 
   const handleCreateCollection = (name: string) => {
     const newCollection: Collection = {
@@ -120,7 +123,12 @@ export default function Bookmarks() {
                   <motion.div
                     key={collection.id}
                     layout
-                    initial={{ opacity: 1, scale: 1 }}
+                    initial={
+                      initialIds.current.has(collection.id)
+                        ? false
+                        : { opacity: 0, scale: 0.8 }
+                    }
+                    animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   >

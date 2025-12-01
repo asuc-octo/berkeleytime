@@ -25,28 +25,28 @@ interface CollectionCardProps {
   onDelete?: () => void;
 }
 
-const COLORS: Record<string, { light: string; dark: string }> = {
-  red: { light: "var(--red-300)", dark: "var(--red-700)" },
-  orange: { light: "var(--orange-300)", dark: "var(--orange-700)" },
-  amber: { light: "var(--amber-300)", dark: "var(--amber-700)" },
-  yellow: { light: "var(--yellow-300)", dark: "var(--yellow-700)" },
-  lime: { light: "var(--lime-300)", dark: "var(--lime-700)" },
-  green: { light: "var(--green-300)", dark: "var(--green-700)" },
-  emerald: { light: "var(--emerald-300)", dark: "var(--emerald-700)" },
-  teal: { light: "var(--teal-300)", dark: "var(--teal-700)" },
-  cyan: { light: "var(--cyan-300)", dark: "var(--cyan-700)" },
-  sky: { light: "var(--sky-300)", dark: "var(--sky-700)" },
-  blue: { light: "var(--blue-300)", dark: "var(--blue-700)" },
-  indigo: { light: "var(--indigo-300)", dark: "var(--indigo-700)" },
-  violet: { light: "var(--violet-300)", dark: "var(--violet-700)" },
-  purple: { light: "var(--purple-300)", dark: "var(--purple-700)" },
-  fuchsia: { light: "var(--fuchsia-300)", dark: "var(--fuchsia-700)" },
-  pink: { light: "var(--pink-300)", dark: "var(--pink-700)" },
-  rose: { light: "var(--rose-300)", dark: "var(--rose-700)" },
-};
+const COLORS = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+];
 
 const springTransition = {
-  type: "spring",
+  type: "spring" as const,
   stiffness: 500,
   damping: 30,
 };
@@ -170,13 +170,10 @@ export function CollectionCard({
                 <DropdownMenu.Item onSelect={() => setBgColor(null)}>
                   <span className={styles.colorDotOutline} /> No color
                 </DropdownMenu.Item>
-                {Object.entries(COLORS).map(([key, value]) => (
-                  <DropdownMenu.Item key={key} onSelect={() => setBgColor(key)}>
-                    <span
-                      className={styles.colorDot}
-                      style={{ backgroundColor: value.light }}
-                    />{" "}
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                {COLORS.map((color) => (
+                  <DropdownMenu.Item key={color} onSelect={() => setBgColor(color)}>
+                    <span className={styles.colorDot} data-color={color} />{" "}
+                    {color.charAt(0).toUpperCase() + color.slice(1)}
                   </DropdownMenu.Item>
                 ))}
               </DropdownMenu.SubContent>

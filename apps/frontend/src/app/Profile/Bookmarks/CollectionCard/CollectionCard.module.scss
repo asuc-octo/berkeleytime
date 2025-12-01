@@ -44,6 +44,7 @@
   display: flex;
   width: 360px;
   padding: 16px;
+  padding-bottom: 50px;
   align-items: center;
   gap: 12px;
   background-color: var(--foreground-color);
@@ -158,6 +159,7 @@
   display: inline-block;
 }
 
+
 .colorDotOutline {
   width: 12px;
   height: 12px;
@@ -166,20 +168,14 @@
   border: 1.5px solid var(--paragraph-color);
 }
 
-// Background colors with light/dark mode support via data attribute
+// Background colors via data attribute
 @each $color in (red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose) {
   .colorBackground[data-color="#{$color}"] {
     background-color: var(--#{$color}-300);
+  }
 
-    :global(body[data-theme="dark"]) & {
-      background-color: var(--#{$color}-700);
-    }
-
-    :global(body:not([data-theme])) & {
-      @media (prefers-color-scheme: dark) {
-        background-color: var(--#{$color}-700);
-      }
-    }
+  .colorDot[data-color="#{$color}"] {
+    background-color: var(--#{$color}-300);
   }
 }
 
