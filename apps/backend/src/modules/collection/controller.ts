@@ -4,6 +4,8 @@ import { ClassModel, CollectionModel } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
 
+const MAX_PERSONAL_NOTE_LENGTH = 5000;
+
 export interface RequestContext {
   user: {
     _id?: string;
@@ -152,6 +154,14 @@ export const addClassToCollection = async (
     throw new GraphQLError("Collection name cannot be empty", {
       extensions: { code: "BAD_USER_INPUT" },
     });
+  }
+
+  // Validate personal note length
+  if (personalNote && personalNote.text.length > MAX_PERSONAL_NOTE_LENGTH) {
+    throw new GraphQLError(
+      `Personal note cannot exceed ${MAX_PERSONAL_NOTE_LENGTH} characters`,
+      { extensions: { code: "BAD_USER_INPUT" } }
+    );
   }
 
   // Verify class exists in catalog

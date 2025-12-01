@@ -5,25 +5,28 @@ import { ClassModel } from "@repo/common";
 import * as controller from "./controller";
 import { CollectionModule } from "./generated-types/module-types";
 
+// Helper to map Collection document to GraphQL response
+const mapCollectionToGraphQL = (collection: any) => ({
+  _id: collection._id.toString(),
+  createdBy: collection.createdBy,
+  name: collection.name,
+  classes: collection.classes,
+  createdAt:
+    collection.createdAt instanceof Date
+      ? collection.createdAt.toISOString()
+      : collection.createdAt,
+  updatedAt:
+    collection.updatedAt instanceof Date
+      ? collection.updatedAt.toISOString()
+      : collection.updatedAt,
+});
+
 const resolvers: CollectionModule.Resolvers = {
   Query: {
     myCollections: async (_, __, context) => {
       try {
         const collections = await controller.getAllCollections(context);
-        return collections.map((collection) => ({
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        }));
+        return collections.map(mapCollectionToGraphQL);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -43,20 +46,7 @@ const resolvers: CollectionModule.Resolvers = {
         if (!collection) {
           return null;
         }
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -79,20 +69,7 @@ const resolvers: CollectionModule.Resolvers = {
           oldName,
           newName
         );
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -128,20 +105,7 @@ const resolvers: CollectionModule.Resolvers = {
           context,
           input
         );
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -161,20 +125,7 @@ const resolvers: CollectionModule.Resolvers = {
           context,
           input
         );
-        return {
-          _id: collection._id.toString(),
-          createdBy: collection.createdBy,
-          name: collection.name,
-          classes: collection.classes as any,
-          createdAt:
-            collection.createdAt instanceof Date
-              ? collection.createdAt.toISOString()
-              : collection.createdAt,
-          updatedAt:
-            collection.updatedAt instanceof Date
-              ? collection.updatedAt.toISOString()
-              : collection.updatedAt,
-        };
+        return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
