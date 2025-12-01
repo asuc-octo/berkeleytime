@@ -192,6 +192,11 @@ const resolvers: CollectionModule.Resolvers = {
   Collection: {
     // Resolve classes with their full class info
     classes: async (parent: any) => {
+      // Guard: Return early if no classes in collection
+      if (!parent.classes || parent.classes.length === 0) {
+        return [];
+      }
+
       // Build batch query for all classes
       const classQueries = parent.classes.map((classEntry: any) => ({
         year: classEntry.year,
