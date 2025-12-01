@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-
+import { useQuery } from "@apollo/client/react";
 import { Calendar } from "iconoir-react";
 import { Link } from "react-router-dom";
 
@@ -17,10 +17,19 @@ import styles from "./Account.module.scss";
 
 const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
 
+import { MY_COLLECTIONS } from "@/lib/api/collection";
+
 export default function Account() {
   const { user } = useUser();
 
-
+  const {
+    data,
+    loading,
+    error,
+    refetch,
+  } = useQuery(MY_COLLECTIONS, {
+    fetchPolicy: "cache-and-network",
+  });
 
   const { data: schedules, loading: schedulesLoading } = useReadSchedules({
     skip: !user,
@@ -62,7 +71,6 @@ export default function Account() {
         </div>
       </div>
       <h2>Bookmarked Classes (Collections Test)</h2>
-      
       <div>
 
 

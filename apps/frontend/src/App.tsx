@@ -12,6 +12,7 @@ import { ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+// import CollectionProvider from "@/providers/CollectionProvider";
 import UserProvider from "@/providers/UserProvider";
 
 const Landing = lazy(() => import("@/app/Landing"));
@@ -390,9 +391,11 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <UserProvider>
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
+        {/*<CollectionProvider>*/}
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        {/*</CollectionProvider>*/}
       </UserProvider>
     </ApolloProvider>
   );

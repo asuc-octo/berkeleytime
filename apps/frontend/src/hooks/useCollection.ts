@@ -6,7 +6,7 @@ const useCollection = () => {
   const collectionContext = useContext(CollectionContext);
 
   if (!collectionContext)
-    throw new Error("useCollection must be used within a UserProvider (? idk what a UserProvider is)");
+    throw new Error("useCollection must be used within a CollectionProvider");
 
   return collectionContext;
 };
