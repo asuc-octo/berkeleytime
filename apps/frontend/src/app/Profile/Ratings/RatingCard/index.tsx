@@ -4,7 +4,6 @@ import { METRIC_MAPPINGS, METRIC_ORDER, MetricName } from "@repo/shared";
 import { Badge, Card, Color, IconButton, Tooltip } from "@repo/theme";
 
 import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
-import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
 import { IUserRatingClass } from "@/lib/api";
 
 import styles from "./RatingCard.module.scss";
@@ -16,11 +15,6 @@ interface RatingCardProps {
 }
 
 export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
-  const { data: course, loading } = useReadCourseTitle(
-    rating.subject,
-    rating.courseNumber
-  );
-
   const getRatingMetrics = (
     metrics: Array<{ metricName: string; value: number }>
   ) => {
@@ -37,20 +31,15 @@ export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
     });
   };
 
-  return loading ? (
-    <></>
-  ) : (
+  return (
     <Card.RootColumn hoverColorChange={false}>
       <Card.ColumnHeader>
         <Card.Body style={{ paddingBottom: 0 }}>
           <Card.Heading>
-            {rating.subject} {rating.courseNumber}{" "}
-            <span className={styles.semester}>
-              {rating.semester} {rating.year}
-            </span>
+            {rating.subject} {rating.courseNumber}
           </Card.Heading>
-          <Card.Description className={styles.title}>
-            {course?.title}
+          <Card.Description className={styles.semester}>
+            {rating.semester} {rating.year}
           </Card.Description>
         </Card.Body>
         <Card.Actions>

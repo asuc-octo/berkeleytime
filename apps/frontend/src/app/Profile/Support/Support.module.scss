@@ -1,0 +1,8 @@
+.link {
+  color: var(--blue-500);
+  transition: color 100ms ease-in-out;
+
+  &:hover {
+    color: var(--blue-hover);
+  }
+}

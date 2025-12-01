@@ -1,11 +1,30 @@
+import { Text } from "@repo/theme";
+
+import styles from "./Support.module.scss";
+import profileStyles from "../Profile.module.scss";
+
 export default function Support() {
   return (
-    <div>
-      <h1>Support</h1>
-      Thank you for beta testing our website!
-      <br />
-      To leave us feedback, either use the blue button on the bottom right or
-      email us at octo.berkeleytime@asuc.org.
+    <div className={profileStyles.contentInner}>
+      <h1 className={profileStyles.pageTitle}>Support</h1>
+      <div className={profileStyles.pageContent}>
+        <Text size="3" style={{ lineHeight: 1.6 }}>
+          Thank you for beta testing our website! To leave us feedback,{" "}
+          <a
+            href="https://forms.gle/zeAUQAHrMcrRJyhK6"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.link}
+          >
+            fill out this form
+          </a>{" "}
+          or email us at{" "}
+          <a href="mailto:octo.berkeleytime@asuc.org" className={styles.link}>
+            octo.berkeleytime@asuc.org
+          </a>
+          .
+        </Text>
+      </div>
     </div>
   );
 }

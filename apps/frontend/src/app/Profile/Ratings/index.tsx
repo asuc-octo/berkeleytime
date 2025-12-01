@@ -37,6 +37,7 @@ import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import { RatingCard } from "./RatingCard";
 import styles from "./Ratings.module.scss";
+import profileStyles from "../Profile.module.scss";
 
 export default function Ratings() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -269,46 +270,48 @@ export default function Ratings() {
   ]);
 
   return (
-    <div>
-      <h1>Your Ratings</h1>
-      <div className={styles.root}>
-        <div className={styles.searchGroup}>
-          <label htmlFor="ratingsSearch" className={styles.searchIcon}>
-            <Search />
-          </label>
-          <input
-            id="ratingsSearch"
-            className={styles.searchInput}
-            type="text"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search Ratings..."
-            autoComplete="off"
-          />
-        </div>
+    <div className={profileStyles.contentInner}>
+      <h1 className={profileStyles.pageTitle}>Ratings</h1>
+      <div className={profileStyles.pageContent}>
+        <div className={styles.root}>
+          <div className={styles.searchGroup}>
+            <label htmlFor="ratingsSearch" className={styles.searchIcon}>
+              <Search />
+            </label>
+            <input
+              id="ratingsSearch"
+              className={styles.searchInput}
+              type="text"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search Ratings..."
+              autoComplete="off"
+            />
+          </div>
 
-        {loading && <p>Loading your ratings...</p>}
-        {error && <p>Error loading ratings: {error.message}</p>}
-        {filteredRatings.length === 0 && searchQuery && !loading && (
-          <p>No ratings found matching "{searchQuery}"</p>
-        )}
-        {filteredRatings.length > 0 && (
-          <Grid
-            gap="17px"
-            width="100%"
-            columns="repeat(auto-fit, 345px)"
-            style={{ marginBottom: 40 }}
-          >
-            {filteredRatings.map((rating) => (
-              <RatingCard
-                key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
-                rating={rating}
-                onEdit={handleEditClick}
-                onDelete={handleDeleteClick}
-              />
-            ))}
-          </Grid>
-        )}
+          {loading && <p>Loading your ratings...</p>}
+          {error && <p>Error loading ratings: {error.message}</p>}
+          {filteredRatings.length === 0 && searchQuery && !loading && (
+            <p>No ratings found matching "{searchQuery}"</p>
+          )}
+          {filteredRatings.length > 0 && (
+            <Grid
+              gap="17px"
+              width="100%"
+              columns="repeat(auto-fit, 345px)"
+              style={{ marginBottom: 40 }}
+            >
+              {filteredRatings.map((rating) => (
+                <RatingCard
+                  key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
+                  rating={rating}
+                  onEdit={handleEditClick}
+                  onDelete={handleDeleteClick}
+                />
+              ))}
+            </Grid>
+          )}
+        </div>
       </div>
       {ratingForEdit && currentClassForModal && (
         <UserFeedbackModal

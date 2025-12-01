@@ -27,15 +27,7 @@
     }
   }
 }
-.title {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  color: var(--paragraph-color);
-  max-width: 100%;
-}
 .semester {
   font-weight: var(--font-normal);
   color: var(--label-color);
-  margin-left: 5px;
 }
