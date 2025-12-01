@@ -24,14 +24,25 @@ interface CollectionCardProps {
   onDelete?: () => void;
 }
 
-const COLORS = {
-  red: "#ef4444",
-  orange: "#f97316",
-  yellow: "#eab308",
-  green: "#22c55e",
-  blue: "#3b82f6",
-  purple: "#a855f7",
-} as const;
+const COLORS: Record<string, { light: string; dark: string }> = {
+  red: { light: "var(--red-300)", dark: "var(--red-700)" },
+  orange: { light: "var(--orange-300)", dark: "var(--orange-700)" },
+  amber: { light: "var(--amber-300)", dark: "var(--amber-700)" },
+  yellow: { light: "var(--yellow-300)", dark: "var(--yellow-700)" },
+  lime: { light: "var(--lime-300)", dark: "var(--lime-700)" },
+  green: { light: "var(--green-300)", dark: "var(--green-700)" },
+  emerald: { light: "var(--emerald-300)", dark: "var(--emerald-700)" },
+  teal: { light: "var(--teal-300)", dark: "var(--teal-700)" },
+  cyan: { light: "var(--cyan-300)", dark: "var(--cyan-700)" },
+  sky: { light: "var(--sky-300)", dark: "var(--sky-700)" },
+  blue: { light: "var(--blue-300)", dark: "var(--blue-700)" },
+  indigo: { light: "var(--indigo-300)", dark: "var(--indigo-700)" },
+  violet: { light: "var(--violet-300)", dark: "var(--violet-700)" },
+  purple: { light: "var(--purple-300)", dark: "var(--purple-700)" },
+  fuchsia: { light: "var(--fuchsia-300)", dark: "var(--fuchsia-700)" },
+  pink: { light: "var(--pink-300)", dark: "var(--pink-700)" },
+  rose: { light: "var(--rose-300)", dark: "var(--rose-700)" },
+};
 
 const springTransition = {
   type: "spring",
@@ -62,7 +73,7 @@ export function CollectionCard({
       {bgColor && (
         <div
           className={styles.colorBackground}
-          style={{ backgroundColor: bgColor }}
+          data-color={bgColor}
         />
       )}
       <div className={styles.cardsStack}>
@@ -118,7 +129,7 @@ export function CollectionCard({
       <div className={styles.footer}>
         <div className={styles.footerContent}>
           <p className={styles.collectionName}>
-            {isPinned && <PinSolid width={14} height={14} />}
+            {isPinned && <PinSolid width={14} height={14} color="var(--blue-500)" />}
             {name}
           </p>
           <p className={styles.classCount}>{classCount} classes</p>
@@ -152,48 +163,15 @@ export function CollectionCard({
                 <DropdownMenu.Item onSelect={() => setBgColor(null)}>
                   <span className={styles.colorDotOutline} /> No color
                 </DropdownMenu.Item>
-                <DropdownMenu.Item onSelect={() => setBgColor(COLORS.red)}>
-                  <span
-                    className={styles.colorDot}
-                    style={{ backgroundColor: COLORS.red }}
-                  />{" "}
-                  Red
-                </DropdownMenu.Item>
-                <DropdownMenu.Item onSelect={() => setBgColor(COLORS.orange)}>
-                  <span
-                    className={styles.colorDot}
-                    style={{ backgroundColor: COLORS.orange }}
-                  />{" "}
-                  Orange
-                </DropdownMenu.Item>
-                <DropdownMenu.Item onSelect={() => setBgColor(COLORS.yellow)}>
-                  <span
-                    className={styles.colorDot}
-                    style={{ backgroundColor: COLORS.yellow }}
-                  />{" "}
-                  Yellow
-                </DropdownMenu.Item>
-                <DropdownMenu.Item onSelect={() => setBgColor(COLORS.green)}>
-                  <span
-                    className={styles.colorDot}
-                    style={{ backgroundColor: COLORS.green }}
-                  />{" "}
-                  Green
-                </DropdownMenu.Item>
-                <DropdownMenu.Item onSelect={() => setBgColor(COLORS.blue)}>
-                  <span
-                    className={styles.colorDot}
-                    style={{ backgroundColor: COLORS.blue }}
-                  />{" "}
-                  Blue
-                </DropdownMenu.Item>
-                <DropdownMenu.Item onSelect={() => setBgColor(COLORS.purple)}>
-                  <span
-                    className={styles.colorDot}
-                    style={{ backgroundColor: COLORS.purple }}
-                  />{" "}
-                  Purple
-                </DropdownMenu.Item>
+                {Object.entries(COLORS).map(([key, value]) => (
+                  <DropdownMenu.Item key={key} onSelect={() => setBgColor(key)}>
+                    <span
+                      className={styles.colorDot}
+                      style={{ backgroundColor: value.light }}
+                    />{" "}
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </DropdownMenu.Item>
+                ))}
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub>
             <DropdownMenu.Item isDelete onSelect={onDelete}>

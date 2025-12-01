@@ -63,3 +63,26 @@
   font-weight: var(--font-normal);
   color: var(--label-color);
 }
+
+.addCard {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 345px;
+  height: 333px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--button-hover-color);
+  }
+}
+
+.addIcon {
+  color: var(--paragraph-color);
+  width: 32px;
+  height: 32px;
+}

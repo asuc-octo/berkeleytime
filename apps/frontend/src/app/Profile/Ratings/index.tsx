@@ -36,7 +36,7 @@ import {
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import profileStyles from "../Profile.module.scss";
-import { RatingCard } from "./RatingCard";
+import { AddRatingCard, RatingCard } from "./RatingCard";
 import styles from "./Ratings.module.scss";
 
 export default function Ratings() {
@@ -47,8 +47,10 @@ export default function Ratings() {
   const [ratingForDelete, setRatingForDelete] =
     useState<IUserRatingClass | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditThankYouOpen, setIsEditThankYouOpen] = useState(false);
+  const [isAddThankYouOpen, setIsAddThankYouOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [courseQuery, setCourseQuery] = useState<{
@@ -169,6 +171,14 @@ export default function Ratings() {
     setIsEditModalOpen(false);
   }, []);
 
+  const openAddModal = useCallback(() => {
+    setIsAddModalOpen(true);
+  }, []);
+
+  const closeAddModal = useCallback(() => {
+    setIsAddModalOpen(false);
+  }, []);
+
   const closeDeleteModal = useCallback(() => {
     setIsDeleteModalOpen(false);
     setRatingForDelete(null);
@@ -237,6 +247,35 @@ export default function Ratings() {
     [ratingForEdit, createRatingsMutation, buildRefetchQueries]
   );
 
+  const handleSubmitAdd = useCallback(
+    async (
+      metricValues: MetricData,
+      termInfo: { semester: Semester; year: number },
+      courseInfo: { subject: string; courseNumber: string; classNumber: string }
+    ) => {
+      const refetchTarget = {
+        subject: courseInfo.subject,
+        courseNumber: courseInfo.courseNumber,
+        classNumber: courseInfo.classNumber,
+        semester: termInfo.semester,
+        year: termInfo.year,
+      } as IUserRatingClass;
+
+      await submitRatingHelper({
+        metricValues,
+        termInfo,
+        createRatingsMutation,
+        classIdentifiers: {
+          subject: courseInfo.subject,
+          courseNumber: courseInfo.courseNumber,
+          number: courseInfo.classNumber,
+        },
+        refetchQueries: buildRefetchQueries(refetchTarget),
+      });
+    },
+    [createRatingsMutation, buildRefetchQueries]
+  );
+
   useEffect(() => {
     if (!isEditModalOpen && !isEditThankYouOpen) {
       setRatingForEdit(null);
@@ -295,23 +334,22 @@ export default function Ratings() {
           {filteredRatings.length === 0 && searchQuery && !loading && (
             <p>No ratings found matching "{searchQuery}"</p>
           )}
-          {filteredRatings.length > 0 && (
-            <Grid
-              gap="17px"
-              width="100%"
-              columns="repeat(auto-fit, 345px)"
-              style={{ marginBottom: 40 }}
-            >
-              {filteredRatings.map((rating) => (
-                <RatingCard
-                  key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
-                  rating={rating}
-                  onEdit={handleEditClick}
-                  onDelete={handleDeleteClick}
-                />
-              ))}
-            </Grid>
-          )}
+          <Grid
+            gap="17px"
+            width="100%"
+            columns="repeat(auto-fit, 345px)"
+            style={{ marginBottom: 40 }}
+          >
+            {filteredRatings.map((rating) => (
+              <RatingCard
+                key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
+                rating={rating}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+              />
+            ))}
+            <AddRatingCard onClick={openAddModal} />
+          </Grid>
         </div>
       </div>
       {ratingForEdit && currentClassForModal && (
@@ -363,6 +401,26 @@ export default function Ratings() {
       <SubmitRatingPopup
         isOpen={isEditThankYouOpen}
         onClose={() => setIsEditThankYouOpen(false)}
+      />
+      <UserFeedbackModal
+        isOpen={isAddModalOpen}
+        onClose={closeAddModal}
+        title="Add Rating"
+        subtitle=""
+        showSelectedCourseSubtitle={false}
+        onSubmit={handleSubmitAdd}
+        onSubmitPopupChange={setIsAddThankYouOpen}
+        userRatedClasses={userRatedClasses}
+        disableRatedCourses={true}
+        onError={(error) => {
+          const message = getRatingErrorMessage(error);
+          setErrorMessage(message);
+          setIsErrorDialogOpen(true);
+        }}
+      />
+      <SubmitRatingPopup
+        isOpen={isAddThankYouOpen}
+        onClose={() => setIsAddThankYouOpen(false)}
       />
     </div>
   );

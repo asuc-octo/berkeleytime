@@ -1,4 +1,4 @@
-import { EditPencil, Trash } from "iconoir-react";
+import { EditPencil, Plus, Trash } from "iconoir-react";
 
 import { METRIC_MAPPINGS, METRIC_ORDER, MetricName } from "@repo/shared";
 import { Badge, Card, Color, IconButton, Tooltip } from "@repo/theme";
@@ -86,5 +86,17 @@ export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
         )}
       </Card.ColumnBody>
     </Card.RootColumn>
+  );
+}
+
+interface AddRatingCardProps {
+  onClick?: () => void;
+}
+
+export function AddRatingCard({ onClick }: AddRatingCardProps) {
+  return (
+    <div className={styles.addCard} onClick={onClick}>
+      <Plus className={styles.addIcon} />
+    </div>
   );
 }
