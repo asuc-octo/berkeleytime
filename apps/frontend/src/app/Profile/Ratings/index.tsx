@@ -25,8 +25,8 @@ import { useUserRatings } from "@/hooks/api/ratings";
 import { IUserRatingClass } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
-  CreateRatingDocument,
-  DeleteRatingDocument,
+  CreateRatingsDocument,
+  DeleteRatingsDocument,
   GetClassDocument,
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
@@ -56,8 +56,8 @@ export default function Ratings() {
   } | null>(null);
 
   const { ratings, loading, error } = useUserRatings();
-  const [createRatingMutation] = useMutation(CreateRatingDocument);
-  const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
+  const [createRatingsMutation] = useMutation(CreateRatingsDocument);
+  const [deleteRatingsMutation] = useMutation(DeleteRatingsDocument);
 
   const { data: selectedCourse } = useReadCourseWithInstructor(
     courseQuery?.subject ?? "",
@@ -224,23 +224,16 @@ export default function Ratings() {
       await submitRatingHelper({
         metricValues,
         termInfo,
-        createRatingMutation,
-        deleteRatingMutation,
+        createRatingsMutation,
         classIdentifiers: {
           subject: courseInfo.subject,
           courseNumber: courseInfo.courseNumber,
           number: courseInfo.classNumber,
         },
-        currentRatings: ratingForEdit,
         refetchQueries: buildRefetchQueries(refetchTarget),
       });
     },
-    [
-      ratingForEdit,
-      createRatingMutation,
-      deleteRatingMutation,
-      buildRefetchQueries,
-    ]
+    [ratingForEdit, createRatingsMutation, buildRefetchQueries]
   );
 
   useEffect(() => {
@@ -254,8 +247,7 @@ export default function Ratings() {
     if (!ratingForDelete) return;
     try {
       await deleteRatingHelper({
-        userRating: ratingForDelete,
-        deleteRatingMutation,
+        deleteRatingsMutation,
         classIdentifiers: {
           subject: ratingForDelete.subject,
           courseNumber: ratingForDelete.courseNumber,
@@ -271,7 +263,7 @@ export default function Ratings() {
     }
   }, [
     ratingForDelete,
-    deleteRatingMutation,
+    deleteRatingsMutation,
     buildRefetchQueries,
     closeDeleteModal,
   ]);

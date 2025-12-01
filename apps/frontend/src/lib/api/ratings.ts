@@ -57,45 +57,29 @@ export const GET_SEMESTERS_WITH_RATINGS = gql`
   }
 `;
 
-export const CREATE_RATING = gql`
-  mutation CreateRating(
+export const CREATE_RATINGS = gql`
+  mutation CreateRatings(
     $subject: String!
     $courseNumber: String!
     $semester: Semester!
     $year: Int!
     $classNumber: String!
-    $metricName: MetricName!
-    $value: Int!
+    $metrics: [RatingMetricInput!]!
   ) {
-    createRating(
+    createRatings(
       subject: $subject
       courseNumber: $courseNumber
       semester: $semester
       year: $year
       classNumber: $classNumber
-      metricName: $metricName
-      value: $value
+      metrics: $metrics
     )
   }
 `;
 
-export const DELETE_RATING = gql`
-  mutation DeleteRating(
-    $subject: String!
-    $courseNumber: String!
-    $semester: Semester!
-    $year: Int!
-    $classNumber: String!
-    $metricName: MetricName!
-  ) {
-    deleteRating(
-      subject: $subject
-      courseNumber: $courseNumber
-      semester: $semester
-      year: $year
-      classNumber: $classNumber
-      metricName: $metricName
-    )
+export const DELETE_RATINGS = gql`
+  mutation DeleteRatings($subject: String!, $courseNumber: String!) {
+    deleteRatings(subject: $subject, courseNumber: $courseNumber)
   }
 `;
 

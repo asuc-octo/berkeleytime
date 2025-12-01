@@ -1,0 +1,96 @@
+.card {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0;
+  z-index: 998;
+  width: min(400px, calc(100vw - 32px));
+  margin-right: 12px;
+  animation: expandOut 150ms ease-out;
+  transform-origin: top left;
+}
+
+@keyframes expandOut {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.trigger {
+  cursor: pointer;
+  user-select: none;
+}
+
+.header {
+  padding: 8px 12px;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLink {
+  color: var(--blue-500);
+  font-size: var(--text-12);
+  font-weight: var(--font-normal);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    color: var(--blue-hover);
+  }
+}
+
+.mapContainer {
+  width: 100%;
+  height: 200px;
+  background-color: var(--button-hover-color);
+
+  // Collapse attribution by default, expand on hover
+  :global(.maplibregl-ctrl-attrib) {
+    background-color: transparent;
+    opacity: 0.6;
+    transition: opacity 150ms ease;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    // Hide the text, show only the info button
+    :global(.maplibregl-ctrl-attrib-inner) {
+      color: var(--paragraph-color);
+      position: absolute;
+      right: 24px;
+      bottom: 0;
+      display: none;
+    }
+
+    // Show text on hover
+    &:hover :global(.maplibregl-ctrl-attrib-inner) {
+      display: block;
+      color: var(--paragraph-color);
+      background-color: var(--background-color);
+      padding: 2px 4px;
+      border-radius: 2px;
+      white-space: nowrap;
+
+      a {
+        color: var(--paragraph-color);
+      }
+    }
+  }
+
+  :global(.maplibregl-ctrl-attrib-button) {
+    display: block !important;
+  }
+}

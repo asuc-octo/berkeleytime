@@ -259,10 +259,10 @@ const GradeDistributions = () => {
     );
 
     const themes = filteredOutputs.reduce(
-      (acc, _, index) => {
+      (acc, output, index) => {
         acc[index.toString()] = {
-          light: LIGHT_COLORS[index % LIGHT_COLORS.length],
-          dark: DARK_COLORS[index % DARK_COLORS.length],
+          light: output.color,
+          dark: output.color,
         };
         return acc;
       },

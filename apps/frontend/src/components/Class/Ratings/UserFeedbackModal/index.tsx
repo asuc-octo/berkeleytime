@@ -66,6 +66,9 @@ export function UserFeedbackModal({
   const { data: termsData, loading: termsLoading } = useReadTerms();
   const totalRatings = Math.max(1, requiredRatingsCount);
   const [currentRatingIndex, setCurrentRatingIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const modalBodyRef = useRef<HTMLDivElement>(null);
+  const prevRatingIndexRef = useRef<number>(0);
 
   const initialMetricData = useMemo(
     () =>
@@ -326,6 +329,7 @@ export function UserFeedbackModal({
     reset(initialMetricData, initialSelectedCourse);
     setSelectedTerm(initialTermValue);
     setCurrentRatingIndex(0);
+    prevRatingIndexRef.current = 0;
     hasAutoSelected.current = false; // Reset the auto-selection flag when closing
     onClose();
   };
@@ -355,6 +359,29 @@ export function UserFeedbackModal({
       attendanceStartNumber: attendanceStart,
     };
   }, []);
+
+  // Handle slide animation when moving to next rating
+  useEffect(() => {
+    const prevIndex = prevRatingIndexRef.current;
+
+    // Only animate if rating index increased (Submit & Continue was clicked)
+    if (currentRatingIndex > prevIndex && prevIndex >= 0) {
+      setIsTransitioning(true);
+
+      // Scroll to top of modal body
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTop = 0;
+      }
+
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+
+      return () => clearTimeout(timeout);
+    }
+
+    prevRatingIndexRef.current = currentRatingIndex;
+  }, [currentRatingIndex]);
 
   const remainingRatings = Math.max(0, totalRatings - currentRatingIndex - 1);
   const submitLabel = isSubmitting
@@ -396,8 +423,11 @@ export function UserFeedbackModal({
         subtitle={modalSubtitle}
         progress={overallProgress}
         footer={footer}
+        modalBodyRef={modalBodyRef}
       >
-        <div className={styles.formContentWrapper}>
+        <div
+          className={`${styles.formContentWrapper} ${isTransitioning ? styles.slideTransition : ""}`}
+        >
           <RatingFormBody
             selectedCourse={selectedCourse}
             onCourseSelect={(course) => {

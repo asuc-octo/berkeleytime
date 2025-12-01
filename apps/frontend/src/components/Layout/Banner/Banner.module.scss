@@ -1,3 +1,5 @@
+@use "../../../mixins" as *;
+
 .root {
   flex-shrink: 0;
   height: 32px;
@@ -28,22 +30,14 @@
     border-radius: 4px;
     transition: color 100ms ease-in-out;
 
-    @media (prefers-color-scheme: dark) {
-      color: var(--gray-300);
-    }
-
-    body[data-theme="dark"] & {
+    @include dark-mode {
       color: var(--gray-300);
     }
 
     &:hover {
       color: var(--gray-900);
 
-      @media (prefers-color-scheme: dark) {
-        color: var(--gray-100);
-      }
-
-      body[data-theme="dark"] & {
+      @include dark-mode {
         color: var(--gray-100);
       }
     }
@@ -53,11 +47,7 @@
     color: var(--gray-700);
     font-size: var(--text-12);
 
-    @media (prefers-color-scheme: dark) {
-      color: var(--gray-300);
-    }
-
-    body[data-theme="dark"] & {
+    @include dark-mode {
       color: var(--gray-300);
     }
   }

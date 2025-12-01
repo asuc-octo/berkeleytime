@@ -7,7 +7,8 @@ import React, {
   useState,
 } from "react";
 
-import type { ApolloClient } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client/react";
+import type { useApolloClient as UseApolloClientType } from "@apollo/client/react";
 import moment from "moment";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -25,6 +26,7 @@ import { Boundary, LoadingIndicator } from "@repo/theme";
 import {
   type ChartConfig,
   ChartTooltip,
+  ChartTooltipContent,
   createChartConfig,
   formatters,
 } from "@/components/Chart";
@@ -33,7 +35,11 @@ import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalytic
 import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import Footer from "@/components/Footer";
-import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
+import {
+  GetEnrollmentDocument,
+  GetEnrollmentTimeframesDocument,
+  Semester,
+} from "@/lib/generated/graphql";
 import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import CourseInput from "./CourseManager/CourseInput";
@@ -47,6 +53,16 @@ import {
   isInputEqual,
 } from "./types";
 
+// Map group names to full labels
+const GROUP_LABELS: Record<string, string> = {
+  continuing: "Continuing Students",
+  new_transfer: "New Transfer Students",
+  new_freshman: "New Freshman Students",
+  new_graduate: "New Graduate Students",
+  new_student: "New Students",
+  all: "All Students",
+};
+
 // Memoized formatter to avoid recreating on each render
 const timeFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "numeric",
@@ -55,6 +71,18 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
+// Helper function to get the dark version of a color
+const getDarkColor = (lightColor: string): string => {
+  const colorIndex = LIGHT_COLORS.indexOf(lightColor);
+  return colorIndex !== -1 ? DARK_COLORS[colorIndex] : lightColor;
+};
+
+type PhaseLine = {
+  timeDelta: number;
+  label: string;
+  key: string;
+};
+
 type EnrollmentChartProps = {
   data: { timeDelta: number; [key: string]: number | null }[] | undefined;
   filteredOutputs: Output[];
@@ -62,7 +90,8 @@ type EnrollmentChartProps = {
   activeOutput?: Output;
   dataMax: number;
   outputs: Output[];
-  shouldAnimate: boolean;
+  animateIndices: Set<number>;
+  phaseLines: PhaseLine[];
   onHoverDuration: (duration: moment.Duration | null) => void;
 };
 
@@ -73,7 +102,8 @@ const EnrollmentChart = memo(function EnrollmentChart({
   activeOutput,
   dataMax,
   outputs,
-  shouldAnimate,
+  animateIndices,
+  phaseLines,
   onHoverDuration,
 }: EnrollmentChartProps) {
   const handleHover: CategoricalChartFunc = useCallback(
@@ -134,35 +164,81 @@ const EnrollmentChart = memo(function EnrollmentChart({
               }}
             />
           )}
+          {/* Enrollment phase start lines */}
+          {phaseLines.map((line) => (
+            <ReferenceLine
+              key={line.key}
+              x={line.timeDelta}
+              stroke="var(--paragraph-color)"
+              strokeWidth={1}
+              strokeDasharray="6 4"
+              strokeOpacity={0.8}
+              label={{
+                value: line.label,
+                position: "insideBottomLeft",
+                fill: "var(--paragraph-color)",
+                fontSize: 10,
+                angle: -90,
+                dx: 12,
+                dy: -10,
+              }}
+            />
+          ))}
           {outputs?.length > 0 && (
             <ChartTooltip
-              tooltipConfig={{
-                labelFormatter: (label) => {
-                  const duration = moment.duration(label, "minutes");
-                  const day = Math.floor(duration.asDays()) + 1;
-                  const time = timeFormatter.format(
-                    moment.utc(0).add(duration).toDate()
-                  );
-                  return `Day ${day} ${time}`;
-                },
-                valueFormatter: (value) => formatters.percentRound(value),
-                indicator: "line",
+              content={(props) => {
+                // Filter payload to only show active output when a class is selected
+                let payloadToShow = props.payload;
+                if (props.payload && activeOutput) {
+                  const activeIndex = outputs.findIndex((o) => o.active);
+                  if (activeIndex !== -1) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    payloadToShow = props.payload.filter((item: any) => {
+                      const dataKey = item.dataKey || item.name;
+                      return (
+                        dataKey === `enroll_${activeIndex}` ||
+                        dataKey === `waitlist_${activeIndex}`
+                      );
+                    });
+                  }
+                }
+
+                return (
+                  <ChartTooltipContent
+                    {...props}
+                    payload={payloadToShow}
+                    config={chartConfig}
+                    tooltipConfig={{
+                      labelFormatter: (label) => {
+                        const duration = moment.duration(label, "minutes");
+                        const day = Math.floor(duration.asDays()) + 1;
+                        const time = timeFormatter.format(
+                          moment.utc(0).add(duration).toDate()
+                        );
+                        return `Day ${day} ${time}`;
+                      },
+                      valueFormatter: (value) => formatters.percentRound(value),
+                      indicator: "line",
+                    }}
+                  />
+                );
               }}
             />
           )}
           {filteredOutputs?.map((output, index) => {
             const originalIndex = outputs.indexOf(output);
+            const shouldAnimateLine = animateIndices.has(originalIndex);
+            const lineColor =
+              activeOutput && !output.active
+                ? getDarkColor(output.color)
+                : output.color;
             return (
               <React.Fragment key={index}>
                 <Line
                   dataKey={`enroll_${originalIndex}`}
-                  stroke={
-                    activeOutput && !output.active
-                      ? DARK_COLORS[originalIndex]
-                      : LIGHT_COLORS[originalIndex]
-                  }
+                  stroke={lineColor}
                   name={`${output.input.subject} ${output.input.courseNumber}`}
-                  isAnimationActive={shouldAnimate}
+                  isAnimationActive={shouldAnimateLine}
                   dot={false}
                   strokeWidth={3}
                   type="monotone"
@@ -170,13 +246,9 @@ const EnrollmentChart = memo(function EnrollmentChart({
                 />
                 <Line
                   dataKey={`waitlist_${originalIndex}`}
-                  stroke={
-                    activeOutput && !output.active
-                      ? DARK_COLORS[originalIndex]
-                      : LIGHT_COLORS[originalIndex]
-                  }
+                  stroke={lineColor}
                   name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                  isAnimationActive={shouldAnimate}
+                  isAnimationActive={shouldAnimateLine}
                   dot={false}
                   strokeWidth={2}
                   strokeDasharray="5 5"
@@ -224,7 +296,7 @@ const parseInputsFromUrl = (searchParams: URLSearchParams): Input[] =>
     );
 
 const fetchEnrollment = async (
-  client: ApolloClient<unknown>,
+  client: ReturnType<typeof useApolloClient>,
   input: Input
 ): Promise<{ data: Output["data"]; input: Input } | null> => {
   try {
@@ -301,14 +373,37 @@ export default function Enrollment() {
   });
 
   const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
-  const shouldAnimate = useRef(true);
+  const [animateIndices, setAnimateIndices] = useState<Set<number>>(new Set());
+  const previousOutputsLength = useRef(0);
 
   const [hoveredDuration, setHoveredDuration] =
     useState<moment.Duration | null>(null);
 
+  // Track newly added classes and animate only their lines
   useEffect(() => {
-    shouldAnimate.current = false;
-  }, []);
+    const currentLength = outputs.length;
+    const previousLength = previousOutputsLength.current;
+
+    if (currentLength > previousLength) {
+      // New class(es) added - find which indices are new
+      const newIndices = new Set<number>();
+      for (let i = previousLength; i < currentLength; i++) {
+        newIndices.add(i);
+      }
+      setAnimateIndices(newIndices);
+
+      // Clear animation after animation completes (recharts default is ~1000ms)
+      const timeout = setTimeout(() => {
+        setAnimateIndices(new Set());
+      }, 1500);
+
+      previousOutputsLength.current = currentLength;
+      return () => clearTimeout(timeout);
+    }
+
+    // Update previous length even if no new classes were added
+    previousOutputsLength.current = currentLength;
+  }, [outputs.length]);
 
   /**
    *
@@ -415,6 +510,117 @@ export default function Enrollment() {
     );
   }, [data]);
 
+  // Determine the semester to show phase lines for
+  const phaseLinesConfig = useMemo(() => {
+    if (!outputs || outputs.length === 0) return null;
+
+    // Check if all outputs are from the same semester
+    const firstSemester = outputs[0].input.semester;
+    const firstYear = outputs[0].input.year;
+    const allSameSemester = outputs.every(
+      (o) => o.input.semester === firstSemester && o.input.year === firstYear
+    );
+
+    if (allSameSemester) {
+      return { year: firstYear, semester: firstSemester, showAlways: true };
+    }
+
+    // If different semesters, show lines for active output's semester
+    if (activeOutput) {
+      return {
+        year: activeOutput.input.year,
+        semester: activeOutput.input.semester,
+        showAlways: false,
+      };
+    }
+
+    return null;
+  }, [outputs, activeOutput]);
+
+  // Fetch enrollment timeframes for the relevant semester
+  const { data: timeframesData } = useQuery(GetEnrollmentTimeframesDocument, {
+    variables: {
+      year: phaseLinesConfig?.year ?? 0,
+      semester: phaseLinesConfig?.semester ?? Semester.Fall,
+    },
+    skip: !phaseLinesConfig,
+  });
+
+  // Calculate phase line positions
+  const phaseLines = useMemo((): PhaseLine[] => {
+    if (!data || data.length === 0 || !timeframesData?.enrollmentTimeframes)
+      return [];
+    if (!phaseLinesConfig) return [];
+
+    // Find the output that matches the phase lines semester to get its first timestamp
+    const matchingOutput = outputs.find(
+      (o) =>
+        o.input.year === phaseLinesConfig.year &&
+        o.input.semester === phaseLinesConfig.semester
+    );
+
+    if (!matchingOutput) return [];
+
+    const firstTime = moment(matchingOutput.data.history[0].startTime);
+    const lastTimeDelta = data[data.length - 1].timeDelta;
+
+    // Debug logging
+    console.log("Phase lines debug:", {
+      firstTime: firstTime.toISOString(),
+      lastTimeDelta,
+      lastTimeDeltaDays: lastTimeDelta / 1440,
+      timeframes: timeframesData.enrollmentTimeframes.map((tf) => ({
+        group: tf.group,
+        phase: tf.phase,
+        startDate: tf.startDate,
+        calculatedTimeDelta: moment
+          .duration(moment(tf.startDate).diff(firstTime))
+          .asMinutes(),
+        calculatedDay:
+          moment.duration(moment(tf.startDate).diff(firstTime)).asMinutes() /
+            1440 +
+          1,
+      })),
+    });
+
+    // Format semester as FA25, SP24, etc.
+    const semesterPrefix =
+      phaseLinesConfig.semester === "Fall"
+        ? "FA"
+        : phaseLinesConfig.semester === "Spring"
+          ? "SP"
+          : "SU";
+    const yearSuffix = String(phaseLinesConfig.year).slice(-2);
+    const termLabel = `${semesterPrefix}${yearSuffix}`;
+
+    const result = timeframesData.enrollmentTimeframes
+      .filter((tf) => tf.group === "continuing" || tf.group === "all")
+      .map((tf) => {
+        const phaseStart = moment(tf.startDate);
+        const timeDelta = moment
+          .duration(phaseStart.diff(firstTime))
+          .asMinutes();
+
+        // Only include lines within the chart's data range
+        if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
+
+        const phaseLabel = tf.isAdjustment
+          ? "Adjustment Period"
+          : `Phase ${tf.phase}`;
+        const groupLabel = GROUP_LABELS[tf.group] ?? tf.group;
+
+        return {
+          timeDelta,
+          label: `${termLabel} ${phaseLabel} - ${groupLabel}`,
+          key: `${tf.phase}-${tf.group}-${tf.isAdjustment}`,
+        };
+      })
+      .filter((line): line is NonNullable<typeof line> => line !== null);
+
+    console.log("Phase lines result:", result);
+    return result;
+  }, [data, timeframesData, phaseLinesConfig, outputs]);
+
   const chartConfig = useMemo(() => {
     const labels: Record<string, string> = {};
     const themes: Record<string, { light: string; dark: string }> = {};
@@ -425,12 +631,12 @@ export default function Enrollment() {
       labels[`waitlist_${index}`] = `${courseName} - Waitlisted`;
 
       themes[`enroll_${index}`] = {
-        light: LIGHT_COLORS[index % LIGHT_COLORS.length],
-        dark: DARK_COLORS[index % DARK_COLORS.length],
+        light: output.color,
+        dark: getDarkColor(output.color),
       };
       themes[`waitlist_${index}`] = {
-        light: LIGHT_COLORS[index % LIGHT_COLORS.length],
-        dark: DARK_COLORS[index % DARK_COLORS.length],
+        light: output.color,
+        dark: getDarkColor(output.color),
       };
     });
 
@@ -518,7 +724,8 @@ export default function Enrollment() {
               activeOutput={activeOutput}
               dataMax={dataMax}
               outputs={outputs}
-              shouldAnimate={shouldAnimate.current}
+              animateIndices={animateIndices}
+              phaseLines={phaseLines}
               onHoverDuration={handleHoverDuration}
             />
           )

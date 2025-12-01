@@ -1,8 +1,11 @@
 import { GraphQLError } from "graphql";
+import { Types } from "mongoose";
 
 import { ClassModel, CollectionModel } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
+
+const MAX_PERSONAL_NOTE_LENGTH = 5000;
 
 export interface RequestContext {
   user: {
@@ -11,36 +14,60 @@ export interface RequestContext {
   };
 }
 
+// Type for stored class entries in MongoDB
+export interface StoredClassEntry {
+  year: number;
+  semester: string;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  classNumber: string;
+  personalNote?: {
+    text: string;
+    updatedAt: Date;
+  };
+}
+
+// Type for collection documents returned from MongoDB
+export interface CollectionDocument {
+  _id: Types.ObjectId;
+  createdBy: string;
+  name: string;
+  classes: StoredClassEntry[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Collection-Level Operations
 
 export const getAllCollections = async (
   context: RequestContext
-): Promise<any[]> => {
+): Promise<CollectionDocument[]> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
     });
   }
 
-  return await CollectionModel.find({
+  return (await CollectionModel.find({
     createdBy: context.user._id,
-  }).lean();
+  }).lean()) as unknown as CollectionDocument[];
 };
 
 export const getCollection = async (
   context: RequestContext,
   name: string
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
     });
   }
 
-  const collection = await CollectionModel.findOne({
+  const collection = (await CollectionModel.findOne({
     createdBy: context.user._id,
     name,
-  }).lean();
+  }).lean()) as CollectionDocument | null;
 
   if (!collection) {
     throw new GraphQLError("Collection not found", {
@@ -55,7 +82,7 @@ export const renameCollection = async (
   context: RequestContext,
   oldName: string,
   newName: string
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -97,7 +124,7 @@ export const renameCollection = async (
   collection.name = newName;
   await collection.save();
 
-  return collection.toObject();
+  return collection.toObject() as unknown as CollectionDocument;
 };
 
 export const deleteCollection = async (
@@ -129,7 +156,7 @@ export const deleteCollection = async (
 export const addClassToCollection = async (
   context: RequestContext,
   input: CollectionModule.AddClassInput
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -154,22 +181,15 @@ export const addClassToCollection = async (
     });
   }
 
-  // 1. Get or create collection
-  let collection = await CollectionModel.findOne({
-    createdBy: context.user._id,
-    name: collectionName,
-  });
-
-  if (!collection) {
-    // Create collection if doesn't exist
-    collection = await CollectionModel.create({
-      createdBy: context.user._id,
-      name: collectionName,
-      classes: [],
-    });
+  // Validate personal note length
+  if (personalNote && personalNote.text.length > MAX_PERSONAL_NOTE_LENGTH) {
+    throw new GraphQLError(
+      `Personal note cannot exceed ${MAX_PERSONAL_NOTE_LENGTH} characters`,
+      { extensions: { code: "BAD_USER_INPUT" } }
+    );
   }
 
-  // 2. Verify class exists in catalog
+  // Verify class exists in catalog
   const classExists = await ClassModel.findOne({
     year,
     semester,
@@ -185,17 +205,6 @@ export const addClassToCollection = async (
     });
   }
 
-  // 3. UPSERT: Check if class already in collection
-  const existingClassIndex = collection.classes.findIndex(
-    (c) =>
-      c.year === year &&
-      c.semester === semester &&
-      c.sessionId === sessionId &&
-      c.subject === subject &&
-      c.courseNumber === courseNumber &&
-      c.classNumber === classNumber
-  );
-
   // Normalize personalNote: treat empty/whitespace text as undefined
   const normalizedPersonalNote =
     personalNote && personalNote.text.trim().length > 0
@@ -205,31 +214,54 @@ export const addClassToCollection = async (
         }
       : undefined;
 
-  if (existingClassIndex >= 0) {
-    collection.classes[existingClassIndex].personalNote =
-      normalizedPersonalNote as any;
-  } else {
-    // INSERT: Class doesn't exist, add it
-    const newClass = {
-      year,
-      semester,
-      sessionId,
-      subject,
-      courseNumber,
-      classNumber,
-      personalNote: normalizedPersonalNote,
-    };
-    collection.classes.push(newClass as any);
+  const classIdentifier = {
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    classNumber,
+  };
+
+  // Try to update existing class's note in collection
+  let result = await CollectionModel.findOneAndUpdate(
+    {
+      createdBy: context.user._id,
+      name: collectionName,
+      classes: { $elemMatch: classIdentifier },
+    },
+    {
+      $set: { "classes.$.personalNote": normalizedPersonalNote },
+    },
+    { new: true }
+  );
+
+  if (result) {
+    return result.toObject() as unknown as CollectionDocument;
   }
 
-  await collection.save();
-  return collection.toObject();
+  // Add class to existing or new collection
+  result = await CollectionModel.findOneAndUpdate(
+    {
+      createdBy: context.user._id,
+      name: collectionName,
+    },
+    {
+      $setOnInsert: { createdBy: context.user._id, name: collectionName },
+      $push: {
+        classes: { ...classIdentifier, personalNote: normalizedPersonalNote },
+      },
+    },
+    { upsert: true, new: true }
+  );
+
+  return result!.toObject() as unknown as CollectionDocument;
 };
 
 export const removeClassFromCollection = async (
   context: RequestContext,
   input: CollectionModule.RemoveClassInput
-): Promise<any> => {
+): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -246,38 +278,45 @@ export const removeClassFromCollection = async (
     classNumber,
   } = input;
 
-  // 1. Verify collection exists and user owns it
-  const collection = await CollectionModel.findOne({
-    createdBy: context.user._id,
-    name: collectionName,
-  });
+  const classIdentifier = {
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    classNumber,
+  };
 
-  if (!collection) {
-    throw new GraphQLError("Collection not found", {
-      extensions: { code: "NOT_FOUND" },
+  // Atomic operation: Remove class from collection using $pull
+  const result = await CollectionModel.findOneAndUpdate(
+    {
+      createdBy: context.user._id,
+      name: collectionName,
+      classes: { $elemMatch: classIdentifier },
+    },
+    {
+      $pull: { classes: classIdentifier },
+    },
+    { new: true }
+  );
+
+  if (!result) {
+    // Determine if collection doesn't exist or class wasn't in collection
+    const collectionExists = await CollectionModel.findOne({
+      createdBy: context.user._id,
+      name: collectionName,
     });
-  }
 
-  // 2. Find and remove class
-  const initialLength = collection.classes.length;
-  collection.classes = collection.classes.filter(
-    (c: any) =>
-      !(
-        c.year === year &&
-        c.semester === semester &&
-        c.sessionId === sessionId &&
-        c.subject === subject &&
-        c.courseNumber === courseNumber &&
-        c.classNumber === classNumber
-      )
-  ) as any;
+    if (!collectionExists) {
+      throw new GraphQLError("Collection not found", {
+        extensions: { code: "NOT_FOUND" },
+      });
+    }
 
-  if (collection.classes.length === initialLength) {
     throw new GraphQLError("Class not found in collection", {
       extensions: { code: "NOT_FOUND" },
     });
   }
 
-  await collection.save();
-  return collection.toObject();
+  return result.toObject() as unknown as CollectionDocument;
 };

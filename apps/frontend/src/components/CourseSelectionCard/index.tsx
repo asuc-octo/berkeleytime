@@ -62,6 +62,7 @@ export default function CourseSelectionCard({
       active={active}
       disabled={hidden}
       onClick={(event) => {
+        if (hidden) return;
         if (
           hideRef.current &&
           !hideRef.current.contains(event.target as Node) &&

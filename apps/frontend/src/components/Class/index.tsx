@@ -39,7 +39,7 @@ import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
 import {
-  CreateRatingDocument,
+  CreateRatingsDocument,
   GetUserRatingsDocument,
   Semester,
 } from "@/lib/generated/graphql";
@@ -157,7 +157,7 @@ export default function Class({
     skip: !user,
   });
 
-  const [createUnlockRating] = useMutation(CreateRatingDocument);
+  const [createUnlockRatings] = useMutation(CreateRatingsDocument);
   const [updateUser] = useUpdateUser();
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
@@ -170,7 +170,6 @@ export default function Class({
     providedClass?.courseNumber ?? (courseNumber as string),
     {
       skip: !!providedCourse,
-      fetchPolicy: "cache-first",
     }
   );
 
@@ -407,30 +406,26 @@ export default function Class({
         );
       }
 
-      for (let index = 0; index < populatedMetrics.length; index++) {
-        const metric = populatedMetrics[index];
-        const value = metricValues[metric] as number;
-        if (value === undefined) continue;
+      // Build metrics array for batch submission
+      const metrics = populatedMetrics.map((metric) => ({
+        metricName: metric,
+        value: metricValues[metric] as number,
+      }));
 
-        const isFinalMutation = index === populatedMetrics.length - 1;
-        await createUnlockRating({
-          variables: {
-            subject: classInfo.subject,
-            courseNumber: classInfo.courseNumber,
-            semester: termInfo.semester,
-            year: termInfo.year,
-            classNumber: classInfo.classNumber,
-            metricName: metric,
-            value,
-          },
-          refetchQueries: isFinalMutation
-            ? [{ query: GetUserRatingsDocument }]
-            : undefined,
-          awaitRefetchQueries: isFinalMutation,
-        });
-      }
+      await createUnlockRatings({
+        variables: {
+          subject: classInfo.subject,
+          courseNumber: classInfo.courseNumber,
+          semester: termInfo.semester,
+          year: termInfo.year,
+          classNumber: classInfo.classNumber,
+          metrics,
+        },
+        refetchQueries: [{ query: GetUserRatingsDocument }],
+        awaitRefetchQueries: true,
+      });
     },
-    [createUnlockRating]
+    [createUnlockRatings]
   );
 
   const shouldShowUnlockModal =
