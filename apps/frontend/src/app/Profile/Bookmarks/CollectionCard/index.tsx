@@ -23,6 +23,7 @@ interface CollectionCardProps {
   onPin?: (isPinned: boolean) => void;
   onRename?: () => void;
   onDelete?: () => void;
+  onClick?: () => void;
 }
 
 const COLORS = [
@@ -58,6 +59,7 @@ export function CollectionCard({
   onPin,
   onRename,
   onDelete,
+  onClick,
 }: CollectionCardProps) {
   const [bgColor, setBgColor] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -71,6 +73,7 @@ export function CollectionCard({
       className={styles.root}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick}
     >
       {bgColor && (
         <div

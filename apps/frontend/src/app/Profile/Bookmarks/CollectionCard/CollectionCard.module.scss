@@ -9,6 +9,7 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 
   :global(body[data-theme="dark"]) &,
   :global(body:not([data-theme])) & {

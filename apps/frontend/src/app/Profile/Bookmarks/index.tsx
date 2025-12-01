@@ -139,6 +139,7 @@ export default function Bookmarks() {
                       onPin={(isPinned) => handlePin(collection.id, isPinned)}
                       onRename={() => handleRenameClick(collection)}
                       onDelete={() => handleDeleteClick(collection)}
+                      onClick={() => console.log("Clicked:", collection.name)}
                     />
                   </motion.div>
                 ))}
