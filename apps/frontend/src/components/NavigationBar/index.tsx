@@ -7,7 +7,6 @@ import {
   LogOut,
   Menu,
   ProfileCircle,
-  Settings,
   Star,
   SunLight,
   User,
@@ -20,7 +19,6 @@ import {
   Flex,
   IconButton,
   MenuItem,
-  Tooltip,
   useTheme,
 } from "@repo/theme";
 
@@ -35,51 +33,56 @@ interface NavigationBarProps {
   accentColor?: string;
 }
 
-const ThemeIcon = ({
+const ThemeDropdown = ({
   theme,
   setTheme,
 }: {
   theme: "light" | "dark" | null;
   setTheme: (theme: "light" | "dark" | null) => void;
 }) => {
+  const systemPrefersDark =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  const effectiveTheme =
+    theme === null ? (systemPrefersDark ? "dark" : "light") : theme;
+
   return (
-    <Tooltip
-      trigger={
-        <IconButton
-          variant="solid"
-          onClick={() =>
-            setTheme(
-              theme === "light" ? "dark" : theme === "dark" ? null : "light"
-            )
-          }
-          aria-label="Toggle theme"
-        >
-          {theme === "light" ? (
-            <SunLight
-              width={18}
-              height={18}
-              className={styles.themeIcon}
-              aria-label="Light theme"
-            />
-          ) : theme === "dark" ? (
-            <HalfMoon
-              width={18}
-              height={18}
-              className={styles.themeIcon}
-              aria-label="Dark theme"
-            />
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <IconButton className={styles.themeButton} aria-label="Toggle theme">
+          {effectiveTheme === "light" ? (
+            <SunLight width={18} height={18} />
           ) : (
-            <Settings
-              width={18}
-              height={18}
-              className={styles.themeIcon}
-              aria-label="System theme"
-            />
+            <HalfMoon width={18} height={18} />
           )}
         </IconButton>
-      }
-      title="Toggle theme"
-    />
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content
+        sideOffset={5}
+        align="end"
+        className={styles.themeDropdown}
+      >
+        <DropdownMenu.Item
+          className={styles.themeDropdownItem}
+          onSelect={() => setTheme("light")}
+        >
+          Light
+        </DropdownMenu.Item>
+        <DropdownMenu.Item
+          className={styles.themeDropdownItem}
+          onSelect={() => setTheme("dark")}
+        >
+          Dark
+        </DropdownMenu.Item>
+        <DropdownMenu.Item
+          className={styles.themeDropdownItem}
+          onSelect={() => setTheme(null)}
+        >
+          System
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   );
 };
 
@@ -212,7 +215,7 @@ export default function NavigationBar({
           <ArrowRight />
         </Button>
       )}
-      <ThemeIcon theme={theme} setTheme={setTheme} />
+      <ThemeDropdown theme={theme} setTheme={setTheme} />
       {/* <PinsDrawer>
         <IconButton>
           <Pin />

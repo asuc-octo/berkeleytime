@@ -1,6 +1,6 @@
 import { LogOut } from "iconoir-react";
 
-import { Button, PillSwitcher, Theme, useTheme } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import useUser from "@/hooks/useUser";
 import { signOut } from "@/lib/api";
@@ -8,19 +8,8 @@ import { signOut } from "@/lib/api";
 import profileStyles from "../Profile.module.scss";
 import styles from "./Account.module.scss";
 
-const themeOptions = [
-  { value: "system", label: "System" },
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
-];
-
 export default function Account() {
   const { user } = useUser();
-  const { theme, setTheme } = useTheme();
-
-  const handleThemeChange = (value: string) => {
-    setTheme(value === "system" ? null : (value as Theme));
-  };
 
   return (
     <div className={profileStyles.contentInner}>
@@ -42,14 +31,6 @@ export default function Account() {
               <span className={styles.infoValue}>
                 {user?.student ? "Yes" : "No"}
               </span>
-            </div>
-            <div className={styles.infoItem}>
-              <label>Theme</label>
-              <PillSwitcher
-                items={themeOptions}
-                value={theme ?? "system"}
-                onValueChange={handleThemeChange}
-              />
             </div>
           </div>
           <Button

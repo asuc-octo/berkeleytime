@@ -1,15 +1,7 @@
 .root {
-
-
-  .themeIcon {
-    color: var(--paragraph-color);
-    cursor: pointer;
-    transition: all 100ms ease-in-out;
-
-    &:hover {
-      color: var(--heading-color);
-      background-color: var(--foreground-color);
-    }
+  .themeButton,
+  .themeButton[data-variant="outline"] {
+    border: none !important;
   }
 
   .brand {
