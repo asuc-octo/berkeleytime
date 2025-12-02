@@ -4,9 +4,14 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { Button, Dialog } from "@repo/theme";
 
-import CollectionNameInput from "@/components/CollectionNameInput";
+import CollectionNameInput, {
+  COLLECTION_COLORS,
+} from "@/components/CollectionNameInput";
 
 import styles from "./CollectionModal.module.scss";
+
+const getRandomColor = () =>
+  COLLECTION_COLORS[Math.floor(Math.random() * COLLECTION_COLORS.length)];
 
 interface CollectionModalProps {
   isOpen: boolean;
@@ -53,7 +58,7 @@ export function CollectionModal({
   useEffect(() => {
     if (isOpen) {
       setName(mode === "rename" ? "" : (initialName ?? ""));
-      setColor(initialColor);
+      setColor(mode === "create" ? getRandomColor() : initialColor);
     }
   }, [isOpen, initialName, initialColor, mode]);
 
@@ -62,13 +67,13 @@ export function CollectionModal({
     if (!isColorMode && (!name.trim() || hasError)) return;
     onSubmit(isColorMode ? originalName : name.trim(), color);
     setName("");
-    setColor(null);
+    setColor(getRandomColor());
     onClose();
   };
 
   const handleClose = () => {
     setName("");
-    setColor(null);
+    setColor(getRandomColor());
     onClose();
   };
 

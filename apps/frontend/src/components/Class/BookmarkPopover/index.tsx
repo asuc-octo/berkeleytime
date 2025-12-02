@@ -13,13 +13,17 @@ import { Popover } from "radix-ui";
 
 import { IconButton } from "@repo/theme";
 
-import CollectionNameInput from "@/components/CollectionNameInput";
+import CollectionNameInput, {
+  COLLECTION_COLORS,
+} from "@/components/CollectionNameInput";
 import {
   useAddClassToCollection,
   useCreateCollection,
   useGetAllCollections,
   useRemoveClassFromCollection,
 } from "@/hooks/api/collections";
+import useUser from "@/hooks/useUser";
+import { signIn } from "@/lib/api";
 import { CollectionColor, Semester } from "@/lib/generated/graphql";
 import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
 
@@ -43,6 +47,7 @@ export default function BookmarkPopover({
   classInfo,
   disabled = false,
 }: BookmarkPopoverProps) {
+  const { user } = useUser();
   const { data: apiCollections, loading: collectionsLoading } =
     useGetAllCollections();
   const [createCollection] = useCreateCollection();
@@ -118,10 +123,13 @@ export default function BookmarkPopover({
     initialCollectionIds.current = new Set(collections.map((c) => c.id));
   }
 
+  const getRandomColor = () =>
+    COLLECTION_COLORS[Math.floor(Math.random() * COLLECTION_COLORS.length)];
+
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [newCollectionColor, setNewCollectionColor] = useState<string | null>(
-    null
+    getRandomColor
   );
   const existingNames = collections.map((c) => c.name.toLowerCase());
   const hasConflict =
@@ -213,7 +221,7 @@ export default function BookmarkPopover({
       });
 
       setNewCollectionName("");
-      setNewCollectionColor(null);
+      setNewCollectionColor(getRandomColor());
       setIsCreateFormOpen(false);
     } catch (error) {
       console.error("Failed to create collection:", error);
@@ -233,7 +241,7 @@ export default function BookmarkPopover({
   const resetForm = () => {
     setIsCreateFormOpen(false);
     setNewCollectionName("");
-    setNewCollectionColor(null);
+    setNewCollectionColor(getRandomColor());
   };
 
   const isAnyClassSaved = savedCollectionIds.size > 0;
@@ -281,6 +289,11 @@ export default function BookmarkPopover({
           })}
           disabled={disabled || !classInfo || collectionsLoading}
           onClick={(e) => {
+            if (!user) {
+              e.preventDefault();
+              signIn();
+              return;
+            }
             if (!isAnyClassSaved && classInfo) {
               e.preventDefault();
               handleQuickAdd();
@@ -319,12 +332,13 @@ export default function BookmarkPopover({
                     className={styles.collectionRow}
                   >
                     <span className={styles.collectionName}>
-                      {collection.isPinned && (
-                        <PinSolid
-                          width={14}
-                          height={14}
-                          className={styles.pinIcon}
+                      {collection.color ? (
+                        <span
+                          className={styles.colorIndicator}
+                          data-color={collection.color}
                         />
+                      ) : (
+                        <span className={styles.colorIndicatorEmpty} />
                       )}
                       <span>
                         {collection.name}{" "}
@@ -332,6 +346,13 @@ export default function BookmarkPopover({
                           ({collection.classCount})
                         </span>
                       </span>
+                      {collection.isPinned && (
+                        <PinSolid
+                          width={14}
+                          height={14}
+                          className={styles.pinIcon}
+                        />
+                      )}
                     </span>
                     <IconButton
                       className={classNames(styles.bookmark, {

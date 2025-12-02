@@ -44,9 +44,9 @@
   position: absolute;
   display: flex;
   width: 360px;
+  min-height: 200px;
   padding: 16px;
-  padding-bottom: 50px;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);

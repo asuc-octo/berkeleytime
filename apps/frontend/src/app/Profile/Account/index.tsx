@@ -1,14 +1,17 @@
-import { PillSwitcher, Theme, useTheme } from "@repo/theme";
+import { LogOut } from "iconoir-react";
+
+import { Button, PillSwitcher, Theme, useTheme } from "@repo/theme";
 
 import useUser from "@/hooks/useUser";
+import { signOut } from "@/lib/api";
 
 import profileStyles from "../Profile.module.scss";
 import styles from "./Account.module.scss";
 
 const themeOptions = [
-  { value: "system", label: "System preference" },
-  { value: "light", label: "Light mode" },
-  { value: "dark", label: "Dark mode" },
+  { value: "system", label: "System" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
 ];
 
 export default function Account() {
@@ -49,6 +52,14 @@ export default function Account() {
               />
             </div>
           </div>
+          <Button
+            variant="tertiary"
+            onClick={() => signOut()}
+            style={{ color: "var(--red-500)" }}
+          >
+            <LogOut width={16} height={16} />
+            Sign Out
+          </Button>
         </div>
       </div>
     </div>

@@ -32,7 +32,7 @@ export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
   };
 
   return (
-    <Card.RootColumn hoverColorChange={false}>
+    <Card.RootColumn hoverColorChange={false} className={styles.root}>
       <div className={styles.header}>
         <div className={styles.classInfo}>
           <span className={styles.className}>

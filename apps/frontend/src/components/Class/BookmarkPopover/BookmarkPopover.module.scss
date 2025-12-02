@@ -45,7 +45,7 @@
   word-wrap: break-word;
   display: flex;
   align-items: flex-start;
-  gap: 4px;
+  gap: 8px;
 }
 
 .pinIcon {
@@ -57,6 +57,41 @@
 .collectionCount {
   color: var(--secondary-color);
   font-weight: var(--font-normal);
+}
+
+.colorIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.colorIndicatorEmpty {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 4px;
+  background-color: var(--zinc-50);
+  box-sizing: border-box;
+
+  :global(body[data-theme="dark"]) &,
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--button-hover-color);
+    }
+  }
+
+  :global(body[data-theme="dark"]) & {
+    background-color: var(--button-hover-color);
+  }
+}
+
+@each $color in (red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose) {
+  .colorIndicator[data-color="#{$color}"] {
+    background-color: var(--#{$color}-400);
+  }
 }
 
 .createCollectionBtn {

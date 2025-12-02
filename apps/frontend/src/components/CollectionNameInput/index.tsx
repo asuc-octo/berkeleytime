@@ -63,7 +63,10 @@ export function CollectionNameInput({
         className={classNames(styles.input, { [styles.inputError]: hasError })}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          const val = e.target.value;
+          onChange(val.charAt(0).toUpperCase() + val.slice(1));
+        }}
         onKeyDown={handleKeyDown}
         autoFocus={autoFocus}
         disabled={disabled}

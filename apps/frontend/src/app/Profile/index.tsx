@@ -2,7 +2,6 @@ import classNames from "classnames";
 import {
   Bookmark,
   ChatBubbleQuestion,
-  LogOut,
   ProfileCircle,
   Star,
 } from "iconoir-react";
@@ -10,7 +9,6 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import UserContext from "@/contexts/UserContext";
 import { useReadUser } from "@/hooks/api";
-import { signOut } from "@/lib/api";
 
 import styles from "./Profile.module.scss";
 
@@ -78,10 +76,6 @@ export default function Root() {
                 </div>
               )}
             </NavLink>
-          </div>
-          <div className={styles.navItem} onClick={() => signOut()}>
-            <LogOut />
-            <span>Sign Out</span>
           </div>
         </div>
         <div className={styles.content}>

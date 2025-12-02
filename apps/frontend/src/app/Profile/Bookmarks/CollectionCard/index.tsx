@@ -122,7 +122,6 @@ export function CollectionCard({
   const topClass = previewClasses[0];
   const secondClass = previewClasses[1];
   const showCards = previewClasses.length > 0;
-  const showSecondCard = previewClasses.length > 1;
 
   return (
     <div
@@ -136,26 +135,18 @@ export function CollectionCard({
         {topClass && (
           <motion.div
             className={styles.stackedCard}
-            animate={
-              showSecondCard
-                ? {
-                    top: isHovered ? 35 : 40,
-                    left: 0,
-                    rotate: isHovered ? -3 : -3.5,
-                  }
-                : {
-                    top: isHovered ? 25 : 35,
-                    left: 0,
-                    rotate: 0,
-                  }
-            }
+            animate={{
+              top: isHovered ? 35 : 40,
+              left: 0,
+              rotate: isHovered ? -3 : -3.5,
+            }}
             transition={springTransition}
             style={{ zIndex: 2 }}
           >
             <TiltedCardContent classData={topClass} />
           </motion.div>
         )}
-        {showSecondCard && secondClass && (
+        {topClass && (
           <motion.div
             className={styles.stackedCard}
             animate={{
@@ -166,7 +157,7 @@ export function CollectionCard({
             transition={springTransition}
             style={{ zIndex: 1 }}
           >
-            <TiltedCardContent classData={secondClass} />
+            {secondClass && <TiltedCardContent classData={secondClass} />}
           </motion.div>
         )}
       </div>
