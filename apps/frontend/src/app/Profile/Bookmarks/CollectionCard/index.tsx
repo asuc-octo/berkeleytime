@@ -171,7 +171,7 @@ export function CollectionCard({
                 color={isSystem ? "currentColor" : "var(--blue-500)"}
               />
             )}
-            {name}
+            <span>{name}</span>
           </p>
           <p className={styles.classCount}>
             {classCount === 0 ? "No class added" : `${classCount} classes`}

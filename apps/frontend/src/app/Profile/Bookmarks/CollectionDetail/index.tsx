@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { motion } from "framer-motion";
-import { NavArrowRight, Xmark } from "iconoir-react";
+import { ArrowLeft, NavArrowRight, Xmark } from "iconoir-react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { Boundary, Flex, LoadingIndicator } from "@repo/theme";
@@ -140,6 +140,7 @@ export default function CollectionDetail() {
       <div className={styles.sidebar}>
         <div className={styles.header}>
           <button className={styles.backButton} onClick={handleBack}>
+            <ArrowLeft width={12} height={12} />
             Back
           </button>
           <h2 className={styles.title}>{collection.name}</h2>
@@ -157,6 +158,7 @@ export default function CollectionDetail() {
         <div className={styles.header}>
           <div className={styles.headerTop}>
             <button className={styles.backButton} onClick={handleBack}>
+              <ArrowLeft width={12} height={12} />
               Back
             </button>
             <button

@@ -15,7 +15,8 @@
   .header {
     padding: 16px 20px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
     flex-shrink: 0;
   }
@@ -24,21 +25,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     padding: 4px 12px;
     height: 32px;
     font-size: var(--text-14);
     font-weight: var(--font-medium);
-    color: var(--paragraph-color);
+    color: var(--blue-500);
     background: transparent;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     cursor: pointer;
     width: fit-content;
+    outline: none;
     transition: background-color 0.2s ease;
 
     &:hover {
       background-color: var(--button-hover-color);
+    }
+
+    &:focus-visible {
+      border-color: var(--blue-500);
     }
   }
 
@@ -48,6 +54,7 @@
     color: var(--heading-color);
     margin: 0;
     letter-spacing: -0.18px;
+    margin-left: 10px;
   }
 
   .listContainer {
@@ -142,21 +149,26 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     padding: 4px 12px;
     height: 32px;
     font-size: var(--text-14);
     font-weight: var(--font-medium);
-    color: var(--paragraph-color);
+    color: var(--blue-500);
     background: transparent;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     cursor: pointer;
     width: fit-content;
+    outline: none;
     transition: background-color 0.2s ease;
 
     &:hover {
       background-color: var(--button-hover-color);
+    }
+
+    &:focus-visible {
+      border-color: var(--blue-500);
     }
   }
 

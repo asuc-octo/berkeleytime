@@ -5,6 +5,11 @@
   background-color: color-mix(in srgb, currentColor 10%, transparent);
 }
 
+.bookmark:focus-visible,
+.bookmark[data-variant="outline"]:focus-visible {
+  border-color: var(--blue-500);
+}
+
 .bookmarkPopover {
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
@@ -107,9 +112,11 @@
   font-weight: var(--font-medium);
   color: var(--blue-500);
   cursor: pointer;
+  outline: none;
   transition: background-color 150ms ease;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background-color: var(--button-hover-color);
   }
 }

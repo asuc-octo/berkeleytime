@@ -45,10 +45,15 @@
   color: var(--paragraph-color);
   font-size: var(--text-14);
   cursor: pointer;
+  outline: none;
   transition: border-color 150ms ease;
   white-space: nowrap;
 
   &:hover {
+    border-color: var(--blue-500);
+  }
+
+  &:focus-visible {
     border-color: var(--blue-500);
   }
 }
