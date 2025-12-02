@@ -1,10 +1,32 @@
 import { gql } from "graphql-tag";
 
 export const collectionTypeDef = gql`
+  enum CollectionColor {
+    red
+    orange
+    amber
+    yellow
+    lime
+    green
+    emerald
+    teal
+    cyan
+    sky
+    blue
+    indigo
+    violet
+    purple
+    fuchsia
+    pink
+    rose
+  }
+
   type Collection {
     _id: ID!
     createdBy: String!
     name: String!
+    color: CollectionColor
+    pinnedAt: String
     classes: [CollectionClass!]!
     createdAt: String!
     updatedAt: String!
@@ -12,18 +34,13 @@ export const collectionTypeDef = gql`
 
   type CollectionClass {
     class: Class
-    personalNote: PersonalNote
     error: String
-  }
-
-  type PersonalNote {
-    text: String!
-    updatedAt: String!
   }
 
   type Query {
     myCollections: [Collection!]! @auth
     myCollection(name: String!): Collection @auth
+    myCollectionById(id: ID!): Collection @auth
   }
 
   input AddClassInput {
@@ -34,11 +51,6 @@ export const collectionTypeDef = gql`
     subject: String!
     courseNumber: CourseNumber!
     classNumber: ClassNumber!
-    personalNote: PersonalNoteInput
-  }
-
-  input PersonalNoteInput {
-    text: String!
   }
 
   input RemoveClassInput {
@@ -51,8 +63,15 @@ export const collectionTypeDef = gql`
     classNumber: ClassNumber!
   }
 
+  input UpdateCollectionInput {
+    name: String
+    color: CollectionColor
+    pinned: Boolean
+  }
+
   type Mutation {
-    renameCollection(oldName: String!, newName: String!): Collection! @auth
+    updateCollection(name: String!, input: UpdateCollectionInput!): Collection!
+      @auth
     deleteCollection(name: String!): Boolean! @auth
     addClassToCollection(input: AddClassInput!): Collection! @auth
     removeClassFromCollection(input: RemoveClassInput!): Collection! @auth

@@ -10,19 +10,31 @@ import { Flex } from "@repo/theme";
 import Class from "@/components/Class";
 import ClassCard from "@/components/ClassCard";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
+import { useGetCollectionById } from "@/hooks/api/collections";
 import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./CollectionDetail.module.scss";
-import { dummyCollection } from "./dummyData";
 
 export default function CollectionDetail() {
   const navigate = useNavigate();
-  const { subject, courseNumber, number } = useParams();
+  const { id, subject, courseNumber, number } = useParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
 
-  const collection = dummyCollection;
-  const classes = collection.classes;
+  const {
+    data: collection,
+    loading: collectionLoading,
+    error: collectionError,
+  } = useGetCollectionById(id ?? "");
+
+  // Filter out classes that couldn't be found in the catalog
+  const classes = useMemo(
+    () =>
+      collection?.classes
+        ?.filter((c) => c.class !== null)
+        .map((c) => c.class!) ?? [],
+    [collection]
+  );
 
   const selectedClassInfo = useMemo(() => {
     if (!subject || !courseNumber || !number) return null;
@@ -52,11 +64,11 @@ export default function CollectionDetail() {
   const handleClassSelect = useCallback(
     (classItem: (typeof classes)[0]) => {
       navigate(
-        `/collection/demo/${classItem.subject.toLowerCase()}/${classItem.courseNumber.toLowerCase()}/${classItem.number}`
+        `/collection/${id}/${classItem.subject.toLowerCase()}/${classItem.courseNumber.toLowerCase()}/${classItem.number}`
       );
       setDrawerOpen(false);
     },
-    [navigate]
+    [navigate, id]
   );
 
   useEffect(() => {
@@ -90,6 +102,27 @@ export default function CollectionDetail() {
       style={{ cursor: "pointer" }}
     />
   ));
+
+  if (collectionLoading) {
+    return (
+      <div className={styles.root}>
+        <div className={styles.loadingState}>Loading collection...</div>
+      </div>
+    );
+  }
+
+  if (collectionError || !collection) {
+    return (
+      <div className={styles.root}>
+        <div className={styles.errorState}>
+          <p>Collection not found</p>
+          <button className={styles.backButton} onClick={handleBack}>
+            Back to bookmarks
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div

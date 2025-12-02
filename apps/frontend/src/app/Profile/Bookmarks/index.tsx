@@ -99,6 +99,12 @@ export default function Bookmarks() {
     }
   };
 
+  const handleColorChange = (id: string, color: string | null) => {
+    setCollections((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, color } : c))
+    );
+  };
+
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setCollectionToDelete(null);
@@ -155,8 +161,9 @@ export default function Bookmarks() {
                       color={collection.color}
                       onPin={(isPinned) => handlePin(collection.id, isPinned)}
                       onRename={() => handleRenameClick(collection)}
+                      onColorChange={(color) => handleColorChange(collection.id, color)}
                       onDelete={() => handleDeleteClick(collection)}
-                      onClick={() => handleCollectionClick("/collection/demo")}
+                      onClick={() => handleCollectionClick(`/collection/${collection.id}`)}
                     />
                   </motion.div>
                 ))}

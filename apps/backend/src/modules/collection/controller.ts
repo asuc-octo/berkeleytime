@@ -1,11 +1,9 @@
 import { GraphQLError } from "graphql";
 import { Types } from "mongoose";
 
-import { ClassModel, CollectionModel } from "@repo/common";
+import { ClassModel, CollectionModel, CollectionColor } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
-
-const MAX_PERSONAL_NOTE_LENGTH = 5000;
 
 export interface RequestContext {
   user: {
@@ -22,10 +20,6 @@ export interface StoredClassEntry {
   subject: string;
   courseNumber: string;
   classNumber: string;
-  personalNote?: {
-    text: string;
-    updatedAt: Date;
-  };
 }
 
 // Type for collection documents returned from MongoDB
@@ -33,6 +27,8 @@ export interface CollectionDocument {
   _id: Types.ObjectId;
   createdBy: string;
   name: string;
+  color?: CollectionColor;
+  pinnedAt?: Date;
   classes: StoredClassEntry[];
   createdAt: Date;
   updatedAt: Date;
@@ -78,10 +74,29 @@ export const getCollection = async (
   return collection;
 };
 
-export const renameCollection = async (
+export const getCollectionById = async (
   context: RequestContext,
-  oldName: string,
-  newName: string
+  id: string
+): Promise<CollectionDocument | null> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Query by ID, still verify ownership
+  const collection = (await CollectionModel.findOne({
+    _id: id,
+    createdBy: context.user._id,
+  }).lean()) as CollectionDocument | null;
+
+  return collection;
+};
+
+export const updateCollection = async (
+  context: RequestContext,
+  name: string,
+  input: CollectionModule.UpdateCollectionInput
 ): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -89,42 +104,60 @@ export const renameCollection = async (
     });
   }
 
-  // Validate new name
-  if (!newName || newName.trim().length === 0) {
-    throw new GraphQLError("New collection name cannot be empty", {
-      extensions: { code: "BAD_USER_INPUT" },
-    });
-  }
-
   // Find collection (with ownership verification)
   const collection = await CollectionModel.findOne({
     createdBy: context.user._id,
-    name: oldName,
+    name,
   });
 
   if (!collection) {
-    throw new GraphQLError("Collection not found", {
+    throw new GraphQLError(`Collection "${name}" not found`, {
       extensions: { code: "NOT_FOUND" },
     });
   }
 
-  // Check new name doesn't conflict
-  const existing = await CollectionModel.findOne({
-    createdBy: context.user._id,
-    name: newName,
-  });
+  // Build update object with only provided fields
+  const update: Record<string, unknown> = {};
 
-  if (existing) {
-    throw new GraphQLError(`Collection "${newName}" already exists`, {
-      extensions: { code: "BAD_USER_INPUT" },
-    });
+  if (input.name !== undefined && input.name !== null) {
+    // Validate new name
+    if (!input.name.trim()) {
+      throw new GraphQLError("Collection name cannot be empty", {
+        extensions: { code: "BAD_USER_INPUT" },
+      });
+    }
+
+    // Check new name doesn't conflict (unless it's the same name)
+    if (input.name.trim() !== name) {
+      const existing = await CollectionModel.findOne({
+        createdBy: context.user._id,
+        name: input.name.trim(),
+      });
+
+      if (existing) {
+        throw new GraphQLError(`Collection "${input.name}" already exists`, {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
+      }
+    }
+
+    update.name = input.name.trim();
   }
 
-  // Update name
-  collection.name = newName;
-  await collection.save();
+  if (input.color !== undefined) {
+    update.color = input.color; // null clears the color
+  }
 
-  return collection.toObject() as unknown as CollectionDocument;
+  // Backend generates timestamp - prevents client-side injection
+  if (input.pinned !== undefined && input.pinned !== null) {
+    update.pinnedAt = input.pinned ? new Date() : null;
+  }
+
+  const result = await CollectionModel.findByIdAndUpdate(collection._id, update, {
+    new: true,
+  });
+
+  return result!.toObject() as unknown as CollectionDocument;
 };
 
 export const deleteCollection = async (
@@ -171,7 +204,6 @@ export const addClassToCollection = async (
     subject,
     courseNumber,
     classNumber,
-    personalNote,
   } = input;
 
   // Validate collection name
@@ -179,14 +211,6 @@ export const addClassToCollection = async (
     throw new GraphQLError("Collection name cannot be empty", {
       extensions: { code: "BAD_USER_INPUT" },
     });
-  }
-
-  // Validate personal note length
-  if (personalNote && personalNote.text.length > MAX_PERSONAL_NOTE_LENGTH) {
-    throw new GraphQLError(
-      `Personal note cannot exceed ${MAX_PERSONAL_NOTE_LENGTH} characters`,
-      { extensions: { code: "BAD_USER_INPUT" } }
-    );
   }
 
   // Verify class exists in catalog
@@ -205,15 +229,6 @@ export const addClassToCollection = async (
     });
   }
 
-  // Normalize personalNote: treat empty/whitespace text as undefined
-  const normalizedPersonalNote =
-    personalNote && personalNote.text.trim().length > 0
-      ? {
-          text: personalNote.text.trim(),
-          updatedAt: new Date(),
-        }
-      : undefined;
-
   const classIdentifier = {
     year,
     semester,
@@ -223,34 +238,27 @@ export const addClassToCollection = async (
     classNumber,
   };
 
-  // Try to update existing class's note in collection
-  let result = await CollectionModel.findOneAndUpdate(
-    {
-      createdBy: context.user._id,
-      name: collectionName,
-      classes: { $elemMatch: classIdentifier },
-    },
-    {
-      $set: { "classes.$.personalNote": normalizedPersonalNote },
-    },
-    { new: true }
-  );
+  // Check if class already exists in collection
+  const existingCollection = await CollectionModel.findOne({
+    createdBy: context.user._id,
+    name: collectionName,
+    classes: { $elemMatch: classIdentifier },
+  });
 
-  if (result) {
-    return result.toObject() as unknown as CollectionDocument;
+  if (existingCollection) {
+    // Class already in collection, return as-is
+    return existingCollection.toObject() as unknown as CollectionDocument;
   }
 
   // Add class to existing or new collection
-  result = await CollectionModel.findOneAndUpdate(
+  const result = await CollectionModel.findOneAndUpdate(
     {
       createdBy: context.user._id,
       name: collectionName,
     },
     {
       $setOnInsert: { createdBy: context.user._id, name: collectionName },
-      $push: {
-        classes: { ...classIdentifier, personalNote: normalizedPersonalNote },
-      },
+      $push: { classes: classIdentifier },
     },
     { upsert: true, new: true }
   );

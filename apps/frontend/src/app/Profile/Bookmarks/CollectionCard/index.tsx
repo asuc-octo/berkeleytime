@@ -3,7 +3,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookStack,
+  Circle,
+  EditPencil,
   MoreHoriz,
+  NavArrowRight,
   Pin,
   PinSlash,
   PinSolid,
@@ -12,6 +15,8 @@ import {
 } from "iconoir-react";
 
 import { DropdownMenu, IconButton } from "@repo/theme";
+
+import { COLLECTION_COLORS } from "@/components/CollectionNameInput";
 
 import styles from "./CollectionCard.module.scss";
 
@@ -22,6 +27,7 @@ interface CollectionCardProps {
   color?: string | null;
   onPin?: (isPinned: boolean) => void;
   onRename?: () => void;
+  onColorChange?: (color: string | null) => void;
   onDelete?: () => void;
   onClick?: () => void;
 }
@@ -39,6 +45,7 @@ export function CollectionCard({
   color = null,
   onPin,
   onRename,
+  onColorChange,
   onDelete,
   onClick,
 }: CollectionCardProps) {
@@ -145,6 +152,30 @@ export function CollectionCard({
               <DropdownMenu.Item onSelect={onRename}>
                 <BookStack width={18} height={18} /> Rename collection
               </DropdownMenu.Item>
+              <DropdownMenu.Sub>
+                <DropdownMenu.SubTrigger>
+                  <EditPencil width={18} height={18} /> Edit color
+                  <NavArrowRight
+                    width={14}
+                    height={14}
+                    style={{ marginLeft: "auto" }}
+                  />
+                </DropdownMenu.SubTrigger>
+                <DropdownMenu.SubContent sideOffset={-2}>
+                  <DropdownMenu.Item onSelect={() => onColorChange?.(null)}>
+                    <span className={styles.colorDotOutline} /> No color
+                  </DropdownMenu.Item>
+                  {COLLECTION_COLORS.map((colorOption) => (
+                    <DropdownMenu.Item
+                      key={colorOption}
+                      onSelect={() => onColorChange?.(colorOption)}
+                    >
+                      <span className={styles.colorDot} data-color={colorOption} />{" "}
+                      {colorOption.charAt(0).toUpperCase() + colorOption.slice(1)}
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.SubContent>
+              </DropdownMenu.Sub>
               <DropdownMenu.Item isDelete onSelect={onDelete}>
                 <Trash width={18} height={18} /> Delete collection
               </DropdownMenu.Item>

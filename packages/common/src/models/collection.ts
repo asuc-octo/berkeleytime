@@ -1,5 +1,27 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
+export const COLLECTION_COLORS = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+] as const;
+
+export type CollectionColor = (typeof COLLECTION_COLORS)[number];
+
 export const collectionSchema = new Schema(
   {
     createdBy: {
@@ -12,6 +34,17 @@ export const collectionSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    color: {
+      type: String,
+      enum: COLLECTION_COLORS,
+      required: false,
+      default: undefined,
+    },
+    pinnedAt: {
+      type: Date,
+      required: false,
+      default: undefined,
     },
     classes: {
       required: true,
@@ -42,20 +75,6 @@ export const collectionSchema = new Schema(
           classNumber: {
             type: String,
             required: true,
-          },
-          personalNote: {
-            type: {
-              text: {
-                type: String,
-                required: true,
-              },
-              updatedAt: {
-                type: Date,
-                required: true,
-              },
-            },
-            required: false,
-            default: undefined,
           },
         },
       ],

@@ -12,6 +12,8 @@ interface CollectionParent {
   _id: string;
   createdBy: string;
   name: string;
+  color: CollectionModule.CollectionColor | null;
+  pinnedAt: string | null;
   classes: StoredClassEntry[];
   createdAt: string;
   updatedAt: string;
@@ -26,6 +28,12 @@ const mapCollectionToGraphQL = (
     _id: collection._id.toString(),
     createdBy: collection.createdBy,
     name: collection.name,
+    color: (collection.color as CollectionModule.CollectionColor) ?? null,
+    pinnedAt: collection.pinnedAt
+      ? collection.pinnedAt instanceof Date
+        ? collection.pinnedAt.toISOString()
+        : String(collection.pinnedAt)
+      : null,
     classes: collection.classes,
     createdAt:
       collection.createdAt instanceof Date
@@ -78,15 +86,35 @@ const resolvers: CollectionModule.Resolvers = {
         );
       }
     },
+
+    myCollectionById: async (_, { id }, context) => {
+      try {
+        const collection = await controller.getCollectionById(context, id);
+        if (!collection) {
+          return null;
+        }
+        return mapCollectionToGraphQL(collection);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
   },
 
   Mutation: {
-    renameCollection: async (_, { oldName, newName }, context) => {
+    updateCollection: async (_, { name, input }, context) => {
       try {
-        const collection = await controller.renameCollection(
+        const collection = await controller.updateCollection(
           context,
-          oldName,
-          newName
+          name,
+          input
         );
         return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
@@ -190,18 +218,6 @@ const resolvers: CollectionModule.Resolvers = {
         ])
       );
 
-      // Helper to format personal note
-      const formatPersonalNote = (note: StoredClassEntry["personalNote"]) =>
-        note
-          ? {
-              text: note.text,
-              updatedAt:
-                note.updatedAt instanceof Date
-                  ? note.updatedAt.toISOString()
-                  : String(note.updatedAt),
-            }
-          : null;
-
       return typedParent.classes.map(
         (classEntry): CollectionModule.CollectionClass => {
           const key = `${classEntry.year}|${classEntry.semester}|${classEntry.sessionId}|${classEntry.subject}|${classEntry.courseNumber}|${classEntry.classNumber}`;
@@ -219,7 +235,6 @@ const resolvers: CollectionModule.Resolvers = {
 
             return {
               class: null,
-              personalNote: formatPersonalNote(classEntry.personalNote),
               error: "CLASS_NOT_FOUND_IN_CATALOG",
             };
           }
@@ -227,7 +242,6 @@ const resolvers: CollectionModule.Resolvers = {
           return {
             // Cast to Class - nested fields resolved by Class field resolvers
             class: classData as unknown as CollectionModule.Class,
-            personalNote: formatPersonalNote(classEntry.personalNote),
             error: null,
           };
         }

@@ -224,7 +224,7 @@ const router = createBrowserRouter([
             <CollectionDetail />
           </SuspenseBoundary>
         ),
-        path: "collection/demo/:subject?/:courseNumber?/:number?",
+        path: "collection/:id/:subject?/:courseNumber?/:number?",
         children: [
           {
             element: (
