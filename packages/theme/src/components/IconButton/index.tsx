@@ -7,7 +7,7 @@ import styles from "./IconButton.module.scss";
 interface Props<T> {
   active?: boolean;
   disabled?: boolean;
-  variant?: "outline";
+  variant?: "outline" | "solid";
   as?: T;
 }
 

@@ -1,4 +1,17 @@
 .root {
+
+
+  .themeIcon {
+    color: var(--paragraph-color);
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+
+    &:hover {
+      color: var(--heading-color);
+      background-color: var(--foreground-color);
+    }
+  }
+
   .brand {
     font-size: 24px;
     font-weight: 580;

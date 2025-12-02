@@ -5,9 +5,9 @@ import {
   ChatBubbleQuestion,
   HalfMoon,
   LogOut,
-  MacOsWindow,
   Menu,
   ProfileCircle,
+  Settings,
   Star,
   SunLight,
   User,
@@ -20,6 +20,7 @@ import {
   Flex,
   IconButton,
   MenuItem,
+  Tooltip,
   useTheme,
 } from "@repo/theme";
 
@@ -34,10 +35,52 @@ interface NavigationBarProps {
   accentColor?: string;
 }
 
-const ThemeIcon = ({ theme }: { theme: "light" | "dark" | null }) => {
-  if (theme === "light") return <SunLight width={18} height={18} />;
-  if (theme === "dark") return <HalfMoon width={18} height={18} />;
-  return <MacOsWindow width={18} height={18} />;
+const ThemeIcon = ({
+  theme,
+  setTheme,
+}: {
+  theme: "light" | "dark" | null;
+  setTheme: (theme: "light" | "dark" | null) => void;
+}) => {
+  return (
+    <Tooltip
+      trigger={
+        <IconButton
+          variant="solid"
+          onClick={() =>
+            setTheme(
+              theme === "light" ? "dark" : theme === "dark" ? null : "light"
+            )
+          }
+          aria-label="Toggle theme"
+        >
+          {theme === "light" ? (
+            <SunLight
+              width={18}
+              height={18}
+              className={styles.themeIcon}
+              aria-label="Light theme"
+            />
+          ) : theme === "dark" ? (
+            <HalfMoon
+              width={18}
+              height={18}
+              className={styles.themeIcon}
+              aria-label="Dark theme"
+            />
+          ) : (
+            <Settings
+              width={18}
+              height={18}
+              className={styles.themeIcon}
+              aria-label="System theme"
+            />
+          )}
+        </IconButton>
+      }
+      title="Toggle theme"
+    />
+  );
 };
 
 export default function NavigationBar({
@@ -116,13 +159,13 @@ export default function NavigationBar({
               <User />
             </Button>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content sideOffset={5} align="end">
+          <DropdownMenu.Content sideOffset={5} align="center">
             <DropdownMenu.Item asChild>
               <Link to="/profile">
                 <ProfileCircle width={18} height={18} /> Account
               </Link>
             </DropdownMenu.Item>
-            <DropdownMenu.Sub>
+            {/* <DropdownMenu.Sub>
               <DropdownMenu.SubTrigger>
                 <ThemeIcon theme={theme} /> Appearance
               </DropdownMenu.SubTrigger>
@@ -137,7 +180,7 @@ export default function NavigationBar({
                   <SunLight width={18} height={18} /> Light
                 </DropdownMenu.Item>
               </DropdownMenu.SubContent>
-            </DropdownMenu.Sub>
+            </DropdownMenu.Sub> */}
             <DropdownMenu.Item asChild>
               <Link to="/profile/bookmarks">
                 <Bookmark width={18} height={18} /> Bookmarks
@@ -169,6 +212,7 @@ export default function NavigationBar({
           <ArrowRight />
         </Button>
       )}
+      <ThemeIcon theme={theme} setTheme={setTheme} />
       {/* <PinsDrawer>
         <IconButton>
           <Pin />
