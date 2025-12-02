@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import {
+  GetAllCollectionsDocument,
   GetCollectionByIdDocument,
   RemoveClassFromCollectionDocument,
   RemoveClassInput,
@@ -23,6 +24,9 @@ export const useRemoveClassFromCollection = () => {
           {
             query: GetCollectionByIdDocument,
             variables: { id: input.collectionId },
+          },
+          {
+            query: GetAllCollectionsDocument,
           },
         ],
         awaitRefetchQueries: false,

@@ -5,6 +5,7 @@ import { useMutation } from "@apollo/client/react";
 import {
   AddClassInput,
   AddClassToCollectionDocument,
+  GetAllCollectionsDocument,
   GetCollectionByIdDocument,
 } from "@/lib/generated/graphql";
 
@@ -23,6 +24,9 @@ export const useAddClassToCollection = () => {
           {
             query: GetCollectionByIdDocument,
             variables: { id: input.collectionId },
+          },
+          {
+            query: GetAllCollectionsDocument,
           },
         ],
         awaitRefetchQueries: false,
