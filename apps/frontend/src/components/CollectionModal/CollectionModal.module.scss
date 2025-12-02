@@ -11,17 +11,6 @@
   width: 100%;
 }
 
-.input {
-  &::placeholder {
-    color: var(--label-color);
-  }
-}
-
-.inputError,
-.inputError:focus {
-  border-color: var(--red-500);
-}
-
 .label {
   font-size: var(--text-12);
   font-weight: var(--font-medium);

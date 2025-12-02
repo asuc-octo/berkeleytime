@@ -8,24 +8,18 @@ import { useNavigate } from "react-router-dom";
 import { Button, Dialog, Grid } from "@repo/theme";
 
 import { CollectionModal } from "@/components/CollectionModal";
+import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
 
 import styles from "../Profile.module.scss";
 import { AddCollectionCard, CollectionCard } from "./CollectionCard";
 import deleteStyles from "./DeleteCollectionDialog.module.scss";
 
-interface Collection {
-  id: string;
-  name: string;
-  classCount: number;
-  isPinned: boolean;
-}
-
 const initialCollections: Collection[] = [
-  { id: "1", name: "All saved", classCount: 24, isPinned: false },
-  { id: "2", name: "Fall 2025", classCount: 8, isPinned: false },
-  { id: "3", name: "Spring 2026", classCount: 12, isPinned: false },
-  { id: "4", name: "Breadths", classCount: 5, isPinned: false },
-  { id: "5", name: "Major Requirements", classCount: 15, isPinned: false },
+  { id: "1", name: ALL_SAVED_COLLECTION_NAME, classCount: 24, isPinned: false, color: null, createdAt: 0 },
+  { id: "2", name: "Fall 2025", classCount: 8, isPinned: false, color: null, createdAt: 1 },
+  { id: "3", name: "Spring 2026", classCount: 12, isPinned: false, color: null, createdAt: 2 },
+  { id: "4", name: "Breadths", classCount: 5, isPinned: false, color: null, createdAt: 3 },
+  { id: "5", name: "Major Requirements", classCount: 15, isPinned: false, color: null, createdAt: 4 },
 ];
 
 export default function Bookmarks() {
@@ -56,12 +50,14 @@ export default function Bookmarks() {
     }
   }, [isExiting, exitPath, navigate]);
 
-  const handleCreateCollection = (name: string) => {
+  const handleCreateCollection = (name: string, color: string | null) => {
     const newCollection: Collection = {
       id: Date.now().toString(),
       name,
       classCount: 0,
       isPinned: false,
+      color,
+      createdAt: Date.now(),
     };
     setCollections((prev) => [...prev, newCollection]);
   };
@@ -93,11 +89,11 @@ export default function Bookmarks() {
     setCollectionToRename(null);
   };
 
-  const handleRenameCollection = (newName: string) => {
+  const handleRenameCollection = (newName: string, color: string | null) => {
     if (collectionToRename) {
       setCollections((prev) =>
         prev.map((c) =>
-          c.id === collectionToRename.id ? { ...c, name: newName } : c
+          c.id === collectionToRename.id ? { ...c, name: newName, color } : c
         )
       );
     }
@@ -156,6 +152,7 @@ export default function Bookmarks() {
                       name={collection.name}
                       classCount={collection.classCount}
                       isPinned={collection.isPinned}
+                      color={collection.color}
                       onPin={(isPinned) => handlePin(collection.id, isPinned)}
                       onRename={() => handleRenameClick(collection)}
                       onDelete={() => handleDeleteClick(collection)}
@@ -228,6 +225,7 @@ export default function Bookmarks() {
           .map((c) => c.name)}
         mode="rename"
         initialName={collectionToRename?.name}
+        initialColor={collectionToRename?.color}
       />
     </motion.div>
   );

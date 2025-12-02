@@ -3,7 +3,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookStack,
-  EditPencil,
   MoreHoriz,
   Pin,
   PinSlash,
@@ -20,31 +19,12 @@ interface CollectionCardProps {
   name: string;
   classCount: number;
   isPinned?: boolean;
+  color?: string | null;
   onPin?: (isPinned: boolean) => void;
   onRename?: () => void;
   onDelete?: () => void;
   onClick?: () => void;
 }
-
-const COLORS = [
-  "red",
-  "orange",
-  "amber",
-  "yellow",
-  "lime",
-  "green",
-  "emerald",
-  "teal",
-  "cyan",
-  "sky",
-  "blue",
-  "indigo",
-  "violet",
-  "purple",
-  "fuchsia",
-  "pink",
-  "rose",
-];
 
 const springTransition = {
   type: "spring" as const,
@@ -56,12 +36,12 @@ export function CollectionCard({
   name,
   classCount,
   isPinned = false,
+  color = null,
   onPin,
   onRename,
   onDelete,
   onClick,
 }: CollectionCardProps) {
-  const [bgColor, setBgColor] = useState<string | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const handlePinToggle = () => {
@@ -75,8 +55,8 @@ export function CollectionCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      {bgColor && (
-        <div className={styles.colorBackground} data-color={bgColor} />
+      {color && (
+        <div className={styles.colorBackground} data-color={color} />
       )}
       <div
         className={styles.cardsStack}
@@ -165,25 +145,6 @@ export function CollectionCard({
               <DropdownMenu.Item onSelect={onRename}>
                 <BookStack width={18} height={18} /> Rename collection
               </DropdownMenu.Item>
-              <DropdownMenu.Sub>
-                <DropdownMenu.SubTrigger>
-                  <EditPencil width={18} height={18} /> Change color
-                </DropdownMenu.SubTrigger>
-                <DropdownMenu.SubContent>
-                  <DropdownMenu.Item onSelect={() => setBgColor(null)}>
-                    <span className={styles.colorDotOutline} /> No color
-                  </DropdownMenu.Item>
-                  {COLORS.map((color) => (
-                    <DropdownMenu.Item
-                      key={color}
-                      onSelect={() => setBgColor(color)}
-                    >
-                      <span className={styles.colorDot} data-color={color} />{" "}
-                      {color.charAt(0).toUpperCase() + color.slice(1)}
-                    </DropdownMenu.Item>
-                  ))}
-                </DropdownMenu.SubContent>
-              </DropdownMenu.Sub>
               <DropdownMenu.Item isDelete onSelect={onDelete}>
                 <Trash width={18} height={18} /> Delete collection
               </DropdownMenu.Item>

@@ -2,17 +2,20 @@ import { FormEvent, useEffect, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 
-import { Button, Dialog, Input } from "@repo/theme";
+import { Button, Dialog } from "@repo/theme";
+
+import CollectionNameInput from "@/components/CollectionNameInput";
 
 import styles from "./CollectionModal.module.scss";
 
 interface CollectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (name: string) => void;
+  onSubmit: (name: string, color: string | null) => void;
   existingNames?: string[];
   mode?: "create" | "rename";
   initialName?: string;
+  initialColor?: string | null;
 }
 
 export function CollectionModal({
@@ -22,9 +25,11 @@ export function CollectionModal({
   existingNames = [],
   mode = "create",
   initialName,
+  initialColor = null,
 }: CollectionModalProps) {
   const originalName = initialName ?? "";
   const [name, setName] = useState("");
+  const [color, setColor] = useState<string | null>(initialColor);
 
   const hasConflict = existingNames.some(
     (existing) => existing.toLowerCase() === name.trim().toLowerCase()
@@ -40,20 +45,23 @@ export function CollectionModal({
 
   useEffect(() => {
     if (isOpen) {
-      setName("");
+      setName(initialName ?? "");
+      setColor(initialColor);
     }
-  }, [isOpen]);
+  }, [isOpen, initialName, initialColor]);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: FormEvent) => {
+    e?.preventDefault();
     if (!name.trim() || hasError) return;
-    onSubmit(name.trim());
+    onSubmit(name.trim(), color);
     setName("");
+    setColor(null);
     onClose();
   };
 
   const handleClose = () => {
     setName("");
+    setColor(null);
     onClose();
   };
 
@@ -73,12 +81,14 @@ export function CollectionModal({
                   animate={hasError ? { x: [0, -4, 4, -4, 4, 0] } : { x: 0 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <Input
-                    id="collection-name"
-                    className={`${styles.input} ${hasError ? styles.inputError : ""}`}
+                  <CollectionNameInput
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={setName}
+                    onSubmit={handleSubmit}
+                    color={color}
+                    onColorChange={setColor}
                     placeholder="New collection name"
+                    hasError={hasError}
                     autoFocus
                   />
                 </motion.div>
@@ -116,7 +126,7 @@ export function CollectionModal({
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button onClick={handleSubmit} disabled={!name.trim() || hasError}>
+            <Button onClick={() => handleSubmit()} disabled={!name.trim() || hasError}>
               {submitLabel}
             </Button>
           </Dialog.Footer>
