@@ -104,6 +104,21 @@
   }
 }
 
+.reserved {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reservedIcon {
+  color: var(--paragraph-color);
+  width: 14px;
+  height: 14px;
+}
+
 .footer {
   background-color: var(--foreground-color);
   border-top: 1px solid var(--border-color);

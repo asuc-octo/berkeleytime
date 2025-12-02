@@ -440,7 +440,17 @@ export default function Class({
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
-                    <BookmarkPopover disabled={userLoading} />
+                    <BookmarkPopover
+                      disabled={userLoading}
+                      classInfo={_class ? {
+                        year: _class.year,
+                        semester: _class.semester,
+                        sessionId: _class.sessionId,
+                        subject: _class.subject,
+                        courseNumber: _class.courseNumber,
+                        classNumber: _class.number,
+                      } : undefined}
+                    />
                     <ThemeTooltip
                       content="Open in Berkeley Catalog"
                       trigger={

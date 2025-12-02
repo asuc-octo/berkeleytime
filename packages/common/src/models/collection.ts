@@ -46,6 +46,11 @@ export const collectionSchema = new Schema(
       required: false,
       default: undefined,
     },
+    isSystem: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     classes: {
       required: true,
       default: [],
@@ -75,6 +80,11 @@ export const collectionSchema = new Schema(
           classNumber: {
             type: String,
             required: true,
+          },
+          addedAt: {
+            type: Date,
+            required: true,
+            default: Date.now,
           },
         },
       ],

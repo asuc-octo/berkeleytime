@@ -34,11 +34,12 @@ export function CollectionModal({
   const hasConflict = existingNames.some(
     (existing) => existing.toLowerCase() === name.trim().toLowerCase()
   );
+  const isTooLong = name.trim().length > 50;
 
   const isUnchanged = mode === "rename" && name.trim() === originalName;
 
   const isColorMode = mode === "color";
-  const hasError = !isColorMode && (hasConflict || isUnchanged);
+  const hasError = !isColorMode && (hasConflict || isTooLong || isUnchanged);
 
   const title = mode === "create"
     ? "New collection"
@@ -49,10 +50,11 @@ export function CollectionModal({
 
   useEffect(() => {
     if (isOpen) {
-      setName(initialName ?? "");
+      // For rename mode, start with empty input so user types new name
+      setName(mode === "rename" ? "" : (initialName ?? ""));
       setColor(initialColor);
     }
-  }, [isOpen, initialName, initialColor]);
+  }, [isOpen, initialName, initialColor, mode]);
 
   const handleSubmit = (e?: FormEvent) => {
     e?.preventDefault();
@@ -93,7 +95,7 @@ export function CollectionModal({
                     onSubmit={handleSubmit}
                     color={color}
                     onColorChange={setColor}
-                    placeholder="New collection name"
+                    placeholder={mode === "rename" ? originalName : "New collection name"}
                     hasError={hasError}
                     autoFocus={!isColorMode}
                     disabled={isColorMode}
@@ -113,7 +115,18 @@ export function CollectionModal({
                           Collection with the same name already exists.
                         </motion.span>
                       )}
-                      {isUnchanged && !hasConflict && (
+                      {isTooLong && !hasConflict && (
+                        <motion.span
+                          key="toolong"
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          Collection name must be 50 characters or less.
+                        </motion.span>
+                      )}
+                      {isUnchanged && !hasConflict && !isTooLong && (
                         <motion.span
                           key="unchanged"
                           initial={{ opacity: 0, y: -4 }}

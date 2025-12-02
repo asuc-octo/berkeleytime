@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -8,24 +8,78 @@ import { useNavigate } from "react-router-dom";
 import { Button, Dialog, Grid } from "@repo/theme";
 
 import { CollectionModal } from "@/components/CollectionModal";
-import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
+import {
+  useCreateCollection,
+  useDeleteCollection,
+  useGetAllCollectionsWithPreview,
+  useUpdateCollection,
+} from "@/hooks/api/collections";
+import { CollectionColor } from "@/lib/generated/graphql";
+import { Collection, CollectionPreviewClass } from "@/types/collection";
 
 import styles from "../Profile.module.scss";
 import { AddCollectionCard, CollectionCard } from "./CollectionCard";
 import deleteStyles from "./DeleteCollectionDialog.module.scss";
 
-const initialCollections: Collection[] = [
-  { id: "1", name: ALL_SAVED_COLLECTION_NAME, classCount: 24, isPinned: false, color: null, createdAt: 0 },
-  { id: "2", name: "Fall 2025", classCount: 8, isPinned: false, color: null, createdAt: 1 },
-  { id: "3", name: "Spring 2026", classCount: 12, isPinned: false, color: null, createdAt: 2 },
-  { id: "4", name: "Breadths", classCount: 5, isPinned: false, color: null, createdAt: 3 },
-  { id: "5", name: "Major Requirements", classCount: 15, isPinned: false, color: null, createdAt: 4 },
-];
-
 export default function Bookmarks() {
   const navigate = useNavigate();
-  const [collections, setCollections] =
-    useState<Collection[]>(initialCollections);
+
+  // Fetch collections from API
+  const { data: apiCollections, loading } = useGetAllCollectionsWithPreview();
+  const [createCollection] = useCreateCollection();
+  const [updateCollection] = useUpdateCollection();
+  const [deleteCollection] = useDeleteCollection();
+
+  // Transform API data to Collection interface
+  const collections = useMemo<Collection[]>(() => {
+    if (!apiCollections) return [];
+
+    return apiCollections
+      .map((c) => {
+        // Extract top 2 valid preview classes (skip null classes)
+        // Classes are already sorted by addedAt desc from backend
+        const previewClasses: CollectionPreviewClass[] = [];
+        for (const entry of c.classes ?? []) {
+          if (previewClasses.length >= 2) break;
+          if (!entry.class) continue;
+
+          previewClasses.push({
+            subject: entry.class.subject,
+            courseNumber: entry.class.courseNumber,
+            number: entry.class.number,
+            title: entry.class.title ?? entry.class.course?.title ?? null,
+            gradeAverage: entry.class.gradeDistribution?.average ?? entry.class.course?.gradeDistribution?.average ?? null,
+            enrolledCount: entry.class.primarySection?.enrollment?.latest?.enrolledCount ?? null,
+            maxEnroll: entry.class.primarySection?.enrollment?.latest?.maxEnroll ?? null,
+            unitsMin: entry.class.unitsMin,
+            unitsMax: entry.class.unitsMax,
+            hasReservedSeats: (entry.class.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0) > 0,
+          });
+        }
+
+        return {
+          id: c._id,
+          name: c.name,
+          classCount: c.classes?.length ?? 0,
+          isPinned: !!c.pinnedAt,
+          isSystem: c.isSystem,
+          color: (c.color ?? null) as string | null,
+          createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
+          previewClasses,
+        };
+      })
+      .sort((a, b) => {
+        // System collections first (All Saved)
+        if (a.isSystem && !b.isSystem) return -1;
+        if (!a.isSystem && b.isSystem) return 1;
+        // Then pinned items
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        // Then by creation date (newest first)
+        return b.createdAt - a.createdAt;
+      });
+  }, [apiCollections]);
+
   const [collectionToDelete, setCollectionToDelete] =
     useState<Collection | null>(null);
   const [collectionToRename, setCollectionToRename] =
@@ -37,7 +91,7 @@ export default function Bookmarks() {
   const [exitPath, setExitPath] = useState<string | null>(null);
 
   // Track initial collection IDs to skip entrance animation on page load
-  const initialIds = useRef(new Set(initialCollections.map((c) => c.id)));
+  const initialIds = useRef(new Set(collections.map((c) => c.id)));
 
   const handleCollectionClick = useCallback((path: string) => {
     setExitPath(path);
@@ -50,29 +104,31 @@ export default function Bookmarks() {
     }
   }, [isExiting, exitPath, navigate]);
 
-  const handleCreateCollection = (name: string, color: string | null) => {
-    const newCollection: Collection = {
-      id: Date.now().toString(),
-      name,
-      classCount: 0,
-      isPinned: false,
-      color,
-      createdAt: Date.now(),
-    };
-    setCollections((prev) => [...prev, newCollection]);
-  };
+  const handleCreateCollection = useCallback(
+    async (name: string, color: string | null) => {
+      try {
+        await createCollection({
+          name,
+          color: color as CollectionColor | null,
+        });
+        setIsCreateModalOpen(false);
+      } catch (error) {
+        console.error("Failed to create collection:", error);
+      }
+    },
+    [createCollection]
+  );
 
-  const handlePin = (id: string, isPinned: boolean) => {
-    setCollections((prev) => {
-      const updated = prev.map((c) => (c.id === id ? { ...c, isPinned } : c));
-      // Sort: pinned items first, then maintain original order
-      return updated.sort((a, b) => {
-        if (a.isPinned && !b.isPinned) return -1;
-        if (!a.isPinned && b.isPinned) return 1;
-        return 0;
-      });
-    });
-  };
+  const handlePin = useCallback(
+    async (collectionId: string, isPinned: boolean) => {
+      try {
+        await updateCollection(collectionId, { pinned: isPinned });
+      } catch (error) {
+        console.error("Failed to pin collection:", error);
+      }
+    },
+    [updateCollection]
+  );
 
   const handleDeleteClick = (collection: Collection) => {
     setCollectionToDelete(collection);
@@ -89,35 +145,62 @@ export default function Bookmarks() {
     setCollectionToRename(null);
   };
 
-  const handleRenameCollection = (newName: string, color: string | null) => {
-    if (collectionToRename) {
-      setCollections((prev) =>
-        prev.map((c) =>
-          c.id === collectionToRename.id ? { ...c, name: newName, color } : c
-        )
-      );
-    }
-  };
+  const handleRenameCollection = useCallback(
+    async (newName: string, color: string | null) => {
+      if (!collectionToRename) return;
 
-  const handleColorChange = (id: string, color: string | null) => {
-    setCollections((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, color } : c))
-    );
-  };
+      try {
+        await updateCollection(collectionToRename.id, {
+          name: newName,
+          color: color as CollectionColor | null,
+        });
+        handleCloseRenameModal();
+      } catch (error) {
+        console.error("Failed to rename collection:", error);
+      }
+    },
+    [collectionToRename, updateCollection]
+  );
+
+  const handleColorChange = useCallback(
+    async (collectionId: string, color: string | null) => {
+      try {
+        await updateCollection(collectionId, {
+          color: color as CollectionColor | null,
+        });
+      } catch (error) {
+        console.error("Failed to change collection color:", error);
+      }
+    },
+    [updateCollection]
+  );
 
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setCollectionToDelete(null);
   };
 
-  const handleConfirmDelete = async () => {
-    if (collectionToDelete) {
-      setCollections((prev) =>
-        prev.filter((c) => c.id !== collectionToDelete.id)
-      );
+  const handleConfirmDelete = useCallback(async () => {
+    if (!collectionToDelete) return;
+
+    try {
+      await deleteCollection(collectionToDelete.id);
+      handleCloseDeleteModal();
+    } catch (error) {
+      console.error("Failed to delete collection:", error);
     }
-    handleCloseDeleteModal();
-  };
+  }, [collectionToDelete, deleteCollection]);
+
+  if (loading) {
+    return (
+      <div className={styles.contentInner}>
+        <h1 className={styles.pageTitle}>Bookmarks</h1>
+        <div className={styles.pageContent}>
+          <p>Loading collections...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -158,7 +241,9 @@ export default function Bookmarks() {
                       name={collection.name}
                       classCount={collection.classCount}
                       isPinned={collection.isPinned}
+                      isSystem={collection.isSystem}
                       color={collection.color}
+                      previewClasses={collection.previewClasses}
                       onPin={(isPinned) => handlePin(collection.id, isPinned)}
                       onRename={() => handleRenameClick(collection)}
                       onColorChange={(color) => handleColorChange(collection.id, color)}

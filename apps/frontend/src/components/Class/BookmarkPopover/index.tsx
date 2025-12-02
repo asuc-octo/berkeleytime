@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -9,42 +9,108 @@ import { IconButton } from "@repo/theme";
 
 import CollectionNameInput from "@/components/CollectionNameInput";
 import {
-  ALL_SAVED_COLLECTION_NAME,
-  Collection,
-} from "@/types/collection";
+  useAddClassToCollection,
+  useCreateCollection,
+  useGetAllCollections,
+  useRemoveClassFromCollection,
+} from "@/hooks/api/collections";
+import { CollectionColor, Semester } from "@/lib/generated/graphql";
+import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
 
 import styles from "./BookmarkPopover.module.scss";
 
-interface BookmarkPopoverProps {
-  disabled?: boolean;
-  // Future: onCollectionChange callbacks for backend integration
+interface ClassInfo {
+  year: number;
+  semester: Semester;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  classNumber: string;
 }
 
-export default function BookmarkPopover({ disabled = false }: BookmarkPopoverProps) {
-  const [savedCollections, setSavedCollections] = useState<Set<string>>(
-    new Set()
-  );
+interface BookmarkPopoverProps {
+  classInfo?: ClassInfo;
+  disabled?: boolean;
+}
 
-  // TEMPORARY: In production, unpinned collections should be sorted by last edited date.
-  // For now, we use createdAt to sort newest first among unpinned collections.
-  const initialCollectionIds = useRef(
-    new Set(["1", "2", "3", "4", "5"])
-  );
+export default function BookmarkPopover({ classInfo, disabled = false }: BookmarkPopoverProps) {
+  // Fetch collections from API
+  const { data: apiCollections, loading: collectionsLoading } = useGetAllCollections();
+  const [createCollection] = useCreateCollection();
+  const [addClassToCollection] = useAddClassToCollection();
+  const [removeClassFromCollection] = useRemoveClassFromCollection();
 
-  const [collections, setCollections] = useState<Collection[]>([
-    { id: "1", name: ALL_SAVED_COLLECTION_NAME, classCount: 4, color: null, isPinned: false, createdAt: 0 },
-    { id: "2", name: "Fall 2025", classCount: 8, color: null, isPinned: true, createdAt: 1 },
-    { id: "3", name: "Spring 2026", classCount: 12, color: null, isPinned: false, createdAt: 2 },
-    { id: "4", name: "Breadths", classCount: 5, color: null, isPinned: true, createdAt: 3 },
-    {
-      id: "5",
-      name: "Testing this really long name for a collection, Major Requirements",
-      classCount: 15,
-      color: null,
-      isPinned: false,
-      createdAt: 4,
-    },
-  ]);
+  // Controlled popover state for quick-add behavior
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  // Track which collections are being mutated (for loading states)
+  const [mutatingCollections, setMutatingCollections] = useState<Set<string>>(new Set());
+
+  // Transform API data to Collection interface, ensuring "All Saved" always exists
+  const collections = useMemo<Collection[]>(() => {
+    const result: Collection[] = [];
+    let hasAllSaved = false;
+
+    if (apiCollections) {
+      for (const c of apiCollections) {
+        if (c._id && c.name) {
+          if (c.isSystem && c.name === ALL_SAVED_COLLECTION_NAME) {
+            hasAllSaved = true;
+          }
+          result.push({
+            id: c._id,
+            name: c.name,
+            classCount: c.classes?.length ?? 0,
+            isPinned: !!c.pinnedAt,
+            isSystem: c.isSystem,
+            color: c.color as string | null,
+            createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
+          });
+        }
+      }
+    }
+
+    // Always ensure "All Saved" exists (placeholder if not from API)
+    if (!hasAllSaved) {
+      result.unshift({
+        id: "all-saved-placeholder",
+        name: ALL_SAVED_COLLECTION_NAME,
+        classCount: 0,
+        isPinned: false,
+        isSystem: true,
+        color: null,
+        createdAt: Date.now(),
+      });
+    }
+
+    return result;
+  }, [apiCollections]);
+
+  // Determine which collections contain the current class (tracked by ID)
+  const savedCollectionIds = useMemo<Set<string>>(() => {
+    if (!apiCollections || !classInfo) return new Set();
+
+    const saved = new Set<string>();
+    for (const collection of apiCollections) {
+      if (!collection._id) continue;
+      const hasClass = collection.classes?.some(
+        (entry) =>
+          entry.class?.subject === classInfo.subject &&
+          entry.class?.courseNumber === classInfo.courseNumber &&
+          entry.class?.number === classInfo.classNumber
+      );
+      if (hasClass) {
+        saved.add(collection._id);
+      }
+    }
+    return saved;
+  }, [apiCollections, classInfo]);
+
+  // Track initial collection IDs to skip entrance animation
+  const initialCollectionIds = useRef<Set<string>>(new Set());
+  if (initialCollectionIds.current.size === 0 && collections.length > 0) {
+    initialCollectionIds.current = new Set(collections.map((c) => c.id));
+  }
 
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
@@ -54,11 +120,14 @@ export default function BookmarkPopover({ disabled = false }: BookmarkPopoverPro
   const hasConflict =
     newCollectionName.trim() !== "" &&
     existingNames.includes(newCollectionName.trim().toLowerCase());
+  const isTooLong = newCollectionName.trim().length > 50;
 
-  // Sort: "All saved" first, then pinned, then unpinned (newest first)
+  // Sort: system first, then pinned, then unpinned (newest first)
   const sortedCollections = [...collections].sort((a, b) => {
-    if (a.name === ALL_SAVED_COLLECTION_NAME) return -1;
-    if (b.name === ALL_SAVED_COLLECTION_NAME) return 1;
+    // System collections first (All Saved)
+    if (a.isSystem && !b.isSystem) return -1;
+    if (!a.isSystem && b.isSystem) return 1;
+    // Then pinned
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
     // For unpinned items, sort by createdAt descending (newest first)
@@ -66,32 +135,90 @@ export default function BookmarkPopover({ disabled = false }: BookmarkPopoverPro
     return 0;
   });
 
-  const handleSubmitNewCollection = () => {
-    if (!newCollectionName.trim() || hasConflict) return;
+  // Toggle class in collection
+  const handleToggleCollection = useCallback(
+    async (collectionId: string, currentlySaved: boolean) => {
+      if (!classInfo) return;
+
+      setMutatingCollections((prev) => new Set(prev).add(collectionId));
+
+      try {
+        if (currentlySaved) {
+          await removeClassFromCollection({
+            collectionId,
+            year: classInfo.year,
+            semester: classInfo.semester,
+            sessionId: classInfo.sessionId,
+            subject: classInfo.subject,
+            courseNumber: classInfo.courseNumber,
+            classNumber: classInfo.classNumber,
+          });
+        } else {
+          await addClassToCollection({
+            collectionId,
+            year: classInfo.year,
+            semester: classInfo.semester,
+            sessionId: classInfo.sessionId,
+            subject: classInfo.subject,
+            courseNumber: classInfo.courseNumber,
+            classNumber: classInfo.classNumber,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to toggle collection:", error);
+      } finally {
+        setMutatingCollections((prev) => {
+          const next = new Set(prev);
+          next.delete(collectionId);
+          return next;
+        });
+      }
+    },
+    [classInfo, addClassToCollection, removeClassFromCollection]
+  );
+
+  // Create new collection and add class to it
+  const [isCreatingCollection, setIsCreatingCollection] = useState(false);
+
+  const handleSubmitNewCollection = useCallback(async () => {
+    if (!newCollectionName.trim() || hasConflict || isTooLong || !classInfo) return;
 
     const trimmedName = newCollectionName.trim();
-    const newId = Date.now().toString();
-    setCollections((prev) => [
-      ...prev,
-      {
-        id: newId,
+
+    setIsCreatingCollection(true);
+
+    try {
+      // First create the collection
+      const result = await createCollection({
         name: trimmedName,
-        classCount: 0,
-        color: newCollectionColor,
-        isPinned: false,
-        createdAt: Date.now(),
-      },
-    ]);
-    setSavedCollections((prev) => {
-      const next = new Set(prev);
-      next.add(ALL_SAVED_COLLECTION_NAME);
-      next.add(trimmedName);
-      return next;
-    });
-    setNewCollectionName("");
-    setNewCollectionColor(null);
-    setIsCreateFormOpen(false);
-  };
+        color: newCollectionColor as CollectionColor | null,
+      });
+
+      const collectionId = result.data?.createCollection._id;
+      if (!collectionId) {
+        throw new Error("Failed to get collection ID");
+      }
+
+      // Then add the class to it
+      await addClassToCollection({
+        collectionId,
+        year: classInfo.year,
+        semester: classInfo.semester,
+        sessionId: classInfo.sessionId,
+        subject: classInfo.subject,
+        courseNumber: classInfo.courseNumber,
+        classNumber: classInfo.classNumber,
+      });
+
+      setNewCollectionName("");
+      setNewCollectionColor(null);
+      setIsCreateFormOpen(false);
+    } catch (error) {
+      console.error("Failed to create collection:", error);
+    } finally {
+      setIsCreatingCollection(false);
+    }
+  }, [newCollectionName, newCollectionColor, hasConflict, isTooLong, classInfo, createCollection, addClassToCollection]);
 
   const resetForm = () => {
     setIsCreateFormOpen(false);
@@ -99,26 +226,67 @@ export default function BookmarkPopover({ disabled = false }: BookmarkPopoverPro
     setNewCollectionColor(null);
   };
 
+  const isAnyClassSaved = savedCollectionIds.size > 0;
+
+  // Find "All Saved" collection (real or placeholder)
+  const allSavedCollection = collections.find((c) => c.isSystem);
+
+  // Quick-add to "All Saved" when clicking bookmark icon on unsaved class
+  // Open popover immediately and add to "All Saved" in the background
+  const handleQuickAdd = useCallback(() => {
+    if (!classInfo || !allSavedCollection) return;
+
+    // Open popover immediately
+    setIsPopoverOpen(true);
+
+    // Add to "All Saved" in the background
+    setMutatingCollections((prev) => new Set(prev).add(allSavedCollection.id));
+
+    addClassToCollection({
+      collectionId: allSavedCollection.id,
+      year: classInfo.year,
+      semester: classInfo.semester,
+      sessionId: classInfo.sessionId,
+      subject: classInfo.subject,
+      courseNumber: classInfo.courseNumber,
+      classNumber: classInfo.classNumber,
+    })
+      .catch((error) => {
+        console.error("Failed to quick-add to All Saved:", error);
+      })
+      .finally(() => {
+        setMutatingCollections((prev) => {
+          const next = new Set(prev);
+          next.delete(allSavedCollection.id);
+          return next;
+        });
+      });
+  }, [classInfo, allSavedCollection, addClassToCollection]);
+
   return (
-    <Popover.Root onOpenChange={(open) => !open && resetForm()}>
+    <Popover.Root
+      open={isPopoverOpen}
+      onOpenChange={(open) => {
+        setIsPopoverOpen(open);
+        if (!open) resetForm();
+      }}
+    >
       <Popover.Trigger asChild>
         <IconButton
           className={classNames(styles.bookmark, {
-            [styles.active]: savedCollections.size > 0,
+            [styles.active]: isAnyClassSaved,
           })}
-          disabled={disabled}
-          onClick={() => {
-            setSavedCollections((prev) => {
-              if (prev.has(ALL_SAVED_COLLECTION_NAME)) {
-                return prev;
-              }
-              const next = new Set(prev);
-              next.add(ALL_SAVED_COLLECTION_NAME);
-              return next;
-            });
+          disabled={disabled || !classInfo || collectionsLoading}
+          onClick={(e) => {
+            if (!isAnyClassSaved && classInfo) {
+              // Prevent popover from opening, do quick-add instead
+              e.preventDefault();
+              handleQuickAdd();
+            }
+            // If already saved, popover opens naturally via Popover.Trigger
           }}
         >
-          {savedCollections.size > 0 ? <BookmarkSolid /> : <Bookmark />}
+          {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}
         </IconButton>
       </Popover.Trigger>
       <Popover.Portal>
@@ -134,7 +302,7 @@ export default function BookmarkPopover({ disabled = false }: BookmarkPopoverPro
           >
             <LayoutGroup>
               {sortedCollections.map((collection) => {
-                const isSaved = savedCollections.has(collection.name);
+                const isSaved = savedCollectionIds.has(collection.id);
                 const isNew = !initialCollectionIds.current.has(collection.id);
                 return (
                   <motion.div
@@ -168,26 +336,8 @@ export default function BookmarkPopover({ disabled = false }: BookmarkPopoverPro
                       className={classNames(styles.bookmark, {
                         [styles.active]: isSaved,
                       })}
-                      onClick={() => {
-                        setSavedCollections((prev) => {
-                          const next = new Set(prev);
-                          if (collection.name === ALL_SAVED_COLLECTION_NAME) {
-                            if (next.has(ALL_SAVED_COLLECTION_NAME)) {
-                              return new Set();
-                            } else {
-                              next.add(ALL_SAVED_COLLECTION_NAME);
-                            }
-                          } else {
-                            if (next.has(collection.name)) {
-                              next.delete(collection.name);
-                            } else {
-                              next.add(ALL_SAVED_COLLECTION_NAME);
-                              next.add(collection.name);
-                            }
-                          }
-                          return next;
-                        });
-                      }}
+                      disabled={mutatingCollections.has(collection.id)}
+                      onClick={() => handleToggleCollection(collection.id, isSaved)}
                     >
                       {isSaved ? (
                         <BookmarkSolid width={16} height={16} />
@@ -213,6 +363,7 @@ export default function BookmarkPopover({ disabled = false }: BookmarkPopoverPro
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.96 }}
                     transition={{ duration: 0.15 }}
+                    layout
                   >
                     <div className={styles.createCollectionInputRow}>
                       <CollectionNameInput
@@ -221,27 +372,33 @@ export default function BookmarkPopover({ disabled = false }: BookmarkPopoverPro
                         onSubmit={handleSubmitNewCollection}
                         color={newCollectionColor}
                         onColorChange={setNewCollectionColor}
-                        hasError={hasConflict}
+                        hasError={hasConflict || isTooLong}
                         autoFocus
                       />
                       <IconButton
                         className={styles.createCollectionSubmit}
-                        disabled={!newCollectionName.trim() || hasConflict}
+                        disabled={!newCollectionName.trim() || hasConflict || isTooLong || isCreatingCollection}
                         onClick={handleSubmitNewCollection}
                       >
                         <ArrowUp width={16} height={16} />
                       </IconButton>
                     </div>
                     <AnimatePresence>
-                      {hasConflict && (
+                      {(hasConflict || isTooLong) && (
                         <motion.span
                           className={styles.createCollectionError}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.15 }}
+                          initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                          animate={{ opacity: 1, height: "auto", marginTop: 8 }}
+                          exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                          transition={{
+                            opacity: { duration: 0.15 },
+                            height: { type: "spring", stiffness: 500, damping: 35 },
+                            marginTop: { type: "spring", stiffness: 500, damping: 35 },
+                          }}
                         >
-                          A collection with this name already exists
+                          {hasConflict
+                            ? "A collection with this name already exists"
+                            : "Collection name must be 50 characters or less"}
                         </motion.span>
                       )}
                     </AnimatePresence>

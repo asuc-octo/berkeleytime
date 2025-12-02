@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { NavArrowRight, Xmark } from "iconoir-react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Flex } from "@repo/theme";
+import { Boundary, Flex, LoadingIndicator } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassCard from "@/components/ClassCard";
@@ -20,6 +20,7 @@ export default function CollectionDetail() {
   const { id, subject, courseNumber, number } = useParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   const {
     data: collection,
@@ -58,8 +59,14 @@ export default function CollectionDetail() {
   );
 
   const handleBack = useCallback(() => {
-    navigate("/profile/bookmarks");
-  }, [navigate]);
+    setIsExiting(true);
+  }, []);
+
+  const handleExitComplete = useCallback(() => {
+    if (isExiting) {
+      navigate("/profile/bookmarks");
+    }
+  }, [isExiting, navigate]);
 
   const handleClassSelect = useCallback(
     (classItem: (typeof classes)[0]) => {
@@ -105,21 +112,19 @@ export default function CollectionDetail() {
 
   if (collectionLoading) {
     return (
-      <div className={styles.root}>
-        <div className={styles.loadingState}>Loading collection...</div>
-      </div>
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
     );
   }
 
   if (collectionError || !collection) {
     return (
       <div className={styles.root}>
-        <div className={styles.errorState}>
-          <p>Collection not found</p>
-          <button className={styles.backButton} onClick={handleBack}>
-            Back to bookmarks
-          </button>
-        </div>
+        <Boundary className={styles.emptyState}>
+          <h3>Collection not found</h3>
+          <p>This collection may have been deleted or doesn't exist.</p>
+        </Boundary>
       </div>
     );
   }
@@ -128,8 +133,9 @@ export default function CollectionDetail() {
     <motion.div
       className={styles.root}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: 0.2 }}
+      onAnimationComplete={handleExitComplete}
     >
       <div className={styles.sidebar}>
         <div className={styles.header}>

@@ -3,8 +3,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   BookStack,
-  Circle,
   EditPencil,
+  InfoCircle,
   MoreHoriz,
   NavArrowRight,
   Pin,
@@ -17,6 +17,8 @@ import {
 import { DropdownMenu, IconButton } from "@repo/theme";
 
 import { COLLECTION_COLORS } from "@/components/CollectionNameInput";
+import { getLetterGradeFromGPA } from "@/lib/grades";
+import { CollectionPreviewClass } from "@/types/collection";
 
 import styles from "./CollectionCard.module.scss";
 
@@ -24,12 +26,65 @@ interface CollectionCardProps {
   name: string;
   classCount: number;
   isPinned?: boolean;
+  isSystem?: boolean;
   color?: string | null;
+  previewClasses?: CollectionPreviewClass[];
   onPin?: (isPinned: boolean) => void;
   onRename?: () => void;
   onColorChange?: (color: string | null) => void;
   onDelete?: () => void;
   onClick?: () => void;
+}
+
+function formatEnrollment(enrolled: number | null, max: number | null): string | null {
+  if (enrolled === null || max === null || max === 0) return null;
+  const pct = Math.round((enrolled / max) * 100);
+  return `${pct}% enrolled`;
+}
+
+function formatUnits(min: number, max: number): string {
+  if (min === max) {
+    return `${min} ${min === 1 ? "unit" : "units"}`;
+  }
+  return `${min}-${max} units`;
+}
+
+interface TiltedCardContentProps {
+  classData: CollectionPreviewClass;
+}
+
+function TiltedCardContent({ classData }: TiltedCardContentProps) {
+  const grade = classData.gradeAverage !== null
+    ? getLetterGradeFromGPA(classData.gradeAverage)
+    : null;
+  const enrollment = formatEnrollment(classData.enrolledCount, classData.maxEnroll);
+  const units = formatUnits(classData.unitsMin, classData.unitsMax);
+
+  return (
+    <div className={styles.cardContent}>
+      <div className={styles.cardHeader}>
+        <span className={styles.cardTitle}>
+          {classData.subject} {classData.courseNumber}
+        </span>
+        {grade && <span className={styles.cardGrade}>{grade}</span>}
+      </div>
+      <p className={styles.cardDescription}>{classData.title || "Untitled"}</p>
+      <div className={styles.cardFooter}>
+        {enrollment && (
+          <span className={`${styles.cardPill} ${styles.enrolled}`}>
+            {enrollment}
+          </span>
+        )}
+        <span className={styles.cardPill}>{units}</span>
+        {classData.hasReservedSeats && (
+          <span className={styles.reserved}>
+            <InfoCircle className={styles.reservedIcon} />
+            Reserved
+          </span>
+        )}
+      </div>
+    </div>
+  );
 }
 
 const springTransition = {
@@ -42,7 +97,9 @@ export function CollectionCard({
   name,
   classCount,
   isPinned = false,
+  isSystem = false,
   color = null,
+  previewClasses = [],
   onPin,
   onRename,
   onColorChange,
@@ -54,6 +111,12 @@ export function CollectionCard({
   const handlePinToggle = () => {
     onPin?.(!isPinned);
   };
+
+  // Get top 2 preview classes (already filtered for valid classes)
+  const topClass = previewClasses[0];
+  const secondClass = previewClasses[1];
+  const showCards = previewClasses.length > 0;
+  const showSecondCard = previewClasses.length > 1;
 
   return (
     <div
@@ -67,62 +130,46 @@ export function CollectionCard({
       )}
       <div
         className={styles.cardsStack}
-        style={{ opacity: classCount > 0 ? 1 : 0 }}
+        style={{ opacity: showCards ? 1 : 0 }}
       >
-        <motion.div
-          className={styles.stackedCard}
-          animate={{
-            top: isHovered ? 35 : 40,
-            left: 0,
-            rotate: isHovered ? -3 : -3.5,
-          }}
-          transition={springTransition}
-          style={{ zIndex: 2 }}
-        >
-          <div className={styles.cardContent}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitle}>COM LIT 198BC</span>
-              <span className={styles.cardGrade}>A</span>
-            </div>
-            <p className={styles.cardDescription}>Berkeley Connect</p>
-            <div className={styles.cardFooter}>
-              <span className={`${styles.cardPill} ${styles.enrolled}`}>
-                100% enrolled
-              </span>
-              <span className={styles.cardPill}>4 units</span>
-            </div>
-          </div>
-        </motion.div>
-        <motion.div
-          className={styles.stackedCard}
-          animate={{
-            top: isHovered ? 30 : 20,
-            left: isHovered ? 25 : 17,
-            rotate: isHovered ? 5 : 2.5,
-          }}
-          transition={springTransition}
-          style={{ zIndex: 1 }}
-        >
-          <div className={styles.cardContent}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitle}>COM LIT 198BC</span>
-              <span className={styles.cardGrade}>A</span>
-            </div>
-            <p className={styles.cardDescription}>Berkeley Connect</p>
-            <div className={styles.cardFooter}>
-              <span className={`${styles.cardPill} ${styles.enrolled}`}>
-                100% enrolled
-              </span>
-              <span className={styles.cardPill}>4 units</span>
-            </div>
-          </div>
-        </motion.div>
+        {topClass && (
+          <motion.div
+            className={styles.stackedCard}
+            animate={{
+              top: isHovered ? 35 : 40,
+              left: 0,
+              rotate: isHovered ? -3 : -3.5,
+            }}
+            transition={springTransition}
+            style={{ zIndex: 2 }}
+          >
+            <TiltedCardContent classData={topClass} />
+          </motion.div>
+        )}
+        {showSecondCard && secondClass && (
+          <motion.div
+            className={styles.stackedCard}
+            animate={{
+              top: isHovered ? 30 : 20,
+              left: isHovered ? 25 : 17,
+              rotate: isHovered ? 5 : 2.5,
+            }}
+            transition={springTransition}
+            style={{ zIndex: 1 }}
+          >
+            <TiltedCardContent classData={secondClass} />
+          </motion.div>
+        )}
       </div>
       <div className={styles.footer}>
         <div className={styles.footerContent}>
           <p className={styles.collectionName}>
-            {isPinned && (
-              <PinSolid width={14} height={14} color="var(--blue-500)" />
+            {(isPinned || isSystem) && (
+              <PinSolid
+                width={14}
+                height={14}
+                color={isSystem ? "white" : "var(--blue-500)"}
+              />
             )}
             {name}
           </p>
@@ -138,20 +185,24 @@ export function CollectionCard({
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content sideOffset={5} align="start">
-              <DropdownMenu.Item onSelect={handlePinToggle}>
-                {isPinned ? (
-                  <>
-                    <PinSlash width={18} height={18} /> Unpin collection
-                  </>
-                ) : (
-                  <>
-                    <Pin width={18} height={18} /> Pin collection
-                  </>
-                )}
-              </DropdownMenu.Item>
-              <DropdownMenu.Item onSelect={onRename}>
-                <BookStack width={18} height={18} /> Rename collection
-              </DropdownMenu.Item>
+              {!isSystem && (
+                <DropdownMenu.Item onSelect={handlePinToggle}>
+                  {isPinned ? (
+                    <>
+                      <PinSlash width={18} height={18} /> Unpin collection
+                    </>
+                  ) : (
+                    <>
+                      <Pin width={18} height={18} /> Pin collection
+                    </>
+                  )}
+                </DropdownMenu.Item>
+              )}
+              {!isSystem && (
+                <DropdownMenu.Item onSelect={onRename}>
+                  <BookStack width={18} height={18} /> Rename collection
+                </DropdownMenu.Item>
+              )}
               <DropdownMenu.Sub>
                 <DropdownMenu.SubTrigger>
                   <EditPencil width={18} height={18} /> Edit color
@@ -176,9 +227,11 @@ export function CollectionCard({
                   ))}
                 </DropdownMenu.SubContent>
               </DropdownMenu.Sub>
-              <DropdownMenu.Item isDelete onSelect={onDelete}>
-                <Trash width={18} height={18} /> Delete collection
-              </DropdownMenu.Item>
+              {!isSystem && (
+                <DropdownMenu.Item isDelete onSelect={onDelete}>
+                  <Trash width={18} height={18} /> Delete collection
+                </DropdownMenu.Item>
+              )}
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         </div>
