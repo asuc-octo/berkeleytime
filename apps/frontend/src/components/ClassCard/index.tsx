@@ -3,8 +3,6 @@ import { ComponentPropsWithRef } from "react";
 import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
-  Bookmark,
-  BookmarkSolid,
   InfoCircle,
   Trash,
 } from "iconoir-react";
@@ -81,8 +79,6 @@ interface ClassProps {
   onDelete?: () => void;
   leftBorderColor?: Color;
   onColorSelect?: (c: Color) => void;
-  bookmarked?: boolean;
-  bookmarkToggle?: () => void;
   active?: boolean;
   wrapDescription?: boolean;
 }
@@ -95,9 +91,7 @@ export default function ClassCard({
   onDelete,
   leftBorderColor = undefined,
   onColorSelect = undefined,
-  bookmarked = false,
   children,
-  bookmarkToggle,
   active = false,
   wrapDescription = false,
   ...props
@@ -201,22 +195,6 @@ export default function ClassCard({
                 textAlign: "right",
               }}
             />
-          )}
-          {bookmarked && bookmarkToggle && (
-            <Card.ActionIcon
-              data-action-icon
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                bookmarkToggle();
-              }}
-            >
-              {bookmarked ? (
-                <BookmarkSolid width={16} height={16} />
-              ) : (
-                <Bookmark width={16} height={16} />
-              )}
-            </Card.ActionIcon>
           )}
           {onColorSelect && leftBorderColor && (
             <ColorSelector
