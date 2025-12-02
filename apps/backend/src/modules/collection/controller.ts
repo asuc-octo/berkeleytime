@@ -99,7 +99,7 @@ export const getAllCollections = async (
     if (!a.isSystem && b.isSystem) return 1;
     if (a.pinnedAt && !b.pinnedAt) return -1;
     if (!a.pinnedAt && b.pinnedAt) return 1;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
   });
 };
 

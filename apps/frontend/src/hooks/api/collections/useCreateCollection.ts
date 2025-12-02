@@ -15,7 +15,7 @@ const NEW_COLLECTION_FRAGMENT = gql`
     color
     pinnedAt
     isSystem
-    createdAt
+    updatedAt
     classes {
       class {
         subject

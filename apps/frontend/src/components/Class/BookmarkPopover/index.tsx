@@ -72,7 +72,7 @@ export default function BookmarkPopover({
             pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
             isSystem: c.isSystem,
             color: c.color as string | null,
-            createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
+            updatedAt: c.updatedAt ? new Date(c.updatedAt).getTime() : 0,
           });
         }
       }
@@ -87,7 +87,7 @@ export default function BookmarkPopover({
         pinnedAt: null,
         isSystem: true,
         color: null,
-        createdAt: Date.now(),
+        updatedAt: Date.now(),
       });
     }
 
@@ -137,7 +137,7 @@ export default function BookmarkPopover({
     if (a.isPinned && b.isPinned) {
       return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
     }
-    return b.createdAt - a.createdAt;
+    return b.updatedAt - a.updatedAt;
   });
 
   const handleToggleCollection = useCallback(

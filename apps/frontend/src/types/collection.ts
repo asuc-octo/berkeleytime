@@ -19,7 +19,7 @@ export interface Collection {
   pinnedAt: number | null;
   isSystem: boolean;
   color: string | null;
-  createdAt: number;
+  updatedAt: number;
   previewClasses?: CollectionPreviewClass[];
 }
 
