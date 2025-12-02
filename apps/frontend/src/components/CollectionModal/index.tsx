@@ -4,14 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { Button, Dialog } from "@repo/theme";
 
-import CollectionNameInput, {
-  COLLECTION_COLORS,
-} from "@/components/CollectionNameInput";
+import CollectionNameInput from "@/components/CollectionNameInput";
+import { getRandomColor } from "@/lib/colors";
 
 import styles from "./CollectionModal.module.scss";
-
-const getRandomColor = () =>
-  COLLECTION_COLORS[Math.floor(Math.random() * COLLECTION_COLORS.length)];
 
 interface CollectionModalProps {
   isOpen: boolean;
@@ -78,7 +74,7 @@ export function CollectionModal({
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={handleClose}>
+    <Dialog.Root open={isOpen} onOpenChange={handleClose} modal={false}>
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>

@@ -16,7 +16,11 @@ import {
 
 import { DropdownMenu, IconButton } from "@repo/theme";
 
-import { COLLECTION_COLORS } from "@/components/CollectionNameInput";
+import {
+  COLLECTION_COLORS,
+  capitalizeColor,
+  getColorStyle,
+} from "@/lib/colors";
 import { getLetterGradeFromGPA } from "@/lib/grades";
 import { CollectionPreviewClass } from "@/types/collection";
 
@@ -130,7 +134,9 @@ export function CollectionCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      {color && <div className={styles.colorBackground} data-color={color} />}
+      {color && (
+        <div className={styles.colorBackground} style={getColorStyle(color)} />
+      )}
       <div className={styles.cardsStack} style={{ opacity: showCards ? 1 : 0 }}>
         {topClass && (
           <motion.div
@@ -223,10 +229,9 @@ export function CollectionCard({
                     >
                       <span
                         className={styles.colorDot}
-                        data-color={colorOption}
+                        style={getColorStyle(colorOption)}
                       />{" "}
-                      {colorOption.charAt(0).toUpperCase() +
-                        colorOption.slice(1)}
+                      {capitalizeColor(colorOption)}
                     </DropdownMenu.Item>
                   ))}
                 </DropdownMenu.SubContent>

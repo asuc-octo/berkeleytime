@@ -93,12 +93,6 @@
   }
 }
 
-@each $color in (red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose) {
-  .colorIndicator[data-color="#{$color}"] {
-    background-color: var(--#{$color}-400);
-  }
-}
-
 .createCollectionBtn {
   display: flex;
   align-items: center;

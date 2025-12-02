@@ -196,17 +196,6 @@
   border: 1.5px solid var(--paragraph-color);
 }
 
-// Background colors via data attribute
-@each $color in (red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose) {
-  .colorBackground[data-color="#{$color}"] {
-    background-color: var(--#{$color}-300);
-  }
-
-  .colorDot[data-color="#{$color}"] {
-    background-color: var(--#{$color}-300);
-  }
-}
-
 .addCard {
   background-color: var(--background-color);
   border: 1px solid var(--border-color);

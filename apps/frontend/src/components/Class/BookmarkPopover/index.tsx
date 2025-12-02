@@ -13,9 +13,7 @@ import { Popover } from "radix-ui";
 
 import { IconButton } from "@repo/theme";
 
-import CollectionNameInput, {
-  COLLECTION_COLORS,
-} from "@/components/CollectionNameInput";
+import CollectionNameInput from "@/components/CollectionNameInput";
 import {
   useAddClassToCollection,
   useCreateCollection,
@@ -24,6 +22,7 @@ import {
 } from "@/hooks/api/collections";
 import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
+import { getColorStyle, getRandomColor } from "@/lib/colors";
 import { CollectionColor, Semester } from "@/lib/generated/graphql";
 import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
 
@@ -122,9 +121,6 @@ export default function BookmarkPopover({
   if (initialCollectionIds.current.size === 0 && collections.length > 0) {
     initialCollectionIds.current = new Set(collections.map((c) => c.id));
   }
-
-  const getRandomColor = () =>
-    COLLECTION_COLORS[Math.floor(Math.random() * COLLECTION_COLORS.length)];
 
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
@@ -335,7 +331,7 @@ export default function BookmarkPopover({
                       {collection.color ? (
                         <span
                           className={styles.colorIndicator}
-                          data-color={collection.color}
+                          style={getColorStyle(collection.color)}
                         />
                       ) : (
                         <span className={styles.colorIndicatorEmpty} />

@@ -1,39 +1,4 @@
-.inputRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-}
-
-.input {
-  flex: 1;
-  min-width: 0;
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--background-color);
-  color: var(--heading-color);
-  font-size: var(--text-14);
-  outline: none;
-  transition: border-color 150ms ease;
-  box-sizing: border-box;
-
-  &::placeholder {
-    color: var(--label-color);
-  }
-
-  &:focus {
-    border-color: var(--blue-500);
-  }
-
-  &.inputError,
-  &.inputError:focus {
-    border-color: var(--red-500);
-  }
-}
-
-.colorSelectButton {
+.trigger {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -56,9 +21,14 @@
   &:focus-visible {
     border-color: var(--blue-500);
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
-.colorDropdown {
+.dropdown {
   z-index: 9999;
 }
 

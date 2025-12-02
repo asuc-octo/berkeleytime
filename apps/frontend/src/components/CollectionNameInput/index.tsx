@@ -3,27 +3,13 @@ import { Circle } from "iconoir-react";
 
 import { DropdownMenu } from "@repo/theme";
 
-import styles from "./CollectionNameInput.module.scss";
+import {
+  COLLECTION_COLORS,
+  capitalizeColor,
+  getColorStyle,
+} from "@/lib/colors";
 
-export const COLLECTION_COLORS = [
-  "red",
-  "orange",
-  "amber",
-  "yellow",
-  "lime",
-  "green",
-  "emerald",
-  "teal",
-  "cyan",
-  "sky",
-  "blue",
-  "indigo",
-  "violet",
-  "purple",
-  "fuchsia",
-  "pink",
-  "rose",
-];
+import styles from "./CollectionNameInput.module.scss";
 
 interface CollectionNameInputProps {
   value: string;
@@ -77,8 +63,11 @@ export function CollectionNameInput({
             <button className={styles.colorSelectButton} type="button">
               {color ? (
                 <>
-                  <span className={styles.colorDot} data-color={color} />
-                  {color.charAt(0).toUpperCase() + color.slice(1)}
+                  <span
+                    className={styles.colorDot}
+                    style={getColorStyle(color)}
+                  />
+                  {capitalizeColor(color)}
                 </>
               ) : (
                 <>
@@ -102,8 +91,11 @@ export function CollectionNameInput({
                   key={colorOption}
                   onSelect={() => onColorChange(colorOption)}
                 >
-                  <span className={styles.colorDot} data-color={colorOption} />{" "}
-                  {colorOption.charAt(0).toUpperCase() + colorOption.slice(1)}
+                  <span
+                    className={styles.colorDot}
+                    style={getColorStyle(colorOption)}
+                  />{" "}
+                  {capitalizeColor(colorOption)}
                 </DropdownMenu.Item>
               ))}
             </DropdownMenu.Content>
