@@ -5,7 +5,7 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { WarningTriangleSolid } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Dialog, Grid } from "@repo/theme";
+import { Button, Color, Dialog, Grid } from "@repo/theme";
 
 import { CollectionModal } from "@/components/CollectionModal";
 import {
@@ -67,7 +67,7 @@ export default function Bookmarks() {
           isPinned: !!c.pinnedAt,
           pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
           isSystem: c.isSystem,
-          color: (c.color ?? null) as string | null,
+          color: (c.color ?? null) as Color | null,
           updatedAt: c.updatedAt ? new Date(c.updatedAt).getTime() : 0,
           previewClasses,
         };

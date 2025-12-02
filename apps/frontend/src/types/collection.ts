@@ -1,3 +1,5 @@
+import { Color } from "@repo/theme";
+
 export interface CollectionPreviewClass {
   subject: string;
   courseNumber: string;
@@ -18,7 +20,7 @@ export interface Collection {
   isPinned: boolean;
   pinnedAt: number | null;
   isSystem: boolean;
-  color: string | null;
+  color: Color | null;
   updatedAt: number;
   previewClasses?: CollectionPreviewClass[];
 }

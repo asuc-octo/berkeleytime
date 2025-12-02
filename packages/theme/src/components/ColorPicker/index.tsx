@@ -2,22 +2,23 @@ import classNames from "classnames";
 import { Circle } from "iconoir-react";
 
 import { DropdownMenu } from "../DropdownMenu";
+import { Color } from "../ThemeProvider";
 import styles from "./ColorPicker.module.scss";
 
 interface ColorPickerProps {
-  value: string | null;
-  onChange: (color: string | null) => void;
-  colors: readonly string[];
+  value: Color | null;
+  onChange: (color: Color | null) => void;
+  colors: readonly Color[];
   allowNull?: boolean;
   className?: string;
   disabled?: boolean;
 }
 
-function capitalize(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+function capitalize(color: Color): string {
+  return color.charAt(0).toUpperCase() + color.slice(1);
 }
 
-function getColorStyle(color: string | null): React.CSSProperties | undefined {
+function getColorStyle(color: Color | null): React.CSSProperties | undefined {
   return color ? { backgroundColor: `var(--${color}-300)` } : undefined;
 }
 

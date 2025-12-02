@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { Circle } from "iconoir-react";
 
-import { DropdownMenu } from "@repo/theme";
+import { Color, DropdownMenu } from "@repo/theme";
 
 import {
   COLLECTION_COLORS,
@@ -15,8 +15,8 @@ interface CollectionNameInputProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
-  color: string | null;
-  onColorChange: (color: string | null) => void;
+  color: Color | null;
+  onColorChange: (color: Color | null) => void;
   placeholder?: string;
   hasError?: boolean;
   disabled?: boolean;

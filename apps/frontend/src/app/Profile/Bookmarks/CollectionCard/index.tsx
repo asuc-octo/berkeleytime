@@ -14,7 +14,7 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { DropdownMenu, IconButton } from "@repo/theme";
+import { Color, DropdownMenu, IconButton } from "@repo/theme";
 
 import {
   COLLECTION_COLORS,
@@ -31,11 +31,11 @@ interface CollectionCardProps {
   classCount: number;
   isPinned?: boolean;
   isSystem?: boolean;
-  color?: string | null;
+  color?: Color | null;
   previewClasses?: CollectionPreviewClass[];
   onPin?: (isPinned: boolean) => void;
   onRename?: () => void;
-  onColorChange?: (color: string | null) => void;
+  onColorChange?: (color: Color | null) => void;
   onDelete?: () => void;
   onClick?: () => void;
 }
@@ -222,16 +222,16 @@ export function CollectionCard({
                   <DropdownMenu.Item onSelect={() => onColorChange?.(null)}>
                     <span className={styles.colorDotOutline} /> No color
                   </DropdownMenu.Item>
-                  {COLLECTION_COLORS.map((colorOption) => (
+                  {COLLECTION_COLORS.map((color) => (
                     <DropdownMenu.Item
-                      key={colorOption}
-                      onSelect={() => onColorChange?.(colorOption)}
+                      key={color}
+                      onSelect={() => onColorChange?.(color)}
                     >
                       <span
                         className={styles.colorDot}
-                        style={getColorStyle(colorOption)}
+                        style={getColorStyle(color)}
                       />{" "}
-                      {capitalizeColor(colorOption)}
+                      {capitalizeColor(color)}
                     </DropdownMenu.Item>
                   ))}
                 </DropdownMenu.SubContent>
