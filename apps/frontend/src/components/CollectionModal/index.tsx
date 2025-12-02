@@ -41,12 +41,14 @@ export function CollectionModal({
   const isColorMode = mode === "color";
   const hasError = !isColorMode && (hasConflict || isTooLong || isUnchanged);
 
-  const title = mode === "create"
-    ? "New collection"
-    : mode === "rename"
-    ? "Rename collection"
-    : "Edit color";
-  const submitLabel = mode === "create" ? "Create" : mode === "rename" ? "Rename" : "Save";
+  const title =
+    mode === "create"
+      ? "New collection"
+      : mode === "rename"
+        ? "Rename collection"
+        : "Edit color";
+  const submitLabel =
+    mode === "create" ? "Create" : mode === "rename" ? "Rename" : "Save";
 
   useEffect(() => {
     if (isOpen) {
@@ -95,7 +97,9 @@ export function CollectionModal({
                     onSubmit={handleSubmit}
                     color={color}
                     onColorChange={setColor}
-                    placeholder={mode === "rename" ? originalName : "New collection name"}
+                    placeholder={
+                      mode === "rename" ? originalName : "New collection name"
+                    }
                     hasError={hasError}
                     autoFocus={!isColorMode}
                     disabled={isColorMode}
@@ -148,7 +152,10 @@ export function CollectionModal({
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button onClick={() => handleSubmit()} disabled={!isColorMode && (!name.trim() || hasError)}>
+            <Button
+              onClick={() => handleSubmit()}
+              disabled={!isColorMode && (!name.trim() || hasError)}
+            >
               {submitLabel}
             </Button>
           </Dialog.Footer>

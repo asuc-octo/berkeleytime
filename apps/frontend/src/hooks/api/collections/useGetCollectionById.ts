@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client/react";
 
-import {
-  GetCollectionByIdDocument,
+import { GetCollectionByIdDocument } from "@/lib/generated/graphql";
+import type {
   GetCollectionByIdQuery,
   GetCollectionByIdQueryVariables,
 } from "@/lib/generated/graphql";
@@ -9,7 +9,9 @@ import {
 export const useGetCollectionById = (
   id: string,
   options?: Omit<
-    Parameters<typeof useQuery<GetCollectionByIdQuery, GetCollectionByIdQueryVariables>>[1],
+    Parameters<
+      typeof useQuery<GetCollectionByIdQuery, GetCollectionByIdQueryVariables>
+    >[1],
     "variables"
   >
 ) => {

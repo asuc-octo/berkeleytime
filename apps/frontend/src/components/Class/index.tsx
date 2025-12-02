@@ -442,14 +442,18 @@ export default function Class({
                   <Flex gap="3">
                     <BookmarkPopover
                       disabled={userLoading}
-                      classInfo={_class ? {
-                        year: _class.year,
-                        semester: _class.semester,
-                        sessionId: _class.sessionId,
-                        subject: _class.subject,
-                        courseNumber: _class.courseNumber,
-                        classNumber: _class.number,
-                      } : undefined}
+                      classInfo={
+                        _class
+                          ? {
+                              year: _class.year,
+                              semester: _class.semester,
+                              sessionId: _class.sessionId,
+                              subject: _class.subject,
+                              courseNumber: _class.courseNumber,
+                              classNumber: _class.number,
+                            }
+                          : undefined
+                      }
                     />
                     <ThemeTooltip
                       content="Open in Berkeley Catalog"

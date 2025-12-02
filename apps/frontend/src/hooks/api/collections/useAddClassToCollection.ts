@@ -3,8 +3,8 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  AddClassToCollectionDocument,
   AddClassInput,
+  AddClassToCollectionDocument,
   GetCollectionByIdDocument,
 } from "@/lib/generated/graphql";
 
@@ -20,7 +20,10 @@ export const useAddClassToCollection = () => {
         ...options,
         variables: { input },
         refetchQueries: [
-          { query: GetCollectionByIdDocument, variables: { id: input.collectionId } },
+          {
+            query: GetCollectionByIdDocument,
+            variables: { id: input.collectionId },
+          },
         ],
         awaitRefetchQueries: false,
       });

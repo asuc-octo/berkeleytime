@@ -2,7 +2,13 @@ import { useCallback, useMemo, useRef, useState } from "react";
 
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { ArrowUp, Bookmark, BookmarkSolid, PinSolid, Plus } from "iconoir-react";
+import {
+  ArrowUp,
+  Bookmark,
+  BookmarkSolid,
+  PinSolid,
+  Plus,
+} from "iconoir-react";
 import { Popover } from "radix-ui";
 
 import { IconButton } from "@repo/theme";
@@ -33,9 +39,12 @@ interface BookmarkPopoverProps {
   disabled?: boolean;
 }
 
-export default function BookmarkPopover({ classInfo, disabled = false }: BookmarkPopoverProps) {
-  // Fetch collections from API
-  const { data: apiCollections, loading: collectionsLoading } = useGetAllCollections();
+export default function BookmarkPopover({
+  classInfo,
+  disabled = false,
+}: BookmarkPopoverProps) {
+  const { data: apiCollections, loading: collectionsLoading } =
+    useGetAllCollections();
   const [createCollection] = useCreateCollection();
   const [addClassToCollection] = useAddClassToCollection();
   const [removeClassFromCollection] = useRemoveClassFromCollection();
@@ -44,7 +53,9 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   // Track which collections are being mutated (for loading states)
-  const [mutatingCollections, setMutatingCollections] = useState<Set<string>>(new Set());
+  const [mutatingCollections, setMutatingCollections] = useState<Set<string>>(
+    new Set()
+  );
 
   // Transform API data to Collection interface, ensuring "All Saved" always exists
   const collections = useMemo<Collection[]>(() => {
@@ -116,30 +127,27 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
 
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
-  const [newCollectionColor, setNewCollectionColor] = useState<string | null>(null);
-
+  const [newCollectionColor, setNewCollectionColor] = useState<string | null>(
+    null
+  );
   const existingNames = collections.map((c) => c.name.toLowerCase());
   const hasConflict =
     newCollectionName.trim() !== "" &&
     existingNames.includes(newCollectionName.trim().toLowerCase());
   const isTooLong = newCollectionName.trim().length > 50;
 
-  // Sort: system first, then pinned (by pinnedAt), then unpinned (newest first)
+  // Sort: system → pinned (by pinnedAt desc) → unpinned (by createdAt desc)
   const sortedCollections = [...collections].sort((a, b) => {
-    // System collections first (All Saved)
     if (a.isSystem && !b.isSystem) return -1;
     if (!a.isSystem && b.isSystem) return 1;
-    // Then pinned (sorted by pinnedAt, latest first)
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
     if (a.isPinned && b.isPinned) {
       return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
     }
-    // For unpinned items, sort by createdAt descending (newest first)
     return b.createdAt - a.createdAt;
   });
 
-  // Toggle class in collection
   const handleToggleCollection = useCallback(
     async (collectionId: string, currentlySaved: boolean) => {
       if (!classInfo) return;
@@ -181,18 +189,17 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
     [classInfo, addClassToCollection, removeClassFromCollection]
   );
 
-  // Create new collection and add class to it
   const [isCreatingCollection, setIsCreatingCollection] = useState(false);
 
   const handleSubmitNewCollection = useCallback(async () => {
-    if (!newCollectionName.trim() || hasConflict || isTooLong || !classInfo) return;
+    if (!newCollectionName.trim() || hasConflict || isTooLong || !classInfo)
+      return;
 
     const trimmedName = newCollectionName.trim();
 
     setIsCreatingCollection(true);
 
     try {
-      // First create the collection
       const result = await createCollection({
         name: trimmedName,
         color: newCollectionColor as CollectionColor | null,
@@ -203,7 +210,6 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
         throw new Error("Failed to get collection ID");
       }
 
-      // Then add the class to it
       await addClassToCollection({
         collectionId,
         year: classInfo.year,
@@ -222,7 +228,15 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
     } finally {
       setIsCreatingCollection(false);
     }
-  }, [newCollectionName, newCollectionColor, hasConflict, isTooLong, classInfo, createCollection, addClassToCollection]);
+  }, [
+    newCollectionName,
+    newCollectionColor,
+    hasConflict,
+    isTooLong,
+    classInfo,
+    createCollection,
+    addClassToCollection,
+  ]);
 
   const resetForm = () => {
     setIsCreateFormOpen(false);
@@ -231,19 +245,13 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
   };
 
   const isAnyClassSaved = savedCollectionIds.size > 0;
-
-  // Find "All Saved" collection (real or placeholder)
   const allSavedCollection = collections.find((c) => c.isSystem);
 
-  // Quick-add to "All Saved" when clicking bookmark icon on unsaved class
-  // Open popover immediately and add to "All Saved" in the background
+  // Quick-add: opens popover and adds to "All Saved" in background
   const handleQuickAdd = useCallback(() => {
     if (!classInfo || !allSavedCollection) return;
 
-    // Open popover immediately
     setIsPopoverOpen(true);
-
-    // Add to "All Saved" in the background
     setMutatingCollections((prev) => new Set(prev).add(allSavedCollection.id));
 
     addClassToCollection({
@@ -283,11 +291,10 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
           disabled={disabled || !classInfo || collectionsLoading}
           onClick={(e) => {
             if (!isAnyClassSaved && classInfo) {
-              // Prevent popover from opening, do quick-add instead
               e.preventDefault();
               handleQuickAdd();
             }
-            // If already saved, popover opens naturally via Popover.Trigger
+            // Otherwise popover opens naturally via Popover.Trigger
           }}
         >
           {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}
@@ -341,7 +348,9 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
                         [styles.active]: isSaved,
                       })}
                       disabled={mutatingCollections.has(collection.id)}
-                      onClick={() => handleToggleCollection(collection.id, isSaved)}
+                      onClick={() =>
+                        handleToggleCollection(collection.id, isSaved)
+                      }
                     >
                       {isSaved ? (
                         <BookmarkSolid width={16} height={16} />
@@ -355,7 +364,9 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
             </LayoutGroup>
             <motion.div
               layout
-              transition={{ layout: { type: "spring", stiffness: 500, damping: 35 } }}
+              transition={{
+                layout: { type: "spring", stiffness: 500, damping: 35 },
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               <AnimatePresence mode="popLayout" initial={false}>
@@ -381,7 +392,12 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
                       />
                       <IconButton
                         className={styles.createCollectionSubmit}
-                        disabled={!newCollectionName.trim() || hasConflict || isTooLong || isCreatingCollection}
+                        disabled={
+                          !newCollectionName.trim() ||
+                          hasConflict ||
+                          isTooLong ||
+                          isCreatingCollection
+                        }
                         onClick={handleSubmitNewCollection}
                       >
                         <ArrowUp width={16} height={16} />
@@ -396,8 +412,16 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
                           exit={{ opacity: 0, height: 0, marginTop: 0 }}
                           transition={{
                             opacity: { duration: 0.15 },
-                            height: { type: "spring", stiffness: 500, damping: 35 },
-                            marginTop: { type: "spring", stiffness: 500, damping: 35 },
+                            height: {
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 35,
+                            },
+                            marginTop: {
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 35,
+                            },
                           }}
                         >
                           {hasConflict

@@ -212,7 +212,6 @@ const resolvers: CollectionModule.Resolvers = {
     classes: async (parent) => {
       const typedParent = parent as unknown as CollectionParent;
 
-      // Guard: Return early if no classes in collection
       if (!typedParent.classes || typedParent.classes.length === 0) {
         return [];
       }
@@ -224,7 +223,6 @@ const resolvers: CollectionModule.Resolvers = {
         return dateB - dateA;
       });
 
-      // Build batch query for all classes
       const classQueries = sortedClasses.map((classEntry) => ({
         year: classEntry.year,
         semester: classEntry.semester,

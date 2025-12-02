@@ -20,7 +20,10 @@ export const useRemoveClassFromCollection = () => {
         ...options,
         variables: { input },
         refetchQueries: [
-          { query: GetCollectionByIdDocument, variables: { id: input.collectionId } },
+          {
+            query: GetCollectionByIdDocument,
+            variables: { id: input.collectionId },
+          },
         ],
         awaitRefetchQueries: false,
       });

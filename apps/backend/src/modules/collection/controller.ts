@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 import { Types } from "mongoose";
 
-import { ClassModel, CollectionModel, CollectionColor } from "@repo/common";
+import { ClassModel, CollectionColor, CollectionModel } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
 
@@ -172,7 +172,6 @@ export const createCollection = async (
 
   const { name, color } = input;
 
-  // Validate name
   if (!name || !name.trim()) {
     throw new GraphQLError("Collection name cannot be empty", {
       extensions: { code: "BAD_USER_INPUT" },
@@ -181,12 +180,14 @@ export const createCollection = async (
 
   // Prevent using reserved system collection names
   if (name.trim().toLowerCase() === ALL_SAVED_NAME.toLowerCase()) {
-    throw new GraphQLError(`"${ALL_SAVED_NAME}" is a reserved collection name`, {
-      extensions: { code: "BAD_USER_INPUT" },
-    });
+    throw new GraphQLError(
+      `"${ALL_SAVED_NAME}" is a reserved collection name`,
+      {
+        extensions: { code: "BAD_USER_INPUT" },
+      }
+    );
   }
 
-  // Check if name already exists for this user
   const existing = await CollectionModel.findOne({
     createdBy: context.user._id,
     name: name.trim(),
@@ -243,7 +244,6 @@ export const updateCollection = async (
       });
     }
 
-    // Validate new name
     if (!input.name.trim()) {
       throw new GraphQLError("Collection name cannot be empty", {
         extensions: { code: "BAD_USER_INPUT" },
@@ -252,9 +252,12 @@ export const updateCollection = async (
 
     // Prevent renaming to reserved names
     if (input.name.trim().toLowerCase() === ALL_SAVED_NAME.toLowerCase()) {
-      throw new GraphQLError(`"${ALL_SAVED_NAME}" is a reserved collection name`, {
-        extensions: { code: "BAD_USER_INPUT" },
-      });
+      throw new GraphQLError(
+        `"${ALL_SAVED_NAME}" is a reserved collection name`,
+        {
+          extensions: { code: "BAD_USER_INPUT" },
+        }
+      );
     }
 
     // Check new name doesn't conflict (unless it's the same name)
@@ -282,9 +285,12 @@ export const updateCollection = async (
   // System collections cannot be pinned/unpinned (they are always pinned)
   if (input.pinned !== undefined && input.pinned !== null) {
     if (collection.isSystem) {
-      throw new GraphQLError("System collections cannot be pinned or unpinned", {
-        extensions: { code: "FORBIDDEN" },
-      });
+      throw new GraphQLError(
+        "System collections cannot be pinned or unpinned",
+        {
+          extensions: { code: "FORBIDDEN" },
+        }
+      );
     }
     update.pinnedAt = input.pinned ? new Date() : null;
   }
@@ -293,7 +299,13 @@ export const updateCollection = async (
     new: true,
   });
 
-  return result!.toObject() as unknown as CollectionDocument;
+  if (!result) {
+    throw new GraphQLError("Collection not found after update", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return result.toObject() as unknown as CollectionDocument;
 };
 
 export const deleteCollection = async (
@@ -439,7 +451,13 @@ export const addClassToCollection = async (
     { new: true }
   );
 
-  return result!.toObject() as unknown as CollectionDocument;
+  if (!result) {
+    throw new GraphQLError("Collection not found after update", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return result.toObject() as unknown as CollectionDocument;
 };
 
 export const removeClassFromCollection = async (
@@ -513,6 +531,11 @@ export const removeClassFromCollection = async (
 
     // Return the updated "All Saved" collection
     const updatedAllSaved = await CollectionModel.findById(collectionId).lean();
+    if (!updatedAllSaved) {
+      throw new GraphQLError("Collection not found after update", {
+        extensions: { code: "NOT_FOUND" },
+      });
+    }
     return updatedAllSaved as unknown as CollectionDocument;
   }
 
@@ -528,5 +551,11 @@ export const removeClassFromCollection = async (
     { new: true }
   );
 
-  return result!.toObject() as unknown as CollectionDocument;
+  if (!result) {
+    throw new GraphQLError("Collection not found after update", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return result.toObject() as unknown as CollectionDocument;
 };

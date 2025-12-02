@@ -1,17 +1,21 @@
 import { gql } from "@apollo/client";
 
 import {
-  GetCollectionByIdQuery,
   GetAllCollectionsQuery,
   GetAllCollectionsWithPreviewQuery,
+  GetCollectionByIdQuery,
 } from "../generated/graphql";
 
 export type ICollection = NonNullable<
   GetCollectionByIdQuery["myCollectionById"]
 >;
-export type ICollectionClass = NonNullable<ICollection["classes"][number]["class"]>;
-export type ICollectionSummary = GetAllCollectionsQuery["myCollections"][number];
-export type ICollectionWithPreview = GetAllCollectionsWithPreviewQuery["myCollections"][number];
+export type ICollectionClass = NonNullable<
+  ICollection["classes"][number]["class"]
+>;
+export type ICollectionSummary =
+  GetAllCollectionsQuery["myCollections"][number];
+export type ICollectionWithPreview =
+  GetAllCollectionsWithPreviewQuery["myCollections"][number];
 export type ICollectionPreviewClass = NonNullable<
   ICollectionWithPreview["classes"][number]["class"]
 >;

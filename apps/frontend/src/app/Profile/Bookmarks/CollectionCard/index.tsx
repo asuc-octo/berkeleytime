@@ -36,7 +36,10 @@ interface CollectionCardProps {
   onClick?: () => void;
 }
 
-function formatEnrollment(enrolled: number | null, max: number | null): string | null {
+function formatEnrollment(
+  enrolled: number | null,
+  max: number | null
+): string | null {
   if (enrolled === null || max === null || max === 0) return null;
   const pct = Math.round((enrolled / max) * 100);
   return `${pct}% enrolled`;
@@ -54,10 +57,14 @@ interface TiltedCardContentProps {
 }
 
 function TiltedCardContent({ classData }: TiltedCardContentProps) {
-  const grade = classData.gradeAverage !== null
-    ? getLetterGradeFromGPA(classData.gradeAverage)
-    : null;
-  const enrollment = formatEnrollment(classData.enrolledCount, classData.maxEnroll);
+  const grade =
+    classData.gradeAverage !== null
+      ? getLetterGradeFromGPA(classData.gradeAverage)
+      : null;
+  const enrollment = formatEnrollment(
+    classData.enrolledCount,
+    classData.maxEnroll
+  );
   const units = formatUnits(classData.unitsMin, classData.unitsMax);
 
   return (
@@ -112,7 +119,6 @@ export function CollectionCard({
     onPin?.(!isPinned);
   };
 
-  // Get top 2 preview classes (already filtered for valid classes)
   const topClass = previewClasses[0];
   const secondClass = previewClasses[1];
   const showCards = previewClasses.length > 0;
@@ -125,13 +131,8 @@ export function CollectionCard({
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
     >
-      {color && (
-        <div className={styles.colorBackground} data-color={color} />
-      )}
-      <div
-        className={styles.cardsStack}
-        style={{ opacity: showCards ? 1 : 0 }}
-      >
+      {color && <div className={styles.colorBackground} data-color={color} />}
+      <div className={styles.cardsStack} style={{ opacity: showCards ? 1 : 0 }}>
         {topClass && (
           <motion.div
             className={styles.stackedCard}
@@ -229,8 +230,12 @@ export function CollectionCard({
                       key={colorOption}
                       onSelect={() => onColorChange?.(colorOption)}
                     >
-                      <span className={styles.colorDot} data-color={colorOption} />{" "}
-                      {colorOption.charAt(0).toUpperCase() + colorOption.slice(1)}
+                      <span
+                        className={styles.colorDot}
+                        data-color={colorOption}
+                      />{" "}
+                      {colorOption.charAt(0).toUpperCase() +
+                        colorOption.slice(1)}
                     </DropdownMenu.Item>
                   ))}
                 </DropdownMenu.SubContent>

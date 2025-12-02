@@ -1,17 +1,17 @@
 import { useQuery } from "@apollo/client/react";
 
-import {
-  GetAllCollectionsDocument,
+import { GetAllCollectionsDocument } from "@/lib/generated/graphql";
+import type {
   GetAllCollectionsQuery,
   GetAllCollectionsQueryVariables,
 } from "@/lib/generated/graphql";
 
 export const useGetAllCollections = (
-  options?: Parameters<typeof useQuery<GetAllCollectionsQuery, GetAllCollectionsQueryVariables>>[1]
+  options?: Parameters<
+    typeof useQuery<GetAllCollectionsQuery, GetAllCollectionsQueryVariables>
+  >[1]
 ) => {
-  const query = useQuery(GetAllCollectionsDocument, {
-    ...options,
-  });
+  const query = useQuery(GetAllCollectionsDocument, options);
 
   return {
     ...query,

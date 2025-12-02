@@ -23,65 +23,70 @@ import deleteStyles from "./DeleteCollectionDialog.module.scss";
 
 export default function Bookmarks() {
   const navigate = useNavigate();
-
-  // Fetch collections from API
   const { data: apiCollections, loading } = useGetAllCollectionsWithPreview();
   const [createCollection] = useCreateCollection();
   const [updateCollection] = useUpdateCollection();
   const [deleteCollection] = useDeleteCollection();
 
-  // Transform API data to Collection interface
   const collections = useMemo<Collection[]>(() => {
     if (!apiCollections) return [];
 
-    return apiCollections
-      .map((c) => {
-        // Extract top 2 valid preview classes (skip null classes)
-        // Classes are already sorted by addedAt desc from backend
-        const previewClasses: CollectionPreviewClass[] = [];
-        for (const entry of c.classes ?? []) {
-          if (previewClasses.length >= 2) break;
-          if (!entry.class) continue;
+    return (
+      apiCollections
+        .map((c) => {
+          // Extract top 2 preview classes (backend sorts by addedAt desc)
+          const previewClasses: CollectionPreviewClass[] = [];
+          for (const entry of c.classes ?? []) {
+            if (previewClasses.length >= 2) break;
+            if (!entry.class) continue;
 
-          previewClasses.push({
-            subject: entry.class.subject,
-            courseNumber: entry.class.courseNumber,
-            number: entry.class.number,
-            title: entry.class.title ?? entry.class.course?.title ?? null,
-            gradeAverage: entry.class.gradeDistribution?.average ?? entry.class.course?.gradeDistribution?.average ?? null,
-            enrolledCount: entry.class.primarySection?.enrollment?.latest?.enrolledCount ?? null,
-            maxEnroll: entry.class.primarySection?.enrollment?.latest?.maxEnroll ?? null,
-            unitsMin: entry.class.unitsMin,
-            unitsMax: entry.class.unitsMax,
-            hasReservedSeats: (entry.class.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0) > 0,
-          });
-        }
+            previewClasses.push({
+              subject: entry.class.subject,
+              courseNumber: entry.class.courseNumber,
+              number: entry.class.number,
+              title: entry.class.title ?? entry.class.course?.title ?? null,
+              gradeAverage:
+                entry.class.gradeDistribution?.average ??
+                entry.class.course?.gradeDistribution?.average ??
+                null,
+              enrolledCount:
+                entry.class.primarySection?.enrollment?.latest?.enrolledCount ??
+                null,
+              maxEnroll:
+                entry.class.primarySection?.enrollment?.latest?.maxEnroll ??
+                null,
+              unitsMin: entry.class.unitsMin,
+              unitsMax: entry.class.unitsMax,
+              hasReservedSeats:
+                (entry.class.primarySection?.enrollment?.latest
+                  ?.activeReservedMaxCount ?? 0) > 0,
+            });
+          }
 
-        return {
-          id: c._id,
-          name: c.name,
-          classCount: c.classes?.length ?? 0,
-          isPinned: !!c.pinnedAt,
-          pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
-          isSystem: c.isSystem,
-          color: (c.color ?? null) as string | null,
-          createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
-          previewClasses,
-        };
-      })
-      .sort((a, b) => {
-        // System collections first (All Saved)
-        if (a.isSystem && !b.isSystem) return -1;
-        if (!a.isSystem && b.isSystem) return 1;
-        // Then pinned items (sorted by pinnedAt, latest first)
-        if (a.isPinned && !b.isPinned) return -1;
-        if (!a.isPinned && b.isPinned) return 1;
-        if (a.isPinned && b.isPinned) {
-          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
-        }
-        // Then by creation date (newest first)
-        return b.createdAt - a.createdAt;
-      });
+          return {
+            id: c._id,
+            name: c.name,
+            classCount: c.classes?.length ?? 0,
+            isPinned: !!c.pinnedAt,
+            pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
+            isSystem: c.isSystem,
+            color: (c.color ?? null) as string | null,
+            createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
+            previewClasses,
+          };
+        })
+        // Sort: system → pinned (by pinnedAt desc) → unpinned (by createdAt desc)
+        .sort((a, b) => {
+          if (a.isSystem && !b.isSystem) return -1;
+          if (!a.isSystem && b.isSystem) return 1;
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          if (a.isPinned && b.isPinned) {
+            return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+          }
+          return b.createdAt - a.createdAt;
+        })
+    );
   }, [apiCollections]);
 
   const [collectionToDelete, setCollectionToDelete] =
@@ -94,14 +99,13 @@ export default function Bookmarks() {
   const [isExiting, setIsExiting] = useState(false);
   const [exitPath, setExitPath] = useState<string | null>(null);
 
-  // Track initial collection IDs to skip entrance animation on page load
+  // Track initial IDs to skip entrance animation on page load
   const initialIds = useRef<Set<string> | null>(null);
   if (initialIds.current === null && collections.length > 0) {
     initialIds.current = new Set(collections.map((c) => c.id));
   }
 
-  // Add new collection IDs after creation to prevent re-entrance animation
-  // when sorting changes their position
+  // Add new IDs after creation to prevent re-animation when sort changes
   useEffect(() => {
     if (initialIds.current) {
       collections.forEach((c) => initialIds.current!.add(c.id));
@@ -261,9 +265,13 @@ export default function Bookmarks() {
                       previewClasses={collection.previewClasses}
                       onPin={(isPinned) => handlePin(collection.id, isPinned)}
                       onRename={() => handleRenameClick(collection)}
-                      onColorChange={(color) => handleColorChange(collection.id, color)}
+                      onColorChange={(color) =>
+                        handleColorChange(collection.id, color)
+                      }
                       onDelete={() => handleDeleteClick(collection)}
-                      onClick={() => handleCollectionClick(`/collection/${collection.id}`)}
+                      onClick={() =>
+                        handleCollectionClick(`/collection/${collection.id}`)
+                      }
                     />
                   </motion.div>
                 ))}
