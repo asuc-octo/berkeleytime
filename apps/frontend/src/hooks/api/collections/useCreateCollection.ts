@@ -1,41 +1,63 @@
 import { useCallback } from "react";
 
+import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
 import {
   CreateCollectionDocument,
   CreateCollectionInput,
-  GetAllCollectionsDocument,
-  GetAllCollectionsWithPreviewDocument,
 } from "@/lib/generated/graphql";
 
+// Fragment for writing new collection to cache
+const NEW_COLLECTION_FRAGMENT = gql`
+  fragment NewCollection on Collection {
+    _id
+    name
+    color
+    pinnedAt
+    isSystem
+    createdAt
+    classes {
+      class {
+        subject
+        courseNumber
+        number
+      }
+    }
+  }
+`;
+
 export const useCreateCollection = () => {
-  const mutation = useMutation(CreateCollectionDocument);
+  const [mutate, result] = useMutation(CreateCollectionDocument);
 
   const createCollection = useCallback(
     async (
       input: CreateCollectionInput,
-      options?: Omit<
-        Parameters<typeof mutation[0]>[0],
-        "variables"
-      >
+      options?: Omit<Parameters<typeof mutate>[0], "variables">
     ) => {
-      const mutate = mutation[0];
-
       return await mutate({
         ...options,
         variables: { input },
-        refetchQueries: [
-          { query: GetAllCollectionsDocument },
-          { query: GetAllCollectionsWithPreviewDocument },
-        ],
+        update(cache, { data }) {
+          if (!data?.createCollection) return;
+
+          cache.modify({
+            fields: {
+              myCollections: (existing = []) => {
+                const newRef = cache.writeFragment({
+                  data: data.createCollection,
+                  fragment: NEW_COLLECTION_FRAGMENT,
+                });
+                return [...existing, newRef];
+              },
+            },
+          });
+        },
+        // No refetchQueries - cache is updated directly
       });
     },
-    [mutation]
+    [mutate]
   );
 
-  return [createCollection, mutation[1]] as [
-    mutate: typeof createCollection,
-    result: (typeof mutation)[1],
-  ];
+  return [createCollection, result] as const;
 };

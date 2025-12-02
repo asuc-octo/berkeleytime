@@ -135,11 +135,19 @@ export function CollectionCard({
         {topClass && (
           <motion.div
             className={styles.stackedCard}
-            animate={{
-              top: isHovered ? 35 : 40,
-              left: 0,
-              rotate: isHovered ? -3 : -3.5,
-            }}
+            animate={
+              showSecondCard
+                ? {
+                    top: isHovered ? 35 : 40,
+                    left: 0,
+                    rotate: isHovered ? -3 : -3.5,
+                  }
+                : {
+                    top: isHovered ? 25 : 35,
+                    left: 0,
+                    rotate: 0,
+                  }
+            }
             transition={springTransition}
             style={{ zIndex: 2 }}
           >
@@ -168,7 +176,7 @@ export function CollectionCard({
               <PinSolid
                 width={14}
                 height={14}
-                color={isSystem ? "white" : "var(--blue-500)"}
+                color={isSystem ? "currentColor" : "var(--blue-500)"}
               />
             )}
             {name}

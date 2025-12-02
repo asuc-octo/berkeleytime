@@ -62,6 +62,7 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
             name: c.name,
             classCount: c.classes?.length ?? 0,
             isPinned: !!c.pinnedAt,
+            pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
             isSystem: c.isSystem,
             color: c.color as string | null,
             createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
@@ -77,6 +78,7 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
         name: ALL_SAVED_COLLECTION_NAME,
         classCount: 0,
         isPinned: false,
+        pinnedAt: null,
         isSystem: true,
         color: null,
         createdAt: Date.now(),
@@ -122,17 +124,19 @@ export default function BookmarkPopover({ classInfo, disabled = false }: Bookmar
     existingNames.includes(newCollectionName.trim().toLowerCase());
   const isTooLong = newCollectionName.trim().length > 50;
 
-  // Sort: system first, then pinned, then unpinned (newest first)
+  // Sort: system first, then pinned (by pinnedAt), then unpinned (newest first)
   const sortedCollections = [...collections].sort((a, b) => {
     // System collections first (All Saved)
     if (a.isSystem && !b.isSystem) return -1;
     if (!a.isSystem && b.isSystem) return 1;
-    // Then pinned
+    // Then pinned (sorted by pinnedAt, latest first)
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
+    if (a.isPinned && b.isPinned) {
+      return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+    }
     // For unpinned items, sort by createdAt descending (newest first)
-    if (!a.isPinned && !b.isPinned) return b.createdAt - a.createdAt;
-    return 0;
+    return b.createdAt - a.createdAt;
   });
 
   // Toggle class in collection

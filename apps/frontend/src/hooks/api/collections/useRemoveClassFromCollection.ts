@@ -3,41 +3,30 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import {
+  GetCollectionByIdDocument,
   RemoveClassFromCollectionDocument,
   RemoveClassInput,
-  GetAllCollectionsDocument,
-  GetAllCollectionsWithPreviewDocument,
-  GetCollectionByIdDocument,
 } from "@/lib/generated/graphql";
 
 export const useRemoveClassFromCollection = () => {
-  const mutation = useMutation(RemoveClassFromCollectionDocument);
+  const [mutate, result] = useMutation(RemoveClassFromCollectionDocument);
 
   const removeClassFromCollection = useCallback(
     async (
       input: RemoveClassInput,
-      options?: Omit<
-        Parameters<typeof mutation[0]>[0],
-        "variables"
-      >
+      options?: Omit<Parameters<typeof mutate>[0], "variables">
     ) => {
-      const mutate = mutation[0];
-
       return await mutate({
         ...options,
         variables: { input },
         refetchQueries: [
-          { query: GetAllCollectionsDocument },
-          { query: GetAllCollectionsWithPreviewDocument },
           { query: GetCollectionByIdDocument, variables: { id: input.collectionId } },
         ],
+        awaitRefetchQueries: false,
       });
     },
-    [mutation]
+    [mutate]
   );
 
-  return [removeClassFromCollection, mutation[1]] as [
-    mutate: typeof removeClassFromCollection,
-    result: (typeof mutation)[1],
-  ];
+  return [removeClassFromCollection, result] as const;
 };

@@ -5,40 +5,44 @@ import { useMutation } from "@apollo/client/react";
 import {
   UpdateCollectionDocument,
   UpdateCollectionInput,
-  GetAllCollectionsDocument,
-  GetAllCollectionsWithPreviewDocument,
-  GetCollectionByIdDocument,
 } from "@/lib/generated/graphql";
 
 export const useUpdateCollection = () => {
-  const mutation = useMutation(UpdateCollectionDocument);
+  const [mutate, result] = useMutation(UpdateCollectionDocument);
 
   const updateCollection = useCallback(
     async (
       id: string,
       input: UpdateCollectionInput,
-      options?: Omit<
-        Parameters<typeof mutation[0]>[0],
-        "variables"
-      >
+      options?: Omit<Parameters<typeof mutate>[0], "variables">
     ) => {
-      const mutate = mutation[0];
-
       return await mutate({
         ...options,
         variables: { id, input },
-        refetchQueries: [
-          { query: GetAllCollectionsDocument },
-          { query: GetAllCollectionsWithPreviewDocument },
-          { query: GetCollectionByIdDocument, variables: { id } },
-        ],
+        // Surgically update only the fields being changed
+        // This avoids overwriting the full class preview data
+        update(cache) {
+          cache.modify({
+            id: `Collection:${id}`,
+            fields: {
+              // Only update fields that are in the input
+              ...(input.name !== undefined && {
+                name: () => input.name,
+              }),
+              ...(input.color !== undefined && {
+                color: () => input.color,
+              }),
+              ...(input.pinned !== undefined && {
+                pinnedAt: () =>
+                  input.pinned ? new Date().toISOString() : null,
+              }),
+            },
+          });
+        },
       });
     },
-    [mutation]
+    [mutate]
   );
 
-  return [updateCollection, mutation[1]] as [
-    mutate: typeof updateCollection,
-    result: (typeof mutation)[1],
-  ];
+  return [updateCollection, result] as const;
 };

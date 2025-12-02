@@ -16,6 +16,7 @@ export interface Collection {
   name: string;
   classCount: number;
   isPinned: boolean;
+  pinnedAt: number | null;
   isSystem: boolean;
   color: string | null;
   createdAt: number;

@@ -187,13 +187,6 @@ export const UPDATE_COLLECTION = gql`
       pinnedAt
       isSystem
       createdAt
-      classes {
-        class {
-          subject
-          courseNumber
-          number
-        }
-      }
     }
   }
 `;

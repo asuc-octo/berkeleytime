@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -62,6 +62,7 @@ export default function Bookmarks() {
           name: c.name,
           classCount: c.classes?.length ?? 0,
           isPinned: !!c.pinnedAt,
+          pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
           isSystem: c.isSystem,
           color: (c.color ?? null) as string | null,
           createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
@@ -72,9 +73,12 @@ export default function Bookmarks() {
         // System collections first (All Saved)
         if (a.isSystem && !b.isSystem) return -1;
         if (!a.isSystem && b.isSystem) return 1;
-        // Then pinned items
+        // Then pinned items (sorted by pinnedAt, latest first)
         if (a.isPinned && !b.isPinned) return -1;
         if (!a.isPinned && b.isPinned) return 1;
+        if (a.isPinned && b.isPinned) {
+          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+        }
         // Then by creation date (newest first)
         return b.createdAt - a.createdAt;
       });
@@ -91,7 +95,18 @@ export default function Bookmarks() {
   const [exitPath, setExitPath] = useState<string | null>(null);
 
   // Track initial collection IDs to skip entrance animation on page load
-  const initialIds = useRef(new Set(collections.map((c) => c.id)));
+  const initialIds = useRef<Set<string> | null>(null);
+  if (initialIds.current === null && collections.length > 0) {
+    initialIds.current = new Set(collections.map((c) => c.id));
+  }
+
+  // Add new collection IDs after creation to prevent re-entrance animation
+  // when sorting changes their position
+  useEffect(() => {
+    if (initialIds.current) {
+      collections.forEach((c) => initialIds.current!.add(c.id));
+    }
+  }, [collections]);
 
   const handleCollectionClick = useCallback((path: string) => {
     setExitPath(path);
@@ -229,7 +244,7 @@ export default function Bookmarks() {
                     key={collection.id}
                     layout
                     initial={
-                      initialIds.current.has(collection.id)
+                      initialIds.current?.has(collection.id)
                         ? false
                         : { opacity: 0, scale: 0.8 }
                     }
