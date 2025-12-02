@@ -52,7 +52,6 @@ export function CollectionModal({
 
   useEffect(() => {
     if (isOpen) {
-      // For rename mode, start with empty input so user types new name
       setName(mode === "rename" ? "" : (initialName ?? ""));
       setColor(initialColor);
     }

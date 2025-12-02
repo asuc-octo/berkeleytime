@@ -8,7 +8,6 @@ import {
   CreateCollectionInput,
 } from "@/lib/generated/graphql";
 
-// Fragment for writing new collection to cache
 const NEW_COLLECTION_FRAGMENT = gql`
   fragment NewCollection on Collection {
     _id
@@ -53,7 +52,6 @@ export const useCreateCollection = () => {
             },
           });
         },
-        // No refetchQueries - cache is updated directly
       });
     },
     [mutate]

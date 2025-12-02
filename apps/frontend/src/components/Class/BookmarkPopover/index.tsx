@@ -49,15 +49,11 @@ export default function BookmarkPopover({
   const [addClassToCollection] = useAddClassToCollection();
   const [removeClassFromCollection] = useRemoveClassFromCollection();
 
-  // Controlled popover state for quick-add behavior
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-
-  // Track which collections are being mutated (for loading states)
   const [mutatingCollections, setMutatingCollections] = useState<Set<string>>(
     new Set()
   );
 
-  // Transform API data to Collection interface, ensuring "All Saved" always exists
   const collections = useMemo<Collection[]>(() => {
     const result: Collection[] = [];
     let hasAllSaved = false;
@@ -82,7 +78,6 @@ export default function BookmarkPopover({
       }
     }
 
-    // Always ensure "All Saved" exists (placeholder if not from API)
     if (!hasAllSaved) {
       result.unshift({
         id: "all-saved-placeholder",
@@ -99,7 +94,6 @@ export default function BookmarkPopover({
     return result;
   }, [apiCollections]);
 
-  // Determine which collections contain the current class (tracked by ID)
   const savedCollectionIds = useMemo<Set<string>>(() => {
     if (!apiCollections || !classInfo) return new Set();
 
@@ -119,7 +113,6 @@ export default function BookmarkPopover({
     return saved;
   }, [apiCollections, classInfo]);
 
-  // Track initial collection IDs to skip entrance animation
   const initialCollectionIds = useRef<Set<string>>(new Set());
   if (initialCollectionIds.current.size === 0 && collections.length > 0) {
     initialCollectionIds.current = new Set(collections.map((c) => c.id));
@@ -136,7 +129,6 @@ export default function BookmarkPopover({
     existingNames.includes(newCollectionName.trim().toLowerCase());
   const isTooLong = newCollectionName.trim().length > 50;
 
-  // Sort: system → pinned (by pinnedAt desc) → unpinned (by createdAt desc)
   const sortedCollections = [...collections].sort((a, b) => {
     if (a.isSystem && !b.isSystem) return -1;
     if (!a.isSystem && b.isSystem) return 1;
@@ -247,7 +239,6 @@ export default function BookmarkPopover({
   const isAnyClassSaved = savedCollectionIds.size > 0;
   const allSavedCollection = collections.find((c) => c.isSystem);
 
-  // Quick-add: opens popover and adds to "All Saved" in background
   const handleQuickAdd = useCallback(() => {
     if (!classInfo || !allSavedCollection) return;
 
@@ -294,7 +285,6 @@ export default function BookmarkPopover({
               e.preventDefault();
               handleQuickAdd();
             }
-            // Otherwise popover opens naturally via Popover.Trigger
           }}
         >
           {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}

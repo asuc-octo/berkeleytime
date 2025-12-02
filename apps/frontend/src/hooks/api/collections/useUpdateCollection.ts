@@ -19,13 +19,10 @@ export const useUpdateCollection = () => {
       return await mutate({
         ...options,
         variables: { id, input },
-        // Surgically update only the fields being changed
-        // This avoids overwriting the full class preview data
         update(cache) {
           cache.modify({
             id: `Collection:${id}`,
             fields: {
-              // Only update fields that are in the input
               ...(input.name !== undefined && {
                 name: () => input.name,
               }),

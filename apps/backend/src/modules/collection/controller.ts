@@ -12,7 +12,6 @@ export interface RequestContext {
   };
 }
 
-// Type for stored class entries in MongoDB
 export interface StoredClassEntry {
   year: number;
   semester: string;
@@ -23,7 +22,6 @@ export interface StoredClassEntry {
   addedAt: Date;
 }
 
-// Type for collection documents returned from MongoDB
 export interface CollectionDocument {
   _id: Types.ObjectId;
   createdBy: string;
@@ -36,10 +34,8 @@ export interface CollectionDocument {
   updatedAt: Date;
 }
 
-// Constants
 export const ALL_SAVED_NAME = "All Saved";
 
-// Helper: Get or create the "All Saved" system collection for a user
 export const getOrCreateAllSaved = async (
   context: RequestContext
 ): Promise<CollectionDocument> => {
@@ -49,7 +45,6 @@ export const getOrCreateAllSaved = async (
     });
   }
 
-  // Try to find existing "All Saved" collection
   let allSaved = await CollectionModel.findOne({
     createdBy: context.user._id,
     isSystem: true,
@@ -57,13 +52,11 @@ export const getOrCreateAllSaved = async (
   });
 
   if (!allSaved) {
-    // Create "All Saved" collection
     // For existing users, populate with union of all classes from their collections
     const existingCollections = await CollectionModel.find({
       createdBy: context.user._id,
     }).lean();
 
-    // Collect all unique classes from existing collections
     const allClassesMap = new Map<string, StoredClassEntry>();
     for (const collection of existingCollections) {
       for (const classEntry of collection.classes || []) {
@@ -78,15 +71,13 @@ export const getOrCreateAllSaved = async (
       createdBy: context.user._id,
       name: ALL_SAVED_NAME,
       isSystem: true,
-      pinnedAt: new Date(), // System collections are always pinned
+      pinnedAt: new Date(),
       classes: Array.from(allClassesMap.values()),
     });
   }
 
   return allSaved.toObject() as unknown as CollectionDocument;
 };
-
-// Collection-Level Operations
 
 export const getAllCollections = async (
   context: RequestContext
@@ -97,22 +88,17 @@ export const getAllCollections = async (
     });
   }
 
-  // Ensure "All Saved" exists for this user
   await getOrCreateAllSaved(context);
 
   const collections = (await CollectionModel.find({
     createdBy: context.user._id,
   }).lean()) as unknown as CollectionDocument[];
 
-  // Sort: system collections first, then pinned, then by creation date
   return collections.sort((a, b) => {
-    // System collections first
     if (a.isSystem && !b.isSystem) return -1;
     if (!a.isSystem && b.isSystem) return 1;
-    // Then pinned
     if (a.pinnedAt && !b.pinnedAt) return -1;
     if (!a.pinnedAt && b.pinnedAt) return 1;
-    // Then by creation date (newest first)
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 };
@@ -151,7 +137,6 @@ export const getCollectionById = async (
     });
   }
 
-  // Query by ID, still verify ownership
   const collection = (await CollectionModel.findOne({
     _id: id,
     createdBy: context.user._id,
@@ -178,7 +163,6 @@ export const createCollection = async (
     });
   }
 
-  // Prevent using reserved system collection names
   if (name.trim().toLowerCase() === ALL_SAVED_NAME.toLowerCase()) {
     throw new GraphQLError(
       `"${ALL_SAVED_NAME}" is a reserved collection name`,
@@ -221,7 +205,6 @@ export const updateCollection = async (
     });
   }
 
-  // Find collection by ID (with ownership verification)
   const collection = await CollectionModel.findOne({
     _id: id,
     createdBy: context.user._id,
@@ -233,11 +216,9 @@ export const updateCollection = async (
     });
   }
 
-  // Build update object with only provided fields
   const update: Record<string, unknown> = {};
 
   if (input.name !== undefined && input.name !== null) {
-    // System collections cannot be renamed
     if (collection.isSystem) {
       throw new GraphQLError("System collections cannot be renamed", {
         extensions: { code: "FORBIDDEN" },
@@ -250,7 +231,6 @@ export const updateCollection = async (
       });
     }
 
-    // Prevent renaming to reserved names
     if (input.name.trim().toLowerCase() === ALL_SAVED_NAME.toLowerCase()) {
       throw new GraphQLError(
         `"${ALL_SAVED_NAME}" is a reserved collection name`,
@@ -260,7 +240,6 @@ export const updateCollection = async (
       );
     }
 
-    // Check new name doesn't conflict (unless it's the same name)
     if (input.name.trim() !== collection.name) {
       const existing = await CollectionModel.findOne({
         createdBy: context.user._id,
@@ -278,11 +257,9 @@ export const updateCollection = async (
   }
 
   if (input.color !== undefined) {
-    update.color = input.color; // null clears the color
+    update.color = input.color;
   }
 
-  // Backend generates timestamp - prevents client-side injection
-  // System collections cannot be pinned/unpinned (they are always pinned)
   if (input.pinned !== undefined && input.pinned !== null) {
     if (collection.isSystem) {
       throw new GraphQLError(
@@ -318,7 +295,6 @@ export const deleteCollection = async (
     });
   }
 
-  // Find collection first to check if it's a system collection
   const collection = await CollectionModel.findOne({
     _id: id,
     createdBy: context.user._id,
@@ -330,7 +306,6 @@ export const deleteCollection = async (
     });
   }
 
-  // System collections cannot be deleted
   if (collection.isSystem) {
     throw new GraphQLError("System collections cannot be deleted", {
       extensions: { code: "FORBIDDEN" },
@@ -341,8 +316,6 @@ export const deleteCollection = async (
 
   return true;
 };
-
-// Class-Level Operations
 
 export const addClassToCollection = async (
   context: RequestContext,
@@ -364,7 +337,6 @@ export const addClassToCollection = async (
     classNumber,
   } = input;
 
-  // Verify class exists in catalog
   const classExists = await ClassModel.findOne({
     year,
     semester,
@@ -394,7 +366,6 @@ export const addClassToCollection = async (
     addedAt: new Date(),
   };
 
-  // Find the target collection first
   const targetCollection = await CollectionModel.findOne({
     _id: collectionId,
     createdBy: context.user._id,
@@ -406,11 +377,9 @@ export const addClassToCollection = async (
     });
   }
 
-  // If adding to a non-system collection, also add to "All Saved" first
+  // Also add to "All Saved" when adding to a non-system collection
   if (!targetCollection.isSystem) {
     const allSaved = await getOrCreateAllSaved(context);
-
-    // Add to "All Saved" if not already there
     await CollectionModel.findOneAndUpdate(
       {
         _id: allSaved._id,
@@ -423,7 +392,6 @@ export const addClassToCollection = async (
     );
   }
 
-  // Check if class already exists in target collection
   const alreadyInCollection = targetCollection.classes?.some(
     (c) =>
       c.year === year &&
@@ -435,11 +403,9 @@ export const addClassToCollection = async (
   );
 
   if (alreadyInCollection) {
-    // Class already in collection, return as-is
     return targetCollection.toObject() as unknown as CollectionDocument;
   }
 
-  // Add class to target collection
   const result = await CollectionModel.findOneAndUpdate(
     {
       _id: collectionId,
@@ -489,7 +455,6 @@ export const removeClassFromCollection = async (
     classNumber,
   };
 
-  // Find the target collection first to check if it's a system collection
   const targetCollection = await CollectionModel.findOne({
     _id: collectionId,
     createdBy: context.user._id,
@@ -501,7 +466,6 @@ export const removeClassFromCollection = async (
     });
   }
 
-  // Check if the class is in the collection
   const classInCollection = targetCollection.classes?.some(
     (c) =>
       c.year === year &&
@@ -518,7 +482,7 @@ export const removeClassFromCollection = async (
     });
   }
 
-  // If removing from "All Saved" (system collection), cascade remove from ALL collections
+  // Removing from "All Saved" cascades to all collections
   if (targetCollection.isSystem) {
     await CollectionModel.updateMany(
       {
@@ -529,7 +493,6 @@ export const removeClassFromCollection = async (
       }
     );
 
-    // Return the updated "All Saved" collection
     const updatedAllSaved = await CollectionModel.findById(collectionId).lean();
     if (!updatedAllSaved) {
       throw new GraphQLError("Collection not found after update", {
@@ -539,7 +502,6 @@ export const removeClassFromCollection = async (
     return updatedAllSaved as unknown as CollectionDocument;
   }
 
-  // Regular collection: just remove from this collection
   const result = await CollectionModel.findOneAndUpdate(
     {
       _id: collectionId,

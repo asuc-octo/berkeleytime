@@ -31,62 +31,57 @@ export default function Bookmarks() {
   const collections = useMemo<Collection[]>(() => {
     if (!apiCollections) return [];
 
-    return (
-      apiCollections
-        .map((c) => {
-          // Extract top 2 preview classes (backend sorts by addedAt desc)
-          const previewClasses: CollectionPreviewClass[] = [];
-          for (const entry of c.classes ?? []) {
-            if (previewClasses.length >= 2) break;
-            if (!entry.class) continue;
+    return apiCollections
+      .map((c) => {
+        const previewClasses: CollectionPreviewClass[] = [];
+        for (const entry of c.classes ?? []) {
+          if (previewClasses.length >= 2) break;
+          if (!entry.class) continue;
 
-            previewClasses.push({
-              subject: entry.class.subject,
-              courseNumber: entry.class.courseNumber,
-              number: entry.class.number,
-              title: entry.class.title ?? entry.class.course?.title ?? null,
-              gradeAverage:
-                entry.class.gradeDistribution?.average ??
-                entry.class.course?.gradeDistribution?.average ??
-                null,
-              enrolledCount:
-                entry.class.primarySection?.enrollment?.latest?.enrolledCount ??
-                null,
-              maxEnroll:
-                entry.class.primarySection?.enrollment?.latest?.maxEnroll ??
-                null,
-              unitsMin: entry.class.unitsMin,
-              unitsMax: entry.class.unitsMax,
-              hasReservedSeats:
-                (entry.class.primarySection?.enrollment?.latest
-                  ?.activeReservedMaxCount ?? 0) > 0,
-            });
-          }
+          previewClasses.push({
+            subject: entry.class.subject,
+            courseNumber: entry.class.courseNumber,
+            number: entry.class.number,
+            title: entry.class.title ?? entry.class.course?.title ?? null,
+            gradeAverage:
+              entry.class.gradeDistribution?.average ??
+              entry.class.course?.gradeDistribution?.average ??
+              null,
+            enrolledCount:
+              entry.class.primarySection?.enrollment?.latest?.enrolledCount ??
+              null,
+            maxEnroll:
+              entry.class.primarySection?.enrollment?.latest?.maxEnroll ?? null,
+            unitsMin: entry.class.unitsMin,
+            unitsMax: entry.class.unitsMax,
+            hasReservedSeats:
+              (entry.class.primarySection?.enrollment?.latest
+                ?.activeReservedMaxCount ?? 0) > 0,
+          });
+        }
 
-          return {
-            id: c._id,
-            name: c.name,
-            classCount: c.classes?.length ?? 0,
-            isPinned: !!c.pinnedAt,
-            pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
-            isSystem: c.isSystem,
-            color: (c.color ?? null) as string | null,
-            createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
-            previewClasses,
-          };
-        })
-        // Sort: system → pinned (by pinnedAt desc) → unpinned (by createdAt desc)
-        .sort((a, b) => {
-          if (a.isSystem && !b.isSystem) return -1;
-          if (!a.isSystem && b.isSystem) return 1;
-          if (a.isPinned && !b.isPinned) return -1;
-          if (!a.isPinned && b.isPinned) return 1;
-          if (a.isPinned && b.isPinned) {
-            return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
-          }
-          return b.createdAt - a.createdAt;
-        })
-    );
+        return {
+          id: c._id,
+          name: c.name,
+          classCount: c.classes?.length ?? 0,
+          isPinned: !!c.pinnedAt,
+          pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
+          isSystem: c.isSystem,
+          color: (c.color ?? null) as string | null,
+          createdAt: c.createdAt ? new Date(c.createdAt).getTime() : 0,
+          previewClasses,
+        };
+      })
+      .sort((a, b) => {
+        if (a.isSystem && !b.isSystem) return -1;
+        if (!a.isSystem && b.isSystem) return 1;
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        if (a.isPinned && b.isPinned) {
+          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+        }
+        return b.createdAt - a.createdAt;
+      });
   }, [apiCollections]);
 
   const [collectionToDelete, setCollectionToDelete] =
@@ -99,13 +94,11 @@ export default function Bookmarks() {
   const [isExiting, setIsExiting] = useState(false);
   const [exitPath, setExitPath] = useState<string | null>(null);
 
-  // Track initial IDs to skip entrance animation on page load
   const initialIds = useRef<Set<string> | null>(null);
   if (initialIds.current === null && collections.length > 0) {
     initialIds.current = new Set(collections.map((c) => c.id));
   }
 
-  // Add new IDs after creation to prevent re-animation when sort changes
   useEffect(() => {
     if (initialIds.current) {
       collections.forEach((c) => initialIds.current!.add(c.id));

@@ -16,7 +16,6 @@ export const useDeleteCollection = () => {
       return await mutate({
         ...options,
         variables: { id },
-        // Optimistically remove from cache immediately
         update(cache) {
           cache.modify({
             fields: {

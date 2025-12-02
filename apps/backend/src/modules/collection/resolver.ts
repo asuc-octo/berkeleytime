@@ -7,8 +7,7 @@ import { CollectionDocument, StoredClassEntry } from "./controller";
 import * as controller from "./controller";
 import { CollectionModule } from "./generated-types/module-types";
 
-// Intermediate type for parent passed to Collection field resolvers
-// Note: classes is StoredClassEntry[] here, transformed by Collection.classes resolver
+// classes is StoredClassEntry[] here, transformed by Collection.classes resolver
 interface CollectionParent {
   _id: string;
   createdBy: string;
@@ -21,8 +20,6 @@ interface CollectionParent {
   updatedAt: string;
 }
 
-// Helper to map Collection document to GraphQL response
-// Returns CollectionParent which will be resolved by field resolvers
 const mapCollectionToGraphQL = (
   collection: CollectionDocument
 ): CollectionModule.Collection => {
@@ -208,7 +205,6 @@ const resolvers: CollectionModule.Resolvers = {
   },
 
   Collection: {
-    // Resolve classes with their full class info
     classes: async (parent) => {
       const typedParent = parent as unknown as CollectionParent;
 
@@ -216,7 +212,6 @@ const resolvers: CollectionModule.Resolvers = {
         return [];
       }
 
-      // Sort classes by addedAt descending (newest first)
       const sortedClasses = [...typedParent.classes].sort((a, b) => {
         const dateA = a.addedAt ? new Date(a.addedAt).getTime() : 0;
         const dateB = b.addedAt ? new Date(b.addedAt).getTime() : 0;
@@ -229,7 +224,7 @@ const resolvers: CollectionModule.Resolvers = {
         sessionId: classEntry.sessionId,
         subject: classEntry.subject,
         courseNumber: classEntry.courseNumber,
-        number: classEntry.classNumber, // Note: classNumber -> number
+        number: classEntry.classNumber,
       }));
 
       const allClasses = await ClassModel.find({
@@ -267,8 +262,6 @@ const resolvers: CollectionModule.Resolvers = {
             };
           }
 
-          // Use formatClass to transform raw DB data to GraphQL-compatible format
-          // This handles unitsMin/unitsMax derivation from allowedUnits
           const formattedClass = formatClass(classData as IClassItem);
 
           return {
