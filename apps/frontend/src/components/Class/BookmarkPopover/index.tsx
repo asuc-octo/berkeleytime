@@ -310,65 +310,69 @@ export default function BookmarkPopover({
             className={styles.collectionList}
             onClick={() => isCreateFormOpen && resetForm()}
           >
-            <LayoutGroup>
-              {sortedCollections.map((collection) => {
-                const isSaved = savedCollectionIds.has(collection.id);
-                const isNew = !initialCollectionIds.current.has(collection.id);
-                return (
-                  <motion.div
-                    key={collection.id}
-                    layout
-                    initial={isNew ? { opacity: 0, y: 50 } : false}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      layout: { type: "spring", stiffness: 500, damping: 35 },
-                      opacity: { duration: 0.2 },
-                      y: { type: "spring", stiffness: 400, damping: 25 },
-                    }}
-                    className={styles.collectionRow}
-                  >
-                    <span className={styles.collectionName}>
-                      {collection.color ? (
-                        <span
-                          className={styles.colorIndicator}
-                          style={getColorStyle(collection.color)}
-                        />
-                      ) : (
-                        <span className={styles.colorIndicatorEmpty} />
-                      )}
-                      <span>
-                        {collection.name}{" "}
-                        <span className={styles.collectionCount}>
-                          ({collection.classCount})
-                        </span>
-                      </span>
-                      {collection.isPinned && (
-                        <PinSolid
-                          width={14}
-                          height={14}
-                          className={styles.pinIcon}
-                        />
-                      )}
-                    </span>
-                    <IconButton
-                      className={classNames(styles.bookmark, {
-                        [styles.active]: isSaved,
-                      })}
-                      disabled={mutatingCollections.has(collection.id)}
-                      onClick={() =>
-                        handleToggleCollection(collection.id, isSaved)
-                      }
+            <div className={styles.collectionRows}>
+              <LayoutGroup>
+                {sortedCollections.map((collection) => {
+                  const isSaved = savedCollectionIds.has(collection.id);
+                  const isNew = !initialCollectionIds.current.has(
+                    collection.id
+                  );
+                  return (
+                    <motion.div
+                      key={collection.id}
+                      layout
+                      initial={isNew ? { opacity: 0, y: 50 } : false}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        layout: { type: "spring", stiffness: 500, damping: 35 },
+                        opacity: { duration: 0.2 },
+                        y: { type: "spring", stiffness: 400, damping: 25 },
+                      }}
+                      className={styles.collectionRow}
                     >
-                      {isSaved ? (
-                        <BookmarkSolid width={16} height={16} />
-                      ) : (
-                        <Bookmark width={16} height={16} />
-                      )}
-                    </IconButton>
-                  </motion.div>
-                );
-              })}
-            </LayoutGroup>
+                      <span className={styles.collectionName}>
+                        {collection.color ? (
+                          <span
+                            className={styles.colorIndicator}
+                            style={getColorStyle(collection.color)}
+                          />
+                        ) : (
+                          <span className={styles.colorIndicatorEmpty} />
+                        )}
+                        <span>
+                          {collection.name}{" "}
+                          <span className={styles.collectionCount}>
+                            ({collection.classCount})
+                          </span>
+                        </span>
+                        {collection.isPinned && (
+                          <PinSolid
+                            width={14}
+                            height={14}
+                            className={styles.pinIcon}
+                          />
+                        )}
+                      </span>
+                      <IconButton
+                        className={classNames(styles.bookmark, {
+                          [styles.active]: isSaved,
+                        })}
+                        disabled={mutatingCollections.has(collection.id)}
+                        onClick={() =>
+                          handleToggleCollection(collection.id, isSaved)
+                        }
+                      >
+                        {isSaved ? (
+                          <BookmarkSolid width={16} height={16} />
+                        ) : (
+                          <Bookmark width={16} height={16} />
+                        )}
+                      </IconButton>
+                    </motion.div>
+                  );
+                })}
+              </LayoutGroup>
+            </div>
             <motion.div
               layout
               transition={{
