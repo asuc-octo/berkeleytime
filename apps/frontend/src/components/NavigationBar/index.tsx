@@ -11,7 +11,8 @@ import {
   SunLight,
   User,
 } from "iconoir-react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import {
   Button,
@@ -19,6 +20,7 @@ import {
   Flex,
   IconButton,
   MenuItem,
+  Select,
   useTheme,
 } from "@repo/theme";
 
@@ -86,12 +88,36 @@ const ThemeDropdown = ({
   );
 };
 
+const navItems = [
+  { path: "/catalog", label: "Catalog" },
+  { path: "/schedules", label: "Scheduler" },
+  { path: "/gradtrak", label: "Gradtrak" },
+  { path: "/grades", label: "Grades" },
+  { path: "/enrollment", label: "Enrollment" },
+];
+
 export default function NavigationBar({
   invert,
   accentColor,
 }: NavigationBarProps) {
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
+  const [isNarrow, setIsNarrow] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 992px)");
+    setIsNarrow(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => setIsNarrow(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
+
+  const currentNavItem = navItems.find((item) =>
+    location.pathname.startsWith(item.path)
+  );
 
   return (
     <Flex
@@ -108,61 +134,47 @@ export default function NavigationBar({
         </IconButton>
       </SideBar>
       <Link className={styles.brand} to="/">
-        Berkeleytime
+        <span className={styles.brandFull}>Berkeleytime</span>
+        <span className={styles.brandShort}>Bt</span>
       </Link>
+      <div className={styles.navSelect}>
+        <Select
+          options={navItems.map((item) => ({
+            value: item.path,
+            label: item.label,
+          }))}
+          value={currentNavItem?.path ?? null}
+          onChange={(path) => {
+            if (path) navigate(path as string);
+          }}
+          placeholder="Navigate"
+        />
+      </div>
       <div className={styles.group}>
-        <NavLink to="/catalog">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Catalog
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/schedules">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Scheduler
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/gradtrak">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Gradtrak
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/grades">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Grades
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/enrollment">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Enrollment
-            </MenuItem>
-          )}
-        </NavLink>
-        {/* <NavLink to="/about">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              About
-            </MenuItem>
-          )}
-        </NavLink> */}
+        {navItems.map((item) => (
+          <NavLink key={item.path} to={item.path}>
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                {item.label}
+              </MenuItem>
+            )}
+          </NavLink>
+        ))}
       </div>
       {user ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <Button className={styles.button} style={{ color: accentColor }}>
-              {user.name ?? "Profile"}
+              {isNarrow
+                ? (() => {
+                    const firstName = user.name?.split(" ")[0] ?? "Profile";
+                    return firstName.length > 10 ? firstName.slice(0, 10) + "..." : firstName;
+                  })()
+                : (user.name ?? "Profile")}
               <User />
             </Button>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content sideOffset={5} align="center">
+          <DropdownMenu.Content sideOffset={5} align={isNarrow ? "end" : "center"}>
             <DropdownMenu.Item asChild>
               <Link to="/profile">
                 <ProfileCircle width={18} height={18} /> Account

@@ -9,10 +9,6 @@
   align-items: center;
   color: var(--foreground-color);
 
-  @media (width <= 992px) {
-    display: none;
-  }
-
   .actions {
     margin-left: auto;
     display: flex;
@@ -29,6 +25,12 @@
     padding: 4px 8px;
     border-radius: 4px;
     transition: color 100ms ease-in-out;
+
+    &:first-child {
+      @media (width <= 992px) {
+        display: none;
+      }
+    }
 
     @include dark-mode {
       color: var(--gray-300);

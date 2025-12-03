@@ -4,6 +4,10 @@
     border: none !important;
   }
 
+  .themeButton[data-state="open"] {
+    box-shadow: inset 0 0 0 1px var(--border-color);
+  }
+
   .brand {
     font-size: 24px;
     font-weight: 580;
@@ -20,6 +24,37 @@
 
     &:hover {
       opacity: 0.8;
+    }
+  }
+
+  .brandFull {
+    @media (width <= 992px) {
+      display: none;
+    }
+  }
+
+  .brandShort {
+    display: none;
+
+    @media (width <= 992px) {
+      display: inline;
+    }
+  }
+
+
+  .navSelect {
+    display: none;
+
+    @media (width <= 992px) {
+      display: block;
+      width: 150px;
+
+      > div {
+        height: 32px;
+        min-height: unset;
+        padding: 0 8px;
+        font-size: var(--text-14);
+      }
     }
   }
 
