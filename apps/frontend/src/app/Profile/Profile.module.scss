@@ -97,12 +97,6 @@
     margin: 0;
   }
 
-  .sectionHeader {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
   .collectionsSection {
     display: grid;
     grid-template-columns: repeat(auto-fit, 420px);

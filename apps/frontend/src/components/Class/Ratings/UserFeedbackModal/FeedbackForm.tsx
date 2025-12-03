@@ -175,7 +175,7 @@ const BooleanOptions = ({ name, value, onChange }: BooleanInputProps) => {
     onChange(value === selectedValue ? null : selectedValue);
 
   return (
-    <div className={styles.booleanBadges}>
+    <div className={styles.booleanBadges} role="group" aria-label={name}>
       <button
         type="button"
         className={`${styles.booleanBadge} ${value === 1 ? styles.selected : ""}`}

@@ -56,13 +56,13 @@
 }
 
 .singleCard {
-  composes: previewCard;
+  @extend .previewCard;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .stackedCard {
-  composes: previewCard;
+  @extend .previewCard;
 }
 
 .cardContent {

@@ -184,9 +184,7 @@ export function CollectionCard({
       <div className={styles.footer}>
         <div className={styles.footerContent}>
           <p className={styles.collectionName}>
-            {(isPinned || isSystem) && (
-              <PinSolid width={14} height={14} />
-            )}
+            {(isPinned || isSystem) && <PinSolid width={14} height={14} />}
             <span>{name}</span>
           </p>
           <p className={styles.classCount}>

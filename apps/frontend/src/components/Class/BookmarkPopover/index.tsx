@@ -5,7 +5,7 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Bookmark, BookmarkSolid, PinSolid, Plus } from "iconoir-react";
 import { Popover } from "radix-ui";
 
-import { Button, IconButton } from "@repo/theme";
+import { Button, Color, IconButton } from "@repo/theme";
 
 import CollectionNameInput from "@/components/CollectionNameInput";
 import {
@@ -69,7 +69,8 @@ export default function BookmarkPopover({
             isPinned: !!c.pinnedAt,
             pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
             isSystem: c.isSystem,
-            color: c.color ?? null,
+            // CollectionColor is a subset of Color with identical string values
+            color: (c.color ?? null) as unknown as Color | null,
             lastAdd: new Date(c.lastAdd).getTime(),
           });
         }
@@ -136,7 +137,7 @@ export default function BookmarkPopover({
 
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
-  const [newCollectionColor, setNewCollectionColor] = useState<string | null>(
+  const [newCollectionColor, setNewCollectionColor] = useState<Color | null>(
     null
   );
   const existingNames = collections.map((c) => c.name.toLowerCase());
@@ -356,7 +357,7 @@ export default function BookmarkPopover({
             [styles.active]: isAnyClassSaved,
           })}
           disabled={disabled || !classInfo || collectionsLoading}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
             if (!user) {
               e.preventDefault();
               signIn();

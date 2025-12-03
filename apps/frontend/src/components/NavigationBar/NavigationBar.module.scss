@@ -1,3 +1,11 @@
+.themeDropdown {
+  min-width: 100px;
+}
+
+.themeDropdownItem {
+  font-size: 14px;
+}
+
 .root {
   .themeButton,
   .themeButton[data-variant="outline"] {
