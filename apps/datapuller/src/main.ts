@@ -5,6 +5,7 @@ import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
 import sectionsPuller from "./pullers/sections";
+import semanticSearchPuller from "./pullers/semantic-search";
 import termsPuller from "./pullers/terms";
 import setup from "./shared";
 import { Config } from "./shared/config";
@@ -28,6 +29,7 @@ const pullerMap: {
   enrollments: enrollmentHistoriesPuller.updateEnrollmentHistories,
   "terms-all": termsPuller.allTerms,
   "terms-nearby": termsPuller.nearbyTerms,
+  "semantic-search-refresh": semanticSearchPuller.refreshSemanticSearch,
 } as const;
 
 const runPuller = async () => {

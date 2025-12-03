@@ -1,8 +1,10 @@
 import logging
 import os
+import pickle
 import threading
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import faiss
@@ -14,6 +16,10 @@ from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger("semantic-search")
 logging.basicConfig(level=os.getenv("SEMANTIC_SEARCH_LOG_LEVEL", "INFO"))
+
+# Directory for persisting FAISS indices
+INDEX_STORAGE_DIR = Path(os.getenv("INDEX_STORAGE_DIR", "/app/indexes"))
+INDEX_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 
 COURSE_QUERY = """
 query Catalog($year: Int!, $semester: Semester!) {
@@ -88,6 +94,80 @@ class SemanticSearchEngine:
         self._indices: Dict[str, TermIndex] = {}
         self._lock = threading.RLock()
 
+    def _get_index_path(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Path:
+        """Get filesystem path for persisted index."""
+        suffix = ",".join(allowed_subjects) if allowed_subjects else "all"
+        filename = f"{year}_{semester}_{suffix}.index"
+        return INDEX_STORAGE_DIR / filename
+
+    def _save_index(self, entry: TermIndex) -> None:
+        """Save FAISS index and metadata to disk."""
+        try:
+            index_path = self._get_index_path(entry.year, entry.semester, entry.allowed_subjects)
+
+            # Save FAISS index
+            faiss.write_index(entry.index, str(index_path.with_suffix(".faiss")))
+
+            # Save metadata (everything except the FAISS index)
+            metadata = {
+                "embeddings": entry.embeddings,
+                "courses": entry.courses,
+                "course_texts": entry.course_texts,
+                "kept_idx": entry.kept_idx,
+                "last_refreshed": entry.last_refreshed,
+                "year": entry.year,
+                "semester": entry.semester,
+                "allowed_subjects": entry.allowed_subjects,
+            }
+            with open(index_path.with_suffix(".pkl"), "wb") as f:
+                pickle.dump(metadata, f)
+
+            logger.info("Saved index to %s", index_path)
+        except Exception as exc:
+            logger.warning("Failed to save index to disk: %s", exc)
+
+    def _load_index(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Optional[TermIndex]:
+        """Load FAISS index and metadata from disk if available."""
+        try:
+            index_path = self._get_index_path(year, semester, allowed_subjects)
+            faiss_file = index_path.with_suffix(".faiss")
+            pkl_file = index_path.with_suffix(".pkl")
+
+            if not faiss_file.exists() or not pkl_file.exists():
+                return None
+
+            # Load FAISS index
+            index = faiss.read_index(str(faiss_file))
+
+            # Load metadata
+            with open(pkl_file, "rb") as f:
+                metadata = pickle.load(f)
+
+            entry = TermIndex(
+                index=index,
+                embeddings=metadata["embeddings"],
+                courses=metadata["courses"],
+                course_texts=metadata["course_texts"],
+                kept_idx=metadata["kept_idx"],
+                last_refreshed=metadata["last_refreshed"],
+                year=metadata["year"],
+                semester=metadata["semester"],
+                allowed_subjects=metadata["allowed_subjects"],
+            )
+
+            logger.info(
+                "Loaded index from disk for %s %s (subjects=%s, size=%d, last_refreshed=%s)",
+                entry.semester,
+                entry.year,
+                "all" if not entry.allowed_subjects else ",".join(sorted(entry.allowed_subjects)),
+                len(entry.course_texts),
+                entry.last_refreshed.isoformat(),
+            )
+            return entry
+        except Exception as exc:
+            logger.warning("Failed to load index from disk: %s", exc)
+            return None
+
     def refresh(
         self, year: int, semester: str, allowed_subjects: Optional[Iterable[str]] = None
     ) -> TermIndex:
@@ -140,6 +220,9 @@ class SemanticSearchEngine:
 
         with self._lock:
             self._indices[self._key(entry.year, entry.semester, entry.allowed_subjects)] = entry
+
+        # Save index to disk for persistence
+        self._save_index(entry)
 
         logger.info("Semantic index ready with %d entries", len(course_texts))
         return entry
@@ -220,6 +303,14 @@ class SemanticSearchEngine:
 
         if entry:
             return entry
+
+        # Try loading from disk before building
+        loaded = self._load_index(year, canonical_semester, sorted(allowed) if allowed else None)
+        if loaded:
+            with self._lock:
+                self._indices[key] = loaded
+            return loaded
+
         return self.refresh(year, canonical_semester, allowed)
 
     def _key(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
@@ -318,7 +409,17 @@ def resolve_term(year: Optional[int], semester: Optional[str]) -> Tuple[int, str
 def build_index() -> None:
     if DEFAULT_TERM:
         try:
-            engine.refresh(*DEFAULT_TERM)
+            # Try loading from disk first
+            year, semester = DEFAULT_TERM
+            loaded = engine._load_index(year, semester, None)
+            if loaded:
+                key = engine._key(loaded.year, loaded.semester, loaded.allowed_subjects)
+                with engine._lock:
+                    engine._indices[key] = loaded
+                logger.info("Loaded default index from disk on startup")
+            else:
+                # Build fresh if not found on disk
+                engine.refresh(*DEFAULT_TERM)
         except Exception as exc:  # pragma: no cover - startup diagnostics
             logger.exception("Failed to build semantic search index: %s", exc)
             raise

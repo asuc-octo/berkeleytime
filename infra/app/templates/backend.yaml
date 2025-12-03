@@ -50,6 +50,7 @@ data:
   NODE_ENV: {{ .Values.nodeEnv }}
   MONGODB_URI: {{ .Values.mongoUri }}
   REDIS_URI: {{ .Values.redisUri }}
+  SEMANTIC_SEARCH_URL: {{ printf "http://%s-svc:%d" (include "bt-app.semanticSearchName" .) (.Values.semanticSearch.port | int) | quote }}
   SIS_CLASS_APP_ID: "_" # TODO: remove from backend
   SIS_CLASS_APP_KEY: "_"
   SIS_COURSE_APP_ID: "_"
