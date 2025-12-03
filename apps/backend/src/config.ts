@@ -20,6 +20,9 @@ export interface Config {
   backendPath: string;
   graphqlPath: string;
   isDev: boolean;
+  semanticSearch: {
+    url: string;
+  };
   mongoDB: {
     uri: string;
   };
@@ -35,7 +38,6 @@ export interface Config {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   redisUri: string;
-  semanticSearchUrl: string;
 }
 
 // All your secrets, keys go here
@@ -46,6 +48,9 @@ export const config: Config = {
   backendPath: env("BACKEND_PATH"),
   graphqlPath: env("GRAPHQL_PATH"),
   isDev: env("NODE_ENV") === "development",
+  semanticSearch: {
+    url: env("SEMANTIC_SEARCH_URL"),
+  },
   mongoDB: {
     uri: env("MONGODB_URI"),
   },
@@ -61,5 +66,4 @@ export const config: Config = {
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: env("GOOGLE_CLIENT_SECRET"),
   redisUri: env("REDIS_URI"),
-  semanticSearchUrl: env("SEMANTIC_SEARCH_URL"),
 };

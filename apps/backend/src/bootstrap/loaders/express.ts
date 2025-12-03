@@ -60,7 +60,7 @@ export default async (
   passportLoader(app, redis);
 
   // load semantic search routes
-  app.use("/api/semantic-search", semanticSearchRoutes);
+  app.use("/semantic-search", semanticSearchRoutes);
 
   app.use(
     config.graphqlPath,
