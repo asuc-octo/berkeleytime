@@ -65,12 +65,9 @@ export default function Catalog() {
   const { data: terms, loading: termsLoading } = useReadTerms();
   const [createUnlockRatings] = useMutation(CreateRatingsDocument);
 
-  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(
-    GetUserRatingsDocument,
-    {
-      skip: !user,
-    }
-  );
+  const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
+    skip: !user,
+  });
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,
@@ -237,8 +234,7 @@ export default function Catalog() {
   );
 
   useEffect(() => {
-    if (!user || userRatingsLoading || !userRatingsData || ratingsNeeded <= 0)
-      return;
+    if (!user || ratingsNeeded <= 0) return;
 
     showToast({
       title: "Unlock all features by reviewing classes you have taken",
@@ -247,14 +243,7 @@ export default function Catalog() {
         onClick: openUnlockModal,
       },
     });
-  }, [
-    showToast,
-    openUnlockModal,
-    user,
-    userRatingsLoading,
-    userRatingsData,
-    ratingsNeeded,
-  ]);
+  }, [showToast, openUnlockModal, user, ratingsNeeded]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
