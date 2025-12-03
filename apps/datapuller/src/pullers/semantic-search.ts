@@ -49,9 +49,7 @@ const refreshSemanticSearch = async (config: Config) => {
       }
 
       const result = await response.json();
-      log.info(
-        `Refreshed ${year} ${semester}: ${result.size} courses indexed`
-      );
+      log.info(`Refreshed ${year} ${semester}: ${result.size} courses indexed`);
     } catch (error: any) {
       log.error(
         `Error refreshing ${term.year} ${term.semester}: ${error.message}`
