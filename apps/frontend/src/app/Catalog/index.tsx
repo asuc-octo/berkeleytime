@@ -1,33 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useMutation, useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { NavArrowRight, Xmark } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { MetricName, REQUIRED_METRICS } from "@repo/shared";
-import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
 import { Flex, IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
-import {
-  ErrorDialog,
-  SubmitRatingPopup,
-} from "@/components/Class/Ratings/RatingDialog";
-import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
-import { MetricData } from "@/components/Class/Ratings/metricsUtil";
 import ClassBrowser from "@/components/ClassBrowser";
-import { useToast } from "@/components/Toast";
 import { useReadTerms } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
-import useUser from "@/hooks/useUser";
-import {
-  CreateRatingsDocument,
-  GetUserRatingsDocument,
-  Semester,
-} from "@/lib/generated/graphql";
+import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
-import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import styles from "./Catalog.module.scss";
 
@@ -50,117 +34,11 @@ export default function Catalog() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { showToast } = useToast();
 
   const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(false);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
 
-  const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
-  const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
-  const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
-
-  const { user } = useUser();
   const { data: terms, loading: termsLoading } = useReadTerms();
-  const [createUnlockRatings] = useMutation(CreateRatingsDocument);
-
-  const { data: userRatingsData, loading: userRatingsLoading } = useQuery(
-    GetUserRatingsDocument,
-    {
-      skip: !user,
-    }
-  );
-
-  const userRatingsCount = useMemo(
-    () => userRatingsData?.userRatings?.classes?.length ?? 0,
-    [userRatingsData]
-  );
-
-  const userRatedClasses = useMemo(() => {
-    const ratedClasses =
-      userRatingsData?.userRatings?.classes?.map((cls) => ({
-        subject: cls.subject,
-        courseNumber: cls.courseNumber,
-      })) ?? [];
-
-    const seen = new Set<string>();
-    return ratedClasses.filter((cls) => {
-      const key = `${cls.subject}-${cls.courseNumber}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, [userRatingsData]);
-
-  const ratingsNeeded = Math.max(
-    0,
-    USER_REQUIRED_RATINGS_TO_UNLOCK - userRatingsCount
-  );
-
-  const openUnlockModal = useCallback(() => {
-    if (!user) return;
-    const goalCount =
-      ratingsNeeded <= 0 ? USER_REQUIRED_RATINGS_TO_UNLOCK : ratingsNeeded;
-    setUnlockModalGoalCount(goalCount);
-    setIsUnlockModalOpen(true);
-    setIsUnlockThankYouOpen(false);
-  }, [ratingsNeeded, user]);
-
-  const handleUnlockModalClose = useCallback(() => {
-    setIsUnlockModalOpen(false);
-    setUnlockModalGoalCount(0);
-    setIsUnlockThankYouOpen(false);
-  }, []);
-
-  const METRIC_NAMES = Object.values(MetricName) as MetricName[];
-
-  const handleUnlockRatingSubmit = useCallback(
-    async (
-      metricValues: MetricData,
-      termInfo: { semester: Semester; year: number },
-      classInfo: { subject: string; courseNumber: string; classNumber: string }
-    ) => {
-      const populatedMetrics = METRIC_NAMES.filter(
-        (metric) => typeof metricValues[metric] === "number"
-      );
-      if (populatedMetrics.length === 0) {
-        throw new Error(`No populated metrics`);
-      }
-
-      const missingRequiredMetrics = REQUIRED_METRICS.filter(
-        (metric) => !populatedMetrics.includes(metric)
-      );
-      if (missingRequiredMetrics.length > 0) {
-        throw new Error(
-          `Missing required metrics: ${missingRequiredMetrics.join(", ")}`
-        );
-      }
-
-      const metrics = populatedMetrics.map((metric) => ({
-        metricName: metric,
-        value: metricValues[metric] as number,
-      }));
-
-      await createUnlockRatings({
-        variables: {
-          subject: classInfo.subject,
-          courseNumber: classInfo.courseNumber,
-          semester: termInfo.semester,
-          year: termInfo.year,
-          classNumber: classInfo.classNumber,
-          metrics,
-        },
-        refetchQueries: [{ query: GetUserRatingsDocument }],
-        awaitRefetchQueries: true,
-      });
-    },
-    [METRIC_NAMES, createUnlockRatings]
-  );
-
-  const shouldShowUnlockModal =
-    !!user &&
-    ((unlockModalGoalCount > 0 && isUnlockModalOpen) || isUnlockThankYouOpen);
 
   const semester = useMemo(() => {
     if (!providedSemester) return null;
@@ -235,26 +113,6 @@ export default function Catalog() {
     },
     [navigate, location, term]
   );
-
-  useEffect(() => {
-    if (!user || userRatingsLoading || !userRatingsData || ratingsNeeded <= 0)
-      return;
-
-    showToast({
-      title: "Unlock all features by reviewing classes you have taken",
-      action: {
-        label: "Start",
-        onClick: openUnlockModal,
-      },
-    });
-  }, [
-    showToast,
-    openUnlockModal,
-    user,
-    userRatingsLoading,
-    userRatingsData,
-    ratingsNeeded,
-  ]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -344,34 +202,6 @@ export default function Catalog() {
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {_class ? <Class class={_class} /> : null}
       </Flex>
-
-      {shouldShowUnlockModal && (
-        <UserFeedbackModal
-          isOpen={isUnlockModalOpen}
-          onClose={handleUnlockModalClose}
-          title="Unlock Ratings"
-          subtitle={`Rate ${Math.max(unlockModalGoalCount, 1)} classes to unlock all other ratings.`}
-          onSubmit={handleUnlockRatingSubmit}
-          userRatedClasses={userRatedClasses}
-          requiredRatingsCount={unlockModalGoalCount || 1}
-          onSubmitPopupChange={setIsUnlockThankYouOpen}
-          disableRatedCourses={true}
-          onError={(error) => {
-            const message = getRatingErrorMessage(error);
-            setErrorMessage(message);
-            setIsErrorDialogOpen(true);
-          }}
-        />
-      )}
-      <SubmitRatingPopup
-        isOpen={isUnlockThankYouOpen}
-        onClose={() => setIsUnlockThankYouOpen(false)}
-      />
-      <ErrorDialog
-        isOpen={isErrorDialogOpen}
-        onClose={() => setIsErrorDialogOpen(false)}
-        errorMessage={errorMessage}
-      />
     </div>
   );
 }

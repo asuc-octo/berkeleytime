@@ -12,7 +12,6 @@ import { ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
-import { ToastContextProvider } from "@/components/Toast";
 import UserProvider from "@/providers/UserProvider";
 
 const Landing = lazy(() => import("@/app/Landing"));
@@ -446,9 +445,7 @@ export default function App() {
     <ApolloProvider client={client}>
       <UserProvider>
         <ThemeProvider>
-          <ToastContextProvider>
-            <RouterProvider router={router} />
-          </ToastContextProvider>
+          <RouterProvider router={router} />
         </ThemeProvider>
       </UserProvider>
     </ApolloProvider>
