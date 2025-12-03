@@ -5,7 +5,7 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { WarningTriangleSolid } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Button, Color, Dialog, Grid } from "@repo/theme";
+import { Button, Color, Dialog } from "@repo/theme";
 
 import { CollectionModal } from "@/components/CollectionModal";
 import {
@@ -223,8 +223,8 @@ export default function Bookmarks() {
     >
       <h1 className={styles.pageTitle}>Bookmarks</h1>
       <div className={styles.pageContent}>
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
+        <div className={styles.collectionsSection}>
+          <div className={styles.collectionsHeader}>
             <h2 className={styles.sectionTitle}>Collections</h2>
             <button
               className={styles.newCollectionButton}
@@ -233,49 +233,52 @@ export default function Bookmarks() {
               New Collection
             </button>
           </div>
-          <Grid gap="20px" columns="repeat(auto-fit, 420px)">
-            <LayoutGroup>
-              <AnimatePresence mode="popLayout">
-                {collections.map((collection) => (
-                  <motion.div
-                    key={collection.id}
-                    layout
-                    initial={
-                      initialIds.current?.has(collection.id)
-                        ? false
-                        : { opacity: 0, scale: 0.8 }
+          <LayoutGroup>
+            <AnimatePresence mode="popLayout">
+              {collections.map((collection) => (
+                <motion.div
+                  key={collection.id}
+                  layout
+                  initial={
+                    initialIds.current?.has(collection.id)
+                      ? false
+                      : { opacity: 0, scale: 0.8 }
+                  }
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <CollectionCard
+                    name={collection.name}
+                    classCount={collection.classCount}
+                    isPinned={collection.isPinned}
+                    isSystem={collection.isSystem}
+                    color={collection.color}
+                    previewClasses={collection.previewClasses}
+                    onPin={(isPinned) => handlePin(collection.id, isPinned)}
+                    onRename={() => handleRenameClick(collection)}
+                    onColorChange={(color) =>
+                      handleColorChange(collection.id, color)
                     }
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  >
-                    <CollectionCard
-                      name={collection.name}
-                      classCount={collection.classCount}
-                      isPinned={collection.isPinned}
-                      isSystem={collection.isSystem}
-                      color={collection.color}
-                      previewClasses={collection.previewClasses}
-                      onPin={(isPinned) => handlePin(collection.id, isPinned)}
-                      onRename={() => handleRenameClick(collection)}
-                      onColorChange={(color) =>
-                        handleColorChange(collection.id, color)
+                    onDelete={() => handleDeleteClick(collection)}
+                    onClick={() => {
+                      const firstClass = collection.previewClasses?.[0];
+                      if (firstClass) {
+                        handleCollectionClick(
+                          `/collection/${collection.id}/${firstClass.subject.toLowerCase()}/${firstClass.courseNumber.toLowerCase()}/${firstClass.number}`
+                        );
+                      } else {
+                        handleCollectionClick(`/collection/${collection.id}`);
                       }
-                      onDelete={() => handleDeleteClick(collection)}
-                      onClick={() =>
-                        handleCollectionClick(`/collection/${collection.id}`)
-                      }
-                    />
-                  </motion.div>
-                ))}
-                <motion.div key="add-collection" layout>
-                  <AddCollectionCard
-                    onClick={() => setIsCreateModalOpen(true)}
+                    }}
                   />
                 </motion.div>
-              </AnimatePresence>
-            </LayoutGroup>
-          </Grid>
+              ))}
+              <motion.div key="add-collection" layout>
+                <AddCollectionCard onClick={() => setIsCreateModalOpen(true)} />
+              </motion.div>
+            </AnimatePresence>
+          </LayoutGroup>
         </div>
       </div>
 

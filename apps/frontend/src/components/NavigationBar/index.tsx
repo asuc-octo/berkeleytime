@@ -154,6 +154,7 @@ export default function NavigationBar({
           )}
         </NavLink> */}
       </div>
+      <ThemeDropdown theme={theme} setTheme={setTheme} />
       {user ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
@@ -215,7 +216,6 @@ export default function NavigationBar({
           <ArrowRight />
         </Button>
       )}
-      <ThemeDropdown theme={theme} setTheme={setTheme} />
       {/* <PinsDrawer>
         <IconButton>
           <Pin />

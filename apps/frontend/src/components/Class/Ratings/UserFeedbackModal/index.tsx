@@ -417,7 +417,7 @@ export function UserFeedbackModal({
         footer={footer}
         modalBodyRef={modalBodyRef}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentRatingIndex}
             className={styles.formContentWrapper}

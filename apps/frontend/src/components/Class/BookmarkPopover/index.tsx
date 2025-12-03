@@ -16,7 +16,7 @@ import {
 } from "@/hooks/api/collections";
 import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
-import { getColorStyle, getRandomColor } from "@/lib/colors";
+import { getColorStyle } from "@/lib/colors";
 import { CollectionColor, Semester } from "@/lib/generated/graphql";
 import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
 
@@ -116,10 +116,28 @@ export default function BookmarkPopover({
     initialCollectionIds.current = new Set(collections.map((c) => c.id));
   }
 
+  // Frozen sort order - captured when popover opens, maintained while open
+  const frozenOrderRef = useRef<string[]>([]);
+
+  const getSortedIds = useCallback((cols: Collection[]) => {
+    return [...cols]
+      .sort((a, b) => {
+        if (a.isSystem && !b.isSystem) return -1;
+        if (!a.isSystem && b.isSystem) return 1;
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        if (a.isPinned && b.isPinned) {
+          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+        }
+        return b.lastAdd - a.lastAdd;
+      })
+      .map((c) => c.id);
+  }, []);
+
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [newCollectionColor, setNewCollectionColor] = useState<string | null>(
-    getRandomColor
+    null
   );
   const existingNames = collections.map((c) => c.name.toLowerCase());
   const hasConflict =
@@ -127,16 +145,48 @@ export default function BookmarkPopover({
     existingNames.includes(newCollectionName.trim().toLowerCase());
   const isTooLong = newCollectionName.trim().length > 50;
 
-  const sortedCollections = [...collections].sort((a, b) => {
-    if (a.isSystem && !b.isSystem) return -1;
-    if (!a.isSystem && b.isSystem) return 1;
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    if (a.isPinned && b.isPinned) {
-      return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+  // Display collections using frozen order while popover is open
+  const displayCollections = useMemo(() => {
+    if (!isPopoverOpen || frozenOrderRef.current.length === 0) {
+      // Return fresh sorted list when closed or no frozen order
+      return [...collections].sort((a, b) => {
+        if (a.isSystem && !b.isSystem) return -1;
+        if (!a.isSystem && b.isSystem) return 1;
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        if (a.isPinned && b.isPinned) {
+          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+        }
+        return b.lastAdd - a.lastAdd;
+      });
     }
-    return b.lastAdd - a.lastAdd;
-  });
+
+    const frozenIds = new Set(frozenOrderRef.current);
+    const collectionMap = new Map(collections.map((c) => [c.id, c]));
+
+    // Get collections in frozen order (with updated data like classCount)
+    const result: Collection[] = [];
+    for (const id of frozenOrderRef.current) {
+      const collection = collectionMap.get(id);
+      if (collection) result.push(collection);
+    }
+
+    // Find insertion point for new collections (after system + pinned)
+    const insertIndex = result.findIndex((c) => !c.isSystem && !c.isPinned);
+    const insertAt = insertIndex === -1 ? result.length : insertIndex;
+
+    // Insert new collections at the correct position
+    const newCollections = collections
+      .filter((c) => !frozenIds.has(c.id))
+      .sort((a, b) => b.lastAdd - a.lastAdd);
+
+    result.splice(insertAt, 0, ...newCollections);
+
+    // Update frozen order to include new collections
+    frozenOrderRef.current = result.map((c) => c.id);
+
+    return result;
+  }, [collections, isPopoverOpen]);
 
   const handleToggleCollection = useCallback(
     async (collectionId: string, currentlySaved: boolean) => {
@@ -212,7 +262,7 @@ export default function BookmarkPopover({
       });
 
       setNewCollectionName("");
-      setNewCollectionColor(getRandomColor());
+      setNewCollectionColor(null);
       setIsCreateFormOpen(false);
     } catch (error) {
       console.error("Failed to create collection:", error);
@@ -232,7 +282,7 @@ export default function BookmarkPopover({
   const resetForm = () => {
     setIsCreateFormOpen(false);
     setNewCollectionName("");
-    setNewCollectionColor(getRandomColor());
+    setNewCollectionColor(null);
   };
 
   const isAnyClassSaved = savedCollectionIds.size > 0;
@@ -242,6 +292,8 @@ export default function BookmarkPopover({
     if (!classInfo || !allSavedCollection) return;
     if (allSavedCollection.id === "all-saved-placeholder") return;
 
+    // Capture frozen order before opening popover
+    frozenOrderRef.current = getSortedIds(collections);
     setIsPopoverOpen(true);
     setMutatingCollections((prev) => new Set(prev).add(allSavedCollection.id));
 
@@ -264,14 +316,28 @@ export default function BookmarkPopover({
           return next;
         });
       });
-  }, [classInfo, allSavedCollection, addClassToCollection]);
+  }, [
+    classInfo,
+    allSavedCollection,
+    addClassToCollection,
+    collections,
+    getSortedIds,
+  ]);
 
   return (
     <Popover.Root
       open={isPopoverOpen}
       onOpenChange={(open) => {
+        if (open && !isPopoverOpen) {
+          // Capture frozen order when opening
+          frozenOrderRef.current = getSortedIds(collections);
+        }
+        if (!open) {
+          // Update initial IDs so all current collections are "not new" next time
+          initialCollectionIds.current = new Set(collections.map((c) => c.id));
+          resetForm();
+        }
         setIsPopoverOpen(open);
-        if (!open) resetForm();
       }}
     >
       <Popover.Trigger asChild>
@@ -308,7 +374,7 @@ export default function BookmarkPopover({
           >
             <div className={styles.collectionRows}>
               <LayoutGroup>
-                {sortedCollections.map((collection) => {
+                {displayCollections.map((collection) => {
                   const isSaved = savedCollectionIds.has(collection.id);
                   const isNew = !initialCollectionIds.current.has(
                     collection.id

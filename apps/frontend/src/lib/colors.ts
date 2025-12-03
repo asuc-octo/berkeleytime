@@ -12,12 +12,6 @@ export const COLLECTION_COLORS: Color[] = [
   Color.Pink,
 ];
 
-export function getRandomColor(): Color {
-  return COLLECTION_COLORS[
-    Math.floor(Math.random() * COLLECTION_COLORS.length)
-  ];
-}
-
 export function capitalizeColor(color: Color): string {
   return color.charAt(0).toUpperCase() + color.slice(1);
 }

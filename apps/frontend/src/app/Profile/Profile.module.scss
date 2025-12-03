@@ -14,6 +14,10 @@
     gap: 24px;
     min-height: 100vh;
     flex-shrink: 0;
+
+    @media (max-width: 991px) {
+      display: none;
+    }
   }
 
   .navGroup {
@@ -97,6 +101,51 @@
     display: flex;
     align-items: center;
     gap: 16px;
+  }
+
+  .collectionsSection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 420px);
+    gap: 20px;
+  }
+
+  .collectionsHeader {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .ratingsSection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 320px);
+    gap: 17px;
+  }
+
+  .ratingsHeader {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .addRatingButton {
+    padding: 4px 12px;
+    height: 32px;
+    font-size: var(--text-14);
+    font-weight: var(--font-normal);
+    color: var(--blue-500);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--button-hover-color);
+    }
   }
 
   .newCollectionButton {
