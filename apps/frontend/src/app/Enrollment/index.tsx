@@ -34,7 +34,6 @@ import { ChartContainer } from "@/components/CourseAnalytics/ChartContainer";
 import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalyticsPage";
 import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
-import Footer from "@/components/Footer";
 import {
   GetEnrollmentDocument,
   GetEnrollmentTimeframesDocument,
@@ -759,7 +758,6 @@ export default function Enrollment() {
           )
         }
       />
-      <Footer />
     </>
   );
 }

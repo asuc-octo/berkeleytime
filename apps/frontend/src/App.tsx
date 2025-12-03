@@ -166,7 +166,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <Layout footer={false} />,
+    element: <Layout footer={false} scrollLock />,
     children: [
       {
         element: (
