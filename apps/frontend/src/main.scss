@@ -1,3 +1,12 @@
+html {
+  /* Prevent double-tap zoom on mobile while preserving pinch-to-zoom feel */
+  touch-action: manipulation;
+  /* Prevent text size adjustment on orientation change */
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body,
 p,
 h1,
@@ -19,6 +28,16 @@ input {
 
   &:focus {
     outline: none;
+  }
+}
+
+/* Prevent iOS Safari from zooming in on input focus (requires 16px+) */
+/* Only apply on mobile/touch devices to avoid affecting desktop styling */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 }
 
