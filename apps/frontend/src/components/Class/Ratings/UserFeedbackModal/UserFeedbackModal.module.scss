@@ -71,6 +71,14 @@
   padding: 20px 0;
 }
 
+.inlineQuestion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 0;
+}
+
 .ratingScale {
   display: flex;
   align-items: center;
@@ -167,6 +175,46 @@
         border-color: var(--blue-400);
       }
     }
+  }
+}
+
+.booleanBadges {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.booleanBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: none;
+  color: var(--heading-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--button-hover-color);
+  }
+
+  &.selected {
+    background-color: var(--blue-500);
+    border-color: var(--blue-500);
+    color: white;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: none;
   }
 }
 
