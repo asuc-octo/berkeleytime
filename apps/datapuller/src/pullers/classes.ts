@@ -11,6 +11,8 @@ import {
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
 
+const TERMS_PER_API_BATCH = 4;
+
 // Note: We scan ALL terms in the database rather than just the affected ones.
 // This is intentional to ensure data consistency, as class data may be modified
 // by sources other than the datapuller. Since the query is fast, the overhead
@@ -100,40 +102,36 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
   let totalInserted = 0;
   let totalDeleted = 0;
 
-  const termsBatchIds = terms.map((term) => term.id);
-  log.trace(`Fetching classes for ${terms.length.toLocaleString()} terms...`);
-  const classes = await getClasses(
-    log,
-    CLASS_APP_ID,
-    CLASS_APP_KEY,
-    termsBatchIds
-  );
-
-  log.info(`Fetched ${classes.length.toLocaleString()} classes.`);
-  if (!classes || classes.length === 0) {
-    log.error(`No classes found, skipping update.`);
-    return;
-  }
-  totalClasses += classes.length;
-
-  // Insert classes in batches of 5000
-  for (let i = 0; i < termsBatchIds.length; i += 1) {
+  // Insert classes in batches of 4 terms
+  for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
+    const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
+    const termsBatchIds = termsBatch.map((term) => term.id);
     const session = await connection.startSession();
-    let currentTerm = termsBatchIds[i];
     try {
       await session.withTransaction(async () => {
-        // const batch = classes.slice(i, i + CLASSES_PER_BATCH);
-        const batch = classes.filter((x) => x.termId == currentTerm);
+        log.trace(
+          `Fetching classes for terms ${termsBatch.map((term) => term.name).toLocaleString()}...`
+        );
+        const classes = await getClasses(
+          log,
+          CLASS_APP_ID,
+          CLASS_APP_KEY,
+          termsBatchIds
+        );
 
-        log.trace(`Deleting classes in term ${currentTerm}...`);
+        if (classes.length === 0) {
+          throw new Error(`No classes found, skipping update.`);
+        }
+
+        log.trace(`Deleting classes in batch ${i}...`);
 
         const { deletedCount } = await ClassModel.deleteMany({
-          termId: currentTerm,
+          termId: { $in: termsBatchIds },
         });
 
-        log.trace(`Inserting term ${currentTerm}...`);
+        log.trace(`Inserting batch ${i}`);
 
-        const { insertedCount } = await ClassModel.insertMany(batch, {
+        const { insertedCount } = await ClassModel.insertMany(classes, {
           ordered: false,
           rawResult: true,
         });
@@ -141,21 +139,22 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
         // avoid replacing data if a non-negligible amount is deleted
         if (insertedCount / deletedCount <= 0.9) {
           throw new Error(
-            `Deleted ${deletedCount} classes and inserted only ${insertedCount} in term ${currentTerm}; aborting data insertion process`
+            `Deleted ${deletedCount} classes and inserted only ${insertedCount} in batch ${i}; aborting data insertion process`
           );
         }
 
+        totalClasses += classes.length;
         totalDeleted += deletedCount;
         totalInserted += insertedCount;
       });
     } catch (error: any) {
-      log.warn(`Error inserting batch: ${error.message}`);
+      log.error(`Error inserting batch: ${error.message}`);
     } finally {
       await session.endSession();
     }
   }
 
-  log.info(`Deleted ${totalDeleted.toLocaleString()} classes`);
+  log.info(`Deleted ${totalDeleted.toLocaleString()} total classes`);
   log.info(
     `Inserted ${totalInserted.toLocaleString()} classes, after fetching ${totalClasses.toLocaleString()} classes.`
   );
