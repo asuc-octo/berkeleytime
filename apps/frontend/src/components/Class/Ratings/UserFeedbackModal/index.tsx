@@ -1,5 +1,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
+import { AnimatePresence, motion } from "framer-motion";
+
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { Button } from "@repo/theme";
 
@@ -66,7 +68,6 @@ export function UserFeedbackModal({
   const { data: termsData, loading: termsLoading } = useReadTerms();
   const totalRatings = Math.max(1, requiredRatingsCount);
   const [currentRatingIndex, setCurrentRatingIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const modalBodyRef = useRef<HTMLDivElement>(null);
   const prevRatingIndexRef = useRef<number>(0);
 
@@ -360,24 +361,15 @@ export function UserFeedbackModal({
     };
   }, []);
 
-  // Handle slide animation when moving to next rating
+  // Scroll to top when moving to next rating
   useEffect(() => {
     const prevIndex = prevRatingIndexRef.current;
 
-    // Only animate if rating index increased (Submit & Continue was clicked)
+    // Only scroll if rating index increased (Submit & Continue was clicked)
     if (currentRatingIndex > prevIndex && prevIndex >= 0) {
-      setIsTransitioning(true);
-
-      // Scroll to top of modal body
       if (modalBodyRef.current) {
         modalBodyRef.current.scrollTop = 0;
       }
-
-      const timeout = setTimeout(() => {
-        setIsTransitioning(false);
-      }, 300);
-
-      return () => clearTimeout(timeout);
     }
 
     prevRatingIndexRef.current = currentRatingIndex;
@@ -425,31 +417,38 @@ export function UserFeedbackModal({
         footer={footer}
         modalBodyRef={modalBodyRef}
       >
-        <div
-          className={`${styles.formContentWrapper} ${isTransitioning ? styles.slideTransition : ""}`}
-        >
-          <RatingFormBody
-            selectedCourse={selectedCourse}
-            onCourseSelect={(course) => {
-              setSelectedCourse(course);
-              setSelectedTerm(null);
-            }}
-            onCourseClear={() => {
-              setSelectedCourse(null);
-              setSelectedTerm(null);
-            }}
-            selectedTerm={selectedTerm}
-            onTermSelect={setSelectedTerm}
-            termOptions={termOptions}
-            termOptionsLoading={isTermOptionsLoading}
-            metricData={metricData}
-            setMetricData={setMetricData}
-            userRatedClasses={userRatedClasses}
-            questionNumbers={questionNumbers}
-            disableRatedCourses={disableRatedCourses}
-            lockedCourse={lockedCourse}
-          />
-        </div>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentRatingIndex}
+            className={styles.formContentWrapper}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.15, ease: "easeInOut" }}
+          >
+            <RatingFormBody
+              selectedCourse={selectedCourse}
+              onCourseSelect={(course) => {
+                setSelectedCourse(course);
+                setSelectedTerm(null);
+              }}
+              onCourseClear={() => {
+                setSelectedCourse(null);
+                setSelectedTerm(null);
+              }}
+              selectedTerm={selectedTerm}
+              onTermSelect={setSelectedTerm}
+              termOptions={termOptions}
+              termOptionsLoading={isTermOptionsLoading}
+              metricData={metricData}
+              setMetricData={setMetricData}
+              userRatedClasses={userRatedClasses}
+              questionNumbers={questionNumbers}
+              disableRatedCourses={disableRatedCourses}
+              lockedCourse={lockedCourse}
+            />
+          </motion.div>
+        </AnimatePresence>
       </RatingModalLayout>
     </>
   );

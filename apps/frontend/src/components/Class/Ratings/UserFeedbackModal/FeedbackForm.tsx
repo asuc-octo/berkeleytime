@@ -9,8 +9,6 @@ interface BooleanInputProps {
   name: string;
   value: number | null;
   onChange: (value: number | null) => void;
-  yesLabel?: string;
-  noLabel?: string;
 }
 
 interface AttendanceFormProps {
@@ -54,37 +52,29 @@ export function AttendanceForm({
     {
       type: MetricName.Attendance,
       question: "Is lecture attendance required?",
-      yesLabel: "Yes, lecture attendance was required.",
-      noLabel: "No, lecture attendance was not required.",
     },
     {
       type: MetricName.Recording,
       question: "Were lectures recorded?",
-      yesLabel: "Yes, lectures were recorded.",
-      noLabel: "No, lectures were not recorded.",
     },
   ];
 
   return (
     <div>
-      {ATTENDANCE_QUESTIONS.map(
-        ({ type, question, yesLabel, noLabel }, index) => (
-          <div className={styles.formGroup} key={type}>
-            <div className={styles.questionPair}>
-              <h3>
-                {startQuestionNumber + index}. {question}
-              </h3>
-              <BooleanOptions
-                name={type}
-                value={metricData[type] ?? null}
-                onChange={(v) => handleAttendanceClickClick(type, v)}
-                yesLabel={yesLabel}
-                noLabel={noLabel}
-              />
-            </div>
+      {ATTENDANCE_QUESTIONS.map(({ type, question }, index) => (
+        <div className={styles.formGroup} key={type}>
+          <div className={styles.inlineQuestion}>
+            <h3>
+              {startQuestionNumber + index}. {question}
+            </h3>
+            <BooleanOptions
+              name={type}
+              value={metricData[type] ?? null}
+              onChange={(v) => handleAttendanceClickClick(type, v)}
+            />
           </div>
-        )
-      )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -180,40 +170,28 @@ const RatingScale = ({
   </div>
 );
 
-const BooleanOptions = ({
-  name,
-  value,
-  onChange,
-  yesLabel = "Yes",
-  noLabel = "No",
-}: BooleanInputProps) => {
+const BooleanOptions = ({ name, value, onChange }: BooleanInputProps) => {
   const handleClick = (selectedValue: number) =>
     onChange(value === selectedValue ? null : selectedValue);
 
   return (
-    <div className={styles.radioOptions}>
-      {[
-        { label: yesLabel, value: 1 },
-        { label: noLabel, value: 0 },
-      ].map(({ label, value: optionValue }) => (
-        <label key={optionValue}>
-          <input
-            type="radio"
-            name={name}
-            value={optionValue}
-            checked={value === optionValue}
-            onChange={() => {}} // Required to avoid React warning
-            onClick={(e) => {
-              if ((e.target as HTMLInputElement).checked) {
-                handleClick(optionValue);
-              } else {
-                onChange(null);
-              }
-            }}
-          />
-          {label}
-        </label>
-      ))}
+    <div className={styles.booleanBadges} role="group" aria-label={name}>
+      <button
+        type="button"
+        className={`${styles.booleanBadge} ${value === 1 ? styles.selected : ""}`}
+        onClick={() => handleClick(1)}
+        aria-pressed={value === 1}
+      >
+        Yes
+      </button>
+      <button
+        type="button"
+        className={`${styles.booleanBadge} ${value === 0 ? styles.selected : ""}`}
+        onClick={() => handleClick(0)}
+        aria-pressed={value === 0}
+      >
+        No
+      </button>
     </div>
   );
 };

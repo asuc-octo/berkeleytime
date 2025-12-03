@@ -8,8 +8,7 @@ import {
 } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
-import classNames from "classnames";
-import { Bookmark, BookmarkSolid, OpenNewWindow } from "iconoir-react";
+import { OpenNewWindow } from "iconoir-react";
 import { Tabs } from "radix-ui";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
@@ -34,7 +33,7 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useGetClassOverview, useUpdateUser } from "@/hooks/api";
+import { useGetClassOverview } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
@@ -48,6 +47,7 @@ import { getExternalLink } from "@/lib/section";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import SuspenseBoundary from "../SuspenseBoundary";
+import BookmarkPopover from "./BookmarkPopover";
 import styles from "./Class.module.scss";
 import UserFeedbackModal from "./Ratings/UserFeedbackModal";
 import { MetricData } from "./Ratings/metricsUtil";
@@ -158,7 +158,6 @@ export default function Class({
   });
 
   const [createUnlockRatings] = useMutation(CreateRatingsDocument);
-  const [updateUser] = useUpdateUser();
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
@@ -240,69 +239,6 @@ export default function Class({
       return true;
     });
   }, [userRatingsData]);
-
-  const bookmarked = useMemo(
-    () =>
-      user?.bookmarkedClasses.some(
-        (bookmarkedClass) =>
-          bookmarkedClass.subject === _class?.subject &&
-          bookmarkedClass.courseNumber === _class?.courseNumber &&
-          bookmarkedClass.number === _class?.number &&
-          bookmarkedClass.year === _class?.year &&
-          bookmarkedClass.semester === _class?.semester
-      ),
-    [user, _class]
-  );
-
-  const bookmark = useCallback(async () => {
-    if (!user || !_class) return;
-
-    const bookmarkEntry: (typeof user.bookmarkedClasses)[number] = {
-      __typename: "Class",
-      ..._class,
-      course: {
-        __typename: "Course",
-        title: _course?.title ?? "",
-      },
-      gradeDistribution: {
-        __typename: "GradeDistribution",
-        average: _course?.gradeDistribution?.average ?? null,
-      },
-    };
-
-    const bookmarkedClasses = bookmarked
-      ? user.bookmarkedClasses.filter(
-          (bookmarkedClass) =>
-            !(
-              bookmarkedClass.subject === _class?.subject &&
-              bookmarkedClass.courseNumber === _class?.courseNumber &&
-              bookmarkedClass.number === _class?.number &&
-              bookmarkedClass.year === _class?.year &&
-              bookmarkedClass.semester === _class?.semester
-            )
-        )
-      : user.bookmarkedClasses.concat(bookmarkEntry);
-    await updateUser(
-      {
-        bookmarkedClasses: bookmarkedClasses.map((bookmarkedClass) => ({
-          subject: bookmarkedClass.subject,
-          number: bookmarkedClass.number,
-          courseNumber: bookmarkedClass.courseNumber,
-          year: bookmarkedClass.year,
-          semester: bookmarkedClass.semester,
-          sessionId: bookmarkedClass.sessionId,
-        })),
-      },
-      {
-        optimisticResponse: {
-          updateUser: {
-            ...user,
-            bookmarkedClasses: user.bookmarkedClasses,
-          },
-        },
-      }
-    );
-  }, [_class, _course, bookmarked, updateUser, user]);
 
   useEffect(() => {
     if (!_class) return;
@@ -504,19 +440,19 @@ export default function Class({
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
-                    {/* TODO: Reusable bookmark button */}
-                    <ThemeTooltip
-                      content={bookmarked ? "Remove bookmark" : "Bookmark"}
-                      trigger={
-                        <IconButton
-                          className={classNames(styles.bookmark, {
-                            [styles.active]: bookmarked,
-                          })}
-                          onClick={() => bookmark()}
-                          disabled={userLoading}
-                        >
-                          {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                        </IconButton>
+                    <BookmarkPopover
+                      disabled={userLoading}
+                      classInfo={
+                        _class
+                          ? {
+                              year: _class.year,
+                              semester: _class.semester,
+                              sessionId: _class.sessionId,
+                              subject: _class.subject,
+                              courseNumber: _class.courseNumber,
+                              classNumber: _class.number,
+                            }
+                          : undefined
                       }
                     />
                     <ThemeTooltip

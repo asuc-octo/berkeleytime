@@ -3,6 +3,8 @@
   position: fixed;
   background-color: var(--background-color);
   opacity: 0.9;
+  overflow: hidden;
+  overscroll-behavior: contain;
 
   &[data-state="open"] {
     animation: fadeIn 150ms ease-in;

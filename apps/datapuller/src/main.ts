@@ -1,5 +1,6 @@
 import { parseArgs } from "node:util";
 
+import bookmarkMigrationPuller from "./pullers/bookmark-migration";
 import classesPuller from "./pullers/classes";
 import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
@@ -19,6 +20,7 @@ const cliArgs = {
 const pullerMap: {
   [key: string]: (config: Config, ...arg: any) => Promise<unknown>;
 } = {
+  "bookmark-migration": bookmarkMigrationPuller.migrateBookmarks,
   courses: coursesPuller.updateCourses,
   "sections-active": sectionsPuller.activeTerms,
   "sections-last-five-years": sectionsPuller.lastFiveYearsTerms,

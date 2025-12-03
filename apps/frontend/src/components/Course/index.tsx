@@ -1,9 +1,6 @@
 import { ReactNode, lazy, useMemo } from "react";
 
-import classNames from "classnames";
 import {
-  Bookmark,
-  BookmarkSolid,
   Expand,
   GridPlus,
   Link as LinkIcon,
@@ -26,8 +23,7 @@ import {
 import { AverageGrade } from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
 import { CoursePin } from "@/contexts/PinsContext";
-import { useReadCourse, useUpdateUser } from "@/hooks/api";
-import useUser from "@/hooks/useUser";
+import { useReadCourse } from "@/hooks/api";
 import { ICourse } from "@/lib/api";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -90,10 +86,6 @@ export default function Course({
 
   const location = useLocation();
 
-  const { user, loading: userLoading } = useUser();
-
-  const [updateUser] = useUpdateUser();
-
   const { data, loading } = useReadCourse(subject as string, number as string, {
     // Allow course to be provided
     skip: !!providedCourse,
@@ -131,15 +123,6 @@ export default function Course({
   //   );
   // }, [input, pins]);
 
-  const bookmarked = useMemo(() => {
-    if (!user || !input) return;
-
-    return user.bookmarkedCourses.some(
-      (course) =>
-        course.subject === input.subject && course.number === input.number
-    );
-  }, [user, input]);
-
   const context = useMemo(() => {
     if (!course) return;
 
@@ -154,39 +137,6 @@ export default function Course({
     () => context && navigator.canShare && navigator.canShare(context),
     [context]
   );
-
-  const bookmark = async () => {
-    if (!user || !course) return;
-
-    const bookmarked = user.bookmarkedCourses.some(
-      (course) =>
-        course.subject === course.subject && course.number === course.number
-    );
-
-    const bookmarkedCourses = bookmarked
-      ? user.bookmarkedCourses.filter(
-          (course) =>
-            course.subject !== course.subject || course.number !== course.number
-        )
-      : user.bookmarkedCourses.concat(course);
-
-    await updateUser(
-      {
-        bookmarkedCourses: bookmarkedCourses.map((course) => ({
-          subject: course.subject,
-          number: course.number,
-        })),
-      },
-      {
-        optimisticResponse: {
-          updateUser: {
-            ...user,
-            bookmarkedCourses: user.bookmarkedCourses,
-          },
-        },
-      }
-    );
-  };
 
   const share = () => {
     if (!context) return;
@@ -227,20 +177,6 @@ export default function Course({
             <Flex direction="column" gap="5">
               <Flex justify="between">
                 <Flex gap="3">
-                  {/* TODO: Reusable bookmark button */}
-                  <Tooltip
-                    content={bookmarked ? "Remove bookmark" : "Bookmark"}
-                  >
-                    <IconButton
-                      className={classNames(styles.bookmark, {
-                        [styles.active]: bookmarked,
-                      })}
-                      onClick={() => bookmark()}
-                      disabled={userLoading}
-                    >
-                      {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-                    </IconButton>
-                  </Tooltip>
                   {/* TODO: Reusable pin button
                     <Tooltip content={pinned ? "Remove pin" : "Pin"}>
                       <IconButton

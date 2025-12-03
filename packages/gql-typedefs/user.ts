@@ -7,8 +7,6 @@ export const userTypeDef = gql`
     name: String!
     staff: Boolean!
     student: Boolean!
-    bookmarkedCourses: [Course!]!
-    bookmarkedClasses: [Class!]!
     majors: [String!]!
     minors: [String!]!
   }
@@ -17,23 +15,7 @@ export const userTypeDef = gql`
     user: User @auth
   }
 
-  input BookmarkedCourseInput {
-    subject: String!
-    number: CourseNumber!
-  }
-
-  input BookmarkedClassInput {
-    year: Int!
-    semester: Semester!
-    sessionId: SessionIdentifier
-    subject: String!
-    courseNumber: CourseNumber!
-    number: ClassNumber!
-  }
-
   input UpdateUserInput {
-    bookmarkedClasses: [BookmarkedClassInput!]
-    bookmarkedCourses: [BookmarkedCourseInput!]
     majors: [String!]
     minors: [String!]
   }

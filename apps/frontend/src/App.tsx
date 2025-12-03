@@ -20,8 +20,12 @@ const Profile = {
   Account: lazy(() => import("@/app/Profile/Account")),
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
-  Settings: lazy(() => import("@/app/Profile/Settings")),
+  Bookmarks: lazy(() => import("@/app/Profile/Bookmarks")),
 };
+
+const CollectionDetail = lazy(
+  () => import("@/app/Profile/Bookmarks/CollectionDetail")
+);
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -201,11 +205,11 @@ const router = createBrowserRouter([
           },
           {
             element: (
-              <SuspenseBoundary key="settings">
-                <Profile.Settings />
+              <SuspenseBoundary key="bookmarks">
+                <Profile.Bookmarks />
               </SuspenseBoundary>
             ),
-            path: "settings",
+            path: "bookmarks",
           },
         ],
       },
@@ -214,6 +218,56 @@ const router = createBrowserRouter([
   {
     element: <Layout footer={false} />,
     children: [
+      {
+        element: (
+          <SuspenseBoundary key="collection">
+            <CollectionDetail />
+          </SuspenseBoundary>
+        ),
+        path: "collection/:id/:subject?/:courseNumber?/:number?",
+        children: [
+          {
+            element: (
+              <SuspenseBoundary key="overview">
+                <Class.Overview />
+              </SuspenseBoundary>
+            ),
+            index: true,
+          },
+          {
+            element: (
+              <SuspenseBoundary key="sections">
+                <Class.Sections />
+              </SuspenseBoundary>
+            ),
+            path: "sections",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="enrollment">
+                <Class.Enrollment />
+              </SuspenseBoundary>
+            ),
+            path: "enrollment",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="grades">
+                <Class.Grades />
+              </SuspenseBoundary>
+            ),
+            path: "grades",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="ratings">
+                <Class.Ratings />
+              </SuspenseBoundary>
+            ),
+            path: "ratings",
+          },
+        ],
+      },
       {
         element: (
           <SuspenseBoundary key="grades">
