@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../config";
+import semanticSearchRoutes from "../../modules/semantic-search/routes";
 import passportLoader from "./passport";
 
 export default async (
@@ -57,6 +58,9 @@ export default async (
 
   // load authentication
   passportLoader(app, redis);
+
+  // load semantic search routes
+  app.use("/api/semantic-search", semanticSearchRoutes);
 
   app.use(
     config.graphqlPath,

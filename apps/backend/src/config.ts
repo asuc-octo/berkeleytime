@@ -35,6 +35,7 @@ export interface Config {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   redisUri: string;
+  semanticSearchUrl: string;
 }
 
 // All your secrets, keys go here
@@ -60,4 +61,5 @@ export const config: Config = {
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: env("GOOGLE_CLIENT_SECRET"),
   redisUri: env("REDIS_URI"),
+  semanticSearchUrl: env("SEMANTIC_SEARCH_URL"),
 };
