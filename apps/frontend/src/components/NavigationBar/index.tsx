@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import classNames from "classnames";
 import {
   ArrowRight,
@@ -11,7 +13,6 @@ import {
   SunLight,
   User,
 } from "iconoir-react";
-import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -168,13 +169,18 @@ export default function NavigationBar({
               {isNarrow
                 ? (() => {
                     const firstName = user.name?.split(" ")[0] ?? "Profile";
-                    return firstName.length > 10 ? firstName.slice(0, 10) + "..." : firstName;
+                    return firstName.length > 10
+                      ? firstName.slice(0, 10) + "..."
+                      : firstName;
                   })()
                 : (user.name ?? "Profile")}
               <User />
             </Button>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content sideOffset={5} align={isNarrow ? "end" : "center"}>
+          <DropdownMenu.Content
+            sideOffset={5}
+            align={isNarrow ? "end" : "center"}
+          >
             <DropdownMenu.Item asChild>
               <Link to="/profile">
                 <ProfileCircle width={18} height={18} /> Account

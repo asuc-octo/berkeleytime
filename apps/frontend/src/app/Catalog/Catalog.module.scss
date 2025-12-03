@@ -1,4 +1,5 @@
 .root {
+  position: relative;
   flex: 1 1 0;
   display: flex;
   min-height: 0;
@@ -9,129 +10,74 @@
   }
 
   .panel {
-    display: flex;
-    flex-direction: column;
-
-    .header {
-      padding: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      background-color: var(--foreground-color);
-
-      .title {
-        font-size: var(--text-14);
-        font-weight: var(--font-medium);
-        color: var(--heading-color);
-        line-height: 1;
-      }
-    }
-
-    .body {
-      flex-grow: 1;
-      min-height: 0;
-    }
+    border-right: 1px solid var(--border-color);
   }
 
-  @media (width > 992px) {
-    .panel {
-      border-right: 1px solid var(--border-color);
-    }
+  .view {
+    flex-grow: 1;
+  }
 
-    .panel .header {
-      display: none;
+  @media (max-width: 900px) {
+    .panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 384px;
+      height: 100%;
+      z-index: 10;
     }
 
     .view {
-      flex-grow: 1;
-    }
-  }
-
-  @media (width <= 992px) {
-    // On mobile: always hide static panel, use drawer
-    .panel {
-      display: none;
+      width: 100%;
+      margin-left: 40px;
     }
 
-    .view {
-      flex-grow: 1;
-    }
-  }
-}
-
-.catalogDrawer {
-  width: 384px;
-  background-color: var(--foreground-color);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 1000;
-  transform: translateX(-100%);
-  transition: transform 200ms ease-in-out;
-
-  &.drawerOpen {
-    transform: translateX(0);
   }
 
-  @media (width <= 992px) {
-    display: flex; // Only show drawer on mobile
-  }
-
-  @media (width > 992px) {
-    display: none; // Hide drawer on desktop
-  }
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-
-  @media (width > 992px) {
-    display: none; // Hide overlay on desktop
-  }
-}
-
-.floatingButton {
-  position: fixed;
-  left: -32px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 64px;
-  background-color: var(--blue-500);
-  border: 1px solid var(--blue-500);
-  border-left: none;
-  border-radius: 0 8px 8px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: left 200ms ease-in-out;
-  z-index: 100;
-  color: white;
-
-  &.visible {
+  .tapZone {
+    position: absolute;
     left: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    z-index: 12;
+    cursor: pointer;
   }
 
-  &:hover {
-    background-color: var(--blue-hover);
-    border-color: var(--blue-hover);
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
+  .expandButton {
+    position: absolute;
+    left: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 80px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--blue-500);
     color: white;
+    cursor: pointer;
+    z-index: 11;
+    transition: background-color 0.15s ease;
+
+    // Extend clickable area by 5px
+    &::before {
+      content: "";
+      position: absolute;
+      inset: -5px;
+    }
+
+    &:hover {
+      background-color: var(--blue-600);
+    }
   }
 
-  @media (width > 992px) {
-    display: none; // Hide on desktop
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--background-color);
+    z-index: 9;
+    cursor: pointer;
   }
 }
+

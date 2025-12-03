@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
-import classNames from "classnames";
-import { NavArrowRight, Xmark } from "iconoir-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
-import { Flex, IconButton } from "@repo/theme";
+import { Flex } from "@repo/theme";
 
 import Class from "@/components/Class";
 import {
@@ -39,6 +39,11 @@ const SEMESTER_ORDER: Record<Semester, number> = {
   [Semester.Winter]: 3,
 };
 
+// Panel dimensions for narrow screen mode
+const PANEL_WIDTH = 384;
+const PANEL_VISIBLE_WHEN_COLLAPSED = 40;
+const PANEL_COLLAPSED_OFFSET = PANEL_WIDTH - PANEL_VISIBLE_WHEN_COLLAPSED;
+
 export default function Catalog() {
   const {
     year: providedYear,
@@ -52,14 +57,63 @@ export default function Catalog() {
   const location = useLocation();
   const { showToast } = useToast();
 
-  const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(false);
-  const [showFloatingButton, setShowFloatingButton] = useState(false);
-
   const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [unlockModalGoalCount, setUnlockModalGoalCount] = useState(0);
   const [isUnlockThankYouOpen, setIsUnlockThankYouOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+  // Default panel open when no class is selected
+  const hasClassSelected = !!(providedSubject && courseNumber && number);
+  const [isPanelOpen, setIsPanelOpen] = useState(!hasClassSelected);
+  const [showExpandButton, setShowExpandButton] = useState(false);
+  const [buttonY, setButtonY] = useState(0);
+  const [isNarrowScreen, setIsNarrowScreen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Track mouse position for expand button (throttled for performance)
+  useEffect(() => {
+    if (!isNarrowScreen || isPanelOpen) {
+      setShowExpandButton(false);
+      return;
+    }
+
+    let rafId: number | null = null;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (rafId) return; // Skip if already scheduled
+
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const atLeftEdge = e.clientX <= 60;
+        const rootRect = rootRef.current?.getBoundingClientRect();
+        const withinYBounds = rootRect
+          ? e.clientY >= rootRect.top && e.clientY <= rootRect.bottom
+          : false;
+
+        if (atLeftEdge && withinYBounds && rootRect) {
+          setShowExpandButton(true);
+          setButtonY(e.clientY - rootRect.top);
+        } else {
+          setShowExpandButton(false);
+        }
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [isNarrowScreen, isPanelOpen]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 900px)");
+    setIsNarrowScreen(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => setIsNarrowScreen(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
 
   const { user } = useUser();
   const { data: terms, loading: termsLoading } = useReadTerms();
@@ -226,8 +280,7 @@ export default function Catalog() {
     (subject: string, courseNumber: string, number: string) => {
       if (!term) return;
 
-      setCatalogDrawerOpen(false); // Close drawer when selecting a class
-
+      setIsPanelOpen(false);
       navigate({
         ...location,
         pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}`,
@@ -256,21 +309,6 @@ export default function Catalog() {
     ratingsNeeded,
   ]);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (window.innerWidth > 992) {
-        setShowFloatingButton(false);
-        return;
-      }
-
-      // Expand button when cursor is within 60px of left edge (covers peeking button)
-      setShowFloatingButton(e.clientX < 60);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   if (termsLoading) {
     return (
       <div>
@@ -287,33 +325,19 @@ export default function Catalog() {
 
   // TODO: Class error state, class loading state
   return (
-    <div className={styles.root}>
-      {/* Desktop: Static panel */}
-      <div className={styles.panel}>
-        <div className={styles.header}>
-          <p className={styles.title}>
-            {term.semester} {term.year}
-          </p>
-          <IconButton onClick={() => {}}>
-            <Xmark />
-          </IconButton>
-        </div>
-        <div className={styles.body}>
-          <ClassBrowser
-            onSelect={handleSelect}
-            semester={term.semester}
-            year={term.year}
-            terms={terms}
-            persistent
-          />
-        </div>
-      </div>
-
-      {/* Mobile: Drawer overlay */}
-      <div
-        className={classNames(styles.catalogDrawer, {
-          [styles.drawerOpen]: catalogDrawerOpen,
-        })}
+    <div className={styles.root} ref={rootRef}>
+      <motion.div
+        className={styles.panel}
+        animate={
+          isNarrowScreen
+            ? { x: isPanelOpen ? 0 : -PANEL_COLLAPSED_OFFSET }
+            : { x: 0 }
+        }
+        transition={{
+          type: "spring",
+          stiffness: 500,
+          damping: 35,
+        }}
       >
         <ClassBrowser
           onSelect={handleSelect}
@@ -322,24 +346,51 @@ export default function Catalog() {
           terms={terms}
           persistent
         />
-      </div>
-      {catalogDrawerOpen && (
+      </motion.div>
+
+      {/* Tap zone to open panel when collapsed */}
+      {isNarrowScreen && !isPanelOpen && (
         <div
-          className={styles.overlay}
-          onClick={() => setCatalogDrawerOpen(false)}
+          className={styles.tapZone}
+          onClick={() => setIsPanelOpen(true)}
+          role="button"
+          aria-label="Open class browser"
         />
       )}
 
-      {/* Floating button to open catalog on mobile */}
-      <button
-        className={classNames(styles.floatingButton, {
-          [styles.visible]: showFloatingButton,
-        })}
-        onClick={() => setCatalogDrawerOpen(true)}
-        aria-label="Open catalog"
-      >
-        <NavArrowRight />
-      </button>
+      {/* Expand button that follows mouse Y (mouse only) */}
+      <AnimatePresence>
+        {isNarrowScreen && showExpandButton && !isPanelOpen && (
+          <motion.button
+            className={styles.expandButton}
+            style={{ top: buttonY - 40 }}
+            onClick={() => setIsPanelOpen(true)}
+            aria-label="Expand panel"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.15 }}
+          >
+            <NavArrowRight width={16} height={16} />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Overlay when panel is expanded */}
+      <AnimatePresence>
+        {isNarrowScreen && isPanelOpen && (
+          <motion.div
+            className={styles.overlay}
+            onClick={() => setIsPanelOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            role="button"
+            aria-label="Close class browser"
+          />
+        )}
+      </AnimatePresence>
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {_class ? <Class class={_class} /> : null}
