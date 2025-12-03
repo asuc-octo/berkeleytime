@@ -83,19 +83,9 @@
   border-radius: 3px;
   flex-shrink: 0;
   margin-top: 4px;
-  background-color: var(--zinc-50);
+  background-color: transparent;
+  border: 1.5px solid var(--border-color);
   box-sizing: border-box;
-
-  :global(body[data-theme="dark"]) &,
-  :global(body:not([data-theme])) & {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--button-hover-color);
-    }
-  }
-
-  :global(body[data-theme="dark"]) & {
-    background-color: var(--button-hover-color);
-  }
 }
 
 .createCollectionBtn {

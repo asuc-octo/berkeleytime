@@ -74,7 +74,7 @@ export function CollectionModal({
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={handleClose} modal={false}>
+    <Dialog.Root open={isOpen} onOpenChange={handleClose}>
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Card>

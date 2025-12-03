@@ -2,12 +2,15 @@ import type { CSSProperties } from "react";
 
 import { Color } from "@repo/theme";
 
-import { CollectionColor } from "./generated/graphql";
-
-// valid cast since CollectionColor values are a subset of Color values
-export const COLLECTION_COLORS = Object.values(
-  CollectionColor
-) as unknown as Color[];
+// Limited color palette in rainbow order
+export const COLLECTION_COLORS: Color[] = [
+  Color.Red,
+  Color.Orange,
+  Color.Green,
+  Color.Blue,
+  Color.Purple,
+  Color.Pink,
+];
 
 export function getRandomColor(): Color {
   return COLLECTION_COLORS[

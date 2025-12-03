@@ -3,7 +3,6 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import {
-  ArrowUp,
   Bookmark,
   BookmarkSolid,
   PinSolid,
@@ -11,7 +10,7 @@ import {
 } from "iconoir-react";
 import { Popover } from "radix-ui";
 
-import { IconButton } from "@repo/theme";
+import { Button, IconButton } from "@repo/theme";
 
 import CollectionNameInput from "@/components/CollectionNameInput";
 import {
@@ -401,7 +400,7 @@ export default function BookmarkPopover({
                         hasError={hasConflict || isTooLong}
                         autoFocus
                       />
-                      <IconButton
+                      <Button
                         className={styles.createCollectionSubmit}
                         disabled={
                           !newCollectionName.trim() ||
@@ -411,8 +410,8 @@ export default function BookmarkPopover({
                         }
                         onClick={handleSubmitNewCollection}
                       >
-                        <ArrowUp width={16} height={16} />
-                      </IconButton>
+                        Create
+                      </Button>
                     </div>
                     <AnimatePresence>
                       {(hasConflict || isTooLong) && (
