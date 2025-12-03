@@ -40,7 +40,7 @@
   z-index: 1;
 }
 
-.stackedCard {
+.previewCard {
   position: absolute;
   display: flex;
   width: 360px;
@@ -53,6 +53,16 @@
   border-radius: 8px 8px 0 0;
   box-sizing: border-box;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.singleCard {
+  composes: previewCard;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.stackedCard {
+  composes: previewCard;
 }
 
 .cardContent {

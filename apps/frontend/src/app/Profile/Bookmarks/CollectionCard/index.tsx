@@ -126,6 +126,7 @@ export function CollectionCard({
   const topClass = previewClasses[0];
   const secondClass = previewClasses[1];
   const showCards = previewClasses.length > 0;
+  const isSingleCard = previewClasses.length === 1;
 
   return (
     <div
@@ -138,33 +139,46 @@ export function CollectionCard({
         <div className={styles.colorBackground} style={getColorStyle(color)} />
       )}
       <div className={styles.cardsStack} style={{ opacity: showCards ? 1 : 0 }}>
-        {topClass && (
+        {isSingleCard && topClass ? (
           <motion.div
-            className={styles.stackedCard}
-            animate={{
-              top: isHovered ? 35 : 40,
-              left: 0,
-              rotate: isHovered ? -3 : -3.5,
-            }}
+            className={styles.singleCard}
+            animate={{ top: isHovered ? 32 : 45 }}
             transition={springTransition}
             style={{ zIndex: 2 }}
           >
             <TiltedCardContent classData={topClass} />
           </motion.div>
-        )}
-        {topClass && (
-          <motion.div
-            className={styles.stackedCard}
-            animate={{
-              top: isHovered ? 30 : 20,
-              left: isHovered ? 25 : 17,
-              rotate: isHovered ? 5 : 2.5,
-            }}
-            transition={springTransition}
-            style={{ zIndex: 1 }}
-          >
-            {secondClass && <TiltedCardContent classData={secondClass} />}
-          </motion.div>
+        ) : (
+          <>
+            {topClass && (
+              <motion.div
+                className={styles.stackedCard}
+                animate={{
+                  top: isHovered ? 35 : 40,
+                  left: 0,
+                  rotate: isHovered ? -3 : -3.5,
+                }}
+                transition={springTransition}
+                style={{ zIndex: 2 }}
+              >
+                <TiltedCardContent classData={topClass} />
+              </motion.div>
+            )}
+            {secondClass && (
+              <motion.div
+                className={styles.stackedCard}
+                animate={{
+                  top: isHovered ? 30 : 20,
+                  left: isHovered ? 25 : 17,
+                  rotate: isHovered ? 5 : 2.5,
+                }}
+                transition={springTransition}
+                style={{ zIndex: 1 }}
+              >
+                <TiltedCardContent classData={secondClass} />
+              </motion.div>
+            )}
+          </>
         )}
       </div>
       <div className={styles.footer}>
