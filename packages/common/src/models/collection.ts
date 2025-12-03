@@ -46,6 +46,11 @@ export const collectionSchema = new Schema(
       required: false,
       default: undefined,
     },
+    lastAdd: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
     isSystem: {
       type: Boolean,
       required: true,

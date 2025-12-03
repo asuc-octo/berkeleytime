@@ -74,8 +74,8 @@ export default function BookmarkPopover({
             isPinned: !!c.pinnedAt,
             pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
             isSystem: c.isSystem,
-            color: c.color as string | null,
-            updatedAt: c.updatedAt ? new Date(c.updatedAt).getTime() : 0,
+            color: c.color ?? null,
+            lastAdd: new Date(c.lastAdd).getTime(),
           });
         }
       }
@@ -90,7 +90,7 @@ export default function BookmarkPopover({
         pinnedAt: null,
         isSystem: true,
         color: null,
-        updatedAt: Date.now(),
+        lastAdd: Date.now(),
       });
     }
 
@@ -140,12 +140,13 @@ export default function BookmarkPopover({
     if (a.isPinned && b.isPinned) {
       return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
     }
-    return b.updatedAt - a.updatedAt;
+    return b.lastAdd - a.lastAdd;
   });
 
   const handleToggleCollection = useCallback(
     async (collectionId: string, currentlySaved: boolean) => {
       if (!classInfo) return;
+      if (collectionId === "all-saved-placeholder") return;
 
       setMutatingCollections((prev) => new Set(prev).add(collectionId));
 
@@ -244,6 +245,7 @@ export default function BookmarkPopover({
 
   const handleQuickAdd = useCallback(() => {
     if (!classInfo || !allSavedCollection) return;
+    if (allSavedCollection.id === "all-saved-placeholder") return;
 
     setIsPopoverOpen(true);
     setMutatingCollections((prev) => new Set(prev).add(allSavedCollection.id));

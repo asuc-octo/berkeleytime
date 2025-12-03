@@ -14,6 +14,7 @@ interface CollectionParent {
   name: string;
   color: CollectionModule.CollectionColor | null;
   pinnedAt: string | null;
+  lastAdd: string;
   isSystem: boolean;
   classes: StoredClassEntry[];
   createdAt: string;
@@ -33,6 +34,10 @@ const mapCollectionToGraphQL = (
         ? collection.pinnedAt.toISOString()
         : String(collection.pinnedAt)
       : null,
+    lastAdd:
+      collection.lastAdd instanceof Date
+        ? collection.lastAdd.toISOString()
+        : String(collection.lastAdd),
     isSystem: collection.isSystem,
     classes: collection.classes,
     createdAt:

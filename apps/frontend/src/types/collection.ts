@@ -21,7 +21,7 @@ export interface Collection {
   pinnedAt: number | null;
   isSystem: boolean;
   color: Color | null;
-  updatedAt: number;
+  lastAdd: number;
   previewClasses?: CollectionPreviewClass[];
 }
 

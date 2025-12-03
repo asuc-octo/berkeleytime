@@ -68,7 +68,7 @@ export default function Bookmarks() {
           pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
           isSystem: c.isSystem,
           color: (c.color ?? null) as Color | null,
-          updatedAt: c.updatedAt ? new Date(c.updatedAt).getTime() : 0,
+          lastAdd: new Date(c.lastAdd).getTime(),
           previewClasses,
         };
       })
@@ -80,7 +80,7 @@ export default function Bookmarks() {
         if (a.isPinned && b.isPinned) {
           return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
         }
-        return b.updatedAt - a.updatedAt;
+        return b.lastAdd - a.lastAdd;
       });
   }, [apiCollections]);
 

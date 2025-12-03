@@ -28,6 +28,7 @@ export interface CollectionDocument {
   name: string;
   color?: CollectionColor;
   pinnedAt?: Date;
+  lastAdd: Date;
   isSystem: boolean;
   classes: StoredClassEntry[];
   createdAt: Date;
@@ -72,6 +73,7 @@ export const getOrCreateAllSaved = async (
       name: ALL_SAVED_NAME,
       isSystem: true,
       pinnedAt: new Date(),
+      lastAdd: new Date(),
       classes: Array.from(allClassesMap.values()),
     });
   }
@@ -99,7 +101,7 @@ export const getAllCollections = async (
     if (!a.isSystem && b.isSystem) return 1;
     if (a.pinnedAt && !b.pinnedAt) return -1;
     if (!a.pinnedAt && b.pinnedAt) return 1;
-    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    return new Date(b.lastAdd).getTime() - new Date(a.lastAdd).getTime();
   });
 };
 
@@ -188,6 +190,7 @@ export const createCollection = async (
     name: name.trim(),
     color: color ?? undefined,
     isSystem: false,
+    lastAdd: new Date(),
     classes: [],
   });
 
@@ -388,6 +391,7 @@ export const addClassToCollection = async (
       },
       {
         $push: { classes: classIdentifierWithTimestamp },
+        $set: { lastAdd: new Date() },
       }
     );
   }
@@ -413,6 +417,7 @@ export const addClassToCollection = async (
     },
     {
       $push: { classes: classIdentifierWithTimestamp },
+      $set: { lastAdd: new Date() },
     },
     { new: true }
   );

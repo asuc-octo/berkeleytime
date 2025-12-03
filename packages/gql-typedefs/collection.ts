@@ -27,6 +27,7 @@ export const collectionTypeDef = gql`
     name: String!
     color: CollectionColor
     pinnedAt: String
+    lastAdd: String!
     isSystem: Boolean!
     classes: [CollectionClass!]!
     createdAt: String!

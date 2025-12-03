@@ -68,7 +68,7 @@ export const GET_ALL_COLLECTIONS = gql`
       color
       pinnedAt
       isSystem
-      updatedAt
+      lastAdd
       classes {
         class {
           subject
@@ -88,7 +88,7 @@ export const GET_ALL_COLLECTIONS_WITH_PREVIEW = gql`
       color
       pinnedAt
       isSystem
-      updatedAt
+      lastAdd
       classes {
         addedAt
         class {
@@ -130,7 +130,7 @@ export const ADD_CLASS_TO_COLLECTION = gql`
       color
       pinnedAt
       isSystem
-      updatedAt
+      lastAdd
       classes {
         class {
           subject
@@ -150,7 +150,7 @@ export const REMOVE_CLASS_FROM_COLLECTION = gql`
       color
       pinnedAt
       isSystem
-      updatedAt
+      lastAdd
       classes {
         class {
           subject
@@ -170,7 +170,7 @@ export const CREATE_COLLECTION = gql`
       color
       pinnedAt
       isSystem
-      updatedAt
+      lastAdd
       classes {
         class {
           subject
@@ -190,7 +190,7 @@ export const UPDATE_COLLECTION = gql`
       color
       pinnedAt
       isSystem
-      updatedAt
+      lastAdd
     }
   }
 `;
