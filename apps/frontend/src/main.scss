@@ -14,12 +14,29 @@ button {
   padding: unset;
 }
 
+// Prevent iOS auto-zoom on focus (requires 16px minimum)
+// Only applies on touch devices, desktop can use smaller fonts
+@media (hover: none) and (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
 input {
   width: 100%;
 
   &:focus {
     outline: none;
   }
+}
+
+// Disable double-tap zoom globally
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
 }
 
 a {
