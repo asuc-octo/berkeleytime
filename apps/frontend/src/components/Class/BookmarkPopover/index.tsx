@@ -193,6 +193,16 @@ export default function BookmarkPopover({
       if (!classInfo) return;
       if (collectionId === "all-saved-placeholder") return;
 
+      // Check if unbookmarking from "All Saved" (system collection)
+      const isAllSavedCollection = collections.find(
+        (c) => c.id === collectionId
+      )?.isSystem;
+
+      // Close popover optimistically when unbookmarking from All Saved
+      if (currentlySaved && isAllSavedCollection) {
+        setIsPopoverOpen(false);
+      }
+
       setMutatingCollections((prev) => new Set(prev).add(collectionId));
 
       try {
@@ -227,7 +237,7 @@ export default function BookmarkPopover({
         });
       }
     },
-    [classInfo, addClassToCollection, removeClassFromCollection]
+    [classInfo, addClassToCollection, removeClassFromCollection, collections]
   );
 
   const [isCreatingCollection, setIsCreatingCollection] = useState(false);

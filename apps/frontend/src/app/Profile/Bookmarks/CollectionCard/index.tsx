@@ -185,11 +185,7 @@ export function CollectionCard({
         <div className={styles.footerContent}>
           <p className={styles.collectionName}>
             {(isPinned || isSystem) && (
-              <PinSolid
-                width={14}
-                height={14}
-                color={isSystem ? "currentColor" : "var(--blue-500)"}
-              />
+              <PinSolid width={14} height={14} />
             )}
             <span>{name}</span>
           </p>

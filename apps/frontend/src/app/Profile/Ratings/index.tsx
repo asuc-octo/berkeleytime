@@ -57,13 +57,17 @@ export default function Ratings() {
   const [createRatingsMutation] = useMutation(CreateRatingsDocument);
   const [deleteRatingsMutation] = useMutation(DeleteRatingsDocument);
 
-  const { data: selectedCourse } = useReadCourseWithInstructor(
-    courseQuery?.subject ?? "",
-    courseQuery?.courseNumber ?? "",
-    {
-      skip: !courseQuery,
-    }
-  );
+  const [pendingEditRating, setPendingEditRating] =
+    useState<IUserRatingClass | null>(null);
+
+  const { data: selectedCourse, loading: courseLoading } =
+    useReadCourseWithInstructor(
+      courseQuery?.subject ?? "",
+      courseQuery?.courseNumber ?? "",
+      {
+        skip: !courseQuery,
+      }
+    );
 
   // Preload rating links when ratings are available
   useEffect(() => {
@@ -137,12 +141,11 @@ export default function Ratings() {
   }, [ratingForEdit]);
 
   const handleEditClick = useCallback((rating: IUserRatingClass) => {
-    setRatingForEdit(rating);
+    setPendingEditRating(rating);
     setCourseQuery({
       subject: rating.subject,
       courseNumber: rating.courseNumber,
     });
-    setIsEditModalOpen(true);
   }, []);
 
   const handleDeleteClick = useCallback((rating: IUserRatingClass) => {
@@ -258,6 +261,15 @@ export default function Ratings() {
     },
     [createRatingsMutation, buildRefetchQueries]
   );
+
+  // Open modal when course data is ready
+  useEffect(() => {
+    if (pendingEditRating && selectedCourse && !courseLoading) {
+      setRatingForEdit(pendingEditRating);
+      setIsEditModalOpen(true);
+      setPendingEditRating(null);
+    }
+  }, [pendingEditRating, selectedCourse, courseLoading]);
 
   useEffect(() => {
     if (!isEditModalOpen && !isEditThankYouOpen) {
