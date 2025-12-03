@@ -16,7 +16,8 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query } = useBrowser();
+  const { classes, loading, year, semester, query, aiSearchActive } =
+    useBrowser();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -92,7 +93,7 @@ export default function List({ onSelect }: ListProps) {
         ref={recentlyViewedSectionRef}
         className={styles.recentlyViewedSection}
       >
-        {showRecentlyViewed && (
+        {!aiSearchActive && showRecentlyViewed && (
           <div className={styles.recentlyViewed}>
             <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
             <div className={styles.recentlyViewedList}>
