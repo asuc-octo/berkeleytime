@@ -135,7 +135,6 @@ export default function Class({
   course: providedCourse,
   dialog,
 }: ClassProps) {
-  // const { pins, addPin, removePin } = usePins();
   const location = useLocation();
   const navigate = useNavigate();
 

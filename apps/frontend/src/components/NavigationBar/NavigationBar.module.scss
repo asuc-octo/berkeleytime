@@ -48,7 +48,8 @@
   &.invert {
     padding: 12px 12px 0;
 
-    .icon-button {
+    .icon-button,
+    .themeButton {
       color: white;
 
       &:global([data-variant="outline"]) {

@@ -36,9 +36,11 @@ interface NavigationBarProps {
 const ThemeDropdown = ({
   theme,
   setTheme,
+  forceTheme,
 }: {
   theme: "light" | "dark" | null;
   setTheme: (theme: "light" | "dark" | null) => void;
+  forceTheme?: "light" | "dark";
 }) => {
   const systemPrefersDark =
     typeof window !== "undefined" &&
@@ -62,6 +64,7 @@ const ThemeDropdown = ({
         sideOffset={5}
         align="end"
         className={styles.themeDropdown}
+        forceTheme={forceTheme}
       >
         <DropdownMenu.Item
           className={styles.themeDropdownItem}
@@ -154,16 +157,24 @@ export default function NavigationBar({
           )}
         </NavLink> */}
       </div>
-      <ThemeDropdown theme={theme} setTheme={setTheme} />
+      <ThemeDropdown
+        theme={theme}
+        setTheme={setTheme}
+        forceTheme={invert ? "light" : undefined}
+      />
       {user ? (
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <Button className={styles.button} style={{ color: accentColor }}>
-              {user.name ?? "Profile"}
+              {user.name?.split(" ")[0] ?? "Profile"}
               <User />
             </Button>
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content sideOffset={5} align="center">
+          <DropdownMenu.Content
+            sideOffset={5}
+            align="end"
+            forceTheme={invert ? "light" : undefined}
+          >
             <DropdownMenu.Item asChild>
               <Link to="/profile">
                 <ProfileCircle width={18} height={18} /> Account
@@ -216,11 +227,6 @@ export default function NavigationBar({
           <ArrowRight />
         </Button>
       )}
-      {/* <PinsDrawer>
-        <IconButton>
-          <Pin />
-        </IconButton>
-      </PinsDrawer> */}
     </Flex>
   );
 }

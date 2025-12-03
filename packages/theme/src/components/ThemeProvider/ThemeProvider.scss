@@ -469,6 +469,15 @@ body[data-theme="light"] {
   @include light-theme;
 }
 
+// Allow any element to override theme with data-theme attribute
+[data-theme="dark"] {
+  @include dark-theme;
+}
+
+[data-theme="light"] {
+  @include light-theme;
+}
+
 body:not([data-theme]) {
   @include light-theme;
 

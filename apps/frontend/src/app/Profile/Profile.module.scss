@@ -1,9 +1,14 @@
 .root {
-  min-height: 100vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   color: var(--heading-color);
+  overflow: hidden;
 
   .body {
     display: flex;
+    flex: 1;
+    overflow: hidden;
   }
 
   .sidebar {
@@ -12,7 +17,6 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    min-height: 100vh;
     flex-shrink: 0;
 
     @media (max-width: 991px) {
@@ -59,18 +63,19 @@
 
   .content {
     flex: 1;
-    padding: 48px 0;
     display: flex;
     justify-content: center;
+    overflow-y: auto;
   }
 
   .contentInner {
-    padding: 0 48px;
+    padding: 48px;
     width: 100%;
     max-width: 1500px;
     display: flex;
     flex-direction: column;
     gap: 48px;
+    height: fit-content;
   }
 
   .pageTitle {

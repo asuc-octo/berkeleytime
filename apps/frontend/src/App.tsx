@@ -35,14 +35,6 @@ const Class = {
   Ratings: lazy(() => import("@/components/Class/Ratings")),
 };
 
-const Course = {
-  Root: lazy(() => import("@/app/Course")),
-  Enrollment: lazy(() => import("@/components/Course/Enrollment")),
-  Grades: lazy(() => import("@/components/Course/Grades")),
-  Overview: lazy(() => import("@/components/Course/Overview")),
-  Classes: lazy(() => import("@/components/Course/Classes")),
-};
-
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
@@ -171,6 +163,11 @@ const router = createBrowserRouter([
           </SuspenseBoundary>
         ),
       },
+    ],
+  },
+  {
+    element: <Layout footer={false} />,
+    children: [
       {
         element: (
           <SuspenseBoundary key="profile">
@@ -283,53 +280,6 @@ const router = createBrowserRouter([
           </SuspenseBoundary>
         ),
         path: "enrollment",
-      },
-      {
-        element: (
-          <SuspenseBoundary key="courses/:subject/:number">
-            <Course.Root />
-          </SuspenseBoundary>
-        ),
-        path: "courses/:subject/:number",
-        children: [
-          {
-            element: (
-              <SuspenseBoundary key="overview">
-                <Course.Overview />
-              </SuspenseBoundary>
-            ),
-            index: true,
-          },
-          {
-            element: (
-              <SuspenseBoundary key="classes">
-                <Course.Classes />
-              </SuspenseBoundary>
-            ),
-            path: "classes",
-          },
-          {
-            element: (
-              <SuspenseBoundary key="enrollment">
-                <Course.Enrollment />
-              </SuspenseBoundary>
-            ),
-            path: "enrollment",
-          },
-          {
-            element: (
-              <SuspenseBoundary key="grades">
-                <Course.Grades />
-              </SuspenseBoundary>
-            ),
-            path: "grades",
-          },
-          {
-            path: "*",
-            loader: ({ params: { subject, number } }) =>
-              redirect(`/courses/${subject}/${number}`),
-          },
-        ],
       },
       {
         element: (
