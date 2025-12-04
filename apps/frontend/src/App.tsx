@@ -15,7 +15,6 @@ import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
 
 const Landing = lazy(() => import("@/app/Landing"));
-const LandingExperiment = lazy(() => import("@/app/LandingExperiment"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
@@ -53,16 +52,8 @@ const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 
 const router = createBrowserRouter([
   {
-    element: <Layout header={false} footer={false} />,
+    element: <Layout footer={false} headerBorder={false} />,
     children: [
-      // {
-      //   element: (
-      //       <SuspenseBoundary key="schedules/:scheduleId">
-      //         <Discover />
-      //       </SuspenseBoundary>
-      // ),
-      //   path: "discover",
-      // },
       {
         element: (
           <SuspenseBoundary key="landing">
@@ -110,19 +101,6 @@ const router = createBrowserRouter([
       //   ),
       //   path: "map",
       // },
-    ],
-  },
-  {
-    element: <Layout footer={false} headerBorder={false} />,
-    children: [
-      {
-        path: "landing",
-        element: (
-          <SuspenseBoundary key="landing-experiment">
-            <LandingExperiment />
-          </SuspenseBoundary>
-        ),
-      },
     ],
   },
   {

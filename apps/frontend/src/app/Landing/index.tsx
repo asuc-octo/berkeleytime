@@ -1,82 +1,119 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@repo/theme";
 
-import SunCalc from "suncalc";
+import Footer from "@/components/Footer";
 
-import Features from "./Features";
-import Hero from "./Hero";
-import daytime from "./Hero/daytime.svg";
-import night from "./Hero/night.svg";
-import sunrise_sunset from "./Hero/sunrise_sunset.svg";
 import styles from "./Landing.module.scss";
-import Organization from "./Organization";
-import Wave from "./Wave";
 
-// TODO: Tailwind color gradients
-const steps = {
-  night: {
-    colors: ["#082D65", "#0E1B3B"],
-    angle: "to bottom right",
-    image: night,
-  },
-  sunrise_sunset: {
-    colors: ["#F1A848", "#F55998"],
-    image: sunrise_sunset,
-  },
-  daytime: {
-    colors: ["#408FF7", "#0DD0DA"],
-    image: daytime,
-  },
+// Get upcoming semester (what students are likely registering for)
+const getUpcomingSemester = () => {
+  const now = new Date();
+  const month = now.getMonth(); // 0-11
+  const year = now.getFullYear();
+
+  // Nov-Dec: Spring of next year, Jan-Apr: Fall of same year, May-Oct: Spring of next year
+  if (month >= 10) return { year: year + 1, semester: "Spring" }; // Nov-Dec -> Spring next year
+  if (month <= 3) return { year, semester: "Fall" }; // Jan-Apr -> Fall same year
+  return { year: year + 1, semester: "Spring" }; // May-Oct -> Spring next year
 };
 
-// UC Berkeley coordinates
-const BERKELEY_LAT = 37.8719;
-const BERKELEY_LNG = -122.2585;
-
-const getStep = (milliseconds: number) => {
-  const date = new Date(milliseconds);
-  const times = SunCalc.getTimes(date, BERKELEY_LAT, BERKELEY_LNG);
-
-  const now = date.getTime();
-  const dawnTime = times.dawn.getTime();
-  const goldenHourEndTime = times.goldenHourEnd.getTime();
-  const goldenHourTime = times.goldenHour.getTime();
-  const duskTime = times.dusk.getTime();
-
-  if (now >= dawnTime && now < goldenHourEndTime) return steps.sunrise_sunset;
-  if (now >= goldenHourEndTime && now < goldenHourTime) return steps.daytime;
-  if (now >= goldenHourTime && now < duskTime) return steps.sunrise_sunset;
-  return steps.night;
-};
-
-const Home = () => {
-  // Berkeley time
-  const [milliseconds, setMilliseconds] = useState(
-    () => Date.now() - 10 * 60 * 1000
-  );
-
-  const step = useMemo(() => {
-    return getStep(milliseconds);
-  }, [milliseconds]);
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setMilliseconds((milliseconds) => milliseconds + 1000),
-      1000
-    );
-
-    return () => clearInterval(interval);
-  }, []);
+const Landing = () => {
+  const { year, semester } = getUpcomingSemester();
+  const defaultClassUrl = `/catalog/${year}/${semester}/COMPSCI/61A/001?embed=true&autoScroll=true`;
 
   return (
     <div className={styles.root}>
-      <Hero step={step} milliseconds={milliseconds} />
-      <div className={styles.features}>
-        <Features />
+      <div className={styles.content}>
+        <div className={styles.previewSection}>
+          <div className={styles.previewHeader}>
+            <div className={styles.headerDots} />
+            <h1 className={styles.previewTitle}>
+              Berkeley's largest course discovery platform
+              <br />
+              Built and run by students, for students
+            </h1>
+          </div>
+          <div className={styles.previewWrapper}>
+            <div className={styles.previewBackground}>
+              <div className={styles.gradientLayer1} />
+              <div className={styles.gradientLayer2} />
+            </div>
+            <div className={styles.previewContainer}>
+              <div className={styles.titleBar}>
+                <div className={styles.trafficLights}>
+                  <span className={styles.trafficLight} data-color="red" />
+                  <span className={styles.trafficLight} data-color="yellow" />
+                  <span className={styles.trafficLight} data-color="green" />
+                </div>
+              </div>
+              <div className={styles.iframeWrapper}>
+                <iframe
+                  src={defaultClassUrl}
+                  className={styles.previewIframe}
+                  title="Catalog Preview"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <Wave className={styles.bottomWave} fill="var(--neutral-900)" />
-      <Organization />
+
+      <div className={styles.getInvolvedBox}>
+        <div className={styles.getInvolvedTitle}>
+          <h2 className={styles.getInvolvedCardTitle}>Get Involved</h2>
+          <p className={styles.getInvolvedDescription}>
+            Over 20,000 students use Berkeleytime every semester.
+            Help us make course planning a little easier for everyone.
+          </p>
+        </div>
+        <Accordion type="single" collapsible className={styles.accordion}>
+          <AccordionItem value="join">
+            <AccordionTrigger>Join The Team</AccordionTrigger>
+            <AccordionContent>
+              Ship real features to thousands of users, grow with talented
+              peers, and make college planning suck less. We're looking for
+              developers, designers, researchers, and marketers.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="contribute">
+            <AccordionTrigger>Contribute Code</AccordionTrigger>
+            <AccordionContent>
+              Berkeleytime is a completely open-source project. Check out our
+              repository and contribute at{" "}
+              <a href="https://github.com/asuc-octo/berkeleytime">
+                github.com/asuc-octo/berkeleytime
+              </a>.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="feedback">
+            <AccordionTrigger>Provide Feedback</AccordionTrigger>
+            <AccordionContent>
+              Spotted a bug or have a quick suggestion?{" "}
+              <a
+                href="https://forms.gle/zeAUQAHrMcrRJyhK6"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Fill out this form
+              </a>
+              . Interested in beta testing new features? Reach out at{" "}
+              <a href="mailto:octo.berkeleytime@asuc.org">
+                octo.berkeleytime@asuc.org
+              </a>
+              .
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+
+      <div className={styles.footerSpacer} />
+      <Footer />
     </div>
   );
 };
 
-export default Home;
+export default Landing;
