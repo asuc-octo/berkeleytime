@@ -2,13 +2,13 @@ import { Filter, Search } from "iconoir-react";
 
 import { Button, Flex, Skeleton } from "@repo/theme";
 
+import browserStyles from "@/components/ClassBrowser/ClassBrowser.module.scss";
+import filterStyles from "@/components/ClassBrowser/Filters/Filters.module.scss";
+import headerStyles from "@/components/ClassBrowser/Header/Header.module.scss";
+import listStyles from "@/components/ClassBrowser/List/List.module.scss";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 
 import styles from "./Catalog.module.scss";
-import browserStyles from "@/components/ClassBrowser/ClassBrowser.module.scss";
-import filterStyles from "@/components/ClassBrowser/Filters/Filters.module.scss";
-import listStyles from "@/components/ClassBrowser/List/List.module.scss";
-import headerStyles from "@/components/ClassBrowser/Header/Header.module.scss";
 
 function FilterSkeleton() {
   return (

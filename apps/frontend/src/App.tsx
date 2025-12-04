@@ -10,10 +10,10 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
+import CatalogSkeleton from "@/app/Catalog/Skeleton";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
-import CatalogSkeleton from "@/app/Catalog/Skeleton";
 
 const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
