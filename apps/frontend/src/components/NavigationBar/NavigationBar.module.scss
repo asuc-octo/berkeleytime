@@ -1,5 +1,48 @@
+.menuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--foreground-color);
+  z-index: 1001;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.menuNav {
+  display: flex;
+  flex-direction: column;
+  padding: 100px 24px 24px;
+  gap: 8px;
+
+  a {
+    font-size: 24px;
+    font-weight: var(--font-medium);
+    color: var(--heading-color);
+    text-decoration: none;
+    padding: 12px 0;
+    transition: opacity 150ms ease;
+
+    &:hover {
+      opacity: 0.7;
+    }
+
+    &:global(.active) {
+      opacity: 0.5;
+    }
+  }
+}
+
 .themeDropdown {
   min-width: 100px;
+  z-index: 1003;
+}
+
+.profileDropdown {
+  z-index: 1003;
 }
 
 .themeDropdownItem {
@@ -13,7 +56,9 @@
   }
 
   .brand {
+    margin-left: 10px;
     font-size: 24px;
+    user-select: none;
     font-weight: 580;
     font-feature-settings:
       "cv05" on,
@@ -24,15 +69,25 @@
     color: var(--heading-color);
     cursor: pointer;
     transition: all 100ms ease-in-out;
-    margin-right: auto;
 
     &:hover {
       opacity: 0.8;
     }
   }
 
+  .compactMenuButton {
+    display: none;
+    border: none;
+
+    @media (width <= 992px) {
+      display: inline-grid;
+      margin-left: auto;
+    }
+  }
+
   .group {
     display: flex;
+    margin-left: auto;
 
     @media (width <= 992px) {
       display: none;
@@ -52,7 +107,6 @@
   &.invert {
     padding: 12px 12px 0;
 
-    .icon-button,
     .themeButton {
       color: white;
 

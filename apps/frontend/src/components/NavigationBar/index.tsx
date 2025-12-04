@@ -1,4 +1,7 @@
 import classNames from "classnames";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Bookmark,
@@ -10,6 +13,7 @@ import {
   Star,
   SunLight,
   User,
+  Xmark,
 } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
 
@@ -26,7 +30,6 @@ import useUser from "@/hooks/useUser";
 import { signIn, signOut } from "@/lib/api";
 
 import styles from "./NavigationBar.module.scss";
-import SideBar from "./SideBar";
 
 interface NavigationBarProps {
   invert?: boolean;
@@ -54,11 +57,19 @@ const ThemeDropdown = ({
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <IconButton className={styles.themeButton} aria-label="Toggle theme">
-          {effectiveTheme === "light" ? (
-            <SunLight width={18} height={18} />
-          ) : (
-            <HalfMoon width={18} height={18} />
-          )}
+          <motion.div
+            key={effectiveTheme}
+            initial={{ rotate: -90, opacity: 0 }}
+            animate={{ rotate: 0, opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            style={{ display: "flex" }}
+          >
+            {effectiveTheme === "light" ? (
+              <SunLight width={18} height={18} />
+            ) : (
+              <HalfMoon width={18} height={18} />
+            )}
+          </motion.div>
         </IconButton>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content
@@ -97,9 +108,63 @@ export default function NavigationBar({
 }: NavigationBarProps) {
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   return (
-    <Flex
+    <>
+      {menuOpen &&
+        createPortal(
+          <motion.div
+            className={styles.menuOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.nav
+              className={styles.menuNav}
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } },
+              }}
+            >
+              {[
+                { to: "/catalog", label: "Catalog" },
+                { to: "/schedules", label: "Scheduler" },
+                { to: "/gradtrak", label: "Gradtrak" },
+                { to: "/grades", label: "Grades" },
+                { to: "/enrollment", label: "Enrollment" },
+              ].map(({ to, label }) => (
+                <motion.div
+                  key={to}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <NavLink to={to} onClick={() => setMenuOpen(false)}>
+                    {label}
+                  </NavLink>
+                </motion.div>
+              ))}
+            </motion.nav>
+          </motion.div>,
+          document.body
+        )}
+      <Flex
       align="center"
       flexShrink="0"
       gap="3"
@@ -108,11 +173,6 @@ export default function NavigationBar({
         [styles.noBorder]: noBorder,
       })}
     >
-      <SideBar>
-        <IconButton className={styles.iconButton}>
-          <Menu />
-        </IconButton>
-      </SideBar>
       <Link className={styles.brand} to="/">
         Berkeleytime
       </Link>
@@ -160,6 +220,18 @@ export default function NavigationBar({
           )}
         </NavLink> */}
       </div>
+      <IconButton
+        className={styles.compactMenuButton}
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <motion.div
+          animate={{ rotate: menuOpen ? 90 : 0 }}
+          transition={{ duration: 0.2 }}
+          style={{ display: "flex" }}
+        >
+          {menuOpen ? <Xmark /> : <Menu />}
+        </motion.div>
+      </IconButton>
       <ThemeDropdown
         theme={theme}
         setTheme={setTheme}
@@ -177,6 +249,7 @@ export default function NavigationBar({
             sideOffset={5}
             align="end"
             forceTheme={invert ? "light" : undefined}
+            className={styles.profileDropdown}
           >
             <DropdownMenu.Item asChild>
               <Link to="/profile">
@@ -231,5 +304,6 @@ export default function NavigationBar({
         </Button>
       )}
     </Flex>
+    </>
   );
 }
