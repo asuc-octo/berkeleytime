@@ -91,7 +91,7 @@ function FilterSkeleton() {
 
 function ListSkeleton() {
   return (
-    <div className={listStyles.root}>
+    <div className={`${listStyles.root} ${listStyles.loading}`}>
       {/* Header skeleton */}
       <div className={headerStyles.root}>
         <div className={headerStyles.group}>

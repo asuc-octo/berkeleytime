@@ -4,6 +4,10 @@
   overflow: auto;
   background-color: var(--foreground-color);
 
+  &.loading {
+    overflow: hidden;
+  }
+
   &:focus {
     outline: none;
   }
