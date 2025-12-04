@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Outlet, useSearchParams } from "react-router";
 
 import { Flex } from "@repo/theme";
 
@@ -9,27 +9,32 @@ import Banner from "./Banner";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {
+  banner?: boolean;
   header?: boolean;
   footer?: boolean;
   scrollLock?: boolean;
 }
 
 export default function Layout({
+  banner = true,
   header = true,
   footer = true,
   scrollLock = false,
 }: LayoutProps) {
+  const [searchParams] = useSearchParams();
+  const isEmbed = searchParams.get("embed") === "true";
+
   return (
     <Flex direction="column">
       <Flex
         direction="column"
         className={scrollLock ? styles.viewLocked : styles.view}
       >
-        <Banner />
-        {header && <NavigationBar />}
+        {banner && !isEmbed && <Banner />}
+        {header && !isEmbed && <NavigationBar />}
         <Outlet />
       </Flex>
-      {footer && <Footer />}
+      {footer && !isEmbed && <Footer />}
     </Flex>
   );
 }

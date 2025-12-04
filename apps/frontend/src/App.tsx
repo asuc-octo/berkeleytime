@@ -113,7 +113,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <Layout footer={false} />,
+    element: <Layout banner={false} header={false} footer={false} />,
     children: [
       {
         path: "landing",
@@ -123,6 +123,11 @@ const router = createBrowserRouter([
           </SuspenseBoundary>
         ),
       },
+    ],
+  },
+  {
+    element: <Layout footer={false} />,
+    children: [
       {
         path: "gradtrak",
         element: (

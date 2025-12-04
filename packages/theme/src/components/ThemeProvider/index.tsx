@@ -45,6 +45,18 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     () => localStorage.getItem("theme") as ThemeType
   );
 
+  // Sync theme across tabs/iframes when localStorage changes
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "theme") {
+        setTheme(e.newValue as ThemeType);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   useEffect(() => {
     if (theme) {
       localStorage.setItem("theme", theme);
