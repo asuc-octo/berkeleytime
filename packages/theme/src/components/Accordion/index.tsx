@@ -1,42 +1,64 @@
-import { ComponentPropsWithRef } from "react";
+"use client";
 
-import { Minus, Plus } from "iconoir-react";
+import * as React from "react";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { NavArrowDown } from "iconoir-react";
+import clsx from "clsx";
 
 import styles from "./Accordion.module.scss";
 
-function Root({ children, ...props }: ComponentPropsWithRef<"div">) {
+function Accordion({
+  className,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return (
-    <div className={styles.accordion} {...props}>
-      {children}
-    </div>
+    <AccordionPrimitive.Root
+      className={clsx(styles.accordion, className)}
+      {...props}
+    />
   );
 }
 
-function Details({ children, ...props }: ComponentPropsWithRef<"details">) {
-  return <details {...props}>{children}</details>;
-}
-
-function Summary({ children, ...props }: ComponentPropsWithRef<"summary">) {
+function AccordionItem({
+  className,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   return (
-    <summary {...props}>
-      <h3 className={styles.title}>{children}</h3>
-      <Plus height={24} width={24} />
-      <Minus height={24} width={24} />
-    </summary>
+    <AccordionPrimitive.Item
+      className={clsx(styles.item, className)}
+      {...props}
+    />
   );
 }
 
-function Content({ children, ...props }: ComponentPropsWithRef<"p">) {
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   return (
-    <p className={styles.content} {...props}>
-      {children}
-    </p>
+    <AccordionPrimitive.Header className={styles.header}>
+      <AccordionPrimitive.Trigger
+        className={clsx(styles.trigger, className)}
+        {...props}
+      >
+        {children}
+        <NavArrowDown className={styles.icon} />
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
   );
 }
 
-export const Accordion = {
-  Root,
-  Details,
-  Summary,
-  Content,
-};
+function AccordionContent({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+  return (
+    <AccordionPrimitive.Content className={styles.content} {...props}>
+      <div className={clsx(styles.contentInner, className)}>{children}</div>
+    </AccordionPrimitive.Content>
+  );
+}
+
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };

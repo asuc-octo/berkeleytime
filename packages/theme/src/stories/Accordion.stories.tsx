@@ -1,10 +1,15 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Accordion } from "../components/Accordion";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "../components/Accordion";
 
-const meta: Meta<typeof Accordion.Root> = {
+const meta: Meta<typeof Accordion> = {
   title: "Theme/Accordion",
-  component: Accordion.Root,
+  component: Accordion,
   parameters: {
     layout: "centered",
     background: "dark",
@@ -12,15 +17,19 @@ const meta: Meta<typeof Accordion.Root> = {
 };
 export default meta;
 
-type Story = StoryObj<typeof Accordion.Root>;
+type Story = StoryObj<typeof Accordion>;
 
 export const Default: Story = {
   render: () => (
-    <Accordion.Root>
-      <Accordion.Details>
-        <Accordion.Summary>Accordion Title</Accordion.Summary>
-        <Accordion.Content>Here is the accordion content.</Accordion.Content>
-      </Accordion.Details>
-    </Accordion.Root>
+    <Accordion type="single" collapsible>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Accordion Title</AccordionTrigger>
+        <AccordionContent>Here is the accordion content.</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger>Another Item</AccordionTrigger>
+        <AccordionContent>More content here.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
   ),
 };
