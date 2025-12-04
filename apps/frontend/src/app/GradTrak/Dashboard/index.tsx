@@ -601,10 +601,10 @@ export default function Dashboard() {
               open={filterMenuOpen}
               onOpenChange={setFilterMenuOpen}
             >
-              <DropdownMenu.Trigger asChild>
-                <Tooltip
-                  content="Filter"
-                  trigger={
+              <Tooltip
+                content="Filter"
+                trigger={
+                  <DropdownMenu.Trigger asChild>
                     <div className={styles.filterButtonContainer}>
                       <IconButton
                         className={styles.filterButton}
@@ -618,9 +618,9 @@ export default function Dashboard() {
                         </div>
                       )}
                     </div>
-                  }
-                />
-              </DropdownMenu.Trigger>
+                  </DropdownMenu.Trigger>
+                }
+              />
               <DropdownMenu.Content
                 sideOffset={5}
                 align="end"
@@ -715,10 +715,10 @@ export default function Dashboard() {
                 open={sortMenuOpen}
                 onOpenChange={setSortMenuOpen}
               >
-                <DropdownMenu.Trigger asChild>
-                  <Tooltip
-                    content="Sort"
-                    trigger={
+                <Tooltip
+                  content="Sort"
+                  trigger={
+                    <DropdownMenu.Trigger asChild>
                       <div
                         style={{
                           position: "relative",
@@ -735,9 +735,9 @@ export default function Dashboard() {
                           <Sort />
                         </IconButton>
                       </div>
-                    }
-                  />
-                </DropdownMenu.Trigger>
+                    </DropdownMenu.Trigger>
+                  }
+                />
                 <DropdownMenu.Content
                   sideOffset={5}
                   align="end"
