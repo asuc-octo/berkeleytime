@@ -15,6 +15,7 @@ import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
 
 const Landing = lazy(() => import("@/app/Landing"));
+const LandingExperiment = lazy(() => import("@/app/LandingExperiment"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
@@ -114,6 +115,14 @@ const router = createBrowserRouter([
   {
     element: <Layout footer={false} />,
     children: [
+      {
+        path: "landing",
+        element: (
+          <SuspenseBoundary key="landing-experiment">
+            <LandingExperiment />
+          </SuspenseBoundary>
+        ),
+      },
       {
         path: "gradtrak",
         element: (
