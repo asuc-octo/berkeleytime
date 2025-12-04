@@ -5,9 +5,16 @@
   position: relative;
 
   .view {
-    overflow: auto;
+    overflow: hidden;
     flex-grow: 1;
     background-color: var(--foreground-color);
+    position: relative;
+  }
+
+  .classContainer {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
   }
 
   .panel {
