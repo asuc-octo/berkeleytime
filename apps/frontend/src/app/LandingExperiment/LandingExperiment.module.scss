@@ -10,12 +10,12 @@
   padding: 20px;
 }
 
-// Content area - fills remaining space and centers preview
 .content {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  margin-bottom: 80px;
 }
 
 // Section wrapper for title + preview
@@ -96,6 +96,8 @@
 // Preview container
 .previewContainer {
   position: absolute;
+  display: flex;
+  flex-direction: column;
   background-color: var(--background-color);
   height: 530px;
   width: min(85vw, 900px);
@@ -104,57 +106,58 @@
   z-index: 1;
 }
 
+// macOS-style title bar
+.titleBar {
+  flex-shrink: 0;
+  height: 20px;
+  background-color: var(--background-color);
+  border-bottom: 0.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+}
+
+.trafficLights {
+  display: flex;
+  gap: 6px;
+}
+
+.trafficLight {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &[data-color="red"] {
+    background-color: #ff5f57;
+  }
+
+  &[data-color="yellow"] {
+    background-color: #febc2e;
+  }
+
+  &[data-color="green"] {
+    background-color: #28c840;
+  }
+}
+
 // Zoom level for mini view (0.6 = 60% scale, sees ~167% viewport)
 $preview-zoom: 0.6;
 
+.iframeWrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
 .previewIframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: percentage(math.div(1, $preview-zoom));
   height: percentage(math.div(1, $preview-zoom));
   border: none;
   background: var(--background);
   transform: scale($preview-zoom);
   transform-origin: top left;
-}
-
-// Card - same size as previewBackground but with border
-.card {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-  height: 700px;
-  margin-top: 40px;
-  padding: 20px;
-  background-color: var(--background);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-sizing: border-box;
-}
-
-.cardText {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 12px;
-  padding: 15px;
-  color: var(--paragraph-color);
-  font-size: var(--text-16);
-  line-height: 1.5;
-}
-
-.cardTitle {
-  color: var(--heading-color);
-  font-size: var(--text-24);
-  font-weight: var(--font-medium);
-  line-height: 1.25;
-}
-
-.innerCard {
-  width: 65%;
-  height: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
 }
 

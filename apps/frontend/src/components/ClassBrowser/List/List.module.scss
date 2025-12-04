@@ -4,6 +4,15 @@
   overflow: auto;
   background-color: var(--foreground-color);
 
+  &.hideScrollbar {
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE/Edge
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome/Safari
+    }
+  }
+
   &:focus {
     outline: none;
   }

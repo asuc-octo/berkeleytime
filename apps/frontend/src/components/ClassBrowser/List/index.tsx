@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
+import classNames from "classnames";
 import { FrameAltEmpty } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
@@ -119,7 +120,12 @@ export default function List({ onSelect }: ListProps) {
   };
 
   return (
-    <div ref={rootRef} className={styles.root}>
+    <div
+      ref={rootRef}
+      className={classNames(styles.root, {
+        [styles.hideScrollbar]: autoScroll,
+      })}
+    >
       <Header />
       <div
         ref={recentlyViewedSectionRef}

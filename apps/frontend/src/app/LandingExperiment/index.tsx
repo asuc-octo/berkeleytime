@@ -1,3 +1,5 @@
+import Footer from "@/components/Footer";
+
 import styles from "./LandingExperiment.module.scss";
 
 // Get upcoming semester (what students are likely registering for)
@@ -34,22 +36,25 @@ const LandingExperiment = () => {
               <div className={styles.gradientLayer2} />
             </div>
             <div className={styles.previewContainer}>
-              <iframe
-                src={defaultClassUrl}
-                className={styles.previewIframe}
-                title="Catalog Preview"
-              />
+              <div className={styles.titleBar}>
+                <div className={styles.trafficLights}>
+                  <span className={styles.trafficLight} data-color="red" />
+                  <span className={styles.trafficLight} data-color="yellow" />
+                  <span className={styles.trafficLight} data-color="green" />
+                </div>
+              </div>
+              <div className={styles.iframeWrapper}>
+                <iframe
+                  src={defaultClassUrl}
+                  className={styles.previewIframe}
+                  title="Catalog Preview"
+                />
+              </div>
             </div>
-          </div>
-          <div className={styles.card}>
-            <div className={styles.cardText}>
-              <h2 className={styles.cardTitle}>Find the right classes for you</h2>
-              <p>Instead of spending hours sifting through courses on the Berkeley course catalog, instantly filter and sort courses by average grade, number of open seats, and more.</p>
-            </div>
-            <div className={styles.innerCard} />
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
