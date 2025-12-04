@@ -23,7 +23,7 @@ const getUpcomingSemester = () => {
 
 const Landing = () => {
   const { year, semester } = getUpcomingSemester();
-  const defaultClassUrl = `/catalog/${year}/${semester}/COMPSCI/61A/001?embed=true&autoScroll=true`;
+  const defaultClassUrl = `/catalog/${year}/${semester}/COMPSCI/61A/001?embed=true`;
 
   return (
     <div className={styles.root}>
@@ -32,9 +32,8 @@ const Landing = () => {
           <div className={styles.previewHeader}>
             <div className={styles.headerDots} />
             <h1 className={styles.previewTitle}>
-              Berkeley's largest course discovery platform
-              <br />
-              Built and run by students, for students
+              Berkeley's largest course discovery platform.
+              Built and run by students, for students.
             </h1>
           </div>
           <div className={styles.previewWrapper}>
@@ -60,9 +59,8 @@ const Landing = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      <div className={styles.getInvolvedBox}>
+        <div className={styles.getInvolvedBox}>
         <div className={styles.getInvolvedTitle}>
           <h2 className={styles.getInvolvedCardTitle}>Get Involved</h2>
           <p className={styles.getInvolvedDescription}>
@@ -74,9 +72,7 @@ const Landing = () => {
           <AccordionItem value="join">
             <AccordionTrigger>Join The Team</AccordionTrigger>
             <AccordionContent>
-              Ship real features to thousands of users, grow with talented
-              peers, and make college planning suck less. We're looking for
-              developers, designers, researchers, and marketers.
+              Ship real features that shape how thousands of students plan their academic journey. We’re always looking for developers, designers, researchers, and marketers.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="contribute">
@@ -108,6 +104,7 @@ const Landing = () => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+        </div>
       </div>
 
       <div className={styles.footerSpacer} />

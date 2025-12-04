@@ -11,11 +11,10 @@
 }
 
 .content {
-  flex: 1;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  margin-bottom: 80px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 // Section wrapper for title + preview
@@ -32,11 +31,13 @@
   align-items: center;
   gap: 20px;
   padding: 60px 0px;
+  box-sizing: border-box;
   width: 100%;
   max-width: 1200px;
 }
 
 .headerDots {
+  flex-shrink: 0;
   width: 56px;
   height: 56px;
   border-radius: 4px;
@@ -47,14 +48,18 @@
   @include dark-mode {
     background-color: var(--heading-color);
   }
+
+  @media (max-width: 700px) {
+    display: none;
+  }
 }
 
 .previewTitle {
-  flex-shrink: 0;
   color: var(--heading-color);
   font-size: var(--text-28);
   font-weight: var(--font-medium);
   line-height: 1.25;
+  max-width: 600px;
 }
 
 .previewSubtitle {
@@ -173,7 +178,8 @@ $get-involved-breakpoint: 660px;
   width: 100%;
   max-width: 1200px;
   font-size: var(--text-18);
-  margin: 0 auto;
+  margin-top: 80px;
+  box-sizing: border-box;
 
   @media (max-width: $get-involved-breakpoint) {
     flex-direction: column;
@@ -219,5 +225,6 @@ $get-involved-breakpoint: 660px;
 }
 
 .footerSpacer {
-  height: 80px;
+  flex: 1;
+  min-height: 80px;
 }
