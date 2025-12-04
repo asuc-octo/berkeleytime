@@ -1,17 +1,12 @@
+@use "sass:math";
+@use "./gradient";
+
 .root {
   flex: 1;
-  position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  isolation: isolate;
-}
-
-.navbarWrapper {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  overflow: visible;
+  background-color: var(--background);
+  padding: 80px 20px;
 }
 
 // Content area - fills remaining space and centers preview
@@ -20,203 +15,130 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 2;
 }
 
 // Section wrapper for title + preview
 .previewSection {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 75vw;
+  align-items: center;
+  width: 100%;
 }
 
 .previewHeader {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 60px;
+  gap: 4px;
+  margin-bottom: 40px;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .previewTitle {
-  color: white;
-  font-size: 48px;
+  color: var(--heading-color);
+  font-size: var(--text-28);
   font-weight: var(--font-medium);
+  line-height: 1.25;
 }
 
 .previewSubtitle {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 24px;
-  font-weight: var(--font-regular);
+  color: var(--heading-color);
+  font-size: var(--text-18);
+  font-weight: var(--font-normal);
+  line-height: 1.5;
 }
 
-// Preview container - centered with 16:9 aspect ratio
-.previewContainer {
+// Wrapper for layering showcase and preview
+.previewWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  max-width: 1200px;
+}
+
+// Animated gradient background behind preview
+.previewBackground {
+  position: relative;
+  width: 100%;
+  height: 700px;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-// Frame that holds the scaled iframe - dimensions set via JS
-.previewFrame {
-  transform-origin: top left;
-}
-
-.previewIframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: var(--background);
-}
-
-.lens {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  background: radial-gradient(
-    rgba(0, 0, 0, 0) 10%,
-    rgba(0, 0, 0, 0.2) 80%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-}
-
-.sky {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
+.gradientLayer1 {
+  @include gradient.gradient-layer;
   animation: firmament-1 30s linear infinite;
 }
 
-.sky2 {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
+.gradientLayer2 {
+  @include gradient.gradient-layer;
   animation: firmament-2 30s linear infinite;
 }
 
-// Sky gradient presets
-$one: linear-gradient(
-  to bottom,
-  #040911 2%,
-  #070e1b 31%,
-  #0b182b 56%,
-  #13253c 75%,
-  #1c3249 89%,
-  #243a4c 99%
-);
-
-$two: linear-gradient(
-  to bottom,
-  #010104 2%,
-  #0a0a12 31%,
-  #1b1a1e 56%,
-  #302822 75%,
-  #4e2c0e 89%,
-  #5e1801 99%
-);
-
-$three: linear-gradient(
-  to bottom,
-  #695371 2%,
-  #9b6368 31%,
-  #bc7161 56%,
-  #ab5f53 75%,
-  #944d47 89%,
-  #8a4541 99%
-);
-
-$four: linear-gradient(
-  to bottom,
-  rgba(137, 137, 137, 1) 2%,
-  rgba(163, 148, 139, 1) 31%,
-  rgba(153, 124, 113, 1) 56%,
-  rgba(123, 93, 91, 1) 75%,
-  rgba(90, 70, 78, 1) 89%,
-  rgba(64, 55, 67, 1) 99%
-);
-
-$five: linear-gradient(
-  to bottom,
-  #50a7fd 2%,
-  #5cb2fe 31%,
-  #6bbdfe 56%,
-  #79c8fe 75%,
-  #85d1fe 89%,
-  #8dd6fe 99%
-);
-
-$six: linear-gradient(
-  to bottom,
-  rgba(43, 72, 80, 1) 2%,
-  rgba(75, 111, 126, 1) 31%,
-  rgba(112, 157, 164, 1) 56%,
-  rgba(174, 189, 154, 1) 75%,
-  rgba(200, 144, 77, 1) 89%,
-  rgba(74, 58, 48, 1) 99%
-);
-
-$seven: linear-gradient(
-  to bottom,
-  #012254 2%,
-  #02387b 31%,
-  #1e59a6 56%,
-  #6379bb 75%,
-  #7b537f 89%,
-  #253668 99%
-);
-
-$eight: linear-gradient(
-  to bottom,
-  #1c3a62 2%,
-  #1e3e68 31%,
-  #214470 56%,
-  #244a7b 75%,
-  #285184 89%,
-  #2b558b 99%
-);
-
-// Layer 1: holds gradient, switches only when layer 2 is fully opaque (hiding this layer)
-@keyframes firmament-1 {
-  0% { background: $one; }
-  12.5% { background: $one; }
-  12.51% { background: $three; }  // switch while hidden behind sky2
-  25% { background: $three; }
-  37.5% { background: $three; }
-  37.51% { background: $five; }   // switch while hidden
-  50% { background: $five; }
-  62.5% { background: $five; }
-  62.51% { background: $seven; }  // switch while hidden
-  75% { background: $seven; }
-  87.5% { background: $seven; }
-  87.51% { background: $one; }    // switch while hidden
-  100% { background: $one; }
+// Preview container
+.previewContainer {
+  position: absolute;
+  background-color: var(--background-color);
+  height: 530px;
+  width: min(85vw, 900px);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1;
 }
 
-// Layer 2: fades in/out, switches gradient only when fully transparent
-@keyframes firmament-2 {
-  0% { background: $two; opacity: 0; }
-  12.5% { background: $two; opacity: 1; }
-  25% { background: $two; opacity: 0; }
-  25.01% { background: $four; opacity: 0; }  // switch while invisible
-  37.5% { background: $four; opacity: 1; }
-  50% { background: $four; opacity: 0; }
-  50.01% { background: $six; opacity: 0; }   // switch while invisible
-  62.5% { background: $six; opacity: 1; }
-  75% { background: $six; opacity: 0; }
-  75.01% { background: $eight; opacity: 0; } // switch while invisible
-  87.5% { background: $eight; opacity: 1; }
-  100% { background: $eight; opacity: 0; }
+// Zoom level for mini view (0.6 = 60% scale, sees ~167% viewport)
+$preview-zoom: 0.6;
+
+.previewIframe {
+  width: percentage(math.div(1, $preview-zoom));
+  height: percentage(math.div(1, $preview-zoom));
+  border: none;
+  background: var(--background);
+  transform: scale($preview-zoom);
+  transform-origin: top left;
 }
+
+// Card - same size as previewBackground but with border
+.card {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  height: 700px;
+  margin-top: 40px;
+  padding: 20px;
+  background-color: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.cardText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px;
+  color: var(--paragraph-color);
+  font-size: var(--text-16);
+  line-height: 1.5;
+}
+
+.cardTitle {
+  color: var(--heading-color);
+  font-size: var(--text-24);
+  font-weight: var(--font-medium);
+  line-height: 1.25;
+}
+
+.innerCard {
+  width: 65%;
+  height: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+

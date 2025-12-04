@@ -113,7 +113,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <Layout banner={false} header={false} footer={false} />,
+    element: <Layout footer={false} headerBorder={false} />,
     children: [
       {
         path: "landing",

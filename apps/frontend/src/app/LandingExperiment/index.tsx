@@ -1,13 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-
-import NavigationBar from "@/components/NavigationBar";
-
 import styles from "./LandingExperiment.module.scss";
-
-// Smaller viewport = content appears larger when scaled to fit container
-// 1920/1.1 ≈ 1745 for ~110% zoom effect
-const IFRAME_WIDTH = 1745;
-const IFRAME_HEIGHT = 981;
 
 // Get upcoming semester (what students are likely registering for)
 const getUpcomingSemester = () => {
@@ -22,60 +13,39 @@ const getUpcomingSemester = () => {
 };
 
 const LandingExperiment = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5);
-
   const { year, semester } = getUpcomingSemester();
   const defaultClassUrl = `/catalog/${year}/${semester}/COMPSCI/61A/001?embed=true`;
 
-  useEffect(() => {
-    const updateScale = () => {
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth;
-        const containerHeight = containerRef.current.offsetHeight;
-        // Fit to container by using the smaller scale factor
-        const scaleX = containerWidth / IFRAME_WIDTH;
-        const scaleY = containerHeight / IFRAME_HEIGHT;
-        setScale(Math.min(scaleX, scaleY));
-      }
-    };
-
-    updateScale();
-    window.addEventListener("resize", updateScale);
-    return () => window.removeEventListener("resize", updateScale);
-  }, []);
-
   return (
     <div className={styles.root}>
-      <div className={styles.sky} />
-      <div className={styles.sky2} />
-      <div className={styles.lens} />
-
-      <div className={styles.navbarWrapper}>
-        <NavigationBar invert />
-      </div>
-
       <div className={styles.content}>
         <div className={styles.previewSection}>
           <div className={styles.previewHeader}>
-            <h2 className={styles.previewTitle}>Your all-in-one destination for course discovery.</h2>
-            <p className={styles.previewSubtitle}>Berkeley's largest course discovery platform built and run by students, for students.</p>
+            <h1 className={styles.previewTitle}>
+              Berkeley's largest course discovery platform
+              <br />
+              built and run by students, for students
+            </h1>
           </div>
-          <div className={styles.previewContainer} ref={containerRef}>
-            <div
-              className={styles.previewFrame}
-              style={{
-                width: IFRAME_WIDTH,
-                height: IFRAME_HEIGHT,
-                transform: `scale(${scale})`,
-              }}
-            >
+          <div className={styles.previewWrapper}>
+            <div className={styles.previewBackground}>
+              <div className={styles.gradientLayer1} />
+              <div className={styles.gradientLayer2} />
+            </div>
+            <div className={styles.previewContainer}>
               <iframe
                 src={defaultClassUrl}
                 className={styles.previewIframe}
                 title="Catalog Preview"
               />
             </div>
+          </div>
+          <div className={styles.card}>
+            <div className={styles.cardText}>
+              <h2 className={styles.cardTitle}>Find the right classes for you</h2>
+              <p>Instead of spending hours sifting through courses on the Berkeley course catalog, instantly filter and sort courses by average grade, number of open seats, and more.</p>
+            </div>
+            <div className={styles.innerCard} />
           </div>
         </div>
       </div>

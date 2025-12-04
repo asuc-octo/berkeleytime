@@ -31,6 +31,7 @@ import SideBar from "./SideBar";
 interface NavigationBarProps {
   invert?: boolean;
   accentColor?: string;
+  noBorder?: boolean;
 }
 
 const ThemeDropdown = ({
@@ -92,6 +93,7 @@ const ThemeDropdown = ({
 export default function NavigationBar({
   invert,
   accentColor,
+  noBorder,
 }: NavigationBarProps) {
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
@@ -103,6 +105,7 @@ export default function NavigationBar({
       gap="3"
       className={classNames(styles.root, {
         [styles.invert]: invert,
+        [styles.noBorder]: noBorder,
       })}
     >
       <SideBar>

@@ -13,6 +13,7 @@ interface LayoutProps {
   header?: boolean;
   footer?: boolean;
   scrollLock?: boolean;
+  headerBorder?: boolean;
 }
 
 export default function Layout({
@@ -20,6 +21,7 @@ export default function Layout({
   header = true,
   footer = true,
   scrollLock = false,
+  headerBorder = true,
 }: LayoutProps) {
   const [searchParams] = useSearchParams();
   const isEmbed = searchParams.get("embed") === "true";
@@ -31,7 +33,7 @@ export default function Layout({
         className={scrollLock ? styles.viewLocked : styles.view}
       >
         {banner && !isEmbed && <Banner />}
-        {header && !isEmbed && <NavigationBar />}
+        {header && !isEmbed && <NavigationBar noBorder={!headerBorder} />}
         <Outlet />
       </Flex>
       {footer && !isEmbed && <Footer />}

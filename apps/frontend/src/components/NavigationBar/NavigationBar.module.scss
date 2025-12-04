@@ -43,6 +43,10 @@
     border-bottom: 1px solid var(--border-color);
     background-color: var(--foreground-color);
     padding: 12px;
+
+    &.noBorder {
+      border-bottom: none;
+    }
   }
 
   &.invert {
