@@ -13,6 +13,7 @@ import { ThemeProvider } from "@repo/theme";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
+import CatalogSkeleton from "@/app/Catalog/Skeleton";
 
 const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
@@ -283,7 +284,10 @@ const router = createBrowserRouter([
       },
       {
         element: (
-          <SuspenseBoundary key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?">
+          <SuspenseBoundary
+            key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?"
+            fallback={<CatalogSkeleton />}
+          >
             <Catalog />
           </SuspenseBoundary>
         ),

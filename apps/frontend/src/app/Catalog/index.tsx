@@ -14,6 +14,7 @@ import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
+import CatalogSkeleton from "./Skeleton";
 
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
@@ -140,12 +141,7 @@ export default function Catalog() {
   );
 
   if (termsLoading) {
-    return (
-      <div>
-        <div />
-        <div />
-      </div>
-    );
+    return <CatalogSkeleton />;
   }
 
   // TODO: Error state
