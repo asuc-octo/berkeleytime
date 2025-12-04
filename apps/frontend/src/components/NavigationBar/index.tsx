@@ -1,6 +1,6 @@
-import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+
+import classNames from "classnames";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -15,6 +15,7 @@ import {
   User,
   Xmark,
 } from "iconoir-react";
+import { createPortal } from "react-dom";
 import { Link, NavLink } from "react-router-dom";
 
 import {
@@ -137,7 +138,9 @@ export default function NavigationBar({
               animate="visible"
               variants={{
                 hidden: {},
-                visible: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } },
+                visible: {
+                  transition: { staggerChildren: 0.05, delayChildren: 0.1 },
+                },
               }}
             >
               {[
@@ -165,98 +168,98 @@ export default function NavigationBar({
           document.body
         )}
       <Flex
-      align="center"
-      flexShrink="0"
-      gap="3"
-      className={classNames(styles.root, {
-        [styles.invert]: invert,
-        [styles.noBorder]: noBorder,
-      })}
-    >
-      <Link className={styles.brand} to="/">
-        Berkeleytime
-      </Link>
-      <div className={styles.group}>
-        <NavLink to="/catalog">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Catalog
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/schedules">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Scheduler
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/gradtrak">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Gradtrak
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/grades">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Grades
-            </MenuItem>
-          )}
-        </NavLink>
-        <NavLink to="/enrollment">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              Enrollment
-            </MenuItem>
-          )}
-        </NavLink>
-        {/* <NavLink to="/about">
+        align="center"
+        flexShrink="0"
+        gap="3"
+        className={classNames(styles.root, {
+          [styles.invert]: invert,
+          [styles.noBorder]: noBorder,
+        })}
+      >
+        <Link className={styles.brand} to="/">
+          Berkeleytime
+        </Link>
+        <div className={styles.group}>
+          <NavLink to="/catalog">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                Catalog
+              </MenuItem>
+            )}
+          </NavLink>
+          <NavLink to="/schedules">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                Scheduler
+              </MenuItem>
+            )}
+          </NavLink>
+          <NavLink to="/gradtrak">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                Gradtrak
+              </MenuItem>
+            )}
+          </NavLink>
+          <NavLink to="/grades">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                Grades
+              </MenuItem>
+            )}
+          </NavLink>
+          <NavLink to="/enrollment">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                Enrollment
+              </MenuItem>
+            )}
+          </NavLink>
+          {/* <NavLink to="/about">
           {({ isActive }) => (
             <MenuItem className={styles.item} active={isActive}>
               About
             </MenuItem>
           )}
         </NavLink> */}
-      </div>
-      <IconButton
-        className={styles.compactMenuButton}
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        <motion.div
-          animate={{ rotate: menuOpen ? 90 : 0 }}
-          transition={{ duration: 0.2 }}
-          style={{ display: "flex" }}
+        </div>
+        <IconButton
+          className={styles.compactMenuButton}
+          onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? <Xmark /> : <Menu />}
-        </motion.div>
-      </IconButton>
-      <ThemeDropdown
-        theme={theme}
-        setTheme={setTheme}
-        forceTheme={invert ? "light" : undefined}
-      />
-      {user ? (
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <Button className={styles.button} style={{ color: accentColor }}>
-              {user.name?.split(" ")[0] ?? "Profile"}
-              <User />
-            </Button>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content
-            sideOffset={5}
-            align="end"
-            forceTheme={invert ? "light" : undefined}
-            className={styles.profileDropdown}
+          <motion.div
+            animate={{ rotate: menuOpen ? 90 : 0 }}
+            transition={{ duration: 0.2 }}
+            style={{ display: "flex" }}
           >
-            <DropdownMenu.Item asChild>
-              <Link to="/profile">
-                <ProfileCircle width={18} height={18} /> Account
-              </Link>
-            </DropdownMenu.Item>
-            {/* <DropdownMenu.Sub>
+            {menuOpen ? <Xmark /> : <Menu />}
+          </motion.div>
+        </IconButton>
+        <ThemeDropdown
+          theme={theme}
+          setTheme={setTheme}
+          forceTheme={invert ? "light" : undefined}
+        />
+        {user ? (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <Button className={styles.button} style={{ color: accentColor }}>
+                {user.name?.split(" ")[0] ?? "Profile"}
+                <User />
+              </Button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content
+              sideOffset={5}
+              align="end"
+              forceTheme={invert ? "light" : undefined}
+              className={styles.profileDropdown}
+            >
+              <DropdownMenu.Item asChild>
+                <Link to="/profile">
+                  <ProfileCircle width={18} height={18} /> Account
+                </Link>
+              </DropdownMenu.Item>
+              {/* <DropdownMenu.Sub>
               <DropdownMenu.SubTrigger>
                 <ThemeIcon theme={theme} /> Appearance
               </DropdownMenu.SubTrigger>
@@ -272,38 +275,38 @@ export default function NavigationBar({
                 </DropdownMenu.Item>
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub> */}
-            <DropdownMenu.Item asChild>
-              <Link to="/profile/bookmarks">
-                <Bookmark width={18} height={18} /> Bookmarks
-              </Link>
-            </DropdownMenu.Item>
-            <DropdownMenu.Item asChild>
-              <Link to="/profile/ratings">
-                <Star width={18} height={18} /> Ratings
-              </Link>
-            </DropdownMenu.Item>
-            <DropdownMenu.Item asChild>
-              <Link to="/profile/support">
-                <ChatBubbleQuestion width={18} height={18} /> Support
-              </Link>
-            </DropdownMenu.Item>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item onSelect={() => signOut()}>
-              <LogOut width={18} height={18} /> Sign Out
-            </DropdownMenu.Item>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      ) : (
-        <Button
-          onClick={() => signIn()}
-          className={styles.button}
-          style={{ color: accentColor }}
-        >
-          Sign in
-          <ArrowRight />
-        </Button>
-      )}
-    </Flex>
+              <DropdownMenu.Item asChild>
+                <Link to="/profile/bookmarks">
+                  <Bookmark width={18} height={18} /> Bookmarks
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item asChild>
+                <Link to="/profile/ratings">
+                  <Star width={18} height={18} /> Ratings
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item asChild>
+                <Link to="/profile/support">
+                  <ChatBubbleQuestion width={18} height={18} /> Support
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator />
+              <DropdownMenu.Item onSelect={() => signOut()}>
+                <LogOut width={18} height={18} /> Sign Out
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        ) : (
+          <Button
+            onClick={() => signIn()}
+            className={styles.button}
+            style={{ color: accentColor }}
+          >
+            Sign in
+            <ArrowRight />
+          </Button>
+        )}
+      </Flex>
     </>
   );
 }

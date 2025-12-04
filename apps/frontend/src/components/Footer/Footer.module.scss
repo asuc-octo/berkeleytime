@@ -5,8 +5,9 @@
   gap: 64px;
   line-height: 1;
 
-  @media (width <= 992px) {
-    flex-direction: column;
+  .columns {
+    display: flex;
+    gap: 64px;
   }
 
   .column {

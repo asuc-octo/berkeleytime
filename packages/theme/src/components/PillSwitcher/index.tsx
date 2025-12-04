@@ -1,6 +1,7 @@
+import { ReactNode } from "react";
+
 import classNames from "classnames";
 import { Tabs } from "radix-ui";
-import { ReactNode } from "react";
 
 import styles from "./PillSwitcher.module.scss";
 

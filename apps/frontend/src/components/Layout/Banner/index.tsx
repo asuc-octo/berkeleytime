@@ -9,7 +9,10 @@ export default function Banner() {
         You are viewing a beta release of Berkeleytime.
       </p>
       <div className={styles.actions}>
-        <a className={`${styles.link} ${styles.returnLink}`} href="https://berkeleytime.com">
+        <a
+          className={`${styles.link} ${styles.returnLink}`}
+          href="https://berkeleytime.com"
+        >
           <div className={styles.text}>Return to Berkeleytime</div>
           <ArrowUpRight height={12} width={12} />
         </a>

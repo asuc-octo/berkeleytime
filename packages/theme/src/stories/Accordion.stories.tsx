@@ -2,9 +2,9 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
 } from "../components/Accordion";
 
 const meta: Meta<typeof Accordion> = {

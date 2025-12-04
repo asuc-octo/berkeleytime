@@ -1,7 +1,7 @@
 import { HalfMoon, MacOsWindow, SunLight } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { Box, Container, PillSwitcher, useTheme } from "@repo/theme";
+import { Container, PillSwitcher, useTheme } from "@repo/theme";
 
 import styles from "./Footer.module.scss";
 
@@ -18,7 +18,9 @@ function ThemeSwitcher() {
     <PillSwitcher
       items={items}
       value={theme ?? "system"}
-      onValueChange={(value) => setTheme(value === "system" ? null : (value as "light" | "dark"))}
+      onValueChange={(value) =>
+        setTheme(value === "system" ? null : (value as "light" | "dark"))
+      }
       iconOnly
     />
   );
@@ -26,17 +28,17 @@ function ThemeSwitcher() {
 
 export default function Footer() {
   return (
-    <Box px="5">
-      <Container>
-        <div className={styles.root}>
-          <div className={styles.group}>
-            <div className={styles.brandGroup}>
-              <Link to="/" className={styles.brand}>
-                Berkeleytime
-              </Link>
-              <p className={styles.description}>An ASUC OCTO project</p>
-            </div>
+    <Container>
+      <div className={styles.root}>
+        <div className={styles.group}>
+          <div className={styles.brandGroup}>
+            <Link to="/" className={styles.brand}>
+              Berkeleytime
+            </Link>
+            <p className={styles.description}>An ASUC OCTO project</p>
           </div>
+        </div>
+        <div className={styles.columns}>
           <div className={styles.column}>
             <p className={styles.label}>Socials</p>
             <a
@@ -80,11 +82,11 @@ export default function Footer() {
             </Link>
           </div>
         </div>
-        <div className={styles.bottom}>
-          <span>© {new Date().getFullYear()}, Berkeleytime.</span>
-          <ThemeSwitcher />
-        </div>
-      </Container>
-    </Box>
+      </div>
+      <div className={styles.bottom}>
+        <span>© {new Date().getFullYear()}, Berkeleytime.</span>
+        <ThemeSwitcher />
+      </div>
+    </Container>
   );
 }

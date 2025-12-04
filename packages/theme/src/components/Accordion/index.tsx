@@ -1,9 +1,10 @@
 "use client";
 
 import * as React from "react";
+
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { NavArrowDown } from "iconoir-react";
 import clsx from "clsx";
+import { NavArrowDown } from "iconoir-react";
 
 import styles from "./Accordion.module.scss";
 
