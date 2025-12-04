@@ -1,6 +1,6 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
-import { SectionSectionAttributesArgs } from "../../generated-types/graphql";
+import { MutationTrackClassViewArgs, SectionSectionAttributesArgs } from "../../generated-types/graphql";
 import { getCourseById } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
@@ -13,6 +13,7 @@ import {
   getPrimarySection,
   getSecondarySections,
   getSection,
+  trackClassView,
 } from "./controller";
 import {
   IntermediateClass,
@@ -112,6 +113,14 @@ const resolvers: ClassModule.Resolvers = {
 
       return section as unknown as ClassModule.Section;
     },
+  },
+
+  Mutation: {
+    trackClassView: (
+      _: unknown,
+      { year, semester, sessionId, subject, courseNumber, number }: MutationTrackClassViewArgs,
+      context: { req: any; redis: any }
+    ) => trackClassView(year, semester, sessionId ?? "1", subject, courseNumber, number, context.req, context.redis),
   },
 
   Class: {

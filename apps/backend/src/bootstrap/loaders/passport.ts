@@ -29,7 +29,7 @@ export default async (app: Application, redis: RedisClientType) => {
       secret: config.SESSION_SECRET,
       name: "sessionId",
       resave: false,
-      saveUninitialized: false,
+      saveUninitialized: true,
       cookie: {
         secure: !config.isDev,
         httpOnly: true,

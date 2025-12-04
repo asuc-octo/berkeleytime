@@ -62,6 +62,8 @@ export default async (
     config.graphqlPath,
     expressMiddleware(server, {
       context: async ({ req }) => ({
+        req,
+        redis,
         user: {
           ...req.user,
           isAuthenticated: req.isAuthenticated(),

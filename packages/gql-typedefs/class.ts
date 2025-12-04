@@ -22,6 +22,17 @@ export const classTypeDef = gql`
     ): Section
   }
 
+  type Mutation {
+    trackClassView(
+      year: Int!
+      semester: Semester!
+      sessionId: SessionIdentifier
+      subject: String!
+      courseNumber: CourseNumber!
+      number: ClassNumber!
+    ): Boolean!
+  }
+
   type Class {
     "Identifiers"
     termId: TermIdentifier!
@@ -50,6 +61,7 @@ export const classTypeDef = gql`
     unitsMin: Float!
     requirementDesignation: SectionAttributeInfo
     anyPrintInScheduleOfClasses: Boolean
+    viewCount: Int!
   }
 
   enum ClassFinalExam {
