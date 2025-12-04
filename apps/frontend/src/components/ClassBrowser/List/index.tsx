@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
+import { useSearchParams } from "react-router-dom";
 
 import ClassCard from "@/components/ClassCard";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
@@ -16,8 +17,10 @@ interface ListProps {
 }
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query } = useBrowser();
+  const { classes, loading, year, semester, query, expanded } = useBrowser();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
+  const [searchParams] = useSearchParams();
+  const autoScroll = searchParams.get("autoScroll") === "true";
 
   const rootRef = useRef<HTMLDivElement>(null);
   const recentlyViewedSectionRef = useRef<HTMLDivElement>(null);
@@ -66,6 +69,36 @@ export default function List({ onSelect }: ListProps) {
       window.removeEventListener("recent-updated", handleRecentUpdate);
     };
   }, []);
+
+  // Auto-scroll effect for demo/landing page
+  useEffect(() => {
+    if (!autoScroll || expanded || !rootRef.current) return;
+
+    const scrollContainer = rootRef.current;
+    const scrollSpeed = 1;
+    let animationId: number;
+
+    const scroll = () => {
+      if (!scrollContainer) return;
+
+      const maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      const currentScroll = scrollContainer.scrollTop;
+
+      if (currentScroll >= maxScroll) {
+        scrollContainer.scrollTop = 0;
+      } else {
+        scrollContainer.scrollTop += scrollSpeed;
+      }
+
+      animationId = requestAnimationFrame(scroll);
+    };
+
+    animationId = requestAnimationFrame(scroll);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
+  }, [autoScroll, expanded]);
 
   const virtualizer = useVirtualizer({
     count: classes.length,

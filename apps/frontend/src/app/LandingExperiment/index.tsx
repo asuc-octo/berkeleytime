@@ -14,7 +14,7 @@ const getUpcomingSemester = () => {
 
 const LandingExperiment = () => {
   const { year, semester } = getUpcomingSemester();
-  const defaultClassUrl = `/catalog/${year}/${semester}/COMPSCI/61A/001?embed=true`;
+  const defaultClassUrl = `/catalog/${year}/${semester}/COMPSCI/61A/001?embed=true&autoScroll=true`;
 
   return (
     <div className={styles.root}>
