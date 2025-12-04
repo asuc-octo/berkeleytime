@@ -403,13 +403,45 @@ export const READ_SCHEDULES = gql`
       year
       semester
       sessionId
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+        color
+      }
       classes {
         class {
           subject
           courseNumber
           number
+          primarySection {
+            sectionId
+            number
+            component
+            meetings {
+              days
+              endTime
+              startTime
+            }
+          }
+          sections {
+            sectionId
+            number
+            component
+            meetings {
+              days
+              endTime
+              startTime
+            }
+          }
         }
-        # selectedSections
+        selectedSections {
+          sectionId
+        }
+        color
       }
     }
   }

@@ -9,6 +9,7 @@ import { IScheduleEvent } from "@/lib/api";
 import { Color } from "@/lib/generated/graphql";
 
 import styles from "./Event.module.scss";
+import { acceptedColors } from "@/app/Schedule/schedule";
 
 interface EventProps {
   event: IScheduleEvent;
@@ -85,6 +86,7 @@ export default function Event({
           <Flex direction="row" width="80px" justify="between" align="center">
             <ColorSelector
               selectedColor={event.color!}
+              allowedColors={acceptedColors}
               onColorSelect={onColorSelect}
             />
             <IconButton onClick={() => onDelete(event)}>

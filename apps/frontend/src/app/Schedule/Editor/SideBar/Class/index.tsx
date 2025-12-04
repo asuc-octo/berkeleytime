@@ -7,6 +7,7 @@ import { Color, Component, Semester } from "@/lib/generated/graphql";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
+import { acceptedColors } from "@/app/Schedule/schedule";
 
 interface ClassProps {
   expanded: boolean;
@@ -106,19 +107,20 @@ export default function Class({
               color
             )
           }
+          acceptedColors={acceptedColors}
           wrapDescription={true}
         >
           <div className={styles.group}>
             <div className={styles.label}>
               <p className={styles.component}>
-                {componentMap[_class.primarySection.component]}
+                { _class.primarySection ? componentMap[_class.primarySection.component] : "N/A"}
               </p>
               <p className={styles.time}>Time</p>
             </div>
-            <Section
+            { _class.primarySection && <Section
               active={selectedSections.some(
                 (selectedSection) =>
-                  selectedSection.sectionId === _class.primarySection.sectionId
+                  selectedSection.sectionId === _class.primarySection?.sectionId
               )}
               {..._class.primarySection}
               onSectionMouseOver={() =>
@@ -126,7 +128,7 @@ export default function Class({
                   _class.subject,
                   _class.courseNumber,
                   _class.number,
-                  _class.primarySection.number
+                  _class.primarySection?.number
                 )
               }
               onSectionMouseOut={onSectionMouseOut}
@@ -135,10 +137,10 @@ export default function Class({
                   _class.subject,
                   _class.courseNumber,
                   _class.number,
-                  _class.primarySection.number
+                  _class.primarySection?.number
                 )
               }
-            />
+            /> }
           </div>
           {Object.keys(groups).map((component) => {
             const group = component as Component;

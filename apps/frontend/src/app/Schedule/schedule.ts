@@ -1,7 +1,8 @@
 import { ISchedule, IScheduleClass } from "@/lib/api";
 import { Color, Event, Section } from "@/lib/generated/graphql";
+import { Color as ThemeColor } from "@repo/theme";
 
-interface BaseEvent {
+export interface BaseEvent {
   days: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];
   startTime: string;
   endTime: string;
@@ -48,7 +49,7 @@ export const getSelectedSections = (schedule?: ISchedule) => {
     schedule?.classes.flatMap(({ selectedSections, class: _class, color }) =>
       selectedSections.reduce((acc, section) => {
         const _section =
-          _class.primarySection.sectionId === section.sectionId
+          _class.primarySection?.sectionId === section.sectionId
             ? _class.primarySection
             : _class.sections.find(
                 (currentSection) =>
@@ -69,7 +70,7 @@ export const getSelectedSections = (schedule?: ISchedule) => {
   );
 };
 
-export const acceptedColors = Object.values(Color);
+export const acceptedColors = Object.values(ThemeColor);
 
 // DARK_MODE colors from grades mapped to Color enum
 const COLOR_ORDER: Color[] = [

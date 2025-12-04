@@ -117,7 +117,7 @@ export default function Schedules() {
                           key={i}
                           _id={schedule._id}
                           name={schedule.name}
-                          classes={schedule.classes}
+                          schedule={schedule}
                         />
                       </Carousel.Item>
                     );

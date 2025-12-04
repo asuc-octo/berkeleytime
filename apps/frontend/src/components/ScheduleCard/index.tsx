@@ -6,52 +6,48 @@ import { Link } from "react-router-dom";
 import { Card } from "@repo/theme";
 
 import { useDeleteSchedule } from "@/hooks/api";
-import { IScheduleListClass } from "@/lib/api";
-import { Semester } from "@/lib/generated/graphql";
+import { IScheduleListSchedule } from "@/lib/api";
+import ScheduleSummary from "../ScheduleSummary";
 
 interface ScheduleProps {
   _id: string;
   name: string;
-  classes: IScheduleListClass[];
-  semester?: Semester;
+  schedule: IScheduleListSchedule;
 }
 
 export default function ScheduleCard({
   _id,
   name,
-  classes,
-  semester,
+  schedule,
   ...props
 }: ScheduleProps & Omit<ComponentPropsWithRef<"div">, keyof ScheduleProps>) {
   const [deleteSchedule] = useDeleteSchedule();
   return (
     <Link to={`/schedules/${_id}`}>
-      <Card.Root {...props}>
-        <Card.Body>
-          <Card.Heading>{name}</Card.Heading>
-          {semester && <Card.Description>{semester}</Card.Description>}
-          <Card.Footer>
-            {classes.length > 0
-              ? classes
-                  .reduce((acc, c) => {
-                    return (acc = `${acc} • ${c.class.subject} ${c.class.courseNumber}`);
-                  }, "")
-                  .substring(3)
-              : "Empty schedule"}
-          </Card.Footer>
-        </Card.Body>
-        <Card.Actions>
-          <Card.ActionIcon
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteSchedule(_id);
-            }}
-            isDelete
-          >
-            <Trash />
-          </Card.ActionIcon>
-        </Card.Actions>
-      </Card.Root>
+      <Card.RootColumn {...props}>
+        <Card.ColumnHeader>
+          <Card.Body>
+            <Card.Heading>{name}</Card.Heading>
+            { schedule?.classes && <Card.Description>{`${schedule.classes.length} classes`}</Card.Description> }
+          </Card.Body>
+          <Card.Actions>
+            <Card.ActionIcon
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteSchedule(_id);
+              }}
+              isDelete
+            >
+              <Trash />
+            </Card.ActionIcon>
+          </Card.Actions>
+        </Card.ColumnHeader>
+        <Card.ColumnBody>
+          <ScheduleSummary
+            schedule={schedule}
+          />
+        </Card.ColumnBody>
+      </Card.RootColumn>
     </Link>
   );
 }
