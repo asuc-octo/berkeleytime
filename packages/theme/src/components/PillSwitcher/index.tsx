@@ -1,11 +1,12 @@
 import classNames from "classnames";
 import { Tabs } from "radix-ui";
+import { ReactNode } from "react";
 
 import styles from "./PillSwitcher.module.scss";
 
 export interface PillSwitcherItem {
   value: string;
-  label: string;
+  label: ReactNode;
 }
 
 export interface PillSwitcherProps {
@@ -14,6 +15,7 @@ export interface PillSwitcherProps {
   value?: string;
   onValueChange?: (value: string) => void;
   fullWidth?: boolean;
+  iconOnly?: boolean;
 }
 
 export function PillSwitcher({
@@ -22,6 +24,7 @@ export function PillSwitcher({
   value,
   onValueChange,
   fullWidth = false,
+  iconOnly = false,
 }: PillSwitcherProps) {
   return (
     <Tabs.Root
@@ -32,6 +35,7 @@ export function PillSwitcher({
       <Tabs.List
         className={classNames(styles.list, {
           [styles.fullWidthList]: fullWidth,
+          [styles.iconOnlyList]: iconOnly,
         })}
       >
         {items.map((item) => (
@@ -40,6 +44,7 @@ export function PillSwitcher({
             value={item.value}
             className={classNames(styles.trigger, {
               [styles.fullWidthTrigger]: fullWidth,
+              [styles.iconOnlyTrigger]: iconOnly,
             })}
           >
             {item.label}

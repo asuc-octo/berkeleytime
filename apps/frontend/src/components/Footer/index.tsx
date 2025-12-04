@@ -1,65 +1,65 @@
-import classNames from "classnames";
-import { Discord, Github, Instagram } from "iconoir-react";
+import { HalfMoon, MacOsWindow, SunLight } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { Box, Container, IconButton } from "@repo/theme";
+import { Box, Container, PillSwitcher, useTheme } from "@repo/theme";
 
 import styles from "./Footer.module.scss";
 
-interface FooterProps {
-  invert?: boolean;
+function ThemeSwitcher() {
+  const { theme, setTheme } = useTheme();
+
+  const items = [
+    { value: "system", label: <MacOsWindow width={14} height={14} /> },
+    { value: "light", label: <SunLight width={14} height={14} /> },
+    { value: "dark", label: <HalfMoon width={14} height={14} /> },
+  ];
+
+  return (
+    <PillSwitcher
+      items={items}
+      value={theme ?? "system"}
+      onValueChange={(value) => setTheme(value === "system" ? null : (value as "light" | "dark"))}
+      iconOnly
+    />
+  );
 }
 
-export default function Footer({ invert }: FooterProps) {
+export default function Footer() {
   return (
     <Box px="5">
       <Container>
-        <div
-          className={classNames(styles.root, {
-            [styles.invert]: invert,
-          })}
-        >
+        <div className={styles.root}>
           <div className={styles.group}>
-            <Link to="/" className={styles.brand}>
-              Berkeleytime
-            </Link>
-            <p className={styles.description}>
-              An{" "}
-              <a
-                href="https://octo.asuc.org/"
-                target="_blank"
-                className={styles.link}
-              >
-                ASUC OCTO
-              </a>{" "}
-              project
-            </p>
-            <div className={styles.row}>
-              <IconButton
-                className={styles.iconButton}
-                as="a"
-                href="https://www.instagram.com/berkeleytimeofficial/"
-                target="_blank"
-              >
-                <Instagram />
-              </IconButton>
-              <IconButton
-                className={styles.iconButton}
-                as="a"
-                href="https://discord.gg/uP2bTPh99U"
-                target="_blank"
-              >
-                <Discord />
-              </IconButton>
-              <IconButton
-                className={styles.iconButton}
-                href="https://github.com/asuc-octo/berkeleytime"
-                target="_blank"
-                as="a"
-              >
-                <Github />
-              </IconButton>
+            <div className={styles.brandGroup}>
+              <Link to="/" className={styles.brand}>
+                Berkeleytime
+              </Link>
+              <p className={styles.description}>An ASUC OCTO project</p>
             </div>
+          </div>
+          <div className={styles.column}>
+            <p className={styles.label}>Socials</p>
+            <a
+              href="https://www.instagram.com/berkeleytimeofficial/"
+              target="_blank"
+              className={styles.link}
+            >
+              Instagram
+            </a>
+            <a
+              href="https://discord.gg/uP2bTPh99U"
+              target="_blank"
+              className={styles.link}
+            >
+              Discord
+            </a>
+            <a
+              href="https://github.com/asuc-octo/berkeleytime"
+              target="_blank"
+              className={styles.link}
+            >
+              GitHub
+            </a>
           </div>
           <div className={styles.column}>
             <p className={styles.label}>Offerings</p>
@@ -79,27 +79,10 @@ export default function Footer({ invert }: FooterProps) {
               Enrollment
             </Link>
           </div>
-          {/* <div className={styles.column}>
-          <p className={styles.label}>Organization</p>
-          <Link to="/about" className={styles.link}>
-            About us
-          </Link>
-          <Link to="/scheduler" className={styles.link}>
-            Frequently asked questions
-          </Link>
-          <Link to="/grades" className={styles.link}>
-            Resources
-          </Link>
         </div>
-        <div className={styles.column}>
-          <p className={styles.label}>Legal</p>
-          <Link to="/catalog" className={styles.link}>
-            Terms of service
-          </Link>
-          <Link to="/scheduler" className={styles.link}>
-            Privacy policy
-          </Link>
-        </div> */}
+        <div className={styles.bottom}>
+          <span>© {new Date().getFullYear()}, Berkeleytime.</span>
+          <ThemeSwitcher />
         </div>
       </Container>
     </Box>
