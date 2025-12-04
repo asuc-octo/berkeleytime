@@ -1,12 +1,13 @@
 @use "sass:math";
 @use "./gradient";
+@use "../../mixins" as *;
 
 .root {
   flex: 1;
   display: flex;
   flex-direction: column;
   background-color: var(--background);
-  padding: 80px 20px;
+  padding: 20px;
 }
 
 // Content area - fills remaining space and centers preview
@@ -27,14 +28,29 @@
 
 .previewHeader {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 40px;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  padding: 80px 0px;
   width: 100%;
   max-width: 1200px;
 }
 
+.headerDots {
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  background-image: url("./halftone-dots.webp");
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  @include dark-mode {
+    background-color: var(--heading-color);
+  }
+}
+
 .previewTitle {
+  flex-shrink: 0;
   color: var(--heading-color);
   font-size: var(--text-28);
   font-weight: var(--font-medium);

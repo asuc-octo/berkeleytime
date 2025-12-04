@@ -21,10 +21,11 @@ const LandingExperiment = () => {
       <div className={styles.content}>
         <div className={styles.previewSection}>
           <div className={styles.previewHeader}>
+            <div className={styles.headerDots} />
             <h1 className={styles.previewTitle}>
               Berkeley's largest course discovery platform
               <br />
-              built and run by students, for students
+              Built and run by students, for students
             </h1>
           </div>
           <div className={styles.previewWrapper}>
