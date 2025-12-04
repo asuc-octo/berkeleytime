@@ -56,21 +56,27 @@ const LandingExperiment = () => {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.previewContainer} ref={containerRef}>
-        <div
-          className={styles.previewFrame}
-          style={{
-            width: IFRAME_WIDTH,
-            height: IFRAME_HEIGHT,
-            transform: `scale(${scale})`,
-          }}
-        >
-          <iframe
-            src={defaultClassUrl}
-            className={styles.previewIframe}
-            title="Catalog Preview"
-          />
-        </div>
+        <div className={styles.previewSection}>
+          <div className={styles.previewHeader}>
+            <h2 className={styles.previewTitle}>Your all-in-one destination for course discovery.</h2>
+            <p className={styles.previewSubtitle}>Berkeley's largest course discovery platform built and run by students, for students.</p>
+          </div>
+          <div className={styles.previewContainer} ref={containerRef}>
+            <div
+              className={styles.previewFrame}
+              style={{
+                width: IFRAME_WIDTH,
+                height: IFRAME_HEIGHT,
+                transform: `scale(${scale})`,
+              }}
+            >
+              <iframe
+                src={defaultClassUrl}
+                className={styles.previewIframe}
+                title="Catalog Preview"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -24,9 +24,36 @@
   z-index: 2;
 }
 
-// Preview container - centered with 16:10 aspect ratio
+// Section wrapper for title + preview
+.previewSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 75vw;
+}
+
+.previewHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 60px;
+}
+
+.previewTitle {
+  color: white;
+  font-size: 48px;
+  font-weight: var(--font-medium);
+}
+
+.previewSubtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 24px;
+  font-weight: var(--font-regular);
+}
+
+// Preview container - centered with 16:9 aspect ratio
 .previewContainer {
-  width: min(70vw, 1500px);
+  width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 8px;
   overflow: hidden;
