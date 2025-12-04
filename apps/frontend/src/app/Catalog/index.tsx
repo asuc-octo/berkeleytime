@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { NavArrowRight } from "iconoir-react";
@@ -126,6 +126,13 @@ export default function Catalog() {
     }
   );
 
+  // Keep reference to last valid class to prevent blank frames during transitions
+  const lastClassRef = useRef(_class);
+  if (_class) {
+    lastClassRef.current = _class;
+  }
+  const displayedClass = _class ?? lastClassRef.current;
+
   const handleSelect = useCallback(
     (subject: string, courseNumber: string, number: string) => {
       if (!term) return;
@@ -204,7 +211,20 @@ export default function Catalog() {
       )}
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {_class ? <Class class={_class} /> : null}
+        <AnimatePresence initial={false}>
+          {displayedClass && (
+            <motion.div
+              key={`${subject}-${courseNumber}-${number}`}
+              className={styles.classContainer}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
+            >
+              <Class class={displayedClass} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Flex>
     </div>
   );
