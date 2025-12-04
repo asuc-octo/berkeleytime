@@ -85,8 +85,14 @@ export default function List({ onSelect }: ListProps) {
     onSelect(selected.subject, selected.courseNumber, selected.number);
   };
 
+  const isLoading = loading && classes.length === 0;
+
   return (
-    <div ref={rootRef} className={styles.root}>
+    <div
+      ref={rootRef}
+      className={styles.root}
+      style={isLoading ? { overflow: "hidden" } : undefined}
+    >
       <Header />
       <div
         ref={recentlyViewedSectionRef}
