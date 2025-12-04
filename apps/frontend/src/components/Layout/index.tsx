@@ -32,8 +32,12 @@ export default function Layout({
         direction="column"
         className={scrollLock ? styles.viewLocked : styles.view}
       >
-        {banner && !isEmbed && <Banner />}
-        {header && !isEmbed && <NavigationBar noBorder={!headerBorder} />}
+        {(banner || header) && !isEmbed && (
+          <div className={styles.stickyHeader}>
+            {banner && <Banner />}
+            {header && <NavigationBar noBorder={!headerBorder} />}
+          </div>
+        )}
         <Outlet />
       </Flex>
       {footer && !isEmbed && <Footer />}
