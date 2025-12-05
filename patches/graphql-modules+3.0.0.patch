@@ -1,5 +1,5 @@
 diff --git a/node_modules/graphql-modules/package.json b/node_modules/graphql-modules/package.json
-index 3feda76..d37c95f 100644
+index 1234567..abcdefg 100644
 --- a/node_modules/graphql-modules/package.json
 +++ b/node_modules/graphql-modules/package.json
 @@ -30,7 +30,8 @@

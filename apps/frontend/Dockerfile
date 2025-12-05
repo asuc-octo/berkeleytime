@@ -1,5 +1,5 @@
-FROM node:22-alpine AS base
-RUN ["npm", "install", "-g", "turbo@latest"]
+FROM oven/bun:alpine AS base
+RUN bun add -g turbo
 
 FROM base AS frontend-builder
 WORKDIR /frontend
@@ -10,8 +10,9 @@ FROM base AS frontend-dev
 WORKDIR /frontend
 
 COPY --from=frontend-builder /frontend/out/json/ .
-COPY --from=frontend-builder /frontend/out/package-lock.json ./package-lock.json
-RUN ["npm", "install"]
+COPY --from=frontend-builder /frontend/out/bun.lock ./bun.lock
+COPY bunfig.toml ./bunfig.toml
+RUN ["bun", "install"]
 
 COPY --from=frontend-builder /frontend/out/full/ .
 ENTRYPOINT ["turbo", "run", "dev", "--filter=frontend"]

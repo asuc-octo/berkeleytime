@@ -1,0 +1,4 @@
+[install]
+# Use hoisted mode for npm-compatible node_modules structure
+# Required for Vite/Rollup to resolve transitive dependencies
+linker = "hoisted"

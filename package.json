@@ -8,11 +8,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,scss}\"",
     "postinstall": "patch-package"
   },
-  "engines": {
-    "node": ">=21.0.0",
-    "npm": ">=10.0.0"
-  },
-  "packageManager": "npm@11.6.1",
+  "packageManager": "bun@1.3.2",
   "workspaces": [
     "apps/*",
     "packages/*"

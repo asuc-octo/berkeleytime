@@ -17,7 +17,7 @@ import { PlanModule } from "./generated-types/module-types";
 
 export function formatPlan(plan: PlanType): PlanModule.Plan {
   return {
-    _id: plan._id as string,
+    _id: String(plan._id),
     userEmail: plan.userEmail,
     planTerms: plan.planTerms.map(formatPlanTerm),
     majors: plan.majors,
@@ -34,7 +34,7 @@ export function formatPlan(plan: PlanType): PlanModule.Plan {
 
 export function formatPlanTerm(planTerm: PlanTermType): PlanModule.PlanTerm {
   return {
-    _id: planTerm._id as string,
+    _id: String(planTerm._id),
     name: planTerm.name,
     userEmail: planTerm.userEmail,
     courses: planTerm.courses.map(formatCourse),

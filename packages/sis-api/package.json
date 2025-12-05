@@ -2,7 +2,7 @@
   "name": "@repo/sis-api",
   "type": "module",
   "scripts": {
-    "build": "tsx src/index.ts"
+    "build": "bun src/index.ts"
   },
   "exports": {
     "./courses": "./dist/courses.ts",

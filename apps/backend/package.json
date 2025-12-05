@@ -2,8 +2,8 @@
   "name": "backend",
   "private": true,
   "scripts": {
-    "start": "tsx src/main.ts",
-    "dev": "tsx watch src/main.ts",
+    "start": "bun src/main.ts",
+    "dev": "bun --watch src/main.ts",
     "build": "tsc --noEmit",
     "generate": "node scripts/prepare-typedefs.js && graphql-codegen --config codegen.ts"
   },

@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "tsc --noEmit",
-    "main": "tsx src/main.ts"
+    "main": "bun src/main.ts"
   },
   "devDependencies": {
     "@types/luxon": "^3.7.1",

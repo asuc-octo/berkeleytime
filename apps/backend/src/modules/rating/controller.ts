@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { connection } from "mongoose";
+import mongoose from "mongoose";
 
 import {
   AggregatedMetricsModel,
@@ -34,6 +34,8 @@ import {
   checkUserMaxRatingsConstraint,
   checkValueConstraint,
 } from "./helper/checkConstraints";
+
+const { connection } = mongoose;
 
 export interface RequestContext {
   user: {

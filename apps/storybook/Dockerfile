@@ -1,5 +1,5 @@
-FROM node:22-alpine AS base
-RUN ["npm", "install", "-g", "turbo@latest"]
+FROM oven/bun:alpine AS base
+RUN bun add -g turbo
 
 FROM base AS storybook-builder
 WORKDIR /storybook
@@ -10,8 +10,9 @@ FROM base AS storybook-dev
 WORKDIR /storybook
 
 COPY --from=storybook-builder /storybook/out/json/ .
-COPY --from=storybook-builder /storybook/out/package-lock.json ./package-lock.json
-RUN ["npm", "install"]
+COPY --from=storybook-builder /storybook/out/bun.lock ./bun.lock
+COPY bunfig.toml ./bunfig.toml
+RUN ["bun", "install"]
 
 COPY --from=storybook-builder /storybook/out/full/ .
 ENTRYPOINT ["turbo", "run", "dev", "--filter=@repo/storybook"]

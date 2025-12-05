@@ -1,5 +1,5 @@
-FROM node:22-alpine AS base
-RUN ["npm", "install", "-g", "turbo@latest"]
+FROM oven/bun:alpine AS base
+RUN bun add -g turbo
 
 FROM base AS backend-builder
 WORKDIR /backend
@@ -10,8 +10,9 @@ FROM base AS backend-dev
 WORKDIR /backend
 
 COPY --from=backend-builder /backend/out/json/ .
-COPY --from=backend-builder /backend/out/package-lock.json ./package-lock.json
-RUN ["npm", "install"]
+COPY --from=backend-builder /backend/out/bun.lock ./bun.lock
+COPY bunfig.toml ./bunfig.toml
+RUN ["bun", "install"]
 
 COPY --from=backend-builder /backend/out/full/ .
 ENTRYPOINT ["turbo", "run", "dev", "--filter=backend"]
