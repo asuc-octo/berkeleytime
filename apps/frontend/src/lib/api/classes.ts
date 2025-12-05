@@ -411,6 +411,26 @@ export const GET_CLASS_RATINGS = gql`
   }
 `;
 
+export const TRACK_CLASS_VIEW = gql`
+  mutation TrackClassView(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    trackClassView(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    )
+  }
+`;
+
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
 export type IClassDetails = NonNullable<GetClassDetailsQuery["class"]>;
