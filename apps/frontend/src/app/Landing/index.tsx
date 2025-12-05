@@ -80,7 +80,7 @@ const Home = () => {
       <div className={styles.features}>
         <Features />
       </div>
-      <Wave className={styles.bottomWave} fill="var(--neutral-900)" />
+      <Wave className={styles.bottomWave} fill="var(--foreground-color)" />
       <Organization />
     </div>
   );
