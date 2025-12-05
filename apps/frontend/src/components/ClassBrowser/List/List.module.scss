@@ -8,6 +8,14 @@
     overflow: hidden;
   }
 
+  &.autoScroll {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   &:focus {
     outline: none;
   }

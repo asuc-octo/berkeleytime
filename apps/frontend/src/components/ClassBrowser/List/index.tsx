@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
+import classNames from "classnames";
 import { FrameAltEmpty } from "iconoir-react";
+import { useSearchParams } from "react-router-dom";
 
 import ClassCard from "@/components/ClassCard";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
@@ -18,9 +20,12 @@ interface ListProps {
 export default function List({ onSelect }: ListProps) {
   const { classes, loading, year, semester, query } = useBrowser();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
+  const [searchParams] = useSearchParams();
 
   const rootRef = useRef<HTMLDivElement>(null);
   const recentlyViewedSectionRef = useRef<HTMLDivElement>(null);
+
+  const isAutoScroll = searchParams.get("autoscroll") === "true";
 
   const recentlyViewed = useMemo(() => {
     const allRecents = getRecents(RecentType.Class);
@@ -67,6 +72,42 @@ export default function List({ onSelect }: ListProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isAutoScroll || !rootRef.current) return;
+
+    let animationId: number;
+    let lastTime = performance.now();
+    let accumulatedScroll = 0;
+    const speed = 30; // pixels per second
+
+    const animate = (currentTime: number) => {
+      const el = rootRef.current;
+      if (!el) return;
+
+      const deltaTime = (currentTime - lastTime) / 1000;
+      lastTime = currentTime;
+      accumulatedScroll += speed * deltaTime;
+
+      // Only apply scroll when we have at least 1 pixel (avoids rounding jitter)
+      if (accumulatedScroll >= 1) {
+        const scrollAmount = Math.floor(accumulatedScroll);
+        accumulatedScroll -= scrollAmount;
+
+        if (el.scrollTop >= el.scrollHeight - el.clientHeight) {
+          el.scrollTop = 0;
+        } else {
+          el.scrollTop += scrollAmount;
+        }
+      }
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationId);
+  }, [isAutoScroll]);
+
   const virtualizer = useVirtualizer({
     count: classes.length,
     getScrollElement: () => rootRef.current,
@@ -90,7 +131,7 @@ export default function List({ onSelect }: ListProps) {
   return (
     <div
       ref={rootRef}
-      className={styles.root}
+      className={classNames(styles.root, { [styles.autoScroll]: isAutoScroll })}
       style={isLoading ? { overflow: "hidden" } : undefined}
     >
       <Header />
