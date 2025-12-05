@@ -27,6 +27,10 @@ export const UPDATE_USER = gql`
 `;
 
 export const signIn = (redirectURI?: string) => {
+  // Don't trigger sign-in in embed mode (landing page preview)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "true") return;
+
   redirectURI =
     redirectURI ??
     window.location.origin + window.location.pathname + window.location.search;
