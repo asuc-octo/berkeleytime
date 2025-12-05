@@ -13,6 +13,7 @@ import {
   getPrimarySection,
   getSecondarySections,
   getSection,
+  getViewCount,
   trackClassView,
 } from "./controller";
 import {
@@ -116,11 +117,14 @@ const resolvers: ClassModule.Resolvers = {
   },
 
   Mutation: {
-    trackClassView: (
+    trackClassView: async (
       _: unknown,
       { year, semester, sessionId, subject, courseNumber, number }: MutationTrackClassViewArgs,
       context: { req: any; redis: any }
-    ) => trackClassView(year, semester, sessionId ?? "1", subject, courseNumber, number, context.req, context.redis),
+    ) => {
+      const result = await trackClassView(year, semester, sessionId ?? "1", subject, courseNumber, number, context.req, context.redis);
+      return result.success;
+    },
   },
 
   Class: {
@@ -236,6 +240,22 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return aggregatedRatings;
+    },
+
+    viewCount: async (
+      parent: IntermediateClass | ClassModule.Class,
+      _args: unknown,
+      context: { redis: any }
+    ) => {
+      return getViewCount(
+        parent.year,
+        parent.semester,
+        parent.sessionId,
+        parent.subject,
+        parent.courseNumber,
+        parent.number,
+        context.redis
+      );
     },
   },
 
