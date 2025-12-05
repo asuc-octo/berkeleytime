@@ -4,6 +4,7 @@ import { Xmark } from "iconoir-react";
 
 import { Flex, IconButton, Input } from "@repo/theme";
 
+import { acceptedColors } from "@/app/Schedule/schedule";
 import ColorSelector from "@/components/ColorSelector";
 import { IScheduleEvent } from "@/lib/api";
 import { Color } from "@/lib/generated/graphql";
@@ -85,6 +86,7 @@ export default function Event({
           <Flex direction="row" width="80px" justify="between" align="center">
             <ColorSelector
               selectedColor={event.color!}
+              allowedColors={acceptedColors}
               onColorSelect={onColorSelect}
             />
             <IconButton onClick={() => onDelete(event)}>

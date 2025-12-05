@@ -21,3 +21,35 @@
   color: var(--paragraph-color);
   text-align: center;
 }
+
+.semesterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.semesterTitle {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--orange-500);
+  line-height: 1;
+}
+
+.semesterIcon {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background-color: var(--orange-500);
+  color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 8px;
+}
