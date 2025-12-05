@@ -1,3 +1,7 @@
+.wrapper {
+  padding: 0 40px;
+}
+
 .root {
   padding: 64px 0;
   display: flex;
@@ -46,6 +50,46 @@
       font-size: var(--text-14);
       font-weight: var(--font-normal);
       color: var(--paragraph-color);
+    }
+
+    .statusBadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      height: 32px;
+      padding: 0 12px;
+      width: fit-content;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: var(--text-14);
+      font-weight: var(--font-normal);
+      color: var(--paragraph-color);
+      text-decoration: none;
+      transition:
+        background-color 100ms ease-in-out,
+        color 100ms ease-in-out;
+
+      &:hover {
+        background-color: var(--button-hover-color);
+        color: var(--heading-color);
+      }
+
+      .statusDot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background-color: var(--green-500);
+      }
+
+      &[data-status="HASISSUES"] .statusDot {
+        background-color: var(--yellow-500);
+      }
+
+      &[data-status="UNDERMAINTENANCE"] .statusDot {
+        background-color: var(--blue-500);
+      }
     }
 
     .brand {

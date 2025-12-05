@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { HalfMoon, MacOsWindow, SunLight } from "iconoir-react";
 import { Link } from "react-router-dom";
 
@@ -26,9 +28,43 @@ function ThemeSwitcher() {
   );
 }
 
+type Status = "UP" | "HASISSUES" | "UNDERMAINTENANCE";
+
+const STATUS_LABELS: Record<Status, string> = {
+  UP: "All systems operational",
+  HASISSUES: "Experiencing issues",
+  UNDERMAINTENANCE: "Under maintenance",
+};
+
+function StatusBadge() {
+  const [status, setStatus] = useState<Status | null>(null);
+
+  useEffect(() => {
+    fetch("https://berkeleytime.instatus.com/summary.json")
+      .then((res) => res.json())
+      .then((data) => setStatus(data.page.status as Status))
+      .catch(() => setStatus("HASISSUES"));
+  }, []);
+
+  if (!status) return null;
+
+  return (
+    <a
+      href="https://berkeleytime.instatus.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={styles.statusBadge}
+      data-status={status}
+    >
+      <span className={styles.statusDot} />
+      {STATUS_LABELS[status]}
+    </a>
+  );
+}
+
 export default function Footer() {
   return (
-    <Container>
+    <Container className={styles.wrapper}>
       <div className={styles.root}>
         <div className={styles.group}>
           <div className={styles.brandGroup}>
@@ -36,6 +72,7 @@ export default function Footer() {
               Berkeleytime
             </Link>
             <p className={styles.description}>An ASUC OCTO project</p>
+            <StatusBadge />
           </div>
         </div>
         <div className={styles.columns}>
