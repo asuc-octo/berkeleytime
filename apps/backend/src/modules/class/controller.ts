@@ -190,3 +190,85 @@ export const getViewCount = async (
 
   return pendingViews + mongoViews;
 };
+
+export const flushViewCounts = async (
+  redis: RedisClientType
+): Promise<{ flushed: number; errors: number }> => {
+  console.log("[ViewCount Flush] Starting flush...");
+
+  const keys = await redis.keys("view-counter:*");
+
+  if (keys.length === 0) {
+    console.log("[ViewCount Flush] No counters to flush");
+    return { flushed: 0, errors: 0 };
+  }
+
+  console.log(`[ViewCount Flush] Found ${keys.length} counters`);
+
+  const operations: Array<{
+    updateOne: {
+      filter: {
+        year: number;
+        semester: string;
+        sessionId: string;
+        subject: string;
+        courseNumber: string;
+        number: string;
+      };
+      update: { $inc: { viewCount: number } };
+    };
+  }> = [];
+
+  const keysToDelete: string[] = [];
+
+  for (const key of keys) {
+    const value = await redis.get(key);
+    if (!value) continue;
+
+    const count = parseInt(value, 10);
+    if (isNaN(count) || count === 0) continue;
+
+    const parts = key.replace("view-counter:", "").split(":");
+    if (parts.length !== 6) {
+      console.log(`[ViewCount Flush] Invalid key format: ${key}`);
+      continue;
+    }
+
+    const [yearStr, semester, sessionId, subject, courseNumber, number] = parts;
+    const year = parseInt(yearStr, 10);
+
+    if (isNaN(year)) {
+      console.log(`[ViewCount Flush] Invalid year in key: ${key}`);
+      continue;
+    }
+
+    operations.push({
+      updateOne: {
+        filter: { year, semester, sessionId, subject, courseNumber, number },
+        update: { $inc: { viewCount: count } },
+      },
+    });
+
+    keysToDelete.push(key);
+  }
+
+  if (operations.length === 0) {
+    console.log("[ViewCount Flush] No valid operations to execute");
+    return { flushed: 0, errors: 0 };
+  }
+
+  try {
+    const result = await ClassModel.bulkWrite(operations, { ordered: false });
+    console.log(`[ViewCount Flush] Updated ${result.modifiedCount} documents`);
+
+    for (const key of keysToDelete) {
+      await redis.del(key);
+    }
+    console.log(`[ViewCount Flush] Deleted ${keysToDelete.length} Redis keys`);
+
+    return { flushed: result.modifiedCount, errors: 0 };
+  } catch (error) {
+    console.error("[ViewCount Flush] Error during bulk write:", error);
+    return { flushed: 0, errors: operations.length };
+  }
+};
