@@ -4,12 +4,12 @@ import { Xmark } from "iconoir-react";
 
 import { Flex, IconButton, Input } from "@repo/theme";
 
+import { acceptedColors } from "@/app/Schedule/schedule";
 import ColorSelector from "@/components/ColorSelector";
 import { IScheduleEvent } from "@/lib/api";
 import { Color } from "@/lib/generated/graphql";
 
 import styles from "./Event.module.scss";
-import { acceptedColors } from "@/app/Schedule/schedule";
 
 interface EventProps {
   event: IScheduleEvent;

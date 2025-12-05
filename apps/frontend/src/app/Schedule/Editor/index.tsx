@@ -324,12 +324,14 @@ export default function Editor() {
 
       const _class: IScheduleClass["class"] = {
         ..._classClone,
-        primarySection: _classClone.primarySection ? {
-          ..._classClone.primarySection,
-          subject: _classClone.subject,
-          courseNumber: _classClone.courseNumber,
-          classNumber: _classClone.number,
-        } : undefined,
+        primarySection: _classClone.primarySection
+          ? {
+              ..._classClone.primarySection,
+              subject: _classClone.subject,
+              courseNumber: _classClone.courseNumber,
+              classNumber: _classClone.number,
+            }
+          : undefined,
         sections: _classClone.sections.map((s) => {
           return {
             ...s,
@@ -358,10 +360,12 @@ export default function Editor() {
 
       _schedule.classes.push({
         class: _class,
-        selectedSections: selectedSections.map((s) => { return {
-          sectionId: s?.sectionId,
-          ...s
-        }}),
+        selectedSections: selectedSections.map((s) => {
+          return {
+            sectionId: s?.sectionId,
+            ...s,
+          };
+        }),
         color: getNextClassColor(_schedule.classes.length),
       });
 
@@ -562,7 +566,8 @@ export default function Editor() {
     const _schedule = structuredClone(schedule);
 
     _schedule.classes = schedule.classes.filter(
-      (c) => c.class.primarySection?.sectionId !== _class.primarySection?.sectionId
+      (c) =>
+        c.class.primarySection?.sectionId !== _class.primarySection?.sectionId
     );
 
     updateSchedule(

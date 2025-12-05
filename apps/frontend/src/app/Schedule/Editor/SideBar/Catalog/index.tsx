@@ -6,9 +6,9 @@ import { useSearchParams } from "react-router-dom";
 import { Dialog, IconButton } from "@repo/theme";
 
 import ClassBrowser from "@/components/ClassBrowser";
+import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./Catalog.module.scss";
-import { Semester } from "@/lib/generated/graphql";
 
 interface CatalogProps {
   onClassSelect: (

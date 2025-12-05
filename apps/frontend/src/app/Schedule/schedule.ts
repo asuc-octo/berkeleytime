@@ -1,6 +1,7 @@
+import { Color as ThemeColor } from "@repo/theme";
+
 import { ISchedule, IScheduleClass } from "@/lib/api";
 import { Color, Event, Section } from "@/lib/generated/graphql";
-import { Color as ThemeColor } from "@repo/theme";
 
 export interface BaseEvent {
   days: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];

@@ -1,12 +1,14 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, useState } from "react";
 
-import { Trash } from "iconoir-react";
-import { Link } from "react-router-dom";
+import { EditPencil, Trash } from "iconoir-react";
+import { useNavigate } from "react-router-dom";
 
-import { Card } from "@repo/theme";
+import { Button, Dialog, Input } from "@repo/theme";
 
-import { useDeleteSchedule } from "@/hooks/api";
+import { BubbleCard, MenuItem } from "@/components/BubbleCard";
+import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import { IScheduleListSchedule } from "@/lib/api";
+
 import ScheduleSummary from "../ScheduleSummary";
 
 interface ScheduleProps {
@@ -21,33 +23,106 @@ export default function ScheduleCard({
   schedule,
   ...props
 }: ScheduleProps & Omit<ComponentPropsWithRef<"div">, keyof ScheduleProps>) {
+  const navigate = useNavigate();
   const [deleteSchedule] = useDeleteSchedule();
+  const [updateSchedule] = useUpdateSchedule();
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [renameValue, setRenameValue] = useState(name);
+
+  const handleRename = () => {
+    setIsRenameDialogOpen(true);
+    setRenameValue(name);
+  };
+
+  const handleRenameSubmit = () => {
+    const trimmedValue = renameValue.trim();
+    if (trimmedValue && trimmedValue !== name) {
+      updateSchedule(_id, { name: trimmedValue });
+    }
+    setIsRenameDialogOpen(false);
+  };
+
+  const handleDelete = () => {
+    deleteSchedule(_id);
+  };
+
+  const menuItems: MenuItem[] = [
+    {
+      name: "Rename schedule",
+      icon: <EditPencil width={18} height={18} />,
+      onClick: handleRename,
+    },
+    {
+      name: "Delete schedule",
+      icon: <Trash width={18} height={18} />,
+      onClick: handleDelete,
+      isDelete: true,
+    },
+  ];
+
+  const description = schedule?.classes
+    ? `${schedule.classes.length} classes`
+    : undefined;
+
+  const handleCardClick = () => {
+    navigate(`/schedules/${_id}`);
+  };
+
+  // Filter out props that might conflict with BubbleCard
+  const { color: _, ...bubbleCardProps } = props as any;
+
   return (
-    <Link to={`/schedules/${_id}`}>
-      <Card.RootColumn {...props}>
-        <Card.ColumnHeader>
-          <Card.Body>
-            <Card.Heading>{name}</Card.Heading>
-            { schedule?.classes && <Card.Description>{`${schedule.classes.length} classes`}</Card.Description> }
-          </Card.Body>
-          <Card.Actions>
-            <Card.ActionIcon
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteSchedule(_id);
-              }}
-              isDelete
-            >
-              <Trash />
-            </Card.ActionIcon>
-          </Card.Actions>
-        </Card.ColumnHeader>
-        <Card.ColumnBody>
-          <ScheduleSummary
-            schedule={schedule}
-          />
-        </Card.ColumnBody>
-      </Card.RootColumn>
-    </Link>
+    <>
+      <BubbleCard
+        title={name}
+        description={description}
+        menuItems={menuItems}
+        onClick={handleCardClick}
+        showCards={true}
+        width={250}
+        height={300}
+        cssColor={"var(--background-color)"}
+        {...bubbleCardProps}
+      >
+        <ScheduleSummary schedule={schedule} />
+      </BubbleCard>
+      <Dialog.Root
+        open={isRenameDialogOpen}
+        onOpenChange={setIsRenameDialogOpen}
+      >
+        <Dialog.Portal>
+          <Dialog.Overlay />
+          <Dialog.Card>
+            <Dialog.Header title="Rename schedule" hasCloseButton />
+            <Dialog.Body>
+              <Input
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleRenameSubmit();
+                  }
+                }}
+                autoFocus
+              />
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setIsRenameDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleRenameSubmit}
+                disabled={!renameValue.trim() || renameValue.trim() === name}
+              >
+                Rename
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Card>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
   );
 }

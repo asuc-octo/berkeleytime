@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 
 import { Color } from "@repo/theme";
 
+import { ScheduleEvent, getNextClassColor } from "@/app/Schedule/schedule";
 import { IScheduleListClass, IScheduleListSchedule } from "@/lib/api";
 
-import { getNextClassColor, ScheduleEvent } from "@/app/Schedule/schedule";
 import CompactEvent from "./Event";
 import styles from "./ScheduleSummary.module.scss";
 
@@ -15,7 +15,7 @@ export const getY = (time: string) => {
 
 export type SummaryScheduleEvent = ScheduleEvent & {
   index: number;
-}
+};
 
 // You have to trust me on this math
 const adjustAttachedEvents = (
@@ -101,10 +101,7 @@ const getSelectedSections = (schedule?: IScheduleListSchedule) => {
   );
 };
 
-export default function ScheduleSummary({
-  schedule,
-}: ScheduleSummaryProps) {
-
+export default function ScheduleSummary({ schedule }: ScheduleSummaryProps) {
   if (!schedule) return <></>;
 
   const events = useMemo(() => schedule.events, [schedule]);
@@ -130,7 +127,7 @@ export default function ScheduleSummary({
                 id: event._id,
                 type: "custom",
                 color: event.color,
-                index: index
+                index: index,
               }) as SummaryScheduleEvent
           )
           // Filter events for the current day
@@ -139,7 +136,12 @@ export default function ScheduleSummary({
         const relevantSections = sections
           // Filter sections for the current day which have a time specified
           .flatMap(({ section, color }) => {
-            const index = schedule.classes.findIndex((c) => c.class.subject === section.subject && c.class.courseNumber === section.courseNumber && c.class.number === section.classNumber);
+            const index = schedule.classes.findIndex(
+              (c) =>
+                c.class.subject === section.subject &&
+                c.class.courseNumber === section.courseNumber &&
+                c.class.number === section.classNumber
+            );
             return section.meetings
               .filter(
                 (meeting) =>
@@ -157,11 +159,10 @@ export default function ScheduleSummary({
                     id: section.sectionId,
                     type: "section",
                     color: color ?? getNextClassColor(index),
-                    index: index
+                    index: index,
                   }) as SummaryScheduleEvent
-              )
-            }
-          );
+              );
+          });
 
         const relevantEventsAndSections = [
           ...relevantEvents,
@@ -256,4 +257,3 @@ export default function ScheduleSummary({
     </div>
   );
 }
-

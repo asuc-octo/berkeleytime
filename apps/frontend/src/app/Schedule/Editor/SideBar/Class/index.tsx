@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 
+import { acceptedColors } from "@/app/Schedule/schedule";
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
 import { IScheduleClass, componentMap } from "@/lib/api";
@@ -7,7 +8,6 @@ import { Color, Component, Semester } from "@/lib/generated/graphql";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
-import { acceptedColors } from "@/app/Schedule/schedule";
 
 interface ClassProps {
   expanded: boolean;
@@ -113,34 +113,39 @@ export default function Class({
           <div className={styles.group}>
             <div className={styles.label}>
               <p className={styles.component}>
-                { _class.primarySection ? componentMap[_class.primarySection.component] : "N/A"}
+                {_class.primarySection
+                  ? componentMap[_class.primarySection.component]
+                  : "N/A"}
               </p>
               <p className={styles.time}>Time</p>
             </div>
-            { _class.primarySection && <Section
-              active={selectedSections.some(
-                (selectedSection) =>
-                  selectedSection.sectionId === _class.primarySection?.sectionId
-              )}
-              {..._class.primarySection}
-              onSectionMouseOver={() =>
-                onSectionMouseOver(
-                  _class.subject,
-                  _class.courseNumber,
-                  _class.number,
-                  _class.primarySection?.number
-                )
-              }
-              onSectionMouseOut={onSectionMouseOut}
-              onSectionSelect={() =>
-                onSectionSelect(
-                  _class.subject,
-                  _class.courseNumber,
-                  _class.number,
-                  _class.primarySection?.number
-                )
-              }
-            /> }
+            {_class.primarySection && (
+              <Section
+                active={selectedSections.some(
+                  (selectedSection) =>
+                    selectedSection.sectionId ===
+                    _class.primarySection?.sectionId
+                )}
+                {..._class.primarySection}
+                onSectionMouseOver={() =>
+                  onSectionMouseOver(
+                    _class.subject,
+                    _class.courseNumber,
+                    _class.number,
+                    _class.primarySection?.number
+                  )
+                }
+                onSectionMouseOut={onSectionMouseOut}
+                onSectionSelect={() =>
+                  onSectionSelect(
+                    _class.subject,
+                    _class.courseNumber,
+                    _class.number,
+                    _class.primarySection?.number
+                  )
+                }
+              />
+            )}
           </div>
           {Object.keys(groups).map((component) => {
             const group = component as Component;

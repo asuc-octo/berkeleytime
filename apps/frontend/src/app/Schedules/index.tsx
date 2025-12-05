@@ -4,7 +4,6 @@ import { ArrowRight, Calendar, Plus } from "iconoir-react";
 
 import { Box, Button, Container, Flex } from "@repo/theme";
 
-import Carousel from "@/components/Carousel";
 import Footer from "@/components/Footer";
 import ScheduleCard from "@/components/ScheduleCard";
 import { useReadSchedules } from "@/hooks/api";
@@ -108,21 +107,27 @@ export default function Schedules() {
             })
             .map((sem) => {
               return (
-                <Carousel.Root key={sem} title={sem} Icon={<Calendar />}>
-                  {schedulesBySemester[sem].map((schedule, i) => {
-                    if (!schedule) return null;
-                    return (
-                      <Carousel.Item key={i}>
+                <div key={sem} className={styles.semesterSection}>
+                  <div className={styles.semesterTitle}>
+                    <div className={styles.semesterIcon}>
+                      <Calendar />
+                    </div>
+                    {sem}
+                  </div>
+                  <div className={styles.grid}>
+                    {schedulesBySemester[sem].map((schedule, i) => {
+                      if (!schedule) return null;
+                      return (
                         <ScheduleCard
                           key={i}
                           _id={schedule._id}
                           name={schedule.name}
                           schedule={schedule}
                         />
-                      </Carousel.Item>
-                    );
-                  })}
-                </Carousel.Root>
+                      );
+                    })}
+                  </div>
+                </div>
               );
             })}
         </Flex>
