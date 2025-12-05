@@ -115,7 +115,7 @@ export default function Catalog() {
     }
   }, [isDesktop, hasClassSelected]);
 
-  const { data: _class } = useGetClass(
+  const { data: _class, error: classError } = useGetClass(
     term?.year as number,
     term?.semester as Semester,
     subject as string,
@@ -211,20 +211,11 @@ export default function Catalog() {
       )}
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        <AnimatePresence initial={false}>
-          {displayedClass && (
-            <motion.div
-              key={`${subject}-${courseNumber}-${number}`}
-              className={styles.classContainer}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.1 }}
-            >
-              <Class class={displayedClass} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {displayedClass && !classError && (
+          <div className={styles.classContainer}>
+            <Class class={displayedClass} />
+          </div>
+        )}
       </Flex>
     </div>
   );

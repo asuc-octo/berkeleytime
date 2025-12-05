@@ -113,10 +113,11 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "gradtrak",
     element: <Layout footer={false} />,
     children: [
       {
-        path: "gradtrak",
+        index: true,
         element: (
           <SuspenseBoundary key="gradtrak-landing">
             <GradTrak />
@@ -124,7 +125,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "gradtrak/onboarding",
+        path: "onboarding",
         element: (
           <SuspenseBoundary key="gradtrak-onboarding">
             <GradTrakOnboarding />
@@ -132,7 +133,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "gradtrak/dashboard",
+        path: "dashboard",
         element: (
           <SuspenseBoundary key="gradtrak-dashboard">
             <GradTrakDashboard />
