@@ -53,7 +53,7 @@ const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 
 const router = createBrowserRouter([
   {
-    element: <Layout header={false} footer={false} />,
+    element: <Layout banner={false} header={false} footer={false} />,
     children: [
       // {
       //   element: (
