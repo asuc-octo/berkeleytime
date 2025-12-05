@@ -11,12 +11,20 @@ import styles from "./Layout.module.scss";
 interface LayoutProps {
   header?: boolean;
   footer?: boolean;
+  scrollLock?: boolean;
 }
 
-export default function Layout({ header = true, footer = true }: LayoutProps) {
+export default function Layout({
+  header = true,
+  footer = true,
+  scrollLock = false,
+}: LayoutProps) {
   return (
     <Flex direction="column">
-      <Flex direction="column" className={styles.view}>
+      <Flex
+        direction="column"
+        className={scrollLock ? styles.viewLocked : styles.view}
+      >
         <Banner />
         {header && <NavigationBar />}
         <Outlet />

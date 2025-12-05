@@ -1,24 +1,6 @@
-.afterCarouselLink {
-  font-size: 13px;
-  font-weight: var(--font-medium);
-  color: var(--blue-500);
-  line-height: 1;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  transition: color 100ms ease-in-out;
-  margin-top: 24px;
-  margin-bottom: 40px;
-
-  &:hover {
-    color: var(--blue-hover);
-  }
-}
-
 .infoItem {
   display: flex;
   height: 50px;
-  border-bottom: 1px solid var(--border-color);
   color: var(--paragraph-color);
   align-items: center;
 }
@@ -35,18 +17,4 @@
 
 .infoValue {
   font-size: var(--text-16);
-}
-
-.classesPlaceholder {
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--foreground-color);
-  height: 128px;
-}
-
-.schedulesPlaceholder {
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--foreground-color);
-  height: 84px;
 }

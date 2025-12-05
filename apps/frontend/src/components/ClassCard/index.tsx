@@ -3,8 +3,6 @@ import { ComponentPropsWithRef } from "react";
 import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
-  Bookmark,
-  BookmarkSolid,
   InfoCircle,
   Trash,
 } from "iconoir-react";
@@ -16,10 +14,23 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
 import { IEnrollmentSingular } from "@/lib/api/enrollment";
-import { Color } from "@/lib/generated/graphql";
+import { Color, Semester } from "@/lib/generated/graphql";
 
 import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
+
+const formatSemester = (semester: Semester): string => {
+  switch (semester) {
+    case Semester.Fall:
+      return "Fall";
+    case Semester.Spring:
+      return "Spring";
+    case Semester.Summer:
+      return "Summer";
+    default:
+      return semester;
+  }
+};
 
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
@@ -49,6 +60,8 @@ type EnrollmentSnapshot = Pick<
 >;
 
 type ClassCardClass = Partial<BaseClassFields> & {
+  year?: number;
+  semester?: Semester;
   course?: Partial<CourseSummary> | null;
   primarySection?: {
     enrollment?: {
@@ -83,7 +96,6 @@ export default function ClassCard({
   acceptedColors = Object.values(Color),
   bookmarked = false,
   children,
-  bookmarkToggle,
   active = false,
   wrapDescription = false,
   ...props
@@ -130,6 +142,11 @@ export default function ClassCard({
           <Card.Description wrapDescription={wrapDescription}>
             {_class?.title ?? _class?.course?.title}
           </Card.Description>
+          {_class?.semester && _class?.year && (
+            <span className={styles.semester}>
+              {formatSemester(_class.semester)} {_class.year}
+            </span>
+          )}
           <Card.Footer>
             <EnrollmentDisplay
               enrolledCount={
@@ -182,22 +199,6 @@ export default function ClassCard({
                 textAlign: "right",
               }}
             />
-          )}
-          {bookmarked && bookmarkToggle && (
-            <Card.ActionIcon
-              data-action-icon
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                bookmarkToggle();
-              }}
-            >
-              {bookmarked ? (
-                <BookmarkSolid width={16} height={16} />
-              ) : (
-                <Bookmark width={16} height={16} />
-              )}
-            </Card.ActionIcon>
           )}
           {onColorSelect && leftBorderColor && (
             <ColorSelector

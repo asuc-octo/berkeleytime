@@ -1,0 +1,230 @@
+.root {
+  background-color: var(--zinc-50);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 20px;
+  width: 420px;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  :global(body[data-theme="dark"]) &,
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--button-hover-color);
+    }
+  }
+
+  :global(body[data-theme="dark"]) & {
+    background-color: var(--button-hover-color);
+  }
+}
+
+// avoid weird clipping issue with the color background
+.colorBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  border-radius: 20px 20px 0 0;
+  z-index: 0;
+}
+
+.cardsStack {
+  position: relative;
+  height: 130px;
+  z-index: 1;
+}
+
+.previewCard {
+  position: absolute;
+  display: flex;
+  width: 360px;
+  min-height: 200px;
+  padding: 16px;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px 8px 0 0;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.singleCard {
+  @extend .previewCard;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.stackedCard {
+  @extend .previewCard;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.cardTitle {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  letter-spacing: -0.16px;
+}
+
+.cardGrade {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--emerald-500);
+}
+
+.cardDescription {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  letter-spacing: -0.1px;
+}
+
+.cardFooter {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cardPill {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  letter-spacing: -0.1px;
+
+  &.enrolled {
+    color: var(--red-500);
+  }
+}
+
+.reserved {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reservedIcon {
+  color: var(--paragraph-color);
+  width: 14px;
+  height: 14px;
+}
+
+.footer {
+  background-color: var(--foreground-color);
+  border-top: 1px solid var(--border-color);
+  padding: 20px;
+  padding-bottom: 40px;
+  margin: 0 -20px -40px -20px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menuButton {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  &[data-state="open"] {
+    opacity: 1;
+  }
+}
+
+.root:hover .menuButton {
+  opacity: 1;
+}
+
+.footerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  flex: 1;
+  margin-right: 12px;
+}
+
+.collectionName {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  letter-spacing: -0.16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.classCount {
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--paragraph-color);
+  letter-spacing: -0.14px;
+}
+
+.colorDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+
+.colorDotOutline {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1.5px solid var(--paragraph-color);
+}
+
+.addCard {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  width: 420px;
+  height: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--button-hover-color);
+  }
+}
+
+.addIcon {
+  color: var(--paragraph-color);
+  width: 32px;
+  height: 32px;
+}

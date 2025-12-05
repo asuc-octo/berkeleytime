@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { AnimatePresence, motion } from "framer-motion";
 import { Filter, FilterSolid, Search } from "iconoir-react";
 
 import { Button } from "@repo/theme";
@@ -49,7 +50,17 @@ export default function Header() {
         onClick={() => setExpanded(!expanded)}
       >
         {hasActiveFilters ? <FilterSolid /> : <Filter />}
-        {expanded ? "Close Filters" : "Open Filters"}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={expanded ? "close" : "open"}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+          >
+            {expanded ? "Close Filters" : "Open Filters"}
+          </motion.span>
+        </AnimatePresence>
       </Button>
     </div>
   );

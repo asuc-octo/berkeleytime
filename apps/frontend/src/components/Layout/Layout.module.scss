@@ -1,3 +1,8 @@
 .view {
   min-height: 100dvh;
 }
+
+.viewLocked {
+  height: 100dvh;
+  overflow: hidden;
+}

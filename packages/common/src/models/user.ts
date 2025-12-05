@@ -30,51 +30,6 @@ export const userSchema = new Schema(
       required: false,
       default: [],
     },
-    bookmarkedClasses: {
-      required: false,
-      default: [],
-      type: [
-        {
-          year: {
-            type: Number,
-            required: true,
-          },
-          semester: {
-            type: String,
-            enum: ["Spring", "Summer", "Fall", "Winter"],
-            required: true,
-          },
-          subject: {
-            type: String,
-            required: true,
-          },
-          courseNumber: {
-            type: String,
-            required: true,
-          },
-          number: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
-    },
-    bookmarkedCourses: {
-      required: false,
-      default: [],
-      type: [
-        {
-          subject: {
-            type: String,
-            required: true,
-          },
-          number: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
-    },
     minors: {
       type: [String],
       trim: true,

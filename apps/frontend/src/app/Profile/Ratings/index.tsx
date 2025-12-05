@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMutation } from "@apollo/client/react";
-import { Search } from "iconoir-react";
 import _ from "lodash";
-
-import { Grid } from "@repo/theme";
 
 import {
   DeleteRatingPopup,
@@ -35,19 +32,20 @@ import {
 } from "@/lib/generated/graphql";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
-import { RatingCard } from "./RatingCard";
-import styles from "./Ratings.module.scss";
+import profileStyles from "../Profile.module.scss";
+import { AddRatingCard, RatingCard } from "./RatingCard";
 
 export default function Ratings() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [ratingForEdit, setRatingForEdit] = useState<IUserRatingClass | null>(
     null
   );
   const [ratingForDelete, setRatingForDelete] =
     useState<IUserRatingClass | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditThankYouOpen, setIsEditThankYouOpen] = useState(false);
+  const [isAddThankYouOpen, setIsAddThankYouOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [courseQuery, setCourseQuery] = useState<{
@@ -59,13 +57,17 @@ export default function Ratings() {
   const [createRatingsMutation] = useMutation(CreateRatingsDocument);
   const [deleteRatingsMutation] = useMutation(DeleteRatingsDocument);
 
-  const { data: selectedCourse } = useReadCourseWithInstructor(
-    courseQuery?.subject ?? "",
-    courseQuery?.courseNumber ?? "",
-    {
-      skip: !courseQuery,
-    }
-  );
+  const [pendingEditRating, setPendingEditRating] =
+    useState<IUserRatingClass | null>(null);
+
+  const { data: selectedCourse, loading: courseLoading } =
+    useReadCourseWithInstructor(
+      courseQuery?.subject ?? "",
+      courseQuery?.courseNumber ?? "",
+      {
+        skip: !courseQuery,
+      }
+    );
 
   // Preload rating links when ratings are available
   useEffect(() => {
@@ -84,18 +86,6 @@ export default function Ratings() {
       links.forEach((link) => link.remove());
     };
   }, [ratings]);
-
-  const filteredRatings = useMemo(() => {
-    if (!ratings) return [];
-    if (!searchQuery.trim()) return ratings;
-
-    const query = searchQuery.toLowerCase().trim();
-    return ratings.filter((rating) => {
-      const searchableText =
-        `${rating.subject} ${rating.courseNumber} ${rating.semester} ${rating.year}`.toLowerCase();
-      return searchableText.includes(query);
-    });
-  }, [ratings, searchQuery]);
 
   const userRatedClasses = useMemo(() => {
     const seen = new Set<string>();
@@ -151,12 +141,11 @@ export default function Ratings() {
   }, [ratingForEdit]);
 
   const handleEditClick = useCallback((rating: IUserRatingClass) => {
-    setRatingForEdit(rating);
+    setPendingEditRating(rating);
     setCourseQuery({
       subject: rating.subject,
       courseNumber: rating.courseNumber,
     });
-    setIsEditModalOpen(true);
   }, []);
 
   const handleDeleteClick = useCallback((rating: IUserRatingClass) => {
@@ -166,6 +155,14 @@ export default function Ratings() {
 
   const closeEditModal = useCallback(() => {
     setIsEditModalOpen(false);
+  }, []);
+
+  const openAddModal = useCallback(() => {
+    setIsAddModalOpen(true);
+  }, []);
+
+  const closeAddModal = useCallback(() => {
+    setIsAddModalOpen(false);
   }, []);
 
   const closeDeleteModal = useCallback(() => {
@@ -236,6 +233,44 @@ export default function Ratings() {
     [ratingForEdit, createRatingsMutation, buildRefetchQueries]
   );
 
+  const handleSubmitAdd = useCallback(
+    async (
+      metricValues: MetricData,
+      termInfo: { semester: Semester; year: number },
+      courseInfo: { subject: string; courseNumber: string; classNumber: string }
+    ) => {
+      const refetchTarget = {
+        subject: courseInfo.subject,
+        courseNumber: courseInfo.courseNumber,
+        classNumber: courseInfo.classNumber,
+        semester: termInfo.semester,
+        year: termInfo.year,
+      } as IUserRatingClass;
+
+      await submitRatingHelper({
+        metricValues,
+        termInfo,
+        createRatingsMutation,
+        classIdentifiers: {
+          subject: courseInfo.subject,
+          courseNumber: courseInfo.courseNumber,
+          number: courseInfo.classNumber,
+        },
+        refetchQueries: buildRefetchQueries(refetchTarget),
+      });
+    },
+    [createRatingsMutation, buildRefetchQueries]
+  );
+
+  // Open modal when course data is ready
+  useEffect(() => {
+    if (pendingEditRating && selectedCourse && !courseLoading) {
+      setRatingForEdit(pendingEditRating);
+      setIsEditModalOpen(true);
+      setPendingEditRating(null);
+    }
+  }, [pendingEditRating, selectedCourse, courseLoading]);
+
   useEffect(() => {
     if (!isEditModalOpen && !isEditThankYouOpen) {
       setRatingForEdit(null);
@@ -269,46 +304,31 @@ export default function Ratings() {
   ]);
 
   return (
-    <div>
-      <h1>Your Ratings</h1>
-      <div className={styles.root}>
-        <div className={styles.searchGroup}>
-          <label htmlFor="ratingsSearch" className={styles.searchIcon}>
-            <Search />
-          </label>
-          <input
-            id="ratingsSearch"
-            className={styles.searchInput}
-            type="text"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search Ratings..."
-            autoComplete="off"
-          />
+    <div className={profileStyles.contentInner}>
+      <h1 className={profileStyles.pageTitle}>Ratings</h1>
+      <div className={profileStyles.pageContent}>
+        <div className={profileStyles.ratingsSection}>
+          <div className={profileStyles.ratingsHeader}>
+            <h2 className={profileStyles.sectionTitle}>Rated classes</h2>
+            <button
+              className={profileStyles.addRatingButton}
+              onClick={openAddModal}
+            >
+              Add Rating
+            </button>
+          </div>
+          {loading && <p>Loading your ratings...</p>}
+          {error && <p>Error loading ratings: {error.message}</p>}
+          {ratings.map((rating) => (
+            <RatingCard
+              key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
+              rating={rating}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          ))}
+          <AddRatingCard onClick={openAddModal} />
         </div>
-
-        {loading && <p>Loading your ratings...</p>}
-        {error && <p>Error loading ratings: {error.message}</p>}
-        {filteredRatings.length === 0 && searchQuery && !loading && (
-          <p>No ratings found matching "{searchQuery}"</p>
-        )}
-        {filteredRatings.length > 0 && (
-          <Grid
-            gap="17px"
-            width="100%"
-            columns="repeat(auto-fit, 345px)"
-            style={{ marginBottom: 40 }}
-          >
-            {filteredRatings.map((rating) => (
-              <RatingCard
-                key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
-                rating={rating}
-                onEdit={handleEditClick}
-                onDelete={handleDeleteClick}
-              />
-            ))}
-          </Grid>
-        )}
       </div>
       {ratingForEdit && currentClassForModal && (
         <UserFeedbackModal
@@ -359,6 +379,26 @@ export default function Ratings() {
       <SubmitRatingPopup
         isOpen={isEditThankYouOpen}
         onClose={() => setIsEditThankYouOpen(false)}
+      />
+      <UserFeedbackModal
+        isOpen={isAddModalOpen}
+        onClose={closeAddModal}
+        title="Add Rating"
+        subtitle=""
+        showSelectedCourseSubtitle={false}
+        onSubmit={handleSubmitAdd}
+        onSubmitPopupChange={setIsAddThankYouOpen}
+        userRatedClasses={userRatedClasses}
+        disableRatedCourses={true}
+        onError={(error) => {
+          const message = getRatingErrorMessage(error);
+          setErrorMessage(message);
+          setIsErrorDialogOpen(true);
+        }}
+      />
+      <SubmitRatingPopup
+        isOpen={isAddThankYouOpen}
+        onClose={() => setIsAddThankYouOpen(false)}
       />
     </div>
   );

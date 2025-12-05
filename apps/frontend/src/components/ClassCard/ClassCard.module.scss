@@ -2,6 +2,7 @@
   color: var(--paragraph-color);
 }
 
+
 .reservedSeating {
   font-size: var(--text-14);
   color: var(--paragraph-color);
@@ -20,4 +21,9 @@
   flex-shrink: 0;
   vertical-align: baseline;
   display: inline-block;
+}
+
+.semester {
+  color: var(--paragraph-color);
+  margin-top: 4px;
 }
