@@ -1,14 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-import { type TowerColors, calculateTowerColors } from "./useTowerTint";
-
-// Base tower colors (used as fallback)
-const BASE_COLORS: TowerColors = {
-  light: "#969696",
-  moderate: "#707070",
-  bright: "#c9c9c9",
-  dark: "#3a3a3a",
-};
+import { useTowerColors } from "./useTowerTint";
 
 interface SatherTowerProps {
   milliseconds: number;
@@ -19,22 +11,8 @@ export default function SatherTower({
   milliseconds,
   className,
 }: SatherTowerProps) {
-  // Track animation time for color tinting (updates every 100ms for smooth transitions)
-  const [animationTime, setAnimationTime] = useState(0);
-
-  useEffect(() => {
-    const startTime = Date.now();
-    const interval = setInterval(() => {
-      setAnimationTime(Date.now() - startTime);
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Calculate monotone colors based on current gradient phase
-  const COLORS = useMemo(() => {
-    if (animationTime === 0) return BASE_COLORS;
-    return calculateTowerColors(animationTime);
-  }, [animationTime]);
+  // Tower colors synced with sky gradient (both use same time source)
+  const COLORS = useTowerColors(milliseconds);
 
   const { hourAngle, minuteAngle } = useMemo(() => {
     const date = new Date(milliseconds);

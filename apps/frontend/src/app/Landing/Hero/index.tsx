@@ -8,6 +8,7 @@ import { Button } from "@repo/theme";
 import Wave from "../Wave";
 import styles from "./Hero.module.scss";
 import SatherTower from "./SatherTower";
+import { useSkyGradient } from "./useSkyGradient";
 
 interface HeroProps {
   milliseconds: number;
@@ -15,6 +16,7 @@ interface HeroProps {
 
 export default function Hero({ milliseconds }: HeroProps) {
   const navigate = useNavigate();
+  const { gradient } = useSkyGradient(milliseconds);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,8 +29,7 @@ export default function Hero({ milliseconds }: HeroProps) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.gradientLayer1} />
-      <div className={styles.gradientLayer2} />
+      <div className={styles.gradientLayer} style={{ background: gradient }} />
       <div className={styles.heroContent}>
         <div className={styles.text}>
           <h1 className={styles.heading}>
