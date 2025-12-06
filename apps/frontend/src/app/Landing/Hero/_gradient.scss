@@ -1,0 +1,127 @@
+// =============================================================================
+// ANIMATED SKY GRADIENT - Day/night cycle animation using two layers
+// =============================================================================
+
+// Sky gradient presets
+$gradient-one: linear-gradient(
+  to bottom,
+  #040911 2%,
+  #070e1b 31%,
+  #0b182b 56%,
+  #13253c 75%,
+  #1c3249 89%,
+  #243a4c 99%
+);
+
+$gradient-two: linear-gradient(
+  to bottom,
+  #010104 2%,
+  #0a0a12 31%,
+  #1b1a1e 56%,
+  #302822 75%,
+  #4e2c0e 89%,
+  #5e1801 99%
+);
+
+$gradient-three: linear-gradient(
+  to bottom,
+  #695371 2%,
+  #9b6368 31%,
+  #bc7161 56%,
+  #ab5f53 75%,
+  #944d47 89%,
+  #8a4541 99%
+);
+
+$gradient-four: linear-gradient(
+  to bottom,
+  rgba(137, 137, 137, 1) 2%,
+  rgba(163, 148, 139, 1) 31%,
+  rgba(153, 124, 113, 1) 56%,
+  rgba(123, 93, 91, 1) 75%,
+  rgba(90, 70, 78, 1) 89%,
+  rgba(64, 55, 67, 1) 99%
+);
+
+$gradient-five: linear-gradient(
+  to bottom,
+  #50a7fd 2%,
+  #5cb2fe 31%,
+  #6bbdfe 56%,
+  #79c8fe 75%,
+  #85d1fe 89%,
+  #8dd6fe 99%
+);
+
+$gradient-six: linear-gradient(
+  to bottom,
+  rgba(43, 72, 80, 1) 2%,
+  rgba(75, 111, 126, 1) 31%,
+  rgba(112, 157, 164, 1) 56%,
+  rgba(174, 189, 154, 1) 75%,
+  rgba(200, 144, 77, 1) 89%,
+  rgba(74, 58, 48, 1) 99%
+);
+
+$gradient-seven: linear-gradient(
+  to bottom,
+  #012254 2%,
+  #02387b 31%,
+  #1e59a6 56%,
+  #6379bb 75%,
+  #7b537f 89%,
+  #253668 99%
+);
+
+$gradient-eight: linear-gradient(
+  to bottom,
+  #1c3a62 2%,
+  #1e3e68 31%,
+  #214470 56%,
+  #244a7b 75%,
+  #285184 89%,
+  #2b558b 99%
+);
+
+// Layer 1: holds gradient, switches only when layer 2 is fully opaque (hiding this layer)
+@keyframes firmament-1 {
+  0% { background: $gradient-one; }
+  12.5% { background: $gradient-one; }
+  12.51% { background: $gradient-three; }
+  25% { background: $gradient-three; }
+  37.5% { background: $gradient-three; }
+  37.51% { background: $gradient-five; }
+  50% { background: $gradient-five; }
+  62.5% { background: $gradient-five; }
+  62.51% { background: $gradient-seven; }
+  75% { background: $gradient-seven; }
+  87.5% { background: $gradient-seven; }
+  87.51% { background: $gradient-one; }
+  100% { background: $gradient-one; }
+}
+
+// Layer 2: fades in/out, switches gradient only when fully transparent
+@keyframes firmament-2 {
+  0% { background: $gradient-two; opacity: 0; }
+  12.5% { background: $gradient-two; opacity: 1; }
+  25% { background: $gradient-two; opacity: 0; }
+  25.01% { background: $gradient-four; opacity: 0; }
+  37.5% { background: $gradient-four; opacity: 1; }
+  50% { background: $gradient-four; opacity: 0; }
+  50.01% { background: $gradient-six; opacity: 0; }
+  62.5% { background: $gradient-six; opacity: 1; }
+  75% { background: $gradient-six; opacity: 0; }
+  75.01% { background: $gradient-eight; opacity: 0; }
+  87.5% { background: $gradient-eight; opacity: 1; }
+  100% { background: $gradient-eight; opacity: 0; }
+}
+
+// Mixin for gradient layer base styles
+@mixin gradient-layer {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  border-radius: inherit;
+}

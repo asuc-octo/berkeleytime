@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent } from "react";
 
 import { ArrowRight, Clock } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
@@ -10,35 +10,11 @@ import SatherTower from "./SatherTower";
 import Wave from "../Wave";
 
 interface HeroProps {
-  step: {
-    colors: string[];
-    gradient?: string[];
-    angle?: string;
-  };
   milliseconds: number;
 }
 
-export default function Hero({ step, milliseconds }: HeroProps) {
+export default function Hero({ milliseconds }: HeroProps) {
   const navigate = useNavigate();
-  const root = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const element = root.current;
-    if (!element) return;
-
-    const [start, stop] = step.gradient ?? step.colors;
-    const { angle } = step;
-
-    element.style.setProperty("--landing-gradient-start", start);
-    element.style.setProperty("--landing-gradient-stop", stop);
-
-    if (angle) {
-      element.style.setProperty("--landing-gradient-angle", angle);
-      return;
-    }
-
-    element.style.removeProperty("--landing-gradient-angle");
-  }, [step]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -50,7 +26,9 @@ export default function Hero({ step, milliseconds }: HeroProps) {
   };
 
   return (
-    <div className={styles.root} ref={root}>
+    <div className={styles.root}>
+      <div className={styles.gradientLayer1} />
+      <div className={styles.gradientLayer2} />
       <div className={styles.heroContent}>
         <div className={styles.text}>
           <h1 className={styles.heading}>

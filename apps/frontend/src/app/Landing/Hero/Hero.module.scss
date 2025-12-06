@@ -1,14 +1,21 @@
+@use "./gradient";
+
 .root {
   position: relative;
   display: flex;
   flex-direction: column;
   isolation: isolate;
   overflow: hidden;
-  background: linear-gradient(
-    var(--landing-gradient-angle, to top right),
-    var(--landing-gradient-start),
-    var(--landing-gradient-stop)
-  );
+
+  .gradientLayer1 {
+    @include gradient.gradient-layer;
+    animation: firmament-1 30s linear infinite;
+  }
+
+  .gradientLayer2 {
+    @include gradient.gradient-layer;
+    animation: firmament-2 30s linear infinite;
+  }
 
   .wave {
     display: block;

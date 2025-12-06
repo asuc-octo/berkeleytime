@@ -1,6 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-
-import SunCalc from "suncalc";
+import { useEffect, useState } from "react";
 
 import Banner from "@/components/Layout/Banner";
 import NavigationBar from "@/components/NavigationBar";
@@ -11,49 +9,9 @@ import styles from "./Landing.module.scss";
 import Organization from "./Organization";
 import Wave from "./Wave";
 
-// TODO: Tailwind color gradients
-const steps = {
-  night: {
-    colors: ["#082D65", "#0E1B3B"],
-    angle: "to bottom right",
-  },
-  sunrise_sunset: {
-    colors: ["#F1A848", "#F55998"],
-  },
-  daytime: {
-    colors: ["#408FF7", "#0DD0DA"],
-  },
-};
-
-// UC Berkeley coordinates
-const BERKELEY_LAT = 37.8719;
-const BERKELEY_LNG = -122.2585;
-
-const getStep = (milliseconds: number) => {
-  const date = new Date(milliseconds);
-  const times = SunCalc.getTimes(date, BERKELEY_LAT, BERKELEY_LNG);
-
-  const now = date.getTime();
-  const dawnTime = times.dawn.getTime();
-  const goldenHourEndTime = times.goldenHourEnd.getTime();
-  const goldenHourTime = times.goldenHour.getTime();
-  const duskTime = times.dusk.getTime();
-
-  if (now >= dawnTime && now < goldenHourEndTime) return steps.sunrise_sunset;
-  if (now >= goldenHourEndTime && now < goldenHourTime) return steps.daytime;
-  if (now >= goldenHourTime && now < duskTime) return steps.sunrise_sunset;
-  return steps.night;
-};
-
 const Home = () => {
-  // Berkeley time
-  const [milliseconds, setMilliseconds] = useState(
-    () => Date.now() - 10 * 60 * 1000
-  );
-
-  const step = useMemo(() => {
-    return getStep(milliseconds);
-  }, [milliseconds]);
+  // Berkeley time for clock display
+  const [milliseconds, setMilliseconds] = useState(() => Date.now());
 
   useEffect(() => {
     const interval = setInterval(
@@ -70,7 +28,7 @@ const Home = () => {
         <Banner />
         <NavigationBar />
       </div>
-      <Hero step={step} milliseconds={milliseconds} />
+      <Hero milliseconds={milliseconds} />
       <div className={styles.features}>
         <Features />
       </div>
