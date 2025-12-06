@@ -50,14 +50,8 @@
         font-size: 48px;
         margin-bottom: 16px;
         color: var(--dark-heading-color);
-        font-weight: 660;
-        font-feature-settings:
-          "cv05" on,
-          "cv13" on,
-          "ss07" on,
-          "cv12" on,
-          "cv06" on;
-        line-height: 1.25;
+        font-weight: 600;
+        line-height: 1.1;
         position: relative;
 
         @media (width <= 768px) {
@@ -72,27 +66,26 @@
         line-height: 1.5;
         font-weight: var(--font-medium);
         margin-bottom: 64px;
+        max-width: 500px;
       }
 
-      .form {
-        position: relative;
-        max-width: 448px;
-        background-color: white;
-        padding: 0 16px;
-        border-radius: 4px;
-        display: flex;
+      .catalogLink {
+        display: inline-flex;
         align-items: center;
-        gap: 16px;
-        box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
+        gap: 8px;
+        font-size: 18px;
+        font-weight: var(--font-medium);
+        color: white;
+        text-decoration: none;
+        transition: opacity 150ms ease;
 
-        .input {
-          font-size: var(--text-16);
-          color: var(--slate-900);
-          height: 56px;
+        &:hover {
+          opacity: 0.8;
+        }
 
-          &::placeholder {
-            color: var(--slate-500);
-          }
+        svg {
+          width: 20px;
+          height: 20px;
         }
       }
     }
@@ -101,24 +94,31 @@
       position: absolute;
       right: 272px;
       bottom: 64px;
-      text-align: right;
-      font-size: var(--text-16);
-      line-height: 1.5;
-      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      color: rgba(255 255 255 / 70%);
       z-index: 2;
 
       @media (width <= 992px) {
         display: none;
       }
 
-      p.heading {
-        font-weight: var(--font-medium);
-        color: white;
-        margin-top: 16px;
+      svg {
+        opacity: 0.7;
       }
 
-      p.description {
-        margin-top: 4px;
+      .time {
+        font-size: 14px;
+        font-weight: var(--font-medium);
+        color: white;
+        margin-top: 8px;
+      }
+
+      .location {
+        font-size: 12px;
+        opacity: 0.7;
       }
     }
 

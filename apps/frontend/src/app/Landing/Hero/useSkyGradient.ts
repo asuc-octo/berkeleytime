@@ -147,11 +147,24 @@ export interface SkyGradientResult {
   progress: number;
 }
 
+// Cache sun phases by date string (only recalculate once per day)
+let cachedSunPhases: SunPhases | null = null;
+let cachedDateKey: string | null = null;
+
+function getCachedSunPhases(date: Date): SunPhases {
+  const dateKey = date.toDateString();
+  if (cachedDateKey !== dateKey) {
+    cachedSunPhases = getSunPhases(date);
+    cachedDateKey = dateKey;
+  }
+  return cachedSunPhases!;
+}
+
 // Main hook: calculate sky gradient based on time
 export function useSkyGradient(milliseconds: number): SkyGradientResult {
   return useMemo(() => {
     const date = new Date(milliseconds);
-    const sun = getSunPhases(date);
+    const sun = getCachedSunPhases(date);
     const now = getTimeOfDay(date);
 
     let phase: number;

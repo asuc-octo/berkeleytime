@@ -1,9 +1,5 @@
-import { FormEvent } from "react";
-
-import { ArrowRight, Clock } from "iconoir-react";
-import { useNavigate } from "react-router-dom";
-
-import { Button } from "@repo/theme";
+import { ArrowUpRight, Clock } from "iconoir-react";
+import { Link } from "react-router-dom";
 
 import Wave from "../Wave";
 import styles from "./Hero.module.scss";
@@ -15,17 +11,7 @@ interface HeroProps {
 }
 
 export default function Hero({ milliseconds }: HeroProps) {
-  const navigate = useNavigate();
   const { gradient } = useSkyGradient(milliseconds);
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.currentTarget);
-    const query = formData.get("query");
-
-    navigate(`/catalog?query=${query}`);
-  };
 
   return (
     <div className={styles.root}>
@@ -39,31 +25,20 @@ export default function Hero({ milliseconds }: HeroProps) {
             Berkeley's largest course discovery platform built and run by
             students, for students
           </h2>
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <input
-              className={styles.input}
-              type="text"
-              autoFocus
-              name="query"
-              required
-              placeholder="Search for courses..."
-            />
-            <Button>
-              Go
-              <ArrowRight />
-            </Button>
-          </form>
+          <Link to="/catalog" className={styles.catalogLink}>
+            Go to Catalog
+            <ArrowUpRight />
+          </Link>
         </div>
         <div className={styles.clock}>
-          <Clock height={24} width={24} />
-          <p className={styles.heading}>
+          <Clock height={18} width={18} />
+          <p className={styles.time}>
             {new Date(milliseconds).toLocaleTimeString(undefined, {
               hour: "numeric",
               minute: "numeric",
-              second: "numeric",
             })}
           </p>
-          <p className={styles.description}>Berkeley time</p>
+          <p className={styles.location}>Berkeley, CA</p>
         </div>
         <SatherTower className={styles.campanile} milliseconds={milliseconds} />
       </div>
