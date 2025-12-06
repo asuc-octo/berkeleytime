@@ -34,9 +34,9 @@ jobs:
       - name: Get PR Information
         id: pr-info
         run: |
-          echo "title=${github.ref_name}" >> $GITHUB_OUTPUT
-          echo "number=${github.run_number}" >> $GITHUB_OUTPUT
-          echo "author=${github.triggering_actor}" >> $GITHUB_OUTPUT
+          echo "title=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          echo "number=${{ github.run_number }}" >> $GITHUB_OUTPUT
+          echo "author=${{ github.triggering_actor }}" >> $GITHUB_OUTPUT
 
   compute-sha:
     name: Compute sha_short and host
