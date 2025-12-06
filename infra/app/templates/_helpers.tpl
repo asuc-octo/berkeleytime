@@ -13,6 +13,10 @@ helm.sh/chart: {{ include "bt-app.chart" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 env: {{ .Values.env }}
+pr.number: {{ .Values.pr.number | default "" }}
+pr.author: {{ .Values.pr.author | default "" }}
+pr.title: {{ .Values.pr.title | default "" }}
+pr.name: {{ .Values.pr.name | default (printf "pr-%s" (.Values.pr.number | default "")) }}
 {{- end -}}
 
 {{- define "bt-app.backendLabels" -}}
