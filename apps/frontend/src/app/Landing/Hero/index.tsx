@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "@repo/theme";
 
+import Wave from "../Wave";
 import styles from "./Hero.module.scss";
 import SatherTower from "./SatherTower";
-import Wave from "../Wave";
 
 interface HeroProps {
   milliseconds: number;

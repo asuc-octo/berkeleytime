@@ -1,7 +1,9 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-// Tower color palette
-const COLORS = {
+import { type TowerColors, calculateTowerColors } from "./useTowerTint";
+
+// Base tower colors (used as fallback)
+const BASE_COLORS: TowerColors = {
   light: "#969696",
   moderate: "#707070",
   bright: "#c9c9c9",
@@ -13,7 +15,27 @@ interface SatherTowerProps {
   className?: string;
 }
 
-export default function SatherTower({ milliseconds, className }: SatherTowerProps) {
+export default function SatherTower({
+  milliseconds,
+  className,
+}: SatherTowerProps) {
+  // Track animation time for color tinting (updates every 100ms for smooth transitions)
+  const [animationTime, setAnimationTime] = useState(0);
+
+  useEffect(() => {
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      setAnimationTime(Date.now() - startTime);
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Calculate monotone colors based on current gradient phase
+  const COLORS = useMemo(() => {
+    if (animationTime === 0) return BASE_COLORS;
+    return calculateTowerColors(animationTime);
+  }, [animationTime]);
+
   const { hourAngle, minuteAngle } = useMemo(() => {
     const date = new Date(milliseconds);
     const hours = date.getHours() % 12;
@@ -58,7 +80,10 @@ export default function SatherTower({ milliseconds, className }: SatherTowerProp
             points="907.644 221.182 914.37 265.08 909.892 266.883 909.595 294.86 901.757 297.935 903.543 219.991 907.644 221.182"
             fill={COLORS.moderate}
           />
-          <polyline points="977.452 34.441 973.451 48.363 979.536 77.645" fill={COLORS.moderate} />
+          <polyline
+            points="977.452 34.441 973.451 48.363 979.536 77.645"
+            fill={COLORS.moderate}
+          />
           <path
             d="M1070.45,449.407l-2.869-1.098.021-5.689-1.942-1.512v-128.065l6.899.071v-7.516l-9.468-3.353v-25.254l-.188-5.346-1.323-.992-4.464-40.873-2.05-2.05-2.315-7.374,1.521.033.033-4.233-2.745-6.085-2.976,6.283-.132,4.167,2.282-.132-3.175,7.407h5.026l1.249,45.48v26.463l-.985-.295v-32.486l-20.316-6.558-.533-20.872,3.813-1.562v-4.823l-3.996-1.544v-4.167l-2.844-.959v-4.068l-3.127-1.199-37.316-130.615-.017-3.704.719-1.811v-3.075l-2.468-1.314v-6.659l-.285-.285v-1.637l-2.232-2.232v-.967l.62-.794.198-2.505-1.563-.174-.116-.62,1.604-15.774,2.53-4.018-.248-.546h-1.786l-2.431-.843-1.736-1.687-1.587-3.026-.397-4.117,1.24-.447v-1.24l-.893-.298-.645-.447-.496-.496-.843-22.669.124,22.446-1.414,1.414-2.133.744.843.893h2.431l2.083,43.205,1.835.298.099,3.572-1.289,4.613s9.473,99.604,9.473,100.596l1.852-2.447,1.19,10.33v7.792l-16.535,72.487-96.562,31.397,8.261,4.968,17.467,15.156,1.389,6.349,2.688,7.066,18.681,35.898,4.285-39.991,19.07,35.935,4.066-40.059,21.181,40.695-1.816,50.669-92.241,25.283,5.515,5.427,15.793,12.208,3.175,2.861,26.333,72.065-5.537,347.939h127.851v-415.007l1.536.59-.167,414.417,11.646-1.034v-425.505l-1.885-2.265,3.445-5.456.015-5.35Z"
             fill={COLORS.moderate}
@@ -167,7 +192,9 @@ export default function SatherTower({ milliseconds, className }: SatherTowerProp
       {/* Clock faces with hands */}
       <g id="clocks">
         {/* Left clock (front-facing) - uses "light" color */}
-        <g transform={`translate(${leftClockCenter.x}, ${leftClockCenter.y}) skewY(${leftClockSkew})`}>
+        <g
+          transform={`translate(${leftClockCenter.x}, ${leftClockCenter.y}) skewY(${leftClockSkew})`}
+        >
           {/* Hour hand */}
           <line
             x1="0"
@@ -193,7 +220,9 @@ export default function SatherTower({ milliseconds, className }: SatherTowerProp
         </g>
 
         {/* Right clock (side-facing) - uses "dark" color */}
-        <g transform={`translate(${rightClockCenter.x}, ${rightClockCenter.y}) skewY(${rightClockSkew}) scale(0.5, 1)`}>
+        <g
+          transform={`translate(${rightClockCenter.x}, ${rightClockCenter.y}) skewY(${rightClockSkew}) scale(0.5, 1)`}
+        >
           {/* Hour hand */}
           <line
             x1="0"
