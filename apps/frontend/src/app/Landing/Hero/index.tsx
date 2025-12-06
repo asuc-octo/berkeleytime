@@ -5,15 +5,15 @@ import { useNavigate } from "react-router-dom";
 
 import { Button } from "@repo/theme";
 
-import Wave from "../Wave";
 import styles from "./Hero.module.scss";
+import SatherTower from "./SatherTower";
+import Wave from "../Wave";
 
 interface HeroProps {
   step: {
     colors: string[];
     gradient?: string[];
     angle?: string;
-    image: string;
   };
   milliseconds: number;
 }
@@ -86,7 +86,7 @@ export default function Hero({ step, milliseconds }: HeroProps) {
           </p>
           <p className={styles.description}>Berkeley time</p>
         </div>
-        <img className={styles.campanile} src={step.image} />
+        <SatherTower className={styles.campanile} milliseconds={milliseconds} />
       </div>
       <Wave className={styles.wave} />
     </div>

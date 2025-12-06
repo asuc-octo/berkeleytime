@@ -7,7 +7,6 @@ import NavigationBar from "@/components/NavigationBar";
 
 import Features from "./Features";
 import Hero from "./Hero";
-import satherTower from "./Hero/sather_tower.svg";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
 import Wave from "./Wave";
@@ -17,15 +16,12 @@ const steps = {
   night: {
     colors: ["#082D65", "#0E1B3B"],
     angle: "to bottom right",
-    image: satherTower,
   },
   sunrise_sunset: {
     colors: ["#F1A848", "#F55998"],
-    image: satherTower,
   },
   daytime: {
     colors: ["#408FF7", "#0DD0DA"],
-    image: satherTower,
   },
 };
 
