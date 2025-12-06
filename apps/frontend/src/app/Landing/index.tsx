@@ -7,9 +7,7 @@ import NavigationBar from "@/components/NavigationBar";
 
 import Features from "./Features";
 import Hero from "./Hero";
-import daytime from "./Hero/daytime.svg";
-import night from "./Hero/night.svg";
-import sunrise_sunset from "./Hero/sunrise_sunset.svg";
+import satherTower from "./Hero/sather_tower.svg";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
 import Wave from "./Wave";
@@ -19,15 +17,15 @@ const steps = {
   night: {
     colors: ["#082D65", "#0E1B3B"],
     angle: "to bottom right",
-    image: night,
+    image: satherTower,
   },
   sunrise_sunset: {
     colors: ["#F1A848", "#F55998"],
-    image: sunrise_sunset,
+    image: satherTower,
   },
   daytime: {
     colors: ["#408FF7", "#0DD0DA"],
-    image: daytime,
+    image: satherTower,
   },
 };
 

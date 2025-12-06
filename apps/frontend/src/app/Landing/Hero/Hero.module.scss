@@ -20,9 +20,13 @@
     z-index: 3;
   }
 
-  .container {
+  .heroContent {
     position: relative;
     z-index: 1;
+    width: min(85vw, 1500px);
+    margin: 0 auto;
+    padding: 0 20px;
+    flex: 1;
 
     .text {
       margin: 96px 0 120px;
@@ -97,7 +101,7 @@
       font-size: var(--text-16);
       line-height: 1.5;
       color: #eee;
-      z-index: 1;
+      z-index: 2;
 
       @media (width <= 992px) {
         display: none;
@@ -116,12 +120,15 @@
 
     img.campanile {
       position: absolute;
-      z-index: 0;
-      right: 24px;
-      top: 0;
+      z-index: 1;
+      right: 0;
+      top: 50px;
+      height: calc(100% + clamp(175px, 15vw, 350px) - 50px);
+      width: auto;
 
       @media (width <= 992px) {
         left: 50%;
+        right: auto;
         transform: translateX(-50%);
         opacity: 0.25;
       }

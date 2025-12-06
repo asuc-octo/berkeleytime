@@ -3,7 +3,7 @@ import { FormEvent, useEffect, useRef } from "react";
 import { ArrowRight, Clock } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { Box, Button, Container } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import Wave from "../Wave";
 import styles from "./Hero.module.scss";
@@ -51,45 +51,43 @@ export default function Hero({ step, milliseconds }: HeroProps) {
 
   return (
     <div className={styles.root} ref={root}>
-      <Box px="5">
-        <Container flexGrow="1" className={styles.container}>
-          <div className={styles.text}>
-            <h1 className={styles.heading}>
-              Confidently plan and manage your schedule
-            </h1>
-            <h2 className={styles.description}>
-              Berkeley's largest course discovery platform built and run by
-              students, for students
-            </h2>
-            <form className={styles.form} onSubmit={handleSubmit}>
-              <input
-                className={styles.input}
-                type="text"
-                autoFocus
-                name="query"
-                required
-                placeholder="Search for courses..."
-              />
-              <Button>
-                Go
-                <ArrowRight />
-              </Button>
-            </form>
-          </div>
-          <div className={styles.clock}>
-            <Clock height={24} width={24} />
-            <p className={styles.heading}>
-              {new Date(milliseconds).toLocaleTimeString(undefined, {
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-              })}
-            </p>
-            <p className={styles.description}>Berkeley time</p>
-          </div>
-          <img className={styles.campanile} src={step.image} />
-        </Container>
-      </Box>
+      <div className={styles.heroContent}>
+        <div className={styles.text}>
+          <h1 className={styles.heading}>
+            Confidently plan and manage your schedule
+          </h1>
+          <h2 className={styles.description}>
+            Berkeley's largest course discovery platform built and run by
+            students, for students
+          </h2>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <input
+              className={styles.input}
+              type="text"
+              autoFocus
+              name="query"
+              required
+              placeholder="Search for courses..."
+            />
+            <Button>
+              Go
+              <ArrowRight />
+            </Button>
+          </form>
+        </div>
+        <div className={styles.clock}>
+          <Clock height={24} width={24} />
+          <p className={styles.heading}>
+            {new Date(milliseconds).toLocaleTimeString(undefined, {
+              hour: "numeric",
+              minute: "numeric",
+              second: "numeric",
+            })}
+          </p>
+          <p className={styles.description}>Berkeley time</p>
+        </div>
+        <img className={styles.campanile} src={step.image} />
+      </div>
       <Wave className={styles.wave} />
     </div>
   );
