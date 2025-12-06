@@ -18,10 +18,6 @@ on:
         required: true
         type: boolean
         default: false
-      pr_number:
-        description: "PR number"
-        required: false
-        type: string
 
 env:
   HOSTS: "auth0.dev.stanfurdtime.com auth1.dev.stanfurdtime.com auth2.dev.stanfurdtime.com auth3.dev.stanfurdtime.com auth4.dev.stanfurdtime.com auth5.dev.stanfurdtime.com auth6.dev.stanfurdtime.com auth7.dev.stanfurdtime.com auth8.dev.stanfurdtime.com auth9.dev.stanfurdtime.com"
@@ -37,26 +33,10 @@ jobs:
     steps:
       - name: Get PR Information
         id: pr-info
-        if: ${{ inputs.pr_number != '' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const prNumber = ${{ inputs.pr_number }};
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-            });
-            
-            core.setOutput('number', pr.number.toString());
-            core.setOutput('author', pr.user?.login || '');
-            core.setOutput('title', pr.title || '');
-      - name: Set empty outputs if no PR
-        if: ${{ inputs.pr_number == '' }}
         run: |
-          echo "number=" >> $GITHUB_OUTPUT
-          echo "author=" >> $GITHUB_OUTPUT
-          echo "title=" >> $GITHUB_OUTPUT
+          echo "title=${github.ref_name}" >> $GITHUB_OUTPUT
+          echo "number=${github.run_number}" >> $GITHUB_OUTPUT
+          echo "author=${github.triggering_actor}" >> $GITHUB_OUTPUT
 
   compute-sha:
     name: Compute sha_short and host
