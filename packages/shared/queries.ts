@@ -57,6 +57,7 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
         academicCareer
         academicOrganization
         academicOrganizationName
+        ratingsCount
       }
       requirementDesignation {
         description

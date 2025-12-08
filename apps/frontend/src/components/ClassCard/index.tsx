@@ -4,6 +4,7 @@ import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
   InfoCircle,
+  Star,
   Trash,
 } from "iconoir-react";
 
@@ -52,7 +53,9 @@ type BaseClassFields = Pick<
   | "gradeDistribution"
 >;
 
-type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
+type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
+  ratingsCount?: number | null;
+};
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
@@ -166,6 +169,12 @@ export default function ClassCard({
                 title="Reserved Seating"
                 description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
               />
+            )}
+            {(_class?.course?.ratingsCount ?? 0) > 0 && (
+              <span className={styles.ratingsCount}>
+                <Star className={styles.ratingsIcon} />
+                {_class?.course?.ratingsCount}
+              </span>
             )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon

@@ -412,6 +412,25 @@ export const getSemestersWithRatings = async (
   return formatSemesterRatings(semesters);
 };
 
+export const getCourseRatingsCount = async (
+  subject: string,
+  courseNumber: string
+): Promise<number> => {
+  const aggregated = await courseRatingAggregator(subject, courseNumber);
+
+  if (!aggregated || !aggregated[0]) {
+    return 0;
+  }
+
+  const formatted = formatAggregatedRatings(aggregated[0]);
+  // Return the max count across all metrics (they should be roughly equal)
+  const maxCount = Math.max(
+    0,
+    ...formatted.metrics.map((metric) => metric.count)
+  );
+  return maxCount;
+};
+
 export const getInstructorAggregatedRatings = async (
   subject: string,
   courseNumber: string
