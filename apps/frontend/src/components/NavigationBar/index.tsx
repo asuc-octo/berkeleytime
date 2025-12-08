@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import classNames from "classnames";
 import { motion } from "framer-motion";
@@ -41,11 +41,9 @@ interface NavigationBarProps {
 const ThemeDropdown = ({
   theme,
   setTheme,
-  forceTheme,
 }: {
   theme: "light" | "dark" | null;
   setTheme: (theme: "light" | "dark" | null) => void;
-  forceTheme?: "light" | "dark";
 }) => {
   const systemPrefersDark =
     typeof window !== "undefined" &&
@@ -54,13 +52,20 @@ const ThemeDropdown = ({
   const effectiveTheme =
     theme === null ? (systemPrefersDark ? "dark" : "light") : theme;
 
+  // Track previous theme to only animate on actual theme changes
+  const prevThemeRef = useRef(effectiveTheme);
+  const shouldAnimate = prevThemeRef.current !== effectiveTheme;
+  useEffect(() => {
+    prevThemeRef.current = effectiveTheme;
+  }, [effectiveTheme]);
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <IconButton className={styles.themeButton} aria-label="Toggle theme">
           <motion.div
             key={effectiveTheme}
-            initial={{ rotate: -90, opacity: 0 }}
+            initial={shouldAnimate ? { rotate: -90, opacity: 0 } : false}
             animate={{ rotate: 0, opacity: 1 }}
             transition={{ duration: 0.2 }}
             style={{ display: "flex" }}
@@ -77,7 +82,6 @@ const ThemeDropdown = ({
         sideOffset={5}
         align="end"
         className={styles.themeDropdown}
-        forceTheme={forceTheme}
       >
         <DropdownMenu.Item
           className={styles.themeDropdownItem}
@@ -235,11 +239,7 @@ export default function NavigationBar({
             {menuOpen ? <Xmark /> : <Menu />}
           </motion.div>
         </IconButton>
-        <ThemeDropdown
-          theme={theme}
-          setTheme={setTheme}
-          forceTheme={invert ? "light" : undefined}
-        />
+        <ThemeDropdown theme={theme} setTheme={setTheme} />
         {user ? (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -251,7 +251,6 @@ export default function NavigationBar({
             <DropdownMenu.Content
               sideOffset={5}
               align="end"
-              forceTheme={invert ? "light" : undefined}
               className={styles.profileDropdown}
             >
               <DropdownMenu.Item asChild>

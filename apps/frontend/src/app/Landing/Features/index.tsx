@@ -49,7 +49,6 @@ export default function Features() {
               flexShrink="0"
               py={{ lg: "192px" }}
             >
-              <div className={styles.badge}>New</div>
               <h3 className={styles.heading}>Simple schedule planning</h3>
               <p className={styles.description}>
                 Plan, save, and share schedules. An alternative to CalCentral,

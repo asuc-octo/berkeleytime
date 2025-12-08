@@ -53,7 +53,8 @@
 
       .description {
         font-size: 24px;
-        color: #eee;
+        color: white;
+        opacity: 0.5;
         line-height: 1.5;
         font-weight: var(--font-medium);
         margin-bottom: 64px;
@@ -67,11 +68,12 @@
         font-size: 18px;
         font-weight: var(--font-medium);
         color: white;
+        opacity: 0.5;
         text-decoration: none;
         transition: opacity 150ms ease;
 
         &:hover {
-          opacity: 0.8;
+          opacity: 1;
         }
 
         svg {
