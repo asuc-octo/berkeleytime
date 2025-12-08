@@ -8,6 +8,7 @@
   display: flex;
   align-items: center;
   color: var(--foreground-color);
+  transition: background-color 200ms ease;
 
   .actions {
     margin-left: auto;
@@ -24,7 +25,7 @@
     text-decoration: none;
     padding: 4px 8px;
     border-radius: 4px;
-    transition: color 100ms ease-in-out;
+    transition: color 200ms ease;
 
     &.returnLink {
       @media (width <= 992px) {
@@ -48,9 +49,27 @@
   .text {
     color: var(--gray-700);
     font-size: var(--text-12);
+    transition: color 200ms ease;
 
     @include dark-mode {
       color: var(--gray-300);
+    }
+  }
+
+  // Transparent mode - must come AFTER default rules for specificity
+  &.transparent {
+    background-color: transparent;
+
+    .text {
+      color: rgb(255 255 255 / 70%);
+    }
+
+    .link {
+      color: rgb(255 255 255 / 70%);
+
+      &:hover {
+        color: white;
+      }
     }
   }
 }

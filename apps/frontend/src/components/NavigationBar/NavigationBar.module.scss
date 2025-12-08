@@ -68,7 +68,9 @@
       "cv06" on;
     color: var(--heading-color);
     cursor: pointer;
-    transition: all 100ms ease-in-out;
+    transition:
+      color 300ms ease,
+      opacity 100ms ease-in-out;
 
     &:hover {
       opacity: 0.8;
@@ -98,6 +100,9 @@
     border-bottom: 1px solid var(--border-color);
     background-color: var(--foreground-color);
     padding: 12px;
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease;
 
     &.noBorder {
       border-bottom: none;
@@ -105,10 +110,15 @@
   }
 
   &.invert {
-    padding: 12px 12px 0;
+    padding: 12px;
+    background-color: transparent;
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease;
 
     .themeButton {
       color: white;
+      transition: color 300ms ease;
 
       &:global([data-variant="outline"]) {
         &:hover {
@@ -120,6 +130,7 @@
 
     .brand {
       color: white;
+      transition: color 300ms ease;
 
       &:hover {
         color: rgb(255 255 255 / 75%);
@@ -128,6 +139,7 @@
 
     .item {
       color: rgb(255 255 255 / 65%);
+      transition: color 300ms ease;
 
       &::after {
         background-color: rgb(255 255 255 / 10%);
@@ -150,6 +162,9 @@
     .button {
       background-color: white;
       color: var(--sky-500);
+      transition:
+        background-color 300ms ease,
+        color 300ms ease;
 
       &:hover {
         background-color: rgb(255 255 255 / 85%);

@@ -1,10 +1,15 @@
+import classNames from "classnames";
 import { ArrowUpRight, MessageText } from "iconoir-react";
 
 import styles from "./Banner.module.scss";
 
-export default function Banner() {
+interface BannerProps {
+  transparent?: boolean;
+}
+
+export default function Banner({ transparent }: BannerProps) {
   return (
-    <div className={styles.root}>
+    <div className={classNames(styles.root, { [styles.transparent]: transparent })}>
       <p className={styles.text}>
         You are viewing a beta release of Berkeleytime.
       </p>

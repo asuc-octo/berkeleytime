@@ -96,21 +96,15 @@
   font-size: var(--text-16);
   line-height: 1.5;
   margin-bottom: 32px;
-  color: var(--light-paragraph-color);
+  color: var(--paragraph-color);
 }
 
 .heading {
   font-size: 32px;
   font-weight: 660;
-  font-feature-settings:
-    "cv05" on,
-    "cv13" on,
-    "ss07" on,
-    "cv12" on,
-    "cv06" on;
   line-height: 1.25;
   margin-bottom: 16px;
-  color: var(--light-heading-color);
+  color: var(--heading-color);
 }
 
 .badge {

@@ -27,7 +27,7 @@ export default function Features() {
   const breakpointMatch = useBreakpointMatch(Breakpoint.Large);
 
   return (
-    <Box px="5" py="9">
+    <Box px="5" py="9" style={{ backgroundColor: "var(--background-color)" }}>
       <Container>
         <Flex direction="column" gap="9">
           <Flex direction={{ initial: "column", lg: "row" }} gap="9">

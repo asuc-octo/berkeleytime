@@ -1,7 +1,19 @@
 .root {
+  --header-height: 88px;
   display: flex;
   flex-direction: column;
-  background-color: var(--light-background-color);
+  background-color: var(--background-color);
+  position: relative;
+}
+
+.heroBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 0;
+  transition: background 1s ease-out;
 }
 
 .stickyHeader {
@@ -13,13 +25,6 @@
 .features {
   position: relative;
   z-index: 1;
-  background-color: var(--light-background-color);
+  background-color: var(--background-color);
   margin-top: -2px;
-}
-
-.bottomWave {
-  display: block;
-  width: 100%;
-  height: clamp(100px, 20vw, 200px);
-  margin-bottom: -2px;
 }

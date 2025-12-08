@@ -4,18 +4,14 @@ import { Link } from "react-router-dom";
 import Wave from "../Wave";
 import styles from "./Hero.module.scss";
 import SatherTower from "./SatherTower";
-import { useSkyGradient } from "./useSkyGradient";
 
 interface HeroProps {
   milliseconds: number;
 }
 
 export default function Hero({ milliseconds }: HeroProps) {
-  const { gradient } = useSkyGradient(milliseconds);
-
   return (
     <div className={styles.root}>
-      <div className={styles.gradientLayer} style={{ background: gradient }} />
       <div className={styles.heroContent}>
         <div className={styles.text}>
           <h1 className={styles.heading}>
@@ -42,7 +38,7 @@ export default function Hero({ milliseconds }: HeroProps) {
         </div>
         <SatherTower className={styles.campanile} milliseconds={milliseconds} />
       </div>
-      <Wave className={styles.wave} />
+      <Wave className={styles.wave} fill="var(--background-color)" />
     </div>
   );
 }
