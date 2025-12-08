@@ -475,6 +475,12 @@ export default function Class({
                       primarySection?.enrollment?.latest?.enrolledCount
                     }
                     maxEnroll={primarySection?.enrollment?.latest?.maxEnroll}
+                    waitlistedCount={
+                      primarySection?.enrollment?.latest?.waitlistedCount
+                    }
+                    maxWaitlist={
+                      primarySection?.enrollment?.latest?.maxWaitlist
+                    }
                     time={primarySection?.enrollment?.latest?.endTime}
                   >
                     {(content) => (
