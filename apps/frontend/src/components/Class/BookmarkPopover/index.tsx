@@ -404,13 +404,11 @@ export default function BookmarkPopover({
                       className={styles.collectionRow}
                     >
                       <span className={styles.collectionName}>
-                        {collection.color ? (
+                        {collection.color && (
                           <span
                             className={styles.colorIndicator}
                             style={getColorStyle(collection.color)}
                           />
-                        ) : (
-                          <span className={styles.colorIndicatorEmpty} />
                         )}
                         <span>
                           {collection.name}{" "}
