@@ -2,6 +2,7 @@ import type { ApolloServer } from "@apollo/server";
 import { type Application, type Request, type Response } from "express";
 import { RedisClientType } from "redis";
 
+import { flushViewCounts } from "../class/controller";
 import { warmCatalogCache } from "./controller";
 
 export default (
@@ -53,6 +54,22 @@ export default (
         res.status(200).json(result);
       } catch (error: any) {
         console.error("[Cache API] Error:", error);
+        res.status(500).json({
+          error: "Internal server error",
+          message: error.message,
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/cache/flush-view-counts",
+    async (_req: Request, res: Response): Promise<void> => {
+      try {
+        const result = await flushViewCounts(redis);
+        res.status(200).json(result);
+      } catch (error: any) {
+        console.error("[Cache API] Flush error:", error);
         res.status(500).json({
           error: "Internal server error",
           message: error.message,

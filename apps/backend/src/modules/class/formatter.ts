@@ -49,6 +49,7 @@ export const formatClass = (_class: IClassItem) => {
 
     gradingBasis: _class.gradingBasis as ClassGradingBasis,
     finalExam: _class.finalExam as ClassFinalExam,
+    viewCount: _class.viewCount ?? 0,
   };
   return output as unknown as IntermediateClass;
 };
