@@ -1,0 +1,83 @@
+.card {
+  min-width: 300px;
+  max-width: 330px;
+  flex: 1 1 300px;
+}
+
+.content {
+  padding: 16px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.courseCode {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  font-size: var(--text-16);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.icon {
+  color: var(--label-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.body {
+  width: 100%;
+  min-width: 0;
+  margin-top: 8px;
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  color: var(--paragraph-color);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.metadata {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

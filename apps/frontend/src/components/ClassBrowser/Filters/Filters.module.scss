@@ -1,15 +1,18 @@
 .root {
-  width: 340px;
+  width: 360px;
   flex-shrink: 0;
   overflow-y: auto;
   background-color: var(--foreground-color);
-  scrollbar-color: var(--label-color) var(--foreground-color);
+
+  @media (width <= 992px) {
+    width: 384px;
+  }
 
   .body {
     display: flex;
     flex-direction: column;
-    padding: 24px 16px;
-    gap: 20px;
+    padding: 24px;
+    gap: 16px;
 
     .filtersHeader {
       display: flex;
@@ -18,14 +21,14 @@
     }
 
     .filtersTitle {
-      font-size: 16px;
-      color: var(--heading-color);
+      font-weight: var(--font-medium);
+      font-size: var(--text-18);
       line-height: 20px;
-      font-weight: 600;
+      color: var(--heading-color);
     }
 
     .clearButton {
-      font-size: 14px;
+      font-size: var(--text-14);
       color: var(--blue-500);
       line-height: 20px;
       background: none;
@@ -35,11 +38,7 @@
       transition: all 100ms ease-in-out;
 
       &:hover {
-        color: var(--blue-600);
-
-        @media (prefers-color-scheme: dark) {
-          color: var(--blue-400);
-        }
+        color: var(--blue-hover);
       }
     }
 
@@ -50,9 +49,10 @@
     }
 
     .label {
-      font-size: 14px;
-      color: var(--heading-color);
+      font-weight: var(--font-medium);
+      font-size: var(--text-14);
       line-height: 20px;
+      color: var(--heading-color);
       margin-bottom: 8px;
     }
 
@@ -73,6 +73,34 @@
       align-items: center;
       justify-content: center;
       padding: 0;
+    }
+
+    .timeRangeInputs {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .timeInputGroup {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .timeLabel {
+      font-size: var(--text-12);
+      color: var(--paragraph-color);
+      margin-bottom: 4px;
+    }
+
+    .timeInput {
+      width: 100%;
+      color: var(--paragraph-color);
+
+      &::-webkit-calendar-picker-indicator {
+        display: none;
+        appearance: none;
+      }
     }
 
   }
@@ -101,7 +129,7 @@
 
   @media (992px < width <= 1400px) {
     &.responsive {
-      width: 340px;
+      width: 384px;
 
       .body {
         padding-top: 12px;

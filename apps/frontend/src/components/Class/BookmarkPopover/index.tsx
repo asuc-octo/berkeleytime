@@ -1,0 +1,537 @@
+import { useCallback, useMemo, useRef, useState } from "react";
+
+import classNames from "classnames";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { Bookmark, BookmarkSolid, PinSolid, Plus } from "iconoir-react";
+import { Popover } from "radix-ui";
+
+import { Button, Color, IconButton } from "@repo/theme";
+
+import CollectionNameInput from "@/components/CollectionNameInput";
+import {
+  useAddClassToCollection,
+  useCreateCollection,
+  useGetAllCollections,
+  useRemoveClassFromCollection,
+} from "@/hooks/api/collections";
+import useUser from "@/hooks/useUser";
+import { signIn } from "@/lib/api";
+import { getColorStyle } from "@/lib/colors";
+import { CollectionColor, Semester } from "@/lib/generated/graphql";
+import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
+
+import styles from "./BookmarkPopover.module.scss";
+
+interface ClassInfo {
+  year: number;
+  semester: Semester;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  classNumber: string;
+}
+
+interface BookmarkPopoverProps {
+  classInfo?: ClassInfo;
+  disabled?: boolean;
+}
+
+export default function BookmarkPopover({
+  classInfo,
+  disabled = false,
+}: BookmarkPopoverProps) {
+  const { user } = useUser();
+  const { data: apiCollections, loading: collectionsLoading } =
+    useGetAllCollections();
+  const [createCollection] = useCreateCollection();
+  const [addClassToCollection] = useAddClassToCollection();
+  const [removeClassFromCollection] = useRemoveClassFromCollection();
+
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [mutatingCollections, setMutatingCollections] = useState<Set<string>>(
+    new Set()
+  );
+
+  const collections = useMemo<Collection[]>(() => {
+    const result: Collection[] = [];
+    let hasAllSaved = false;
+
+    if (apiCollections) {
+      for (const c of apiCollections) {
+        if (c._id && c.name) {
+          if (c.isSystem && c.name === ALL_SAVED_COLLECTION_NAME) {
+            hasAllSaved = true;
+          }
+          result.push({
+            id: c._id,
+            name: c.name,
+            classCount: c.classes?.length ?? 0,
+            isPinned: !!c.pinnedAt,
+            pinnedAt: c.pinnedAt ? new Date(c.pinnedAt).getTime() : null,
+            isSystem: c.isSystem,
+            // CollectionColor is a subset of Color with identical string values
+            color: (c.color ?? null) as unknown as Color | null,
+            lastAdd: new Date(c.lastAdd).getTime(),
+          });
+        }
+      }
+    }
+
+    if (!hasAllSaved) {
+      result.unshift({
+        id: "all-saved-placeholder",
+        name: ALL_SAVED_COLLECTION_NAME,
+        classCount: 0,
+        isPinned: false,
+        pinnedAt: null,
+        isSystem: true,
+        color: null,
+        lastAdd: Date.now(),
+      });
+    }
+
+    return result;
+  }, [apiCollections]);
+
+  const savedCollectionIds = useMemo<Set<string>>(() => {
+    if (!apiCollections || !classInfo) return new Set();
+
+    const saved = new Set<string>();
+    for (const collection of apiCollections) {
+      if (!collection._id) continue;
+      const hasClass = collection.classes?.some(
+        (entry) =>
+          entry.class?.subject === classInfo.subject &&
+          entry.class?.courseNumber === classInfo.courseNumber &&
+          entry.class?.number === classInfo.classNumber
+      );
+      if (hasClass) {
+        saved.add(collection._id);
+      }
+    }
+    return saved;
+  }, [apiCollections, classInfo]);
+
+  const initialCollectionIds = useRef<Set<string>>(new Set());
+  if (initialCollectionIds.current.size === 0 && collections.length > 0) {
+    initialCollectionIds.current = new Set(collections.map((c) => c.id));
+  }
+
+  // Frozen sort order - captured when popover opens, maintained while open
+  const frozenOrderRef = useRef<string[]>([]);
+
+  const getSortedIds = useCallback((cols: Collection[]) => {
+    return [...cols]
+      .sort((a, b) => {
+        if (a.isSystem && !b.isSystem) return -1;
+        if (!a.isSystem && b.isSystem) return 1;
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        if (a.isPinned && b.isPinned) {
+          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+        }
+        return b.lastAdd - a.lastAdd;
+      })
+      .map((c) => c.id);
+  }, []);
+
+  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState("");
+  const [newCollectionColor, setNewCollectionColor] = useState<Color | null>(
+    null
+  );
+  const existingNames = collections.map((c) => c.name.toLowerCase());
+  const hasConflict =
+    newCollectionName.trim() !== "" &&
+    existingNames.includes(newCollectionName.trim().toLowerCase());
+  const isTooLong = newCollectionName.trim().length > 50;
+
+  // Display collections using frozen order while popover is open
+  const displayCollections = useMemo(() => {
+    if (!isPopoverOpen || frozenOrderRef.current.length === 0) {
+      // Return fresh sorted list when closed or no frozen order
+      return [...collections].sort((a, b) => {
+        if (a.isSystem && !b.isSystem) return -1;
+        if (!a.isSystem && b.isSystem) return 1;
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        if (a.isPinned && b.isPinned) {
+          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
+        }
+        return b.lastAdd - a.lastAdd;
+      });
+    }
+
+    const frozenIds = new Set(frozenOrderRef.current);
+    const collectionMap = new Map(collections.map((c) => [c.id, c]));
+
+    // Get collections in frozen order (with updated data like classCount)
+    const result: Collection[] = [];
+    for (const id of frozenOrderRef.current) {
+      const collection = collectionMap.get(id);
+      if (collection) result.push(collection);
+    }
+
+    // Find insertion point for new collections (after system + pinned)
+    const insertIndex = result.findIndex((c) => !c.isSystem && !c.isPinned);
+    const insertAt = insertIndex === -1 ? result.length : insertIndex;
+
+    // Insert new collections at the correct position
+    const newCollections = collections
+      .filter((c) => !frozenIds.has(c.id))
+      .sort((a, b) => b.lastAdd - a.lastAdd);
+
+    result.splice(insertAt, 0, ...newCollections);
+
+    // Update frozen order to include new collections
+    frozenOrderRef.current = result.map((c) => c.id);
+
+    return result;
+  }, [collections, isPopoverOpen]);
+
+  const handleToggleCollection = useCallback(
+    async (collectionId: string, currentlySaved: boolean) => {
+      if (!classInfo) return;
+      if (collectionId === "all-saved-placeholder") return;
+
+      // Check if unbookmarking from "All Saved" (system collection)
+      const isAllSavedCollection = collections.find(
+        (c) => c.id === collectionId
+      )?.isSystem;
+
+      // Close popover optimistically when unbookmarking from All Saved
+      if (currentlySaved && isAllSavedCollection) {
+        setIsPopoverOpen(false);
+      }
+
+      setMutatingCollections((prev) => new Set(prev).add(collectionId));
+
+      try {
+        if (currentlySaved) {
+          await removeClassFromCollection({
+            collectionId,
+            year: classInfo.year,
+            semester: classInfo.semester,
+            sessionId: classInfo.sessionId,
+            subject: classInfo.subject,
+            courseNumber: classInfo.courseNumber,
+            classNumber: classInfo.classNumber,
+          });
+        } else {
+          await addClassToCollection({
+            collectionId,
+            year: classInfo.year,
+            semester: classInfo.semester,
+            sessionId: classInfo.sessionId,
+            subject: classInfo.subject,
+            courseNumber: classInfo.courseNumber,
+            classNumber: classInfo.classNumber,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to toggle collection:", error);
+      } finally {
+        setMutatingCollections((prev) => {
+          const next = new Set(prev);
+          next.delete(collectionId);
+          return next;
+        });
+      }
+    },
+    [classInfo, addClassToCollection, removeClassFromCollection, collections]
+  );
+
+  const [isCreatingCollection, setIsCreatingCollection] = useState(false);
+
+  const handleSubmitNewCollection = useCallback(async () => {
+    if (!newCollectionName.trim() || hasConflict || isTooLong || !classInfo)
+      return;
+
+    const trimmedName = newCollectionName.trim();
+
+    setIsCreatingCollection(true);
+
+    try {
+      const result = await createCollection({
+        name: trimmedName,
+        color: newCollectionColor as CollectionColor | null,
+      });
+
+      const collectionId = result.data?.createCollection._id;
+      if (!collectionId) {
+        throw new Error("Failed to get collection ID");
+      }
+
+      await addClassToCollection({
+        collectionId,
+        year: classInfo.year,
+        semester: classInfo.semester,
+        sessionId: classInfo.sessionId,
+        subject: classInfo.subject,
+        courseNumber: classInfo.courseNumber,
+        classNumber: classInfo.classNumber,
+      });
+
+      setNewCollectionName("");
+      setNewCollectionColor(null);
+      setIsCreateFormOpen(false);
+    } catch (error) {
+      console.error("Failed to create collection:", error);
+    } finally {
+      setIsCreatingCollection(false);
+    }
+  }, [
+    newCollectionName,
+    newCollectionColor,
+    hasConflict,
+    isTooLong,
+    classInfo,
+    createCollection,
+    addClassToCollection,
+  ]);
+
+  const resetForm = () => {
+    setIsCreateFormOpen(false);
+    setNewCollectionName("");
+    setNewCollectionColor(null);
+  };
+
+  const isAnyClassSaved = savedCollectionIds.size > 0;
+  const allSavedCollection = collections.find((c) => c.isSystem);
+
+  const handleQuickAdd = useCallback(() => {
+    if (!classInfo || !allSavedCollection) return;
+    if (allSavedCollection.id === "all-saved-placeholder") return;
+
+    // Capture frozen order before opening popover
+    frozenOrderRef.current = getSortedIds(collections);
+    setIsPopoverOpen(true);
+    setMutatingCollections((prev) => new Set(prev).add(allSavedCollection.id));
+
+    addClassToCollection({
+      collectionId: allSavedCollection.id,
+      year: classInfo.year,
+      semester: classInfo.semester,
+      sessionId: classInfo.sessionId,
+      subject: classInfo.subject,
+      courseNumber: classInfo.courseNumber,
+      classNumber: classInfo.classNumber,
+    })
+      .catch((error) => {
+        console.error("Failed to quick-add to All Saved:", error);
+      })
+      .finally(() => {
+        setMutatingCollections((prev) => {
+          const next = new Set(prev);
+          next.delete(allSavedCollection.id);
+          return next;
+        });
+      });
+  }, [
+    classInfo,
+    allSavedCollection,
+    addClassToCollection,
+    collections,
+    getSortedIds,
+  ]);
+
+  return (
+    <Popover.Root
+      open={isPopoverOpen}
+      onOpenChange={(open) => {
+        if (open && !isPopoverOpen) {
+          // Capture frozen order when opening
+          frozenOrderRef.current = getSortedIds(collections);
+        }
+        if (!open) {
+          // Update initial IDs so all current collections are "not new" next time
+          initialCollectionIds.current = new Set(collections.map((c) => c.id));
+          resetForm();
+        }
+        setIsPopoverOpen(open);
+      }}
+    >
+      <Popover.Trigger asChild>
+        <IconButton
+          className={classNames(styles.bookmark, {
+            [styles.active]: isAnyClassSaved,
+          })}
+          disabled={disabled || !classInfo || collectionsLoading}
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            if (!user) {
+              e.preventDefault();
+              signIn();
+              return;
+            }
+            if (!isAnyClassSaved && classInfo) {
+              e.preventDefault();
+              handleQuickAdd();
+            }
+          }}
+        >
+          {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}
+        </IconButton>
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          side="bottom"
+          align="end"
+          sideOffset={8}
+          className={styles.bookmarkPopover}
+        >
+          <div
+            className={styles.collectionList}
+            onClick={() => isCreateFormOpen && resetForm()}
+          >
+            <div className={styles.collectionRows}>
+              <LayoutGroup>
+                {displayCollections.map((collection) => {
+                  const isSaved = savedCollectionIds.has(collection.id);
+                  const isNew = !initialCollectionIds.current.has(
+                    collection.id
+                  );
+                  return (
+                    <motion.div
+                      key={collection.id}
+                      layout
+                      initial={isNew ? { opacity: 0, y: 50 } : false}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        layout: { type: "spring", stiffness: 500, damping: 35 },
+                        opacity: { duration: 0.2 },
+                        y: { type: "spring", stiffness: 400, damping: 25 },
+                      }}
+                      className={styles.collectionRow}
+                    >
+                      <span className={styles.collectionName}>
+                        {collection.color && (
+                          <span
+                            className={styles.colorIndicator}
+                            style={getColorStyle(collection.color)}
+                          />
+                        )}
+                        <span>
+                          {collection.name}{" "}
+                          <span className={styles.collectionCount}>
+                            ({collection.classCount})
+                          </span>
+                        </span>
+                        {collection.isPinned && (
+                          <PinSolid
+                            width={14}
+                            height={14}
+                            className={styles.pinIcon}
+                          />
+                        )}
+                      </span>
+                      <IconButton
+                        className={classNames(styles.bookmark, {
+                          [styles.active]: isSaved,
+                        })}
+                        disabled={mutatingCollections.has(collection.id)}
+                        onClick={() =>
+                          handleToggleCollection(collection.id, isSaved)
+                        }
+                      >
+                        {isSaved ? (
+                          <BookmarkSolid width={16} height={16} />
+                        ) : (
+                          <Bookmark width={16} height={16} />
+                        )}
+                      </IconButton>
+                    </motion.div>
+                  );
+                })}
+              </LayoutGroup>
+            </div>
+            <motion.div
+              layout
+              transition={{
+                layout: { type: "spring", stiffness: 500, damping: 35 },
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <AnimatePresence mode="popLayout" initial={false}>
+                {isCreateFormOpen ? (
+                  <motion.div
+                    key="form"
+                    className={styles.createCollectionForm}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.15 }}
+                    layout
+                  >
+                    <div className={styles.createCollectionInputRow}>
+                      <CollectionNameInput
+                        value={newCollectionName}
+                        onChange={setNewCollectionName}
+                        onSubmit={handleSubmitNewCollection}
+                        color={newCollectionColor}
+                        onColorChange={setNewCollectionColor}
+                        hasError={hasConflict || isTooLong}
+                        autoFocus
+                      />
+                      <Button
+                        className={styles.createCollectionSubmit}
+                        disabled={
+                          !newCollectionName.trim() ||
+                          hasConflict ||
+                          isTooLong ||
+                          isCreatingCollection
+                        }
+                        onClick={handleSubmitNewCollection}
+                      >
+                        Create
+                      </Button>
+                    </div>
+                    <AnimatePresence>
+                      {(hasConflict || isTooLong) && (
+                        <motion.span
+                          className={styles.createCollectionError}
+                          initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                          animate={{ opacity: 1, height: "auto", marginTop: 8 }}
+                          exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                          transition={{
+                            opacity: { duration: 0.15 },
+                            height: {
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 35,
+                            },
+                            marginTop: {
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 35,
+                            },
+                          }}
+                        >
+                          {hasConflict
+                            ? "A collection with this name already exists"
+                            : "Collection name must be 50 characters or less"}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ) : (
+                  <motion.button
+                    key="button"
+                    className={styles.createCollectionBtn}
+                    onClick={() => setIsCreateFormOpen(true)}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Plus width={16} height={16} />
+                    Create new collection
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+}

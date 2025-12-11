@@ -3,11 +3,16 @@ import { DropdownMenu as Primitive } from "radix-ui";
 
 import styles from "./DropdownMenu.module.scss";
 
-function Content({ className, ...props }: Primitive.DropdownMenuContentProps) {
+type ContentProps = Primitive.DropdownMenuContentProps & {
+  forceTheme?: "light" | "dark";
+};
+
+function Content({ className, forceTheme, ...props }: ContentProps) {
   return (
     <Primitive.Portal>
       <Primitive.Content
         {...props}
+        data-theme={forceTheme}
         className={classNames(styles.content, className)}
       />
     </Primitive.Portal>

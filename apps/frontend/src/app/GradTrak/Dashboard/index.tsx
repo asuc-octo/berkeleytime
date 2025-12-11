@@ -767,23 +767,26 @@ export default function Dashboard() {
               open={filterMenuOpen}
               onOpenChange={setFilterMenuOpen}
             >
-              <DropdownMenu.Trigger asChild>
-                <Tooltip content="Filter">
-                  <div className={styles.filterButtonContainer}>
-                    <IconButton
-                      className={styles.filterButton}
-                      data-open={filterMenuOpen}
-                    >
-                      <Filter />
-                    </IconButton>
-                    {activeFiltersCount > 0 && (
-                      <div className={styles.filterButtonBadge}>
-                        {activeFiltersCount}
-                      </div>
-                    )}
-                  </div>
-                </Tooltip>
-              </DropdownMenu.Trigger>
+              <Tooltip
+                content="Filter"
+                trigger={
+                  <DropdownMenu.Trigger asChild>
+                    <div className={styles.filterButtonContainer}>
+                      <IconButton
+                        className={styles.filterButton}
+                        data-open={filterMenuOpen}
+                      >
+                        <Filter />
+                      </IconButton>
+                      {activeFiltersCount > 0 && (
+                        <div className={styles.filterButtonBadge}>
+                          {activeFiltersCount}
+                        </div>
+                      )}
+                    </div>
+                  </DropdownMenu.Trigger>
+                }
+              />
               <DropdownMenu.Content
                 sideOffset={5}
                 align="end"
@@ -878,21 +881,29 @@ export default function Dashboard() {
                 open={sortMenuOpen}
                 onOpenChange={setSortMenuOpen}
               >
-                <DropdownMenu.Trigger asChild>
-                  <Tooltip content="Sort">
-                    <div
-                      style={{ position: "relative", display: "inline-block" }}
-                    >
-                      <IconButton
+                <Tooltip
+                  content="Sort"
+                  trigger={
+                    <DropdownMenu.Trigger asChild>
+                      <div
                         style={{
-                          backgroundColor: sortMenuOpen ? "#52525B" : undefined,
+                          position: "relative",
+                          display: "inline-block",
                         }}
                       >
-                        <Sort />
-                      </IconButton>
-                    </div>
-                  </Tooltip>
-                </DropdownMenu.Trigger>
+                        <IconButton
+                          style={{
+                            backgroundColor: sortMenuOpen
+                              ? "#52525B"
+                              : undefined,
+                          }}
+                        >
+                          <Sort />
+                        </IconButton>
+                      </div>
+                    </DropdownMenu.Trigger>
+                  }
+                />
                 <DropdownMenu.Content
                   sideOffset={5}
                   align="end"

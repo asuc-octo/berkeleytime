@@ -464,3 +464,121 @@ export const semestersWithRatingsAggregator = async (
     },
   ]);
 };
+
+export const instructorRatingsAggregator = async (
+  subject: string,
+  courseNumber: string,
+  classes: { semester: Semester; year: number; classNumber: string }[]
+) => {
+  if (classes.length === 0) {
+    return {
+      subject,
+      courseNumber,
+      metrics: [],
+    };
+  }
+
+  // Group classes by semester/year for more efficient querying
+  const semesterYearMap = new Map<string, Set<string>>();
+
+  classes.forEach(({ semester, year, classNumber }) => {
+    const key = `${semester}_${year}`;
+    if (!semesterYearMap.has(key)) {
+      semesterYearMap.set(key, new Set());
+    }
+    semesterYearMap.get(key)!.add(classNumber);
+  });
+
+  // Build $or conditions with $in for classNumbers
+  const orConditions = Array.from(semesterYearMap.entries()).map(
+    ([semesterYear, classNumbers]) => {
+      const [semester, year] = semesterYear.split("_");
+      return {
+        semester,
+        year: parseInt(year),
+        classNumber: { $in: Array.from(classNumbers) },
+      };
+    }
+  );
+
+  const result = await AggregatedMetricsModel.aggregate([
+    {
+      $match: {
+        subject,
+        courseNumber,
+        $or: orConditions,
+      },
+    },
+    {
+      $group: {
+        _id: {
+          subject: "$subject",
+          courseNumber: "$courseNumber",
+          metricName: "$metricName",
+          categoryValue: "$categoryValue",
+        },
+        categoryCount: { $sum: "$categoryCount" },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          subject: "$_id.subject",
+          courseNumber: "$_id.courseNumber",
+          metricName: "$_id.metricName",
+        },
+        totalCount: { $sum: "$categoryCount" },
+        sumValues: {
+          $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
+        },
+        categories: {
+          $push: {
+            value: "$_id.categoryValue",
+            count: "$categoryCount",
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          subject: "$_id.subject",
+          courseNumber: "$_id.courseNumber",
+        },
+        metrics: {
+          $push: {
+            metricName: "$_id.metricName",
+            count: "$totalCount",
+            weightedAverage: {
+              $cond: [
+                { $eq: ["$totalCount", 0] },
+                0,
+                { $divide: ["$sumValues", "$totalCount"] },
+              ],
+            },
+            categories: "$categories",
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        subject: "$_id.subject",
+        courseNumber: "$_id.courseNumber",
+        metrics: 1,
+      },
+    },
+  ]);
+
+  return (
+    result[0] || {
+      subject,
+      courseNumber,
+      semester: null,
+      year: null,
+      classNumber: null,
+      metrics: [],
+    }
+  );
+};

@@ -33,22 +33,28 @@ export default function UserRatingSummary({
     <div className={styles.root}>
       <div className={styles.title}>
         <div>
-          <h3>Your Rating Summary</h3>
+          <h3>Your Rating</h3>
           {userRatings.lastUpdated && (
             <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
           )}
         </div>
         <Flex gap="2">
-          <Tooltip content="Edit rating">
-            <IconButton onClick={() => onOpenModal(true)}>
-              <EditPencil />
-            </IconButton>
-          </Tooltip>
-          <Tooltip content="Delete rating">
-            <IconButton onClick={() => ratingDelete()}>
-              <Trash />
-            </IconButton>
-          </Tooltip>
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => onOpenModal(true)}>
+                <EditPencil />
+              </IconButton>
+            }
+            title="Edit rating"
+          />
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => ratingDelete()}>
+                <Trash />
+              </IconButton>
+            }
+            title="Delete rating"
+          />
         </Flex>
       </div>
       <div className={styles.body}>

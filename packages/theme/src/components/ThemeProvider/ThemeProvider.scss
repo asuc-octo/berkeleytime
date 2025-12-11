@@ -289,28 +289,50 @@
   --rose-900: #881337;
   --rose-950: #4c0519;
 
+  // Font sizes (rem based on 16px base)
+  --text-12: 0.75rem; // 12px
+  --text-14: 0.875rem; // 14px
+  --text-16: 1rem; // 16px
+  --text-18: 1.125rem; // 18px
+  --text-28: 1.75rem; // 28px
+
+  // Font weights
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  // Semantic text tokens
+  --heading-large: var(--font-bold) var(--text-28);
+  --heading-medium: var(--font-medium) var(--text-18);
+  --heading-small: var(--font-semibold) var(--text-16);
+  --heading-caps: var(--font-medium) var(--text-14);
+  --body-medium: var(--font-normal) var(--text-14);
   --light-foreground-color: white;
-  --light-background-color: var(--slate-50);
-  --light-backdrop-color: var(--slate-100);
+  --light-background-color: white;
+  --light-backdrop-color: var(--neutral-100);
 
   --light-border-color: rgb(0 0 0 / 10%);
 
-  --light-heading-color: var(--slate-900);
-  --light-paragraph-color: var(--slate-500);
-  --light-paragraph-color-50: var(--slate-500-50);
-  --light-label-color: var(--slate-400);
+  --light-heading-color: var(--neutral-w900);
+  --light-paragraph-color: var(--neutral-500);
+  --light-paragraph-color-50: var(--neutral-500-50);
+  --light-description-color: var(--neutral-700);
+  --light-secondary-color: var(--neutral-700);
+  --light-label-color: var(--neutral-400);
 
   // --light-button-color: white;
-  --light-button-hover-color: var(--slate-100);
-  --light-button-active-color: var(--slate-200);
+  --light-button-hover-color: var(--neutral-100);
+  --light-button-active-color: var(--neutral-200);
 
   --light-tooltip-color: white;
+  --light-tooltip-heading-color: var(--neutral-700);
 
   --light-cancel-color: var(--red-500);
   --light-cancel-hover-color: var(--red-600);
   --light-cancel-accent-color: white;
 
-  --dark-foreground-color: var(--zinc-800);
+  --dark-foreground-color: var(--zinc-900);
   --dark-background-color: var(--zinc-900);
   --dark-backdrop-color: var(--zinc-950);
 
@@ -319,13 +341,16 @@
   --dark-heading-color: white;
   --dark-paragraph-color: var(--zinc-400);
   --dark-paragraph-color-50: var(--zinc-400-50);
+  --dark-description-color: var(--zinc-300);
+  --dark-secondary-color: var(--zinc-300);
   --dark-label-color: var(--zinc-500);
 
   // --dark-button-color: var(--zinc-800);
-  --dark-button-hover-color: var(--zinc-700);
-  --dark-button-active-color: var(--zinc-600);
+  --dark-button-hover-color: var(--zinc-800);
+  --dark-button-active-color: var(--zinc-700);
 
   --dark-tooltip-color: var(--zinc-950);
+  --dark-tooltip-heading-color: white;
 
   --dark-cancel-color: var(--red-950);
   --dark-cancel-hover-color: var(--red-900);
@@ -342,6 +367,8 @@
   --heading-color: var(--light-heading-color);
   --paragraph-color: var(--light-paragraph-color);
   --paragraph-color-50: var(--light-paragraph-color-50);
+  --description-color: var(--light-description-color);
+  --secondary-color: var(--light-secondary-color);
   --label-color: var(--light-label-color);
 
   // --button-color: var(--light-button-color);
@@ -349,10 +376,13 @@
   --button-active-color: var(--light-button-active-color);
 
   --tooltip-color: var(--light-tooltip-color);
+  --tooltip-heading-color: var(--light-tooltip-heading-color);
 
   --cancel-color: var(--light-cancel-color);
   --cancel-hover-color: var(--light-cancel-hover-color);
   --cancel-accent-color: var(--light-cancel-accent-color);
+
+  --blue-hover: var(--blue-600);
 
   // badges
   --slate-badge: var(--slate-500);
@@ -389,6 +419,8 @@
   --heading-color: var(--dark-heading-color);
   --paragraph-color: var(--dark-paragraph-color);
   --paragraph-color-50: var(--dark-paragraph-color-50);
+  --description-color: var(--dark-description-color);
+  --secondary-color: var(--dark-secondary-color);
   --label-color: var(--dark-label-color);
 
   // --button-color: var(--dark-button-color);
@@ -396,10 +428,13 @@
   --button-active-color: var(--dark-button-active-color);
 
   --tooltip-color: var(--dark-tooltip-color);
+  --tooltip-heading-color: var(--dark-tooltip-heading-color);
 
   --cancel-color: var(--dark-cancel-color);
   --cancel-hover-color: var(--dark-cancel-hover-color);
   --cancel-accent-color: var(--dark-cancel-accent-color);
+
+  --blue-hover: var(--blue-400);
 
   // badges
   --slate-badge: var(--slate-300);
@@ -434,6 +469,15 @@ body[data-theme="light"] {
   @include light-theme;
 }
 
+// Allow any element to override theme with data-theme attribute
+[data-theme="dark"] {
+  @include dark-theme;
+}
+
+[data-theme="light"] {
+  @include light-theme;
+}
+
 body:not([data-theme]) {
   @include light-theme;
 
@@ -445,8 +489,23 @@ body:not([data-theme]) {
 body {
   background-color: var(--background-color);
   font-family: Inter, sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 
   @supports (font-variation-settings: normal) {
     font-family: InterVariable, sans-serif;
   }
+}
+
+// Apply transition to all elements that use theme colors
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    fill 0.3s ease,
+    stroke 0.3s ease;
 }

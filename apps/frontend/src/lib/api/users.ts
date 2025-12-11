@@ -11,38 +11,6 @@ export const READ_USER = gql`
       email
       name
       student
-      bookmarkedCourses {
-        title
-        subject
-        number
-      }
-      bookmarkedClasses {
-        title
-        subject
-        number
-        courseNumber
-        year
-        semester
-        sessionId
-        unitsMin
-        unitsMax
-        course {
-          title
-        }
-        primarySection {
-          enrollment {
-            latest {
-              enrolledCount
-              maxEnroll
-              waitlistedCount
-              maxWaitlist
-            }
-          }
-        }
-        gradeDistribution {
-          average
-        }
-      }
     }
   }
 `;
@@ -50,23 +18,10 @@ export const READ_USER = gql`
 export const UPDATE_USER = gql`
   mutation UpdateUser($user: UpdateUserInput!) {
     updateUser(user: $user) {
+      _id
       name
       email
       student
-      bookmarkedCourses {
-        title
-        subject
-        number
-      }
-      bookmarkedClasses {
-        title
-        subject
-        number
-        courseNumber
-        year
-        semester
-        sessionId
-      }
     }
   }
 `;

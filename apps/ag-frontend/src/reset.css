@@ -3,6 +3,15 @@
   https://www.joshwcomeau.com/css/custom-css-reset/
 */
 
+html {
+  /* Prevent double-tap zoom on mobile while preserving pinch-to-zoom feel */
+  touch-action: manipulation;
+  /* Prevent text size adjustment on orientation change */
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -23,6 +32,14 @@ img, picture, video, canvas, svg {
 
 input, button, textarea, select {
   font: inherit;
+}
+
+/* Prevent iOS Safari from zooming in on input focus (requires 16px+) */
+/* Only apply on mobile/touch devices to avoid affecting desktop styling */
+@media (hover: none) and (pointer: coarse) {
+  input, textarea, select {
+    font-size: 16px;
+  }
 }
 
 p, h1, h2, h3, h4, h5, h6 {

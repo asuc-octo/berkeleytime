@@ -16,6 +16,7 @@ import {
   GradingFilter,
   Level,
   SortBy,
+  TimeRange,
   UnitRange,
   UniversityRequirement,
   getFilteredClasses,
@@ -69,13 +70,16 @@ export default function ClassBrowser({
   const [localUnits, setLocalUnits] = useState<UnitRange>([0, 5]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
+  const [localTimeRange, setLocalTimeRange] = useState<TimeRange>([null, null]);
   const [localBreadths, setLocalBreadths] = useState<Breadth[]>([]);
   const [localUniversityRequirement, setLocalUniversityRequirement] =
     useState<UniversityRequirement | null>(null);
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
-  const [localDepartment, setLocalDepartment] = useState<string | null>(null);
+  const [localAcademicOrganization, setLocalAcademicOrganization] = useState<
+    string | null
+  >(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
@@ -132,6 +136,14 @@ export default function ClassBrowser({
     [searchParams, localDays, persistent]
   );
 
+  const timeRange = useMemo((): TimeRange => {
+    if (!persistent) return localTimeRange;
+
+    const timeFrom = searchParams.get("timeFrom");
+    const timeTo = searchParams.get("timeTo");
+    return [timeFrom, timeTo];
+  }, [searchParams, localTimeRange, persistent]);
+
   const breadths = useMemo(
     () =>
       persistent
@@ -161,13 +173,13 @@ export default function ClassBrowser({
     [searchParams, localGradingFilters, persistent]
   );
 
-  const department = useMemo(() => {
+  const academicOrganization = useMemo(() => {
     const value = persistent
-      ? (searchParams.get("department") ?? null)
-      : localDepartment;
+      ? (searchParams.get("academicOrganization") ?? null)
+      : localAcademicOrganization;
 
-    return value ? value.toLowerCase() : null;
-  }, [searchParams, localDepartment, persistent]);
+    return value;
+  }, [searchParams, localAcademicOrganization, persistent]);
 
   const sortBy = useMemo(() => {
     if (persistent) {
@@ -211,7 +223,8 @@ export default function ClassBrowser({
         breadths,
         universityRequirement,
         gradingFilters,
-        department
+        academicOrganization,
+        timeRange
       ),
     [
       classes,
@@ -223,7 +236,8 @@ export default function ClassBrowser({
       breadths,
       universityRequirement,
       gradingFilters,
-      department,
+      academicOrganization,
+      timeRange,
     ]
   );
 
@@ -240,6 +254,36 @@ export default function ClassBrowser({
       }),
     [includedClasses, index, query, sortBy, effectiveOrder]
   );
+
+  const hasActiveFilters = useMemo(() => {
+    return (
+      units[0] !== 0 ||
+      units[1] !== 5 ||
+      levels.length > 0 ||
+      days.length > 0 ||
+      timeRange[0] !== null ||
+      timeRange[1] !== null ||
+      breadths.length > 0 ||
+      universityRequirement !== null ||
+      gradingFilters.length > 0 ||
+      academicOrganization !== null ||
+      open ||
+      online ||
+      sortBy !== SortBy.Relevance
+    );
+  }, [
+    units,
+    levels,
+    days,
+    timeRange,
+    breadths,
+    universityRequirement,
+    gradingFilters,
+    academicOrganization,
+    open,
+    online,
+    sortBy,
+  ]);
 
   const updateArray = <T,>(
     key: string,
@@ -298,6 +342,25 @@ export default function ClassBrowser({
     setState(value);
   };
 
+  const updateTimeRange = (value: TimeRange) => {
+    if (persistent) {
+      if (value[0]) {
+        searchParams.set("timeFrom", value[0]);
+      } else {
+        searchParams.delete("timeFrom");
+      }
+      if (value[1]) {
+        searchParams.set("timeTo", value[1]);
+      } else {
+        searchParams.delete("timeTo");
+      }
+      setSearchParams(searchParams);
+      return;
+    }
+
+    setLocalTimeRange(value);
+  };
+
   const updateSortBy = (value: SortBy) => {
     setLocalReverse(false);
     if (persistent) {
@@ -342,14 +405,16 @@ export default function ClassBrowser({
         year: currentYear,
         semester: currentSemester,
         terms,
+        hasActiveFilters,
         query,
         units,
         levels,
         days,
+        timeRange,
         breadths,
         universityRequirement,
         gradingFilters,
-        department,
+        academicOrganization,
         online,
         open,
         reverse: localReverse,
@@ -358,24 +423,24 @@ export default function ClassBrowser({
         updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
         updateDays: (days) => updateArray("days", setLocalDays, days),
+        updateTimeRange,
         updateBreadths: (breadths) =>
           updateArray("breadths", setLocalBreadths, breadths),
         updateUniversityRequirement,
         updateGradingFilters: (filters) =>
           updateArray("gradingBases", setLocalGradingFilters, filters),
-        updateDepartment: (dept) => {
+        updateAcademicOrganization: (org) => {
           if (persistent) {
-            const normalized = dept ? dept.toLowerCase() : null;
-            if (normalized) {
-              searchParams.set("department", normalized);
+            if (org) {
+              searchParams.set("academicOrganization", org);
             } else {
-              searchParams.delete("department");
+              searchParams.delete("academicOrganization");
             }
             setSearchParams(searchParams);
             return;
           }
 
-          setLocalDepartment(dept ? dept.toLowerCase() : null);
+          setLocalAcademicOrganization(org);
         },
         updateSortBy,
         updateOpen: (open) => updateBoolean("open", setLocalOpen, open),

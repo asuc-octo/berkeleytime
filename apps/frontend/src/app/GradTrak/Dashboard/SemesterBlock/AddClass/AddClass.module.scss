@@ -27,7 +27,7 @@ body {
     input {
       color: var(--heading-color);
       font-size: 0.75rem;
-      font-weight: 500;
+      font-weight: var(--font-medium);
       background-color: transparent;
       padding: 0;
     }
@@ -57,8 +57,6 @@ body {
       list-style-type: none;
       padding: 0;
       margin: 0;
-      scrollbar-color: var(--paragraph-color)
-        var(--border-color, rgba(0, 0, 0, 0.1));
       scrollbar-width: thin;
 
       // &.has-items {

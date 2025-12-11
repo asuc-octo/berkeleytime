@@ -10,7 +10,7 @@
   user-select: none;
 
   .text {
-    font-size: 14px;
+    font-size: var(--text-14);
     line-height: 1;
 
     .value {
@@ -18,44 +18,25 @@
     }
   }
 }
-
-.content {
-  border-radius: 4px;
-  padding: 12px;
-  background-color: var(--tooltip-color);
+.card {
   width: 256px;
-  animation: fadeIn 100ms ease-in;
-  z-index: 998;
-
-  .arrow {
-    fill: var(--tooltip-color);
-  }
 
   .divider {
     height: 1px;
-    background-color: var(--neutral-700);
+    background-color: var(--border-color);
     margin: 12px 0;
   }
 
   .row {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
-    line-height: 1;
+    font-size: var(--text-14);
+    line-height: 1.4;
     color: var(--neutral-400);
 
     .key {
-      font-weight: 500;
-      color: white;
+      font-weight: var(--font-semibold);
+      color: var(--tooltip-heading-color);
     }
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }

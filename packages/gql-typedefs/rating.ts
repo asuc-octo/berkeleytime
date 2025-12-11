@@ -35,6 +35,29 @@ export const ratingTypeDef = gql`
   }
 
   """
+  Instructor information
+  """
+  type Instructor {
+    givenName: String!
+    familyName: String!
+  }
+
+  """
+  Ratings by instructor
+  """
+  type InstructorRating @cacheControl(maxAge: 1) {
+    instructor: Instructor!
+    aggregatedRatings: AggregatedRatings!
+    classesTaught: [ClassIdentifier!]!
+  }
+
+  type ClassIdentifier {
+    semester: Semester!
+    year: Int!
+    classNumber: String!
+  }
+
+  """
   Ratings by user
   """
   type UserRatings @cacheControl(maxAge: 1) {
@@ -68,6 +91,11 @@ export const ratingTypeDef = gql`
     year: Int!
     semester: Int!
     classNumber: String!
+  }
+
+  input RatingMetricInput {
+    metricName: MetricName!
+    value: Int!
   }
 
   """
@@ -108,7 +136,7 @@ export const ratingTypeDef = gql`
   Modify data
   """
   type Mutation {
-    createRating(
+    createRatings(
       "Class Identifiers"
       year: Int!
       semester: Semester!
@@ -116,18 +144,9 @@ export const ratingTypeDef = gql`
       courseNumber: String!
       classNumber: String!
 
-      metricName: MetricName!
-      value: Int!
+      metrics: [RatingMetricInput!]!
     ): Boolean! @auth
 
-    deleteRating(
-      "Class Identifiers"
-      year: Int!
-      semester: Semester!
-      subject: String!
-      courseNumber: String!
-      classNumber: String!
-      metricName: MetricName!
-    ): Boolean! @auth
+    deleteRatings(subject: String!, courseNumber: String!): Boolean! @auth
   }
 `;

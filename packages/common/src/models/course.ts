@@ -5,6 +5,10 @@ export interface ICourseItem {
   courseId: string;
   // subjectArea.code
   subject: string;
+  // subjectArea.description
+  subjectName?: string;
+  // departmentNicknames
+  departmentNicknames?: string;
   // catalogNumber.formatted
   number: string;
   title?: string;
@@ -26,6 +30,8 @@ export interface ICourseItem {
   academicGroup?: string;
   // academicOrganization.code
   academicOrganization?: string;
+  // academicOrganization.description
+  academicOrganizationName?: string;
   instructorAddConsentRequired?: boolean;
   instructorDropConsentRequired?: boolean;
   allowMultipleEnrollments?: boolean;
@@ -111,6 +117,9 @@ export interface ICourseItem {
   formerDisplayName?: string;
   // createdDate?: string;
   updatedDate?: string;
+  allTimeAverageGrade?: number | null;
+  allTimePassCount?: number | null;
+  allTimeNoPassCount?: number | null;
 }
 
 export interface ICourseItemDocument extends ICourseItem, Document {}
@@ -118,6 +127,8 @@ export interface ICourseItemDocument extends ICourseItem, Document {}
 const courseSchema = new Schema<ICourseItem>({
   courseId: { type: String, required: true },
   subject: { type: String, required: true },
+  subjectName: { type: String },
+  departmentNicknames: { type: String },
   number: { type: String, required: true },
   title: { type: String },
   description: { type: String },
@@ -131,6 +142,7 @@ const courseSchema = new Schema<ICourseItem>({
   finalExam: { type: String },
   academicGroup: { type: String },
   academicOrganization: { type: String },
+  academicOrganizationName: { type: String },
   instructorAddConsentRequired: { type: Boolean },
   instructorDropConsentRequired: { type: Boolean },
   allowMultipleEnrollments: { type: Boolean },
@@ -205,10 +217,14 @@ const courseSchema = new Schema<ICourseItem>({
   formerDisplayName: { type: String },
   // createdDate: { type: String },
   updatedDate: { type: String },
+  allTimeAverageGrade: { type: Number, default: null },
+  allTimePassCount: { type: Number, default: null },
+  allTimeNoPassCount: { type: Number, default: null },
 });
 
 // for catalog, associated courses by id, curated class controllers
 courseSchema.index({ courseId: 1 });
+courseSchema.index({ courseId: 1, printInCatalog: 1 });
 
 // for associated courses by subject number and bookmarked courses controllers
 courseSchema.index({

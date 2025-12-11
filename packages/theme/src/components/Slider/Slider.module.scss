@@ -67,7 +67,7 @@
 
 .label {
   position: absolute;
-  font-size: 14px;
+  font-size: var(--text-14);
   color: var(--paragraph-color);
   transform: translateX(-50%);
   white-space: nowrap;

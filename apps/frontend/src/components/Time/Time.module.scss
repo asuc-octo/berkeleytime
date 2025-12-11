@@ -1,25 +1,17 @@
 .trigger {
-  font-size: 14px;
-  line-height: 1.5;
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
   color: var(--paragraph-color);
+  line-height: 1.5;
   width: fit-content;
 }
 
-.content {
-  border-radius: 4px;
-  padding: 12px;
-  background-color: var(--tooltip-color);
-  animation: fadeIn 100ms ease-in-out forwards;
-  color: var(--neutral-400);
-  font-size: 14px;
-  z-index: 998;
+.tooltipCard {
   display: flex;
   gap: 4px;
-  opacity: 0;
-
-  .arrow {
-    fill: var(--tooltip-color);
-  }
+  color: var(--neutral-400);
+  font-size: var(--text-14);
+  line-height: 1.4;
 
   .day {
     width: 24px;
@@ -54,11 +46,5 @@
   .divider {
     width: 1px;
     background-color: var(--border-color);
-  }
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
   }
 }

@@ -10,6 +10,20 @@ export const enrollmentTypeDef = gql`
       courseNumber: CourseNumber!
       sectionNumber: SectionNumber!
     ): Enrollment
+
+    enrollmentTimeframes(
+      year: Int!
+      semester: Semester!
+    ): [EnrollmentTimeframe!]!
+  }
+
+  type EnrollmentTimeframe {
+    phase: Int
+    isAdjustment: Boolean!
+    group: String!
+    startDate: String!
+    endDate: String
+    startEventSummary: String
   }
 
   type Enrollment @cacheControl(maxAge: 3600) {
@@ -26,13 +40,11 @@ export const enrollmentTypeDef = gql`
     "Attributes"
     history: [EnrollmentSingular!]!
     latest: EnrollmentSingular
-    seatReservationTypes: [ReservationType!]
   }
 
-  type ReservationType {
-    number: Int!
-    requirementGroup: String!
-    fromDate: String!
+  type RequirementGroupDescriptor {
+    code: String
+    description: String!
   }
 
   type EnrollmentSingular {
@@ -50,12 +62,16 @@ export const enrollmentTypeDef = gql`
     instructorAddConsentRequired: Boolean
     instructorDropConsentRequired: Boolean
     seatReservationCount: [SeatReservationCounts!]
+    activeReservedMaxCount: Int!
   }
 
   type SeatReservationCounts {
     number: Int!
     maxEnroll: Int!
     enrolledCount: Int!
+    requirementGroup: RequirementGroupDescriptor!
+    fromDate: String!
+    isValid: Boolean!
   }
 
   enum EnrollmentStatus {

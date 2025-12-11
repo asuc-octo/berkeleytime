@@ -1,42 +1,96 @@
 .root {
-  padding: 24px 0;
-  flex-grow: 1;
+  background-color: var(--background-color);
+  height: 100%;
+}
+
+.wrapper {
+  background-color: var(--foreground-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  min-width: 450px;
   display: flex;
   flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
 
-  .legend {
-    display: flex;
-    gap: 24px;
-    justify-content: center;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 
-    .label {
-      font-size: 14px;
-      line-height: 1;
-      color: var(--paragraph-color);
-      display: flex;
-      align-items: center;
-      gap: 12px;
+.openButton {
+  flex-shrink: 0;
+}
 
-      .icon {
-        width: 16px;
-        height: 16px;
-        border-radius: 4px;
-        background-color: currentColor;
-      }
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-      &:first-child {
-        color: var(--blue-500);
-      }
-    }
-  }
+.title {
+  margin: 0;
+  font-size: 20px;
+  color: var(--heading-color);
+}
 
-  .chart {
-    height: 384px;
+.subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--label-color);
+}
 
-    .label {
-      font-size: 12px;
-      color: var(--label-color);
-      font-weight: 400;
-    }
-  }
+.chart {
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chartContainer {
+  flex: 1;
+  min-height: 0;
+}
+
+.axisLabel {
+  margin: 0;
+  text-align: center;
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+}
+
+.skeletonTitle {
+  width: 180px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.skeletonSubtitle {
+  width: 100px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeletonButton {
+  width: 140px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.skeletonChart {
+  flex: 1;
+  min-height: 300px;
+  border-radius: 8px;
+}
+
+.skeletonAxisLabel {
+  width: 200px;
+  height: 16px;
+  border-radius: 4px;
+  margin: 0 auto;
 }

@@ -1,6 +1,4 @@
-import { subjects } from "@repo/shared";
-
-import { IClass } from "@/lib/api";
+import { ICatalogClass } from "@/lib/api";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SortBy } from "./browser";
@@ -15,47 +13,46 @@ const DEFAULT_SORT_ORDER: Record<SortBy, SortOrder> = {
   [SortBy.PercentOpenSeats]: "desc",
 };
 
-const initializeFuse = (classes: IClass[]) => {
+const initializeFuse = (classes: ICatalogClass[]) => {
   const list = classes.map((_class) => {
     const { title, subject, courseNumber: number } = _class;
 
-    // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
-    const term = subject.toLowerCase();
+    const departmentNicknames = _class.course?.departmentNicknames;
+    const abbreviations: string[] = departmentNicknames
+      ? departmentNicknames
+          .split("!")
+          .map((abbr: string) => abbr.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
 
-    const alternateNames = subjects[term]?.abbreviations.reduce(
-      (acc, abbreviation) => {
-        // Add alternate names for abbreviations
-        const abbreviations = [
-          `${abbreviation}${number}`,
-          `${abbreviation} ${number}`,
-        ];
-
-        if (containsPrefix) {
-          abbreviations.push(
-            `${abbreviation}${alternateNumber}`,
-            `${abbreviation} ${alternateNumber}`
-          );
-        }
-
-        return [...acc, ...abbreviations];
-      },
-      // Add alternate names
-      containsPrefix
+    const alternateNames = [
+      ...(containsPrefix
         ? [
             `${subject}${number}`,
             `${subject} ${alternateNumber}`,
             `${subject}${alternateNumber}`,
           ]
-        : [`${subject}${number}`]
-    );
+        : [`${subject}${number}`]),
+      ...abbreviations.flatMap((abbreviation: string) =>
+        containsPrefix
+          ? [
+              `${abbreviation}${number}`.toLowerCase(),
+              `${abbreviation} ${number}`.toLowerCase(),
+              `${abbreviation}${alternateNumber}`.toLowerCase(),
+              `${abbreviation} ${alternateNumber}`.toLowerCase(),
+            ]
+          : [
+              `${abbreviation}${number}`.toLowerCase(),
+              `${abbreviation} ${number}`.toLowerCase(),
+            ]
+      ),
+    ];
 
     return {
       title: _class.title ?? title,
-      // subject,
-      // number,
       name: `${subject} ${number}`,
       alternateNames,
     };
@@ -89,7 +86,7 @@ const initializeFuse = (classes: IClass[]) => {
 };
 
 interface Data {
-  classes: IClass[];
+  classes: ICatalogClass[];
   query: string;
   sortBy: SortBy;
 }

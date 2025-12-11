@@ -68,9 +68,10 @@ export default function Editor() {
       if (!selectedClass) return;
 
       // Find the associated section
-      const section = selectedClass.class.sections.find(
-        (section) => section.number === number
-      );
+      const section = [
+        ...selectedClass.class.sections,
+        selectedClass.class.primarySection,
+      ].find((section) => section.number === number);
 
       if (!section) return;
 
@@ -79,20 +80,23 @@ export default function Editor() {
         (selectedSection) => {
           // return selectedSection.sectionId == section.sectionId
 
-          const currentSection = selectedClass.class.sections.find(
-            (section) => section.sectionId === selectedSection.sectionId
-          );
+          const currentSection = [
+            ...selectedClass.class.sections,
+            selectedClass.class.primarySection,
+          ].find((section) => section.sectionId === selectedSection.sectionId);
 
           return (
-            !currentSection ||
-            currentSection.component !== section.component ||
-            currentSection.sectionId == section.sectionId
+            !currentSection || currentSection.component !== section.component
           );
         }
       );
 
-      // Add the selected section
-      selectedClass.selectedSections = [...selectedSections, section];
+      // Add the selected section, unless it already exists (then remove)
+      selectedClass.selectedSections = selectedClass.selectedSections.find(
+        (s) => s.sectionId === section.sectionId
+      )
+        ? selectedSections
+        : [...selectedSections, section];
 
       setCurrentSection(null);
 
@@ -329,27 +333,28 @@ export default function Editor() {
         sections: _classClone.sections.map((s) => {
           return {
             ...s,
-            subject: _class.subject,
-            courseNumber: _class.courseNumber,
-            classNumber: _class.number,
+            subject: _classClone.subject,
+            courseNumber: _classClone.courseNumber,
+            classNumber: _classClone.number,
           };
         }),
       };
 
       const selectedSections = [_class.primarySection];
 
-      const kinds = Array.from(
-        new Set(_classClone.sections.map((section) => section.component))
-      );
+      // DISABLED: Don't select by default?
+      // const kinds = Array.from(
+      //   new Set(_classClone.sections.map((section) => section.component))
+      // );
 
       // Add the first section of each kind to selected sections
-      for (const kind of kinds) {
-        const section = _class.sections
-          .filter((section) => section.component === kind)
-          .sort((a, b) => a.number.localeCompare(b.number))[0];
+      // for (const kind of kinds) {
+      //   const section = _class.sections
+      //     .filter((section) => section.component === kind)
+      //     .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        selectedSections.push(section);
-      }
+      //   selectedSections.push(section);
+      // }
 
       _schedule.classes.push({
         class: _class,
@@ -586,21 +591,27 @@ export default function Editor() {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.group}>
-          <Tooltip content="Back to schedules">
-            <Link to="../schedules">
-              <IconButton>
-                <ArrowLeft />
-              </IconButton>
-            </Link>
-          </Tooltip>
+          <Tooltip
+            trigger={
+              <Link to="../schedules">
+                <IconButton>
+                  <ArrowLeft />
+                </IconButton>
+              </Link>
+            }
+            title="Back to schedules"
+          />
           <p className={styles.heading}>{schedule.name}</p>
           {editing && (
             <EditDialog>
-              <Tooltip content="Edit">
-                <IconButton>
-                  <Edit />
-                </IconButton>
-              </Tooltip>
+              <Tooltip
+                trigger={
+                  <IconButton>
+                    <Edit />
+                  </IconButton>
+                }
+                title="Edit"
+              />
             </EditDialog>
           )}
           <div className={styles.separator} />

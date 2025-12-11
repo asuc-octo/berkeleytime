@@ -233,27 +233,33 @@ export default function DisplayMenu({
                         <Text className={styles.toggleItemText}>{d.label}</Text>
                       </Flex>
                       {v[1] ? (
-                        <Tooltip content={"Hide Property"}>
-                          <Eye
-                            className={styles.eye}
-                            onClick={() =>
-                              onChangeSettings({
-                                show: { ...settings.show, [s]: false },
-                              })
-                            }
-                          />
-                        </Tooltip>
+                        <Tooltip
+                          trigger={
+                            <Eye
+                              className={styles.eye}
+                              onClick={() =>
+                                onChangeSettings({
+                                  show: { ...settings.show, [s]: false },
+                                })
+                              }
+                            />
+                          }
+                          title="Hide Property"
+                        />
                       ) : (
-                        <Tooltip content={"Show Property"}>
-                          <EyeClosed
-                            className={styles.eye}
-                            onClick={() =>
-                              onChangeSettings({
-                                show: { ...settings.show, [s]: true },
-                              })
-                            }
-                          />
-                        </Tooltip>
+                        <Tooltip
+                          trigger={
+                            <EyeClosed
+                              className={styles.eye}
+                              onClick={() =>
+                                onChangeSettings({
+                                  show: { ...settings.show, [s]: true },
+                                })
+                              }
+                            />
+                          }
+                          title="Show Property"
+                        />
                       )}
                     </div>
                   );

@@ -146,6 +146,9 @@ export default async (app: Application, redis: RedisClientType) => {
             googleId: profile.id,
             name: profile.displayName,
           });
+        } else {
+          // Update name from Google profile on each login
+          user.name = profile.displayName;
         }
 
         const doc = await user.save();

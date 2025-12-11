@@ -1,3 +1,14 @@
 .view {
   min-height: 100dvh;
 }
+
+.viewLocked {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.stickyHeader {
+  position: sticky;
+  top: 0;
+  z-index: 1002;
+}

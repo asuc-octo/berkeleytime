@@ -1,0 +1,41 @@
+.view {
+  padding: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  gap: 24px;
+  position: relative;
+  width: 100%;
+  max-width: 1500px;
+}
+
+.chart {
+  width: 100%;
+  margin: 0;
+  position: relative;
+  min-height: 250px;
+}
+
+.empty {
+  position: absolute;
+  color: var(--label-color);
+  text-align: center;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-inline: auto;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.emptyText {
+  text-align: center;
+}

@@ -13,11 +13,7 @@
     padding: 12px;
     position: sticky;
     top: 0;
-    background: linear-gradient(
-      to bottom,
-      var(--background-color) 44px,
-      transparent
-    );
+    background: var(--background-color);
     z-index: 2;
 
     .button {
@@ -33,7 +29,7 @@
       align-items: center;
 
       .data {
-        font-size: 12px;
+        font-size: var(--text-12);
         color: var(--paragraph-color);
         line-height: 1;
       }

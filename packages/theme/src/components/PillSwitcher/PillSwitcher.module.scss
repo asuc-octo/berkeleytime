@@ -1,0 +1,101 @@
+.list {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--button-hover-color);
+  padding: 3px;
+  border-radius: 30px;
+}
+
+.fullWidthList {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: 100%;
+  background-color: var(--button-hover-color);
+  padding: 2px 2px 0 2px;
+  column-gap: 2px;
+  row-gap: 0;
+  border-radius: 0;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: 30px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
+  line-height: normal;
+  letter-spacing: -0.1px;
+  color: var(--label-color);
+
+  transition: all 100ms ease-in-out;
+
+  &:hover {
+    color: var(--paragraph-color);
+  }
+
+  &[data-state="active"] {
+    background-color: var(--foreground-color);
+    color: var(--heading-color);
+    box-shadow:
+      0px 3px 2px 0px rgba(0, 0, 0, 0.06),
+      0px 3px 8px 0px rgba(0, 0, 0, 0.15),
+      0px 0px 1px 0px rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="dark"] &[data-state="active"] {
+    box-shadow:
+      0px 3px 2px 0px rgba(0, 0, 0, 0.2),
+      0px 3px 8px 0px rgba(0, 0, 0, 0.4),
+      0px 0px 1px 0px rgba(0, 0, 0, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+  }
+}
+
+.fullWidthTrigger {
+  border-radius: 4px 4px 0 0;
+  padding: 6px 8px;
+  min-height: 28px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--label-color);
+  transition: all 100ms ease-in-out;
+
+  &:hover {
+    background-color: var(--button-hover-color);
+    color: var(--heading-color);
+  }
+
+  &[data-state="active"] {
+    background-color: var(--foreground-color);
+    color: var(--heading-color);
+    box-shadow: none;
+  }
+}
+
+.iconOnlyList {
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+}
+
+.iconOnlyTrigger {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 6px;
+}

@@ -10,10 +10,17 @@ import {
   UserRatings,
 } from "../../generated-types/graphql";
 
+const clampCount = (count: number | null | undefined): number => {
+  if (typeof count !== "number" || !Number.isFinite(count)) {
+    return 0;
+  }
+  return Math.max(count, 0);
+};
+
 export const formatUserRatings = (ratings: UserRatings): UserRatings => {
   return {
     createdBy: ratings.createdBy,
-    count: ratings.count,
+    count: clampCount(ratings.count),
 
     classes: ratings.classes.map((userClass: UserClass) => ({
       year: userClass.year,
@@ -42,16 +49,34 @@ export const formatAggregatedRatings = (
     courseNumber: aggregated.courseNumber,
     classNumber: aggregated.classNumber,
 
-    metrics: aggregated.metrics.map((metric: Metric) => ({
-      metricName: metric.metricName as MetricName,
-      count: metric.count,
-      weightedAverage: metric.weightedAverage,
+    metrics: (aggregated.metrics ?? []).map((metric: Metric) => {
+      const categories = (metric.categories ?? []).map(
+        (category: Category) => ({
+          value: category.value,
+          count: clampCount(category.count),
+        })
+      );
 
-      categories: metric.categories.map((category: Category) => ({
-        value: category.value,
-        count: category.count,
-      })),
-    })),
+      const totalCount = categories.reduce(
+        (sum, category) => sum + category.count,
+        0
+      );
+      const weightedSum = categories.reduce(
+        (sum, category) =>
+          sum +
+          category.count *
+            (typeof category.value === "number" ? category.value : 0),
+        0
+      );
+      const sanitizedCount = Math.max(totalCount, clampCount(metric.count));
+
+      return {
+        metricName: metric.metricName as MetricName,
+        count: sanitizedCount,
+        weightedAverage: totalCount > 0 ? weightedSum / totalCount : 0,
+        categories,
+      };
+    }),
   };
 };
 
@@ -74,6 +99,6 @@ export const formatSemesterRatings = (semesters: any[]): SemesterRatings[] => {
   return semesters.map((semester) => ({
     year: semester.year,
     semester: semester.semester as Semester,
-    maxMetricCount: semester.maxMetricCount,
+    maxMetricCount: clampCount(semester.maxMetricCount),
   }));
 };
