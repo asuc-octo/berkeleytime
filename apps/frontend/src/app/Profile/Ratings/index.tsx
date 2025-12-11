@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMutation } from "@apollo/client/react";
-import { Search } from "iconoir-react";
 import _ from "lodash";
-
-import { Grid } from "@repo/theme";
 
 import {
   DeleteRatingPopup,
   ErrorDialog,
+  SubmitRatingPopup,
 } from "@/components/Class/Ratings/RatingDialog";
 import UserFeedbackModal from "@/components/Class/Ratings/UserFeedbackModal";
 import {
@@ -24,8 +22,8 @@ import { useUserRatings } from "@/hooks/api/ratings";
 import { IUserRatingClass } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
-  CreateRatingDocument,
-  DeleteRatingDocument,
+  CreateRatingsDocument,
+  DeleteRatingsDocument,
   GetClassDocument,
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
@@ -34,19 +32,20 @@ import {
 } from "@/lib/generated/graphql";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
-import { RatingCard } from "./RatingCard";
-import styles from "./Ratings.module.scss";
+import profileStyles from "../Profile.module.scss";
+import { AddRatingCard, RatingCard } from "./RatingCard";
 
 export default function Ratings() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [ratingForEdit, setRatingForEdit] = useState<IUserRatingClass | null>(
     null
   );
   const [ratingForDelete, setRatingForDelete] =
     useState<IUserRatingClass | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditThankYouOpen, setIsEditThankYouOpen] = useState(false);
+  const [isAddThankYouOpen, setIsAddThankYouOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
   const [courseQuery, setCourseQuery] = useState<{
@@ -55,16 +54,20 @@ export default function Ratings() {
   } | null>(null);
 
   const { ratings, loading, error } = useUserRatings();
-  const [createRatingMutation] = useMutation(CreateRatingDocument);
-  const [deleteRatingMutation] = useMutation(DeleteRatingDocument);
+  const [createRatingsMutation] = useMutation(CreateRatingsDocument);
+  const [deleteRatingsMutation] = useMutation(DeleteRatingsDocument);
 
-  const { data: selectedCourse } = useReadCourseWithInstructor(
-    courseQuery?.subject ?? "",
-    courseQuery?.courseNumber ?? "",
-    {
-      skip: !courseQuery,
-    }
-  );
+  const [pendingEditRating, setPendingEditRating] =
+    useState<IUserRatingClass | null>(null);
+
+  const { data: selectedCourse, loading: courseLoading } =
+    useReadCourseWithInstructor(
+      courseQuery?.subject ?? "",
+      courseQuery?.courseNumber ?? "",
+      {
+        skip: !courseQuery,
+      }
+    );
 
   // Preload rating links when ratings are available
   useEffect(() => {
@@ -84,17 +87,20 @@ export default function Ratings() {
     };
   }, [ratings]);
 
-  const filteredRatings = useMemo(() => {
-    if (!ratings) return [];
-    if (!searchQuery.trim()) return ratings;
-
-    const query = searchQuery.toLowerCase().trim();
-    return ratings.filter((rating) => {
-      const searchableText =
-        `${rating.subject} ${rating.courseNumber} ${rating.semester} ${rating.year}`.toLowerCase();
-      return searchableText.includes(query);
-    });
-  }, [ratings, searchQuery]);
+  const userRatedClasses = useMemo(() => {
+    const seen = new Set<string>();
+    return ratings
+      .map((rating) => ({
+        subject: rating.subject,
+        courseNumber: rating.courseNumber,
+      }))
+      .filter((cls) => {
+        const key = `${cls.subject}-${cls.courseNumber}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+  }, [ratings]);
 
   const availableTerms = useMemo(() => {
     if (!selectedCourse?.classes) return [];
@@ -110,15 +116,17 @@ export default function Ratings() {
         return true;
       })
       .map((c) => {
+        const value = `${c.semester} ${c.year} ${c.number}`;
         return {
-          value: `${c.semester} ${c.year} ${c.number}`,
+          value,
           label: `${c.semester} ${c.year} ${formatInstructorText(c.primarySection)}`,
           semester: c.semester as Semester,
           year: c.year,
+          classNumber: c.number,
         };
       });
 
-    return _.uniqBy(courseTerms, (term) => term.label);
+    return _.uniqBy(courseTerms, (term) => term.value);
   }, [selectedCourse]);
 
   const currentClassForModal = useMemo(() => {
@@ -133,12 +141,11 @@ export default function Ratings() {
   }, [ratingForEdit]);
 
   const handleEditClick = useCallback((rating: IUserRatingClass) => {
-    setRatingForEdit(rating);
+    setPendingEditRating(rating);
     setCourseQuery({
       subject: rating.subject,
       courseNumber: rating.courseNumber,
     });
-    setIsEditModalOpen(true);
   }, []);
 
   const handleDeleteClick = useCallback((rating: IUserRatingClass) => {
@@ -148,6 +155,14 @@ export default function Ratings() {
 
   const closeEditModal = useCallback(() => {
     setIsEditModalOpen(false);
+  }, []);
+
+  const openAddModal = useCallback(() => {
+    setIsAddModalOpen(true);
+  }, []);
+
+  const closeAddModal = useCallback(() => {
+    setIsAddModalOpen(false);
   }, []);
 
   const closeDeleteModal = useCallback(() => {
@@ -189,36 +204,72 @@ export default function Ratings() {
   const handleSubmitEdit = useCallback(
     async (
       metricValues: MetricData,
-      termInfo: { semester: Semester; year: number }
+      termInfo: { semester: Semester; year: number },
+      courseInfo: { subject: string; courseNumber: string; classNumber: string }
     ) => {
       if (!ratingForEdit) return;
-      try {
-        await submitRatingHelper({
-          metricValues,
-          termInfo,
-          createRatingMutation,
-          deleteRatingMutation,
-          classIdentifiers: {
-            subject: ratingForEdit.subject,
-            courseNumber: ratingForEdit.courseNumber,
-            number: ratingForEdit.classNumber,
-          },
-          currentRatings: ratingForEdit,
-          refetchQueries: buildRefetchQueries(ratingForEdit),
-        });
-      } catch (err) {
-        const message = getRatingErrorMessage(err);
-        setErrorMessage(message);
-        setIsErrorDialogOpen(true);
-      }
+
+      const refetchTarget = {
+        ...ratingForEdit,
+        subject: courseInfo.subject,
+        courseNumber: courseInfo.courseNumber,
+        classNumber: courseInfo.classNumber,
+        semester: termInfo.semester,
+        year: termInfo.year,
+      } as IUserRatingClass;
+
+      await submitRatingHelper({
+        metricValues,
+        termInfo,
+        createRatingsMutation,
+        classIdentifiers: {
+          subject: courseInfo.subject,
+          courseNumber: courseInfo.courseNumber,
+          number: courseInfo.classNumber,
+        },
+        refetchQueries: buildRefetchQueries(refetchTarget),
+      });
     },
-    [
-      ratingForEdit,
-      createRatingMutation,
-      deleteRatingMutation,
-      buildRefetchQueries,
-    ]
+    [ratingForEdit, createRatingsMutation, buildRefetchQueries]
   );
+
+  const handleSubmitAdd = useCallback(
+    async (
+      metricValues: MetricData,
+      termInfo: { semester: Semester; year: number },
+      courseInfo: { subject: string; courseNumber: string; classNumber: string }
+    ) => {
+      const refetchTarget = {
+        subject: courseInfo.subject,
+        courseNumber: courseInfo.courseNumber,
+        classNumber: courseInfo.classNumber,
+        semester: termInfo.semester,
+        year: termInfo.year,
+      } as IUserRatingClass;
+
+      await submitRatingHelper({
+        metricValues,
+        termInfo,
+        createRatingsMutation,
+        classIdentifiers: {
+          subject: courseInfo.subject,
+          courseNumber: courseInfo.courseNumber,
+          number: courseInfo.classNumber,
+        },
+        refetchQueries: buildRefetchQueries(refetchTarget),
+      });
+    },
+    [createRatingsMutation, buildRefetchQueries]
+  );
+
+  // Open modal when course data is ready
+  useEffect(() => {
+    if (pendingEditRating && selectedCourse && !courseLoading) {
+      setRatingForEdit(pendingEditRating);
+      setIsEditModalOpen(true);
+      setPendingEditRating(null);
+    }
+  }, [pendingEditRating, selectedCourse, courseLoading]);
 
   useEffect(() => {
     if (!isEditModalOpen && !isEditThankYouOpen) {
@@ -231,8 +282,7 @@ export default function Ratings() {
     if (!ratingForDelete) return;
     try {
       await deleteRatingHelper({
-        userRating: ratingForDelete,
-        deleteRatingMutation,
+        deleteRatingsMutation,
         classIdentifiers: {
           subject: ratingForDelete.subject,
           courseNumber: ratingForDelete.courseNumber,
@@ -248,63 +298,72 @@ export default function Ratings() {
     }
   }, [
     ratingForDelete,
-    deleteRatingMutation,
+    deleteRatingsMutation,
     buildRefetchQueries,
     closeDeleteModal,
   ]);
 
   return (
-    <div>
-      <h1>Your Ratings</h1>
-      <div className={styles.root}>
-        <div className={styles.searchGroup}>
-          <label htmlFor="ratingsSearch" className={styles.searchIcon}>
-            <Search />
-          </label>
-          <input
-            id="ratingsSearch"
-            className={styles.searchInput}
-            type="text"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Search Ratings..."
-            autoComplete="off"
-          />
+    <div className={profileStyles.contentInner}>
+      <h1 className={profileStyles.pageTitle}>Ratings</h1>
+      <div className={profileStyles.pageContent}>
+        <div className={profileStyles.ratingsSection}>
+          <div className={profileStyles.ratingsHeader}>
+            <h2 className={profileStyles.sectionTitle}>Rated classes</h2>
+            <button
+              className={profileStyles.addRatingButton}
+              onClick={openAddModal}
+            >
+              Add Rating
+            </button>
+          </div>
+          {loading && <p>Loading your ratings...</p>}
+          {error && <p>Error loading ratings: {error.message}</p>}
+          {ratings.map((rating) => (
+            <RatingCard
+              key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
+              rating={rating}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          ))}
+          <AddRatingCard onClick={openAddModal} />
         </div>
-
-        {loading && <p>Loading your ratings...</p>}
-        {error && <p>Error loading ratings: {error.message}</p>}
-        {filteredRatings.length === 0 && searchQuery && !loading && (
-          <p>No ratings found matching "{searchQuery}"</p>
-        )}
-        {filteredRatings.length > 0 && (
-          <Grid
-            gap="17px"
-            width="100%"
-            columns="repeat(auto-fit, 345px)"
-            style={{ marginBottom: 40 }}
-          >
-            {filteredRatings.map((rating) => (
-              <RatingCard
-                key={`${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`}
-                rating={rating}
-                onEdit={handleEditClick}
-                onDelete={handleDeleteClick}
-              />
-            ))}
-          </Grid>
-        )}
       </div>
       {ratingForEdit && currentClassForModal && (
         <UserFeedbackModal
           isOpen={isEditModalOpen}
           onClose={closeEditModal}
           title="Edit Rating"
-          currentClass={currentClassForModal}
+          subtitle=""
+          showSelectedCourseSubtitle={false}
+          initialCourse={
+            currentClassForModal
+              ? {
+                  subject: currentClassForModal.subject,
+                  number: currentClassForModal.courseNumber,
+                  courseId: "",
+                }
+              : null
+          }
           availableTerms={availableTerms}
-          onSubmit={handleSubmitEdit}
+          onSubmit={async (metricValues, termInfo, courseInfo) => {
+            await handleSubmitEdit(metricValues, termInfo, courseInfo);
+          }}
           initialUserClass={ratingForEdit}
           onSubmitPopupChange={setIsEditThankYouOpen}
+          userRatedClasses={userRatedClasses}
+          disableRatedCourses={false}
+          lockedCourse={{
+            subject: currentClassForModal.subject,
+            number: currentClassForModal.courseNumber,
+            courseId: "",
+          }}
+          onError={(error) => {
+            const message = getRatingErrorMessage(error);
+            setErrorMessage(message);
+            setIsErrorDialogOpen(true);
+          }}
         />
       )}
       <DeleteRatingPopup
@@ -316,6 +375,30 @@ export default function Ratings() {
         isOpen={isErrorDialogOpen}
         onClose={() => setIsErrorDialogOpen(false)}
         errorMessage={errorMessage}
+      />
+      <SubmitRatingPopup
+        isOpen={isEditThankYouOpen}
+        onClose={() => setIsEditThankYouOpen(false)}
+      />
+      <UserFeedbackModal
+        isOpen={isAddModalOpen}
+        onClose={closeAddModal}
+        title="Add Rating"
+        subtitle=""
+        showSelectedCourseSubtitle={false}
+        onSubmit={handleSubmitAdd}
+        onSubmitPopupChange={setIsAddThankYouOpen}
+        userRatedClasses={userRatedClasses}
+        disableRatedCourses={true}
+        onError={(error) => {
+          const message = getRatingErrorMessage(error);
+          setErrorMessage(message);
+          setIsErrorDialogOpen(true);
+        }}
+      />
+      <SubmitRatingPopup
+        isOpen={isAddThankYouOpen}
+        onClose={() => setIsAddThankYouOpen(false)}
       />
     </div>
   );

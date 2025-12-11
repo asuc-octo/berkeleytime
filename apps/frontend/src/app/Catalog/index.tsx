@@ -1,19 +1,34 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import classNames from "classnames";
-import { NavArrowRight, Xmark } from "iconoir-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { Flex, IconButton } from "@repo/theme";
+import { Flex } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
-import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
+import CatalogSkeleton from "./Skeleton";
+
+const useIsDesktop = () => {
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(width > 992px)");
+    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  return isDesktop;
+};
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
 const SEMESTER_ORDER: Record<Semester, number> = {
@@ -35,8 +50,12 @@ export default function Catalog() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(false);
-  const [showFloatingButton, setShowFloatingButton] = useState(false);
+  const isDesktop = useIsDesktop();
+  const hasClassSelected = Boolean(providedSubject && courseNumber && number);
+
+  const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(
+    () => !isDesktop && !hasClassSelected
+  );
 
   const { data: terms, loading: termsLoading } = useReadTerms();
 
@@ -89,9 +108,16 @@ export default function Catalog() {
     [providedSubject]
   );
 
-  const { data: _class, loading: classLoading } = useReadClass(
+  // Auto-expand drawer on mobile when no class is selected
+  useEffect(() => {
+    if (!isDesktop && !hasClassSelected) {
+      setCatalogDrawerOpen(true);
+    }
+  }, [isDesktop, hasClassSelected]);
+
+  const { data: _class, error: classError } = useGetClass(
     term?.year as number,
-    term?.semester,
+    term?.semester as Semester,
     subject as string,
     courseNumber as string,
     number as string,
@@ -100,8 +126,12 @@ export default function Catalog() {
     }
   );
 
-  // Course data is already included in _class via the backend resolver
-  const _course = _class?.course;
+  // Keep reference to last valid class to prevent blank frames during transitions
+  const lastClassRef = useRef(_class);
+  if (_class) {
+    lastClassRef.current = _class;
+  }
+  const displayedClass = _class ?? lastClassRef.current;
 
   const handleSelect = useCallback(
     (subject: string, courseNumber: string, number: string) => {
@@ -117,30 +147,8 @@ export default function Catalog() {
     [navigate, location, term]
   );
 
-  // Handle mouse movement for floating button on mobile
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      // Only show on mobile
-      if (window.innerWidth > 992) {
-        setShowFloatingButton(false);
-        return;
-      }
-
-      // Expand button when cursor is within 60px of left edge (covers peeking button)
-      setShowFloatingButton(e.clientX < 60);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   if (termsLoading) {
-    return (
-      <div className={styles.loading}>
-        <div className={styles.loadingHeader} />
-        <div className={styles.loadingBody} />
-      </div>
-    );
+    return <CatalogSkeleton />;
   }
 
   // TODO: Error state
@@ -151,17 +159,9 @@ export default function Catalog() {
   // TODO: Class error state, class loading state
   return (
     <div className={styles.root}>
-      {/* Desktop: Static panel */}
-      <div className={styles.panel}>
-        <div className={styles.header}>
-          <p className={styles.title}>
-            {term.semester} {term.year}
-          </p>
-          <IconButton onClick={() => {}}>
-            <Xmark />
-          </IconButton>
-        </div>
-        <div className={styles.body}>
+      {isDesktop ? (
+        // Desktop: Static panel
+        <div className={styles.panel}>
           <ClassBrowser
             onSelect={handleSelect}
             semester={term.semester}
@@ -170,49 +170,52 @@ export default function Catalog() {
             persistent
           />
         </div>
-      </div>
-
-      {/* Mobile: Drawer overlay */}
-      <div
-        className={classNames(styles.catalogDrawer, {
-          [styles.drawerOpen]: catalogDrawerOpen,
-        })}
-      >
-        <ClassBrowser
-          onSelect={handleSelect}
-          semester={term.semester}
-          year={term.year}
-          terms={terms}
-          persistent
-        />
-      </div>
-      {catalogDrawerOpen && (
-        <div
-          className={styles.overlay}
-          onClick={() => setCatalogDrawerOpen(false)}
-        />
+      ) : (
+        // Mobile: Drawer overlay
+        <>
+          <AnimatePresence>
+            {catalogDrawerOpen && (
+              <motion.div
+                className={styles.overlay}
+                onClick={() => setCatalogDrawerOpen(false)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              />
+            )}
+          </AnimatePresence>
+          <motion.div
+            className={styles.catalogDrawer}
+            animate={{ x: catalogDrawerOpen ? 0 : "-100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          >
+            <ClassBrowser
+              onSelect={handleSelect}
+              semester={term.semester}
+              year={term.year}
+              terms={terms}
+              persistent
+            />
+          </motion.div>
+        </>
       )}
 
-      {/* Floating button to open catalog on mobile */}
-      <button
-        className={classNames(styles.floatingButton, {
-          [styles.visible]: showFloatingButton,
-        })}
-        onClick={() => setCatalogDrawerOpen(true)}
-        aria-label="Open catalog"
-      >
-        <NavArrowRight />
-      </button>
+      {!isDesktop && (
+        <div
+          className={styles.drawerTrigger}
+          onClick={() => setCatalogDrawerOpen(true)}
+        >
+          {!catalogDrawerOpen && <NavArrowRight />}
+        </div>
+      )}
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {classLoading ? (
-          <div className={styles.loading}>
-            <div className={styles.loadingHeader} />
-            <div className={styles.loadingBody} />
+        {displayedClass && !classError && (
+          <div className={styles.classContainer}>
+            <Class class={displayedClass} />
           </div>
-        ) : _class && _course ? (
-          <Class class={_class} course={_course} />
-        ) : null}
+        )}
       </Flex>
     </div>
   );

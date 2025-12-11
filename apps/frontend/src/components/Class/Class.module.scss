@@ -6,12 +6,6 @@
   background-color: var(--foreground-color);
   border-bottom: 1px solid var(--border-color);
 
-  .bookmark.active {
-    color: var(--blue-500);
-    border-color: color-mix(in srgb, currentColor 10%, transparent);
-    background-color: color-mix(in srgb, currentColor 10%, transparent);
-  }
-
   .heading {
     font-size: 24px;
     font-weight: 660;
@@ -29,9 +23,23 @@
   }
 
   .description {
-    font-size: 16px;
+    font-size: var(--text-16);
     line-height: 1.5;
     color: var(--secondary-color);
+  }
+
+  .reservedSeatingBadgeContainer {
+    height: 0;
+    position: relative;
+    align-self: center;
+
+    > * {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translateY(-50%);
+      white-space: nowrap;
+    }
   }
 
   .badge {
@@ -55,23 +63,6 @@
     right: -6px;
     top: 1px;
     background-color: var(--blue-500);
-  }
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-
-  .loadingHeader {
-    height: 238.5px;
-    background-color: var(--foreground-color);
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .loadingBody {
-    flex-grow: 1;
-    background-color: var(--background-color);
   }
 }
 

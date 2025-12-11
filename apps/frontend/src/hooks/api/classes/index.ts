@@ -1,1 +1,1 @@
-export * from "./useReadClass";
+export * from "./useGetClass";

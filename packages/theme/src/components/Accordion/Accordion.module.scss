@@ -1,57 +1,95 @@
 .accordion {
-  max-width: 512px;
-  margin: 64px auto;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+}
 
-  details {
-    appearance: none;
+.item {
+  border-bottom: 1px solid var(--border-color);
 
-    &:not(:last-child) {
-      padding-bottom: 32px;
-      border-bottom: 1px solid var(--neutral-700);
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.header {
+  display: flex;
+}
+
+.trigger {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  font-size: var(--text-18);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 150ms ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &[data-state="open"] .icon {
+    transform: rotate(180deg);
+  }
+}
+
+.icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--paragraph-color);
+  transition: transform 200ms ease;
+}
+
+.content {
+  overflow: hidden;
+
+  &[data-state="open"] {
+    animation: slideDown 200ms ease-out;
+  }
+
+  &[data-state="closed"] {
+    animation: slideUp 200ms ease-out;
+  }
+}
+
+.contentInner {
+  padding-bottom: 16px;
+  font-size: var(--text-16);
+  line-height: 1.6;
+  color: var(--paragraph-color);
+
+  a {
+    color: var(--blue-500);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--blue-hover);
     }
+  }
+}
 
-    &:not([open]) summary > :last-child {
-      display: none;
-    }
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
 
-    &[open] summary > :nth-last-child(2) {
-      display: none;
-    }
-
-    .content {
-      margin-top: 24px;
-      font-size: 16px;
-      line-height: 1.5;
-      color: var(--neutral-500);
-    }
-
-    summary {
-      color: var(--neutral-500);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-
-      &:hover .title {
-        color: var(--neutral-300);
-      }
-
-      .title {
-        font-size: 24px;
-        font-weight: 660;
-        font-feature-settings:
-          "cv05" on,
-          "cv13" on,
-          "ss07" on,
-          "cv12" on,
-          "cv06" on;
-        line-height: 1.25;
-        color: white;
-        transition: all 100ms ease-in-out;
-      }
-    }
+@keyframes slideUp {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
   }
 }

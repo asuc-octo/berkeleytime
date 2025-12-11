@@ -49,7 +49,7 @@
 
     .heading {
       color: var(--heading-color);
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       line-height: 1;
       font-weight: 660;
       font-size: var(--text-16);
@@ -93,5 +93,4 @@
 }
 .disabled {
   filter: grayscale(100%);
-  background-color: var(--background-color);
 }

@@ -10,48 +10,57 @@ import styles from "./Overview.module.scss";
 import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
-  const { class: _class } = useClass();
+  const { class: _class, course } = useClass();
+
+  const sectionAttributes = useMemo(
+    () => _class.primarySection?.sectionAttributes ?? [],
+    [_class.primarySection?.sectionAttributes]
+  );
 
   const prereqs = useMemo(() => {
-    if (_class.course.requirements && _class.course.requirements.trim()) {
-      return _class.course.requirements;
+    if (course.requirements && course.requirements.trim()) {
+      return course.requirements;
     }
-    const requiredCourses = _class.course.requiredCourses;
-    if (requiredCourses == null || requiredCourses.length === 0) {
-      return null;
-    }
-    return requiredCourses
-      .map((course) => `${course.subject} ${course.number}`)
-      .join(", ");
-  }, [_class]);
+    return null;
+  }, [course.requirements]);
 
-  const classNoteLines = useMemo(() => {
-    const attributes = _class.primarySection?.sectionAttributes ?? [];
-    if (!attributes.length) return null;
-
-    const noteAttribute = attributes.find(
-      (attribute) => attribute.attribute?.code === "NOTE"
+  const classDescription = useMemo(() => {
+    const classDescriptionAttribute = sectionAttributes.find(
+      (attribute) =>
+        attribute.attribute?.code === "NOTE" &&
+        attribute.attribute?.formalDescription === "Class Description"
     );
 
     const text =
-      noteAttribute?.value?.formalDescription?.trim() ??
-      noteAttribute?.value?.description?.trim() ??
+      classDescriptionAttribute?.value?.formalDescription?.trim() ??
+      classDescriptionAttribute?.value?.description?.trim() ??
+      null;
+
+    return text ?? course.description ?? "";
+  }, [course.description, sectionAttributes]);
+
+  const classNoteLines = useMemo(() => {
+    if (!sectionAttributes.length) return null;
+
+    const classNotesAttribute = sectionAttributes.find(
+      (attribute) =>
+        attribute.attribute?.code === "NOTE" &&
+        attribute.attribute?.formalDescription === "Class Notes"
+    );
+
+    const text =
+      classNotesAttribute?.value?.formalDescription?.trim() ??
+      classNotesAttribute?.value?.description?.trim() ??
       null;
 
     if (!text) return null;
 
-    // Get the description and title for comparison
-    const description = (
-      _class.description ??
-      _class.course.description ??
-      ""
-    ).trim();
+    const normalize = (value: string): string =>
+      value.replace(/\s+/g, " ").trim();
 
-    const title = (_class.title ?? _class.course.title ?? "").trim();
-
-    const normalizedNoteText = text.replace(/\s+/g, " ").trim();
-    const normalizedDescription = description.replace(/\s+/g, " ").trim();
-    const normalizedTitle = title.replace(/\s+/g, " ").trim();
+    const normalizedNoteText = normalize(text);
+    const normalizedDescription = normalize(classDescription ?? "");
+    const normalizedTitle = normalize(course.title ?? "");
 
     if (
       normalizedNoteText === normalizedDescription ||
@@ -64,13 +73,12 @@ export default function Overview() {
       .split(/\n+/)
       .map((line) => line.trim())
       .filter(Boolean);
-  }, [
-    _class.primarySection?.sectionAttributes,
-    _class.description,
-    _class.course.description,
-    _class.title,
-    _class.course.title,
-  ]);
+  }, [classDescription, course.title, sectionAttributes]);
+
+  const displayedDescription = useMemo(() => {
+    const trimmed = classDescription.trim();
+    return trimmed.length > 0 ? trimmed : "No description provided.";
+  }, [classDescription]);
 
   return (
     <Box p="5">
@@ -87,9 +95,7 @@ export default function Overview() {
           )}
           <Flex direction="column" gap="2">
             <p className={styles.label}>Description</p>
-            <p className={styles.description}>
-              {_class.description ?? _class.course.description}
-            </p>
+            <p className={styles.description}>{displayedDescription}</p>
           </Flex>
           {classNoteLines && classNoteLines.length > 0 && (
             <Flex direction="column" gap="2">

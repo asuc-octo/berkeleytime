@@ -1,0 +1,25 @@
+.body {
+  form {
+    width: 100%;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.label {
+  font-size: var(--text-12);
+  font-weight: var(--font-medium);
+  color: var(--label-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.error {
+  font-size: var(--text-12);
+  color: var(--red-500);
+}

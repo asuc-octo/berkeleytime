@@ -1,9 +1,7 @@
-import { MutationFunction } from "@apollo/client";
 import { DocumentNode } from "graphql";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 
-import { IUserRatingClass } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
 import { MetricData } from "./metricsUtil";
@@ -21,36 +19,31 @@ type RefetchQuery = {
   variables?: Record<string, unknown>;
 };
 
+type MutationFn = (options: {
+  variables: Record<string, unknown>;
+  refetchQueries?: RefetchQuery[];
+  awaitRefetchQueries?: boolean;
+}) => Promise<unknown>;
+
 interface SubmitRatingOptions {
   metricValues: MetricData;
   termInfo: { semester: Semester; year: number };
-  createRatingMutation: MutationFunction<any, any>;
-  deleteRatingMutation: MutationFunction<any, any>;
+  createRatingsMutation: MutationFn;
   classIdentifiers: ClassIdentifiers;
-  currentRatings?: IUserRatingClass | null;
   refetchQueries?: RefetchQuery[];
 }
 
 export async function submitRating({
   metricValues,
   termInfo,
-  createRatingMutation,
-  deleteRatingMutation,
+  createRatingsMutation,
   classIdentifiers,
-  currentRatings,
   refetchQueries = [],
 }: SubmitRatingOptions) {
-  const populatedMetrics = METRIC_NAMES.filter((metricName) => {
-    const value = metricValues[metricName];
-    return value !== null && value !== undefined;
-  });
-
-  if (populatedMetrics.length === 0) {
-    throw new Error("No populated metrics");
-  }
-
+  // Validate required metrics are present
   const missingRequiredMetrics = REQUIRED_METRICS.filter(
-    (metric) => !populatedMetrics.includes(metric)
+    (metric) =>
+      metricValues[metric] === null || metricValues[metric] === undefined
   );
   if (missingRequiredMetrics.length > 0) {
     throw new Error(
@@ -58,90 +51,49 @@ export async function submitRating({
     );
   }
 
-  await Promise.all(
-    METRIC_NAMES.map((metric) => {
-      const value = metricValues[metric];
-      if (!populatedMetrics.includes(metric)) {
-        const metricExists = currentRatings?.metrics?.some(
-          (m) => m.metricName === metric
-        );
-        if (metricExists) {
-          return deleteRatingMutation({
-            variables: {
-              subject: classIdentifiers.subject,
-              courseNumber: classIdentifiers.courseNumber,
-              semester: termInfo.semester,
-              year: termInfo.year,
-              classNumber: classIdentifiers.number,
-              metricName: metric,
-            },
-            refetchQueries,
-            awaitRefetchQueries: true,
-          });
-        }
-        return Promise.resolve();
-      }
+  const metrics = METRIC_NAMES.filter(
+    (metric) =>
+      metricValues[metric] !== null && metricValues[metric] !== undefined
+  ).map((metric) => ({
+    metricName: metric,
+    value: metricValues[metric] as number,
+  }));
 
-      if (
-        currentRatings?.semester === termInfo.semester &&
-        currentRatings?.year === termInfo.year
-      ) {
-        const currentMetric = currentRatings.metrics.find(
-          (m) => m.metricName === metric
-        );
-        if (currentMetric?.value === value) {
-          return Promise.resolve();
-        }
-      }
+  if (metrics.length === 0) {
+    throw new Error("No populated metrics");
+  }
 
-      if (value === undefined) {
-        return Promise.resolve();
-      }
-
-      return createRatingMutation({
-        variables: {
-          subject: classIdentifiers.subject,
-          courseNumber: classIdentifiers.courseNumber,
-          semester: termInfo.semester,
-          year: termInfo.year,
-          classNumber: classIdentifiers.number,
-          metricName: metric,
-          value,
-        },
-        refetchQueries,
-        awaitRefetchQueries: true,
-      });
-    })
-  );
+  await createRatingsMutation({
+    variables: {
+      subject: classIdentifiers.subject,
+      courseNumber: classIdentifiers.courseNumber,
+      semester: termInfo.semester,
+      year: termInfo.year,
+      classNumber: classIdentifiers.number,
+      metrics,
+    },
+    refetchQueries,
+    awaitRefetchQueries: true,
+  });
 }
 
 interface DeleteRatingOptions {
-  userRating: IUserRatingClass;
-  deleteRatingMutation: MutationFunction<any, any>;
+  deleteRatingsMutation: MutationFn;
   classIdentifiers: ClassIdentifiers;
   refetchQueries?: RefetchQuery[];
 }
 
 export async function deleteRating({
-  userRating,
-  deleteRatingMutation,
+  deleteRatingsMutation,
   classIdentifiers,
   refetchQueries = [],
 }: DeleteRatingOptions) {
-  await Promise.all(
-    userRating.metrics.map((metric) =>
-      deleteRatingMutation({
-        variables: {
-          subject: classIdentifiers.subject,
-          courseNumber: classIdentifiers.courseNumber,
-          semester: userRating.semester,
-          year: userRating.year,
-          classNumber: classIdentifiers.number,
-          metricName: metric.metricName,
-        },
-        refetchQueries,
-        awaitRefetchQueries: true,
-      })
-    )
-  );
+  await deleteRatingsMutation({
+    variables: {
+      subject: classIdentifiers.subject,
+      courseNumber: classIdentifiers.courseNumber,
+    },
+    refetchQueries,
+    awaitRefetchQueries: true,
+  });
 }

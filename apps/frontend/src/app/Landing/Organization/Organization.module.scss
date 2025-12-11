@@ -1,79 +1,62 @@
+$breakpoint: 660px;
+
 .root {
-  .heading {
-    font-size: 48px;
-    color: white;
-    font-weight: 660;
-    font-feature-settings:
-      "cv05" on,
-      "cv13" on,
-      "ss07" on,
-      "cv12" on,
-      "cv06" on;
-    line-height: 1.25;
-    position: relative;
-    text-align: center;
+  background-color: var(--foreground-color);
+}
 
-    @media (width <= 768px) {
-      font-size: 32px;
-      line-height: 1.5;
-    }
-  }
+.wrapper {
+  padding: 0 40px;
+}
 
-  .accordion {
-    max-width: 512px;
-    margin: 64px auto;
-    display: flex;
+.getInvolvedBox {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  font-size: var(--text-18);
+  padding: 40px 0;
+  box-sizing: border-box;
+
+  @media (max-width: $breakpoint) {
     flex-direction: column;
-    gap: 32px;
+    gap: 16px;
+  }
+}
 
-    details {
-      appearance: none;
+.getInvolvedTitle {
+  flex: 1;
+  min-width: 180px;
 
-      &:not(:last-child) {
-        padding-bottom: 32px;
-        border-bottom: 1px solid var(--neutral-700);
-      }
+  @media (max-width: $breakpoint) {
+    min-width: unset;
+  }
+}
 
-      &:not([open]) summary > :last-child {
-        display: none;
-      }
+.heading {
+  color: var(--heading-color);
+  font-size: 32px;
+  font-weight: var(--font-medium);
+  line-height: 1.25;
+}
 
-      &[open] summary > :nth-last-child(2) {
-        display: none;
-      }
+.description {
+  margin-top: 8px;
+  max-width: 400px;
+  font-size: var(--text-16);
+  color: var(--paragraph-color);
+  line-height: 1.5;
 
-      .content {
-        margin-top: 24px;
-        font-size: 14px;
-        line-height: 1.5;
-        color: var(--neutral-500);
-      }
+  @media (max-width: $breakpoint) {
+    display: none;
+  }
+}
 
-      summary {
-        color: var(--neutral-500);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
+.accordion {
+  flex: 1;
+  max-width: 680px;
 
-        &:hover .title {
-          color: var(--neutral-300);
-        }
-
-        .title {
-          font-size: 24px;
-          font-weight: 660;
-          font-feature-settings:
-            "cv05" on,
-            "cv13" on,
-            "ss07" on,
-            "cv12" on,
-            "cv06" on;
-          line-height: 1.25;
-          color: white;
-          transition: all 100ms ease-in-out;
-        }
-      }
-    }
+  @media (max-width: $breakpoint) {
+    max-width: 100%;
   }
 }

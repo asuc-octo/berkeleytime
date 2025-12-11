@@ -1,17 +1,46 @@
 .root {
   display: inline-block;
-  border-radius: 2px;
-  aspect-ratio: 1;
   flex-shrink: 0;
 
+  // Sizes
   &[data-size="sm"] {
-    width: 12px;
+    width: 8px;
+    height: 8px;
   }
 
   &[data-size="md"] {
-    width: 16px;
+    width: 12px;
+    height: 12px;
   }
+
   &[data-size="lg"] {
-    width: 20px;
+    width: 16px;
+    height: 16px;
+  }
+
+  // Variants
+  &[data-variant="square"] {
+    border-radius: 2px;
+  }
+
+  &[data-variant="circle"],
+  &[data-variant="dot"] {
+    border-radius: 50%;
+  }
+
+  &[data-variant="line"] {
+    width: 16px;
+    height: 3px;
+    border-radius: 1.5px;
+
+    &[data-size="sm"] {
+      width: 12px;
+      height: 2px;
+    }
+
+    &[data-size="lg"] {
+      width: 20px;
+      height: 4px;
+    }
   }
 }

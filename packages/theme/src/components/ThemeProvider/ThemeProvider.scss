@@ -290,6 +290,7 @@
   --rose-950: #4c0519;
 
   // Font sizes (rem based on 16px base)
+  --text-12: 0.75rem; // 12px
   --text-14: 0.875rem; // 14px
   --text-16: 1rem; // 16px
   --text-18: 1.125rem; // 18px
@@ -331,7 +332,7 @@
   --light-cancel-hover-color: var(--red-600);
   --light-cancel-accent-color: white;
 
-  --dark-foreground-color: var(--zinc-800);
+  --dark-foreground-color: var(--zinc-900);
   --dark-background-color: var(--zinc-900);
   --dark-backdrop-color: var(--zinc-950);
 
@@ -345,8 +346,8 @@
   --dark-label-color: var(--zinc-500);
 
   // --dark-button-color: var(--zinc-800);
-  --dark-button-hover-color: var(--zinc-700);
-  --dark-button-active-color: var(--zinc-600);
+  --dark-button-hover-color: var(--zinc-800);
+  --dark-button-active-color: var(--zinc-700);
 
   --dark-tooltip-color: var(--zinc-950);
   --dark-tooltip-heading-color: white;
@@ -380,6 +381,8 @@
   --cancel-color: var(--light-cancel-color);
   --cancel-hover-color: var(--light-cancel-hover-color);
   --cancel-accent-color: var(--light-cancel-accent-color);
+
+  --blue-hover: var(--blue-600);
 
   // badges
   --slate-badge: var(--slate-500);
@@ -431,6 +434,8 @@
   --cancel-hover-color: var(--dark-cancel-hover-color);
   --cancel-accent-color: var(--dark-cancel-accent-color);
 
+  --blue-hover: var(--blue-400);
+
   // badges
   --slate-badge: var(--slate-300);
   --gray-badge: var(--gray-300);
@@ -464,6 +469,15 @@ body[data-theme="light"] {
   @include light-theme;
 }
 
+// Allow any element to override theme with data-theme attribute
+[data-theme="dark"] {
+  @include dark-theme;
+}
+
+[data-theme="light"] {
+  @include light-theme;
+}
+
 body:not([data-theme]) {
   @include light-theme;
 
@@ -475,8 +489,23 @@ body:not([data-theme]) {
 body {
   background-color: var(--background-color);
   font-family: Inter, sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 
   @supports (font-variation-settings: normal) {
     font-family: InterVariable, sans-serif;
   }
+}
+
+// Apply transition to all elements that use theme colors
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    fill 0.3s ease,
+    stroke 0.3s ease;
 }

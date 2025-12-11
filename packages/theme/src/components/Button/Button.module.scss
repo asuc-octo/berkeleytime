@@ -7,13 +7,14 @@
   flex-shrink: 0;
   align-items: center;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   line-height: 1;
   cursor: pointer;
   gap: 8px;
   user-select: none;
   border: none;
   background: unset;
+  outline: none;
   transition:
     border-color 100ms ease-in-out,
     background-color 100ms ease-in-out,
@@ -29,7 +30,7 @@
     color: white;
 
     &:hover {
-      background-color: var(--blue-600);
+      background-color: var(--blue-hover);
     }
 
     &:active {
@@ -60,6 +61,10 @@
     &:active {
       background-color: var(--button-active-color);
     }
+
+    &:focus-visible {
+      border-color: var(--blue-500);
+    }
   }
   &[data-variant="secondary"][data-disabled] {
     opacity: 1;
@@ -73,7 +78,7 @@
 
     &:hover {
       background-color: var(--button-hover-color);
-      color: var(--blue-600);
+      color: var(--blue-hover);
     }
 
     &:active {

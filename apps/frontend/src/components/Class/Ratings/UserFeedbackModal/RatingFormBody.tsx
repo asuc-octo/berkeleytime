@@ -2,8 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 import { Flex, Select } from "@repo/theme";
 
-import CourseSearch from "@/components/CourseSearch";
-import { ICourse } from "@/lib/api";
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { Semester } from "@/lib/generated/graphql";
 
 import { MetricData } from "../metricsUtil";
@@ -20,71 +19,71 @@ interface Term {
 }
 
 interface QuestionNumbers {
-  classQuestionNumber: number | null;
+  classQuestionNumber: number;
   semesterQuestionNumber: number;
   ratingsStartNumber: number;
   attendanceStartNumber: number;
 }
 
 interface RatingFormBodyProps {
-  showCourseSelection: boolean;
-  selectedCourse: ICourse | null;
-  onCourseSelect: (course: ICourse | null) => void;
+  selectedCourse: CourseOption | null;
+  onCourseSelect: (course: CourseOption | null) => void;
   onCourseClear: () => void;
   selectedTerm: string | null;
   onTermSelect: (term: string | null) => void;
   termOptions: Term[];
+  termOptionsLoading?: boolean;
   metricData: MetricData;
   setMetricData: Dispatch<SetStateAction<MetricData>>;
   userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
   questionNumbers: QuestionNumbers;
+  disableRatedCourses?: boolean;
+  lockedCourse?: CourseOption | null;
 }
 
 export function RatingFormBody({
-  showCourseSelection,
   selectedCourse,
   onCourseSelect,
   onCourseClear,
   selectedTerm,
   onTermSelect,
   termOptions,
+  termOptionsLoading = false,
   metricData,
   setMetricData,
   userRatedClasses = [],
   questionNumbers,
+  disableRatedCourses = false,
+  lockedCourse = null,
 }: RatingFormBodyProps) {
   return (
     <Flex direction="column">
-      {showCourseSelection && (
-        <div className={styles.formGroup}>
-          <div className={styles.questionPair}>
-            <h3>
-              {questionNumbers.classQuestionNumber}. Which class are you rating?{" "}
-              <RequiredAsterisk />
-            </h3>
-            <div
-              style={{
-                width: 350,
-                margin: "0 auto",
+      <div className={styles.formGroup}>
+        <div className={styles.questionPair}>
+          <h3>
+            {questionNumbers.classQuestionNumber}. Which class are you rating?{" "}
+            <RequiredAsterisk />
+          </h3>
+          <div
+            style={{
+              width: 350,
+              margin: "0 auto",
+            }}
+          >
+            <CourseSelect
+              selectedCourse={selectedCourse}
+              onSelect={(course) => {
+                onCourseSelect(course);
               }}
-            >
-              <CourseSearch
-                selectedCourse={selectedCourse}
-                onSelect={(course) => {
-                  onCourseSelect(course as ICourse);
-                }}
-                onClear={onCourseClear}
-                minimal={true}
-                inputStyle={{
-                  height: 44,
-                  width: "100%",
-                }}
-                ratedCourses={userRatedClasses}
-              />
-            </div>
+              onClear={onCourseClear}
+              minimal={true}
+              ratedCourses={userRatedClasses}
+              disableRatedCourses={disableRatedCourses}
+              lockedCourse={lockedCourse}
+            />
           </div>
         </div>
-      )}
+      </div>
 
       <div className={styles.formGroup}>
         <div className={styles.questionPair}>
@@ -103,19 +102,19 @@ export function RatingFormBody({
                 value: term.value,
                 label: term.label,
               }))}
-              disabled={
-                (showCourseSelection && !selectedCourse) ||
-                (showCourseSelection &&
-                  !!selectedCourse &&
-                  termOptions.length === 0)
-              }
+              disabled={!selectedCourse || termOptionsLoading}
+              loading={termOptionsLoading}
               value={selectedTerm}
               onChange={(selectedOption) => {
                 if (Array.isArray(selectedOption)) onTermSelect(null);
                 else onTermSelect(selectedOption || null);
               }}
-              placeholder="Select semester"
+              placeholder={
+                selectedCourse ? "Select semester" : "Select a class first"
+              }
+              emptyMessage="No semesters found."
               clearable={true}
+              searchable={true}
             />
           </div>
         </div>

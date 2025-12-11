@@ -6,24 +6,38 @@ import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 
 import Banner from "./Banner";
-import Feedback from "./Feedback";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {
+  banner?: boolean;
   header?: boolean;
   footer?: boolean;
+  scrollLock?: boolean;
+  headerBorder?: boolean;
 }
 
-export default function Layout({ header = true, footer = true }: LayoutProps) {
+export default function Layout({
+  banner = true,
+  header = true,
+  footer = true,
+  scrollLock = false,
+  headerBorder = true,
+}: LayoutProps) {
   return (
     <Flex direction="column">
-      <Flex direction="column" className={styles.view}>
-        <Banner />
-        {header && <NavigationBar />}
+      <Flex
+        direction="column"
+        className={scrollLock ? styles.viewLocked : styles.view}
+      >
+        {(banner || header) && (
+          <div className={styles.stickyHeader}>
+            {banner && <Banner />}
+            {header && <NavigationBar noBorder={!headerBorder} />}
+          </div>
+        )}
         <Outlet />
       </Flex>
       {footer && <Footer />}
-      <Feedback />
     </Flex>
   );
 }

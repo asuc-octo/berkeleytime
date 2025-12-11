@@ -64,32 +64,33 @@
   color: var(--paragraph-color);
 }
 
-.placeholder {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  color: var(--label-color);
-  height: 100%;
-  font-size: var(--text-16);
-  font-weight: var(--font-normal);
-  line-height: 1.5;
-  padding: 24px 0;
-  padding-top: 150px;
-  text-align: center;
+.skeletonTitle {
+  width: 180px;
+  height: 24px;
+  border-radius: 4px;
+}
 
-  .heading {
-    color: var(--heading-color);
-    font-weight: var(--font-medium);
-    font-size: var(--text-16);
-    margin-top: 24px;
-  }
+.skeletonSubtitle {
+  width: 100px;
+  height: 16px;
+  border-radius: 4px;
+}
 
-  .paragraph {
-    color: var(--paragraph-color);
-    margin-top: 8px;
-    max-width: 448px;
-    font-size: var(--text-14);
-    font-weight: var(--font-normal);
-  }
+.skeletonButton {
+  width: 140px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.skeletonChart {
+  flex: 1;
+  min-height: 300px;
+  border-radius: 8px;
+}
+
+.skeletonAxisLabel {
+  width: 200px;
+  height: 16px;
+  border-radius: 4px;
+  margin: 0 auto;
 }

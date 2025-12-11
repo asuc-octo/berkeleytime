@@ -125,13 +125,16 @@ export default function Comparison() {
                 })}
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <Tooltip content="Close">
-            <Link to="../">
-              <IconButton>
-                <Xmark />
-              </IconButton>
-            </Link>
-          </Tooltip>
+          <Tooltip
+            trigger={
+              <Link to="../">
+                <IconButton>
+                  <Xmark />
+                </IconButton>
+              </Link>
+            }
+            title="Close"
+          />
         </div>
       </div>
       <div className={styles.body}>

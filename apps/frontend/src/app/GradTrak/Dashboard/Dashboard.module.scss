@@ -12,6 +12,7 @@
     overflow: hidden;
     scrollbar-color: var(--paragraph-color)
       var(--border-color, rgba(0, 0, 0, 0.1));
+    max-width: 78%;
 
     .header {
       display: flex;
@@ -47,7 +48,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: var(--text-12);
             font-weight: bold;
             padding: 0 6px;
             box-sizing: border-box;
@@ -194,8 +195,8 @@
   }
 
   .sectionTitle {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: var(--text-14);
+    font-weight: var(--font-medium);
     margin-top: 12px;
   }
 }

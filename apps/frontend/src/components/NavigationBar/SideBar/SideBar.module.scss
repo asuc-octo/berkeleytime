@@ -26,16 +26,16 @@
       gap: 12px;
 
       .label {
-        font-size: 14px;
+        font-size: var(--text-14);
         color: var(--label-color);
         line-height: 1;
       }
 
       .item {
-        font-size: 14px;
+        font-size: var(--text-14);
         color: var(--heading-color);
         line-height: 1;
-        font-weight: 500;
+        font-weight: var(--font-medium);
         transition: color 100ms ease-in-out;
 
         &:hover {
@@ -61,14 +61,8 @@
         "ss07" on,
         "cv12" on,
         "cv06" on;
-      color: var(--blue-500);
-      cursor: pointer;
-      transition: all 100ms ease-in-out;
+      color: var(--heading-color);
       margin-right: auto;
-
-      &:hover {
-        color: var(--blue-600);
-      }
     }
   }
 }

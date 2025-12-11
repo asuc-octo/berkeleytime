@@ -40,20 +40,26 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
             status
             enrolledCount
             maxEnroll
-            reservedSeatingMaxCount
+            activeReservedMaxCount
           }
         }
         meetings {
           days
+          startTime
+          endTime
         }
       }
       course {
         title
+        departmentNicknames
         gradeDistribution {
           average
           pnpPercentage
         }
         academicCareer
+        academicOrganization
+        academicOrganizationName
+        ratingsCount
       }
       requirementDesignation {
         description

@@ -7,9 +7,7 @@ import {
   UpdateScheduleInput,
 } from "../generated/graphql";
 
-// export type ScheduleIdentifier = string & {
-//   readonly __brand: unique symbol;
-// };
+export type ScheduleIdentifier = string;
 
 export type IScheduleClass = NonNullable<
   NonNullable<ReadScheduleQuery["schedule"]>["classes"][number]

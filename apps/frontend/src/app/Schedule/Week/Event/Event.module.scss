@@ -4,7 +4,7 @@
   padding: 8px;
   border-radius: 4px;
   background-color: var(--gray-500);
-  font-size: 12px;
+  font-size: var(--text-12);
   opacity: 0.5;
   overflow-y: hidden;
 
@@ -13,7 +13,7 @@
   }
 
   .heading {
-    font-weight: 500;
+    font-weight: var(--font-medium);
     color: white;
     text-overflow: ellipsis;
     white-space: nowrap;

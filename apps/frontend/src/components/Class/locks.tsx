@@ -3,9 +3,7 @@ import { MouseEvent, ReactElement, ReactNode } from "react";
 import { Lock } from "iconoir-react";
 import { NavLink, NavLinkProps } from "react-router-dom";
 
-import { MenuItem } from "@repo/theme";
-
-import { CatalogTooltip } from "@/components/CatalogTooltip";
+import { MenuItem, Tooltip } from "@repo/theme";
 
 import {
   RatingsLockContext,
@@ -92,10 +90,10 @@ function RatingsTabLinkBase({
 
   const tooltipDescription = loginRequired
     ? "Log in to view ratings from other students."
-    : `Share ${ratingsNeededValue} class rating${ratingsNeededValue !== 1 ? "s" : ""} to unlock everyone else's`;
+    : `Rate ${Math.max(ratingsNeededValue, 1)} classes to unlock all other ratings.`;
 
   return (
-    <CatalogTooltip
+    <Tooltip
       trigger={navLink}
       title={!dialog ? "Locked Content" : undefined}
       description={tooltipDescription}

@@ -58,7 +58,7 @@
       }
 
       .value {
-        font-size: 14px;
+        font-size: var(--text-14);
         line-height: 1;
 
         .distance {
@@ -89,8 +89,8 @@
         border-radius: 50%;
         background-color: var(--blue-500);
         display: flex;
-        font-weight: 700;
-        font-size: 14px;
+        font-weight: var(--font-bold);
+        font-size: var(--text-14);
         align-items: center;
         justify-content: center;
         color: white;
@@ -98,14 +98,14 @@
 
       .text {
         flex-grow: 1;
-        font-size: 14px;
+        font-size: var(--text-14);
 
         .label {
-          font-size: 12px;
+          font-size: var(--text-12);
         }
 
         .heading {
-          font-weight: 700;
+          font-weight: var(--font-bold);
           color: var(--heading-color);
           margin-top: 4px;
         }
@@ -127,8 +127,8 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: var(--font-bold);
+  font-size: var(--text-14);
 
   &:global(.marker-red) {
     background-color: var(--red-500);

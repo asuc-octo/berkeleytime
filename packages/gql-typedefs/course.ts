@@ -19,8 +19,10 @@ export const courseTypeDef = gql`
     classes: [Class!]!
     crossListing: [Course!]!
     requiredCourses: [Course!]!
-    aggregatedRatings: AggregatedRatings!
+    aggregatedRatings(metricNames: [MetricName!]): AggregatedRatings!
+    instructorAggregatedRatings: [InstructorRating!]!
     gradeDistribution: GradeDistribution!
+    ratingsCount: Int!
 
     "Attributes"
     requirements: String
@@ -29,6 +31,9 @@ export const courseTypeDef = gql`
     gradingBasis: CourseGradingBasis!
     finalExam: CourseFinalExam
     academicCareer: AcademicCareer!
+    academicOrganization: String
+    academicOrganizationName: String
+    departmentNicknames: String
     title: String!
     primaryInstructionMethod: InstructionMethod!
     toDate: String!

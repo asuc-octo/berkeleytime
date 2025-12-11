@@ -33,7 +33,7 @@ enum Consensus {
 
 export function UserSubmittedData() {
   const { user } = useUser();
-  const { class: _class } = useClass();
+  const { course } = useClass();
   const handleFeedbackClick = (e: ReactMouseEvent<HTMLAnchorElement>) => {
     if (!user) {
       e.preventDefault();
@@ -46,8 +46,8 @@ export function UserSubmittedData() {
     MetricName.Attendance | MetricName.Recording,
     Consensus
   > = {
-    [MetricName.Recording]: getResponse(_class.course, MetricName.Recording),
-    [MetricName.Attendance]: getResponse(_class.course, MetricName.Attendance),
+    [MetricName.Recording]: getResponse(course, MetricName.Recording),
+    [MetricName.Attendance]: getResponse(course, MetricName.Attendance),
   };
   const atLeastOneConsensus = Object.values(responses).some(
     (c) => c == Consensus.Yes || c == Consensus.No
