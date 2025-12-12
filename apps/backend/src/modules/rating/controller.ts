@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { GraphQLError } from "graphql";
 import { connection } from "mongoose";
 
@@ -834,4 +835,24 @@ export const deleteRatings = async (
   }
 
   return true;
+};
+
+const anonymizeUserId = (userId: string): string => {
+  return createHash("sha256").update(userId).digest("hex").slice(0, 16);
+};
+
+export const getAllRatings = async () => {
+  const ratings = await RatingModel.find({}).lean();
+
+  return ratings.map((rating) => ({
+    anonymousUserId: anonymizeUserId(rating.createdBy),
+    subject: rating.subject,
+    courseNumber: rating.courseNumber,
+    semester: rating.semester as Semester,
+    year: rating.year,
+    classNumber: rating.classNumber,
+    metricName: rating.metricName as MetricName,
+    value: rating.value,
+    createdAt: (rating as any).createdAt.toISOString(),
+  }));
 };
