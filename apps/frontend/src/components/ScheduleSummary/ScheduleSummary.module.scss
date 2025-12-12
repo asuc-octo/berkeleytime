@@ -12,6 +12,7 @@
     z-index: 1;
     overflow: auto;
     border: .5px solid var(--border-color);
+    overflow: hidden;
 
     .week {
       flex-grow: 1;

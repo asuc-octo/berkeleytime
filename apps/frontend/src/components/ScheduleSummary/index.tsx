@@ -108,7 +108,10 @@ export default function ScheduleSummary({ schedule }: ScheduleSummaryProps) {
 
   const sections = useMemo(() => getSelectedSections(schedule), [schedule]);
 
-  const [activeEvent, setActiveEvent] = useState<number | null>(null);
+  const [activeEvent, setActiveEvent] = useState<{
+    index: number;
+    type: "section" | "custom";
+  } | null>(null);
 
   const days = useMemo(
     () =>

@@ -15,8 +15,16 @@ interface CompactEventProps {
   position: number;
   flipPopup: boolean;
   index: number;
-  activeEvent: number | null;
-  setActiveEvent: (event: number | null) => void;
+  activeEvent: {
+    index: number;
+    type: "section" | "custom";
+  } | null;
+  setActiveEvent: (
+    event: {
+      index: number;
+      type: "section" | "custom";
+    } | null
+  ) => void;
 }
 
 export default function CompactEvent({
@@ -95,10 +103,12 @@ export default function CompactEvent({
       trigger={
         <div
           className={classNames(styles.root, {
-            [styles.active]: activeEvent === index || activeEvent === null,
+            [styles.active]:
+              activeEvent === null ||
+              (activeEvent.index === index && activeEvent.type === props.type),
           })}
           style={style}
-          onMouseEnter={() => setActiveEvent(index)}
+          onMouseEnter={() => setActiveEvent({ index, type: props.type })}
           onMouseLeave={() => setActiveEvent(null)}
           title={`${title} - ${description}`}
         ></div>
