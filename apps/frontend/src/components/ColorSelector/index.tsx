@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { NavArrowDown } from "iconoir-react";
 import { createPortal } from "react-dom";
 
+import { Color as ThemeColor } from "@repo/theme";
+
 import { Color } from "@/lib/generated/graphql";
 
 import styles from "./ColorSelector.module.scss";
@@ -29,7 +31,7 @@ export const LabelColor = (props: { color: Color }) => {
 export default function ColorSelector({
   selectedColor,
   onColorSelect,
-  allowedColors = Object.values(Color),
+  allowedColors = Object.values(ThemeColor),
   usePortal = true,
 }: ColorSelectorProps) {
   const [showColorPicker, setShowColorPicker] = useState(false);

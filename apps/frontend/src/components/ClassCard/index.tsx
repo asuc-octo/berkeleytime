@@ -81,6 +81,9 @@ interface ClassProps {
   onDelete?: () => void;
   leftBorderColor?: Color;
   onColorSelect?: (c: Color) => void;
+  acceptedColors?: Color[];
+  bookmarked?: boolean;
+  bookmarkToggle?: () => void;
   active?: boolean;
   wrapDescription?: boolean;
 }
@@ -93,6 +96,8 @@ export default function ClassCard({
   onDelete,
   leftBorderColor = undefined,
   onColorSelect = undefined,
+  acceptedColors = Object.values(Color),
+  bookmarked = false,
   children,
   active = false,
   wrapDescription = false,
@@ -207,6 +212,7 @@ export default function ClassCard({
           {onColorSelect && leftBorderColor && (
             <ColorSelector
               selectedColor={leftBorderColor}
+              allowedColors={acceptedColors}
               onColorSelect={onColorSelect}
             />
           )}

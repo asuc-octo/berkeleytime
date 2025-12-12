@@ -5,8 +5,6 @@ import {
   BookStack,
   EditPencil,
   InfoCircle,
-  MoreHoriz,
-  NavArrowRight,
   Pin,
   PinSlash,
   PinSolid,
@@ -14,11 +12,17 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Color, DropdownMenu, IconButton } from "@repo/theme";
+import { Color } from "@repo/theme";
 
+import {
+  BubbleCard,
+  MenuItem,
+  springTransition,
+} from "@/components/BubbleCard";
 import {
   COLLECTION_COLORS,
   capitalizeColor,
+  getColorCSSVar,
   getColorStyle,
 } from "@/lib/colors";
 import { getLetterGradeFromGPA } from "@/lib/grades";
@@ -98,12 +102,6 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
   );
 }
 
-const springTransition = {
-  type: "spring" as const,
-  stiffness: 500,
-  damping: 30,
-};
-
 export function CollectionCard({
   name,
   classCount,
@@ -119,6 +117,9 @@ export function CollectionCard({
 }: CollectionCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
+
   const handlePinToggle = () => {
     onPin?.(!isPinned);
   };
@@ -128,132 +129,123 @@ export function CollectionCard({
   const showCards = previewClasses.length > 0;
   const isSingleCard = previewClasses.length === 1;
 
+  // Build menu items array
+  const menuItems: MenuItem[] = [];
+
+  if (!isSystem) {
+    menuItems.push({
+      name: isPinned ? "Unpin collection" : "Pin collection",
+      icon: isPinned ? (
+        <PinSlash width={18} height={18} />
+      ) : (
+        <Pin width={18} height={18} />
+      ),
+      onClick: handlePinToggle,
+    });
+
+    menuItems.push({
+      name: "Rename collection",
+      icon: <BookStack width={18} height={18} />,
+      onClick: onRename,
+    });
+  }
+
+  // Color submenu
+  const colorSubItems: MenuItem[] = [
+    {
+      name: "No color",
+      icon: <span className={styles.colorDotOutline} />,
+      onClick: () => onColorChange?.(null),
+    },
+    ...COLLECTION_COLORS.map((c) => ({
+      name: capitalizeColor(c),
+      icon: <span className={styles.colorDot} style={getColorStyle(c)} />,
+      onClick: () => onColorChange?.(c),
+    })),
+  ];
+
+  menuItems.push({
+    name: "Edit color",
+    icon: <EditPencil width={18} height={18} />,
+    subItems: colorSubItems,
+  });
+
+  if (!isSystem) {
+    menuItems.push({
+      name: "Delete collection",
+      icon: <Trash width={18} height={18} />,
+      onClick: onDelete,
+      isDelete: true,
+    });
+  }
+
+  const title = (
+    <>
+      {(isPinned || isSystem) && <PinSolid width={14} height={14} />}
+      <span>{name}</span>
+    </>
+  );
+
+  const description =
+    classCount === 0 ? "No class added" : `${classCount} classes`;
+
   return (
-    <div
-      className={styles.root}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <BubbleCard
+      title={title}
+      description={description}
+      cssColor={getColorCSSVar(color)}
+      childrenPadding={true}
+      menuItems={menuItems}
       onClick={onClick}
+      showCards={showCards}
+      isHovered={isHovered}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      width={420}
+      height={230}
     >
-      {color && (
-        <div className={styles.colorBackground} style={getColorStyle(color)} />
+      {isSingleCard && topClass ? (
+        <motion.div
+          className={styles.singleCard}
+          animate={{ top: isHovered ? 32 : 45 }}
+          transition={springTransition}
+          style={{ zIndex: 2 }}
+        >
+          <TiltedCardContent classData={topClass} />
+        </motion.div>
+      ) : (
+        <>
+          {topClass && (
+            <motion.div
+              className={styles.stackedCard}
+              animate={{
+                top: isHovered ? 35 : 40,
+                left: 25,
+                rotate: isHovered ? -3 : -3.5,
+              }}
+              transition={springTransition}
+              style={{ zIndex: 2 }}
+            >
+              <TiltedCardContent classData={topClass} />
+            </motion.div>
+          )}
+          {secondClass && (
+            <motion.div
+              className={styles.stackedCard}
+              animate={{
+                top: isHovered ? 30 : 20,
+                left: isHovered ? 50 : 42,
+                rotate: isHovered ? 5 : 2.5,
+              }}
+              transition={springTransition}
+              style={{ zIndex: 1 }}
+            >
+              <TiltedCardContent classData={secondClass} />
+            </motion.div>
+          )}
+        </>
       )}
-      <div className={styles.cardsStack} style={{ opacity: showCards ? 1 : 0 }}>
-        {isSingleCard && topClass ? (
-          <motion.div
-            className={styles.singleCard}
-            animate={{ top: isHovered ? 32 : 45 }}
-            transition={springTransition}
-            style={{ zIndex: 2 }}
-          >
-            <TiltedCardContent classData={topClass} />
-          </motion.div>
-        ) : (
-          <>
-            {topClass && (
-              <motion.div
-                className={styles.stackedCard}
-                animate={{
-                  top: isHovered ? 35 : 40,
-                  left: 0,
-                  rotate: isHovered ? -3 : -3.5,
-                }}
-                transition={springTransition}
-                style={{ zIndex: 2 }}
-              >
-                <TiltedCardContent classData={topClass} />
-              </motion.div>
-            )}
-            {secondClass && (
-              <motion.div
-                className={styles.stackedCard}
-                animate={{
-                  top: isHovered ? 30 : 20,
-                  left: isHovered ? 25 : 17,
-                  rotate: isHovered ? 5 : 2.5,
-                }}
-                transition={springTransition}
-                style={{ zIndex: 1 }}
-              >
-                <TiltedCardContent classData={secondClass} />
-              </motion.div>
-            )}
-          </>
-        )}
-      </div>
-      <div className={styles.footer}>
-        <div className={styles.footerContent}>
-          <p className={styles.collectionName}>
-            {(isPinned || isSystem) && <PinSolid width={14} height={14} />}
-            <span>{name}</span>
-          </p>
-          <p className={styles.classCount}>
-            {classCount === 0 ? "No class added" : `${classCount} classes`}
-          </p>
-        </div>
-        <div onClick={(e) => e.stopPropagation()}>
-          <DropdownMenu.Root modal={false}>
-            <DropdownMenu.Trigger asChild>
-              <IconButton className={styles.menuButton}>
-                <MoreHoriz />
-              </IconButton>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content sideOffset={5} align="start">
-              {!isSystem && (
-                <DropdownMenu.Item onSelect={handlePinToggle}>
-                  {isPinned ? (
-                    <>
-                      <PinSlash width={18} height={18} /> Unpin collection
-                    </>
-                  ) : (
-                    <>
-                      <Pin width={18} height={18} /> Pin collection
-                    </>
-                  )}
-                </DropdownMenu.Item>
-              )}
-              {!isSystem && (
-                <DropdownMenu.Item onSelect={onRename}>
-                  <BookStack width={18} height={18} /> Rename collection
-                </DropdownMenu.Item>
-              )}
-              <DropdownMenu.Sub>
-                <DropdownMenu.SubTrigger>
-                  <EditPencil width={18} height={18} /> Edit color
-                  <NavArrowRight
-                    width={14}
-                    height={14}
-                    style={{ marginLeft: "auto" }}
-                  />
-                </DropdownMenu.SubTrigger>
-                <DropdownMenu.SubContent sideOffset={-2}>
-                  <DropdownMenu.Item onSelect={() => onColorChange?.(null)}>
-                    <span className={styles.colorDotOutline} /> No color
-                  </DropdownMenu.Item>
-                  {COLLECTION_COLORS.map((color) => (
-                    <DropdownMenu.Item
-                      key={color}
-                      onSelect={() => onColorChange?.(color)}
-                    >
-                      <span
-                        className={styles.colorDot}
-                        style={getColorStyle(color)}
-                      />{" "}
-                      {capitalizeColor(color)}
-                    </DropdownMenu.Item>
-                  ))}
-                </DropdownMenu.SubContent>
-              </DropdownMenu.Sub>
-              {!isSystem && (
-                <DropdownMenu.Item isDelete onSelect={onDelete}>
-                  <Trash width={18} height={18} /> Delete collection
-                </DropdownMenu.Item>
-              )}
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        </div>
-      </div>
-    </div>
+    </BubbleCard>
   );
 }
 
