@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, ReactNode } from "react";
 
 import {
   ArrowSeparateVertical,
@@ -86,6 +86,7 @@ interface ClassProps {
   bookmarkToggle?: () => void;
   active?: boolean;
   wrapDescription?: boolean;
+  customActionMenu?: ReactNode;
 }
 
 export default function ClassCard({
@@ -101,6 +102,7 @@ export default function ClassCard({
   children,
   active = false,
   wrapDescription = false,
+  customActionMenu,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   const gradeDistribution =
@@ -209,25 +211,31 @@ export default function ClassCard({
               }}
             />
           )}
-          {onColorSelect && leftBorderColor && (
-            <ColorSelector
-              selectedColor={leftBorderColor}
-              allowedColors={acceptedColors}
-              onColorSelect={onColorSelect}
-            />
-          )}
-          {onDelete && (
-            <Card.ActionIcon
-              data-action-icon
-              isDelete
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                onDelete();
-              }}
-            >
-              <Trash />
-            </Card.ActionIcon>
+          {customActionMenu ? (
+            customActionMenu
+          ) : (
+            <>
+              {onColorSelect && leftBorderColor && (
+                <ColorSelector
+                  selectedColor={leftBorderColor}
+                  allowedColors={acceptedColors}
+                  onColorSelect={onColorSelect}
+                />
+              )}
+              {onDelete && (
+                <Card.ActionIcon
+                  data-action-icon
+                  isDelete
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    onDelete();
+                  }}
+                >
+                  <Trash />
+                </Card.ActionIcon>
+              )}
+            </>
           )}
         </Card.Actions>
       </Card.ColumnHeader>

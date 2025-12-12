@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { DataTransferBoth, Xmark } from "iconoir-react";
+import { Xmark } from "iconoir-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { DropdownMenu, IconButton, Tooltip } from "@repo/theme";
+import { IconButton, Select, Tooltip } from "@repo/theme";
+import type { Option } from "@repo/theme";
 
 import Week from "@/app/Schedule/Week";
 import Units from "@/components/Units";
 import { useReadSchedule, useReadSchedules } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-import { ScheduleIdentifier } from "@/lib/api";
+import { IScheduleListSchedule, ScheduleIdentifier } from "@/lib/api";
 
 import { getSelectedSections, getUnits } from "../schedule";
 import styles from "./Comparison.module.scss";
@@ -30,7 +31,7 @@ export default function Comparison() {
   const [minimum, maximum] = useMemo(() => getUnits(schedule), [schedule]);
 
   const [comparisonMinimum, comparisonMaximum] = useMemo(
-    () => getUnits(comparison),
+    () => getUnits(comparison ?? undefined),
     [comparison]
   );
 
@@ -40,9 +41,55 @@ export default function Comparison() {
   );
 
   const selectedComparisonSections = useMemo(
-    () => getSelectedSections(comparison),
+    () => getSelectedSections(comparison ?? undefined),
     [comparison]
   );
+
+  const SEMESTER_ORDER = ["Spring", "Summer", "Fall"];
+
+  const scheduleOptions = useMemo<Option<string>[]>(() => {
+    if (!schedules) return [];
+
+    // Group schedules by semester
+    const schedulesBySemester = schedules
+      .filter((_schedule) => _schedule?._id !== schedule._id)
+      .reduce(
+        (acc, _schedule) => {
+          if (!_schedule) return acc;
+          const term = `${_schedule.semester} ${_schedule.year}`;
+          if (!acc[term]) acc[term] = [];
+          acc[term].push(_schedule);
+          return acc;
+        },
+        {} as { [key: string]: IScheduleListSchedule[] }
+      );
+
+    // Convert to grouped options with labels
+    const sortedTerms = Object.keys(schedulesBySemester).sort((a, b) => {
+      const [semA, yearA] = a.split(" ");
+      const [semB, yearB] = b.split(" ");
+      const yearDiff = Number(yearB) - Number(yearA);
+      if (yearDiff !== 0) return yearDiff;
+      return (
+        SEMESTER_ORDER.indexOf(semB) - SEMESTER_ORDER.indexOf(semA)
+      );
+    });
+
+    const options: Option<string>[] = [];
+    sortedTerms.forEach((term) => {
+      // Add label for the semester group
+      options.push({ type: "label", label: term });
+      // Add schedules for this semester
+      schedulesBySemester[term].forEach((_schedule) => {
+        options.push({
+          value: _schedule?._id ?? "",
+          label: _schedule?.name ?? "",
+        });
+      });
+    });
+
+    return options;
+  }, [schedules, schedule._id]);
 
   const [y, setY] = useState<number | null>(null);
   const leftRef = useRef<HTMLDivElement>(null);
@@ -97,34 +144,25 @@ export default function Comparison() {
           {/* Information is redundant -> <p className={styles.paragraph}>{schedule.semester} {schedule.year}</p> */}
         </div>
         <div className={styles.group}>
-          <p className={styles.heading}>
-            {comparison ? comparison.name : "No schedule selected"}
-          </p>
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <IconButton>
-                <DataTransferBoth />
-              </IconButton>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content
-              style={{ width: 250, position: "relative", left: -30 }}
-            >
-              {schedules &&
-                schedules.map((_schedule) => {
-                  return (
-                    <DropdownMenu.Item
-                      onClick={() => {
-                        navigate(
-                          `/schedules/${schedule._id}/compare/${_schedule._id}`
-                        );
-                      }}
-                    >
-                      {_schedule.name} - {_schedule.semester} {_schedule.year}
-                    </DropdownMenu.Item>
-                  );
-                })}
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+          <div style={{ flex: 1, minWidth: 0, marginRight: 12, display: "flex", alignItems: "center" }}>
+            <Select<string>
+              searchable
+              options={scheduleOptions}
+              value={comparisonId ?? null}
+              onChange={(value) => {
+                if (Array.isArray(value)) return;
+                if (value) {
+                  navigate(`/schedules/${schedule._id}/compare/${value}`);
+                } else {
+                  navigate(`/schedules/${schedule._id}/compare`);
+                }
+              }}
+              placeholder="Select a schedule to compare"
+              searchPlaceholder="Search schedules..."
+              emptyMessage="No schedules found."
+              style={{ width: "100%" }}
+            />
+          </div>
           <Tooltip
             trigger={
               <Link to="../">

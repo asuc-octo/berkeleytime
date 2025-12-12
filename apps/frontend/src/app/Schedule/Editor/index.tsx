@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
+import { ArrowLeft, Copy, Edit, ShareIos, Shuffle, ViewColumns2 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
 import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
@@ -17,6 +17,7 @@ import { SectionColor, getNextClassColor, getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
 import CloneDialog from "./CloneDialog";
+import GenerateSchedulesDialog from "./GenerateSchedulesDialog";
 import EditDialog from "./EditDialog";
 import styles from "./Editor.module.scss";
 import Map from "./Map";
@@ -635,6 +636,12 @@ export default function Editor() {
             Map
           </MenuItem> */}
         </div>
+        <GenerateSchedulesDialog schedule={schedule}>
+          <Button variant="secondary">
+            <Shuffle />
+            Generate
+          </Button>
+        </GenerateSchedulesDialog>
         <Link to="compare">
           <Button variant="secondary">
             <ViewColumns2 />

@@ -1,8 +1,14 @@
 import { useMemo, useState } from "react";
 
+import { EditPencil, Trash } from "iconoir-react";
+
 import { acceptedColors } from "@/app/Schedule/schedule";
+import { MenuItem } from "@/components/BubbleCard";
 import ClassCard from "@/components/ClassCard";
 import ClassDrawer from "@/components/ClassDrawer";
+import { ColorDot } from "@/components/ColorDot";
+import { ActionMenu } from "@/components/ActionMenu";
+import { capitalizeColor } from "@/lib/colors";
 import { IScheduleClass, componentMap } from "@/lib/api";
 import { Color, Component, Semester } from "@/lib/generated/graphql";
 
@@ -63,6 +69,28 @@ export default function Class({
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // Color submenu
+  const colorSubItems: MenuItem[] = acceptedColors.map((c) => ({
+    name: capitalizeColor(c as any),
+    icon: <ColorDot color={c as any} />,
+    onClick: () =>
+      onColorChange(_class.subject, _class.courseNumber, _class.number, c),
+  }));
+
+  const menuItems: MenuItem[] = [
+    {
+      name: "Edit color",
+      icon: <EditPencil width={18} height={18} />,
+      subItems: colorSubItems,
+    },
+    {
+      name: "Delete class",
+      icon: <Trash width={18} height={18} />,
+      onClick: () => onDelete(_class),
+      isDelete: true,
+    },
+  ];
+
   return (
     <ClassDrawer
       subject={_class.subject}
@@ -81,7 +109,8 @@ export default function Class({
           if (
             target.closest("[data-action-icon]") ||
             target.closest("[data-actions]") ||
-            target.closest("[data-color-selector]")
+            target.closest("[data-color-selector]") ||
+            target.closest("[data-action-menu]")
           ) {
             return;
           }
@@ -95,19 +124,8 @@ export default function Class({
           expandable
           expanded={expanded}
           onExpandedChange={onExpandedChange}
-          onDelete={() => {
-            onDelete(_class);
-          }}
           leftBorderColor={color}
-          onColorSelect={(color) =>
-            onColorChange(
-              _class.subject,
-              _class.courseNumber,
-              _class.number,
-              color
-            )
-          }
-          acceptedColors={acceptedColors}
+          customActionMenu={<ActionMenu menuItems={menuItems} asIcon />}
           wrapDescription={true}
         >
           <div className={styles.group}>
