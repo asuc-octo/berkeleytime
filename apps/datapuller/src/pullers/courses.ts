@@ -21,6 +21,15 @@ const updateCourses = async (config: Config) => {
 
   log.trace("Deleting courses no longer in SIS...");
 
+  const previousCourses = await CourseModel.countDocuments();
+
+  if (courses.length / previousCourses <= 0.95) {
+    log.error(
+      `Fetched only ${courses.length} courses, while there were ${previousCourses} previous courses`
+    );
+    return;
+  }
+
   const { deletedCount } = await CourseModel.deleteMany({
     courseId: { $nin: courses.map((course) => course.courseId) },
   });
