@@ -4,6 +4,7 @@ import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
   InfoCircle,
+  Lock,
   Star,
   Trash,
 } from "iconoir-react";
@@ -87,6 +88,7 @@ interface ClassProps {
   active?: boolean;
   wrapDescription?: boolean;
   customActionMenu?: ReactNode;
+  onUnlock?: () => void;
 }
 
 export default function ClassCard({
@@ -103,6 +105,7 @@ export default function ClassCard({
   active = false,
   wrapDescription = false,
   customActionMenu,
+  onUnlock = undefined,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   const gradeDistribution =
@@ -210,6 +213,18 @@ export default function ClassCard({
                 textAlign: "right",
               }}
             />
+          )}
+          {onUnlock && (
+            <Card.ActionIcon
+              data-action-icon
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onUnlock();
+              }}
+            >
+              <Lock />
+            </Card.ActionIcon>
           )}
           {customActionMenu ? (
             customActionMenu

@@ -59,6 +59,24 @@ export const selectedClassSchema = new Schema({
     type: String,
     required: false,
   },
+  hidden: {
+    type: Boolean,
+    default: false,
+  },
+  locked: {
+    type: Boolean,
+    default: false,
+  },
+  blockedSections: {
+    type: [String],
+    required: false,
+    default: [],
+  },
+  lockedComponents: {
+    type: [String],
+    required: false,
+    default: [],
+  },
 });
 
 export const scheduleSchema = new Schema(

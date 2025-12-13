@@ -70,9 +70,7 @@ export default function Comparison() {
       const [semB, yearB] = b.split(" ");
       const yearDiff = Number(yearB) - Number(yearA);
       if (yearDiff !== 0) return yearDiff;
-      return (
-        SEMESTER_ORDER.indexOf(semB) - SEMESTER_ORDER.indexOf(semA)
-      );
+      return SEMESTER_ORDER.indexOf(semB) - SEMESTER_ORDER.indexOf(semA);
     });
 
     const options: Option<string>[] = [];
@@ -144,7 +142,15 @@ export default function Comparison() {
           {/* Information is redundant -> <p className={styles.paragraph}>{schedule.semester} {schedule.year}</p> */}
         </div>
         <div className={styles.group}>
-          <div style={{ flex: 1, minWidth: 0, marginRight: 12, display: "flex", alignItems: "center" }}>
+          <div
+            style={{
+              flex: 1,
+              minWidth: 0,
+              marginRight: 12,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <Select<string>
               searchable
               options={scheduleOptions}

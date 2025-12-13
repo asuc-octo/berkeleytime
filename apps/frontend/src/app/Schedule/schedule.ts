@@ -47,26 +47,29 @@ export const getUnits = (schedule?: ISchedule) => {
 
 export const getSelectedSections = (schedule?: ISchedule) => {
   return (
-    schedule?.classes.flatMap(({ selectedSections, class: _class, color }) =>
-      selectedSections.reduce((acc, section) => {
-        const _section =
-          _class.primarySection?.sectionId === section.sectionId
-            ? _class.primarySection
-            : _class.sections.find(
-                (currentSection) =>
-                  currentSection.sectionId === section.sectionId
-              );
+    schedule?.classes.flatMap(
+      ({ selectedSections, class: _class, color, hidden, blockedSections }) =>
+        hidden
+          ? []
+          : selectedSections.reduce((acc, section) => {
+              const _section =
+                _class.primarySection?.sectionId === section.sectionId
+                  ? _class.primarySection
+                  : _class.sections.find(
+                      (currentSection) =>
+                        currentSection.sectionId === section.sectionId
+                    );
 
-        return _section
-          ? [
-              ...acc,
-              {
-                section: _section,
-                color: color as Color,
-              },
-            ]
-          : acc;
-      }, [] as SectionColor[])
+              return _section
+                ? [
+                    ...acc,
+                    {
+                      section: _section,
+                      color: color as Color,
+                    },
+                  ]
+                : acc;
+            }, [] as SectionColor[])
     ) ?? []
   );
 };

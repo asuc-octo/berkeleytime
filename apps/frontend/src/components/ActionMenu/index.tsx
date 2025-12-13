@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { NavArrowRight, MoreHoriz } from "iconoir-react";
+import { MoreHoriz, NavArrowRight } from "iconoir-react";
 
 import { Card, DropdownMenu, IconButton } from "@repo/theme";
 
@@ -20,7 +20,11 @@ export interface ActionMenuProps {
   asIcon?: boolean;
 }
 
-export function ActionMenu({ menuItems, buttonClassName, asIcon = false }: ActionMenuProps) {
+export function ActionMenu({
+  menuItems,
+  buttonClassName,
+  asIcon = false,
+}: ActionMenuProps) {
   const renderMenuItem = (item: MenuItem, index: number) => {
     if (item.subItems && item.subItems.length > 0) {
       return (
@@ -88,4 +92,3 @@ export function ActionMenu({ menuItems, buttonClassName, asIcon = false }: Actio
     </div>
   );
 }
-

@@ -13,8 +13,5 @@ export function ColorDot({ color }: ColorDotProps) {
     return <span className={styles.colorDotOutline} />;
   }
 
-  return (
-    <span className={styles.colorDot} style={getColorStyle(color)} />
-  );
+  return <span className={styles.colorDot} style={getColorStyle(color)} />;
 }
-

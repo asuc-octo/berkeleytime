@@ -140,6 +140,10 @@ export const READ_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -262,6 +266,10 @@ export const UPDATE_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -390,6 +398,10 @@ export const CREATE_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -442,6 +454,7 @@ export const READ_SCHEDULES = gql`
           sectionId
         }
         color
+        hidden
       }
     }
   }

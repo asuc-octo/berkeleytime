@@ -30,6 +30,10 @@ export const scheduleTypeDef = gql`
     class: Class!
     selectedSections: [Section!]!
     color: Color
+    hidden: Boolean
+    locked: Boolean
+    blockedSections: [SectionIdentifier!]
+    lockedComponents: [Component!]
   }
 
   type Event {
@@ -77,6 +81,10 @@ export const scheduleTypeDef = gql`
     number: ClassNumber!
     sectionIds: [SectionIdentifier!]!
     color: Color
+    hidden: Boolean
+    locked: Boolean
+    blockedSections: [SectionIdentifier!]
+    lockedComponents: [Component!]
   }
 
   input UpdateScheduleInput {
