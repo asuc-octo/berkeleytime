@@ -867,13 +867,22 @@ export default function Editor() {
         schedule._id,
         {
           events: _schedule.events.map(
-            ({ startTime, endTime, title, description, days, color }) => ({
+            ({
               startTime,
               endTime,
               title,
               description,
               days,
               color,
+              hidden,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
             })
           ),
         },
@@ -904,13 +913,68 @@ export default function Editor() {
         schedule._id,
         {
           events: _schedule.events.map(
-            ({ startTime, endTime, title, description, days, color }) => ({
+            ({
               startTime,
               endTime,
               title,
               description,
               days,
               color,
+              hidden,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleEventHideChange = useCallback(
+    (id: string, hidden: boolean) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      const event = _schedule.events.find((e) => e._id == id);
+
+      if (!event) return;
+
+      // Update the hidden state
+      event.hidden = hidden;
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          events: _schedule.events.map(
+            ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
             })
           ),
         },
@@ -1083,18 +1147,19 @@ export default function Editor() {
           onComponentLockChange={handleComponentLockChange}
           onEventColorChange={handleEventColorChange}
           onEventTitleChange={handleEventTitleChange}
+          onEventHideChange={handleEventHideChange}
         />
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (
             <Week
-              events={schedule.events}
+              events={schedule.events.filter((e) => !e.hidden)}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />
           ) : tab === 1 ? (
             <Calendar
               term={schedule.term}
-              customEvents={schedule.events}
+              customEvents={schedule.events.filter((e) => !e.hidden)}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />

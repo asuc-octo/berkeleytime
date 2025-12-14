@@ -6,7 +6,11 @@ import { Color } from "@repo/theme";
 import ScheduleSummary from "@/components/ScheduleSummary";
 import { useUpdateSchedule } from "@/hooks/api";
 import { ISchedule, IScheduleClass } from "@/lib/api";
-import { IScheduleListClass, IScheduleListSchedule } from "@/lib/api/schedules";
+import {
+  IScheduleEvent,
+  IScheduleListClass,
+  IScheduleListSchedule,
+} from "@/lib/api/schedules";
 import { Component } from "@/lib/generated/graphql";
 
 import styles from "./GenerateSchedulesDialog.module.scss";
@@ -39,8 +43,6 @@ function generatePermutations(
   lockedArray: ComponentIndex[]
 ): ComponentIndex[][] {
   const results: ComponentIndex[][] = [];
-
-  console.log(limitArray, blockedArray, lockedArray);
 
   // Helper function for the recursive DFS
   function dfs(index: number, currentCombination: ComponentIndex[]) {
@@ -120,16 +122,48 @@ function generatePermutations(
 
 const detectMeetingOverlap = (
   section1: IScheduleClass["class"]["primarySection"] | undefined,
-  section2: IScheduleClass["class"]["primarySection"] | undefined
+  section2: IScheduleClass["class"]["primarySection"] | undefined,
+  event?: IScheduleEvent
 ): boolean => {
-  if (!section1 || !section2) return false;
-  if (section1.meetings.length === 0 || section2.meetings.length === 0)
+  if (!section1 || (!section2 && !event)) return false;
+  if (
+    section1.meetings.length === 0 ||
+    (section2 && section2.meetings.length === 0)
+  )
     return false;
   for (const meeting1 of section1.meetings) {
-    for (const meeting2 of section2.meetings) {
+    if (section2) {
+      for (const meeting2 of section2.meetings) {
+        // Check if meetings occur on the same day
+        const sameDay = meeting1.days?.some(
+          (day, index) => day && meeting2.days?.[index]
+        );
+        if (!sameDay) continue;
+
+        // Both meetings must have valid times
+        if (
+          !meeting1.startTime ||
+          !meeting1.endTime ||
+          !meeting2.startTime ||
+          !meeting2.endTime
+        )
+          continue;
+
+        const start1 = parseTime(meeting1.startTime);
+        const end1 = parseTime(meeting1.endTime);
+        const start2 = parseTime(meeting2.startTime);
+        const end2 = parseTime(meeting2.endTime);
+
+        // Two time ranges overlap if: start1 < end2 AND start2 < end1
+        // This covers all overlap cases: partial overlap, one containing the other, etc.
+        if (start1 < end2 && start2 < end1) {
+          return true;
+        }
+      }
+    } else if (event) {
       // Check if meetings occur on the same day
       const sameDay = meeting1.days?.some(
-        (day, index) => day && meeting2.days?.[index]
+        (day, index) => day && event.days?.[index]
       );
       if (!sameDay) continue;
 
@@ -137,15 +171,15 @@ const detectMeetingOverlap = (
       if (
         !meeting1.startTime ||
         !meeting1.endTime ||
-        !meeting2.startTime ||
-        !meeting2.endTime
+        !event.startTime ||
+        !event.endTime
       )
         continue;
 
       const start1 = parseTime(meeting1.startTime);
       const end1 = parseTime(meeting1.endTime);
-      const start2 = parseTime(meeting2.startTime);
-      const end2 = parseTime(meeting2.endTime);
+      const start2 = parseTime(event.startTime);
+      const end2 = parseTime(event.endTime);
 
       // Two time ranges overlap if: start1 < end2 AND start2 < end1
       // This covers all overlap cases: partial overlap, one containing the other, etc.
@@ -159,18 +193,19 @@ const detectMeetingOverlap = (
 
 const validCombination = (
   classes: IScheduleClass[],
+  events: IScheduleEvent[],
   current: ComponentIndex[][],
   newClass: ComponentIndex[],
   newClassIndex: number
 ): boolean => {
   for (const ci1 of newClass) {
     if (ci1.index === -1) continue;
+    const section1 =
+      ci1.index === classes[newClassIndex].class.sections.length
+        ? classes[newClassIndex].class.primarySection
+        : classes[newClassIndex].class.sections[ci1.index];
     for (let i = 0; i < current.length; i++) {
       for (const ci2 of current[i]) {
-        const section1 =
-          ci1.index === classes[newClassIndex].class.sections.length
-            ? classes[newClassIndex].class.primarySection
-            : classes[newClassIndex].class.sections[ci1.index];
         const section2 =
           ci2.index === classes[i].class.sections.length
             ? classes[i].class.primarySection
@@ -178,6 +213,11 @@ const validCombination = (
         if (detectMeetingOverlap(section1, section2)) {
           return false;
         }
+      }
+    }
+    for (const event of events) {
+      if (detectMeetingOverlap(section1, undefined, event)) {
+        return false;
       }
     }
   }
@@ -205,7 +245,8 @@ const validCombination = (
 
 // Generate all combinations of sections from selected classes
 const generateCombinations = (
-  selectedClasses: IScheduleClass[]
+  selectedClasses: IScheduleClass[],
+  selectedEvents: IScheduleEvent[]
 ): IScheduleListClass[][] | string => {
   if (selectedClasses.length === 0) return [];
 
@@ -229,7 +270,6 @@ const generateCombinations = (
         },
         {} as Record<Component, number>
       );
-    console.log(componentCounts);
     return acc * Object.values(componentCounts).reduce((acc, c) => acc * c, 1);
   }, 1);
 
@@ -364,7 +404,13 @@ const generateCombinations = (
 
     // filter out combinations that have time conflicts
     const filtered = adjCombinations.filter((combination) => {
-      return validCombination(selectedClasses, current, combination, index);
+      return validCombination(
+        selectedClasses,
+        selectedEvents,
+        current,
+        combination,
+        index
+      );
     });
     // recurse
     return filtered
@@ -464,7 +510,10 @@ export default function GenerateSchedulesDialog({
   const generatedSchedules = useMemo(() => {
     if (selectedClasses.length === 0) return [];
 
-    const combinations = generateCombinations(selectedClasses);
+    const combinations = generateCombinations(
+      selectedClasses,
+      schedule.events.filter((e) => !e.hidden)
+    );
 
     if (typeof combinations === "string") return combinations;
 
@@ -476,15 +525,7 @@ export default function GenerateSchedulesDialog({
         year: schedule.year,
         semester: schedule.semester,
         sessionId: schedule.sessionId,
-        events: schedule.events.map((event) => ({
-          _id: event._id,
-          title: event.title,
-          description: event.description,
-          startTime: event.startTime,
-          endTime: event.endTime,
-          days: event.days,
-          color: event.color,
-        })),
+        events: schedule.events,
         classes: combination,
       };
 

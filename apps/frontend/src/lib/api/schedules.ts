@@ -45,6 +45,7 @@ export const READ_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -171,6 +172,7 @@ export const UPDATE_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -303,6 +305,7 @@ export const CREATE_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -423,6 +426,7 @@ export const READ_SCHEDULES = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {

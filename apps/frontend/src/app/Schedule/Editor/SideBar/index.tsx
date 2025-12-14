@@ -81,6 +81,7 @@ interface SideBarProps {
   ) => void;
   onEventColorChange: (id: string, color: Color) => void;
   onEventTitleChange: (id: string, title: string) => void;
+  onEventHideChange: (id: string, hidden: boolean) => void;
 }
 
 export default function SideBar({
@@ -101,6 +102,7 @@ export default function SideBar({
   onComponentLockChange,
   onEventColorChange,
   onEventTitleChange,
+  onEventHideChange,
 }: SideBarProps) {
   const { schedule, editing } = useSchedule();
 
@@ -186,6 +188,9 @@ export default function SideBar({
                 onEventColorChange(event._id, c);
               }}
               onEventTitleChange={onEventTitleChange}
+              onHideChange={(hidden) => {
+                onEventHideChange(event._id, hidden);
+              }}
             />
           );
         })}

@@ -48,7 +48,7 @@ export const getUnits = (schedule?: ISchedule) => {
 export const getSelectedSections = (schedule?: ISchedule) => {
   return (
     schedule?.classes.flatMap(
-      ({ selectedSections, class: _class, color, hidden, blockedSections }) =>
+      ({ selectedSections, class: _class, color, hidden }) =>
         hidden
           ? []
           : selectedSections.reduce((acc, section) => {

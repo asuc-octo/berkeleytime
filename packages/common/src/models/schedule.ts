@@ -33,6 +33,10 @@ export const customEventSchema = new Schema({
     type: String,
     required: false,
   },
+  hidden: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const selectedClassSchema = new Schema({

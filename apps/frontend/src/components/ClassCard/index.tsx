@@ -81,8 +81,6 @@ interface ClassProps {
   onExpandedChange?: (expanded: boolean) => void;
   onDelete?: () => void;
   leftBorderColor?: Color;
-  onColorSelect?: (c: Color) => void;
-  acceptedColors?: Color[];
   bookmarked?: boolean;
   bookmarkToggle?: () => void;
   active?: boolean;
@@ -98,8 +96,6 @@ export default function ClassCard({
   onExpandedChange,
   onDelete,
   leftBorderColor = undefined,
-  onColorSelect = undefined,
-  acceptedColors = Object.values(Color),
   bookmarked = false,
   children,
   active = false,
@@ -230,13 +226,6 @@ export default function ClassCard({
             customActionMenu
           ) : (
             <>
-              {onColorSelect && leftBorderColor && (
-                <ColorSelector
-                  selectedColor={leftBorderColor}
-                  allowedColors={acceptedColors}
-                  onColorSelect={onColorSelect}
-                />
-              )}
               {onDelete && (
                 <Card.ActionIcon
                   data-action-icon

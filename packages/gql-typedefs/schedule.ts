@@ -45,6 +45,7 @@ export const scheduleTypeDef = gql`
     title: String!
     description: String
     color: Color
+    hidden: Boolean
   }
 
   type Schedule @cacheControl(maxAge: 1) {
@@ -73,6 +74,7 @@ export const scheduleTypeDef = gql`
     title: String!
     description: String
     color: Color
+    hidden: Boolean
   }
 
   input SelectedClassInput {
