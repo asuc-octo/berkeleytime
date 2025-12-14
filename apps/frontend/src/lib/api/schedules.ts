@@ -45,6 +45,7 @@ export const READ_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -140,6 +141,10 @@ export const READ_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -167,6 +172,7 @@ export const UPDATE_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -262,6 +268,10 @@ export const UPDATE_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -295,6 +305,7 @@ export const CREATE_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -390,6 +401,10 @@ export const CREATE_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -411,6 +426,7 @@ export const READ_SCHEDULES = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -442,6 +458,7 @@ export const READ_SCHEDULES = gql`
           sectionId
         }
         color
+        hidden
       }
     }
   }

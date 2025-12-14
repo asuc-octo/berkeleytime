@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 import {
   LabelType,
   MajorReqType,
@@ -17,7 +19,7 @@ import { PlanModule } from "./generated-types/module-types";
 
 export function formatPlan(plan: PlanType): PlanModule.Plan {
   return {
-    _id: plan._id.toString(),
+    _id: (plan._id as Types.ObjectId).toString(),
     userEmail: plan.userEmail,
     planTerms: plan.planTerms.map(formatPlanTerm),
     majors: plan.majors,
@@ -34,7 +36,7 @@ export function formatPlan(plan: PlanType): PlanModule.Plan {
 
 export function formatPlanTerm(planTerm: PlanTermType): PlanModule.PlanTerm {
   return {
-    _id: planTerm._id.toString(),
+    _id: (planTerm._id as Types.ObjectId).toString(),
     name: planTerm.name,
     userEmail: planTerm.userEmail,
     courses: planTerm.courses.map(formatCourse),

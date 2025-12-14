@@ -160,7 +160,7 @@ import styles from "./Select.module.scss";
 import SelectItem from "./SelectItem";
 import { deepEqual, isOptionItem, useMatchTriggerWidth } from "./utils";
 
-export * from "./SelectItem";
+export { SelectItem };
 
 export type OptionLabel = {
   type: "label";
@@ -215,6 +215,7 @@ export interface SelectProps<T> {
   tabValue?: string;
   onTabChange?: (value: string) => void;
   selectedLabel?: string;
+  style?: React.CSSProperties;
 }
 
 export function Select<T>({
@@ -240,6 +241,7 @@ export function Select<T>({
   tabValue,
   onTabChange,
   selectedLabel,
+  style,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -544,6 +546,7 @@ export function Select<T>({
             })}
             tabIndex={0}
             gap="12px"
+            style={style}
           >
             {triggerContent}
           </Flex>
@@ -605,6 +608,7 @@ export function Select<T>({
           })}
           tabIndex={0}
           gap="12px"
+          style={style}
         >
           {triggerContent}
         </Flex>

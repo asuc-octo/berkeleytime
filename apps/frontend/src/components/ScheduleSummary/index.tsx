@@ -120,13 +120,22 @@ export default function ScheduleSummary({ schedule }: ScheduleSummaryProps) {
         const minutes: string[][] = [...Array(60 * 18)].map(() => []);
 
         const relevantEvents = events
+          .filter((event) => !event.hidden)
           .map(
             (event, index) =>
               ({
                 event,
                 startTime: event.startTime,
                 endTime: event.endTime,
-                days: event.days,
+                days: event.days as [
+                  boolean,
+                  boolean,
+                  boolean,
+                  boolean,
+                  boolean,
+                  boolean,
+                  boolean,
+                ],
                 id: event._id,
                 type: "custom",
                 color: event.color,

@@ -30,6 +30,10 @@ export const scheduleTypeDef = gql`
     class: Class!
     selectedSections: [Section!]!
     color: Color
+    hidden: Boolean
+    locked: Boolean
+    blockedSections: [SectionIdentifier!]
+    lockedComponents: [Component!]
   }
 
   type Event {
@@ -41,6 +45,7 @@ export const scheduleTypeDef = gql`
     title: String!
     description: String
     color: Color
+    hidden: Boolean
   }
 
   type Schedule @cacheControl(maxAge: 1) {
@@ -69,6 +74,7 @@ export const scheduleTypeDef = gql`
     title: String!
     description: String
     color: Color
+    hidden: Boolean
   }
 
   input SelectedClassInput {
@@ -77,6 +83,10 @@ export const scheduleTypeDef = gql`
     number: ClassNumber!
     sectionIds: [SectionIdentifier!]!
     color: Color
+    hidden: Boolean
+    locked: Boolean
+    blockedSections: [SectionIdentifier!]
+    lockedComponents: [Component!]
   }
 
   input UpdateScheduleInput {
