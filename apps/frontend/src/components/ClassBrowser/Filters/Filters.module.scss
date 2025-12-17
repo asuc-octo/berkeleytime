@@ -80,6 +80,34 @@
       padding: 0;
     }
 
+    .timeRangeInputs {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .timeInputGroup {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .timeLabel {
+      font-size: var(--text-12);
+      color: var(--paragraph-color);
+      margin-bottom: 4px;
+    }
+
+    .timeInput {
+      width: 100%;
+      color: var(--paragraph-color);
+
+      &::-webkit-calendar-picker-indicator {
+        display: none;
+        appearance: none;
+      }
+    }
+
   }
 
   @media (width > 992px) {

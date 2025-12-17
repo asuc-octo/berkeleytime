@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Box, Button, Container } from "@repo/theme";
+import { Box, Button, Container, Skeleton } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -29,6 +29,27 @@ const chartConfig = createChartConfig(["course"], {
   labels: { course: "All semesters" },
   colors: { course: "var(--blue-500)" },
 });
+
+function GradesSkeleton() {
+  return (
+    <Box p="5" className={styles.root}>
+      <Container size="3">
+        <div className={styles.wrapper}>
+          <div className={styles.header}>
+            <div className={styles.titleBlock}>
+              <Skeleton className={styles.skeletonTitle} />
+              <Skeleton className={styles.skeletonSubtitle} />
+            </div>
+            <Skeleton className={styles.skeletonButton} />
+          </div>
+          <div className={styles.chart}>
+            <Skeleton className={styles.skeletonChart} />
+          </div>
+        </div>
+      </Container>
+    </Box>
+  );
+}
 
 export default function Grades() {
   const {
@@ -129,7 +150,7 @@ export default function Grades() {
   }, [courseTotal]);
 
   if (loading || !courseGradeDistribution) {
-    return <EmptyState heading="Loading Grade Data" loading />;
+    return <GradesSkeleton />;
   }
 
   if (hasNoGradeData) {

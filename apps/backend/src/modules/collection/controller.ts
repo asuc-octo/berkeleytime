@@ -1,11 +1,9 @@
 import { GraphQLError } from "graphql";
 import { Types } from "mongoose";
 
-import { ClassModel, CollectionModel } from "@repo/common";
+import { ClassModel, CollectionColor, CollectionModel } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
-
-const MAX_PERSONAL_NOTE_LENGTH = 5000;
 
 export interface RequestContext {
   user: {
@@ -14,7 +12,6 @@ export interface RequestContext {
   };
 }
 
-// Type for stored class entries in MongoDB
 export interface StoredClassEntry {
   year: number;
   semester: string;
@@ -22,23 +19,67 @@ export interface StoredClassEntry {
   subject: string;
   courseNumber: string;
   classNumber: string;
-  personalNote?: {
-    text: string;
-    updatedAt: Date;
-  };
+  addedAt: Date;
 }
 
-// Type for collection documents returned from MongoDB
 export interface CollectionDocument {
   _id: Types.ObjectId;
   createdBy: string;
   name: string;
+  color?: CollectionColor;
+  pinnedAt?: Date;
+  lastAdd: Date;
+  isSystem: boolean;
   classes: StoredClassEntry[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-// Collection-Level Operations
+export const ALL_SAVED_NAME = "All Saved";
+
+export const getOrCreateAllSaved = async (
+  context: RequestContext
+): Promise<CollectionDocument> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  let allSaved = await CollectionModel.findOne({
+    createdBy: context.user._id,
+    isSystem: true,
+    name: ALL_SAVED_NAME,
+  });
+
+  if (!allSaved) {
+    // For existing users, populate with union of all classes from their collections
+    const existingCollections = await CollectionModel.find({
+      createdBy: context.user._id,
+    }).lean();
+
+    const allClassesMap = new Map<string, StoredClassEntry>();
+    for (const collection of existingCollections) {
+      for (const classEntry of collection.classes || []) {
+        const key = `${classEntry.year}|${classEntry.semester}|${classEntry.sessionId}|${classEntry.subject}|${classEntry.courseNumber}|${classEntry.classNumber}`;
+        if (!allClassesMap.has(key)) {
+          allClassesMap.set(key, classEntry as StoredClassEntry);
+        }
+      }
+    }
+
+    allSaved = await CollectionModel.create({
+      createdBy: context.user._id,
+      name: ALL_SAVED_NAME,
+      isSystem: true,
+      pinnedAt: new Date(),
+      lastAdd: new Date(),
+      classes: Array.from(allClassesMap.values()),
+    });
+  }
+
+  return allSaved.toObject() as unknown as CollectionDocument;
+};
 
 export const getAllCollections = async (
   context: RequestContext
@@ -49,9 +90,19 @@ export const getAllCollections = async (
     });
   }
 
-  return (await CollectionModel.find({
+  await getOrCreateAllSaved(context);
+
+  const collections = (await CollectionModel.find({
     createdBy: context.user._id,
   }).lean()) as unknown as CollectionDocument[];
+
+  return collections.sort((a, b) => {
+    if (a.isSystem && !b.isSystem) return -1;
+    if (!a.isSystem && b.isSystem) return 1;
+    if (a.pinnedAt && !b.pinnedAt) return -1;
+    if (!a.pinnedAt && b.pinnedAt) return 1;
+    return new Date(b.lastAdd).getTime() - new Date(a.lastAdd).getTime();
+  });
 };
 
 export const getCollection = async (
@@ -78,10 +129,27 @@ export const getCollection = async (
   return collection;
 };
 
-export const renameCollection = async (
+export const getCollectionById = async (
   context: RequestContext,
-  oldName: string,
-  newName: string
+  id: string
+): Promise<CollectionDocument | null> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const collection = (await CollectionModel.findOne({
+    _id: id,
+    createdBy: context.user._id,
+  }).lean()) as CollectionDocument | null;
+
+  return collection;
+};
+
+export const createCollection = async (
+  context: RequestContext,
+  input: CollectionModule.CreateCollectionInput
 ): Promise<CollectionDocument> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -89,17 +157,60 @@ export const renameCollection = async (
     });
   }
 
-  // Validate new name
-  if (!newName || newName.trim().length === 0) {
-    throw new GraphQLError("New collection name cannot be empty", {
+  const { name, color } = input;
+
+  if (!name || !name.trim()) {
+    throw new GraphQLError("Collection name cannot be empty", {
       extensions: { code: "BAD_USER_INPUT" },
     });
   }
 
-  // Find collection (with ownership verification)
-  const collection = await CollectionModel.findOne({
+  if (name.trim().toLowerCase() === ALL_SAVED_NAME.toLowerCase()) {
+    throw new GraphQLError(
+      `"${ALL_SAVED_NAME}" is a reserved collection name`,
+      {
+        extensions: { code: "BAD_USER_INPUT" },
+      }
+    );
+  }
+
+  const existing = await CollectionModel.findOne({
     createdBy: context.user._id,
-    name: oldName,
+    name: name.trim(),
+  });
+
+  if (existing) {
+    throw new GraphQLError(`Collection "${name}" already exists`, {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
+
+  const collection = await CollectionModel.create({
+    createdBy: context.user._id,
+    name: name.trim(),
+    color: color ?? undefined,
+    isSystem: false,
+    lastAdd: new Date(),
+    classes: [],
+  });
+
+  return collection.toObject() as unknown as CollectionDocument;
+};
+
+export const updateCollection = async (
+  context: RequestContext,
+  id: string,
+  input: CollectionModule.UpdateCollectionInput
+): Promise<CollectionDocument> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const collection = await CollectionModel.findOne({
+    _id: id,
+    createdBy: context.user._id,
   });
 
   if (!collection) {
@@ -108,28 +219,78 @@ export const renameCollection = async (
     });
   }
 
-  // Check new name doesn't conflict
-  const existing = await CollectionModel.findOne({
-    createdBy: context.user._id,
-    name: newName,
+  const update: Record<string, unknown> = {};
+
+  if (input.name !== undefined && input.name !== null) {
+    if (collection.isSystem) {
+      throw new GraphQLError("System collections cannot be renamed", {
+        extensions: { code: "FORBIDDEN" },
+      });
+    }
+
+    if (!input.name.trim()) {
+      throw new GraphQLError("Collection name cannot be empty", {
+        extensions: { code: "BAD_USER_INPUT" },
+      });
+    }
+
+    if (input.name.trim().toLowerCase() === ALL_SAVED_NAME.toLowerCase()) {
+      throw new GraphQLError(
+        `"${ALL_SAVED_NAME}" is a reserved collection name`,
+        {
+          extensions: { code: "BAD_USER_INPUT" },
+        }
+      );
+    }
+
+    if (input.name.trim() !== collection.name) {
+      const existing = await CollectionModel.findOne({
+        createdBy: context.user._id,
+        name: input.name.trim(),
+      });
+
+      if (existing) {
+        throw new GraphQLError(`Collection "${input.name}" already exists`, {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
+      }
+    }
+
+    update.name = input.name.trim();
+  }
+
+  if (input.color !== undefined) {
+    update.color = input.color;
+  }
+
+  if (input.pinned !== undefined && input.pinned !== null) {
+    if (collection.isSystem) {
+      throw new GraphQLError(
+        "System collections cannot be pinned or unpinned",
+        {
+          extensions: { code: "FORBIDDEN" },
+        }
+      );
+    }
+    update.pinnedAt = input.pinned ? new Date() : null;
+  }
+
+  const result = await CollectionModel.findByIdAndUpdate(id, update, {
+    new: true,
   });
 
-  if (existing) {
-    throw new GraphQLError(`Collection "${newName}" already exists`, {
-      extensions: { code: "BAD_USER_INPUT" },
+  if (!result) {
+    throw new GraphQLError("Collection not found after update", {
+      extensions: { code: "NOT_FOUND" },
     });
   }
 
-  // Update name
-  collection.name = newName;
-  await collection.save();
-
-  return collection.toObject() as unknown as CollectionDocument;
+  return result.toObject() as unknown as CollectionDocument;
 };
 
 export const deleteCollection = async (
   context: RequestContext,
-  name: string
+  id: string
 ): Promise<boolean> => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -137,21 +298,27 @@ export const deleteCollection = async (
     });
   }
 
-  const result = await CollectionModel.deleteOne({
+  const collection = await CollectionModel.findOne({
+    _id: id,
     createdBy: context.user._id,
-    name,
   });
 
-  if (result.deletedCount === 0) {
+  if (!collection) {
     throw new GraphQLError("Collection not found", {
       extensions: { code: "NOT_FOUND" },
     });
   }
 
+  if (collection.isSystem) {
+    throw new GraphQLError("System collections cannot be deleted", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
+
+  await CollectionModel.deleteOne({ _id: id });
+
   return true;
 };
-
-// Class-Level Operations
 
 export const addClassToCollection = async (
   context: RequestContext,
@@ -164,32 +331,15 @@ export const addClassToCollection = async (
   }
 
   const {
-    collectionName,
+    collectionId,
     year,
     semester,
     sessionId,
     subject,
     courseNumber,
     classNumber,
-    personalNote,
   } = input;
 
-  // Validate collection name
-  if (!collectionName || collectionName.trim().length === 0) {
-    throw new GraphQLError("Collection name cannot be empty", {
-      extensions: { code: "BAD_USER_INPUT" },
-    });
-  }
-
-  // Validate personal note length
-  if (personalNote && personalNote.text.length > MAX_PERSONAL_NOTE_LENGTH) {
-    throw new GraphQLError(
-      `Personal note cannot exceed ${MAX_PERSONAL_NOTE_LENGTH} characters`,
-      { extensions: { code: "BAD_USER_INPUT" } }
-    );
-  }
-
-  // Verify class exists in catalog
   const classExists = await ClassModel.findOne({
     year,
     semester,
@@ -205,15 +355,6 @@ export const addClassToCollection = async (
     });
   }
 
-  // Normalize personalNote: treat empty/whitespace text as undefined
-  const normalizedPersonalNote =
-    personalNote && personalNote.text.trim().length > 0
-      ? {
-          text: personalNote.text.trim(),
-          updatedAt: new Date(),
-        }
-      : undefined;
-
   const classIdentifier = {
     year,
     semester,
@@ -223,39 +364,71 @@ export const addClassToCollection = async (
     classNumber,
   };
 
-  // Try to update existing class's note in collection
-  let result = await CollectionModel.findOneAndUpdate(
+  const classIdentifierWithTimestamp = {
+    ...classIdentifier,
+    addedAt: new Date(),
+  };
+
+  const targetCollection = await CollectionModel.findOne({
+    _id: collectionId,
+    createdBy: context.user._id,
+  });
+
+  if (!targetCollection) {
+    throw new GraphQLError("Collection not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  // Also add to "All Saved" when adding to a non-system collection
+  if (!targetCollection.isSystem) {
+    const allSaved = await getOrCreateAllSaved(context);
+    await CollectionModel.findOneAndUpdate(
+      {
+        _id: allSaved._id,
+        createdBy: context.user._id,
+        classes: { $not: { $elemMatch: classIdentifier } },
+      },
+      {
+        $push: { classes: classIdentifierWithTimestamp },
+        $set: { lastAdd: new Date() },
+      }
+    );
+  }
+
+  const alreadyInCollection = targetCollection.classes?.some(
+    (c) =>
+      c.year === year &&
+      c.semester === semester &&
+      c.sessionId === sessionId &&
+      c.subject === subject &&
+      c.courseNumber === courseNumber &&
+      c.classNumber === classNumber
+  );
+
+  if (alreadyInCollection) {
+    return targetCollection.toObject() as unknown as CollectionDocument;
+  }
+
+  const result = await CollectionModel.findOneAndUpdate(
     {
+      _id: collectionId,
       createdBy: context.user._id,
-      name: collectionName,
-      classes: { $elemMatch: classIdentifier },
     },
     {
-      $set: { "classes.$.personalNote": normalizedPersonalNote },
+      $push: { classes: classIdentifierWithTimestamp },
+      $set: { lastAdd: new Date() },
     },
     { new: true }
   );
 
-  if (result) {
-    return result.toObject() as unknown as CollectionDocument;
+  if (!result) {
+    throw new GraphQLError("Collection not found after update", {
+      extensions: { code: "NOT_FOUND" },
+    });
   }
 
-  // Add class to existing or new collection
-  result = await CollectionModel.findOneAndUpdate(
-    {
-      createdBy: context.user._id,
-      name: collectionName,
-    },
-    {
-      $setOnInsert: { createdBy: context.user._id, name: collectionName },
-      $push: {
-        classes: { ...classIdentifier, personalNote: normalizedPersonalNote },
-      },
-    },
-    { upsert: true, new: true }
-  );
-
-  return result!.toObject() as unknown as CollectionDocument;
+  return result.toObject() as unknown as CollectionDocument;
 };
 
 export const removeClassFromCollection = async (
@@ -269,7 +442,7 @@ export const removeClassFromCollection = async (
   }
 
   const {
-    collectionName,
+    collectionId,
     year,
     semester,
     sessionId,
@@ -287,12 +460,57 @@ export const removeClassFromCollection = async (
     classNumber,
   };
 
-  // Atomic operation: Remove class from collection using $pull
+  const targetCollection = await CollectionModel.findOne({
+    _id: collectionId,
+    createdBy: context.user._id,
+  });
+
+  if (!targetCollection) {
+    throw new GraphQLError("Collection not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  const classInCollection = targetCollection.classes?.some(
+    (c) =>
+      c.year === year &&
+      c.semester === semester &&
+      c.sessionId === sessionId &&
+      c.subject === subject &&
+      c.courseNumber === courseNumber &&
+      c.classNumber === classNumber
+  );
+
+  if (!classInCollection) {
+    throw new GraphQLError("Class not found in collection", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  // Removing from "All Saved" cascades to all collections
+  if (targetCollection.isSystem) {
+    await CollectionModel.updateMany(
+      {
+        createdBy: context.user._id,
+      },
+      {
+        $pull: { classes: classIdentifier },
+      }
+    );
+
+    const updatedAllSaved = await CollectionModel.findById(collectionId).lean();
+    if (!updatedAllSaved) {
+      throw new GraphQLError("Collection not found after update", {
+        extensions: { code: "NOT_FOUND" },
+      });
+    }
+    return updatedAllSaved as unknown as CollectionDocument;
+  }
+
   const result = await CollectionModel.findOneAndUpdate(
     {
+      _id: collectionId,
       createdBy: context.user._id,
-      name: collectionName,
-      classes: { $elemMatch: classIdentifier },
     },
     {
       $pull: { classes: classIdentifier },
@@ -301,19 +519,7 @@ export const removeClassFromCollection = async (
   );
 
   if (!result) {
-    // Determine if collection doesn't exist or class wasn't in collection
-    const collectionExists = await CollectionModel.findOne({
-      createdBy: context.user._id,
-      name: collectionName,
-    });
-
-    if (!collectionExists) {
-      throw new GraphQLError("Collection not found", {
-        extensions: { code: "NOT_FOUND" },
-      });
-    }
-
-    throw new GraphQLError("Class not found in collection", {
+    throw new GraphQLError("Collection not found after update", {
       extensions: { code: "NOT_FOUND" },
     });
   }

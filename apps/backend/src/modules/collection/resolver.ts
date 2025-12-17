@@ -1,24 +1,26 @@
 import { GraphQLError } from "graphql";
 
-import { ClassModel } from "@repo/common";
+import { ClassModel, IClassItem } from "@repo/common";
 
+import { formatClass } from "../class/formatter";
 import { CollectionDocument, StoredClassEntry } from "./controller";
 import * as controller from "./controller";
 import { CollectionModule } from "./generated-types/module-types";
 
-// Intermediate type for parent passed to Collection field resolvers
-// Note: classes is StoredClassEntry[] here, transformed by Collection.classes resolver
+// classes is StoredClassEntry[] here, transformed by Collection.classes resolver
 interface CollectionParent {
   _id: string;
   createdBy: string;
   name: string;
+  color: CollectionModule.CollectionColor | null;
+  pinnedAt: string | null;
+  lastAdd: string;
+  isSystem: boolean;
   classes: StoredClassEntry[];
   createdAt: string;
   updatedAt: string;
 }
 
-// Helper to map Collection document to GraphQL response
-// Returns CollectionParent which will be resolved by field resolvers
 const mapCollectionToGraphQL = (
   collection: CollectionDocument
 ): CollectionModule.Collection => {
@@ -26,6 +28,17 @@ const mapCollectionToGraphQL = (
     _id: collection._id.toString(),
     createdBy: collection.createdBy,
     name: collection.name,
+    color: (collection.color as CollectionModule.CollectionColor) ?? null,
+    pinnedAt: collection.pinnedAt
+      ? collection.pinnedAt instanceof Date
+        ? collection.pinnedAt.toISOString()
+        : String(collection.pinnedAt)
+      : null,
+    lastAdd:
+      collection.lastAdd instanceof Date
+        ? collection.lastAdd.toISOString()
+        : String(collection.lastAdd),
+    isSystem: collection.isSystem,
     classes: collection.classes,
     createdAt:
       collection.createdAt instanceof Date
@@ -78,15 +91,52 @@ const resolvers: CollectionModule.Resolvers = {
         );
       }
     },
+
+    myCollectionById: async (_, { id }, context) => {
+      try {
+        const collection = await controller.getCollectionById(context, id);
+        if (!collection) {
+          return null;
+        }
+        return mapCollectionToGraphQL(collection);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
   },
 
   Mutation: {
-    renameCollection: async (_, { oldName, newName }, context) => {
+    createCollection: async (_, { input }, context) => {
       try {
-        const collection = await controller.renameCollection(
+        const collection = await controller.createCollection(context, input);
+        return mapCollectionToGraphQL(collection);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
+
+    updateCollection: async (_, { id, input }, context) => {
+      try {
+        const collection = await controller.updateCollection(
           context,
-          oldName,
-          newName
+          id,
+          input
         );
         return mapCollectionToGraphQL(collection);
       } catch (error: unknown) {
@@ -102,9 +152,9 @@ const resolvers: CollectionModule.Resolvers = {
       }
     },
 
-    deleteCollection: async (_, { name }, context) => {
+    deleteCollection: async (_, { id }, context) => {
       try {
-        return await controller.deleteCollection(context, name);
+        return await controller.deleteCollection(context, id);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
@@ -160,23 +210,26 @@ const resolvers: CollectionModule.Resolvers = {
   },
 
   Collection: {
-    // Resolve classes with their full class info
     classes: async (parent) => {
-      const typedParent = parent as CollectionParent;
+      const typedParent = parent as unknown as CollectionParent;
 
-      // Guard: Return early if no classes in collection
       if (!typedParent.classes || typedParent.classes.length === 0) {
         return [];
       }
 
-      // Build batch query for all classes
-      const classQueries = typedParent.classes.map((classEntry) => ({
+      const sortedClasses = [...typedParent.classes].sort((a, b) => {
+        const dateA = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+        const dateB = b.addedAt ? new Date(b.addedAt).getTime() : 0;
+        return dateB - dateA;
+      });
+
+      const classQueries = sortedClasses.map((classEntry) => ({
         year: classEntry.year,
         semester: classEntry.semester,
         sessionId: classEntry.sessionId,
         subject: classEntry.subject,
         courseNumber: classEntry.courseNumber,
-        number: classEntry.classNumber, // Note: classNumber -> number
+        number: classEntry.classNumber,
       }));
 
       const allClasses = await ClassModel.find({
@@ -190,19 +243,7 @@ const resolvers: CollectionModule.Resolvers = {
         ])
       );
 
-      // Helper to format personal note
-      const formatPersonalNote = (note: StoredClassEntry["personalNote"]) =>
-        note
-          ? {
-              text: note.text,
-              updatedAt:
-                note.updatedAt instanceof Date
-                  ? note.updatedAt.toISOString()
-                  : String(note.updatedAt),
-            }
-          : null;
-
-      return typedParent.classes.map(
+      return sortedClasses.map(
         (classEntry): CollectionModule.CollectionClass => {
           const key = `${classEntry.year}|${classEntry.semester}|${classEntry.sessionId}|${classEntry.subject}|${classEntry.courseNumber}|${classEntry.classNumber}`;
           const classData = classMap.get(key);
@@ -219,16 +260,21 @@ const resolvers: CollectionModule.Resolvers = {
 
             return {
               class: null,
-              personalNote: formatPersonalNote(classEntry.personalNote),
               error: "CLASS_NOT_FOUND_IN_CATALOG",
+              addedAt: classEntry.addedAt
+                ? new Date(classEntry.addedAt).toISOString()
+                : null,
             };
           }
 
+          const formattedClass = formatClass(classData as IClassItem);
+
           return {
-            // Cast to Class - nested fields resolved by Class field resolvers
-            class: classData as unknown as CollectionModule.Class,
-            personalNote: formatPersonalNote(classEntry.personalNote),
+            class: formattedClass as unknown as CollectionModule.Class,
             error: null,
+            addedAt: classEntry.addedAt
+              ? new Date(classEntry.addedAt).toISOString()
+              : null,
           };
         }
       );

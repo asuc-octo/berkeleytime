@@ -24,7 +24,6 @@ import {
   getInputSearchParam,
 } from "@/components/CourseAnalytics/types";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
-import Footer from "@/components/Footer";
 import { type IGradeDistribution } from "@/lib/api";
 import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
@@ -381,7 +380,6 @@ const GradeDistributions = () => {
           )
         }
       />
-      <Footer />
     </>
   );
 };

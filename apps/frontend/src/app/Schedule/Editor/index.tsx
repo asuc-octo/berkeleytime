@@ -71,7 +71,7 @@ export default function Editor() {
       const section = [
         ...selectedClass.class.sections,
         selectedClass.class.primarySection,
-      ].find((section) => section.number === number);
+      ].find((section) => section?.number === number);
 
       if (!section) return;
 
@@ -83,7 +83,7 @@ export default function Editor() {
           const currentSection = [
             ...selectedClass.class.sections,
             selectedClass.class.primarySection,
-          ].find((section) => section.sectionId === selectedSection.sectionId);
+          ].find((section) => section?.sectionId === selectedSection.sectionId);
 
           return (
             !currentSection || currentSection.component !== section.component
@@ -145,7 +145,7 @@ export default function Editor() {
       if (!selectedClass) return;
 
       const section =
-        selectedClass.class.primarySection.number === number
+        selectedClass.class.primarySection?.number === number
           ? selectedClass.class.primarySection
           : selectedClass.class.sections.find(
               (section) => section.number === number
@@ -324,12 +324,14 @@ export default function Editor() {
 
       const _class: IScheduleClass["class"] = {
         ..._classClone,
-        primarySection: {
-          ..._classClone.primarySection,
-          subject: _classClone.subject,
-          courseNumber: _classClone.courseNumber,
-          classNumber: _classClone.number,
-        },
+        primarySection: _classClone.primarySection
+          ? {
+              ..._classClone.primarySection,
+              subject: _classClone.subject,
+              courseNumber: _classClone.courseNumber,
+              classNumber: _classClone.number,
+            }
+          : undefined,
         sections: _classClone.sections.map((s) => {
           return {
             ...s,
@@ -358,7 +360,12 @@ export default function Editor() {
 
       _schedule.classes.push({
         class: _class,
-        selectedSections,
+        selectedSections: selectedSections.map((s) => {
+          return {
+            sectionId: s?.sectionId,
+            ...s,
+          };
+        }),
         color: getNextClassColor(_schedule.classes.length),
       });
 
@@ -559,7 +566,8 @@ export default function Editor() {
     const _schedule = structuredClone(schedule);
 
     _schedule.classes = schedule.classes.filter(
-      (c) => c.class.primarySection.sectionId != _class.primarySection.sectionId
+      (c) =>
+        c.class.primarySection?.sectionId !== _class.primarySection?.sectionId
     );
 
     updateSchedule(

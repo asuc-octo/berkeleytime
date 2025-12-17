@@ -9,6 +9,7 @@ import {
   GradingFilter,
   Level,
   SortBy,
+  TimeRange,
   UnitRange,
   UniversityRequirement,
 } from "./browser";
@@ -28,6 +29,7 @@ export interface BrowserContextType {
   units: UnitRange;
   levels: Level[];
   days: Day[];
+  timeRange: TimeRange;
   breadths: Breadth[];
   universityRequirement: UniversityRequirement | null;
   gradingFilters: GradingFilter[];
@@ -41,6 +43,7 @@ export interface BrowserContextType {
   updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
+  updateTimeRange: Dispatch<TimeRange>;
   updateBreadths: Dispatch<Breadth[]>;
   updateUniversityRequirement: Dispatch<UniversityRequirement | null>;
   updateGradingFilters: Dispatch<GradingFilter[]>;

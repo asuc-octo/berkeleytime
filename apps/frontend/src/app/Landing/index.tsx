@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 
 import SunCalc from "suncalc";
 
+import Banner from "@/components/Layout/Banner";
+import NavigationBar from "@/components/NavigationBar";
+
 import Features from "./Features";
 import Hero from "./Hero";
 import daytime from "./Hero/daytime.svg";
@@ -69,11 +72,15 @@ const Home = () => {
 
   return (
     <div className={styles.root}>
+      <div className={styles.stickyHeader}>
+        <Banner />
+        <NavigationBar />
+      </div>
       <Hero step={step} milliseconds={milliseconds} />
       <div className={styles.features}>
         <Features />
       </div>
-      <Wave className={styles.bottomWave} fill="var(--neutral-900)" />
+      <Wave className={styles.bottomWave} fill="var(--foreground-color)" />
       <Organization />
     </div>
   );

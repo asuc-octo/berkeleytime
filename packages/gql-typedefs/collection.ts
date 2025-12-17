@@ -1,48 +1,68 @@
 import { gql } from "graphql-tag";
 
 export const collectionTypeDef = gql`
-  type Collection {
+  enum CollectionColor {
+    red
+    orange
+    amber
+    yellow
+    lime
+    green
+    emerald
+    teal
+    cyan
+    sky
+    blue
+    indigo
+    violet
+    purple
+    fuchsia
+    pink
+    rose
+  }
+
+  type Collection @cacheControl(maxAge: 0) {
     _id: ID!
     createdBy: String!
     name: String!
+    color: CollectionColor
+    pinnedAt: String
+    lastAdd: String!
+    isSystem: Boolean!
     classes: [CollectionClass!]!
     createdAt: String!
     updatedAt: String!
   }
 
-  type CollectionClass {
+  type CollectionClass @cacheControl(maxAge: 0) {
     class: Class
-    personalNote: PersonalNote
     error: String
-  }
-
-  type PersonalNote {
-    text: String!
-    updatedAt: String!
+    addedAt: String
   }
 
   type Query {
     myCollections: [Collection!]! @auth
     myCollection(name: String!): Collection @auth
+    myCollectionById(id: ID!): Collection @auth
+  }
+
+  input CreateCollectionInput {
+    name: String!
+    color: CollectionColor
   }
 
   input AddClassInput {
-    collectionName: String!
+    collectionId: ID!
     year: Int!
     semester: Semester!
     sessionId: SessionIdentifier!
     subject: String!
     courseNumber: CourseNumber!
     classNumber: ClassNumber!
-    personalNote: PersonalNoteInput
-  }
-
-  input PersonalNoteInput {
-    text: String!
   }
 
   input RemoveClassInput {
-    collectionName: String!
+    collectionId: ID!
     year: Int!
     semester: Semester!
     sessionId: SessionIdentifier!
@@ -51,9 +71,16 @@ export const collectionTypeDef = gql`
     classNumber: ClassNumber!
   }
 
+  input UpdateCollectionInput {
+    name: String
+    color: CollectionColor
+    pinned: Boolean
+  }
+
   type Mutation {
-    renameCollection(oldName: String!, newName: String!): Collection! @auth
-    deleteCollection(name: String!): Boolean! @auth
+    createCollection(input: CreateCollectionInput!): Collection! @auth
+    updateCollection(id: ID!, input: UpdateCollectionInput!): Collection! @auth
+    deleteCollection(id: ID!): Boolean! @auth
     addClassToCollection(input: AddClassInput!): Collection! @auth
     removeClassFromCollection(input: RemoveClassInput!): Collection! @auth
   }

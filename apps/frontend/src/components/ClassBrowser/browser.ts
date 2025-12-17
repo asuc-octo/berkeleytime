@@ -33,6 +33,16 @@ export enum Unit {
 
 export type UnitRange = [number, number];
 
+// TimeRange is [fromTime, toTime] in "HH:MM" format (24-hour)
+// Default [null, null] means no filtering (all times)
+export type TimeRange = [string | null, string | null];
+
+// Helper to parse "HH:MM" time string to minutes since midnight
+const parseTimeToMinutes = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
 export enum Day {
   Sunday = "0",
   Monday = "1",
@@ -147,7 +157,8 @@ export const getFilteredClasses = (
   currentBreadths: Breadth[] = [],
   currentUniversityRequirement: UniversityRequirement | null = null,
   currentGradingFilters: GradingFilter[] = [],
-  currentAcademicOrganization: string | null = null
+  currentAcademicOrganization: string | null = null,
+  currentTimeRange: TimeRange = [null, null]
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -209,6 +220,38 @@ export const getFilteredClasses = (
         if (!includesDays) {
           acc.excludedClasses.push(_class);
 
+          return acc;
+        }
+      }
+
+      // Filter by time range
+      if (currentTimeRange[0] !== null || currentTimeRange[1] !== null) {
+        const meeting = _class.primarySection.meetings?.[0];
+        const meetingStart = meeting?.startTime;
+        const meetingEnd = meeting?.endTime;
+
+        // If class has no meeting times, exclude it when time filter is active
+        if (!meetingStart || !meetingEnd) {
+          acc.excludedClasses.push(_class);
+          return acc;
+        }
+
+        const filterFrom = currentTimeRange[0]
+          ? parseTimeToMinutes(currentTimeRange[0])
+          : 0;
+        const filterTo = currentTimeRange[1]
+          ? parseTimeToMinutes(currentTimeRange[1])
+          : 24 * 60 - 1;
+
+        const classStart = parseTimeToMinutes(meetingStart);
+        const classEnd = parseTimeToMinutes(meetingEnd);
+
+        // Check if class time overlaps with filter range
+        // Class must start at or after filterFrom AND end at or before filterTo
+        const isWithinRange = classStart >= filterFrom && classEnd <= filterTo;
+
+        if (!isWithinRange) {
+          acc.excludedClasses.push(_class);
           return acc;
         }
       }

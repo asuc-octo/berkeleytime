@@ -1,3 +1,7 @@
+.wrapper {
+  padding: 0 40px;
+}
+
 .root {
   padding: 64px 0;
   display: flex;
@@ -5,66 +9,46 @@
   gap: 64px;
   line-height: 1;
 
-  @media (width <= 992px) {
-    flex-direction: column;
-  }
-
-  &.invert {
-    border-color: var(--neutral-700);
-
-    .icon-button {
-      color: var(--neutral-400);
-    }
-
-    .group .description,
-    .column .label {
-      color: var(--neutral-400);
-    }
-
-    .column .link,
-    .group .description .link {
-      color: white;
-
-      &:hover {
-        color: var(--neutral-300);
-      }
-    }
-  }
-
-  .link {
-    color: var(--heading-color);
-    transition: all 100ms ease-in-out;
-    font-weight: var(--font-medium);
-    font-size: var(--text-16);
-
-    &:hover {
-      color: var(--paragraph-color);
-    }
+  .columns {
+    display: flex;
+    gap: 64px;
   }
 
   .column {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 
     .label {
-      font-size: var(--text-12);
-      color: var(--label-color);
+      font-size: var(--text-14);
+      font-weight: var(--font-medium);
+      color: var(--heading-color);
+    }
+
+    .link {
+      font-size: var(--text-14);
+      font-weight: var(--font-normal);
+      color: var(--paragraph-color);
+      transition: all 100ms ease-in-out;
+
+      &:hover {
+        color: var(--heading-color);
+      }
     }
   }
 
   .group {
     flex-grow: 1;
 
-    .row {
+    .brandGroup {
       display: flex;
-      margin-top: 24px;
-      gap: 12px;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .description {
-      font-size: var(--text-16);
-      margin-top: 16px;
+      font-size: var(--text-14);
+      font-weight: var(--font-normal);
       color: var(--paragraph-color);
     }
 
@@ -80,7 +64,52 @@
       color: var(--heading-color);
       cursor: pointer;
       transition: all 100ms ease-in-out;
-      margin-right: auto;
     }
+  }
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 0;
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  height: 32px;
+  padding: 0 10px;
+  width: fit-content;
+  background-color: var(--button-hover-color);
+  border-radius: 8px;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--paragraph-color);
+  text-decoration: none;
+  transition: all 100ms ease-in-out;
+
+  &:hover {
+    color: var(--heading-color);
+  }
+
+  .statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background-color: var(--green-500);
+  }
+
+  &[data-status="HASISSUES"] .statusDot {
+    background-color: var(--yellow-500);
+  }
+
+  &[data-status="UNDERMAINTENANCE"] .statusDot {
+    background-color: var(--blue-500);
   }
 }

@@ -6,12 +6,6 @@
   background-color: var(--foreground-color);
   border-bottom: 1px solid var(--border-color);
 
-  .bookmark.active {
-    color: var(--blue-500);
-    border-color: color-mix(in srgb, currentColor 10%, transparent);
-    background-color: color-mix(in srgb, currentColor 10%, transparent);
-  }
-
   .heading {
     font-size: 24px;
     font-weight: 660;

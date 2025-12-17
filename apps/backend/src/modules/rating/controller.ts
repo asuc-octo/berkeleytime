@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { GraphQLError } from "graphql";
 import { connection } from "mongoose";
 
@@ -412,6 +413,25 @@ export const getSemestersWithRatings = async (
   return formatSemesterRatings(semesters);
 };
 
+export const getCourseRatingsCount = async (
+  subject: string,
+  courseNumber: string
+): Promise<number> => {
+  const aggregated = await courseRatingAggregator(subject, courseNumber);
+
+  if (!aggregated || !aggregated[0]) {
+    return 0;
+  }
+
+  const formatted = formatAggregatedRatings(aggregated[0]);
+  // Return the max count across all metrics (they should be roughly equal)
+  const maxCount = Math.max(
+    0,
+    ...formatted.metrics.map((metric) => metric.count)
+  );
+  return maxCount;
+};
+
 export const getInstructorAggregatedRatings = async (
   subject: string,
   courseNumber: string
@@ -815,4 +835,24 @@ export const deleteRatings = async (
   }
 
   return true;
+};
+
+const anonymizeUserId = (userId: string): string => {
+  return createHash("sha256").update(userId).digest("hex").slice(0, 16);
+};
+
+export const getAllRatings = async () => {
+  const ratings = await RatingModel.find({}).lean();
+
+  return ratings.map((rating) => ({
+    anonymousUserId: anonymizeUserId(rating.createdBy),
+    subject: rating.subject,
+    courseNumber: rating.courseNumber,
+    semester: rating.semester as Semester,
+    year: rating.year,
+    classNumber: rating.classNumber,
+    metricName: rating.metricName as MetricName,
+    value: rating.value,
+    createdAt: (rating as any).createdAt.toISOString(),
+  }));
 };

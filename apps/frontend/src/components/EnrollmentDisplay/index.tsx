@@ -11,6 +11,8 @@ import styles from "./EnrollmentDisplay.module.scss";
 interface EnrollmentDisplayProps {
   enrolledCount?: number;
   maxEnroll?: number;
+  waitlistedCount?: number;
+  maxWaitlist?: number;
   time?: string;
   children?: (content: ReactNode) => ReactNode;
 }
@@ -18,13 +20,14 @@ interface EnrollmentDisplayProps {
 export default function EnrollmentDisplay({
   enrolledCount,
   maxEnroll,
+  waitlistedCount,
+  maxWaitlist,
   time,
   children,
 }: EnrollmentDisplayProps) {
   const formattedTime = useMemo(() => {
     if (!time) return null;
-    const date = moment(time);
-    return date.format("h:mm A MMM D, YYYY");
+    return moment(time).fromNow();
   }, [time]);
 
   const hasData = enrolledCount !== undefined && maxEnroll !== undefined;
@@ -35,11 +38,13 @@ export default function EnrollmentDisplay({
     maxEnroll === 0 ? 0 : Math.round((enrolledCount / maxEnroll) * 100);
   const color = getEnrollmentColor(enrolledCount, maxEnroll);
 
+  const hasWaitlist = waitlistedCount !== undefined && waitlistedCount > 0;
+
   const content = (
     <Tooltip
       trigger={
         <span className={styles.trigger} style={{ color }}>
-          {percentage}% enrolled
+          {percentage}% enrolled{hasWaitlist && ` (${waitlistedCount} wl.)`}
         </span>
       }
       title="Enrollment"
@@ -48,8 +53,17 @@ export default function EnrollmentDisplay({
           <span style={{ color }}>
             {enrolledCount}/{maxEnroll}
           </span>{" "}
-          students are enrolled in this class for this semester as of{" "}
-          {formattedTime}
+          students are enrolled in this class for this semester.
+          {hasWaitlist && (
+            <>
+              {" "}
+              {waitlistedCount}
+              {maxWaitlist !== undefined && `/${maxWaitlist}`} students are on
+              the waitlist.
+            </>
+          )}
+          <br />
+          <i>Updated {formattedTime}.</i>
         </>
       }
     />

@@ -42,32 +42,6 @@
 .formContentWrapper {
   position: relative;
   width: 100%;
-
-  &.slideTransition {
-    animation: slideOut 0.15s ease-out forwards, slideIn 0.15s 0.15s ease-in forwards;
-  }
-}
-
-@keyframes slideOut {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 .formGroup {
@@ -82,18 +56,20 @@
     padding: 0;
   }
 
-  .requiredAsterisk {
-    color: #dc2626;
-    margin-left: 4px;
-    font-size: var(--text-16);
-    line-height: 1;
-  }
 }
 
 .questionPair {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 20px 0;
+}
+
+.inlineQuestion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
   padding: 20px 0;
 }
 
@@ -156,68 +132,43 @@
   }
 }
 
-.radioOptions {
+.booleanBadges {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--paragraph-color);
-    font-size: var(--text-14);
-    cursor: pointer;
-    white-space: nowrap;
-
-    input[type="radio"] {
-      appearance: none;
-      min-width: 16px;
-      min-height: 16px;
-      width: 16px;
-      height: 16px;
-      border: 2px solid var(--border-color);
-      border-radius: 50%;
-      margin: 0;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-
-      &:checked {
-        border-color: var(--blue-500);
-        background-color: var(--blue-500);
-        box-shadow: inset 0 0 0 3px var(--foreground-color);
-      }
-
-      &:hover:not(:checked) {
-        border-color: var(--blue-400);
-      }
-    }
-  }
+  flex-direction: row;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.submitButton {
-  transition: background-color 0.2s ease;
+.booleanBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: none;
+  color: var(--heading-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
 
-  &.valid {
-    background: var(--blue-500);
-    color: white;
-    cursor: pointer;
-
-    &:hover {
-      background-color: var(--button-hover);
-      color: white;
-    }
+  &:hover {
+    background-color: var(--button-hover-color);
   }
 
-  &.invalid {
-    background: var(--foreground-color);
-    cursor: default;
+  &.selected {
+    background-color: var(--blue-500);
+    border-color: var(--blue-500);
+    color: white;
+  }
 
-    &:hover {
-      background: var(--foreground-color);
-      color: var(--paragraph-color);
-    }
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: none;
   }
 }
 
@@ -238,32 +189,5 @@
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-.closeButton {
-  position: absolute;
-  right: 24px;
-  top: 24px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-  color: var(--label-color);
-  cursor: pointer;
-  font-size: var(--text-18);
-  padding: 0;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: var(--heading-color);
-  }
-
-  &:focus {
-    outline: none;
-    color: var(--heading-color);
   }
 }

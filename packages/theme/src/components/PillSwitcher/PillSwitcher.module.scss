@@ -86,3 +86,16 @@
     box-shadow: none;
   }
 }
+
+.iconOnlyList {
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+}
+
+.iconOnlyTrigger {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 6px;
+}

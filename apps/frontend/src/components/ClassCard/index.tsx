@@ -3,9 +3,8 @@ import { ComponentPropsWithRef } from "react";
 import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
-  Bookmark,
-  BookmarkSolid,
   InfoCircle,
+  Star,
   Trash,
 } from "iconoir-react";
 
@@ -16,10 +15,23 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
 import { IEnrollmentSingular } from "@/lib/api/enrollment";
-import { Color } from "@/lib/generated/graphql";
+import { Color, Semester } from "@/lib/generated/graphql";
 
 import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
+
+const formatSemester = (semester: Semester): string => {
+  switch (semester) {
+    case Semester.Fall:
+      return "Fall";
+    case Semester.Spring:
+      return "Spring";
+    case Semester.Summer:
+      return "Summer";
+    default:
+      return semester;
+  }
+};
 
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
@@ -41,7 +53,9 @@ type BaseClassFields = Pick<
   | "gradeDistribution"
 >;
 
-type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
+type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
+  ratingsCount?: number | null;
+};
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
@@ -49,6 +63,8 @@ type EnrollmentSnapshot = Pick<
 >;
 
 type ClassCardClass = Partial<BaseClassFields> & {
+  year?: number;
+  semester?: Semester;
   course?: Partial<CourseSummary> | null;
   primarySection?: {
     enrollment?: {
@@ -65,6 +81,7 @@ interface ClassProps {
   onDelete?: () => void;
   leftBorderColor?: Color;
   onColorSelect?: (c: Color) => void;
+  acceptedColors?: Color[];
   bookmarked?: boolean;
   bookmarkToggle?: () => void;
   active?: boolean;
@@ -79,9 +96,9 @@ export default function ClassCard({
   onDelete,
   leftBorderColor = undefined,
   onColorSelect = undefined,
+  acceptedColors = Object.values(Color),
   bookmarked = false,
   children,
-  bookmarkToggle,
   active = false,
   wrapDescription = false,
   ...props
@@ -128,6 +145,11 @@ export default function ClassCard({
           <Card.Description wrapDescription={wrapDescription}>
             {_class?.title ?? _class?.course?.title}
           </Card.Description>
+          {_class?.semester && _class?.year && (
+            <span className={styles.semester}>
+              {formatSemester(_class.semester)} {_class.year}
+            </span>
+          )}
           <Card.Footer>
             <EnrollmentDisplay
               enrolledCount={
@@ -152,6 +174,12 @@ export default function ClassCard({
                 title="Reserved Seating"
                 description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
               />
+            )}
+            {(_class?.course?.ratingsCount ?? 0) > 0 && (
+              <span className={styles.ratingsCount}>
+                <Star className={styles.ratingsIcon} />
+                {_class?.course?.ratingsCount}
+              </span>
             )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
@@ -181,25 +209,10 @@ export default function ClassCard({
               }}
             />
           )}
-          {bookmarked && bookmarkToggle && (
-            <Card.ActionIcon
-              data-action-icon
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                bookmarkToggle();
-              }}
-            >
-              {bookmarked ? (
-                <BookmarkSolid width={16} height={16} />
-              ) : (
-                <Bookmark width={16} height={16} />
-              )}
-            </Card.ActionIcon>
-          )}
           {onColorSelect && leftBorderColor && (
             <ColorSelector
               selectedColor={leftBorderColor}
+              allowedColors={acceptedColors}
               onColorSelect={onColorSelect}
             />
           )}
