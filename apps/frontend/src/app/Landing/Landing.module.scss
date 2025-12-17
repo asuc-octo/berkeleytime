@@ -1,5 +1,7 @@
 .root {
   --header-height: 88px;
+  --content-max-width: 1500px;
+  --content-padding: 40px;
   display: flex;
   flex-direction: column;
   background-color: var(--background-color);
@@ -10,6 +12,14 @@
   position: sticky;
   top: 0;
   z-index: 1002;
+}
+
+.container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--content-padding);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .features {

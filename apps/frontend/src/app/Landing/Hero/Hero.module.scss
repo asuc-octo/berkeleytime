@@ -1,14 +1,16 @@
 .root {
-  padding: 40px;
+  padding: var(--content-padding, 40px);
   container-type: inline-size;
+  max-width: var(--content-max-width, 1500px);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .heroBox {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  max-width: 1500px;
-  margin: 0 auto;
   
   display: grid;
   grid-template-columns: 1fr auto;

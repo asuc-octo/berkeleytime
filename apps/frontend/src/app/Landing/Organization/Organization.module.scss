@@ -5,7 +5,11 @@ $breakpoint: 660px;
 }
 
 .wrapper {
-  padding: 0 40px;
+  max-width: var(--content-max-width, 1500px);
+  margin: 0 auto;
+  padding: 0 var(--content-padding, 40px);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .getInvolvedBox {

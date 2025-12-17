@@ -3,7 +3,6 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  Container,
   Flex,
 } from "@repo/theme";
 
@@ -14,7 +13,7 @@ import styles from "./Organization.module.scss";
 export default function Organization() {
   return (
     <Flex direction="column" className={styles.root} pt="9">
-      <Container className={styles.wrapper}>
+      <div className={styles.wrapper}>
         <div className={styles.getInvolvedBox}>
           <div className={styles.getInvolvedTitle}>
             <h2 className={styles.heading}>Get Involved</h2>
@@ -63,7 +62,7 @@ export default function Organization() {
             </AccordionItem>
           </Accordion>
         </div>
-      </Container>
+      </div>
       <Footer />
     </Flex>
   );
