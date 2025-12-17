@@ -1,4 +1,3 @@
-import { User } from "iconoir-react";
 import { InfoCircle } from "iconoir-react";
 import { HoverCard } from "radix-ui";
 
@@ -70,9 +69,9 @@ export function ReservedSeatingHoverCard({
                   </span>
                   <div className={styles.pillContainer}>
                     <div className={`${styles.pill} ${pillClassName}`}>
-                      <User width={16} height={16} strokeWidth={2} />
                       <span className={styles.pillText}>
-                        {reservation.enrolledCount}/{reservation.maxEnroll}
+                        {reservation.enrolledCount}/{reservation.maxEnroll}{" "}
+                        enrolled
                       </span>
                     </div>
                   </div>

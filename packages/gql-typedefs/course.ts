@@ -22,6 +22,7 @@ export const courseTypeDef = gql`
     aggregatedRatings(metricNames: [MetricName!]): AggregatedRatings!
     instructorAggregatedRatings: [InstructorRating!]!
     gradeDistribution: GradeDistribution!
+    ratingsCount: Int!
 
     "Attributes"
     requirements: String

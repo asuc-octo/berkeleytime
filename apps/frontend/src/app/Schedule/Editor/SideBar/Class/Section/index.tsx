@@ -43,7 +43,6 @@ export default function Section({
         endTime={meeting?.endTime ?? null}
         startTime={meeting?.startTime ?? null}
         days={meeting?.days ?? null}
-        tooltip={false}
         className={styles.time}
       />
     </div>

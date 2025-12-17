@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { DaySelect, IconButton, Select, Slider } from "@repo/theme";
+import { DaySelect, IconButton, Input, Select, Slider } from "@repo/theme";
 import type { Option, OptionItem } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
@@ -49,6 +49,8 @@ export default function Filters() {
     updateLevels,
     days,
     updateDays,
+    timeRange,
+    updateTimeRange,
     breadths,
     updateBreadths,
     universityRequirement,
@@ -104,7 +106,8 @@ export default function Filters() {
       breadths,
       universityRequirement,
       gradingFilters,
-      academicOrganization
+      academicOrganization,
+      timeRange
     ).includedClasses;
   }, [
     allClasses,
@@ -118,6 +121,7 @@ export default function Filters() {
     universityRequirement,
     gradingFilters,
     academicOrganization,
+    timeRange,
   ]);
 
   const filteredLevels = useMemo(() => {
@@ -153,7 +157,8 @@ export default function Filters() {
         breadths,
         universityRequirement,
         gradingFilters,
-        null
+        null,
+        timeRange
       ).includedClasses,
     [
       allClasses,
@@ -165,6 +170,7 @@ export default function Filters() {
       breadths,
       universityRequirement,
       gradingFilters,
+      timeRange,
     ]
   );
 
@@ -190,7 +196,8 @@ export default function Filters() {
         [],
         null,
         gradingFilters,
-        academicOrganization
+        academicOrganization,
+        timeRange
       ).includedClasses,
     [
       allClasses,
@@ -201,6 +208,7 @@ export default function Filters() {
       online,
       gradingFilters,
       academicOrganization,
+      timeRange,
     ]
   );
 
@@ -242,7 +250,8 @@ export default function Filters() {
         breadths,
         universityRequirement,
         [],
-        academicOrganization
+        academicOrganization,
+        timeRange
       ).includedClasses,
     [
       allClasses,
@@ -254,6 +263,7 @@ export default function Filters() {
       breadths,
       universityRequirement,
       academicOrganization,
+      timeRange,
     ]
   );
 
@@ -517,6 +527,7 @@ export default function Filters() {
     updateUnits([0, 5]);
     setDaysArray([...EMPTY_DAYS]);
     updateDays([]);
+    updateTimeRange([null, null]);
     updateSortBy(SortBy.Relevance);
   };
 
@@ -684,6 +695,38 @@ export default function Filters() {
             }}
             size="sm"
           />
+          <div className={styles.timeRangeInputs}>
+            <div className={styles.timeInputGroup}>
+              <label htmlFor="time-from" className={styles.timeLabel}>
+                From
+              </label>
+              <Input
+                type="time"
+                id="time-from"
+                value={timeRange[0] ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value || null;
+                  updateTimeRange([value, timeRange[1]]);
+                }}
+                className={styles.timeInput}
+              />
+            </div>
+            <div className={styles.timeInputGroup}>
+              <label htmlFor="time-to" className={styles.timeLabel}>
+                To
+              </label>
+              <Input
+                type="time"
+                id="time-to"
+                value={timeRange[1] ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value || null;
+                  updateTimeRange([timeRange[0], value]);
+                }}
+                className={styles.timeInput}
+              />
+            </div>
+          </div>
         </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Grading Option</p>

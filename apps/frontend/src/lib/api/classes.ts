@@ -261,6 +261,8 @@ export const GET_CLASS_DETAILS = gql`
             endTime
             enrolledCount
             maxEnroll
+            waitlistedCount
+            maxWaitlist
             activeReservedMaxCount
             seatReservationCount {
               enrolledCount

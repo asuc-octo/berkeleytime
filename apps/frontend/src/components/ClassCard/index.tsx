@@ -4,6 +4,7 @@ import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
   InfoCircle,
+  Star,
   Trash,
 } from "iconoir-react";
 
@@ -52,7 +53,9 @@ type BaseClassFields = Pick<
   | "gradeDistribution"
 >;
 
-type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
+type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
+  ratingsCount?: number | null;
+};
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
@@ -78,6 +81,9 @@ interface ClassProps {
   onDelete?: () => void;
   leftBorderColor?: Color;
   onColorSelect?: (c: Color) => void;
+  acceptedColors?: Color[];
+  bookmarked?: boolean;
+  bookmarkToggle?: () => void;
   active?: boolean;
   wrapDescription?: boolean;
 }
@@ -90,6 +96,8 @@ export default function ClassCard({
   onDelete,
   leftBorderColor = undefined,
   onColorSelect = undefined,
+  acceptedColors = Object.values(Color),
+  bookmarked = false,
   children,
   active = false,
   wrapDescription = false,
@@ -167,6 +175,12 @@ export default function ClassCard({
                 description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
               />
             )}
+            {(_class?.course?.ratingsCount ?? 0) > 0 && (
+              <span className={styles.ratingsCount}>
+                <Star className={styles.ratingsIcon} />
+                {_class?.course?.ratingsCount}
+              </span>
+            )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 data-action-icon
@@ -198,6 +212,7 @@ export default function ClassCard({
           {onColorSelect && leftBorderColor && (
             <ColorSelector
               selectedColor={leftBorderColor}
+              allowedColors={acceptedColors}
               onColorSelect={onColorSelect}
             />
           )}
