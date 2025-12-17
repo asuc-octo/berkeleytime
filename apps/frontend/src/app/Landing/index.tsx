@@ -1,6 +1,7 @@
 import Banner from "@/components/Layout/Banner";
 import NavigationBar from "@/components/NavigationBar";
 
+import AboutTeam from "./AboutTeam";
 import Hero from "./Hero";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
@@ -15,6 +16,7 @@ const Home = () => {
       </div>
       <Hero />
       <ScrollFeatures />
+      <AboutTeam />
       <Organization />
     </div>
   );

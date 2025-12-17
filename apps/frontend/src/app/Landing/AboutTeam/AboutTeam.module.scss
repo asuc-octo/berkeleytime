@@ -1,0 +1,27 @@
+.wrapper {
+  max-width: var(--content-max-width, 1500px);
+  margin: 0 auto;
+  padding: 50px var(--content-padding, 40px);
+  padding-top: 80px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.description {
+  margin-top: 8px;
+  font-size: var(--text-16);
+  color: var(--paragraph-color);
+  line-height: 1.5;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
