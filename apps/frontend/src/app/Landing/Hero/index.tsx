@@ -12,9 +12,8 @@ export default function Hero() {
             Confidently plan and manage your schedule
           </h1>
           <p className={styles.description}>
-            The largest course discovery platform at Berkeley.
-            <br />
-            Built by students, for students.
+            The largest course discovery platform at Berkeley. Built by
+            students, for students.
           </p>
         </div>
         <div className={styles.towerWrapper}>

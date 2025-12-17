@@ -42,39 +42,42 @@ export default function ScrollFeatures() {
       <section className={styles.container}>
         {/* Wrapper for sticky header + all slides except last */}
         <div className={styles.stickyScope}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Your academic toolkit</h2>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Your academic toolkit</h2>
+          </div>
+
+          <div className={styles.content}>
+            {otherFeatures.map((feature) => (
+              <div key={feature.id} className={styles.slide}>
+                <div className={styles.slideContent}>
+                  <h3 className={styles.slideTitle}>{feature.title}</h3>
+                  <p className={styles.slideDescription}>
+                    {feature.description}
+                  </p>
+                </div>
+                <div className={styles.slidePlaceholder}>
+                  <span>Feature Preview</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className={styles.content}>
-          {otherFeatures.map((feature) => (
-            <div key={feature.id} className={styles.slide}>
-              <div className={styles.slideContent}>
-                <h3 className={styles.slideTitle}>{feature.title}</h3>
-                <p className={styles.slideDescription}>{feature.description}</p>
-              </div>
-              <div className={styles.slidePlaceholder}>
-                <span>Feature Preview</span>
-              </div>
+        {/* Last slide outside sticky scope - header unsticks here */}
+        <div className={styles.lastSlide}>
+          <div className={styles.slide}>
+            <div className={styles.slideContent}>
+              <h3 className={styles.slideTitle}>{lastFeature.title}</h3>
+              <p className={styles.slideDescription}>
+                {lastFeature.description}
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Last slide outside sticky scope - header unsticks here */}
-      <div className={styles.lastSlide}>
-        <div className={styles.slide}>
-          <div className={styles.slideContent}>
-            <h3 className={styles.slideTitle}>{lastFeature.title}</h3>
-            <p className={styles.slideDescription}>{lastFeature.description}</p>
-          </div>
-          <div className={styles.slidePlaceholder}>
-            <span>Feature Preview</span>
+            <div className={styles.slidePlaceholder}>
+              <span>Feature Preview</span>
+            </div>
           </div>
         </div>
-      </div>
       </section>
     </div>
   );
 }
-

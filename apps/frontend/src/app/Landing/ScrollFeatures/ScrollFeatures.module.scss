@@ -39,10 +39,19 @@
   flex-direction: column;
   gap: 60px;
   padding: 60px var(--content-padding, 40px);
+  padding-bottom: 0;
+
+  @container (width < 700px) {
+    gap: 48px;
+  }
 }
 
 .lastSlide {
   padding: 60px var(--content-padding, 40px);
+
+  @container (width < 700px) {
+    padding-top: 48px;
+  }
 }
 
 .slide {
@@ -72,6 +81,7 @@
   color: var(--heading-color);
   line-height: 1.25;
   margin: 0 0 8px;
+  text-wrap: balance;
 }
 
 .slideDescription {
@@ -79,6 +89,7 @@
   color: var(--paragraph-color);
   line-height: 1.5;
   margin: 0;
+  text-wrap: balance;
 }
 
 .slidePlaceholder {
@@ -93,6 +104,10 @@
   font-size: 14px;
 
   @container (width < 700px) {
-    height: 280px;
+    flex: none;
+    width: 100%;
+    min-height: 200px;
+    height: auto;
+    aspect-ratio: 16 / 10;
   }
 }

@@ -49,6 +49,7 @@
   font-weight: 600;
   line-height: 1.15;
   max-width: 700px;
+  text-wrap: balance;
 
   @container (width < 700px) {
     font-size: 36px;
@@ -64,6 +65,7 @@
   line-height: 1.5;
   font-weight: var(--font-medium);
   max-width: 800px;
+  text-wrap: balance;
 
   @container (width < 700px) {
     display: none;
