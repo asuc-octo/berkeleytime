@@ -13,17 +13,3 @@
   top: 0;
   z-index: 1002;
 }
-
-.container {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-  padding: 0 var(--content-padding);
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.features {
-  position: relative;
-  z-index: 1;
-  background-color: var(--background-color);
-}

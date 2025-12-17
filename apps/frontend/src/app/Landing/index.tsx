@@ -1,10 +1,10 @@
 import Banner from "@/components/Layout/Banner";
 import NavigationBar from "@/components/NavigationBar";
 
-import Features from "./Features";
 import Hero from "./Hero";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
+import ScrollFeatures from "./ScrollFeatures";
 
 const Home = () => {
   return (
@@ -14,9 +14,7 @@ const Home = () => {
         <NavigationBar />
       </div>
       <Hero />
-      <div className={styles.features}>
-        <Features />
-      </div>
+      <ScrollFeatures />
       <Organization />
     </div>
   );
