@@ -1,44 +1,26 @@
-import { ArrowUpRight, Clock } from "iconoir-react";
-import { Link } from "react-router-dom";
-
-import Wave from "../Wave";
 import styles from "./Hero.module.scss";
 import SatherTower from "./SatherTower";
 
-interface HeroProps {
-  milliseconds: number;
-}
+const GRADIENT = "linear-gradient(180deg,#62A5F4 0%, #3B82F6 100%)";
 
-export default function Hero({ milliseconds }: HeroProps) {
+export default function Hero() {
   return (
     <div className={styles.root}>
-      <div className={styles.heroContent}>
+      <div className={styles.heroBox} style={{ background: GRADIENT }}>
         <div className={styles.text}>
           <h1 className={styles.heading}>
             Confidently plan and manage your schedule
           </h1>
-          <h2 className={styles.description}>
-            Berkeley's largest course discovery platform built and run by
-            students, for students
-          </h2>
-          <Link to="/catalog" className={styles.catalogLink}>
-            Go to Catalog
-            <ArrowUpRight />
-          </Link>
-        </div>
-        <div className={styles.clock}>
-          <Clock height={18} width={18} />
-          <p className={styles.time}>
-            {new Date(milliseconds).toLocaleTimeString(undefined, {
-              hour: "numeric",
-              minute: "numeric",
-            })}
+          <p className={styles.description}>
+            The largest course discovery platform at Berkeley.
+            <br />
+            Built by students, for students.
           </p>
-          <p className={styles.location}>Berkeley, CA</p>
         </div>
-        <SatherTower className={styles.campanile} milliseconds={milliseconds} />
+        <div className={styles.towerWrapper}>
+          <SatherTower className={styles.campanile} />
+        </div>
       </div>
-      <Wave className={styles.wave} fill="var(--background-color)" />
     </div>
   );
 }

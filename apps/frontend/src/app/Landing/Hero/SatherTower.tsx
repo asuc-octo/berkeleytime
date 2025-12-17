@@ -1,45 +1,15 @@
-import { useMemo } from "react";
-
-import { useTowerColors } from "./useTowerTint";
-
 interface SatherTowerProps {
-  milliseconds: number;
   className?: string;
 }
 
-export default function SatherTower({
-  milliseconds,
-  className,
-}: SatherTowerProps) {
-  // Tower colors synced with sky gradient (both use same time source)
-  const COLORS = useTowerColors(milliseconds);
+const COLORS = {
+  light: "#B9CEEA",
+  moderate: "#3568A5",
+  bright: "#FFFFFF",
+  dark: "#2C3642",
+};
 
-  const { hourAngle, minuteAngle } = useMemo(() => {
-    const date = new Date(milliseconds);
-    const hours = date.getHours() % 12;
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-
-    // Hour hand: 30 degrees per hour + 0.5 degrees per minute
-    const hourAngle = (hours + minutes / 60) * 30;
-    // Minute hand: 6 degrees per minute + 0.1 degrees per second
-    const minuteAngle = (minutes + seconds / 60) * 6;
-
-    return { hourAngle, minuteAngle };
-  }, [milliseconds]);
-
-  // Left clock (front-facing) - center approximately (940, 507)
-  const leftClockCenter = { x: 940, y: 507 };
-  const leftClockSkew = -8; // Adjust this to align 3 o'clock with the clock face
-
-  // Right clock (side-facing) - based on clock_layout ellipse center
-  const rightClockCenter = { x: 1032, y: 511 };
-  const rightClockSkew = 15; // Adjust this for the side clock perspective
-
-  // Hand lengths (relative to clock size)
-  const hourHandLength = 18;
-  const minuteHandLength = 28;
-
+export default function SatherTower({ className }: SatherTowerProps) {
   return (
     <svg
       className={className}
@@ -163,65 +133,6 @@ export default function SatherTower({
           <polygon
             points="1017.291 251.556 1008.539 248.669 1008.539 253.41 1017.291 256.297 1017.291 251.556"
             fill={COLORS.dark}
-          />
-        </g>
-      </g>
-
-      {/* Clock faces with hands */}
-      <g id="clocks">
-        {/* Left clock (front-facing) - uses "light" color */}
-        <g
-          transform={`translate(${leftClockCenter.x}, ${leftClockCenter.y}) skewY(${leftClockSkew})`}
-        >
-          {/* Hour hand */}
-          <line
-            x1="0"
-            y1="0"
-            x2="0"
-            y2={-hourHandLength}
-            stroke={COLORS.light}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            transform={`rotate(${hourAngle})`}
-          />
-          {/* Minute hand */}
-          <line
-            x1="0"
-            y1="0"
-            x2="0"
-            y2={-minuteHandLength}
-            stroke={COLORS.light}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            transform={`rotate(${minuteAngle})`}
-          />
-        </g>
-
-        {/* Right clock (side-facing) - uses "dark" color */}
-        <g
-          transform={`translate(${rightClockCenter.x}, ${rightClockCenter.y}) skewY(${rightClockSkew}) scale(0.5, 1)`}
-        >
-          {/* Hour hand */}
-          <line
-            x1="0"
-            y1="0"
-            x2="0"
-            y2={-hourHandLength}
-            stroke={COLORS.dark}
-            strokeWidth="3"
-            strokeLinecap="round"
-            transform={`rotate(${hourAngle})`}
-          />
-          {/* Minute hand */}
-          <line
-            x1="0"
-            y1="0"
-            x2="0"
-            y2={-minuteHandLength}
-            stroke={COLORS.dark}
-            strokeWidth="2"
-            strokeLinecap="round"
-            transform={`rotate(${minuteAngle})`}
           />
         </g>
       </g>

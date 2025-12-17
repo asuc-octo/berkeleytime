@@ -6,16 +6,6 @@
   position: relative;
 }
 
-.heroBackground {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100vh;
-  z-index: 0;
-  transition: background 1s ease-out;
-}
-
 .stickyHeader {
   position: sticky;
   top: 0;
@@ -26,5 +16,4 @@
   position: relative;
   z-index: 1;
   background-color: var(--background-color);
-  margin-top: -2px;
 }

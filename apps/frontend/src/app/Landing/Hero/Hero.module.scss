@@ -1,134 +1,92 @@
 .root {
+  padding: 40px;
+  container-type: inline-size;
+}
+
+.heroBox {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  isolation: isolate;
+  border-radius: 8px;
   overflow: hidden;
+  max-width: 1500px;
+  margin: 0 auto;
+  
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  min-height: 550px;
 
-  .wave {
-    display: block;
-    width: 100%;
-    height: clamp(175px, 15vw, 350px);
-    margin-top: auto;
-    color: var(--background-color);
-    position: relative;
-    z-index: 3;
+  @container (width < 700px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: auto;
   }
+}
 
-  .heroContent {
-    position: relative;
-    z-index: 1;
-    width: min(85vw, 1500px);
-    margin: 0 auto;
-    padding: 0 20px;
-    flex: 1;
+.text {
+  padding: 60px;
+  padding-bottom: 80px;
+  max-width: 700px;
+  align-self: center;
 
-    .text {
-      margin: 96px 0 120px;
-      position: relative;
-      z-index: 2;
+  @container (width < 700px) {
+    padding: 40px;
+    padding-bottom: 24px;
+    max-width: none;
+    order: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
 
-      @media (width <= 992px) {
-        margin-top: 64px;
-        margin-bottom: 48px;
-      }
+.heading {
+  font-size: 48px;
+  margin-bottom: 16px;
+  color: var(--dark-heading-color);
+  font-weight: 600;
+  line-height: 1.15;
+  max-width: 700px;
 
-      @media (width > 992px) {
-        max-width: 592px;
-      }
+  @container (width < 700px) {
+    font-size: 36px;
+    margin-bottom: 0;
+    max-width: 430px;
+  }
+}
 
-      .heading {
-        font-size: 48px;
-        margin-bottom: 16px;
-        color: var(--dark-heading-color);
-        font-weight: 600;
-        line-height: 1.1;
-        position: relative;
+.description {
+  font-size: 24px;
+  color: white;
+  opacity: 0.8;
+  line-height: 1.5;
+  font-weight: var(--font-medium);
+  max-width: 800px;
 
-        @media (width <= 768px) {
-          font-size: 32px;
-          line-height: 1.5;
-        }
-      }
+  @container (width < 700px) {
+    display: none;
+  }
+}
 
-      .description {
-        font-size: 24px;
-        color: white;
-        opacity: 0.5;
-        line-height: 1.5;
-        font-weight: var(--font-medium);
-        margin-bottom: 64px;
-        max-width: 500px;
-      }
+.towerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 100%;
+  padding-right: 40px;
 
-      .catalogLink {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 18px;
-        font-weight: var(--font-medium);
-        color: white;
-        opacity: 0.5;
-        text-decoration: none;
-        transition: opacity 150ms ease;
+  @container (width < 700px) {
+    padding-right: 0;
+    height: 350px;
+    order: 2;
+  }
+}
 
-        &:hover {
-          opacity: 1;
-        }
+.campanile {
+  height: 500px;
+  width: auto;
 
-        svg {
-          width: 20px;
-          height: 20px;
-        }
-      }
-    }
-
-    .clock {
-      position: absolute;
-      right: 272px;
-      bottom: 64px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      color: rgba(255 255 255 / 70%);
-      z-index: 2;
-
-      @media (width <= 992px) {
-        display: none;
-      }
-
-      svg {
-        opacity: 0.7;
-      }
-
-      .time {
-        font-size: 14px;
-        font-weight: var(--font-medium);
-        color: white;
-        margin-top: 8px;
-      }
-
-      .location {
-        font-size: 12px;
-        opacity: 0.7;
-      }
-    }
-
-    .campanile {
-      position: absolute;
-      z-index: 1;
-      right: 0;
-      top: 50px;
-      height: calc(100% + clamp(175px, 15vw, 350px) - 50px);
-      width: auto;
-
-      @media (width <= 992px) {
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
-        opacity: 0.25;
-      }
-    }
+  @container (width < 700px) {
+    height: 100%;
   }
 }
