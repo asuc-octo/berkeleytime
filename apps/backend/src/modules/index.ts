@@ -11,6 +11,7 @@ import GradeDistribution from "./grade-distribution";
 import Plan from "./plan";
 import Rating from "./rating";
 import Schedule from "./schedule";
+import Staff from "./staff";
 import Term from "./term";
 import User from "./user";
 
@@ -22,6 +23,7 @@ const modules = [
   Collection,
   Common,
   Schedule,
+  Staff,
   Term,
   Course,
   Class,
