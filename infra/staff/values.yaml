@@ -1,0 +1,17 @@
+env: prod
+
+host: staff.berkeleytime.com
+port: 80
+
+issuer: letsencrypt-prod
+
+frontend:
+  replicas: 1
+
+  port: 3002
+  path: /
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-staff-frontend
+    tag: prod

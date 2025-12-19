@@ -27,7 +27,9 @@ export default async (
         config.url,
         "http://localhost:8080",
         "http://localhost:8081",
+        "http://localhost:8082",
         "https://ag.berkeleytime.com",
+        "https://staff.berkeleytime.com",
       ],
       credentials: true,
     })
