@@ -135,6 +135,10 @@ export const getClasses = async (
       class: formatClass(_class as IClassItem) as unknown as ClassModule.Class,
       selectedSections: sections as unknown as ClassModule.Section[],
       color: selectedClass.color,
+      hidden: selectedClass.hidden,
+      locked: selectedClass.locked,
+      blockedSections: selectedClass.blockedSections,
+      lockedComponents: selectedClass.lockedComponents,
     } as ScheduleModule.SelectedClass);
   }
 
