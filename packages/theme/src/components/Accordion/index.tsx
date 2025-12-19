@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import clsx from "clsx";
+import classNames from "classnames";
 import { NavArrowDown } from "iconoir-react";
 
 import styles from "./Accordion.module.scss";
@@ -14,7 +14,7 @@ function Accordion({
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return (
     <AccordionPrimitive.Root
-      className={clsx(styles.accordion, className)}
+      className={classNames(styles.accordion, className)}
       {...props}
     />
   );
@@ -26,7 +26,7 @@ function AccordionItem({
 }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   return (
     <AccordionPrimitive.Item
-      className={clsx(styles.item, className)}
+      className={classNames(styles.item, className)}
       {...props}
     />
   );
@@ -40,7 +40,7 @@ function AccordionTrigger({
   return (
     <AccordionPrimitive.Header className={styles.header}>
       <AccordionPrimitive.Trigger
-        className={clsx(styles.trigger, className)}
+        className={classNames(styles.trigger, className)}
         {...props}
       >
         {children}
@@ -57,7 +57,7 @@ function AccordionContent({
 }: React.ComponentProps<typeof AccordionPrimitive.Content>) {
   return (
     <AccordionPrimitive.Content className={styles.content} {...props}>
-      <div className={clsx(styles.contentInner, className)}>{children}</div>
+      <div className={classNames(styles.contentInner, className)}>{children}</div>
     </AccordionPrimitive.Content>
   );
 }

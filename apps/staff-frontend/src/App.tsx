@@ -1,15 +1,42 @@
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+import { ThemeProvider } from "@repo/theme";
+
+import Layout from "@/components/Layout";
+import { UserProvider } from "@/contexts/UserContext";
+
+import Dashboard from "./app/Dashboard";
+
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+    ],
+  },
+]);
+
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: "/api/graphql",
+    credentials: "include",
+  }),
+  cache: new InMemoryCache(),
+});
+
 export default function App() {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        fontFamily: "system-ui, sans-serif",
-      }}
-    >
-      <h1>Staff Dashboard</h1>
-    </div>
+    <ApolloProvider client={client}>
+      <UserProvider>
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
+      </UserProvider>
+    </ApolloProvider>
   );
 }
