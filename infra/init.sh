@@ -45,7 +45,7 @@ helm install bt-prod-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis 
 
 helm install bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app --namespace=bt \
     --version=1.0.0 \
-    --set host=stanfurdtime.com
+    --set host=berkeleytime.com
 
 # ==========
 # STAGING
@@ -66,7 +66,7 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
     --set frontend.image.tag=latest \
     --set agFrontend.image.tag=latest \
     --set backend.image.tag=latest \
-    --set host=staging.stanfurdtime.com \
+    --set host=staging.berkeleytime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
 
@@ -90,7 +90,7 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
     --set frontend.image.tag=dev1 \
     --set agFrontend.image.tag=dev1 \
     --set backend.image.tag=dev1 \
-    --set host=dev1.stanfurdtime.com \
+    --set host=dev1.berkeleytime.com \
     --set mongoUri=mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
     --set nodeEnv=development
@@ -101,7 +101,7 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
 
 helm install bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs --namespace=bt \
     --version=1.0.0 \
-    --set host=docs.stanfurdtime.com
+    --set host=docs.berkeleytime.com
 
 # ==========
 # AG
