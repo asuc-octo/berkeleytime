@@ -1,12 +1,16 @@
 import { useState } from "react";
 
-import { Xmark } from "iconoir-react";
+import { EditPencil, EyeClosed, Trash } from "iconoir-react";
 
-import { Flex, IconButton, Input } from "@repo/theme";
+import { Input } from "@repo/theme";
 
+import EventDialog from "@/app/Schedule/Editor/EventDialog";
 import { acceptedColors } from "@/app/Schedule/schedule";
-import ColorSelector from "@/components/ColorSelector";
+import { ActionMenu } from "@/components/ActionMenu";
+import { MenuItem } from "@/components/ActionMenu";
+import { ColorDot } from "@/components/ColorDot";
 import { IScheduleEvent } from "@/lib/api";
+import { capitalizeColor } from "@/lib/colors";
 import { Color } from "@/lib/generated/graphql";
 
 import styles from "./Event.module.scss";
@@ -16,6 +20,7 @@ interface EventProps {
   onDelete: (event: IScheduleEvent) => void;
   onColorSelect: (c: Color) => void;
   onEventTitleChange: (id: string, title: string) => void;
+  onHideChange: (hidden: boolean) => void;
 }
 
 export default function Event({
@@ -23,9 +28,11 @@ export default function Event({
   onDelete,
   onColorSelect,
   onEventTitleChange,
+  onHideChange,
 }: EventProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(event.title);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const handleClick = () => {
     setIsEditing(true);
@@ -48,12 +55,45 @@ export default function Event({
     }
   };
 
+  // Color submenu
+  const colorSubItems: MenuItem[] = acceptedColors.map((c) => ({
+    name: capitalizeColor(c as any),
+    icon: <ColorDot color={c as any} />,
+    onClick: () => onColorSelect(c),
+  }));
+
+  const menuItems: MenuItem[] = [
+    {
+      name: "Change color",
+      icon: <EditPencil width={18} height={18} />,
+      subItems: colorSubItems,
+    },
+    {
+      name: "Edit",
+      icon: <EditPencil width={18} height={18} />,
+      onClick: () => setEditDialogOpen(true),
+    },
+    {
+      name: event.hidden ? "Show event" : "Hide event",
+      icon: <EyeClosed width={18} height={18} />,
+      onClick: () => onHideChange(!event.hidden),
+    },
+    {
+      name: "Delete",
+      icon: <Trash width={18} height={18} />,
+      onClick: () => onDelete(event),
+      isDelete: true,
+    },
+  ];
+
   return (
     <div className={styles.root} data-draggable>
-      <div
-        className={styles.border}
-        style={{ backgroundColor: `var(--${event.color}-500)` }}
-      />
+      {!event.hidden && (
+        <div
+          className={styles.border}
+          style={{ backgroundColor: `var(--${event.color}-500)` }}
+        />
+      )}
       <div className={styles.body}>
         <div className={styles.header}>
           <div className={styles.row}>
@@ -83,18 +123,23 @@ export default function Event({
               <p className={styles.description}>{event.description}</p>
             </div>
           </div>
-          <Flex direction="row" width="80px" justify="between" align="center">
-            <ColorSelector
-              selectedColor={event.color!}
-              allowedColors={acceptedColors}
-              onColorSelect={onColorSelect}
-            />
-            <IconButton onClick={() => onDelete(event)}>
-              <Xmark />
-            </IconButton>
-          </Flex>
+          <ActionMenu menuItems={menuItems} asIcon />
         </div>
       </div>
+      <EventDialog
+        event={
+          editDialogOpen
+            ? {
+                ...event,
+                days: [...event.days.slice(5, 7), ...event.days.slice(0, 5)],
+              }
+            : undefined
+        }
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+      >
+        <div style={{ display: "none" }} />
+      </EventDialog>
     </div>
   );
 }
