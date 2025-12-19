@@ -1,0 +1,103 @@
+.card {
+  background-color: var(--zinc-50);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  box-sizing: border-box;
+
+  :global(body[data-theme="dark"]) &,
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--button-hover-color);
+    }
+  }
+
+  :global(body[data-theme="dark"]) & {
+    background-color: var(--button-hover-color);
+  }
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  flex: 1 1 auto;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  width: 48px;
+  height: 48px;
+  color: var(--paragraph-color);
+  opacity: 0.5;
+}
+
+.footer {
+  background-color: var(--foreground-color);
+  border-top: 1px solid var(--border-color);
+  padding: 20px;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.linkButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: var(--paragraph-color);
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    color: var(--heading-color);
+  }
+}
+
+.name {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  letter-spacing: -0.16px;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role {
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--paragraph-color);
+  letter-spacing: -0.14px;
+  margin: 0;
+}

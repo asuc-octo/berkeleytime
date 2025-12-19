@@ -1,0 +1,39 @@
+.root {
+  padding: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.selectWrapper {
+  width: 180px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
