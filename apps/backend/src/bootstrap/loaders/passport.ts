@@ -35,6 +35,7 @@ export default async (app: Application, redis: RedisClientType) => {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
         sameSite: "lax",
+        domain: config.isDev ? undefined : ".berkeleytime.com",
       },
       store: new RedisStore({
         client: redis,
