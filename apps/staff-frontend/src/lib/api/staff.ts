@@ -150,3 +150,15 @@ export const UPDATE_STAFF_INFO = gql`
     }
   }
 `;
+
+export const DELETE_SEMESTER_ROLE = gql`
+  mutation DeleteSemesterRole($roleId: ID!) {
+    deleteSemesterRole(roleId: $roleId)
+  }
+`;
+
+export const DELETE_STAFF_MEMBER = gql`
+  mutation DeleteStaffMember($memberId: ID!) {
+    deleteStaffMember(memberId: $memberId)
+  }
+`;

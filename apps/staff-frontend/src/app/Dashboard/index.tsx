@@ -24,6 +24,8 @@ import {
 
 import {
   useAllStaffMembers,
+  useDeleteSemesterRole,
+  useDeleteStaffMember,
   useEnsureStaffMember,
   useStaffMemberByUserId,
   useUpdateStaffInfo,
@@ -108,8 +110,8 @@ export default function Dashboard() {
     string | null
   >(null);
   const [roleForm, setRoleForm] = useState<RoleFormData>({
-    year: currentYear.toString(),
-    semester: "Fall",
+    year: "",
+    semester: "" as Semester,
     role: "",
     team: "",
     photo: null,
@@ -139,6 +141,8 @@ export default function Dashboard() {
   const { ensureStaffMember } = useEnsureStaffMember();
   const { upsertSemesterRole } = useUpsertSemesterRole();
   const { updateStaffInfo } = useUpdateStaffInfo();
+  const { deleteSemesterRole } = useDeleteSemesterRole();
+  const { deleteStaffMember } = useDeleteStaffMember();
 
   const openAddModal = (
     user: { name: string; email?: string },
@@ -148,8 +152,8 @@ export default function Dashboard() {
     setEditingRole(null);
     setEditingStaffMemberId(staffMemberId);
     setRoleForm({
-      year: currentYear.toString(),
-      semester: "Fall",
+      year: "",
+      semester: "" as Semester,
       role: "",
       team: "",
       photo: null,
@@ -247,34 +251,77 @@ export default function Dashboard() {
   };
 
   const handleSaveStaffInfo = async () => {
-    if (!editingStaffMemberId) return;
+    if (isAddingNewStaff) {
+      if (!selectedUser) return;
 
-    await updateStaffInfo(editingStaffMemberId, {
-      isAlumni: staffInfoForm.isAlumni,
-      personalLink: staffInfoForm.personalLink || undefined,
-    });
+      const member = await ensureStaffMember(selectedUser._id);
+      if (member) {
+        await updateStaffInfo(
+          member.id,
+          {
+            isAlumni: staffInfoForm.isAlumni,
+            personalLink: staffInfoForm.personalLink || undefined,
+          },
+          selectedUser._id
+        );
+      }
+    } else {
+      if (!editingStaffMemberId) return;
+
+      await updateStaffInfo(
+        editingStaffMemberId,
+        {
+          isAlumni: staffInfoForm.isAlumni,
+          personalLink: staffInfoForm.personalLink || undefined,
+        },
+        selectedUser?._id
+      );
+    }
 
     setIsStaffInfoModalOpen(false);
     refetchStaff();
   };
 
-  const handleAddAsStaff = async () => {
+  const handleDeleteRole = async () => {
+    if (!editingRole) return;
+
+    const confirmed = window.confirm(
+      `Delete the role "${editingRole.role}" for ${editingRole.semester} ${editingRole.year}?`
+    );
+    if (!confirmed) return;
+
+    await deleteSemesterRole(editingRole.id);
+    setIsRoleModalOpen(false);
+    refetchStaff();
+  };
+
+  const handleDeleteStaffMember = async () => {
+    if (!editingStaffMemberId || !editingUser) return;
+
+    const confirmed = window.confirm(
+      `Delete ${editingUser.name} from staff? This will remove all their roles and admin access.`
+    );
+    if (!confirmed) return;
+
+    await deleteStaffMember(editingStaffMemberId, selectedUser?._id);
+    setIsStaffInfoModalOpen(false);
+    refetchStaff();
+  };
+
+  const handleAddAsStaff = () => {
     if (!selectedUser) return;
 
-    const member = await ensureStaffMember(selectedUser._id);
-    if (member) {
-      setEditingUser({
-        name: selectedUser.name,
-        email: selectedUser.email,
-      });
-      setEditingStaffMemberId(member.id);
-      setIsAddingNewStaff(true);
-      setStaffInfoForm({
-        isAlumni: false,
-        personalLink: "",
-      });
-      setIsStaffInfoModalOpen(true);
-    }
+    setEditingUser({
+      name: selectedUser.name,
+      email: selectedUser.email,
+    });
+    setEditingStaffMemberId(null);
+    setIsAddingNewStaff(true);
+    setStaffInfoForm({
+      isAlumni: false,
+      personalLink: "",
+    });
+    setIsStaffInfoModalOpen(true);
   };
 
   const { data, loading } = useQuery<{ allUsers: UserSearchResult[] }>(
@@ -742,6 +789,16 @@ export default function Dashboard() {
             </div>
           </Dialog.Body>
           <Dialog.Footer>
+            {editingRole && (
+              <Button
+                variant="secondary"
+                onClick={handleDeleteRole}
+                style={{ marginRight: "auto", color: "var(--red-500)" }}
+              >
+                <Trash width={16} height={16} />
+                Delete Role
+              </Button>
+            )}
             <Button
               variant="secondary"
               onClick={() => setIsRoleModalOpen(false)}
@@ -803,25 +860,33 @@ export default function Dashboard() {
             </div>
           </Dialog.Body>
           <Dialog.Footer>
+            {!isAddingNewStaff && (
+              <Button
+                variant="secondary"
+                onClick={handleDeleteStaffMember}
+                style={{ marginRight: "auto", color: "var(--red-500)" }}
+              >
+                <Trash width={16} height={16} />
+                Remove Staff
+              </Button>
+            )}
             <Button
               variant="secondary"
               onClick={() => setIsStaffInfoModalOpen(false)}
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleSaveStaffInfo}
-              style={
-                isAddingNewStaff
-                  ? {
-                      backgroundColor: "var(--red-500)",
-                      borderColor: "var(--red-500)",
-                    }
-                  : undefined
-              }
-            >
-              {isAddingNewStaff ? "Add Admin" : "Save Changes"}
-            </Button>
+            {isAddingNewStaff ? (
+              <Button
+                variant="secondary"
+                onClick={handleSaveStaffInfo}
+                style={{ color: "var(--red-500)" }}
+              >
+                Add Admin
+              </Button>
+            ) : (
+              <Button onClick={handleSaveStaffInfo}>Save Changes</Button>
+            )}
           </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Root>
