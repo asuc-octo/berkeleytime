@@ -1,19 +1,27 @@
-import { ArrowUpRight, MessageText } from "iconoir-react";
+import { useState } from "react";
+
+import { ArrowUpRight, MessageText, Xmark } from "iconoir-react";
 
 import styles from "./Banner.module.scss";
 
 export default function Banner() {
+  const [isVisible, setIsVisible] = useState(true);
+
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <div className={styles.root}>
       <p className={styles.text}>
-        You are viewing a beta release of Berkeleytime.
+        You are viewing the <i>new</i> release of Berkeleytime.
       </p>
       <div className={styles.actions}>
         <a
           className={`${styles.link} ${styles.returnLink}`}
-          href="https://berkeleytime.com"
+          href="https://legacy.berkeleytime.com"
         >
-          <div className={styles.text}>Return to Berkeleytime</div>
+          <div className={styles.text}>Return to Legacy Berkeleytime</div>
           <ArrowUpRight height={12} width={12} />
         </a>
         <a
@@ -25,6 +33,14 @@ export default function Banner() {
           <div className={styles.text}>Provide Feedback</div>
           <MessageText height={12} width={12} />
         </a>
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={() => setIsVisible(false)}
+          aria-label="Close banner"
+        >
+          <Xmark />
+        </button>
       </div>
     </div>
   );
