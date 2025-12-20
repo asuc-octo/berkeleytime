@@ -1,6 +1,11 @@
 import { useState } from "react";
+
 import styles from "./Analytics.module.scss";
-import { TotalRequestsBlock, UniqueVisitorsBlock, VisitorTimeDistributionBlock } from "./components/CloudflareAnalytics";
+import {
+  TotalRequestsBlock,
+  UniqueVisitorsBlock,
+  VisitorTimeDistributionBlock,
+} from "./components/CloudflareAnalytics";
 import {
   CollectionHighlightsBlock,
   CustomCollectionsBlock,
@@ -17,9 +22,19 @@ import {
   RatingsDayHistogramBlock,
   UniqueUsersGrowthBlock,
 } from "./components/RatingsAnalytics";
-import { SignupDayHistogramBlock, SignupHourHistogramBlock, UserGrowthBlock } from "./components/UserAnalytics";
+import {
+  SignupDayHistogramBlock,
+  SignupHourHistogramBlock,
+  UserGrowthBlock,
+} from "./components/UserAnalytics";
 
-type Tab = "all" | "general" | "ratings" | "bookmarks" | "gradtrak" | "scheduler";
+type Tab =
+  | "all"
+  | "general"
+  | "ratings"
+  | "bookmarks"
+  | "gradtrak"
+  | "scheduler";
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState<Tab>("general");

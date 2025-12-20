@@ -1,4 +1,8 @@
-import { getUser, getUserCreationAnalyticsData, updateUser } from "./controller";
+import {
+  getUser,
+  getUserCreationAnalyticsData,
+  updateUser,
+} from "./controller";
 import { UserModule } from "./generated-types/module-types";
 
 const resolvers: UserModule.Resolvers = {

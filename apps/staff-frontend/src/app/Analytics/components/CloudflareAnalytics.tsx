@@ -18,7 +18,6 @@ import {
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
-
 import { useCloudflareAnalyticsData } from "@/hooks/api";
 
 import { AnalyticsCard, TimeRange } from "./AnalyticsCard";
@@ -50,7 +49,20 @@ function formatNumber(num: number): string {
 
 // Format date for display (YYYY-MM-DD -> "Dec 19")
 function formatDisplayDate(dateStr: string): string {
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const [, month, day] = dateStr.split("-");
   return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
 }
@@ -64,7 +76,12 @@ export function UniqueVisitorsBlock() {
 
   const { chartData, totalVisitors, avgPerDay, percentChange } = useMemo(() => {
     if (!data || data.dataPoints.length === 0) {
-      return { chartData: [] as ChartDataPoint[], totalVisitors: 0, avgPerDay: 0, percentChange: 0 };
+      return {
+        chartData: [] as ChartDataPoint[],
+        totalVisitors: 0,
+        avgPerDay: 0,
+        percentChange: 0,
+      };
     }
 
     // Split into previous period and current period
@@ -81,15 +98,23 @@ export function UniqueVisitorsBlock() {
       totalRequests: dp.totalRequests,
     }));
 
-    const totalVisitors = currentPeriod.reduce((sum, dp) => sum + dp.uniqueVisitors, 0);
-    const avgPerDay = chartData.length > 0 ? totalVisitors / chartData.length : 0;
+    const totalVisitors = currentPeriod.reduce(
+      (sum, dp) => sum + dp.uniqueVisitors,
+      0
+    );
+    const avgPerDay =
+      chartData.length > 0 ? totalVisitors / chartData.length : 0;
 
     // Calculate percent change comparing current period to previous period
-    const previousTotal = previousPeriod.reduce((sum, dp) => sum + dp.uniqueVisitors, 0);
+    const previousTotal = previousPeriod.reduce(
+      (sum, dp) => sum + dp.uniqueVisitors,
+      0
+    );
 
-    const percentChange = previousTotal > 0
-      ? ((totalVisitors - previousTotal) / previousTotal) * 100
-      : 0;
+    const percentChange =
+      previousTotal > 0
+        ? ((totalVisitors - previousTotal) / previousTotal) * 100
+        : 0;
 
     return { chartData, totalVisitors, avgPerDay, percentChange };
   }, [data]);
@@ -105,7 +130,14 @@ export function UniqueVisitorsBlock() {
         title="Unique Visitors"
         description="Daily unique visitors from Cloudflare"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -118,7 +150,15 @@ export function UniqueVisitorsBlock() {
         title="Unique Visitors"
         description="Daily unique visitors from Cloudflare"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -131,7 +171,15 @@ export function UniqueVisitorsBlock() {
         title="Unique Visitors"
         description="Daily unique visitors from Cloudflare"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--label-color)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--label-color)",
+          }}
+        >
           Cloudflare not configured
         </div>
       </AnalyticsCard>
@@ -141,7 +189,7 @@ export function UniqueVisitorsBlock() {
   return (
     <AnalyticsCard
       title="Unique Visitors"
-      description={`Daily unique visitors (${timeRange})`}
+      description={`From Cloudflare (${timeRange})`}
       currentValue={totalVisitors}
       currentValueLabel="visitors"
       percentChange={percentChange}
@@ -154,9 +202,23 @@ export function UniqueVisitorsBlock() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="uniqueVisitorsGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              <linearGradient
+                id="uniqueVisitorsGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -180,7 +242,8 @@ export function UniqueVisitorsBlock() {
             />
             <ChartTooltip
               tooltipConfig={{
-                labelFormatter: (_, payload) => payload?.[0]?.payload?.displayDate || "",
+                labelFormatter: (_, payload) =>
+                  payload?.[0]?.payload?.displayDate || "",
                 valueFormatter: (value: number) => value.toLocaleString(),
               }}
             />
@@ -207,7 +270,12 @@ export function TotalRequestsBlock() {
 
   const { chartData, totalRequests, avgPerDay, percentChange } = useMemo(() => {
     if (!data || data.dataPoints.length === 0) {
-      return { chartData: [] as ChartDataPoint[], totalRequests: 0, avgPerDay: 0, percentChange: 0 };
+      return {
+        chartData: [] as ChartDataPoint[],
+        totalRequests: 0,
+        avgPerDay: 0,
+        percentChange: 0,
+      };
     }
 
     // Split into previous period and current period
@@ -224,15 +292,23 @@ export function TotalRequestsBlock() {
       totalRequests: dp.totalRequests,
     }));
 
-    const totalRequests = currentPeriod.reduce((sum, dp) => sum + dp.totalRequests, 0);
-    const avgPerDay = chartData.length > 0 ? totalRequests / chartData.length : 0;
+    const totalRequests = currentPeriod.reduce(
+      (sum, dp) => sum + dp.totalRequests,
+      0
+    );
+    const avgPerDay =
+      chartData.length > 0 ? totalRequests / chartData.length : 0;
 
     // Calculate percent change comparing current period to previous period
-    const previousTotal = previousPeriod.reduce((sum, dp) => sum + dp.totalRequests, 0);
+    const previousTotal = previousPeriod.reduce(
+      (sum, dp) => sum + dp.totalRequests,
+      0
+    );
 
-    const percentChange = previousTotal > 0
-      ? ((totalRequests - previousTotal) / previousTotal) * 100
-      : 0;
+    const percentChange =
+      previousTotal > 0
+        ? ((totalRequests - previousTotal) / previousTotal) * 100
+        : 0;
 
     return { chartData, totalRequests, avgPerDay, percentChange };
   }, [data]);
@@ -248,7 +324,14 @@ export function TotalRequestsBlock() {
         title="Total Requests"
         description="Daily total requests from Cloudflare"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -261,7 +344,15 @@ export function TotalRequestsBlock() {
         title="Total Requests"
         description="Daily total requests from Cloudflare"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -274,7 +365,15 @@ export function TotalRequestsBlock() {
         title="Total Requests"
         description="Daily total requests from Cloudflare"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--label-color)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--label-color)",
+          }}
+        >
           Cloudflare not configured
         </div>
       </AnalyticsCard>
@@ -284,7 +383,7 @@ export function TotalRequestsBlock() {
   return (
     <AnalyticsCard
       title="Total Requests"
-      description={`Daily total requests (${timeRange})`}
+      description={`From Cloudflare (${timeRange})`}
       currentValue={totalRequests}
       currentValueLabel="requests"
       percentChange={percentChange}
@@ -297,9 +396,23 @@ export function TotalRequestsBlock() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="totalRequestsGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              <linearGradient
+                id="totalRequestsGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -323,7 +436,8 @@ export function TotalRequestsBlock() {
             />
             <ChartTooltip
               tooltipConfig={{
-                labelFormatter: (_, payload) => payload?.[0]?.payload?.displayDate || "",
+                labelFormatter: (_, payload) =>
+                  payload?.[0]?.payload?.displayDate || "",
                 valueFormatter: (value: number) => value.toLocaleString(),
               }}
             />
@@ -362,7 +476,10 @@ export function VisitorTimeDistributionBlock() {
 
   const { hourlyData, peakHour } = useMemo(() => {
     if (!data || data.dataPoints.length === 0) {
-      return { hourlyData: [] as HourlyDistributionDataPoint[], peakHour: null };
+      return {
+        hourlyData: [] as HourlyDistributionDataPoint[],
+        peakHour: null,
+      };
     }
 
     // Aggregate by hour of day (0-23)
@@ -377,12 +494,14 @@ export function VisitorTimeDistributionBlock() {
     // Calculate total and percentages
     const total = hourlyTotals.reduce((sum, count) => sum + count, 0);
 
-    const hourlyData: HourlyDistributionDataPoint[] = hourlyTotals.map((count, hour) => ({
-      hour: `${hour}`,
-      hourLabel: `${formatHourLabel(hour)} - ${formatHourLabel((hour + 1) % 24)}`,
-      value: total > 0 ? (count / total) * 100 : 0,
-      count,
-    }));
+    const hourlyData: HourlyDistributionDataPoint[] = hourlyTotals.map(
+      (count, hour) => ({
+        hour: `${hour}`,
+        hourLabel: `${formatHourLabel(hour)} - ${formatHourLabel((hour + 1) % 24)}`,
+        value: total > 0 ? (count / total) * 100 : 0,
+        count,
+      })
+    );
 
     // Find peak hour
     let maxCount = 0;
@@ -398,7 +517,12 @@ export function VisitorTimeDistributionBlock() {
 
     return {
       hourlyData,
-      peakHour: { hour: peakHourIdx, count: maxCount, label: formatHourLabel(peakHourIdx), percent: peakPercent },
+      peakHour: {
+        hour: peakHourIdx,
+        count: maxCount,
+        label: formatHourLabel(peakHourIdx),
+        percent: peakPercent,
+      },
     };
   }, [data]);
 
@@ -413,7 +537,14 @@ export function VisitorTimeDistributionBlock() {
         title="Visitor Time Distribution"
         description="When visitors arrive (hour of day, UTC)"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -426,7 +557,15 @@ export function VisitorTimeDistributionBlock() {
         title="Visitor Time Distribution"
         description="When visitors arrive (hour of day, UTC)"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -439,7 +578,15 @@ export function VisitorTimeDistributionBlock() {
         title="Visitor Time Distribution"
         description="When visitors arrive (hour of day, UTC)"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--label-color)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--label-color)",
+          }}
+        >
           Cloudflare not configured
         </div>
       </AnalyticsCard>
@@ -449,7 +596,7 @@ export function VisitorTimeDistributionBlock() {
   return (
     <AnalyticsCard
       title="Visitor Time Distribution"
-      description="When visitors arrive (3d)"
+      description="From Cloudflare (3d)"
       currentValueLabel={`${peakHour?.label ?? "12 AM"} peak`}
       subtitle={`${peakHour?.percent?.toFixed(1) ?? 0}% of visitors`}
     >
@@ -476,7 +623,8 @@ export function VisitorTimeDistributionBlock() {
             />
             <ChartTooltip
               tooltipConfig={{
-                labelFormatter: (_, payload) => payload?.[0]?.payload?.hourLabel || "",
+                labelFormatter: (_, payload) =>
+                  payload?.[0]?.payload?.hourLabel || "",
                 valueFormatter: (value: number) => `${value.toFixed(2)}%`,
               }}
             />

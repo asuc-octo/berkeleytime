@@ -27,6 +27,9 @@ export const cloudflareTypeDef = gql`
 
   type Query {
     "Staff-only: Cloudflare analytics data for the specified number of days and granularity"
-    cloudflareAnalyticsData(days: Int!, granularity: String): CloudflareAnalyticsData @auth
+    cloudflareAnalyticsData(
+      days: Int!
+      granularity: String
+    ): CloudflareAnalyticsData @auth
   }
 `;

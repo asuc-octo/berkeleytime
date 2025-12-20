@@ -18,7 +18,6 @@ import {
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
-
 import { useCollectionAnalyticsData } from "@/hooks/api";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
@@ -30,7 +29,14 @@ export function CollectionHighlightsBlock() {
   if (loading) {
     return (
       <AnalyticsCard title="Collection Highlights" description="Top stats">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -40,7 +46,15 @@ export function CollectionHighlightsBlock() {
   if (error || !data) {
     return (
       <AnalyticsCard title="Collection Highlights" description="Top stats">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -50,20 +64,61 @@ export function CollectionHighlightsBlock() {
   const { highlights } = data;
 
   const stats = [
-    { label: "Largest collection", value: `${highlights.largestCollectionSize} classes` },
-    { label: "Largest custom collection", value: `${highlights.largestCustomCollectionSize} classes` },
-    { label: "Largest custom collection name", value: highlights.largestCustomCollectionName || "—" },
-    { label: "Most bookmarked course", value: highlights.mostBookmarkedCourse ? `${highlights.mostBookmarkedCourse} (${highlights.mostBookmarkedCourseCount})` : "—" },
-    { label: "Most collections by user", value: `${highlights.mostCollectionsByUser} collections` },
+    {
+      label: "Largest collection",
+      value: `${highlights.largestCollectionSize} classes`,
+    },
+    {
+      label: "Largest custom collection",
+      value: `${highlights.largestCustomCollectionSize} classes`,
+    },
+    {
+      label: "Largest custom collection name",
+      value: highlights.largestCustomCollectionName || "—",
+    },
+    {
+      label: "Most bookmarked course",
+      value: highlights.mostBookmarkedCourse
+        ? `${highlights.mostBookmarkedCourse} (${highlights.mostBookmarkedCourseCount})`
+        : "—",
+    },
+    {
+      label: "Most collections by user",
+      value: `${highlights.mostCollectionsByUser} collections`,
+    },
   ];
 
   return (
     <AnalyticsCard title="Collection Highlights" description="Top stats">
-      <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "8px 0" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          padding: "8px 0",
+        }}
+      >
         {stats.map((stat) => (
-          <div key={stat.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ color: "var(--label-color)", fontSize: 16 }}>{stat.label}</span>
-            <span style={{ color: "var(--heading-color)", fontSize: 16, fontWeight: 500 }}>{stat.value}</span>
+          <div
+            key={stat.label}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ color: "var(--label-color)", fontSize: 16 }}>
+              {stat.label}
+            </span>
+            <span
+              style={{
+                color: "var(--heading-color)",
+                fontSize: 16,
+                fontWeight: 500,
+              }}
+            >
+              {stat.value}
+            </span>
           </div>
         ))}
       </div>
@@ -99,7 +154,20 @@ function getGranularityKey(date: Date, granularity: Granularity): string {
 
 // Helper to format display date based on granularity
 function formatDisplayDate(key: string, granularity: Granularity): string {
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const parts = key.split("-");
   const month = monthNames[parseInt(parts[1]) - 1];
   const day = parseInt(parts[2]);
@@ -119,7 +187,12 @@ export function UsersWithBookmarksBlock() {
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!data || data.collectionCreations.length === 0) {
-      return { chartData: [] as DailyDataPoint[], current: 0, absoluteChange: 0, percentChange: 0 };
+      return {
+        chartData: [] as DailyDataPoint[],
+        current: 0,
+        absoluteChange: 0,
+        percentChange: 0,
+      };
     }
 
     const days = getTimeRangeDays(timeRange);
@@ -127,7 +200,8 @@ export function UsersWithBookmarksBlock() {
     const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
     const sortedData = [...data.collectionCreations].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
     // Baseline count before the window
@@ -171,10 +245,12 @@ export function UsersWithBookmarksBlock() {
       };
     });
 
-    const current = chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+    const current =
+      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
     const start = chartData.length > 0 ? chartData[0].value : 0;
     const absoluteChange = current - start;
-    const percentChange = start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
+    const percentChange =
+      start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
     return { chartData, current, absoluteChange, percentChange };
   }, [data, timeRange, granularity]);
@@ -186,8 +262,18 @@ export function UsersWithBookmarksBlock() {
 
   if (loading) {
     return (
-      <AnalyticsCard title="Bookmark Users" description="Users with saved classes">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+      <AnalyticsCard
+        title="Bookmark Users"
+        description="Users with saved classes"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -196,8 +282,19 @@ export function UsersWithBookmarksBlock() {
 
   if (error) {
     return (
-      <AnalyticsCard title="Bookmark Users" description="Users with saved classes">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+      <AnalyticsCard
+        title="Bookmark Users"
+        description="Users with saved classes"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -226,16 +323,52 @@ export function UsersWithBookmarksBlock() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              <linearGradient
+                id="collectionGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
-            <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={["auto", "auto"]}
+            />
             <ChartTooltip />
-            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#collectionGradient)"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
@@ -250,7 +383,11 @@ export function DailyBookmarksBlock() {
 
   const { chartData, totalInWindow, avgPerDay } = useMemo(() => {
     if (!data || data.classAdditions.length === 0) {
-      return { chartData: [] as DailyDataPoint[], totalInWindow: 0, avgPerDay: 0 };
+      return {
+        chartData: [] as DailyDataPoint[],
+        totalInWindow: 0,
+        avgPerDay: 0,
+      };
     }
 
     const days = getTimeRangeDays(timeRange);
@@ -282,7 +419,8 @@ export function DailyBookmarksBlock() {
     }));
 
     const totalInWindow = chartData.reduce((sum, d) => sum + d.value, 0);
-    const avgPerDay = chartData.length > 0 ? totalInWindow / chartData.length : 0;
+    const avgPerDay =
+      chartData.length > 0 ? totalInWindow / chartData.length : 0;
 
     return { chartData, totalInWindow, avgPerDay };
   }, [data, timeRange]);
@@ -294,8 +432,18 @@ export function DailyBookmarksBlock() {
 
   if (loading) {
     return (
-      <AnalyticsCard title="Daily Bookmarks" description="Classes bookmarked per day">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+      <AnalyticsCard
+        title="Daily Bookmarks"
+        description="Classes bookmarked per day"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -304,8 +452,19 @@ export function DailyBookmarksBlock() {
 
   if (error) {
     return (
-      <AnalyticsCard title="Daily Bookmarks" description="Classes bookmarked per day">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+      <AnalyticsCard
+        title="Daily Bookmarks"
+        description="Classes bookmarked per day"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -326,11 +485,31 @@ export function DailyBookmarksBlock() {
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 9 }} interval="preserveStartEnd" />
-            <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={30} domain={[0, 'auto']} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 9 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={30}
+              domain={[0, "auto"]}
+            />
             <ChartTooltip />
-            <Bar dataKey="value" fill="var(--heading-color)" radius={[2, 2, 0, 0]} />
+            <Bar
+              dataKey="value"
+              fill="var(--heading-color)"
+              radius={[2, 2, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </ChartContainer>
@@ -346,7 +525,12 @@ export function TotalBookmarksBlock() {
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!data || data.classAdditions.length === 0) {
-      return { chartData: [] as DailyDataPoint[], current: 0, absoluteChange: 0, percentChange: 0 };
+      return {
+        chartData: [] as DailyDataPoint[],
+        current: 0,
+        absoluteChange: 0,
+        percentChange: 0,
+      };
     }
 
     const days = getTimeRangeDays(timeRange);
@@ -398,10 +582,12 @@ export function TotalBookmarksBlock() {
       };
     });
 
-    const current = chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+    const current =
+      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
     const start = chartData.length > 0 ? chartData[0].value : 0;
     const absoluteChange = current - start;
-    const percentChange = start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
+    const percentChange =
+      start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
     return { chartData, current, absoluteChange, percentChange };
   }, [data, timeRange, granularity]);
@@ -413,8 +599,18 @@ export function TotalBookmarksBlock() {
 
   if (loading) {
     return (
-      <AnalyticsCard title="Total Bookmarks" description="Cumulative classes bookmarked">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+      <AnalyticsCard
+        title="Total Bookmarks"
+        description="Cumulative classes bookmarked"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -423,8 +619,19 @@ export function TotalBookmarksBlock() {
 
   if (error) {
     return (
-      <AnalyticsCard title="Total Bookmarks" description="Cumulative classes bookmarked">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+      <AnalyticsCard
+        title="Total Bookmarks"
+        description="Cumulative classes bookmarked"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -453,16 +660,52 @@ export function TotalBookmarksBlock() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              <linearGradient
+                id="collectionGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
-            <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={["auto", "auto"]}
+            />
             <ChartTooltip />
-            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#collectionGradient)"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
@@ -478,7 +721,12 @@ export function CustomCollectionsBlock() {
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!data || data.customCollectionCreations.length === 0) {
-      return { chartData: [] as DailyDataPoint[], current: 0, absoluteChange: 0, percentChange: 0 };
+      return {
+        chartData: [] as DailyDataPoint[],
+        current: 0,
+        absoluteChange: 0,
+        percentChange: 0,
+      };
     }
 
     const days = getTimeRangeDays(timeRange);
@@ -486,7 +734,8 @@ export function CustomCollectionsBlock() {
     const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
     const sortedData = [...data.customCollectionCreations].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
     // Baseline count before the window
@@ -530,10 +779,12 @@ export function CustomCollectionsBlock() {
       };
     });
 
-    const current = chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+    const current =
+      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
     const start = chartData.length > 0 ? chartData[0].value : 0;
     const absoluteChange = current - start;
-    const percentChange = start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
+    const percentChange =
+      start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
     return { chartData, current, absoluteChange, percentChange };
   }, [data, timeRange, granularity]);
@@ -545,8 +796,18 @@ export function CustomCollectionsBlock() {
 
   if (loading) {
     return (
-      <AnalyticsCard title="Custom Collections" description="User-created collections">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+      <AnalyticsCard
+        title="Custom Collections"
+        description="User-created collections"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -555,8 +816,19 @@ export function CustomCollectionsBlock() {
 
   if (error) {
     return (
-      <AnalyticsCard title="Custom Collections" description="User-created collections">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+      <AnalyticsCard
+        title="Custom Collections"
+        description="User-created collections"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -584,16 +856,52 @@ export function CustomCollectionsBlock() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              <linearGradient
+                id="collectionGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
-            <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={["auto", "auto"]}
+            />
             <ChartTooltip />
-            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#collectionGradient)"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
@@ -609,7 +917,12 @@ export function UsersWithCustomCollectionsBlock() {
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!data || data.usersWithCustomCollections.length === 0) {
-      return { chartData: [] as DailyDataPoint[], current: 0, absoluteChange: 0, percentChange: 0 };
+      return {
+        chartData: [] as DailyDataPoint[],
+        current: 0,
+        absoluteChange: 0,
+        percentChange: 0,
+      };
     }
 
     const days = getTimeRangeDays(timeRange);
@@ -617,7 +930,8 @@ export function UsersWithCustomCollectionsBlock() {
     const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
     const sortedData = [...data.usersWithCustomCollections].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
     // Baseline count before the window
@@ -661,10 +975,12 @@ export function UsersWithCustomCollectionsBlock() {
       };
     });
 
-    const current = chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+    const current =
+      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
     const start = chartData.length > 0 ? chartData[0].value : 0;
     const absoluteChange = current - start;
-    const percentChange = start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
+    const percentChange =
+      start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
     return { chartData, current, absoluteChange, percentChange };
   }, [data, timeRange, granularity]);
@@ -676,8 +992,18 @@ export function UsersWithCustomCollectionsBlock() {
 
   if (loading) {
     return (
-      <AnalyticsCard title="Custom Collection Users" description="Unique users who created collections">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+      <AnalyticsCard
+        title="Custom Collection Users"
+        description="Unique users who created collections"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -686,8 +1012,19 @@ export function UsersWithCustomCollectionsBlock() {
 
   if (error) {
     return (
-      <AnalyticsCard title="Custom Collection Users" description="Unique users who created collections">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+      <AnalyticsCard
+        title="Custom Collection Users"
+        description="Unique users who created collections"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -715,16 +1052,52 @@ export function UsersWithCustomCollectionsBlock() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              <linearGradient
+                id="collectionGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-            <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
-            <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={["auto", "auto"]}
+            />
             <ChartTooltip />
-            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#collectionGradient)"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>

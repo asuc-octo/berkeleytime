@@ -10,7 +10,9 @@ interface UserCreationAnalyticsDataResponse {
 }
 
 export const useUserCreationAnalyticsData = () => {
-  const query = useQuery<UserCreationAnalyticsDataResponse>(USER_CREATION_ANALYTICS_DATA);
+  const query = useQuery<UserCreationAnalyticsDataResponse>(
+    USER_CREATION_ANALYTICS_DATA
+  );
 
   return {
     ...query,

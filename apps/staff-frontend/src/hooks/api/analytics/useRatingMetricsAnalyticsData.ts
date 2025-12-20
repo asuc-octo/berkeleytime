@@ -10,7 +10,9 @@ interface RatingMetricsAnalyticsDataResponse {
 }
 
 export const useRatingMetricsAnalyticsData = () => {
-  const query = useQuery<RatingMetricsAnalyticsDataResponse>(RATING_METRICS_ANALYTICS_DATA);
+  const query = useQuery<RatingMetricsAnalyticsDataResponse>(
+    RATING_METRICS_ANALYTICS_DATA
+  );
 
   return {
     ...query,

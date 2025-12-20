@@ -46,7 +46,8 @@ export function AnalyticsCard({
   customControls,
   children,
 }: AnalyticsCardProps) {
-  const showMetrics = currentValue !== undefined || currentValueLabel !== undefined;
+  const showMetrics =
+    currentValue !== undefined || currentValueLabel !== undefined;
   const isPositive = (absoluteChange ?? percentChange ?? 0) >= 0;
 
   // Format the change text: "+3.8% vs prev. 30d"
@@ -68,14 +69,23 @@ export function AnalyticsCard({
         {showMetrics && (
           <div className={styles.headerRight}>
             <div className={styles.currentValue}>
-              {currentValuePrefix}{currentValue !== undefined && currentValue.toLocaleString()}{currentValueLabel && (currentValue !== undefined ? ` ${currentValueLabel}` : currentValueLabel)}
+              {currentValuePrefix}
+              {currentValue !== undefined && currentValue.toLocaleString()}
+              {currentValueLabel &&
+                (currentValue !== undefined
+                  ? ` ${currentValueLabel}`
+                  : currentValueLabel)}
             </div>
             {subtitle ? (
               <div
                 className={styles.percentChange}
-                style={{ color: subtitlePositive !== undefined
-                  ? (subtitlePositive ? "var(--green-500)" : "var(--red-500)")
-                  : "var(--label-color)"
+                style={{
+                  color:
+                    subtitlePositive !== undefined
+                      ? subtitlePositive
+                        ? "var(--green-500)"
+                        : "var(--red-500)"
+                      : "var(--label-color)",
                 }}
               >
                 {subtitle}
@@ -83,7 +93,9 @@ export function AnalyticsCard({
             ) : formatChangeText() ? (
               <div
                 className={styles.percentChange}
-                style={{ color: isPositive ? "var(--green-500)" : "var(--red-500)" }}
+                style={{
+                  color: isPositive ? "var(--green-500)" : "var(--red-500)",
+                }}
               >
                 {formatChangeText()}
               </div>
@@ -104,7 +116,13 @@ export function AnalyticsCard({
                   { value: "30d", label: "30d" },
                   { value: "90d", label: "90d" },
                 ]}
-                style={{ width: "fit-content", minHeight: 24, height: 24, padding: "0 8px", fontSize: 12 }}
+                style={{
+                  width: "fit-content",
+                  minHeight: 24,
+                  height: 24,
+                  padding: "0 8px",
+                  fontSize: 12,
+                }}
               />
               {onGranularityChange && (
                 <>
@@ -116,7 +134,13 @@ export function AnalyticsCard({
                       { value: "hour", label: "Hour" },
                       { value: "day", label: "Day" },
                     ]}
-                    style={{ width: "fit-content", minHeight: 24, height: 24, padding: "0 8px", fontSize: 12 }}
+                    style={{
+                      width: "fit-content",
+                      minHeight: 24,
+                      height: 24,
+                      padding: "0 8px",
+                      fontSize: 12,
+                    }}
                   />
                 </>
               )}

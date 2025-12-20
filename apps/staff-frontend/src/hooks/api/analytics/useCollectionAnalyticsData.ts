@@ -10,7 +10,9 @@ interface CollectionAnalyticsDataResponse {
 }
 
 export const useCollectionAnalyticsData = () => {
-  const query = useQuery<CollectionAnalyticsDataResponse>(COLLECTION_ANALYTICS_DATA);
+  const query = useQuery<CollectionAnalyticsDataResponse>(
+    COLLECTION_ANALYTICS_DATA
+  );
 
   return {
     ...query,

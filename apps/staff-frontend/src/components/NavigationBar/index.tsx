@@ -1,7 +1,14 @@
 import { HalfMoon, LogOut, SunLight, User, WebWindow } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
 
-import { Button, DropdownMenu, Flex, IconButton, MenuItem, useTheme } from "@repo/theme";
+import {
+  Button,
+  DropdownMenu,
+  Flex,
+  IconButton,
+  MenuItem,
+  useTheme,
+} from "@repo/theme";
 
 import { BASE } from "../../App";
 import { useReadUser } from "../../hooks/api/users";
@@ -72,19 +79,13 @@ export default function NavigationBar() {
       </Link>
       <div className={styles.group}>
         <NavLink to="/" end>
-          {({ isActive }) => (
-            <MenuItem active={isActive}>Members</MenuItem>
-          )}
+          {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
         </NavLink>
         <NavLink to="/stats">
-          {({ isActive }) => (
-            <MenuItem active={isActive}>Stats</MenuItem>
-          )}
+          {({ isActive }) => <MenuItem active={isActive}>Stats</MenuItem>}
         </NavLink>
         <NavLink to="/analytics">
-          {({ isActive }) => (
-            <MenuItem active={isActive}>Analytics</MenuItem>
-          )}
+          {({ isActive }) => <MenuItem active={isActive}>Analytics</MenuItem>}
         </NavLink>
       </div>
       <ThemeDropdown theme={theme} setTheme={setTheme} />

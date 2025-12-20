@@ -55,6 +55,7 @@ export const getUserCreationAnalyticsData = async (context: RequestContext) => {
     .lean();
 
   return users.map((user) => ({
-    createdAt: (user as any).createdAt?.toISOString() || new Date().toISOString(),
+    createdAt:
+      (user as any).createdAt?.toISOString() || new Date().toISOString(),
   }));
 };

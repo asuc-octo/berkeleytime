@@ -18,7 +18,6 @@ import {
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
-
 import { useUserCreationAnalyticsData } from "@/hooks/api";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
@@ -51,7 +50,20 @@ function getGranularityKey(date: Date, granularity: Granularity): string {
 
 // Helper to format display date based on granularity
 function formatDisplayDate(key: string, granularity: Granularity): string {
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const parts = key.split("-");
   const month = monthNames[parseInt(parts[1]) - 1];
   const day = parseInt(parts[2]);
@@ -71,7 +83,12 @@ export function UserGrowthBlock() {
 
   const { chartData, totalUsers, newInRange, percentGrowth } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
-      return { chartData: [] as DailyDataPoint[], totalUsers: 0, newInRange: 0, percentGrowth: 0 };
+      return {
+        chartData: [] as DailyDataPoint[],
+        totalUsers: 0,
+        newInRange: 0,
+        percentGrowth: 0,
+      };
     }
 
     const days = getTimeRangeDays(timeRange);
@@ -80,7 +97,8 @@ export function UserGrowthBlock() {
 
     // Sort all users by creation time
     const sortedUsers = [...rawData].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
     // Count users created before the window (baseline)
@@ -129,7 +147,8 @@ export function UserGrowthBlock() {
 
     const totalUsers = cumulative;
     const newInRange = totalUsers - baselineCount;
-    const percentGrowth = baselineCount > 0 ? (newInRange / baselineCount) * 100 : 0;
+    const percentGrowth =
+      baselineCount > 0 ? (newInRange / baselineCount) * 100 : 0;
 
     return { chartData, totalUsers, newInRange, percentGrowth };
   }, [rawData, timeRange, granularity]);
@@ -145,7 +164,14 @@ export function UserGrowthBlock() {
         title="User Growth"
         description="New accounts created per day (30d)"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -158,7 +184,15 @@ export function UserGrowthBlock() {
         title="User Growth"
         description="New accounts created per day (30d)"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -187,9 +221,23 @@ export function UserGrowthBlock() {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
             <defs>
-              <linearGradient id="userGrowthGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              <linearGradient
+                id="userGrowthGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -209,7 +257,7 @@ export function UserGrowthBlock() {
               axisLine={false}
               tick={{ fill: "var(--label-color)", fontSize: 12 }}
               width={40}
-              domain={['auto', 'auto']}
+              domain={["auto", "auto"]}
             />
             <ChartTooltip />
             <Area
@@ -282,7 +330,12 @@ export function SignupHourHistogramBlock() {
 
     return {
       hourlyData,
-      peakHour: { hour: peakHour, count: maxCount, label: formatHour(peakHour), percent: peakPercent },
+      peakHour: {
+        hour: peakHour,
+        count: maxCount,
+        label: formatHour(peakHour),
+        percent: peakPercent,
+      },
       totalUsers: total,
     };
   }, [rawData]);
@@ -298,7 +351,14 @@ export function SignupHourHistogramBlock() {
         title="Signup Time Distribution"
         description="When users create accounts (hour of day)"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -311,7 +371,15 @@ export function SignupHourHistogramBlock() {
         title="Signup Time Distribution"
         description="When users create accounts (hour of day)"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -348,7 +416,8 @@ export function SignupHourHistogramBlock() {
             />
             <ChartTooltip
               tooltipConfig={{
-                labelFormatter: (_, payload) => payload?.[0]?.payload?.hourLabel || "",
+                labelFormatter: (_, payload) =>
+                  payload?.[0]?.payload?.hourLabel || "",
                 valueFormatter: (value: number) => `${value.toFixed(2)}%`,
               }}
             />
@@ -371,7 +440,11 @@ export function SignupDayHistogramBlock() {
 
   const { dailyData, totalInWindow, avgPerDay } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
-      return { dailyData: [] as DailyDataPoint[], totalInWindow: 0, avgPerDay: 0 };
+      return {
+        dailyData: [] as DailyDataPoint[],
+        totalInWindow: 0,
+        avgPerDay: 0,
+      };
     }
 
     const days = getTimeRangeDays(timeRange);
@@ -404,7 +477,8 @@ export function SignupDayHistogramBlock() {
 
     // Calculate total signups in window and average
     const totalInWindow = dailyData.reduce((sum, d) => sum + d.value, 0);
-    const avgPerDay = dailyData.length > 0 ? totalInWindow / dailyData.length : 0;
+    const avgPerDay =
+      dailyData.length > 0 ? totalInWindow / dailyData.length : 0;
 
     return {
       dailyData,
@@ -424,7 +498,14 @@ export function SignupDayHistogramBlock() {
         title="Daily Signups"
         description="Number of signups per day"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
           <LoadingIndicator />
         </div>
       </AnalyticsCard>
@@ -437,7 +518,15 @@ export function SignupDayHistogramBlock() {
         title="Daily Signups"
         description="Number of signups per day"
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
           Error loading data
         </div>
       </AnalyticsCard>
@@ -475,7 +564,7 @@ export function SignupDayHistogramBlock() {
               axisLine={false}
               tick={{ fill: "var(--label-color)", fontSize: 12 }}
               width={30}
-              domain={[0, 'auto']}
+              domain={[0, "auto"]}
             />
             <ChartTooltip />
             <Bar

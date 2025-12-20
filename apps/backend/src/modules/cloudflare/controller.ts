@@ -58,9 +58,12 @@ export const getCloudflareAnalyticsData = async (
   }).lean();
 
   if (!staffMember) {
-    throw new GraphQLError("Only staff members can access Cloudflare analytics", {
-      extensions: { code: "FORBIDDEN" },
-    });
+    throw new GraphQLError(
+      "Only staff members can access Cloudflare analytics",
+      {
+        extensions: { code: "FORBIDDEN" },
+      }
+    );
   }
 
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
@@ -137,14 +140,17 @@ export const getCloudflareAnalyticsData = async (
   }
 
   try {
-    const response = await fetch("https://api.cloudflare.com/client/v4/graphql", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiToken}`,
-      },
-      body: JSON.stringify({ query }),
-    });
+    const response = await fetch(
+      "https://api.cloudflare.com/client/v4/graphql",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiToken}`,
+        },
+        body: JSON.stringify({ query }),
+      }
+    );
 
     if (!response.ok) {
       throw new GraphQLError(`Cloudflare API error: ${response.statusText}`, {
@@ -155,9 +161,12 @@ export const getCloudflareAnalyticsData = async (
     const result = (await response.json()) as CloudflareAPIResponse;
 
     if (result.errors && result.errors.length > 0) {
-      throw new GraphQLError(`Cloudflare API error: ${result.errors[0].message}`, {
-        extensions: { code: "INTERNAL_SERVER_ERROR" },
-      });
+      throw new GraphQLError(
+        `Cloudflare API error: ${result.errors[0].message}`,
+        {
+          extensions: { code: "INTERNAL_SERVER_ERROR" },
+        }
+      );
     }
 
     const zones = result.data?.viewer?.zones;
@@ -169,20 +178,28 @@ export const getCloudflareAnalyticsData = async (
       };
     }
 
-    const httpRequestsData = granularity === "hour"
-      ? zones[0].httpRequests1hGroups || []
-      : zones[0].httpRequests1dGroups || [];
+    const httpRequestsData =
+      granularity === "hour"
+        ? zones[0].httpRequests1hGroups || []
+        : zones[0].httpRequests1dGroups || [];
 
     const dataPoints: CloudflareDataPoint[] = httpRequestsData.map((group) => ({
-      date: granularity === "hour"
-        ? group.dimensions.datetime || ""
-        : group.dimensions.date || "",
+      date:
+        granularity === "hour"
+          ? group.dimensions.datetime || ""
+          : group.dimensions.date || "",
       uniqueVisitors: group.uniq.uniques,
       totalRequests: group.sum.requests,
     }));
 
-    const totalUniqueVisitors = dataPoints.reduce((sum, dp) => sum + dp.uniqueVisitors, 0);
-    const totalRequests = dataPoints.reduce((sum, dp) => sum + dp.totalRequests, 0);
+    const totalUniqueVisitors = dataPoints.reduce(
+      (sum, dp) => sum + dp.uniqueVisitors,
+      0
+    );
+    const totalRequests = dataPoints.reduce(
+      (sum, dp) => sum + dp.totalRequests,
+      0
+    );
 
     return {
       dataPoints,
@@ -193,8 +210,11 @@ export const getCloudflareAnalyticsData = async (
     if (error instanceof GraphQLError) {
       throw error;
     }
-    throw new GraphQLError(`Failed to fetch Cloudflare analytics: ${(error as Error).message}`, {
-      extensions: { code: "INTERNAL_SERVER_ERROR" },
-    });
+    throw new GraphQLError(
+      `Failed to fetch Cloudflare analytics: ${(error as Error).message}`,
+      {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      }
+    );
   }
 };

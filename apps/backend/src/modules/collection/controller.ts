@@ -1,7 +1,12 @@
 import { GraphQLError } from "graphql";
 import { Types } from "mongoose";
 
-import { ClassModel, CollectionColor, CollectionModel, StaffMemberModel } from "@repo/common";
+import {
+  ClassModel,
+  CollectionColor,
+  CollectionModel,
+  StaffMemberModel,
+} from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
 
@@ -606,12 +611,12 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
   });
 
   // Convert user first custom collection to array
-  const usersWithCustomCollections = Array.from(userFirstCustomCollection.entries()).map(
-    ([userId, createdAt]) => ({
-      createdAt: createdAt.toISOString(),
-      userId,
-    })
-  );
+  const usersWithCustomCollections = Array.from(
+    userFirstCustomCollection.entries()
+  ).map(([userId, createdAt]) => ({
+    createdAt: createdAt.toISOString(),
+    userId,
+  }));
 
   // Second pass: get first activity date for users who have post-migration activity
   // Use their earliest post-migration class addition as their "start" date
@@ -625,16 +630,26 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
   });
 
   // Only include users who have actually added classes after migration
-  const collectionCreations = Array.from(userFirstActivity.entries()).map(([userId, firstAddedAt]) => ({
-    createdAt: firstAddedAt.toISOString(),
-    userId,
-  }));
+  const collectionCreations = Array.from(userFirstActivity.entries()).map(
+    ([userId, firstAddedAt]) => ({
+      createdAt: firstAddedAt.toISOString(),
+      userId,
+    })
+  );
 
   // Sort by timestamp
-  collectionCreations.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-  classAdditions.sort((a, b) => new Date(a.addedAt).getTime() - new Date(b.addedAt).getTime());
-  customCollectionCreations.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-  usersWithCustomCollections.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  collectionCreations.sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+  classAdditions.sort(
+    (a, b) => new Date(a.addedAt).getTime() - new Date(b.addedAt).getTime()
+  );
+  customCollectionCreations.sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+  usersWithCustomCollections.sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
 
   // Compute highlights
   let largestCollectionSize = 0;

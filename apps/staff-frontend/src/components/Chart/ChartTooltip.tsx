@@ -1,5 +1,8 @@
 import { Tooltip } from "recharts";
-import type { TooltipProps, ContentType } from "recharts/types/component/Tooltip";
+import type {
+  ContentType,
+  TooltipProps,
+} from "recharts/types/component/Tooltip";
 
 import { useChart } from "./ChartContext";
 import { ChartTooltipContent } from "./ChartTooltipContent";

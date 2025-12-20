@@ -53,7 +53,6 @@ export default function App() {
   const isLoading = userLoading || (user && staffLoading);
   const isNotStaff = user && !staffLoading && !staffMember;
 
-
   if (isLoading) {
     return (
       <ThemeProvider>
@@ -66,8 +65,7 @@ export default function App() {
     return (
       <ThemeProvider>
         <div className={styles.signInContainer}>
-          <pre className={styles.asciiArt}>{
-          `                .,,uod8B8bou,,.
+          <pre className={styles.asciiArt}>{`                .,,uod8B8bou,,.
            ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
       ,=m8BBBBBBBBBBBBBBBRPFT?!||||||||||||||
       !...:!TVBBBRPFT||||||||||!!^^""'   ||||

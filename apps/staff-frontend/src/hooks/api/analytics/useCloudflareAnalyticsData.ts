@@ -9,10 +9,16 @@ interface CloudflareAnalyticsDataResponse {
   cloudflareAnalyticsData: CloudflareAnalyticsData;
 }
 
-export const useCloudflareAnalyticsData = (days: number, granularity: "day" | "hour" = "day") => {
-  const query = useQuery<CloudflareAnalyticsDataResponse>(CLOUDFLARE_ANALYTICS_DATA, {
-    variables: { days, granularity },
-  });
+export const useCloudflareAnalyticsData = (
+  days: number,
+  granularity: "day" | "hour" = "day"
+) => {
+  const query = useQuery<CloudflareAnalyticsDataResponse>(
+    CLOUDFLARE_ANALYTICS_DATA,
+    {
+      variables: { days, granularity },
+    }
+  );
 
   return {
     ...query,
