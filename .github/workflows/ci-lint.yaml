@@ -43,8 +43,6 @@ jobs:
 
             const body = `### Linting Failed
 
-            The linting check failed. Here is the output:
-
             <details>
             <summary>Click to expand lint output</summary>
 

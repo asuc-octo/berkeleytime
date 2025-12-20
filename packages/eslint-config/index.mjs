@@ -6,7 +6,21 @@ import reactRefreshPlugin from "eslint-plugin-react-refresh";
 import ts from "typescript-eslint";
 
 /** @type { import("eslint").Linter.Config[] } */
-export default [
+export const backendConfig = [
+  { ignores: ["**/generated-types/**", "**/generated-typedefs/**"] },
+  js.configs.recommended,
+  ...ts.configs.recommended,
+  prettier,
+  {
+    files: ["**/*.ts"],
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
+    },
+  },
+];
+
+/** @type { import("eslint").Linter.Config[] } */
+export const frontendConfig = [
   js.configs.recommended,
   ...ts.configs.recommended,
   prettier,
