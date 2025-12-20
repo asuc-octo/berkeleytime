@@ -57,7 +57,9 @@ function AccordionContent({
 }: React.ComponentProps<typeof AccordionPrimitive.Content>) {
   return (
     <AccordionPrimitive.Content className={styles.content} {...props}>
-      <div className={classNames(styles.contentInner, className)}>{children}</div>
+      <div className={classNames(styles.contentInner, className)}>
+        {children}
+      </div>
     </AccordionPrimitive.Content>
   );
 }

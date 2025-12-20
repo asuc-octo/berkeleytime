@@ -5,7 +5,6 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
-import { UserProvider } from "@/contexts/UserContext";
 
 import Dashboard from "./app/Dashboard";
 
@@ -32,11 +31,9 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <UserProvider>
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </UserProvider>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </ApolloProvider>
   );
 }

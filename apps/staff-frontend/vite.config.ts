@@ -8,8 +8,8 @@ export default defineConfig({
     port: 3002,
     allowedHosts: ["staff-frontend"],
     proxy: {
-      "/api/graphql": {
-        target: "http://localhost:8080",
+      "/api": {
+        target: "http://backend:5001",
         changeOrigin: true,
         secure: false,
       },

@@ -1,78 +1,88 @@
-import { Book, DataTransferBoth, GraphUp, Group } from "iconoir-react";
+import { useMemo, useState } from "react";
 
-import { useUser } from "@/contexts/UserContext";
+import { gql, useQuery } from "@apollo/client";
+
+import { OptionItem, Select } from "@repo/theme";
 
 import styles from "./Dashboard.module.scss";
 
+interface UserSearchResult {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+const ALL_USERS = gql`
+  query AllUsers {
+    allUsers {
+      _id
+      name
+      email
+    }
+  }
+`;
+
 export default function Dashboard() {
-  const { user, loading } = useUser();
+  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
+    null
+  );
+  const [searchQuery, setSearchQuery] = useState("");
 
-  if (loading) {
-    return (
-      <div className={styles.root}>
-        <div className={styles.container}>
-          <p className={styles.subtitle}>Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  const { data, loading } = useQuery<{ allUsers: UserSearchResult[] }>(
+    ALL_USERS
+  );
 
-  if (!user) {
-    return (
-      <div className={styles.root}>
-        <div className={styles.container}>
-          <h1 className={styles.title}>Staff Dashboard</h1>
-          <p className={styles.subtitle}>
-            Please sign in to access the staff dashboard.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const options = useMemo<OptionItem<UserSearchResult>[]>(() => {
+    if (!data?.allUsers) return [];
+
+    const query = searchQuery.toLowerCase();
+    const filtered = query
+      ? data.allUsers.filter(
+          (user) =>
+            user.name.toLowerCase().includes(query) ||
+            user.email.toLowerCase().includes(query)
+        )
+      : data.allUsers;
+
+    return filtered.slice(0, 50).map((user) => ({
+      value: user,
+      label: user.name,
+      meta: user.email,
+    }));
+  }, [data?.allUsers, searchQuery]);
+
+  const handleChange = (
+    value: UserSearchResult | UserSearchResult[] | null
+  ) => {
+    if (Array.isArray(value)) return;
+    setSelectedUser(value);
+  };
 
   return (
     <div className={styles.root}>
-      <div className={styles.container}>
-        <h1 className={styles.title}>Welcome, {user.name?.split(" ")[0]}!</h1>
-        <p className={styles.subtitle}>
-          Manage Berkeleytime data and configurations.
-        </p>
-
-        <div className={styles.grid}>
-          <div className={styles.card}>
-            <Book width={32} height={32} />
-            <span className={styles.cardTitle}>Courses</span>
-            <span className={styles.cardDescription}>
-              Manage course data and metadata
-            </span>
-          </div>
-
-          <div className={styles.card}>
-            <DataTransferBoth width={32} height={32} />
-            <span className={styles.cardTitle}>Data Pipeline</span>
-            <span className={styles.cardDescription}>
-              Monitor and trigger data pulls
-            </span>
-          </div>
-
-          <div className={styles.card}>
-            <GraphUp width={32} height={32} />
-            <span className={styles.cardTitle}>Analytics</span>
-            <span className={styles.cardDescription}>
-              View site usage and metrics
-            </span>
-          </div>
-
-          <div className={styles.card}>
-            <Group width={32} height={32} />
-            <span className={styles.cardTitle}>Users</span>
-            <span className={styles.cardDescription}>
-              Manage user accounts and permissions
-            </span>
-          </div>
-        </div>
+      <h1 className={styles.title}>Member Search</h1>
+      <div className={styles.searchContainer}>
+        <Select
+          searchable
+          options={options}
+          value={selectedUser}
+          onChange={handleChange}
+          onSearchChange={setSearchQuery}
+          placeholder="Search by name..."
+          searchPlaceholder="Type a name or email..."
+          emptyMessage={loading ? "Loading users..." : "No users found."}
+          loading={loading}
+          clearable
+        />
       </div>
+
+      {selectedUser && (
+        <div className={styles.selectedUser}>
+          <div className={styles.selectedUserName}>{selectedUser.name}</div>
+          <div className={styles.selectedUserEmail}>{selectedUser.email}</div>
+          <div className={styles.selectedUserId}>ID: {selectedUser._id}</div>
+        </div>
+      )}
     </div>
   );
 }
-
