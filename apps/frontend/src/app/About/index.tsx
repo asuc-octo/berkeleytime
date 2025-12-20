@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useRef, useState, UIEvent } from "react";
+import { UIEvent, useEffect, useMemo, useRef, useState } from "react";
 
+import { useQuery } from "@apollo/client/react";
 import { LightBulb, NavArrowLeft, NavArrowRight } from "iconoir-react";
 
 import { Select } from "@repo/theme";
 
+import { GetAllStaffMembersDocument } from "@/lib/generated/graphql";
+
 import styles from "./About.module.scss";
 import { MemberCard } from "./MemberCard";
-import { useQuery } from "@apollo/client/react";
-import { GetAllStaffMembersDocument } from "@/lib/generated/graphql";
 
 const ABOUT_IMAGES = [
   "/images/about1.png",
@@ -19,13 +20,29 @@ const ABOUT_IMAGES = [
 
 // Founding Team data
 const FOUNDING_TEAM = [
-  { name: "Christine Wang", role: "Fullstack Engineer", link: "https://www.linkedin.com/in/cwang395/" },
+  {
+    name: "Christine Wang",
+    role: "Fullstack Engineer",
+    link: "https://www.linkedin.com/in/cwang395/",
+  },
   { name: "Emily Chen", role: "Fullstack Engineer", link: null },
-  { name: "Eric Huynh", role: "Fullstack Engineer", link: "http://erichuynhing.com/" },
+  {
+    name: "Eric Huynh",
+    role: "Fullstack Engineer",
+    link: "http://erichuynhing.com/",
+  },
   { name: "Jennifer Yu", role: "Fullstack Engineer", link: null },
   { name: "Justin Lu", role: "Fullstack Engineer", link: null },
-  { name: "Kelvin Leong", role: "Fullstack Engineer", link: "https://www.linkedin.com/in/kelvinjleong/" },
-  { name: "Kevin Jiang", role: "Fullstack Engineer", link: "https://github.com/kevjiangba/" },
+  {
+    name: "Kelvin Leong",
+    role: "Fullstack Engineer",
+    link: "https://www.linkedin.com/in/kelvinjleong/",
+  },
+  {
+    name: "Kevin Jiang",
+    role: "Fullstack Engineer",
+    link: "https://github.com/kevjiangba/",
+  },
   { name: "Kimya Khoshnan", role: "Fullstack Engineer", link: null },
   { name: "Laura Harker", role: "Fullstack Engineer", link: null },
   { name: "Mihir Patil", role: "Fullstack Engineer", link: null },
@@ -38,117 +55,122 @@ const FOUNDING_TEAM = [
 
 // Founders data
 const FOUNDERS = [
-  { name: "Ashwin Iyengar", role: "Co-Founder", link: "http://ashwiniyengar.github.io/" },
-  { name: "Noah Gilmore", role: "Co-Founder", link: "https://noahgilmore.com/" },
+  {
+    name: "Ashwin Iyengar",
+    role: "Co-Founder",
+    link: "http://ashwiniyengar.github.io/",
+  },
+  {
+    name: "Noah Gilmore",
+    role: "Co-Founder",
+    link: "https://noahgilmore.com/",
+  },
   { name: "Yuxin Zhu", role: "Co-Founder", link: "http://yuxinzhu.com/" },
 ];
 
 export default function About() {
-
-  const { data } = useQuery(GetAllStaffMembersDocument);
+  const { data: allStaffMembers, loading: allStaffMembersLoading } = useQuery(
+    GetAllStaffMembersDocument
+  );
 
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [selectedAlumniYear, setSelectedAlumniYear] = useState<number | null>(null);
+  const [selectedAlumniYear, setSelectedAlumniYear] = useState<number | null>(
+    null
+  );
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const allStaffMembers = useMemo(() => {
-    return data?.allStaffMembers;
-  }, [data]);
-  
   const latestTerm = useMemo(() => {
     const semesterOrder: Record<string, number> = {
       Spring: 0,
       Fall: 1,
     };
-  
+
     let latestYear = 0;
     let latestSemester: "Spring" | "Fall" = "Spring";
-  
-    allStaffMembers?.forEach((member) => {
+
+    allStaffMembers?.allStaffMembers?.forEach((member) => {
       member.roles.forEach((role) => {
         if (role.year > latestYear) {
           latestYear = role.year;
           latestSemester = role.semester as "Spring" | "Fall";
         } else if (role.year === latestYear) {
           const currentOrder = semesterOrder[latestSemester] ?? 0;
-          const roleOrder = semesterOrder[role.semester as "Spring" | "Fall"] ?? 0;
+          const roleOrder =
+            semesterOrder[role.semester as "Spring" | "Fall"] ?? 0;
           if (roleOrder > currentOrder) {
             latestSemester = role.semester as "Spring" | "Fall";
           }
         }
       });
     });
-  
+
     return { year: latestYear, semester: latestSemester };
-  }, [allStaffMembers]);
+  }, [allStaffMembers, allStaffMembersLoading]);
 
-  const [selectedTerm, setSelectedTerm] = useState<{ year: number, semester: "Spring" | "Fall" }>(latestTerm);
-
-  // Update selectedTerm when latestTerm changes (if it hasn't been manually set)
-  useEffect(() => {
-    if (latestTerm && (!selectedTerm || (selectedTerm.year === latestTerm.year && selectedTerm.semester === latestTerm.semester))) {
-      setSelectedTerm(latestTerm);
-    }
-  }, [latestTerm]);
-
-  // Filter team members to only show those in the selected term
-  const membersInSelectedTerm = useMemo(() => {
-    return allStaffMembers?.filter((member) =>
-      member.roles.some(
-        (role) =>
-          role.year === selectedTerm.year &&
-          role.semester === selectedTerm.semester
-      )
-    );
-  }, [allStaffMembers, selectedTerm]);
+  const [selectedTerm, setSelectedTerm] = useState<{
+    year: number;
+    semester: "Spring" | "Fall";
+  } | null>(latestTerm);
 
   const availableTerms = useMemo(() => {
-    const terms = new Set<{ year: number, semester: "Spring" | "Fall" }>();
-    allStaffMembers?.forEach((member) => {
+    const terms: { year: number; semester: "Spring" | "Fall" }[] = [];
+    allStaffMembers?.allStaffMembers?.forEach((member) => {
       member.roles.forEach((role) => {
-        terms.add({ year: role.year, semester: role.semester as "Spring" | "Fall" });
+        if (
+          terms.some(
+            (t) => t.year === role.year && t.semester === role.semester
+          )
+        )
+          return;
+        terms.push({
+          year: role.year,
+          semester: role.semester as "Spring" | "Fall",
+        });
       });
     });
-    return Array.from(terms).sort((a, b) => {
+    const sorted = Array.from(terms).sort((a, b) => {
       if (a.year !== b.year) return b.year - a.year; // Sort by year descending
       // If same year, Spring comes before Fall
-      return a.semester === "Spring" ? -1 : 1;
+      return a.semester === "Spring" ? 1 : -1;
     });
-  }, [allStaffMembers]);
+    setSelectedTerm(sorted[0]);
+    return sorted;
+  }, [allStaffMembers, allStaffMembersLoading]);
 
   // Convert availableTerms to Select options
   const termOptions = useMemo(() => {
     return availableTerms.map((term) => ({
-      value: `${term.year}-${term.semester}`,
+      value: term,
       label: `${term.semester} ${term.year}`,
     }));
   }, [availableTerms]);
 
-  // Get the current selected term value for the Select
-  const selectedTermValue = useMemo(() => {
-    return selectedTerm ? `${selectedTerm.year}-${selectedTerm.semester}` : null;
-  }, [selectedTerm]);
-
   const availableAlumniYears = useMemo(() => {
     const years = new Set<number>();
-    allStaffMembers?.forEach((member) => {
-      const latestRole = member.roles.find(
-        (role) => role.year === latestTerm.year && role.semester === latestTerm.semester
-      );
-      if ( latestRole?.year !== latestTerm.year || latestRole?.semester !== latestTerm.semester) {
-        years.add(latestRole?.year ?? 0);
-      }
+    allStaffMembers?.allStaffMembers?.forEach((member) => {
+      if (
+        member.roles.some(
+          (role) =>
+            role.year === latestTerm.year &&
+            role.semester === latestTerm.semester
+        )
+      )
+        return;
+      const latestRole = member.roles.sort((a, b) => b.year - a.year)[0];
+      years.add(latestRole.year);
     });
-    return Array.from(years).sort((a, b) => a - b);
-  }, [allStaffMembers]);
+    const sorted = Array.from(years).sort((a, b) => b - a);
+    setSelectedAlumniYear(sorted[0]);
+    return sorted;
+  }, [allStaffMembers, allStaffMembersLoading]);
 
   const availableTeams = useMemo(() => {
     const teams = new Set<string>();
-    allStaffMembers?.forEach((member) => {
+    allStaffMembers?.allStaffMembers?.forEach((member) => {
       member.roles.forEach((role) => {
         if (
-          role.year === selectedTerm.year &&
-          role.semester === selectedTerm.semester &&
+          role.year === selectedTerm?.year &&
+          role.semester === selectedTerm?.semester &&
           role.team
         ) {
           teams.add(role.team);
@@ -156,18 +178,24 @@ export default function About() {
       });
     });
     return Array.from(teams).sort();
-  }, [allStaffMembers, selectedTerm]);
+  }, [allStaffMembers, allStaffMembersLoading, selectedTerm]);
 
   // Filter by team or leadership
   const filteredTeamMembers = useMemo(() => {
-    let filtered = membersInSelectedTerm;
+    let filtered = allStaffMembers?.allStaffMembers?.filter((member) =>
+      member.roles.some(
+        (role) =>
+          role.year === selectedTerm?.year &&
+          role.semester === selectedTerm?.semester
+      )
+    );
 
     if (selectedTeam === "Leadership") {
       filtered = filtered?.filter((member) =>
         member.roles.some(
           (role) =>
-            role.year === selectedTerm.year &&
-            role.semester === selectedTerm.semester &&
+            role.year === selectedTerm?.year &&
+            role.semester === selectedTerm?.semester &&
             role.isLeadership
         )
       );
@@ -175,8 +203,8 @@ export default function About() {
       filtered = filtered?.filter((member) =>
         member.roles.some(
           (role) =>
-            role.year === selectedTerm.year &&
-            role.semester === selectedTerm.semester &&
+            role.year === selectedTerm?.year &&
+            role.semester === selectedTerm?.semester &&
             role.team === selectedTeam
         )
       );
@@ -186,14 +214,14 @@ export default function About() {
     return filtered?.sort((a, b) => {
       const aHasLeadership = a.roles.some(
         (r) =>
-          r.year === selectedTerm.year &&
-          r.semester === selectedTerm.semester &&
+          r.year === selectedTerm?.year &&
+          r.semester === selectedTerm?.semester &&
           r.isLeadership
       );
       const bHasLeadership = b.roles.some(
         (r) =>
-          r.year === selectedTerm.year &&
-          r.semester === selectedTerm.semester &&
+          r.year === selectedTerm?.year &&
+          r.semester === selectedTerm?.semester &&
           r.isLeadership
       );
 
@@ -201,22 +229,32 @@ export default function About() {
       if (!aHasLeadership && bHasLeadership) return 1;
       return a.name.localeCompare(b.name);
     });
-  }, [selectedTeam, membersInSelectedTerm, selectedTerm]);
+  }, [selectedTeam, allStaffMembers, allStaffMembersLoading, selectedTerm]);
 
   // Filter alumni by selected year
   // An alumnus is shown for a year if they have at least one role with isAlumni: true in that year
   const filteredAlumni = useMemo(() => {
-    if (selectedTerm === null) return allStaffMembers?.filter((member) => member.isAlumni);
-
-    return allStaffMembers?.filter((member) =>
-      !member.roles.some(
-        (role) => role.year === latestTerm.year && role.semester === latestTerm.semester
-      ) && 
-      member.roles.some(
-        (role) => role.year === selectedAlumniYear
-      )
+    return allStaffMembers?.allStaffMembers?.filter(
+      (member) =>
+        !member.roles.some(
+          (role) =>
+            role.year === latestTerm.year &&
+            role.semester === latestTerm.semester
+        ) && member.roles.some((role) => role.year === selectedAlumniYear)
     );
-  }, [selectedTerm]);
+  }, [allStaffMembers, latestTerm, selectedAlumniYear]);
+
+  console.log(allStaffMembers);
+  console.log(selectedTeam, selectedTerm);
+  console.log(
+    latestTerm,
+    availableAlumniYears,
+    availableTerms,
+    availableTeams,
+    selectedAlumniYear,
+    filteredTeamMembers,
+    filteredAlumni
+  );
 
   // Create infinite scroll by duplicating images
   const infiniteImages = useMemo(() => {
@@ -264,8 +302,8 @@ export default function About() {
         <h2 className={styles.aboutTitle}>About Our Team</h2>
         <p className={styles.aboutDescription}>
           We're a small group of student volunteers at UC Berkeley, dedicated to
-          simplifying the course discovery experience. We actively build, improve
-          and maintain Berkeleytime.
+          simplifying the course discovery experience. We actively build,
+          improve and maintain Berkeleytime.
         </p>
         <div className={styles.carouselContainer}>
           <div
@@ -371,13 +409,12 @@ export default function About() {
             <Select
               searchable
               options={termOptions}
-              value={selectedTermValue}
+              value={selectedTerm}
               onChange={(newValue) => {
-                if (newValue && typeof newValue === "string") {
-                  const [year, semester] = newValue.split("-");
+                if (newValue && !Array.isArray(newValue)) {
                   setSelectedTerm({
-                    year: parseInt(year, 10),
-                    semester: semester as "Spring" | "Fall",
+                    year: newValue.year,
+                    semester: newValue.semester,
                   });
                 }
               }}
@@ -423,12 +460,16 @@ export default function About() {
                 role.year === latestTerm.year &&
                 role.semester === latestTerm.semester
             );
-            const displayRole = latestRole || member.roles[member.roles.length - 1];
+            const displayRole =
+              latestRole || member.roles[member.roles.length - 1];
             return (
               <MemberCard
                 key={member.id}
                 name={member.name}
-                imageUrl={displayRole.photo || "https://m.media-amazon.com/images/M/MV5BZTJjZTcxYjktZTU5ZS00YzdhLWJjMzYtOWY0M2MxZDEzZWUyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"}
+                imageUrl={
+                  displayRole.photo ||
+                  "https://m.media-amazon.com/images/M/MV5BZTJjZTcxYjktZTU5ZS00YzdhLWJjMzYtOWY0M2MxZDEzZWUyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
+                }
                 role={displayRole.role}
                 link={member.personalLink || undefined}
               />
@@ -457,14 +498,17 @@ export default function About() {
             // Get the role for the selected year, or the most recent alumni role
             const roleForYear =
               selectedAlumniYear !== null
-                ? member.roles.find(
-                    (r) => r.year === selectedAlumniYear
-                  )
-                : member.roles.find((r) => r.year === latestTerm.year && r.semester === latestTerm.semester);
+                ? member.roles.find((r) => r.year === selectedAlumniYear)
+                : member.roles.find(
+                    (r) =>
+                      r.year === latestTerm.year &&
+                      r.semester === latestTerm.semester
+                  );
             const displayRole = roleForYear || member.roles[0];
 
-            const isPresident =
-              displayRole.role.toLowerCase().includes("president");
+            const isPresident = displayRole.role
+              .toLowerCase()
+              .includes("president");
 
             return (
               <MemberCard

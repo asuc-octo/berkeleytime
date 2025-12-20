@@ -8,7 +8,6 @@ export const GET_ALL_STAFF_MEMBERS = gql`
       name
       email
       personalLink
-      isAlumni
       roles {
         id
         year

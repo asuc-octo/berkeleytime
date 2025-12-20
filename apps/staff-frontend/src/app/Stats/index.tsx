@@ -190,10 +190,14 @@ export default function Stats() {
             </h3>
             <div className={styles.list}>
               {scheduler.schedulesBySemester.map((sem, index) => (
-                <div key={`${sem.year}-${sem.semester}`} className={styles.listItem}>
+                <div
+                  key={`${sem.year}-${sem.semester}`}
+                  className={styles.listItem}
+                >
                   <span className={styles.listItemNumber}>{index + 1}.</span>
                   <span className={styles.listItemText}>
-                    {sem.semester} {sem.year}: {sem.count.toLocaleString()} schedules
+                    {sem.semester} {sem.year}: {sem.count.toLocaleString()}{" "}
+                    schedules
                   </span>
                 </div>
               ))}
@@ -221,7 +225,9 @@ export default function Stats() {
 
         {gradtrak.courseHistogram.length > 0 && (
           <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>Course Count Distribution</h3>
+            <h3 className={styles.subsectionTitle}>
+              Course Count Distribution
+            </h3>
             <div className={styles.histogram}>
               {gradtrak.courseHistogram.map((bucket) => (
                 <div key={bucket.range} className={styles.histogramBar}>
@@ -326,9 +332,7 @@ export default function Stats() {
         <h2 className={styles.sectionTitle}>Collections</h2>
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>
-              Non-System Collections
-            </div>
+            <div className={styles.statLabel}>Non-System Collections</div>
             <div className={styles.statValue}>
               {collections.nonSystemCollectionsCount.toLocaleString()}
             </div>

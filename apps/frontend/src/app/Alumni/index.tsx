@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 
 import { MemberCard } from "../About/MemberCard";
-
 import styles from "./Alumni.module.scss";
 
 // Sample alumni data - in production, this would come from GraphQL
@@ -117,9 +116,7 @@ export default function Alumni() {
     if (selectedYear === null) return ALL_ALUMNI;
 
     return ALL_ALUMNI.filter((member) =>
-      member.roles.some(
-        (role) => role.isAlumni && role.year === selectedYear
-      )
+      member.roles.some((role) => role.isAlumni && role.year === selectedYear)
     );
   }, [selectedYear]);
 
@@ -144,14 +141,13 @@ export default function Alumni() {
           // Get the role for the selected year, or the most recent alumni role
           const roleForYear =
             selectedYear !== null
-              ? member.roles.find(
-                  (r) => r.isAlumni && r.year === selectedYear
-                )
+              ? member.roles.find((r) => r.isAlumni && r.year === selectedYear)
               : member.roles.find((r) => r.isAlumni);
           const displayRole = roleForYear || member.roles[0];
 
-          const isPresident =
-            displayRole.role.toLowerCase().includes("president");
+          const isPresident = displayRole.role
+            .toLowerCase()
+            .includes("president");
 
           return (
             <MemberCard
@@ -172,4 +168,3 @@ export default function Alumni() {
     </div>
   );
 }
-
