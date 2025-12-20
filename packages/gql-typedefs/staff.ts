@@ -9,6 +9,8 @@ export const staffTypeDef = gql`
     userId: ID
     name: String!
     personalLink: String
+    isAlumni: Boolean!
+    addedBy: ID
     roles: [SemesterRole!]!
   }
 
@@ -23,7 +25,8 @@ export const staffTypeDef = gql`
     role: String!
     team: String
     photo: String
-    isAlumni: Boolean!
+    altPhoto: String
+    isLeadership: Boolean!
   }
 
   """
@@ -50,5 +53,65 @@ export const staffTypeDef = gql`
     Get all users (staff only).
     """
     allUsers: [UserSearchResult!]!
+
+    """
+    Get a staff member by user ID.
+    """
+    staffMemberByUserId(userId: ID!): StaffMember
+  }
+
+  """
+  Input for creating/updating a semester role.
+  """
+  input UpsertSemesterRoleInput {
+    year: Int!
+    semester: Semester!
+    role: String!
+    team: String
+    photo: String
+    altPhoto: String
+    isLeadership: Boolean
+  }
+
+  """
+  Input for updating staff member info.
+  """
+  input UpdateStaffInfoInput {
+    personalLink: String
+    isAlumni: Boolean
+  }
+
+  type Mutation {
+    """
+    Create or get staff member for a user. Returns the staff member.
+    If user doesn't have a staff record, creates one.
+    Also sets user.staff = true.
+    """
+    ensureStaffMember(userId: ID!, addedBy: ID): StaffMember!
+
+    """
+    Upsert a semester role for a staff member.
+    Creates if no role exists for that (memberId, year, semester).
+    Updates if one exists.
+    """
+    upsertSemesterRole(
+      memberId: ID!
+      input: UpsertSemesterRoleInput!
+    ): SemesterRole!
+
+    """
+    Delete a semester role by ID.
+    """
+    deleteSemesterRole(roleId: ID!): Boolean!
+
+    """
+    Update staff member info (personalLink, isAlumni).
+    """
+    updateStaffInfo(memberId: ID!, input: UpdateStaffInfoInput!): StaffMember!
+
+    """
+    Delete a staff member and all their roles.
+    """
+    deleteStaffMember(memberId: ID!): Boolean!
   }
 `;

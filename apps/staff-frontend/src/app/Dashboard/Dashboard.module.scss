@@ -280,13 +280,18 @@
   color: var(--paragraph-color);
 }
 
+.semesterRoleTags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .semesterRoleTeam {
   font-size: 12px;
   color: var(--label-color);
   padding: 2px 8px;
   background-color: var(--border-color);
   border-radius: 4px;
-  align-self: flex-start;
 }
 
 .editButton {
@@ -314,6 +319,15 @@
   color: var(--purple-500);
   padding: 2px 8px;
   background-color: var(--purple-500-20);
+  border-radius: 4px;
+}
+
+.leadBadge {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--yellow-500);
+  padding: 2px 8px;
+  background-color: color-mix(in srgb, var(--yellow-500) 20%, transparent);
   border-radius: 4px;
 }
 
@@ -380,14 +394,52 @@
   color: var(--paragraph-color);
 }
 
-.photoUpload {
+.photoUploadRow {
   grid-column: 1 / -1;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.photoUploadContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  max-width: 160px;
+}
+
+.photoUploadLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+.photoRemoveButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--red-500);
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--red-400);
+  }
+}
+
+.photoUpload {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 180px;
-  height: 180px;
-  margin: 0 auto;
+  width: 100%;
+  aspect-ratio: 1;
   border: 2px dashed var(--border-color);
   border-radius: 12px;
   cursor: pointer;

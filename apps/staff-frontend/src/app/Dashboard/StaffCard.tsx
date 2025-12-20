@@ -14,6 +14,8 @@ export interface SemesterRole {
   role: string;
   team?: string;
   photo?: string;
+  altPhoto?: string;
+  isLeadership: boolean;
 }
 
 export interface StaffMember {
@@ -114,9 +116,14 @@ export default function StaffCard({
                 </span>
                 <span className={styles.semesterRoleTitle}>{role.role}</span>
               </div>
-              {role.team && (
-                <span className={styles.semesterRoleTeam}>{role.team}</span>
-              )}
+              <div className={styles.semesterRoleTags}>
+                {role.isLeadership && (
+                  <span className={styles.leadBadge}>Lead</span>
+                )}
+                {role.team && (
+                  <span className={styles.semesterRoleTeam}>{role.team}</span>
+                )}
+              </div>
             </div>
             {onEditRole && (
               <button

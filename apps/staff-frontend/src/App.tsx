@@ -1,14 +1,14 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ArrowRight } from "iconoir-react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import { Button, ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
 
+import styles from "./App.module.scss";
 import Dashboard from "./app/Dashboard";
 import Stats from "./app/Stats";
 import { useReadUser } from "./hooks/api/users/useReadUser";
-import styles from "./App.module.scss";
 
 export const BASE = import.meta.env.DEV
   ? "http://localhost:8080"

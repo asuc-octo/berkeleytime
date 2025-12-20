@@ -6,6 +6,7 @@ import {
   MediaImagePlus,
   Plus,
   Search,
+  Trash,
   User,
   UserBadgeCheck,
   WarningTriangleSolid,
@@ -44,6 +45,7 @@ const createDummyStaffMember = (photos: string[]): StaffMember => ({
       role: "Engineering Lead",
       team: "Backend",
       photo: photos[0],
+      isLeadership: true,
     },
     {
       _id: "role-2",
@@ -52,6 +54,7 @@ const createDummyStaffMember = (photos: string[]): StaffMember => ({
       role: "Software Engineer",
       team: "Backend",
       photo: photos[1],
+      isLeadership: false,
     },
     {
       _id: "role-3",
@@ -59,6 +62,7 @@ const createDummyStaffMember = (photos: string[]): StaffMember => ({
       semester: "Fall",
       role: "Software Engineer",
       team: "Frontend",
+      isLeadership: false,
     },
   ],
 });
@@ -78,6 +82,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "President",
         team: "Leadership",
+        isLeadership: true,
       },
       {
         _id: "r2",
@@ -85,6 +90,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "VP Engineering",
         team: "Leadership",
+        isLeadership: true,
       },
     ],
   },
@@ -100,6 +106,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Software Engineer",
         team: "Backend",
+        isLeadership: false,
       },
     ],
   },
@@ -116,6 +123,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Design Lead",
         team: "Design",
+        isLeadership: true,
       },
       {
         _id: "r5",
@@ -123,6 +131,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "Designer",
         team: "Design",
+        isLeadership: false,
       },
     ],
   },
@@ -138,6 +147,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Software Engineer",
         team: "Frontend",
+        isLeadership: false,
       },
       {
         _id: "r7",
@@ -145,6 +155,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "Software Engineer",
         team: "Frontend",
+        isLeadership: false,
       },
       {
         _id: "r8",
@@ -152,6 +163,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Junior Developer",
         team: "Frontend",
+        isLeadership: false,
       },
     ],
   },
@@ -168,6 +180,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "VP Design",
         team: "Leadership",
+        isLeadership: true,
       },
     ],
   },
@@ -183,6 +196,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "President",
         team: "Leadership",
+        isLeadership: true,
       },
       {
         _id: "r11",
@@ -190,6 +204,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "VP Engineering",
         team: "Leadership",
+        isLeadership: true,
       },
       {
         _id: "r12",
@@ -197,6 +212,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Engineering Lead",
         team: "Backend",
+        isLeadership: true,
       },
       {
         _id: "r13",
@@ -204,6 +220,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "Software Engineer",
         team: "Backend",
+        isLeadership: false,
       },
     ],
   },
@@ -220,6 +237,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Designer",
         team: "Design",
+        isLeadership: false,
       },
     ],
   },
@@ -235,6 +253,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Software Engineer",
         team: "Infrastructure",
+        isLeadership: false,
       },
       {
         _id: "r16",
@@ -242,6 +261,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "Software Engineer",
         team: "Infrastructure",
+        isLeadership: false,
       },
     ],
   },
@@ -258,6 +278,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "Product Manager",
         team: "Product",
+        isLeadership: false,
       },
     ],
   },
@@ -273,6 +294,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Data Engineer",
         team: "Data",
+        isLeadership: false,
       },
       {
         _id: "r19",
@@ -280,6 +302,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Spring",
         role: "Data Analyst",
         team: "Data",
+        isLeadership: false,
       },
       {
         _id: "r20",
@@ -287,6 +310,7 @@ const DUMMY_STAFF_LIST: StaffMember[] = [
         semester: "Fall",
         role: "Junior Analyst",
         team: "Data",
+        isLeadership: false,
       },
     ],
   },
@@ -310,6 +334,7 @@ interface RoleFormData {
   role: string;
   team: string;
   photo: string | null;
+  altPhoto: string | null;
 }
 
 interface StaffInfoFormData {
@@ -364,6 +389,7 @@ export default function Dashboard() {
     role: "",
     team: "",
     photo: null,
+    altPhoto: null,
   });
   const [isStaffInfoModalOpen, setIsStaffInfoModalOpen] = useState(false);
   const [staffInfoForm, setStaffInfoForm] = useState<StaffInfoFormData>({
@@ -384,6 +410,7 @@ export default function Dashboard() {
       role: "",
       team: "",
       photo: null,
+      altPhoto: null,
     });
     setIsRoleModalOpen(true);
   };
@@ -400,11 +427,15 @@ export default function Dashboard() {
       role: role.role,
       team: role.team || "",
       photo: role.photo || null,
+      altPhoto: role.altPhoto || null,
     });
     setIsRoleModalOpen(true);
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "photo" | "altPhoto"
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const img = new Image();
@@ -422,12 +453,19 @@ export default function Dashboard() {
           ctx.drawImage(img, x, y, size, size, 0, 0, size, size);
           setRoleForm({
             ...roleForm,
-            photo: canvas.toDataURL("image/jpeg", 0.9),
+            [type]: canvas.toDataURL("image/jpeg", 0.9),
           });
         }
       };
       img.src = URL.createObjectURL(file);
     }
+  };
+
+  const handleRemovePhoto = (type: "photo" | "altPhoto") => {
+    setRoleForm({
+      ...roleForm,
+      [type]: null,
+    });
   };
 
   const handleSaveRole = () => {
@@ -592,10 +630,8 @@ export default function Dashboard() {
 
           {selectedUser &&
             (() => {
-              // Use dummy data for now
-              const staffMember: StaffMember | null =
-                createDummyStaffMember(dogPhotos);
-              const isStaff = staffMember !== null;
+              // TODO: Replace with actual API call to get staff member by user ID
+              const staffMember = null as StaffMember | null;
 
               return (
                 <div className={styles.selectedUser}>
@@ -617,32 +653,40 @@ export default function Dashboard() {
                       <div className={styles.staffStatusBadges}>
                         <span
                           className={
-                            isStaff ? styles.staffBadge : styles.notStaffBadge
+                            staffMember
+                              ? styles.staffBadge
+                              : styles.notStaffBadge
                           }
                         >
                           <UserBadgeCheck width={14} height={14} />
-                          {isStaff ? "Staff member" : "Not a staff yet"}
+                          {staffMember ? "Staff member" : "Not a staff yet"}
                         </span>
-                        {isStaff && staffMember.isAlumni && (
+                        {staffMember?.isAlumni && (
                           <span className={styles.alumniBadge}>Alumni</span>
                         )}
                       </div>
-                      {isStaff && staffMember?.personalLink ? (
-                        <a
-                          href={staffMember.personalLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.personalLink}
-                        >
-                          {staffMember.personalLink}
-                        </a>
+                      {staffMember ? (
+                        staffMember.personalLink ? (
+                          <a
+                            href={staffMember.personalLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.personalLink}
+                          >
+                            {staffMember.personalLink}
+                          </a>
+                        ) : (
+                          <span className={styles.noLink}>
+                            No personal link provided
+                          </span>
+                        )
                       ) : (
                         <span className={styles.noLink}>
-                          No personal link provided
+                          Adding as staff grants admin access
                         </span>
                       )}
                     </div>
-                    {isStaff && (
+                    {staffMember ? (
                       <button
                         type="button"
                         className={styles.editButton}
@@ -655,13 +699,33 @@ export default function Dashboard() {
                       >
                         <EditPencil width={16} height={16} />
                       </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className={styles.editButton}
+                        onClick={() => {
+                          setEditingUser({
+                            name: selectedUser.name,
+                            email: selectedUser.email,
+                          });
+                          setStaffInfoForm({
+                            isAlumni: false,
+                            personalLink: "",
+                          });
+                          setIsStaffInfoModalOpen(true);
+                        }}
+                      >
+                        <Plus width={16} height={16} />
+                      </button>
                     )}
                   </div>
 
-                  <div className={styles.semesterRoles}>
-                    <div className={styles.semesterRolesHeader}>Experience</div>
-                    {isStaff &&
-                      staffMember?.semesterRoles.map((role) => (
+                  {staffMember && (
+                    <div className={styles.semesterRoles}>
+                      <div className={styles.semesterRolesHeader}>
+                        Experience
+                      </div>
+                      {staffMember.semesterRoles.map((role) => (
                         <div key={role._id} className={styles.semesterRole}>
                           {role.photo ? (
                             <img
@@ -677,17 +741,24 @@ export default function Dashboard() {
                             </div>
                           )}
                           <div className={styles.semesterRoleInfo}>
-                            <span className={styles.semesterRoleTerm}>
-                              {role.semester} {role.year}
-                            </span>
-                            <span className={styles.semesterRoleTitle}>
-                              {role.role}
-                            </span>
-                            {role.team && (
-                              <span className={styles.semesterRoleTeam}>
-                                {role.team}
+                            <div className={styles.semesterRoleMain}>
+                              <span className={styles.semesterRoleTerm}>
+                                {role.semester} {role.year}
                               </span>
-                            )}
+                              <span className={styles.semesterRoleTitle}>
+                                {role.role}
+                              </span>
+                            </div>
+                            <div className={styles.semesterRoleTags}>
+                              {role.isLeadership && (
+                                <span className={styles.leadBadge}>Lead</span>
+                              )}
+                              {role.team && (
+                                <span className={styles.semesterRoleTeam}>
+                                  {role.team}
+                                </span>
+                              )}
+                            </div>
                           </div>
                           <button
                             type="button"
@@ -703,20 +774,21 @@ export default function Dashboard() {
                           </button>
                         </div>
                       ))}
-                    <button
-                      className={styles.addButton}
-                      type="button"
-                      onClick={() =>
-                        openAddModal({
-                          name: selectedUser.name,
-                          email: selectedUser.email,
-                        })
-                      }
-                    >
-                      <Plus width={16} height={16} />
-                      Add new role
-                    </button>
-                  </div>
+                      <button
+                        className={styles.addButton}
+                        type="button"
+                        onClick={() =>
+                          openAddModal({
+                            name: selectedUser.name,
+                            email: selectedUser.email,
+                          })
+                        }
+                      >
+                        <Plus width={16} height={16} />
+                        Add new role
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })()}
@@ -747,28 +819,80 @@ export default function Dashboard() {
           />
           <Dialog.Body>
             <div className={styles.formGrid}>
-              <label
-                className={`${styles.photoUpload} ${roleForm.photo ? styles.hasPhoto : ""}`}
-              >
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoUpload}
-                  className={styles.photoInput}
-                />
-                {roleForm.photo ? (
-                  <img
-                    src={roleForm.photo}
-                    alt="Upload preview"
-                    className={styles.photoPreview}
-                  />
-                ) : (
-                  <div className={styles.photoPlaceholder}>
-                    <MediaImagePlus width={32} height={32} />
-                    <span>Upload photo</span>
+              <div className={styles.photoUploadRow}>
+                <div className={styles.photoUploadContainer}>
+                  <div className={styles.photoUploadLabel}>
+                    <span>Primary photo</span>
+                    {roleForm.photo && (
+                      <button
+                        type="button"
+                        className={styles.photoRemoveButton}
+                        onClick={() => handleRemovePhoto("photo")}
+                      >
+                        <Trash width={14} height={14} />
+                      </button>
+                    )}
                   </div>
-                )}
-              </label>
+                  <label
+                    className={`${styles.photoUpload} ${roleForm.photo ? styles.hasPhoto : ""}`}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handlePhotoUpload(e, "photo")}
+                      className={styles.photoInput}
+                    />
+                    {roleForm.photo ? (
+                      <img
+                        src={roleForm.photo}
+                        alt="Primary photo preview"
+                        className={styles.photoPreview}
+                      />
+                    ) : (
+                      <div className={styles.photoPlaceholder}>
+                        <MediaImagePlus width={32} height={32} />
+                        <span>Upload photo</span>
+                      </div>
+                    )}
+                  </label>
+                </div>
+                <div className={styles.photoUploadContainer}>
+                  <div className={styles.photoUploadLabel}>
+                    <span>Alt photo</span>
+                    {roleForm.altPhoto && (
+                      <button
+                        type="button"
+                        className={styles.photoRemoveButton}
+                        onClick={() => handleRemovePhoto("altPhoto")}
+                      >
+                        <Trash width={14} height={14} />
+                      </button>
+                    )}
+                  </div>
+                  <label
+                    className={`${styles.photoUpload} ${roleForm.altPhoto ? styles.hasPhoto : ""}`}
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handlePhotoUpload(e, "altPhoto")}
+                      className={styles.photoInput}
+                    />
+                    {roleForm.altPhoto ? (
+                      <img
+                        src={roleForm.altPhoto}
+                        alt="Alt photo preview"
+                        className={styles.photoPreview}
+                      />
+                    ) : (
+                      <div className={styles.photoPlaceholder}>
+                        <MediaImagePlus width={32} height={32} />
+                        <span>Upload photo</span>
+                      </div>
+                    )}
+                  </label>
+                </div>
+              </div>
               <div className={styles.formField}>
                 <label className={styles.formLabel}>Semester</label>
                 <Select

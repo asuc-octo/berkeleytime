@@ -17,6 +17,16 @@ export const staffMemberSchema = new Schema(
       trim: true,
       required: false,
     },
+    isAlumni: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    addedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: false,
+    },
   },
   {
     timestamps: {

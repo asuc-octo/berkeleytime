@@ -30,7 +30,11 @@ export const semesterRoleSchema = new Schema(
       type: String,
       required: false,
     },
-    isAlumni: {
+    altPhoto: {
+      type: String,
+      required: false,
+    },
+    isLeadership: {
       type: Boolean,
       required: true,
       default: false,
@@ -46,6 +50,10 @@ export const semesterRoleSchema = new Schema(
 
 semesterRoleSchema.index({ year: 1, semester: 1 });
 semesterRoleSchema.index({ memberId: 1 });
+semesterRoleSchema.index(
+  { memberId: 1, year: 1, semester: 1 },
+  { unique: true }
+);
 
 export const SemesterRoleModel = mongoose.model(
   "semester-roles",
