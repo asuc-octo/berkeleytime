@@ -8,6 +8,7 @@ import Layout from "@/components/Layout";
 import styles from "./App.module.scss";
 import Dashboard from "./app/Dashboard";
 import Stats from "./app/Stats";
+import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
 
 export const BASE = import.meta.env.DEV
@@ -40,8 +41,15 @@ const router = createBrowserRouter([
 
 export default function App() {
   const { data: user, loading: userLoading } = useReadUser();
+  const { data: staffMember, loading: staffLoading } = useStaffMemberByUserId({
+    userId: user?._id ?? null,
+  });
 
-  if (userLoading) {
+  const isLoading = userLoading || (user && staffLoading);
+  const isNotStaff = user && !staffLoading && !staffMember;
+
+
+  if (isLoading) {
     return (
       <ThemeProvider>
         <div className={styles.signInContainer}>Loading...</div>
@@ -49,11 +57,12 @@ export default function App() {
     );
   }
 
-  if (!user) {
+  if (!user || isNotStaff) {
     return (
       <ThemeProvider>
         <div className={styles.signInContainer}>
-          <pre className={styles.asciiArt}>{`                .,,uod8B8bou,,.
+          <pre className={styles.asciiArt}>{
+          `                .,,uod8B8bou,,.
            ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
       ,=m8BBBBBBBBBBBBBBBRPFT?!||||||||||||||
       !...:!TVBBBRPFT||||||||||!!^^""'   ||||
@@ -84,10 +93,19 @@ export default function App() {
                     \`!9899fT|!^"'
                       \`!^"'`}</pre>
           <h1 className={styles.heading}>Staff Dashboard</h1>
-          <Button onClick={() => signIn()}>
+          <Button
+            variant="tertiary"
+            onClick={() => signIn()}
+            style={{ color: "var(--heading-color)" }}
+          >
             Sign in
             <ArrowRight />
           </Button>
+          {isNotStaff && (
+            <p className={styles.errorText}>
+              This account is not registered as a staff member
+            </p>
+          )}
         </div>
       </ThemeProvider>
     );

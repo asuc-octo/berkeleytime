@@ -19,8 +19,8 @@ export const staffMemberSchema = new Schema(
     },
     addedBy: {
       type: Schema.Types.ObjectId,
-      ref: "users",
-      required: false,
+      ref: "staff-members",
+      required: true,
     },
   },
   {
