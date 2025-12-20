@@ -20,7 +20,7 @@ export interface StaffMember {
   name: string;
   email?: string;
   personalLink?: string;
-  isAlumni: boolean;
+  addedByName?: string;
   roles: SemesterRole[];
 }
 
@@ -36,7 +36,6 @@ export interface UpsertSemesterRoleInput {
 
 export interface UpdateStaffInfoInput {
   personalLink?: string;
-  isAlumni?: boolean;
 }
 
 // Queries
@@ -48,7 +47,7 @@ export const ALL_STAFF_MEMBERS = gql`
       name
       email
       personalLink
-      isAlumni
+      addedByName
       roles {
         id
         year
@@ -71,7 +70,7 @@ export const STAFF_MEMBER_BY_USER_ID = gql`
       name
       email
       personalLink
-      isAlumni
+      addedByName
       roles {
         id
         year
@@ -88,14 +87,14 @@ export const STAFF_MEMBER_BY_USER_ID = gql`
 
 // Mutations
 export const ENSURE_STAFF_MEMBER = gql`
-  mutation EnsureStaffMember($userId: ID!, $addedBy: ID) {
+  mutation EnsureStaffMember($userId: ID!, $addedBy: ID!) {
     ensureStaffMember(userId: $userId, addedBy: $addedBy) {
       id
       userId
       name
       email
       personalLink
-      isAlumni
+      addedByName
       roles {
         id
         year
@@ -136,7 +135,7 @@ export const UPDATE_STAFF_INFO = gql`
       name
       email
       personalLink
-      isAlumni
+      addedByName
       roles {
         id
         year

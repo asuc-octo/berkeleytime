@@ -31,6 +31,7 @@ import {
   useUpdateStaffInfo,
   useUpsertSemesterRole,
 } from "../../hooks/api/staff";
+import { useReadUser } from "../../hooks/api/users";
 import { Semester } from "../../lib/api/staff";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
@@ -62,7 +63,6 @@ interface RoleFormData {
 }
 
 interface StaffInfoFormData {
-  isAlumni: boolean;
   personalLink: string;
 }
 
@@ -121,7 +121,6 @@ export default function Dashboard() {
   const [isStaffInfoModalOpen, setIsStaffInfoModalOpen] = useState(false);
   const [isAddingNewStaff, setIsAddingNewStaff] = useState(false);
   const [staffInfoForm, setStaffInfoForm] = useState<StaffInfoFormData>({
-    isAlumni: false,
     personalLink: "",
   });
   const [editingUser, setEditingUser] = useState<{
@@ -130,6 +129,7 @@ export default function Dashboard() {
   } | null>(null);
 
   // API hooks
+  const { data: currentUser } = useReadUser();
   const {
     data: staffMembers,
     loading: staffLoading,
@@ -137,6 +137,9 @@ export default function Dashboard() {
   } = useAllStaffMembers();
   const { data: selectedStaffMember } = useStaffMemberByUserId({
     userId: selectedUser?._id ?? null,
+  });
+  const { data: currentUserStaffMember } = useStaffMemberByUserId({
+    userId: currentUser?._id ?? null,
   });
   const { ensureStaffMember } = useEnsureStaffMember();
   const { upsertSemesterRole } = useUpsertSemesterRole();
@@ -244,7 +247,6 @@ export default function Dashboard() {
     setEditingStaffMemberId(staffMember.id);
     setIsAddingNewStaff(false);
     setStaffInfoForm({
-      isAlumni: staffMember.isAlumni,
       personalLink: staffMember.personalLink || "",
     });
     setIsStaffInfoModalOpen(true);
@@ -255,16 +257,23 @@ export default function Dashboard() {
       if (!selectedUser) return;
 
       const confirmed = window.confirm(
-        `Grant admin access to ${selectedUser.name}?\n\nThis will allow them to access the staff dashboard and manage staff members.`
+        `Add ${selectedUser.name} as staff?\n\nThis will grant them admin access to the staff dashboard.`
       );
       if (!confirmed) return;
 
-      const member = await ensureStaffMember(selectedUser._id);
+      if (!currentUserStaffMember?.id) {
+        alert("Unable to add staff: your staff member record was not found.");
+        return;
+      }
+
+      const member = await ensureStaffMember(
+        selectedUser._id,
+        currentUserStaffMember.id
+      );
       if (member) {
         await updateStaffInfo(
           member.id,
           {
-            isAlumni: staffInfoForm.isAlumni,
             personalLink: staffInfoForm.personalLink || undefined,
           },
           selectedUser._id
@@ -276,7 +285,6 @@ export default function Dashboard() {
       await updateStaffInfo(
         editingStaffMemberId,
         {
-          isAlumni: staffInfoForm.isAlumni,
           personalLink: staffInfoForm.personalLink || undefined,
         },
         selectedUser?._id
@@ -291,7 +299,7 @@ export default function Dashboard() {
     if (!editingRole) return;
 
     const confirmed = window.confirm(
-      `Delete this role?\n\n${editingRole.role} — ${editingRole.semester} ${editingRole.year}\n\nThis will remove this experience entry from their profile.`
+      `Delete this role?\n\n${editingRole.role} — ${editingRole.semester} ${editingRole.year}\n\nThis will remove this experience entry from their profile. This action cannot be undone.`
     );
     if (!confirmed) return;
 
@@ -304,7 +312,7 @@ export default function Dashboard() {
     if (!editingStaffMemberId || !editingUser) return;
 
     const confirmed = window.confirm(
-      `Remove ${editingUser.name} from staff?\n\n⚠️ This action cannot be undone.\n\nThis will:\n• Revoke their admin access to the staff dashboard\n• Delete all their experience entries\n• Remove them from the About page`
+      `Remove ${editingUser.name} from staff?\n\nThis action cannot be undone.\n\nThis will:\n• Revoke their admin access to the staff dashboard\n• Delete all their experience entries\n• Remove them from the About page`
     );
     if (!confirmed) return;
 
@@ -323,7 +331,6 @@ export default function Dashboard() {
     setEditingStaffMemberId(null);
     setIsAddingNewStaff(true);
     setStaffInfoForm({
-      isAlumni: false,
       personalLink: "",
     });
     setIsStaffInfoModalOpen(true);
@@ -505,8 +512,10 @@ export default function Dashboard() {
                           <UserBadgeCheck width={14} height={14} />
                           {staffMember ? "Staff member" : "Not a staff yet"}
                         </span>
-                        {staffMember?.isAlumni && (
-                          <span className={styles.alumniBadge}>Alumni</span>
+                        {staffMember?.addedByName && (
+                          <span className={styles.addedByText}>
+                            Added by {staffMember.addedByName}
+                          </span>
                         )}
                       </div>
                       {staffMember ? (
@@ -826,7 +835,7 @@ export default function Dashboard() {
           <Dialog.Header
             title={
               isAddingNewStaff
-                ? "Add Admin"
+                ? "Add Staff"
                 : (editingUser?.name ?? "Edit Staff Info")
             }
             subtitle={editingUser?.email}
@@ -847,20 +856,6 @@ export default function Dashboard() {
                     })
                   }
                 />
-              </div>
-              <div className={styles.formFieldFull}>
-                <label className={styles.checkboxField}>
-                  <Checkbox
-                    checked={staffInfoForm.isAlumni}
-                    onCheckedChange={(checked) =>
-                      setStaffInfoForm({
-                        ...staffInfoForm,
-                        isAlumni: checked === true,
-                      })
-                    }
-                  />
-                  <span>Alumni</span>
-                </label>
               </div>
             </div>
           </Dialog.Body>
@@ -887,7 +882,7 @@ export default function Dashboard() {
                 onClick={handleSaveStaffInfo}
                 style={{ color: "var(--red-500)" }}
               >
-                Add Admin
+                Add Staff
               </Button>
             ) : (
               <Button onClick={handleSaveStaffInfo}>Save Changes</Button>
