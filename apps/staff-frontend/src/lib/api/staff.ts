@@ -87,8 +87,8 @@ export const STAFF_MEMBER_BY_USER_ID = gql`
 
 // Mutations
 export const ENSURE_STAFF_MEMBER = gql`
-  mutation EnsureStaffMember($userId: ID!, $addedBy: ID!) {
-    ensureStaffMember(userId: $userId, addedBy: $addedBy) {
+  mutation EnsureStaffMember($userId: ID!) {
+    ensureStaffMember(userId: $userId) {
       id
       userId
       name

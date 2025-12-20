@@ -30,9 +30,9 @@ export const useEnsureStaffMember = () => {
   const [mutate, result] =
     useMutation<EnsureStaffMemberResponse>(ENSURE_STAFF_MEMBER);
 
-  const ensureStaffMember = async (userId: string, addedBy: string) => {
+  const ensureStaffMember = async (userId: string) => {
     const response = await mutate({
-      variables: { userId, addedBy },
+      variables: { userId },
       refetchQueries: [
         ALL_STAFF_MEMBERS,
         {

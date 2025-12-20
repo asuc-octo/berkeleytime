@@ -15,6 +15,7 @@ import {
   getStaffBySemester,
   getStaffMember,
   getStaffMemberByUserId,
+  StaffRequestContext,
   updateStaffInfo,
   upsertSemesterRole,
 } from "./controller";
@@ -39,24 +40,33 @@ const resolvers = {
   Mutation: {
     ensureStaffMember: (
       _: unknown,
-      { userId, addedBy }: { userId: string; addedBy: string }
-    ) => ensureStaffMember(userId, addedBy),
+      { userId }: { userId: string },
+      context: StaffRequestContext
+    ) => ensureStaffMember(context, userId),
 
     upsertSemesterRole: (
       _: unknown,
-      { memberId, input }: { memberId: string; input: UpsertSemesterRoleInput }
-    ) => upsertSemesterRole(memberId, input),
+      { memberId, input }: { memberId: string; input: UpsertSemesterRoleInput },
+      context: StaffRequestContext
+    ) => upsertSemesterRole(context, memberId, input),
 
-    deleteSemesterRole: (_: unknown, { roleId }: { roleId: string }) =>
-      deleteSemesterRole(roleId),
+    deleteSemesterRole: (
+      _: unknown,
+      { roleId }: { roleId: string },
+      context: StaffRequestContext
+    ) => deleteSemesterRole(context, roleId),
 
     updateStaffInfo: (
       _: unknown,
-      { memberId, input }: { memberId: string; input: UpdateStaffInfoInput }
-    ) => updateStaffInfo(memberId, input),
+      { memberId, input }: { memberId: string; input: UpdateStaffInfoInput },
+      context: StaffRequestContext
+    ) => updateStaffInfo(context, memberId, input),
 
-    deleteStaffMember: (_: unknown, { memberId }: { memberId: string }) =>
-      deleteStaffMember(memberId),
+    deleteStaffMember: (
+      _: unknown,
+      { memberId }: { memberId: string },
+      context: StaffRequestContext
+    ) => deleteStaffMember(context, memberId),
   },
 
   StaffMember: {

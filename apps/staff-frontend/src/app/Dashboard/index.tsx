@@ -31,7 +31,6 @@ import {
   useUpdateStaffInfo,
   useUpsertSemesterRole,
 } from "../../hooks/api/staff";
-import { useReadUser } from "../../hooks/api/users";
 import { Semester } from "../../lib/api/staff";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
@@ -129,7 +128,6 @@ export default function Dashboard() {
   } | null>(null);
 
   // API hooks
-  const { data: currentUser } = useReadUser();
   const {
     data: staffMembers,
     loading: staffLoading,
@@ -137,9 +135,6 @@ export default function Dashboard() {
   } = useAllStaffMembers();
   const { data: selectedStaffMember } = useStaffMemberByUserId({
     userId: selectedUser?._id ?? null,
-  });
-  const { data: currentUserStaffMember } = useStaffMemberByUserId({
-    userId: currentUser?._id ?? null,
   });
   const { ensureStaffMember } = useEnsureStaffMember();
   const { upsertSemesterRole } = useUpsertSemesterRole();
@@ -261,15 +256,7 @@ export default function Dashboard() {
       );
       if (!confirmed) return;
 
-      if (!currentUserStaffMember?.id) {
-        alert("Unable to add staff: your staff member record was not found.");
-        return;
-      }
-
-      const member = await ensureStaffMember(
-        selectedUser._id,
-        currentUserStaffMember.id
-      );
+      const member = await ensureStaffMember(selectedUser._id);
       if (member) {
         await updateStaffInfo(
           member.id,
