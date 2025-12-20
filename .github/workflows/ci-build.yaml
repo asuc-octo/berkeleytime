@@ -3,6 +3,7 @@ name: "CI: Check Build"
 on:
   pull_request:
     paths:
+      - ".github/workflows/ci-build.yaml"
       - "apps/backend/**"
       - "apps/frontend/**"
       - "apps/datapuller/**"

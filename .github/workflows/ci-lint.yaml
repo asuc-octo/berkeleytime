@@ -3,6 +3,7 @@ name: "CI: Check Lint"
 on:
   pull_request:
     paths:
+      - ".github/workflows/ci-lint.yaml"
       - "apps/backend/**"
       - "apps/frontend/**"
       - "apps/ag-frontend/**"
