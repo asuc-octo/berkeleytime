@@ -1,0 +1,30 @@
+name: CI Build
+
+on:
+  pull_request:
+
+jobs:
+  build-image:
+    name: Build Image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [backend, frontend, datapuller, ag-frontend]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/${{ matrix.image }}/Dockerfile
+          target: ${{ matrix.image }}-prod
+          platforms: linux/amd64
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
