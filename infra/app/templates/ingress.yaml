@@ -6,7 +6,10 @@ metadata:
     {{- include "bt-app.labels" . | nindent 4 }}
   {{- if eq .Values.env "prod" }}
   annotations:
-    nginx.ingress.kubernetes.io/permanent-redirect: "https://berkeleytime.com$request_uri"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      if ($host = "beta.berkeleytime.com") {
+        return 308 https://berkeleytime.com$request_uri;
+      }
   {{- end }}
 spec:
   ingressClassName: nginx
