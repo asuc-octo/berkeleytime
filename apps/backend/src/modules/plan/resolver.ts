@@ -11,6 +11,7 @@ import {
   deletePlan,
   editPlan,
   editPlanTerm,
+  getGradTrakAnalyticsData,
   getPlanByUser,
   removePlanTerm,
   setClasses,
@@ -21,6 +22,9 @@ const resolvers: PlanModule.Resolvers = {
   Query: {
     planByUser(_parent, _args, context) {
       return getPlanByUser(context);
+    },
+    gradTrakAnalyticsData(_parent, _args, context) {
+      return getGradTrakAnalyticsData(context);
     },
   },
   Mutation: {

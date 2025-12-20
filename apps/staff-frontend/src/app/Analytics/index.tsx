@@ -15,6 +15,13 @@ import {
   UsersWithCustomCollectionsBlock,
 } from "./components/CollectionAnalytics";
 import {
+  CourseCountHistogramBlock,
+  MajorDistributionBlock,
+  StartYearDistributionBlock,
+  TopUsersTableBlock,
+  TotalGradTraksBlock,
+} from "./components/GradTrakAnalytics";
+import {
   AverageScoresOverTimeBlock,
   CourseDistributionBlock,
   CourseRatingsDistributionBlock,
@@ -42,6 +49,7 @@ export default function Analytics() {
   const showGeneral = activeTab === "all" || activeTab === "general";
   const showRatings = activeTab === "all" || activeTab === "ratings";
   const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
+  const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
 
   return (
     <div className={styles.root}>
@@ -149,6 +157,25 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <CollectionHighlightsBlock />
+            </div>
+          </>
+        )}
+        {showGradTrak && (
+          <>
+            <div className={styles.cell}>
+              <TotalGradTraksBlock />
+            </div>
+            <div className={styles.cell}>
+              <CourseCountHistogramBlock />
+            </div>
+            <div className={styles.cell}>
+              <MajorDistributionBlock />
+            </div>
+            <div className={styles.cell}>
+              <StartYearDistributionBlock />
+            </div>
+            <div className={styles.cell}>
+              <TopUsersTableBlock />
             </div>
           </>
         )}

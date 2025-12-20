@@ -57,6 +57,17 @@ export interface CloudflareAnalyticsData {
   totalRequests: number;
 }
 
+export interface GradTrakAnalyticsDataPoint {
+  planId: string;
+  userEmail: string;
+  majors: string[];
+  minors: string[];
+  colleges: string[];
+  totalCourses: number;
+  startYear: number | null;
+  createdAt: string;
+}
+
 // Queries
 export const RATING_ANALYTICS_DATA = gql`
   query RatingAnalyticsData {
@@ -128,6 +139,21 @@ export const CLOUDFLARE_ANALYTICS_DATA = gql`
       }
       totalUniqueVisitors
       totalRequests
+    }
+  }
+`;
+
+export const GRADTRAK_ANALYTICS_DATA = gql`
+  query GradTrakAnalyticsData {
+    gradTrakAnalyticsData {
+      planId
+      userEmail
+      majors
+      minors
+      colleges
+      totalCourses
+      startYear
+      createdAt
     }
   }
 `;

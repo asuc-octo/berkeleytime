@@ -202,11 +202,30 @@ export const planTypeDef = gql`
     pinned: Boolean
   }
 
+  """
+  GradTrak analytics data point for treemap visualization
+  """
+  type GradTrakAnalyticsDataPoint @cacheControl(maxAge: 0) {
+    planId: ID!
+    userEmail: String!
+    majors: [String!]!
+    minors: [String!]!
+    colleges: [String!]!
+    totalCourses: Int!
+    startYear: Int
+    createdAt: String!
+  }
+
   type Query {
     """
     Takes in user's email and returns their entire plan
     """
     planByUser: [Plan!]! @auth
+
+    """
+    Staff-only: GradTrak analytics data for visualization
+    """
+    gradTrakAnalyticsData: [GradTrakAnalyticsDataPoint!]! @auth
   }
 
   type Mutation {
