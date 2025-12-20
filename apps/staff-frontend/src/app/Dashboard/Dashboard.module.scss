@@ -313,13 +313,9 @@
   }
 }
 
-.alumniBadge {
+.addedByText {
   font-size: 12px;
-  font-weight: 500;
-  color: var(--purple-500);
-  padding: 2px 8px;
-  background-color: var(--purple-500-20);
-  border-radius: 4px;
+  color: var(--label-color);
 }
 
 .leadBadge {

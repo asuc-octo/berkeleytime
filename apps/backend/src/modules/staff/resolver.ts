@@ -6,6 +6,7 @@ import {
   deleteSemesterRole,
   deleteStaffMember,
   ensureStaffMember,
+  getAddedByName,
   getAllStaffMembers,
   getAllUsers,
   getMemberEmail,
@@ -38,7 +39,7 @@ const resolvers = {
   Mutation: {
     ensureStaffMember: (
       _: unknown,
-      { userId, addedBy }: { userId: string; addedBy?: string | null }
+      { userId, addedBy }: { userId: string; addedBy: string }
     ) => ensureStaffMember(userId, addedBy),
 
     upsertSemesterRole: (
@@ -62,6 +63,7 @@ const resolvers = {
     id: (parent: any) => parent._id?.toString() ?? parent.id,
     email: (parent: any) => getMemberEmail(parent.userId?.toString()),
     roles: (parent: any) => getMemberRoles(parent._id?.toString() ?? parent.id),
+    addedByName: (parent: any) => getAddedByName(parent.addedBy?.toString()),
   },
 
   SemesterRole: {

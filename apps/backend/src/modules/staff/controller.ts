@@ -57,10 +57,13 @@ export const getMemberEmail = async (userId?: string) => {
   return user?.email ?? null;
 };
 
-export const ensureStaffMember = async (
-  userId: string,
-  addedBy?: string | null
-) => {
+export const getAddedByName = async (addedBy?: string) => {
+  if (!addedBy) return null;
+  const member = await StaffMemberModel.findById(addedBy).select("name").lean();
+  return member?.name ?? null;
+};
+
+export const ensureStaffMember = async (userId: string, addedBy: string) => {
   // Check if StaffMember already exists for this userId
   const existingMember = await StaffMemberModel.findOne({ userId }).lean();
 
@@ -78,9 +81,8 @@ export const ensureStaffMember = async (
   const newMember = await StaffMemberModel.create({
     userId,
     name: user.name,
-    isAlumni: false,
     isLeadership: false,
-    addedBy: addedBy || undefined,
+    addedBy,
   });
 
   // Set user.staff = true
@@ -137,9 +139,6 @@ export const updateStaffInfo = async (
 
   if (input.personalLink !== undefined) {
     updateData.personalLink = input.personalLink;
-  }
-  if (input.isAlumni !== undefined) {
-    updateData.isAlumni = input.isAlumni;
   }
 
   const member = await StaffMemberModel.findByIdAndUpdate(

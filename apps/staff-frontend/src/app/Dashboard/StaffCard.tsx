@@ -24,7 +24,7 @@ export interface StaffMember {
   name: string;
   email?: string;
   personalLink?: string;
-  isAlumni: boolean;
+  addedByName?: string;
   roles: SemesterRole[];
 }
 
@@ -65,8 +65,10 @@ export default function StaffCard({
               <UserBadgeCheck width={14} height={14} />
               Staff member
             </span>
-            {staffMember.isAlumni && (
-              <span className={styles.alumniBadge}>Alumni</span>
+            {staffMember.addedByName && (
+              <span className={styles.addedByText}>
+                Added by {staffMember.addedByName}
+              </span>
             )}
           </div>
           {staffMember.personalLink ? (

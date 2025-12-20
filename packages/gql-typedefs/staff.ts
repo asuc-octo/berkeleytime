@@ -10,8 +10,8 @@ export const staffTypeDef = gql`
     name: String!
     email: String
     personalLink: String
-    isAlumni: Boolean!
     addedBy: ID
+    addedByName: String
     roles: [SemesterRole!]!
   }
 
@@ -84,7 +84,6 @@ export const staffTypeDef = gql`
   """
   input UpdateStaffInfoInput {
     personalLink: String
-    isAlumni: Boolean
   }
 
   type Mutation {
@@ -93,7 +92,7 @@ export const staffTypeDef = gql`
     If user doesn't have a staff record, creates one.
     Also sets user.staff = true.
     """
-    ensureStaffMember(userId: ID!, addedBy: ID): StaffMember!
+    ensureStaffMember(userId: ID!, addedBy: ID!): StaffMember!
 
     """
     Upsert a semester role for a staff member.
@@ -111,7 +110,7 @@ export const staffTypeDef = gql`
     deleteSemesterRole(roleId: ID!): Boolean!
 
     """
-    Update staff member info (personalLink, isAlumni).
+    Update staff member info (personalLink).
     """
     updateStaffInfo(memberId: ID!, input: UpdateStaffInfoInput!): StaffMember!
 
