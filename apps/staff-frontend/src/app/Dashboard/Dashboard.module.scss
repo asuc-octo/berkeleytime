@@ -46,12 +46,15 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: #e67700;
+  color: var(--orange-500);
   font-size: 12px;
   font-weight: 500;
 }
 
 .staffStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
@@ -67,34 +70,144 @@
 }
 
 .staffBadge {
-  color: #2e7d32;
+  color: var(--green-500);
 }
 
 .notStaffBadge {
-  color: #c62828;
+  color: var(--red-500);
 }
 
-.addStaffRow {
+.personalLink {
+  margin-top: 8px;
+
+  a {
+    font-size: 13px;
+    color: var(--blue-500);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.semesterRoles {
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
 }
 
-.addStaffButton {
+.semesterRolesHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--label-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.semesterRole {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  & + & {
+    margin-top: 12px;
+  }
+}
+
+.semesterRolePhoto {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.semesterRolePhotoPlaceholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background-color: var(--button-hover-color);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--label-color);
+}
+
+.semesterRoleInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.semesterRoleTerm {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+.semesterRoleTitle {
+  font-size: 13px;
+  color: var(--paragraph-color);
+}
+
+.semesterRoleTeam {
+  font-size: 12px;
+  color: var(--label-color);
+  padding: 2px 8px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--paragraph-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--button-hover-color);
+  }
+}
+
+.alumniBadge {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--purple-500);
+  padding: 2px 8px;
+  background-color: var(--purple-500-20);
+  border-radius: 4px;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   width: 100%;
-  padding: 12px;
+  height: 48px;
+  margin-top: 12px;
   border: 1px dashed var(--border-color);
   border-radius: 8px;
-  background: none;
+  background: transparent;
+  font-size: 14px;
   color: var(--label-color);
   cursor: pointer;
   transition: border-color 0.15s ease, background-color 0.15s ease;
 
   &:hover {
     border-color: var(--label-color);
-    background-color: var(--border-color);
+    background-color: var(--button-hover-color);
   }
 }

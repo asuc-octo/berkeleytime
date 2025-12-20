@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { gql, useQuery } from "@apollo/client";
-import { Plus, UserBadgeCheck, WarningTriangleSolid } from "iconoir-react";
+import { EditPencil, Plus, User, UserBadgeCheck, WarningTriangleSolid } from "iconoir-react";
 
 import { OptionItem, Select } from "@repo/theme";
 
@@ -12,6 +12,56 @@ interface UserSearchResult {
   name: string;
   email: string;
 }
+
+interface SemesterRole {
+  _id: string;
+  year: number;
+  semester: "Spring" | "Summer" | "Fall" | "Winter";
+  role: string;
+  team?: string;
+  photo?: string;
+}
+
+interface StaffMember {
+  _id: string;
+  name: string;
+  personalLink?: string;
+  isAlumni: boolean;
+  semesterRoles: SemesterRole[];
+}
+
+// Dummy data for testing UI
+const createDummyStaffMember = (photos: string[]): StaffMember => ({
+  _id: "dummy-staff-id",
+  name: "John Doe",
+  personalLink: "https://johndoe.com",
+  isAlumni: true,
+  semesterRoles: [
+    {
+      _id: "role-1",
+      year: 2024,
+      semester: "Fall",
+      role: "Engineering Lead",
+      team: "Backend",
+      photo: photos[0],
+    },
+    {
+      _id: "role-2",
+      year: 2024,
+      semester: "Spring",
+      role: "Software Engineer",
+      team: "Backend",
+      photo: photos[1],
+    },
+    {
+      _id: "role-3",
+      year: 2023,
+      semester: "Fall",
+      role: "Software Engineer",
+      team: "Frontend",
+    },
+  ],
+});
 
 const ALL_USERS = gql`
   query AllUsers {
@@ -28,10 +78,26 @@ export default function Dashboard() {
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [dogPhotos, setDogPhotos] = useState<string[]>([]);
 
   const { data, loading } = useQuery<{ allUsers: UserSearchResult[] }>(
     ALL_USERS
   );
+
+  // Fetch random dog photos for dummy data
+  useEffect(() => {
+    const fetchDogPhotos = async () => {
+      const photos = await Promise.all(
+        [1, 2].map(async () => {
+          const res = await fetch("https://dog.ceo/api/breeds/image/random");
+          const data = await res.json();
+          return data.message;
+        })
+      );
+      setDogPhotos(photos);
+    };
+    fetchDogPhotos();
+  }, []);
 
   const options = useMemo<OptionItem<UserSearchResult>[]>(() => {
     if (!data?.allUsers) return [];
@@ -78,7 +144,10 @@ export default function Dashboard() {
       </div>
 
       {selectedUser && (() => {
-        const isStaff = false; // TODO: Replace with actual logic
+        // Use dummy data for now
+        const staffMember: StaffMember | null = createDummyStaffMember(dogPhotos);
+        const isStaff = staffMember !== null;
+
         return (
           <div className={styles.selectedUser}>
             <div className={styles.selectedUserName}>{selectedUser.name}</div>
@@ -91,19 +160,59 @@ export default function Dashboard() {
                 </span>
               )}
             </div>
+
             <div className={styles.staffStatus}>
               <span className={isStaff ? styles.staffBadge : styles.notStaffBadge}>
                 <UserBadgeCheck width={14} height={14} />
                 {isStaff ? "Staff member" : "Not a staff yet"}
               </span>
+              {isStaff && staffMember.isAlumni && (
+                <span className={styles.alumniBadge}>Alumni</span>
+              )}
             </div>
-            {!isStaff && (
-              <div className={styles.addStaffRow}>
-                <button className={styles.addStaffButton} type="button">
-                  <Plus width={16} height={16} />
-                </button>
+
+            {isStaff && staffMember?.personalLink && (
+              <div className={styles.personalLink}>
+                <a href={staffMember.personalLink} target="_blank" rel="noopener noreferrer">
+                  {staffMember.personalLink}
+                </a>
               </div>
             )}
+
+            <div className={styles.semesterRoles}>
+              <div className={styles.semesterRolesHeader}>Experience</div>
+              {isStaff && staffMember?.semesterRoles.map((role) => (
+                <div key={role._id} className={styles.semesterRole}>
+                  {role.photo ? (
+                    <img
+                      src={role.photo}
+                      alt={`${selectedUser.name} - ${role.semester} ${role.year}`}
+                      className={styles.semesterRolePhoto}
+                    />
+                  ) : (
+                    <div className={styles.semesterRolePhotoPlaceholder}>
+                      <User width={24} height={24} />
+                    </div>
+                  )}
+                  <div className={styles.semesterRoleInfo}>
+                    <span className={styles.semesterRoleTerm}>
+                      {role.semester} {role.year}
+                    </span>
+                    <span className={styles.semesterRoleTitle}>{role.role}</span>
+                    {role.team && (
+                      <span className={styles.semesterRoleTeam}>{role.team}</span>
+                    )}
+                  </div>
+                  <button type="button" className={styles.editButton}>
+                    <EditPencil width={16} height={16} />
+                  </button>
+                </div>
+              ))}
+              <button className={styles.addButton} type="button">
+                <Plus width={16} height={16} />
+                Add new role
+              </button>
+            </div>
           </div>
         );
       })()}
