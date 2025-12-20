@@ -12,6 +12,7 @@ import Plan from "./plan";
 import Rating from "./rating";
 import Schedule from "./schedule";
 import Staff from "./staff";
+import Stats from "./stats";
 import Term from "./term";
 import User from "./user";
 
@@ -24,6 +25,7 @@ const modules = [
   Common,
   Schedule,
   Staff,
+  Stats,
   Term,
   Course,
   Class,

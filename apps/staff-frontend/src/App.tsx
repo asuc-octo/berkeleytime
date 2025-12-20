@@ -5,14 +5,19 @@ import { ThemeProvider } from "@repo/theme";
 import Layout from "@/components/Layout";
 
 import Dashboard from "./app/Dashboard";
+import Stats from "./app/Stats";
 import { useReadUser } from "./hooks/api/users/useReadUser";
+
+export const BASE = import.meta.env.DEV
+  ? "http://localhost:3000"
+  : "https://beta.berkeleytime.com";
 
 export const signIn = (redirectURI?: string) => {
   redirectURI =
     redirectURI ??
     window.location.origin + window.location.pathname + window.location.search;
 
-  window.location.href = `${window.location.origin}/api/login?redirect_uri=${redirectURI}`;
+  window.location.href = `${BASE}/api/login?redirect_uri=${redirectURI}`;
 };
 
 const router = createBrowserRouter([
@@ -22,6 +27,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
+      },
+      {
+        path: "stats",
+        element: <Stats />,
       },
     ],
   },

@@ -80,7 +80,7 @@ services:
     networks:
       - bt
     ports:
-      - 8080:8080
+      - 3000:8080
       - 8081:8081
       - 8082:8082
     restart: always
@@ -112,10 +112,26 @@ services:
       dockerfile: ./apps/docs/Dockerfile
       target: docs-dev
     ports:
-      - 3000:3000
+      - 8080:3000
     networks:
       - bt
     restart: always
     volumes:
       - ./apps/docs:/apps/docs
+  minio:
+    image: 'minio/minio:latest'
+    ports:
+      - '9000:9000'
+      - '9090:9090'
+    environment:
+      MINIO_ROOT_USER: 'root'
+      MINIO_ROOT_PASSWORD: 'password'
+    networks:
+      - bt
+    volumes:
+      - 'minio:/data/minio'
+    command: minio server /data/minio --console-address ":9090"
+volumes:
+  minio:
+    driver: local
 

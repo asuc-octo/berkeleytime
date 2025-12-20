@@ -12,3 +12,4 @@ export * from "./schedule";
 export * from "./term";
 export * from "./user";
 export * from "./staff";
+export * from "./stats";

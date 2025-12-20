@@ -35,6 +35,11 @@ export interface Config {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   redisUri: string;
+  s3Endpoint: string;
+  s3Port: string;
+  s3AccessKeyId: string;
+  s3SecretAccessKey: string;
+  s3StaffPhotosBucket: string;
 }
 
 // All your secrets, keys go here
@@ -60,4 +65,9 @@ export const config: Config = {
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: env("GOOGLE_CLIENT_SECRET"),
   redisUri: env("REDIS_URI"),
+  s3Endpoint: env("S3_ENDPOINT"),
+  s3Port: env("S3_PORT"),
+  s3AccessKeyId: env("S3_ACCESS_KEY_ID"),
+  s3SecretAccessKey: env("S3_SECRET_ACCESS_KEY"),
+  s3StaffPhotosBucket: env("S3_STAFF_PHOTOS_BUCKET"),
 };
