@@ -7,6 +7,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/hsts: "true"
     nginx.ingress.kubernetes.io/hsts-max-age: "0" # reset hsts to allow access to old.berkeleytime.com
+spec:
   ingressClassName: nginx
   tls:
     - hosts:
