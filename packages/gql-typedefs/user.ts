@@ -11,8 +11,18 @@ export const userTypeDef = gql`
     minors: [String!]!
   }
 
+  """
+  Minimal user data point for analytics
+  """
+  type UserCreationDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the user was created"
+    createdAt: String!
+  }
+
   type Query {
     user: User @auth
+    "Staff-only: User creation timestamps for analytics"
+    userCreationAnalyticsData: [UserCreationDataPoint!]! @auth
   }
 
   input UpdateUserInput {

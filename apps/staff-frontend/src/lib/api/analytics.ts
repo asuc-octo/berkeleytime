@@ -7,6 +7,10 @@ export interface RatingDataPoint {
   courseKey: string;
 }
 
+export interface UserCreationDataPoint {
+  createdAt: string;
+}
+
 // Queries
 export const RATING_ANALYTICS_DATA = gql`
   query RatingAnalyticsData {
@@ -14,6 +18,14 @@ export const RATING_ANALYTICS_DATA = gql`
       createdAt
       anonymousUserId
       courseKey
+    }
+  }
+`;
+
+export const USER_CREATION_ANALYTICS_DATA = gql`
+  query UserCreationAnalyticsData {
+    userCreationAnalyticsData {
+      createdAt
     }
   }
 `;
