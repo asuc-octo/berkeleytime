@@ -104,7 +104,9 @@ export default function Stats() {
     return (
       <div className={styles.root}>
         <h1 className={styles.title}>Statistics</h1>
-        <div className={styles.error}>Error loading statistics: {error.message}</div>
+        <div className={styles.error}>
+          Error loading statistics: {error.message}
+        </div>
       </div>
     );
   }
@@ -129,7 +131,9 @@ export default function Stats() {
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <div className={styles.statLabel}>Total Count</div>
-            <div className={styles.statValue}>{users.totalCount.toLocaleString()}</div>
+            <div className={styles.statValue}>
+              {users.totalCount.toLocaleString()}
+            </div>
           </div>
           <div className={styles.statCard}>
             <div className={styles.statLabel}>Created Last Week</div>
@@ -177,7 +181,9 @@ export default function Stats() {
 
         {gradtrak.topPlansWithMostCourses.length > 0 && (
           <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>Top 3 Plans with Most Courses</h3>
+            <h3 className={styles.subsectionTitle}>
+              Top 3 Plans with Most Courses
+            </h3>
             <div className={styles.list}>
               {gradtrak.topPlansWithMostCourses.map((plan, index) => (
                 <div key={plan.planId} className={styles.listItem}>
@@ -202,7 +208,7 @@ export default function Stats() {
                     <div
                       className={styles.histogramBarFill}
                       style={{
-                        width: `${(bucket.count / Math.max(...gradtrak.courseHistogram.map(b => b.count))) * 100}%`,
+                        width: `${(bucket.count / Math.max(...gradtrak.courseHistogram.map((b) => b.count))) * 100}%`,
                       }}
                     />
                   </div>
@@ -224,7 +230,9 @@ export default function Stats() {
             </div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statLabel}>Unique Users Who Created Ratings</div>
+            <div className={styles.statLabel}>
+              Unique Users Who Created Ratings
+            </div>
             <div className={styles.statValue}>
               {ratings.uniqueCreatedBy.toLocaleString()}
             </div>
@@ -267,7 +275,8 @@ export default function Stats() {
               <div className={styles.detailRow}>
                 <span className={styles.detailLabel}>Term:</span>
                 <span className={styles.detailValue}>
-                  {ratings.classWithMostRatings.semester} {ratings.classWithMostRatings.year}
+                  {ratings.classWithMostRatings.semester}{" "}
+                  {ratings.classWithMostRatings.year}
                 </span>
               </div>
               <div className={styles.detailRow}>

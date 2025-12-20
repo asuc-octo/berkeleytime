@@ -6,4 +6,3 @@ export default {
   resolver,
   typeDef: statsTypeDef,
 };
-

@@ -22,9 +22,8 @@ export const getStats = async () => {
   });
 
   // Scheduler stats
-  const uniqueUsersWithSchedules = (
-    await ScheduleModel.distinct("createdBy")
-  ).length;
+  const uniqueUsersWithSchedules = (await ScheduleModel.distinct("createdBy"))
+    .length;
 
   // Gradtrak stats
   // Total courses across all plans

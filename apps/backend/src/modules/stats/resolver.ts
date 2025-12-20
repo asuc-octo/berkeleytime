@@ -8,4 +8,3 @@ const resolvers: StatsModule.Resolvers = {
 };
 
 export default resolvers;
-

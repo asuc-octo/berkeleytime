@@ -1,7 +1,7 @@
 import { gql } from "graphql-tag";
 
 export const statsTypeDef = gql`
-  type UserStats  {
+  type UserStats {
     totalCount: Int!
     createdLastWeek: Int!
     createdLastMonth: Int!
