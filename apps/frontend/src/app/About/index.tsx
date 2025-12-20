@@ -2,521 +2,19 @@ import { useEffect, useMemo, useRef, useState, UIEvent } from "react";
 
 import { LightBulb, NavArrowLeft, NavArrowRight } from "iconoir-react";
 
+import { Select } from "@repo/theme";
+
 import styles from "./About.module.scss";
 import { MemberCard } from "./MemberCard";
+import { useQuery } from "@apollo/client/react";
+import { GetAllStaffMembersDocument } from "@/lib/generated/graphql";
 
-// Helper function to create a staff member following the StaffMember schema
-const createStaffMember = (
-  id: string,
-  name: string,
-  role: string,
-  personalLink: string | null,
-  year: number,
-  semester: "Spring" | "Summer" | "Fall" | "Winter",
-  team?: string,
-  photo?: string,
-  isAlumni: boolean = false,
-  isLeadership: boolean = false
-) => ({
-  id,
-  userId: null,
-  name,
-  personalLink,
-  roles: [
-    {
-      id: `${id}-role-1`,
-      year,
-      semester,
-      role,
-      team: team || null,
-      photo: photo || null,
-      isAlumni,
-      isLeadership,
-    },
-  ],
-});
-
-const TEAM_MEMBERS = [
-  createStaffMember(
-    "1",
-    "Alex Chen",
-    "President",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    undefined,
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "2",
-    "Sarah Kim",
-    "VP Engineering",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "3",
-    "Michael Park",
-    "VP Design",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "4",
-    "Emily Zhang",
-    "VP Product",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Product",
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "5",
-    "David Lee",
-    "Tech Lead",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "6",
-    "Jessica Wu",
-    "Design Lead",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "7",
-    "Ryan Patel",
-    "Backend Lead",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "8",
-    "Amanda Liu",
-    "Frontend Lead",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    true // isLeadership
-  ),
-  createStaffMember(
-    "9",
-    "Kevin Nguyen",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "10",
-    "Rachel Wang",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "11",
-    "Brian Tran",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "12",
-    "Michelle Huang",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "13",
-    "Justin Cho",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "14",
-    "Stephanie Lin",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "15",
-    "Andrew Yang",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "16",
-    "Nicole Cheng",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "17",
-    "Christopher Ma",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "18",
-    "Jennifer Sun",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "19",
-    "Daniel Lim",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "20",
-    "Ashley Tan",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "21",
-    "Matthew Ho",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "22",
-    "Victoria Guo",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "23",
-    "Jonathan Xu",
-    "Product Manager",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Product",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "24",
-    "Samantha Yee",
-    "Product Manager",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Product",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "25",
-    "Tyler Chang",
-    "Data Analyst",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Data",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "26",
-    "Olivia Zhao",
-    "Data Analyst",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Data",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "27",
-    "Brandon Shi",
-    "DevOps",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "28",
-    "Katherine Lau",
-    "DevOps",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "29",
-    "Nathan Fong",
-    "QA Engineer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "30",
-    "Grace Chu",
-    "QA Engineer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "31",
-    "Eric Wong",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "32",
-    "Megan Tsai",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "33",
-    "Steven Hsu",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "34",
-    "Christina Lai",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "35",
-    "Patrick Kwan",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "36",
-    "Diana Ye",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "37",
-    "Jason Cheung",
-    "Designer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Design",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "38",
-    "Vanessa Lu",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "39",
-    "Henry Tam",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
-  createStaffMember(
-    "40",
-    "Cynthia Ong",
-    "Developer",
-    "https://linkedin.com/in/",
-    2026,
-    "Spring",
-    "Engineering",
-    undefined,
-    false,
-    false // isLeadership
-  ),
+const ABOUT_IMAGES = [
+  "/images/about1.png",
+  "/images/about2.png",
+  "/images/about3.png",
+  "/images/about4.png",
+  "/images/about5.png",
 ];
 
 // Founding Team data
@@ -545,226 +43,157 @@ const FOUNDERS = [
   { name: "Yuxin Zhu", role: "Co-Founder", link: "http://yuxinzhu.com/" },
 ];
 
-// Sample alumni data - in production, this would come from GraphQL
-// Filtering by members who have at least one role with isAlumni: true
-const ALL_ALUMNI = [
-  {
-    id: "alum-1",
-    userId: null,
-    name: "First Last",
-    personalLink: "https://linkedin.com/in/",
-    roles: [
-      {
-        id: "alum-1-role-1",
-        year: 2024,
-        semester: "Spring" as const,
-        role: "President",
-        team: null,
-        photo: null,
-        isAlumni: true,
-        isLeadership: true,
-      },
-    ],
-  },
-  {
-    id: "alum-2",
-    userId: null,
-    name: "John Doe",
-    personalLink: "https://linkedin.com/in/",
-    roles: [
-      {
-        id: "alum-2-role-1",
-        year: 2023,
-        semester: "Fall" as const,
-        role: "Former President",
-        team: null,
-        photo: null,
-        isAlumni: true,
-        isLeadership: true,
-      },
-    ],
-  },
-  {
-    id: "alum-3",
-    userId: null,
-    name: "Jane Smith",
-    personalLink: "https://linkedin.com/in/",
-    roles: [
-      {
-        id: "alum-3-role-1",
-        year: 2023,
-        semester: "Spring" as const,
-        role: "VP Engineering",
-        team: "Engineering",
-        photo: null,
-        isAlumni: true,
-        isLeadership: true,
-      },
-    ],
-  },
-  {
-    id: "alum-4",
-    userId: null,
-    name: "Bob Johnson",
-    personalLink: "https://linkedin.com/in/",
-    roles: [
-      {
-        id: "alum-4-role-1",
-        year: 2022,
-        semester: "Fall" as const,
-        role: "Tech Lead",
-        team: "Engineering",
-        photo: null,
-        isAlumni: true,
-        isLeadership: true,
-      },
-    ],
-  },
-  {
-    id: "alum-5",
-    userId: null,
-    name: "Alice Williams",
-    personalLink: "https://linkedin.com/in/",
-    roles: [
-      {
-        id: "alum-5-role-1",
-        year: 2022,
-        semester: "Spring" as const,
-        role: "Design Lead",
-        team: "Design",
-        photo: null,
-        isAlumni: true,
-        isLeadership: true,
-      },
-    ],
-  },
-];
-
-// Generate years from current year down to 2018
-const getAvailableYears = () => {
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let year = currentYear; year >= 2018; year--) {
-    years.push(year);
-  }
-  return years;
-};
-
-const AVAILABLE_YEARS = getAvailableYears();
-
-const ABOUT_IMAGES = [
-  "/images/about1.png",
-  "/images/about2.png",
-  "/images/about3.png",
-  "/images/about4.png",
-  "/images/about5.png",
-];
-
-// Find the latest semester from all team members
-const findLatestSemester = () => {
-  const semesterOrder: Record<string, number> = {
-    Spring: 0,
-    Summer: 1,
-    Fall: 2,
-    Winter: 3,
-  };
-
-  let latestYear = 0;
-  let latestSemester: "Spring" | "Summer" | "Fall" | "Winter" = "Spring";
-
-  TEAM_MEMBERS.forEach((member) => {
-    member.roles.forEach((role) => {
-      if (role.year > latestYear) {
-        latestYear = role.year;
-        latestSemester = role.semester;
-      } else if (role.year === latestYear) {
-        const currentOrder = semesterOrder[latestSemester] ?? 0;
-        const roleOrder = semesterOrder[role.semester] ?? 0;
-        if (roleOrder > currentOrder) {
-          latestSemester = role.semester;
-        }
-      }
-    });
-  });
-
-  return { year: latestYear, semester: latestSemester };
-};
-
-const LATEST_SEMESTER = findLatestSemester();
-
-// Get all unique teams from the latest semester
-const getTeamsFromLatestSemester = () => {
-  const teams = new Set<string>();
-  TEAM_MEMBERS.forEach((member) => {
-    member.roles.forEach((role) => {
-      if (
-        role.year === LATEST_SEMESTER.year &&
-        role.semester === LATEST_SEMESTER.semester &&
-        role.team
-      ) {
-        teams.add(role.team);
-      }
-    });
-  });
-  return Array.from(teams).sort();
-};
-
-const AVAILABLE_TEAMS = getTeamsFromLatestSemester();
-
 export default function About() {
+
+  const { data } = useQuery(GetAllStaffMembersDocument);
+
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | null>(
-    new Date().getFullYear()
-  );
+  const [selectedAlumniYear, setSelectedAlumniYear] = useState<number | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Filter team members to only show those in the latest semester
-  const membersInLatestSemester = useMemo(() => {
-    return TEAM_MEMBERS.filter((member) =>
+  const allStaffMembers = useMemo(() => {
+    return data?.allStaffMembers;
+  }, [data]);
+  
+  const latestTerm = useMemo(() => {
+    const semesterOrder: Record<string, number> = {
+      Spring: 0,
+      Fall: 1,
+    };
+  
+    let latestYear = 0;
+    let latestSemester: "Spring" | "Fall" = "Spring";
+  
+    allStaffMembers?.forEach((member) => {
+      member.roles.forEach((role) => {
+        if (role.year > latestYear) {
+          latestYear = role.year;
+          latestSemester = role.semester as "Spring" | "Fall";
+        } else if (role.year === latestYear) {
+          const currentOrder = semesterOrder[latestSemester] ?? 0;
+          const roleOrder = semesterOrder[role.semester as "Spring" | "Fall"] ?? 0;
+          if (roleOrder > currentOrder) {
+            latestSemester = role.semester as "Spring" | "Fall";
+          }
+        }
+      });
+    });
+  
+    return { year: latestYear, semester: latestSemester };
+  }, [allStaffMembers]);
+
+  const [selectedTerm, setSelectedTerm] = useState<{ year: number, semester: "Spring" | "Fall" }>(latestTerm);
+
+  // Update selectedTerm when latestTerm changes (if it hasn't been manually set)
+  useEffect(() => {
+    if (latestTerm && (!selectedTerm || (selectedTerm.year === latestTerm.year && selectedTerm.semester === latestTerm.semester))) {
+      setSelectedTerm(latestTerm);
+    }
+  }, [latestTerm]);
+
+  // Filter team members to only show those in the selected term
+  const membersInSelectedTerm = useMemo(() => {
+    return allStaffMembers?.filter((member) =>
       member.roles.some(
         (role) =>
-          role.year === LATEST_SEMESTER.year &&
-          role.semester === LATEST_SEMESTER.semester
+          role.year === selectedTerm.year &&
+          role.semester === selectedTerm.semester
       )
     );
-  }, []);
+  }, [allStaffMembers, selectedTerm]);
+
+  const availableTerms = useMemo(() => {
+    const terms = new Set<{ year: number, semester: "Spring" | "Fall" }>();
+    allStaffMembers?.forEach((member) => {
+      member.roles.forEach((role) => {
+        terms.add({ year: role.year, semester: role.semester as "Spring" | "Fall" });
+      });
+    });
+    return Array.from(terms).sort((a, b) => {
+      if (a.year !== b.year) return b.year - a.year; // Sort by year descending
+      // If same year, Spring comes before Fall
+      return a.semester === "Spring" ? -1 : 1;
+    });
+  }, [allStaffMembers]);
+
+  // Convert availableTerms to Select options
+  const termOptions = useMemo(() => {
+    return availableTerms.map((term) => ({
+      value: `${term.year}-${term.semester}`,
+      label: `${term.semester} ${term.year}`,
+    }));
+  }, [availableTerms]);
+
+  // Get the current selected term value for the Select
+  const selectedTermValue = useMemo(() => {
+    return selectedTerm ? `${selectedTerm.year}-${selectedTerm.semester}` : null;
+  }, [selectedTerm]);
+
+  const availableAlumniYears = useMemo(() => {
+    const years = new Set<number>();
+    allStaffMembers?.forEach((member) => {
+      const latestRole = member.roles.find(
+        (role) => role.year === latestTerm.year && role.semester === latestTerm.semester
+      );
+      if ( latestRole?.year !== latestTerm.year || latestRole?.semester !== latestTerm.semester) {
+        years.add(latestRole?.year ?? 0);
+      }
+    });
+    return Array.from(years).sort((a, b) => a - b);
+  }, [allStaffMembers]);
+
+  const availableTeams = useMemo(() => {
+    const teams = new Set<string>();
+    allStaffMembers?.forEach((member) => {
+      member.roles.forEach((role) => {
+        if (
+          role.year === selectedTerm.year &&
+          role.semester === selectedTerm.semester &&
+          role.team
+        ) {
+          teams.add(role.team);
+        }
+      });
+    });
+    return Array.from(teams).sort();
+  }, [allStaffMembers, selectedTerm]);
 
   // Filter by team or leadership
   const filteredTeamMembers = useMemo(() => {
-    let filtered = membersInLatestSemester;
+    let filtered = membersInSelectedTerm;
 
     if (selectedTeam === "Leadership") {
-      filtered = filtered.filter((member) =>
+      filtered = filtered?.filter((member) =>
         member.roles.some(
           (role) =>
-            role.year === LATEST_SEMESTER.year &&
-            role.semester === LATEST_SEMESTER.semester &&
+            role.year === selectedTerm.year &&
+            role.semester === selectedTerm.semester &&
             role.isLeadership
         )
       );
     } else if (selectedTeam) {
-      filtered = filtered.filter((member) =>
+      filtered = filtered?.filter((member) =>
         member.roles.some(
           (role) =>
-            role.year === LATEST_SEMESTER.year &&
-            role.semester === LATEST_SEMESTER.semester &&
+            role.year === selectedTerm.year &&
+            role.semester === selectedTerm.semester &&
             role.team === selectedTeam
         )
       );
     }
 
     // Sort: leadership first, then alphabetically by name
-    return filtered.sort((a, b) => {
+    return filtered?.sort((a, b) => {
       const aHasLeadership = a.roles.some(
         (r) =>
-          r.year === LATEST_SEMESTER.year &&
-          r.semester === LATEST_SEMESTER.semester &&
+          r.year === selectedTerm.year &&
+          r.semester === selectedTerm.semester &&
           r.isLeadership
       );
       const bHasLeadership = b.roles.some(
         (r) =>
-          r.year === LATEST_SEMESTER.year &&
-          r.semester === LATEST_SEMESTER.semester &&
+          r.year === selectedTerm.year &&
+          r.semester === selectedTerm.semester &&
           r.isLeadership
       );
 
@@ -772,19 +201,22 @@ export default function About() {
       if (!aHasLeadership && bHasLeadership) return 1;
       return a.name.localeCompare(b.name);
     });
-  }, [selectedTeam, membersInLatestSemester]);
+  }, [selectedTeam, membersInSelectedTerm, selectedTerm]);
 
   // Filter alumni by selected year
   // An alumnus is shown for a year if they have at least one role with isAlumni: true in that year
   const filteredAlumni = useMemo(() => {
-    if (selectedYear === null) return ALL_ALUMNI;
+    if (selectedTerm === null) return allStaffMembers?.filter((member) => member.isAlumni);
 
-    return ALL_ALUMNI.filter((member) =>
+    return allStaffMembers?.filter((member) =>
+      !member.roles.some(
+        (role) => role.year === latestTerm.year && role.semester === latestTerm.semester
+      ) && 
       member.roles.some(
-        (role) => role.isAlumni && role.year === selectedYear
+        (role) => role.year === selectedAlumniYear
       )
     );
-  }, [selectedYear]);
+  }, [selectedTerm]);
 
   // Create infinite scroll by duplicating images
   const infiniteImages = useMemo(() => {
@@ -930,84 +362,105 @@ export default function About() {
           </div>
         </div>
       </div>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Our Team</h2>
-        <div className={styles.spacer} />
-      </div>
-      <div className={styles.teamNavigation}>
-        <button
-          className={`${styles.teamButton} ${
-            selectedTeam === null ? styles.teamButtonActive : ""
-          }`}
-          onClick={() => setSelectedTeam(null)}
-        >
-          All
-        </button>
-        <button
-          className={`${styles.teamButton} ${
-            selectedTeam === "Leadership" ? styles.teamButtonActive : ""
-          }`}
-          onClick={() => setSelectedTeam("Leadership")}
-        >
-          Leadership
-        </button>
-        {AVAILABLE_TEAMS.map((team) => (
-          <button
-            key={team}
-            className={`${styles.teamButton} ${
-              selectedTeam === team ? styles.teamButtonActive : ""
-            }`}
-            onClick={() => setSelectedTeam(team)}
-          >
-            {team}
-          </button>
-        ))}
-      </div>
-      <div className={styles.grid}>
-        {filteredTeamMembers.map((member) => {
-          // Get the role for the latest semester
-          const latestRole = member.roles.find(
-            (role) =>
-              role.year === LATEST_SEMESTER.year &&
-              role.semester === LATEST_SEMESTER.semester
-          );
-          const displayRole = latestRole || member.roles[member.roles.length - 1];
-          return (
-            <MemberCard
-              key={member.id}
-              name={member.name}
-              imageUrl={displayRole.photo || "https://m.media-amazon.com/images/M/MV5BZTJjZTcxYjktZTU5ZS00YzdhLWJjMzYtOWY0M2MxZDEzZWUyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"}
-              role={displayRole.role}
-              link={member.personalLink || undefined}
+
+      <div className={styles.ourTeamSection}>
+        <div className={styles.header} style={{ marginBottom: 24 }}>
+          <h2 className={styles.title}>Our Team</h2>
+          <div className={styles.spacer} />
+          <div className={styles.selectWrapper}>
+            <Select
+              searchable
+              options={termOptions}
+              value={selectedTermValue}
+              onChange={(newValue) => {
+                if (newValue && typeof newValue === "string") {
+                  const [year, semester] = newValue.split("-");
+                  setSelectedTerm({
+                    year: parseInt(year, 10),
+                    semester: semester as "Spring" | "Fall",
+                  });
+                }
+              }}
+              placeholder="Select term"
+              searchPlaceholder="Search terms..."
             />
-          );
-        })}
+          </div>
+        </div>
+        <div className={styles.teamNavigation}>
+          <button
+            className={`${styles.teamButton} ${
+              selectedTeam === null ? styles.teamButtonActive : ""
+            }`}
+            onClick={() => setSelectedTeam(null)}
+          >
+            All
+          </button>
+          <button
+            className={`${styles.teamButton} ${
+              selectedTeam === "Leadership" ? styles.teamButtonActive : ""
+            }`}
+            onClick={() => setSelectedTeam("Leadership")}
+          >
+            Leadership
+          </button>
+          {availableTeams.map((team) => (
+            <button
+              key={team}
+              className={`${styles.teamButton} ${
+                selectedTeam === team ? styles.teamButtonActive : ""
+              }`}
+              onClick={() => setSelectedTeam(team)}
+            >
+              {team}
+            </button>
+          ))}
+        </div>
+        <div className={styles.grid}>
+          {filteredTeamMembers?.map((member) => {
+            // Get the role for the latest semester
+            const latestRole = member.roles.find(
+              (role) =>
+                role.year === latestTerm.year &&
+                role.semester === latestTerm.semester
+            );
+            const displayRole = latestRole || member.roles[member.roles.length - 1];
+            return (
+              <MemberCard
+                key={member.id}
+                name={member.name}
+                imageUrl={displayRole.photo || "https://m.media-amazon.com/images/M/MV5BZTJjZTcxYjktZTU5ZS00YzdhLWJjMzYtOWY0M2MxZDEzZWUyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"}
+                role={displayRole.role}
+                link={member.personalLink || undefined}
+              />
+            );
+          })}
+        </div>
       </div>
 
       <div className={styles.alumniSection}>
         <h2 className={styles.title}>Alumni</h2>
         <div className={styles.yearNavigation}>
-          {AVAILABLE_YEARS.map((year) => (
+          {availableAlumniYears.map((year) => (
             <button
               key={year}
               className={`${styles.yearButton} ${
-                selectedYear === year ? styles.yearButtonActive : ""
+                selectedAlumniYear === year ? styles.yearButtonActive : ""
               }`}
-              onClick={() => setSelectedYear(year)}
+              onClick={() => setSelectedAlumniYear(year)}
             >
               {year}
             </button>
           ))}
         </div>
         <div className={styles.alumniGrid}>
-          {filteredAlumni.map((member) => {
+          {filteredAlumni?.map((member) => {
             // Get the role for the selected year, or the most recent alumni role
             const roleForYear =
-              selectedYear !== null
+              selectedAlumniYear !== null
                 ? member.roles.find(
-                    (r) => r.isAlumni && r.year === selectedYear
+                    (r) => r.year === selectedAlumniYear
                   )
-                : member.roles.find((r) => r.isAlumni);
+                : member.roles.find((r) => r.year === latestTerm.year && r.semester === latestTerm.semester);
             const displayRole = roleForYear || member.roles[0];
 
             const isPresident =
@@ -1030,11 +483,11 @@ export default function About() {
       </div>
 
       <div className={styles.alumniSection}>
-        <h2 className={styles.title}>Founding Team</h2>
+        <h2 className={styles.title}>Founders</h2>
         <div className={styles.alumniGrid}>
-          {FOUNDING_TEAM.map((member, index) => (
+          {FOUNDERS.map((member, index) => (
             <MemberCard
-              key={`founding-${index}`}
+              key={`founder-${index}`}
               name={member.name}
               imageUrl={undefined}
               role={member.role}
@@ -1043,14 +496,11 @@ export default function About() {
             />
           ))}
         </div>
-      </div>
-
-      <div className={styles.alumniSection}>
-        <h2 className={styles.title}>Founders</h2>
+        <h2 className={styles.title}>Founding Team</h2>
         <div className={styles.alumniGrid}>
-          {FOUNDERS.map((member, index) => (
+          {FOUNDING_TEAM.map((member, index) => (
             <MemberCard
-              key={`founder-${index}`}
+              key={`founding-${index}`}
               name={member.name}
               imageUrl={undefined}
               role={member.role}
