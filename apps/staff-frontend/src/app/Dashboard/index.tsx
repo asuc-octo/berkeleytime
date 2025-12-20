@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { gql, useQuery } from "@apollo/client";
+import { Plus, UserBadgeCheck, WarningTriangleSolid } from "iconoir-react";
 
 import { OptionItem, Select } from "@repo/theme";
 
@@ -76,13 +77,36 @@ export default function Dashboard() {
         />
       </div>
 
-      {selectedUser && (
-        <div className={styles.selectedUser}>
-          <div className={styles.selectedUserName}>{selectedUser.name}</div>
-          <div className={styles.selectedUserEmail}>{selectedUser.email}</div>
-          <div className={styles.selectedUserId}>ID: {selectedUser._id}</div>
-        </div>
-      )}
+      {selectedUser && (() => {
+        const isStaff = false; // TODO: Replace with actual logic
+        return (
+          <div className={styles.selectedUser}>
+            <div className={styles.selectedUserName}>{selectedUser.name}</div>
+            <div className={styles.selectedUserEmail}>
+              {selectedUser.email}
+              {!selectedUser.email.endsWith("@berkeley.edu") && (
+                <span className={styles.unaffiliatedWarning}>
+                  <WarningTriangleSolid width={14} height={14} />
+                  Unaffiliated email
+                </span>
+              )}
+            </div>
+            <div className={styles.staffStatus}>
+              <span className={isStaff ? styles.staffBadge : styles.notStaffBadge}>
+                <UserBadgeCheck width={14} height={14} />
+                {isStaff ? "Staff member" : "Not a staff yet"}
+              </span>
+            </div>
+            {!isStaff && (
+              <div className={styles.addStaffRow}>
+                <button className={styles.addStaffButton} type="button">
+                  <Plus width={16} height={16} />
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }

@@ -21,27 +21,80 @@
 
 .selectedUser {
   margin-top: 24px;
-  padding: 16px;
-  border-radius: 8px;
+  padding: 20px 24px;
+  border-radius: 12px;
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
 }
 
 .selectedUserName {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   color: var(--heading-color);
 }
 
 .selectedUserEmail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 14px;
   color: var(--label-color);
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-.selectedUserId {
+.unaffiliatedWarning {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #e67700;
   font-size: 12px;
+  font-weight: 500;
+}
+
+.staffStatus {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.staffBadge,
+.notStaffBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.staffBadge {
+  color: #2e7d32;
+}
+
+.notStaffBadge {
+  color: #c62828;
+}
+
+.addStaffRow {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.addStaffButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  background: none;
   color: var(--label-color);
-  margin-top: 8px;
-  font-family: monospace;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--label-color);
+    background-color: var(--border-color);
+  }
 }
