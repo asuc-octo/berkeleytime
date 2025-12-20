@@ -85,8 +85,8 @@ const YEAR_OPTIONS: OptionItem<string>[] = Array.from(
 );
 
 const SEARCH_TABS = [
-  { value: "staff", label: "Staff Search" },
-  { value: "user", label: "User Search" },
+  { value: "staff", label: "Staff View" },
+  { value: "user", label: "Users Lookup" },
 ];
 
 type StaffSearchBy = "name" | "role" | "semester" | "team";
