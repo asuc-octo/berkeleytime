@@ -489,3 +489,18 @@
   height: 100%;
   object-fit: cover;
 }
+
+.analyticsWrapper {
+  width: 100%;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: var(--label-color);
+  }
+}

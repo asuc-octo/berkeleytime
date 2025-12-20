@@ -81,6 +81,11 @@ export default function NavigationBar() {
             <MenuItem active={isActive}>Stats</MenuItem>
           )}
         </NavLink>
+        <NavLink to="/analytics">
+          {({ isActive }) => (
+            <MenuItem active={isActive}>Analytics</MenuItem>
+          )}
+        </NavLink>
       </div>
       <ThemeDropdown theme={theme} setTheme={setTheme} />
       {user && (

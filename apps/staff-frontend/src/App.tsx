@@ -6,6 +6,7 @@ import { Button, ThemeProvider } from "@repo/theme";
 import Layout from "@/components/Layout";
 
 import styles from "./App.module.scss";
+import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
 import Stats from "./app/Stats";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "stats",
         element: <Stats />,
+      },
+      {
+        path: "analytics",
+        element: <Analytics />,
       },
     ],
   },
