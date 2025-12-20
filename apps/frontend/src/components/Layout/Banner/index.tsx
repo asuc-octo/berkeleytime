@@ -34,6 +34,7 @@ export default function Banner() {
           <MessageText height={12} width={12} />
         </a>
         <button
+          type="button"
           className={styles.closeButton}
           onClick={() => setIsVisible(false)}
           aria-label="Close banner"
