@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import {
   Bar,
@@ -19,7 +19,7 @@ import {
 
 import { useUserCreationAnalyticsData } from "@/hooks/api";
 
-import { AnalyticsCard } from "./AnalyticsCard";
+import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
 
 interface DailyDataPoint {
   date: string;
@@ -27,77 +27,110 @@ interface DailyDataPoint {
   value: number;
 }
 
+// Helper to get time range in days
+function getTimeRangeDays(timeRange: TimeRange): number {
+  if (timeRange === "7d") return 7;
+  if (timeRange === "90d") return 90;
+  return 30;
+}
+
+// Helper to get granularity bucket key
+function getGranularityKey(date: Date, granularity: Granularity): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hour = String(date.getHours()).padStart(2, "0");
+
+  if (granularity === "hour") {
+    return `${year}-${month}-${day}-${hour}`;
+  }
+  return `${year}-${month}-${day}`;
+}
+
+// Helper to format display date based on granularity
+function formatDisplayDate(key: string, granularity: Granularity): string {
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const parts = key.split("-");
+  const month = monthNames[parseInt(parts[1]) - 1];
+  const day = parseInt(parts[2]);
+
+  if (granularity === "hour") {
+    const hour = parseInt(parts[3]);
+    return `${month} ${day} ${hour}:00`;
+  }
+  return `${month} ${day}`;
+}
+
 // User Growth Block - accounts created in the last month (per day)
 export function UserGrowthBlock() {
   const { data: rawData, loading, error } = useUserCreationAnalyticsData();
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const [granularity, setGranularity] = useState<Granularity>("day");
 
-  const { dailyData, totalUsers, newLastMonth, percentGrowth } = useMemo(() => {
+  const { chartData, totalUsers, newInRange, percentGrowth } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
-      return { dailyData: [] as DailyDataPoint[], totalUsers: 0, newLastMonth: 0, percentGrowth: 0 };
+      return { chartData: [] as DailyDataPoint[], totalUsers: 0, newInRange: 0, percentGrowth: 0 };
     }
 
-    const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-    ];
-
-    // Get date 30 days ago
+    const days = getTimeRangeDays(timeRange);
     const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
     // Sort all users by creation time
     const sortedUsers = [...rawData].sort(
       (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
-    // Count users created before the 30-day window (baseline)
-    let cumulativeCount = 0;
+    // Count users created before the window (baseline)
+    let baselineCount = 0;
     for (const user of sortedUsers) {
-      if (new Date(user.createdAt) < thirtyDaysAgo) {
-        cumulativeCount++;
+      if (new Date(user.createdAt) < rangeStart) {
+        baselineCount++;
       } else {
         break;
       }
     }
-    const baselineCount = cumulativeCount;
 
-    // Initialize all days in the last 30 days
-    const dayMap = new Map<string, number>();
-    for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
-      const dayKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      dayMap.set(dayKey, 0);
+    // Initialize buckets based on granularity
+    const bucketMap = new Map<string, number>();
+    for (let d = new Date(rangeStart); d <= now; ) {
+      const key = getGranularityKey(d, granularity);
+      bucketMap.set(key, 0);
+      if (granularity === "hour") {
+        d.setHours(d.getHours() + 1);
+      } else {
+        d.setDate(d.getDate() + 1);
+      }
     }
 
-    // Count new users per day
+    // Count new users per bucket
     sortedUsers.forEach((point) => {
       const date = new Date(point.createdAt);
-      if (date >= thirtyDaysAgo && date <= now) {
-        const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-        dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + 1);
+      if (date >= rangeStart && date <= now) {
+        const key = getGranularityKey(date, granularity);
+        bucketMap.set(key, (bucketMap.get(key) || 0) + 1);
       }
     });
 
     // Convert to sorted array with cumulative values
-    const sortedDays = Array.from(dayMap.keys()).sort();
+    const sortedKeys = Array.from(bucketMap.keys()).sort();
 
     let cumulative = baselineCount;
-    const dailyData: DailyDataPoint[] = sortedDays.map((dayKey) => {
-      const [, month, day] = dayKey.split("-");
-      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
-      cumulative += dayMap.get(dayKey) || 0;
+    const chartData: DailyDataPoint[] = sortedKeys.map((key) => {
+      cumulative += bucketMap.get(key) || 0;
       return {
-        date: displayDate,
-        dateKey: dayKey,
+        date: formatDisplayDate(key, granularity),
+        dateKey: key,
         value: cumulative,
       };
     });
 
     const totalUsers = cumulative;
-    const newLastMonth = totalUsers - baselineCount;
-    const percentGrowth = baselineCount > 0 ? (newLastMonth / baselineCount) * 100 : 0;
+    const newInRange = totalUsers - baselineCount;
+    const percentGrowth = baselineCount > 0 ? (newInRange / baselineCount) * 100 : 0;
 
-    return { dailyData, totalUsers, newLastMonth, percentGrowth };
-  }, [rawData]);
+    return { chartData, totalUsers, newInRange, percentGrowth };
+  }, [rawData, timeRange, granularity]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: "Total Users" },
@@ -133,16 +166,24 @@ export function UserGrowthBlock() {
   return (
     <AnalyticsCard
       title="User Growth"
-      description="Cumulative user accounts (30d)"
+      description={`Cumulative user accounts (${timeRange})`}
       currentValue={totalUsers}
       currentValueLabel="users"
-      absoluteChange={newLastMonth}
+      absoluteChange={newInRange}
       percentChange={percentGrowth}
-      changeTimescale="30d"
+      changeTimescale={timeRange}
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={(val) => {
+        setTimeRange(val);
+        setGranularity(val === "7d" ? "hour" : "day");
+      }}
+      granularity={granularity}
+      onGranularityChange={setGranularity}
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={dailyData}>
+          <LineChart data={chartData}>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="var(--border-color)"
@@ -160,7 +201,7 @@ export function UserGrowthBlock() {
               axisLine={false}
               tick={{ fill: "var(--label-color)", fontSize: 12 }}
               width={40}
-              domain={["dataMin", "dataMax"]}
+              domain={['auto', 'auto']}
             />
             <ChartTooltip />
             <Line
@@ -178,7 +219,7 @@ export function UserGrowthBlock() {
   );
 }
 
-// Signup Hour Histogram Block - count of signups by hour of day
+// Signup Hour Histogram Block - count of signups by hour of day (90d)
 export function SignupHourHistogramBlock() {
   const { data: rawData, loading, error } = useUserCreationAnalyticsData();
 
@@ -187,10 +228,19 @@ export function SignupHourHistogramBlock() {
       return { hourlyData: [], peakHour: null, totalUsers: 0 };
     }
 
+    const now = new Date();
+    const rangeStart = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+    // Filter data to 90 days
+    const filteredData = rawData.filter((point) => {
+      const date = new Date(point.createdAt);
+      return date >= rangeStart && date <= now;
+    });
+
     // Count signups per hour of day (0-23)
     const hourCounts = new Array(24).fill(0);
 
-    rawData.forEach((point) => {
+    filteredData.forEach((point) => {
       const date = new Date(point.createdAt);
       const hour = date.getHours();
       hourCounts[hour]++;
@@ -203,7 +253,7 @@ export function SignupHourHistogramBlock() {
       return h < 12 ? `${h} AM` : `${h - 12} PM`;
     };
 
-    const total = rawData.length;
+    const total = filteredData.length;
     const hourlyData = hourCounts.map((count, hour) => ({
       hour: `${hour}`,
       hourLabel: `${formatHour(hour)} - ${formatHour((hour + 1) % 24)}`,
@@ -264,7 +314,7 @@ export function SignupHourHistogramBlock() {
   return (
     <AnalyticsCard
       title="Signup Time Distribution"
-      description="When users create accounts (hour of day)"
+      description="When users create accounts (90d)"
       currentValueLabel={`${peakHour?.label ?? "12 AM"} peak`}
       subtitle={`${peakHour?.percent?.toFixed(1) ?? 0}% of signups`}
     >
@@ -307,51 +357,43 @@ export function SignupHourHistogramBlock() {
   );
 }
 
-// Daily Signups Block - signups per calendar day (last 30 days)
+// Daily Signups Block - signups per calendar day
 export function SignupDayHistogramBlock() {
   const { data: rawData, loading, error } = useUserCreationAnalyticsData();
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
 
   const { dailyData, totalInWindow, avgPerDay } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
       return { dailyData: [] as DailyDataPoint[], totalInWindow: 0, avgPerDay: 0 };
     }
 
-    const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-    ];
-
-    // Get date 30 days ago
+    const days = getTimeRangeDays(timeRange);
     const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
-    // Initialize all days in the last 30 days with 0
+    // Initialize daily buckets
     const dateMap = new Map<string, number>();
-    for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
-      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    for (let d = new Date(rangeStart); d <= now; d.setDate(d.getDate() + 1)) {
+      const dateKey = getGranularityKey(d, "day");
       dateMap.set(dateKey, 0);
     }
 
-    // Count signups per day (only last 30 days)
+    // Count signups per day
     rawData.forEach((point) => {
       const date = new Date(point.createdAt);
-      if (date >= thirtyDaysAgo && date <= now) {
-        const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      if (date >= rangeStart && date <= now) {
+        const dateKey = getGranularityKey(date, "day");
         dateMap.set(dateKey, (dateMap.get(dateKey) || 0) + 1);
       }
     });
 
     // Sort by date and convert to chart data
     const sortedDates = Array.from(dateMap.keys()).sort();
-    const dailyData: DailyDataPoint[] = sortedDates.map((dateKey) => {
-      const [, month, day] = dateKey.split("-");
-      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
-      return {
-        date: displayDate,
-        dateKey,
-        value: dateMap.get(dateKey) || 0,
-      };
-    });
+    const dailyData: DailyDataPoint[] = sortedDates.map((dateKey) => ({
+      date: formatDisplayDate(dateKey, "day"),
+      dateKey,
+      value: dateMap.get(dateKey) || 0,
+    }));
 
     // Calculate total signups in window and average
     const totalInWindow = dailyData.reduce((sum, d) => sum + d.value, 0);
@@ -362,7 +404,7 @@ export function SignupDayHistogramBlock() {
       totalInWindow,
       avgPerDay,
     };
-  }, [rawData]);
+  }, [rawData, timeRange]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: "Signups" },
@@ -373,7 +415,7 @@ export function SignupDayHistogramBlock() {
     return (
       <AnalyticsCard
         title="Daily Signups"
-        description="Number of signups per day (30d)"
+        description="Number of signups per day"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -386,7 +428,7 @@ export function SignupDayHistogramBlock() {
     return (
       <AnalyticsCard
         title="Daily Signups"
-        description="Number of signups per day (30d)"
+        description="Number of signups per day"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -398,10 +440,13 @@ export function SignupDayHistogramBlock() {
   return (
     <AnalyticsCard
       title="Daily Signups"
-      description="Number of signups per day (30d)"
+      description={`Number of signups per day (${timeRange})`}
       currentValue={totalInWindow}
       currentValueLabel="signups"
-      subtitle={`avg ${avgPerDay.toFixed(1)}/day`}
+      subtitle={`${avgPerDay.toFixed(1)} avg/day`}
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={setTimeRange}
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -423,6 +468,7 @@ export function SignupDayHistogramBlock() {
               axisLine={false}
               tick={{ fill: "var(--label-color)", fontSize: 12 }}
               width={30}
+              domain={[0, 'auto']}
             />
             <ChartTooltip />
             <Bar

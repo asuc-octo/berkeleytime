@@ -929,7 +929,7 @@ export const getRatingMetricsAnalyticsData = async (
   const ratings = await RatingModel.find({
     metricName: { $in: ["Usefulness", "Difficulty", "Workload"] },
   })
-    .select("metricName value createdAt")
+    .select("metricName value createdAt subject courseNumber")
     .sort({ createdAt: 1 })
     .lean();
 
@@ -937,5 +937,6 @@ export const getRatingMetricsAnalyticsData = async (
     createdAt: (rating as any).createdAt.toISOString(),
     metricName: rating.metricName as MetricName,
     value: rating.value,
+    courseKey: `${rating.subject} ${rating.courseNumber}`,
   }));
 };

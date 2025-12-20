@@ -11,6 +11,7 @@ export interface RatingMetricDataPoint {
   createdAt: string;
   metricName: string;
   value: number;
+  courseKey: string;
 }
 
 export interface UserCreationDataPoint {
@@ -51,6 +52,7 @@ export const RATING_METRICS_ANALYTICS_DATA = gql`
       createdAt
       metricName
       value
+      courseKey
     }
   }
 `;

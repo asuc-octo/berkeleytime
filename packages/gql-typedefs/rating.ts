@@ -123,6 +123,8 @@ export const ratingTypeDef = gql`
     metricName: MetricName!
     "The rating value (1-5)"
     value: Int!
+    "Course identifier (subject + courseNumber)"
+    courseKey: String!
   }
 
   input ClassWithoutCourseInput {

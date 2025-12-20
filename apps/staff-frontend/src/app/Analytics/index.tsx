@@ -17,7 +17,7 @@ import {
 } from "./components/RatingsAnalytics";
 import { SignupDayHistogramBlock, SignupHourHistogramBlock, UserGrowthBlock } from "./components/UserAnalytics";
 
-type Tab = "all" | "general" | "ratings" | "bookmarks";
+type Tab = "all" | "general" | "ratings" | "bookmarks" | "gradtrak" | "scheduler";
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState<Tab>("general");
@@ -53,6 +53,18 @@ export default function Analytics() {
             onClick={() => setActiveTab("bookmarks")}
           >
             Bookmarks
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "gradtrak" ? styles.active : ""}`}
+            onClick={() => setActiveTab("gradtrak")}
+          >
+            GradTrak
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "scheduler" ? styles.active : ""}`}
+            onClick={() => setActiveTab("scheduler")}
+          >
+            Scheduler
           </button>
         </div>
       </div>

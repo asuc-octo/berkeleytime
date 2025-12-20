@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
-    "@repo/theme": "*",
     "@repo/common": "*",
+    "@repo/theme": "*",
     "classnames": "^2.5.1",
     "graphql": "^16.11.0",
     "iconoir-react": "^7.11.0",
