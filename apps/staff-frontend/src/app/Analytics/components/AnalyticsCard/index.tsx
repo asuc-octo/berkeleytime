@@ -49,11 +49,11 @@ export function AnalyticsCard({
   const showMetrics = currentValue !== undefined || currentValueLabel !== undefined;
   const isPositive = (absoluteChange ?? percentChange ?? 0) >= 0;
 
-  // Format the change text: "+3.8% (30d)"
+  // Format the change text: "+3.8% vs prev. 30d"
   const formatChangeText = () => {
     if (percentChange !== undefined) {
       const sign = isPositive ? "+" : "";
-      return `${sign}${percentChange.toFixed(1)}% (${changeTimescale})`;
+      return `${sign}${percentChange.toFixed(1)}% vs prev. ${changeTimescale}`;
     }
     return null;
   };

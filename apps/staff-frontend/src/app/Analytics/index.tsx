@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./Analytics.module.scss";
+import { TotalRequestsBlock, UniqueVisitorsBlock, VisitorTimeDistributionBlock } from "./components/CloudflareAnalytics";
 import {
   CollectionHighlightsBlock,
   CustomCollectionsBlock,
@@ -72,6 +73,15 @@ export default function Analytics() {
       <div className={styles.grid}>
         {showGeneral && (
           <>
+            <div className={styles.cell}>
+              <UniqueVisitorsBlock />
+            </div>
+            <div className={styles.cell}>
+              <TotalRequestsBlock />
+            </div>
+            <div className={styles.cell}>
+              <VisitorTimeDistributionBlock />
+            </div>
             <div className={styles.cell}>
               <UserGrowthBlock />
             </div>

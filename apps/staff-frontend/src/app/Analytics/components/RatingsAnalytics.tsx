@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -19,7 +21,7 @@ import {
   createChartConfig,
 } from "@/components/Chart";
 
-import { Select } from "@repo/theme";
+import { LoadingIndicator, Select } from "@repo/theme";
 
 import { useRatingAnalyticsData, useRatingMetricsAnalyticsData } from "@/hooks/api";
 
@@ -290,7 +292,7 @@ export function UniqueUsersGrowthBlock() {
     return (
       <AnalyticsCard title="Rating Users" description="Users who submitted ratings">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -326,13 +328,19 @@ export function UniqueUsersGrowthBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="uniqueUsersGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
             <ChartTooltip />
-            <Line type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "var(--heading-color)" }} />
-          </LineChart>
+            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#uniqueUsersGradient)" />
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>
@@ -416,7 +424,7 @@ export function RatingsCountBlock() {
     return (
       <AnalyticsCard title="Total Ratings" description="Cumulative rating submissions">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -452,13 +460,19 @@ export function RatingsCountBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="ratingsCountGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
             <ChartTooltip />
-            <Line type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "var(--heading-color)" }} />
-          </LineChart>
+            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#ratingsCountGradient)" />
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>
@@ -542,7 +556,7 @@ export function CourseDistributionBlock() {
     return (
       <AnalyticsCard title="Rated Courses" description="Courses with ratings">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -578,13 +592,19 @@ export function CourseDistributionBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="courseRatingsGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
             <ChartTooltip />
-            <Line type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "var(--heading-color)" }} />
-          </LineChart>
+            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#courseRatingsGradient)" />
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>
@@ -828,7 +848,7 @@ export function CourseRatingsDistributionBlock() {
         description="Area = rating count, by subject"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -956,7 +976,7 @@ export function RatingsDayHistogramBlock() {
     return (
       <AnalyticsCard title="Daily Ratings" description="Number of ratings submitted">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -1121,7 +1141,7 @@ export function AverageScoresOverTimeBlock() {
         description="Running average of all ratings up to each day"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );

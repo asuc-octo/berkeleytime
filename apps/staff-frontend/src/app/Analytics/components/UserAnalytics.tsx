@@ -1,15 +1,17 @@
 import { useMemo, useState } from "react";
 
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
+
+import { LoadingIndicator } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -144,7 +146,7 @@ export function UserGrowthBlock() {
         description="New accounts created per day (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -183,7 +185,13 @@ export function UserGrowthBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="userGrowthGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="var(--border-color)"
@@ -204,15 +212,14 @@ export function UserGrowthBlock() {
               domain={['auto', 'auto']}
             />
             <ChartTooltip />
-            <Line
+            <Area
               type="monotone"
               dataKey="value"
               stroke="var(--heading-color)"
               strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 4, fill: "var(--heading-color)" }}
+              fill="url(#userGrowthGradient)"
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>
@@ -292,7 +299,7 @@ export function SignupHourHistogramBlock() {
         description="When users create accounts (hour of day)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -418,7 +425,7 @@ export function SignupDayHistogramBlock() {
         description="Number of signups per day"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );

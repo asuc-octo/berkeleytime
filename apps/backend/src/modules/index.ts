@@ -2,6 +2,7 @@ import { merge } from "lodash";
 
 import Catalog from "./catalog";
 import Class from "./class";
+import Cloudflare from "./cloudflare";
 import Collection from "./collection";
 import Common from "./common";
 import Course from "./course";
@@ -20,6 +21,7 @@ const modules = [
   User,
   GradeDistribution,
   Catalog,
+  Cloudflare,
   CuratedClasses,
   Collection,
   Common,

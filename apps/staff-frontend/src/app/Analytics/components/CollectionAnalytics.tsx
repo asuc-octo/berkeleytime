@@ -1,15 +1,17 @@
 import { useMemo, useState } from "react";
 
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
+
+import { LoadingIndicator } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -29,7 +31,7 @@ export function CollectionHighlightsBlock() {
     return (
       <AnalyticsCard title="Collection Highlights" description="Top stats">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -186,7 +188,7 @@ export function UsersWithBookmarksBlock() {
     return (
       <AnalyticsCard title="Bookmark Users" description="Users with saved classes">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -222,13 +224,19 @@ export function UsersWithBookmarksBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
             <ChartTooltip />
-            <Line type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "var(--heading-color)" }} />
-          </LineChart>
+            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>
@@ -288,7 +296,7 @@ export function DailyBookmarksBlock() {
     return (
       <AnalyticsCard title="Daily Bookmarks" description="Classes bookmarked per day">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -407,7 +415,7 @@ export function TotalBookmarksBlock() {
     return (
       <AnalyticsCard title="Total Bookmarks" description="Cumulative classes bookmarked">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -443,13 +451,19 @@ export function TotalBookmarksBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
             <ChartTooltip />
-            <Line type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "var(--heading-color)" }} />
-          </LineChart>
+            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>
@@ -533,7 +547,7 @@ export function CustomCollectionsBlock() {
     return (
       <AnalyticsCard title="Custom Collections" description="User-created collections">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -568,13 +582,19 @@ export function CustomCollectionsBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
             <ChartTooltip />
-            <Line type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "var(--heading-color)" }} />
-          </LineChart>
+            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>
@@ -658,7 +678,7 @@ export function UsersWithCustomCollectionsBlock() {
     return (
       <AnalyticsCard title="Custom Collection Users" description="Unique users who created collections">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-          Loading...
+          <LoadingIndicator />
         </div>
       </AnalyticsCard>
     );
@@ -693,13 +713,19 @@ export function UsersWithCustomCollectionsBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient id="collectionGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="var(--heading-color)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--heading-color)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 10 }} interval="preserveStartEnd" />
             <YAxis tickLine={false} axisLine={false} tick={{ fill: "var(--label-color)", fontSize: 12 }} width={40} domain={['auto', 'auto']} />
             <ChartTooltip />
-            <Line type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} dot={false} activeDot={{ r: 4, fill: "var(--heading-color)" }} />
-          </LineChart>
+            <Area type="monotone" dataKey="value" stroke="var(--heading-color)" strokeWidth={2} fill="url(#collectionGradient)" />
+          </AreaChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>

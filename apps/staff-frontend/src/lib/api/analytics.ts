@@ -45,6 +45,18 @@ export interface CollectionAnalyticsData {
   highlights: CollectionHighlights;
 }
 
+export interface CloudflareAnalyticsDataPoint {
+  date: string;
+  uniqueVisitors: number;
+  totalRequests: number;
+}
+
+export interface CloudflareAnalyticsData {
+  dataPoints: CloudflareAnalyticsDataPoint[];
+  totalUniqueVisitors: number;
+  totalRequests: number;
+}
+
 // Queries
 export const RATING_ANALYTICS_DATA = gql`
   query RatingAnalyticsData {
@@ -102,6 +114,20 @@ export const COLLECTION_ANALYTICS_DATA = gql`
         mostBookmarkedCourseCount
         mostCollectionsByUser
       }
+    }
+  }
+`;
+
+export const CLOUDFLARE_ANALYTICS_DATA = gql`
+  query CloudflareAnalyticsData($days: Int!, $granularity: String) {
+    cloudflareAnalyticsData(days: $days, granularity: $granularity) {
+      dataPoints {
+        date
+        uniqueVisitors
+        totalRequests
+      }
+      totalUniqueVisitors
+      totalRequests
     }
   }
 `;
