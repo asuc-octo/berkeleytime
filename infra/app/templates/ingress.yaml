@@ -4,12 +4,10 @@ metadata:
   name: {{ .Release.Name }}-ingress
   labels:
     {{- include "bt-app.labels" . | nindent 4 }}
-  {{- if eq .Values.env "prod" }}
+  {{- if eq .Values.env "dev" }}
   annotations:
-    nginx.ingress.kubernetes.io/server-snippet: |
-      if ($host = "beta.berkeleytime.com") {
-        return 308 https://berkeleytime.com$request_uri;
-      }
+    nginx.ingress.kubernetes.io/permanent-redirect: "https://berkeleytime.com$request_uri"
+    nginx.ingress.kubernetes.io/permanent-redirect-code: "308"
   {{- end }}
 spec:
   ingressClassName: nginx
@@ -38,7 +36,7 @@ spec:
                   number: {{ .Values.port }}
 
     # redirect rule for beta.berkeleytime.com → berkeleytime.com (only prod)
-    {{- if eq .Values.env "prod" }}
+    {{- if eq .Values.env "dev" }}
     - host: beta.berkeleytime.com
       # annotation short-circuits, so below is only a (necessary) placeholder
       http:
