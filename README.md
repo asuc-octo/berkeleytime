@@ -8,4 +8,4 @@ Berkeleytime was created by [Yuxin Zhu](http://yuxinzhu.com/) and [Noah Gilmore]
 
 # Getting started
 
-Follow the instructions on the [Getting Started page of the docs](https://docs.stanfurdtime.com/getting-started/local-development.html) to setup!
+Follow the instructions on the [Getting Started page of the docs](https://docs.berkeleytime.com/getting-started/local-development.html) to setup!

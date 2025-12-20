@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to generate diff for'
+        description: "PR number to generate diff for"
         required: true
         type: string
   issue_comment:
@@ -25,7 +25,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v1
         with:
-          version: '3.10.2'
+          version: "3.10.2"
 
       - name: Install Helm Diff Plugin
         run: helm plugin install https://github.com/databus23/helm-diff
@@ -52,7 +52,7 @@ jobs:
           # Create header for the diff output file
           echo "### Helm Diff Results" > diff_output.md
           echo "" >> diff_output.md
-          
+
           # Function to process diff output and wrap each resource in a dropdown
           process_diff() {
             local resource=""
@@ -97,11 +97,11 @@ jobs:
               } >> diff_output.md
             fi
           }
-          
+
           # First update dependencies if needed
           helm dependency update ./infra/app
           helm dependency update ./infra/base
-          
+
           # Process app chart diff output and log raw diff
           echo "#### App Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
@@ -109,9 +109,9 @@ jobs:
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
-            --set host=stanfurdtime.com \
+            --set host=berkeleytime.com \
             --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
-            
+
           # Process base chart diff output and log raw diff
           echo "" >> diff_output.md
           echo "#### Base Chart Changes" >> diff_output.md
@@ -131,12 +131,12 @@ jobs:
           cat /tmp/raw_diffs.log >> diff_output.md
           echo "\`\`\`" >> diff_output.md
           echo "</details>" >> diff_output.md
-          
+
           # Log the raw diffs to GitHub Actions output
           echo "raw_diffs<<EOF" >> $GITHUB_OUTPUT
           cat /tmp/raw_diffs.log >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-          
+
           # Save the formatted diff output as a step output using a unique delimiter
           delim=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "diff<<$delim" >> $GITHUB_OUTPUT
@@ -161,4 +161,3 @@ jobs:
         env:
           PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}
-
