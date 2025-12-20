@@ -17,6 +17,23 @@ export interface UserCreationDataPoint {
   createdAt: string;
 }
 
+export interface CollectionCreationDataPoint {
+  createdAt: string;
+  userId: string;
+}
+
+export interface ClassAdditionDataPoint {
+  addedAt: string;
+  userId: string;
+}
+
+export interface CollectionAnalyticsData {
+  collectionCreations: CollectionCreationDataPoint[];
+  classAdditions: ClassAdditionDataPoint[];
+  customCollectionCreations: CollectionCreationDataPoint[];
+  usersWithCustomCollections: CollectionCreationDataPoint[];
+}
+
 // Queries
 export const RATING_ANALYTICS_DATA = gql`
   query RatingAnalyticsData {
@@ -42,6 +59,29 @@ export const USER_CREATION_ANALYTICS_DATA = gql`
   query UserCreationAnalyticsData {
     userCreationAnalyticsData {
       createdAt
+    }
+  }
+`;
+
+export const COLLECTION_ANALYTICS_DATA = gql`
+  query CollectionAnalyticsData {
+    collectionAnalyticsData {
+      collectionCreations {
+        createdAt
+        userId
+      }
+      classAdditions {
+        addedAt
+        userId
+      }
+      customCollectionCreations {
+        createdAt
+        userId
+      }
+      usersWithCustomCollections {
+        createdAt
+        userId
+      }
     }
   }
 `;

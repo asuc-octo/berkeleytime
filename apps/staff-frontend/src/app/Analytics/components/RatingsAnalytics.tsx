@@ -191,8 +191,8 @@ export function UniqueUsersGrowthBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Unique Users (30 days)"
-        description="Cumulative unique users who have submitted ratings"
+        title="Rating Users"
+        description="Users who submitted ratings (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -204,8 +204,8 @@ export function UniqueUsersGrowthBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Unique Users (30 days)"
-        description="Cumulative unique users who have submitted ratings"
+        title="Rating Users"
+        description="Users who submitted ratings (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -216,8 +216,8 @@ export function UniqueUsersGrowthBlock() {
 
   return (
     <AnalyticsCard
-      title="Unique Users (30 days)"
-      description="Cumulative unique users who have submitted ratings"
+      title="Rating Users"
+      description="Users who submitted ratings (30d)"
       currentValue={summaries.uniqueUsers.current}
       currentValueLabel="users"
       absoluteChange={summaries.uniqueUsers.absoluteChange}
@@ -273,8 +273,8 @@ export function RatingsCountBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Total Submissions (30 days)"
-        description="Cumulative rating submissions"
+        title="Total Ratings"
+        description="Cumulative rating submissions (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -286,8 +286,8 @@ export function RatingsCountBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Total Submissions (30 days)"
-        description="Cumulative rating submissions"
+        title="Total Ratings"
+        description="Cumulative rating submissions (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -298,8 +298,8 @@ export function RatingsCountBlock() {
 
   return (
     <AnalyticsCard
-      title="Total Submissions (30 days)"
-      description="Cumulative rating submissions"
+      title="Total Ratings"
+      description="Cumulative rating submissions (30d)"
       currentValue={summaries.totalRatings.current}
       currentValueLabel="submissions"
       absoluteChange={summaries.totalRatings.absoluteChange}
@@ -355,8 +355,8 @@ export function CourseDistributionBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Courses with Ratings (30 days)"
-        description="Cumulative courses that have received ratings"
+        title="Rated Courses"
+        description="Courses with ratings (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -368,8 +368,8 @@ export function CourseDistributionBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Courses with Ratings (30 days)"
-        description="Cumulative courses that have received ratings"
+        title="Rated Courses"
+        description="Courses with ratings (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -380,8 +380,8 @@ export function CourseDistributionBlock() {
 
   return (
     <AnalyticsCard
-      title="Courses with Ratings (30 days)"
-      description="Cumulative courses that have received ratings"
+      title="Rated Courses"
+      description="Courses with ratings (30d)"
       currentValue={summaries.uniqueCourses.current}
       currentValueLabel="courses"
       absoluteChange={summaries.uniqueCourses.absoluteChange}
@@ -584,8 +584,8 @@ export function CourseRatingsDistributionBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Ratings Distribution by Course"
-        description="Size represents number of ratings"
+        title="Course Ratings Treemap"
+        description="Area = rating count, by subject"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -597,8 +597,8 @@ export function CourseRatingsDistributionBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Ratings Distribution by Course"
-        description="Size represents number of ratings"
+        title="Course Ratings Treemap"
+        description="Area = rating count, by subject"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -610,7 +610,7 @@ export function CourseRatingsDistributionBlock() {
   return (
     <AnalyticsCard
       title="Course Ratings Treemap"
-      description={`Area equiv. ratings, grouped by subject (${totalSubjects} subjects)`}
+      description={`Area = rating count, by subject`}
       currentValue={singleRatingCount}
       currentValueLabel="w. 1 rating"
       subtitle={`avg ${avgPerClass.toFixed(1)} ratings/class`}
@@ -698,8 +698,8 @@ export function RatingsDayHistogramBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Daily Ratings (30 days)"
-        description="Number of ratings submitted per day"
+        title="Daily Ratings"
+        description="Number of ratings submitted per day (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -711,8 +711,8 @@ export function RatingsDayHistogramBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Daily Ratings (30 days)"
-        description="Number of ratings submitted per day"
+        title="Daily Ratings"
+        description="Number of ratings submitted per day (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -723,8 +723,8 @@ export function RatingsDayHistogramBlock() {
 
   return (
     <AnalyticsCard
-      title="Daily Ratings (30 days)"
-      description="Number of ratings submitted per day"
+      title="Daily Ratings"
+      description="Number of ratings submitted per day (30d)"
       currentValue={totalInWindow}
       currentValueLabel="ratings"
       subtitle={`avg ${avgPerDay.toFixed(1)}/day`}
@@ -882,7 +882,7 @@ export function AverageScoresOverTimeBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Cumulative Average Scores"
+        title="Average Scores"
         description="Running average of all ratings up to each day"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
@@ -895,7 +895,7 @@ export function AverageScoresOverTimeBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Cumulative Average Scores"
+        title="Average Scores"
         description="Running average of all ratings up to each day"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
@@ -907,7 +907,7 @@ export function AverageScoresOverTimeBlock() {
 
   return (
     <AnalyticsCard
-      title="Cumulative Average Scores"
+      title="Average Scores"
       description="Running average of all ratings up to each day"
       subtitle={`Use: ${overallAverages.Usefulness.toFixed(2)} | Diff: ${overallAverages.Difficulty.toFixed(2)} | Work: ${overallAverages.Workload.toFixed(2)}`}
     >

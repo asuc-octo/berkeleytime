@@ -107,8 +107,8 @@ export function UserGrowthBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="User Growth (30 days)"
-        description="New accounts created per day"
+        title="User Growth"
+        description="New accounts created per day (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -120,8 +120,8 @@ export function UserGrowthBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="User Growth (30 days)"
-        description="New accounts created per day"
+        title="User Growth"
+        description="New accounts created per day (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -132,8 +132,8 @@ export function UserGrowthBlock() {
 
   return (
     <AnalyticsCard
-      title="User Growth (30 days)"
-      description="Cumulative user accounts"
+      title="User Growth"
+      description="Cumulative user accounts (30d)"
       currentValue={totalUsers}
       currentValueLabel="users"
       absoluteChange={newLastMonth}
@@ -372,8 +372,8 @@ export function SignupDayHistogramBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Daily Signups (30 days)"
-        description="Number of signups per day"
+        title="Daily Signups"
+        description="Number of signups per day (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -385,8 +385,8 @@ export function SignupDayHistogramBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Daily Signups (30 days)"
-        description="Number of signups per day"
+        title="Daily Signups"
+        description="Number of signups per day (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -397,8 +397,8 @@ export function SignupDayHistogramBlock() {
 
   return (
     <AnalyticsCard
-      title="Daily Signups (30 days)"
-      description="Number of signups per day"
+      title="Daily Signups"
+      description="Number of signups per day (30d)"
       currentValue={totalInWindow}
       currentValueLabel="signups"
       subtitle={`avg ${avgPerDay.toFixed(1)}/day`}

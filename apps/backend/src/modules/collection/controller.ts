@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 import { Types } from "mongoose";
 
-import { ClassModel, CollectionColor, CollectionModel } from "@repo/common";
+import { ClassModel, CollectionColor, CollectionModel, StaffMemberModel } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
 
@@ -525,4 +525,121 @@ export const removeClassFromCollection = async (
   }
 
   return result.toObject() as unknown as CollectionDocument;
+};
+
+// Migration cutoff date - data before this is considered migration data
+// Migration happened on Dec 3, 2025
+const MIGRATION_CUTOFF = new Date("2025-12-04T00:00:00Z");
+
+/**
+ * Staff-only endpoint to get collection analytics data
+ * Returns:
+ * - Collection creation timestamps (for tracking users with schedules over time)
+ * - Classes added with addedAt timestamps (for tracking saved classes over time)
+ *
+ * Filters out migration data - collections/classes that were created during
+ * migration and haven't been touched since.
+ */
+export const getCollectionAnalyticsData = async (context: RequestContext) => {
+  if (!context.user?._id) {
+    throw new GraphQLError("Not authenticated", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Verify caller is a staff member
+  const staffMember = await StaffMemberModel.findOne({
+    userId: context.user._id,
+  }).lean();
+
+  if (!staffMember) {
+    throw new GraphQLError("Only staff members can access analytics data", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
+
+  // Fetch all collections with creation timestamps and classes
+  const collections = await CollectionModel.find({})
+    .select("createdBy isSystem classes createdAt")
+    .lean();
+
+  // First pass: collect all post-migration class additions and custom collection creations
+  const usersWithPostMigrationActivity = new Set<string>();
+  const classAdditions: { addedAt: string; userId: string }[] = [];
+  const customCollectionCreations: { createdAt: string; userId: string }[] = [];
+
+  // Track first custom collection per user (for unique users metric)
+  const userFirstCustomCollection = new Map<string, Date>();
+
+  collections.forEach((col) => {
+    const userId = col.createdBy;
+    const createdAt = (col as any).createdAt as Date;
+
+    // Track custom (non-system) collections created after migration
+    if (!col.isSystem && createdAt >= MIGRATION_CUTOFF) {
+      customCollectionCreations.push({
+        createdAt: createdAt.toISOString(),
+        userId,
+      });
+
+      // Track first custom collection per user
+      const existing = userFirstCustomCollection.get(userId);
+      if (!existing || createdAt < existing) {
+        userFirstCustomCollection.set(userId, createdAt);
+      }
+    }
+
+    const classes = col.classes || [];
+    classes.forEach((classEntry: any) => {
+      if (classEntry.addedAt) {
+        const addedAt = new Date(classEntry.addedAt);
+        // Only include post-migration class additions
+        if (addedAt >= MIGRATION_CUTOFF) {
+          classAdditions.push({
+            addedAt: addedAt.toISOString(),
+            userId,
+          });
+          usersWithPostMigrationActivity.add(userId);
+        }
+      }
+    });
+  });
+
+  // Convert user first custom collection to array
+  const usersWithCustomCollections = Array.from(userFirstCustomCollection.entries()).map(
+    ([userId, createdAt]) => ({
+      createdAt: createdAt.toISOString(),
+      userId,
+    })
+  );
+
+  // Second pass: get first activity date for users who have post-migration activity
+  // Use their earliest post-migration class addition as their "start" date
+  const userFirstActivity = new Map<string, Date>();
+  classAdditions.forEach((addition) => {
+    const addedAt = new Date(addition.addedAt);
+    const existing = userFirstActivity.get(addition.userId);
+    if (!existing || addedAt < existing) {
+      userFirstActivity.set(addition.userId, addedAt);
+    }
+  });
+
+  // Only include users who have actually added classes after migration
+  const collectionCreations = Array.from(userFirstActivity.entries()).map(([userId, firstAddedAt]) => ({
+    createdAt: firstAddedAt.toISOString(),
+    userId,
+  }));
+
+  // Sort by timestamp
+  collectionCreations.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  classAdditions.sort((a, b) => new Date(a.addedAt).getTime() - new Date(b.addedAt).getTime());
+  customCollectionCreations.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  usersWithCustomCollections.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+  return {
+    collectionCreations,
+    classAdditions,
+    customCollectionCreations,
+    usersWithCustomCollections,
+  };
 };

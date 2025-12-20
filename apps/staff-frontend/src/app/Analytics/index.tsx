@@ -1,5 +1,12 @@
 import styles from "./Analytics.module.scss";
 import {
+  CustomCollectionsBlock,
+  DailyBookmarksBlock,
+  TotalBookmarksBlock,
+  UsersWithBookmarksBlock,
+  UsersWithCustomCollectionsBlock,
+} from "./components/CollectionAnalytics";
+import {
   AverageScoresOverTimeBlock,
   CourseDistributionBlock,
   CourseRatingsDistributionBlock,
@@ -39,6 +46,21 @@ export default function Analytics() {
         </div>
         <div className={styles.cell}>
           <AverageScoresOverTimeBlock />
+        </div>
+        <div className={styles.cell}>
+          <UsersWithBookmarksBlock />
+        </div>
+        <div className={styles.cell}>
+          <TotalBookmarksBlock />
+        </div>
+        <div className={styles.cell}>
+          <DailyBookmarksBlock />
+        </div>
+        <div className={styles.cell}>
+          <CustomCollectionsBlock />
+        </div>
+        <div className={styles.cell}>
+          <UsersWithCustomCollectionsBlock />
         </div>
       </div>
     </div>

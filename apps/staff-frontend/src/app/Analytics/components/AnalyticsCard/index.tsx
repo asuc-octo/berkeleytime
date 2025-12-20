@@ -32,13 +32,8 @@ export function AnalyticsCard({
   const showMetrics = currentValue !== undefined || currentValueLabel !== undefined;
   const isPositive = (absoluteChange ?? percentChange ?? 0) >= 0;
 
-  // Format the change text: "+45 users, +3.8% (30d)"
+  // Format the change text: "+3.8% (30d)"
   const formatChangeText = () => {
-    if (absoluteChange !== undefined && percentChange !== undefined) {
-      const sign = isPositive ? "+" : "";
-      const label = currentValueLabel ? ` ${currentValueLabel}` : "";
-      return `${sign}${absoluteChange.toLocaleString()}${label}, ${sign}${percentChange.toFixed(1)}% (${changeTimescale})`;
-    }
     if (percentChange !== undefined) {
       const sign = isPositive ? "+" : "";
       return `${sign}${percentChange.toFixed(1)}% (${changeTimescale})`;
