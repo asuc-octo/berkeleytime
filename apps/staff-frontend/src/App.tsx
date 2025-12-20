@@ -55,7 +55,7 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <div className={styles.signInContainer}>Loading...</div>
       </ThemeProvider>
     );
@@ -63,7 +63,7 @@ export default function App() {
 
   if (!user || isNotStaff) {
     return (
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <div className={styles.signInContainer}>
           <pre className={styles.asciiArt}>{`                .,,uod8B8bou,,.
            ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
@@ -115,7 +115,7 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider>
+    <ThemeProvider forcedTheme="dark">
       <RouterProvider router={router} />
     </ThemeProvider>
   );

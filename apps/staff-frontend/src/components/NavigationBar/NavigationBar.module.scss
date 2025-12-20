@@ -1,21 +1,7 @@
-.themeDropdown {
-  min-width: 100px;
-  z-index: 1003;
-}
-
-.themeDropdownItem {
-  font-size: 14px;
-}
-
 .root {
   border-bottom: 1px solid var(--border-color);
   background-color: var(--foreground-color);
   padding: 12px;
-
-  .themeButton,
-  .themeButton[data-variant="outline"] {
-    border: none !important;
-  }
 
   .brand {
     margin-left: 10px;

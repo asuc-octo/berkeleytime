@@ -1,4 +1,6 @@
+import { Filter } from "iconoir-react";
 import { useMemo, useState } from "react";
+import { Popover } from "radix-ui";
 
 import {
   Area,
@@ -15,7 +17,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { LoadingIndicator, Select } from "@repo/theme";
+import { IconButton, Input, LoadingIndicator, Select } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -84,6 +86,70 @@ interface MetricSummary {
   current: number;
   absoluteChange: number;
   percentChange: number;
+}
+
+// Filter popover for "At least N ratings" filter
+function MinRatingsFilterPopover({
+  value,
+  onChange,
+  children,
+}: {
+  value: number;
+  onChange: (val: number) => void;
+  children?: React.ReactNode;
+}) {
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <IconButton size="small" style={{ width: 24, height: 24, marginLeft: "auto" }}>
+          <Filter width={14} height={14} />
+        </IconButton>
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          side="bottom"
+          align="end"
+          sideOffset={4}
+          style={{
+            background: "var(--foreground-color)",
+            border: "1px solid var(--border-color)",
+            borderRadius: 8,
+            padding: "12px 14px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            zIndex: 1000,
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
+          {children}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+              At least
+            </span>
+            <Input
+              value={value === 0 ? "" : String(value)}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "");
+                onChange(val === "" ? 0 : parseInt(val) || 0);
+              }}
+              style={{
+                width: 50,
+                minHeight: 24,
+                height: 24,
+                padding: "0 8px",
+                fontSize: 12,
+                textAlign: "center",
+              }}
+            />
+            <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+              ratings
+            </span>
+          </div>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
 }
 
 /**
@@ -261,6 +327,7 @@ export function UniqueUsersGrowthBlock() {
   const { data: rawData, loading, error } = useRatingAnalyticsData();
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
+  const [minRatings, setMinRatings] = useState(0);
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
@@ -281,10 +348,29 @@ export function UniqueUsersGrowthBlock() {
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
-    // Baseline users before the window
+    // Count ratings per user (up to current point in time)
+    const userRatingCounts = new Map<string, number>();
+    sortedData.forEach((point) => {
+      userRatingCounts.set(
+        point.anonymousUserId,
+        (userRatingCounts.get(point.anonymousUserId) || 0) + 1
+      );
+    });
+
+    // Filter users who have at least minRatings
+    const qualifiedUsers = new Set(
+      [...userRatingCounts.entries()]
+        .filter(([, count]) => count >= minRatings)
+        .map(([userId]) => userId)
+    );
+
+    // Baseline users before the window (only qualified ones)
     const baselineUsers = new Set<string>();
     sortedData.forEach((point) => {
-      if (new Date(point.createdAt) < rangeStart) {
+      if (
+        new Date(point.createdAt) < rangeStart &&
+        qualifiedUsers.has(point.anonymousUserId)
+      ) {
         baselineUsers.add(point.anonymousUserId);
       }
     });
@@ -301,10 +387,14 @@ export function UniqueUsersGrowthBlock() {
       }
     }
 
-    // Fill buckets
+    // Fill buckets (only qualified users)
     sortedData.forEach((point) => {
       const date = new Date(point.createdAt);
-      if (date >= rangeStart && date <= now) {
+      if (
+        date >= rangeStart &&
+        date <= now &&
+        qualifiedUsers.has(point.anonymousUserId)
+      ) {
         const key = getGranularityKey(date, granularity);
         bucketMap.get(key)?.add(point.anonymousUserId);
       }
@@ -330,7 +420,7 @@ export function UniqueUsersGrowthBlock() {
       start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
     return { chartData, current, absoluteChange, percentChange };
-  }, [rawData, timeRange, granularity]);
+  }, [rawData, timeRange, granularity, minRatings]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: "Unique Users" },
@@ -395,6 +485,9 @@ export function UniqueUsersGrowthBlock() {
       }}
       granularity={granularity}
       onGranularityChange={setGranularity}
+      customControls={
+        <MinRatingsFilterPopover value={minRatings} onChange={setMinRatings} />
+      }
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -655,6 +748,7 @@ export function CourseDistributionBlock() {
   const { data: rawData, loading, error } = useRatingAnalyticsData();
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
+  const [minRatings, setMinRatings] = useState(0);
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
@@ -675,10 +769,29 @@ export function CourseDistributionBlock() {
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
 
-    // Baseline courses before the window
+    // Count ratings per course
+    const courseRatingCounts = new Map<string, number>();
+    sortedData.forEach((point) => {
+      courseRatingCounts.set(
+        point.courseKey,
+        (courseRatingCounts.get(point.courseKey) || 0) + 1
+      );
+    });
+
+    // Filter courses that have at least minRatings
+    const qualifiedCourses = new Set(
+      [...courseRatingCounts.entries()]
+        .filter(([, count]) => count >= minRatings)
+        .map(([courseKey]) => courseKey)
+    );
+
+    // Baseline courses before the window (only qualified ones)
     const baselineCourses = new Set<string>();
     sortedData.forEach((point) => {
-      if (new Date(point.createdAt) < rangeStart) {
+      if (
+        new Date(point.createdAt) < rangeStart &&
+        qualifiedCourses.has(point.courseKey)
+      ) {
         baselineCourses.add(point.courseKey);
       }
     });
@@ -695,10 +808,14 @@ export function CourseDistributionBlock() {
       }
     }
 
-    // Fill buckets
+    // Fill buckets (only qualified courses)
     sortedData.forEach((point) => {
       const date = new Date(point.createdAt);
-      if (date >= rangeStart && date <= now) {
+      if (
+        date >= rangeStart &&
+        date <= now &&
+        qualifiedCourses.has(point.courseKey)
+      ) {
         const key = getGranularityKey(date, granularity);
         bucketMap.get(key)?.add(point.courseKey);
       }
@@ -724,7 +841,7 @@ export function CourseDistributionBlock() {
       start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
     return { chartData, current, absoluteChange, percentChange };
-  }, [rawData, timeRange, granularity]);
+  }, [rawData, timeRange, granularity, minRatings]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: "Courses with Ratings" },
@@ -783,6 +900,9 @@ export function CourseDistributionBlock() {
       }}
       granularity={granularity}
       onGranularityChange={setGranularity}
+      customControls={
+        <MinRatingsFilterPopover value={minRatings} onChange={setMinRatings} />
+      }
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -976,15 +1096,34 @@ const TreemapContent = (props: any) => {
 export function CourseRatingsDistributionBlock() {
   const { data: rawData, loading, error } = useRatingAnalyticsData();
   const { data: metricsData } = useRatingMetricsAnalyticsData();
-  const [minRatings, setMinRatings] = useState(1);
+  const [minRatings, setMinRatings] = useState(0);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [treemapTimeRange, setTreemapTimeRange] = useState<
+    "all" | "week" | "month"
+  >("all");
+
+  // Filter data by time range
+  const filteredData = useMemo(() => {
+    if (!rawData || rawData.length === 0) return [];
+    if (treemapTimeRange === "all") return rawData;
+
+    const now = new Date();
+    const cutoff = new Date();
+    if (treemapTimeRange === "week") {
+      cutoff.setDate(now.getDate() - 7);
+    } else {
+      cutoff.setMonth(now.getMonth() - 1);
+    }
+
+    return rawData.filter((point) => new Date(point.createdAt) >= cutoff);
+  }, [rawData, treemapTimeRange]);
 
   // Extract all unique subjects with course counts for the dropdown
   const subjectOptions = useMemo(() => {
-    if (!rawData || rawData.length === 0) return [];
+    if (!filteredData || filteredData.length === 0) return [];
 
     const subjectCourseCounts = new Map<string, Map<string, number>>();
-    rawData.forEach((point) => {
+    filteredData.forEach((point) => {
       const parts = point.courseKey.split(" ");
       const subject = parts[0];
       if (!subjectCourseCounts.has(subject)) {
@@ -1008,7 +1147,7 @@ export function CourseRatingsDistributionBlock() {
         label: subject,
         meta: `${count}`,
       }));
-  }, [rawData, minRatings]);
+  }, [filteredData, minRatings]);
 
   // Calculate per-course metric averages for tooltip display
   const courseMetrics = useMemo(() => {
@@ -1055,7 +1194,7 @@ export function CourseRatingsDistributionBlock() {
 
   const { treemapData, totalSubjects, totalCourses, avgPerClass } =
     useMemo(() => {
-      if (!rawData || rawData.length === 0) {
+      if (!filteredData || filteredData.length === 0) {
         return {
           treemapData: [],
           totalSubjects: 0,
@@ -1067,7 +1206,7 @@ export function CourseRatingsDistributionBlock() {
       // Count ratings per course and group by subject
       const subjectData = new Map<string, Map<string, number>>();
 
-      rawData.forEach((point) => {
+      filteredData.forEach((point) => {
         const parts = point.courseKey.split(" ");
         const subject = parts[0];
         const courseNum = parts.slice(1).join(" ") || point.courseKey;
@@ -1128,7 +1267,7 @@ export function CourseRatingsDistributionBlock() {
         totalCourses,
         avgPerClass,
       };
-    }, [rawData, minRatings, selectedSubject, courseMetrics]);
+    }, [filteredData, minRatings, selectedSubject, courseMetrics]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: "Ratings" },
@@ -1186,49 +1325,49 @@ export function CourseRatingsDistributionBlock() {
       customControls={
         <>
           <span style={{ fontSize: 12, color: "var(--label-color)" }}>
-            Subject
+            Time range
           </span>
           <Select
-            searchable
-            clearable
-            value={selectedSubject}
-            onChange={(val) => setSelectedSubject(val as string | null)}
-            options={subjectOptions}
-            placeholder="All"
-            searchPlaceholder="Search"
-            style={{
-              width: 140,
-              minHeight: 24,
-              height: 24,
-              padding: "0 8px",
-              fontSize: 12,
-            }}
-          />
-          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
-            At least
-          </span>
-          <Select
-            value={String(minRatings)}
-            onChange={(val) => setMinRatings(parseInt(val as string))}
+            value={treemapTimeRange}
+            onChange={(val) =>
+              setTreemapTimeRange(val as "all" | "week" | "month")
+            }
             options={[
-              { value: "1", label: "1" },
-              { value: "2", label: "2" },
-              { value: "3", label: "3" },
-              { value: "5", label: "5" },
-              { value: "10", label: "10" },
-              { value: "20", label: "20" },
+              { value: "all", label: "All time" },
+              { value: "week", label: "This week" },
+              { value: "month", label: "This month" },
             ]}
             style={{
-              width: "fit-content",
+              width: 110,
               minHeight: 24,
               height: 24,
               padding: "0 8px",
               fontSize: 12,
             }}
           />
-          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
-            ratings
-          </span>
+          <MinRatingsFilterPopover value={minRatings} onChange={setMinRatings}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+                Subject
+              </span>
+              <Select
+                searchable
+                clearable
+                value={selectedSubject}
+                onChange={(val) => setSelectedSubject(val as string | null)}
+                options={subjectOptions}
+                placeholder="All"
+                searchPlaceholder="Search"
+                style={{
+                  width: 140,
+                  minHeight: 24,
+                  height: 24,
+                  padding: "0 8px",
+                  fontSize: 12,
+                }}
+              />
+            </div>
+          </MinRatingsFilterPopover>
         </>
       }
     >
