@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [backend, frontend, datapuller, ag-frontend, docs]
+        image: [backend, frontend, datapuller] # only essential to reduce actions minutes usage
 
     steps:
       - name: Checkout Repository
