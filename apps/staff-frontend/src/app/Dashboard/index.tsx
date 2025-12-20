@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { gql, useQuery } from "@apollo/client";
-import { EditPencil, Plus, User, UserBadgeCheck, WarningTriangleSolid } from "iconoir-react";
+import {
+  EditPencil,
+  Plus,
+  User,
+  UserBadgeCheck,
+  WarningTriangleSolid,
+} from "iconoir-react";
 
 import { OptionItem, Select } from "@repo/theme";
 
@@ -143,79 +149,92 @@ export default function Dashboard() {
         />
       </div>
 
-      {selectedUser && (() => {
-        // Use dummy data for now
-        const staffMember: StaffMember | null = createDummyStaffMember(dogPhotos);
-        const isStaff = staffMember !== null;
+      {selectedUser &&
+        (() => {
+          // Use dummy data for now
+          const staffMember: StaffMember | null =
+            createDummyStaffMember(dogPhotos);
+          const isStaff = staffMember !== null;
 
-        return (
-          <div className={styles.selectedUser}>
-            <div className={styles.selectedUserName}>{selectedUser.name}</div>
-            <div className={styles.selectedUserEmail}>
-              {selectedUser.email}
-              {!selectedUser.email.endsWith("@berkeley.edu") && (
-                <span className={styles.unaffiliatedWarning}>
-                  <WarningTriangleSolid width={14} height={14} />
-                  Unaffiliated email
-                </span>
-              )}
-            </div>
-
-            <div className={styles.staffStatus}>
-              <span className={isStaff ? styles.staffBadge : styles.notStaffBadge}>
-                <UserBadgeCheck width={14} height={14} />
-                {isStaff ? "Staff member" : "Not a staff yet"}
-              </span>
-              {isStaff && staffMember.isAlumni && (
-                <span className={styles.alumniBadge}>Alumni</span>
-              )}
-            </div>
-
-            {isStaff && staffMember?.personalLink && (
-              <div className={styles.personalLink}>
-                <a href={staffMember.personalLink} target="_blank" rel="noopener noreferrer">
-                  {staffMember.personalLink}
-                </a>
+          return (
+            <div className={styles.selectedUser}>
+              <div className={styles.selectedUserName}>{selectedUser.name}</div>
+              <div className={styles.selectedUserEmail}>
+                {selectedUser.email}
+                {!selectedUser.email.endsWith("@berkeley.edu") && (
+                  <span className={styles.unaffiliatedWarning}>
+                    <WarningTriangleSolid width={14} height={14} />
+                    Unaffiliated email
+                  </span>
+                )}
               </div>
-            )}
 
-            <div className={styles.semesterRoles}>
-              <div className={styles.semesterRolesHeader}>Experience</div>
-              {isStaff && staffMember?.semesterRoles.map((role) => (
-                <div key={role._id} className={styles.semesterRole}>
-                  {role.photo ? (
-                    <img
-                      src={role.photo}
-                      alt={`${selectedUser.name} - ${role.semester} ${role.year}`}
-                      className={styles.semesterRolePhoto}
-                    />
-                  ) : (
-                    <div className={styles.semesterRolePhotoPlaceholder}>
-                      <User width={24} height={24} />
-                    </div>
-                  )}
-                  <div className={styles.semesterRoleInfo}>
-                    <span className={styles.semesterRoleTerm}>
-                      {role.semester} {role.year}
-                    </span>
-                    <span className={styles.semesterRoleTitle}>{role.role}</span>
-                    {role.team && (
-                      <span className={styles.semesterRoleTeam}>{role.team}</span>
-                    )}
-                  </div>
-                  <button type="button" className={styles.editButton}>
-                    <EditPencil width={16} height={16} />
-                  </button>
+              <div className={styles.staffStatus}>
+                <span
+                  className={isStaff ? styles.staffBadge : styles.notStaffBadge}
+                >
+                  <UserBadgeCheck width={14} height={14} />
+                  {isStaff ? "Staff member" : "Not a staff yet"}
+                </span>
+                {isStaff && staffMember.isAlumni && (
+                  <span className={styles.alumniBadge}>Alumni</span>
+                )}
+              </div>
+
+              {isStaff && staffMember?.personalLink && (
+                <div className={styles.personalLink}>
+                  <a
+                    href={staffMember.personalLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {staffMember.personalLink}
+                  </a>
                 </div>
-              ))}
-              <button className={styles.addButton} type="button">
-                <Plus width={16} height={16} />
-                Add new role
-              </button>
+              )}
+
+              <div className={styles.semesterRoles}>
+                <div className={styles.semesterRolesHeader}>Experience</div>
+                {isStaff &&
+                  staffMember?.semesterRoles.map((role) => (
+                    <div key={role._id} className={styles.semesterRole}>
+                      {role.photo ? (
+                        <img
+                          src={role.photo}
+                          alt={`${selectedUser.name} - ${role.semester} ${role.year}`}
+                          className={styles.semesterRolePhoto}
+                        />
+                      ) : (
+                        <div className={styles.semesterRolePhotoPlaceholder}>
+                          <User width={24} height={24} />
+                        </div>
+                      )}
+                      <div className={styles.semesterRoleInfo}>
+                        <span className={styles.semesterRoleTerm}>
+                          {role.semester} {role.year}
+                        </span>
+                        <span className={styles.semesterRoleTitle}>
+                          {role.role}
+                        </span>
+                        {role.team && (
+                          <span className={styles.semesterRoleTeam}>
+                            {role.team}
+                          </span>
+                        )}
+                      </div>
+                      <button type="button" className={styles.editButton}>
+                        <EditPencil width={16} height={16} />
+                      </button>
+                    </div>
+                  ))}
+                <button className={styles.addButton} type="button">
+                  <Plus width={16} height={16} />
+                  Add new role
+                </button>
+              </div>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
     </div>
   );
 }

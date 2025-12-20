@@ -11,10 +11,6 @@ export interface ReadUserResponse {
   user: IUser;
 }
 
-export const BASE = import.meta.env.DEV
-  ? "http://localhost:8080"
-  : "https://beta.berkeleytime.com";
-
 export const READ_USER = gql`
   query GetUser {
     user {
@@ -31,12 +27,12 @@ export const signIn = (redirectURI?: string) => {
     redirectURI ??
     window.location.origin + window.location.pathname + window.location.search;
 
-  window.location.href = `${BASE}/api/login?redirect_uri=${redirectURI}`;
+  window.location.href = `${window.location.origin}/api/login?redirect_uri=${redirectURI}`;
 };
 
 export const signOut = async (redirectURI?: string) => {
   redirectURI =
     redirectURI ?? window.location.pathname + window.location.search;
 
-  window.location.href = `${BASE}/api/logout?redirect_uri=${redirectURI}`;
+  window.location.href = `${window.location.origin}/api/logout?redirect_uri=${redirectURI}`;
 };
