@@ -1,5 +1,6 @@
-import { SemesterRoleModel, StaffMemberModel, UserModel } from "@repo/common";
 import { GraphQLError } from "graphql";
+
+import { SemesterRoleModel, StaffMemberModel, UserModel } from "@repo/common";
 
 import {
   Semester,
@@ -214,7 +215,14 @@ export const deleteStaffMember = async (
   memberId: string
 ) => {
   // Verify caller is a staff member
-  await requireStaffMember(context);
+  const callerStaffMember = await requireStaffMember(context);
+
+  // Prevent self-deletion to avoid locking out access
+  if (callerStaffMember._id.toString() === memberId) {
+    throw new GraphQLError("You cannot remove yourself from staff", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
 
   // Get staff member to find userId
   const member = await StaffMemberModel.findById(memberId).lean();

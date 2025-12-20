@@ -31,6 +31,7 @@ import {
   useUpdateStaffInfo,
   useUpsertSemesterRole,
 } from "../../hooks/api/staff";
+import { useReadUser } from "../../hooks/api/users";
 import { Semester } from "../../lib/api/staff";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
@@ -128,6 +129,7 @@ export default function Dashboard() {
   } | null>(null);
 
   // API hooks
+  const { data: currentUser } = useReadUser();
   const {
     data: staffMembers,
     loading: staffLoading,
@@ -135,6 +137,9 @@ export default function Dashboard() {
   } = useAllStaffMembers();
   const { data: selectedStaffMember } = useStaffMemberByUserId({
     userId: selectedUser?._id ?? null,
+  });
+  const { data: currentUserStaffMember } = useStaffMemberByUserId({
+    userId: currentUser?._id ?? null,
   });
   const { ensureStaffMember } = useEnsureStaffMember();
   const { upsertSemesterRole } = useUpsertSemesterRole();
@@ -847,16 +852,17 @@ export default function Dashboard() {
             </div>
           </Dialog.Body>
           <Dialog.Footer>
-            {!isAddingNewStaff && (
-              <Button
-                variant="secondary"
-                onClick={handleDeleteStaffMember}
-                style={{ marginRight: "auto", color: "var(--red-500)" }}
-              >
-                <Trash width={16} height={16} />
-                Remove Staff
-              </Button>
-            )}
+            {!isAddingNewStaff &&
+              editingStaffMemberId !== currentUserStaffMember?.id && (
+                <Button
+                  variant="secondary"
+                  onClick={handleDeleteStaffMember}
+                  style={{ marginRight: "auto", color: "var(--red-500)" }}
+                >
+                  <Trash width={16} height={16} />
+                  Remove Staff
+                </Button>
+              )}
             <Button
               variant="secondary"
               onClick={() => setIsStaffInfoModalOpen(false)}

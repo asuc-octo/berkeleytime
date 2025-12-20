@@ -3,6 +3,7 @@ import {
   UpsertSemesterRoleInput,
 } from "../../generated-types/graphql";
 import {
+  StaffRequestContext,
   deleteSemesterRole,
   deleteStaffMember,
   ensureStaffMember,
@@ -15,7 +16,6 @@ import {
   getStaffBySemester,
   getStaffMember,
   getStaffMemberByUserId,
-  StaffRequestContext,
   updateStaffInfo,
   upsertSemesterRole,
 } from "./controller";
