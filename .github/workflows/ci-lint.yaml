@@ -23,7 +23,7 @@ jobs:
 
       - name: Lint
         id: lint
-        run: npm run lint > lint-output.txt 2>&1
+        run: npm run lint -- --continue --output-logs=errors-only > lint-output.txt 2>&1
         continue-on-error: true
 
       - name: Post Lint Report
@@ -42,6 +42,8 @@ jobs:
             }
 
             const body = `### Linting Failed
+
+            Run \`npm run lint -- --continue\` to see the full output locally.
 
             <details>
             <summary>Click to expand lint output</summary>
