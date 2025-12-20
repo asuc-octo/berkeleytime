@@ -2,6 +2,12 @@ name: "CI: Check Lint"
 
 on:
   pull_request:
+    paths:
+      - "apps/backend/**"
+      - "apps/frontend/**"
+      - "apps/ag-frontend/**"
+      - "apps/datapuller/**"
+      - "packages/**"
 
 jobs:
   lint:

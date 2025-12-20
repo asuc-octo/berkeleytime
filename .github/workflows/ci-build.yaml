@@ -2,6 +2,11 @@ name: "CI: Check Build"
 
 on:
   pull_request:
+    paths:
+      - "apps/backend/**"
+      - "apps/frontend/**"
+      - "apps/datapuller/**"
+      - "packages/**"
 
 jobs:
   build-image:
