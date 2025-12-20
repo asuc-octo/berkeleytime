@@ -7,6 +7,12 @@ export interface RatingDataPoint {
   courseKey: string;
 }
 
+export interface RatingMetricDataPoint {
+  createdAt: string;
+  metricName: string;
+  value: number;
+}
+
 export interface UserCreationDataPoint {
   createdAt: string;
 }
@@ -18,6 +24,16 @@ export const RATING_ANALYTICS_DATA = gql`
       createdAt
       anonymousUserId
       courseKey
+    }
+  }
+`;
+
+export const RATING_METRICS_ANALYTICS_DATA = gql`
+  query RatingMetricsAnalyticsData {
+    ratingMetricsAnalyticsData {
+      createdAt
+      metricName
+      value
     }
   }
 `;

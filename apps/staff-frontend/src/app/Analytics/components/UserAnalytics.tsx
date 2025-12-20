@@ -31,10 +31,15 @@ interface DailyDataPoint {
 export function UserGrowthBlock() {
   const { data: rawData, loading, error } = useUserCreationAnalyticsData();
 
-  const { hourlyData, totalUsers, newLastMonth, percentGrowth } = useMemo(() => {
+  const { dailyData, totalUsers, newLastMonth, percentGrowth } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
-      return { hourlyData: [] as DailyDataPoint[], totalUsers: 0, newLastMonth: 0, percentGrowth: 0 };
+      return { dailyData: [] as DailyDataPoint[], totalUsers: 0, newLastMonth: 0, percentGrowth: 0 };
     }
+
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
 
     // Get date 30 days ago
     const now = new Date();
@@ -56,39 +61,33 @@ export function UserGrowthBlock() {
     }
     const baselineCount = cumulativeCount;
 
-    // Group by hour and track cumulative
-    const hourMap = new Map<string, number>();
-
-    // Initialize all hours in the range
-    for (let d = new Date(thirtyDaysAgo); d <= now; d.setTime(d.getTime() + 60 * 60 * 1000)) {
-      const hourKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}-${String(d.getHours()).padStart(2, "0")}`;
-      hourMap.set(hourKey, 0);
+    // Initialize all days in the last 30 days
+    const dayMap = new Map<string, number>();
+    for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
+      const dayKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      dayMap.set(dayKey, 0);
     }
 
-    // Count new users per hour
+    // Count new users per day
     sortedUsers.forEach((point) => {
       const date = new Date(point.createdAt);
       if (date >= thirtyDaysAgo && date <= now) {
-        const hourKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}-${String(date.getHours()).padStart(2, "0")}`;
-        hourMap.set(hourKey, (hourMap.get(hourKey) || 0) + 1);
+        const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        dayMap.set(dayKey, (dayMap.get(dayKey) || 0) + 1);
       }
     });
 
     // Convert to sorted array with cumulative values
-    const sortedHours = Array.from(hourMap.keys()).sort();
-    const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-    ];
+    const sortedDays = Array.from(dayMap.keys()).sort();
 
     let cumulative = baselineCount;
-    const hourlyData: DailyDataPoint[] = sortedHours.map((hourKey) => {
-      const [, month, day, hour] = hourKey.split("-");
-      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)} ${hour}:00`;
-      cumulative += hourMap.get(hourKey) || 0;
+    const dailyData: DailyDataPoint[] = sortedDays.map((dayKey) => {
+      const [, month, day] = dayKey.split("-");
+      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+      cumulative += dayMap.get(dayKey) || 0;
       return {
         date: displayDate,
-        dateKey: hourKey,
+        dateKey: dayKey,
         value: cumulative,
       };
     });
@@ -97,7 +96,7 @@ export function UserGrowthBlock() {
     const newLastMonth = totalUsers - baselineCount;
     const percentGrowth = baselineCount > 0 ? (newLastMonth / baselineCount) * 100 : 0;
 
-    return { hourlyData, totalUsers, newLastMonth, percentGrowth };
+    return { dailyData, totalUsers, newLastMonth, percentGrowth };
   }, [rawData]);
 
   const chartConfig = createChartConfig(["value"], {
@@ -134,16 +133,16 @@ export function UserGrowthBlock() {
   return (
     <AnalyticsCard
       title="User Growth (30 days)"
-      description="New accounts created per day"
-      currentValue={newLastMonth}
-      currentValuePrefix="+"
+      description="Cumulative user accounts"
+      currentValue={totalUsers}
       currentValueLabel="users"
-      subtitle={`${percentGrowth >= 0 ? "+" : ""}${percentGrowth.toFixed(1)}% (30d)`}
-      subtitlePositive={percentGrowth >= 0}
+      absoluteChange={newLastMonth}
+      percentChange={percentGrowth}
+      changeTimescale="30d"
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={hourlyData}>
+          <LineChart data={dailyData}>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="var(--border-color)"
@@ -296,6 +295,136 @@ export function SignupHourHistogramBlock() {
                 valueFormatter: (value: number) => `${value.toFixed(2)}%`,
               }}
             />
+            <Bar
+              dataKey="value"
+              fill="var(--heading-color)"
+              radius={[2, 2, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+// Daily Signups Block - signups per calendar day (last 30 days)
+export function SignupDayHistogramBlock() {
+  const { data: rawData, loading, error } = useUserCreationAnalyticsData();
+
+  const { dailyData, totalInWindow, avgPerDay } = useMemo(() => {
+    if (!rawData || rawData.length === 0) {
+      return { dailyData: [] as DailyDataPoint[], totalInWindow: 0, avgPerDay: 0 };
+    }
+
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+
+    // Get date 30 days ago
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // Initialize all days in the last 30 days with 0
+    const dateMap = new Map<string, number>();
+    for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      dateMap.set(dateKey, 0);
+    }
+
+    // Count signups per day (only last 30 days)
+    rawData.forEach((point) => {
+      const date = new Date(point.createdAt);
+      if (date >= thirtyDaysAgo && date <= now) {
+        const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        dateMap.set(dateKey, (dateMap.get(dateKey) || 0) + 1);
+      }
+    });
+
+    // Sort by date and convert to chart data
+    const sortedDates = Array.from(dateMap.keys()).sort();
+    const dailyData: DailyDataPoint[] = sortedDates.map((dateKey) => {
+      const [, month, day] = dateKey.split("-");
+      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+      return {
+        date: displayDate,
+        dateKey,
+        value: dateMap.get(dateKey) || 0,
+      };
+    });
+
+    // Calculate total signups in window and average
+    const totalInWindow = dailyData.reduce((sum, d) => sum + d.value, 0);
+    const avgPerDay = dailyData.length > 0 ? totalInWindow / dailyData.length : 0;
+
+    return {
+      dailyData,
+      totalInWindow,
+      avgPerDay,
+    };
+  }, [rawData]);
+
+  const chartConfig = createChartConfig(["value"], {
+    labels: { value: "Signups" },
+    colors: { value: "var(--heading-color)" },
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Daily Signups (30 days)"
+        description="Number of signups per day"
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+          Loading...
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Daily Signups (30 days)"
+        description="Number of signups per day"
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Daily Signups (30 days)"
+      description="Number of signups per day"
+      currentValue={totalInWindow}
+      currentValueLabel="signups"
+      subtitle={`avg ${avgPerDay.toFixed(1)}/day`}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={dailyData}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 9 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={30}
+            />
+            <ChartTooltip />
             <Bar
               dataKey="value"
               fill="var(--heading-color)"

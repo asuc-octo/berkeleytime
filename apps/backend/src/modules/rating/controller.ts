@@ -899,3 +899,43 @@ export const getRatingAnalyticsData = async (context: RequestContext) => {
     courseKey: `${rating.subject} ${rating.courseNumber}`,
   }));
 };
+
+/**
+ * Staff-only endpoint to get rating metric values for analytics
+ * Returns all rating metrics (excluding boolean metrics like Recording/Attendance)
+ * with their values to compute average scores over time
+ */
+export const getRatingMetricsAnalyticsData = async (
+  context: RequestContext
+) => {
+  if (!context.user?._id) {
+    throw new GraphQLError("Not authenticated", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Verify caller is a staff member
+  const staffMember = await StaffMemberModel.findOne({
+    userId: context.user._id,
+  }).lean();
+
+  if (!staffMember) {
+    throw new GraphQLError("Only staff members can access analytics data", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
+
+  // Fetch all numeric rating metrics (1-5 scale), excluding boolean metrics
+  const ratings = await RatingModel.find({
+    metricName: { $in: ["Usefulness", "Difficulty", "Workload"] },
+  })
+    .select("metricName value createdAt")
+    .sort({ createdAt: 1 })
+    .lean();
+
+  return ratings.map((rating) => ({
+    createdAt: (rating as any).createdAt.toISOString(),
+    metricName: rating.metricName as MetricName,
+    value: rating.value,
+  }));
+};

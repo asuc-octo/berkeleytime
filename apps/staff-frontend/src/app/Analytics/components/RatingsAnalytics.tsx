@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
   Line,
   LineChart,
@@ -17,7 +19,7 @@ import {
   createChartConfig,
 } from "@/components/Chart";
 
-import { useRatingAnalyticsData } from "@/hooks/api";
+import { useRatingAnalyticsData, useRatingMetricsAnalyticsData } from "@/hooks/api";
 
 import { AnalyticsCard } from "./AnalyticsCard";
 
@@ -29,11 +31,12 @@ interface DailyDataPoint {
 
 interface MetricSummary {
   current: number;
-  percentChange7d: number;
+  absoluteChange: number;
+  percentChange: number;
 }
 
 /**
- * Process raw rating data points into daily cumulative timeseries
+ * Process raw rating data points into daily cumulative timeseries (last 30 days)
  */
 function useProcessedAnalyticsData() {
   const { data: rawData, loading, error } = useRatingAnalyticsData();
@@ -52,7 +55,36 @@ function useProcessedAnalyticsData() {
       };
     }
 
-    // Group data by day (YYYY-MM-DD format)
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+
+    // Get date 30 days ago
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // Sort by date first
+    const sortedData = [...rawData].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+    // Count baseline values (before the 30-day window)
+    let baselineRatings = 0;
+    const baselineUsers = new Set<string>();
+    const baselineCourses = new Set<string>();
+
+    sortedData.forEach((point) => {
+      const date = new Date(point.createdAt);
+      if (date < thirtyDaysAgo) {
+        baselineRatings++;
+        baselineUsers.add(point.anonymousUserId);
+        baselineCourses.add(point.courseKey);
+      }
+    });
+
+    // Initialize all days in the last 30 days
     const dailyData = new Map<
       string,
       {
@@ -62,36 +94,36 @@ function useProcessedAnalyticsData() {
       }
     >();
 
-    // Sort by date first
-    const sortedData = [...rawData].sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
+    for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
+      const dayKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      dailyData.set(dayKey, {
+        count: 0,
+        users: new Set(),
+        courses: new Set(),
+      });
+    }
 
+    // Fill in data for the last 30 days
     sortedData.forEach((point) => {
       const date = new Date(point.createdAt);
-      const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      if (date >= thirtyDaysAgo && date <= now) {
+        const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
-      if (!dailyData.has(dayKey)) {
-        dailyData.set(dayKey, {
-          count: 0,
-          users: new Set(),
-          courses: new Set(),
-        });
+        const dayData = dailyData.get(dayKey);
+        if (dayData) {
+          dayData.count++;
+          dayData.users.add(point.anonymousUserId);
+          dayData.courses.add(point.courseKey);
+        }
       }
-
-      const dayData = dailyData.get(dayKey)!;
-      dayData.count++;
-      dayData.users.add(point.anonymousUserId);
-      dayData.courses.add(point.courseKey);
     });
 
     // Convert to sorted array and compute cumulative values
     const sortedDays = Array.from(dailyData.keys()).sort();
 
-    let cumulativeRatings = 0;
-    const cumulativeUsers = new Set<string>();
-    const cumulativeCourses = new Set<string>();
+    let cumulativeRatings = baselineRatings;
+    const cumulativeUsers = new Set<string>(baselineUsers);
+    const cumulativeCourses = new Set<string>(baselineCourses);
 
     const totalRatings: DailyDataPoint[] = [];
     const uniqueUsers: DailyDataPoint[] = [];
@@ -102,10 +134,6 @@ function useProcessedAnalyticsData() {
 
       // Format date for display (e.g., "Dec 19")
       const [, month, day] = dayKey.split("-");
-      const monthNames = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-      ];
       const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
 
       // Cumulative ratings
@@ -121,32 +149,19 @@ function useProcessedAnalyticsData() {
       uniqueCourses.push({ date: displayDate, dateKey: dayKey, value: cumulativeCourses.size });
     });
 
-    // Calculate 7-day percent change
-    const calc7dChange = (data: DailyDataPoint[]): MetricSummary => {
-      if (data.length === 0) return { current: 0, percentChange7d: 0 };
+    // Calculate 30-day change (comparing first and last point in window)
+    const calc30dChange = (data: DailyDataPoint[]): MetricSummary => {
+      if (data.length === 0) return { current: 0, absoluteChange: 0, percentChange: 0 };
 
       const current = data[data.length - 1].value;
+      const start = data[0].value;
 
-      // Find value from 7 days ago
-      const now = new Date();
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const sevenDaysAgoKey = `${sevenDaysAgo.getFullYear()}-${String(sevenDaysAgo.getMonth() + 1).padStart(2, "0")}-${String(sevenDaysAgo.getDate()).padStart(2, "0")}`;
-
-      // Find the closest data point on or before 7 days ago
-      let value7dAgo = 0;
-      for (const point of data) {
-        if (point.dateKey <= sevenDaysAgoKey) {
-          value7dAgo = point.value;
-        } else {
-          break;
-        }
-      }
-
-      const percentChange7d = value7dAgo > 0
-        ? ((current - value7dAgo) / value7dAgo) * 100
+      const absoluteChange = current - start;
+      const percentChange = start > 0
+        ? ((current - start) / start) * 100
         : current > 0 ? 100 : 0;
 
-      return { current, percentChange7d };
+      return { current, absoluteChange, percentChange };
     };
 
     return {
@@ -154,9 +169,9 @@ function useProcessedAnalyticsData() {
       uniqueUsers,
       uniqueCourses,
       summaries: {
-        totalRatings: calc7dChange(totalRatings),
-        uniqueUsers: calc7dChange(uniqueUsers),
-        uniqueCourses: calc7dChange(uniqueCourses),
+        totalRatings: calc30dChange(totalRatings),
+        uniqueUsers: calc30dChange(uniqueUsers),
+        uniqueCourses: calc30dChange(uniqueCourses),
       },
     };
   }, [rawData]);
@@ -176,8 +191,8 @@ export function UniqueUsersGrowthBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Unique Users Growth"
-        description="Number of unique users who have submitted ratings"
+        title="Unique Users (30 days)"
+        description="Cumulative unique users who have submitted ratings"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -189,8 +204,8 @@ export function UniqueUsersGrowthBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Unique Users Growth"
-        description="Number of unique users who have submitted ratings"
+        title="Unique Users (30 days)"
+        description="Cumulative unique users who have submitted ratings"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -201,10 +216,13 @@ export function UniqueUsersGrowthBlock() {
 
   return (
     <AnalyticsCard
-      title="Unique Users Growth"
-      description="Number of unique users who have submitted ratings"
+      title="Unique Users (30 days)"
+      description="Cumulative unique users who have submitted ratings"
       currentValue={summaries.uniqueUsers.current}
-      percentChange={summaries.uniqueUsers.percentChange7d}
+      currentValueLabel="users"
+      absoluteChange={summaries.uniqueUsers.absoluteChange}
+      percentChange={summaries.uniqueUsers.percentChange}
+      changeTimescale="30d"
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -255,8 +273,8 @@ export function RatingsCountBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Total Submissions"
-        description="Cumulative number of rating submissions over time"
+        title="Total Submissions (30 days)"
+        description="Cumulative rating submissions"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -268,8 +286,8 @@ export function RatingsCountBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Total Submissions"
-        description="Cumulative number of rating submissions over time"
+        title="Total Submissions (30 days)"
+        description="Cumulative rating submissions"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -280,10 +298,13 @@ export function RatingsCountBlock() {
 
   return (
     <AnalyticsCard
-      title="Total Submissions"
-      description="Cumulative number of rating submissions over time"
+      title="Total Submissions (30 days)"
+      description="Cumulative rating submissions"
       currentValue={summaries.totalRatings.current}
-      percentChange={summaries.totalRatings.percentChange7d}
+      currentValueLabel="submissions"
+      absoluteChange={summaries.totalRatings.absoluteChange}
+      percentChange={summaries.totalRatings.percentChange}
+      changeTimescale="30d"
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -334,8 +355,8 @@ export function CourseDistributionBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Courses with Ratings"
-        description="Number of courses that have received at least one rating"
+        title="Courses with Ratings (30 days)"
+        description="Cumulative courses that have received ratings"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
           Loading...
@@ -347,8 +368,8 @@ export function CourseDistributionBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Courses with Ratings"
-        description="Number of courses that have received at least one rating"
+        title="Courses with Ratings (30 days)"
+        description="Cumulative courses that have received ratings"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
           Error loading data
@@ -359,10 +380,13 @@ export function CourseDistributionBlock() {
 
   return (
     <AnalyticsCard
-      title="Courses with Ratings"
-      description="Number of courses that have received at least one rating"
+      title="Courses with Ratings (30 days)"
+      description="Cumulative courses that have received ratings"
       currentValue={summaries.uniqueCourses.current}
-      percentChange={summaries.uniqueCourses.percentChange7d}
+      currentValueLabel="courses"
+      absoluteChange={summaries.uniqueCourses.absoluteChange}
+      percentChange={summaries.uniqueCourses.percentChange}
+      changeTimescale="30d"
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -603,6 +627,346 @@ export function CourseRatingsDistributionBlock() {
           >
             <Tooltip content={<TreemapTooltip />} />
           </Treemap>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+// Daily Ratings Block - ratings per calendar day (last 30 days)
+export function RatingsDayHistogramBlock() {
+  const { data: rawData, loading, error } = useRatingAnalyticsData();
+
+  const { dailyData, totalInWindow, avgPerDay } = useMemo(() => {
+    if (!rawData || rawData.length === 0) {
+      return { dailyData: [] as DailyDataPoint[], totalInWindow: 0, avgPerDay: 0 };
+    }
+
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+
+    // Get date 30 days ago
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // Initialize all days in the last 30 days with 0
+    const dateMap = new Map<string, number>();
+    for (let d = new Date(thirtyDaysAgo); d <= now; d.setDate(d.getDate() + 1)) {
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      dateMap.set(dateKey, 0);
+    }
+
+    // Count ratings per day (only last 30 days)
+    rawData.forEach((point) => {
+      const date = new Date(point.createdAt);
+      if (date >= thirtyDaysAgo && date <= now) {
+        const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        dateMap.set(dateKey, (dateMap.get(dateKey) || 0) + 1);
+      }
+    });
+
+    // Sort by date and convert to chart data
+    const sortedDates = Array.from(dateMap.keys()).sort();
+    const dailyData: DailyDataPoint[] = sortedDates.map((dateKey) => {
+      const [, month, day] = dateKey.split("-");
+      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+      return {
+        date: displayDate,
+        dateKey,
+        value: dateMap.get(dateKey) || 0,
+      };
+    });
+
+    // Calculate total ratings in window and average
+    const totalInWindow = dailyData.reduce((sum, d) => sum + d.value, 0);
+    const avgPerDay = dailyData.length > 0 ? totalInWindow / dailyData.length : 0;
+
+    return {
+      dailyData,
+      totalInWindow,
+      avgPerDay,
+    };
+  }, [rawData]);
+
+  const chartConfig = createChartConfig(["value"], {
+    labels: { value: "Ratings" },
+    colors: { value: "var(--heading-color)" },
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Daily Ratings (30 days)"
+        description="Number of ratings submitted per day"
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+          Loading...
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Daily Ratings (30 days)"
+        description="Number of ratings submitted per day"
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Daily Ratings (30 days)"
+      description="Number of ratings submitted per day"
+      currentValue={totalInWindow}
+      currentValueLabel="ratings"
+      subtitle={`avg ${avgPerDay.toFixed(1)}/day`}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={dailyData}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 9 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={30}
+            />
+            <ChartTooltip />
+            <Bar
+              dataKey="value"
+              fill="var(--heading-color)"
+              radius={[2, 2, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+// Metric colors
+const METRIC_COLORS: Record<string, string> = {
+  Usefulness: "#4e79a7",
+  Difficulty: "#e15759",
+  Workload: "#f28e2c",
+};
+
+interface MetricDailyDataPoint {
+  date: string;
+  dateKey: string;
+  Usefulness: number | null;
+  Difficulty: number | null;
+  Workload: number | null;
+}
+
+// Average Rating Scores Over Time Block (Cumulative)
+export function AverageScoresOverTimeBlock() {
+  const { data: rawData, loading, error } = useRatingMetricsAnalyticsData();
+
+  const { dailyData, overallAverages } = useMemo(() => {
+    if (!rawData || rawData.length === 0) {
+      return {
+        dailyData: [] as MetricDailyDataPoint[],
+        overallAverages: { Usefulness: 0, Difficulty: 0, Workload: 0 },
+      };
+    }
+
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+
+    // Group by date and metric
+    const dateMetricMap = new Map<string, Map<string, number[]>>();
+
+    rawData.forEach((point) => {
+      const date = new Date(point.createdAt);
+      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+      if (!dateMetricMap.has(dateKey)) {
+        dateMetricMap.set(dateKey, new Map());
+      }
+
+      const metricsForDay = dateMetricMap.get(dateKey)!;
+      if (!metricsForDay.has(point.metricName)) {
+        metricsForDay.set(point.metricName, []);
+      }
+      metricsForDay.get(point.metricName)!.push(point.value);
+    });
+
+    // Sort dates and compute cumulative averages
+    const sortedDates = Array.from(dateMetricMap.keys()).sort();
+
+    // Track cumulative totals for each metric
+    const cumulativeTotals: Record<string, { sum: number; count: number }> = {
+      Usefulness: { sum: 0, count: 0 },
+      Difficulty: { sum: 0, count: 0 },
+      Workload: { sum: 0, count: 0 },
+    };
+
+    const dailyData: MetricDailyDataPoint[] = sortedDates.map((dateKey) => {
+      const [, month, day] = dateKey.split("-");
+      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+
+      const metricsForDay = dateMetricMap.get(dateKey)!;
+
+      // Add today's values to cumulative totals
+      ["Usefulness", "Difficulty", "Workload"].forEach((metricName) => {
+        const values = metricsForDay.get(metricName);
+        if (values) {
+          cumulativeTotals[metricName].sum += values.reduce((a, b) => a + b, 0);
+          cumulativeTotals[metricName].count += values.length;
+        }
+      });
+
+      // Compute cumulative average up to this point
+      const calcCumulativeAvg = (metricName: string): number | null => {
+        const { sum, count } = cumulativeTotals[metricName];
+        if (count === 0) return null;
+        return sum / count;
+      };
+
+      return {
+        date: displayDate,
+        dateKey,
+        Usefulness: calcCumulativeAvg("Usefulness"),
+        Difficulty: calcCumulativeAvg("Difficulty"),
+        Workload: calcCumulativeAvg("Workload"),
+      };
+    });
+
+    // Final cumulative totals are the overall averages
+    const overallAverages = {
+      Usefulness: cumulativeTotals.Usefulness.count > 0
+        ? cumulativeTotals.Usefulness.sum / cumulativeTotals.Usefulness.count
+        : 0,
+      Difficulty: cumulativeTotals.Difficulty.count > 0
+        ? cumulativeTotals.Difficulty.sum / cumulativeTotals.Difficulty.count
+        : 0,
+      Workload: cumulativeTotals.Workload.count > 0
+        ? cumulativeTotals.Workload.sum / cumulativeTotals.Workload.count
+        : 0,
+    };
+
+    return { dailyData, overallAverages };
+  }, [rawData]);
+
+  const chartConfig = createChartConfig(["Usefulness", "Difficulty", "Workload"], {
+    labels: {
+      Usefulness: "Usefulness",
+      Difficulty: "Difficulty",
+      Workload: "Workload",
+    },
+    colors: METRIC_COLORS,
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Cumulative Average Scores"
+        description="Running average of all ratings up to each day"
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+          Loading...
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Cumulative Average Scores"
+        description="Running average of all ratings up to each day"
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Cumulative Average Scores"
+      description="Running average of all ratings up to each day"
+      subtitle={`Use: ${overallAverages.Usefulness.toFixed(2)} | Diff: ${overallAverages.Difficulty.toFixed(2)} | Work: ${overallAverages.Workload.toFixed(2)}`}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={dailyData}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 9 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={30}
+              domain={[1, 5]}
+              ticks={[1, 2, 3, 4, 5]}
+            />
+            <ChartTooltip
+              tooltipConfig={{
+                valueFormatter: (value: number) => value?.toFixed(2) ?? "-",
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="Usefulness"
+              stroke={METRIC_COLORS.Usefulness}
+              strokeWidth={2}
+              dot={false}
+              connectNulls
+              activeDot={{ r: 4, fill: METRIC_COLORS.Usefulness }}
+            />
+            <Line
+              type="monotone"
+              dataKey="Difficulty"
+              stroke={METRIC_COLORS.Difficulty}
+              strokeWidth={2}
+              dot={false}
+              connectNulls
+              activeDot={{ r: 4, fill: METRIC_COLORS.Difficulty }}
+            />
+            <Line
+              type="monotone"
+              dataKey="Workload"
+              stroke={METRIC_COLORS.Workload}
+              strokeWidth={2}
+              dot={false}
+              connectNulls
+              activeDot={{ r: 4, fill: METRIC_COLORS.Workload }}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </ChartContainer>
     </AnalyticsCard>

@@ -8,7 +8,9 @@ interface AnalyticsCardProps {
   currentValue?: number;
   currentValuePrefix?: string;
   currentValueLabel?: string;
+  absoluteChange?: number;
   percentChange?: number;
+  changeTimescale?: string;
   subtitle?: string;
   subtitlePositive?: boolean;
   children: ReactNode;
@@ -20,13 +22,29 @@ export function AnalyticsCard({
   currentValue,
   currentValuePrefix,
   currentValueLabel,
+  absoluteChange,
   percentChange,
+  changeTimescale = "7d",
   subtitle,
   subtitlePositive,
   children,
 }: AnalyticsCardProps) {
   const showMetrics = currentValue !== undefined || currentValueLabel !== undefined;
-  const isPositive = (percentChange ?? 0) >= 0;
+  const isPositive = (absoluteChange ?? percentChange ?? 0) >= 0;
+
+  // Format the change text: "+45 users, +3.8% (30d)"
+  const formatChangeText = () => {
+    if (absoluteChange !== undefined && percentChange !== undefined) {
+      const sign = isPositive ? "+" : "";
+      const label = currentValueLabel ? ` ${currentValueLabel}` : "";
+      return `${sign}${absoluteChange.toLocaleString()}${label}, ${sign}${percentChange.toFixed(1)}% (${changeTimescale})`;
+    }
+    if (percentChange !== undefined) {
+      const sign = isPositive ? "+" : "";
+      return `${sign}${percentChange.toFixed(1)}% (${changeTimescale})`;
+    }
+    return null;
+  };
 
   return (
     <div className={styles.root}>
@@ -50,12 +68,12 @@ export function AnalyticsCard({
               >
                 {subtitle}
               </div>
-            ) : percentChange !== undefined ? (
+            ) : formatChangeText() ? (
               <div
                 className={styles.percentChange}
                 style={{ color: isPositive ? "var(--green-500)" : "var(--red-500)" }}
               >
-                {isPositive ? "+" : ""}{percentChange.toFixed(1)}% (7d)
+                {formatChangeText()}
               </div>
             ) : null}
           </div>

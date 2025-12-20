@@ -1,11 +1,13 @@
 import styles from "./Analytics.module.scss";
 import {
+  AverageScoresOverTimeBlock,
   CourseDistributionBlock,
   CourseRatingsDistributionBlock,
   RatingsCountBlock,
+  RatingsDayHistogramBlock,
   UniqueUsersGrowthBlock,
 } from "./components/RatingsAnalytics";
-import { SignupHourHistogramBlock, UserGrowthBlock } from "./components/UserAnalytics";
+import { SignupDayHistogramBlock, SignupHourHistogramBlock, UserGrowthBlock } from "./components/UserAnalytics";
 
 export default function Analytics() {
   return (
@@ -13,6 +15,9 @@ export default function Analytics() {
       <div className={styles.grid}>
         <div className={styles.cell}>
           <UserGrowthBlock />
+        </div>
+        <div className={styles.cell}>
+          <SignupDayHistogramBlock />
         </div>
         <div className={styles.cell}>
           <SignupHourHistogramBlock />
@@ -24,10 +29,16 @@ export default function Analytics() {
           <RatingsCountBlock />
         </div>
         <div className={styles.cell}>
+          <RatingsDayHistogramBlock />
+        </div>
+        <div className={styles.cell}>
           <CourseDistributionBlock />
         </div>
         <div className={styles.cell}>
           <CourseRatingsDistributionBlock />
+        </div>
+        <div className={styles.cell}>
+          <AverageScoresOverTimeBlock />
         </div>
       </div>
     </div>

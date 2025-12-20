@@ -112,6 +112,19 @@ export const ratingTypeDef = gql`
     courseKey: String!
   }
 
+  """
+  Rating metric data point for analytics
+  Contains metric name and value for computing average scores over time
+  """
+  type RatingMetricDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the rating was created"
+    createdAt: String!
+    "The metric name (Usefulness, Difficulty, Workload)"
+    metricName: MetricName!
+    "The rating value (1-5)"
+    value: Int!
+  }
+
   input ClassWithoutCourseInput {
     year: Int!
     semester: Int!
@@ -161,6 +174,9 @@ export const ratingTypeDef = gql`
 
     "Staff-only: Rating data points for analytics timeseries"
     ratingAnalyticsData: [RatingDataPoint!]! @auth
+
+    "Staff-only: Rating metric values for analytics (average scores over time)"
+    ratingMetricsAnalyticsData: [RatingMetricDataPoint!]! @auth
   }
 
   """
