@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: documentation
-      url: https://docs.stanfurdtime.com
+      url: https://docs.berkeleytime.com
 
     steps:
       - name: SSH and Helm Install
@@ -88,7 +88,7 @@ jobs:
               --install \
               --version=1.0.0 \
               --namespace=bt \
-              --set host=docs.stanfurdtime.com
+              --set host=docs.berkeleytime.com
 
             # Restart deployment if helm chart existed
             if [ $status = true ]; then
@@ -100,4 +100,4 @@ jobs:
 
       - name: Output Summary
         run: |
-          echo "# :white_check_mark: Deployment available at [docs.stanfurdtime.com](https://docs.stanfurdtime.com)." >> $GITHUB_STEP_SUMMARY
+          echo "# :white_check_mark: Deployment available at [docs.berkeleytime.com](https://docs.berkeleytime.com)." >> $GITHUB_STEP_SUMMARY

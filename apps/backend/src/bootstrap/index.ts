@@ -1,7 +1,7 @@
 import express, { json } from "express";
 import http from "http";
 
-import { Config } from "../config";
+import { Config } from "../../../../packages/common/src/utils/config";
 import cacheRoutes from "../modules/cache/routes";
 import loaders, { loadCacheWarmingDependencies } from "./loaders";
 

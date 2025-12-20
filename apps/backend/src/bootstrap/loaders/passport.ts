@@ -7,7 +7,7 @@ import type { RedisClientType } from "redis";
 
 import { UserModel } from "@repo/common";
 
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
 
 const LOGIN_ROUTE = "/login";
 const LOGIN_REDIRECT_ROUTE = "/login/redirect";

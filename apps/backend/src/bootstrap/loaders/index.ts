@@ -1,6 +1,6 @@
 import { type Application, Router } from "express";
 
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
 // loaders
 import apolloLoader from "./apollo";
 import expressLoader from "./express";
