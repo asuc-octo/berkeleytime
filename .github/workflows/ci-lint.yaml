@@ -51,7 +51,7 @@ jobs:
 
             const body = `### Linting Failed
 
-            Run \`npm run lint -- --continue\` to see the full output locally.
+            Note: The status check will always pass. Run \`npm run lint -- --continue\` to see the full output locally.
 
             <details>
             <summary>Click to expand lint output</summary>
