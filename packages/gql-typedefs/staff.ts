@@ -4,10 +4,11 @@ export const staffTypeDef = gql`
   """
   A staff member (may or may not have a user account).
   """
-  type StaffMember {
+  type StaffMember @cacheControl(maxAge: 0) {
     id: ID!
     userId: ID
     name: String!
+    email: String
     personalLink: String
     isAlumni: Boolean!
     addedBy: ID
@@ -17,7 +18,7 @@ export const staffTypeDef = gql`
   """
   A staff member's role in a specific semester.
   """
-  type SemesterRole {
+  type SemesterRole @cacheControl(maxAge: 0) {
     id: ID!
     member: StaffMember!
     year: Int!
@@ -48,6 +49,11 @@ export const staffTypeDef = gql`
     Get a staff member by ID.
     """
     staffMember(id: ID!): StaffMember
+
+    """
+    Get all staff members.
+    """
+    allStaffMembers: [StaffMember!]!
 
     """
     Get all users (staff only).

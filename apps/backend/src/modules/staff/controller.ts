@@ -46,6 +46,17 @@ export const getStaffMemberByUserId = async (userId: string) => {
   return member;
 };
 
+export const getAllStaffMembers = async () => {
+  const members = await StaffMemberModel.find().sort({ name: 1 }).lean();
+  return members;
+};
+
+export const getMemberEmail = async (userId?: string) => {
+  if (!userId) return null;
+  const user = await UserModel.findById(userId).select("email").lean();
+  return user?.email ?? null;
+};
+
 export const ensureStaffMember = async (
   userId: string,
   addedBy?: string | null

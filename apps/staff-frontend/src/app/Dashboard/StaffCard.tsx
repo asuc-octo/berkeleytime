@@ -8,7 +8,7 @@ import {
 import styles from "./Dashboard.module.scss";
 
 export interface SemesterRole {
-  _id: string;
+  id: string;
   year: number;
   semester: "Spring" | "Summer" | "Fall" | "Winter";
   role: string;
@@ -19,12 +19,13 @@ export interface SemesterRole {
 }
 
 export interface StaffMember {
-  _id: string;
+  id: string;
+  userId?: string;
   name: string;
   email?: string;
   personalLink?: string;
   isAlumni: boolean;
-  semesterRoles: SemesterRole[];
+  roles: SemesterRole[];
 }
 
 interface StaffCardProps {
@@ -94,10 +95,10 @@ export default function StaffCard({
 
       <div className={styles.semesterRoles}>
         <div className={styles.semesterRolesHeader}>
-          Experience ({staffMember.semesterRoles.length})
+          Experience ({staffMember.roles.length})
         </div>
-        {staffMember.semesterRoles.map((role) => (
-          <div key={role._id} className={styles.semesterRole}>
+        {staffMember.roles.map((role) => (
+          <div key={role.id} className={styles.semesterRole}>
             {role.photo ? (
               <img
                 src={role.photo}

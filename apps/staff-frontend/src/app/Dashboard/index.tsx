@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { gql, useQuery } from "@apollo/client";
 import {
@@ -22,6 +22,14 @@ import {
   Select,
 } from "@repo/theme";
 
+import {
+  useAllStaffMembers,
+  useEnsureStaffMember,
+  useStaffMemberByUserId,
+  useUpdateStaffInfo,
+  useUpsertSemesterRole,
+} from "../../hooks/api/staff";
+import { Semester } from "../../lib/api/staff";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
 
@@ -30,291 +38,6 @@ interface UserSearchResult {
   name: string;
   email: string;
 }
-
-// Dummy data for testing UI
-const createDummyStaffMember = (photos: string[]): StaffMember => ({
-  _id: "dummy-staff-id",
-  name: "John Doe",
-  personalLink: "https://johndoe.com",
-  isAlumni: true,
-  semesterRoles: [
-    {
-      _id: "role-1",
-      year: 2024,
-      semester: "Fall",
-      role: "Engineering Lead",
-      team: "Backend",
-      photo: photos[0],
-      isLeadership: true,
-    },
-    {
-      _id: "role-2",
-      year: 2024,
-      semester: "Spring",
-      role: "Software Engineer",
-      team: "Backend",
-      photo: photos[1],
-      isLeadership: false,
-    },
-    {
-      _id: "role-3",
-      year: 2023,
-      semester: "Fall",
-      role: "Software Engineer",
-      team: "Frontend",
-      isLeadership: false,
-    },
-  ],
-});
-
-// Dummy staff list for Staff Search tab
-const DUMMY_STAFF_LIST: StaffMember[] = [
-  {
-    _id: "staff-1",
-    name: "Alice Chen",
-    email: "alicechen@berkeley.edu",
-    personalLink: "https://alicechen.dev",
-    isAlumni: false,
-    semesterRoles: [
-      {
-        _id: "r1",
-        year: 2024,
-        semester: "Fall",
-        role: "President",
-        team: "Leadership",
-        isLeadership: true,
-      },
-      {
-        _id: "r2",
-        year: 2024,
-        semester: "Spring",
-        role: "VP Engineering",
-        team: "Leadership",
-        isLeadership: true,
-      },
-    ],
-  },
-  {
-    _id: "staff-2",
-    name: "Bob Martinez",
-    email: "bobm@gmail.com",
-    isAlumni: false,
-    semesterRoles: [
-      {
-        _id: "r3",
-        year: 2024,
-        semester: "Fall",
-        role: "Software Engineer",
-        team: "Backend",
-        isLeadership: false,
-      },
-    ],
-  },
-  {
-    _id: "staff-3",
-    name: "Carol Kim",
-    email: "carol.kim@berkeley.edu",
-    personalLink: "https://linkedin.com/in/carolkim",
-    isAlumni: true,
-    semesterRoles: [
-      {
-        _id: "r4",
-        year: 2023,
-        semester: "Fall",
-        role: "Design Lead",
-        team: "Design",
-        isLeadership: true,
-      },
-      {
-        _id: "r5",
-        year: 2023,
-        semester: "Spring",
-        role: "Designer",
-        team: "Design",
-        isLeadership: false,
-      },
-    ],
-  },
-  {
-    _id: "staff-4",
-    name: "David Park",
-    email: "dpark@berkeley.edu",
-    isAlumni: false,
-    semesterRoles: [
-      {
-        _id: "r6",
-        year: 2024,
-        semester: "Fall",
-        role: "Software Engineer",
-        team: "Frontend",
-        isLeadership: false,
-      },
-      {
-        _id: "r7",
-        year: 2024,
-        semester: "Spring",
-        role: "Software Engineer",
-        team: "Frontend",
-        isLeadership: false,
-      },
-      {
-        _id: "r8",
-        year: 2023,
-        semester: "Fall",
-        role: "Junior Developer",
-        team: "Frontend",
-        isLeadership: false,
-      },
-    ],
-  },
-  {
-    _id: "staff-5",
-    name: "Emily Zhang",
-    email: "emily.zhang@outlook.com",
-    personalLink: "https://emilyzhang.com",
-    isAlumni: false,
-    semesterRoles: [
-      {
-        _id: "r9",
-        year: 2024,
-        semester: "Fall",
-        role: "VP Design",
-        team: "Leadership",
-        isLeadership: true,
-      },
-    ],
-  },
-  {
-    _id: "staff-6",
-    name: "Frank Liu",
-    email: "frank@berkeley.edu",
-    isAlumni: true,
-    semesterRoles: [
-      {
-        _id: "r10",
-        year: 2022,
-        semester: "Fall",
-        role: "President",
-        team: "Leadership",
-        isLeadership: true,
-      },
-      {
-        _id: "r11",
-        year: 2022,
-        semester: "Spring",
-        role: "VP Engineering",
-        team: "Leadership",
-        isLeadership: true,
-      },
-      {
-        _id: "r12",
-        year: 2021,
-        semester: "Fall",
-        role: "Engineering Lead",
-        team: "Backend",
-        isLeadership: true,
-      },
-      {
-        _id: "r13",
-        year: 2021,
-        semester: "Spring",
-        role: "Software Engineer",
-        team: "Backend",
-        isLeadership: false,
-      },
-    ],
-  },
-  {
-    _id: "staff-7",
-    name: "Grace Wang",
-    email: "grace.wang@berkeley.edu",
-    personalLink: "https://gracewang.dev",
-    isAlumni: false,
-    semesterRoles: [
-      {
-        _id: "r14",
-        year: 2024,
-        semester: "Fall",
-        role: "Designer",
-        team: "Design",
-        isLeadership: false,
-      },
-    ],
-  },
-  {
-    _id: "staff-8",
-    name: "Henry Nguyen",
-    email: "hnguyen@berkeley.edu",
-    isAlumni: false,
-    semesterRoles: [
-      {
-        _id: "r15",
-        year: 2024,
-        semester: "Fall",
-        role: "Software Engineer",
-        team: "Infrastructure",
-        isLeadership: false,
-      },
-      {
-        _id: "r16",
-        year: 2024,
-        semester: "Spring",
-        role: "Software Engineer",
-        team: "Infrastructure",
-        isLeadership: false,
-      },
-    ],
-  },
-  {
-    _id: "staff-9",
-    name: "Iris Thompson",
-    email: "iris.t@yahoo.com",
-    personalLink: "https://linkedin.com/in/iris-t",
-    isAlumni: true,
-    semesterRoles: [
-      {
-        _id: "r17",
-        year: 2023,
-        semester: "Spring",
-        role: "Product Manager",
-        team: "Product",
-        isLeadership: false,
-      },
-    ],
-  },
-  {
-    _id: "staff-10",
-    name: "James Wilson",
-    email: "jwilson@berkeley.edu",
-    isAlumni: false,
-    semesterRoles: [
-      {
-        _id: "r18",
-        year: 2024,
-        semester: "Fall",
-        role: "Data Engineer",
-        team: "Data",
-        isLeadership: false,
-      },
-      {
-        _id: "r19",
-        year: 2024,
-        semester: "Spring",
-        role: "Data Analyst",
-        team: "Data",
-        isLeadership: false,
-      },
-      {
-        _id: "r20",
-        year: 2023,
-        semester: "Fall",
-        role: "Junior Analyst",
-        team: "Data",
-        isLeadership: false,
-      },
-    ],
-  },
-];
 
 const ALL_USERS = gql`
   query AllUsers {
@@ -326,8 +49,6 @@ const ALL_USERS = gql`
   }
 `;
 
-type Semester = "Spring" | "Summer" | "Fall" | "Winter";
-
 interface RoleFormData {
   year: string;
   semester: Semester;
@@ -335,6 +56,7 @@ interface RoleFormData {
   team: string;
   photo: string | null;
   altPhoto: string | null;
+  isLeadership: boolean;
 }
 
 interface StaffInfoFormData {
@@ -380,9 +102,11 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [staffSearchBy, setStaffSearchBy] = useState<StaffSearchBy>("name");
   const [staffSearchQuery, setStaffSearchQuery] = useState("");
-  const [dogPhotos, setDogPhotos] = useState<string[]>([]);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<SemesterRole | null>(null);
+  const [editingStaffMemberId, setEditingStaffMemberId] = useState<
+    string | null
+  >(null);
   const [roleForm, setRoleForm] = useState<RoleFormData>({
     year: currentYear.toString(),
     semester: "Fall",
@@ -390,8 +114,10 @@ export default function Dashboard() {
     team: "",
     photo: null,
     altPhoto: null,
+    isLeadership: false,
   });
   const [isStaffInfoModalOpen, setIsStaffInfoModalOpen] = useState(false);
+  const [isAddingNewStaff, setIsAddingNewStaff] = useState(false);
   const [staffInfoForm, setStaffInfoForm] = useState<StaffInfoFormData>({
     isAlumni: false,
     personalLink: "",
@@ -401,9 +127,26 @@ export default function Dashboard() {
     email?: string;
   } | null>(null);
 
-  const openAddModal = (user: { name: string; email?: string }) => {
+  // API hooks
+  const {
+    data: staffMembers,
+    loading: staffLoading,
+    refetch: refetchStaff,
+  } = useAllStaffMembers();
+  const { data: selectedStaffMember } = useStaffMemberByUserId({
+    userId: selectedUser?._id ?? null,
+  });
+  const { ensureStaffMember } = useEnsureStaffMember();
+  const { upsertSemesterRole } = useUpsertSemesterRole();
+  const { updateStaffInfo } = useUpdateStaffInfo();
+
+  const openAddModal = (
+    user: { name: string; email?: string },
+    staffMemberId: string
+  ) => {
     setEditingUser(user);
     setEditingRole(null);
+    setEditingStaffMemberId(staffMemberId);
     setRoleForm({
       year: currentYear.toString(),
       semester: "Fall",
@@ -411,16 +154,19 @@ export default function Dashboard() {
       team: "",
       photo: null,
       altPhoto: null,
+      isLeadership: false,
     });
     setIsRoleModalOpen(true);
   };
 
   const openEditModal = (
     role: SemesterRole,
-    user: { name: string; email?: string }
+    user: { name: string; email?: string },
+    staffMemberId: string
   ) => {
     setEditingUser(user);
     setEditingRole(role);
+    setEditingStaffMemberId(staffMemberId);
     setRoleForm({
       year: role.year.toString(),
       semester: role.semester,
@@ -428,6 +174,7 @@ export default function Dashboard() {
       team: role.team || "",
       photo: role.photo || null,
       altPhoto: role.altPhoto || null,
+      isLeadership: role.isLeadership,
     });
     setIsRoleModalOpen(true);
   };
@@ -468,15 +215,21 @@ export default function Dashboard() {
     });
   };
 
-  const handleSaveRole = () => {
-    // TODO: Implement save logic with API call
-    console.log("Saving role:", {
-      ...roleForm,
+  const handleSaveRole = async () => {
+    if (!editingStaffMemberId) return;
+
+    await upsertSemesterRole(editingStaffMemberId, {
       year: parseInt(roleForm.year),
-      isEdit: editingRole !== null,
-      editingRoleId: editingRole?._id,
+      semester: roleForm.semester,
+      role: roleForm.role,
+      team: roleForm.team || undefined,
+      photo: roleForm.photo || undefined,
+      altPhoto: roleForm.altPhoto || undefined,
+      isLeadership: roleForm.isLeadership,
     });
+
     setIsRoleModalOpen(false);
+    refetchStaff();
   };
 
   const openStaffInfoModal = (
@@ -484,6 +237,8 @@ export default function Dashboard() {
     user: { name: string; email?: string }
   ) => {
     setEditingUser(user);
+    setEditingStaffMemberId(staffMember.id);
+    setIsAddingNewStaff(false);
     setStaffInfoForm({
       isAlumni: staffMember.isAlumni,
       personalLink: staffMember.personalLink || "",
@@ -491,30 +246,40 @@ export default function Dashboard() {
     setIsStaffInfoModalOpen(true);
   };
 
-  const handleSaveStaffInfo = () => {
-    // TODO: Implement save logic with API call
-    console.log("Saving staff info:", staffInfoForm);
+  const handleSaveStaffInfo = async () => {
+    if (!editingStaffMemberId) return;
+
+    await updateStaffInfo(editingStaffMemberId, {
+      isAlumni: staffInfoForm.isAlumni,
+      personalLink: staffInfoForm.personalLink || undefined,
+    });
+
     setIsStaffInfoModalOpen(false);
+    refetchStaff();
+  };
+
+  const handleAddAsStaff = async () => {
+    if (!selectedUser) return;
+
+    const member = await ensureStaffMember(selectedUser._id);
+    if (member) {
+      setEditingUser({
+        name: selectedUser.name,
+        email: selectedUser.email,
+      });
+      setEditingStaffMemberId(member.id);
+      setIsAddingNewStaff(true);
+      setStaffInfoForm({
+        isAlumni: false,
+        personalLink: "",
+      });
+      setIsStaffInfoModalOpen(true);
+    }
   };
 
   const { data, loading } = useQuery<{ allUsers: UserSearchResult[] }>(
     ALL_USERS
   );
-
-  // Fetch random dog photos for dummy data
-  useEffect(() => {
-    const fetchDogPhotos = async () => {
-      const photos = await Promise.all(
-        [1, 2].map(async () => {
-          const res = await fetch("https://dog.ceo/api/breeds/image/random");
-          const data = await res.json();
-          return data.message;
-        })
-      );
-      setDogPhotos(photos);
-    };
-    fetchDogPhotos();
-  }, []);
 
   const options = useMemo<OptionItem<UserSearchResult>[]>(() => {
     if (!data?.allUsers) return [];
@@ -536,12 +301,37 @@ export default function Dashboard() {
   }, [data?.allUsers, searchQuery]);
 
   // Get unique past roles from the staff member's history
-  // TODO: Replace with actual staff member data from API
   const pastRoles = useMemo(() => {
-    const staffMember = createDummyStaffMember(dogPhotos);
-    const roles = staffMember.semesterRoles.map((r) => r.role);
+    const staffMember = staffMembers.find((m) => m.id === editingStaffMemberId);
+    if (!staffMember) return [];
+    const roles = staffMember.roles.map((r) => r.role);
     return [...new Set(roles)];
-  }, [dogPhotos]);
+  }, [staffMembers, editingStaffMemberId]);
+
+  // Filter staff members based on search criteria
+  const filteredStaff = useMemo(() => {
+    if (!staffSearchQuery) return staffMembers;
+
+    const query = staffSearchQuery.toLowerCase();
+    return staffMembers.filter((staff) => {
+      switch (staffSearchBy) {
+        case "name":
+          return staff.name.toLowerCase().includes(query);
+        case "role":
+          return staff.roles.some((r) => r.role.toLowerCase().includes(query));
+        case "semester":
+          return staff.roles.some(
+            (r) =>
+              r.semester.toLowerCase().includes(query) ||
+              r.year.toString().includes(query)
+          );
+        case "team":
+          return staff.roles.some((r) => r.team?.toLowerCase().includes(query));
+        default:
+          return true;
+      }
+    });
+  }, [staffMembers, staffSearchQuery, staffSearchBy]);
 
   const handleChange = (
     value: UserSearchResult | UserSearchResult[] | null
@@ -590,24 +380,27 @@ export default function Dashboard() {
             </div>
           </div>
           <div className={styles.staffList}>
-            {DUMMY_STAFF_LIST.map((staff) => (
-              <StaffCard
-                key={staff._id}
-                staffMember={staff}
-                onEditStaffInfo={() =>
-                  openStaffInfoModal(staff, {
-                    name: staff.name,
-                    email: staff.email,
-                  })
-                }
-                onEditRole={(role) =>
-                  openEditModal(role, { name: staff.name, email: staff.email })
-                }
-                onAddRole={() =>
-                  openAddModal({ name: staff.name, email: staff.email })
-                }
-              />
-            ))}
+            {staffLoading ? (
+              <div className={styles.emptyState}>Loading staff members...</div>
+            ) : filteredStaff.length === 0 ? (
+              <div className={styles.emptyState}>No staff members found.</div>
+            ) : (
+              filteredStaff.map((staff) => (
+                <StaffCard
+                  key={staff.id}
+                  staffMember={staff}
+                  onEditStaffInfo={() =>
+                    openStaffInfoModal(staff, {
+                      name: staff.name,
+                    })
+                  }
+                  onEditRole={(role) =>
+                    openEditModal(role, { name: staff.name }, staff.id)
+                  }
+                  onAddRole={() => openAddModal({ name: staff.name }, staff.id)}
+                />
+              ))
+            )}
           </div>
         </>
       )}
@@ -630,8 +423,7 @@ export default function Dashboard() {
 
           {selectedUser &&
             (() => {
-              // TODO: Replace with actual API call to get staff member by user ID
-              const staffMember = null as StaffMember | null;
+              const staffMember = selectedStaffMember;
 
               return (
                 <div className={styles.selectedUser}>
@@ -703,17 +495,7 @@ export default function Dashboard() {
                       <button
                         type="button"
                         className={styles.editButton}
-                        onClick={() => {
-                          setEditingUser({
-                            name: selectedUser.name,
-                            email: selectedUser.email,
-                          });
-                          setStaffInfoForm({
-                            isAlumni: false,
-                            personalLink: "",
-                          });
-                          setIsStaffInfoModalOpen(true);
-                        }}
+                        onClick={handleAddAsStaff}
                       >
                         <Plus width={16} height={16} />
                       </button>
@@ -725,8 +507,8 @@ export default function Dashboard() {
                       <div className={styles.semesterRolesHeader}>
                         Experience
                       </div>
-                      {staffMember.semesterRoles.map((role) => (
-                        <div key={role._id} className={styles.semesterRole}>
+                      {staffMember.roles.map((role) => (
+                        <div key={role.id} className={styles.semesterRole}>
                           {role.photo ? (
                             <img
                               src={role.photo}
@@ -764,10 +546,14 @@ export default function Dashboard() {
                             type="button"
                             className={styles.editButton}
                             onClick={() =>
-                              openEditModal(role, {
-                                name: selectedUser.name,
-                                email: selectedUser.email,
-                              })
+                              openEditModal(
+                                role,
+                                {
+                                  name: selectedUser.name,
+                                  email: selectedUser.email,
+                                },
+                                staffMember.id
+                              )
                             }
                           >
                             <EditPencil width={16} height={16} />
@@ -778,10 +564,13 @@ export default function Dashboard() {
                         className={styles.addButton}
                         type="button"
                         onClick={() =>
-                          openAddModal({
-                            name: selectedUser.name,
-                            email: selectedUser.email,
-                          })
+                          openAddModal(
+                            {
+                              name: selectedUser.name,
+                              email: selectedUser.email,
+                            },
+                            staffMember.id
+                          )
                         }
                       >
                         <Plus width={16} height={16} />
@@ -802,19 +591,7 @@ export default function Dashboard() {
             title={
               editingUser?.name ?? (editingRole ? "Edit Role" : "Add New Role")
             }
-            subtitle={
-              editingUser?.email ? (
-                <span className={styles.modalSubtitle}>
-                  {editingUser.email}
-                  {!editingUser.email.endsWith("@berkeley.edu") && (
-                    <span className={styles.unaffiliatedWarning}>
-                      <WarningTriangleSolid width={14} height={14} />
-                      Unaffiliated email
-                    </span>
-                  )}
-                </span>
-              ) : undefined
-            }
+            subtitle={editingUser?.email}
             hasCloseButton
           />
           <Dialog.Body>
@@ -904,6 +681,7 @@ export default function Dashboard() {
                     }
                   }}
                   placeholder="Select semester"
+                  style={{ minHeight: 32, padding: "0 12px" }}
                 />
               </div>
               <div className={styles.formField}>
@@ -917,7 +695,22 @@ export default function Dashboard() {
                     }
                   }}
                   placeholder="Select year"
+                  style={{ minHeight: 32, padding: "0 12px" }}
                 />
+              </div>
+              <div className={styles.formFieldFull}>
+                <label className={styles.checkboxField}>
+                  <Checkbox
+                    checked={roleForm.isLeadership}
+                    onCheckedChange={(checked) =>
+                      setRoleForm({
+                        ...roleForm,
+                        isLeadership: checked === true,
+                      })
+                    }
+                  />
+                  <span>This is a leadership role</span>
+                </label>
               </div>
               <div className={styles.formFieldFull}>
                 <label className={styles.formLabel}>Role</label>
@@ -936,7 +729,7 @@ export default function Dashboard() {
                 )}
               </div>
               <div className={styles.formFieldFull}>
-                <label className={styles.formLabel}>Team (optional)</label>
+                <label className={styles.formLabel}>Pod/Team</label>
                 <Input
                   type="text"
                   placeholder="e.g., Infrastructure, User Profile"
@@ -969,20 +762,12 @@ export default function Dashboard() {
         <Dialog.Overlay />
         <Dialog.Card>
           <Dialog.Header
-            title={editingUser?.name ?? "Edit Staff Info"}
-            subtitle={
-              editingUser?.email ? (
-                <span className={styles.modalSubtitle}>
-                  {editingUser.email}
-                  {!editingUser.email.endsWith("@berkeley.edu") && (
-                    <span className={styles.unaffiliatedWarning}>
-                      <WarningTriangleSolid width={14} height={14} />
-                      Unaffiliated email
-                    </span>
-                  )}
-                </span>
-              ) : undefined
+            title={
+              isAddingNewStaff
+                ? "Add Admin"
+                : (editingUser?.name ?? "Edit Staff Info")
             }
+            subtitle={editingUser?.email}
             hasCloseButton
           />
           <Dialog.Body>
@@ -1024,7 +809,19 @@ export default function Dashboard() {
             >
               Cancel
             </Button>
-            <Button onClick={handleSaveStaffInfo}>Save Changes</Button>
+            <Button
+              onClick={handleSaveStaffInfo}
+              style={
+                isAddingNewStaff
+                  ? {
+                      backgroundColor: "var(--red-500)",
+                      borderColor: "var(--red-500)",
+                    }
+                  : undefined
+              }
+            >
+              {isAddingNewStaff ? "Add Admin" : "Save Changes"}
+            </Button>
           </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Root>
