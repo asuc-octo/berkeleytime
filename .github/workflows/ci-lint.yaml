@@ -71,12 +71,3 @@ jobs:
             });
 
             core.setFailed('Linting failed');
-
-  success:
-    name: Return Success (Ignore this action for now)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Return success
-        if: always()
-        run: exit 0
