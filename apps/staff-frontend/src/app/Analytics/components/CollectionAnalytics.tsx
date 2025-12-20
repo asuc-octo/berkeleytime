@@ -744,7 +744,7 @@ export function UsersWithCustomCollectionsBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Collection Users"
+        title="Custom Collection Users"
         description="Unique users who created collections (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
@@ -757,7 +757,7 @@ export function UsersWithCustomCollectionsBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Collection Users"
+        title="Custom Collection Users"
         description="Unique users who created collections (30d)"
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
@@ -769,7 +769,7 @@ export function UsersWithCustomCollectionsBlock() {
 
   return (
     <AnalyticsCard
-      title="Collection Users"
+      title="Custom Collection Users"
       description="Unique users who created collections (30d)"
       currentValue={summaries.current}
       currentValueLabel="users"
