@@ -36,6 +36,7 @@ jobs:
       - name: Post Lint Report
         if: steps.lint.outcome == 'failure'
         uses: actions/github-script@v7
+        continue-on-error: true
         with:
           script: |
             const fs = require('fs');
@@ -71,6 +72,11 @@ jobs:
 
             core.setFailed('Linting failed');
 
-      - name: Return Success (Ignore this action for now)
+  success:
+    name: Return Success (Ignore this action for now)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Return success
         if: always()
         run: exit 0
