@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "./Analytics.module.scss";
 import {
+  CollectionHighlightsBlock,
   CustomCollectionsBlock,
   DailyBookmarksBlock,
   TotalBookmarksBlock,
@@ -120,6 +121,9 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <UsersWithCustomCollectionsBlock />
+            </div>
+            <div className={styles.cell}>
+              <CollectionHighlightsBlock />
             </div>
           </>
         )}

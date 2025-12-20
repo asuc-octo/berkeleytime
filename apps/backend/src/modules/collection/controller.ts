@@ -560,7 +560,7 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
 
   // Fetch all collections with creation timestamps and classes
   const collections = await CollectionModel.find({})
-    .select("createdBy isSystem classes createdAt")
+    .select("createdBy isSystem classes createdAt name")
     .lean();
 
   // First pass: collect all post-migration class additions and custom collection creations
@@ -636,10 +636,79 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
   customCollectionCreations.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   usersWithCustomCollections.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
+  // Compute highlights
+  let largestCollectionSize = 0;
+  let largestCustomCollectionSize = 0;
+  let largestCustomCollectionName: string | null = null;
+  const courseBookmarkCounts = new Map<string, number>();
+  const userCollectionCounts = new Map<string, number>();
+
+  collections.forEach((col) => {
+    const classCount = col.classes?.length || 0;
+
+    // Track largest collection overall
+    if (classCount > largestCollectionSize) {
+      largestCollectionSize = classCount;
+    }
+
+    // Track largest custom collection
+    if (!col.isSystem && classCount > largestCustomCollectionSize) {
+      largestCustomCollectionSize = classCount;
+      largestCustomCollectionName = (col as any).name || null;
+    }
+
+    // Count collections per user (custom only)
+    if (!col.isSystem) {
+      userCollectionCounts.set(
+        col.createdBy,
+        (userCollectionCounts.get(col.createdBy) || 0) + 1
+      );
+    }
+
+    // Count bookmarks per course
+    (col.classes || []).forEach((classEntry: any) => {
+      if (classEntry.subject && classEntry.courseNumber) {
+        const courseKey = `${classEntry.subject} ${classEntry.courseNumber}`;
+        courseBookmarkCounts.set(
+          courseKey,
+          (courseBookmarkCounts.get(courseKey) || 0) + 1
+        );
+      }
+    });
+  });
+
+  // Find most bookmarked course
+  let mostBookmarkedCourse: string | null = null;
+  let mostBookmarkedCourseCount = 0;
+  courseBookmarkCounts.forEach((count, course) => {
+    if (count > mostBookmarkedCourseCount) {
+      mostBookmarkedCourseCount = count;
+      mostBookmarkedCourse = course;
+    }
+  });
+
+  // Find user with most collections
+  let mostCollectionsByUser = 0;
+  userCollectionCounts.forEach((count) => {
+    if (count > mostCollectionsByUser) {
+      mostCollectionsByUser = count;
+    }
+  });
+
+  const highlights = {
+    largestCollectionSize,
+    largestCustomCollectionSize,
+    largestCustomCollectionName,
+    mostBookmarkedCourse,
+    mostBookmarkedCourseCount,
+    mostCollectionsByUser,
+  };
+
   return {
     collectionCreations,
     classAdditions,
     customCollectionCreations,
     usersWithCustomCollections,
+    highlights,
   };
 };

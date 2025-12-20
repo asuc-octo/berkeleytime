@@ -68,7 +68,7 @@ export default function NavigationBar() {
   return (
     <Flex align="center" flexShrink="0" gap="3" className={styles.root}>
       <Link className={styles.brand} to="/">
-        Berkeleytime [Staff]
+        Bt Staff
       </Link>
       <div className={styles.group}>
         <NavLink to="/" end>

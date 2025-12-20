@@ -106,6 +106,24 @@ export const collectionTypeDef = gql`
   }
 
   """
+  Collection highlights for quick stats
+  """
+  type CollectionHighlights @cacheControl(maxAge: 0) {
+    "Largest collection class count"
+    largestCollectionSize: Int!
+    "Largest custom collection class count"
+    largestCustomCollectionSize: Int!
+    "Largest custom collection name"
+    largestCustomCollectionName: String
+    "Most bookmarked course identifier"
+    mostBookmarkedCourse: String
+    "Most bookmarked course count"
+    mostBookmarkedCourseCount: Int!
+    "Most collections by a single user"
+    mostCollectionsByUser: Int!
+  }
+
+  """
   Collection analytics data
   """
   type CollectionAnalyticsData @cacheControl(maxAge: 0) {
@@ -117,6 +135,8 @@ export const collectionTypeDef = gql`
     customCollectionCreations: [CollectionCreationDataPoint!]!
     "Unique users with custom collections (first custom collection per user)"
     usersWithCustomCollections: [CollectionCreationDataPoint!]!
+    "Highlights and top stats"
+    highlights: CollectionHighlights!
   }
 
   extend type Query {

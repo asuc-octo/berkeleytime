@@ -28,11 +28,21 @@ export interface ClassAdditionDataPoint {
   userId: string;
 }
 
+export interface CollectionHighlights {
+  largestCollectionSize: number;
+  largestCustomCollectionSize: number;
+  largestCustomCollectionName: string | null;
+  mostBookmarkedCourse: string | null;
+  mostBookmarkedCourseCount: number;
+  mostCollectionsByUser: number;
+}
+
 export interface CollectionAnalyticsData {
   collectionCreations: CollectionCreationDataPoint[];
   classAdditions: ClassAdditionDataPoint[];
   customCollectionCreations: CollectionCreationDataPoint[];
   usersWithCustomCollections: CollectionCreationDataPoint[];
+  highlights: CollectionHighlights;
 }
 
 // Queries
@@ -83,6 +93,14 @@ export const COLLECTION_ANALYTICS_DATA = gql`
       usersWithCustomCollections {
         createdAt
         userId
+      }
+      highlights {
+        largestCollectionSize
+        largestCustomCollectionSize
+        largestCustomCollectionName
+        mostBookmarkedCourse
+        mostBookmarkedCourseCount
+        mostCollectionsByUser
       }
     }
   }

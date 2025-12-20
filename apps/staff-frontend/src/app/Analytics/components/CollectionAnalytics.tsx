@@ -21,6 +21,54 @@ import { useCollectionAnalyticsData } from "@/hooks/api";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
 
+// Collection Highlights Block - simple stats display
+export function CollectionHighlightsBlock() {
+  const { data, loading, error } = useCollectionAnalyticsData();
+
+  if (loading) {
+    return (
+      <AnalyticsCard title="Collection Highlights" description="Top stats">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
+          Loading...
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <AnalyticsCard title="Collection Highlights" description="Top stats">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1, color: "var(--red-500)" }}>
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  const { highlights } = data;
+
+  const stats = [
+    { label: "Largest collection", value: `${highlights.largestCollectionSize} classes` },
+    { label: "Largest custom collection", value: `${highlights.largestCustomCollectionSize} classes` },
+    { label: "Largest custom collection name", value: highlights.largestCustomCollectionName || "—" },
+    { label: "Most bookmarked course", value: highlights.mostBookmarkedCourse ? `${highlights.mostBookmarkedCourse} (${highlights.mostBookmarkedCourseCount})` : "—" },
+    { label: "Most collections by user", value: `${highlights.mostCollectionsByUser} collections` },
+  ];
+
+  return (
+    <AnalyticsCard title="Collection Highlights" description="Top stats">
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "8px 0" }}>
+        {stats.map((stat) => (
+          <div key={stat.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ color: "var(--label-color)", fontSize: 16 }}>{stat.label}</span>
+            <span style={{ color: "var(--heading-color)", fontSize: 16, fontWeight: 500 }}>{stat.value}</span>
+          </div>
+        ))}
+      </div>
+    </AnalyticsCard>
+  );
+}
+
 interface DailyDataPoint {
   date: string;
   dateKey: string;
