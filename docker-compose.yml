@@ -80,7 +80,7 @@ services:
     networks:
       - bt
     ports:
-      - 3000:8080
+      - 8080:8080
       - 8081:8081
       - 8082:8082
     restart: always
@@ -112,7 +112,7 @@ services:
       dockerfile: ./apps/docs/Dockerfile
       target: docs-dev
     ports:
-      - 8080:3000
+      - 3000:3000
     networks:
       - bt
     restart: always
