@@ -1,4 +1,4 @@
-name: CI Lint
+name: "CI: Check Lint"
 
 on:
   pull_request:
@@ -22,4 +22,44 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
+        id: lint
+        run: npm run lint > lint-output.txt 2>&1
+        continue-on-error: true
+
+      - name: Post Lint Report
+        if: steps.lint.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('lint-output.txt', 'utf8');
+
+            // Truncate if too long to avoid API limits
+            const maxLength = 60000;
+            let cleanOutput = output;
+            if (output.length > maxLength) {
+              cleanOutput = output.substring(0, maxLength) + '\n... (output truncated)';
+            }
+
+            const body = `### Linting Failed
+
+            The linting check failed. Here is the output:
+
+            <details>
+            <summary>Click to expand lint output</summary>
+
+            \`\`\`
+            ${cleanOutput}
+            \`\`\`
+
+            </details>
+            `;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+            core.setFailed('Linting failed');

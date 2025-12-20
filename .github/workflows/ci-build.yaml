@@ -1,4 +1,4 @@
-name: CI Build
+name: "CI: Check Build"
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [backend, frontend, datapuller, ag-frontend]
+        image: [backend, frontend, datapuller, ag-frontend, docs]
 
     steps:
       - name: Checkout Repository

@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: "CD: Deploy to Production"
 run-name: "Deployed `${{ github.sha }}`"
 
 concurrency: production

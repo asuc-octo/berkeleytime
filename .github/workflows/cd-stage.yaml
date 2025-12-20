@@ -1,4 +1,4 @@
-name: Deploy to Staging
+name: "CD: Deploy to Staging"
 
 concurrency:
   group: staging
