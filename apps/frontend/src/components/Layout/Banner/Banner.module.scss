@@ -27,7 +27,7 @@
     transition: color 100ms ease-in-out;
 
     &.returnLink {
-      @media (width <=992px) {
+      @media (width <= 992px) {
         display: none;
       }
     }
