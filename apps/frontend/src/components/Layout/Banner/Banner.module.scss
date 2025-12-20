@@ -27,7 +27,7 @@
     transition: color 100ms ease-in-out;
 
     &.returnLink {
-      @media (width <= 992px) {
+      @media (width <=992px) {
         display: none;
       }
     }
@@ -51,6 +51,32 @@
 
     @include dark-mode {
       color: var(--gray-300);
+    }
+  }
+
+  .closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 100ms ease-in-out;
+    margin-left: 8px;
+
+    @include dark-mode {
+      color: var(--gray-300);
+    }
+
+    &:hover {
+      color: var(--gray-900);
+      background-color: var(--button-hover-color);
+
+      @include dark-mode {
+        color: var(--gray-100);
+      }
     }
   }
 }
