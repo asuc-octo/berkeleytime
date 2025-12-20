@@ -1,10 +1,8 @@
 .root {
   display: flex;
   flex-direction: column;
-  padding: 32px 24px;
+  padding: 32px 48px;
   flex: 1;
-  max-width: 600px;
-  margin: 0 auto;
   width: 100%;
 }
 
@@ -15,8 +13,74 @@
   margin-bottom: 16px;
 }
 
+.tabsContainer {
+  margin-bottom: 20px;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--label-color);
+  font-size: 14px;
+}
+
 .searchContainer {
   width: 100%;
+}
+
+.userSearchWrapper {
+  max-width: 480px;
+}
+
+.staffSearchRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 480px;
+}
+
+.searchBySelect {
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.searchGroup {
+  flex: 1;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  height: 48px;
+  background-color: var(--foreground-color);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+
+  &:has(.searchInput:focus) {
+    outline: 4px solid color-mix(in srgb, var(--blue-500) 25%, transparent);
+    border-color: var(--blue-500);
+  }
+}
+
+.searchIcon {
+  color: var(--label-color);
+  display: grid;
+  place-items: center;
+}
+
+.searchInput {
+  flex: 1;
+  color: var(--heading-color);
+  font-size: 14px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+
+  &::placeholder {
+    color: var(--paragraph-color);
+  }
 }
 
 .selectedUser {
@@ -25,6 +89,46 @@
   border-radius: 12px;
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
+}
+
+.staffCardHeader {
+  margin-bottom: 16px;
+}
+
+.staffCardName {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.staffCardEmail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--label-color);
+  margin-top: 4px;
+}
+
+.modalSubtitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.staffList {
+  columns: 400px;
+  column-gap: 20px;
+  margin-top: 20px;
+}
+
+.staffCard {
+  padding: 20px 24px;
+  border-radius: 12px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  break-inside: avoid;
+  margin-bottom: 16px;
 }
 
 .selectedUserName {
@@ -54,10 +158,24 @@
 .staffStatus {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
+}
+
+.staffStatusInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.staffStatusBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .staffBadge,
@@ -78,16 +196,18 @@
 }
 
 .personalLink {
-  margin-top: 8px;
+  font-size: 13px;
+  color: var(--blue-500);
 
-  a {
-    font-size: 13px;
-    color: var(--blue-500);
-
-    &:hover {
-      text-decoration: underline;
-    }
+  &:hover {
+    text-decoration: underline;
   }
+}
+
+.noLink {
+  font-size: 13px;
+  color: var(--label-color);
+  font-style: italic;
 }
 
 .semesterRoles {
@@ -104,6 +224,7 @@
   letter-spacing: 0.5px;
   margin-bottom: 12px;
 }
+
 
 .semesterRole {
   display: flex;
@@ -137,10 +258,15 @@
 
 .semesterRoleInfo {
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.semesterRoleMain {
+  display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-  flex: 1;
 }
 
 .semesterRoleTerm {
@@ -160,6 +286,7 @@
   padding: 2px 8px;
   background-color: var(--border-color);
   border-radius: 4px;
+  align-self: flex-start;
 }
 
 .editButton {
@@ -210,4 +337,92 @@
     border-color: var(--label-color);
     background-color: var(--button-hover-color);
   }
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formFieldFull {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  grid-column: 1 / -1;
+}
+
+.formLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+.formHint {
+  font-size: 12px;
+  color: var(--label-color);
+  margin-top: 6px;
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--paragraph-color);
+}
+
+.photoUpload {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto;
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--label-color);
+    background-color: var(--button-hover-color);
+  }
+
+  &.hasPhoto {
+    border: none;
+  }
+}
+
+.photoInput {
+  display: none;
+}
+
+.photoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--label-color);
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.photoPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
