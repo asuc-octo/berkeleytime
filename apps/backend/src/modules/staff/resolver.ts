@@ -6,7 +6,9 @@ import {
   deleteSemesterRole,
   deleteStaffMember,
   ensureStaffMember,
+  getAllStaffMembers,
   getAllUsers,
+  getMemberEmail,
   getMemberRoles,
   getRoleMember,
   getStaffBySemester,
@@ -24,6 +26,8 @@ const resolvers = {
     ) => getStaffBySemester(year, semester as any),
 
     staffMember: (_: unknown, { id }: { id: string }) => getStaffMember(id),
+
+    allStaffMembers: () => getAllStaffMembers(),
 
     staffMemberByUserId: (_: unknown, { userId }: { userId: string }) =>
       getStaffMemberByUserId(userId),
@@ -56,6 +60,7 @@ const resolvers = {
 
   StaffMember: {
     id: (parent: any) => parent._id?.toString() ?? parent.id,
+    email: (parent: any) => getMemberEmail(parent.userId?.toString()),
     roles: (parent: any) => getMemberRoles(parent._id?.toString() ?? parent.id),
   },
 
