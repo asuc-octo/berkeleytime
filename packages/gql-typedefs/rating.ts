@@ -99,6 +99,19 @@ export const ratingTypeDef = gql`
     createdAt: String!
   }
 
+  """
+  Minimal rating data point for analytics timeseries
+  Contains only the data needed to compute growth metrics
+  """
+  type RatingDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the rating was created"
+    createdAt: String!
+    "Anonymized user ID for counting unique users"
+    anonymousUserId: String!
+    "Course identifier (subject + courseNumber)"
+    courseKey: String!
+  }
+
   input ClassWithoutCourseInput {
     year: Int!
     semester: Int!
@@ -145,6 +158,9 @@ export const ratingTypeDef = gql`
 
     "All raw ratings with anonymized user IDs"
     allRatings: [RawRating!]!
+
+    "Staff-only: Rating data points for analytics timeseries"
+    ratingAnalyticsData: [RatingDataPoint!]! @auth
   }
 
   """

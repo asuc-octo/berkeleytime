@@ -7,6 +7,7 @@ import {
   RatingModel,
   RatingType,
   SectionModel,
+  StaffMemberModel,
 } from "@repo/common";
 import { METRIC_MAPPINGS, REQUIRED_METRICS } from "@repo/shared";
 
@@ -854,5 +855,47 @@ export const getAllRatings = async () => {
     metricName: rating.metricName as MetricName,
     value: rating.value,
     createdAt: (rating as any).createdAt.toISOString(),
+  }));
+};
+
+/**
+ * Staff-only endpoint to get minimal rating data for analytics timeseries
+ * Returns only the data needed to compute:
+ * - Total ratings over time
+ * - Unique courses over time
+ * - Unique users over time
+ *
+ * Filters for "Difficulty" metric only to count unique submissions
+ * (each user submission creates one entry per metric, so we pick one to avoid overcounting)
+ */
+export const getRatingAnalyticsData = async (context: RequestContext) => {
+  if (!context.user?._id) {
+    throw new GraphQLError("Not authenticated", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Verify caller is a staff member
+  const staffMember = await StaffMemberModel.findOne({
+    userId: context.user._id,
+  }).lean();
+
+  if (!staffMember) {
+    throw new GraphQLError("Only staff members can access analytics data", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
+
+  // Fetch ratings with only the fields we need, sorted by creation date
+  // Filter for Difficulty metric only to count unique submissions
+  const ratings = await RatingModel.find({ metricName: "Difficulty" })
+    .select("createdBy subject courseNumber createdAt")
+    .sort({ createdAt: 1 })
+    .lean();
+
+  return ratings.map((rating) => ({
+    createdAt: (rating as any).createdAt.toISOString(),
+    anonymousUserId: anonymizeUserId(rating.createdBy),
+    courseKey: `${rating.subject} ${rating.courseNumber}`,
   }));
 };
