@@ -1,5 +1,5 @@
 import { HalfMoon, SunLight } from "iconoir-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { DropdownMenu, Flex, IconButton, useTheme } from "@repo/theme";
 
@@ -60,6 +60,7 @@ const ThemeDropdown = ({
 
 export default function NavigationBar() {
   const { theme, setTheme } = useTheme();
+  const location = useLocation();
 
   return (
     <Flex align="center" flexShrink="0" gap="3" className={styles.root}>
@@ -67,6 +68,24 @@ export default function NavigationBar() {
         Berkeleytime [Staff]
       </Link>
       <div style={{ marginLeft: "auto" }} />
+      <nav className={styles.nav}>
+        <Link
+          to="/"
+          className={`${styles.navLink} ${
+            location.pathname === "/" ? styles.navLinkActive : ""
+          }`}
+        >
+          Members
+        </Link>
+        <Link
+          to="/stats"
+          className={`${styles.navLink} ${
+            location.pathname === "/stats" ? styles.navLinkActive : ""
+          }`}
+        >
+          Stats
+        </Link>
+      </nav>
       <ThemeDropdown theme={theme} setTheme={setTheme} />
     </Flex>
   );

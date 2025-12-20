@@ -177,3 +177,14 @@
   font-size: 14px;
   color: var(--paragraph-color);
 }
+
+.sideBySideContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.sideBySideItem {
+  display: flex;
+  flex-direction: column;
+}

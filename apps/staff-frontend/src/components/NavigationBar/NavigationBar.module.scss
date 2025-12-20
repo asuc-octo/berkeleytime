@@ -36,5 +36,34 @@
       opacity: 0.8;
     }
   }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 12px;
+  }
+
+  .navLink {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--label-color);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--heading-color);
+      background-color: var(--button-hover-color);
+    }
+
+    &.navLinkActive {
+      color: var(--heading-color);
+      background-color: var(--button-hover-color);
+      font-weight: 600;
+    }
+  }
 }
 

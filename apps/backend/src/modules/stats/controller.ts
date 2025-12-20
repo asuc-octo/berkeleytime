@@ -1,5 +1,6 @@
 import {
   AggregatedMetricsModel,
+  CollectionModel,
   PlanModel,
   RatingModel,
   ScheduleModel,
@@ -24,6 +25,56 @@ export const getStats = async () => {
   // Scheduler stats
   const uniqueUsersWithSchedules = (await ScheduleModel.distinct("createdBy"))
     .length;
+  const totalSchedules = await ScheduleModel.countDocuments({});
+
+  // Get last 3 semesters with schedule counts
+  // First, get all unique year/semester combinations
+  // Semester order for sorting: Fall (0), Spring (1), Summer (2), Winter (3)
+  // Most recent semesters first: higher year, then Fall > Spring > Summer > Winter
+  const semesterOrder: Record<string, number> = {
+    Fall: 0,
+    Spring: 1,
+    Summer: 2,
+    Winter: 3,
+  };
+  const uniqueSemesters = await ScheduleModel.aggregate([
+    {
+      $group: {
+        _id: {
+          year: "$year",
+          semester: "$semester",
+        },
+      },
+    },
+  ]);
+
+  // Sort by year descending, then by semester order (Fall, Spring, Summer, Winter)
+  uniqueSemesters.sort((a, b) => {
+    if (a._id.year !== b._id.year) {
+      return b._id.year - a._id.year; // Higher year first
+    }
+    const orderA = semesterOrder[a._id.semester] ?? 999;
+    const orderB = semesterOrder[b._id.semester] ?? 999;
+    return orderA - orderB; // Fall (0) before Spring (1), etc.
+  });
+
+  // Get top 3 semesters
+  const last3Semesters = uniqueSemesters.slice(0, 3);
+
+  // Count schedules for each of the last 3 semesters
+  const schedulesBySemester = await Promise.all(
+    last3Semesters.map(async (sem) => {
+      const count = await ScheduleModel.countDocuments({
+        year: sem._id.year,
+        semester: sem._id.semester,
+      });
+      return {
+        year: sem._id.year,
+        semester: sem._id.semester,
+        count,
+      };
+    })
+  );
 
   // Gradtrak stats
   // Total courses across all plans
@@ -166,6 +217,14 @@ export const getStats = async () => {
   // Unique createdBy
   const uniqueCreatedBy = (await RatingModel.distinct("createdBy")).length;
 
+  // Collections stats
+  const nonSystemCollectionsCount = await CollectionModel.countDocuments({
+    isSystem: { $ne: true },
+  });
+  const uniqueUsersWithNonSystemCollections = (
+    await CollectionModel.distinct("createdBy", { isSystem: { $ne: true } })
+  ).length;
+
   return {
     users: {
       totalCount: totalUsers,
@@ -174,6 +233,8 @@ export const getStats = async () => {
     },
     scheduler: {
       uniqueUsersWithSchedules,
+      totalSchedules,
+      schedulesBySemester: schedulesBySemester,
     },
     gradtrak: {
       totalCourses,
@@ -186,6 +247,10 @@ export const getStats = async () => {
       courseWithMostRatings,
       classWithMostRatings,
       uniqueCreatedBy,
+    },
+    collections: {
+      nonSystemCollectionsCount,
+      uniqueUsersWithNonSystemCollections,
     },
   };
 };

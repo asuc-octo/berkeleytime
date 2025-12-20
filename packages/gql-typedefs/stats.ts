@@ -7,8 +7,16 @@ export const statsTypeDef = gql`
     createdLastMonth: Int!
   }
 
+  type SemesterScheduleCount {
+    year: Int!
+    semester: String!
+    count: Int!
+  }
+
   type SchedulerStats {
     uniqueUsersWithSchedules: Int!
+    totalSchedules: Int!
+    schedulesBySemester: [SemesterScheduleCount!]!
   }
 
   type PlanCourseCount {
@@ -50,11 +58,17 @@ export const statsTypeDef = gql`
     uniqueCreatedBy: Int!
   }
 
+  type CollectionsStats {
+    nonSystemCollectionsCount: Int!
+    uniqueUsersWithNonSystemCollections: Int!
+  }
+
   type Stats @cacheControl(maxAge: 1) {
     users: UserStats!
     scheduler: SchedulerStats!
     gradtrak: GradtrakStats!
     ratings: RatingsStats!
+    collections: CollectionsStats!
   }
 
   type Query {

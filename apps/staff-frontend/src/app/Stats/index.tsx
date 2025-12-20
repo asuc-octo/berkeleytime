@@ -12,14 +12,16 @@ const STATS_QUERY = gql`
       }
       scheduler {
         uniqueUsersWithSchedules
+        totalSchedules
+        schedulesBySemester {
+          year
+          semester
+          count
+        }
       }
       gradtrak {
         totalCourses
         maxCoursesInOnePlan
-        topPlansWithMostCourses {
-          planId
-          totalCourses
-        }
         courseHistogram {
           range
           count
@@ -42,6 +44,10 @@ const STATS_QUERY = gql`
         }
         uniqueCreatedBy
       }
+      collections {
+        nonSystemCollectionsCount
+        uniqueUsersWithNonSystemCollections
+      }
     }
   }
 `;
@@ -55,6 +61,12 @@ interface StatsData {
     };
     scheduler: {
       uniqueUsersWithSchedules: number;
+      totalSchedules: number;
+      schedulesBySemester: Array<{
+        year: number;
+        semester: string;
+        count: number;
+      }>;
     };
     gradtrak: {
       totalCourses: number;
@@ -84,6 +96,10 @@ interface StatsData {
         totalRatings: number;
       };
       uniqueCreatedBy: number;
+    };
+    collections: {
+      nonSystemCollectionsCount: number;
+      uniqueUsersWithNonSystemCollections: number;
     };
   };
 }
@@ -120,7 +136,7 @@ export default function Stats() {
     );
   }
 
-  const { users, scheduler, gradtrak, ratings } = data.stats;
+  const { users, scheduler, gradtrak, ratings, collections } = data.stats;
 
   return (
     <div className={styles.root}>
@@ -154,12 +170,40 @@ export default function Stats() {
         <h2 className={styles.sectionTitle}>Scheduler</h2>
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
+            <div className={styles.statLabel}>Total Schedules</div>
+            <div className={styles.statValue}>
+              {scheduler.totalSchedules.toLocaleString()}
+            </div>
+          </div>
+          <div className={styles.statCard}>
             <div className={styles.statLabel}>Unique Users with Schedules</div>
             <div className={styles.statValue}>
               {scheduler.uniqueUsersWithSchedules.toLocaleString()}
             </div>
           </div>
         </div>
+
+        {scheduler.schedulesBySemester.length > 0 && (
+          <div className={styles.subsection}>
+            <h3 className={styles.subsectionTitle}>
+              Last 3 Semesters Schedule Counts
+            </h3>
+            <div className={styles.list}>
+              {scheduler.schedulesBySemester.map((sem, index) => (
+                <div
+                  key={`${sem.year}-${sem.semester}`}
+                  className={styles.listItem}
+                >
+                  <span className={styles.listItemNumber}>{index + 1}.</span>
+                  <span className={styles.listItemText}>
+                    {sem.semester} {sem.year}: {sem.count.toLocaleString()}{" "}
+                    schedules
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className={styles.section}>
@@ -179,27 +223,11 @@ export default function Stats() {
           </div>
         </div>
 
-        {gradtrak.topPlansWithMostCourses.length > 0 && (
-          <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>
-              Top 3 Plans with Most Courses
-            </h3>
-            <div className={styles.list}>
-              {gradtrak.topPlansWithMostCourses.map((plan, index) => (
-                <div key={plan.planId} className={styles.listItem}>
-                  <span className={styles.listItemNumber}>{index + 1}.</span>
-                  <span className={styles.listItemText}>
-                    Plan {plan.planId}: {plan.totalCourses} courses
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {gradtrak.courseHistogram.length > 0 && (
           <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>Course Distribution</h3>
+            <h3 className={styles.subsectionTitle}>
+              Course Count Distribution
+            </h3>
             <div className={styles.histogram}>
               {gradtrak.courseHistogram.map((bucket) => (
                 <div key={bucket.range} className={styles.histogramBar}>
@@ -239,55 +267,85 @@ export default function Stats() {
           </div>
         </div>
 
-        {ratings.courseWithMostRatings && (
+        {(ratings.courseWithMostRatings || ratings.classWithMostRatings) && (
           <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>Course with Most Ratings</h3>
-            <div className={styles.detailCard}>
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Course:</span>
-                <span className={styles.detailValue}>
-                  {ratings.courseWithMostRatings.subject}{" "}
-                  {ratings.courseWithMostRatings.courseNumber}
-                </span>
-              </div>
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Total Ratings:</span>
-                <span className={styles.detailValue}>
-                  {ratings.courseWithMostRatings.totalRatings.toLocaleString()}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
+            <div className={styles.sideBySideContainer}>
+              {ratings.courseWithMostRatings && (
+                <div className={styles.sideBySideItem}>
+                  <h3 className={styles.subsectionTitle}>
+                    Course with Most Ratings
+                  </h3>
+                  <div className={styles.detailCard}>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Course:</span>
+                      <span className={styles.detailValue}>
+                        {ratings.courseWithMostRatings.subject}{" "}
+                        {ratings.courseWithMostRatings.courseNumber}
+                      </span>
+                    </div>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Total Ratings:</span>
+                      <span className={styles.detailValue}>
+                        {ratings.courseWithMostRatings.totalRatings.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-        {ratings.classWithMostRatings && (
-          <div className={styles.subsection}>
-            <h3 className={styles.subsectionTitle}>Class with Most Ratings</h3>
-            <div className={styles.detailCard}>
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Class:</span>
-                <span className={styles.detailValue}>
-                  {ratings.classWithMostRatings.subject}{" "}
-                  {ratings.classWithMostRatings.courseNumber} - Class{" "}
-                  {ratings.classWithMostRatings.classNumber}
-                </span>
-              </div>
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Term:</span>
-                <span className={styles.detailValue}>
-                  {ratings.classWithMostRatings.semester}{" "}
-                  {ratings.classWithMostRatings.year}
-                </span>
-              </div>
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Total Ratings:</span>
-                <span className={styles.detailValue}>
-                  {ratings.classWithMostRatings.totalRatings.toLocaleString()}
-                </span>
-              </div>
+              {ratings.classWithMostRatings && (
+                <div className={styles.sideBySideItem}>
+                  <h3 className={styles.subsectionTitle}>
+                    Class with Most Ratings
+                  </h3>
+                  <div className={styles.detailCard}>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Class:</span>
+                      <span className={styles.detailValue}>
+                        {ratings.classWithMostRatings.subject}{" "}
+                        {ratings.classWithMostRatings.courseNumber} - Class{" "}
+                        {ratings.classWithMostRatings.classNumber}
+                      </span>
+                    </div>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Term:</span>
+                      <span className={styles.detailValue}>
+                        {ratings.classWithMostRatings.semester}{" "}
+                        {ratings.classWithMostRatings.year}
+                      </span>
+                    </div>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Total Ratings:</span>
+                      <span className={styles.detailValue}>
+                        {ratings.classWithMostRatings.totalRatings.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>Collections</h2>
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>Non-System Collections</div>
+            <div className={styles.statValue}>
+              {collections.nonSystemCollectionsCount.toLocaleString()}
+            </div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>
+              Unique Users with Non-System Collections
+            </div>
+            <div className={styles.statValue}>
+              {collections.uniqueUsersWithNonSystemCollections.toLocaleString()}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
