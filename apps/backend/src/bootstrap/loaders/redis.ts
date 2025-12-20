@@ -1,6 +1,6 @@
 import { RedisClientType, createClient } from "redis";
 
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
 
 export default async (): Promise<RedisClientType> => {
   const client = createClient({

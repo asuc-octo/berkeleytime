@@ -1,5 +1,5 @@
 import bootstrap, { bootstrapCacheWarmingServer } from "./bootstrap";
-import { config } from "./config";
+import { config } from "../../../packages/common/src/utils/config";
 
 // Start main backend server
 bootstrap(config);

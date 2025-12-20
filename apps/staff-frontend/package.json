@@ -9,6 +9,8 @@
     "start": "serve -s dist -p 3002"
   },
   "dependencies": {
+    "@apollo/client": "4.0.7",
+    "graphql": "^16.11.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
