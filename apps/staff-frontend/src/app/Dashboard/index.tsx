@@ -254,6 +254,11 @@ export default function Dashboard() {
     if (isAddingNewStaff) {
       if (!selectedUser) return;
 
+      const confirmed = window.confirm(
+        `Grant admin access to ${selectedUser.name}?\n\nThis will allow them to access the staff dashboard and manage staff members.`
+      );
+      if (!confirmed) return;
+
       const member = await ensureStaffMember(selectedUser._id);
       if (member) {
         await updateStaffInfo(
@@ -286,7 +291,7 @@ export default function Dashboard() {
     if (!editingRole) return;
 
     const confirmed = window.confirm(
-      `Delete the role "${editingRole.role}" for ${editingRole.semester} ${editingRole.year}?`
+      `Delete this role?\n\n${editingRole.role} — ${editingRole.semester} ${editingRole.year}\n\nThis will remove this experience entry from their profile.`
     );
     if (!confirmed) return;
 
@@ -299,7 +304,7 @@ export default function Dashboard() {
     if (!editingStaffMemberId || !editingUser) return;
 
     const confirmed = window.confirm(
-      `Delete ${editingUser.name} from staff? This will remove all their roles and admin access.`
+      `Remove ${editingUser.name} from staff?\n\n⚠️ This action cannot be undone.\n\nThis will:\n• Revoke their admin access to the staff dashboard\n• Delete all their experience entries\n• Remove them from the About page`
     );
     if (!confirmed) return;
 
