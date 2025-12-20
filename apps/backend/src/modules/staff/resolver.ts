@@ -1,4 +1,5 @@
 import {
+  getAllUsers,
   getMemberRoles,
   getRoleMember,
   getStaffBySemester,
@@ -13,6 +14,8 @@ const resolvers = {
     ) => getStaffBySemester(year, semester as any),
 
     staffMember: (_: unknown, { id }: { id: string }) => getStaffMember(id),
+
+    allUsers: () => getAllUsers(),
   },
 
   StaffMember: {

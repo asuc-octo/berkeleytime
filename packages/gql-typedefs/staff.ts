@@ -26,6 +26,15 @@ export const staffTypeDef = gql`
     isAlumni: Boolean!
   }
 
+  """
+  A user account for search results.
+  """
+  type UserSearchResult {
+    _id: ID!
+    name: String!
+    email: String!
+  }
+
   type Query {
     """
     Get all staff members for a specific semester.
@@ -36,5 +45,10 @@ export const staffTypeDef = gql`
     Get a staff member by ID.
     """
     staffMember(id: ID!): StaffMember
+
+    """
+    Get all users (staff only).
+    """
+    allUsers: [UserSearchResult!]!
   }
 `;

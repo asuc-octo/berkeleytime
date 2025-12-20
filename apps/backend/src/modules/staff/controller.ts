@@ -1,4 +1,4 @@
-import { SemesterRoleModel, StaffMemberModel } from "@repo/common";
+import { SemesterRoleModel, StaffMemberModel, UserModel } from "@repo/common";
 
 import { Semester } from "../../generated-types/graphql";
 
@@ -26,4 +26,13 @@ export const getMemberRoles = async (memberId: string) => {
 export const getRoleMember = async (memberId: string) => {
   const member = await StaffMemberModel.findById(memberId).lean();
   return member;
+};
+
+export const getAllUsers = async () => {
+  const users = await UserModel.find()
+    .select("_id name email")
+    .sort({ name: 1 })
+    .lean();
+
+  return users;
 };

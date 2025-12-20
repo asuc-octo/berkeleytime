@@ -1,0 +1,40 @@
+.themeDropdown {
+  min-width: 100px;
+  z-index: 1003;
+}
+
+.themeDropdownItem {
+  font-size: 14px;
+}
+
+.root {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--foreground-color);
+  padding: 12px;
+
+  .themeButton,
+  .themeButton[data-variant="outline"] {
+    border: none !important;
+  }
+
+  .brand {
+    margin-left: 10px;
+    font-size: 24px;
+    user-select: none;
+    font-weight: 580;
+    font-feature-settings:
+      "cv05" on,
+      "cv13" on,
+      "ss07" on,
+      "cv12" on,
+      "cv06" on;
+    color: var(--heading-color);
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+

@@ -1,9 +1,17 @@
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+import { ThemeProvider } from "@repo/theme";
+
+import Layout from "@/components/Layout";
+
+import Dashboard from "./app/Dashboard";
 import { useReadUser } from "./hooks/api/users/useReadUser";
 
 const BASE = import.meta.env.DEV
   ? "http://localhost:3000"
   : "https://beta.berkeleytime.com";
-
 
 export const signIn = (redirectURI?: string) => {
   redirectURI =
@@ -13,8 +21,27 @@ export const signIn = (redirectURI?: string) => {
   window.location.href = `${BASE}/api/login?redirect_uri=${redirectURI}`;
 };
 
-export default function App() {
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+    ],
+  },
+]);
 
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: "/api/graphql",
+    credentials: "include",
+  }),
+  cache: new InMemoryCache(),
+});
+
+export default function App() {
   const { data: user, loading: userLoading } = useReadUser();
 
   if (userLoading || !user) {
@@ -27,16 +54,10 @@ export default function App() {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        fontFamily: "system-ui, sans-serif",
-      }}
-    >
-      <h1>Staff Dashboard</h1>
-    </div>
+    <ApolloProvider client={client}>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }
