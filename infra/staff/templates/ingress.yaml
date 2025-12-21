@@ -11,7 +11,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.host }}
-      secretName: bt-staff-cert
+      secretName: bt-cert
   rules:
     - host: {{ .Values.host }}
       http:
