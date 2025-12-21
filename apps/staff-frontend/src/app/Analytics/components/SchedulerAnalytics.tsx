@@ -1379,14 +1379,8 @@ export function SchedulerUtilizationRatioBlock() {
             />
             <ChartTooltip
               tooltipConfig={{
-                valueFormatter: (value: number, _name, item) => {
-                  const payload = item?.payload;
-                  const ratioStr = Number.isFinite(value)
-                    ? `${value.toFixed(2)}:1`
-                    : "∞";
-                  if (!payload) return ratioStr;
-                  return `${ratioStr} (${payload.nonEmptyCount.toLocaleString()} non-empty / ${payload.emptyCount.toLocaleString()} empty)`;
-                },
+                valueFormatter: (value: number) =>
+                  Number.isFinite(value) ? `${value.toFixed(2)}:1` : "∞",
               }}
             />
             <Area

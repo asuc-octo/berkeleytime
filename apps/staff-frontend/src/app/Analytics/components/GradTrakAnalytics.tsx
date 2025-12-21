@@ -83,17 +83,18 @@ function GradTrakFilterPopover({
   onMinCoursesChange,
   selectedYear,
   onYearChange,
-  yearOptions,
+  yearOptions = [],
   children,
 }: {
   minCourses: number;
   onMinCoursesChange: (val: number) => void;
-  selectedYear: string | null;
-  onYearChange: (val: string | null) => void;
-  yearOptions: { value: string; label: string }[];
+  selectedYear?: string | null;
+  onYearChange?: (val: string | null) => void;
+  yearOptions?: { value: string; label: string }[];
   children?: React.ReactNode;
 }) {
-  const hasActiveFilter = minCourses > 0 || selectedYear !== null;
+  const hasActiveFilter =
+    minCourses > 0 || (selectedYear !== null && selectedYear !== undefined);
 
   return (
     <Popover.Root>
@@ -150,7 +151,7 @@ function GradTrakFilterPopover({
               courses
             </span>
           </div>
-          {yearOptions.length > 0 && (
+          {yearOptions.length > 0 && onYearChange && (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 12, color: "var(--label-color)" }}>
                 Start year
@@ -185,33 +186,15 @@ export function TotalGradTraksBlock() {
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
   const [minCourses, setMinCourses] = useState(0);
-  const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
-  // Get unique years for filter dropdown
-  const yearOptions = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    const years = new Set<number>();
-    data.forEach((plan) => {
-      if (plan.startYear) years.add(plan.startYear);
-    });
-    return Array.from(years)
-      .sort((a, b) => b - a)
-      .map((year) => ({ value: String(year), label: String(year) }));
-  }, [data]);
-
-  // Filter by min courses and start year
+  // Filter by min courses
   const filteredData = useMemo(() => {
     let filtered = [...data];
     if (minCourses > 0) {
       filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
     }
-    if (selectedYear) {
-      filtered = filtered.filter(
-        (plan) => plan.startYear === parseInt(selectedYear)
-      );
-    }
     return filtered;
-  }, [data, minCourses, selectedYear]);
+  }, [data, minCourses]);
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!filteredData || filteredData.length === 0) {
@@ -351,9 +334,6 @@ export function TotalGradTraksBlock() {
         <GradTrakFilterPopover
           minCourses={minCourses}
           onMinCoursesChange={setMinCourses}
-          selectedYear={selectedYear}
-          onYearChange={setSelectedYear}
-          yearOptions={yearOptions}
         />
       }
     >
@@ -1331,25 +1311,45 @@ export function TopUsersTableBlock() {
                   style={{
                     padding: "6px 4px",
                     color: "var(--paragraph-color)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    verticalAlign: "top",
                   }}
                   title={user.majors.join(", ")}
                 >
-                  {user.majors.join(", ") || "—"}
+                  {user.majors.length > 0
+                    ? user.majors.map((major, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {major}
+                        </div>
+                      ))
+                    : "—"}
                 </td>
                 <td
                   style={{
                     padding: "6px 4px",
                     color: "var(--paragraph-color)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    verticalAlign: "top",
                   }}
                   title={user.minors.join(", ")}
                 >
-                  {user.minors.join(", ")}
+                  {user.minors.map((minor, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {minor}
+                    </div>
+                  ))}
                 </td>
               </tr>
             ))}
@@ -1585,14 +1585,8 @@ export function UtilizationRatioBlock() {
             />
             <ChartTooltip
               tooltipConfig={{
-                valueFormatter: (value: number, _name, item) => {
-                  const payload = item?.payload;
-                  const ratioStr = Number.isFinite(value)
-                    ? `${value.toFixed(2)}:1`
-                    : "∞";
-                  if (!payload) return ratioStr;
-                  return `${ratioStr} (${payload.nonEmptyCount.toLocaleString()} non-empty / ${payload.emptyCount.toLocaleString()} empty)`;
-                },
+                valueFormatter: (value: number) =>
+                  Number.isFinite(value) ? `${value.toFixed(2)}:1` : "∞",
               }}
             />
             <Area

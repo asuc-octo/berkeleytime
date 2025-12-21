@@ -56,12 +56,17 @@ export function AnalyticsCard({
     currentValue !== undefined || currentValueLabel !== undefined;
   const isPositive = (absoluteChange ?? percentChange ?? 0) >= 0;
 
-  // Format the change text: "+3.8%" for cumulative, "+3.8% vs. prev. 30d" for non-cumulative
+  // Format the change text: "+3.8% (2,500)" for cumulative, "+3.8% vs. prev. 30d" for non-cumulative
   const formatChangeText = () => {
     if (percentChange !== undefined) {
       const sign = isPositive ? "+" : "";
       if (isCumulative) {
-        return `${sign}${percentChange.toFixed(1)}%`;
+        const percentText = `${sign}${percentChange.toFixed(1)}%`;
+        if (absoluteChange !== undefined) {
+          const absSign = absoluteChange >= 0 ? "+" : "";
+          return `${percentText} (${absSign}${absoluteChange.toLocaleString()})`;
+        }
+        return percentText;
       }
       return `${sign}${percentChange.toFixed(1)}% vs. prev. ${changeTimescale}`;
     }

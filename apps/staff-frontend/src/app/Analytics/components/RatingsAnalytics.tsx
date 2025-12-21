@@ -967,7 +967,7 @@ export function CourseRatingsDistributionBlock() {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [treemapTimeRange, setTreemapTimeRange] = useState<
     "all" | "week" | "month"
-  >("all");
+  >("week");
 
   // Filter data by time range
   const filteredData = useMemo(() => {
