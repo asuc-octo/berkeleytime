@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
+import staffRoutes from "../../modules/staff/routes";
 import passportLoader from "./passport";
 
 export default async (
@@ -59,6 +60,9 @@ export default async (
 
   // load authentication
   passportLoader(app, redis);
+
+  // load staff routes
+  staffRoutes(app);
 
   app.use(
     config.graphqlPath,

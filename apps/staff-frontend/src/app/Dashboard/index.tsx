@@ -35,6 +35,7 @@ import { useReadUser } from "../../hooks/api/users";
 import { Semester } from "../../lib/api/staff";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
+import { BASE } from "@/App";
 
 interface UserSearchResult {
   _id: string;
@@ -186,32 +187,92 @@ export default function Dashboard() {
     setIsRoleModalOpen(true);
   };
 
-  const handlePhotoUpload = (
+  const handlePhotoUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     type: "photo" | "altPhoto"
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    try {
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         // Crop to square from center
-        const size = Math.min(img.width, img.height);
-        const x = (img.width - size) / 2;
-        const y = (img.height - size) / 2;
+        const cropSize = Math.min(img.width, img.height);
+        const x = (img.width - cropSize) / 2;
+        const y = (img.height - cropSize) / 2;
+
+        // Scale down to max 250x250
+        const maxSize = 500;
+        const finalSize = Math.min(cropSize, maxSize);
 
         const canvas = document.createElement("canvas");
-        canvas.width = size;
-        canvas.height = size;
+        canvas.width = finalSize;
+        canvas.height = finalSize;
         const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.drawImage(img, x, y, size, size, 0, 0, size, size);
-          setRoleForm({
-            ...roleForm,
-            [type]: canvas.toDataURL("image/jpeg", 0.9),
-          });
-        }
+        if (!ctx) return;
+
+        ctx.drawImage(img, x, y, cropSize, cropSize, 0, 0, finalSize, finalSize);
+
+        // Show preview immediately using data URL
+        const previewDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        setRoleForm({
+          ...roleForm,
+          [type]: previewDataUrl,
+        });
+
+        // Convert canvas to blob and upload
+        canvas.toBlob(
+          async (blob) => {
+            if (!blob) return;
+
+            try {
+              // Create FormData and upload to endpoint
+              const formData = new FormData();
+              formData.append("image", blob, file.name);
+
+              const response = await fetch(`${BASE}/api/uploadStaffImage`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Failed to upload image:", errorData);
+                alert(`Failed to upload image: ${errorData.error || "Unknown error"}`);
+                // Revert to null on error
+                setRoleForm({
+                  ...roleForm,
+                  [type]: null,
+                });
+                return;
+              }
+
+              const data = await response.json();
+              // Store the URL returned from the upload (full URL to the image)
+              setRoleForm({
+                ...roleForm,
+                [type]: data.url,
+              });
+            } catch (uploadError) {
+              console.error("Error uploading image:", uploadError);
+              alert("Failed to upload image");
+              // Revert to null on error
+              setRoleForm({
+                ...roleForm,
+                [type]: null,
+              });
+            }
+          },
+          "image/jpeg",
+          0.9
+        );
       };
       img.src = URL.createObjectURL(file);
+    } catch (error) {
+      console.error("Error processing image:", error);
+      alert("Failed to process image");
     }
   };
 

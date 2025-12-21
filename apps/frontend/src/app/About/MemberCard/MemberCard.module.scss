@@ -7,7 +7,6 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
   box-sizing: border-box;
 
   :global(body[data-theme="dark"]) &,
@@ -94,6 +93,7 @@
   display: flex;
   align-items: center;
   color: var(--paragraph-color);
+  cursor: pointer;
 
   svg {
     width: 16px;
