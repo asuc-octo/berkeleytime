@@ -1015,38 +1015,47 @@ export default function Dashboard() {
               </DropdownMenu.Root>
             </div>
 
-            <Tooltip content="Add new block">
-              <IconButton
-                onClick={() => {
-                  setShowAddBlockMenu(!showAddBlockMenu);
-                }}
-              >
-                <Plus />
-              </IconButton>
-            </Tooltip>
+            <Tooltip
+              content="Add new block"
+              trigger={
+                <IconButton
+                  onClick={() => {
+                    setShowAddBlockMenu(!showAddBlockMenu);
+                  }}
+                >
+                  <Plus />
+                </IconButton>
+              }
+            />
 
-            <Tooltip content="Display settings">
-              <Button
-                ref={displayMenuTriggerRef}
-                variant="secondary"
-                onClick={() => {
-                  setShowDisplayMenu(!showDisplayMenu);
-                }}
-              >
-                Display
-                <NavArrowDown />
-              </Button>
-            </Tooltip>
+            <Tooltip
+              content="Display settings"
+              trigger={
+                <Button
+                  ref={displayMenuTriggerRef}
+                  variant="secondary"
+                  onClick={() => {
+                    setShowDisplayMenu(!showDisplayMenu);
+                  }}
+                >
+                  Display
+                  <NavArrowDown />
+                </Button>
+              }
+            />
 
-            <Tooltip content="Edit Major">
-              <Button
-                variant="primary"
-                onClick={() => setEditOpen(true)}
-              >
-                <Edit />
-                Edit
-              </Button>
-            </Tooltip>
+            <Tooltip
+              content="Edit Major"
+              trigger={
+                <Button
+                  variant="primary"
+                  onClick={() => setEditOpen(true)}
+                >
+                  <Edit />
+                  Edit
+                </Button>
+              }
+            />
 
             <Dialog.Root open={editOpen} onOpenChange={setEditOpen}>
               <Dialog.Overlay />
