@@ -1,0 +1,35 @@
+.root {
+  position: absolute;
+  z-index: 2;
+  padding: 4px 6px;
+  border-radius: 2px;
+  background-color: var(--gray-500);
+  font-size: var(--text-11);
+  opacity: 0.5;
+  overflow: hidden;
+  cursor: pointer;
+
+  &.active {
+    opacity: 1;
+  }
+
+  .heading {
+    font-weight: var(--font-medium);
+    color: white;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 1.2;
+  }
+
+  .description {
+    margin-top: 2px;
+    color: rgb(255 255 255 / 75%);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: var(--text-10);
+    line-height: 1.2;
+  }
+}
+

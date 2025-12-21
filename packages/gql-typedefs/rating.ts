@@ -87,6 +87,18 @@ export const ratingTypeDef = gql`
     maxMetricCount: Int!
   }
 
+  type RawRating {
+    anonymousUserId: String!
+    subject: String!
+    courseNumber: String!
+    semester: Semester!
+    year: Int!
+    classNumber: String!
+    metricName: MetricName!
+    value: Int!
+    createdAt: String!
+  }
+
   input ClassWithoutCourseInput {
     year: Int!
     semester: Int!
@@ -130,6 +142,9 @@ export const ratingTypeDef = gql`
       subject: String!
       courseNumber: String!
     ): [SemesterRatings!]!
+
+    "All raw ratings with anonymized user IDs"
+    allRatings: [RawRating!]!
   }
 
   """

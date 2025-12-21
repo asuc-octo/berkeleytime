@@ -1,7 +1,9 @@
+import { Color as ThemeColor } from "@repo/theme";
+
 import { ISchedule, IScheduleClass } from "@/lib/api";
 import { Color, Event, Section } from "@/lib/generated/graphql";
 
-interface BaseEvent {
+export interface BaseEvent {
   days: [boolean, boolean, boolean, boolean, boolean, boolean, boolean];
   startTime: string;
   endTime: string;
@@ -45,31 +47,34 @@ export const getUnits = (schedule?: ISchedule) => {
 
 export const getSelectedSections = (schedule?: ISchedule) => {
   return (
-    schedule?.classes.flatMap(({ selectedSections, class: _class, color }) =>
-      selectedSections.reduce((acc, section) => {
-        const _section =
-          _class.primarySection.sectionId === section.sectionId
-            ? _class.primarySection
-            : _class.sections.find(
-                (currentSection) =>
-                  currentSection.sectionId === section.sectionId
-              );
+    schedule?.classes.flatMap(
+      ({ selectedSections, class: _class, color, hidden }) =>
+        hidden
+          ? []
+          : selectedSections.reduce((acc, section) => {
+              const _section =
+                _class.primarySection?.sectionId === section.sectionId
+                  ? _class.primarySection
+                  : _class.sections.find(
+                      (currentSection) =>
+                        currentSection.sectionId === section.sectionId
+                    );
 
-        return _section
-          ? [
-              ...acc,
-              {
-                section: _section,
-                color: color as Color,
-              },
-            ]
-          : acc;
-      }, [] as SectionColor[])
+              return _section
+                ? [
+                    ...acc,
+                    {
+                      section: _section,
+                      color: color as Color,
+                    },
+                  ]
+                : acc;
+            }, [] as SectionColor[])
     ) ?? []
   );
 };
 
-export const acceptedColors = Object.values(Color);
+export const acceptedColors = Object.values(ThemeColor);
 
 // DARK_MODE colors from grades mapped to Color enum
 const COLOR_ORDER: Color[] = [

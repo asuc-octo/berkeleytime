@@ -45,6 +45,7 @@ export const READ_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -140,6 +141,10 @@ export const READ_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -167,6 +172,7 @@ export const UPDATE_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -262,6 +268,10 @@ export const UPDATE_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -295,6 +305,7 @@ export const CREATE_SCHEDULE = gql`
         endTime
         days
         color
+        hidden
       }
       classes {
         class {
@@ -390,6 +401,10 @@ export const CREATE_SCHEDULE = gql`
           sectionId
         }
         color
+        hidden
+        locked
+        blockedSections
+        lockedComponents
       }
     }
   }
@@ -403,13 +418,47 @@ export const READ_SCHEDULES = gql`
       year
       semester
       sessionId
+      events {
+        _id
+        title
+        description
+        startTime
+        endTime
+        days
+        color
+        hidden
+      }
       classes {
         class {
           subject
           courseNumber
           number
+          primarySection {
+            sectionId
+            number
+            component
+            meetings {
+              days
+              endTime
+              startTime
+            }
+          }
+          sections {
+            sectionId
+            number
+            component
+            meetings {
+              days
+              endTime
+              startTime
+            }
+          }
         }
-        # selectedSections
+        selectedSections {
+          sectionId
+        }
+        color
+        hidden
       }
     }
   }

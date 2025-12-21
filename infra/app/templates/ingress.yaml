@@ -4,6 +4,9 @@ metadata:
   name: {{ .Release.Name }}-ingress
   labels:
     {{- include "bt-app.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/hsts: "true"
+    nginx.ingress.kubernetes.io/hsts-max-age: "0" # reset hsts to allow access to old.berkeleytime.com
 spec:
   ingressClassName: nginx
   tls:
@@ -11,6 +14,7 @@ spec:
         - {{ .Values.host }}
       secretName: bt-cert
   rules:
+    # main host rule
     - host: {{ .Values.host }}
       http:
         paths:

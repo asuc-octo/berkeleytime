@@ -6,8 +6,8 @@
 ## What are Deployment Environments?
 
 Berkeleytime has three deployment environments: production, staging, and development. The production environment refers to the live deployed website seen by users of Berkeleytime and should contain code already tested in the other two environments. The staging and development environments are primarily used by Berkeleytime developers/designers to test new code.
-- **Production**: Finalized changes merged in `main` are *manually* deployed here at [beta.berkeleytime.com](https://beta.berkeleytime.com)
-- **Staging**: Changes already merged in `main` are *automatically* deployed here at [staging.stanfurdime.com](https://staging.stanfurdime.com)
+- **Production**: Finalized changes merged in `main` are *manually* deployed here at [berkeleytime.com](https://berkeleytime.com)
+- **Staging**: Changes already merged in `main` are *automatically* deployed here at [staging.berkeleytime.com](https://staging.berkeleytime.com)
 - **Development**: Specific git branches can be *manually* deployed here.
 
 ## The CI/CD Github Actions
