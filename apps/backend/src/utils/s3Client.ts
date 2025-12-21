@@ -35,7 +35,7 @@ export const ensureBucketExists = async (
   s3Client: S3Client
 ): Promise<void> => {
   let bucketJustCreated = false;
-  
+
   try {
     // Check if bucket exists
     await s3Client.send(new HeadBucketCommand({ Bucket: bucketName }));
@@ -87,13 +87,15 @@ export const ensureBucketExists = async (
         Policy: JSON.stringify(publicPolicy),
       })
     );
-    
+
     if (bucketJustCreated) {
       console.log(`Set public policy for S3 bucket: ${bucketName}`);
     }
   } catch (policyError: any) {
     // Log but don't fail if policy setting fails (bucket might already have a policy)
-    console.warn(`Failed to set public policy for bucket ${bucketName}:`, policyError.message);
+    console.warn(
+      `Failed to set public policy for bucket ${bucketName}:`,
+      policyError.message
+    );
   }
 };
-

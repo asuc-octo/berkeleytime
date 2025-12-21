@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { Link, User } from "iconoir-react";
 
 import styles from "./MemberCard.module.scss";
@@ -25,14 +26,14 @@ export function MemberCard({
   hideImage = false,
 }: MemberCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   // Use altImageUrl on hover if available, otherwise use imageUrl
   const displayImageUrl = isHovered && altImageUrl ? altImageUrl : imageUrl;
 
   return (
     <div className={styles.card}>
       {!hideImage && (
-        <div 
+        <div
           className={styles.imageContainer}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}

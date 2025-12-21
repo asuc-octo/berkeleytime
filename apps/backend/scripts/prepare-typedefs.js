@@ -17,9 +17,13 @@ const moduleDirs = fs.readdirSync(modulesDir, { withFileTypes: true })
   .map(dirent => dirent.name)
   .sort();
 
+// Typedefs that provide types used by other modules but don't have their own module
+// (e.g., cloudflare and stats types are used by the analytics module)
+const sharedTypedefs = ['cloudflare', 'stats'];
+
 // Check for mismatches
 const missingTypedefs = moduleDirs.filter(module => !typedefFiles.includes(module));
-const missingModules = typedefFiles.filter(typedef => !moduleDirs.includes(typedef));
+const missingModules = typedefFiles.filter(typedef => !moduleDirs.includes(typedef) && !sharedTypedefs.includes(typedef));
 
 if (missingTypedefs.length > 0 || missingModules.length > 0) {
   console.error('Error: Mismatch between typedef files and module directories');
@@ -33,7 +37,8 @@ if (missingTypedefs.length > 0 || missingModules.length > 0) {
 }
 
 // Copy each schema file to its corresponding module's typedefs directory
-typedefFiles.forEach((module) => {
+// Skip shared typedefs that don't have their own module
+typedefFiles.filter(module => !sharedTypedefs.includes(module)).forEach((module) => {
   const sourceFile = path.join(sourceDir, `${module}.ts`);
   const targetDir = path.join(modulesDir, module, 'generated-typedefs');
   const targetFile = path.join(targetDir, `${module}.ts`);
@@ -49,6 +54,19 @@ typedefFiles.forEach((module) => {
   } else {
     console.error(`Error: ${sourceFile} does not exist`);
     process.exit(1);
+  }
+});
+
+// Copy shared typedefs to the analytics module (they contain types used by analytics)
+const analyticsTypedefsDir = path.join(modulesDir, 'analytics', 'generated-typedefs');
+if (!fs.existsSync(analyticsTypedefsDir)) {
+  fs.mkdirSync(analyticsTypedefsDir, { recursive: true });
+}
+sharedTypedefs.forEach((typedef) => {
+  const sourceFile = path.join(sourceDir, `${typedef}.ts`);
+  const targetFile = path.join(analyticsTypedefsDir, `${typedef}.ts`);
+  if (fs.existsSync(sourceFile)) {
+    fs.copyFileSync(sourceFile, targetFile);
   }
 });
 

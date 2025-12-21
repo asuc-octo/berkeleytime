@@ -91,8 +91,9 @@ export const staffTypeDef = gql`
     Create or get staff member for a user. Returns the staff member.
     If user doesn't have a staff record, creates one.
     Also sets user.staff = true.
+    The addedBy field is automatically set from the authenticated user.
     """
-    ensureStaffMember(userId: ID!, addedBy: ID!): StaffMember!
+    ensureStaffMember(userId: ID!): StaffMember! @auth
 
     """
     Upsert a semester role for a staff member.
@@ -102,21 +103,22 @@ export const staffTypeDef = gql`
     upsertSemesterRole(
       memberId: ID!
       input: UpsertSemesterRoleInput!
-    ): SemesterRole!
+    ): SemesterRole! @auth
 
     """
     Delete a semester role by ID.
     """
-    deleteSemesterRole(roleId: ID!): Boolean!
+    deleteSemesterRole(roleId: ID!): Boolean! @auth
 
     """
     Update staff member info (personalLink).
     """
     updateStaffInfo(memberId: ID!, input: UpdateStaffInfoInput!): StaffMember!
+      @auth
 
     """
     Delete a staff member and all their roles.
     """
-    deleteStaffMember(memberId: ID!): Boolean!
+    deleteStaffMember(memberId: ID!): Boolean! @auth
   }
 `;

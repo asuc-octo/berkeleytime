@@ -4,10 +4,7 @@ import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 
 import { config } from "../../../../../packages/common/src/utils/config";
-import {
-  createS3Client,
-  ensureBucketExists,
-} from "../../utils/s3Client";
+import { createS3Client, ensureBucketExists } from "../../utils/s3Client";
 
 // Configure multer to handle file uploads in memory
 const upload = multer({
@@ -48,7 +45,8 @@ export default (app: Application): void => {
       try {
         if (!req.file) {
           res.status(400).json({
-            error: "No image file provided. Please upload a file with field name 'image'",
+            error:
+              "No image file provided. Please upload a file with field name 'image'",
           });
           return;
         }
@@ -77,19 +75,22 @@ export default (app: Application): void => {
         res.status(200).json({
           success: true,
           fileName,
-          url: `http://${ config.isDev ? "localhost" : config.s3Endpoint}:${config.s3Port}/${config.s3StaffPhotosBucket}/${fileName}`, // You may want to construct a full URL here if needed
+          url: `http://${config.isDev ? "localhost" : config.s3Endpoint}:${config.s3Port}/${config.s3StaffPhotosBucket}/${fileName}`, // You may want to construct a full URL here if needed
         });
       } catch (error: any) {
         console.error("[Staff Upload API] Error:", error);
-        
+
         // Handle multer errors
-        if (error instanceof Error && error.message === "Only image files are allowed") {
+        if (
+          error instanceof Error &&
+          error.message === "Only image files are allowed"
+        ) {
           res.status(400).json({
             error: "Invalid file type. Only image files are allowed",
           });
           return;
         }
-        
+
         // Handle file size errors
         if (error.code === "LIMIT_FILE_SIZE") {
           res.status(400).json({
@@ -97,7 +98,7 @@ export default (app: Application): void => {
           });
           return;
         }
-        
+
         res.status(500).json({
           error: "Failed to upload image",
           message: error.message,
@@ -106,4 +107,3 @@ export default (app: Application): void => {
     }
   );
 };
-

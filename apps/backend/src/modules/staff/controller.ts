@@ -1,3 +1,5 @@
+import { GraphQLError } from "graphql";
+
 import { SemesterRoleModel, StaffMemberModel, UserModel } from "@repo/common";
 
 import {
@@ -5,6 +7,36 @@ import {
   UpdateStaffInfoInput,
   UpsertSemesterRoleInput,
 } from "../../generated-types/graphql";
+
+// Context interface for authenticated requests
+export interface StaffRequestContext {
+  user: {
+    _id: string;
+    isAuthenticated: boolean;
+  };
+}
+
+// Helper to verify the current user is a staff member
+// Returns the staff member record for the authenticated user
+export const requireStaffMember = async (context: StaffRequestContext) => {
+  if (!context.user?._id) {
+    throw new GraphQLError("Not authenticated", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const staffMember = await StaffMemberModel.findOne({
+    userId: context.user._id,
+  }).lean();
+
+  if (!staffMember) {
+    throw new GraphQLError("Only staff members can perform this action", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
+
+  return staffMember;
+};
 
 export const getStaffBySemester = async (year: number, semester: Semester) => {
   const roles = await SemesterRoleModel.find({ year, semester })
@@ -63,7 +95,13 @@ export const getAddedByName = async (addedBy?: string) => {
   return member?.name ?? null;
 };
 
-export const ensureStaffMember = async (userId: string, addedBy: string) => {
+export const ensureStaffMember = async (
+  context: StaffRequestContext,
+  userId: string
+) => {
+  // Verify caller is a staff member and get their record
+  const callerStaffMember = await requireStaffMember(context);
+
   // Check if StaffMember already exists for this userId
   const existingMember = await StaffMemberModel.findOne({ userId }).lean();
 
@@ -74,15 +112,17 @@ export const ensureStaffMember = async (userId: string, addedBy: string) => {
   // Get user info to create staff member
   const user = await UserModel.findById(userId).lean();
   if (!user) {
-    throw new Error(`User with ID ${userId} not found`);
+    throw new GraphQLError(`User with ID ${userId} not found`, {
+      extensions: { code: "NOT_FOUND" },
+    });
   }
 
-  // Create new StaffMember
+  // Create new StaffMember with addedBy set to the caller's staff member ID
   const newMember = await StaffMemberModel.create({
     userId,
     name: user.name,
     isLeadership: false,
-    addedBy,
+    addedBy: callerStaffMember._id,
   });
 
   // Set user.staff = true
@@ -92,9 +132,13 @@ export const ensureStaffMember = async (userId: string, addedBy: string) => {
 };
 
 export const upsertSemesterRole = async (
+  context: StaffRequestContext,
   memberId: string,
   input: UpsertSemesterRoleInput
 ) => {
+  // Verify caller is a staff member
+  await requireStaffMember(context);
+
   // Use findOneAndUpdate with upsert to create or update
   const role = await SemesterRoleModel.findOneAndUpdate(
     {
@@ -126,15 +170,25 @@ export const upsertSemesterRole = async (
   return role;
 };
 
-export const deleteSemesterRole = async (roleId: string) => {
+export const deleteSemesterRole = async (
+  context: StaffRequestContext,
+  roleId: string
+) => {
+  // Verify caller is a staff member
+  await requireStaffMember(context);
+
   const result = await SemesterRoleModel.findByIdAndDelete(roleId);
   return result !== null;
 };
 
 export const updateStaffInfo = async (
+  context: StaffRequestContext,
   memberId: string,
   input: UpdateStaffInfoInput
 ) => {
+  // Verify caller is a staff member
+  await requireStaffMember(context);
+
   const updateData: Record<string, unknown> = {};
 
   if (input.personalLink !== undefined) {
@@ -148,13 +202,28 @@ export const updateStaffInfo = async (
   );
 
   if (!member) {
-    throw new Error(`Staff member with ID ${memberId} not found`);
+    throw new GraphQLError(`Staff member with ID ${memberId} not found`, {
+      extensions: { code: "NOT_FOUND" },
+    });
   }
 
   return member;
 };
 
-export const deleteStaffMember = async (memberId: string) => {
+export const deleteStaffMember = async (
+  context: StaffRequestContext,
+  memberId: string
+) => {
+  // Verify caller is a staff member
+  const callerStaffMember = await requireStaffMember(context);
+
+  // Prevent self-deletion to avoid locking out access
+  if (callerStaffMember._id.toString() === memberId) {
+    throw new GraphQLError("You cannot remove yourself from staff", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
+
   // Get staff member to find userId
   const member = await StaffMemberModel.findById(memberId).lean();
   if (!member) {

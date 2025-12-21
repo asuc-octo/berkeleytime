@@ -1,5 +1,6 @@
 import { merge } from "lodash";
 
+import Analytics from "./analytics";
 import Catalog from "./catalog";
 import Class from "./class";
 import Collection from "./collection";
@@ -12,11 +13,11 @@ import Plan from "./plan";
 import Rating from "./rating";
 import Schedule from "./schedule";
 import Staff from "./staff";
-import Stats from "./stats";
 import Term from "./term";
 import User from "./user";
 
 const modules = [
+  Analytics,
   User,
   GradeDistribution,
   Catalog,
@@ -25,7 +26,6 @@ const modules = [
   Common,
   Schedule,
   Staff,
-  Stats,
   Term,
   Course,
   Class,
@@ -36,4 +36,6 @@ const modules = [
 
 export const resolvers = merge(modules.map((module) => module.resolver));
 
-export const typeDefs = modules.map((module) => module.typeDef);
+export const typeDefs = modules.flatMap((module) =>
+  "typeDefs" in module ? module.typeDefs : [module.typeDef]
+);

@@ -2,14 +2,16 @@ import { useMemo, useState } from "react";
 
 import { gql, useQuery } from "@apollo/client";
 import {
+  BadgeCheck,
   EditPencil,
   MediaImagePlus,
   Plus,
   Search,
   Trash,
   User,
-  UserBadgeCheck,
   WarningTriangleSolid,
+  Xmark,
+  XmarkCircle,
 } from "iconoir-react";
 
 import {
@@ -21,6 +23,8 @@ import {
   PillSwitcher,
   Select,
 } from "@repo/theme";
+
+import { BASE } from "@/App";
 
 import {
   useAllStaffMembers,
@@ -35,7 +39,6 @@ import { useReadUser } from "../../hooks/api/users";
 import { Semester } from "../../lib/api/staff";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
-import { BASE } from "@/App";
 
 interface UserSearchResult {
   _id: string;
@@ -84,8 +87,8 @@ const YEAR_OPTIONS: OptionItem<string>[] = Array.from(
 );
 
 const SEARCH_TABS = [
-  { value: "staff", label: "Staff Search" },
-  { value: "user", label: "User Search" },
+  { value: "staff", label: "Staff View" },
+  { value: "user", label: "Users Lookup" },
 ];
 
 type StaffSearchBy = "name" | "role" | "semester" | "team";
@@ -99,9 +102,9 @@ const STAFF_SEARCH_BY_OPTIONS: OptionItem<StaffSearchBy>[] = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("staff");
-  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
-    null
-  );
+  const [searchSelectedUser, setSearchSelectedUser] =
+    useState<UserSearchResult | null>(null);
+  const [viewedUsers, setViewedUsers] = useState<UserSearchResult[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [staffSearchBy, setStaffSearchBy] = useState<StaffSearchBy>("name");
   const [staffSearchQuery, setStaffSearchQuery] = useState("");
@@ -128,6 +131,7 @@ export default function Dashboard() {
     name: string;
     email?: string;
   } | null>(null);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
   // API hooks
   const { data: currentUser } = useReadUser();
@@ -136,9 +140,6 @@ export default function Dashboard() {
     loading: staffLoading,
     refetch: refetchStaff,
   } = useAllStaffMembers();
-  const { data: selectedStaffMember } = useStaffMemberByUserId({
-    userId: selectedUser?._id ?? null,
-  });
   const { data: currentUserStaffMember } = useStaffMemberByUserId({
     userId: currentUser?._id ?? null,
   });
@@ -212,7 +213,17 @@ export default function Dashboard() {
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        ctx.drawImage(img, x, y, cropSize, cropSize, 0, 0, finalSize, finalSize);
+        ctx.drawImage(
+          img,
+          x,
+          y,
+          cropSize,
+          cropSize,
+          0,
+          0,
+          finalSize,
+          finalSize
+        );
 
         // Show preview immediately using data URL
         const previewDataUrl = canvas.toDataURL("image/jpeg", 0.9);
@@ -240,7 +251,9 @@ export default function Dashboard() {
               if (!response.ok) {
                 const errorData = await response.json();
                 console.error("Failed to upload image:", errorData);
-                alert(`Failed to upload image: ${errorData.error || "Unknown error"}`);
+                alert(
+                  `Failed to upload image: ${errorData.error || "Unknown error"}`
+                );
                 // Revert to null on error
                 setRoleForm({
                   ...roleForm,
@@ -302,9 +315,10 @@ export default function Dashboard() {
 
   const openStaffInfoModal = (
     staffMember: StaffMember,
-    user: { name: string; email?: string }
+    user: { _id: string; name: string; email?: string }
   ) => {
     setEditingUser(user);
+    setEditingUserId(user._id);
     setEditingStaffMemberId(staffMember.id);
     setIsAddingNewStaff(false);
     setStaffInfoForm({
@@ -315,29 +329,21 @@ export default function Dashboard() {
 
   const handleSaveStaffInfo = async () => {
     if (isAddingNewStaff) {
-      if (!selectedUser) return;
+      if (!editingUserId || !editingUser) return;
 
       const confirmed = window.confirm(
-        `Add ${selectedUser.name} as staff?\n\nThis will grant them admin access to the staff dashboard.`
+        `Add ${editingUser.name} as staff?\n\nThis will grant them admin access to the staff dashboard.`
       );
       if (!confirmed) return;
 
-      if (!currentUserStaffMember?.id) {
-        alert("Unable to add staff: your staff member record was not found.");
-        return;
-      }
-
-      const member = await ensureStaffMember(
-        selectedUser._id,
-        currentUserStaffMember.id
-      );
+      const member = await ensureStaffMember(editingUserId);
       if (member) {
         await updateStaffInfo(
           member.id,
           {
             personalLink: staffInfoForm.personalLink || undefined,
           },
-          selectedUser._id
+          editingUserId
         );
       }
     } else {
@@ -348,7 +354,7 @@ export default function Dashboard() {
         {
           personalLink: staffInfoForm.personalLink || undefined,
         },
-        selectedUser?._id
+        editingUserId ?? undefined
       );
     }
 
@@ -377,24 +383,44 @@ export default function Dashboard() {
     );
     if (!confirmed) return;
 
-    await deleteStaffMember(editingStaffMemberId, selectedUser?._id);
+    await deleteStaffMember(editingStaffMemberId, editingUserId ?? undefined);
     setIsStaffInfoModalOpen(false);
     refetchStaff();
   };
 
-  const handleAddAsStaff = () => {
-    if (!selectedUser) return;
-
+  const handleAddAsStaff = (user: UserSearchResult) => {
     setEditingUser({
-      name: selectedUser.name,
-      email: selectedUser.email,
+      name: user.name,
+      email: user.email,
     });
+    setEditingUserId(user._id);
     setEditingStaffMemberId(null);
     setIsAddingNewStaff(true);
     setStaffInfoForm({
       personalLink: "",
     });
     setIsStaffInfoModalOpen(true);
+  };
+
+  const handleAddToView = () => {
+    if (!searchSelectedUser) return;
+    // Don't add duplicates
+    if (viewedUsers.some((u) => u._id === searchSelectedUser._id)) {
+      setSearchSelectedUser(null);
+      setSearchQuery("");
+      return;
+    }
+    setViewedUsers([...viewedUsers, searchSelectedUser]);
+    setSearchSelectedUser(null);
+    setSearchQuery("");
+  };
+
+  const getStaffMemberByUserId = (userId: string) => {
+    return staffMembers.find((m) => m.userId === userId);
+  };
+
+  const handleRemoveFromView = (userId: string) => {
+    setViewedUsers(viewedUsers.filter((u) => u._id !== userId));
   };
 
   const { data, loading } = useQuery<{ allUsers: UserSearchResult[] }>(
@@ -413,12 +439,22 @@ export default function Dashboard() {
         )
       : data.allUsers;
 
-    return filtered.slice(0, 50).map((user) => ({
+    const sliced = filtered.slice(0, 50);
+
+    // Ensure selected user is always in options
+    if (
+      searchSelectedUser &&
+      !sliced.some((u) => u._id === searchSelectedUser._id)
+    ) {
+      sliced.unshift(searchSelectedUser);
+    }
+
+    return sliced.map((user) => ({
       value: user,
       label: user.name,
       meta: user.email,
     }));
-  }, [data?.allUsers, searchQuery]);
+  }, [data?.allUsers, searchQuery, searchSelectedUser]);
 
   // Get unique past roles from the staff member's history
   const pastRoles = useMemo(() => {
@@ -457,7 +493,7 @@ export default function Dashboard() {
     value: UserSearchResult | UserSearchResult[] | null
   ) => {
     if (Array.isArray(value)) return;
-    setSelectedUser(value);
+    setSearchSelectedUser(value);
   };
 
   return (
@@ -511,6 +547,7 @@ export default function Dashboard() {
                   staffMember={staff}
                   onEditStaffInfo={() =>
                     openStaffInfoModal(staff, {
+                      _id: staff.userId ?? staff.id,
                       name: staff.name,
                     })
                   }
@@ -527,182 +564,207 @@ export default function Dashboard() {
 
       {activeTab === "user" && (
         <div className={styles.userSearchWrapper}>
-          <div className={styles.searchContainer}>
-            <Select
-              searchable
-              options={options}
-              value={selectedUser}
-              onChange={handleChange}
-              onSearchChange={setSearchQuery}
-              placeholder="Search by name..."
-              searchPlaceholder="Type a name or email..."
-              emptyMessage={loading ? "Loading users..." : "No users found."}
-              loading={loading}
-            />
+          <div className={styles.userSearchRow}>
+            <div className={styles.searchContainer}>
+              <Select
+                searchable
+                options={options}
+                value={searchSelectedUser}
+                onChange={handleChange}
+                onSearchChange={setSearchQuery}
+                placeholder="Search by name..."
+                searchPlaceholder="Type a name or email..."
+                emptyMessage={loading ? "Loading users..." : "No users found."}
+                loading={loading}
+              />
+            </div>
+            <Button
+              variant="secondary"
+              onClick={handleAddToView}
+              style={{ height: 44, flexShrink: 0 }}
+            >
+              <Plus width={16} height={16} />
+              Add to view
+            </Button>
           </div>
 
-          {selectedUser &&
-            (() => {
-              const staffMember = selectedStaffMember;
+          {viewedUsers.length > 0 && (
+            <div className={styles.staffList}>
+              {viewedUsers.map((user) => {
+                const staffMember = getStaffMemberByUserId(user._id);
 
-              return (
-                <div className={styles.selectedUser}>
-                  <div className={styles.selectedUserName}>
-                    {selectedUser.name}
-                  </div>
-                  <div className={styles.selectedUserEmail}>
-                    {selectedUser.email}
-                    {!selectedUser.email.endsWith("@berkeley.edu") && (
-                      <span className={styles.unaffiliatedWarning}>
-                        <WarningTriangleSolid width={14} height={14} />
-                        Unaffiliated email
-                      </span>
-                    )}
-                  </div>
-
-                  <div className={styles.staffStatus}>
-                    <div className={styles.staffStatusInfo}>
-                      <div className={styles.staffStatusBadges}>
-                        <span
-                          className={
-                            staffMember
-                              ? styles.staffBadge
-                              : styles.notStaffBadge
-                          }
-                        >
-                          <UserBadgeCheck width={14} height={14} />
-                          {staffMember ? "Staff member" : "Not a staff yet"}
+                return (
+                  <div key={user._id} className={styles.selectedUser}>
+                    <div className={styles.selectedUserHeader}>
+                      <div className={styles.selectedUserName}>{user.name}</div>
+                      <button
+                        type="button"
+                        className={styles.editButton}
+                        onClick={() => handleRemoveFromView(user._id)}
+                      >
+                        <Xmark width={16} height={16} />
+                      </button>
+                    </div>
+                    <div className={styles.selectedUserEmail}>
+                      {user.email}
+                      {!user.email.endsWith("@berkeley.edu") && (
+                        <span className={styles.unaffiliatedWarning}>
+                          <WarningTriangleSolid width={14} height={14} />
+                          Unaffiliated email
                         </span>
-                        {staffMember?.addedByName && (
-                          <span className={styles.addedByText}>
-                            Added by {staffMember.addedByName}
+                      )}
+                    </div>
+
+                    <div className={styles.staffStatus}>
+                      <div className={styles.staffStatusInfo}>
+                        <div className={styles.staffStatusBadges}>
+                          <span
+                            className={
+                              staffMember
+                                ? styles.staffBadge
+                                : styles.notStaffBadge
+                            }
+                          >
+                            {staffMember ? (
+                              <BadgeCheck width={14} height={14} />
+                            ) : (
+                              <XmarkCircle width={14} height={14} />
+                            )}
+                            {staffMember ? "Staff member" : "Not a staff yet"}
+                          </span>
+                          {staffMember?.addedByName && (
+                            <span className={styles.addedByText}>
+                              Added by {staffMember.addedByName}
+                            </span>
+                          )}
+                        </div>
+                        {staffMember ? (
+                          staffMember.personalLink ? (
+                            <a
+                              href={staffMember.personalLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={styles.personalLink}
+                            >
+                              {staffMember.personalLink}
+                            </a>
+                          ) : (
+                            <span className={styles.noLink}>
+                              No personal link provided
+                            </span>
+                          )
+                        ) : (
+                          <span className={styles.noLink}>
+                            Adding as staff grants admin access
                           </span>
                         )}
                       </div>
                       {staffMember ? (
-                        staffMember.personalLink ? (
-                          <a
-                            href={staffMember.personalLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.personalLink}
-                          >
-                            {staffMember.personalLink}
-                          </a>
-                        ) : (
-                          <span className={styles.noLink}>
-                            No personal link provided
-                          </span>
-                        )
+                        <button
+                          type="button"
+                          className={styles.editButton}
+                          onClick={() =>
+                            openStaffInfoModal(staffMember, {
+                              _id: user._id,
+                              name: user.name,
+                              email: user.email,
+                            })
+                          }
+                        >
+                          <EditPencil width={16} height={16} />
+                        </button>
                       ) : (
-                        <span className={styles.noLink}>
-                          Adding as staff grants admin access
-                        </span>
+                        <button
+                          type="button"
+                          className={styles.editButton}
+                          onClick={() => handleAddAsStaff(user)}
+                        >
+                          <Plus width={16} height={16} />
+                        </button>
                       )}
                     </div>
-                    {staffMember ? (
-                      <button
-                        type="button"
-                        className={styles.editButton}
-                        onClick={() =>
-                          openStaffInfoModal(staffMember, {
-                            name: selectedUser.name,
-                            email: selectedUser.email,
-                          })
-                        }
-                      >
-                        <EditPencil width={16} height={16} />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className={styles.editButton}
-                        onClick={handleAddAsStaff}
-                      >
-                        <Plus width={16} height={16} />
-                      </button>
+
+                    {staffMember && (
+                      <div className={styles.semesterRoles}>
+                        <div className={styles.semesterRolesHeader}>
+                          Experience
+                        </div>
+                        {staffMember.roles.map((role) => (
+                          <div key={role.id} className={styles.semesterRole}>
+                            {role.photo ? (
+                              <img
+                                src={role.photo}
+                                alt={`${user.name} - ${role.semester} ${role.year}`}
+                                className={styles.semesterRolePhoto}
+                              />
+                            ) : (
+                              <div
+                                className={styles.semesterRolePhotoPlaceholder}
+                              >
+                                <User width={24} height={24} />
+                              </div>
+                            )}
+                            <div className={styles.semesterRoleInfo}>
+                              <div className={styles.semesterRoleMain}>
+                                <span className={styles.semesterRoleTerm}>
+                                  {role.semester} {role.year}
+                                </span>
+                                <span className={styles.semesterRoleTitle}>
+                                  {role.role}
+                                </span>
+                              </div>
+                              <div className={styles.semesterRoleTags}>
+                                {role.isLeadership && (
+                                  <span className={styles.leadBadge}>Lead</span>
+                                )}
+                                {role.team && (
+                                  <span className={styles.semesterRoleTeam}>
+                                    {role.team}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className={styles.editButton}
+                              onClick={() =>
+                                openEditModal(
+                                  role,
+                                  {
+                                    name: user.name,
+                                    email: user.email,
+                                  },
+                                  staffMember.id
+                                )
+                              }
+                            >
+                              <EditPencil width={16} height={16} />
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          className={styles.addButton}
+                          type="button"
+                          onClick={() =>
+                            openAddModal(
+                              {
+                                name: user.name,
+                                email: user.email,
+                              },
+                              staffMember.id
+                            )
+                          }
+                        >
+                          <Plus width={16} height={16} />
+                          Add new role
+                        </button>
+                      </div>
                     )}
                   </div>
-
-                  {staffMember && (
-                    <div className={styles.semesterRoles}>
-                      <div className={styles.semesterRolesHeader}>
-                        Experience
-                      </div>
-                      {staffMember.roles.map((role) => (
-                        <div key={role.id} className={styles.semesterRole}>
-                          {role.photo ? (
-                            <img
-                              src={role.photo}
-                              alt={`${selectedUser.name} - ${role.semester} ${role.year}`}
-                              className={styles.semesterRolePhoto}
-                            />
-                          ) : (
-                            <div
-                              className={styles.semesterRolePhotoPlaceholder}
-                            >
-                              <User width={24} height={24} />
-                            </div>
-                          )}
-                          <div className={styles.semesterRoleInfo}>
-                            <div className={styles.semesterRoleMain}>
-                              <span className={styles.semesterRoleTerm}>
-                                {role.semester} {role.year}
-                              </span>
-                              <span className={styles.semesterRoleTitle}>
-                                {role.role}
-                              </span>
-                            </div>
-                            <div className={styles.semesterRoleTags}>
-                              {role.isLeadership && (
-                                <span className={styles.leadBadge}>Lead</span>
-                              )}
-                              {role.team && (
-                                <span className={styles.semesterRoleTeam}>
-                                  {role.team}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            className={styles.editButton}
-                            onClick={() =>
-                              openEditModal(
-                                role,
-                                {
-                                  name: selectedUser.name,
-                                  email: selectedUser.email,
-                                },
-                                staffMember.id
-                              )
-                            }
-                          >
-                            <EditPencil width={16} height={16} />
-                          </button>
-                        </div>
-                      ))}
-                      <button
-                        className={styles.addButton}
-                        type="button"
-                        onClick={() =>
-                          openAddModal(
-                            {
-                              name: selectedUser.name,
-                              email: selectedUser.email,
-                            },
-                            staffMember.id
-                          )
-                        }
-                      >
-                        <Plus width={16} height={16} />
-                        Add new role
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 
@@ -921,16 +983,17 @@ export default function Dashboard() {
             </div>
           </Dialog.Body>
           <Dialog.Footer>
-            {!isAddingNewStaff && (
-              <Button
-                variant="secondary"
-                onClick={handleDeleteStaffMember}
-                style={{ marginRight: "auto", color: "var(--red-500)" }}
-              >
-                <Trash width={16} height={16} />
-                Remove Staff
-              </Button>
-            )}
+            {!isAddingNewStaff &&
+              editingStaffMemberId !== currentUserStaffMember?.id && (
+                <Button
+                  variant="secondary"
+                  onClick={handleDeleteStaffMember}
+                  style={{ marginRight: "auto", color: "var(--red-500)" }}
+                >
+                  <Trash width={16} height={16} />
+                  Remove Staff
+                </Button>
+              )}
             <Button
               variant="secondary"
               onClick={() => setIsStaffInfoModalOpen(false)}

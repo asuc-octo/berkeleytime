@@ -1,7 +1,7 @@
 import {
+  BadgeCheck,
   EditPencil,
   User,
-  UserBadgeCheck,
   WarningTriangleSolid,
 } from "iconoir-react";
 
@@ -62,7 +62,7 @@ export default function StaffCard({
         <div className={styles.staffStatusInfo}>
           <div className={styles.staffStatusBadges}>
             <span className={styles.staffBadge}>
-              <UserBadgeCheck width={14} height={14} />
+              <BadgeCheck width={14} height={14} />
               Staff member
             </span>
             {staffMember.addedByName && (

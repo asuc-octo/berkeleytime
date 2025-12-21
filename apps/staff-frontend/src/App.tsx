@@ -6,8 +6,9 @@ import { Button, ThemeProvider } from "@repo/theme";
 import Layout from "@/components/Layout";
 
 import styles from "./App.module.scss";
+import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
-import Stats from "./app/Stats";
+import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
 
 export const BASE = import.meta.env.DEV
@@ -31,8 +32,8 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "stats",
-        element: <Stats />,
+        path: "analytics",
+        element: <Analytics />,
       },
     ],
   },
@@ -40,18 +41,24 @@ const router = createBrowserRouter([
 
 export default function App() {
   const { data: user, loading: userLoading } = useReadUser();
+  const { data: staffMember, loading: staffLoading } = useStaffMemberByUserId({
+    userId: user?._id ?? null,
+  });
 
-  if (userLoading) {
+  const isLoading = userLoading || (user && staffLoading);
+  const isNotStaff = user && !staffLoading && !staffMember;
+
+  if (isLoading) {
     return (
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <div className={styles.signInContainer}>Loading...</div>
       </ThemeProvider>
     );
   }
 
-  if (!user) {
+  if (!user || isNotStaff) {
     return (
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <div className={styles.signInContainer}>
           <pre className={styles.asciiArt}>{`                .,,uod8B8bou,,.
            ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
@@ -84,17 +91,26 @@ export default function App() {
                     \`!9899fT|!^"'
                       \`!^"'`}</pre>
           <h1 className={styles.heading}>Staff Dashboard</h1>
-          <Button onClick={() => signIn()}>
+          <Button
+            variant="tertiary"
+            onClick={() => signIn()}
+            style={{ color: "var(--heading-color)" }}
+          >
             Sign in
             <ArrowRight />
           </Button>
+          {isNotStaff && (
+            <p className={styles.errorText}>
+              This account is not registered as a staff member
+            </p>
+          )}
         </div>
       </ThemeProvider>
     );
   }
 
   return (
-    <ThemeProvider>
+    <ThemeProvider forcedTheme="dark">
       <RouterProvider router={router} />
     </ThemeProvider>
   );
