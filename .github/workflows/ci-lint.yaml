@@ -1,7 +1,7 @@
 name: "CI: Check Lint"
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-lint-${{ github.ref }}
   cancel-in-progress: true
 
 on:

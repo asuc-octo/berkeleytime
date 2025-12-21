@@ -1,7 +1,7 @@
 name: "CI: Check Build"
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-build-${{ github.ref }}
   cancel-in-progress: true
 
 on:
