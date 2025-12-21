@@ -6,6 +6,11 @@ concurrency:
 
 on:
   pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronized
+      - ready_for_review
     paths:
       - ".github/workflows/ci-build.yaml"
       - "apps/backend/**"
