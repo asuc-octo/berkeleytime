@@ -9,7 +9,6 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
@@ -1153,7 +1152,7 @@ export function TopUsersTableBlock() {
             </tr>
           </thead>
           <tbody>
-            {topUsers.map((user, index) => (
+            {topUsers.map((user) => (
               <tr
                 key={user.planId}
                 style={{
