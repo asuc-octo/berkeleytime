@@ -1,0 +1,49 @@
+.root {
+  flex: 1;
+  width: 100%;
+  overflow: auto;
+  padding: 20px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
+
+.tabs {
+  display: flex;
+  border: 1px solid var(--border-color);
+}
+
+.tab {
+  padding: 8px 16px;
+  border: none;
+  border-right: 1px solid var(--border-color);
+  background-color: var(--foreground-color);
+  color: var(--heading-color);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &.active {
+    background-color: var(--border-color);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.cell {
+  height: 400px;
+  border: 1px solid var(--border-color);
+  background-color: var(--foreground-color);
+}

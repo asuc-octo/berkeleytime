@@ -99,6 +99,45 @@ export const ratingTypeDef = gql`
     createdAt: String!
   }
 
+  """
+  Minimal rating data point for analytics timeseries
+  Contains only the data needed to compute growth metrics
+  """
+  type RatingDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the rating was created"
+    createdAt: String!
+    "User email for counting unique users"
+    userEmail: String!
+    "Course identifier (subject + courseNumber)"
+    courseKey: String!
+  }
+
+  """
+  Rating metric data point for analytics
+  Contains metric name and value for computing average scores over time
+  """
+  type RatingMetricDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the rating was created"
+    createdAt: String!
+    "The metric name (Usefulness, Difficulty, Workload)"
+    metricName: MetricName!
+    "The rating value (1-5)"
+    value: Int!
+    "Course identifier (subject + courseNumber)"
+    courseKey: String!
+  }
+
+  """
+  Optional response data point for analytics
+  Indicates whether optional fields (Recording, Attendance) were filled for a rating submission
+  """
+  type OptionalResponseDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the rating was created"
+    createdAt: String!
+    "Whether at least one optional field was filled"
+    hasOptional: Boolean!
+  }
+
   input ClassWithoutCourseInput {
     year: Int!
     semester: Int!

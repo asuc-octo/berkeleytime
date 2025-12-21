@@ -6,8 +6,8 @@ import { Button, ThemeProvider } from "@repo/theme";
 import Layout from "@/components/Layout";
 
 import styles from "./App.module.scss";
+import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
-import Stats from "./app/Stats";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
 
@@ -32,8 +32,8 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "stats",
-        element: <Stats />,
+        path: "analytics",
+        element: <Analytics />,
       },
     ],
   },
@@ -50,7 +50,7 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <div className={styles.signInContainer}>Loading...</div>
       </ThemeProvider>
     );
@@ -58,7 +58,7 @@ export default function App() {
 
   if (!user || isNotStaff) {
     return (
-      <ThemeProvider>
+      <ThemeProvider forcedTheme="dark">
         <div className={styles.signInContainer}>
           <pre className={styles.asciiArt}>{`                .,,uod8B8bou,,.
            ..,uod8BBBBBBBBBBBBBBBBRPFT?l!i:.
@@ -110,7 +110,7 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider>
+    <ThemeProvider forcedTheme="dark">
       <RouterProvider router={router} />
     </ThemeProvider>
   );

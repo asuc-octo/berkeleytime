@@ -1,5 +1,7 @@
+export * from "./analytics";
 export * from "./catalog";
 export * from "./class";
+export * from "./cloudflare";
 export * from "./common";
 export * from "./course";
 export * from "./curated-classes";

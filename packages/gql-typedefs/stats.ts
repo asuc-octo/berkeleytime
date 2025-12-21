@@ -1,5 +1,9 @@
 import { gql } from "graphql-tag";
 
+/**
+ * Stats type definitions.
+ * Note: Query is defined in analytics.ts, not here.
+ */
 export const statsTypeDef = gql`
   type UserStats {
     totalCount: Int!
@@ -69,9 +73,5 @@ export const statsTypeDef = gql`
     gradtrak: GradtrakStats!
     ratings: RatingsStats!
     collections: CollectionsStats!
-  }
-
-  type Query {
-    stats: Stats!
   }
 `;
