@@ -8,7 +8,6 @@ import Layout from "@/components/Layout";
 import styles from "./App.module.scss";
 import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
-import Stats from "./app/Stats";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
 
@@ -31,10 +30,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Dashboard />,
-      },
-      {
-        path: "stats",
-        element: <Stats />,
       },
       {
         path: "analytics",

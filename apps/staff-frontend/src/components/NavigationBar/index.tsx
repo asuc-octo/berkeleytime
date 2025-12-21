@@ -20,9 +20,6 @@ export default function NavigationBar() {
         <NavLink to="/" end>
           {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
         </NavLink>
-        <NavLink to="/stats">
-          {({ isActive }) => <MenuItem active={isActive}>Stats</MenuItem>}
-        </NavLink>
         <NavLink to="/analytics">
           {({ isActive }) => <MenuItem active={isActive}>Analytics</MenuItem>}
         </NavLink>
