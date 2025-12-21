@@ -184,15 +184,6 @@ export const ratingTypeDef = gql`
 
     "All raw ratings with anonymized user IDs"
     allRatings: [RawRating!]!
-
-    "Staff-only: Rating data points for analytics timeseries"
-    ratingAnalyticsData: [RatingDataPoint!]! @auth
-
-    "Staff-only: Rating metric values for analytics (average scores over time)"
-    ratingMetricsAnalyticsData: [RatingMetricDataPoint!]! @auth
-
-    "Staff-only: Optional response data for analytics (Recording/Attendance completion)"
-    optionalResponseAnalyticsData: [OptionalResponseDataPoint!]! @auth
   }
 
   """

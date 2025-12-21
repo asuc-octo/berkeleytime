@@ -21,8 +21,6 @@ export const userTypeDef = gql`
 
   type Query {
     user: User @auth
-    "Staff-only: User creation timestamps for analytics"
-    userCreationAnalyticsData: [UserCreationDataPoint!]! @auth
   }
 
   input UpdateUserInput {

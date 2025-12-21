@@ -37,8 +37,8 @@ import {
 import {
   ClassesPerScheduleBlock,
   DailySchedulesBlock,
-  SchedulesBySemesterBlock,
   SchedulerUtilizationRatioBlock,
+  SchedulesBySemesterBlock,
   TopSchedulerUsersBlock,
   TotalSchedulesBlock,
 } from "./components/SchedulerAnalytics";

@@ -1,8 +1,4 @@
-import {
-  getUser,
-  getUserCreationAnalyticsData,
-  updateUser,
-} from "./controller";
+import { getUser, updateUser } from "./controller";
 import { UserModule } from "./generated-types/module-types";
 
 const resolvers: UserModule.Resolvers = {
@@ -11,9 +7,6 @@ const resolvers: UserModule.Resolvers = {
       const user = await getUser(context);
 
       return user as unknown as UserModule.User;
-    },
-    userCreationAnalyticsData: async (_, __, context) => {
-      return getUserCreationAnalyticsData(context);
     },
   },
 

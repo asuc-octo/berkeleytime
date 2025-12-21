@@ -1,24 +1,17 @@
-import { GraphQLError } from "graphql";
-import { Types } from "mongoose";
-
 import {
   ClassModel,
   IClassItem,
   ScheduleModel,
   SectionModel,
-  StaffMemberModel,
   TermModel,
-  UserModel,
 } from "@repo/common";
 
 import {
   CreateScheduleInput,
-  SchedulerAnalyticsDataPoint,
   SelectedClassInput,
   Semester,
   UpdateScheduleInput,
 } from "../../generated-types/graphql";
-import { RequestContext } from "../../types/request-context";
 import { formatClass } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
 import { formatSchedule } from "./formatter";
@@ -151,51 +144,3 @@ export const getClasses = async (
 
   return classes;
 };
-
-export async function getSchedulerAnalyticsData(
-  context: RequestContext
-): Promise<SchedulerAnalyticsDataPoint[]> {
-  if (!context.user?._id) {
-    throw new GraphQLError("Authentication required", {
-      extensions: { code: "UNAUTHENTICATED" },
-    });
-  }
-
-  // Verify staff member
-  const staffMember = await StaffMemberModel.findOne({
-    userId: context.user._id,
-  }).lean();
-
-  if (!staffMember) {
-    throw new GraphQLError("Only staff members can access analytics data", {
-      extensions: { code: "FORBIDDEN" },
-    });
-  }
-
-  // Get all schedules
-  const schedules = await ScheduleModel.find({}).lean();
-
-  // Get all user IDs from schedules
-  const userIds = [...new Set(schedules.map((s) => s.createdBy))];
-
-  // Fetch user emails in bulk
-  const users = await UserModel.find({
-    _id: { $in: userIds },
-  })
-    .select({ _id: 1, email: 1 })
-    .lean();
-
-  const userEmailMap = new Map(
-    users.map((u) => [(u._id as Types.ObjectId).toString(), u.email])
-  );
-
-  return schedules.map((schedule) => ({
-    scheduleId: (schedule._id as Types.ObjectId).toString(),
-    userEmail: userEmailMap.get(schedule.createdBy) || "",
-    totalClasses: schedule.classes?.length || 0,
-    semester: schedule.semester,
-    year: schedule.year,
-    createdAt:
-      (schedule as any).createdAt?.toISOString() || new Date().toISOString(),
-  }));
-}

@@ -617,7 +617,8 @@ export function CourseCountHistogramBlock() {
   }, [filteredData]);
 
   const { maxCourses, avgCourses } = useMemo(() => {
-    if (!filteredData || filteredData.length === 0) return { maxCourses: 0, avgCourses: 0 };
+    if (!filteredData || filteredData.length === 0)
+      return { maxCourses: 0, avgCourses: 0 };
     const total = filteredData.reduce(
       (sum, plan) => sum + plan.totalCourses,
       0

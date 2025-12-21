@@ -636,7 +636,9 @@ export function ClassesPerScheduleBlock() {
       (sum, schedule) => sum + schedule.totalClasses,
       0
     );
-    const max = Math.max(...filteredData.map((schedule) => schedule.totalClasses));
+    const max = Math.max(
+      ...filteredData.map((schedule) => schedule.totalClasses)
+    );
     return {
       maxClasses: max,
       avgClasses: total / filteredData.length,

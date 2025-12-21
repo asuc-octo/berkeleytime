@@ -1,5 +1,9 @@
 import { gql } from "graphql-tag";
 
+/**
+ * Cloudflare analytics type definitions.
+ * Note: Query is defined in analytics.ts, not here.
+ */
 export const cloudflareTypeDef = gql`
   """
   A single data point for Cloudflare analytics over time
@@ -23,13 +27,5 @@ export const cloudflareTypeDef = gql`
     totalUniqueVisitors: Int!
     "Total requests in the period"
     totalRequests: Int!
-  }
-
-  type Query {
-    "Staff-only: Cloudflare analytics data for the specified number of days and granularity"
-    cloudflareAnalyticsData(
-      days: Int!
-      granularity: String
-    ): CloudflareAnalyticsData @auth
   }
 `;

@@ -154,9 +154,4 @@ export const collectionTypeDef = gql`
     "Highlights and top stats"
     highlights: CollectionHighlights!
   }
-
-  extend type Query {
-    "Staff-only: Collection analytics data"
-    collectionAnalyticsData: CollectionAnalyticsData! @auth
-  }
 `;

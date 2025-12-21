@@ -76,10 +76,6 @@ export const scheduleTypeDef = gql`
   type Query {
     schedules: [Schedule] @auth
     schedule(id: ID!): Schedule
-    """
-    Staff-only: Scheduler analytics data for visualization
-    """
-    schedulerAnalyticsData: [SchedulerAnalyticsDataPoint!]! @auth
   }
 
   input EventInput {

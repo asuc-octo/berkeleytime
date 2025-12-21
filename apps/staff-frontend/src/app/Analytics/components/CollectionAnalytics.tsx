@@ -47,7 +47,8 @@ export function CollectionNamesBlock() {
 
   const avgClasses =
     filteredCollections.length > 0
-      ? filteredCollections.reduce((sum, c) => sum + c.classCount, 0) / filteredCollections.length
+      ? filteredCollections.reduce((sum, c) => sum + c.classCount, 0) /
+        filteredCollections.length
       : 0;
 
   if (loading) {

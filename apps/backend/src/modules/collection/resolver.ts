@@ -111,22 +111,6 @@ const resolvers: CollectionModule.Resolvers = {
         );
       }
     },
-
-    collectionAnalyticsData: async (_, __, context) => {
-      try {
-        return await controller.getCollectionAnalyticsData(context);
-      } catch (error: unknown) {
-        if (error instanceof GraphQLError) {
-          throw error;
-        }
-        throw new GraphQLError(
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "An unexpected error occurred",
-          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
-        );
-      }
-    },
   },
 
   Mutation: {

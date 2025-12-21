@@ -1,8 +1,7 @@
 import { GraphQLError } from "graphql";
 
-import { StaffMemberModel } from "@repo/common";
-
-import { RequestContext } from "../../types/request-context";
+import { RequestContext } from "../../../types/request-context";
+import { requireStaffAuth } from "../helpers/staff-auth";
 
 interface CloudflareDataPoint {
   date: string;
@@ -46,25 +45,7 @@ export const getCloudflareAnalyticsData = async (
   days: number,
   granularity: "day" | "hour" = "day"
 ): Promise<CloudflareAnalyticsData> => {
-  if (!context.user?._id) {
-    throw new GraphQLError("Authentication required", {
-      extensions: { code: "UNAUTHENTICATED" },
-    });
-  }
-
-  // Verify staff member
-  const staffMember = await StaffMemberModel.findOne({
-    userId: context.user._id,
-  }).lean();
-
-  if (!staffMember) {
-    throw new GraphQLError(
-      "Only staff members can access Cloudflare analytics",
-      {
-        extensions: { code: "FORBIDDEN" },
-      }
-    );
-  }
+  await requireStaffAuth(context);
 
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   const zoneId = process.env.CLOUDFLARE_ZONE_ID;

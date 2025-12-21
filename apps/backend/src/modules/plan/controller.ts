@@ -1,4 +1,3 @@
-import { GraphQLError } from "graphql";
 import { omitBy } from "lodash";
 import { Types } from "mongoose";
 
@@ -8,20 +7,17 @@ import {
   PlanModel,
   PlanTermModel,
   SelectedCourseModel,
-  StaffMemberModel,
 } from "@repo/common";
 
 import {
   Colleges,
   EditPlanTermInput,
-  GradTrakAnalyticsDataPoint,
   Plan,
   PlanInput,
   PlanTerm,
   PlanTermInput,
   SelectedCourseInput,
 } from "../../generated-types/graphql";
-import { RequestContext } from "../../types/request-context";
 import { formatPlan, formatPlanTerm } from "./formatter";
 
 // get plan for a user
@@ -288,54 +284,4 @@ export async function deletePlan(context: any): Promise<string> {
   if (!context.user.email) throw new Error("Unauthorized");
   await PlanModel.deleteOne({ userEmail: context.user.email });
   return context.user.email;
-}
-
-export async function getGradTrakAnalyticsData(
-  context: RequestContext
-): Promise<GradTrakAnalyticsDataPoint[]> {
-  if (!context.user?._id) {
-    throw new GraphQLError("Authentication required", {
-      extensions: { code: "UNAUTHENTICATED" },
-    });
-  }
-
-  // Verify staff member
-  const staffMember = await StaffMemberModel.findOne({
-    userId: context.user._id,
-  }).lean();
-
-  if (!staffMember) {
-    throw new GraphQLError("Only staff members can access analytics data", {
-      extensions: { code: "FORBIDDEN" },
-    });
-  }
-
-  // Get all plans with their data
-  const plans = await PlanModel.find({}).lean();
-
-  return plans.map((plan) => {
-    // Calculate total courses across all plan terms
-    const totalCourses = plan.planTerms.reduce(
-      (sum, term) => sum + (term.courses?.length || 0),
-      0
-    );
-
-    // Find the earliest year from plan terms (excluding misc which has year -1)
-    const years = plan.planTerms
-      .map((term) => term.year)
-      .filter((year) => year > 0);
-    const startYear = years.length > 0 ? Math.min(...years) : null;
-
-    return {
-      planId: (plan._id as Types.ObjectId).toString(),
-      userEmail: plan.userEmail || "",
-      majors: plan.majors || [],
-      minors: plan.minors || [],
-      colleges: plan.colleges || [],
-      totalCourses,
-      startYear,
-      createdAt:
-        (plan as any).createdAt?.toISOString() || new Date().toISOString(),
-    };
-  });
 }

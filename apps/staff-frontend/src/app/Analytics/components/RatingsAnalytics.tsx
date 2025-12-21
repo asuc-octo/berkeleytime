@@ -1528,13 +1528,20 @@ export function ScoreDistributionBlock() {
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} layout="vertical" stackOffset="expand">
+          <BarChart data={chartData} stackOffset="expand">
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="var(--border-color)"
-              horizontal={false}
+              vertical={false}
             />
-            <XAxis type="number" hide />
+            <XAxis
+              type="category"
+              dataKey="metric"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 11 }}
+            />
+            <YAxis type="number" hide />
             <Legend
               layout="horizontal"
               verticalAlign="bottom"
@@ -1549,18 +1556,10 @@ export function ScoreDistributionBlock() {
                 );
               }}
             />
-            <YAxis
-              type="category"
-              dataKey="metric"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "var(--label-color)", fontSize: 11 }}
-              width={75}
-            />
             <ChartTooltip
               tooltipConfig={{
                 sortBy: "name",
-                sortOrder: "asc",
+                sortOrder: "desc",
                 valueFormatter: (value: number, _name, item) => {
                   const payload = item?.payload;
                   if (!payload) return `${value.toFixed(1)}%`;
@@ -1934,7 +1933,9 @@ export function OptionalResponseRatioBlock() {
 
     // For cumulative charts: compare end vs start of the visible range
     const percentChange =
-      startRatio !== 0 ? ((currentRatio - startRatio) / startRatio) * 100 : null;
+      startRatio !== 0
+        ? ((currentRatio - startRatio) / startRatio) * 100
+        : null;
 
     return { chartData, currentRatio, percentChange };
   }, [data, timeRange, granularity]);
@@ -2085,7 +2086,8 @@ export function RecentRatingsBlock() {
   const sortedRatings = useMemo(() => {
     if (!data || data.length === 0) return [];
     return [...data].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [data]);
 

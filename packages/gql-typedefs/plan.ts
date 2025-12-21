@@ -221,11 +221,6 @@ export const planTypeDef = gql`
     Takes in user's email and returns their entire plan
     """
     planByUser: [Plan!]! @auth
-
-    """
-    Staff-only: GradTrak analytics data for visualization
-    """
-    gradTrakAnalyticsData: [GradTrakAnalyticsDataPoint!]! @auth
   }
 
   type Mutation {
