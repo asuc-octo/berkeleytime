@@ -310,6 +310,7 @@ export function UsersWithBookmarksBlock() {
       absoluteChange={absoluteChange}
       percentChange={percentChange}
       changeTimescale={timeRange}
+      isCumulative
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={(val) => {
@@ -477,7 +478,7 @@ export function DailyBookmarksBlock() {
       description={`Classes bookmarked per day (${timeRange})`}
       currentValue={totalInWindow}
       currentValueLabel="bookmarks"
-      subtitle={`${avgPerDay.toFixed(1)} avg/day`}
+      subtitle={`${avgPerDay.toFixed(1)} avg./day`}
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={setTimeRange}
@@ -647,6 +648,7 @@ export function TotalBookmarksBlock() {
       absoluteChange={absoluteChange}
       percentChange={percentChange}
       changeTimescale={timeRange}
+      isCumulative
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={(val) => {
@@ -843,6 +845,7 @@ export function CustomCollectionsBlock() {
       currentValueLabel="collections"
       percentChange={percentChange}
       changeTimescale={timeRange}
+      isCumulative
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={(val) => {
@@ -1039,6 +1042,7 @@ export function UsersWithCustomCollectionsBlock() {
       currentValueLabel="users"
       percentChange={percentChange}
       changeTimescale={timeRange}
+      isCumulative
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={(val) => {

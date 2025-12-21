@@ -208,6 +208,7 @@ export function UserGrowthBlock() {
       absoluteChange={newInRange}
       percentChange={percentGrowth}
       changeTimescale={timeRange}
+      isCumulative
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={(val) => {
@@ -539,7 +540,7 @@ export function SignupDayHistogramBlock() {
       description={`Number of signups per day (${timeRange})`}
       currentValue={totalInWindow}
       currentValueLabel="signups"
-      subtitle={`${avgPerDay.toFixed(1)} avg/day`}
+      subtitle={`${avgPerDay.toFixed(1)} avg./day`}
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={setTimeRange}

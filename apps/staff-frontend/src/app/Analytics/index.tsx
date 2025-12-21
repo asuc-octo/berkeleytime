@@ -20,6 +20,7 @@ import {
   StartYearDistributionBlock,
   TopUsersTableBlock,
   TotalGradTraksBlock,
+  UtilizationRatioBlock,
 } from "./components/GradTrakAnalytics";
 import {
   AverageScoresOverTimeBlock,
@@ -27,6 +28,7 @@ import {
   CourseRatingsDistributionBlock,
   RatingsCountBlock,
   RatingsDayHistogramBlock,
+  ScoreDistributionBlock,
   UniqueUsersGrowthBlock,
 } from "./components/RatingsAnalytics";
 import {
@@ -136,6 +138,9 @@ export default function Analytics() {
             <div className={styles.cell}>
               <AverageScoresOverTimeBlock />
             </div>
+            <div className={styles.cell}>
+              <ScoreDistributionBlock />
+            </div>
           </>
         )}
         {showBookmarks && (
@@ -164,6 +169,9 @@ export default function Analytics() {
           <>
             <div className={styles.cell}>
               <TotalGradTraksBlock />
+            </div>
+            <div className={styles.cell}>
+              <UtilizationRatioBlock />
             </div>
             <div className={styles.cell}>
               <CourseCountHistogramBlock />

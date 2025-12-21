@@ -10,7 +10,9 @@ interface GradTrakAnalyticsDataResponse {
 }
 
 export const useGradTrakAnalyticsData = () => {
-  const query = useQuery<GradTrakAnalyticsDataResponse>(GRADTRAK_ANALYTICS_DATA);
+  const query = useQuery<GradTrakAnalyticsDataResponse>(
+    GRADTRAK_ANALYTICS_DATA
+  );
 
   return {
     ...query,

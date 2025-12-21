@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 
+import { Filter, FilterSolid } from "iconoir-react";
+import { Popover } from "radix-ui";
 import {
   Area,
   AreaChart,
@@ -7,11 +9,12 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
-import { LoadingIndicator } from "@repo/theme";
+import { IconButton, Input, LoadingIndicator, Select } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -43,8 +46,18 @@ function getGranularityKey(date: Date, granularity: Granularity): string {
 
 function formatDisplayDate(key: string, granularity: Granularity): string {
   const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
   const parts = key.split("-");
   const month = monthNames[parseInt(parts[1]) - 1];
@@ -63,19 +76,146 @@ interface DailyDataPoint {
   value: number;
 }
 
+type GradTrakTimeRange = "all" | "week" | "month";
+
+// Filter popover for GradTrak filters
+function GradTrakFilterPopover({
+  minCourses,
+  onMinCoursesChange,
+  selectedYear,
+  onYearChange,
+  yearOptions,
+  children,
+}: {
+  minCourses: number;
+  onMinCoursesChange: (val: number) => void;
+  selectedYear: string | null;
+  onYearChange: (val: string | null) => void;
+  yearOptions: { value: string; label: string }[];
+  children?: React.ReactNode;
+}) {
+  const hasActiveFilter = minCourses > 0 || selectedYear !== null;
+
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <IconButton
+          size="small"
+          style={{ width: 24, height: 24, marginLeft: "auto" }}
+        >
+          {hasActiveFilter ? (
+            <FilterSolid width={14} height={14} color="var(--blue-500)" />
+          ) : (
+            <Filter width={14} height={14} />
+          )}
+        </IconButton>
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Content
+          side="bottom"
+          align="end"
+          sideOffset={4}
+          style={{
+            background: "var(--foreground-color)",
+            border: "1px solid var(--border-color)",
+            borderRadius: 8,
+            padding: "12px 14px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            zIndex: 1000,
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
+          {children}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+              At least
+            </span>
+            <Input
+              value={minCourses === 0 ? "" : String(minCourses)}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "");
+                onMinCoursesChange(val === "" ? 0 : parseInt(val) || 0);
+              }}
+              style={{
+                width: 50,
+                minHeight: 24,
+                height: 24,
+                padding: "0 8px",
+                fontSize: 12,
+                textAlign: "center",
+              }}
+            />
+            <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+              courses
+            </span>
+          </div>
+          {yearOptions.length > 0 && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+                Start year
+              </span>
+              <Select
+                searchable
+                clearable
+                value={selectedYear}
+                onChange={(val) => onYearChange(val as string | null)}
+                options={yearOptions}
+                placeholder="All"
+                searchPlaceholder="Search"
+                style={{
+                  width: 100,
+                  minHeight: 24,
+                  height: 24,
+                  padding: "0 8px",
+                  fontSize: 12,
+                }}
+              />
+            </div>
+          )}
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+}
+
 // Total GradTraks Block
 export function TotalGradTraksBlock() {
   const { data, loading, error } = useGradTrakAnalyticsData();
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
+  const [minCourses, setMinCourses] = useState(0);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
-  // Filter out empty gradtraks
-  const nonEmptyData = useMemo(() => {
-    return data.filter((plan) => plan.totalCourses > 0);
+  // Get unique years for filter dropdown
+  const yearOptions = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    const years = new Set<number>();
+    data.forEach((plan) => {
+      if (plan.startYear) years.add(plan.startYear);
+    });
+    return Array.from(years)
+      .sort((a, b) => b - a)
+      .map((year) => ({ value: String(year), label: String(year) }));
   }, [data]);
 
+  // Filter by min courses and start year
+  const filteredData = useMemo(() => {
+    let filtered = [...data];
+    if (minCourses > 0) {
+      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
+    }
+    if (selectedYear) {
+      filtered = filtered.filter(
+        (plan) => plan.startYear === parseInt(selectedYear)
+      );
+    }
+    return filtered;
+  }, [data, minCourses, selectedYear]);
+
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
-    if (!nonEmptyData || nonEmptyData.length === 0) {
+    if (!filteredData || filteredData.length === 0) {
       return {
         chartData: [] as DailyDataPoint[],
         current: 0,
@@ -88,7 +228,7 @@ export function TotalGradTraksBlock() {
     const now = new Date();
     const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
-    const sortedData = [...nonEmptyData].sort(
+    const sortedData = [...filteredData].sort(
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
@@ -142,7 +282,7 @@ export function TotalGradTraksBlock() {
       start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
     return { chartData, current, absoluteChange, percentChange };
-  }, [nonEmptyData, timeRange, granularity]);
+  }, [filteredData, timeRange, granularity]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: "GradTraks" },
@@ -151,7 +291,10 @@ export function TotalGradTraksBlock() {
 
   if (loading) {
     return (
-      <AnalyticsCard title="Total GradTraks" description="Users with a GradTrak">
+      <AnalyticsCard
+        title="Total GradTraks"
+        description="Users with a GradTrak"
+      >
         <div
           style={{
             display: "flex",
@@ -168,7 +311,10 @@ export function TotalGradTraksBlock() {
 
   if (error) {
     return (
-      <AnalyticsCard title="Total GradTraks" description="Users with a GradTrak">
+      <AnalyticsCard
+        title="Total GradTraks"
+        description="Users with a GradTrak"
+      >
         <div
           style={{
             display: "flex",
@@ -193,6 +339,7 @@ export function TotalGradTraksBlock() {
       absoluteChange={absoluteChange}
       percentChange={percentChange}
       changeTimescale={timeRange}
+      isCumulative
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={(val) => {
@@ -201,6 +348,15 @@ export function TotalGradTraksBlock() {
       }}
       granularity={granularity}
       onGranularityChange={setGranularity}
+      customControls={
+        <GradTrakFilterPopover
+          minCourses={minCourses}
+          onMinCoursesChange={setMinCourses}
+          selectedYear={selectedYear}
+          onYearChange={setSelectedYear}
+          yearOptions={yearOptions}
+        />
+      }
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -262,14 +418,37 @@ export function TotalGradTraksBlock() {
 // Course Count Histogram Block
 export function CourseCountHistogramBlock() {
   const { data, loading, error } = useGradTrakAnalyticsData();
+  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
+  const [minCourses, setMinCourses] = useState(0);
 
-  // Filter out empty gradtraks
-  const nonEmptyData = useMemo(() => {
-    return data.filter((plan) => plan.totalCourses > 0);
-  }, [data]);
+  // Filter data by time range and min courses
+  const filteredData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    let filtered = [...data];
+
+    // Time range filter
+    if (timeRange !== "all") {
+      const now = new Date();
+      const cutoff = new Date();
+      if (timeRange === "week") {
+        cutoff.setDate(now.getDate() - 7);
+      } else {
+        cutoff.setMonth(now.getMonth() - 1);
+      }
+      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
+    }
+
+    // Min courses filter
+    if (minCourses > 0) {
+      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
+    }
+
+    return filtered;
+  }, [data, timeRange, minCourses]);
 
   const histogramData = useMemo(() => {
-    if (!nonEmptyData || nonEmptyData.length === 0) return [];
+    if (!filteredData || filteredData.length === 0) return [];
 
     // Create buckets: 1-5, 6-10, 11-15, 16-20, 21-25, 26-30, 31-35, 36-40, 40+
     const buckets = [
@@ -284,7 +463,7 @@ export function CourseCountHistogramBlock() {
       { range: "40+", min: 41, max: Infinity, count: 0 },
     ];
 
-    nonEmptyData.forEach((plan) => {
+    filteredData.forEach((plan) => {
       const courses = plan.totalCourses;
       for (const bucket of buckets) {
         if (courses >= bucket.min && courses <= bucket.max) {
@@ -295,13 +474,18 @@ export function CourseCountHistogramBlock() {
     });
 
     return buckets.map((b) => ({ range: b.range, count: b.count }));
-  }, [nonEmptyData]);
+  }, [filteredData]);
 
   const avgCourses = useMemo(() => {
-    if (!nonEmptyData || nonEmptyData.length === 0) return 0;
-    const total = nonEmptyData.reduce((sum, plan) => sum + plan.totalCourses, 0);
-    return total / nonEmptyData.length;
-  }, [nonEmptyData]);
+    if (!filteredData || filteredData.length === 0) return 0;
+    const total = filteredData.reduce(
+      (sum, plan) => sum + plan.totalCourses,
+      0
+    );
+    return total / filteredData.length;
+  }, [filteredData]);
+
+  const emptyCount = data.filter((plan) => plan.totalCourses === 0).length;
 
   const chartConfig = createChartConfig(["count"], {
     labels: { count: "GradTraks" },
@@ -353,9 +537,40 @@ export function CourseCountHistogramBlock() {
     <AnalyticsCard
       title="Courses per GradTrak"
       description="Distribution of course counts"
-      currentValuePrefix="avg "
+      currentValuePrefix="avg. "
       currentValue={Math.round(avgCourses * 10) / 10}
-      currentValueLabel="courses"
+      currentValueLabel="/gradtrak"
+      subtitle={`excluding ${emptyCount.toLocaleString()} empty gradtraks`}
+      customControls={
+        <>
+          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+            Time created
+          </span>
+          <Select
+            value={timeRange}
+            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
+            options={[
+              { value: "all", label: "All time" },
+              { value: "week", label: "This week" },
+              { value: "month", label: "This month" },
+            ]}
+            style={{
+              width: 110,
+              minHeight: 24,
+              height: 24,
+              padding: "0 8px",
+              fontSize: 12,
+            }}
+          />
+          <GradTrakFilterPopover
+            minCourses={minCourses}
+            onMinCoursesChange={setMinCourses}
+            selectedYear={null}
+            onYearChange={() => {}}
+            yearOptions={[]}
+          />
+        </>
+      }
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -393,18 +608,41 @@ export function CourseCountHistogramBlock() {
 // Major Distribution Histogram Block
 export function MajorDistributionBlock() {
   const { data, loading, error } = useGradTrakAnalyticsData();
+  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
+  const [minCourses, setMinCourses] = useState(0);
 
-  // Filter out empty gradtraks
-  const nonEmptyData = useMemo(() => {
-    return data.filter((plan) => plan.totalCourses > 0);
-  }, [data]);
+  // Filter data by time range and min courses
+  const filteredData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    let filtered = [...data];
+
+    // Time range filter
+    if (timeRange !== "all") {
+      const now = new Date();
+      const cutoff = new Date();
+      if (timeRange === "week") {
+        cutoff.setDate(now.getDate() - 7);
+      } else {
+        cutoff.setMonth(now.getMonth() - 1);
+      }
+      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
+    }
+
+    // Min courses filter
+    if (minCourses > 0) {
+      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
+    }
+
+    return filtered;
+  }, [data, timeRange, minCourses]);
 
   const histogramData = useMemo(() => {
-    if (!nonEmptyData || nonEmptyData.length === 0) return [];
+    if (!filteredData || filteredData.length === 0) return [];
 
     // Count gradtraks per major
     const majorCounts = new Map<string, number>();
-    nonEmptyData.forEach((plan) => {
+    filteredData.forEach((plan) => {
       plan.majors.forEach((major) => {
         majorCounts.set(major, (majorCounts.get(major) || 0) + 1);
       });
@@ -419,13 +657,14 @@ export function MajorDistributionBlock() {
         fullMajor: major,
         count,
       }));
-  }, [nonEmptyData]);
+  }, [filteredData]);
 
   const { uniqueMajors, avgPerMajor } = useMemo(() => {
-    if (!nonEmptyData || nonEmptyData.length === 0) return { uniqueMajors: 0, avgPerMajor: 0 };
+    if (!filteredData || filteredData.length === 0)
+      return { uniqueMajors: 0, avgPerMajor: 0 };
     const majors = new Set<string>();
     let totalMajorAssignments = 0;
-    nonEmptyData.forEach((plan) => {
+    filteredData.forEach((plan) => {
       plan.majors.forEach((m) => {
         majors.add(m);
         totalMajorAssignments++;
@@ -435,7 +674,7 @@ export function MajorDistributionBlock() {
       uniqueMajors: majors.size,
       avgPerMajor: majors.size > 0 ? totalMajorAssignments / majors.size : 0,
     };
-  }, [nonEmptyData]);
+  }, [filteredData]);
 
   const chartConfig = createChartConfig(["count"], {
     labels: { count: "GradTraks" },
@@ -489,7 +728,37 @@ export function MajorDistributionBlock() {
       description="Top 15 majors by gradtrak count"
       currentValue={uniqueMajors}
       currentValueLabel="majors"
-      subtitle={`avg ${avgPerMajor.toFixed(1)}/major`}
+      subtitle={`avg. ${avgPerMajor.toFixed(1)}/major`}
+      customControls={
+        <>
+          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+            Time created
+          </span>
+          <Select
+            value={timeRange}
+            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
+            options={[
+              { value: "all", label: "All time" },
+              { value: "week", label: "This week" },
+              { value: "month", label: "This month" },
+            ]}
+            style={{
+              width: 110,
+              minHeight: 24,
+              height: 24,
+              padding: "0 8px",
+              fontSize: 12,
+            }}
+          />
+          <GradTrakFilterPopover
+            minCourses={minCourses}
+            onMinCoursesChange={setMinCourses}
+            selectedYear={null}
+            onYearChange={() => {}}
+            yearOptions={[]}
+          />
+        </>
+      }
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -535,20 +804,46 @@ export function MajorDistributionBlock() {
 // Start Year Distribution Histogram Block
 export function StartYearDistributionBlock() {
   const { data, loading, error } = useGradTrakAnalyticsData();
+  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
+  const [minCourses, setMinCourses] = useState(0);
 
-  // Filter out empty gradtraks
-  const nonEmptyData = useMemo(() => {
-    return data.filter((plan) => plan.totalCourses > 0);
-  }, [data]);
+  // Filter data by time range and min courses
+  const filteredData = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    let filtered = [...data];
+
+    // Time range filter
+    if (timeRange !== "all") {
+      const now = new Date();
+      const cutoff = new Date();
+      if (timeRange === "week") {
+        cutoff.setDate(now.getDate() - 7);
+      } else {
+        cutoff.setMonth(now.getMonth() - 1);
+      }
+      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
+    }
+
+    // Min courses filter
+    if (minCourses > 0) {
+      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
+    }
+
+    return filtered;
+  }, [data, timeRange, minCourses]);
 
   const histogramData = useMemo(() => {
-    if (!nonEmptyData || nonEmptyData.length === 0) return [];
+    if (!filteredData || filteredData.length === 0) return [];
 
     // Count gradtraks per start year
     const yearCounts = new Map<number, number>();
-    nonEmptyData.forEach((plan) => {
+    filteredData.forEach((plan) => {
       if (plan.startYear) {
-        yearCounts.set(plan.startYear, (yearCounts.get(plan.startYear) || 0) + 1);
+        yearCounts.set(
+          plan.startYear,
+          (yearCounts.get(plan.startYear) || 0) + 1
+        );
       }
     });
 
@@ -559,7 +854,7 @@ export function StartYearDistributionBlock() {
         year: String(year),
         count,
       }));
-  }, [nonEmptyData]);
+  }, [filteredData]);
 
   const peakYear = useMemo(() => {
     if (histogramData.length === 0) return null;
@@ -621,6 +916,36 @@ export function StartYearDistributionBlock() {
       currentValue={histogramData.length}
       currentValueLabel="start years"
       subtitle={peakYear ? `peak: ${peakYear}` : undefined}
+      customControls={
+        <>
+          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+            Time created
+          </span>
+          <Select
+            value={timeRange}
+            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
+            options={[
+              { value: "all", label: "All time" },
+              { value: "week", label: "This week" },
+              { value: "month", label: "This month" },
+            ]}
+            style={{
+              width: 110,
+              minHeight: 24,
+              height: 24,
+              padding: "0 8px",
+              fontSize: 12,
+            }}
+          />
+          <GradTrakFilterPopover
+            minCourses={minCourses}
+            onMinCoursesChange={setMinCourses}
+            selectedYear={null}
+            onYearChange={() => {}}
+            yearOptions={[]}
+          />
+        </>
+      }
     >
       <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -658,16 +983,30 @@ export function StartYearDistributionBlock() {
 // Top Users Table Block
 export function TopUsersTableBlock() {
   const { data, loading, error } = useGradTrakAnalyticsData();
+  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
 
   const topUsers = useMemo(() => {
     if (!data || data.length === 0) return [];
 
+    let filtered = [...data].filter((plan) => plan.totalCourses > 0);
+
+    // Time range filter
+    if (timeRange !== "all") {
+      const now = new Date();
+      const cutoff = new Date();
+      if (timeRange === "week") {
+        cutoff.setDate(now.getDate() - 7);
+      } else {
+        cutoff.setMonth(now.getMonth() - 1);
+      }
+      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
+    }
+
     // Sort by total courses descending and take top 50
-    return [...data]
-      .filter((plan) => plan.totalCourses > 0)
+    return filtered
       .sort((a, b) => b.totalCourses - a.totalCourses)
       .slice(0, 50);
-  }, [data]);
+  }, [data, timeRange]);
 
   const maxCourses = topUsers.length > 0 ? topUsers[0].totalCourses : 0;
 
@@ -717,6 +1056,29 @@ export function TopUsersTableBlock() {
       title="Top GradTrak Users"
       description="Top 50 users by course count"
       subtitle={`max ${maxCourses} courses`}
+      customControls={
+        <>
+          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+            Time created
+          </span>
+          <Select
+            value={timeRange}
+            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
+            options={[
+              { value: "all", label: "All time" },
+              { value: "week", label: "This week" },
+              { value: "month", label: "This month" },
+            ]}
+            style={{
+              width: 110,
+              minHeight: 24,
+              height: 24,
+              padding: "0 8px",
+              fontSize: 12,
+            }}
+          />
+        </>
+      }
     >
       <div
         style={{
@@ -846,6 +1208,255 @@ export function TopUsersTableBlock() {
           </tbody>
         </table>
       </div>
+    </AnalyticsCard>
+  );
+}
+
+// Utilization Ratio Block - percentage of non-empty GradTraks over time
+export function UtilizationRatioBlock() {
+  const { data, loading, error } = useGradTrakAnalyticsData();
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const [granularity, setGranularity] = useState<Granularity>("day");
+
+  const { chartData, currentRatio, percentChange } = useMemo(() => {
+    if (!data || data.length === 0) {
+      return { chartData: [], currentRatio: 0, percentChange: null };
+    }
+
+    const days = getTimeRangeDays(timeRange);
+    const now = new Date();
+    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+    const sortedData = [...data].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+    // Baseline counts before the window
+    let baselineEmpty = 0;
+    let baselineNonEmpty = 0;
+    sortedData.forEach((plan) => {
+      if (new Date(plan.createdAt) < rangeStart) {
+        if (plan.totalCourses === 0) {
+          baselineEmpty++;
+        } else {
+          baselineNonEmpty++;
+        }
+      }
+    });
+
+    // Initialize buckets
+    const bucketMap = new Map<string, { empty: number; nonEmpty: number }>();
+    for (let d = new Date(rangeStart); d <= now; ) {
+      const key = getGranularityKey(d, granularity);
+      bucketMap.set(key, { empty: 0, nonEmpty: 0 });
+      if (granularity === "hour") {
+        d.setHours(d.getHours() + 1);
+      } else {
+        d.setDate(d.getDate() + 1);
+      }
+    }
+
+    // Fill buckets
+    sortedData.forEach((plan) => {
+      const date = new Date(plan.createdAt);
+      if (date >= rangeStart && date <= now) {
+        const key = getGranularityKey(date, granularity);
+        const bucket = bucketMap.get(key);
+        if (bucket) {
+          if (plan.totalCourses === 0) {
+            bucket.empty++;
+          } else {
+            bucket.nonEmpty++;
+          }
+        }
+      }
+    });
+
+    // Build cumulative data
+    const sortedKeys = Array.from(bucketMap.keys()).sort();
+    let cumulativeEmpty = baselineEmpty;
+    let cumulativeNonEmpty = baselineNonEmpty;
+
+    const chartData = sortedKeys.map((key) => {
+      const bucket = bucketMap.get(key)!;
+      cumulativeEmpty += bucket.empty;
+      cumulativeNonEmpty += bucket.nonEmpty;
+
+      // Ratio = non-empty / empty (how many non-empty per empty)
+      const ratio =
+        cumulativeEmpty > 0
+          ? cumulativeNonEmpty / cumulativeEmpty
+          : cumulativeNonEmpty > 0
+            ? Infinity
+            : 0;
+
+      return {
+        date: formatDisplayDate(key, granularity),
+        dateKey: key,
+        ratio,
+        nonEmptyCount: cumulativeNonEmpty,
+        emptyCount: cumulativeEmpty,
+      };
+    });
+
+    const last = chartData[chartData.length - 1];
+    const first = chartData[0];
+    const currentRatio = last?.ratio ?? 0;
+    const startRatio = first?.ratio ?? 0;
+
+    // For cumulative charts: compare end vs start of the visible range
+    const percentChange =
+      Number.isFinite(currentRatio) &&
+      Number.isFinite(startRatio) &&
+      startRatio !== 0
+        ? ((currentRatio - startRatio) / startRatio) * 100
+        : null;
+
+    return { chartData, currentRatio, percentChange };
+  }, [data, timeRange, granularity]);
+
+  const chartConfig = createChartConfig(["ratio"], {
+    labels: { ratio: "Ratio" },
+    colors: { ratio: "var(--heading-color)" },
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Utilization Ratio"
+        description="Percentage of non-empty gradtraks"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Utilization Ratio"
+        description="Percentage of non-empty gradtraks"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Utilization Ratio"
+      description="Non-empty / empty gradtraks"
+      currentValue={
+        Number.isFinite(currentRatio) ? `${currentRatio.toFixed(2)}:1` : "∞"
+      }
+      comparison={
+        percentChange !== null ? (
+          <span
+            style={{
+              color: percentChange >= 0 ? "var(--green-500)" : "var(--red-500)",
+            }}
+          >
+            {percentChange >= 0 ? "+" : ""}
+            {percentChange.toFixed(1)}%
+          </span>
+        ) : undefined
+      }
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={(val) => {
+        setTimeRange(val);
+        setGranularity(val === "7d" ? "hour" : "day");
+      }}
+      granularity={granularity}
+      onGranularityChange={setGranularity}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient
+                id="utilizationGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              width={40}
+              domain={["dataMin - 0.1", "dataMax + 0.1"]}
+              tickFormatter={(value) =>
+                Number.isFinite(value) ? `${value.toFixed(1)}` : "∞"
+              }
+            />
+            <ChartTooltip
+              tooltipConfig={{
+                valueFormatter: (value: number, _name, item) => {
+                  const payload = item?.payload;
+                  const ratioStr = Number.isFinite(value)
+                    ? `${value.toFixed(2)}:1`
+                    : "∞";
+                  if (!payload) return ratioStr;
+                  return `${ratioStr} (${payload.nonEmptyCount.toLocaleString()} non-empty / ${payload.emptyCount.toLocaleString()} empty)`;
+                },
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="ratio"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#utilizationGradient)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ChartContainer>
     </AnalyticsCard>
   );
 }

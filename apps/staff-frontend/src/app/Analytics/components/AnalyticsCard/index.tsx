@@ -10,14 +10,18 @@ export type Granularity = "hour" | "day";
 interface AnalyticsCardProps {
   title: string;
   description?: string;
-  currentValue?: number;
+  currentValue?: number | string;
   currentValuePrefix?: string;
   currentValueLabel?: string;
   absoluteChange?: number;
   percentChange?: number;
   changeTimescale?: string;
+  /** For cumulative charts, show just "+n%" instead of "vs. prev." */
+  isCumulative?: boolean;
   subtitle?: string;
   subtitlePositive?: boolean;
+  /** Custom comparison element (overrides percentChange display) */
+  comparison?: ReactNode;
   showTimeRangeSelector?: boolean;
   timeRange?: TimeRange;
   onTimeRangeChange?: (value: TimeRange) => void;
@@ -36,8 +40,10 @@ export function AnalyticsCard({
   absoluteChange,
   percentChange,
   changeTimescale = "7d",
+  isCumulative,
   subtitle,
   subtitlePositive,
+  comparison,
   showTimeRangeSelector,
   timeRange = "30d",
   onTimeRangeChange,
@@ -50,11 +56,14 @@ export function AnalyticsCard({
     currentValue !== undefined || currentValueLabel !== undefined;
   const isPositive = (absoluteChange ?? percentChange ?? 0) >= 0;
 
-  // Format the change text: "+3.8% vs prev. 30d"
+  // Format the change text: "+3.8%" for cumulative, "+3.8% vs. prev. 30d" for non-cumulative
   const formatChangeText = () => {
     if (percentChange !== undefined) {
       const sign = isPositive ? "+" : "";
-      return `${sign}${percentChange.toFixed(1)}% vs prev. ${changeTimescale}`;
+      if (isCumulative) {
+        return `${sign}${percentChange.toFixed(1)}%`;
+      }
+      return `${sign}${percentChange.toFixed(1)}% vs. prev. ${changeTimescale}`;
     }
     return null;
   };
@@ -70,13 +79,18 @@ export function AnalyticsCard({
           <div className={styles.headerRight}>
             <div className={styles.currentValue}>
               {currentValuePrefix}
-              {currentValue !== undefined && currentValue.toLocaleString()}
+              {currentValue !== undefined &&
+                (typeof currentValue === "number"
+                  ? currentValue.toLocaleString()
+                  : currentValue)}
               {currentValueLabel &&
                 (currentValue !== undefined
                   ? ` ${currentValueLabel}`
                   : currentValueLabel)}
             </div>
-            {subtitle ? (
+            {comparison ? (
+              <div className={styles.percentChange}>{comparison}</div>
+            ) : subtitle ? (
               <div
                 className={styles.percentChange}
                 style={{

@@ -80,7 +80,9 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
         }}
       >
         <Tooltip.Provider delayDuration={50}>
-          <ThemeContext value={{ theme: effectiveTheme, setTheme: effectiveSetTheme }}>
+          <ThemeContext
+            value={{ theme: effectiveTheme, setTheme: effectiveSetTheme }}
+          >
             {/* https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage */}
             <Theme>{children}</Theme>
           </ThemeContext>
