@@ -60,10 +60,10 @@ export default function Analytics() {
   const [activeTab, setActiveTab] = useState<Tab>("general");
 
   const showGeneral = activeTab === "all" || activeTab === "general";
-  const showRatings = activeTab === "all" || activeTab === "ratings";
-  const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
-  const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
   const showScheduler = activeTab === "all" || activeTab === "scheduler";
+  const showRatings = activeTab === "all" || activeTab === "ratings";
+  const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
+  const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
 
   return (
     <div className={styles.root}>
@@ -82,16 +82,16 @@ export default function Analytics() {
             General
           </button>
           <button
+            className={`${styles.tab} ${activeTab === "scheduler" ? styles.active : ""}`}
+            onClick={() => setActiveTab("scheduler")}
+          >
+            Scheduler
+          </button>
+          <button
             className={`${styles.tab} ${activeTab === "ratings" ? styles.active : ""}`}
             onClick={() => setActiveTab("ratings")}
           >
             Ratings
-          </button>
-          <button
-            className={`${styles.tab} ${activeTab === "bookmarks" ? styles.active : ""}`}
-            onClick={() => setActiveTab("bookmarks")}
-          >
-            Bookmarks
           </button>
           <button
             className={`${styles.tab} ${activeTab === "gradtrak" ? styles.active : ""}`}
@@ -100,10 +100,10 @@ export default function Analytics() {
             GradTrak
           </button>
           <button
-            className={`${styles.tab} ${activeTab === "scheduler" ? styles.active : ""}`}
-            onClick={() => setActiveTab("scheduler")}
+            className={`${styles.tab} ${activeTab === "bookmarks" ? styles.active : ""}`}
+            onClick={() => setActiveTab("bookmarks")}
           >
-            Scheduler
+            Bookmarks
           </button>
         </div>
       </div>
@@ -127,6 +127,28 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <SignupHourHistogramBlock />
+            </div>
+          </>
+        )}
+        {showScheduler && (
+          <>
+            <div className={styles.cell}>
+              <TotalSchedulesBlock />
+            </div>
+            <div className={styles.cell}>
+              <DailySchedulesBlock />
+            </div>
+            <div className={styles.cell}>
+              <SchedulerUtilizationRatioBlock />
+            </div>
+            <div className={styles.cell}>
+              <ClassesPerScheduleBlock />
+            </div>
+            <div className={styles.cell}>
+              <SchedulesBySemesterBlock />
+            </div>
+            <div className={styles.cell}>
+              <TopSchedulerUsersBlock />
             </div>
           </>
         )}
@@ -161,28 +183,6 @@ export default function Analytics() {
             </div>
           </>
         )}
-        {showBookmarks && (
-          <>
-            <div className={styles.cell}>
-              <UsersWithBookmarksBlock />
-            </div>
-            <div className={styles.cell}>
-              <TotalBookmarksBlock />
-            </div>
-            <div className={styles.cell}>
-              <DailyBookmarksBlock />
-            </div>
-            <div className={styles.cell}>
-              <CustomCollectionsBlock />
-            </div>
-            <div className={styles.cell}>
-              <UsersWithCustomCollectionsBlock />
-            </div>
-            <div className={styles.cell}>
-              <CollectionNamesBlock />
-            </div>
-          </>
-        )}
         {showGradTrak && (
           <>
             <div className={styles.cell}>
@@ -208,25 +208,25 @@ export default function Analytics() {
             </div>
           </>
         )}
-        {showScheduler && (
+        {showBookmarks && (
           <>
             <div className={styles.cell}>
-              <TotalSchedulesBlock />
+              <UsersWithBookmarksBlock />
             </div>
             <div className={styles.cell}>
-              <DailySchedulesBlock />
+              <TotalBookmarksBlock />
             </div>
             <div className={styles.cell}>
-              <SchedulerUtilizationRatioBlock />
+              <DailyBookmarksBlock />
             </div>
             <div className={styles.cell}>
-              <ClassesPerScheduleBlock />
+              <CustomCollectionsBlock />
             </div>
             <div className={styles.cell}>
-              <SchedulesBySemesterBlock />
+              <UsersWithCustomCollectionsBlock />
             </div>
             <div className={styles.cell}>
-              <TopSchedulerUsersBlock />
+              <CollectionNamesBlock />
             </div>
           </>
         )}

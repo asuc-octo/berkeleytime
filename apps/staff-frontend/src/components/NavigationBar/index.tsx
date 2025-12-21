@@ -12,6 +12,7 @@ export default function NavigationBar() {
   const { data: user } = useReadUser();
 
   return (
+    
     <Flex align="center" flexShrink="0" gap="3" className={styles.root}>
       <Link className={styles.brand} to="/">
         Bt Staff
