@@ -8,6 +8,7 @@ import {
   RatingType,
   SectionModel,
   StaffMemberModel,
+  UserModel,
 } from "@repo/common";
 import { METRIC_MAPPINGS, REQUIRED_METRICS } from "@repo/shared";
 
@@ -893,9 +894,18 @@ export const getRatingAnalyticsData = async (context: RequestContext) => {
     .sort({ createdAt: 1 })
     .lean();
 
+  // Get unique user IDs and look up their emails
+  const userIds = [...new Set(ratings.map((r) => r.createdBy))];
+  const users = await UserModel.find({ _id: { $in: userIds } })
+    .select("_id email")
+    .lean();
+  const userEmailMap = new Map(
+    users.map((u) => [u._id.toString(), u.email as string])
+  );
+
   return ratings.map((rating) => ({
     createdAt: (rating as any).createdAt.toISOString(),
-    anonymousUserId: anonymizeUserId(rating.createdBy),
+    userEmail: userEmailMap.get(rating.createdBy.toString()) || "unknown",
     courseKey: `${rating.subject} ${rating.courseNumber}`,
   }));
 };

@@ -83,12 +83,6 @@ interface DailyDataPoint {
   value: number;
 }
 
-interface MetricSummary {
-  current: number;
-  absoluteChange: number;
-  percentChange: number;
-}
-
 // Filter popover for "At least N ratings" filter
 function MinRatingsFilterPopover({
   value,
@@ -164,176 +158,6 @@ function MinRatingsFilterPopover({
   );
 }
 
-/**
- * Process raw rating data points into daily cumulative timeseries (last 30 days)
- */
-function useProcessedAnalyticsData() {
-  const { data: rawData, loading, error } = useRatingAnalyticsData();
-
-  const processedData = useMemo(() => {
-    if (!rawData || rawData.length === 0) {
-      return {
-        totalRatings: [] as DailyDataPoint[],
-        uniqueUsers: [] as DailyDataPoint[],
-        uniqueCourses: [] as DailyDataPoint[],
-        summaries: {
-          totalRatings: { current: 0, percentChange7d: 0 },
-          uniqueUsers: { current: 0, percentChange7d: 0 },
-          uniqueCourses: { current: 0, percentChange7d: 0 },
-        },
-      };
-    }
-
-    const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-
-    // Get date 30 days ago
-    const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-    // Sort by date first
-    const sortedData = [...rawData].sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
-
-    // Count baseline values (before the 30-day window)
-    let baselineRatings = 0;
-    const baselineUsers = new Set<string>();
-    const baselineCourses = new Set<string>();
-
-    sortedData.forEach((point) => {
-      const date = new Date(point.createdAt);
-      if (date < thirtyDaysAgo) {
-        baselineRatings++;
-        baselineUsers.add(point.anonymousUserId);
-        baselineCourses.add(point.courseKey);
-      }
-    });
-
-    // Initialize all days in the last 30 days
-    const dailyData = new Map<
-      string,
-      {
-        count: number;
-        users: Set<string>;
-        courses: Set<string>;
-      }
-    >();
-
-    for (
-      let d = new Date(thirtyDaysAgo);
-      d <= now;
-      d.setDate(d.getDate() + 1)
-    ) {
-      const dayKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      dailyData.set(dayKey, {
-        count: 0,
-        users: new Set(),
-        courses: new Set(),
-      });
-    }
-
-    // Fill in data for the last 30 days
-    sortedData.forEach((point) => {
-      const date = new Date(point.createdAt);
-      if (date >= thirtyDaysAgo && date <= now) {
-        const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-
-        const dayData = dailyData.get(dayKey);
-        if (dayData) {
-          dayData.count++;
-          dayData.users.add(point.anonymousUserId);
-          dayData.courses.add(point.courseKey);
-        }
-      }
-    });
-
-    // Convert to sorted array and compute cumulative values
-    const sortedDays = Array.from(dailyData.keys()).sort();
-
-    let cumulativeRatings = baselineRatings;
-    const cumulativeUsers = new Set<string>(baselineUsers);
-    const cumulativeCourses = new Set<string>(baselineCourses);
-
-    const totalRatings: DailyDataPoint[] = [];
-    const uniqueUsers: DailyDataPoint[] = [];
-    const uniqueCourses: DailyDataPoint[] = [];
-
-    sortedDays.forEach((dayKey) => {
-      const data = dailyData.get(dayKey)!;
-
-      // Format date for display (e.g., "Dec 19")
-      const [, month, day] = dayKey.split("-");
-      const displayDate = `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
-
-      // Cumulative ratings
-      cumulativeRatings += data.count;
-      totalRatings.push({
-        date: displayDate,
-        dateKey: dayKey,
-        value: cumulativeRatings,
-      });
-
-      // Cumulative unique users
-      data.users.forEach((u) => cumulativeUsers.add(u));
-      uniqueUsers.push({
-        date: displayDate,
-        dateKey: dayKey,
-        value: cumulativeUsers.size,
-      });
-
-      // Cumulative unique courses
-      data.courses.forEach((c) => cumulativeCourses.add(c));
-      uniqueCourses.push({
-        date: displayDate,
-        dateKey: dayKey,
-        value: cumulativeCourses.size,
-      });
-    });
-
-    // Calculate 30-day change (comparing first and last point in window)
-    const calc30dChange = (data: DailyDataPoint[]): MetricSummary => {
-      if (data.length === 0)
-        return { current: 0, absoluteChange: 0, percentChange: 0 };
-
-      const current = data[data.length - 1].value;
-      const start = data[0].value;
-
-      const absoluteChange = current - start;
-      const percentChange =
-        start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
-
-      return { current, absoluteChange, percentChange };
-    };
-
-    return {
-      totalRatings,
-      uniqueUsers,
-      uniqueCourses,
-      summaries: {
-        totalRatings: calc30dChange(totalRatings),
-        uniqueUsers: calc30dChange(uniqueUsers),
-        uniqueCourses: calc30dChange(uniqueCourses),
-      },
-    };
-  }, [rawData]);
-
-  return { ...processedData, loading, error };
-}
-
 // Unique Users Growth Block
 export function UniqueUsersGrowthBlock() {
   const { data: rawData, loading, error } = useRatingAnalyticsData();
@@ -364,8 +188,8 @@ export function UniqueUsersGrowthBlock() {
     const userRatingCounts = new Map<string, number>();
     sortedData.forEach((point) => {
       userRatingCounts.set(
-        point.anonymousUserId,
-        (userRatingCounts.get(point.anonymousUserId) || 0) + 1
+        point.userEmail,
+        (userRatingCounts.get(point.userEmail) || 0) + 1
       );
     });
 
@@ -381,9 +205,9 @@ export function UniqueUsersGrowthBlock() {
     sortedData.forEach((point) => {
       if (
         new Date(point.createdAt) < rangeStart &&
-        qualifiedUsers.has(point.anonymousUserId)
+        qualifiedUsers.has(point.userEmail)
       ) {
-        baselineUsers.add(point.anonymousUserId);
+        baselineUsers.add(point.userEmail);
       }
     });
 
@@ -405,10 +229,10 @@ export function UniqueUsersGrowthBlock() {
       if (
         date >= rangeStart &&
         date <= now &&
-        qualifiedUsers.has(point.anonymousUserId)
+        qualifiedUsers.has(point.userEmail)
       ) {
         const key = getGranularityKey(date, granularity);
-        bucketMap.get(key)?.add(point.anonymousUserId);
+        bucketMap.get(key)?.add(point.userEmail);
       }
     });
 
@@ -977,12 +801,21 @@ export function CourseDistributionBlock() {
 }
 
 // Custom tooltip for treemap
+interface TreemapPayloadItem {
+  payload: {
+    fullName?: string;
+    name: string;
+    value: number;
+    metrics?: { Usefulness?: number; Difficulty?: number; Workload?: number };
+  };
+}
+
 const TreemapTooltip = ({
   active,
   payload,
 }: {
   active?: boolean;
-  payload?: any[];
+  payload?: TreemapPayloadItem[];
 }) => {
   if (!active || !payload || !payload.length) return null;
 
@@ -1059,8 +892,26 @@ const SUBJECT_PALETTE = [
 ];
 
 // Custom treemap cell content
-const TreemapContent = (props: any) => {
-  const { x, y, width, height, name, value, root } = props;
+interface TreemapContentProps {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  name?: string;
+  value?: number;
+  root?: { color?: string };
+}
+
+const TreemapContent = (props: TreemapContentProps) => {
+  const {
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    name = "",
+    value = 0,
+    root,
+  } = props;
 
   const showName = width > 40 && height > 25;
   const showValue = width > 35 && height > 40;
@@ -1207,82 +1058,81 @@ export function CourseRatingsDistributionBlock() {
     return result;
   }, [metricsData]);
 
-  const { treemapData, totalSubjects, totalCourses, avgPerClass } =
-    useMemo(() => {
-      if (!filteredData || filteredData.length === 0) {
-        return {
-          treemapData: [],
-          totalSubjects: 0,
-          totalCourses: 0,
-          avgPerClass: 0,
-        };
-      }
-
-      // Count ratings per course and group by subject
-      const subjectData = new Map<string, Map<string, number>>();
-
-      filteredData.forEach((point) => {
-        const parts = point.courseKey.split(" ");
-        const subject = parts[0];
-        const courseNum = parts.slice(1).join(" ") || point.courseKey;
-
-        if (selectedSubject && subject !== selectedSubject) return;
-
-        if (!subjectData.has(subject)) {
-          subjectData.set(subject, new Map());
-        }
-        const courses = subjectData.get(subject)!;
-        courses.set(courseNum, (courses.get(courseNum) || 0) + 1);
-      });
-
-      // Create hierarchical treemap data grouped by subject
-      const sortedSubjects = Array.from(subjectData.entries())
-        .map(([subject, courses]) => {
-          const children = Array.from(courses.entries())
-            .filter(([, count]) => count >= minRatings)
-            .map(([courseNum, count]) => {
-              const courseKey = `${subject} ${courseNum}`;
-              return {
-                name: courseNum,
-                fullName: courseKey,
-                value: count,
-                metrics: courseMetrics?.get(courseKey),
-              };
-            })
-            .sort((a, b) => b.value - a.value);
-
-          return {
-            subject,
-            children,
-            totalValue: children.reduce((sum, c) => sum + c.value, 0),
-          };
-        })
-        .filter(({ children }) => children.length > 0)
-        .sort((a, b) => b.totalValue - a.totalValue);
-
-      const treemapData = sortedSubjects.map(
-        ({ subject, children, totalValue }, index) => ({
-          name: subject,
-          color: SUBJECT_PALETTE[index % SUBJECT_PALETTE.length],
-          children,
-          value: totalValue,
-        })
-      );
-
-      const totalCourses = treemapData.reduce(
-        (sum, s) => sum + s.children.length,
-        0
-      );
-      const totalRatings = treemapData.reduce((sum, s) => sum + s.value, 0);
-      const avgPerClass = totalCourses > 0 ? totalRatings / totalCourses : 0;
-
+  const { treemapData, totalCourses, avgPerClass } = useMemo(() => {
+    if (!filteredData || filteredData.length === 0) {
       return {
-        treemapData,
-        totalSubjects: treemapData.length,
-        totalCourses,
-        avgPerClass,
+        treemapData: [],
+        totalSubjects: 0,
+        totalCourses: 0,
+        avgPerClass: 0,
       };
-    }, [filteredData, minRatings, selectedSubject, courseMetrics]);
+    }
+
+    // Count ratings per course and group by subject
+    const subjectData = new Map<string, Map<string, number>>();
+
+    filteredData.forEach((point) => {
+      const parts = point.courseKey.split(" ");
+      const subject = parts[0];
+      const courseNum = parts.slice(1).join(" ") || point.courseKey;
+
+      if (selectedSubject && subject !== selectedSubject) return;
+
+      if (!subjectData.has(subject)) {
+        subjectData.set(subject, new Map());
+      }
+      const courses = subjectData.get(subject)!;
+      courses.set(courseNum, (courses.get(courseNum) || 0) + 1);
+    });
+
+    // Create hierarchical treemap data grouped by subject
+    const sortedSubjects = Array.from(subjectData.entries())
+      .map(([subject, courses]) => {
+        const children = Array.from(courses.entries())
+          .filter(([, count]) => count >= minRatings)
+          .map(([courseNum, count]) => {
+            const courseKey = `${subject} ${courseNum}`;
+            return {
+              name: courseNum,
+              fullName: courseKey,
+              value: count,
+              metrics: courseMetrics?.get(courseKey),
+            };
+          })
+          .sort((a, b) => b.value - a.value);
+
+        return {
+          subject,
+          children,
+          totalValue: children.reduce((sum, c) => sum + c.value, 0),
+        };
+      })
+      .filter(({ children }) => children.length > 0)
+      .sort((a, b) => b.totalValue - a.totalValue);
+
+    const treemapData = sortedSubjects.map(
+      ({ subject, children, totalValue }, index) => ({
+        name: subject,
+        color: SUBJECT_PALETTE[index % SUBJECT_PALETTE.length],
+        children,
+        value: totalValue,
+      })
+    );
+
+    const totalCourses = treemapData.reduce(
+      (sum, s) => sum + s.children.length,
+      0
+    );
+    const totalRatings = treemapData.reduce((sum, s) => sum + s.value, 0);
+    const avgPerClass = totalCourses > 0 ? totalRatings / totalCourses : 0;
+
+    return {
+      treemapData,
+      totalSubjects: treemapData.length,
+      totalCourses,
+      avgPerClass,
+    };
+  }, [filteredData, minRatings, selectedSubject, courseMetrics]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: "Ratings" },
@@ -1569,9 +1419,9 @@ const SCORE_COLORS: Record<number, string> = {
 export function ScoreDistributionBlock() {
   const { data: rawData, loading, error } = useRatingMetricsAnalyticsData();
 
-  const { chartData, totalRatings } = useMemo(() => {
+  const { chartData } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
-      return { chartData: [], totalRatings: 0 };
+      return { chartData: [] };
     }
 
     const metrics = ["Usefulness", "Difficulty", "Workload"];
@@ -1606,9 +1456,7 @@ export function ScoreDistributionBlock() {
       };
     });
 
-    const totalRatings = chartData.reduce((sum, d) => sum + d.total, 0);
-
-    return { chartData, totalRatings };
+    return { chartData };
   }, [rawData]);
 
   const chartConfig = createChartConfig(

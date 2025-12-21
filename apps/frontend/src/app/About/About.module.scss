@@ -242,6 +242,12 @@
   margin: 0;
 }
 
+.ourTeamSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 // Reuse alumniGrid styles for team grid (duplicated for CSS Modules compatibility)
 .grid {
   display: grid;

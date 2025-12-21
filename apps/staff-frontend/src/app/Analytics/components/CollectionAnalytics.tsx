@@ -721,12 +721,11 @@ export function CustomCollectionsBlock() {
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
 
-  const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
+  const { chartData, current, percentChange } = useMemo(() => {
     if (!data || data.customCollectionCreations.length === 0) {
       return {
         chartData: [] as DailyDataPoint[],
         current: 0,
-        absoluteChange: 0,
         percentChange: 0,
       };
     }
@@ -784,11 +783,10 @@ export function CustomCollectionsBlock() {
     const current =
       chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
     const start = chartData.length > 0 ? chartData[0].value : 0;
-    const absoluteChange = current - start;
     const percentChange =
       start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
-    return { chartData, current, absoluteChange, percentChange };
+    return { chartData, current, percentChange };
   }, [data, timeRange, granularity]);
 
   const chartConfig = createChartConfig(["value"], {
@@ -918,12 +916,11 @@ export function UsersWithCustomCollectionsBlock() {
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
 
-  const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
+  const { chartData, current, percentChange } = useMemo(() => {
     if (!data || data.usersWithCustomCollections.length === 0) {
       return {
         chartData: [] as DailyDataPoint[],
         current: 0,
-        absoluteChange: 0,
         percentChange: 0,
       };
     }
@@ -981,11 +978,10 @@ export function UsersWithCustomCollectionsBlock() {
     const current =
       chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
     const start = chartData.length > 0 ? chartData[0].value : 0;
-    const absoluteChange = current - start;
     const percentChange =
       start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
 
-    return { chartData, current, absoluteChange, percentChange };
+    return { chartData, current, percentChange };
   }, [data, timeRange, granularity]);
 
   const chartConfig = createChartConfig(["value"], {

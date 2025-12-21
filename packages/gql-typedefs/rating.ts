@@ -106,8 +106,8 @@ export const ratingTypeDef = gql`
   type RatingDataPoint @cacheControl(maxAge: 0) {
     "Timestamp when the rating was created"
     createdAt: String!
-    "Anonymized user ID for counting unique users"
-    anonymousUserId: String!
+    "User email for counting unique users"
+    userEmail: String!
     "Course identifier (subject + courseNumber)"
     courseKey: String!
   }
