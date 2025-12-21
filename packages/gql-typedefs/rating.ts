@@ -127,6 +127,17 @@ export const ratingTypeDef = gql`
     courseKey: String!
   }
 
+  """
+  Optional response data point for analytics
+  Indicates whether optional fields (Recording, Attendance) were filled for a rating submission
+  """
+  type OptionalResponseDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the rating was created"
+    createdAt: String!
+    "Whether at least one optional field was filled"
+    hasOptional: Boolean!
+  }
+
   input ClassWithoutCourseInput {
     year: Int!
     semester: Int!
@@ -179,6 +190,9 @@ export const ratingTypeDef = gql`
 
     "Staff-only: Rating metric values for analytics (average scores over time)"
     ratingMetricsAnalyticsData: [RatingMetricDataPoint!]! @auth
+
+    "Staff-only: Optional response data for analytics (Recording/Attendance completion)"
+    optionalResponseAnalyticsData: [OptionalResponseDataPoint!]! @auth
   }
 
   """

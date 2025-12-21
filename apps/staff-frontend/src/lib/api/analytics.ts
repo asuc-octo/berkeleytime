@@ -14,6 +14,11 @@ export interface RatingMetricDataPoint {
   courseKey: string;
 }
 
+export interface OptionalResponseDataPoint {
+  createdAt: string;
+  hasOptional: boolean;
+}
+
 export interface UserCreationDataPoint {
   createdAt: string;
 }
@@ -98,6 +103,15 @@ export const RATING_METRICS_ANALYTICS_DATA = gql`
   }
 `;
 
+export const OPTIONAL_RESPONSE_ANALYTICS_DATA = gql`
+  query OptionalResponseAnalyticsData {
+    optionalResponseAnalyticsData {
+      createdAt
+      hasOptional
+    }
+  }
+`;
+
 export const USER_CREATION_ANALYTICS_DATA = gql`
   query UserCreationAnalyticsData {
     userCreationAnalyticsData {
@@ -167,6 +181,28 @@ export const GRADTRAK_ANALYTICS_DATA = gql`
       colleges
       totalCourses
       startYear
+      createdAt
+    }
+  }
+`;
+
+export interface SchedulerAnalyticsDataPoint {
+  scheduleId: string;
+  userEmail: string;
+  totalClasses: number;
+  semester: string;
+  year: number;
+  createdAt: string;
+}
+
+export const SCHEDULER_ANALYTICS_DATA = gql`
+  query SchedulerAnalyticsData {
+    schedulerAnalyticsData {
+      scheduleId
+      userEmail
+      totalClasses
+      semester
+      year
       createdAt
     }
   }

@@ -26,6 +26,7 @@ import {
   createChartConfig,
 } from "@/components/Chart";
 import {
+  useOptionalResponseAnalyticsData,
   useRatingAnalyticsData,
   useRatingMetricsAnalyticsData,
 } from "@/hooks/api";
@@ -1406,13 +1407,13 @@ const METRIC_COLORS: Record<string, string> = {
   Workload: "#f28e2c",
 };
 
-// Score distribution colors (1-5) - gradient from red to green
+// Score distribution colors (1-5) - gradient from red to blue
 const SCORE_COLORS: Record<number, string> = {
   1: "#e15759", // red (low)
   2: "#f28e2c", // orange
   3: "#edc949", // yellow
   4: "#76b7b2", // teal
-  5: "#59a14f", // green (high)
+  5: "#4e79a7", // dark blue (high)
 };
 
 // Score Distribution Block - 100% stacked bar showing 1-5 distribution per metric
@@ -1815,6 +1816,436 @@ export function AverageScoresOverTimeBlock() {
           </LineChart>
         </ResponsiveContainer>
       </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+// Helper function for relative time formatting
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+  const diffWeek = Math.floor(diffDay / 7);
+  const diffMonth = Math.floor(diffDay / 30);
+
+  if (diffSec < 60) return "just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHour < 24) return `${diffHour}h ago`;
+  if (diffDay < 7) return `${diffDay}d ago`;
+  if (diffWeek < 4) return `${diffWeek}w ago`;
+  return `${diffMonth}mo ago`;
+}
+
+// Optional Response Ratio Block - percentage of ratings with optional fields filled
+export function OptionalResponseRatioBlock() {
+  const { data, loading, error } = useOptionalResponseAnalyticsData();
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const [granularity, setGranularity] = useState<Granularity>("day");
+
+  const { chartData, currentRatio, percentChange } = useMemo(() => {
+    if (!data || data.length === 0) {
+      return { chartData: [], currentRatio: 0, percentChange: null };
+    }
+
+    const days = getTimeRangeDays(timeRange);
+    const now = new Date();
+    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+    const sortedData = [...data].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+    // Baseline counts before the window
+    let baselineWithOptional = 0;
+    let baselineWithoutOptional = 0;
+    sortedData.forEach((point) => {
+      if (new Date(point.createdAt) < rangeStart) {
+        if (point.hasOptional) {
+          baselineWithOptional++;
+        } else {
+          baselineWithoutOptional++;
+        }
+      }
+    });
+
+    // Initialize buckets
+    const bucketMap = new Map<
+      string,
+      { withOptional: number; withoutOptional: number }
+    >();
+    for (let d = new Date(rangeStart); d <= now; ) {
+      const key = getGranularityKey(d, granularity);
+      bucketMap.set(key, { withOptional: 0, withoutOptional: 0 });
+      if (granularity === "hour") {
+        d.setHours(d.getHours() + 1);
+      } else {
+        d.setDate(d.getDate() + 1);
+      }
+    }
+
+    // Fill buckets
+    sortedData.forEach((point) => {
+      const date = new Date(point.createdAt);
+      if (date >= rangeStart && date <= now) {
+        const key = getGranularityKey(date, granularity);
+        const bucket = bucketMap.get(key);
+        if (bucket) {
+          if (point.hasOptional) {
+            bucket.withOptional++;
+          } else {
+            bucket.withoutOptional++;
+          }
+        }
+      }
+    });
+
+    // Build cumulative data
+    const sortedKeys = Array.from(bucketMap.keys()).sort();
+    let cumulativeWithOptional = baselineWithOptional;
+    let cumulativeWithoutOptional = baselineWithoutOptional;
+
+    const chartData = sortedKeys.map((key) => {
+      const bucket = bucketMap.get(key)!;
+      cumulativeWithOptional += bucket.withOptional;
+      cumulativeWithoutOptional += bucket.withoutOptional;
+
+      const total = cumulativeWithOptional + cumulativeWithoutOptional;
+      // Ratio = percentage with optional filled
+      const ratio = total > 0 ? (cumulativeWithOptional / total) * 100 : 0;
+
+      return {
+        date: formatDisplayDate(key, granularity),
+        dateKey: key,
+        ratio,
+        withOptionalCount: cumulativeWithOptional,
+        totalCount: total,
+      };
+    });
+
+    const last = chartData[chartData.length - 1];
+    const first = chartData[0];
+    const currentRatio = last?.ratio ?? 0;
+    const startRatio = first?.ratio ?? 0;
+
+    // For cumulative charts: compare end vs start of the visible range
+    const percentChange =
+      startRatio !== 0 ? ((currentRatio - startRatio) / startRatio) * 100 : null;
+
+    return { chartData, currentRatio, percentChange };
+  }, [data, timeRange, granularity]);
+
+  const chartConfig = createChartConfig(["ratio"], {
+    labels: { ratio: "Response Rate" },
+    colors: { ratio: "var(--heading-color)" },
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Optional Response Ratio"
+        description="Ratings with Recording/Attendance filled"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Optional Response Ratio"
+        description="Ratings with Recording/Attendance filled"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Optional Response Ratio"
+      description="Ratings with Recording/Attendance filled"
+      currentValue={`${currentRatio.toFixed(1)}%`}
+      comparison={
+        percentChange !== null ? (
+          <span
+            style={{
+              color: percentChange >= 0 ? "var(--green-500)" : "var(--red-500)",
+            }}
+          >
+            {percentChange >= 0 ? "+" : ""}
+            {percentChange.toFixed(1)}%
+          </span>
+        ) : undefined
+      }
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={(val) => {
+        setTimeRange(val);
+        setGranularity(val === "7d" ? "hour" : "day");
+      }}
+      granularity={granularity}
+      onGranularityChange={setGranularity}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient
+                id="optionalResponseGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              width={45}
+              domain={["dataMin - 2", "dataMax + 2"]}
+              tickFormatter={(value) => `${value.toFixed(0)}%`}
+            />
+            <ChartTooltip
+              tooltipConfig={{
+                valueFormatter: (value: number, _name, item) => {
+                  const payload = item?.payload;
+                  if (!payload) return `${value.toFixed(1)}%`;
+                  return `${value.toFixed(1)}% (${payload.withOptionalCount.toLocaleString()} / ${payload.totalCount.toLocaleString()})`;
+                },
+              }}
+            />
+            <Area
+              type="monotone"
+              dataKey="ratio"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#optionalResponseGradient)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+// Recent Ratings Table Block - shows time, user, and class
+export function RecentRatingsBlock() {
+  const { data, loading, error } = useRatingAnalyticsData();
+
+  // Sort by most recent first
+  const sortedRatings = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    return [...data].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [data]);
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Recent Ratings"
+        description="Latest rating submissions"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <AnalyticsCard
+        title="Recent Ratings"
+        description="Latest rating submissions"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Recent Ratings"
+      description="Latest rating submissions"
+      currentValue={sortedRatings.length}
+      currentValueLabel="total"
+    >
+      <div
+        style={{
+          flex: 1,
+          overflow: "auto",
+          fontSize: 13,
+        }}
+      >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            tableLayout: "fixed",
+          }}
+        >
+          <colgroup>
+            <col style={{ width: "18%" }} />
+            <col style={{ width: "50%" }} />
+            <col style={{ width: "32%" }} />
+          </colgroup>
+          <thead
+            style={{
+              position: "sticky",
+              top: 0,
+              background: "var(--foreground-color)",
+              zIndex: 1,
+            }}
+          >
+            <tr
+              style={{
+                borderBottom: "1px solid var(--border-color)",
+              }}
+            >
+              <th
+                style={{
+                  textAlign: "left",
+                  padding: "8px 4px",
+                  color: "var(--label-color)",
+                  fontWeight: 600,
+                }}
+              >
+                Time
+              </th>
+              <th
+                style={{
+                  textAlign: "left",
+                  padding: "8px 4px",
+                  color: "var(--label-color)",
+                  fontWeight: 600,
+                }}
+              >
+                User
+              </th>
+              <th
+                style={{
+                  textAlign: "left",
+                  padding: "8px 4px",
+                  color: "var(--label-color)",
+                  fontWeight: 600,
+                }}
+              >
+                Class
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedRatings.map((rating, index) => (
+              <tr
+                key={`${rating.userEmail}-${rating.createdAt}-${index}`}
+                style={{
+                  borderBottom: "1px solid var(--border-color)",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "6px 4px",
+                    color: "var(--paragraph-color)",
+                  }}
+                  title={new Date(rating.createdAt).toLocaleString()}
+                >
+                  {formatRelativeTime(rating.createdAt)}
+                </td>
+                <td
+                  style={{
+                    padding: "6px 4px",
+                    color: "var(--paragraph-color)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={rating.userEmail}
+                >
+                  {rating.userEmail}
+                </td>
+                <td
+                  style={{
+                    padding: "6px 4px",
+                    color: "var(--paragraph-color)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {rating.courseKey}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </AnalyticsCard>
   );
 }

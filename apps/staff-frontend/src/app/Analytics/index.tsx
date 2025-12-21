@@ -16,6 +16,7 @@ import {
 } from "./components/CollectionAnalytics";
 import {
   CourseCountHistogramBlock,
+  DailyGradTraksBlock,
   MajorDistributionBlock,
   StartYearDistributionBlock,
   TopUsersTableBlock,
@@ -26,11 +27,21 @@ import {
   AverageScoresOverTimeBlock,
   CourseDistributionBlock,
   CourseRatingsDistributionBlock,
+  OptionalResponseRatioBlock,
   RatingsCountBlock,
   RatingsDayHistogramBlock,
+  RecentRatingsBlock,
   ScoreDistributionBlock,
   UniqueUsersGrowthBlock,
 } from "./components/RatingsAnalytics";
+import {
+  ClassesPerScheduleBlock,
+  DailySchedulesBlock,
+  SchedulesBySemesterBlock,
+  SchedulerUtilizationRatioBlock,
+  TopSchedulerUsersBlock,
+  TotalSchedulesBlock,
+} from "./components/SchedulerAnalytics";
 import {
   SignupDayHistogramBlock,
   SignupHourHistogramBlock,
@@ -52,6 +63,7 @@ export default function Analytics() {
   const showRatings = activeTab === "all" || activeTab === "ratings";
   const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
   const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
+  const showScheduler = activeTab === "all" || activeTab === "scheduler";
 
   return (
     <div className={styles.root}>
@@ -136,10 +148,16 @@ export default function Analytics() {
               <CourseRatingsDistributionBlock />
             </div>
             <div className={styles.cell}>
+              <OptionalResponseRatioBlock />
+            </div>
+            <div className={styles.cell}>
               <AverageScoresOverTimeBlock />
             </div>
             <div className={styles.cell}>
               <ScoreDistributionBlock />
+            </div>
+            <div className={styles.cell}>
+              <RecentRatingsBlock />
             </div>
           </>
         )}
@@ -171,6 +189,9 @@ export default function Analytics() {
               <TotalGradTraksBlock />
             </div>
             <div className={styles.cell}>
+              <DailyGradTraksBlock />
+            </div>
+            <div className={styles.cell}>
               <UtilizationRatioBlock />
             </div>
             <div className={styles.cell}>
@@ -184,6 +205,28 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <TopUsersTableBlock />
+            </div>
+          </>
+        )}
+        {showScheduler && (
+          <>
+            <div className={styles.cell}>
+              <TotalSchedulesBlock />
+            </div>
+            <div className={styles.cell}>
+              <DailySchedulesBlock />
+            </div>
+            <div className={styles.cell}>
+              <SchedulerUtilizationRatioBlock />
+            </div>
+            <div className={styles.cell}>
+              <ClassesPerScheduleBlock />
+            </div>
+            <div className={styles.cell}>
+              <SchedulesBySemesterBlock />
+            </div>
+            <div className={styles.cell}>
+              <TopSchedulerUsersBlock />
             </div>
           </>
         )}

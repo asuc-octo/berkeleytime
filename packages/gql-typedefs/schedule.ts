@@ -61,9 +61,25 @@ export const scheduleTypeDef = gql`
     events: [Event!]!
   }
 
+  """
+  Scheduler analytics data point for staff dashboard
+  """
+  type SchedulerAnalyticsDataPoint @cacheControl(maxAge: 0) {
+    scheduleId: ID!
+    userEmail: String!
+    totalClasses: Int!
+    semester: String!
+    year: Int!
+    createdAt: String!
+  }
+
   type Query {
     schedules: [Schedule] @auth
     schedule(id: ID!): Schedule
+    """
+    Staff-only: Scheduler analytics data for visualization
+    """
+    schedulerAnalyticsData: [SchedulerAnalyticsDataPoint!]! @auth
   }
 
   input EventInput {

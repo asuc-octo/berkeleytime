@@ -136,6 +136,11 @@ export function CollectionNamesBlock() {
             tableLayout: "fixed",
           }}
         >
+          <colgroup>
+            <col style={{ width: "12%" }} />
+            <col style={{ width: "48%" }} />
+            <col style={{ width: "40%" }} />
+          </colgroup>
           <thead
             style={{
               position: "sticky",
@@ -155,7 +160,6 @@ export function CollectionNamesBlock() {
                   padding: "8px 4px",
                   color: "var(--label-color)",
                   fontWeight: 600,
-                  width: 40,
                 }}
               >
                 #
@@ -166,7 +170,6 @@ export function CollectionNamesBlock() {
                   padding: "8px 4px",
                   color: "var(--label-color)",
                   fontWeight: 600,
-                  width: 70,
                 }}
               >
                 User
@@ -205,10 +208,13 @@ export function CollectionNamesBlock() {
                   style={{
                     padding: "6px 4px",
                     color: "var(--paragraph-color)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
                   }}
                   title={col.userEmail}
                 >
-                  {col.userEmail.substring(0, 5)}...
+                  {col.userEmail}
                 </td>
                 <td
                   style={{

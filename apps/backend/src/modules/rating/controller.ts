@@ -950,3 +950,78 @@ export const getRatingMetricsAnalyticsData = async (
     courseKey: `${rating.subject} ${rating.courseNumber}`,
   }));
 };
+
+/**
+ * Staff-only endpoint to get optional response analytics data
+ * Returns data about whether optional fields (Recording, Attendance) were filled
+ * for each unique rating submission (user + class + term)
+ */
+export const getOptionalResponseAnalyticsData = async (
+  context: RequestContext
+) => {
+  if (!context.user?._id) {
+    throw new GraphQLError("Not authenticated", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  // Verify caller is a staff member
+  const staffMember = await StaffMemberModel.findOne({
+    userId: context.user._id,
+  }).lean();
+
+  if (!staffMember) {
+    throw new GraphQLError("Only staff members can access analytics data", {
+      extensions: { code: "FORBIDDEN" },
+    });
+  }
+
+  // Get all ratings to analyze optional field completion
+  // We use Difficulty as the base metric (every submission has it)
+  // Then check if Recording or Attendance exists for that submission
+  const allRatings = await RatingModel.find({})
+    .select("createdBy subject courseNumber semester year classNumber metricName createdAt")
+    .lean();
+
+  // Group by unique submission (user + class + term)
+  const submissionMap = new Map<
+    string,
+    { createdAt: Date; hasOptional: boolean }
+  >();
+
+  allRatings.forEach((rating) => {
+    const key = `${rating.createdBy}-${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`;
+    const existing = submissionMap.get(key);
+    const createdAt = (rating as any).createdAt as Date;
+    const isOptional =
+      rating.metricName === "Recording" || rating.metricName === "Attendance";
+
+    if (!existing) {
+      submissionMap.set(key, {
+        createdAt,
+        hasOptional: isOptional,
+      });
+    } else {
+      // Use earliest createdAt and set hasOptional if any optional metric exists
+      if (createdAt < existing.createdAt) {
+        existing.createdAt = createdAt;
+      }
+      if (isOptional) {
+        existing.hasOptional = true;
+      }
+    }
+  });
+
+  // Convert to array and sort by createdAt
+  const dataPoints = Array.from(submissionMap.values())
+    .map((s) => ({
+      createdAt: s.createdAt.toISOString(),
+      hasOptional: s.hasOptional,
+    }))
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+  return dataPoints;
+};

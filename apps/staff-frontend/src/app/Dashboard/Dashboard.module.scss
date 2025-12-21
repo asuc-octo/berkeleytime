@@ -105,6 +105,35 @@
   margin-top: 20px;
 }
 
+.staffCard {
+  padding: 20px 24px;
+  border-radius: 12px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  break-inside: avoid;
+  margin-bottom: 16px;
+}
+
+.staffCardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.staffCardName {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.staffCardEmail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--label-color);
+}
+
 .selectedUserName {
   font-size: 18px;
   font-weight: 600;

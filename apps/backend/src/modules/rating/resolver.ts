@@ -5,6 +5,7 @@ import {
   deleteRatings,
   getAllRatings,
   getClassAggregatedRatings,
+  getOptionalResponseAnalyticsData,
   getRatingAnalyticsData,
   getRatingMetricsAnalyticsData,
   getSemestersWithRatings,
@@ -162,6 +163,24 @@ const resolvers: RatingModule.Resolvers = {
     ratingMetricsAnalyticsData: async (_, __, context) => {
       try {
         return await getRatingMetricsAnalyticsData(context);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          {
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
+          }
+        );
+      }
+    },
+
+    optionalResponseAnalyticsData: async (_, __, context) => {
+      try {
+        return await getOptionalResponseAnalyticsData(context);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;

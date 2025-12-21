@@ -5,6 +5,7 @@ import {
   deleteSchedule,
   getClasses,
   getSchedule,
+  getSchedulerAnalyticsData,
   getSchedules,
   updateSchedule,
 } from "./controller";
@@ -23,6 +24,10 @@ const resolvers: ScheduleModule.Resolvers = {
       const schedule = await getSchedule(context, id);
 
       return schedule as unknown as ScheduleModule.Schedule;
+    },
+
+    schedulerAnalyticsData: async (_, _args, context) => {
+      return getSchedulerAnalyticsData(context);
     },
   },
 

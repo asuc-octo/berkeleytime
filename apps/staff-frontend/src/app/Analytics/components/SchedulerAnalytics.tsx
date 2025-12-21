@@ -20,7 +20,7 @@ import {
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
-import { useGradTrakAnalyticsData } from "@/hooks/api";
+import { useSchedulerAnalyticsData } from "@/hooks/api";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
 
@@ -75,25 +75,25 @@ interface DailyDataPoint {
   value: number;
 }
 
-type GradTrakTimeRange = "all" | "week" | "month";
+type SchedulerTimeRange = "all" | "week" | "month";
 
-// Filter popover for GradTrak filters
-function GradTrakFilterPopover({
-  minCourses,
-  onMinCoursesChange,
-  selectedYear,
-  onYearChange,
-  yearOptions,
+// Filter popover for Scheduler filters
+function SchedulerFilterPopover({
+  minClasses,
+  onMinClassesChange,
+  selectedSemester,
+  onSemesterChange,
+  semesterOptions,
   children,
 }: {
-  minCourses: number;
-  onMinCoursesChange: (val: number) => void;
-  selectedYear: string | null;
-  onYearChange: (val: string | null) => void;
-  yearOptions: { value: string; label: string }[];
+  minClasses: number;
+  onMinClassesChange: (val: number) => void;
+  selectedSemester: string | null;
+  onSemesterChange: (val: string | null) => void;
+  semesterOptions: { value: string; label: string }[];
   children?: React.ReactNode;
 }) {
-  const hasActiveFilter = minCourses > 0 || selectedYear !== null;
+  const hasActiveFilter = minClasses > 0 || selectedSemester !== null;
 
   return (
     <Popover.Root>
@@ -132,10 +132,10 @@ function GradTrakFilterPopover({
               At least
             </span>
             <Input
-              value={minCourses === 0 ? "" : String(minCourses)}
+              value={minClasses === 0 ? "" : String(minClasses)}
               onChange={(e) => {
                 const val = e.target.value.replace(/\D/g, "");
-                onMinCoursesChange(val === "" ? 0 : parseInt(val) || 0);
+                onMinClassesChange(val === "" ? 0 : parseInt(val) || 0);
               }}
               style={{
                 width: 50,
@@ -147,24 +147,24 @@ function GradTrakFilterPopover({
               }}
             />
             <span style={{ fontSize: 12, color: "var(--label-color)" }}>
-              courses
+              classes
             </span>
           </div>
-          {yearOptions.length > 0 && (
+          {semesterOptions.length > 0 && (
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 12, color: "var(--label-color)" }}>
-                Start year
+                Semester
               </span>
               <Select
                 searchable
                 clearable
-                value={selectedYear}
-                onChange={(val) => onYearChange(val as string | null)}
-                options={yearOptions}
+                value={selectedSemester}
+                onChange={(val) => onSemesterChange(val as string | null)}
+                options={semesterOptions}
                 placeholder="All"
                 searchPlaceholder="Search"
                 style={{
-                  width: 100,
+                  width: 120,
                   minHeight: 24,
                   height: 24,
                   padding: "0 8px",
@@ -179,39 +179,51 @@ function GradTrakFilterPopover({
   );
 }
 
-// Total GradTraks Block
-export function TotalGradTraksBlock() {
-  const { data, loading, error } = useGradTrakAnalyticsData();
+// Total Schedules Block
+export function TotalSchedulesBlock() {
+  const { data, loading, error } = useSchedulerAnalyticsData();
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
-  const [minCourses, setMinCourses] = useState(0);
-  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const [minClasses, setMinClasses] = useState(0);
+  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
 
-  // Get unique years for filter dropdown
-  const yearOptions = useMemo(() => {
+  // Get unique semesters for filter dropdown
+  const semesterOptions = useMemo(() => {
     if (!data || data.length === 0) return [];
-    const years = new Set<number>();
-    data.forEach((plan) => {
-      if (plan.startYear) years.add(plan.startYear);
+    const semesters = new Set<string>();
+    data.forEach((schedule) => {
+      semesters.add(`${schedule.semester} ${schedule.year}`);
     });
-    return Array.from(years)
-      .sort((a, b) => b - a)
-      .map((year) => ({ value: String(year), label: String(year) }));
+    return Array.from(semesters)
+      .sort((a, b) => {
+        const [aSem, aYear] = a.split(" ");
+        const [bSem, bYear] = b.split(" ");
+        if (aYear !== bYear) return parseInt(bYear) - parseInt(aYear);
+        const semOrder = { Spring: 0, Summer: 1, Fall: 2, Winter: 3 };
+        return (
+          (semOrder[bSem as keyof typeof semOrder] || 0) -
+          (semOrder[aSem as keyof typeof semOrder] || 0)
+        );
+      })
+      .map((sem) => ({ value: sem, label: sem }));
   }, [data]);
 
-  // Filter by min courses and start year
+  // Filter by min classes and semester
   const filteredData = useMemo(() => {
     let filtered = [...data];
-    if (minCourses > 0) {
-      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
-    }
-    if (selectedYear) {
+    if (minClasses > 0) {
       filtered = filtered.filter(
-        (plan) => plan.startYear === parseInt(selectedYear)
+        (schedule) => schedule.totalClasses >= minClasses
+      );
+    }
+    if (selectedSemester) {
+      filtered = filtered.filter(
+        (schedule) =>
+          `${schedule.semester} ${schedule.year}` === selectedSemester
       );
     }
     return filtered;
-  }, [data, minCourses, selectedYear]);
+  }, [data, minClasses, selectedSemester]);
 
   const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
     if (!filteredData || filteredData.length === 0) {
@@ -284,15 +296,15 @@ export function TotalGradTraksBlock() {
   }, [filteredData, timeRange, granularity]);
 
   const chartConfig = createChartConfig(["value"], {
-    labels: { value: "GradTraks" },
+    labels: { value: "Schedules" },
     colors: { value: "var(--heading-color)" },
   });
 
   if (loading) {
     return (
       <AnalyticsCard
-        title="Total GradTraks"
-        description="Users with a GradTrak"
+        title="Total Schedules"
+        description="Users with a schedule"
       >
         <div
           style={{
@@ -311,8 +323,8 @@ export function TotalGradTraksBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Total GradTraks"
-        description="Users with a GradTrak"
+        title="Total Schedules"
+        description="Users with a schedule"
       >
         <div
           style={{
@@ -331,10 +343,10 @@ export function TotalGradTraksBlock() {
 
   return (
     <AnalyticsCard
-      title="Total GradTraks"
-      description={`Cumulative gradtraks created (${timeRange})`}
+      title="Total Schedules"
+      description={`Cumulative schedules created (${timeRange})`}
       currentValue={current}
-      currentValueLabel="gradtraks"
+      currentValueLabel="schedules"
       absoluteChange={absoluteChange}
       percentChange={percentChange}
       changeTimescale={timeRange}
@@ -348,12 +360,12 @@ export function TotalGradTraksBlock() {
       granularity={granularity}
       onGranularityChange={setGranularity}
       customControls={
-        <GradTrakFilterPopover
-          minCourses={minCourses}
-          onMinCoursesChange={setMinCourses}
-          selectedYear={selectedYear}
-          onYearChange={setSelectedYear}
-          yearOptions={yearOptions}
+        <SchedulerFilterPopover
+          minClasses={minClasses}
+          onMinClassesChange={setMinClasses}
+          selectedSemester={selectedSemester}
+          onSemesterChange={setSelectedSemester}
+          semesterOptions={semesterOptions}
         />
       }
     >
@@ -362,7 +374,7 @@ export function TotalGradTraksBlock() {
           <AreaChart data={chartData}>
             <defs>
               <linearGradient
-                id="gradtrakGrowthGradient"
+                id="schedulerGrowthGradient"
                 x1="0"
                 y1="0"
                 x2="0"
@@ -405,7 +417,7 @@ export function TotalGradTraksBlock() {
               dataKey="value"
               stroke="var(--heading-color)"
               strokeWidth={2}
-              fill="url(#gradtrakGrowthGradient)"
+              fill="url(#schedulerGrowthGradient)"
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -414,9 +426,9 @@ export function TotalGradTraksBlock() {
   );
 }
 
-// Daily GradTraks Block - gradtraks created per day
-export function DailyGradTraksBlock() {
-  const { data, loading, error } = useGradTrakAnalyticsData();
+// Daily Schedules Block - schedules created per day
+export function DailySchedulesBlock() {
+  const { data, loading, error } = useSchedulerAnalyticsData();
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
 
   const { chartData, totalInWindow, avgPerDay } = useMemo(() => {
@@ -439,9 +451,9 @@ export function DailyGradTraksBlock() {
       bucketMap.set(key, 0);
     }
 
-    // Count gradtraks per day
-    data.forEach((plan) => {
-      const date = new Date(plan.createdAt);
+    // Count schedules per day
+    data.forEach((schedule) => {
+      const date = new Date(schedule.createdAt);
       if (date >= rangeStart && date <= now) {
         const key = getGranularityKey(date, "day");
         bucketMap.set(key, (bucketMap.get(key) || 0) + 1);
@@ -464,15 +476,15 @@ export function DailyGradTraksBlock() {
   }, [data, timeRange]);
 
   const chartConfig = createChartConfig(["value"], {
-    labels: { value: "GradTraks" },
+    labels: { value: "Schedules" },
     colors: { value: "var(--heading-color)" },
   });
 
   if (loading) {
     return (
       <AnalyticsCard
-        title="Daily GradTraks"
-        description="Number of gradtraks created"
+        title="Daily Schedules"
+        description="Number of schedules created"
       >
         <div
           style={{
@@ -491,8 +503,8 @@ export function DailyGradTraksBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Daily GradTraks"
-        description="Number of gradtraks created"
+        title="Daily Schedules"
+        description="Number of schedules created"
       >
         <div
           style={{
@@ -511,10 +523,10 @@ export function DailyGradTraksBlock() {
 
   return (
     <AnalyticsCard
-      title="Daily GradTraks"
-      description={`Number of gradtraks created (${timeRange})`}
+      title="Daily Schedules"
+      description={`Number of schedules created (${timeRange})`}
       currentValue={totalInWindow}
-      currentValueLabel="gradtraks"
+      currentValueLabel="schedules"
       subtitle={`avg. ${avgPerDay.toFixed(1)}/day`}
       showTimeRangeSelector
       timeRange={timeRange}
@@ -554,13 +566,13 @@ export function DailyGradTraksBlock() {
   );
 }
 
-// Course Count Histogram Block
-export function CourseCountHistogramBlock() {
-  const { data, loading, error } = useGradTrakAnalyticsData();
-  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
-  const [minCourses, setMinCourses] = useState(0);
+// Classes Per Schedule Histogram Block
+export function ClassesPerScheduleBlock() {
+  const { data, loading, error } = useSchedulerAnalyticsData();
+  const [timeRange, setTimeRange] = useState<SchedulerTimeRange>("all");
+  const [minClasses, setMinClasses] = useState(0);
 
-  // Filter data by time range and min courses
+  // Filter data by time range and min classes
   const filteredData = useMemo(() => {
     if (!data || data.length === 0) return [];
 
@@ -575,38 +587,39 @@ export function CourseCountHistogramBlock() {
       } else {
         cutoff.setMonth(now.getMonth() - 1);
       }
-      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
+      filtered = filtered.filter(
+        (schedule) => new Date(schedule.createdAt) >= cutoff
+      );
     }
 
-    // Min courses filter
-    if (minCourses > 0) {
-      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
+    // Min classes filter
+    if (minClasses > 0) {
+      filtered = filtered.filter(
+        (schedule) => schedule.totalClasses >= minClasses
+      );
     }
 
     return filtered;
-  }, [data, timeRange, minCourses]);
+  }, [data, timeRange, minClasses]);
 
   const histogramData = useMemo(() => {
     if (!filteredData || filteredData.length === 0) return [];
 
-    // Create buckets: 0, 1-5, 6-10, 11-15, 16-20, 21-25, 26-30, 31-35, 36-40, 40+
+    // Create buckets: 0, 1-2, 3-4, 5-6, 7-8, 9-10, 10+
     const buckets = [
       { range: "0", min: 0, max: 0, count: 0 },
-      { range: "1-5", min: 1, max: 5, count: 0 },
-      { range: "6-10", min: 6, max: 10, count: 0 },
-      { range: "11-15", min: 11, max: 15, count: 0 },
-      { range: "16-20", min: 16, max: 20, count: 0 },
-      { range: "21-25", min: 21, max: 25, count: 0 },
-      { range: "26-30", min: 26, max: 30, count: 0 },
-      { range: "31-35", min: 31, max: 35, count: 0 },
-      { range: "36-40", min: 36, max: 40, count: 0 },
-      { range: "40+", min: 41, max: Infinity, count: 0 },
+      { range: "1-2", min: 1, max: 2, count: 0 },
+      { range: "3-4", min: 3, max: 4, count: 0 },
+      { range: "5-6", min: 5, max: 6, count: 0 },
+      { range: "7-8", min: 7, max: 8, count: 0 },
+      { range: "9-10", min: 9, max: 10, count: 0 },
+      { range: "10+", min: 11, max: Infinity, count: 0 },
     ];
 
-    filteredData.forEach((plan) => {
-      const courses = plan.totalCourses;
+    filteredData.forEach((schedule) => {
+      const classes = schedule.totalClasses;
       for (const bucket of buckets) {
-        if (courses >= bucket.min && courses <= bucket.max) {
+        if (classes >= bucket.min && classes <= bucket.max) {
           bucket.count++;
           break;
         }
@@ -616,29 +629,30 @@ export function CourseCountHistogramBlock() {
     return buckets.map((b) => ({ range: b.range, count: b.count }));
   }, [filteredData]);
 
-  const { maxCourses, avgCourses } = useMemo(() => {
-    if (!filteredData || filteredData.length === 0) return { maxCourses: 0, avgCourses: 0 };
+  const { maxClasses, avgClasses } = useMemo(() => {
+    if (!filteredData || filteredData.length === 0)
+      return { maxClasses: 0, avgClasses: 0 };
     const total = filteredData.reduce(
-      (sum, plan) => sum + plan.totalCourses,
+      (sum, schedule) => sum + schedule.totalClasses,
       0
     );
-    const max = Math.max(...filteredData.map((plan) => plan.totalCourses));
+    const max = Math.max(...filteredData.map((schedule) => schedule.totalClasses));
     return {
-      maxCourses: max,
-      avgCourses: total / filteredData.length,
+      maxClasses: max,
+      avgClasses: total / filteredData.length,
     };
   }, [filteredData]);
 
   const chartConfig = createChartConfig(["count"], {
-    labels: { count: "GradTraks" },
+    labels: { count: "Schedules" },
     colors: { count: "var(--heading-color)" },
   });
 
   if (loading) {
     return (
       <AnalyticsCard
-        title="Courses per GradTrak"
-        description="Distribution of course counts"
+        title="Classes per Schedule"
+        description="Distribution of class counts"
       >
         <div
           style={{
@@ -657,8 +671,8 @@ export function CourseCountHistogramBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Courses per GradTrak"
-        description="Distribution of course counts"
+        title="Classes per Schedule"
+        description="Distribution of class counts"
       >
         <div
           style={{
@@ -677,11 +691,11 @@ export function CourseCountHistogramBlock() {
 
   return (
     <AnalyticsCard
-      title="Courses per GradTrak"
-      description="Distribution of course counts"
-      currentValue={maxCourses}
+      title="Classes per Schedule"
+      description="Distribution of class counts"
+      currentValue={maxClasses}
       currentValueLabel="max"
-      subtitle={`avg. ${avgCourses.toFixed(1)}/gradtrak`}
+      subtitle={`avg. ${avgClasses.toFixed(1)}/schedule`}
       customControls={
         <>
           <span style={{ fontSize: 12, color: "var(--label-color)" }}>
@@ -689,7 +703,7 @@ export function CourseCountHistogramBlock() {
           </span>
           <Select
             value={timeRange}
-            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
+            onChange={(val) => setTimeRange(val as SchedulerTimeRange)}
             options={[
               { value: "all", label: "All time" },
               { value: "week", label: "This week" },
@@ -703,12 +717,12 @@ export function CourseCountHistogramBlock() {
               fontSize: 12,
             }}
           />
-          <GradTrakFilterPopover
-            minCourses={minCourses}
-            onMinCoursesChange={setMinCourses}
-            selectedYear={null}
-            onYearChange={() => {}}
-            yearOptions={[]}
+          <SchedulerFilterPopover
+            minClasses={minClasses}
+            onMinClassesChange={setMinClasses}
+            selectedSemester={null}
+            onSemesterChange={() => {}}
+            semesterOptions={[]}
           />
         </>
       }
@@ -746,13 +760,13 @@ export function CourseCountHistogramBlock() {
   );
 }
 
-// Major Distribution Histogram Block
-export function MajorDistributionBlock() {
-  const { data, loading, error } = useGradTrakAnalyticsData();
-  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
-  const [minCourses, setMinCourses] = useState(0);
+// Schedules By Semester Block
+export function SchedulesBySemesterBlock() {
+  const { data, loading, error } = useSchedulerAnalyticsData();
+  const [timeRange, setTimeRange] = useState<SchedulerTimeRange>("all");
+  const [minClasses, setMinClasses] = useState(0);
 
-  // Filter data by time range and min courses
+  // Filter data by time range and min classes
   const filteredData = useMemo(() => {
     if (!data || data.length === 0) return [];
 
@@ -767,253 +781,66 @@ export function MajorDistributionBlock() {
       } else {
         cutoff.setMonth(now.getMonth() - 1);
       }
-      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
+      filtered = filtered.filter(
+        (schedule) => new Date(schedule.createdAt) >= cutoff
+      );
     }
 
-    // Min courses filter
-    if (minCourses > 0) {
-      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
+    // Min classes filter
+    if (minClasses > 0) {
+      filtered = filtered.filter(
+        (schedule) => schedule.totalClasses >= minClasses
+      );
     }
 
     return filtered;
-  }, [data, timeRange, minCourses]);
+  }, [data, timeRange, minClasses]);
 
   const histogramData = useMemo(() => {
     if (!filteredData || filteredData.length === 0) return [];
 
-    // Count gradtraks per major
-    const majorCounts = new Map<string, number>();
-    filteredData.forEach((plan) => {
-      plan.majors.forEach((major) => {
-        majorCounts.set(major, (majorCounts.get(major) || 0) + 1);
-      });
+    // Count schedules per semester
+    const semesterCounts = new Map<string, number>();
+    filteredData.forEach((schedule) => {
+      const key = `${schedule.semester} ${schedule.year}`;
+      semesterCounts.set(key, (semesterCounts.get(key) || 0) + 1);
     });
 
-    // Sort by count descending and take top 15
-    return Array.from(majorCounts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 15)
-      .map(([major, count]) => ({
-        major: major.substring(0, 4).toUpperCase(),
-        fullMajor: major,
-        count,
-      }));
-  }, [filteredData]);
-
-  const { uniqueMajors, avgPerMajor } = useMemo(() => {
-    if (!filteredData || filteredData.length === 0)
-      return { uniqueMajors: 0, avgPerMajor: 0 };
-    const majors = new Set<string>();
-    let totalMajorAssignments = 0;
-    filteredData.forEach((plan) => {
-      plan.majors.forEach((m) => {
-        majors.add(m);
-        totalMajorAssignments++;
-      });
-    });
-    return {
-      uniqueMajors: majors.size,
-      avgPerMajor: majors.size > 0 ? totalMajorAssignments / majors.size : 0,
-    };
-  }, [filteredData]);
-
-  const chartConfig = createChartConfig(["count"], {
-    labels: { count: "GradTraks" },
-    colors: { count: "var(--heading-color)" },
-  });
-
-  if (loading) {
-    return (
-      <AnalyticsCard
-        title="GradTraks by Major"
-        description="Distribution across majors"
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-          }}
-        >
-          <LoadingIndicator />
-        </div>
-      </AnalyticsCard>
-    );
-  }
-
-  if (error) {
-    return (
-      <AnalyticsCard
-        title="GradTraks by Major"
-        description="Distribution across majors"
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-            color: "var(--red-500)",
-          }}
-        >
-          Error loading data
-        </div>
-      </AnalyticsCard>
-    );
-  }
-
-  return (
-    <AnalyticsCard
-      title="GradTraks by Major"
-      description="Top 15 majors by gradtrak count"
-      currentValue={uniqueMajors}
-      currentValueLabel="majors"
-      subtitle={`avg. ${avgPerMajor.toFixed(1)}/major`}
-      customControls={
-        <>
-          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
-            Time created
-          </span>
-          <Select
-            value={timeRange}
-            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
-            options={[
-              { value: "all", label: "All time" },
-              { value: "week", label: "This week" },
-              { value: "month", label: "This month" },
-            ]}
-            style={{
-              width: 110,
-              minHeight: 24,
-              height: 24,
-              padding: "0 8px",
-              fontSize: 12,
-            }}
-          />
-          <GradTrakFilterPopover
-            minCourses={minCourses}
-            onMinCoursesChange={setMinCourses}
-            selectedYear={null}
-            onYearChange={() => {}}
-            yearOptions={[]}
-          />
-        </>
-      }
-    >
-      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={histogramData} layout="vertical">
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="var(--border-color)"
-              horizontal={false}
-            />
-            <XAxis
-              type="number"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "var(--label-color)", fontSize: 10 }}
-            />
-            <YAxis
-              type="category"
-              dataKey="major"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "var(--label-color)", fontSize: 10 }}
-              width={45}
-              interval={0}
-            />
-            <ChartTooltip
-              tooltipConfig={{
-                labelFormatter: (_label, payload) =>
-                  payload?.[0]?.payload?.fullMajor ?? _label,
-              }}
-            />
-            <Bar
-              dataKey="count"
-              fill="var(--heading-color)"
-              radius={[0, 2, 2, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartContainer>
-    </AnalyticsCard>
-  );
-}
-
-// Start Year Distribution Histogram Block
-export function StartYearDistributionBlock() {
-  const { data, loading, error } = useGradTrakAnalyticsData();
-  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
-  const [minCourses, setMinCourses] = useState(0);
-
-  // Filter data by time range and min courses
-  const filteredData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-
-    let filtered = [...data];
-
-    // Time range filter
-    if (timeRange !== "all") {
-      const now = new Date();
-      const cutoff = new Date();
-      if (timeRange === "week") {
-        cutoff.setDate(now.getDate() - 7);
-      } else {
-        cutoff.setMonth(now.getMonth() - 1);
-      }
-      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
-    }
-
-    // Min courses filter
-    if (minCourses > 0) {
-      filtered = filtered.filter((plan) => plan.totalCourses >= minCourses);
-    }
-
-    return filtered;
-  }, [data, timeRange, minCourses]);
-
-  const histogramData = useMemo(() => {
-    if (!filteredData || filteredData.length === 0) return [];
-
-    // Count gradtraks per start year
-    const yearCounts = new Map<number, number>();
-    filteredData.forEach((plan) => {
-      if (plan.startYear) {
-        yearCounts.set(
-          plan.startYear,
-          (yearCounts.get(plan.startYear) || 0) + 1
+    // Sort by year and semester
+    return Array.from(semesterCounts.entries())
+      .sort((a, b) => {
+        const [aSem, aYear] = a[0].split(" ");
+        const [bSem, bYear] = b[0].split(" ");
+        if (aYear !== bYear) return parseInt(aYear) - parseInt(bYear);
+        const semOrder = { Spring: 0, Summer: 1, Fall: 2, Winter: 3 };
+        return (
+          (semOrder[aSem as keyof typeof semOrder] || 0) -
+          (semOrder[bSem as keyof typeof semOrder] || 0)
         );
-      }
-    });
-
-    // Sort by year ascending
-    return Array.from(yearCounts.entries())
-      .sort((a, b) => a[0] - b[0])
-      .map(([year, count]) => ({
-        year: String(year),
+      })
+      .map(([semester, count]) => ({
+        semester,
         count,
       }));
   }, [filteredData]);
 
-  const peakYear = useMemo(() => {
+  const peakSemester = useMemo(() => {
     if (histogramData.length === 0) return null;
     return histogramData.reduce((max, item) =>
       item.count > max.count ? item : max
-    ).year;
+    ).semester;
   }, [histogramData]);
 
   const chartConfig = createChartConfig(["count"], {
-    labels: { count: "GradTraks" },
+    labels: { count: "Schedules" },
     colors: { count: "var(--heading-color)" },
   });
 
   if (loading) {
     return (
       <AnalyticsCard
-        title="GradTraks by Start Year"
-        description="Distribution across start years"
+        title="Schedules by Semester"
+        description="Distribution across semesters"
       >
         <div
           style={{
@@ -1032,8 +859,8 @@ export function StartYearDistributionBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="GradTraks by Start Year"
-        description="Distribution across start years"
+        title="Schedules by Semester"
+        description="Distribution across semesters"
       >
         <div
           style={{
@@ -1052,11 +879,11 @@ export function StartYearDistributionBlock() {
 
   return (
     <AnalyticsCard
-      title="GradTraks by Start Year"
-      description="Distribution across start years"
+      title="Schedules by Semester"
+      description="Distribution across semesters"
       currentValue={histogramData.length}
-      currentValueLabel="start years"
-      subtitle={peakYear ? `peak: ${peakYear}` : undefined}
+      currentValueLabel="semesters"
+      subtitle={peakSemester ? `peak: ${peakSemester}` : undefined}
       customControls={
         <>
           <span style={{ fontSize: 12, color: "var(--label-color)" }}>
@@ -1064,7 +891,7 @@ export function StartYearDistributionBlock() {
           </span>
           <Select
             value={timeRange}
-            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
+            onChange={(val) => setTimeRange(val as SchedulerTimeRange)}
             options={[
               { value: "all", label: "All time" },
               { value: "week", label: "This week" },
@@ -1078,12 +905,12 @@ export function StartYearDistributionBlock() {
               fontSize: 12,
             }}
           />
-          <GradTrakFilterPopover
-            minCourses={minCourses}
-            onMinCoursesChange={setMinCourses}
-            selectedYear={null}
-            onYearChange={() => {}}
-            yearOptions={[]}
+          <SchedulerFilterPopover
+            minClasses={minClasses}
+            onMinClassesChange={setMinClasses}
+            selectedSemester={null}
+            onSemesterChange={() => {}}
+            semesterOptions={[]}
           />
         </>
       }
@@ -1097,7 +924,7 @@ export function StartYearDistributionBlock() {
               vertical={false}
             />
             <XAxis
-              dataKey="year"
+              dataKey="semester"
               tickLine={false}
               axisLine={false}
               tick={{ fill: "var(--label-color)", fontSize: 10 }}
@@ -1121,15 +948,15 @@ export function StartYearDistributionBlock() {
   );
 }
 
-// Top Users Table Block
-export function TopUsersTableBlock() {
-  const { data, loading, error } = useGradTrakAnalyticsData();
-  const [timeRange, setTimeRange] = useState<GradTrakTimeRange>("all");
+// Top Scheduler Users Table Block
+export function TopSchedulerUsersBlock() {
+  const { data, loading, error } = useSchedulerAnalyticsData();
+  const [timeRange, setTimeRange] = useState<SchedulerTimeRange>("all");
 
   const topUsers = useMemo(() => {
     if (!data || data.length === 0) return [];
 
-    let filtered = [...data].filter((plan) => plan.totalCourses > 0);
+    let filtered = [...data];
 
     // Time range filter
     if (timeRange !== "all") {
@@ -1140,22 +967,34 @@ export function TopUsersTableBlock() {
       } else {
         cutoff.setMonth(now.getMonth() - 1);
       }
-      filtered = filtered.filter((plan) => new Date(plan.createdAt) >= cutoff);
+      filtered = filtered.filter(
+        (schedule) => new Date(schedule.createdAt) >= cutoff
+      );
     }
 
-    // Sort by total courses descending and take top 50
-    return filtered
-      .sort((a, b) => b.totalCourses - a.totalCourses)
-      .slice(0, 50);
+    // Group by user email and count schedules
+    const userScheduleCounts = new Map<string, number>();
+    filtered.forEach((schedule) => {
+      userScheduleCounts.set(
+        schedule.userEmail,
+        (userScheduleCounts.get(schedule.userEmail) || 0) + 1
+      );
+    });
+
+    // Sort by count descending and take top 50
+    return Array.from(userScheduleCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 50)
+      .map(([email, count]) => ({ email, count }));
   }, [data, timeRange]);
 
-  const maxCourses = topUsers.length > 0 ? topUsers[0].totalCourses : 0;
+  const maxSchedules = topUsers.length > 0 ? topUsers[0].count : 0;
 
   if (loading) {
     return (
       <AnalyticsCard
-        title="Top GradTrak Users"
-        description="Users with most courses in their plan"
+        title="Top Scheduler Users"
+        description="Users with most schedules"
       >
         <div
           style={{
@@ -1174,8 +1013,8 @@ export function TopUsersTableBlock() {
   if (error) {
     return (
       <AnalyticsCard
-        title="Top GradTrak Users"
-        description="Users with most courses in their plan"
+        title="Top Scheduler Users"
+        description="Users with most schedules"
       >
         <div
           style={{
@@ -1194,9 +1033,9 @@ export function TopUsersTableBlock() {
 
   return (
     <AnalyticsCard
-      title="Top GradTrak Users"
-      description="Top 50 users by course count"
-      subtitle={`max ${maxCourses} courses`}
+      title="Top Scheduler Users"
+      description="Top 50 users by schedule count"
+      subtitle={`max ${maxSchedules} schedules`}
       customControls={
         <>
           <span style={{ fontSize: 12, color: "var(--label-color)" }}>
@@ -1204,7 +1043,7 @@ export function TopUsersTableBlock() {
           </span>
           <Select
             value={timeRange}
-            onChange={(val) => setTimeRange(val as GradTrakTimeRange)}
+            onChange={(val) => setTimeRange(val as SchedulerTimeRange)}
             options={[
               { value: "all", label: "All time" },
               { value: "week", label: "This week" },
@@ -1237,10 +1076,8 @@ export function TopUsersTableBlock() {
           }}
         >
           <colgroup>
-            <col style={{ width: "10%" }} />
-            <col style={{ width: "35%" }} />
-            <col style={{ width: "30%" }} />
-            <col style={{ width: "25%" }} />
+            <col style={{ width: "15%" }} />
+            <col style={{ width: "85%" }} />
           </colgroup>
           <thead
             style={{
@@ -1275,32 +1112,12 @@ export function TopUsersTableBlock() {
               >
                 Email
               </th>
-              <th
-                style={{
-                  textAlign: "left",
-                  padding: "8px 4px",
-                  color: "var(--label-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Majors
-              </th>
-              <th
-                style={{
-                  textAlign: "left",
-                  padding: "8px 4px",
-                  color: "var(--label-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Minors
-              </th>
             </tr>
           </thead>
           <tbody>
             {topUsers.map((user) => (
               <tr
-                key={user.planId}
+                key={user.email}
                 style={{
                   borderBottom: "1px solid var(--border-color)",
                 }}
@@ -1312,7 +1129,7 @@ export function TopUsersTableBlock() {
                     color: "var(--paragraph-color)",
                   }}
                 >
-                  {user.totalCourses}
+                  {user.count}
                 </td>
                 <td
                   style={{
@@ -1322,33 +1139,9 @@ export function TopUsersTableBlock() {
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                   }}
-                  title={user.userEmail}
+                  title={user.email}
                 >
-                  {user.userEmail}
-                </td>
-                <td
-                  style={{
-                    padding: "6px 4px",
-                    color: "var(--paragraph-color)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                  title={user.majors.join(", ")}
-                >
-                  {user.majors.join(", ") || "—"}
-                </td>
-                <td
-                  style={{
-                    padding: "6px 4px",
-                    color: "var(--paragraph-color)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                  title={user.minors.join(", ")}
-                >
-                  {user.minors.join(", ")}
+                  {user.email}
                 </td>
               </tr>
             ))}
@@ -1359,9 +1152,9 @@ export function TopUsersTableBlock() {
   );
 }
 
-// Utilization Ratio Block - percentage of non-empty GradTraks over time
-export function UtilizationRatioBlock() {
-  const { data, loading, error } = useGradTrakAnalyticsData();
+// Utilization Ratio Block - percentage of non-empty Schedules over time
+export function SchedulerUtilizationRatioBlock() {
+  const { data, loading, error } = useSchedulerAnalyticsData();
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
   const [granularity, setGranularity] = useState<Granularity>("day");
 
@@ -1382,9 +1175,9 @@ export function UtilizationRatioBlock() {
     // Baseline counts before the window
     let baselineEmpty = 0;
     let baselineNonEmpty = 0;
-    sortedData.forEach((plan) => {
-      if (new Date(plan.createdAt) < rangeStart) {
-        if (plan.totalCourses === 0) {
+    sortedData.forEach((schedule) => {
+      if (new Date(schedule.createdAt) < rangeStart) {
+        if (schedule.totalClasses === 0) {
           baselineEmpty++;
         } else {
           baselineNonEmpty++;
@@ -1405,13 +1198,13 @@ export function UtilizationRatioBlock() {
     }
 
     // Fill buckets
-    sortedData.forEach((plan) => {
-      const date = new Date(plan.createdAt);
+    sortedData.forEach((schedule) => {
+      const date = new Date(schedule.createdAt);
       if (date >= rangeStart && date <= now) {
         const key = getGranularityKey(date, granularity);
         const bucket = bucketMap.get(key);
         if (bucket) {
-          if (plan.totalCourses === 0) {
+          if (schedule.totalClasses === 0) {
             bucket.empty++;
           } else {
             bucket.nonEmpty++;
@@ -1472,7 +1265,7 @@ export function UtilizationRatioBlock() {
     return (
       <AnalyticsCard
         title="Utilization Ratio"
-        description="Percentage of non-empty gradtraks"
+        description="Percentage of non-empty schedules"
       >
         <div
           style={{
@@ -1492,7 +1285,7 @@ export function UtilizationRatioBlock() {
     return (
       <AnalyticsCard
         title="Utilization Ratio"
-        description="Percentage of non-empty gradtraks"
+        description="Percentage of non-empty schedules"
       >
         <div
           style={{
@@ -1512,7 +1305,7 @@ export function UtilizationRatioBlock() {
   return (
     <AnalyticsCard
       title="Utilization Ratio"
-      description="Non-empty / empty gradtraks"
+      description="Non-empty / empty schedules"
       currentValue={
         Number.isFinite(currentRatio) ? `${currentRatio.toFixed(2)}:1` : "∞"
       }
@@ -1542,7 +1335,7 @@ export function UtilizationRatioBlock() {
           <AreaChart data={chartData}>
             <defs>
               <linearGradient
-                id="utilizationGradient"
+                id="schedulerUtilizationGradient"
                 x1="0"
                 y1="0"
                 x2="0"
@@ -1599,7 +1392,7 @@ export function UtilizationRatioBlock() {
               dataKey="ratio"
               stroke="var(--heading-color)"
               strokeWidth={2}
-              fill="url(#utilizationGradient)"
+              fill="url(#schedulerUtilizationGradient)"
             />
           </AreaChart>
         </ResponsiveContainer>
