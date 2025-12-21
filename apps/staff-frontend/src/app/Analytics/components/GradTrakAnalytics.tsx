@@ -449,8 +449,9 @@ export function CourseCountHistogramBlock() {
   const histogramData = useMemo(() => {
     if (!filteredData || filteredData.length === 0) return [];
 
-    // Create buckets: 1-5, 6-10, 11-15, 16-20, 21-25, 26-30, 31-35, 36-40, 40+
+    // Create buckets: 0, 1-5, 6-10, 11-15, 16-20, 21-25, 26-30, 31-35, 36-40, 40+
     const buckets = [
+      { range: "0", min: 0, max: 0, count: 0 },
       { range: "1-5", min: 1, max: 5, count: 0 },
       { range: "6-10", min: 6, max: 10, count: 0 },
       { range: "11-15", min: 11, max: 15, count: 0 },
@@ -475,16 +476,18 @@ export function CourseCountHistogramBlock() {
     return buckets.map((b) => ({ range: b.range, count: b.count }));
   }, [filteredData]);
 
-  const avgCourses = useMemo(() => {
-    if (!filteredData || filteredData.length === 0) return 0;
+  const { maxCourses, avgCourses } = useMemo(() => {
+    if (!filteredData || filteredData.length === 0) return { maxCourses: 0, avgCourses: 0 };
     const total = filteredData.reduce(
       (sum, plan) => sum + plan.totalCourses,
       0
     );
-    return total / filteredData.length;
+    const max = Math.max(...filteredData.map((plan) => plan.totalCourses));
+    return {
+      maxCourses: max,
+      avgCourses: total / filteredData.length,
+    };
   }, [filteredData]);
-
-  const emptyCount = data.filter((plan) => plan.totalCourses === 0).length;
 
   const chartConfig = createChartConfig(["count"], {
     labels: { count: "GradTraks" },
@@ -536,10 +539,9 @@ export function CourseCountHistogramBlock() {
     <AnalyticsCard
       title="Courses per GradTrak"
       description="Distribution of course counts"
-      currentValuePrefix="avg. "
-      currentValue={Math.round(avgCourses * 10) / 10}
-      currentValueLabel="/gradtrak"
-      subtitle={`excluding ${emptyCount.toLocaleString()} empty gradtraks`}
+      currentValue={maxCourses}
+      currentValueLabel="max"
+      subtitle={`avg. ${avgCourses.toFixed(1)}/gradtrak`}
       customControls={
         <>
           <span style={{ fontSize: 12, color: "var(--label-color)" }}>

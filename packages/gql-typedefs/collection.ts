@@ -124,6 +124,20 @@ export const collectionTypeDef = gql`
   }
 
   """
+  Custom collection detail for analytics table
+  """
+  type CustomCollectionDetail @cacheControl(maxAge: 0) {
+    "User email"
+    userEmail: String!
+    "Number of classes in collection"
+    classCount: Int!
+    "Collection name"
+    name: String!
+    "When the collection was created"
+    createdAt: String!
+  }
+
+  """
   Collection analytics data
   """
   type CollectionAnalyticsData @cacheControl(maxAge: 0) {
@@ -135,6 +149,8 @@ export const collectionTypeDef = gql`
     customCollectionCreations: [CollectionCreationDataPoint!]!
     "Unique users with custom collections (first custom collection per user)"
     usersWithCustomCollections: [CollectionCreationDataPoint!]!
+    "Custom collection details for table display"
+    customCollections: [CustomCollectionDetail!]!
     "Highlights and top stats"
     highlights: CollectionHighlights!
   }

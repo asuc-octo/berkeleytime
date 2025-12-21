@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { LoadingIndicator } from "@repo/theme";
+import { LoadingIndicator, Select } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -22,13 +22,40 @@ import { useCollectionAnalyticsData } from "@/hooks/api";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
 
-// Collection Highlights Block - simple stats display
-export function CollectionHighlightsBlock() {
+type CollectionTimeRange = "all" | "week" | "month";
+
+// Custom Collections Table Block - shows class count, user, and collection name
+export function CollectionNamesBlock() {
   const { data, loading, error } = useCollectionAnalyticsData();
+  const [timeRange, setTimeRange] = useState<CollectionTimeRange>("all");
+
+  // Filter by time range
+  const filteredCollections = useMemo(() => {
+    const collections = data?.customCollections || [];
+    if (timeRange === "all") return collections;
+
+    const now = new Date();
+    const cutoff = new Date();
+    if (timeRange === "week") {
+      cutoff.setDate(now.getDate() - 7);
+    } else {
+      cutoff.setMonth(now.getMonth() - 1);
+    }
+
+    return collections.filter((c) => new Date(c.createdAt) >= cutoff);
+  }, [data, timeRange]);
+
+  const avgClasses =
+    filteredCollections.length > 0
+      ? filteredCollections.reduce((sum, c) => sum + c.classCount, 0) / filteredCollections.length
+      : 0;
 
   if (loading) {
     return (
-      <AnalyticsCard title="Collection Highlights" description="Top stats">
+      <AnalyticsCard
+        title="Custom Collections"
+        description="User-created collections by size"
+      >
         <div
           style={{
             display: "flex",
@@ -45,7 +72,10 @@ export function CollectionHighlightsBlock() {
 
   if (error || !data) {
     return (
-      <AnalyticsCard title="Collection Highlights" description="Top stats">
+      <AnalyticsCard
+        title="Custom Collections"
+        description="User-created collections by size"
+      >
         <div
           style={{
             display: "flex",
@@ -61,66 +91,141 @@ export function CollectionHighlightsBlock() {
     );
   }
 
-  const { highlights } = data;
-
-  const stats = [
-    {
-      label: "Largest collection",
-      value: `${highlights.largestCollectionSize} classes`,
-    },
-    {
-      label: "Largest custom collection",
-      value: `${highlights.largestCustomCollectionSize} classes`,
-    },
-    {
-      label: "Largest custom collection name",
-      value: highlights.largestCustomCollectionName || "—",
-    },
-    {
-      label: "Most bookmarked course",
-      value: highlights.mostBookmarkedCourse
-        ? `${highlights.mostBookmarkedCourse} (${highlights.mostBookmarkedCourseCount})`
-        : "—",
-    },
-    {
-      label: "Most collections by user",
-      value: `${highlights.mostCollectionsByUser} collections`,
-    },
-  ];
-
   return (
-    <AnalyticsCard title="Collection Highlights" description="Top stats">
+    <AnalyticsCard
+      title="Custom Collections"
+      description="User-created collections by size"
+      currentValue={filteredCollections.length}
+      currentValueLabel="collections"
+      subtitle={`avg. ${avgClasses.toFixed(1)}/collection`}
+      customControls={
+        <>
+          <span style={{ fontSize: 12, color: "var(--label-color)" }}>
+            Time created
+          </span>
+          <Select
+            value={timeRange}
+            onChange={(val) => setTimeRange(val as CollectionTimeRange)}
+            options={[
+              { value: "all", label: "All time" },
+              { value: "week", label: "Past week" },
+              { value: "month", label: "Past month" },
+            ]}
+            style={{
+              width: "fit-content",
+              minHeight: 24,
+              height: 24,
+              padding: "0 8px",
+              fontSize: 12,
+            }}
+          />
+        </>
+      }
+    >
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-          padding: "8px 0",
+          flex: 1,
+          overflow: "auto",
+          fontSize: 13,
         }}
       >
-        {stats.map((stat) => (
-          <div
-            key={stat.label}
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            tableLayout: "fixed",
+          }}
+        >
+          <thead
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              position: "sticky",
+              top: 0,
+              background: "var(--foreground-color)",
+              zIndex: 1,
             }}
           >
-            <span style={{ color: "var(--label-color)", fontSize: 16 }}>
-              {stat.label}
-            </span>
-            <span
+            <tr
               style={{
-                color: "var(--heading-color)",
-                fontSize: 16,
-                fontWeight: 500,
+                borderBottom: "1px solid var(--border-color)",
               }}
             >
-              {stat.value}
-            </span>
-          </div>
-        ))}
+              <th
+                style={{
+                  textAlign: "center",
+                  padding: "8px 4px",
+                  color: "var(--label-color)",
+                  fontWeight: 600,
+                  width: 40,
+                }}
+              >
+                #
+              </th>
+              <th
+                style={{
+                  textAlign: "left",
+                  padding: "8px 4px",
+                  color: "var(--label-color)",
+                  fontWeight: 600,
+                  width: 70,
+                }}
+              >
+                User
+              </th>
+              <th
+                style={{
+                  textAlign: "left",
+                  padding: "8px 4px",
+                  color: "var(--label-color)",
+                  fontWeight: 600,
+                }}
+              >
+                Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCollections.map((col, index) => (
+              <tr
+                key={`${col.userEmail}-${col.name}-${index}`}
+                style={{
+                  borderBottom: "1px solid var(--border-color)",
+                }}
+              >
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "6px 4px",
+                    color: "var(--heading-color)",
+                    fontWeight: 600,
+                  }}
+                >
+                  {col.classCount}
+                </td>
+                <td
+                  style={{
+                    padding: "6px 4px",
+                    color: "var(--paragraph-color)",
+                  }}
+                  title={col.userEmail}
+                >
+                  {col.userEmail.substring(0, 5)}...
+                </td>
+                <td
+                  style={{
+                    padding: "6px 4px",
+                    color: "var(--paragraph-color)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={col.name}
+                >
+                  {col.name || "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </AnalyticsCard>
   );
@@ -478,7 +583,7 @@ export function DailyBookmarksBlock() {
       description={`Classes bookmarked per day (${timeRange})`}
       currentValue={totalInWindow}
       currentValueLabel="bookmarks"
-      subtitle={`${avgPerDay.toFixed(1)} avg./day`}
+      subtitle={`avg. ${avgPerDay.toFixed(1)}/day`}
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={setTimeRange}

@@ -1359,7 +1359,7 @@ export function RatingsDayHistogramBlock() {
       description={`Number of ratings submitted (${timeRange})`}
       currentValue={totalInWindow}
       currentValueLabel="ratings"
-      subtitle={`${avgPerDay.toFixed(1)} avg./day`}
+      subtitle={`avg. ${avgPerDay.toFixed(1)}/day`}
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={setTimeRange}

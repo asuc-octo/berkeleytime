@@ -6,6 +6,7 @@ import {
   CollectionColor,
   CollectionModel,
   StaffMemberModel,
+  UserModel,
 } from "@repo/common";
 
 import { CollectionModule } from "./generated-types/module-types";
@@ -572,6 +573,12 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
   const usersWithPostMigrationActivity = new Set<string>();
   const classAdditions: { addedAt: string; userId: string }[] = [];
   const customCollectionCreations: { createdAt: string; userId: string }[] = [];
+  const customCollectionDetails: {
+    userId: string;
+    classCount: number;
+    name: string;
+    createdAt: string;
+  }[] = [];
 
   // Track first custom collection per user (for unique users metric)
   const userFirstCustomCollection = new Map<string, Date>();
@@ -585,6 +592,14 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
       customCollectionCreations.push({
         createdAt: createdAt.toISOString(),
         userId,
+      });
+
+      // Track collection details for table
+      customCollectionDetails.push({
+        userId,
+        classCount: col.classes?.length || 0,
+        name: (col as any).name || "",
+        createdAt: createdAt.toISOString(),
       });
 
       // Track first custom collection per user
@@ -719,11 +734,35 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
     mostCollectionsByUser,
   };
 
+  // Look up user emails for custom collections table
+  const collectionUserIds = [
+    ...new Set(customCollectionDetails.map((c) => c.userId)),
+  ];
+  const collectionUsers = await UserModel.find({
+    _id: { $in: collectionUserIds },
+  })
+    .select("_id email")
+    .lean();
+  const collectionUserEmailMap = new Map(
+    collectionUsers.map((u) => [u._id.toString(), u.email as string])
+  );
+
+  // Sort by class count descending and map to include email
+  const customCollections = customCollectionDetails
+    .map((c) => ({
+      userEmail: collectionUserEmailMap.get(c.userId) || "unknown",
+      classCount: c.classCount,
+      name: c.name,
+      createdAt: c.createdAt,
+    }))
+    .sort((a, b) => b.classCount - a.classCount);
+
   return {
     collectionCreations,
     classAdditions,
     customCollectionCreations,
     usersWithCustomCollections,
+    customCollections,
     highlights,
   };
 };

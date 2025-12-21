@@ -37,11 +37,19 @@ export interface CollectionHighlights {
   mostCollectionsByUser: number;
 }
 
+export interface CustomCollectionDetail {
+  userEmail: string;
+  classCount: number;
+  name: string;
+  createdAt: string;
+}
+
 export interface CollectionAnalyticsData {
   collectionCreations: CollectionCreationDataPoint[];
   classAdditions: ClassAdditionDataPoint[];
   customCollectionCreations: CollectionCreationDataPoint[];
   usersWithCustomCollections: CollectionCreationDataPoint[];
+  customCollections: CustomCollectionDetail[];
   highlights: CollectionHighlights;
 }
 
@@ -116,6 +124,12 @@ export const COLLECTION_ANALYTICS_DATA = gql`
       usersWithCustomCollections {
         createdAt
         userId
+      }
+      customCollections {
+        userEmail
+        classCount
+        name
+        createdAt
       }
       highlights {
         largestCollectionSize

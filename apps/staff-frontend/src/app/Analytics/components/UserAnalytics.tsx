@@ -540,7 +540,7 @@ export function SignupDayHistogramBlock() {
       description={`Number of signups per day (${timeRange})`}
       currentValue={totalInWindow}
       currentValueLabel="signups"
-      subtitle={`${avgPerDay.toFixed(1)} avg./day`}
+      subtitle={`avg. ${avgPerDay.toFixed(1)}/day`}
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={setTimeRange}

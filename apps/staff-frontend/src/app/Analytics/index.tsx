@@ -7,7 +7,7 @@ import {
   VisitorTimeDistributionBlock,
 } from "./components/CloudflareAnalytics";
 import {
-  CollectionHighlightsBlock,
+  CollectionNamesBlock,
   CustomCollectionsBlock,
   DailyBookmarksBlock,
   TotalBookmarksBlock,
@@ -161,7 +161,7 @@ export default function Analytics() {
               <UsersWithCustomCollectionsBlock />
             </div>
             <div className={styles.cell}>
-              <CollectionHighlightsBlock />
+              <CollectionNamesBlock />
             </div>
           </>
         )}
