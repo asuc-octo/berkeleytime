@@ -1,5 +1,9 @@
 name: "CI: Check Build"
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     paths:
@@ -10,7 +14,8 @@ on:
       - "packages/**"
 
 jobs:
-  build-image:
+  build:
+    if: github.event.pull_request.draft == false
     name: Build Image
     runs-on: ubuntu-latest
     strategy:

@@ -1,5 +1,9 @@
 name: "CI: Check Lint"
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     paths:
@@ -12,6 +16,7 @@ on:
 
 jobs:
   lint:
+    if: github.event.pull_request.draft == false
     name: Lint Codebase
     runs-on: ubuntu-latest
 
