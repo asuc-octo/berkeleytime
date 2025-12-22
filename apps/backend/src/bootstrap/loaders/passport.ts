@@ -22,6 +22,9 @@ const SCOPE = ["profile", "email"];
 
 const CACHE_PREFIX = "user-session:";
 
+const ANONYMOUS_SESSION_TTL = 1000 * 60 * 60 * 12;
+const AUTHENTICATED_SESSION_TTL = 1000 * 60 * 60 * 24 * 365;
+
 export default async (app: Application, redis: RedisClientType) => {
   // init
   app.use(
@@ -29,11 +32,11 @@ export default async (app: Application, redis: RedisClientType) => {
       secret: config.SESSION_SECRET,
       name: "sessionId",
       resave: false,
-      saveUninitialized: false,
+      saveUninitialized: true,
       cookie: {
         secure: !config.isDev,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+        maxAge: ANONYMOUS_SESSION_TTL,
         sameSite: "lax",
       },
       store: new RedisStore({
@@ -80,6 +83,10 @@ export default async (app: Application, redis: RedisClientType) => {
       failureRedirect: FAILURE_REDIRECT,
     }),
     (req, res) => {
+      if (req.session?.cookie) {
+        req.session.cookie.maxAge = AUTHENTICATED_SESSION_TTL;
+      }
+
       const { state } = req.query;
 
       let parsedRedirectURI;

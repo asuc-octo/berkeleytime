@@ -36,7 +36,12 @@ import ClassContext from "@/contexts/ClassContext";
 import { useGetCourseOverviewById } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
-import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
+import {
+  IClassCourse,
+  IClassDetails,
+  TRACK_CLASS_VIEW,
+  signIn,
+} from "@/lib/api";
 import {
   CreateRatingsDocument,
   GetUserRatingsDocument,
@@ -251,6 +256,27 @@ export default function Class({
       number: _class.number,
     });
   }, [_class]);
+
+  const [trackView] = useMutation(TRACK_CLASS_VIEW);
+
+  useEffect(() => {
+    if (!_class) return;
+
+    const timer = setTimeout(() => {
+      trackView({
+        variables: {
+          year: _class.year,
+          semester: _class.semester,
+          sessionId: _class.sessionId,
+          subject: _class.subject,
+          courseNumber: _class.courseNumber,
+          number: _class.number,
+        },
+      }).catch(() => {});
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [_class, trackView]);
 
   const ratingsCount = useMemo<number | false>(() => {
     const count = _course?.ratingsCount;
