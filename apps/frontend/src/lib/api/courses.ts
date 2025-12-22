@@ -113,6 +113,10 @@ export const GET_COURSE_OVERVIEW_BY_ID = gql`
           metricName
           count
           weightedAverage
+          categories {
+            value
+            count
+          }
         }
       }
       gradeDistribution {
