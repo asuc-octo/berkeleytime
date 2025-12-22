@@ -1,9 +1,4 @@
-import { createHash } from "crypto";
 import type { Request } from "express";
-
-export const hashIP = (ip: string): string => {
-  return createHash("sha256").update(ip).digest("hex").substring(0, 12);
-};
 
 export const getClientIP = (req: Request): string => {
   const cfConnectingIP = req.headers["cf-connecting-ip"];

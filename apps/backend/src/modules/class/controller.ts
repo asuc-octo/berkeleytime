@@ -9,7 +9,7 @@ import {
   SectionModel,
 } from "@repo/common";
 
-import { getClientIP, hashIP } from "../../utils/ip";
+import { getClientIP } from "../../utils/ip";
 import { formatClass, formatSection } from "./formatter";
 
 export const getClass = async (
@@ -124,7 +124,6 @@ export const trackClassView = async (
   redis: RedisClientType
 ): Promise<{ success: boolean; rateLimited?: boolean }> => {
   const clientIp = getClientIP(req);
-  const hashedIp = hashIP(clientIp);
   const classId = `${year}:${semester}:${sessionId}:${subject}:${courseNumber}:${number}`;
 
   const rateLimitKey = `rate-limit:${clientIp}`;
@@ -134,7 +133,6 @@ export const trackClassView = async (
   }
 
   if (count > RATE_LIMIT_MAX) {
-    console.log(`[ViewCount] Rate limited IP ${hashedIp}, count: ${count}`);
     return { success: false, rateLimited: true };
   }
 
@@ -149,7 +147,6 @@ export const trackClassView = async (
 
   const exists = await redis.exists(dedupeKey);
   if (exists) {
-    console.log(`[ViewCount] Deduplicated view for ${classId}`);
     return { success: true };
   }
 
@@ -163,11 +160,8 @@ export const trackClassView = async (
     courseNumber,
     number
   );
-  const newCount = await redis.incr(counterKey);
+  await redis.incr(counterKey);
 
-  console.log(
-    `[ViewCount] Incremented view for ${classId}, count: ${newCount}, IP: ${hashedIp}`
-  );
   return { success: true };
 };
 
@@ -210,8 +204,6 @@ export const getViewCount = async (
 export const flushViewCounts = async (
   redis: RedisClientType
 ): Promise<{ flushed: number; errors: number }> => {
-  console.log("[ViewCount Flush] Starting flush...");
-
   const keys: string[] = [];
   let cursor = "0";
   do {
@@ -224,11 +216,8 @@ export const flushViewCounts = async (
   } while (cursor !== "0");
 
   if (keys.length === 0) {
-    console.log("[ViewCount Flush] No counters to flush");
     return { flushed: 0, errors: 0 };
   }
-
-  console.log(`[ViewCount Flush] Found ${keys.length} counters`);
 
   const operations: Array<{
     updateOne: {
@@ -245,25 +234,19 @@ export const flushViewCounts = async (
   }> = [];
 
   for (const key of keys) {
-    const value = await redis.getDel(key);
+    const value = await redis.get(key);
     if (!value) continue;
 
     const count = parseInt(value, 10);
     if (isNaN(count) || count === 0) continue;
 
     const parts = key.replace("view-counter:", "").split(":");
-    if (parts.length !== 6) {
-      console.log(`[ViewCount Flush] Invalid key format: ${key}`);
-      continue;
-    }
+    if (parts.length !== 6) continue;
 
     const [yearStr, semester, sessionId, subject, courseNumber, number] = parts;
     const year = parseInt(yearStr, 10);
 
-    if (isNaN(year)) {
-      console.log(`[ViewCount Flush] Invalid year in key: ${key}`);
-      continue;
-    }
+    if (isNaN(year)) continue;
 
     operations.push({
       updateOne: {
@@ -274,17 +257,19 @@ export const flushViewCounts = async (
   }
 
   if (operations.length === 0) {
-    console.log("[ViewCount Flush] No valid operations to execute");
     return { flushed: 0, errors: 0 };
   }
 
   try {
     const result = await ClassModel.bulkWrite(operations, { ordered: false });
-    console.log(`[ViewCount Flush] Updated ${result.modifiedCount} documents`);
+
+    // Delete Redis keys only after successful Mongo write
+    for (const key of keys) {
+      await redis.del(key);
+    }
 
     return { flushed: result.modifiedCount, errors: 0 };
   } catch (error) {
-    console.error("[ViewCount Flush] Error during bulk write:", error);
     return { flushed: 0, errors: operations.length };
   }
 };
