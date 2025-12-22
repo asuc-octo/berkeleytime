@@ -5,6 +5,7 @@
     "start": "tsx src/main.ts",
     "dev": "tsx watch src/main.ts",
     "build": "tsc --noEmit",
+    "lint": "eslint src/",
     "generate": "node scripts/prepare-typedefs.js && graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
@@ -16,6 +17,7 @@
     "@graphql-codegen/introspection": "5.0.0",
     "@graphql-codegen/typescript": "^5.0.2",
     "@graphql-codegen/typescript-resolvers": "^5.1.0",
+    "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
@@ -24,6 +26,7 @@
     "@types/node": "^24.7.0",
     "@types/papaparse": "^5.3.16",
     "@types/passport-google-oauth20": "^2.0.16",
+    "eslint": "^9.39.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },

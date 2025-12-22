@@ -1,0 +1,46 @@
+name: "CI: Check Build"
+
+concurrency:
+  group: ci-build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    paths:
+      - ".github/workflows/ci-build.yaml"
+      - "apps/backend/**"
+      - "apps/frontend/**"
+      - "apps/datapuller/**"
+      - "packages/**"
+
+jobs:
+  build:
+    if: github.event.pull_request.draft == false
+    name: Build Image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [backend, frontend, datapuller] # only essential to reduce actions minutes usage
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/${{ matrix.image }}/Dockerfile
+          target: ${{ matrix.image }}-prod
+          platforms: linux/amd64
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
