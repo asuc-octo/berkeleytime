@@ -36,7 +36,12 @@ import ClassContext from "@/contexts/ClassContext";
 import { useGetCourseOverviewById } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
-import { IClassCourse, IClassDetails, signIn, TRACK_CLASS_VIEW } from "@/lib/api";
+import {
+  IClassCourse,
+  IClassDetails,
+  TRACK_CLASS_VIEW,
+  signIn,
+} from "@/lib/api";
 import {
   CreateRatingsDocument,
   GetUserRatingsDocument,

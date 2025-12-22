@@ -5,13 +5,13 @@ import classNames from "classnames";
 import {
   ArrowDown,
   ArrowUp,
+  Edit,
   Filter,
   Minus,
   NavArrowDown,
   Plus,
   Sort,
-  Edit,
-  Xmark
+  Xmark,
 } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
@@ -22,16 +22,17 @@ import {
   Button,
   Checkbox,
   Color,
+  Dialog,
   DropdownMenu,
   Flex,
   IconButton,
   LoadingIndicator,
   Text,
-  Dialog,
   Tooltip,
 } from "@repo/theme";
 
 import { initialize } from "@/components/CourseSearch/browser";
+import MajorSearch from "@/components/MajorSearch";
 import {
   useCreateNewPlanTerm,
   useEditPlan,
@@ -49,16 +50,15 @@ import {
   Status,
 } from "@/lib/generated/graphql";
 
+import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
 import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
-import { useGradTrakSettings } from "./settings";
-import MajorSearch from "@/components/MajorSearch";
-import { DegreeOption } from "../types";
 import DEGREES from "./degree-programs-types.json";
+import { useGradTrakSettings } from "./settings";
 
 const FILTER_OPTIONS = [
   {
@@ -99,7 +99,11 @@ export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
 
-  const { data: gradTrak, loading: gradTrakLoading, refetch: refetchGradTrak } = useReadPlan({
+  const {
+    data: gradTrak,
+    loading: gradTrakLoading,
+    refetch: refetchGradTrak,
+  } = useReadPlan({
     skip: !user,
     fetchPolicy: "cache-and-network",
   });
@@ -497,8 +501,12 @@ export default function Dashboard() {
   const [editOpen, setEditOpen] = useState(false);
   const [selectedMajor, setSelectedMajor] = useState<DegreeOption | null>(null);
   const [selectedMinor, setSelectedMinor] = useState<DegreeOption | null>(null);
-  const [selectedMajorList, setSelectedMajorList] = useState<DegreeOption[]>([]);
-  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>([]);
+  const [selectedMajorList, setSelectedMajorList] = useState<DegreeOption[]>(
+    []
+  );
+  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>(
+    []
+  );
 
   const majorOptions = DEGREES.majors;
   const minorOptions = DEGREES.minors;
@@ -512,7 +520,7 @@ export default function Dashboard() {
           if ((majorOptions as any).includes(majorStr)) {
             majors.push({
               label: majorStr,
-              value: majorStr
+              value: majorStr,
             });
           }
         });
@@ -525,7 +533,7 @@ export default function Dashboard() {
           if ((minorOptions as any).includes(minorStr)) {
             minors.push({
               label: minorStr,
-              value: minorStr
+              value: minorStr,
             });
           }
         });
@@ -535,7 +543,6 @@ export default function Dashboard() {
       setSelectedMinorList(minors);
     }
   }, [editOpen, gradTrak, majorOptions, minorOptions]);
-
 
   const handleMajorSelect = (degree: DegreeOption) => {
     setSelectedMajor(degree);
@@ -556,9 +563,11 @@ export default function Dashboard() {
   const handleAddMajor = async () => {
     if (!selectedMajor) return;
 
-    if (selectedMajorList.some((degree) => degree.value === selectedMajor.value)) {
+    if (
+      selectedMajorList.some((degree) => degree.value === selectedMajor.value)
+    ) {
       console.warn("Major already added");
-      setSelectedMajor(null); 
+      setSelectedMajor(null);
       return;
     }
 
@@ -571,7 +580,7 @@ export default function Dashboard() {
 
     try {
       const plan: PlanInput = {};
-      plan.majors = newList.map(m => m.value);
+      plan.majors = newList.map((m) => m.value);
       await editPlan(plan);
     } catch (error) {
       console.error("Error adding major:", error);
@@ -583,9 +592,11 @@ export default function Dashboard() {
   const handleAddMinor = async () => {
     if (!selectedMinor) return;
 
-    if (selectedMinorList.some((degree) => degree.value === selectedMinor.value)) {
+    if (
+      selectedMinorList.some((degree) => degree.value === selectedMinor.value)
+    ) {
       console.warn("Minor already added");
-      setSelectedMinor(null); 
+      setSelectedMinor(null);
       return;
     }
 
@@ -598,7 +609,7 @@ export default function Dashboard() {
 
     try {
       const plan: PlanInput = {};
-      plan.minors = newList.map(m => m.value);
+      plan.minors = newList.map((m) => m.value);
       await editPlan(plan);
     } catch (error) {
       console.error("Error adding minor:", error);
@@ -617,7 +628,7 @@ export default function Dashboard() {
 
     try {
       const plan: PlanInput = {};
-      plan.majors = newList.map(m => m.value);
+      plan.majors = newList.map((m) => m.value);
       await editPlan(plan);
     } catch (error) {
       console.error("Error removing major:", error);
@@ -635,7 +646,7 @@ export default function Dashboard() {
 
     try {
       const plan: PlanInput = {};
-      plan.minors = newList.map(m => m.value);
+      plan.minors = newList.map((m) => m.value);
       await editPlan(plan);
     } catch (error) {
       console.error("Error removing minor:", error);
@@ -646,8 +657,8 @@ export default function Dashboard() {
   const handleSave = async () => {
     try {
       const plan: PlanInput = {};
-      plan.majors = selectedMajorList.map(m => m.value);
-      plan.minors = selectedMinorList.map(m => m.value);
+      plan.majors = selectedMajorList.map((m) => m.value);
+      plan.minors = selectedMinorList.map((m) => m.value);
       await editPlan(plan);
       setEditOpen(false);
       refetchGradTrak();
@@ -723,7 +734,6 @@ export default function Dashboard() {
     (sum, units) => sum + units,
     0
   );
-
 
   useEffect(() => {
     if (!currentUserInfo && !userLoading && !gradTrakLoading) {
@@ -828,7 +838,7 @@ export default function Dashboard() {
                                 (
                                 {
                                   statusCounts[
-                                  option.value as keyof typeof statusCounts
+                                    option.value as keyof typeof statusCounts
                                   ]
                                 }
                                 )
@@ -985,7 +995,7 @@ export default function Dashboard() {
                         >
                           {
                             SORT_OPTION_SEMESTER_ICON[
-                            option as keyof typeof SORT_OPTION_SEMESTER_ICON
+                              option as keyof typeof SORT_OPTION_SEMESTER_ICON
                             ]
                           }
                           <Text className={styles.menuText}>
@@ -1004,7 +1014,7 @@ export default function Dashboard() {
                         >
                           {
                             SORT_OPTION_COURSE_ICON[
-                            option as keyof typeof SORT_OPTION_COURSE_ICON
+                              option as keyof typeof SORT_OPTION_COURSE_ICON
                             ]
                           }
                           <Text className={styles.menuText}>{option}</Text>
@@ -1047,10 +1057,7 @@ export default function Dashboard() {
             <Tooltip
               content="Edit Major"
               trigger={
-                <Button
-                  variant="primary"
-                  onClick={() => setEditOpen(true)}
-                >
+                <Button variant="primary" onClick={() => setEditOpen(true)}>
                   <Edit />
                   Edit
                 </Button>
@@ -1090,7 +1097,10 @@ export default function Dashboard() {
                         {selectedMajorList.length > 0 ? (
                           <div className={styles.degreeList}>
                             {selectedMajorList.map((degree) => (
-                              <div key={degree.value} className={styles.degreeChip}>
+                              <div
+                                key={degree.value}
+                                className={styles.degreeChip}
+                              >
                                 <span>{degree.label}</span>
                                 <span
                                   onClick={() => handleRemoveMajor(degree)}
@@ -1134,7 +1144,10 @@ export default function Dashboard() {
                         {selectedMinorList.length > 0 ? (
                           <div className={styles.degreeList}>
                             {selectedMinorList.map((degree) => (
-                              <div key={degree.value} className={styles.degreeChip}>
+                              <div
+                                key={degree.value}
+                                className={styles.degreeChip}
+                              >
                                 <span>{degree.label}</span>
                                 <span
                                   onClick={() => handleRemoveMinor(degree)}
@@ -1155,7 +1168,10 @@ export default function Dashboard() {
                   </form>
                 </Dialog.Body>
                 <Dialog.Footer>
-                  <Button variant="secondary" onClick={() => setEditOpen(false)}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setEditOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button onClick={handleSave}>Save</Button>

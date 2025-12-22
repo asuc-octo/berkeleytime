@@ -1,4 +1,6 @@
 import { createHash } from "crypto";
+import type { Request } from "express";
+import type { RedisClientType } from "redis";
 
 import {
   ClassModel,
@@ -6,10 +8,8 @@ import {
   ISectionItem,
   SectionModel,
 } from "@repo/common";
-import type { Request } from "express";
-import type { RedisClientType } from "redis";
 
-import { getClientIP } from "../../utils/ip";
+import { getClientIP, hashIP } from "../../utils/ip";
 import { formatClass, formatSection } from "./formatter";
 
 export const getClass = async (
@@ -99,9 +99,9 @@ export const getSection = async (
   return formatSection(section as ISectionItem);
 };
 
-const DEDUPE_TTL_SECONDS = 30 * 60; // 30 minutes
-const RATE_LIMIT_TTL_SECONDS = 60 * 60; // 1 hour
-const RATE_LIMIT_MAX = 100; // 100 views per hour per IP
+const DEDUPE_TTL_SECONDS = 30 * 60;
+const RATE_LIMIT_TTL_SECONDS = 60 * 60;
+const RATE_LIMIT_MAX = 100;
 
 const getViewCounterKey = (
   year: number,
@@ -110,7 +110,8 @@ const getViewCounterKey = (
   subject: string,
   courseNumber: string,
   number: string
-) => `view-counter:${year}:${semester}:${sessionId}:${subject}:${courseNumber}:${number}`;
+) =>
+  `view-counter:${year}:${semester}:${sessionId}:${subject}:${courseNumber}:${number}`;
 
 export const trackClassView = async (
   year: number,
@@ -123,14 +124,17 @@ export const trackClassView = async (
   redis: RedisClientType
 ): Promise<{ success: boolean; rateLimited?: boolean }> => {
   const clientIp = getClientIP(req);
+  const hashedIp = hashIP(clientIp);
   const classId = `${year}:${semester}:${sessionId}:${subject}:${courseNumber}:${number}`;
 
   const rateLimitKey = `rate-limit:${clientIp}`;
-  const currentCount = await redis.get(rateLimitKey);
-  const count = currentCount ? parseInt(currentCount, 10) : 0;
+  const count = await redis.incr(rateLimitKey);
+  if (count === 1) {
+    await redis.expire(rateLimitKey, RATE_LIMIT_TTL_SECONDS);
+  }
 
-  if (count >= RATE_LIMIT_MAX) {
-    console.log(`[ViewCount] Rate limited IP ${clientIp}, count: ${count}`);
+  if (count > RATE_LIMIT_MAX) {
+    console.log(`[ViewCount] Rate limited IP ${hashedIp}, count: ${count}`);
     return { success: false, rateLimited: true };
   }
 
@@ -149,17 +153,21 @@ export const trackClassView = async (
     return { success: true };
   }
 
-  const newRateLimitCount = await redis.incr(rateLimitKey);
-  if (newRateLimitCount === 1) {
-    await redis.expire(rateLimitKey, RATE_LIMIT_TTL_SECONDS);
-  }
-
   await redis.set(dedupeKey, "1", { EX: DEDUPE_TTL_SECONDS });
 
-  const counterKey = getViewCounterKey(year, semester, sessionId, subject, courseNumber, number);
+  const counterKey = getViewCounterKey(
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    number
+  );
   const newCount = await redis.incr(counterKey);
 
-  console.log(`[ViewCount] Incremented view for ${classId}, count: ${newCount}, IP: ${clientIp}`);
+  console.log(
+    `[ViewCount] Incremented view for ${classId}, count: ${newCount}, IP: ${hashedIp}`
+  );
   return { success: true };
 };
 
@@ -172,7 +180,14 @@ export const getViewCount = async (
   number: string,
   redis: RedisClientType
 ): Promise<number> => {
-  const counterKey = getViewCounterKey(year, semester, sessionId, subject, courseNumber, number);
+  const counterKey = getViewCounterKey(
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    number
+  );
 
   const redisCount = await redis.get(counterKey);
   const pendingViews = redisCount ? parseInt(redisCount, 10) : 0;
@@ -186,7 +201,8 @@ export const getViewCount = async (
     number,
   }).lean();
 
-  const mongoViews = (_class as IClassItem & { viewCount?: number })?.viewCount ?? 0;
+  const mongoViews =
+    (_class as IClassItem & { viewCount?: number })?.viewCount ?? 0;
 
   return pendingViews + mongoViews;
 };
@@ -196,7 +212,16 @@ export const flushViewCounts = async (
 ): Promise<{ flushed: number; errors: number }> => {
   console.log("[ViewCount Flush] Starting flush...");
 
-  const keys = await redis.keys("view-counter:*");
+  const keys: string[] = [];
+  let cursor = "0";
+  do {
+    const result = await redis.scan(cursor, {
+      MATCH: "view-counter:*",
+      COUNT: 100,
+    });
+    cursor = String(result.cursor);
+    keys.push(...result.keys);
+  } while (cursor !== "0");
 
   if (keys.length === 0) {
     console.log("[ViewCount Flush] No counters to flush");
@@ -219,10 +244,8 @@ export const flushViewCounts = async (
     };
   }> = [];
 
-  const keysToDelete: string[] = [];
-
   for (const key of keys) {
-    const value = await redis.get(key);
+    const value = await redis.getDel(key);
     if (!value) continue;
 
     const count = parseInt(value, 10);
@@ -248,8 +271,6 @@ export const flushViewCounts = async (
         update: { $inc: { viewCount: count } },
       },
     });
-
-    keysToDelete.push(key);
   }
 
   if (operations.length === 0) {
@@ -260,11 +281,6 @@ export const flushViewCounts = async (
   try {
     const result = await ClassModel.bulkWrite(operations, { ordered: false });
     console.log(`[ViewCount Flush] Updated ${result.modifiedCount} documents`);
-
-    for (const key of keysToDelete) {
-      await redis.del(key);
-    }
-    console.log(`[ViewCount Flush] Deleted ${keysToDelete.length} Redis keys`);
 
     return { flushed: result.modifiedCount, errors: 0 };
   } catch (error) {

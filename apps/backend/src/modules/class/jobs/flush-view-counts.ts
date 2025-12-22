@@ -2,15 +2,20 @@ import type { RedisClientType } from "redis";
 
 import { flushViewCounts } from "../controller";
 
-const FLUSH_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
+const FLUSH_INTERVAL_MS = 10 * 60 * 1000;
+const STARTUP_DELAY_MS = 30 * 1000;
 let isRunning = false;
 
 export const startViewCountFlushJob = (redis: RedisClientType) => {
-  console.log("[ViewCount Flush Job] Starting scheduled job (every 10 minutes)");
+  console.log(
+    "[ViewCount Flush Job] Starting scheduled job (every 10 minutes)"
+  );
 
   const runFlush = async () => {
     if (isRunning) {
-      console.log("[ViewCount Flush Job] Previous flush still running, skipping");
+      console.log(
+        "[ViewCount Flush Job] Previous flush still running, skipping"
+      );
       return;
     }
 
@@ -18,10 +23,14 @@ export const startViewCountFlushJob = (redis: RedisClientType) => {
     const startTime = Date.now();
 
     try {
-      console.log(`[ViewCount Flush Job] Starting flush at ${new Date().toISOString()}`);
+      console.log(
+        `[ViewCount Flush Job] Starting flush at ${new Date().toISOString()}`
+      );
       const result = await flushViewCounts(redis);
       const duration = Date.now() - startTime;
-      console.log(`[ViewCount Flush Job] Completed in ${duration}ms - flushed: ${result.flushed}, errors: ${result.errors}`);
+      console.log(
+        `[ViewCount Flush Job] Completed in ${duration}ms - flushed: ${result.flushed}, errors: ${result.errors}`
+      );
     } catch (error) {
       console.error("[ViewCount Flush Job] Error:", error);
     } finally {
@@ -31,6 +40,5 @@ export const startViewCountFlushJob = (redis: RedisClientType) => {
 
   setInterval(runFlush, FLUSH_INTERVAL_MS);
 
-  runFlush();
+  setTimeout(runFlush, STARTUP_DELAY_MS);
 };
-

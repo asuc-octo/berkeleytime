@@ -7,7 +7,6 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../config";
-import { flushViewCounts } from "../../modules/class/controller";
 import passportLoader from "./passport";
 
 export default async (
@@ -73,14 +72,4 @@ export default async (
       }),
     })
   );
-
-  app.post("/cache/flush-view-counts", async (_req, res) => {
-    try {
-      const result = await flushViewCounts(redis);
-      res.status(200).json(result);
-    } catch (error: any) {
-      console.error("[Flush] Error:", error);
-      res.status(500).json({ error: error.message });
-    }
-  });
 };
