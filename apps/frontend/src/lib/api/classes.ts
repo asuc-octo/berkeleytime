@@ -240,6 +240,7 @@ export const GET_CLASS_DETAILS = gql`
       subject
       sessionId
       courseNumber
+      courseId
       number
       unitsMax
       unitsMin

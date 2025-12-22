@@ -33,7 +33,7 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useGetClassOverview } from "@/hooks/api";
+import { useGetCourseOverviewById } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
@@ -166,14 +166,6 @@ export default function Class({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-  const { data: course } = useGetClassOverview(
-    providedClass?.subject ?? (subject as string),
-    providedClass?.courseNumber ?? (courseNumber as string),
-    {
-      skip: !!providedCourse,
-    }
-  );
-
   const { data } = useGetClass(
     year as number,
     semester as Semester,
@@ -189,6 +181,14 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
+
+  // Use courseId from class data to fetch course info (handles cross-listed courses)
+  const { data: course } = useGetCourseOverviewById(
+    _class?.courseId ?? "",
+    {
+      skip: !!providedCourse || !_class?.courseId,
+    }
+  );
 
   const _course = useMemo(
     () => providedCourse ?? course,

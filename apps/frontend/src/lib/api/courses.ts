@@ -101,6 +101,31 @@ export const GET_CLASS_OVERVIEW = gql`
   }
 `;
 
+export const GET_COURSE_OVERVIEW_BY_ID = gql`
+  query GetCourseOverviewById($courseId: CourseIdentifier!) {
+    courseById(courseId: $courseId) {
+      title
+      description
+      requirements
+      aggregatedRatings(metricNames: [Attendance, Recording]) {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
+      }
+      gradeDistribution {
+        average
+        pnpPercentage
+      }
+    }
+  }
+`;
+
 export const GET_COURSE_GRADE_DIST = gql`
   query GetCourseGradeDist($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
