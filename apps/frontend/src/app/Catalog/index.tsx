@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { NavArrowRight } from "iconoir-react";
@@ -14,6 +14,7 @@ import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
+import CatalogSkeleton from "./Skeleton";
 
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
@@ -44,6 +45,7 @@ export default function Catalog() {
     subject: providedSubject,
     courseNumber,
     number,
+    sessionId,
   } = useParams();
 
   const navigate = useNavigate();
@@ -114,38 +116,46 @@ export default function Catalog() {
     }
   }, [isDesktop, hasClassSelected]);
 
-  const { data: _class } = useGetClass(
+  const { data: _class, error: classError } = useGetClass(
     term?.year as number,
     term?.semester as Semester,
+    sessionId as string,
     subject as string,
     courseNumber as string,
     number as string,
     {
-      skip: !subject || !courseNumber || !number || !term,
+      skip: !subject || !courseNumber || !number || !sessionId || !term,
     }
   );
 
+  // Keep reference to last valid class to prevent blank frames during transitions
+  const lastClassRef = useRef(_class);
+  if (_class) {
+    lastClassRef.current = _class;
+  }
+  const displayedClass = _class ?? lastClassRef.current;
+
   const handleSelect = useCallback(
-    (subject: string, courseNumber: string, number: string) => {
+    (
+      subject: string,
+      courseNumber: string,
+      number: string,
+      sessionId: string
+    ) => {
       if (!term) return;
 
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({
         ...location,
-        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}`,
+        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
     [navigate, location, term]
   );
 
   if (termsLoading) {
-    return (
-      <div>
-        <div />
-        <div />
-      </div>
-    );
+    return <CatalogSkeleton />;
   }
 
   // TODO: Error state
@@ -208,7 +218,11 @@ export default function Catalog() {
       )}
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {_class ? <Class class={_class} /> : null}
+        {displayedClass && !classError && (
+          <div className={styles.classContainer}>
+            <Class class={displayedClass} />
+          </div>
+        )}
       </Flex>
     </div>
   );

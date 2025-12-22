@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Box, Button, Container } from "@repo/theme";
+import { Box, Button, Container, Skeleton } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -40,11 +40,34 @@ const chartConfig = createChartConfig(["enrolled", "waitlisted"], {
   colors: { enrolled: "var(--blue-500)", waitlisted: "var(--orange-500)" },
 });
 
+function EnrollmentSkeleton() {
+  return (
+    <Box p="5" className={styles.root}>
+      <Container size="3">
+        <div className={styles.wrapper}>
+          <div className={styles.header}>
+            <div className={styles.titleBlock}>
+              <Skeleton className={styles.skeletonTitle} />
+              <Skeleton className={styles.skeletonSubtitle} />
+            </div>
+            <Skeleton className={styles.skeletonButton} />
+          </div>
+          <div className={styles.chart}>
+            <Skeleton className={styles.skeletonChart} />
+            <Skeleton className={styles.skeletonAxisLabel} />
+          </div>
+        </div>
+      </Container>
+    </Box>
+  );
+}
+
 export default function Enrollment() {
   const { class: _class } = useClass();
   const { data: enrollmentData, loading } = useGetClassEnrollment(
     _class.year,
     _class.semester,
+    _class.sessionId,
     _class.subject,
     _class.courseNumber,
     _class.number
@@ -167,7 +190,7 @@ export default function Enrollment() {
   ]);
 
   if (loading) {
-    return <EmptyState heading="Loading Enrollment Data" loading />;
+    return <EnrollmentSkeleton />;
   }
 
   if (data.length === 0) {

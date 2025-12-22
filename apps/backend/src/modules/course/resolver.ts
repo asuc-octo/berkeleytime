@@ -7,6 +7,7 @@ import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import {
   getCourseAggregatedRatings,
+  getCourseRatingsCount,
   getInstructorAggregatedRatings,
 } from "../rating/controller";
 import {
@@ -14,6 +15,7 @@ import {
   getAssociatedCoursesBySubjectNumber,
   getClassesByCourse,
   getCourse,
+  getCourseById,
   getCourses,
 } from "./controller";
 import { IntermediateCourse } from "./formatter";
@@ -51,6 +53,12 @@ const resolvers: CourseModule.Resolvers = {
   Query: {
     course: async (_, { subject, number }, _context, _info) => {
       const course = await getCourse(subject, number);
+
+      return course as unknown as CourseModule.Course;
+    },
+
+    courseById: async (_, { courseId }, _context, _info) => {
+      const course = await getCourseById(courseId);
 
       return course as unknown as CourseModule.Course;
     },
@@ -172,6 +180,11 @@ const resolvers: CourseModule.Resolvers = {
       );
 
       return instructorRatings;
+    },
+
+    ratingsCount: async (parent: IntermediateCourse | CourseModule.Course) => {
+      const count = await getCourseRatingsCount(parent.subject, parent.number);
+      return count;
     },
   },
 

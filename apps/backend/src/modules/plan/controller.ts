@@ -1,4 +1,5 @@
 import { omitBy } from "lodash";
+import { Types } from "mongoose";
 
 import {
   LabelModel,
@@ -44,7 +45,7 @@ export async function removePlanTerm(
     throw new Error("No Plan found for this user");
   }
   const planTermIndex = gt.planTerms.findIndex(
-    (sem) => (sem._id as string) == planTermID
+    (sem) => (sem._id as Types.ObjectId).toString() === planTermID
   );
   if (planTermIndex === -1) {
     throw new Error("PlanTerm does not exist in user's plan");
@@ -91,7 +92,7 @@ export async function editPlanTerm(
   }
 
   const planTermIndex = gt.planTerms.findIndex(
-    (sem) => (sem._id as string) == planTermID
+    (sem) => (sem._id as Types.ObjectId).toString() === planTermID
   );
   if (planTermIndex === -1) {
     throw new Error("PlanTerm does not exist in user's plan");
@@ -139,7 +140,7 @@ export async function setClasses(
     throw new Error("No Plan found for this user");
   }
   const planTermIndex = gt.planTerms.findIndex(
-    (sem) => (sem._id as string) == planTermID
+    (sem) => (sem._id as Types.ObjectId).toString() === planTermID
   );
   if (planTermIndex === -1) {
     throw new Error("PlanTerm does not exist in user's plan");

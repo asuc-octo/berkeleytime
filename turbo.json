@@ -15,6 +15,7 @@
       ]
     },
     "generate": {
+      "cache": false,
       "outputs": [
         "*/**/generated-types/**",
         "*/**/generated/**"

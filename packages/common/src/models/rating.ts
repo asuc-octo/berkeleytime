@@ -9,6 +9,15 @@ const ratingSchema = new Schema(
       required: true,
       immutable: true,
     },
+    classId: {
+      type: Schema.Types.ObjectId,
+      ref: "class",
+      required: true,
+    },
+    courseId: {
+      type: String,
+      required: true,
+    },
     subject: {
       type: String,
       required: true,
@@ -51,6 +60,15 @@ export type RatingType = InferSchemaType<typeof ratingSchema>;
 
 const aggregatedMetricsSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
+  classId: {
+    type: Schema.Types.ObjectId,
+    ref: "class",
+    required: true,
+  },
+  courseId: {
+    type: String,
+    required: true,
+  },
   subject: {
     type: String,
     required: true,
@@ -85,32 +103,21 @@ const aggregatedMetricsSchema = new Schema({
   },
 });
 
-// CLASS-level queries (most specific)
+// Unique constraint per class/metric/value combination
 aggregatedMetricsSchema.index(
-  {
-    subject: 1,
-    courseNumber: 1,
-    semester: 1,
-    year: 1,
-    classNumber: 1,
-    metricName: 1,
-    categoryValue: 1,
-  },
+  { classId: 1, metricName: 1, categoryValue: 1 },
   { unique: true }
 );
 
-// TERM-level queries (group all classes in a semester)
+// Course-level queries (unified cross-listings)
+aggregatedMetricsSchema.index({ courseId: 1 });
+
+// Term-level queries
 aggregatedMetricsSchema.index({
   subject: 1,
   courseNumber: 1,
   semester: 1,
   year: 1,
-});
-
-// COURSE-level queries (group all classes across all semesters)
-aggregatedMetricsSchema.index({
-  subject: 1,
-  courseNumber: 1,
 });
 
 export const AggregatedMetricsModel = mongoose.model(

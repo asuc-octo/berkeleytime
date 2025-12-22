@@ -43,7 +43,7 @@
 .previewCard {
   position: absolute;
   display: flex;
-  width: 360px;
+  width: 340px;
   min-height: 200px;
   padding: 16px;
   align-items: flex-start;
@@ -188,22 +188,6 @@
   font-weight: var(--font-medium);
   color: var(--paragraph-color);
   letter-spacing: -0.14px;
-}
-
-.colorDot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-
-.colorDotOutline {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-  border: 1.5px solid var(--paragraph-color);
 }
 
 .addCard {

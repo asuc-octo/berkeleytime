@@ -6,6 +6,7 @@ export const courseTypeDef = gql`
 
   type Query {
     course(subject: String!, number: CourseNumber!): Course
+    courseById(courseId: CourseIdentifier!): Course
     courses: [Course!]!
   }
 
@@ -22,6 +23,7 @@ export const courseTypeDef = gql`
     aggregatedRatings(metricNames: [MetricName!]): AggregatedRatings!
     instructorAggregatedRatings: [InstructorRating!]!
     gradeDistribution: GradeDistribution!
+    ratingsCount: Int!
 
     "Attributes"
     requirements: String

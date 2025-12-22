@@ -63,3 +63,34 @@
   font-size: var(--text-14);
   color: var(--paragraph-color);
 }
+
+.skeletonTitle {
+  width: 180px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.skeletonSubtitle {
+  width: 100px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeletonButton {
+  width: 140px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.skeletonChart {
+  flex: 1;
+  min-height: 300px;
+  border-radius: 8px;
+}
+
+.skeletonAxisLabel {
+  width: 200px;
+  height: 16px;
+  border-radius: 4px;
+  margin: 0 auto;
+}

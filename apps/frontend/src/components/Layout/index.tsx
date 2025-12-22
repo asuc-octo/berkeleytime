@@ -9,15 +9,19 @@ import Banner from "./Banner";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {
+  banner?: boolean;
   header?: boolean;
   footer?: boolean;
   scrollLock?: boolean;
+  headerBorder?: boolean;
 }
 
 export default function Layout({
+  banner = true,
   header = true,
   footer = true,
   scrollLock = false,
+  headerBorder = true,
 }: LayoutProps) {
   return (
     <Flex direction="column">
@@ -25,8 +29,12 @@ export default function Layout({
         direction="column"
         className={scrollLock ? styles.viewLocked : styles.view}
       >
-        <Banner />
-        {header && <NavigationBar />}
+        {(banner || header) && (
+          <div className={styles.stickyHeader}>
+            {banner && <Banner />}
+            {header && <NavigationBar noBorder={!headerBorder} />}
+          </div>
+        )}
         <Outlet />
       </Flex>
       {footer && <Footer />}

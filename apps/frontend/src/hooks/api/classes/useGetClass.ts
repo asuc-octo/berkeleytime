@@ -24,6 +24,7 @@ import {
 export const useGetClass = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -37,6 +38,7 @@ export const useGetClass = (
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,
@@ -53,6 +55,7 @@ export const useGetClass = (
 export const useGetClassSections = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -66,6 +69,7 @@ export const useGetClassSections = (
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,
@@ -81,6 +85,7 @@ export const useGetClassSections = (
 export const useGetClassGrades = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -94,6 +99,7 @@ export const useGetClassGrades = (
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,
@@ -109,6 +115,7 @@ export const useGetClassGrades = (
 export const useGetClassEnrollment = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -122,6 +129,7 @@ export const useGetClassEnrollment = (
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,

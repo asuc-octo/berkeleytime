@@ -10,6 +10,9 @@ import {
   GetCourseGradeDistDocument,
   GetCourseGradeDistQuery,
   GetCourseGradeDistQueryVariables,
+  GetCourseOverviewByIdDocument,
+  GetCourseOverviewByIdQuery,
+  GetCourseOverviewByIdQueryVariables,
   GetCourseQuery,
   GetCourseQueryVariables,
   GetCourseTitleDocument,
@@ -67,6 +70,29 @@ export const useGetClassOverview = (
   return {
     ...query,
     data: query.data?.course,
+  };
+};
+
+export const useGetCourseOverviewById = (
+  courseId: string,
+  options?: Omit<
+    useQuery.Options<
+      GetCourseOverviewByIdQuery,
+      GetCourseOverviewByIdQueryVariables
+    >,
+    "variables"
+  >
+) => {
+  const query = useQuery(GetCourseOverviewByIdDocument, {
+    ...options,
+    variables: {
+      courseId,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.courseById,
   };
 };
 

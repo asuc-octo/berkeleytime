@@ -7,7 +7,7 @@ import { Button } from "@repo/theme";
 import Units from "@/components/Units";
 import useSchedule from "@/hooks/useSchedule";
 import { IScheduleClass, IScheduleEvent } from "@/lib/api";
-import { Color } from "@/lib/generated/graphql";
+import { Color, Component } from "@/lib/generated/graphql";
 
 import { getUnits } from "../../schedule";
 import EventDialog from "../EventDialog";
@@ -22,7 +22,8 @@ interface SideBarProps {
   onClassSelect: (
     subject: string,
     courseNumber: string,
-    number: string
+    number: string,
+    sessionId: string
   ) => void;
   onSectionSelect: (
     subject: string,
@@ -46,8 +47,42 @@ interface SideBarProps {
     classNumber: string,
     color: Color
   ) => void;
+  onLockChange: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    locked: boolean
+  ) => void;
+  onHideChange: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    hidden: boolean
+  ) => void;
+  onSectionBlockToggle: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    sectionId: number,
+    blocked: boolean
+  ) => void;
+  onComponentBlockToggle: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    component: Component,
+    blocked: boolean
+  ) => void;
+  onComponentLockChange: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    component: Component,
+    locked: boolean
+  ) => void;
   onEventColorChange: (id: string, color: Color) => void;
   onEventTitleChange: (id: string, title: string) => void;
+  onEventHideChange: (id: string, hidden: boolean) => void;
 }
 
 export default function SideBar({
@@ -61,8 +96,14 @@ export default function SideBar({
   onDeleteClass,
   onDeleteEvent,
   onColorChange,
+  onLockChange,
+  onHideChange,
+  onSectionBlockToggle,
+  onComponentBlockToggle,
+  onComponentLockChange,
   onEventColorChange,
   onEventTitleChange,
+  onEventHideChange,
 }: SideBarProps) {
   const { schedule, editing } = useSchedule();
 
@@ -148,6 +189,9 @@ export default function SideBar({
                 onEventColorChange(event._id, c);
               }}
               onEventTitleChange={onEventTitleChange}
+              onHideChange={(hidden) => {
+                onEventHideChange(event._id, hidden);
+              }}
             />
           );
         })}
@@ -160,6 +204,10 @@ export default function SideBar({
               semester={schedule.semester}
               year={schedule.year}
               color={selectedClass.color!}
+              hidden={selectedClass.hidden ?? false}
+              locked={selectedClass.locked ?? false}
+              blockedSections={selectedClass.blockedSections}
+              lockedComponents={selectedClass.lockedComponents ?? []}
               expanded={expanded[index] ?? false}
               onExpandedChange={(expanded) => onExpandedChange(index, expanded)}
               onSectionSelect={onSectionSelect}
@@ -167,6 +215,11 @@ export default function SideBar({
               onSectionMouseOut={onSectionMouseOut}
               onDelete={onDeleteClass}
               onColorChange={onColorChange}
+              onLockChange={onLockChange}
+              onHideChange={onHideChange}
+              onSectionBlockToggle={onSectionBlockToggle}
+              onComponentBlockToggle={onComponentBlockToggle}
+              onComponentLockChange={onComponentLockChange}
             />
           );
         })}

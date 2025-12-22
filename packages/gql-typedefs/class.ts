@@ -230,10 +230,10 @@ export const classTypeDef = gql`
 
   type Meeting {
     days: [Boolean!]
-    startTime: String!
-    endTime: String!
-    startDate: String!
-    endDate: String!
+    startTime: String
+    endTime: String
+    startDate: String
+    endDate: String
     location: String
     instructors: [Instructor!]!
   }

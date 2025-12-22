@@ -20,6 +20,7 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       subject
       courseNumber
       number
+      sessionId
       title
       unitsMax
       unitsMin
@@ -45,6 +46,8 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
         }
         meetings {
           days
+          startTime
+          endTime
         }
       }
       course {
@@ -57,6 +60,7 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
         academicCareer
         academicOrganization
         academicOrganizationName
+        ratingsCount
       }
       requirementDesignation {
         description

@@ -10,6 +10,7 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
+import CatalogSkeleton from "@/app/Catalog/Skeleton";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
@@ -52,7 +53,7 @@ const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 
 const router = createBrowserRouter([
   {
-    element: <Layout header={false} footer={false} />,
+    element: <Layout banner={false} header={false} footer={false} />,
     children: [
       // {
       //   element: (
@@ -112,10 +113,11 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "gradtrak",
     element: <Layout footer={false} />,
     children: [
       {
-        path: "gradtrak",
+        index: true,
         element: (
           <SuspenseBoundary key="gradtrak-landing">
             <GradTrak />
@@ -123,7 +125,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "gradtrak/onboarding",
+        path: "onboarding",
         element: (
           <SuspenseBoundary key="gradtrak-onboarding">
             <GradTrakOnboarding />
@@ -131,7 +133,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "gradtrak/dashboard",
+        path: "dashboard",
         element: (
           <SuspenseBoundary key="gradtrak-dashboard">
             <GradTrakDashboard />
@@ -283,11 +285,14 @@ const router = createBrowserRouter([
       },
       {
         element: (
-          <SuspenseBoundary key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?">
+          <SuspenseBoundary
+            key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
+            fallback={<CatalogSkeleton />}
+          >
             <Catalog />
           </SuspenseBoundary>
         ),
-        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?",
+        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",
         children: [
           {
             element: (
@@ -332,10 +337,21 @@ const router = createBrowserRouter([
           {
             path: "*",
             loader: ({
-              params: { year, semester, subject, courseNumber, number },
+              params: {
+                year,
+                semester,
+                subject,
+                courseNumber,
+                number,
+                sessionId,
+              },
             }) => {
               const basePath = `/catalog/${year}/${semester}/${subject}/${courseNumber}`;
-              return redirect(number ? `${basePath}/${number}` : basePath);
+              return redirect(
+                number && sessionId
+                  ? `${basePath}/${number}/${sessionId}`
+                  : basePath
+              );
             },
           },
         ],

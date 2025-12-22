@@ -1,9 +1,11 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, ReactNode } from "react";
 
 import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
   InfoCircle,
+  Lock,
+  Star,
   Trash,
 } from "iconoir-react";
 
@@ -52,7 +54,9 @@ type BaseClassFields = Pick<
   | "gradeDistribution"
 >;
 
-type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution">;
+type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
+  ratingsCount?: number | null;
+};
 
 type EnrollmentSnapshot = Pick<
   IEnrollmentSingular,
@@ -77,9 +81,12 @@ interface ClassProps {
   onExpandedChange?: (expanded: boolean) => void;
   onDelete?: () => void;
   leftBorderColor?: Color;
-  onColorSelect?: (c: Color) => void;
+  bookmarked?: boolean;
+  bookmarkToggle?: () => void;
   active?: boolean;
   wrapDescription?: boolean;
+  customActionMenu?: ReactNode;
+  onUnlock?: () => void;
 }
 
 export default function ClassCard({
@@ -89,10 +96,12 @@ export default function ClassCard({
   onExpandedChange,
   onDelete,
   leftBorderColor = undefined,
-  onColorSelect = undefined,
+  bookmarked = false,
   children,
   active = false,
   wrapDescription = false,
+  customActionMenu,
+  onUnlock = undefined,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   const gradeDistribution =
@@ -167,6 +176,12 @@ export default function ClassCard({
                 description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
               />
             )}
+            {(_class?.course?.ratingsCount ?? 0) > 0 && (
+              <span className={styles.ratingsCount}>
+                <Star className={styles.ratingsIcon} />
+                {_class?.course?.ratingsCount}
+              </span>
+            )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
                 data-action-icon
@@ -195,24 +210,36 @@ export default function ClassCard({
               }}
             />
           )}
-          {onColorSelect && leftBorderColor && (
-            <ColorSelector
-              selectedColor={leftBorderColor}
-              onColorSelect={onColorSelect}
-            />
-          )}
-          {onDelete && (
+          {onUnlock && (
             <Card.ActionIcon
               data-action-icon
-              isDelete
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                onDelete();
+                onUnlock();
               }}
             >
-              <Trash />
+              <Lock />
             </Card.ActionIcon>
+          )}
+          {customActionMenu ? (
+            customActionMenu
+          ) : (
+            <>
+              {onDelete && (
+                <Card.ActionIcon
+                  data-action-icon
+                  isDelete
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    onDelete();
+                  }}
+                >
+                  <Trash />
+                </Card.ActionIcon>
+              )}
+            </>
           )}
         </Card.Actions>
       </Card.ColumnHeader>

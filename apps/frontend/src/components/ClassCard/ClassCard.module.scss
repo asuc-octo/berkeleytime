@@ -27,3 +27,22 @@
   color: var(--paragraph-color);
   margin-top: 4px;
 }
+
+.ratingsCount {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  line-height: 1;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ratingsIcon {
+  color: var(--paragraph-color);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  vertical-align: baseline;
+  display: inline-block;
+}
