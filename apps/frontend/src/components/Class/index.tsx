@@ -253,24 +253,8 @@ export default function Class({
   }, [_class]);
 
   const ratingsCount = useMemo<number | false>(() => {
-    const aggregatedRatings = _course?.aggregatedRatings;
-    if (!aggregatedRatings) {
-      return false;
-    }
-
-    type Metric = NonNullable<
-      NonNullable<IClassCourse["aggregatedRatings"]>["metrics"]
-    >[number];
-    const metrics =
-      (aggregatedRatings.metrics ?? []).filter((metric): metric is Metric =>
-        Boolean(metric)
-      ) ?? [];
-    if (metrics.length === 0) {
-      return false;
-    }
-
-    const counts = metrics.map((metric) => metric.count);
-    return counts.length > 0 ? Math.max(...counts) : false;
+    const count = _course?.ratingsCount;
+    return count && count > 0 ? count : false;
   }, [_course]);
 
   const ratingsLockContext = useMemo(() => {

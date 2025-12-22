@@ -9,7 +9,6 @@ const ratingSchema = new Schema(
       required: true,
       immutable: true,
     },
-    // New canonical identifiers
     classId: {
       type: Schema.Types.ObjectId,
       ref: "class",
@@ -19,7 +18,6 @@ const ratingSchema = new Schema(
       type: String,
       required: true,
     },
-    // Legacy fields - kept for backward compatibility during migration
     subject: {
       type: String,
       required: true,
@@ -62,7 +60,6 @@ export type RatingType = InferSchemaType<typeof ratingSchema>;
 
 const aggregatedMetricsSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
-  // New canonical identifiers
   classId: {
     type: Schema.Types.ObjectId,
     ref: "class",
@@ -72,7 +69,6 @@ const aggregatedMetricsSchema = new Schema({
     type: String,
     required: true,
   },
-  // Legacy fields - kept for backward compatibility during migration
   subject: {
     type: String,
     required: true,
@@ -107,49 +103,21 @@ const aggregatedMetricsSchema = new Schema({
   },
 });
 
-// New indexes using courseId for cross-listing support
-// CLASS-level queries (most specific) - using classId
+// Unique constraint per class/metric/value combination
 aggregatedMetricsSchema.index(
-  {
-    classId: 1,
-    metricName: 1,
-    categoryValue: 1,
-  },
+  { classId: 1, metricName: 1, categoryValue: 1 },
   { unique: true }
 );
 
-// COURSE-level queries (all classes across all semesters, unified cross-listings)
-aggregatedMetricsSchema.index({
-  courseId: 1,
-});
+// Course-level queries (unified cross-listings)
+aggregatedMetricsSchema.index({ courseId: 1 });
 
-// Legacy indexes - kept for migration compatibility
-// CLASS-level queries (most specific)
-aggregatedMetricsSchema.index(
-  {
-    subject: 1,
-    courseNumber: 1,
-    semester: 1,
-    year: 1,
-    classNumber: 1,
-    metricName: 1,
-    categoryValue: 1,
-  },
-  { unique: false } // Changed from unique to allow new unique index on classId
-);
-
-// TERM-level queries (group all classes in a semester)
+// Term-level queries
 aggregatedMetricsSchema.index({
   subject: 1,
   courseNumber: 1,
   semester: 1,
   year: 1,
-});
-
-// COURSE-level queries (group all classes across all semesters)
-aggregatedMetricsSchema.index({
-  subject: 1,
-  courseNumber: 1,
 });
 
 export const AggregatedMetricsModel = mongoose.model(

@@ -56,7 +56,6 @@ interface RatingData {
   value: number;
 }
 
-// Helper to get class document with classId and courseId
 const getClassDocument = async (
   year: number,
   semester: Semester,
@@ -84,7 +83,6 @@ const getClassDocument = async (
   return classDoc;
 };
 
-// Helper to get courseId from subject/courseNumber
 const getCourseId = async (
   subject: string,
   courseNumber: string
@@ -450,9 +448,7 @@ export const getCourseAggregatedRatings = async (
   courseNumber: string,
   metricNames?: InputMaybe<MetricName[]>
 ) => {
-  // Get courseId for unified cross-listing aggregation
   const courseId = await getCourseId(subject, courseNumber);
-
   if (!courseId) {
     return {
       subject,
@@ -485,9 +481,7 @@ export const getSemestersWithRatings = async (
   subject: string,
   courseNumber: string
 ) => {
-  // Get courseId for unified cross-listing aggregation
   const courseId = await getCourseId(subject, courseNumber);
-
   if (!courseId) {
     return [];
   }
@@ -500,7 +494,6 @@ export const getCourseRatingsCount = async (
   subject: string,
   courseNumber: string
 ): Promise<number> => {
-  // Get courseId for unified cross-listing aggregation
   const courseId = await getCourseId(subject, courseNumber);
 
   if (!courseId) {
@@ -526,19 +519,15 @@ export const getInstructorAggregatedRatings = async (
   subject: string,
   courseNumber: string
 ) => {
-  // Get courseId for unified cross-listing aggregation
   const courseId = await getCourseId(subject, courseNumber);
-
   if (!courseId) {
     return [];
   }
 
-  // Find all sections for this course (including cross-listed courses via courseId)
-  const sections = await SectionModel.find({
-    courseId,
-  }).select("semester year number classNumber meetings");
+  const sections = await SectionModel.find({ courseId }).select(
+    "semester year number classNumber meetings"
+  );
 
-  // Build a map of instructors to the classes they taught
   const instructorMap = new Map<
     string,
     {
@@ -723,7 +712,6 @@ const handleCategoryCountChange = async (
   session?: any
 ) => {
   const delta = isIncrement ? 1 : -1;
-  // Query using new classId field for uniqueness
   const metric = await AggregatedMetricsModel.findOne({
     classId,
     metricName,

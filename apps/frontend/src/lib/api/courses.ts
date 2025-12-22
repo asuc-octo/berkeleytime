@@ -107,15 +107,12 @@ export const GET_COURSE_OVERVIEW_BY_ID = gql`
       title
       description
       requirements
+      ratingsCount
       aggregatedRatings(metricNames: [Attendance, Recording]) {
         metrics {
           metricName
           count
           weightedAverage
-          categories {
-            value
-            count
-          }
         }
       }
       gradeDistribution {
