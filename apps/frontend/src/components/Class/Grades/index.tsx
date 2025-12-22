@@ -53,11 +53,12 @@ function GradesSkeleton() {
 
 export default function Grades() {
   const {
-    class: { subject, courseNumber, number, semester, year },
+    class: { subject, courseNumber, number, semester, year, sessionId },
   } = useClass();
   const { data, loading } = useGetClassGrades(
     year,
     semester,
+    sessionId,
     subject,
     courseNumber,
     number

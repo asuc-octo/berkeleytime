@@ -79,6 +79,7 @@ interface ControlledProps {
   course?: IClassCourse;
   year?: never;
   semester?: never;
+  sessionId?: never;
   subject?: never;
   courseNumber?: never;
   number?: never;
@@ -89,6 +90,7 @@ interface UncontrolledProps {
   course?: never;
   year: number;
   semester: Semester;
+  sessionId: string;
   subject: string;
   courseNumber: string;
   number: string;
@@ -128,6 +130,7 @@ const getCurrentTab = (pathname: string): string => {
 export default function Class({
   year,
   semester,
+  sessionId,
   subject,
   courseNumber,
   number,
@@ -174,6 +177,7 @@ export default function Class({
   const { data } = useGetClass(
     year as number,
     semester as Semester,
+    sessionId as string,
     subject as string,
     courseNumber as string,
     number as string,

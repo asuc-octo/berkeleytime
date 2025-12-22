@@ -18,7 +18,7 @@ export const getClass = async (
   const _class = await ClassModel.findOne({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     number,
@@ -40,7 +40,7 @@ export const getSecondarySections = async (
   const sections = await SectionModel.find({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     number: { $regex: `^(${number[number.length - 1]}|999)` },
@@ -60,7 +60,7 @@ export const getPrimarySection = async (
   const section = await SectionModel.findOne({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     number,
@@ -83,7 +83,7 @@ export const getSection = async (
   const section = await SectionModel.findOne({
     year,
     semester,
-    sessionId: sessionId ? sessionId : "1",
+    sessionId,
     subject,
     courseNumber,
     number,

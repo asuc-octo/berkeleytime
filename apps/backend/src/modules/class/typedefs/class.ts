@@ -7,7 +7,7 @@ export const classTypeDef = gql`
     class(
       year: Int!
       semester: Semester!
-      sessionId: SessionIdentifier
+      sessionId: SessionIdentifier!
       subject: String!
       courseNumber: CourseNumber!
       number: ClassNumber!
@@ -15,7 +15,7 @@ export const classTypeDef = gql`
     section(
       year: Int!
       semester: Semester!
-      sessionId: SessionIdentifier
+      sessionId: SessionIdentifier!
       subject: String!
       courseNumber: CourseNumber!
       number: SectionNumber!

@@ -20,6 +20,7 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       subject
       courseNumber
       number
+      sessionId
       title
       unitsMax
       unitsMin

@@ -15,7 +15,7 @@ export const GET_CLASS = gql`
   query GetClass(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -222,7 +222,7 @@ export const GET_CLASS_DETAILS = gql`
   query GetClassDetails(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -293,7 +293,7 @@ export const GET_CLASS_SECTIONS = gql`
   query GetClassSections(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -333,7 +333,7 @@ export const GET_CLASS_GRADES = gql`
   query GetClassGrades(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -363,7 +363,7 @@ export const GET_CLASS_ENROLLMENT = gql`
   query GetClassEnrollment(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!

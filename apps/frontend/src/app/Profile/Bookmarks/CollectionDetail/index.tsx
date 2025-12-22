@@ -50,6 +50,7 @@ export default function CollectionDetail() {
   const { data: classData, loading: classLoading } = useGetClass(
     selectedClassInfo?.year ?? 0,
     (selectedClassInfo?.semester as Semester) ?? Semester.Fall,
+    selectedClassInfo?.sessionId ?? "",
     selectedClassInfo?.subject ?? "",
     selectedClassInfo?.courseNumber ?? "",
     selectedClassInfo?.number ?? "",

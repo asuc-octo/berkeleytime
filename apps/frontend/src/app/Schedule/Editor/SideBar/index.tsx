@@ -22,7 +22,8 @@ interface SideBarProps {
   onClassSelect: (
     subject: string,
     courseNumber: string,
-    number: string
+    number: string,
+    sessionId: string
   ) => void;
   onSectionSelect: (
     subject: string,

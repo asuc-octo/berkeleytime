@@ -57,6 +57,7 @@ export default function Sections() {
   const { data, loading } = useGetClassSections(
     _class.year,
     _class.semester,
+    _class.sessionId,
     _class.subject,
     _class.courseNumber,
     _class.number
