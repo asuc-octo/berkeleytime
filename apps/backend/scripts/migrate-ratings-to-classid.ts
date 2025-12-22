@@ -18,19 +18,14 @@
  *   3. Populate classId and courseId from the Class document
  *   4. Do the same for AggregatedMetrics documents
  */
-
-import mongoose from "mongoose";
 import * as dotenv from "dotenv";
+import mongoose from "mongoose";
+
+// Import models after dotenv config
+import { AggregatedMetricsModel, ClassModel, RatingModel } from "@repo/common";
 
 // Load env before importing models
 dotenv.config();
-
-// Import models after dotenv config
-import {
-  AggregatedMetricsModel,
-  ClassModel,
-  RatingModel,
-} from "@repo/common";
 
 const BATCH_SIZE = 100;
 

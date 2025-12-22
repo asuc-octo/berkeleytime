@@ -337,10 +337,21 @@ const router = createBrowserRouter([
           {
             path: "*",
             loader: ({
-              params: { year, semester, subject, courseNumber, number, sessionId },
+              params: {
+                year,
+                semester,
+                subject,
+                courseNumber,
+                number,
+                sessionId,
+              },
             }) => {
               const basePath = `/catalog/${year}/${semester}/${subject}/${courseNumber}`;
-              return redirect(number && sessionId ? `${basePath}/${number}/${sessionId}` : basePath);
+              return redirect(
+                number && sessionId
+                  ? `${basePath}/${number}/${sessionId}`
+                  : basePath
+              );
             },
           },
         ],

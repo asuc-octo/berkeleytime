@@ -6,13 +6,13 @@ import { GET_CLASS_OVERVIEW } from "@/lib/api/courses";
 import {
   GetClassOverviewQuery,
   GetClassOverviewQueryVariables,
-  GetCourseOverviewByIdDocument,
-  GetCourseOverviewByIdQuery,
-  GetCourseOverviewByIdQueryVariables,
   GetCourseDocument,
   GetCourseGradeDistDocument,
   GetCourseGradeDistQuery,
   GetCourseGradeDistQueryVariables,
+  GetCourseOverviewByIdDocument,
+  GetCourseOverviewByIdQuery,
+  GetCourseOverviewByIdQueryVariables,
   GetCourseQuery,
   GetCourseQueryVariables,
   GetCourseTitleDocument,
@@ -76,7 +76,10 @@ export const useGetClassOverview = (
 export const useGetCourseOverviewById = (
   courseId: string,
   options?: Omit<
-    useQuery.Options<GetCourseOverviewByIdQuery, GetCourseOverviewByIdQueryVariables>,
+    useQuery.Options<
+      GetCourseOverviewByIdQuery,
+      GetCourseOverviewByIdQueryVariables
+    >,
     "variables"
   >
 ) => {

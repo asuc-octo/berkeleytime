@@ -183,12 +183,9 @@ export default function Class({
   const primarySection = _class?.primarySection ?? null;
 
   // Use courseId from class data to fetch course info (handles cross-listed courses)
-  const { data: course } = useGetCourseOverviewById(
-    _class?.courseId ?? "",
-    {
-      skip: !!providedCourse || !_class?.courseId,
-    }
-  );
+  const { data: course } = useGetCourseOverviewById(_class?.courseId ?? "", {
+    skip: !!providedCourse || !_class?.courseId,
+  });
 
   const _course = useMemo(
     () => providedCourse ?? course,
