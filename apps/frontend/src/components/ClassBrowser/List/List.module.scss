@@ -3,6 +3,7 @@
   flex-shrink: 0;
   overflow: auto;
   background-color: var(--foreground-color);
+  scrollbar-color: var(--label-color) var(--foreground-color);
 
   &.loading {
     overflow: hidden;

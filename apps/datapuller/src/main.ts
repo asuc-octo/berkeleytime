@@ -6,6 +6,7 @@ import enrollmentHistoriesPuller from "./pullers/enrollment";
 import enrollmentTimeframePuller from "./pullers/enrollment-timeframe";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
 import sectionsPuller from "./pullers/sections";
+import semanticSearchPuller from "./pullers/semantic-search";
 import termsPuller from "./pullers/terms";
 import setup from "./shared";
 import { Config } from "./shared/config";
@@ -30,6 +31,7 @@ const pullerMap: {
   "enrollment-timeframe": enrollmentTimeframePuller.syncEnrollmentTimeframe,
   "terms-all": termsPuller.allTerms,
   "terms-nearby": termsPuller.nearbyTerms,
+  "semantic-search-refresh": semanticSearchPuller.refreshSemanticSearch,
 } as const;
 
 const runPuller = async () => {
