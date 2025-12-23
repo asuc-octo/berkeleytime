@@ -466,10 +466,7 @@ export default function About() {
               <MemberCard
                 key={member.id}
                 name={member.name}
-                imageUrl={
-                  displayRole.photo ||
-                  "https://m.media-amazon.com/images/M/MV5BZTJjZTcxYjktZTU5ZS00YzdhLWJjMzYtOWY0M2MxZDEzZWUyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
-                }
+                imageUrl={displayRole.photo || undefined}
                 altImageUrl={displayRole.altPhoto || undefined}
                 role={displayRole.role}
                 link={member.personalLink || undefined}

@@ -4,7 +4,7 @@ import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 
 import { config } from "../../../../../packages/common/src/utils/config";
-import { createS3Client, ensureBucketExists } from "../../utils/s3Client";
+import { createS3Client } from "../../utils/s3Client";
 
 // Configure multer to handle file uploads in memory
 const upload = multer({
@@ -58,12 +58,9 @@ export default (app: Application): void => {
         // Create S3 client
         const s3Client = createS3Client();
 
-        // Ensure bucket exists (create if it doesn't)
-        await ensureBucketExists(config.s3StaffPhotosBucket, s3Client);
-
         // Upload to S3
         const putCommand = new PutObjectCommand({
-          Bucket: config.s3StaffPhotosBucket,
+          Bucket: config.s3.staffPhotosBucket,
           Key: fileName,
           Body: req.file.buffer,
           ContentType: req.file.mimetype,
@@ -75,7 +72,7 @@ export default (app: Application): void => {
         res.status(200).json({
           success: true,
           fileName,
-          url: `http://${config.isDev ? "localhost" : config.s3Endpoint}:${config.s3Port}/${config.s3StaffPhotosBucket}/${fileName}`, // You may want to construct a full URL here if needed
+          url: `${config.s3.staffPhotosAccessUrl}/${fileName}`, // You may want to construct a full URL here if needed
         });
       } catch (error: any) {
         console.error("[Staff Upload API] Error:", error);

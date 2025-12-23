@@ -118,8 +118,12 @@ services:
     restart: always
     volumes:
       - ./apps/docs:/apps/docs
+      
+  # if using staff photos in dev, use --profile dev
   minio:
     image: 'minio/minio:latest'
+    profiles:
+      - dev
     ports:
       - '9000:9000'
       - '9090:9090'
@@ -131,6 +135,19 @@ services:
     volumes:
       - 'minio:/data/minio'
     command: minio server /data/minio --console-address ":9090"
+  createbuckets:
+    image: minio/mc
+    profiles:
+      - dev
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 root password;
+      /usr/bin/mc mb myminio/${S3_STAFF_PHOTOS_BUCKET};
+      /usr/bin/mc policy set public myminio/${S3_STAFF_PHOTOS_BUCKET};
+      exit 0;
+      "
 volumes:
   minio:
     driver: local
