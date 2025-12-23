@@ -270,7 +270,12 @@ export default function Editor() {
   );
 
   const handleClassSelect = useCallback(
-    async (subject: string, courseNumber: string, number: string) => {
+    async (
+      subject: string,
+      courseNumber: string,
+      number: string,
+      sessionId: string
+    ) => {
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -343,6 +348,7 @@ export default function Editor() {
         variables: {
           year: schedule.year,
           semester: schedule.semester,
+          sessionId,
           subject,
           courseNumber,
           number,

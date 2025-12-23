@@ -1,7 +1,7 @@
 // TODO: also import in CoEReqs, HaasReqs
 import { useEffect, useState } from "react";
 
-import { WarningCircle, SidebarCollapse, SidebarExpand } from "iconoir-react";
+import { SidebarCollapse, SidebarExpand, WarningCircle } from "iconoir-react";
 
 import {
   CoEReqs,

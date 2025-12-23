@@ -16,7 +16,11 @@ helm repo add metallb https://metallb.github.io/metallb
 helm install bt-sealed-secrets bitnami-labs/sealed-secrets --version 2.17.0 --namespace=bt --create-namespace
 helm install bt-metallb metallb/metallb --version 0.14.9 --namespace=bt
 helm install bt-cert-manager cert-manager/cert-manager --set crds.enabled=true --version 1.16.2 --namespace=bt
-helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.12.0 --namespace=bt
+
+# TODO: eventually remove redirect
+helm upgrade bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.12.0 --namespace=bt \
+    --set controller.allowSnippetAnnotations=true \
+    --set-string controller.config.server-snippet="if (\$host = \"beta.berkeleytime.com\") { return 308 https://berkeleytime.com\$request_uri; }"
 
 helm package ./infra/base --version 1.0.0 --dependency-update
 helm push ./bt-base-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime

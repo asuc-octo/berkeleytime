@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: "CD: Deploy to Production"
 run-name: "Deployed `${{ github.sha }}`"
 
 concurrency: production
@@ -34,6 +34,6 @@ jobs:
       name: bt-prod-app
       version: "1.0.0"
       values: |
-        host: beta.berkeleytime.com
-      host: beta.berkeleytime.com
+        host: berkeleytime.com
+      host: berkeleytime.com
     secrets: inherit

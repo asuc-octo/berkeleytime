@@ -286,13 +286,13 @@ const router = createBrowserRouter([
       {
         element: (
           <SuspenseBoundary
-            key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?"
+            key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
             fallback={<CatalogSkeleton />}
           >
             <Catalog />
           </SuspenseBoundary>
         ),
-        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?",
+        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",
         children: [
           {
             element: (
@@ -337,10 +337,21 @@ const router = createBrowserRouter([
           {
             path: "*",
             loader: ({
-              params: { year, semester, subject, courseNumber, number },
+              params: {
+                year,
+                semester,
+                subject,
+                courseNumber,
+                number,
+                sessionId,
+              },
             }) => {
               const basePath = `/catalog/${year}/${semester}/${subject}/${courseNumber}`;
-              return redirect(number ? `${basePath}/${number}` : basePath);
+              return redirect(
+                number && sessionId
+                  ? `${basePath}/${number}/${sessionId}`
+                  : basePath
+              );
             },
           },
         ],

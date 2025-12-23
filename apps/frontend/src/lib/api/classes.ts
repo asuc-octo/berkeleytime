@@ -15,7 +15,7 @@ export const GET_CLASS = gql`
   query GetClass(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -222,7 +222,7 @@ export const GET_CLASS_DETAILS = gql`
   query GetClassDetails(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -240,6 +240,7 @@ export const GET_CLASS_DETAILS = gql`
       subject
       sessionId
       courseNumber
+      courseId
       number
       unitsMax
       unitsMin
@@ -293,7 +294,7 @@ export const GET_CLASS_SECTIONS = gql`
   query GetClassSections(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -333,7 +334,7 @@ export const GET_CLASS_GRADES = gql`
   query GetClassGrades(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -363,7 +364,7 @@ export const GET_CLASS_ENROLLMENT = gql`
   query GetClassEnrollment(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -410,6 +411,26 @@ export const GET_CLASS_RATINGS = gql`
         }
       }
     }
+  }
+`;
+
+export const TRACK_CLASS_VIEW = gql`
+  mutation TrackClassView(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    trackClassView(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    )
   }
 `;
 

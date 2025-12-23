@@ -1,6 +1,11 @@
+import type { Request } from "express";
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
+import type { RedisClientType } from "redis";
 
-import { SectionSectionAttributesArgs } from "../../generated-types/graphql";
+import {
+  MutationTrackClassViewArgs,
+  SectionSectionAttributesArgs,
+} from "../../generated-types/graphql";
 import { getCourseById } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
@@ -13,6 +18,8 @@ import {
   getPrimarySection,
   getSecondarySections,
   getSection,
+  getViewCount,
+  trackClassView,
 } from "./controller";
 import {
   IntermediateClass,
@@ -20,6 +27,16 @@ import {
   filterAndSortInstructors,
 } from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
+
+interface GraphQLContext {
+  req: Request;
+  redis: RedisClientType;
+  user: {
+    _id?: string;
+    isAuthenticated: boolean;
+    logout: (callback: (err: unknown) => void) => void;
+  };
+}
 
 /**
  * Type for sections that may have unfiltered instructor data from the database.
@@ -111,6 +128,33 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return section as unknown as ClassModule.Section;
+    },
+  },
+
+  Mutation: {
+    trackClassView: async (
+      _: unknown,
+      {
+        year,
+        semester,
+        sessionId,
+        subject,
+        courseNumber,
+        number,
+      }: MutationTrackClassViewArgs,
+      context: GraphQLContext
+    ) => {
+      const result = await trackClassView(
+        year,
+        semester,
+        sessionId ?? "1",
+        subject,
+        courseNumber,
+        number,
+        context.req,
+        context.redis
+      );
+      return result.success;
     },
   },
 
@@ -227,6 +271,22 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return aggregatedRatings;
+    },
+
+    viewCount: async (
+      parent: IntermediateClass | ClassModule.Class,
+      _args: unknown,
+      context: GraphQLContext
+    ) => {
+      return getViewCount(
+        parent.year,
+        parent.semester,
+        parent.sessionId,
+        parent.subject,
+        parent.courseNumber,
+        parent.number,
+        context.redis
+      );
     },
   },
 

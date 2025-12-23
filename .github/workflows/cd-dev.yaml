@@ -1,4 +1,4 @@
-name: Deploy to Development
+name: "CD: Deploy to Development"
 run-name: "Deployed `${{ github.sha }}` for `${{ github.event.inputs.ttl }}` hours"
 
 concurrency:

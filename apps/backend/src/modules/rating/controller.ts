@@ -4,6 +4,8 @@ import { connection } from "mongoose";
 
 import {
   AggregatedMetricsModel,
+  ClassModel,
+  CourseModel,
   RatingModel,
   RatingType,
   SectionModel,
@@ -43,6 +45,8 @@ export interface RequestContext {
 }
 
 interface RatingData {
+  classId: any; // ObjectId
+  courseId: string;
   year: number;
   semester: Semester;
   subject: string;
@@ -51,6 +55,45 @@ interface RatingData {
   metricName: MetricName;
   value: number;
 }
+
+const getClassDocument = async (
+  year: number,
+  semester: Semester,
+  subject: string,
+  courseNumber: string,
+  classNumber: string
+) => {
+  const classDoc = await ClassModel.findOne({
+    year,
+    semester,
+    subject,
+    courseNumber,
+    number: classNumber,
+  });
+
+  if (!classDoc) {
+    throw new GraphQLError(
+      `Class not found: ${subject} ${courseNumber} ${semester} ${year} #${classNumber}`,
+      {
+        extensions: { code: "NOT_FOUND" },
+      }
+    );
+  }
+
+  return classDoc;
+};
+
+const getCourseId = async (
+  subject: string,
+  courseNumber: string
+): Promise<string | null> => {
+  const course = await CourseModel.findOne({
+    subject,
+    number: courseNumber,
+  }).select("courseId");
+
+  return course?.courseId ?? null;
+};
 
 export const numberScaleMetrics = Object.entries(METRIC_MAPPINGS)
   .filter(([_, config]) => config.isRating)
@@ -105,6 +148,17 @@ export const createRating = async (
   }
   checkValueConstraint(metricName, value);
 
+  // Get class document to obtain classId and courseId
+  const classDoc = await getClassDocument(
+    year,
+    semester,
+    subject,
+    courseNumber,
+    classNumber
+  );
+  const classId = classDoc._id;
+  const courseId = classDoc.courseId;
+
   // Get current user ratings before making any changes
   const userRatings = await getUserRatings(context);
   checkUserMaxRatingsConstraint(
@@ -130,6 +184,8 @@ export const createRating = async (
         await createNewRating(
           context,
           {
+            classId,
+            courseId,
             year,
             semester,
             subject,
@@ -161,6 +217,8 @@ export const createRating = async (
         await createNewRating(
           context,
           {
+            classId,
+            courseId,
             year,
             semester,
             subject,
@@ -216,6 +274,8 @@ const deleteRatingOperations = async (
       { session }
     ),
     handleCategoryCountChange(
+      rating.classId,
+      rating.courseId,
       year,
       semester,
       subject,
@@ -388,7 +448,19 @@ export const getCourseAggregatedRatings = async (
   courseNumber: string,
   metricNames?: InputMaybe<MetricName[]>
 ) => {
-  const aggregated = await courseRatingAggregator(subject, courseNumber);
+  const courseId = await getCourseId(subject, courseNumber);
+  if (!courseId) {
+    return {
+      subject,
+      courseNumber,
+      semester: null,
+      year: null,
+      classNumber: null,
+      metrics: [],
+    };
+  }
+
+  const aggregated = await courseRatingAggregator(courseId);
 
   if (!aggregated || !aggregated[0]) {
     return {
@@ -409,7 +481,12 @@ export const getSemestersWithRatings = async (
   subject: string,
   courseNumber: string
 ) => {
-  const semesters = await semestersWithRatingsAggregator(subject, courseNumber);
+  const courseId = await getCourseId(subject, courseNumber);
+  if (!courseId) {
+    return [];
+  }
+
+  const semesters = await semestersWithRatingsAggregator(courseId);
   return formatSemesterRatings(semesters);
 };
 
@@ -417,7 +494,13 @@ export const getCourseRatingsCount = async (
   subject: string,
   courseNumber: string
 ): Promise<number> => {
-  const aggregated = await courseRatingAggregator(subject, courseNumber);
+  const courseId = await getCourseId(subject, courseNumber);
+
+  if (!courseId) {
+    return 0;
+  }
+
+  const aggregated = await courseRatingAggregator(courseId);
 
   if (!aggregated || !aggregated[0]) {
     return 0;
@@ -436,13 +519,15 @@ export const getInstructorAggregatedRatings = async (
   subject: string,
   courseNumber: string
 ) => {
-  // Find all sections for this course
-  const sections = await SectionModel.find({
-    subject,
-    courseNumber,
-  }).select("semester year number classNumber meetings");
+  const courseId = await getCourseId(subject, courseNumber);
+  if (!courseId) {
+    return [];
+  }
 
-  // Build a map of instructors to the classes they taught
+  const sections = await SectionModel.find({ courseId }).select(
+    "semester year number classNumber meetings"
+  );
+
   const instructorMap = new Map<
     string,
     {
@@ -472,7 +557,7 @@ export const getInstructorAggregatedRatings = async (
           }
 
           const instructorData = instructorMap.get(key)!;
-          const classId = {
+          const classInfo = {
             semester: section.semester as Semester,
             year: section.year,
             classNumber: section.classNumber ?? section.number,
@@ -481,13 +566,13 @@ export const getInstructorAggregatedRatings = async (
           // Avoid duplicates
           const exists = instructorData.classes.some(
             (c) =>
-              c.semester === classId.semester &&
-              c.year === classId.year &&
-              c.classNumber === classId.classNumber
+              c.semester === classInfo.semester &&
+              c.year === classInfo.year &&
+              c.classNumber === classInfo.classNumber
           );
 
           if (!exists) {
-            instructorData.classes.push(classId);
+            instructorData.classes.push(classInfo);
           }
         }
       });
@@ -498,8 +583,7 @@ export const getInstructorAggregatedRatings = async (
   const instructorRatings = await Promise.all(
     Array.from(instructorMap.entries()).map(async ([_key, instructorData]) => {
       const aggregated = await instructorRatingsAggregator(
-        subject,
-        courseNumber,
+        courseId,
         instructorData.classes
       );
 
@@ -533,6 +617,8 @@ const createNewRating = async (
   session: any
 ) => {
   const {
+    classId,
+    courseId,
     subject,
     courseNumber,
     semester,
@@ -553,6 +639,8 @@ const createNewRating = async (
       { session }
     ),
     handleCategoryCountChange(
+      classId,
+      courseId,
       year,
       semester,
       subject,
@@ -582,6 +670,8 @@ const handleExistingRating = async (
 
   await Promise.all([
     handleCategoryCountChange(
+      existingRating.classId,
+      existingRating.courseId,
       Number(existingRating.year),
       existingRating.semester as Semester,
       existingRating.subject,
@@ -593,6 +683,8 @@ const handleExistingRating = async (
       session
     ),
     handleCategoryCountChange(
+      existingRating.classId,
+      existingRating.courseId,
       Number(existingRating.year),
       existingRating.semester as Semester,
       existingRating.subject,
@@ -607,6 +699,8 @@ const handleExistingRating = async (
 };
 
 const handleCategoryCountChange = async (
+  classId: any, // ObjectId
+  courseId: string,
   year: number,
   semester: Semester,
   subject: string,
@@ -619,11 +713,7 @@ const handleCategoryCountChange = async (
 ) => {
   const delta = isIncrement ? 1 : -1;
   const metric = await AggregatedMetricsModel.findOne({
-    subject,
-    courseNumber,
-    semester,
-    year,
-    classNumber,
+    classId,
     metricName,
     categoryValue,
   }).session(session);
@@ -648,6 +738,8 @@ const handleCategoryCountChange = async (
       await AggregatedMetricsModel.create(
         [
           {
+            classId,
+            courseId,
             subject,
             courseNumber,
             semester,
@@ -710,6 +802,17 @@ export const createRatings = async (
     checkValueConstraint(metric.metricName, metric.value);
   }
 
+  // Get class document to obtain classId and courseId
+  const classDoc = await getClassDocument(
+    year,
+    semester,
+    subject,
+    courseNumber,
+    classNumber
+  );
+  const classId = classDoc._id;
+  const courseId = classDoc.courseId;
+
   // Get current user ratings for constraint checking
   const userRatings = await getUserRatings(context);
   checkUserMaxRatingsConstraint(
@@ -720,11 +823,10 @@ export const createRatings = async (
     courseNumber
   );
 
-  // Find all existing ratings for this course by this user
+  // Find all existing ratings for this course by this user (using courseId for cross-listing support)
   const existingRatings = await RatingModel.find({
     createdBy: context.user._id,
-    subject,
-    courseNumber,
+    courseId,
   });
 
   const session = await connection.startSession();
@@ -735,6 +837,8 @@ export const createRatings = async (
         await Promise.all([
           RatingModel.deleteOne({ _id: existingRating._id }, { session }),
           handleCategoryCountChange(
+            existingRating.classId,
+            existingRating.courseId,
             Number(existingRating.year),
             existingRating.semester as Semester,
             existingRating.subject,
@@ -755,6 +859,8 @@ export const createRatings = async (
             [
               {
                 createdBy: context.user._id,
+                classId,
+                courseId,
                 subject,
                 courseNumber,
                 semester,
@@ -767,6 +873,8 @@ export const createRatings = async (
             { session }
           ),
           handleCategoryCountChange(
+            classId,
+            courseId,
             year,
             semester,
             subject,
@@ -817,6 +925,8 @@ export const deleteRatings = async (
         await Promise.all([
           RatingModel.deleteOne({ _id: existingRating._id }, { session }),
           handleCategoryCountChange(
+            existingRating.classId,
+            existingRating.courseId,
             Number(existingRating.year),
             existingRating.semester as Semester,
             existingRating.subject,
