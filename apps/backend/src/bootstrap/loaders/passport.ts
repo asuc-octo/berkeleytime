@@ -128,7 +128,10 @@ export default async (app: Application, redis: RedisClientType) => {
   passport.serializeUser((user, done) => {
     done(null, user);
   });
-  passport.deserializeUser((user: any, done) => {
+  passport.deserializeUser(async (user: any, done) => {
+    if (user?._id) {
+      await UserModel.updateOne({ _id: user._id }, { lastSeenAt: new Date() });
+    }
     done(null, user);
   });
   passport.use(
@@ -152,10 +155,11 @@ export default async (app: Application, redis: RedisClientType) => {
             email,
             googleId: profile.id,
             name: profile.displayName,
+            lastSeenAt: new Date(),
           });
         } else {
-          // Update name from Google profile on each login
           user.name = profile.displayName;
+          user.lastSeenAt = new Date();
         }
 
         const doc = await user.save();
