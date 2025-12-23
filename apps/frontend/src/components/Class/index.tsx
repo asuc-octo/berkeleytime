@@ -58,6 +58,8 @@ import UserFeedbackModal from "./Ratings/UserFeedbackModal";
 import { MetricData } from "./Ratings/metricsUtil";
 import { type RatingsTabClasses, RatingsTabLink } from "./locks";
 
+const VIEW_TRACKING_DELAY_MS = 1000;
+
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
@@ -273,7 +275,7 @@ export default function Class({
           number: _class.number,
         },
       }).catch(() => {});
-    }, 5000);
+    }, VIEW_TRACKING_DELAY_MS);
 
     return () => clearTimeout(timer);
   }, [_class, trackView]);
