@@ -473,8 +473,7 @@ export default function About() {
                 if (earlierIndex >= 0) {
                   const term = availableTerms[earlierIndex];
                   const role = member.roles.find(
-                    (r) =>
-                      r.year === term.year && r.semester === term.semester
+                    (r) => r.year === term.year && r.semester === term.semester
                   );
                   if (role?.[field]) {
                     return role[field];
@@ -486,8 +485,7 @@ export default function About() {
                 if (laterIndex < availableTerms.length) {
                   const term = availableTerms[laterIndex];
                   const role = member.roles.find(
-                    (r) =>
-                      r.year === term.year && r.semester === term.semester
+                    (r) => r.year === term.year && r.semester === term.semester
                   );
                   if (role?.[field]) {
                     return role[field];

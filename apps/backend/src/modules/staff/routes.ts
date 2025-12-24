@@ -60,7 +60,7 @@ export default (app: Application): void => {
 
         // Upload to S3
         const putCommand = new PutObjectCommand({
-          Bucket: config.s3.staffPhotosBucket,
+          Bucket: "images",
           Key: fileName,
           Body: req.file.buffer,
           ContentType: req.file.mimetype,
@@ -72,7 +72,7 @@ export default (app: Application): void => {
         res.status(200).json({
           success: true,
           fileName,
-          url: `${config.s3.staffPhotosAccessUrl}/${fileName}`, // You may want to construct a full URL here if needed
+          url: `${config.s3.imagesAccessUrl}/${fileName}`, // You may want to construct a full URL here if needed
         });
       } catch (error: any) {
         console.error("[Staff Upload API] Error:", error);

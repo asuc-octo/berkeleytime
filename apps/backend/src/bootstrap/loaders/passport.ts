@@ -30,7 +30,7 @@ export default async (app: Application, redis: RedisClientType) => {
   app.use(
     session({
       secret: config.SESSION_SECRET,
-      name: "sessionId",
+      name: "bt.sid",
       resave: false,
       saveUninitialized: true,
       cookie: {
