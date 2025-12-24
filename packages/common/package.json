@@ -6,9 +6,11 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
+    "@types/node": "^24.7.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "mongoose": "^8.19.1"
+    "mongoose": "^8.19.1",
+    "dotenv": "^17.2.3"
   }
 }

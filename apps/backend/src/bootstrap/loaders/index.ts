@@ -1,6 +1,6 @@
 import { type Application, Router } from "express";
 
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
 import { startViewCountFlushJob } from "../../modules/class/jobs/flush-view-counts";
 // loaders
 import apolloLoader from "./apollo";

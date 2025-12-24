@@ -1,0 +1,36 @@
+{
+  "name": "staff-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src/",
+    "start": "serve -s dist -p 3002"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.13.8",
+    "@repo/common": "*",
+    "@repo/theme": "*",
+    "classnames": "^2.5.1",
+    "graphql": "^16.11.0",
+    "iconoir-react": "^7.11.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.6.1",
+    "recharts": "^3.2.1"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.2.1",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^9.37.0",
+    "sass": "^1.89.2",
+    "serve": "^14.2.5",
+    "typescript": "^5.9.3",
+    "vite": "7.1.9"
+  }
+}

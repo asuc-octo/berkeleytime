@@ -1,0 +1,31 @@
+.root {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--foreground-color);
+  padding: 12px;
+
+  .brand {
+    margin-left: 10px;
+    font-size: 24px;
+    user-select: none;
+    font-weight: 580;
+    font-feature-settings:
+      "cv05" on,
+      "cv13" on,
+      "ss07" on,
+      "cv12" on,
+      "cv06" on;
+    color: var(--heading-color);
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .group {
+    display: flex;
+    margin-left: auto;
+  }
+}
+

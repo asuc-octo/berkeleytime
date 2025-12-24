@@ -1,5 +1,7 @@
+export * from "./analytics";
 export * from "./catalog";
 export * from "./class";
+export * from "./cloudflare";
 export * from "./common";
 export * from "./course";
 export * from "./curated-classes";
@@ -11,3 +13,5 @@ export * from "./rating";
 export * from "./schedule";
 export * from "./term";
 export * from "./user";
+export * from "./staff";
+export * from "./stats";

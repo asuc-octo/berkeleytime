@@ -13,6 +13,8 @@ import "./ThemeProvider.scss";
 
 export interface ThemeProviderProps {
   children: ReactNode;
+  /** Forces a specific theme, overriding user preferences and system settings */
+  forcedTheme?: "light" | "dark";
 }
 
 export enum Color {
@@ -40,22 +42,33 @@ export enum Color {
   Rose = "rose",
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState(
+export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
+  const [theme, setTheme] = useState<ThemeType>(
     () => localStorage.getItem("theme") as ThemeType
   );
 
+  if (forcedTheme) {
+    document.body.setAttribute("data-theme", forcedTheme);
+  }
+
   useEffect(() => {
+    if (forcedTheme) {
+      document.body.setAttribute("data-theme", forcedTheme);
+      return;
+    }
+
     if (theme) {
       localStorage.setItem("theme", theme);
       document.body.setAttribute("data-theme", theme);
-
       return;
     }
 
     localStorage.removeItem("theme");
     document.body.removeAttribute("data-theme");
-  }, [theme]);
+  }, [theme, forcedTheme]);
+
+  const effectiveTheme = forcedTheme ?? theme;
+  const effectiveSetTheme = forcedTheme ? () => {} : setTheme;
 
   return (
     <StackContext value={1000}>
@@ -67,7 +80,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         }}
       >
         <Tooltip.Provider delayDuration={50}>
-          <ThemeContext value={{ theme: theme, setTheme }}>
+          <ThemeContext
+            value={{ theme: effectiveTheme, setTheme: effectiveSetTheme }}
+          >
             {/* https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage */}
             <Theme>{children}</Theme>
           </ThemeContext>

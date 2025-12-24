@@ -6,7 +6,8 @@ import { type Application, json } from "express";
 import helmet from "helmet";
 import { RedisClientType } from "redis";
 
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
+import staffRoutes from "../../modules/staff/routes";
 import passportLoader from "./passport";
 
 export default async (
@@ -27,7 +28,9 @@ export default async (
         config.url,
         "http://localhost:8080",
         "http://localhost:8081",
+        "http://localhost:8082",
         "https://ag.berkeleytime.com",
+        "https://staff.berkeleytime.com",
       ],
       credentials: true,
     })
@@ -57,6 +60,9 @@ export default async (
 
   // load authentication
   passportLoader(app, redis);
+
+  // load staff routes
+  staffRoutes(app);
 
   app.use(
     config.graphqlPath,
