@@ -113,3 +113,10 @@ helm install bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs --
 
 helm install bt-ag oci://registry-1.docker.io/octoberkeleytime/bt-ag --namespace=bt \
     --version=1.0.0
+
+# ==========
+# STAFF
+# ==========
+
+helm install bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff --namespace=bt \
+    --version=1.0.0
