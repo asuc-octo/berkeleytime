@@ -7,13 +7,6 @@ export default defineConfig({
     host: true,
     port: 3002,
     allowedHosts: ["staff-frontend"],
-    proxy: {
-      "/api": {
-        target: "http://backend:5001",
-        changeOrigin: true,
-        secure: false,
-      },
-    },
   },
   resolve: {
     alias: {

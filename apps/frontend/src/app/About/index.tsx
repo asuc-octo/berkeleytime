@@ -455,20 +455,54 @@ export default function About() {
         <div className={styles.grid}>
           {filteredTeamMembers?.map((member) => {
             // Get the role for the latest semester
-            const latestRole = member.roles.find(
+            const displayRole = member.roles.find(
               (role) =>
-                role.year === latestTerm.year &&
-                role.semester === latestTerm.semester
+                role.year === (selectedTerm ?? latestTerm).year &&
+                role.semester === (selectedTerm ?? latestTerm).semester
             );
-            const displayRole =
-              latestRole || member.roles[member.roles.length - 1];
+
+            const fillInField = (field: "photo" | "altPhoto") => {
+              const startIndex = availableTerms.findIndex(
+                (term) =>
+                  term.year === (selectedTerm ?? latestTerm).year &&
+                  term.semester === (selectedTerm ?? latestTerm).semester
+              );
+              for (let offset = 1; offset < availableTerms.length; offset++) {
+                // Try negative offset first (earlier terms)
+                const earlierIndex = startIndex - offset;
+                if (earlierIndex >= 0) {
+                  const term = availableTerms[earlierIndex];
+                  const role = member.roles.find(
+                    (r) =>
+                      r.year === term.year && r.semester === term.semester
+                  );
+                  if (role?.[field]) {
+                    return role[field];
+                  }
+                }
+
+                // Try positive offset (later terms)
+                const laterIndex = startIndex + offset;
+                if (laterIndex < availableTerms.length) {
+                  const term = availableTerms[laterIndex];
+                  const role = member.roles.find(
+                    (r) =>
+                      r.year === term.year && r.semester === term.semester
+                  );
+                  if (role?.[field]) {
+                    return role[field];
+                  }
+                }
+              }
+              return undefined;
+            };
             return (
               <MemberCard
                 key={member.id}
                 name={member.name}
-                imageUrl={displayRole.photo || undefined}
-                altImageUrl={displayRole.altPhoto || undefined}
-                role={displayRole.role}
+                imageUrl={displayRole!.photo ?? fillInField("photo")}
+                altImageUrl={displayRole!.altPhoto ?? fillInField("altPhoto")}
+                role={displayRole!.role}
                 link={member.personalLink || undefined}
               />
             );
