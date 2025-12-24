@@ -64,6 +64,45 @@ export default function Organization() {
           </Accordion>
         </div>
       </Container>
+      <Container className={styles.sponsorsSection}>
+        <div className={styles.sponsorsContent}>
+          <h2 className={styles.sponsorsTitle}>Sponsors</h2>
+          <p className={styles.sponsorsText}>
+            Thank you to the folks that help the Berkeleytime team continue to
+            provide this service free-of-charge to students!
+          </p>
+          <div className={styles.sponsorsLogos}>
+            <a
+              href="https://www.ocf.berkeley.edu/"
+              className={styles.sponsorLink}
+            >
+              <img
+                src="/images/ocf.png"
+                alt="OCF"
+                className={styles.sponsorLogo}
+              />
+            </a>
+            <a href="https://asuc.org/" className={styles.sponsorLink}>
+              <img
+                src="/images/asuc.png"
+                alt="ASUC"
+                className={styles.sponsorLogo}
+              />
+            </a>
+          </div>
+        </div>
+      </Container>
+      <Container className={styles.sponsorsSection}>
+        <div className={styles.sponsorsContent}>
+          <h2 className={styles.sponsorsTitle}>
+            In Memory Of Courtney Brousseau
+          </h2>
+          <p className={styles.sponsorsText}>
+            Berkeley Alum, ASUC Student Union Board of Directors Chair, ASUC
+            Chief Communications Officer, and Berkeley Mobile Product Manager
+          </p>
+        </div>
+      </Container>
       <Footer />
     </Flex>
   );

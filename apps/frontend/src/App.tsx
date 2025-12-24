@@ -42,6 +42,8 @@ const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
+const Privacy = lazy(() => import("@/app/Legal/Privacy"));
+const Terms = lazy(() => import("@/app/Legal/Terms"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
 const Manage = lazy(() => import("@/app/Schedule/Editor"));
@@ -162,6 +164,22 @@ const router = createBrowserRouter([
         element: (
           <SuspenseBoundary key="about">
             <About />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "legal/privacy",
+        element: (
+          <SuspenseBoundary key="privacy">
+            <Privacy />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "legal/terms",
+        element: (
+          <SuspenseBoundary key="terms">
+            <Terms />
           </SuspenseBoundary>
         ),
       },
