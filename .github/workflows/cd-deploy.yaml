@@ -67,21 +67,21 @@ jobs:
               echo "Deploying staff dashboard..."
 
               # Check if staff helm chart exists
-              helm status ${{ inputs.name }}-staff &>/dev/null && staff_status=true || staff_status=false
+              helm status bt-staff &>/dev/null && staff_status=true || staff_status=false
 
               # Upgrade staff helm chart, or install if not exists
-              helm upgrade ${{ inputs.name }}-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff \
+              helm upgrade bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff \
                 --install \
                 --version=${{ inputs.version }} \
                 --namespace=bt
 
               # Restart deployment if helm chart existed
               if [ $staff_status = true ]; then
-                kubectl rollout restart deployment ${{ inputs.name }}-staff-frontend
+                kubectl rollout restart deployment bt-staff-frontend
               fi
 
               # Check container status
-              kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-staff-frontend
+              kubectl rollout status --timeout=300s deployment bt-staff-frontend
             fi
 
             # Check container status
