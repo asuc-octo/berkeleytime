@@ -69,6 +69,7 @@ interface RoleFormData {
 }
 
 interface StaffInfoFormData {
+  name: string;
   personalLink: string;
 }
 
@@ -128,6 +129,7 @@ export default function Dashboard() {
   const [isStaffInfoModalOpen, setIsStaffInfoModalOpen] = useState(false);
   const [isAddingNewStaff, setIsAddingNewStaff] = useState(false);
   const [staffInfoForm, setStaffInfoForm] = useState<StaffInfoFormData>({
+    name: "",
     personalLink: "",
   });
   const [editingUser, setEditingUser] = useState<{
@@ -338,6 +340,7 @@ export default function Dashboard() {
     setEditingStaffMemberId(staffMember.id);
     setIsAddingNewStaff(false);
     setStaffInfoForm({
+      name: staffMember.name || "",
       personalLink: staffMember.personalLink || "",
     });
     setIsStaffInfoModalOpen(true);
@@ -357,6 +360,7 @@ export default function Dashboard() {
         await updateStaffInfo(
           member.id,
           {
+            name: staffInfoForm.name.trim() || undefined,
             personalLink: staffInfoForm.personalLink || undefined,
           },
           editingUserId
@@ -368,6 +372,7 @@ export default function Dashboard() {
       await updateStaffInfo(
         editingStaffMemberId,
         {
+          name: staffInfoForm.name.trim() || undefined,
           personalLink: staffInfoForm.personalLink || undefined,
         },
         editingUserId ?? undefined
@@ -413,6 +418,7 @@ export default function Dashboard() {
     setEditingStaffMemberId(null);
     setIsAddingNewStaff(true);
     setStaffInfoForm({
+      name: user.name,
       personalLink: "",
     });
     setIsStaffInfoModalOpen(true);
@@ -496,7 +502,6 @@ export default function Dashboard() {
     }));
   }, [allPods, roleForm.year, roleForm.semester]);
 
-  // Group pods by semester for display
   const podsBySemester = useMemo(() => {
     const grouped: Record<string, typeof allPods> = {};
     allPods.forEach((pod) => {
@@ -520,7 +525,7 @@ export default function Dashboard() {
         Fall: 3,
         Winter: 4,
       };
-      return semOrder[semA as Semester] - semOrder[semB as Semester];
+      return semOrder[semB as Semester] - semOrder[semA as Semester];
     });
 
     return sortedKeys.map((key) => {
@@ -653,6 +658,16 @@ export default function Dashboard() {
                     openEditModal(role, { name: staff.name }, staff.id)
                   }
                   onAddRole={() => openAddModal({ name: staff.name }, staff.id)}
+                  onUpdateName={async (name: string) => {
+                    if (staff.id) {
+                      await updateStaffInfo(
+                        staff.id,
+                        { name },
+                        staff.userId ?? undefined
+                      );
+                      refetchStaff();
+                    }
+                  }}
                 />
               ))
             )}
@@ -1168,6 +1183,20 @@ export default function Dashboard() {
           />
           <Dialog.Body>
             <div className={styles.formGrid}>
+              <div className={styles.formFieldFull}>
+                <label className={styles.formLabel}>Name</label>
+                <Input
+                  type="text"
+                  placeholder="Staff member name"
+                  value={staffInfoForm.name}
+                  onChange={(e) =>
+                    setStaffInfoForm({
+                      ...staffInfoForm,
+                      name: e.target.value,
+                    })
+                  }
+                />
+              </div>
               <div className={styles.formFieldFull}>
                 <label className={styles.formLabel}>Personal Link</label>
                 <Input

@@ -126,6 +126,16 @@
   color: var(--heading-color);
 }
 
+.staffCardNameInput {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--heading-color);
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--foreground-color);
+}
+
 .staffCardEmail {
   display: flex;
   align-items: center;

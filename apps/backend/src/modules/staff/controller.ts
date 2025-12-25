@@ -191,6 +191,10 @@ export const updateStaffInfo = async (
 
   const updateData: Record<string, unknown> = {};
 
+  if (input.name !== undefined) {
+    updateData.name = input.name.trim();
+  }
+
   if (input.personalLink !== undefined) {
     updateData.personalLink = input.personalLink;
   }

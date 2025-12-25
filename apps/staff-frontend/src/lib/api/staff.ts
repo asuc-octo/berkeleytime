@@ -35,6 +35,7 @@ export interface UpsertSemesterRoleInput {
 }
 
 export interface UpdateStaffInfoInput {
+  name?: string;
   personalLink?: string;
 }
 

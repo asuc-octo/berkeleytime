@@ -83,6 +83,7 @@ export const staffTypeDef = gql`
   Input for updating staff member info.
   """
   input UpdateStaffInfoInput {
+    name: String
     personalLink: String
   }
 
