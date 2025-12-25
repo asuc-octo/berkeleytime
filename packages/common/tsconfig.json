@@ -3,5 +3,5 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true,
   },
-  "include": ["src"]
+  "include": ["src", "../shared/staff.ts"]
 }

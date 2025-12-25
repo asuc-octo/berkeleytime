@@ -10,6 +10,7 @@ import CuratedClasses from "./curated-classes";
 import Enrollment from "./enrollment";
 import GradeDistribution from "./grade-distribution";
 import Plan from "./plan";
+import Pod from "./pod";
 import Rating from "./rating";
 import Schedule from "./schedule";
 import Staff from "./staff";
@@ -32,6 +33,7 @@ const modules = [
   Enrollment,
   Plan,
   Rating,
+  Pod,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));

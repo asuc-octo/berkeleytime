@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { LightBulb, NavArrowLeft, NavArrowRight } from "iconoir-react";
 
+import { STAFF_ROLES } from "@repo/shared";
 import { Select } from "@repo/theme";
 
 import { GetAllStaffMembersDocument } from "@/lib/generated/graphql";
@@ -309,21 +310,28 @@ export default function About() {
 
     // Sort: leadership first, then alphabetically by name
     return filtered?.sort((a, b) => {
-      const aHasLeadership = a.roles.some(
-        (r) =>
-          r.year === selectedTerm?.year &&
-          r.semester === selectedTerm?.semester &&
-          r.isLeadership
+      const aRole = a.roles.find(
+        (role) =>
+          role.year === selectedTerm?.year &&
+          role.semester === selectedTerm?.semester
       );
-      const bHasLeadership = b.roles.some(
-        (r) =>
-          r.year === selectedTerm?.year &&
-          r.semester === selectedTerm?.semester &&
-          r.isLeadership
+      const bRole = b.roles.find(
+        (role) =>
+          role.year === selectedTerm?.year &&
+          role.semester === selectedTerm?.semester
       );
 
-      if (aHasLeadership && !bHasLeadership) return -1;
-      if (!aHasLeadership && bHasLeadership) return 1;
+      const aIndex = STAFF_ROLES.findIndex((role) => role.name === aRole?.role);
+      const bIndex = STAFF_ROLES.findIndex((role) => role.name === bRole?.role);
+
+      if (aRole?.isLeadership && !bRole?.isLeadership) return -1;
+      if (!aRole?.isLeadership && bRole?.isLeadership) return 1;
+
+      if (aRole?.isLeadership && bRole?.isLeadership && aIndex !== bIndex) {
+        // Lower index comes first
+        return aIndex - bIndex;
+      }
+      // If same index, sort alphabetically
       return a.name.localeCompare(b.name);
     });
   }, [selectedTeam, allStaffMembers, allStaffMembersLoading, selectedTerm]);
@@ -334,11 +342,14 @@ export default function About() {
     const graphqlAlumni =
       allStaffMembers?.allStaffMembers?.filter(
         (member) =>
+          member.roles.length > 0 &&
           !member.roles.some(
             (role) =>
               role.year === latestTerm.year &&
               role.semester === latestTerm.semester
-          ) && member.roles.some((role) => role.year === selectedAlumniYear)
+          ) &&
+          member.roles.sort((a, b) => b.year - a.year)[0].year ===
+            selectedAlumniYear
       ) || [];
 
     // Get constant alumni for the selected year
@@ -473,7 +484,7 @@ export default function About() {
         if (slideDirection === "right") {
           translateX = -farSpacing; // Move far left
         } else {
-          translateX = farSpacing; // Move far right
+          translateX = farSpacing * 0.92; // Move far right
         }
         scale = 0.85;
         zIndex = 3; // Second highest z-index when going out
@@ -509,7 +520,7 @@ export default function About() {
           zIndex = 2; // Highest when becoming center
         } else {
           // When going right, prev card should move closer but not all the way
-          translateX = -baseSpacing * 0.2; // Move closer
+          translateX = -baseSpacing * 0.5; // Move closer
           scale = 0.7;
           zIndex = 0;
         }

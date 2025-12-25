@@ -9,6 +9,7 @@ export * from "./collection";
 export * from "./enrollment";
 export * from "./grade-distribution";
 export * from "./plan";
+export * from "./pod";
 export * from "./rating";
 export * from "./schedule";
 export * from "./term";
