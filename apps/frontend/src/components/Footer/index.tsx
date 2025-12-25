@@ -118,6 +118,21 @@ export default function Footer() {
               Enrollment
             </Link>
           </div>
+          <div className={styles.column}>
+            <p className={styles.label}>About Us</p>
+            <Link to="/about" className={styles.link}>
+              Our Team
+            </Link>
+            <Link to="https://octo.asuc.org/" className={styles.link}>
+              OCTO
+            </Link>
+            <Link to="/legal/privacy" className={styles.link}>
+              Privacy Policy
+            </Link>
+            <Link to="/legal/terms" className={styles.link}>
+              Terms of Service
+            </Link>
+          </div>
         </div>
       </div>
       <div className={styles.bottom}>

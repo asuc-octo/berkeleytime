@@ -100,46 +100,64 @@ export default function StaffCard({
         <div className={styles.semesterRolesHeader}>
           Experience ({staffMember.roles.length})
         </div>
-        {staffMember.roles.map((role) => (
-          <div key={role.id} className={styles.semesterRole}>
-            {role.photo ? (
-              <img
-                src={role.photo}
-                alt={`${staffMember.name} - ${role.semester} ${role.year}`}
-                className={styles.semesterRolePhoto}
-              />
-            ) : (
-              <div className={styles.semesterRolePhotoPlaceholder}>
-                <User width={24} height={24} />
+        {[...staffMember.roles]
+          .sort((a, b) => {
+            // Sort by year descending (most recent first)
+            if (a.year !== b.year) {
+              return b.year - a.year;
+            }
+            // If same year, sort by semester: Winter > Fall > Summer > Spring
+            const semesterOrder: Record<
+              "Spring" | "Summer" | "Fall" | "Winter",
+              number
+            > = {
+              Spring: 1,
+              Summer: 2,
+              Fall: 3,
+              Winter: 4,
+            };
+            return semesterOrder[b.semester] - semesterOrder[a.semester];
+          })
+          .map((role) => (
+            <div key={role.id} className={styles.semesterRole}>
+              {role.photo ? (
+                <img
+                  src={role.photo}
+                  alt={`${staffMember.name} - ${role.semester} ${role.year}`}
+                  className={styles.semesterRolePhoto}
+                />
+              ) : (
+                <div className={styles.semesterRolePhotoPlaceholder}>
+                  <User width={24} height={24} />
+                </div>
+              )}
+              <div className={styles.semesterRoleInfo}>
+                <div className={styles.semesterRoleMain}>
+                  <span className={styles.semesterRoleTerm}>
+                    {role.semester} {role.year}
+                  </span>
+                  <span className={styles.semesterRoleTitle}>{role.role}</span>
+                </div>
+                <div className={styles.semesterRoleTags}>
+                  {role.isLeadership && (
+                    <span className={styles.leadBadge}>Lead</span>
+                  )}
+                  {role.team && (
+                    <span className={styles.semesterRoleTeam}>{role.team}</span>
+                  )}
+                </div>
               </div>
-            )}
-            <div className={styles.semesterRoleInfo}>
-              <div className={styles.semesterRoleMain}>
-                <span className={styles.semesterRoleTerm}>
-                  {role.semester} {role.year}
-                </span>
-                <span className={styles.semesterRoleTitle}>{role.role}</span>
-              </div>
-              <div className={styles.semesterRoleTags}>
-                {role.isLeadership && (
-                  <span className={styles.leadBadge}>Lead</span>
-                )}
-                {role.team && (
-                  <span className={styles.semesterRoleTeam}>{role.team}</span>
-                )}
-              </div>
+              {onEditRole && (
+                <button
+                  type="button"
+                  className={styles.editButton}
+                  onClick={() => onEditRole(role)}
+                >
+                  <EditPencil width={16} height={16} />
+                </button>
+              )}
             </div>
-            {onEditRole && (
-              <button
-                type="button"
-                className={styles.editButton}
-                onClick={() => onEditRole(role)}
-              >
-                <EditPencil width={16} height={16} />
-              </button>
-            )}
-          </div>
-        ))}
+          ))}
         {onAddRole && (
           <button
             className={styles.addButton}

@@ -14,10 +14,11 @@ import {
   XmarkCircle,
 } from "iconoir-react";
 
+import { STAFF_ROLES } from "@repo/shared";
 import {
   Button,
-  Checkbox,
   Dialog,
+  Flex,
   Input,
   OptionItem,
   PillSwitcher,
@@ -26,6 +27,7 @@ import {
 
 import { BASE } from "@/App";
 
+import { useAllPods, useCreatePod, useDeletePod } from "../../hooks/api/pod";
 import {
   useAllStaffMembers,
   useDeleteSemesterRole,
@@ -36,7 +38,7 @@ import {
   useUpsertSemesterRole,
 } from "../../hooks/api/staff";
 import { useReadUser } from "../../hooks/api/users";
-import { Semester } from "../../lib/api/staff";
+import { CreatePodInput, Semester } from "../../lib/api/pod";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
 
@@ -89,6 +91,7 @@ const YEAR_OPTIONS: OptionItem<string>[] = Array.from(
 const SEARCH_TABS = [
   { value: "staff", label: "Staff View" },
   { value: "user", label: "Users Lookup" },
+  { value: "pods", label: "Pods" },
 ];
 
 type StaffSearchBy = "name" | "role" | "semester" | "team";
@@ -148,6 +151,19 @@ export default function Dashboard() {
   const { updateStaffInfo } = useUpdateStaffInfo();
   const { deleteSemesterRole } = useDeleteSemesterRole();
   const { deleteStaffMember } = useDeleteStaffMember();
+  const { data: allPods } = useAllPods();
+  const { createPod } = useCreatePod();
+  const { deletePod: deletePodMutation } = useDeletePod();
+
+  const [podForm, setPodForm] = useState<{
+    semester: Semester | "";
+    year: string;
+    name: string;
+  }>({
+    semester: "" as Semester,
+    year: "",
+    name: "",
+  });
 
   const openAddModal = (
     user: { name: string; email?: string },
@@ -464,6 +480,88 @@ export default function Dashboard() {
     return [...new Set(roles)];
   }, [staffMembers, editingStaffMemberId]);
 
+  // Create pod options for the Select dropdown, filtered by selected semester and year
+  const podOptions = useMemo(() => {
+    if (!roleForm.year || !roleForm.semester) return [];
+
+    const filteredPods = allPods.filter(
+      (pod) =>
+        pod.year === parseInt(roleForm.year, 10) &&
+        pod.semester === roleForm.semester
+    );
+
+    return filteredPods.map((pod) => ({
+      value: pod.name,
+      label: pod.name,
+    }));
+  }, [allPods, roleForm.year, roleForm.semester]);
+
+  // Group pods by semester for display
+  const podsBySemester = useMemo(() => {
+    const grouped: Record<string, typeof allPods> = {};
+    allPods.forEach((pod) => {
+      const key = `${pod.year}-${pod.semester}`;
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(pod);
+    });
+
+    // Sort groups by year (descending) and semester
+    const sortedKeys = Object.keys(grouped).sort((a, b) => {
+      const [yearA, semA] = a.split("-");
+      const [yearB, semB] = b.split("-");
+      if (yearA !== yearB) {
+        return parseInt(yearB, 10) - parseInt(yearA, 10);
+      }
+      const semOrder: Record<Semester, number> = {
+        Spring: 1,
+        Summer: 2,
+        Fall: 3,
+        Winter: 4,
+      };
+      return semOrder[semA as Semester] - semOrder[semB as Semester];
+    });
+
+    return sortedKeys.map((key) => {
+      const [year, semester] = key.split("-");
+      return {
+        year: parseInt(year, 10),
+        semester: semester as Semester,
+        pods: grouped[key].sort((a, b) => a.name.localeCompare(b.name)),
+      };
+    });
+  }, [allPods]);
+
+  const handleAddPod = async () => {
+    if (!podForm.name.trim() || !podForm.semester || !podForm.year) {
+      return;
+    }
+
+    try {
+      const input: CreatePodInput = {
+        name: podForm.name.trim(),
+        semester: podForm.semester as Semester,
+        year: parseInt(podForm.year, 10),
+      };
+      await createPod(input);
+      // Only reset the name field
+      setPodForm({ ...podForm, name: "" });
+    } catch (error) {
+      console.error("Failed to create pod:", error);
+      alert("Failed to create pod");
+    }
+  };
+
+  const handleDeletePod = async (podId: string) => {
+    try {
+      await deletePodMutation(podId);
+    } catch (error) {
+      console.error("Failed to delete pod:", error);
+      alert("Failed to delete pod");
+    }
+  };
+
   // Filter staff members based on search criteria
   const filteredStaff = useMemo(() => {
     if (!staffSearchQuery) return staffMembers;
@@ -560,6 +658,108 @@ export default function Dashboard() {
             )}
           </div>
         </>
+      )}
+
+      {activeTab === "pods" && (
+        <div className={styles.podsWrapper}>
+          <Flex direction="column" gap="12px">
+            <Flex gap="16px" direction="row">
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Semester</label>
+                <Select
+                  options={SEMESTER_OPTIONS}
+                  value={podForm.semester}
+                  onChange={(value) => {
+                    if (value && !Array.isArray(value)) {
+                      setPodForm({ ...podForm, semester: value });
+                    }
+                  }}
+                  placeholder="Select semester"
+                  style={{ minHeight: 32, padding: "0 12px" }}
+                />
+              </div>
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Year</label>
+                <Select
+                  options={YEAR_OPTIONS}
+                  value={podForm.year}
+                  onChange={(value) => {
+                    if (value && !Array.isArray(value)) {
+                      setPodForm({ ...podForm, year: value });
+                    }
+                  }}
+                  placeholder="Select year"
+                  style={{ minHeight: 32, padding: "0 12px" }}
+                />
+              </div>
+              <div className={styles.formField} style={{ flex: 1 }}>
+                <label className={styles.formLabel}>Pod Name</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., Infrastructure, User Profile"
+                  value={podForm.name}
+                  onChange={(e) =>
+                    setPodForm({ ...podForm, name: e.target.value })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddPod();
+                    }
+                  }}
+                  style={{ maxWidth: 320 }}
+                />
+              </div>
+            </Flex>
+            <Button
+              variant="primary"
+              onClick={handleAddPod}
+              disabled={
+                !podForm.name.trim() || !podForm.semester || !podForm.year
+              }
+            >
+              <Plus width={16} height={16} />
+              Add Pod
+            </Button>
+            <div>
+              {podsBySemester.length === 0 ? (
+                <div className={styles.emptyState}>No pods found</div>
+              ) : (
+                podsBySemester.map((group) => (
+                  <div
+                    key={`${group.year}-${group.semester}`}
+                    className={styles.podSemesterGroup}
+                  >
+                    <h3
+                      className={styles.podSemesterHeader}
+                      style={{ color: "var(--heading-color)" }}
+                    >
+                      {group.semester} {group.year}
+                    </h3>
+                    <div className={styles.podList}>
+                      {group.pods.map((pod) => (
+                        <div
+                          key={pod.id}
+                          className={styles.podItem}
+                          style={{ color: "var(--paragraph-color)" }}
+                        >
+                          <span>{pod.name}</span>
+                          <button
+                            type="button"
+                            className={styles.deletePodButton}
+                            onClick={() => handleDeletePod(pod.id)}
+                            aria-label={`Delete ${pod.name}`}
+                          >
+                            <Xmark width={14} height={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </Flex>
+        </div>
       )}
 
       {activeTab === "user" && (
@@ -883,28 +1083,27 @@ export default function Dashboard() {
                 />
               </div>
               <div className={styles.formFieldFull}>
-                <label className={styles.checkboxField}>
-                  <Checkbox
-                    checked={roleForm.isLeadership}
-                    onCheckedChange={(checked) =>
+                <label className={styles.formLabel}>Role</label>
+                <Select
+                  options={STAFF_ROLES.map((role) => ({
+                    value: role,
+                    label: role.name,
+                  }))}
+                  value={{
+                    name: roleForm.role,
+                    isLeadership: roleForm.isLeadership,
+                  }}
+                  onChange={(value) => {
+                    if (value && !Array.isArray(value)) {
                       setRoleForm({
                         ...roleForm,
-                        isLeadership: checked === true,
-                      })
+                        role: value.name,
+                        isLeadership: value.isLeadership,
+                      });
                     }
-                  />
-                  <span>This is a leadership role</span>
-                </label>
-              </div>
-              <div className={styles.formFieldFull}>
-                <label className={styles.formLabel}>Role</label>
-                <Input
-                  type="text"
-                  placeholder="e.g., Software Engineer"
-                  value={roleForm.role}
-                  onChange={(e) =>
-                    setRoleForm({ ...roleForm, role: e.target.value })
-                  }
+                  }}
+                  placeholder="Select role"
+                  style={{ minHeight: 32, padding: "0 12px" }}
                 />
                 {pastRoles.length > 0 && (
                   <div className={styles.formHint}>
@@ -914,13 +1113,16 @@ export default function Dashboard() {
               </div>
               <div className={styles.formFieldFull}>
                 <label className={styles.formLabel}>Pod/Team</label>
-                <Input
-                  type="text"
-                  placeholder="e.g., Infrastructure, User Profile"
+                <Select
+                  options={podOptions}
                   value={roleForm.team}
-                  onChange={(e) =>
-                    setRoleForm({ ...roleForm, team: e.target.value })
-                  }
+                  onChange={(value) => {
+                    if (value && !Array.isArray(value)) {
+                      setRoleForm({ ...roleForm, team: value });
+                    }
+                  }}
+                  placeholder="Select pod/team"
+                  style={{ minHeight: 32, padding: "0 12px" }}
                 />
               </div>
             </div>

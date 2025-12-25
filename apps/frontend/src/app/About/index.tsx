@@ -1,8 +1,9 @@
-import { UIEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import { LightBulb, NavArrowLeft, NavArrowRight } from "iconoir-react";
 
+import { STAFF_ROLES } from "@repo/shared";
 import { Select } from "@repo/theme";
 
 import { GetAllStaffMembersDocument } from "@/lib/generated/graphql";
@@ -68,6 +69,90 @@ const FOUNDERS = [
   { name: "Yuxin Zhu", role: "Co-Founder", link: "http://yuxinzhu.com/" },
 ];
 
+// Alumni data
+type AlumniMember = {
+  name: string;
+  role: string;
+  link: string | null;
+};
+
+type AlumniGroup = {
+  year: number;
+  members: AlumniMember[];
+};
+
+const LEGACY_ALUMNI: AlumniGroup[] = [
+  {
+    year: 2024,
+    members: [
+      { name: "Alex Zhang", role: "Backend Engineer", link: null },
+      { name: "Gabe Mitnick", role: "Frontend Engineer", link: null },
+      { name: "Kelly Ma", role: "Design Lead", link: null },
+      { name: "Kevin Wang", role: "Product Manager", link: null },
+      { name: "Nikhil Jha", role: "Backend Engineer", link: null },
+      { name: "Nikhil Ograin", role: "Backend Engineer", link: null },
+      { name: "Rachel Hua", role: "Designer", link: null },
+      { name: "Shuming Xu", role: "Backend Engineer", link: null },
+      { name: "Vihan Bhargava", role: "Frontend Engineer", link: null },
+    ],
+  },
+  {
+    year: 2023,
+    members: [
+      { name: "Alex Xi", role: "Backend Lead", link: null },
+      { name: "Annie Pan", role: "Designer", link: null },
+      { name: "Carissa Cui", role: "Designer", link: null },
+      { name: "Cici Wei", role: "Designer", link: null },
+      { name: "Joanne Chuang", role: "Designer", link: null },
+      { name: "Yueheng Zhang", role: "Backend Engineer", link: null },
+      { name: "Zachary Zollman", role: "Backend Lead", link: null },
+    ],
+  },
+  {
+    year: 2022,
+    members: [
+      { name: "Christina Shao", role: "Frontend Lead", link: null },
+      { name: "Danji Liu", role: "Design Lead", link: null },
+      { name: "Hiroshi Usui", role: "Backend Lead", link: null },
+    ],
+  },
+  {
+    year: 2021,
+    members: [
+      { name: "Christopher Liu", role: "Frontend Lead", link: null },
+      { name: "Grace Luo", role: "Product Manager", link: null },
+      { name: "Hannah Yan", role: "Designer", link: null },
+      { name: "Janet Xu", role: "Design Lead", link: null },
+      { name: "Jonathan Pan", role: "Backend Engineer", link: null },
+      { name: "Junghyun Choy", role: "Designer", link: null },
+      { name: "Leon Ming", role: "Backend Lead", link: null },
+    ],
+  },
+  {
+    year: 2020,
+    members: [
+      { name: "Anson Tsai", role: "Backend Engineer", link: null },
+      { name: "Chloe Liu", role: "Frontend Engineer", link: null },
+      { name: "Eli Wu", role: "Backend Engineer", link: null },
+      { name: "Isabella Lau", role: "Backend Engineer", link: null },
+      { name: "Jemma Kwak", role: "Design Lead", link: null },
+      { name: "Sean Meng", role: "Backend Engineer", link: null },
+      { name: "Will Wang", role: "Backend Lead / PM", link: null },
+    ],
+  },
+  {
+    year: 2019,
+    members: [
+      { name: "Evelyn Li", role: "Backend Engineer", link: null },
+      { name: "Kate Xu", role: "Frontend Lead", link: null },
+      { name: "Mary Liu", role: "Backend Engineer", link: null },
+      { name: "Richard Liu", role: "Backend Engineer", link: null },
+      { name: "Sangbin Cho", role: "Backend Lead", link: null },
+      { name: "Scott Lee", role: "Frontend Lead / PM", link: null },
+    ],
+  },
+];
+
 export default function About() {
   const { data: allStaffMembers, loading: allStaffMembersLoading } = useQuery(
     GetAllStaffMembersDocument
@@ -77,7 +162,15 @@ export default function About() {
   const [selectedAlumniYear, setSelectedAlumniYear] = useState<number | null>(
     null
   );
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
+    "right"
+  );
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitioningFromIndex, setTransitioningFromIndex] = useState<
+    number | null
+  >(null);
+  const autoRotateIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const latestTerm = useMemo(() => {
     const semesterOrder: Record<string, number> = {
@@ -153,11 +246,16 @@ export default function About() {
           (role) =>
             role.year === latestTerm.year &&
             role.semester === latestTerm.semester
-        )
+        ) ||
+        member.roles.length == 0
       )
         return;
       const latestRole = member.roles.sort((a, b) => b.year - a.year)[0];
       years.add(latestRole.year);
+    });
+    // Add years from constant LEGACY_ALUMNI
+    LEGACY_ALUMNI.forEach((alumniGroup) => {
+      years.add(alumniGroup.year);
     });
     const sorted = Array.from(years).sort((a, b) => b - a);
     setSelectedAlumniYear(sorted[0]);
@@ -212,21 +310,28 @@ export default function About() {
 
     // Sort: leadership first, then alphabetically by name
     return filtered?.sort((a, b) => {
-      const aHasLeadership = a.roles.some(
-        (r) =>
-          r.year === selectedTerm?.year &&
-          r.semester === selectedTerm?.semester &&
-          r.isLeadership
+      const aRole = a.roles.find(
+        (role) =>
+          role.year === selectedTerm?.year &&
+          role.semester === selectedTerm?.semester
       );
-      const bHasLeadership = b.roles.some(
-        (r) =>
-          r.year === selectedTerm?.year &&
-          r.semester === selectedTerm?.semester &&
-          r.isLeadership
+      const bRole = b.roles.find(
+        (role) =>
+          role.year === selectedTerm?.year &&
+          role.semester === selectedTerm?.semester
       );
 
-      if (aHasLeadership && !bHasLeadership) return -1;
-      if (!aHasLeadership && bHasLeadership) return 1;
+      const aIndex = STAFF_ROLES.findIndex((role) => role.name === aRole?.role);
+      const bIndex = STAFF_ROLES.findIndex((role) => role.name === bRole?.role);
+
+      if (aRole?.isLeadership && !bRole?.isLeadership) return -1;
+      if (!aRole?.isLeadership && bRole?.isLeadership) return 1;
+
+      if (aRole?.isLeadership && bRole?.isLeadership && aIndex !== bIndex) {
+        // Lower index comes first
+        return aIndex - bIndex;
+      }
+      // If same index, sort alphabetically
       return a.name.localeCompare(b.name);
     });
   }, [selectedTeam, allStaffMembers, allStaffMembersLoading, selectedTerm]);
@@ -234,65 +339,226 @@ export default function About() {
   // Filter alumni by selected year
   // An alumnus is shown for a year if they have at least one role with isAlumni: true in that year
   const filteredAlumni = useMemo(() => {
-    return allStaffMembers?.allStaffMembers?.filter(
-      (member) =>
-        !member.roles.some(
-          (role) =>
-            role.year === latestTerm.year &&
-            role.semester === latestTerm.semester
-        ) && member.roles.some((role) => role.year === selectedAlumniYear)
+    const graphqlAlumni =
+      allStaffMembers?.allStaffMembers?.filter(
+        (member) =>
+          member.roles.length > 0 &&
+          !member.roles.some(
+            (role) =>
+              role.year === latestTerm.year &&
+              role.semester === latestTerm.semester
+          ) &&
+          member.roles.sort((a, b) => b.year - a.year)[0].year ===
+            selectedAlumniYear
+      ) || [];
+
+    // Get constant alumni for the selected year
+    const constantAlumniGroup = LEGACY_ALUMNI.find(
+      (group) => group.year === selectedAlumniYear
+    );
+    const constantAlumni = constantAlumniGroup
+      ? constantAlumniGroup.members.map((member, index) => ({
+          id: `alumni-${selectedAlumniYear}-${index}`,
+          name: member.name,
+          roles: [
+            {
+              year: selectedAlumniYear,
+              semester: "Spring" as const,
+              role: member.role,
+              team: null,
+              isLeadership: false,
+              photo: null,
+              altPhoto: null,
+            },
+          ],
+          personalLink: member.link,
+        }))
+      : [];
+
+    // Combine and sort: alphabetically by name
+    return [...graphqlAlumni, ...constantAlumni].sort((a, b) =>
+      a.name.localeCompare(b.name)
     );
   }, [allStaffMembers, latestTerm, selectedAlumniYear]);
 
-  console.log(allStaffMembers);
-  console.log(selectedTeam, selectedTerm);
-  console.log(
-    latestTerm,
-    availableAlumniYears,
-    availableTerms,
-    availableTeams,
-    selectedAlumniYear,
-    filteredTeamMembers,
-    filteredAlumni
-  );
-
-  // Create infinite scroll by duplicating images
-  const infiniteImages = useMemo(() => {
-    return [...ABOUT_IMAGES, ...ABOUT_IMAGES, ...ABOUT_IMAGES];
+  // Function to start/reset auto-rotation timer
+  const startAutoRotate = useCallback(() => {
+    // Clear existing interval if any
+    if (autoRotateIntervalRef.current) {
+      clearInterval(autoRotateIntervalRef.current);
+    }
+    // Start new interval
+    autoRotateIntervalRef.current = setInterval(() => {
+      setSlideDirection("right");
+      setCurrentImageIndex((prev) => {
+        setTransitioningFromIndex(prev);
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setIsTransitioning(false);
+          setTransitioningFromIndex(null);
+        }, 600);
+        return (prev + 1) % ABOUT_IMAGES.length;
+      });
+    }, 5000);
   }, []);
 
+  // Auto-rotate carousel every 5 seconds
   useEffect(() => {
-    if (carouselRef.current) {
-      // Start at the middle set of images
-      const imageWidth = carouselRef.current.scrollWidth / 3;
-      carouselRef.current.scrollLeft = imageWidth;
-    }
-  }, []);
+    startAutoRotate();
+    return () => {
+      if (autoRotateIntervalRef.current) {
+        clearInterval(autoRotateIntervalRef.current);
+      }
+    };
+  }, [startAutoRotate]);
 
-  const handleCarouselScroll = (event: UIEvent<HTMLDivElement>) => {
-    if (!carouselRef.current) return;
-    const { scrollLeft, scrollWidth } = event.target as HTMLDivElement;
-    const imageSetWidth = scrollWidth / 3;
-
-    // If scrolled to the first set, jump to the middle set
-    if (scrollLeft < imageSetWidth * 0.5) {
-      carouselRef.current.scrollLeft = imageSetWidth + scrollLeft;
-    }
-    // If scrolled to the last set, jump to the middle set
-    else if (scrollLeft > imageSetWidth * 2.5) {
-      carouselRef.current.scrollLeft = scrollLeft - imageSetWidth;
-    }
+  const goToPrevious = () => {
+    setSlideDirection("left");
+    setTransitioningFromIndex(currentImageIndex);
+    setIsTransitioning(true);
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + ABOUT_IMAGES.length) % ABOUT_IMAGES.length
+    );
+    startAutoRotate(); // Reset timer on manual navigation
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setTransitioningFromIndex(null);
+    }, 600); // Match transition duration
   };
 
-  const scrollCarousel = (direction: "left" | "right") => {
-    if (!carouselRef.current) return;
-    // Scroll by one image width (800px) plus gap (16px)
-    const scrollAmount = 816;
-    const newScrollLeft =
-      direction === "left"
-        ? carouselRef.current.scrollLeft - scrollAmount
-        : carouselRef.current.scrollLeft + scrollAmount;
-    carouselRef.current.scrollTo({ left: newScrollLeft, behavior: "smooth" });
+  const goToNext = () => {
+    setSlideDirection("right");
+    setTransitioningFromIndex(currentImageIndex);
+    setIsTransitioning(true);
+    setCurrentImageIndex((prev) => (prev + 1) % ABOUT_IMAGES.length);
+    startAutoRotate(); // Reset timer on manual navigation
+    setTimeout(() => {
+      setIsTransitioning(false);
+      setTransitioningFromIndex(null);
+    }, 600); // Match transition duration
+  };
+
+  // Calculate normalized offset for an image index
+  // During transition, use the previous index to calculate positions
+  const getNormalizedOffset = (imageIndex: number) => {
+    const referenceIndex =
+      isTransitioning && transitioningFromIndex !== null
+        ? transitioningFromIndex
+        : currentImageIndex;
+    let offset = imageIndex - referenceIndex;
+    // Normalize offset to handle wrapping
+    if (offset > ABOUT_IMAGES.length / 2) {
+      offset -= ABOUT_IMAGES.length;
+    } else if (offset < -ABOUT_IMAGES.length / 2) {
+      offset += ABOUT_IMAGES.length;
+    }
+    return offset;
+  };
+
+  // Calculate the position and transform for each image card
+  const getImageTransform = (imageIndex: number) => {
+    const offset = getNormalizedOffset(imageIndex);
+    const isCurrent = offset === 0;
+    const isPrev = offset === -1;
+    const isNext = offset === 1;
+    const isNextNext = offset === 2;
+    const isPrevPrev = offset === -2;
+
+    // Show more cards during transition to reveal the emerging card
+    const isVisible = isTransitioning
+      ? Math.abs(offset) <= 2 // Show up to 2 cards on each side during transition
+      : Math.abs(offset) <= 1; // Normal: only show immediate neighbors
+
+    // Card spacing
+    const baseSpacing = 280;
+    const farSpacing = 525; // Far enough to not overlap
+    const nextSpacing = 50;
+
+    let translateX = 0;
+    let scale = 1;
+    let zIndex = 1;
+
+    if (isCurrent) {
+      // Current card: move far left/right when transitioning
+      if (isTransitioning) {
+        if (slideDirection === "right") {
+          translateX = -farSpacing; // Move far left
+        } else {
+          translateX = farSpacing * 0.92; // Move far right
+        }
+        scale = 0.85;
+        zIndex = 3; // Second highest z-index when going out
+      } else {
+        translateX = 0; // Center
+        zIndex = 3; // Highest when in center
+        scale = 1;
+      }
+    } else if (isNext) {
+      // Next card: move to center when transitioning right, stay in place when transitioning left
+      if (isTransitioning) {
+        if (slideDirection === "right") {
+          translateX = nextSpacing; // Move to center
+          scale = 1;
+          zIndex = 2; // Highest when becoming center
+        } else {
+          // When going left, next card should move closer but not all the way
+          translateX = baseSpacing * 0.5; // Move closer
+          scale = 0.7;
+          zIndex = 0;
+        }
+      } else {
+        translateX = baseSpacing; // Normal position on right
+        scale = 0.85;
+        zIndex = 2;
+      }
+    } else if (isPrev) {
+      // Previous card: move to center when transitioning left, stay in place when transitioning right
+      if (isTransitioning) {
+        if (slideDirection === "left") {
+          translateX = -nextSpacing; // Move to center
+          scale = 1;
+          zIndex = 2; // Highest when becoming center
+        } else {
+          // When going right, prev card should move closer but not all the way
+          translateX = -baseSpacing * 0.5; // Move closer
+          scale = 0.7;
+          zIndex = 0;
+        }
+      } else {
+        translateX = -baseSpacing; // Normal position on left
+        scale = 0.85;
+        zIndex = 2;
+      }
+    } else if (isNextNext) {
+      // Card that will be on the right after transition (when going right)
+      if (isTransitioning && slideDirection === "right") {
+        translateX = baseSpacing; // Move to right side position
+        scale = 0.85;
+        zIndex = 1;
+      } else {
+        translateX = 0;
+        scale = 0.85;
+        zIndex = 1;
+      }
+    } else if (isPrevPrev) {
+      // Card that will be on the left after transition (when going left)
+      if (isTransitioning && slideDirection === "left") {
+        translateX = -baseSpacing; // Move to left side position
+        scale = 0.85;
+        zIndex = 1;
+      } else {
+        translateX = 0;
+        scale = 0.85;
+        zIndex = 1;
+      }
+    } else {
+      // Other cards: not visible
+      translateX = 0;
+      scale = 0.85;
+      zIndex = 0;
+    }
+
+    return { translateX, scale, isVisible, offset, zIndex };
   };
 
   return (
@@ -306,30 +572,43 @@ export default function About() {
           improve and maintain Berkeleytime.
         </p>
         <div className={styles.carouselContainer}>
-          <div
-            className={styles.carousel}
-            ref={carouselRef}
-            onScroll={handleCarouselScroll}
-          >
-            {infiniteImages.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Team photo ${(index % ABOUT_IMAGES.length) + 1}`}
-                className={styles.carouselImage}
-              />
-            ))}
+          <div className={styles.carousel}>
+            <div className={styles.carouselTrack}>
+              {ABOUT_IMAGES.map((image, index) => {
+                const { translateX, scale, isVisible, zIndex } =
+                  getImageTransform(index);
+
+                return (
+                  <div
+                    key={index}
+                    className={styles.carouselImageWrapper}
+                    style={{
+                      transform: `translateX(${translateX}px) scale(${scale})`,
+                      opacity: isVisible ? 1 : 0,
+                      zIndex: zIndex,
+                      pointerEvents: isVisible ? "auto" : "none",
+                    }}
+                  >
+                    <img
+                      src={image}
+                      alt={`Team photo ${index + 1}`}
+                      className={styles.carouselImage}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
           <button
             className={`${styles.carouselButton} ${styles.carouselButtonLeft}`}
-            onClick={() => scrollCarousel("left")}
+            onClick={goToPrevious}
             aria-label="Previous image"
           >
             <NavArrowLeft />
           </button>
           <button
             className={`${styles.carouselButton} ${styles.carouselButtonRight}`}
-            onClick={() => scrollCarousel("right")}
+            onClick={goToNext}
             aria-label="Next image"
           >
             <NavArrowRight />
@@ -455,20 +734,52 @@ export default function About() {
         <div className={styles.grid}>
           {filteredTeamMembers?.map((member) => {
             // Get the role for the latest semester
-            const latestRole = member.roles.find(
+            const displayRole = member.roles.find(
               (role) =>
-                role.year === latestTerm.year &&
-                role.semester === latestTerm.semester
+                role.year === (selectedTerm ?? latestTerm).year &&
+                role.semester === (selectedTerm ?? latestTerm).semester
             );
-            const displayRole =
-              latestRole || member.roles[member.roles.length - 1];
+
+            const fillInField = (field: "photo" | "altPhoto") => {
+              const startIndex = availableTerms.findIndex(
+                (term) =>
+                  term.year === (selectedTerm ?? latestTerm).year &&
+                  term.semester === (selectedTerm ?? latestTerm).semester
+              );
+              for (let offset = 1; offset < availableTerms.length; offset++) {
+                // Try negative offset first (earlier terms)
+                const earlierIndex = startIndex - offset;
+                if (earlierIndex >= 0) {
+                  const term = availableTerms[earlierIndex];
+                  const role = member.roles.find(
+                    (r) => r.year === term.year && r.semester === term.semester
+                  );
+                  if (role?.[field]) {
+                    return role[field];
+                  }
+                }
+
+                // Try positive offset (later terms)
+                const laterIndex = startIndex + offset;
+                if (laterIndex < availableTerms.length) {
+                  const term = availableTerms[laterIndex];
+                  const role = member.roles.find(
+                    (r) => r.year === term.year && r.semester === term.semester
+                  );
+                  if (role?.[field]) {
+                    return role[field];
+                  }
+                }
+              }
+              return undefined;
+            };
             return (
               <MemberCard
                 key={member.id}
                 name={member.name}
-                imageUrl={displayRole.photo || undefined}
-                altImageUrl={displayRole.altPhoto || undefined}
-                role={displayRole.role}
+                imageUrl={displayRole!.photo ?? fillInField("photo")}
+                altImageUrl={displayRole!.altPhoto ?? fillInField("altPhoto")}
+                role={displayRole!.role}
                 link={member.personalLink || undefined}
               />
             );

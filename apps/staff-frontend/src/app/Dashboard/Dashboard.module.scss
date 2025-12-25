@@ -477,3 +477,59 @@
   height: 100%;
   object-fit: cover;
 }
+
+.podsWrapper {
+  width: 100%;
+}
+
+.podSemesterGroup {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.podSemesterHeader {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.podList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.podItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  max-width: 320px;
+}
+
+.deletePodButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--label-color);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: var(--button-hover-color);
+    color: var(--paragraph-color);
+  }
+}
