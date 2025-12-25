@@ -250,7 +250,7 @@ export default function About() {
         member.roles.length == 0
       )
         return;
-      const latestRole = member.roles.sort((a, b) => b.year - a.year)[0];
+      const latestRole = member.roles.toSorted((a, b) => b.year - a.year)[0];
       years.add(latestRole.year);
     });
     // Add years from constant LEGACY_ALUMNI
@@ -348,7 +348,7 @@ export default function About() {
               role.year === latestTerm.year &&
               role.semester === latestTerm.semester
           ) &&
-          member.roles.sort((a, b) => b.year - a.year)[0].year ===
+          member.roles.toSorted((a, b) => b.year - a.year)[0].year ===
             selectedAlumniYear
       ) || [];
 
@@ -803,35 +803,46 @@ export default function About() {
           ))}
         </div>
         <div className={styles.alumniGrid}>
-          {filteredAlumni?.map((member) => {
-            // Get the role for the selected year, or the most recent alumni role
-            const roleForYear =
-              selectedAlumniYear !== null
-                ? member.roles.find((r) => r.year === selectedAlumniYear)
-                : member.roles.find(
-                    (r) =>
-                      r.year === latestTerm.year &&
-                      r.semester === latestTerm.semester
-                  );
-            const displayRole = roleForYear || member.roles[0];
+          {[...(filteredAlumni ?? [])]
+            .map((member) => {
+              // Find the most senior role across any year
+              const getRoleIndex = (roleName: string) => {
+                const idx = STAFF_ROLES.findIndex((r) => r.name === roleName);
+                return idx === -1 ? 999 : idx;
+              };
 
-            const isPresident = displayRole.role
-              .toLowerCase()
-              .includes("president");
+              const mostSeniorRole = member.roles.reduce((prev, curr) =>
+                getRoleIndex(curr.role) < getRoleIndex(prev.role) ? curr : prev
+              );
 
-            return (
+              return {
+                ...member,
+                _displayRole: mostSeniorRole,
+              };
+            })
+            .sort((a, b) => {
+              // Sort by most senior role index (lowest index first), then name
+              const getRoleIndex = (roleName: string) => {
+                const idx = STAFF_ROLES.findIndex((r) => r.name === roleName);
+                return idx === -1 ? 999 : idx;
+              };
+              const aIdx = getRoleIndex(a._displayRole.role);
+              const bIdx = getRoleIndex(b._displayRole.role);
+              if (aIdx !== bIdx) {
+                return aIdx - bIdx;
+              }
+              return a.name.localeCompare(b.name);
+            })
+            .map((member) => (
               <MemberCard
                 key={member.id}
                 name={member.name}
                 imageUrl={undefined}
-                role={displayRole.role}
+                role={member._displayRole.role}
                 link={member.personalLink || undefined}
-                showBadge={isPresident}
-                badgeLabel="P"
                 hideImage={true}
               />
-            );
-          })}
+            ))}
         </div>
       </div>
 

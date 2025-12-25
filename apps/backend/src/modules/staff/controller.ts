@@ -191,7 +191,7 @@ export const updateStaffInfo = async (
 
   const updateData: Record<string, unknown> = {};
 
-  if (input.name !== undefined) {
+  if (input.name) {
     updateData.name = input.name.trim();
   }
 
