@@ -23,6 +23,10 @@ on:
         description: "Helm chart override values (yaml)"
         required: true
         type: string
+      deploy_staff:
+        description: "Deploy staff dashboard (prod only)"
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -58,6 +62,28 @@ jobs:
               kubectl rollout restart deployment ${{ inputs.name }}-frontend
             fi
 
+            # Deploy staff dashboard if requested
+            if [ "${{ inputs.deploy_staff }}" = "true" ]; then
+              echo "Deploying staff dashboard..."
+
+              # Check if staff helm chart exists
+              helm status ${{ inputs.name }}-staff &>/dev/null && staff_status=true || staff_status=false
+
+              # Upgrade staff helm chart, or install if not exists
+              helm upgrade ${{ inputs.name }}-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff \
+                --install \
+                --version=${{ inputs.version }} \
+                --namespace=bt
+
+              # Restart deployment if helm chart existed
+              if [ $staff_status = true ]; then
+                kubectl rollout restart deployment ${{ inputs.name }}-staff-frontend
+              fi
+
+              # Check container status
+              kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-staff-frontend
+            fi
+
             # Check container status
             kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-backend
             kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-frontend
@@ -65,3 +91,6 @@ jobs:
       - name: Output Summary
         run: |
           echo "# :white_check_mark: Deployment available at [${{ inputs.host }}](https://${{ inputs.host }})." >> $GITHUB_STEP_SUMMARY
+          if [ "${{ inputs.deploy_staff }}" = "true" ]; then
+            echo "# :white_check_mark: Staff dashboard available at [staff.berkeleytime.com](https://staff.berkeleytime.com)." >> $GITHUB_STEP_SUMMARY
+          fi
