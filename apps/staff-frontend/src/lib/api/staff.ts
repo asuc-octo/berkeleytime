@@ -21,6 +21,7 @@ export interface StaffMember {
   email?: string;
   personalLink?: string;
   addedByName?: string;
+  createdAt?: string;
   roles: SemesterRole[];
 }
 
@@ -48,6 +49,7 @@ export const ALL_STAFF_MEMBERS = gql`
       email
       personalLink
       addedByName
+      createdAt
       roles {
         id
         year
@@ -71,6 +73,7 @@ export const STAFF_MEMBER_BY_USER_ID = gql`
       email
       personalLink
       addedByName
+      createdAt
       roles {
         id
         year
@@ -95,6 +98,7 @@ export const ENSURE_STAFF_MEMBER = gql`
       email
       personalLink
       addedByName
+      createdAt
       roles {
         id
         year
@@ -136,6 +140,7 @@ export const UPDATE_STAFF_INFO = gql`
       email
       personalLink
       addedByName
+      createdAt
       roles {
         id
         year

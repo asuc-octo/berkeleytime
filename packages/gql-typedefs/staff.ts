@@ -12,6 +12,7 @@ export const staffTypeDef = gql`
     personalLink: String
     addedBy: ID
     addedByName: String
+    createdAt: String
     roles: [SemesterRole!]!
   }
 
