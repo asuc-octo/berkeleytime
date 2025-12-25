@@ -79,7 +79,7 @@ export const getStaffMemberByUserId = async (userId: string) => {
 };
 
 export const getAllStaffMembers = async () => {
-  const members = await StaffMemberModel.find().sort({ name: 1 }).lean();
+  const members = await StaffMemberModel.find().sort({ createdAt: -1 }).lean();
   return members;
 };
 

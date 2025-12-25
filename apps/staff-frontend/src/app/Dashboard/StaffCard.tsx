@@ -27,6 +27,7 @@ export interface StaffMember {
   email?: string;
   personalLink?: string;
   addedByName?: string;
+  createdAt?: string;
   roles: SemesterRole[];
 }
 
