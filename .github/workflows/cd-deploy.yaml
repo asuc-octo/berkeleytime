@@ -25,7 +25,6 @@ on:
         type: string
       deploy_staff:
         description: "Deploy staff dashboard (prod only)"
-        required: true
         type: boolean
         default: false
 
