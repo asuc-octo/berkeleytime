@@ -215,22 +215,13 @@ export default function NavigationBar({
               </MenuItem>
             )}
           </NavLink>
-          {/* 
-          Hide for now, re-enable when people are populated
           <NavLink to="/about">
             {({ isActive }) => (
               <MenuItem className={styles.item} active={isActive}>
                 About
               </MenuItem>
             )}
-          </NavLink> */}
-          {/* <NavLink to="/about">
-          {({ isActive }) => (
-            <MenuItem className={styles.item} active={isActive}>
-              About
-            </MenuItem>
-          )}
-        </NavLink> */}
+          </NavLink>
         </div>
         <IconButton
           className={styles.compactMenuButton}
