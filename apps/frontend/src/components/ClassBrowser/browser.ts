@@ -4,6 +4,7 @@ import {
   ISectionAttriuteInfo,
   academicCareersMap,
 } from "@/lib/api";
+import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
 import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
@@ -329,12 +330,20 @@ export const getIndex = (classes: ICatalogClass[]) => {
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
-    const abbreviations = departmentNicknames
+    const sisNicknames = departmentNicknames
       ? departmentNicknames
           .split("!")
           .map((abbr: string) => abbr.trim().toLowerCase())
           .filter(Boolean)
       : [];
+
+    const hardcodedNicknames = (SUBJECT_NICKNAME_MAP[subject] || []).map((n) =>
+      n.toLowerCase()
+    );
+
+    const abbreviations = [
+      ...new Set([...sisNicknames, ...hardcodedNicknames]),
+    ];
 
     const alternateNames = abbreviations.reduce(
       (acc, abbreviation) => {

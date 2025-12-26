@@ -1,4 +1,5 @@
 import { ICatalogClass } from "@/lib/api";
+import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SortBy } from "./browser";
@@ -21,12 +22,20 @@ const initializeFuse = (classes: ICatalogClass[]) => {
     const alternateNumber = number.slice(1);
 
     const departmentNicknames = _class.course?.departmentNicknames;
-    const abbreviations: string[] = departmentNicknames
+    const sisNicknames: string[] = departmentNicknames
       ? departmentNicknames
           .split("!")
           .map((abbr: string) => abbr.trim().toLowerCase())
           .filter(Boolean)
       : [];
+
+    const hardcodedNicknames = (SUBJECT_NICKNAME_MAP[subject] || []).map((n) =>
+      n.toLowerCase()
+    );
+
+    const abbreviations = [
+      ...new Set([...sisNicknames, ...hardcodedNicknames]),
+    ];
 
     const alternateNames = [
       ...(containsPrefix
