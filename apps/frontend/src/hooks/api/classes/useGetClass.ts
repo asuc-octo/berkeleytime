@@ -1,21 +1,19 @@
 import { useQuery } from "@apollo/client/react";
 
 import {
-  GET_CLASS_DETAILS,
-  GET_CLASS_ENROLLMENT,
-  GET_CLASS_GRADES,
-  GET_CLASS_RATINGS,
-  GET_CLASS_SECTIONS,
-} from "@/lib/api/classes";
-import {
+  GetClassDetailsDocument,
   GetClassDetailsQuery,
   GetClassDetailsQueryVariables,
+  GetClassEnrollmentDocument,
   GetClassEnrollmentQuery,
   GetClassEnrollmentQueryVariables,
+  GetClassGradesDocument,
   GetClassGradesQuery,
   GetClassGradesQueryVariables,
+  GetClassRatingsDocument,
   GetClassRatingsQuery,
   GetClassRatingsQueryVariables,
+  GetClassSectionsDocument,
   GetClassSectionsQuery,
   GetClassSectionsQueryVariables,
   Semester,
@@ -33,7 +31,7 @@ export const useGetClass = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_DETAILS, {
+  const query = useQuery(GetClassDetailsDocument, {
     ...options,
     variables: {
       year,
@@ -64,7 +62,7 @@ export const useGetClassSections = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_SECTIONS, {
+  const query = useQuery(GetClassSectionsDocument, {
     ...options,
     variables: {
       year,
@@ -94,7 +92,7 @@ export const useGetClassGrades = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_GRADES, {
+  const query = useQuery(GetClassGradesDocument, {
     ...options,
     variables: {
       year,
@@ -124,7 +122,7 @@ export const useGetClassEnrollment = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_ENROLLMENT, {
+  const query = useQuery(GetClassEnrollmentDocument, {
     ...options,
     variables: {
       year,
@@ -150,7 +148,7 @@ export const useGetClassRatings = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_RATINGS, {
+  const query = useQuery(GetClassRatingsDocument, {
     ...options,
     variables: {
       subject,

@@ -12,7 +12,7 @@ export interface ReadUserResponse {
 }
 
 export const BASE = import.meta.env.DEV
-  ? "http://localhost:8080"
+  ? "http://localhost:3000"
   : "https://berkeleytime.com";
 
 export const READ_USER = gql`

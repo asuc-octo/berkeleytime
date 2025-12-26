@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { IconButton, Select, Tooltip } from "@repo/theme";
 import type { Option } from "@repo/theme";
 
-import Week from "@/app/Schedule/Week";
+import Week from "@/app/Schedule/Editor/Week";
 import Units from "@/components/Units";
 import { useReadSchedule, useReadSchedules } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";

@@ -203,6 +203,7 @@ export default function SideBar({
               selectedSections={selectedClass.selectedSections}
               semester={schedule.semester}
               year={schedule.year}
+              sessionId={schedule.sessionId}
               color={selectedClass.color!}
               hidden={selectedClass.hidden ?? false}
               locked={selectedClass.locked ?? false}
@@ -210,6 +211,7 @@ export default function SideBar({
               lockedComponents={selectedClass.lockedComponents ?? []}
               expanded={expanded[index] ?? false}
               onExpandedChange={(expanded) => onExpandedChange(index, expanded)}
+              editing={editing}
               onSectionSelect={onSectionSelect}
               onSectionMouseOver={onSectionMouseOver}
               onSectionMouseOut={onSectionMouseOut}

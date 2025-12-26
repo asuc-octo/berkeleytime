@@ -26,9 +26,9 @@ export default async (
       // Allow requests from the local frontend (should be the only requirement)
       origin: [
         config.url,
-        "http://localhost:8080",
-        "http://localhost:8081",
-        "http://localhost:8082",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
         "https://ag.berkeleytime.com",
         "https://staff.berkeleytime.com",
       ],

@@ -27,9 +27,11 @@ import Section from "./Section";
 interface ClassProps {
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
+  editing: boolean;
   class: IScheduleClass["class"];
   semester: Semester;
   year: number;
+  sessionId: string;
   color: Color;
   hidden?: boolean;
   locked?: boolean;
@@ -94,9 +96,11 @@ interface ClassProps {
 export default function Class({
   expanded,
   onExpandedChange,
+  editing,
   class: _class,
   semester,
   year,
+  sessionId,
   color,
   hidden = false,
   locked = false,
@@ -228,6 +232,7 @@ export default function Class({
       courseNumber={_class.courseNumber}
       year={year}
       semester={semester}
+      sessionId={sessionId}
       open={drawerOpen}
       onOpenChange={setDrawerOpen}
     >
@@ -255,7 +260,9 @@ export default function Class({
           expanded={expanded}
           onExpandedChange={onExpandedChange}
           leftBorderColor={hidden ? undefined : color}
-          customActionMenu={<ActionMenu menuItems={menuItems} asIcon />}
+          customActionMenu={
+            editing ? <ActionMenu menuItems={menuItems} asIcon /> : undefined
+          }
           wrapDescription={true}
           onUnlock={
             locked
@@ -377,6 +384,7 @@ export default function Class({
                     ? true
                     : false
                 }
+                editing={editing}
                 onBlockToggle={() => {
                   onSectionBlockToggle(
                     _class.subject,
@@ -502,6 +510,7 @@ export default function Class({
                     <Section
                       active={active}
                       blocked={isBlocked}
+                      editing={editing}
                       onBlockToggle={() => {
                         onSectionBlockToggle(
                           _class.subject,

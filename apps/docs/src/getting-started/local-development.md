@@ -40,7 +40,7 @@ Open the docker desktop application, then run:
 docker compose up -d
 ```
 
-The Berkeleytime application should now be running locally at `http://localhost:8080`! Make sure that each page (catalog, grades, etc.) is working as expected.
+The Berkeleytime application should now be running locally at `http://localhost:3000`! Make sure that each page (catalog, grades, etc.) is working as expected.
 
 ## Common Commands
 
