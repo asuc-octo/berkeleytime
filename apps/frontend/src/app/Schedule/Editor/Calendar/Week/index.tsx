@@ -33,7 +33,7 @@ export default function Week({ days, finals, dead, first, last }: WeekProps) {
           <Day
             key={date.format("YYYY-MM-DD")}
             date={date}
-            events={events}
+            events={dead ? [] : events}
             active={date.isBetween(first, last, "day", "[]")}
           />
         ))}

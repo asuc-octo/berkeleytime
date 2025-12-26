@@ -7,13 +7,14 @@ import {
   Edit,
   ShareIos,
   Shuffle,
+  Upload,
   ViewColumns2,
 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
+import { Button, IconButton, Input, MenuItem, Tooltip } from "@repo/theme";
 
-import Week from "@/app/Schedule/Week";
+import Week from "@/app/Schedule/Editor/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
 import { IScheduleClass, IScheduleEvent } from "@/lib/api";
@@ -30,6 +31,7 @@ import GenerateSchedulesDialog from "./GenerateSchedulesDialog";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
+import exportToCalendar from "./exportToCalendar";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
@@ -46,6 +48,39 @@ export default function Editor() {
     null
   );
   const [tab, setTab] = useState(0);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState(schedule.name);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
+  // Update nameValue when schedule.name changes
+  useEffect(() => {
+    setNameValue(schedule.name);
+  }, [schedule.name]);
+
+  const handleStartEditName = () => {
+    setIsEditingName(true);
+    setNameValue(schedule.name);
+    // Focus the input after it's rendered
+    setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.select();
+    }, 0);
+  };
+
+  const handleSaveName = () => {
+    const trimmedValue = nameValue.trim();
+    if (trimmedValue && trimmedValue !== schedule.name) {
+      updateSchedule(schedule._id, { name: trimmedValue });
+    } else {
+      setNameValue(schedule.name);
+    }
+    setIsEditingName(false);
+  };
+
+  const handleCancelEditName = () => {
+    setNameValue(schedule.name);
+    setIsEditingName(false);
+  };
 
   const selectedSections = useMemo(
     () => getSelectedSections(schedule),
@@ -405,6 +440,10 @@ export default function Editor() {
           };
         }),
         color: getNextClassColor(_schedule.classes.length),
+        hidden: false,
+        locked: false,
+        blockedSections: [],
+        lockedComponents: [],
       });
 
       // Update the schedule
@@ -517,6 +556,7 @@ export default function Editor() {
       classNumber: string,
       locked: boolean
     ) => {
+      if (!editing) return;
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -576,6 +616,7 @@ export default function Editor() {
       classNumber: string,
       hidden: boolean
     ) => {
+      if (!editing) return;
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -636,6 +677,7 @@ export default function Editor() {
       sectionId: number,
       blocked: boolean
     ) => {
+      if (!editing) return;
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -713,6 +755,7 @@ export default function Editor() {
       component: Component,
       blocked: boolean
     ) => {
+      if (!editing) return;
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -795,6 +838,7 @@ export default function Editor() {
       component: Component,
       locked: boolean
     ) => {
+      if (!editing) return;
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -1081,12 +1125,36 @@ export default function Editor() {
             }
             title="Back to schedules"
           />
-          <p className={styles.heading}>{schedule.name}</p>
+          {isEditingName ? (
+            <Input
+              ref={nameInputRef}
+              value={nameValue}
+              onChange={(e) => setNameValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSaveName();
+                } else if (e.key === "Escape") {
+                  handleCancelEditName();
+                }
+              }}
+              onBlur={handleSaveName}
+              className={styles.heading}
+              style={{ fontSize: "inherit", fontWeight: "inherit" }}
+            />
+          ) : (
+            <p
+              className={styles.heading}
+              onClick={editing ? handleStartEditName : undefined}
+              style={editing ? { cursor: "pointer" } : undefined}
+            >
+              {schedule.name}
+            </p>
+          )}
           {editing && (
             <EditDialog>
               <Tooltip
                 trigger={
-                  <IconButton>
+                  <IconButton onClick={handleStartEditName}>
                     <Edit />
                   </IconButton>
                 }
@@ -1107,12 +1175,14 @@ export default function Editor() {
             Map
           </MenuItem> */}
         </div>
-        <GenerateSchedulesDialog schedule={schedule}>
-          <Button variant="secondary">
-            <Shuffle />
-            Generate
-          </Button>
-        </GenerateSchedulesDialog>
+        {editing && (
+          <GenerateSchedulesDialog schedule={schedule}>
+            <Button variant="secondary">
+              <Shuffle />
+              Generate
+            </Button>
+          </GenerateSchedulesDialog>
+        )}
         <Link to="compare">
           <Button variant="secondary">
             <ViewColumns2 />
@@ -1125,6 +1195,10 @@ export default function Editor() {
             Clone
           </Button>
         </CloneDialog>
+        <Button variant="secondary" onClick={() => exportToCalendar(schedule)}>
+          <Upload />
+          Export
+        </Button>
         {editing && (
           <ShareDialog>
             <Button>

@@ -16,6 +16,7 @@ interface SectionProps {
   onBlockToggle?: () => void;
   active: boolean;
   blocked?: boolean;
+  editing?: boolean;
 }
 
 export default function Section({
@@ -25,6 +26,7 @@ export default function Section({
   onBlockToggle,
   active,
   blocked = false,
+  editing = true,
   sectionId,
   number,
   meetings,
@@ -35,6 +37,7 @@ export default function Section({
       className={classNames(styles.root, {
         [styles.active]: active && !blocked,
         [styles.blocked]: blocked,
+        [styles.noHover]: !editing,
       })}
       key={sectionId}
       onClick={(e) => {

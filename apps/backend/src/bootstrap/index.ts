@@ -23,7 +23,7 @@ export default async (config: Config) => {
   );
 
   console.log(
-    `\tServer ready (in Host network) at:\thttp://localhost:8080${config.backendPath}`
+    `\tServer ready (in Host network) at:\thttp://localhost:3000${config.backendPath}`
   );
 };
 

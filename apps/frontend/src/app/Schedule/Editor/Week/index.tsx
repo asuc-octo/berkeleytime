@@ -1,12 +1,20 @@
-import { MouseEvent, useMemo, useRef, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { Color } from "@repo/theme";
 
 import { IScheduleEvent } from "@/lib/api";
 
-import { ScheduleEvent, SectionColor, getY } from "../schedule";
+import { ScheduleEvent, SectionColor } from "../../schedule";
 import Event from "./Event";
 import styles from "./Week.module.scss";
+
+// Local getY function that starts at midnight (12 AM) instead of 6 AM
+export const getY = (time: string) => {
+  const [hour, minute] = time.split(":");
+  const hourNum = parseInt(hour, 10);
+  const minuteNum = parseInt(minute, 10);
+  return hourNum * 60 + minuteNum;
+};
 
 // You have to trust me on this math
 const adjustAttachedEvents = (
@@ -16,13 +24,16 @@ const adjustAttachedEvents = (
   positions: Record<string, [number, number]>
 ) => {
   const adjustedSections: string[] = [];
+  const MAX_MINUTES = minutes.length;
 
   const adjustSection = (id: string) => {
     if (adjustedSections.includes(id)) return;
 
     adjustedSections.push(id);
 
-    positions[id][1]++;
+    if (positions[id]) {
+      positions[id][1]++;
+    }
 
     const event = relevantEventsAndSections.find((event) => id === event.id);
 
@@ -31,9 +42,16 @@ const adjustAttachedEvents = (
     const top = getY(event.startTime);
     const height = getY(event.endTime) - top;
 
-    for (let i = top; i < top + height; i++) {
-      for (const id of minutes[i]) {
-        adjustSection(id);
+    // Clamp to valid bounds to prevent out-of-bounds access
+    const start = Math.max(0, Math.min(top, MAX_MINUTES - 1));
+    const end = Math.max(0, Math.min(top + height, MAX_MINUTES));
+
+    for (let i = start; i < end; i++) {
+      const minuteArray = minutes[i];
+      if (minuteArray) {
+        for (const id of minuteArray) {
+          adjustSection(id);
+        }
       }
     }
   };
@@ -65,6 +83,7 @@ export default function Week({
 }: WeekProps) {
   const viewRef = useRef<HTMLDivElement>(null);
   const [localY, setLocalY] = useState<number | null>(null);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   const y = useMemo(() => localY ?? remoteY, [localY, remoteY]);
 
@@ -72,6 +91,37 @@ export default function Week({
     setLocalY(y);
     updateRemoteY?.(y);
   };
+
+  // Scroll to 12pm (noon) on initial load
+  useEffect(() => {
+    if (!hasScrolled && viewRef.current) {
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        if (!viewRef.current) return;
+
+        // Find the scrollable parent container
+        let scrollableParent: HTMLElement | null =
+          viewRef.current.parentElement;
+        while (scrollableParent) {
+          const style = window.getComputedStyle(scrollableParent);
+          if (
+            style.overflow === "auto" ||
+            style.overflowY === "auto" ||
+            style.overflow === "scroll" ||
+            style.overflowY === "scroll"
+          ) {
+            // 8am is hour 8, which is 8 * 60 = 720 minutes from midnight
+            // Each hour is 60px tall, so 8am is at 8 * 60 = 480px from the top
+            const scrollPosition = 8 * 60; // 480px
+            scrollableParent.scrollTop = scrollPosition;
+            setHasScrolled(true);
+            break;
+          }
+          scrollableParent = scrollableParent.parentElement;
+        }
+      });
+    }
+  }, [hasScrolled]);
 
   const sections = useMemo(
     () =>
@@ -83,7 +133,7 @@ export default function Week({
     () =>
       [...Array(7)].map((_, day) => {
         const positions: Record<string, [number, number]> = {};
-        const minutes: string[][] = [...Array(60 * 18)].map(() => []);
+        const minutes: string[][] = [...Array(60 * 24)].map(() => []);
 
         const relevantEvents = events
           // Filter events for the current day
@@ -109,7 +159,7 @@ export default function Week({
                 (meeting) =>
                   meeting.days?.[day] &&
                   meeting.startTime &&
-                  getY(meeting.startTime) > 0
+                  getY(meeting.startTime) >= 0
               )
               .map(
                 (meeting) =>
@@ -128,24 +178,41 @@ export default function Week({
         const relevantEventsAndSections = [
           ...relevantEvents,
           ...relevantSections,
-        ].sort(
-          (a, b) =>
-            getY(a.startTime) - getY(b.startTime) ||
-            getY(a.endTime) - getY(b.endTime)
-        );
+        ]
+          // Filter out events that are completely out of bounds
+          .filter((event) => {
+            const top = getY(event.startTime);
+            const bottom = getY(event.endTime);
+            const MAX_MINUTES = minutes.length;
+            // Keep events that overlap with the visible range [0, MAX_MINUTES)
+            return bottom > 0 && top < MAX_MINUTES;
+          })
+          .sort(
+            (a, b) =>
+              getY(a.startTime) - getY(b.startTime) ||
+              getY(a.endTime) - getY(b.endTime)
+          );
 
         // Maintain an array of sections that are attached to each minute
         for (const event of relevantEventsAndSections) {
           const top = getY(event.startTime);
           const height = getY(event.endTime) - top;
+          const MAX_MINUTES = minutes.length;
 
-          const attachedSections = minutes[top];
+          // Clamp to valid bounds
+          const clampedTop = Math.max(0, Math.min(top, MAX_MINUTES - 1));
+          const clampedBottom = Math.max(
+            0,
+            Math.min(top + height, MAX_MINUTES)
+          );
+
+          const attachedSections = minutes[clampedTop];
 
           let position = 0;
 
           while (
             attachedSections?.findIndex(
-              (eventId) => positions[eventId][0] === position
+              (eventId) => positions[eventId]?.[0] === position
             ) !== -1
           ) {
             position++;
@@ -155,7 +222,7 @@ export default function Week({
             attachedSections.length > 0 &&
             Math.max(
               position,
-              ...attachedSections.map((eventId) => positions[eventId][0])
+              ...attachedSections.map((eventId) => positions[eventId]?.[0] ?? 0)
             ) === position
           ) {
             adjustAttachedEvents(
@@ -170,11 +237,14 @@ export default function Week({
             position,
             attachedSections.length === 0
               ? 1
-              : positions[attachedSections[0]][1],
+              : (positions[attachedSections[0]]?.[1] ?? 1),
           ];
 
-          for (let i = top; i < top + height; i++) {
-            minutes[i].push(event.id);
+          // Only add to minutes array within valid bounds
+          for (let i = clampedTop; i < clampedBottom; i++) {
+            if (i >= 0 && i < MAX_MINUTES) {
+              minutes[i].push(event.id);
+            }
           }
         }
 
@@ -192,13 +262,32 @@ export default function Week({
     [sections, currentSection, events]
   );
 
+  const timeZoneLabel = useMemo(() => {
+    // Check if we're currently in Pacific Daylight Time (PDT) or Pacific Standard Time (PST)
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles",
+      timeZoneName: "short",
+    });
+    const parts = formatter.formatToParts(now);
+    const tzName = parts.find((part) => part.type === "timeZoneName")?.value;
+    // Return PDT or PST based on the timezone name, default to PST if not found
+    return tzName === "PDT" ? "PDT" : "PST";
+  }, []);
+
   const currentTime = useMemo(() => {
     if (!viewRef.current || !y) return;
 
-    const hour = (Math.floor(y / 60) + 6) % 12 || 12;
-    const minute = Math.floor(y % 60);
+    // Convert pixel position to minutes (24 hours = 1440 minutes)
+    const totalMinutes = Math.floor(
+      (y / viewRef.current.clientHeight) * (60 * 24)
+    );
+    const hour = Math.floor(totalMinutes / 60);
+    const minute = totalMinutes % 60;
+    const displayHour = hour % 12 || 12;
+    const ampm = hour < 12 ? "AM" : "PM";
 
-    return `${hour}:${minute < 10 ? `0${minute}` : minute}`;
+    return `${displayHour}:${minute < 10 ? `0${minute}` : minute} ${ampm}`;
   }, [y]);
 
   const updateY = (event: MouseEvent<HTMLDivElement>) => {
@@ -218,7 +307,7 @@ export default function Week({
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <div className={styles.timeZone}>PST</div>
+        <div className={styles.timeZone}>{timeZoneLabel}</div>
         <div className={styles.week}>
           <div className={styles.day}>Sunday</div>
           <div className={styles.day}>Monday</div>
@@ -242,18 +331,25 @@ export default function Week({
               {currentTime}
             </div>
           )}
-          {[...Array(17)].map((_, hour) => (
-            <div key={hour} className={styles.hour}>
-              {hour + 7 < 12
-                ? `${hour + 7} AM`
-                : `${hour + 7 === 12 ? 12 : hour - 5} PM`}
-            </div>
-          ))}
+          {[...Array(24)].map((_, hour) => {
+            const displayHour = (hour + 1) % 24;
+            return (
+              <div key={hour} className={styles.hour}>
+                {displayHour === 0
+                  ? "12 AM"
+                  : displayHour < 12
+                    ? `${displayHour} AM`
+                    : displayHour === 12
+                      ? "12 PM"
+                      : `${displayHour - 12} PM`}
+              </div>
+            );
+          })}
         </div>
         <div className={styles.week}>
           {rotateRight(days).map((events, day) => (
             <div key={day} className={styles.day}>
-              {[...Array(18)].map((_, hour) => (
+              {[...Array(24)].map((_, hour) => (
                 <div key={hour} className={styles.hour}></div>
               ))}
               {events.map((event) => (

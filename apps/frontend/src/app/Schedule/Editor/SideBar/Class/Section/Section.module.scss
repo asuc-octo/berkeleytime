@@ -4,7 +4,7 @@
   gap: 12px;
   cursor: pointer;
 
-  &:hover:not(.blocked) .title {
+  &:hover:not(.blocked):not(.noHover) .title {
     color: var(--heading-color);
   }
 

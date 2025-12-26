@@ -44,6 +44,7 @@ import {
 } from "@/lib/api";
 import {
   CreateRatingsDocument,
+  GetCourseOverviewByIdQuery,
   GetUserRatingsDocument,
   Semester,
 } from "@/lib/generated/graphql";
@@ -83,7 +84,7 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClassDetails;
-  course?: IClassCourse;
+  course?: GetCourseOverviewByIdQuery["courseById"];
   year?: never;
   semester?: never;
   sessionId?: never;

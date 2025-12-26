@@ -25,13 +25,16 @@ const adjustAttachedEvents = (
   positions: Record<string, [number, number]>
 ) => {
   const adjustedSections: string[] = [];
+  const MAX_MINUTES = minutes.length;
 
   const adjustSection = (id: string) => {
     if (adjustedSections.includes(id)) return;
 
     adjustedSections.push(id);
 
-    positions[id][1]++;
+    if (positions[id]) {
+      positions[id][1]++;
+    }
 
     const event = relevantEventsAndSections.find((event) => id === event.id);
 
@@ -40,9 +43,16 @@ const adjustAttachedEvents = (
     const top = getY(event.startTime);
     const height = getY(event.endTime) - top;
 
-    for (let i = top; i < top + height; i++) {
-      for (const id of minutes[i]) {
-        adjustSection(id);
+    // Clamp to valid bounds to prevent out-of-bounds access
+    const start = Math.max(0, Math.min(top, MAX_MINUTES - 1));
+    const end = Math.max(0, Math.min(top + height, MAX_MINUTES));
+
+    for (let i = start; i < end; i++) {
+      const minuteArray = minutes[i];
+      if (minuteArray) {
+        for (const id of minuteArray) {
+          adjustSection(id);
+        }
       }
     }
   };
@@ -179,24 +189,41 @@ export default function ScheduleSummary({ schedule }: ScheduleSummaryProps) {
         const relevantEventsAndSections = [
           ...relevantEvents,
           ...relevantSections,
-        ].sort(
-          (a, b) =>
-            getY(a.startTime) - getY(b.startTime) ||
-            getY(a.endTime) - getY(b.endTime)
-        );
+        ]
+          // Filter out events that are completely out of bounds
+          .filter((event) => {
+            const top = getY(event.startTime);
+            const bottom = getY(event.endTime);
+            const MAX_MINUTES = minutes.length;
+            // Keep events that overlap with the visible range [0, MAX_MINUTES)
+            return bottom > 0 && top < MAX_MINUTES;
+          })
+          .sort(
+            (a, b) =>
+              getY(a.startTime) - getY(b.startTime) ||
+              getY(a.endTime) - getY(b.endTime)
+          );
 
         // Maintain an array of sections that are attached to each minute
         for (const event of relevantEventsAndSections) {
           const top = getY(event.startTime);
           const height = getY(event.endTime) - top;
+          const MAX_MINUTES = minutes.length;
 
-          const attachedSections = minutes[top];
+          // Clamp to valid bounds
+          const clampedTop = Math.max(0, Math.min(top, MAX_MINUTES - 1));
+          const clampedBottom = Math.max(
+            0,
+            Math.min(top + height, MAX_MINUTES)
+          );
+
+          const attachedSections = minutes[clampedTop];
 
           let position = 0;
 
           while (
             attachedSections?.findIndex(
-              (eventId) => positions[eventId][0] === position
+              (eventId) => positions[eventId]?.[0] === position
             ) !== -1
           ) {
             position++;
@@ -206,7 +233,7 @@ export default function ScheduleSummary({ schedule }: ScheduleSummaryProps) {
             attachedSections.length > 0 &&
             Math.max(
               position,
-              ...attachedSections.map((eventId) => positions[eventId][0])
+              ...attachedSections.map((eventId) => positions[eventId]?.[0] ?? 0)
             ) === position
           ) {
             adjustAttachedEvents(
@@ -221,23 +248,28 @@ export default function ScheduleSummary({ schedule }: ScheduleSummaryProps) {
             position,
             attachedSections.length === 0
               ? 1
-              : positions[attachedSections[0]][1],
+              : (positions[attachedSections[0]]?.[1] ?? 1),
           ];
 
-          for (let i = top; i < top + height; i++) {
-            minutes[i].push(event.id);
+          // Only add to minutes array within valid bounds
+          for (let i = clampedTop; i < clampedBottom; i++) {
+            if (i >= 0 && i < MAX_MINUTES) {
+              minutes[i].push(event.id);
+            }
           }
         }
 
-        return relevantEventsAndSections.map((event) => {
-          const [position, columns] = positions[event.id];
+        return relevantEventsAndSections
+          .filter((event) => positions[event.id])
+          .map((event) => {
+            const [position, columns] = positions[event.id];
 
-          return {
-            ...event,
-            position,
-            columns,
-          };
-        });
+            return {
+              ...event,
+              position,
+              columns,
+            };
+          });
       }),
     [sections, events]
   );

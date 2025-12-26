@@ -1,15 +1,16 @@
 import { ComponentPropsWithRef, useState } from "react";
 
-import { EditPencil } from "iconoir-react";
+import { EditPencil, Trash } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import { Button, Dialog, Input } from "@repo/theme";
 
 import { BubbleCard, MenuItem } from "@/components/BubbleCard";
-import { useUpdateSchedule } from "@/hooks/api";
+import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import { IScheduleListSchedule } from "@/lib/api";
 
 import ScheduleSummary from "../ScheduleSummary";
+import { DeleteScheduleDialog } from "./DeleteScheduleDialog";
 
 interface ScheduleProps {
   _id: string;
@@ -25,8 +26,10 @@ export default function ScheduleCard({
 }: ScheduleProps & Omit<ComponentPropsWithRef<"div">, keyof ScheduleProps>) {
   const navigate = useNavigate();
   const [updateSchedule] = useUpdateSchedule();
+  const [deleteSchedule] = useDeleteSchedule();
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [renameValue, setRenameValue] = useState(name);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleRename = () => {
     setIsRenameDialogOpen(true);
@@ -41,11 +44,26 @@ export default function ScheduleCard({
     setIsRenameDialogOpen(false);
   };
 
+  const handleDelete = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    await deleteSchedule(_id);
+    navigate("/schedules");
+  };
+
   const menuItems: MenuItem[] = [
     {
       name: "Rename schedule",
       icon: <EditPencil width={18} height={18} />,
       onClick: handleRename,
+    },
+    {
+      name: "Delete schedule",
+      icon: <Trash width={18} height={18} />,
+      onClick: handleDelete,
+      isDelete: true,
     },
   ];
 
@@ -112,6 +130,20 @@ export default function ScheduleCard({
           </Dialog.Card>
         </Dialog.Portal>
       </Dialog.Root>
+      <DeleteScheduleDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        title="Delete Schedule"
+        message={
+          <>
+            This schedule will be permanently deleted and <br />
+            cannot be recovered.
+          </>
+        }
+        onConfirm={handleDeleteConfirm}
+        confirmText="Yes, delete"
+        cancelText="No, keep my schedule"
+      />
     </>
   );
 }

@@ -603,7 +603,9 @@ export default function GenerateSchedulesDialog({
                       align="center"
                       key={courseName}
                     >
-                      <ColoredSquare color={selectedClass.color as Color} />
+                      <ColoredSquare
+                        color={`var(--${selectedClass.color}-500)`}
+                      />
                       <span>{courseName}</span>
                     </Flex>
                   );
