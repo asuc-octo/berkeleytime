@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import { MinusSquareDashed, MinusSquareSolid } from "iconoir-react";
 import moment from "moment";
@@ -16,11 +16,6 @@ interface CalendarProps {
   currentSection: SectionColor | null;
   term: ISchedule["term"];
   customEvents?: IScheduleEvent[];
-}
-
-function rotateRight<T>(arr: T[]): T[] {
-  if (arr.length === 0) return arr;
-  return [arr[arr.length - 1], ...arr.slice(0, arr.length - 1)];
 }
 
 export default function Calendar({
@@ -67,9 +62,9 @@ export default function Calendar({
           subject,
           number,
           active: currentSection?.section.sectionId === sectionId,
-          days: days ?? undefined,
-          startTime,
-          endTime,
+          days: days ? [days[6], ...days.slice(0, 6)] : undefined,
+          startTime: startTime ?? "",
+          endTime: endTime ?? "",
           color,
         });
       }
@@ -180,15 +175,36 @@ export default function Calendar({
       </div>
       <div className={styles.view}>
         {weeks.map((days, index) => {
+          // Only show month header on the first week that contains day 1 of the month
+          const hasDayOne = days.some((day) => day.date.date() === 1);
+          // Check if previous week also had day 1 (to avoid duplicate headers)
+          const previousWeek = index > 0 ? weeks[index - 1] : null;
+          const previousWeekHadDayOne = previousWeek?.some(
+            (day) => day.date.date() === 1
+          );
+          const showMonthHeader =
+            (hasDayOne && !previousWeekHadDayOne) || index === 0;
+          const firstDayOfMonth = showMonthHeader
+            ? index === 0
+              ? first
+              : days.find((day) => day.date.date() === 1)?.date
+            : null;
+
           return (
-            <Week
-              key={index}
-              days={rotateRight(days)}
-              finals={index === 18}
-              dead={index === 17}
-              first={first}
-              last={last}
-            />
+            <React.Fragment key={index}>
+              {showMonthHeader && firstDayOfMonth && (
+                <div className={styles.monthHeader}>
+                  {firstDayOfMonth.format("MMMM")}
+                </div>
+              )}
+              <Week
+                days={days}
+                finals={index === weeks.length - 1}
+                dead={index === weeks.length - 2}
+                first={first}
+                last={last}
+              />
+            </React.Fragment>
           );
         })}
       </div>

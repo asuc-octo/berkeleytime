@@ -1,11 +1,10 @@
-import { subjects } from "@repo/shared";
-
 import {
   ICatalogClass,
   ISectionAttribute,
   ISectionAttriuteInfo,
   academicCareersMap,
 } from "@/lib/api";
+import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
 import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
@@ -34,6 +33,16 @@ export enum Unit {
 }
 
 export type UnitRange = [number, number];
+
+// TimeRange is [fromTime, toTime] in "HH:MM" format (24-hour)
+// Default [null, null] means no filtering (all times)
+export type TimeRange = [string | null, string | null];
+
+// Helper to parse "HH:MM" time string to minutes since midnight
+const parseTimeToMinutes = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
 
 export enum Day {
   Sunday = "0",
@@ -149,7 +158,8 @@ export const getFilteredClasses = (
   currentBreadths: Breadth[] = [],
   currentUniversityRequirement: UniversityRequirement | null = null,
   currentGradingFilters: GradingFilter[] = [],
-  currentDepartment: string | null = null
+  currentAcademicOrganization: string | null = null,
+  currentTimeRange: TimeRange = [null, null]
 ) => {
   return classes.reduce(
     (acc, _class) => {
@@ -174,7 +184,7 @@ export const getFilteredClasses = (
       if (currentLevels.length > 0) {
         const level = getLevel(
           _class.course.academicCareer,
-          _class.course.number
+          _class.courseNumber
         );
 
         if (!currentLevels.includes(level)) {
@@ -211,6 +221,38 @@ export const getFilteredClasses = (
         if (!includesDays) {
           acc.excludedClasses.push(_class);
 
+          return acc;
+        }
+      }
+
+      // Filter by time range
+      if (currentTimeRange[0] !== null || currentTimeRange[1] !== null) {
+        const meeting = _class.primarySection.meetings?.[0];
+        const meetingStart = meeting?.startTime;
+        const meetingEnd = meeting?.endTime;
+
+        // If class has no meeting times, exclude it when time filter is active
+        if (!meetingStart || !meetingEnd) {
+          acc.excludedClasses.push(_class);
+          return acc;
+        }
+
+        const filterFrom = currentTimeRange[0]
+          ? parseTimeToMinutes(currentTimeRange[0])
+          : 0;
+        const filterTo = currentTimeRange[1]
+          ? parseTimeToMinutes(currentTimeRange[1])
+          : 24 * 60 - 1;
+
+        const classStart = parseTimeToMinutes(meetingStart);
+        const classEnd = parseTimeToMinutes(meetingEnd);
+
+        // Check if class time overlaps with filter range
+        // Class must start at or after filterFrom AND end at or before filterTo
+        const isWithinRange = classStart >= filterFrom && classEnd <= filterTo;
+
+        if (!isWithinRange) {
+          acc.excludedClasses.push(_class);
           return acc;
         }
       }
@@ -259,8 +301,8 @@ export const getFilteredClasses = (
       }
 
       if (
-        currentDepartment &&
-        _class.subject.toLowerCase() !== currentDepartment
+        currentAcademicOrganization &&
+        _class.course.academicOrganization !== currentAcademicOrganization
       ) {
         acc.excludedClasses.push(_class);
 
@@ -283,31 +325,42 @@ export const getIndex = (classes: ICatalogClass[]) => {
     const subject = _class.subject;
     const number = _class.courseNumber;
     const title = _class.course.title;
+    const departmentNicknames = _class.course.departmentNicknames;
 
-    // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
-    const term = subject.toLowerCase();
+    const sisNicknames = departmentNicknames
+      ? departmentNicknames
+          .split("!")
+          .map((abbr: string) => abbr.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
 
-    const alternateNames = subjects[term]?.abbreviations.reduce(
+    const hardcodedNicknames = (SUBJECT_NICKNAME_MAP[subject] || []).map((n) =>
+      n.toLowerCase()
+    );
+
+    const abbreviations = [
+      ...new Set([...sisNicknames, ...hardcodedNicknames]),
+    ];
+
+    const alternateNames = abbreviations.reduce(
       (acc, abbreviation) => {
-        // Add alternate names for abbreviations
-        const abbreviations = [
+        const abbrevs = [
           `${abbreviation}${number}`,
           `${abbreviation} ${number}`,
         ];
 
         if (containsPrefix) {
-          abbreviations.push(
+          abbrevs.push(
             `${abbreviation}${alternateNumber}`,
             `${abbreviation} ${alternateNumber}`
           );
         }
 
-        return [...acc, ...abbreviations];
+        return [...acc, ...abbrevs];
       },
-      // Add alternate names
       containsPrefix
         ? [
             `${subject}${number}`,

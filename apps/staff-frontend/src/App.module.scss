@@ -1,0 +1,36 @@
+.signInContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 24px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.asciiArt {
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--heading-color);
+  margin: 0;
+  white-space: pre;
+  display: none;
+
+  @media (min-width: 600px) and (min-height: 700px) {
+    display: block;
+  }
+}
+
+.heading {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+.errorText {
+  color: var(--red-500);
+  font-size: 14px;
+  margin: 0;
+}

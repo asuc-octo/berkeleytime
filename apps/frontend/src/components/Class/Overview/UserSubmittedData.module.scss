@@ -1,0 +1,33 @@
+.userSubmissionRequirements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dataGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+  color: var(--paragraph-color);
+  vertical-align: middle;
+}
+
+.suggestEdit {
+  color: var(--blue-500);
+  text-decoration: none;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  display: flex;
+  align-items: center;
+  transition: all 100ms ease-in-out;
+  width: fit-content;
+
+  &:hover {
+    color: var(--blue-hover);
+  }
+}

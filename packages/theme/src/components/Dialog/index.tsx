@@ -35,6 +35,9 @@ function Content({ className, style, ...props }: Primitive.DialogContentProps) {
     <StackContext value={stack}>
       {/* https://github.com/radix-ui/themes/issues/135 */}
       <Theme>
+        <Dialog.Title style={{ display: "none" }}>
+          {props.title ?? "Berkeleytime Dialog"}
+        </Dialog.Title>
         <Primitive.Content
           {...props}
           className={classNames(styles.content, className)}
@@ -86,16 +89,18 @@ function Header({
   ...props
 }: FlexProps & HeaderProps) {
   return (
-    <Flex p="4" align="start" gap="4" className={styles.header} {...props}>
+    <Flex p="4" align="center" gap="4" className={styles.header} {...props}>
       {title ? (
         <>
           <Flex direction="column" gap="2" flexGrow="1">
             <Dialog.Title asChild>
               <Heading className={styles.headerTitle}>{title}</Heading>
             </Dialog.Title>
-            <Dialog.Description asChild>
-              <Text className={styles.headerSubtitle}>{subtitle}</Text>
-            </Dialog.Description>
+            {subtitle && (
+              <Dialog.Description asChild>
+                <Text className={styles.headerSubtitle}>{subtitle}</Text>
+              </Dialog.Description>
+            )}
           </Flex>
           {onDelete && (
             <Button as="button" onClick={onDelete} variant="secondary">

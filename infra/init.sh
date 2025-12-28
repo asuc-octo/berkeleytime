@@ -16,7 +16,11 @@ helm repo add metallb https://metallb.github.io/metallb
 helm install bt-sealed-secrets bitnami-labs/sealed-secrets --version 2.17.0 --namespace=bt --create-namespace
 helm install bt-metallb metallb/metallb --version 0.14.9 --namespace=bt
 helm install bt-cert-manager cert-manager/cert-manager --set crds.enabled=true --version 1.16.2 --namespace=bt
-helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.12.0 --namespace=bt
+
+# TODO: eventually remove redirect
+helm upgrade bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.12.0 --namespace=bt \
+    --set controller.allowSnippetAnnotations=true \
+    --set-string controller.config.server-snippet="if (\$host = \"beta.berkeleytime.com\") { return 308 https://berkeleytime.com\$request_uri; }"
 
 helm package ./infra/base --version 1.0.0 --dependency-update
 helm push ./bt-base-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
@@ -45,7 +49,7 @@ helm install bt-prod-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis 
 
 helm install bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app --namespace=bt \
     --version=1.0.0 \
-    --set host=stanfurdtime.com
+    --set host=berkeleytime.com
 
 # ==========
 # STAGING
@@ -66,7 +70,7 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
     --set frontend.image.tag=latest \
     --set agFrontend.image.tag=latest \
     --set backend.image.tag=latest \
-    --set host=staging.stanfurdtime.com \
+    --set host=staging.berkeleytime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
 
@@ -90,7 +94,7 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
     --set frontend.image.tag=dev1 \
     --set agFrontend.image.tag=dev1 \
     --set backend.image.tag=dev1 \
-    --set host=dev1.stanfurdtime.com \
+    --set host=dev1.berkeleytime.com \
     --set mongoUri=mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
     --set nodeEnv=development
@@ -101,11 +105,18 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
 
 helm install bt-prod-docs oci://registry-1.docker.io/octoberkeleytime/bt-docs --namespace=bt \
     --version=1.0.0 \
-    --set host=docs.stanfurdtime.com
+    --set host=docs.berkeleytime.com
 
 # ==========
 # AG
 # ==========
 
 helm install bt-ag oci://registry-1.docker.io/octoberkeleytime/bt-ag --namespace=bt \
+    --version=1.0.0
+
+# ==========
+# STAFF
+# ==========
+
+helm install bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff --namespace=bt \
     --version=1.0.0

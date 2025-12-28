@@ -60,17 +60,17 @@
 
       .text {
         flex-grow: 1;
-        font-size: 14px;
+        font-size: var(--text-14);
 
         .heading {
-          font-weight: 700;
+          font-weight: var(--font-bold);
           color: var(--heading-color);
           margin-bottom: 8px;
           line-height: 1;
         }
 
         .titleInput {
-          font-weight: 700;
+          font-weight: var(--font-bold);
           color: var(--heading-color);
           margin-bottom: 8px;
           line-height: 1;

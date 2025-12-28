@@ -1,10 +1,16 @@
-name: Deploy to Production
-run-name: "Deployed `${{ github.sha }}`"
+name: "CD: Deploy to Production"
+run-name: "Deployed `${{ github.sha }}`${{ inputs.deploy_staff && ' with staff dashboard' || '' }}"
 
 concurrency: production
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy_staff:
+        description: "Deploy staff dashboard"
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   branch-check:
@@ -34,6 +40,7 @@ jobs:
       name: bt-prod-app
       version: "1.0.0"
       values: |
-        host: beta.berkeleytime.com
-      host: beta.berkeleytime.com
+        host: berkeleytime.com
+      host: berkeleytime.com
+      deploy_staff: ${{ inputs.deploy_staff }}
     secrets: inherit

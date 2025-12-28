@@ -1,6 +1,29 @@
 node_modules
 npm-debug.log
 db
+data
 infra
 .github
 docs
+
+# Build outputs
+.next
+.turbo
+dist
+build
+.cache
+out
+
+# Logs and local env
+*.log
+.env*.local
+coverage
+
+# Git
+.git
+.gitignore
+
+# OS files
+.DS_Store
+*.swp
+*.swo

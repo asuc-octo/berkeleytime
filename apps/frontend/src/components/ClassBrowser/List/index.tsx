@@ -3,9 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { FrameAltEmpty } from "iconoir-react";
 
-import { LoadingIndicator } from "@repo/theme";
-
 import ClassCard from "@/components/ClassCard";
+import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
@@ -13,7 +12,12 @@ import useBrowser from "../useBrowser";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  onSelect: (subject: string, courseNumber: string, number: string) => void;
+  onSelect: (
+    subject: string,
+    courseNumber: string,
+    number: string,
+    sessionId: string
+  ) => void;
 }
 
 export default function List({ onSelect }: ListProps) {
@@ -83,11 +87,22 @@ export default function List({ onSelect }: ListProps) {
   const handleClassClick = (index: number) => {
     const selected = classes[index];
     if (!selected) return;
-    onSelect(selected.subject, selected.courseNumber, selected.number);
+    onSelect(
+      selected.subject,
+      selected.courseNumber,
+      selected.number,
+      selected.sessionId
+    );
   };
 
+  const isLoading = loading && classes.length === 0;
+
   return (
-    <div ref={rootRef} className={styles.root}>
+    <div
+      ref={rootRef}
+      className={styles.root}
+      style={isLoading ? { overflow: "hidden" } : undefined}
+    >
       <Header />
       <div
         ref={recentlyViewedSectionRef}
@@ -107,7 +122,8 @@ export default function List({ onSelect }: ListProps) {
                     onSelect(
                       _class.subject,
                       _class.courseNumber,
-                      _class.number
+                      _class.number,
+                      _class.sessionId
                     );
                   }}
                 />
@@ -118,12 +134,10 @@ export default function List({ onSelect }: ListProps) {
         <p className={styles.catalogTitle}>CATALOG</p>
       </div>
       {loading && classes.length === 0 ? (
-        <div className={styles.placeholder}>
-          <LoadingIndicator size="lg" />
-          <p className={styles.heading}>Fetching courses...</p>
-          <p className={styles.description}>
-            Search for, filter, and sort courses to narrow down your results.
-          </p>
+        <div className={styles.skeletonContainer}>
+          {[...Array(8)].map((_, i) => (
+            <ClassCardSkeleton key={`skeleton-${i}`} />
+          ))}
         </div>
       ) : classes.length === 0 ? (
         <div className={styles.placeholder}>

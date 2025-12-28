@@ -55,6 +55,7 @@ export interface IClassItem {
   };
   // requisites.description
   requisites?: string;
+  viewCount?: number;
 }
 
 export interface IClassItemDocument extends IClassItem, Document {}
@@ -90,6 +91,7 @@ const classSchema = new Schema<IClassItem>({
     formalDescription: String,
   }, // NOTE: Exclude if always the same as course requirementsFulfilled, requirementDesignation.code
   requisites: { type: String }, // requisites.description
+  viewCount: { type: Number, default: 0 },
 });
 
 // for catalog, class, scheduler, and bookmarked classes controllers
@@ -100,6 +102,13 @@ classSchema.index({
   subject: 1,
   courseNumber: 1,
   number: 1,
+});
+
+// for catalog query
+classSchema.index({
+  year: 1,
+  semester: 1,
+  anyPrintInScheduleOfClasses: 1,
 });
 
 // for course controller

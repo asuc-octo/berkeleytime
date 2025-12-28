@@ -6,9 +6,17 @@ import { useSearchParams } from "react-router-dom";
 import { Box, Select, SelectHandle } from "@repo/theme";
 import { Button, Flex } from "@repo/theme";
 
-import CourseSearch from "@/components/CourseSearch";
+import {
+  type CourseOutput,
+  type Input,
+  InputType,
+  LIGHT_COLORS,
+  getInputSearchParam,
+  isInputEqual,
+} from "@/components/CourseAnalytics/types";
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import { ICourse } from "@/lib/api";
+import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   GetGradeDistributionDocument,
@@ -16,15 +24,9 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import {
-  Input,
-  InputType,
-  LIGHT_COLORS,
-  Output,
-  getInputSearchParam,
-  isInputEqual,
-} from "../../types";
 import styles from "./CourseInput.module.scss";
+
+type Output = CourseOutput<Input, IGradeDistribution>;
 
 interface CourseInputProps {
   outputs: Output[];
@@ -86,11 +88,16 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const [loading, setLoading] = useState(false);
 
-  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
+    null
+  );
 
   const { data: course } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? ""
+    selectedCourse?.number ?? "",
+    {
+      skip: !selectedCourse,
+    }
   );
 
   const [selectedType, setSelectedType] = useState<string | null>(
@@ -98,12 +105,10 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   );
 
   const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
-    DEFAULT_SELECTED_INSTRUCTOR.value
+    null
   );
 
-  const [selectedSemester, setSelectedSemester] = useState<string | null>(
-    DEFAULT_SELECTED_SEMESTER.value
-  );
+  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
 
   // some crazy cyclic dependencies here, averted by the fact that options changes
   // depend on the value of the "byData"
@@ -130,16 +135,18 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         )
           return;
       }
+      if (!c.primarySection) return;
       c.primarySection.meetings.forEach((m) => {
-        // instructor for current class lecture
         m.instructors.forEach((i) => {
           instructorSet.add(`${i.familyName}, ${i.givenName}`);
         });
       });
     });
     const opts = [...instructorSet].map((v) => {
-      // create OptionTypes
-      return { value: v as string, label: v as string };
+      // value remains "Family, Given" for parsing, label is "Given Family" for display
+      const [family, given] = (v as string).split(", ");
+      const label = given && family ? `${given} ${family}` : (v as string);
+      return { value: v as string, label };
     });
     if (opts.length === 1 && selectedType === InputType.Term) {
       // If only one choice, select it
@@ -172,7 +179,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         : localSelectedInstructor === "all"
           ? []
           : course.classes.filter((c) =>
-              c.primarySection.meetings.find((m) =>
+              c.primarySection?.meetings.find((m) =>
                 m.instructors.find(
                   (i) =>
                     localSelectedInstructor ===
@@ -327,14 +334,25 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
         active: false,
         color: availableColor,
         // TODO: Error handling
-        gradeDistribution: response.data!.grade,
+        data: response.data!.grade,
         input,
       };
 
-      setOutputs((outputs) => [...outputs, output]);
+      setOutputs((prev) =>
+        [...prev, output].map((o) => ({
+          ...o,
+          active: false,
+        }))
+      );
 
       searchParams.append("input", getInputSearchParam(input));
       setSearchParams(searchParams);
+
+      // Reset selectors back to defaults after adding a course
+      setSelectedCourse(null);
+      setSelectedInstructor(null);
+      setSelectedSemester(null);
+      setSelectedType(DEFAULT_BY_OPTION.value);
 
       setLoading(false);
     } catch {
@@ -351,11 +369,11 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     [loading, outputs]
   );
 
-  const handleCourseSelect = (course: ICourse) => {
+  const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
 
-    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
-    setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);
+    setSelectedInstructor(null);
+    setSelectedSemester(null);
     if (selectedType === InputType.Instructor) {
       instructorSelectRef.current?.focus();
       instructorSelectRef.current?.openMenu();
@@ -367,20 +385,17 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
-    setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);
+    setSelectedInstructor(null);
+    setSelectedSemester(null);
   };
 
   return (
     <Flex direction="row" gap="3">
       <Box flexGrow="1">
-        <CourseSearch
+        <CourseSelect
           onSelect={handleCourseSelect}
           onClear={handleCourseClear}
           selectedCourse={selectedCourse}
-          inputStyle={{
-            height: 44,
-          }}
         />
       </Box>
       <Box flexGrow="1">
@@ -389,8 +404,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
           disabled={disabled || !selectedCourse}
           value={selectedType}
           onChange={(s) => {
-            setSelectedInstructor(DEFAULT_SELECTED_INSTRUCTOR.value);
-            setSelectedSemester(DEFAULT_SELECTED_SEMESTER.value);
+            setSelectedInstructor(null);
+            setSelectedSemester(null);
             if (!Array.isArray(s)) setSelectedType(s);
             if (s === InputType.Instructor) {
               instructorSelectRef.current?.focus();
@@ -415,6 +430,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             ref={instructorSelectRef}
             options={instructorOptions}
             disabled={disabled || !selectedCourse}
+            searchable
+            searchPlaceholder="Search instructors..."
+            placeholder="Select instructors"
             value={selectedInstructor}
             onChange={(s) => {
               if (Array.isArray(s) || !s) return;
@@ -436,6 +454,9 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
             ref={semesterSelectRef}
             options={semesterOptions}
             disabled={disabled || !selectedCourse}
+            searchable
+            searchPlaceholder="Search semesters..."
+            placeholder="Select semesters"
             value={selectedSemester}
             onChange={(s) => {
               if (Array.isArray(s)) return;

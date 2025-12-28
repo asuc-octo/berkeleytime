@@ -3,7 +3,7 @@
   padding: 8px;
   display: flex;
   flex-direction: column;
-  font-size: 12px;
+  font-size: var(--text-12);
   line-height: 1;
   gap: 4px;
   overflow: hidden;
@@ -48,7 +48,7 @@
     }
 
     .course {
-      font-weight: 500;
+      font-weight: var(--font-medium);
       text-overflow: ellipsis;
       overflow: hidden;
       color: var(--color);

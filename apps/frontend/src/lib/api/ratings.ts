@@ -57,45 +57,29 @@ export const GET_SEMESTERS_WITH_RATINGS = gql`
   }
 `;
 
-export const CREATE_RATING = gql`
-  mutation CreateRating(
+export const CREATE_RATINGS = gql`
+  mutation CreateRatings(
     $subject: String!
     $courseNumber: String!
     $semester: Semester!
     $year: Int!
     $classNumber: String!
-    $metricName: MetricName!
-    $value: Int!
+    $metrics: [RatingMetricInput!]!
   ) {
-    createRating(
+    createRatings(
       subject: $subject
       courseNumber: $courseNumber
       semester: $semester
       year: $year
       classNumber: $classNumber
-      metricName: $metricName
-      value: $value
+      metrics: $metrics
     )
   }
 `;
 
-export const DELETE_RATING = gql`
-  mutation DeleteRating(
-    $subject: String!
-    $courseNumber: String!
-    $semester: Semester!
-    $year: Int!
-    $classNumber: String!
-    $metricName: MetricName!
-  ) {
-    deleteRating(
-      subject: $subject
-      courseNumber: $courseNumber
-      semester: $semester
-      year: $year
-      classNumber: $classNumber
-      metricName: $metricName
-    )
+export const DELETE_RATINGS = gql`
+  mutation DeleteRatings($subject: String!, $courseNumber: String!) {
+    deleteRatings(subject: $subject, courseNumber: $courseNumber)
   }
 `;
 
@@ -133,6 +117,116 @@ export const GET_COURSE_RATINGS = gql`
             count
           }
         }
+      }
+    }
+  }
+`;
+
+export const GET_ALL_RATINGS_DATA = gql`
+  query GetAllRatingsData($subject: String!, $courseNumber: String!) {
+    semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
+      semester
+      year
+      maxMetricCount
+    }
+    userRatings {
+      classes {
+        subject
+        courseNumber
+        semester
+        year
+        classNumber
+        metrics {
+          metricName
+          value
+        }
+        lastUpdated
+      }
+    }
+  }
+`;
+
+export const GET_CLASS_RATINGS_DATA = gql`
+  query GetClassRatingsData(
+    $subject: String!
+    $courseNumber: String!
+    $courseNumberTyped: CourseNumber!
+  ) {
+    course(subject: $subject, number: $courseNumberTyped) {
+      subject
+      number
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
+      }
+      instructorAggregatedRatings {
+        instructor {
+          givenName
+          familyName
+        }
+        aggregatedRatings {
+          metrics {
+            metricName
+            count
+            weightedAverage
+            categories {
+              value
+              count
+            }
+          }
+        }
+      }
+      classes {
+        semester
+        year
+        number
+        anyPrintInScheduleOfClasses
+        primarySection {
+          startDate
+          meetings {
+            instructors {
+              familyName
+              givenName
+            }
+          }
+        }
+        aggregatedRatings {
+          metrics {
+            metricName
+            count
+            weightedAverage
+            categories {
+              value
+              count
+            }
+          }
+        }
+      }
+    }
+    semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
+      semester
+      year
+      maxMetricCount
+    }
+    userRatings {
+      classes {
+        subject
+        courseNumber
+        semester
+        year
+        classNumber
+        metrics {
+          metricName
+          value
+        }
+        lastUpdated
       }
     }
   }

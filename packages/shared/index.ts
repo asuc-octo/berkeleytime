@@ -1,4 +1,4 @@
 export * from "./metrics";
 export * from "./ratingsConfig";
 export * from "./queries";
-export * from "./subjects";
+export * from "./staff";

@@ -1,165 +1,248 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import classNames from "classnames";
-import { FrameAltEmpty, OpenNewWindow } from "iconoir-react";
+import { FrameAltEmpty } from "iconoir-react";
 
-import { IconButton, Tooltip } from "@repo/theme";
+import { Box, Container, PillSwitcher } from "@repo/theme";
 
-import CCN from "@/components/CCN";
-import Capacity from "@/components/Capacity";
-import Details from "@/components/Details";
+import { getEnrollmentColor } from "@/components/Capacity";
+import EmptyState from "@/components/Class/EmptyState";
+import Time from "@/components/Time";
+import { useGetClassSections } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { componentMap } from "@/lib/api";
 import { Component } from "@/lib/generated/graphql";
-import { getExternalLink } from "@/lib/section";
+import { buildings } from "@/lib/location";
 
 import styles from "./Sections.module.scss";
 
+const NO_DATA_LABEL = "No Data";
+
+const hasValidStartTime = (time?: string | null) => {
+  if (!time) {
+    return false;
+  }
+
+  const [hoursPart] = time.split(":");
+  const hours = Number.parseInt(hoursPart ?? "", 10);
+
+  return Number.isFinite(hours) && hours > 0;
+};
+
+const getLocationLink = (location?: string) => {
+  if (!location) {
+    return null;
+  }
+
+  const parts = location.trim().split(/\s+/);
+  if (parts.length < 2) {
+    return null;
+  }
+
+  const room = parts.pop();
+  const buildingKey = parts.join(" ");
+  const building = buildings[buildingKey];
+
+  if (!building?.link || !room) {
+    return null;
+  }
+
+  return {
+    label: `${building.name} ${room}`,
+    href: building.link,
+  };
+};
+
 export default function Sections() {
   const { class: _class } = useClass();
+  const { data, loading } = useGetClassSections(
+    _class.year,
+    _class.semester,
+    _class.sessionId,
+    _class.subject,
+    _class.courseNumber,
+    _class.number
+  );
 
-  const viewRef = useRef<HTMLDivElement>(null);
-  const [group, setGroup] = useState<Component | null>(null);
+  const sections = data?.sections ?? [];
 
-  // TODO: Include primarySection
+  // Group sections by component type
   const groups = useMemo(() => {
-    const sortedSections = _class.sections.toSorted((a, b) =>
+    const sortedSections = sections.toSorted((a, b) =>
       a.number.localeCompare(b.number)
     );
 
     return Object.groupBy(sortedSections, (section) => section.component);
-  }, [_class]);
+  }, [sections]);
 
-  useEffect(() => {
-    const element = viewRef.current;
-    if (!element) return;
-
-    let currentElement: HTMLElement | null = element;
-
-    while (currentElement) {
-      const overflowY = window.getComputedStyle(currentElement).overflowY;
-
-      if (overflowY === "auto") {
-        break;
-      }
-
-      currentElement = currentElement.parentElement;
-    }
-
-    if (!currentElement) return;
-
-    const updateGroup = () => {
-      const view = viewRef.current;
-      if (!view) return;
-
-      // element is a div that can scroll, find the child with the most pixels within the viewport
-      const children = Array.from(view.children) as HTMLElement[];
-
-      const visibleIndexes = children.map((child) => {
-        const rect = child.getBoundingClientRect();
-        const top = Math.max(rect.top, 0);
-        const bottom = Math.min(rect.bottom, window.innerHeight);
-
-        return bottom - top;
-      });
-
-      const maxVisibleIndex = visibleIndexes.reduce(
-        (maxIndex, visible, index) =>
-          visible > visibleIndexes[maxIndex] ? index : maxIndex,
-        0
-      );
-
-      const group = Object.keys(groups)[maxVisibleIndex] as Component;
-      setGroup(group);
-    };
-
-    updateGroup();
-
-    currentElement.addEventListener("scroll", updateGroup);
-
-    return () => {
-      currentElement.removeEventListener("scroll", updateGroup);
-    };
+  // Generate tab items from available component types
+  const tabItems = useMemo(() => {
+    return Object.keys(groups).map((component) => ({
+      value: component,
+      label: componentMap[component as Component],
+    }));
   }, [groups]);
 
-  const handleClick = (index: number) => {
-    viewRef.current?.children[index].scrollIntoView({ behavior: "smooth" });
-  };
+  const [activeTab, setActiveTab] = useState(tabItems[0]?.value || "");
 
-  return _class.sections.length === 0 ? (
-    <div className={styles.placeholder}>
-      <FrameAltEmpty width={32} height={32} />
-      <p className={styles.heading}>No associated sections</p>
-      <p className={styles.paragraph}>
-        Please refer to the class syllabus or instructor for the most accurate
-        information regarding class attendance requirements.
-      </p>
-    </div>
-  ) : (
-    <div className={styles.root}>
-      <div className={styles.menu}>
-        {Object.keys(groups).map((component, index) => (
-          <div
-            className={classNames(styles.item, {
-              [styles.active]: group === component,
-            })}
-            onClick={() => handleClick(index)}
-          >
-            <p className={styles.component}>
-              {componentMap[component as Component]}
-            </p>
-            <p className={styles.count}>
-              {groups[component as Component]?.length.toLocaleString()}
-            </p>
-          </div>
-        ))}
-      </div>
-      <div className={styles.view} ref={viewRef}>
-        {Object.values(groups).map((sections) => (
-          <div className={styles.group}>
-            {sections.map((section) => (
-              <div className={styles.section} key={section.sectionId}>
-                <div className={styles.header}>
-                  <div className={styles.text}>
-                    <p className={styles.heading}>
-                      {componentMap[section.component]} {section.number}
-                    </p>
-                    <CCN sectionId={section.sectionId} />
-                  </div>
-                  <Capacity
-                    enrolledCount={section.enrollment?.latest?.enrolledCount}
-                    maxEnroll={section.enrollment?.latest?.maxEnroll}
-                    waitlistedCount={
-                      section.enrollment?.latest?.waitlistedCount
-                    }
-                    maxWaitlist={section.enrollment?.latest?.maxWaitlist}
-                  />
-                  <Tooltip content="Berkeley Catalog">
-                    <a
-                      href={getExternalLink(
-                        _class.year,
-                        _class.semester,
-                        _class.courseNumber,
-                        _class.number,
-                        section.number,
-                        section.component
+  // Get sections for the active tab
+  const activeSections = groups[activeTab as Component] || [];
+
+  useEffect(() => {
+    if (!tabItems.find((tab) => tab.value === activeTab)) {
+      setActiveTab(tabItems[0]?.value || "");
+    }
+  }, [tabItems, activeTab]);
+
+  if (loading) {
+    return <EmptyState heading="Loading Sections Data" loading />;
+  }
+
+  if (sections.length === 0) {
+    return (
+      <EmptyState
+        icon={<FrameAltEmpty width={32} height={32} />}
+        heading="No Associated Sections"
+        paragraph={
+          <>
+            This class doesn&apos;t list any sections yet.
+            <br />
+            Section details will appear here once they&apos;re available.
+          </>
+        }
+      />
+    );
+  }
+
+  return (
+    <Box p="5">
+      <Container size="3">
+        <div className={styles.root}>
+          <PillSwitcher
+            items={tabItems}
+            value={activeTab}
+            onValueChange={setActiveTab}
+          />
+          <table className={styles.table}>
+            <thead className={styles.header}>
+              <tr>
+                <th
+                  scope="col"
+                  className={`${styles.headerCell} ${styles.ccn}`}
+                >
+                  CCN
+                </th>
+                <th
+                  scope="col"
+                  className={`${styles.headerCell} ${styles.time}`}
+                >
+                  Time
+                </th>
+                <th
+                  scope="col"
+                  className={`${styles.headerCell} ${styles.location}`}
+                >
+                  Location
+                </th>
+                <th
+                  scope="col"
+                  className={`${styles.headerCell} ${styles.waitlist}`}
+                >
+                  Waitlist
+                </th>
+                <th
+                  scope="col"
+                  className={`${styles.headerCell} ${styles.enrolled}`}
+                >
+                  Enrolled
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {activeSections.map((section) => {
+                const enrolledCount = section.enrollment?.latest?.enrolledCount;
+                const maxEnroll = section.enrollment?.latest?.maxEnroll;
+                const waitlistedCount =
+                  section.enrollment?.latest?.waitlistedCount;
+                const firstMeeting = section.meetings[0];
+                const hasTimeData = Boolean(
+                  firstMeeting?.days?.some((day) => day) &&
+                    firstMeeting?.endTime &&
+                    hasValidStartTime(firstMeeting?.startTime)
+                );
+                const locationValue =
+                  typeof firstMeeting?.location === "string"
+                    ? firstMeeting.location.trim()
+                    : "";
+                const locationLink = getLocationLink(locationValue);
+
+                // Calculate enrollment percentage
+                const enrollmentPercentage =
+                  typeof enrolledCount === "number" &&
+                  typeof maxEnroll === "number" &&
+                  maxEnroll > 0
+                    ? Math.round((enrolledCount / maxEnroll) * 100)
+                    : null;
+
+                const enrollmentColor = getEnrollmentColor(
+                  enrolledCount,
+                  maxEnroll
+                );
+
+                return (
+                  <tr key={section.sectionId} className={styles.row}>
+                    <td className={`${styles.cell} ${styles.ccn}`}>
+                      {section.sectionId}
+                    </td>
+                    <td className={`${styles.cell} ${styles.time}`}>
+                      {hasTimeData ? (
+                        <Time
+                          days={firstMeeting?.days}
+                          startTime={firstMeeting?.startTime}
+                          endTime={firstMeeting?.endTime}
+                          className={styles.timeText}
+                        />
+                      ) : (
+                        NO_DATA_LABEL
                       )}
-                      target="_blank"
+                    </td>
+                    <td className={`${styles.cell} ${styles.location}`}>
+                      {locationLink ? (
+                        <a
+                          href={locationLink.href}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className={styles.locationLink}
+                        >
+                          {locationLink.label}
+                        </a>
+                      ) : (
+                        locationValue || NO_DATA_LABEL
+                      )}
+                    </td>
+                    <td className={`${styles.cell} ${styles.waitlist}`}>
+                      {typeof waitlistedCount === "number"
+                        ? waitlistedCount
+                        : NO_DATA_LABEL}
+                    </td>
+                    <td
+                      className={`${styles.cell} ${styles.enrolled}`}
+                      style={
+                        enrollmentPercentage !== null
+                          ? { color: enrollmentColor }
+                          : undefined
+                      }
                     >
-                      <IconButton>
-                        <OpenNewWindow />
-                      </IconButton>
-                    </a>
-                  </Tooltip>
-                </div>
-                {section.meetings.map((meeting, i) => (
-                  <Details {...meeting} key={i} />
-                ))}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
+                      {enrollmentPercentage !== null
+                        ? `${enrollmentPercentage}% enrolled`
+                        : NO_DATA_LABEL}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Container>
+    </Box>
   );
 }

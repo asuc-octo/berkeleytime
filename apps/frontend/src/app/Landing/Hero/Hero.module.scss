@@ -2,6 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  isolation: isolate;
   overflow: hidden;
   background: linear-gradient(
     var(--landing-gradient-angle, to top right),
@@ -10,17 +11,13 @@
   );
 
   .wave {
-    position: absolute;
+    display: block;
     width: 100%;
-    bottom: 0px;
-    left: 0;
-    z-index: 2;
-    color: var(--background-color);
-  }
-
-  @media (width > 992px) {
-    height: 100dvh;
-    max-height: 992px;
+    height: clamp(175px, 15vw, 350px);
+    margin-top: auto;
+    color: var(--light-background-color);
+    position: relative;
+    z-index: 3;
   }
 
   .container {
@@ -28,12 +25,13 @@
     z-index: 1;
 
     .text {
-      margin: 96px 0 192px;
+      margin: 96px 0 120px;
       position: relative;
       z-index: 2;
 
       @media (width <= 992px) {
         margin-top: 64px;
+        margin-bottom: 48px;
       }
 
       @media (width > 992px) {
@@ -64,7 +62,7 @@
         font-size: 24px;
         color: #eee;
         line-height: 1.5;
-        font-weight: 500;
+        font-weight: var(--font-medium);
         margin-bottom: 64px;
       }
 
@@ -80,7 +78,7 @@
         box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
 
         .input {
-          font-size: 16px;
+          font-size: var(--text-16);
           color: var(--slate-900);
           height: 56px;
 
@@ -94,9 +92,9 @@
     .clock {
       position: absolute;
       right: 272px;
-      bottom: 128px;
+      bottom: 64px;
       text-align: right;
-      font-size: 16px;
+      font-size: var(--text-16);
       line-height: 1.5;
       color: #eee;
       z-index: 1;
@@ -106,7 +104,7 @@
       }
 
       p.heading {
-        font-weight: 500;
+        font-weight: var(--font-medium);
         color: white;
         margin-top: 16px;
       }
@@ -118,7 +116,7 @@
 
     img.campanile {
       position: absolute;
-      z-index: 1;
+      z-index: 0;
       right: 24px;
       top: 0;
 

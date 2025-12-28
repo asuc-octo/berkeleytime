@@ -1,49 +1,23 @@
 .label {
-  color: var(--label-color);
-  line-height: 1;
-  font-size: 14px;
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
+  line-height: 20px;
+  color: var(--heading-color);
 }
 
 .description {
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
   color: var(--paragraph-color);
   line-height: 1.5;
-  font-size: 14px;
 }
 
-.userSubmissionRequirements {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-
-  .dataGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .icon {
-    margin-right: 8px;
-    font-size: 1.2rem;
-    color: var(--paragraph-color);
-    vertical-align: middle;
-  }
-}
-
-.suggestEdit {
+.link {
   color: var(--blue-500);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  transition: all 100ms ease-in-out;
-  width: fit-content;
+  text-decoration: underline;
+  transition: color 100ms ease-in-out;
 
   &:hover {
-    color: var(--blue-600);
-
-    @media (prefers-color-scheme: dark) {
-      color: var(--blue-400);
-    }
+    color: var(--blue-hover);
   }
 }

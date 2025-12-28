@@ -1,20 +1,42 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import classNames from "classnames";
-import { Xmark } from "iconoir-react";
-import moment from "moment";
+import { AnimatePresence, motion } from "framer-motion";
+import { NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { Flex, IconButton } from "@repo/theme";
+import { Flex } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
-import { useReadClass } from "@/hooks/api/classes/useReadClass";
-import { TemporalPosition } from "@/lib/generated/graphql";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
+import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 
 import styles from "./Catalog.module.scss";
+import CatalogSkeleton from "./Skeleton";
+
+const useIsDesktop = () => {
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(width > 992px)");
+    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  return isDesktop;
+};
+
+// Semester hierarchy for chronological ordering (latest to earliest in year)
+const SEMESTER_ORDER: Record<Semester, number> = {
+  [Semester.Spring]: 0,
+  [Semester.Summer]: 1,
+  [Semester.Fall]: 2,
+  [Semester.Winter]: 3,
+};
 
 export default function Catalog() {
   const {
@@ -23,12 +45,18 @@ export default function Catalog() {
     subject: providedSubject,
     courseNumber,
     number,
+    sessionId,
   } = useParams();
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [open, setOpen] = useState(false);
+  const isDesktop = useIsDesktop();
+  const hasClassSelected = Boolean(providedSubject && courseNumber && number);
+
+  const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(
+    () => !isDesktop && !hasClassSelected
+  );
 
   const { data: terms, loading: termsLoading } = useReadTerms();
 
@@ -49,16 +77,13 @@ export default function Catalog() {
 
     const recentTerm = getRecents(RecentType.CatalogTerm)[0];
 
-    // Default to the current term
-    const currentTerm = terms.find(
-      (term) => term.temporalPosition === TemporalPosition.Current
-    );
-
-    // Fall back to the next term when the current term has ended
-    const nextTerm = terms
-      .filter((term) => term.startDate)
-      .toSorted((a, b) => moment(a.startDate).diff(moment(b.startDate)))
-      .find((term) => term.temporalPosition === TemporalPosition.Future);
+    // Default to the latest term by year + semester hierarchy
+    const latestTerm = terms.toSorted((a, b) => {
+      // Sort by year DESC first
+      if (a.year !== b.year) return b.year - a.year;
+      // Then by semester hierarchy DESC
+      return SEMESTER_ORDER[b.semester] - SEMESTER_ORDER[a.semester];
+    })[0];
 
     const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??
@@ -67,8 +92,7 @@ export default function Catalog() {
           term.year === recentTerm?.year &&
           term.semester === recentTerm?.semester
       ) ??
-      currentTerm ??
-      nextTerm;
+      latestTerm;
 
     if (selectedTerm) {
       addRecent(RecentType.CatalogTerm, {
@@ -85,41 +109,53 @@ export default function Catalog() {
     [providedSubject]
   );
 
-  const { data: _class, loading: classLoading } = useReadClass(
+  // Auto-expand drawer on mobile when no class is selected
+  useEffect(() => {
+    if (!isDesktop && !hasClassSelected) {
+      setCatalogDrawerOpen(true);
+    }
+  }, [isDesktop, hasClassSelected]);
+
+  const { data: _class, error: classError } = useGetClass(
     term?.year as number,
-    term?.semester,
+    term?.semester as Semester,
+    sessionId as string,
     subject as string,
     courseNumber as string,
     number as string,
     {
-      skip: !subject || !courseNumber || !number || !term,
+      skip: !subject || !courseNumber || !number || !sessionId || !term,
     }
   );
 
-  // Course data is already included in _class via the backend resolver
-  const _course = _class?.course;
+  // Keep reference to last valid class to prevent blank frames during transitions
+  const lastClassRef = useRef(_class);
+  if (_class) {
+    lastClassRef.current = _class;
+  }
+  const displayedClass = _class ?? lastClassRef.current;
 
   const handleSelect = useCallback(
-    (subject: string, courseNumber: string, number: string) => {
+    (
+      subject: string,
+      courseNumber: string,
+      number: string,
+      sessionId: string
+    ) => {
       if (!term) return;
 
-      setOpen(true);
+      setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({
         ...location,
-        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}`,
+        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
     [navigate, location, term]
   );
 
   if (termsLoading) {
-    return (
-      <div className={styles.loading}>
-        <div className={styles.loadingHeader} />
-        <div className={styles.loadingBody} />
-      </div>
-    );
+    return <CatalogSkeleton />;
   }
 
   // TODO: Error state
@@ -129,21 +165,10 @@ export default function Catalog() {
 
   // TODO: Class error state, class loading state
   return (
-    <div
-      className={classNames(styles.root, {
-        [styles.open]: open,
-      })}
-    >
-      <div className={styles.panel}>
-        <div className={styles.header}>
-          <p className={styles.title}>
-            {term.semester} {term.year}
-          </p>
-          <IconButton onClick={() => setOpen(true)}>
-            <Xmark />
-          </IconButton>
-        </div>
-        <div className={styles.body}>
+    <div className={styles.root}>
+      {isDesktop ? (
+        // Desktop: Static panel
+        <div className={styles.panel}>
           <ClassBrowser
             onSelect={handleSelect}
             semester={term.semester}
@@ -152,20 +177,52 @@ export default function Catalog() {
             persistent
           />
         </div>
-      </div>
+      ) : (
+        // Mobile: Drawer overlay
+        <>
+          <AnimatePresence>
+            {catalogDrawerOpen && (
+              <motion.div
+                className={styles.overlay}
+                onClick={() => setCatalogDrawerOpen(false)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.9 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              />
+            )}
+          </AnimatePresence>
+          <motion.div
+            className={styles.catalogDrawer}
+            animate={{ x: catalogDrawerOpen ? 0 : "-100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          >
+            <ClassBrowser
+              onSelect={handleSelect}
+              semester={term.semester}
+              year={term.year}
+              terms={terms}
+              persistent
+            />
+          </motion.div>
+        </>
+      )}
+
+      {!isDesktop && (
+        <div
+          className={styles.drawerTrigger}
+          onClick={() => setCatalogDrawerOpen(true)}
+        >
+          {!catalogDrawerOpen && <NavArrowRight />}
+        </div>
+      )}
+
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {classLoading ? (
-          <div className={styles.loading}>
-            <div className={styles.loadingHeader} />
-            <div className={styles.loadingBody} />
+        {displayedClass && !classError && (
+          <div className={styles.classContainer}>
+            <Class class={displayedClass} />
           </div>
-        ) : _class && _course ? (
-          <Class
-            class={_class}
-            course={_course}
-            onClose={() => setOpen(false)}
-          />
-        ) : null}
+        )}
       </Flex>
     </div>
   );

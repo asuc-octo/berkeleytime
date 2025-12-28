@@ -129,12 +129,10 @@ function SemesterBlock({
       (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
       0
     );
-    setPnpUnits(pnp);
     const transfer = selectedClasses.reduce(
       (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
       0
     );
-    setTransferUnits(transfer);
     onTotalUnitsChange(total, pnp, transfer);
   }, [selectedClasses]);
 
@@ -179,12 +177,10 @@ function SemesterBlock({
       (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
       0
     );
-    setPnpUnits(newPnpUnits);
     const newTransferUnits = updatedClasses.reduce(
       (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
       0
     );
-    setTransferUnits(newTransferUnits);
     onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
   };
 
@@ -297,12 +293,10 @@ function SemesterBlock({
       (sum, cls) => sum + (cls.pnp ? cls.courseUnits : 0),
       0
     );
-    setPnpUnits(newPnpUnits);
     const newTransferUnits = updatedClassList.reduce(
       (sum, cls) => sum + (cls.transfer ? cls.courseUnits : 0),
       0
     );
-    setTransferUnits(newTransferUnits);
     onTotalUnitsChange(newTotalUnits, newPnpUnits, newTransferUnits);
     setIsClassDetailsOpen(false);
     setClassToEdit(null);

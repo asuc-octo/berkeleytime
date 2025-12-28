@@ -1,5 +1,6 @@
 import { ICourseItem } from "@repo/common";
 
+import { normalizeSubject } from "../../utils/subject";
 import { CourseModule } from "./generated-types/module-types";
 
 interface CourseRelationships {
@@ -9,15 +10,23 @@ interface CourseRelationships {
   requiredCourses: string[];
 }
 
+interface CourseComputedFields {
+  allTimeAverageGrade: number | null;
+  allTimePassCount: number | null;
+  allTimeNoPassCount: number | null;
+}
+
 export type IntermediateCourse = Omit<
   CourseModule.Course,
   keyof CourseRelationships
 > &
-  CourseRelationships;
+  CourseRelationships &
+  CourseComputedFields;
 
 export function formatCourse(course: ICourseItem) {
   const output = {
     ...course,
+    subject: normalizeSubject(course.subject),
     gradingBasis: course.gradingBasis as CourseModule.CourseGradingBasis,
     finalExam: course.finalExam as CourseModule.CourseFinalExam,
 
@@ -26,6 +35,9 @@ export function formatCourse(course: ICourseItem) {
     crossListing: course.crossListing ?? [],
     requiredCourses: course.preparation?.requiredCourses ?? [],
     requirements: course.preparation?.requiredText ?? null,
+    allTimeAverageGrade: course.allTimeAverageGrade ?? null,
+    allTimePassCount: course.allTimePassCount ?? null,
+    allTimeNoPassCount: course.allTimeNoPassCount ?? null,
   } as IntermediateCourse;
 
   return output;

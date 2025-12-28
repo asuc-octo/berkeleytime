@@ -22,6 +22,17 @@ export const classTypeDef = gql`
     ): Section
   }
 
+  type Mutation {
+    trackClassView(
+      year: Int!
+      semester: Semester!
+      sessionId: SessionIdentifier
+      subject: String!
+      courseNumber: CourseNumber!
+      number: ClassNumber!
+    ): Boolean!
+  }
+
   type Class {
     "Identifiers"
     termId: TermIdentifier!
@@ -34,7 +45,7 @@ export const classTypeDef = gql`
     "Relationships"
     term: Term!
     course: Course!
-    primarySection: Section!
+    primarySection: Section
     sections: [Section!]!
     gradeDistribution: GradeDistribution!
     aggregatedRatings: AggregatedRatings!
@@ -50,6 +61,7 @@ export const classTypeDef = gql`
     unitsMin: Float!
     requirementDesignation: SectionAttributeInfo
     anyPrintInScheduleOfClasses: Boolean
+    viewCount: Int!
   }
 
   enum ClassFinalExam {
@@ -133,7 +145,7 @@ export const classTypeDef = gql`
     online: Boolean!
     attendanceRequired: Boolean
     lecturesRecorded: Boolean
-    sectionAttributes: [SectionAttribute!]
+    sectionAttributes(attributeCode: String): [SectionAttribute!]
   }
 
   enum Component {
@@ -218,10 +230,10 @@ export const classTypeDef = gql`
 
   type Meeting {
     days: [Boolean!]
-    startTime: String!
-    endTime: String!
-    startDate: String!
-    endDate: String!
+    startTime: String
+    endTime: String
+    startDate: String
+    endDate: String
     location: String
     instructors: [Instructor!]!
   }

@@ -1,7 +1,8 @@
 import classNames from "classnames";
+import { AnimatePresence, motion } from "framer-motion";
 import { Filter, FilterSolid, Search } from "iconoir-react";
 
-import { IconButton } from "@repo/theme";
+import { Button } from "@repo/theme";
 
 import useBrowser from "../useBrowser";
 import styles from "./Header.module.scss";
@@ -16,6 +17,7 @@ export default function Header() {
     semester,
     year,
     responsive,
+    hasActiveFilters,
   } = useBrowser();
 
   return (
@@ -40,10 +42,26 @@ export default function Header() {
           autoComplete="off"
         />
         <div className={styles.label}>{classes.length.toLocaleString()}</div>
-        <IconButton onClick={() => setExpanded(!expanded)}>
-          {expanded ? <FilterSolid /> : <Filter />}
-        </IconButton>
       </div>
+      <Button
+        className={classNames(styles.filterButton, {
+          [styles.active]: hasActiveFilters,
+        })}
+        onClick={() => setExpanded(!expanded)}
+      >
+        {hasActiveFilters ? <FilterSolid /> : <Filter />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={expanded ? "close" : "open"}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.15 }}
+          >
+            {expanded ? "Close Filters" : "Open Filters"}
+          </motion.span>
+        </AnimatePresence>
+      </Button>
     </div>
   );
 }

@@ -90,6 +90,21 @@ export default async (redis: RedisClientType) => {
     validationRules: [...protection.validationRules],
     plugins: [
       ...protection.plugins,
+      // HTTP caching for catalog query (5 min TTL)
+      {
+        async requestDidStart() {
+          return {
+            async willSendResponse(requestContext) {
+              if (requestContext.operationName === "GetCanonicalCatalog") {
+                requestContext.response.http?.headers.set(
+                  "Cache-Control",
+                  "public, max-age=300"
+                );
+              }
+            },
+          };
+        },
+      },
       ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
       ApolloServerPluginCacheControl({
         calculateHttpHeaders: false,
@@ -123,8 +138,7 @@ export default async (redis: RedisClientType) => {
             requestContext.operationName === "GetCanonicalCatalog" &&
             operationName === "catalog" &&
             variables?.year &&
-            variables?.semester &&
-            !variables?.query // No search parameter
+            variables?.semester
           ) {
             const semester = String(variables.semester).toLowerCase();
             const isWarmingStaging =

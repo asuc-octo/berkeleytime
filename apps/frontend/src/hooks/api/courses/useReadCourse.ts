@@ -2,36 +2,39 @@ import { useCallback } from "react";
 
 import { useLazyQuery, useQuery } from "@apollo/client/react";
 
+import { GET_CLASS_OVERVIEW } from "@/lib/api/courses";
 import {
-  ReadCourseDocument,
-  ReadCourseForClassDocument,
-  ReadCourseForClassQuery,
-  ReadCourseForClassQueryVariables,
-  ReadCourseGradeDistDocument,
-  ReadCourseGradeDistQuery,
-  ReadCourseGradeDistQueryVariables,
-  ReadCourseQuery,
-  ReadCourseQueryVariables,
-  ReadCourseTitleDocument,
-  ReadCourseTitleQuery,
-  ReadCourseTitleQueryVariables,
-  ReadCourseUnitsDocument,
-  ReadCourseUnitsQuery,
-  ReadCourseUnitsQueryVariables,
-  ReadCourseWithInstructorDocument,
-  ReadCourseWithInstructorQuery,
-  ReadCourseWithInstructorQueryVariables,
+  GetClassOverviewQuery,
+  GetClassOverviewQueryVariables,
+  GetCourseDocument,
+  GetCourseGradeDistDocument,
+  GetCourseGradeDistQuery,
+  GetCourseGradeDistQueryVariables,
+  GetCourseOverviewByIdDocument,
+  GetCourseOverviewByIdQuery,
+  GetCourseOverviewByIdQueryVariables,
+  GetCourseQuery,
+  GetCourseQueryVariables,
+  GetCourseTitleDocument,
+  GetCourseTitleQuery,
+  GetCourseTitleQueryVariables,
+  GetCourseUnitsDocument,
+  GetCourseUnitsQuery,
+  GetCourseUnitsQueryVariables,
+  GetCourseWithInstructorDocument,
+  GetCourseWithInstructorQuery,
+  GetCourseWithInstructorQueryVariables,
 } from "@/lib/generated/graphql";
 
-export const useReadCourse = (
+export const useGetCourse = (
   subject: string,
   number: string,
   options?: Omit<
-    useQuery.Options<ReadCourseQuery, ReadCourseQueryVariables>,
+    useQuery.Options<GetCourseQuery, GetCourseQueryVariables>,
     "variables"
   >
 ) => {
-  const query = useQuery(ReadCourseDocument, {
+  const query = useQuery(GetCourseDocument, {
     ...options,
     variables: {
       subject,
@@ -45,21 +48,24 @@ export const useReadCourse = (
   };
 };
 
-export const useReadCourseForClass = (
+export const useGetClassOverview = (
   subject: string,
   number: string,
   options?: Omit<
-    useQuery.Options<ReadCourseForClassQuery, ReadCourseForClassQueryVariables>,
+    useQuery.Options<GetClassOverviewQuery, GetClassOverviewQueryVariables>,
     "variables"
   >
 ) => {
-  const query = useQuery(ReadCourseForClassDocument, {
-    ...options,
-    variables: {
-      subject,
-      number,
-    },
-  });
+  const query = useQuery<GetClassOverviewQuery, GetClassOverviewQueryVariables>(
+    GET_CLASS_OVERVIEW,
+    {
+      ...options,
+      variables: {
+        subject,
+        number,
+      },
+    }
+  );
 
   return {
     ...query,
@@ -67,18 +73,38 @@ export const useReadCourseForClass = (
   };
 };
 
-export const useReadCourseGradeDist = (
-  subject: string,
-  number: string,
+export const useGetCourseOverviewById = (
+  courseId: string,
   options?: Omit<
     useQuery.Options<
-      ReadCourseGradeDistQuery,
-      ReadCourseGradeDistQueryVariables
+      GetCourseOverviewByIdQuery,
+      GetCourseOverviewByIdQueryVariables
     >,
     "variables"
   >
 ) => {
-  const query = useQuery(ReadCourseGradeDistDocument, {
+  const query = useQuery(GetCourseOverviewByIdDocument, {
+    ...options,
+    variables: {
+      courseId,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.courseById,
+  };
+};
+
+export const useGetCourseGradeDist = (
+  subject: string,
+  number: string,
+  options?: Omit<
+    useQuery.Options<GetCourseGradeDistQuery, GetCourseGradeDistQueryVariables>,
+    "variables"
+  >
+) => {
+  const query = useQuery(GetCourseGradeDistDocument, {
     ...options,
     variables: {
       subject,
@@ -92,18 +118,18 @@ export const useReadCourseGradeDist = (
   };
 };
 
-export const useReadCourseWithInstructor = (
+export const useGetCourseWithInstructor = (
   subject: string,
   number: string,
   options?: Omit<
     useQuery.Options<
-      ReadCourseWithInstructorQuery,
-      ReadCourseWithInstructorQueryVariables
+      GetCourseWithInstructorQuery,
+      GetCourseWithInstructorQueryVariables
     >,
     "variables"
   >
 ) => {
-  const query = useQuery(ReadCourseWithInstructorDocument, {
+  const query = useQuery(GetCourseWithInstructorDocument, {
     ...options,
     variables: {
       subject,
@@ -117,15 +143,15 @@ export const useReadCourseWithInstructor = (
   };
 };
 
-export const useReadCourseTitle = (
+export const useGetCourseTitle = (
   subject: string,
   number: string,
   options?: Omit<
-    useQuery.Options<ReadCourseTitleQuery, ReadCourseTitleQueryVariables>,
+    useQuery.Options<GetCourseTitleQuery, GetCourseTitleQueryVariables>,
     "variables"
   >
 ) => {
-  const query = useQuery(ReadCourseTitleDocument, {
+  const query = useQuery(GetCourseTitleDocument, {
     ...options,
     variables: {
       subject,
@@ -139,9 +165,9 @@ export const useReadCourseTitle = (
   };
 };
 
-export const useReadCourseUnits = () => {
+export const useGetCourseUnits = () => {
   const [getCourseUnitsQuery, { loading, error }] = useLazyQuery(
-    ReadCourseUnitsDocument
+    GetCourseUnitsDocument
   );
 
   const getCourseUnits = useCallback(
@@ -151,7 +177,7 @@ export const useReadCourseUnits = () => {
       semester: string,
       year: number,
       options?: Omit<
-        useQuery.Options<ReadCourseUnitsQuery, ReadCourseUnitsQueryVariables>,
+        useQuery.Options<GetCourseUnitsQuery, GetCourseUnitsQueryVariables>,
         "variables"
       >
     ) => {
@@ -186,6 +212,13 @@ export const useReadCourseUnits = () => {
 
   return [getCourseUnits, { loading, error }] as [
     getCourseUnits: typeof getCourseUnits,
-    result: { loading: boolean; error: any },
+    result: { loading: boolean; error: unknown },
   ];
 };
+
+// Backward compatibility exports (deprecated)
+export const useReadCourse = useGetCourse;
+export const useReadCourseGradeDist = useGetCourseGradeDist;
+export const useReadCourseWithInstructor = useGetCourseWithInstructor;
+export const useReadCourseTitle = useGetCourseTitle;
+export const useReadCourseUnits = useGetCourseUnits;

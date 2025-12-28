@@ -50,7 +50,7 @@
 
 .link {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: var(--blue-500);
   line-height: 1;
   display: flex;
@@ -59,7 +59,7 @@
   transition: color 100ms ease-in-out;
 
   &:hover {
-    color: var(--blue-600);
+    color: var(--blue-hover);
   }
 }
 
@@ -67,8 +67,8 @@
   display: flex;
   gap: 12px;
   align-items: center;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
   color: var(--orange-500);
   line-height: 1;
   flex-grow: 1;

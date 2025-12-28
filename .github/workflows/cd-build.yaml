@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [backend, frontend, datapuller, ag-frontend]
+        image: [backend, frontend, datapuller, ag-frontend, staff-frontend]
 
     steps:
       - name: Login to Docker Hub
@@ -37,9 +37,12 @@ jobs:
           target: ${{ matrix.image }}-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}
           cache-from: |
+            type=gha
             type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache
             type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:prod-cache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache,mode=max
+          cache-to: |
+            type=gha,mode=max
+            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache,mode=max
           platforms: linux/amd64
           push: true
 
@@ -48,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chart: [app, base, ag]
+        chart: [app, base, ag, staff]
 
     steps:
       - name: Checkout Repository

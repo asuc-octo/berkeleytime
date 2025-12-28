@@ -1,25 +1,20 @@
-import { ArrowRight } from "iconoir-react";
-import { Link } from "react-router-dom";
+import { EditPencil, Plus, Trash } from "iconoir-react";
 
 import { METRIC_MAPPINGS, METRIC_ORDER, MetricName } from "@repo/shared";
-import { Badge, Button, Card, Color } from "@repo/theme";
+import { Badge, Card, Color, IconButton, Tooltip } from "@repo/theme";
 
 import { getStatusColor } from "@/components/Class/Ratings/metricsUtil";
-import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
 import { IUserRatingClass } from "@/lib/api";
 
 import styles from "./RatingCard.module.scss";
 
 interface RatingCardProps {
   rating: IUserRatingClass;
+  onEdit: (rating: IUserRatingClass) => void;
+  onDelete: (rating: IUserRatingClass) => void;
 }
 
-export function RatingCard({ rating }: RatingCardProps) {
-  const { data: course, loading } = useReadCourseTitle(
-    rating.subject,
-    rating.courseNumber
-  );
-
+export function RatingCard({ rating, onEdit, onDelete }: RatingCardProps) {
   const getRatingMetrics = (
     metrics: Array<{ metricName: string; value: number }>
   ) => {
@@ -36,33 +31,37 @@ export function RatingCard({ rating }: RatingCardProps) {
     });
   };
 
-  return loading ? (
-    <></>
-  ) : (
-    <Card.RootColumn hoverColorChange={false}>
-      <Card.ColumnHeader>
-        <Card.Body style={{ paddingBottom: 0 }}>
-          <Card.Heading>
-            {rating.subject} {rating.courseNumber}{" "}
-            <span className={styles.semester}>
-              {rating.semester} {rating.year}
-            </span>
-          </Card.Heading>
-          <Card.Description className={styles.title}>
-            {course?.title}
-          </Card.Description>
-        </Card.Body>
-        <Card.Actions>
-          <Link
-            to={`/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}/ratings`}
-          >
-            <Button variant="tertiary" noFill={true}>
-              View <ArrowRight />
-            </Button>
-          </Link>
-        </Card.Actions>
-      </Card.ColumnHeader>
-      <Card.ColumnBody>
+  return (
+    <Card.RootColumn hoverColorChange={false} className={styles.root}>
+      <div className={styles.header}>
+        <div className={styles.classInfo}>
+          <span className={styles.className}>
+            {rating.subject} {rating.courseNumber}
+          </span>
+          <span className={styles.semester}>
+            {rating.semester} {rating.year}
+          </span>
+        </div>
+        <div className={styles.actions}>
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => onEdit(rating)}>
+                <EditPencil />
+              </IconButton>
+            }
+            title="Edit rating"
+          />
+          <Tooltip
+            trigger={
+              <IconButton onClick={() => onDelete(rating)}>
+                <Trash />
+              </IconButton>
+            }
+            title="Delete rating"
+          />
+        </div>
+      </div>
+      <Card.ColumnBody className={styles.body}>
         <div className={styles.metricsBlock}>
           {getRatingMetrics(rating.metrics).map((metric) => {
             const metricConfig =
@@ -82,10 +81,22 @@ export function RatingCard({ rating }: RatingCardProps) {
         </div>
         {rating.lastUpdated && (
           <p className={styles.lastUpdated}>
-            Last updated on {new Date(rating.lastUpdated).toLocaleDateString()}
+            Last updated on {new Date(rating.lastUpdated).toLocaleString()}
           </p>
         )}
       </Card.ColumnBody>
     </Card.RootColumn>
+  );
+}
+
+interface AddRatingCardProps {
+  onClick?: () => void;
+}
+
+export function AddRatingCard({ onClick }: AddRatingCardProps) {
+  return (
+    <div className={styles.addCard} onClick={onClick}>
+      <Plus className={styles.addIcon} />
+    </div>
   );
 }

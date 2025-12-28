@@ -27,7 +27,7 @@
 
   .text {
     flex-grow: 1;
-    font-size: 14px;
+    font-size: var(--text-14);
     display: flex;
     flex-direction: column;
     max-width: 90%;

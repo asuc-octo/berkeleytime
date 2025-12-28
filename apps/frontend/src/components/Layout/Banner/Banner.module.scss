@@ -1,29 +1,82 @@
+@use "../../../mixins" as *;
+
 .root {
   flex-shrink: 0;
   height: 32px;
-  background-color: var(--orange-900);
+  background-color: var(--backdrop-color);
   padding: 12px;
   display: flex;
   align-items: center;
-  color: white;
-  transition: background-color 100ms ease-in-out;
+  color: var(--foreground-color);
 
-  &:hover {
-    background-color: var(--orange-800);
-  }
-
-  @media (width <= 992px) {
-    display: none;
-  }
-
-  .group {
+  .actions {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
+  .link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray-700);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 100ms ease-in-out;
+
+    &.returnLink {
+      @media (width <= 992px) {
+        display: none;
+      }
+    }
+
+    @include dark-mode {
+      color: var(--gray-300);
+    }
+
+    &:hover {
+      color: var(--gray-900);
+
+      @include dark-mode {
+        color: var(--gray-100);
+      }
+    }
+  }
+
   .text {
-    font-size: 12px;
+    color: var(--gray-700);
+    font-size: var(--text-12);
+
+    @include dark-mode {
+      color: var(--gray-300);
+    }
+  }
+
+  .closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 100ms ease-in-out;
+    margin-left: 8px;
+
+    @include dark-mode {
+      color: var(--gray-300);
+    }
+
+    &:hover {
+      color: var(--gray-900);
+      background-color: var(--button-hover-color);
+
+      @include dark-mode {
+        color: var(--gray-100);
+      }
+    }
   }
 }

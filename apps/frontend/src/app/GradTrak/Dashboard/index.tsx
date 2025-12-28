@@ -5,11 +5,13 @@ import classNames from "classnames";
 import {
   ArrowDown,
   ArrowUp,
+  Edit,
   Filter,
   Minus,
   NavArrowDown,
   Plus,
   Sort,
+  Xmark,
 } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +22,7 @@ import {
   Button,
   Checkbox,
   Color,
+  Dialog,
   DropdownMenu,
   Flex,
   IconButton,
@@ -29,6 +32,7 @@ import {
 } from "@repo/theme";
 
 import { initialize } from "@/components/CourseSearch/browser";
+import MajorSearch from "@/components/MajorSearch";
 import {
   useCreateNewPlanTerm,
   useEditPlan,
@@ -46,12 +50,14 @@ import {
   Status,
 } from "@/lib/generated/graphql";
 
+import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
 import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
+import DEGREES from "./degree-programs-types.json";
 import { useGradTrakSettings } from "./settings";
 
 const FILTER_OPTIONS = [
@@ -93,7 +99,11 @@ export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
 
-  const { data: gradTrak, loading: gradTrakLoading } = useReadPlan({
+  const {
+    data: gradTrak,
+    loading: gradTrakLoading,
+    refetch: refetchGradTrak,
+  } = useReadPlan({
     skip: !user,
     fetchPolicy: "cache-and-network",
   });
@@ -146,7 +156,6 @@ export default function Dashboard() {
   const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [colleges, setColleges] = useState<Colleges[]>([]);
-
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const [filterOptions, setFilterOptions] = useState<{
     completed: boolean;
@@ -489,7 +498,174 @@ export default function Dashboard() {
     },
     []
   );
+  const [editOpen, setEditOpen] = useState(false);
+  const [selectedMajor, setSelectedMajor] = useState<DegreeOption | null>(null);
+  const [selectedMinor, setSelectedMinor] = useState<DegreeOption | null>(null);
+  const [selectedMajorList, setSelectedMajorList] = useState<DegreeOption[]>(
+    []
+  );
+  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>(
+    []
+  );
 
+  const majorOptions = DEGREES.majors;
+  const minorOptions = DEGREES.minors;
+
+  useEffect(() => {
+    if (editOpen && gradTrak) {
+      const majors: DegreeOption[] = [];
+      if (gradTrak.majors) {
+        gradTrak.majors.forEach((majorValue) => {
+          const majorStr = String(majorValue);
+          if ((majorOptions as any).includes(majorStr)) {
+            majors.push({
+              label: majorStr,
+              value: majorStr,
+            });
+          }
+        });
+      }
+
+      const minors: DegreeOption[] = [];
+      if (gradTrak.minors) {
+        gradTrak.minors.forEach((minorValue) => {
+          const minorStr = String(minorValue);
+          if ((minorOptions as any).includes(minorStr)) {
+            minors.push({
+              label: minorStr,
+              value: minorStr,
+            });
+          }
+        });
+      }
+
+      setSelectedMajorList(majors);
+      setSelectedMinorList(minors);
+    }
+  }, [editOpen, gradTrak, majorOptions, minorOptions]);
+
+  const handleMajorSelect = (degree: DegreeOption) => {
+    setSelectedMajor(degree);
+  };
+
+  const handleMinorSelect = (degree: DegreeOption) => {
+    setSelectedMinor(degree);
+  };
+
+  const handleClearMajor = () => {
+    setSelectedMajor(null);
+  };
+
+  const handleClearMinor = () => {
+    setSelectedMinor(null);
+  };
+
+  const handleAddMajor = async () => {
+    if (!selectedMajor) return;
+
+    if (
+      selectedMajorList.some((degree) => degree.value === selectedMajor.value)
+    ) {
+      console.warn("Major already added");
+      setSelectedMajor(null);
+      return;
+    }
+
+    const newList = [...selectedMajorList, selectedMajor];
+    const oldList = [...selectedMajorList];
+    const addedMajor = selectedMajor;
+
+    setSelectedMajorList(newList);
+    setSelectedMajor(null);
+
+    try {
+      const plan: PlanInput = {};
+      plan.majors = newList.map((m) => m.value);
+      await editPlan(plan);
+    } catch (error) {
+      console.error("Error adding major:", error);
+      setSelectedMajorList(oldList);
+      setSelectedMajor(addedMajor);
+    }
+  };
+
+  const handleAddMinor = async () => {
+    if (!selectedMinor) return;
+
+    if (
+      selectedMinorList.some((degree) => degree.value === selectedMinor.value)
+    ) {
+      console.warn("Minor already added");
+      setSelectedMinor(null);
+      return;
+    }
+
+    const newList = [...selectedMinorList, selectedMinor];
+    const oldList = [...selectedMinorList];
+    const addedMinor = selectedMinor;
+
+    setSelectedMinorList(newList);
+    setSelectedMinor(null);
+
+    try {
+      const plan: PlanInput = {};
+      plan.minors = newList.map((m) => m.value);
+      await editPlan(plan);
+    } catch (error) {
+      console.error("Error adding minor:", error);
+      setSelectedMinorList(oldList);
+      setSelectedMinor(addedMinor);
+    }
+  };
+
+  const handleRemoveMajor = async (degreeToRemove: DegreeOption) => {
+    const newList = selectedMajorList.filter(
+      (degree) => degree.value !== degreeToRemove.value
+    );
+    const oldList = [...selectedMajorList];
+
+    setSelectedMajorList(newList);
+
+    try {
+      const plan: PlanInput = {};
+      plan.majors = newList.map((m) => m.value);
+      await editPlan(plan);
+    } catch (error) {
+      console.error("Error removing major:", error);
+      setSelectedMajorList(oldList);
+    }
+  };
+
+  const handleRemoveMinor = async (degreeToRemove: DegreeOption) => {
+    const newList = selectedMinorList.filter(
+      (degree) => degree.value !== degreeToRemove.value
+    );
+    const oldList = [...selectedMinorList];
+
+    setSelectedMinorList(newList);
+
+    try {
+      const plan: PlanInput = {};
+      plan.minors = newList.map((m) => m.value);
+      await editPlan(plan);
+    } catch (error) {
+      console.error("Error removing minor:", error);
+      setSelectedMinorList(oldList);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const plan: PlanInput = {};
+      plan.majors = selectedMajorList.map((m) => m.value);
+      plan.minors = selectedMinorList.map((m) => m.value);
+      await editPlan(plan);
+      setEditOpen(false);
+      refetchGradTrak();
+    } catch (error) {
+      console.error("Error updating majors/minors:", error);
+    }
+  };
   const convertPlanTermsToSemesters = useCallback(
     (planTerms: IPlanTerm[]): { [key: string]: ISelectedCourse[] } => {
       const semesters: { [key: string]: ISelectedCourse[] } = {};
@@ -601,23 +777,26 @@ export default function Dashboard() {
               open={filterMenuOpen}
               onOpenChange={setFilterMenuOpen}
             >
-              <DropdownMenu.Trigger asChild>
-                <Tooltip content="Filter">
-                  <div className={styles.filterButtonContainer}>
-                    <IconButton
-                      className={styles.filterButton}
-                      data-open={filterMenuOpen}
-                    >
-                      <Filter />
-                    </IconButton>
-                    {activeFiltersCount > 0 && (
-                      <div className={styles.filterButtonBadge}>
-                        {activeFiltersCount}
-                      </div>
-                    )}
-                  </div>
-                </Tooltip>
-              </DropdownMenu.Trigger>
+              <Tooltip
+                content="Filter"
+                trigger={
+                  <DropdownMenu.Trigger asChild>
+                    <div className={styles.filterButtonContainer}>
+                      <IconButton
+                        className={styles.filterButton}
+                        data-open={filterMenuOpen}
+                      >
+                        <Filter />
+                      </IconButton>
+                      {activeFiltersCount > 0 && (
+                        <div className={styles.filterButtonBadge}>
+                          {activeFiltersCount}
+                        </div>
+                      )}
+                    </div>
+                  </DropdownMenu.Trigger>
+                }
+              />
               <DropdownMenu.Content
                 sideOffset={5}
                 align="end"
@@ -712,21 +891,29 @@ export default function Dashboard() {
                 open={sortMenuOpen}
                 onOpenChange={setSortMenuOpen}
               >
-                <DropdownMenu.Trigger asChild>
-                  <Tooltip content="Sort">
-                    <div
-                      style={{ position: "relative", display: "inline-block" }}
-                    >
-                      <IconButton
+                <Tooltip
+                  content="Sort"
+                  trigger={
+                    <DropdownMenu.Trigger asChild>
+                      <div
                         style={{
-                          backgroundColor: sortMenuOpen ? "#52525B" : undefined,
+                          position: "relative",
+                          display: "inline-block",
                         }}
                       >
-                        <Sort />
-                      </IconButton>
-                    </div>
-                  </Tooltip>
-                </DropdownMenu.Trigger>
+                        <IconButton
+                          style={{
+                            backgroundColor: sortMenuOpen
+                              ? "#52525B"
+                              : undefined,
+                          }}
+                        >
+                          <Sort />
+                        </IconButton>
+                      </div>
+                    </DropdownMenu.Trigger>
+                  }
+                />
                 <DropdownMenu.Content
                   sideOffset={5}
                   align="end"
@@ -838,28 +1025,159 @@ export default function Dashboard() {
               </DropdownMenu.Root>
             </div>
 
-            <Tooltip content="Add new block">
-              <IconButton
-                onClick={() => {
-                  setShowAddBlockMenu(!showAddBlockMenu);
-                }}
-              >
-                <Plus />
-              </IconButton>
-            </Tooltip>
+            <Tooltip
+              content="Add new block"
+              trigger={
+                <IconButton
+                  onClick={() => {
+                    setShowAddBlockMenu(!showAddBlockMenu);
+                  }}
+                >
+                  <Plus />
+                </IconButton>
+              }
+            />
 
-            <Tooltip content="Display settings">
-              <Button
-                ref={displayMenuTriggerRef}
-                variant="secondary"
-                onClick={() => {
-                  setShowDisplayMenu(!showDisplayMenu);
-                }}
-              >
-                Display
-                <NavArrowDown />
-              </Button>
-            </Tooltip>
+            <Tooltip
+              content="Display settings"
+              trigger={
+                <Button
+                  ref={displayMenuTriggerRef}
+                  variant="secondary"
+                  onClick={() => {
+                    setShowDisplayMenu(!showDisplayMenu);
+                  }}
+                >
+                  Display
+                  <NavArrowDown />
+                </Button>
+              }
+            />
+
+            <Tooltip
+              content="Edit Major"
+              trigger={
+                <Button variant="primary" onClick={() => setEditOpen(true)}>
+                  <Edit />
+                  Edit
+                </Button>
+              }
+            />
+
+            <Dialog.Root open={editOpen} onOpenChange={setEditOpen}>
+              <Dialog.Overlay />
+              <Dialog.Card className={styles.editDialogCard}>
+                <Dialog.Header title="Overview" hasCloseButton />
+                <Dialog.Body className={styles.editDialogBody}>
+                  <form className={styles.editDialogForm}>
+                    <div className={styles.editDialogGrid}>
+                      <div className={styles.degreeSection}>
+                        <label className={styles.degreeFieldLabel}>
+                          Major(s)
+                        </label>
+                        <Flex gap="8px" className={styles.degreeSearchRow}>
+                          <div className={styles.degreeSearchWrapper}>
+                            <MajorSearch
+                              onSelect={handleMajorSelect}
+                              onClear={handleClearMajor}
+                              selectedDegree={selectedMajor}
+                              degrees={majorOptions}
+                              placeholder="Search for a major..."
+                            />
+                          </div>
+                          <Button
+                            variant="tertiary"
+                            onClick={handleAddMajor}
+                            disabled={!selectedMajor}
+                            className={styles.addButton}
+                          >
+                            Add
+                          </Button>
+                        </Flex>
+                        {selectedMajorList.length > 0 ? (
+                          <div className={styles.degreeList}>
+                            {selectedMajorList.map((degree) => (
+                              <div
+                                key={degree.value}
+                                className={styles.degreeChip}
+                              >
+                                <span>{degree.label}</span>
+                                <span
+                                  onClick={() => handleRemoveMajor(degree)}
+                                  className={styles.removeButton}
+                                >
+                                  <Xmark />
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <Text className={styles.emptyState}>
+                            None Selected
+                          </Text>
+                        )}
+                      </div>
+
+                      <div className={styles.degreeSection}>
+                        <label className={styles.degreeFieldLabel}>
+                          Minor(s)
+                        </label>
+                        <Flex gap="8px" className={styles.degreeSearchRow}>
+                          <div className={styles.degreeSearchWrapper}>
+                            <MajorSearch
+                              onSelect={handleMinorSelect}
+                              onClear={handleClearMinor}
+                              selectedDegree={selectedMinor}
+                              degrees={minorOptions}
+                              placeholder="Search for a minor..."
+                            />
+                          </div>
+                          <Button
+                            variant="tertiary"
+                            onClick={handleAddMinor}
+                            disabled={!selectedMinor}
+                            className={styles.addButton}
+                          >
+                            Add
+                          </Button>
+                        </Flex>
+                        {selectedMinorList.length > 0 ? (
+                          <div className={styles.degreeList}>
+                            {selectedMinorList.map((degree) => (
+                              <div
+                                key={degree.value}
+                                className={styles.degreeChip}
+                              >
+                                <span>{degree.label}</span>
+                                <span
+                                  onClick={() => handleRemoveMinor(degree)}
+                                  className={styles.removeButton}
+                                >
+                                  <Xmark />
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <Text className={styles.emptyState}>
+                            None Selected
+                          </Text>
+                        )}
+                      </div>
+                    </div>
+                  </form>
+                </Dialog.Body>
+                <Dialog.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setEditOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSave}>Save</Button>
+                </Dialog.Footer>
+              </Dialog.Card>
+            </Dialog.Root>
           </div>
         </div>
         {showDisplayMenu && (

@@ -21,7 +21,8 @@ import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, signIn } from "@/lib/api";
 
-import styles from "./Overview.module.scss";
+import overviewStyles from "./Overview.module.scss";
+import styles from "./UserSubmittedData.module.scss";
 
 enum Consensus {
   Yes = "Yes",
@@ -32,7 +33,7 @@ enum Consensus {
 
 export function UserSubmittedData() {
   const { user } = useUser();
-  const { class: _class } = useClass();
+  const { course } = useClass();
   const handleFeedbackClick = (e: ReactMouseEvent<HTMLAnchorElement>) => {
     if (!user) {
       e.preventDefault();
@@ -41,21 +42,39 @@ export function UserSubmittedData() {
       signIn(redirectPath);
     }
   };
-  const responses = {
-    Recording: getResponse(_class.course, MetricName.Recording),
-    Attendance: getResponse(_class.course, MetricName.Attendance),
+  const responses: Record<
+    MetricName.Attendance | MetricName.Recording,
+    Consensus
+  > = {
+    [MetricName.Recording]: getResponse(course, MetricName.Recording),
+    [MetricName.Attendance]: getResponse(course, MetricName.Attendance),
   };
   const atLeastOneConsensus = Object.values(responses).some(
     (c) => c == Consensus.Yes || c == Consensus.No
   );
 
+  const METRIC_DISPLAY_CONFIG = [
+    {
+      metric: MetricName.Attendance as const,
+      yes: { icon: User, text: "Attendance Required" },
+      no: { icon: UserXmark, text: "Attendance Not Required" },
+      unknown: { icon: QuestionMark, text: "Unknown Attendance Requirement" },
+    },
+    {
+      metric: MetricName.Recording as const,
+      yes: { icon: VideoCamera, text: "Lectures Recorded" },
+      no: { icon: VideoCameraOff, text: "Lectures Not Recorded" },
+      unknown: { icon: QuestionMark, text: "Unknown Recording Status" },
+    },
+  ];
+
   return (
     <Flex direction="column" gap="2">
-      <p className={styles.label}>User-Submitted Class Requirements</p>
+      <p className={overviewStyles.label}>User-Submitted Class Requirements</p>
       {!atLeastOneConsensus ? (
         <>
-          <p className={styles.description}>
-            No user-submitted information is available for this course yet.
+          <p className={overviewStyles.description}>
+            More user-submitted information is required to show this content.
           </p>
           <Link
             to="ratings?feedbackModal=true"
@@ -68,70 +87,38 @@ export function UserSubmittedData() {
       ) : (
         <div className={styles.userSubmissionRequirements}>
           <div className={styles.dataGroup}>
-            <div>
-              {responses.Attendance === Consensus.Yes && (
-                <>
-                  <User className={styles.icon} />
-                  <span className={styles.description}>
-                    Attendance Required
-                  </span>
-                </>
-              )}
-              {responses.Attendance === Consensus.No && (
-                <>
-                  <UserXmark className={styles.icon} />
-                  <span className={styles.description}>
-                    Attendance Not Required
-                  </span>
-                </>
-              )}
-              {(responses.Attendance === Consensus.Indeterminate ||
-                responses.Attendance === Consensus.BellowThreshold) && (
-                <>
-                  <QuestionMark
+            {METRIC_DISPLAY_CONFIG.map(({ metric, yes, no, unknown }) => {
+              const consensus = responses[metric];
+              const isUnknown =
+                consensus === Consensus.Indeterminate ||
+                consensus === Consensus.BellowThreshold;
+              const config =
+                consensus === Consensus.Yes
+                  ? yes
+                  : consensus === Consensus.No
+                    ? no
+                    : unknown;
+              const Icon = config.icon;
+
+              return (
+                <div key={metric}>
+                  <Icon
                     className={styles.icon}
-                    style={{ color: "var(--label-color)" }}
+                    style={
+                      isUnknown ? { color: "var(--label-color)" } : undefined
+                    }
                   />
                   <span
-                    className={styles.description}
-                    style={{ color: "var(--label-color)" }}
+                    className={overviewStyles.description}
+                    style={
+                      isUnknown ? { color: "var(--label-color)" } : undefined
+                    }
                   >
-                    Unknown Attendance Requirement
+                    {config.text}
                   </span>
-                </>
-              )}
-            </div>
-            <div>
-              {responses.Recording === Consensus.Yes && (
-                <>
-                  <VideoCamera className={styles.icon} />
-                  <span className={styles.description}>Lectures Recorded</span>
-                </>
-              )}
-              {responses.Recording === Consensus.No && (
-                <>
-                  <VideoCameraOff className={styles.icon} />
-                  <span className={styles.description}>
-                    Lectures Not Recorded
-                  </span>
-                </>
-              )}
-              {(responses.Recording === Consensus.Indeterminate ||
-                responses.Recording === Consensus.BellowThreshold) && (
-                <>
-                  <QuestionMark
-                    className={styles.icon}
-                    style={{ color: "var(--label-color)" }}
-                  />
-                  <span
-                    className={styles.description}
-                    style={{ color: "var(--label-color)" }}
-                  >
-                    Unknown Recording Status
-                  </span>
-                </>
-              )}
-            </div>
+                </div>
+              );
+            })}
           </div>
           <div>
             <Link

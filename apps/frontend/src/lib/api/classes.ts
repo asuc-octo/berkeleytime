@@ -6,14 +6,16 @@ import {
   AcademicCareer,
   Component,
   GetCanonicalCatalogQuery,
+  GetClassDetailsQuery,
+  GetClassOverviewQuery,
   GetClassQuery,
 } from "../generated/graphql";
 
-export const READ_CLASS = gql`
+export const GET_CLASS = gql`
   query GetClass(
     $year: Int!
     $semester: Semester!
-    $sessionId: SessionIdentifier
+    $sessionId: SessionIdentifier!
     $subject: String!
     $courseNumber: CourseNumber!
     $number: ClassNumber!
@@ -80,6 +82,7 @@ export const READ_CLASS = gql`
           number
           anyPrintInScheduleOfClasses
           primarySection {
+            startDate
             meetings {
               instructors {
                 familyName
@@ -98,7 +101,29 @@ export const READ_CLASS = gql`
         lecturesRecorded
         startDate
         endDate
+        sectionAttributes(attributeCode: "NOTE") {
+          attribute {
+            code
+            description
+            formalDescription
+          }
+          value {
+            code
+            description
+            formalDescription
+          }
+        }
         enrollment {
+          history {
+            startTime
+            endTime
+            granularitySeconds
+            status
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
           latest {
             startTime
             endTime
@@ -108,16 +133,15 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
             seatReservationCount {
               enrolledCount
               maxEnroll
-              number
+              requirementGroup {
+                description
+              }
+              isValid
             }
-          }
-          seatReservationTypes {
-            fromDate
-            number
-            requirementGroup
           }
         }
         meetings {
@@ -147,6 +171,18 @@ export const READ_CLASS = gql`
         lecturesRecorded
         startDate
         endDate
+        sectionAttributes(attributeCode: "NOTE") {
+          attribute {
+            code
+            description
+            formalDescription
+          }
+          value {
+            code
+            description
+            formalDescription
+          }
+        }
         enrollment {
           latest {
             startTime
@@ -157,6 +193,7 @@ export const READ_CLASS = gql`
             maxEnroll
             waitlistedCount
             maxWaitlist
+            activeReservedMaxCount
           }
         }
         meetings {
@@ -181,9 +218,226 @@ export const READ_CLASS = gql`
   }
 `;
 
+export const GET_CLASS_DETAILS = gql`
+  query GetClassDetails(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier!
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      year
+      semester
+      subject
+      sessionId
+      courseNumber
+      courseId
+      number
+      unitsMax
+      unitsMin
+      primarySection {
+        sectionId
+        component
+        sectionAttributes(attributeCode: "NOTE") {
+          attribute {
+            code
+            formalDescription
+          }
+          value {
+            description
+            formalDescription
+          }
+        }
+        enrollment {
+          latest {
+            endTime
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+            activeReservedMaxCount
+            seatReservationCount {
+              enrolledCount
+              maxEnroll
+              requirementGroup {
+                description
+              }
+              isValid
+            }
+          }
+        }
+        meetings {
+          days
+          location
+          endTime
+          startTime
+          instructors {
+            familyName
+            givenName
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CLASS_SECTIONS = gql`
+  query GetClassSections(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier!
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      sections {
+        sectionId
+        number
+        component
+        meetings {
+          days
+          location
+          endTime
+          startTime
+        }
+        enrollment {
+          latest {
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CLASS_GRADES = gql`
+  query GetClassGrades(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier!
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      course {
+        gradeDistribution {
+          average
+          distribution {
+            letter
+            count
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CLASS_ENROLLMENT = gql`
+  query GetClassEnrollment(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier!
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      primarySection {
+        enrollment {
+          history {
+            startTime
+            endTime
+            granularitySeconds
+            enrolledCount
+            maxEnroll
+            waitlistedCount
+            maxWaitlist
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_CLASS_RATINGS = gql`
+  query GetClassRatings($subject: String!, $courseNumber: CourseNumber!) {
+    course(subject: $subject, number: $courseNumber) {
+      subject
+      number
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+          categories {
+            value
+            count
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const TRACK_CLASS_VIEW = gql`
+  mutation TrackClassView(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    trackClassView(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    )
+  }
+`;
+
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
-export type IClassCourse = IClass["course"];
+export type IClassDetails = NonNullable<GetClassDetailsQuery["class"]>;
+export type IClassCourse = NonNullable<GetClassOverviewQuery["course"]>;
 
 export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];

@@ -1,3 +1,5 @@
+@use "../../../../mixins" as *;
+
 .root {
   .header {
     display: flex;
@@ -17,13 +19,13 @@
 
         .title {
           color: var(--paragraph-color);
-          font-size: 16px;
-          font-weight: 400;
+          font-size: var(--text-16);
+          font-weight: var(--font-normal);
         }
 
         .info {
           color: var(--label-color);
-          font-size: 14px;
+          font-size: var(--text-14);
           display: flex;
           align-items: center;
           cursor: pointer;
@@ -37,7 +39,7 @@
       .metricAverage {
         color: var(--label-color);
         padding-left: 14px;
-        font-size: 14px;
+        font-size: var(--text-14);
       }
     }
     .statusSection {
@@ -81,11 +83,11 @@
       .metric {
         width: 24px;
         color: var(--paragraph-color);
-        font-weight: 500;
+        font-weight: var(--font-medium);
         text-align: center;
         opacity: 0;
         gap: 10px;
-        font-size: 16px;
+        font-size: var(--text-16);
         animation: fadeIn 200ms ease forwards;
         animation-delay: calc(var(--delay) + 50ms);
         user-select: none;
@@ -98,24 +100,39 @@
         border-radius: 4px;
         overflow: hidden;
 
+        @include dark-mode {
+          background-color: var(--zinc-600);
+        }
+
         .bar {
           height: 100%;
           background-color: var(--slate-600);
           border-radius: 4px;
           width: 0;
           transform-origin: left;
-          transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
-          will-change: width;
+          transition-property: width, background-color;
+          transition-duration: 400ms, 200ms;
+          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1), ease;
+          transition-delay: var(--width-delay, 0ms), 0ms;
+          will-change: width, background-color;
+
+          @include dark-mode {
+            background-color: var(--zinc-200);
+          }
         }
-        .inactive-bar {
+        .inactiveBar {
           background-color: var(--slate-400);
+
+          @include dark-mode {
+            background-color: var(--zinc-500);
+          }
         }
       }
 
       .count {
         width: 24px;
         color: var(--paragraph-color);
-        font-size: 16px;
+        font-size: var(--text-16);
         text-align: center;
         opacity: 0;
         animation: fadeIn 200ms ease forwards;
@@ -124,19 +141,6 @@
 
         &.empty {
           color: var(--label-color);
-        }
-      }
-    }
-    @media (prefers-color-scheme: dark) {
-      .statRow {
-        .barContainer {
-          background-color: var(--zinc-600);
-          .bar {
-            background-color: var(--zinc-200);
-          }
-          .inactive-bar {
-            background-color: var(--zinc-500);
-          }
         }
       }
     }
@@ -170,8 +174,4 @@
   to {
     transform: scaleX(1);
   }
-}
-
-.fadeIn {
-  animation: fadeIn 0.2s ease-in;
 }

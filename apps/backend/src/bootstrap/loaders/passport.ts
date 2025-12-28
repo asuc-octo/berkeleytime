@@ -7,7 +7,7 @@ import type { RedisClientType } from "redis";
 
 import { UserModel } from "@repo/common";
 
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
 
 const LOGIN_ROUTE = "/login";
 const LOGIN_REDIRECT_ROUTE = "/login/redirect";
@@ -22,19 +22,23 @@ const SCOPE = ["profile", "email"];
 
 const CACHE_PREFIX = "user-session:";
 
+const ANONYMOUS_SESSION_TTL = 1000 * 60 * 60 * 12;
+const AUTHENTICATED_SESSION_TTL = 1000 * 60 * 60 * 24 * 365;
+
 export default async (app: Application, redis: RedisClientType) => {
   // init
   app.use(
     session({
       secret: config.SESSION_SECRET,
-      name: "sessionId",
+      name: "bt.sid",
       resave: false,
-      saveUninitialized: false,
+      saveUninitialized: true,
       cookie: {
         secure: !config.isDev,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+        maxAge: ANONYMOUS_SESSION_TTL,
         sameSite: "lax",
+        domain: config.isDev ? undefined : ".berkeleytime.com",
       },
       store: new RedisStore({
         client: redis,
@@ -80,6 +84,10 @@ export default async (app: Application, redis: RedisClientType) => {
       failureRedirect: FAILURE_REDIRECT,
     }),
     (req, res) => {
+      if (req.session?.cookie) {
+        req.session.cookie.maxAge = AUTHENTICATED_SESSION_TTL;
+      }
+
       const { state } = req.query;
 
       let parsedRedirectURI;
@@ -121,7 +129,10 @@ export default async (app: Application, redis: RedisClientType) => {
   passport.serializeUser((user, done) => {
     done(null, user);
   });
-  passport.deserializeUser((user: any, done) => {
+  passport.deserializeUser(async (user: any, done) => {
+    if (user?._id) {
+      await UserModel.updateOne({ _id: user._id }, { lastSeenAt: new Date() });
+    }
     done(null, user);
   });
   passport.use(
@@ -145,7 +156,11 @@ export default async (app: Application, redis: RedisClientType) => {
             email,
             googleId: profile.id,
             name: profile.displayName,
+            lastSeenAt: new Date(),
           });
+        } else {
+          user.name = profile.displayName;
+          user.lastSeenAt = new Date();
         }
 
         const doc = await user.save();

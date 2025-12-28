@@ -10,6 +10,7 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
+import CatalogSkeleton from "@/app/Catalog/Skeleton";
 import Layout from "@/components/Layout";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
 import UserProvider from "@/providers/UserProvider";
@@ -20,8 +21,12 @@ const Profile = {
   Account: lazy(() => import("@/app/Profile/Account")),
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
-  Settings: lazy(() => import("@/app/Profile/Settings")),
+  Bookmarks: lazy(() => import("@/app/Profile/Bookmarks")),
 };
+
+const CollectionDetail = lazy(
+  () => import("@/app/Profile/Bookmarks/CollectionDetail")
+);
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -31,20 +36,14 @@ const Class = {
   Ratings: lazy(() => import("@/components/Class/Ratings")),
 };
 
-const Course = {
-  Root: lazy(() => import("@/app/Course")),
-  Enrollment: lazy(() => import("@/components/Course/Enrollment")),
-  Grades: lazy(() => import("@/components/Course/Grades")),
-  Overview: lazy(() => import("@/components/Course/Overview")),
-  Classes: lazy(() => import("@/components/Course/Classes")),
-};
-
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
+const Privacy = lazy(() => import("@/app/Legal/Privacy"));
+const Terms = lazy(() => import("@/app/Legal/Terms"));
 const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
 const Manage = lazy(() => import("@/app/Schedule/Editor"));
@@ -56,7 +55,7 @@ const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 
 const router = createBrowserRouter([
   {
-    element: <Layout header={false} footer={false} />,
+    element: <Layout banner={false} header={false} footer={false} />,
     children: [
       // {
       //   element: (
@@ -116,10 +115,11 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "gradtrak",
     element: <Layout footer={false} />,
     children: [
       {
-        path: "gradtrak",
+        index: true,
         element: (
           <SuspenseBoundary key="gradtrak-landing">
             <GradTrak />
@@ -127,7 +127,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "gradtrak/onboarding",
+        path: "onboarding",
         element: (
           <SuspenseBoundary key="gradtrak-onboarding">
             <GradTrakOnboarding />
@@ -135,7 +135,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "gradtrak/dashboard",
+        path: "dashboard",
         element: (
           <SuspenseBoundary key="gradtrak-dashboard">
             <GradTrakDashboard />
@@ -167,6 +167,27 @@ const router = createBrowserRouter([
           </SuspenseBoundary>
         ),
       },
+      {
+        path: "legal/privacy",
+        element: (
+          <SuspenseBoundary key="privacy">
+            <Privacy />
+          </SuspenseBoundary>
+        ),
+      },
+      {
+        path: "legal/terms",
+        element: (
+          <SuspenseBoundary key="terms">
+            <Terms />
+          </SuspenseBoundary>
+        ),
+      },
+    ],
+  },
+  {
+    element: <Layout footer={false} scrollLock />,
+    children: [
       {
         element: (
           <SuspenseBoundary key="profile">
@@ -201,11 +222,11 @@ const router = createBrowserRouter([
           },
           {
             element: (
-              <SuspenseBoundary key="settings">
-                <Profile.Settings />
+              <SuspenseBoundary key="bookmarks">
+                <Profile.Bookmarks />
               </SuspenseBoundary>
             ),
-            path: "settings",
+            path: "bookmarks",
           },
         ],
       },
@@ -216,74 +237,11 @@ const router = createBrowserRouter([
     children: [
       {
         element: (
-          <SuspenseBoundary key="grades">
-            <GradeDistributions />
+          <SuspenseBoundary key="collection">
+            <CollectionDetail />
           </SuspenseBoundary>
         ),
-        path: "grades",
-      },
-      {
-        element: (
-          <SuspenseBoundary key="enrollment">
-            <Enrollment />
-          </SuspenseBoundary>
-        ),
-        path: "enrollment",
-      },
-      {
-        element: (
-          <SuspenseBoundary key="courses/:subject/:number">
-            <Course.Root />
-          </SuspenseBoundary>
-        ),
-        path: "courses/:subject/:number",
-        children: [
-          {
-            element: (
-              <SuspenseBoundary key="overview">
-                <Course.Overview />
-              </SuspenseBoundary>
-            ),
-            index: true,
-          },
-          {
-            element: (
-              <SuspenseBoundary key="classes">
-                <Course.Classes />
-              </SuspenseBoundary>
-            ),
-            path: "classes",
-          },
-          {
-            element: (
-              <SuspenseBoundary key="enrollment">
-                <Course.Enrollment />
-              </SuspenseBoundary>
-            ),
-            path: "enrollment",
-          },
-          {
-            element: (
-              <SuspenseBoundary key="grades">
-                <Course.Grades />
-              </SuspenseBoundary>
-            ),
-            path: "grades",
-          },
-          {
-            path: "*",
-            loader: ({ params: { subject, number } }) =>
-              redirect(`/courses/${subject}/${number}`),
-          },
-        ],
-      },
-      {
-        element: (
-          <SuspenseBoundary key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?">
-            <Catalog />
-          </SuspenseBoundary>
-        ),
-        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?",
+        path: "collection/:id/:subject?/:courseNumber?/:number?",
         children: [
           {
             element: (
@@ -318,15 +276,101 @@ const router = createBrowserRouter([
             path: "grades",
           },
           {
-            element: <Class.Ratings />,
+            element: (
+              <SuspenseBoundary key="ratings">
+                <Class.Ratings />
+              </SuspenseBoundary>
+            ),
+            path: "ratings",
+          },
+        ],
+      },
+      {
+        element: (
+          <SuspenseBoundary key="grades">
+            <GradeDistributions />
+          </SuspenseBoundary>
+        ),
+        path: "grades",
+      },
+      {
+        element: (
+          <SuspenseBoundary key="enrollment">
+            <Enrollment />
+          </SuspenseBoundary>
+        ),
+        path: "enrollment",
+      },
+      {
+        element: (
+          <SuspenseBoundary
+            key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
+            fallback={<CatalogSkeleton />}
+          >
+            <Catalog />
+          </SuspenseBoundary>
+        ),
+        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",
+        children: [
+          {
+            element: (
+              <SuspenseBoundary key="overview">
+                <Class.Overview />
+              </SuspenseBoundary>
+            ),
+            index: true,
+          },
+          {
+            element: (
+              <SuspenseBoundary key="sections">
+                <Class.Sections />
+              </SuspenseBoundary>
+            ),
+            path: "sections",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="enrollment">
+                <Class.Enrollment />
+              </SuspenseBoundary>
+            ),
+            path: "enrollment",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="grades">
+                <Class.Grades />
+              </SuspenseBoundary>
+            ),
+            path: "grades",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="ratings">
+                <Class.Ratings />
+              </SuspenseBoundary>
+            ),
             path: "ratings",
           },
           {
             path: "*",
-            loader: ({ params: { year, semester, subject, courseNumber } }) =>
-              redirect(
-                `/catalog/${year}/${semester}/${subject}/${courseNumber}`
-              ),
+            loader: ({
+              params: {
+                year,
+                semester,
+                subject,
+                courseNumber,
+                number,
+                sessionId,
+              },
+            }) => {
+              const basePath = `/catalog/${year}/${semester}/${subject}/${courseNumber}`;
+              return redirect(
+                number && sessionId
+                  ? `${basePath}/${number}/${sessionId}`
+                  : basePath
+              );
+            },
           },
         ],
       },

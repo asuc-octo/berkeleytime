@@ -1,4 +1,16 @@
-# CI/CD Workflow
+# Deployment Environments & CI/CD Workflow
+
+<!-- toc -->
+
+
+## What are Deployment Environments?
+
+Berkeleytime has three deployment environments: production, staging, and development. The production environment refers to the live deployed website seen by users of Berkeleytime and should contain code already tested in the other two environments. The staging and development environments are primarily used by Berkeleytime developers/designers to test new code.
+- **Production**: Finalized changes merged in `main` are *manually* deployed here at [berkeleytime.com](https://berkeleytime.com)
+- **Staging**: Changes already merged in `main` are *automatically* deployed here at [staging.berkeleytime.com](https://staging.berkeleytime.com)
+- **Development**: Specific git branches can be *manually* deployed here.
+
+## The CI/CD Github Actions
 
 We use GitHub actions to build our CI/CD workflows.[^1] All three CI/CD workflows[^2] are fairly similar to each other and can all be broken into two phases: the build and the deploy phase.
 
@@ -13,7 +25,7 @@ We use GitHub actions to build our CI/CD workflows.[^1] All three CI/CD workflow
         width="75%" />
 </p>
 
-## Comparing Development, Staging, and Production Environments
+### Comparing Deployment Environment Actions
 
 The differences between the three environments are managed by each individual workflow file: `cd-dev.yaml`, `cd-stage.yaml`, and `cd-prod.yaml`.
 

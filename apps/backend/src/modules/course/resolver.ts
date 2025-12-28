@@ -1,12 +1,21 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
+import { getPnpPercentageFromCounts } from "@repo/common";
+
+import { CourseAggregatedRatingsArgs } from "../../generated-types/graphql";
+import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
-import { getCourseAggregatedRatings } from "../rating/controller";
+import {
+  getCourseAggregatedRatings,
+  getCourseRatingsCount,
+  getInstructorAggregatedRatings,
+} from "../rating/controller";
 import {
   getAssociatedCoursesById,
   getAssociatedCoursesBySubjectNumber,
   getClassesByCourse,
   getCourse,
+  getCourseById,
   getCourses,
 } from "./controller";
 import { IntermediateCourse } from "./formatter";
@@ -44,6 +53,12 @@ const resolvers: CourseModule.Resolvers = {
   Query: {
     course: async (_, { subject, number }, _context, _info) => {
       const course = await getCourse(subject, number);
+
+      return course as unknown as CourseModule.Course;
+    },
+
+    courseById: async (_, { courseId }, _context, _info) => {
+      const course = await getCourseById(courseId);
 
       return course as unknown as CourseModule.Course;
     },
@@ -99,9 +114,41 @@ const resolvers: CourseModule.Resolvers = {
     },
 
     gradeDistribution: async (
-      parent: IntermediateCourse | CourseModule.Course
+      parent: IntermediateCourse | CourseModule.Course,
+      _args,
+      _context,
+      info
     ) => {
-      if (parent.gradeDistribution) return parent.gradeDistribution;
+      const requestedFields = getFields(info.fieldNodes);
+      const needsDistribution = requestedFields.includes("distribution");
+
+      if (!needsDistribution) {
+        if (parent.gradeDistribution) {
+          return {
+            ...parent.gradeDistribution,
+            distribution: [],
+          };
+        }
+
+        const { allTimeAverageGrade, allTimePassCount, allTimeNoPassCount } =
+          parent as IntermediateCourse;
+
+        return {
+          average: allTimeAverageGrade ?? null,
+          distribution: [],
+          pnpPercentage: getPnpPercentageFromCounts(
+            allTimePassCount,
+            allTimeNoPassCount
+          ),
+        };
+      }
+
+      if (
+        parent.gradeDistribution &&
+        parent.gradeDistribution.distribution &&
+        parent.gradeDistribution.distribution.length > 0
+      )
+        return parent.gradeDistribution;
 
       const gradeDistribution = await getGradeDistributionByCourse(
         parent.subject,
@@ -112,14 +159,32 @@ const resolvers: CourseModule.Resolvers = {
     },
 
     aggregatedRatings: async (
-      parent: IntermediateCourse | CourseModule.Course
+      parent: IntermediateCourse | CourseModule.Course,
+      args: CourseAggregatedRatingsArgs
     ) => {
       const aggregatedRatings = await getCourseAggregatedRatings(
+        parent.subject,
+        parent.number,
+        args.metricNames ?? undefined
+      );
+
+      return aggregatedRatings;
+    },
+
+    instructorAggregatedRatings: async (
+      parent: IntermediateCourse | CourseModule.Course
+    ) => {
+      const instructorRatings = await getInstructorAggregatedRatings(
         parent.subject,
         parent.number
       );
 
-      return aggregatedRatings;
+      return instructorRatings;
+    },
+
+    ratingsCount: async (parent: IntermediateCourse | CourseModule.Course) => {
+      const count = await getCourseRatingsCount(parent.subject, parent.number);
+      return count;
     },
   },
 

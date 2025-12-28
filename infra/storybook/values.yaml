@@ -1,6 +1,6 @@
 env: prod
 
-host: storybook.stanfurdtime.com
+host: storybook.berkeleytime.com
 port: 80
 
 issuer: letsencrypt-prod

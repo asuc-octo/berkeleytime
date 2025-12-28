@@ -19,9 +19,7 @@ export default function SideBar({ children }: SideBarProps) {
         <Dialog.Overlay />
         <Dialog.Drawer align="start" className={styles.drawer}>
           <div className={styles.header}>
-            <Link className={styles.brand} to="/">
-              Berkeleytime
-            </Link>
+            <span className={styles.brand}>Berkeleytime</span>
             <Dialog.Close asChild>
               <IconButton>
                 <Xmark />

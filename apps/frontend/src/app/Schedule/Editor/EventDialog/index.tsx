@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import { ArrowRight, Xmark } from "iconoir-react";
 
@@ -15,22 +15,36 @@ import {
   Text,
 } from "@repo/theme";
 
+import { acceptedColors } from "@/app/Schedule/schedule";
+import ColorSelector from "@/components/ColorSelector";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
+import { IScheduleEvent } from "@/lib/api";
 
 import styles from "./EventDialog.module.scss";
 
 interface EventDialogProps {
   children: ReactNode;
+  event?: IScheduleEvent;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 // TODO: Collaborative editing
 // TODO: Invite collaborators
 
-export default function EventDialog({ children }: EventDialogProps) {
+export default function EventDialog({
+  children,
+  event,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+}: EventDialogProps) {
   const { schedule } = useSchedule();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [updateSchedule] = useUpdateSchedule();
+
+  const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setOpen = controlledOnOpenChange || setInternalOpen;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -45,6 +59,33 @@ export default function EventDialog({ children }: EventDialogProps) {
     false,
     false,
   ]);
+  const [color, setColor] = useState<Color>(Color.Gray);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setStartTime("11:30");
+    setEndTime("15:50");
+    setDays([false, false, false, false, false, false, false]);
+    setColor(Color.Gray);
+  };
+
+  // Populate form when event prop is provided
+  useEffect(() => {
+    if (event) {
+      setTitle(event.title || "");
+      setDescription(event.description || "");
+      setStartTime(event.startTime || "11:30");
+      setEndTime(event.endTime || "15:50");
+      // Convert days array (Sunday first) to our format (Monday first)
+      if (event.days && event.days.length === 7) {
+        setDays([...event.days.slice(1), event.days[0]]);
+      }
+      setColor(event.color || Color.Gray);
+    } else {
+      resetForm();
+    }
+  }, [event]);
 
   const save = () => {
     if (title === "") return;
@@ -53,56 +94,92 @@ export default function EventDialog({ children }: EventDialogProps) {
       parseInt(endTime.replace(":", ""), 10)
     )
       return;
-    const temporaryIdentifier = crypto.randomUUID();
 
-    const event = {
+    const eventData = {
       title,
       description,
       startTime,
       endTime,
-      days,
-      color: Color.Gray,
+      days: days.slice(1).concat(days[0]), // Convert back to Sunday-first format
+      color,
     };
 
-    updateSchedule(
-      schedule._id,
-      {
-        events: schedule.events
-          ? [
-              ...schedule.events.map((e) => {
-                // TODO: Clean up
+    if (event) {
+      // Edit mode: replace the existing event
+      const updatedEvents = schedule.events
+        ? schedule.events.map((e) => {
+            if (e._id === event._id) {
+              return eventData;
+            }
+            // eslint-disable-next-line
+            const { _id, __typename, ...rest } = (e as any) || {};
+            return rest;
+          })
+        : [eventData];
 
-                // eslint-disable-next-line
-                const { _id, __typename, ...rest } = (e as any) || {};
-                return rest;
-              }),
-              event,
-            ]
-          : [event],
-      },
-      {
-        optimisticResponse: {
-          updateSchedule: {
-            ...schedule,
-            events: schedule.events
-              ? [
-                  ...schedule.events,
-                  {
-                    ...event,
-                    _id: temporaryIdentifier,
-                  },
-                ]
-              : [
-                  {
-                    ...event,
-                    _id: temporaryIdentifier,
-                  },
-                ],
-          },
+      updateSchedule(
+        schedule._id,
+        {
+          events: updatedEvents,
         },
-      }
-    );
+        {
+          optimisticResponse: {
+            updateSchedule: {
+              ...schedule,
+              events: schedule.events
+                ? schedule.events.map((e) =>
+                    e._id === event._id ? { ...eventData, _id: event._id } : e
+                  )
+                : [{ ...eventData, _id: event._id }],
+            },
+          },
+        }
+      );
+    } else {
+      // Create mode: add new event
+      const temporaryIdentifier = crypto.randomUUID();
 
+      updateSchedule(
+        schedule._id,
+        {
+          events: schedule.events
+            ? [
+                ...schedule.events.map((e) => {
+                  // TODO: Clean up
+
+                  // eslint-disable-next-line
+                  const { _id, __typename, ...rest } = (e as any) || {};
+                  return rest;
+                }),
+                eventData,
+              ]
+            : [eventData],
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: {
+              ...schedule,
+              events: schedule.events
+                ? [
+                    ...schedule.events,
+                    {
+                      ...eventData,
+                      _id: temporaryIdentifier,
+                    },
+                  ]
+                : [
+                    {
+                      ...eventData,
+                      _id: temporaryIdentifier,
+                    },
+                  ],
+            },
+          },
+        }
+      );
+    }
+
+    resetForm();
     setOpen(false);
   };
 
@@ -115,10 +192,14 @@ export default function EventDialog({ children }: EventDialogProps) {
           <Dialog.Header>
             <Flex direction="column" gap="1" flexGrow="1">
               <Dialog.Title asChild>
-                <Heading>Add a custom event</Heading>
+                <Heading>{event ? "Edit event" : "Add a custom event"}</Heading>
               </Dialog.Title>
               <Dialog.Description asChild>
-                <Text>Insert a custom event in your schedule</Text>
+                <Text>
+                  {event
+                    ? "Update your custom event"
+                    : "Insert a custom event in your schedule"}
+                </Text>
               </Dialog.Description>
             </Flex>
             <Dialog.Close asChild>
@@ -159,9 +240,13 @@ export default function EventDialog({ children }: EventDialogProps) {
                 </span>
               </p>
             </Flex>
-            <Flex direction="column" gap="2">
+            <Flex direction="column" gap="2" width="300px">
               <Label>Repeat</Label>
-              <DaySelect days={days} updateDays={setDays} />
+              <DaySelect
+                days={days}
+                updateDays={(v) => setDays([...v])}
+                size="sm"
+              />
             </Flex>
             <Flex direction="column" gap="2">
               <Label>Description</Label>
@@ -172,10 +257,19 @@ export default function EventDialog({ children }: EventDialogProps) {
                 onChange={(event) => setDescription(event.target.value)}
               />
             </Flex>
+            <Flex direction="column" gap="2">
+              <Label>Color</Label>
+              <ColorSelector
+                selectedColor={color}
+                allowedColors={acceptedColors}
+                onColorSelect={setColor}
+                usePortal={false}
+              />
+            </Flex>
           </Dialog.Body>
           <Dialog.Footer>
             <Button onClick={() => save()}>
-              Add
+              {event ? "Save" : "Add"}
               <ArrowRight />
             </Button>
           </Dialog.Footer>

@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import { ArrowLeft, Copy, Edit, ShareIos, ViewColumns2 } from "iconoir-react";
+import {
+  ArrowLeft,
+  Copy,
+  Edit,
+  ShareIos,
+  Shuffle,
+  Upload,
+  ViewColumns2,
+} from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
+import { Button, IconButton, Input, MenuItem, Tooltip } from "@repo/theme";
 
-import Week from "@/app/Schedule/Week";
+import Week from "@/app/Schedule/Editor/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
 import { IScheduleClass, IScheduleEvent } from "@/lib/api";
-import { Color, GetClassDocument } from "@/lib/generated/graphql";
+import { Color, Component, GetClassDocument } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
 import { SectionColor, getNextClassColor, getY } from "../schedule";
@@ -19,9 +27,11 @@ import Calendar from "./Calendar";
 import CloneDialog from "./CloneDialog";
 import EditDialog from "./EditDialog";
 import styles from "./Editor.module.scss";
+import GenerateSchedulesDialog from "./GenerateSchedulesDialog";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
+import exportToCalendar from "./exportToCalendar";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
@@ -38,6 +48,39 @@ export default function Editor() {
     null
   );
   const [tab, setTab] = useState(0);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState(schedule.name);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
+  // Update nameValue when schedule.name changes
+  useEffect(() => {
+    setNameValue(schedule.name);
+  }, [schedule.name]);
+
+  const handleStartEditName = () => {
+    setIsEditingName(true);
+    setNameValue(schedule.name);
+    // Focus the input after it's rendered
+    setTimeout(() => {
+      nameInputRef.current?.focus();
+      nameInputRef.current?.select();
+    }, 0);
+  };
+
+  const handleSaveName = () => {
+    const trimmedValue = nameValue.trim();
+    if (trimmedValue && trimmedValue !== schedule.name) {
+      updateSchedule(schedule._id, { name: trimmedValue });
+    } else {
+      setNameValue(schedule.name);
+    }
+    setIsEditingName(false);
+  };
+
+  const handleCancelEditName = () => {
+    setNameValue(schedule.name);
+    setIsEditingName(false);
+  };
 
   const selectedSections = useMemo(
     () => getSelectedSections(schedule),
@@ -68,9 +111,10 @@ export default function Editor() {
       if (!selectedClass) return;
 
       // Find the associated section
-      const section = selectedClass.class.sections.find(
-        (section) => section.number === number
-      );
+      const section = [
+        ...selectedClass.class.sections,
+        selectedClass.class.primarySection,
+      ].find((section) => section?.number === number);
 
       if (!section) return;
 
@@ -79,20 +123,23 @@ export default function Editor() {
         (selectedSection) => {
           // return selectedSection.sectionId == section.sectionId
 
-          const currentSection = selectedClass.class.sections.find(
-            (section) => section.sectionId === selectedSection.sectionId
-          );
+          const currentSection = [
+            ...selectedClass.class.sections,
+            selectedClass.class.primarySection,
+          ].find((section) => section?.sectionId === selectedSection.sectionId);
 
           return (
-            !currentSection ||
-            currentSection.component !== section.component ||
-            currentSection.sectionId == section.sectionId
+            !currentSection || currentSection.component !== section.component
           );
         }
       );
 
-      // Add the selected section
-      selectedClass.selectedSections = [...selectedSections, section];
+      // Add the selected section, unless it already exists (then remove)
+      selectedClass.selectedSections = selectedClass.selectedSections.find(
+        (s) => s.sectionId === section.sectionId
+      )
+        ? selectedSections
+        : [...selectedSections, section];
 
       setCurrentSection(null);
 
@@ -105,12 +152,20 @@ export default function Editor() {
               selectedSections,
               class: { number, subject, courseNumber },
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             })
           ),
         },
@@ -141,7 +196,7 @@ export default function Editor() {
       if (!selectedClass) return;
 
       const section =
-        selectedClass.class.primarySection.number === number
+        selectedClass.class.primarySection?.number === number
           ? selectedClass.class.primarySection
           : selectedClass.class.sections.find(
               (section) => section.number === number
@@ -222,12 +277,20 @@ export default function Editor() {
               selectedSections,
               class: { number, subject, courseNumber },
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             })
           ),
         },
@@ -242,7 +305,12 @@ export default function Editor() {
   );
 
   const handleClassSelect = useCallback(
-    async (subject: string, courseNumber: string, number: string) => {
+    async (
+      subject: string,
+      courseNumber: string,
+      number: string,
+      sessionId: string
+    ) => {
       // Clone the schedule for immutability
       const _schedule = structuredClone(schedule);
 
@@ -282,12 +350,20 @@ export default function Editor() {
                 selectedSections,
                 class: { number, subject, courseNumber },
                 color,
+                hidden,
+                locked,
+                blockedSections,
+                lockedComponents,
               }) => ({
                 subject,
                 courseNumber,
                 number,
                 sectionIds: selectedSections.map((s) => s.sectionId),
                 color,
+                hidden,
+                locked,
+                blockedSections,
+                lockedComponents,
               })
             ),
           },
@@ -307,6 +383,7 @@ export default function Editor() {
         variables: {
           year: schedule.year,
           semester: schedule.semester,
+          sessionId,
           subject,
           courseNumber,
           number,
@@ -320,41 +397,53 @@ export default function Editor() {
 
       const _class: IScheduleClass["class"] = {
         ..._classClone,
-        primarySection: {
-          ..._classClone.primarySection,
-          subject: _classClone.subject,
-          courseNumber: _classClone.courseNumber,
-          classNumber: _classClone.number,
-        },
+        primarySection: _classClone.primarySection
+          ? {
+              ..._classClone.primarySection,
+              subject: _classClone.subject,
+              courseNumber: _classClone.courseNumber,
+              classNumber: _classClone.number,
+            }
+          : undefined,
         sections: _classClone.sections.map((s) => {
           return {
             ...s,
-            subject: _class.subject,
-            courseNumber: _class.courseNumber,
-            classNumber: _class.number,
+            subject: _classClone.subject,
+            courseNumber: _classClone.courseNumber,
+            classNumber: _classClone.number,
           };
         }),
       };
 
       const selectedSections = [_class.primarySection];
 
-      const kinds = Array.from(
-        new Set(_classClone.sections.map((section) => section.component))
-      );
+      // DISABLED: Don't select by default?
+      // const kinds = Array.from(
+      //   new Set(_classClone.sections.map((section) => section.component))
+      // );
 
       // Add the first section of each kind to selected sections
-      for (const kind of kinds) {
-        const section = _class.sections
-          .filter((section) => section.component === kind)
-          .sort((a, b) => a.number.localeCompare(b.number))[0];
+      // for (const kind of kinds) {
+      //   const section = _class.sections
+      //     .filter((section) => section.component === kind)
+      //     .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        selectedSections.push(section);
-      }
+      //   selectedSections.push(section);
+      // }
 
       _schedule.classes.push({
         class: _class,
-        selectedSections,
+        selectedSections: selectedSections.map((s) => {
+          return {
+            sectionId: s?.sectionId,
+            ...s,
+          };
+        }),
         color: getNextClassColor(_schedule.classes.length),
+        hidden: false,
+        locked: false,
+        blockedSections: [],
+        lockedComponents: [],
       });
 
       // Update the schedule
@@ -366,12 +455,20 @@ export default function Editor() {
               class: { subject, courseNumber, number },
               selectedSections,
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             })
           ),
         },
@@ -425,12 +522,371 @@ export default function Editor() {
               selectedSections,
               class: { number, subject, courseNumber },
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             }) => ({
               subject,
               courseNumber,
               number,
               sectionIds: selectedSections.map((s) => s.sectionId),
               color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleLockChange = useCallback(
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      locked: boolean
+    ) => {
+      if (!editing) return;
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      // Find the associated class
+      const selectedClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      // Update the locked state
+      selectedClass.locked = locked;
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleHideChange = useCallback(
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      hidden: boolean
+    ) => {
+      if (!editing) return;
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      // Find the associated class
+      const selectedClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      // Update the hidden state
+      selectedClass.hidden = hidden;
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleSectionBlockToggle = useCallback(
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      sectionId: number,
+      blocked: boolean
+    ) => {
+      if (!editing) return;
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      // Find the associated class
+      const selectedClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      // Get current blocked section IDs (handle both Section[] and number[] formats)
+
+      // Update the blockedSections array
+      if (blocked) {
+        if (!selectedClass.blockedSections?.find((s) => s === sectionId)) {
+          selectedClass.blockedSections = [
+            ...(selectedClass.blockedSections || []),
+            sectionId,
+          ];
+        }
+      } else {
+        selectedClass.blockedSections = selectedClass.blockedSections?.filter(
+          (s) => s !== sectionId
+        );
+      }
+
+      selectedClass.selectedSections = selectedClass.selectedSections.filter(
+        (s) => s.sectionId !== sectionId
+      );
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleComponentBlockToggle = useCallback(
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      component: Component,
+      blocked: boolean
+    ) => {
+      if (!editing) return;
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      // Find the associated class
+      const selectedClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      // Get current blocked section IDs (handle both Section[] and number[] formats)
+
+      const sectionIds = [
+        selectedClass.class.primarySection,
+        ...selectedClass.class.sections,
+      ]
+        .filter((s) => s && s.sectionId && s.component === component)
+        .map((s) => s!.sectionId);
+
+      // Update the blockedSections array
+      sectionIds.forEach((sectionId) => {
+        if (blocked) {
+          if (!selectedClass.blockedSections?.find((s) => s === sectionId)) {
+            selectedClass.blockedSections = [
+              ...(selectedClass.blockedSections || []),
+              sectionId,
+            ];
+          }
+        } else {
+          selectedClass.blockedSections = selectedClass.blockedSections?.filter(
+            (s) => s !== sectionId
+          );
+        }
+      });
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleComponentLockChange = useCallback(
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      component: Component,
+      locked: boolean
+    ) => {
+      if (!editing) return;
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      // Find the associated class
+      const selectedClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      // Update the lockedComponents array
+      const lockedComponents = selectedClass.lockedComponents || [];
+      if (locked) {
+        if (!lockedComponents.includes(component)) {
+          selectedClass.lockedComponents = [...lockedComponents, component];
+        }
+      } else {
+        selectedClass.lockedComponents = lockedComponents.filter(
+          (c) => c !== component
+        );
+      }
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sectionIds: selectedSections.map((s) => s.sectionId),
+              color,
+              hidden,
+              locked,
+              blockedSections,
+              lockedComponents,
             })
           ),
         },
@@ -461,13 +917,22 @@ export default function Editor() {
         schedule._id,
         {
           events: _schedule.events.map(
-            ({ startTime, endTime, title, description, days, color }) => ({
+            ({
               startTime,
               endTime,
               title,
               description,
               days,
               color,
+              hidden,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
             })
           ),
         },
@@ -498,13 +963,68 @@ export default function Editor() {
         schedule._id,
         {
           events: _schedule.events.map(
-            ({ startTime, endTime, title, description, days, color }) => ({
+            ({
               startTime,
               endTime,
               title,
               description,
               days,
               color,
+              hidden,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule, updateSchedule]
+  );
+
+  const handleEventHideChange = useCallback(
+    (id: string, hidden: boolean) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      const event = _schedule.events.find((e) => e._id == id);
+
+      if (!event) return;
+
+      // Update the hidden state
+      event.hidden = hidden;
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          events: _schedule.events.map(
+            ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
+            }) => ({
+              startTime,
+              endTime,
+              title,
+              description,
+              days,
+              color,
+              hidden,
             })
           ),
         },
@@ -554,7 +1074,8 @@ export default function Editor() {
     const _schedule = structuredClone(schedule);
 
     _schedule.classes = schedule.classes.filter(
-      (c) => c.class.primarySection.sectionId != _class.primarySection.sectionId
+      (c) =>
+        c.class.primarySection?.sectionId !== _class.primarySection?.sectionId
     );
 
     updateSchedule(
@@ -565,12 +1086,20 @@ export default function Editor() {
             selectedSections,
             class: { number, subject, courseNumber },
             color,
+            hidden,
+            locked,
+            blockedSections,
+            lockedComponents,
           }) => ({
             subject,
             courseNumber,
             number,
             sectionIds: selectedSections.map((s) => s.sectionId),
             color,
+            hidden,
+            locked,
+            blockedSections,
+            lockedComponents,
           })
         ),
       },
@@ -586,21 +1115,51 @@ export default function Editor() {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.group}>
-          <Tooltip content="Back to schedules">
-            <Link to="../schedules">
-              <IconButton>
-                <ArrowLeft />
-              </IconButton>
-            </Link>
-          </Tooltip>
-          <p className={styles.heading}>{schedule.name}</p>
+          <Tooltip
+            trigger={
+              <Link to="../schedules">
+                <IconButton>
+                  <ArrowLeft />
+                </IconButton>
+              </Link>
+            }
+            title="Back to schedules"
+          />
+          {isEditingName ? (
+            <Input
+              ref={nameInputRef}
+              value={nameValue}
+              onChange={(e) => setNameValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSaveName();
+                } else if (e.key === "Escape") {
+                  handleCancelEditName();
+                }
+              }}
+              onBlur={handleSaveName}
+              className={styles.heading}
+              style={{ fontSize: "inherit", fontWeight: "inherit" }}
+            />
+          ) : (
+            <p
+              className={styles.heading}
+              onClick={editing ? handleStartEditName : undefined}
+              style={editing ? { cursor: "pointer" } : undefined}
+            >
+              {schedule.name}
+            </p>
+          )}
           {editing && (
             <EditDialog>
-              <Tooltip content="Edit">
-                <IconButton>
-                  <Edit />
-                </IconButton>
-              </Tooltip>
+              <Tooltip
+                trigger={
+                  <IconButton onClick={handleStartEditName}>
+                    <Edit />
+                  </IconButton>
+                }
+                title="Edit"
+              />
             </EditDialog>
           )}
           <div className={styles.separator} />
@@ -616,6 +1175,14 @@ export default function Editor() {
             Map
           </MenuItem> */}
         </div>
+        {editing && (
+          <GenerateSchedulesDialog schedule={schedule}>
+            <Button variant="secondary">
+              <Shuffle />
+              Generate
+            </Button>
+          </GenerateSchedulesDialog>
+        )}
         <Link to="compare">
           <Button variant="secondary">
             <ViewColumns2 />
@@ -628,6 +1195,10 @@ export default function Editor() {
             Clone
           </Button>
         </CloneDialog>
+        <Button variant="secondary" onClick={() => exportToCalendar(schedule)}>
+          <Upload />
+          Export
+        </Button>
         {editing && (
           <ShareDialog>
             <Button>
@@ -649,20 +1220,26 @@ export default function Editor() {
           onDeleteClass={handleDeleteClass}
           onDeleteEvent={handleDeleteEvent}
           onColorChange={handleColorChange}
+          onLockChange={handleLockChange}
+          onHideChange={handleHideChange}
+          onSectionBlockToggle={handleSectionBlockToggle}
+          onComponentBlockToggle={handleComponentBlockToggle}
+          onComponentLockChange={handleComponentLockChange}
           onEventColorChange={handleEventColorChange}
           onEventTitleChange={handleEventTitleChange}
+          onEventHideChange={handleEventHideChange}
         />
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (
             <Week
-              events={schedule.events}
+              events={schedule.events.filter((e) => !e.hidden)}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />
           ) : tab === 1 ? (
             <Calendar
               term={schedule.term}
-              customEvents={schedule.events}
+              customEvents={schedule.events.filter((e) => !e.hidden)}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />

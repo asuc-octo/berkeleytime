@@ -1,7 +1,6 @@
 import { ComponentPropsWithRef, Fragment, useMemo } from "react";
 
 import classNames from "classnames";
-import { Tooltip } from "radix-ui";
 
 import styles from "./Time.module.scss";
 
@@ -30,14 +29,12 @@ interface TimeProps {
   days?: boolean[] | null;
   startTime?: string | null;
   endTime?: string | null;
-  tooltip?: false;
 }
 
 export default function Time({
   days,
   startTime,
   endTime,
-  tooltip,
   className,
   ...props
 }: Omit<ComponentPropsWithRef<"p">, keyof TimeProps> & TimeProps) {
@@ -87,42 +84,9 @@ export default function Time({
   }, [days, startTime, endTime]);
 
   return value ? (
-    <Tooltip.Root disableHoverableContent open={tooltip}>
-      <Tooltip.Trigger asChild>
-        <p className={classNames(styles.trigger, className)} {...props}>
-          {value}
-        </p>
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          asChild
-          side="bottom"
-          sideOffset={8}
-          collisionPadding={8}
-        >
-          <div className={styles.content}>
-            <Tooltip.Arrow className={styles.arrow} />
-            {days!.map((day, index) => (
-              <Fragment key={index}>
-                {index > 0 && <div className={styles.divider} />}
-                <div className={styles.day}>
-                  <div className={styles.label}>
-                    {["Su", "M", "Tu", "W", "Th", "F", "Sa"][index]}
-                  </div>
-                  <div className={styles.noonReference} />
-                  {day && (
-                    <div
-                      className={styles.event}
-                      style={{ bottom: `${bottom}px`, height: `${height}px` }}
-                    />
-                  )}
-                </div>
-              </Fragment>
-            ))}
-          </div>
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+    <p className={classNames(styles.trigger, className)} {...props}>
+      {value}
+    </p>
   ) : (
     <p className={classNames(styles.trigger, className)} {...props}>
       To be determined

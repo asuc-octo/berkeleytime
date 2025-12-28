@@ -7,33 +7,23 @@ export const userTypeDef = gql`
     name: String!
     staff: Boolean!
     student: Boolean!
-    bookmarkedCourses: [Course!]!
-    bookmarkedClasses: [Class!]!
     majors: [String!]!
     minors: [String!]!
+  }
+
+  """
+  Minimal user data point for analytics
+  """
+  type UserCreationDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the user was created"
+    createdAt: String!
   }
 
   type Query {
     user: User @auth
   }
 
-  input BookmarkedCourseInput {
-    subject: String!
-    number: CourseNumber!
-  }
-
-  input BookmarkedClassInput {
-    year: Int!
-    semester: Semester!
-    sessionId: SessionIdentifier
-    subject: String!
-    courseNumber: CourseNumber!
-    number: ClassNumber!
-  }
-
   input UpdateUserInput {
-    bookmarkedClasses: [BookmarkedClassInput!]
-    bookmarkedCourses: [BookmarkedCourseInput!]
     majors: [String!]
     minors: [String!]
   }

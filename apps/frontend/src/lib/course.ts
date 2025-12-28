@@ -1,6 +1,3 @@
-// Re-export subjects from shared package
-export { Subject, subjects } from "@repo/shared";
-
 export enum Colleges {
   LnS = "College of Letters and Sciences",
   CoE = "College of Engineering",

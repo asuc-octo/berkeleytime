@@ -1,142 +1,88 @@
-.placeholder {
+.root {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  color: var(--label-color);
-  height: 100%;
-  font-size: 16px;
-  line-height: 1.5;
-  padding: 24px 0;
-  padding-top: 150px;
-  text-align: center;
+  gap: 10px;
+  width: 100%;
+}
 
-  .heading {
-    color: var(--heading-color);
-    font-weight: 500;
-    margin-top: 24px;
-  }
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
 
-  .paragraph {
-    color: var(--paragraph-color);
-    margin-top: 8px;
-    max-width: 448px;
+.header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.headerCell {
+  padding: 8px;
+  font-weight: var(--font-semibold);
+  font-size: var(--text-14);
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--heading-color);
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.row {
+  height: 120px;
+  border-bottom: 1px solid var(--border-color);
+
+  &:last-child {
+    border-bottom: none;
   }
 }
 
-.root {
-  background-color: var(--background-color);
-  padding: 24px 0 0;
-  display: flex;
-  gap: 24px;
+.cell {
+  padding: 12px 8px;
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--paragraph-color);
+  vertical-align: top;
+  text-align: left;
+  white-space: normal;
+  word-break: break-word;
+}
 
-  @media (width <= 992px) {
-    flex-direction: column;
-  }
+.ccn {
+  width: 50px;
+}
 
-  @media (width > 992px) {
-    align-items: flex-start;
-  }
+.time {
+  width: 180px;
+}
 
-  .view {
-    flex-grow: 1;
+.location {
+  width: 120px;
+}
 
-    .group {
-      scroll-margin-top: 24px;
+.waitlist {
+  width: 60px;
+}
 
-      .section {
-        padding: 24px;
-        background-color: var(--foreground-color);
-        border-radius: 8px;
-        box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-        margin-bottom: 24px;
-        border: 1px solid var(--border-color);
+.enrolled {
+  width: 90px;
+}
 
-        .header {
-          display: flex;
-          margin-bottom: 24px;
-          gap: 12px;
+.timeText {
+  width: 100%;
+  white-space: normal;
+  word-break: break-word;
+}
 
-          .text {
-            flex-grow: 1;
+.locationLink {
+  color: var(--blue-500);
+  text-decoration: none;
+  transition: color 100ms ease-in-out;
+  font-weight: var(--font-medium);
 
-            .heading {
-              color: var(--heading-color);
-              font-size: 14px;
-              margin-bottom: 8px;
-              line-height: 1;
-              font-weight: 500;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .menu {
-    position: sticky;
-    top: 24px;
-    width: 192px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    .item {
-      height: 32px;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      gap: 12px;
-      padding: 0 12px;
-      line-height: 1;
-      font-size: 14px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: var(--button-hover-color);
-
-        .component {
-          color: var(--heading-color);
-        }
-      }
-
-      &:active {
-        background-color: var(--button-active-color);
-      }
-
-      &.active .component {
-        color: var(--heading-color);
-      }
-
-      &.active::after {
-        opacity: 1;
-      }
-
-      &::after {
-        content: "";
-        width: 2px;
-        height: 100%;
-        background-color: var(--blue-500);
-        position: absolute;
-        opacity: 0;
-        left: -12px;
-        transition: all 100ms ease-in-out;
-      }
-
-      .component {
-        font-weight: 500;
-        color: var(--paragraph-color);
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-      }
-
-      .count {
-        color: var(--label-color);
-      }
-    }
+  &:hover {
+    color: var(--blue-hover);
   }
 }

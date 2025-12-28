@@ -9,3 +9,8 @@ export * from "./grade-distribution";
 export * from "./plan";
 export * from "./enrollment-history";
 export * from "./curated-classes";
+export * from "./collection";
+export * from "./enrollment-timeframe";
+export * from "./staff-member";
+export * from "./semester-role";
+export * from "./pod";

@@ -1,4 +1,7 @@
 import classNames from "classnames";
+import { Eye, EyeClosed } from "iconoir-react";
+
+import { Tooltip } from "@repo/theme";
 
 import CCN from "@/components/CCN";
 import Time from "@/components/Time";
@@ -10,14 +13,20 @@ interface SectionProps {
   onSectionSelect?: () => void;
   onSectionMouseOver: () => void;
   onSectionMouseOut: () => void;
+  onBlockToggle?: () => void;
   active: boolean;
+  blocked?: boolean;
+  editing?: boolean;
 }
 
 export default function Section({
   onSectionSelect,
   onSectionMouseOver,
   onSectionMouseOut,
+  onBlockToggle,
   active,
+  blocked = false,
+  editing = true,
   sectionId,
   number,
   meetings,
@@ -26,15 +35,18 @@ export default function Section({
   return meetingsAdjusted.map((meeting) => (
     <div
       className={classNames(styles.root, {
-        [styles.active]: active,
+        [styles.active]: active && !blocked,
+        [styles.blocked]: blocked,
+        [styles.noHover]: !editing,
       })}
       key={sectionId}
       onClick={(e) => {
+        if (blocked) return;
         e.stopPropagation();
         onSectionSelect?.();
       }}
-      onMouseOver={() => onSectionMouseOver()}
-      onMouseOut={() => onSectionMouseOut()}
+      onMouseOver={() => !blocked && onSectionMouseOver()}
+      onMouseOut={() => !blocked && onSectionMouseOut()}
     >
       <div className={styles.radioButton} />
       <p className={styles.title}>{number}</p>
@@ -43,9 +55,34 @@ export default function Section({
         endTime={meeting?.endTime ?? null}
         startTime={meeting?.startTime ?? null}
         days={meeting?.days ?? null}
-        tooltip={false}
         className={styles.time}
       />
+      {onBlockToggle && (
+        <Tooltip
+          trigger={
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onBlockToggle();
+              }}
+              className={styles.blockButton}
+              title={blocked ? "Exclude section" : "Include section"}
+            >
+              {blocked ? (
+                <EyeClosed
+                  width={14}
+                  height={14}
+                  color="var(--paragraph-color)"
+                />
+              ) : (
+                <Eye width={14} height={14} color="var(--paragraph-color)" />
+              )}
+            </button>
+          }
+          title={blocked ? "Exclude section" : "Include section"}
+        />
+      )}
     </div>
   ));
 }

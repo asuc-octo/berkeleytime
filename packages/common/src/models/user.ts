@@ -30,55 +30,15 @@ export const userSchema = new Schema(
       required: false,
       default: [],
     },
-    bookmarkedClasses: {
-      required: false,
-      default: [],
-      type: [
-        {
-          year: {
-            type: Number,
-            required: true,
-          },
-          semester: {
-            type: String,
-            enum: ["Spring", "Summer", "Fall", "Winter"],
-            required: true,
-          },
-          subject: {
-            type: String,
-            required: true,
-          },
-          courseNumber: {
-            type: String,
-            required: true,
-          },
-          number: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
-    },
-    bookmarkedCourses: {
-      required: false,
-      default: [],
-      type: [
-        {
-          subject: {
-            type: String,
-            required: true,
-          },
-          number: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
-    },
     minors: {
       type: [String],
       trim: true,
       required: false,
+    },
+    lastSeenAt: {
+      type: Date,
+      required: true,
+      default: new Date(0), // Unix epoch (1970-01-01) indicates legacy user who hasn't visited since tracking started
     },
   },
   {

@@ -49,28 +49,26 @@
   height: 360px;
 }
 
-.placeholder {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  color: var(--label-color);
+.skeletonTitle {
+  width: 240px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.skeletonSubtitle {
+  width: 160px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.skeletonButton {
+  width: 120px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.skeletonChart {
+  width: 100%;
   height: 100%;
-  font-size: 16px;
-  line-height: 1.5;
-  padding: 24px 0;
-  padding-top: 150px;
-  text-align: center;
-
-  .heading {
-    color: var(--heading-color);
-    font-weight: 500;
-    margin-top: 24px;
-  }
-
-  .paragraph {
-    color: var(--paragraph-color);
-    margin-top: 8px;
-    max-width: 448px;
-  }
+  border-radius: 8px;
 }

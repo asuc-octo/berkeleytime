@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: storybook
-      url: https://storybook.stanfurdtime.com
+      url: https://storybook.berkeleytime.com
 
     steps:
       - name: SSH and Helm Install
@@ -89,7 +89,7 @@ jobs:
               --install \
               --version=0.1.0 \
               --namespace=bt \
-              --set host=storybook.stanfurdtime.com
+              --set host=storybook.berkeleytime.com
 
             # Restart deployment if helm chart existed
             if [ $status = true ]; then
@@ -97,8 +97,8 @@ jobs:
             fi
 
             # Check container status
-            kubectl rollout status --timeout=180s deployment bt-prod-storybook-frontend
+            kubectl rollout status --timeout=300s deployment bt-prod-storybook-frontend
 
       - name: Output Summary
         run: |
-          echo "# :white_check_mark: Deployment available at [storybook.stanfurdtime.com](https://storybook.stanfurdtime.com)." >> $GITHUB_STEP_SUMMARY
+          echo "# :white_check_mark: Deployment available at [storybook.berkeleytime.com](https://storybook.berkeleytime.com)." >> $GITHUB_STEP_SUMMARY

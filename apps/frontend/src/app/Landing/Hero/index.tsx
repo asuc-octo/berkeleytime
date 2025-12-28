@@ -5,10 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 import { Box, Button, Container } from "@repo/theme";
 
-import NavigationBar from "@/components/NavigationBar";
-
+import Wave from "../Wave";
 import styles from "./Hero.module.scss";
-import wave from "./wave.svg";
 
 interface HeroProps {
   step: {
@@ -53,7 +51,6 @@ export default function Hero({ step, milliseconds }: HeroProps) {
 
   return (
     <div className={styles.root} ref={root}>
-      <NavigationBar invert accentColor={step.colors[1]} />
       <Box px="5">
         <Container flexGrow="1" className={styles.container}>
           <div className={styles.text}>
@@ -93,7 +90,7 @@ export default function Hero({ step, milliseconds }: HeroProps) {
           <img className={styles.campanile} src={step.image} />
         </Container>
       </Box>
-      <img className={styles.wave} src={wave} />
+      <Wave className={styles.wave} />
     </div>
   );
 }

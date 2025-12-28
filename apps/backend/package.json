@@ -5,6 +5,7 @@
     "start": "tsx src/main.ts",
     "dev": "tsx watch src/main.ts",
     "build": "tsc --noEmit",
+    "lint": "eslint src/",
     "generate": "node scripts/prepare-typedefs.js && graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
@@ -16,14 +17,18 @@
     "@graphql-codegen/introspection": "5.0.0",
     "@graphql-codegen/typescript": "^5.0.2",
     "@graphql-codegen/typescript-resolvers": "^5.1.0",
+    "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.19",
     "@types/express-session": "^1.18.2",
     "@types/lodash": "^4.17.20",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.7.0",
     "@types/papaparse": "^5.3.16",
     "@types/passport-google-oauth20": "^2.0.16",
+    "@types/uuid": "^10.0.0",
+    "eslint": "^9.39.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
@@ -45,10 +50,8 @@
     "compression": "^1.8.1",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
-    "fuse.js": "^7.1.0",
     "graphql": "^16.11.0",
     "graphql-modules": "^3.0.0",
     "graphql-type-json": "^0.3.2",
@@ -57,9 +60,11 @@
     "lodash": "^4.17.21",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.1",
+    "multer": "^2.0.2",
     "papaparse": "^5.5.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "redis": "^5.8.3"
+    "redis": "^5.8.3",
+    "uuid": "^13.0.0"
   }
 }

@@ -1,5 +1,11 @@
+import type { Request } from "express";
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
+import type { RedisClientType } from "redis";
 
+import {
+  MutationTrackClassViewArgs,
+  SectionSectionAttributesArgs,
+} from "../../generated-types/graphql";
 import { getCourseById } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getEnrollmentBySectionId } from "../enrollment/controller";
@@ -12,9 +18,39 @@ import {
   getPrimarySection,
   getSecondarySections,
   getSection,
+  getViewCount,
+  trackClassView,
 } from "./controller";
-import { IntermediateClass, IntermediateSection } from "./formatter";
+import {
+  IntermediateClass,
+  IntermediateSection,
+  filterAndSortInstructors,
+} from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
+
+interface GraphQLContext {
+  req: Request;
+  redis: RedisClientType;
+  user: {
+    _id?: string;
+    isAuthenticated: boolean;
+    logout: (callback: (err: unknown) => void) => void;
+  };
+}
+
+/**
+ * Type for sections that may have unfiltered instructor data from the database.
+ * Used when sections are embedded in responses and need filtering.
+ */
+type SectionWithRawInstructors = IntermediateSection & {
+  meetings?: Array<{
+    instructors?: Array<{
+      familyName?: string;
+      givenName?: string;
+      role?: string;
+    }>;
+  }>;
+};
 
 const resolvers: ClassModule.Resolvers = {
   ClassNumber: new GraphQLScalarType({
@@ -95,6 +131,33 @@ const resolvers: ClassModule.Resolvers = {
     },
   },
 
+  Mutation: {
+    trackClassView: async (
+      _: unknown,
+      {
+        year,
+        semester,
+        sessionId,
+        subject,
+        courseNumber,
+        number,
+      }: MutationTrackClassViewArgs,
+      context: GraphQLContext
+    ) => {
+      const result = await trackClassView(
+        year,
+        semester,
+        sessionId ?? "1",
+        subject,
+        courseNumber,
+        number,
+        context.req,
+        context.redis
+      );
+      return result.success;
+    },
+  },
+
   Class: {
     term: async (parent: IntermediateClass | ClassModule.Class) => {
       if (parent.term) return parent.term;
@@ -120,33 +183,63 @@ const resolvers: ClassModule.Resolvers = {
     },
 
     primarySection: async (parent: IntermediateClass | ClassModule.Class) => {
-      if (parent.primarySection) return parent.primarySection;
+      const primarySection = (parent.primarySection ||
+        (await getPrimarySection(
+          parent.year,
+          parent.semester,
+          parent.sessionId,
+          parent.subject,
+          parent.courseNumber,
+          parent.number
+        ))) as IntermediateSection | ClassModule.Section | null;
 
-      const primarySection = await getPrimarySection(
-        parent.year,
-        parent.semester,
-        parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
+      if (!primarySection) {
+        return null as unknown as ClassModule.Section;
+      }
+
+      // Filter instructors in embedded sections (when queried through course.classes)
+      // This ensures filtering works even when primarySection comes from raw DB data
+      const sectionWithRawData = primarySection as SectionWithRawInstructors;
+      if (sectionWithRawData.meetings) {
+        const filteredSection: IntermediateSection = {
+          ...sectionWithRawData,
+          meetings: sectionWithRawData.meetings.map((meeting) => ({
+            ...meeting,
+            instructors: filterAndSortInstructors(meeting.instructors),
+          })),
+        };
+        return filteredSection as unknown as ClassModule.Section;
+      }
 
       return primarySection as unknown as ClassModule.Section;
     },
 
     sections: async (parent: IntermediateClass | ClassModule.Class) => {
-      if (parent.sections) return parent.sections;
+      const sections = (parent.sections ||
+        (await getSecondarySections(
+          parent.year,
+          parent.semester,
+          parent.sessionId,
+          parent.subject,
+          parent.courseNumber,
+          parent.number
+        ))) as (IntermediateSection | ClassModule.Section)[];
 
-      const secondarySections = await getSecondarySections(
-        parent.year,
-        parent.semester,
-        parent.sessionId,
-        parent.subject,
-        parent.courseNumber,
-        parent.number
-      );
-
-      return secondarySections as unknown as ClassModule.Section[];
+      // Filter instructors in all sections
+      return sections.map((section) => {
+        const sectionWithRawData = section as SectionWithRawInstructors;
+        if (sectionWithRawData.meetings) {
+          const filteredSection: IntermediateSection = {
+            ...sectionWithRawData,
+            meetings: sectionWithRawData.meetings.map((meeting) => ({
+              ...meeting,
+              instructors: filterAndSortInstructors(meeting.instructors),
+            })),
+          };
+          return filteredSection as unknown as ClassModule.Section;
+        }
+        return section as unknown as ClassModule.Section;
+      });
     },
 
     gradeDistribution: async (
@@ -178,6 +271,22 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return aggregatedRatings;
+    },
+
+    viewCount: async (
+      parent: IntermediateClass | ClassModule.Class,
+      _args: unknown,
+      context: GraphQLContext
+    ) => {
+      return getViewCount(
+        parent.year,
+        parent.semester,
+        parent.sessionId,
+        parent.subject,
+        parent.courseNumber,
+        parent.number,
+        context.redis
+      );
     },
   },
 
@@ -224,6 +333,32 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return enrollmentHistory;
+    },
+
+    sectionAttributes: (
+      parent: IntermediateSection | ClassModule.Section,
+      args: SectionSectionAttributesArgs
+    ) => {
+      const attributes = parent.sectionAttributes ?? [];
+
+      if (!args.attributeCode) {
+        return attributes;
+      }
+
+      return attributes.filter(
+        (attr) => attr.attribute?.code === args.attributeCode
+      );
+    },
+
+    meetings: (parent: IntermediateSection | ClassModule.Section) => {
+      const meetings = parent.meetings ?? [];
+
+      // Filter instructors to only show Primary Instructors (PI = professors)
+      // This prevents TAs from appearing in instructor lists across the application
+      return meetings.map((meeting) => ({
+        ...meeting,
+        instructors: filterAndSortInstructors(meeting.instructors),
+      }));
     },
   },
 
