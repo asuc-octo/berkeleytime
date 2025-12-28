@@ -6,9 +6,10 @@ import { Box, Button, Container, Flex } from "@repo/theme";
 
 import Footer from "@/components/Footer";
 import ScheduleCard from "@/components/ScheduleCard";
-import { useReadSchedules } from "@/hooks/api";
+import { useReadSchedules, useReadTerms } from "@/hooks/api";
 import useUser from "@/hooks/useUser";
 import { IScheduleListSchedule, signIn } from "@/lib/api";
+import { Semester } from "@/lib/generated/graphql";
 
 // import { RecentType, getRecents } from "@/lib/recent";
 
@@ -24,12 +25,28 @@ export default function Schedules() {
     skip: !user,
   });
 
+  const { data: terms } = useReadTerms();
+
+  const sessionIdToName = useMemo(() => {
+    const map = new Map<string, string>();
+    terms?.forEach((term) => {
+      term.sessions?.forEach((session) => {
+        map.set(session.id, session.name);
+      });
+    });
+    return map;
+  }, [terms]);
+
   const schedulesBySemester = useMemo(() => {
     return schedules
       ? schedules.reduce(
           (acc, schedule) => {
             if (!schedule) return acc;
-            const term = `${schedule.semester} ${schedule.year}`;
+            const isSummer = schedule.semester === Semester.Summer;
+            const term =
+              isSummer && schedule.sessionId
+                ? `${schedule.semester} ${schedule.year} - ${sessionIdToName.get(schedule.sessionId) || schedule.sessionId}`
+                : `${schedule.semester} ${schedule.year}`;
             if (!acc[term]) acc[term] = [];
             acc[term].push(schedule);
             return acc;
@@ -37,7 +54,7 @@ export default function Schedules() {
           {} as { [key: string]: IScheduleListSchedule[] }
         )
       : ({} as { [key: string]: IScheduleListSchedule[] });
-  }, [schedules]);
+  }, [schedules, sessionIdToName]);
 
   // const recentSchedules = getRecents(RecentType.Schedule);
 
@@ -98,12 +115,35 @@ export default function Schedules() {
             .sort((a, b) => {
               if (!schedulesBySemester[a][0]) return -1;
               if (!schedulesBySemester[b][0]) return 1;
-              return schedulesBySemester[a][0].year ==
-                schedulesBySemester[b][0].year
-                ? SEMESTER_ORDER.indexOf(schedulesBySemester[b][0].semester) -
-                    SEMESTER_ORDER.indexOf(schedulesBySemester[a][0].semester)
-                : schedulesBySemester[b][0].year -
-                    schedulesBySemester[a][0].year;
+
+              const scheduleA = schedulesBySemester[a][0];
+              const scheduleB = schedulesBySemester[b][0];
+
+              // Compare by year first
+              if (scheduleA.year !== scheduleB.year) {
+                return scheduleB.year - scheduleA.year;
+              }
+
+              // If same year, compare by semester
+              const semesterDiff =
+                SEMESTER_ORDER.indexOf(scheduleB.semester) -
+                SEMESTER_ORDER.indexOf(scheduleA.semester);
+
+              if (semesterDiff !== 0) {
+                return semesterDiff;
+              }
+
+              // If both are Summer terms with same year, sort by sessionId in reverse order
+              if (
+                scheduleA.semester === Semester.Summer &&
+                scheduleB.semester === Semester.Summer &&
+                scheduleA.sessionId &&
+                scheduleB.sessionId
+              ) {
+                return scheduleB.sessionId.localeCompare(scheduleA.sessionId);
+              }
+
+              return 0;
             })
             .map((sem) => {
               return (
