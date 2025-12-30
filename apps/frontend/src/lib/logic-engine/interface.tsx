@@ -1,13 +1,16 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
+
 import { IPlan } from "../api";
 import { run } from "./interpreter";
 import { VARIABLE_MAP } from "./language";
 import { planAdapter } from "./lib/plan";
 
-export default function LogicEngineInterface(plan: IPlan | undefined, setRequirements: Dispatch<SetStateAction<string>>) {
-
+export default function LogicEngineInterface(
+  plan: IPlan | undefined,
+  setRequirements: Dispatch<SetStateAction<string>>
+) {
   const tempCode = `Column col get_element(get_attr(this, "columns"), 0)
-string out get_attr(col, "name")`
+string out get_attr(col, "name")`;
 
   useEffect(() => {
     if (!plan) return;
@@ -15,5 +18,5 @@ string out get_attr(col, "name")`
     VARIABLE_MAP.set("this", { data: planAdapter(plan), type: "Plan" });
     const result = run(tempCode);
     setRequirements(result.get("out")?.data ?? "");
-  }, [plan])
+  }, [plan]);
 }

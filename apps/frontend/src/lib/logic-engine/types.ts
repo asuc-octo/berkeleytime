@@ -1,5 +1,4 @@
 import { UnsupportedTypeError } from "./errors";
-
 import { definedFields as columnDefinedFields } from "./lib/column";
 import { definedFields as planDefinedFields } from "./lib/plan";
 
@@ -12,20 +11,20 @@ export const BasicTypeList = [
   "Column",
   "Course",
   "Label",
-  "T"
 ] as const;
 
-export const CollectionTypeList = [
-  "List"
-] as const;
+export const CollectionTypeList = ["List"] as const;
 
-export type BasicType = typeof BasicTypeList[number];
+export const ObjectTypeList = ["Plan", "Column", "Course", "Label"] as const;
 
-export type CollectionTypeName = typeof CollectionTypeList[number];
+export type BasicType = (typeof BasicTypeList)[number];
+export type CollectionType = (typeof CollectionTypeList)[number];
+export type ObjectType = (typeof ObjectTypeList)[number];
 
-export type CollectionType = `${CollectionTypeName}<${BasicType}>`
+// can also be generics, which can be any string
+export type Type = string;
 
-export type Type = BasicType | CollectionType;
+export type Variables = Map<string, Data<any>>;
 
 export const typeAttributeMap = new Map<Type, Array<string>>();
 typeAttributeMap.set("Plan", planDefinedFields);
@@ -33,49 +32,86 @@ typeAttributeMap.set("Column", columnDefinedFields);
 // typeAttributeMap.set("Course", Object.keys({} as Course));
 // typeAttributeMap.set("Label", Object.keys({} as Label));
 
-export const getGenericType = (t: string): Type => {
+export const getNestedType = (t: string): Type | undefined => {
   const openBracket = t.indexOf("<");
-  const closeBracket = t.indexOf(">");
-  if (openBracket === -1 || closeBracket === -1 || closeBracket != t.length - 1 || !CollectionTypeList.includes(t.substring(0, openBracket) as CollectionTypeName)) throw new UnsupportedTypeError(t);
-  return StringToType(t.substring(openBracket + 1, closeBracket));
-}
+  const closeBracket = t.lastIndexOf(">");
+  if (openBracket === -1 && closeBracket === -1) return undefined;
+  if (
+    openBracket === -1 ||
+    closeBracket === -1 ||
+    (!CollectionTypeList.includes(
+      t.substring(0, openBracket) as CollectionType
+    ) &&
+      t.substring(0, openBracket) !== "Function")
+  )
+    throw new UnsupportedTypeError(t);
+  return t.substring(openBracket + 1, closeBracket);
+};
 
-export const getCollectionTypeToTypeName = (t: string): CollectionTypeName => {
-  return t.substring(0, t.indexOf("<")) as CollectionTypeName;
-}
+export const getCollectionTypeToTypeName = (t: string): Type => {
+  return t.substring(0, t.indexOf("<"));
+};
 
 export const StringToType = (t: string): Type => {
-  if (BasicTypeList.includes(t as BasicType)) return t as Type;
-  getGenericType(t);
-  return t as Type;
-}
+  // this needs to protect against generic generics (eg T<G>)
+  const generic = getNestedType(t);
+  if (generic && isGenericType(generic)) {
+    throw new UnsupportedTypeError(t);
+  }
+  return t;
+};
+
+export const isGenericType = (t: string): boolean => {
+  if (
+    BasicTypeList.includes(t as BasicType) ||
+    ObjectTypeList.includes(t as ObjectType) ||
+    t.startsWith("Function")
+  )
+    return false;
+  const nestedType = getNestedType(t);
+  if (nestedType) return isGenericType(nestedType);
+  return true;
+};
+
+export const isNestedGenericType = (t: string): boolean => {
+  if (isGenericType(t)) return false;
+  const nestedType = getNestedType(t);
+  if (nestedType) {
+    return isGenericType(nestedType);
+  } else {
+    return false;
+  }
+};
+
+export const isFunctionType = (t: string): boolean => {
+  return t.startsWith("Function");
+};
 
 export const matchTypes = (t1: Type, t2: Type): boolean => {
   if (t1 === t2) return true;
-  if (t1 === "T" || t2 === "T") return true;
-  return (getGenericType(t1) === "T" || getGenericType(t2) === "T") && getCollectionTypeToTypeName(t1) === getCollectionTypeToTypeName(t2);
-}
-
-export const isGenericType = (t: Type): boolean => {
-  if (t === "T") return true;
-  try {
-    return getGenericType(t) == "T";
-  } catch (e) {
-    return false;
-  }
-}
+  const t1Generic = getNestedType(t1);
+  const t2Generic = getNestedType(t2);
+  if (t1Generic && t2Generic) return matchTypes(t1Generic, t2Generic);
+  if ((t1Generic && !t2Generic) || (!t1Generic && t2Generic)) return false;
+  if (isGenericType(t1) || isGenericType(t2)) return true;
+  return false;
+};
 
 export interface Data<T> {
   data: T;
   type: Type;
 }
 
-export interface Function {
-  eval: (...args: Data<any>[]) => Data<any>;
+export interface MyFunction {
+  eval: (variables: Variables, ...args: Data<any>[]) => Data<any> | null;
   args: Type[];
-  genericArgs?: (t: Type) => Type[];
+  genericArgs?: (t: Type[]) => Type[];
 }
 
-export type Constructor = (T: Type, v: string) => Data<any>;
+export type Constructor = (
+  T: Type,
+  v: string,
+  variables: Map<string, Data<any>>
+) => Data<any>;
 
-export type FunctionMapEntry = [string, Function];
+export type FunctionMapEntry = [string, Data<MyFunction>];
