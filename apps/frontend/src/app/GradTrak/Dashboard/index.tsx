@@ -56,8 +56,8 @@ import {
   PlanTermInput,
   Status,
 } from "@/lib/generated/graphql";
-import LogicEngineInterface from "@/lib/logic-engine/interface";
 
+import BtLLGradTrakInterface from "../interface";
 import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
@@ -783,7 +783,7 @@ export default function Dashboard() {
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
 
-  LogicEngineInterface(gradTrak, localPlanTerms);
+  BtLLGradTrakInterface(gradTrak, localPlanTerms);
 
   if (userLoading || gradTrakLoading || courseLoading) {
     return (

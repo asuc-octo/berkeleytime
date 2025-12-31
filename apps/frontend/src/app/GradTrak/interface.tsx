@@ -1,18 +1,16 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
 
-import { UC_REQ_BTLL } from "@/app/GradTrak/Dashboard/testBtLL";
+import { columnAdapter, init, planAdapter } from "@repo/BtLL";
 
-import { IPlan, IPlanTerm, ISelectedCourse } from "../api";
-import { GetCourseRequirementsQuery } from "../generated/graphql";
-import { init } from "./interpreter";
-import { columnAdapter } from "./lib/column";
-import { planAdapter } from "./lib/plan";
+import { UC_REQ_BTLL } from "@/app/GradTrak/Dashboard/testBtLL";
+import { IPlan, IPlanTerm, ISelectedCourse } from "@/lib/api";
+import { GetCourseRequirementsQuery } from "@/lib/generated/graphql";
 
 type JoinedCourse = ISelectedCourse & {
   course?: GetCourseRequirementsQuery["course"];
 };
 
-export default function LogicEngineInterface(
+export default function BtLLGradTrakInterface(
   plan: IPlan | undefined,
   planTerms: (IPlanTerm & { courses: JoinedCourse[] })[] | undefined
 ) {
