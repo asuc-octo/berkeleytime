@@ -17,7 +17,7 @@ import {
 export const constructor = (
   t: Type,
   v: string,
-  variables: Map<string, Data<any>>
+  variables: Variables
 ): Data<Array<any>> => {
   const nestedType = getNestedType(t);
   if (!nestedType) throw new UnsupportedTypeError(t);
@@ -29,7 +29,9 @@ export const constructor = (
   if (isGenericType(t)) {
     if (data.length == 0) throw new SyntaxError(`Empty list must have type`);
     if (!data.every((d) => d.type == data[0].type))
-      throw new SyntaxError(`All elements in list must be of the same type`);
+      throw new SyntaxError(
+        `All elements in list must be of the same type: ${v}`
+      );
     if (isGenericType(data[0].type))
       throw new SyntaxError(`List must have a specific type`);
     if (!BasicTypeList.includes(data[0].type as BasicType))
@@ -146,6 +148,35 @@ export const functions: FunctionMapEntry[] = [
     },
   ],
   [
+    "findIndex",
+    {
+      type: "Function<number>(List<T>, Function<boolean>(T))",
+      data: {
+        eval: (
+          variables: Variables,
+          list: Data<Array<any>>,
+          eval_func: Data<MyFunction>
+        ) => {
+          const nestedType = getNestedType(list.type)!;
+          return {
+            data: list.data.findIndex(
+              (d) =>
+                eval_func.data.eval(variables, { data: d, type: nestedType })
+                  ?.data
+            ),
+            type: "number",
+          };
+        },
+        genericArgs: (t: Type[]) => {
+          if (!BasicTypeList.includes(t[0] as BasicType))
+            throw new UnsupportedTypeError(`$List<${t[0]}>`);
+          return [`List<${t[0]}>`, `Function<boolean>(${t[0]})`] as Type[];
+        },
+        args: ["List<T>", "Function<boolean>(T)"],
+      },
+    },
+  ],
+  [
     "filter",
     {
       type: "Function<List<T>>(List<T>, Function<boolean>(T))",
@@ -193,12 +224,12 @@ export const functions: FunctionMapEntry[] = [
               (acc, d) =>
                 eval_func.data.eval(
                   variables,
-                  { data: acc, type: nestedType },
+                  { data: acc, type: initial_value.type },
                   { data: d, type: nestedType }
                 )?.data,
               initial_value.data
             ),
-            type: nestedType,
+            type: initial_value.type,
           };
         },
         genericArgs: (t: Type[]) => {
@@ -210,6 +241,26 @@ export const functions: FunctionMapEntry[] = [
         },
         args: ["List<T>", "Function<G>(G, T)", "G"],
         // return_type: "List<T>"
+      },
+    },
+  ],
+  [
+    "slice",
+    {
+      type: "Function<List<T>>(List<T>, number, number)",
+      data: {
+        eval: (
+          _: Variables,
+          list: Data<Array<any>>,
+          start: Data<number>,
+          end: Data<number>
+        ) => {
+          return {
+            data: list.data.slice(start.data, end.data),
+            type: list.type,
+          };
+        },
+        args: ["List<T>", "number", "number"],
       },
     },
   ],

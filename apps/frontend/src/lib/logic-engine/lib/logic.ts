@@ -1,7 +1,11 @@
 import { TypeCastError } from "../errors";
 import { Data, FunctionMapEntry, Type, Variables } from "../types";
 
-export const constructor = (_: Type, v: string): Data<boolean> => {
+export const constructor = (
+  _: Type,
+  v: string,
+  __: Variables
+): Data<boolean> => {
   if (v === "true") return { data: true, type: "boolean" };
   if (v === "false") return { data: false, type: "boolean" };
   throw new TypeCastError(v, "boolean");

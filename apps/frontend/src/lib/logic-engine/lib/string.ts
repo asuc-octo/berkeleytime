@@ -1,7 +1,11 @@
 import { TypeCastError } from "../errors";
-import { Data, Type } from "../types";
+import { Data, Type, Variables } from "../types";
 
-export const constructor = (_: Type, v: string): Data<string> => {
+export const constructor = (
+  _: Type,
+  v: string,
+  __: Variables
+): Data<string> => {
   const removedQuotes = v.substring(1, v.length - 1);
   if (
     (v.charAt(0) !== '"' || v.charAt(v.length - 1) !== '"') &&

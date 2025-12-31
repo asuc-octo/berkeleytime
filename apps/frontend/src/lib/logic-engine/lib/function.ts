@@ -11,7 +11,7 @@ export const runFunction = (
   for (const line of lines) {
     if (line.trim() === "") continue;
     if (line.trim().startsWith("//")) continue;
-    console.log("Evaluating line:", line);
+    if (debug) console.log("Evaluating line:", line);
     const [type, var_name, ...rest] = bracketAwareSplit(line.trim());
     const expr = rest.join(" ").trim();
 

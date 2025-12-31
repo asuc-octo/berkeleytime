@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client/react";
+import { useApolloClient, useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import {
   ArrowDown,
@@ -40,15 +40,23 @@ import {
   useReadPlan,
   useReadUser,
 } from "@/hooks/api";
-import { ILabel, IPlanTerm, ISelectedCourse } from "@/lib/api";
+import {
+  GET_COURSE_REQUIREMENTS,
+  ILabel,
+  IPlanTerm,
+  ISelectedCourse,
+} from "@/lib/api";
 import { convertStringsToRequirementEnum } from "@/lib/course";
 import {
   Colleges,
   GetCourseNamesDocument,
+  GetCourseRequirementsDocument,
+  GetCourseRequirementsQuery,
   PlanInput,
   PlanTermInput,
   Status,
 } from "@/lib/generated/graphql";
+import LogicEngineInterface from "@/lib/logic-engine/interface";
 
 import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
@@ -98,6 +106,7 @@ export interface SelectedCourse extends ISelectedCourse {
 export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
+  const apolloClient = useApolloClient();
 
   const {
     data: gradTrak,
@@ -153,7 +162,13 @@ export default function Dashboard() {
   const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
-  const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
+  const [localPlanTerms, setLocalPlanTerms] = useState<
+    (IPlanTerm & {
+      courses: (ISelectedCourse & {
+        course?: NonNullable<GetCourseRequirementsQuery["course"]>;
+      })[];
+    })[]
+  >([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [colleges, setColleges] = useState<Colleges[]>([]);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
@@ -203,11 +218,37 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (gradTrak?.planTerms) {
-      setLocalPlanTerms(gradTrak.planTerms);
+      async function updatePlanTerms(planTerms: IPlanTerm[]) {
+        const updatedPlanTerms = await Promise.all(
+          planTerms.map(async (pt) => {
+            const updatedCourses = await Promise.all(
+              pt.courses.map(async (c) => {
+                const courseReqs = await apolloClient.query({
+                  query: GetCourseRequirementsDocument,
+                  variables: {
+                    number: c.courseName.split(" ")[1],
+                    subject: c.courseName.split(" ")[0],
+                  },
+                });
+                return {
+                  ...c,
+                  course: courseReqs.data?.course ?? undefined,
+                };
+              })
+            );
+            return {
+              ...pt,
+              courses: updatedCourses,
+            };
+          })
+        );
+        setLocalPlanTerms(updatedPlanTerms);
+      }
+      updatePlanTerms(gradTrak.planTerms);
     } else {
       setLocalPlanTerms([]);
     }
-  }, [gradTrak?.planTerms]);
+  }, [gradTrak?.planTerms, apolloClient]);
 
   // Update filter options when labels change
   useEffect(() => {
@@ -404,39 +445,40 @@ export default function Dashboard() {
     [key: string]: ISelectedCourse[];
   }>({});
 
-  const filterSemesters = (allSemesters: {
-    [key: string]: ISelectedCourse[];
-  }) => {
-    // if none of the label filters are selected, return all semesters
-    const hasActiveLabelFilters = Object.keys(filterOptions).some(
-      (key) => key.startsWith("label_") && filterOptions[key]
-    );
+  const filterSemesters = useCallback(
+    (allSemesters: { [key: string]: ISelectedCourse[] }) => {
+      // if none of the label filters are selected, return all semesters
+      const hasActiveLabelFilters = Object.keys(filterOptions).some(
+        (key) => key.startsWith("label_") && filterOptions[key]
+      );
 
-    if (!hasActiveLabelFilters) {
-      setFilteredAllSemesters(allSemesters);
-      return;
-    }
+      if (!hasActiveLabelFilters) {
+        setFilteredAllSemesters(allSemesters);
+        return;
+      }
 
-    // iterate through each semester
-    const filteredSemesters: { [key: string]: ISelectedCourse[] } = {};
-    Object.entries(allSemesters).forEach(([key, value]) => {
-      const filteredClasses = value.filter((course) => {
-        for (const label of course.labels) {
-          if (filterOptions["label_" + label.name]) {
-            return true;
+      // iterate through each semester
+      const filteredSemesters: { [key: string]: ISelectedCourse[] } = {};
+      Object.entries(allSemesters).forEach(([key, value]) => {
+        const filteredClasses = value.filter((course) => {
+          for (const label of course.labels) {
+            if (filterOptions["label_" + label.name]) {
+              return true;
+            }
           }
-        }
-        return false;
+          return false;
+        });
+        filteredSemesters[key] = filteredClasses;
       });
-      filteredSemesters[key] = filteredClasses;
-    });
-    setFilteredAllSemesters(filteredSemesters);
-  };
+      setFilteredAllSemesters(filteredSemesters);
+    },
+    [filterOptions]
+  );
 
   useEffect(() => {
     setActiveFiltersCount(Object.values(filterOptions).filter(Boolean).length);
     filterSemesters(allSemesters);
-  }, [filterOptions]);
+  }, [filterOptions, filterSemesters, allSemesters]);
 
   // Calculate label counts when dropdown is opened
   const calculateLabelCounts = () => {
@@ -740,6 +782,8 @@ export default function Dashboard() {
       navigate("/gradtrak", { replace: true });
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
+
+  LogicEngineInterface(gradTrak, localPlanTerms);
 
   if (userLoading || gradTrakLoading || courseLoading) {
     return (

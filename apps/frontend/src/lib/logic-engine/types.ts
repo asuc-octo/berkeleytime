@@ -1,6 +1,8 @@
 import { UnsupportedTypeError } from "./errors";
 import { definedFields as columnDefinedFields } from "./lib/column";
+import { definedFields as courseDefinedFields } from "./lib/course";
 import { definedFields as planDefinedFields } from "./lib/plan";
+import { definedFields as requirementDefinedFields } from "./lib/requirement";
 
 export const BasicTypeList = [
   "raw",
@@ -15,7 +17,13 @@ export const BasicTypeList = [
 
 export const CollectionTypeList = ["List"] as const;
 
-export const ObjectTypeList = ["Plan", "Column", "Course", "Label"] as const;
+export const ObjectTypeList = [
+  "Plan",
+  "Column",
+  "Course",
+  "Label",
+  "Requirement",
+] as const;
 
 export type BasicType = (typeof BasicTypeList)[number];
 export type CollectionType = (typeof CollectionTypeList)[number];
@@ -29,7 +37,8 @@ export type Variables = Map<string, Data<any>>;
 export const typeAttributeMap = new Map<Type, Array<string>>();
 typeAttributeMap.set("Plan", planDefinedFields);
 typeAttributeMap.set("Column", columnDefinedFields);
-// typeAttributeMap.set("Course", Object.keys({} as Course));
+typeAttributeMap.set("Requirement", requirementDefinedFields);
+typeAttributeMap.set("Course", courseDefinedFields);
 // typeAttributeMap.set("Label", Object.keys({} as Label));
 
 export const getNestedType = (t: string): Type | undefined => {

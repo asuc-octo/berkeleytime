@@ -61,8 +61,12 @@ export const bracketAwareSplit = (str: string): string[] => {
   return parts;
 };
 
-export const init = (code: string, debug: boolean = false) => {
-  const variables: Map<string, Data<any>> = new Map(FUNCTION_MAP);
+export const init = (
+  code: string,
+  vars: Map<string, Data<any>> = new Map(),
+  debug: boolean = false
+) => {
+  const variables: Map<string, Data<any>> = new Map([...FUNCTION_MAP, ...vars]);
   const lines = code.split("\n");
   let inFunction = false;
   let functionLines: string[] = [];
@@ -98,7 +102,7 @@ export const init = (code: string, debug: boolean = false) => {
             for (let i = 0; i < argNames.length; i++) {
               localVariables.set(argNames[i], args[i]);
             }
-            console.log("LOCAL FUNC EVAL", var_name, args);
+            if (debug) console.log("LOCAL FUNC EVAL", var_name, args);
             return runFunction(
               myLines.slice(1).join("\n"),
               localVariables,

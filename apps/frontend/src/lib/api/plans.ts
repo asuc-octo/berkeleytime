@@ -1,6 +1,7 @@
 import { gql } from "@apollo/client";
 
-import { GetPlanQuery } from "../generated/graphql";
+import { GetCourseRequirementsQuery, GetPlanQuery } from "../generated/graphql";
+import { ICourse } from "./courses";
 
 export type ILabel = NonNullable<
   GetPlanQuery["planByUser"][number]["labels"]
@@ -14,7 +15,9 @@ export type IPlanTerm = NonNullable<
 
 export type ISelectedCourse = NonNullable<
   GetPlanQuery["planByUser"]
->[number]["planTerms"][number]["courses"][number];
+>[number]["planTerms"][number]["courses"][number] & {
+  course?: NonNullable<GetCourseRequirementsQuery["course"]>;
+};
 
 export const CREATE_NEW_PLAN = gql`
   mutation CreateNewPlan(
@@ -185,6 +188,34 @@ export const EDIT_PLAN_TERM = gql`
       hidden
       status
       pinned
+    }
+  }
+`;
+
+export const GET_COURSE_REQUIREMENTS = gql`
+  query GetCourseRequirements($number: CourseNumber!, $subject: String!) {
+    course(number: $number, subject: $subject) {
+      mostRecentClass {
+        requirementDesignation {
+          code
+          description
+          formalDescription
+        }
+        primarySection {
+          sectionAttributes {
+            attribute {
+              code
+              description
+              formalDescription
+            }
+            value {
+              code
+              description
+              formalDescription
+            }
+          }
+        }
+      }
     }
   }
 `;
