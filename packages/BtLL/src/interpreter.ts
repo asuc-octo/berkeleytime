@@ -1,17 +1,11 @@
-import {
-  SyntaxError,
-  TypeMismatchError,
-  UndefinedFunctionError,
-} from "./errors";
+import { SyntaxError, TypeMismatchError } from "./errors";
 import { argSplit, functionMatch, parseLine } from "./helper";
 import { FUNCTION_MAP, PROTECTED_KEYWORDS, construct } from "./language";
 import { constructor as functionConstructor } from "./lib/function";
 import {
+  BtLLConfig,
   Data,
-  MyFunction,
-  StringToType,
   Type,
-  Variables,
   isFunctionType,
   isGenericType,
   matchTypes,
@@ -20,7 +14,7 @@ import {
 export const init = (
   code: string,
   vars: Map<string, Data<any>> = new Map(),
-  debug: boolean = false
+  config: BtLLConfig = {}
 ) => {
   const variables: Map<string, Data<any>> = new Map([...FUNCTION_MAP, ...vars]);
   const lines = code.split("\n");
@@ -33,21 +27,21 @@ export const init = (
     i = newIndex;
 
     if (isFunctionType(type)) {
-      const func = functionConstructor(type, expr, variables, debug);
-      if (debug) console.log("FUNC DEFINED", var_name, func);
+      const func = functionConstructor(type, expr, variables, config);
+      if (config.debug) console.log("FUNC DEFINED", var_name, func);
       variables.set(var_name, func);
     }
   }
-  return variables.get("main")?.data.eval(variables, [], debug)?.data;
+  return variables.get("main")?.data.eval(variables, [], config.debug)?.data;
 };
 
 export const evaluate = (
   expr: string,
   expected_type: Type,
   variables: Map<string, Data<any>> = new Map(),
-  debug: boolean = false
+  config: BtLLConfig = {}
 ): Data<any> => {
-  if (debug)
+  if (config.debug)
     console.log(
       `EVALUATE: "${expr}" (${expected_type}) ${variables.has(expr)}`
     );
@@ -55,7 +49,7 @@ export const evaluate = (
 
   if (functionRes) {
     const [functionName, argList] = functionRes;
-    if (debug) console.log(`FUNCTION MATCH:`, argList);
+    if (config.debug) console.log(`FUNCTION MATCH:`, argList);
     let funcVar = variables.get(functionName);
     const args = argSplit(argList);
     if (funcVar && args.length !== funcVar.data.args.length)
@@ -70,7 +64,7 @@ export const evaluate = (
               arg,
               funcVar ? funcVar.data.args[i] : "T",
               variables,
-              debug
+              config
             )
           )
         : [];
@@ -79,10 +73,10 @@ export const evaluate = (
         `Function<${expected_type}>(${args_val.map((arg) => arg.type).join(", ")})`,
         functionName,
         variables,
-        debug
+        config
       );
 
-    if (debug) console.log(`FUNC_EVAL ARGS:`, functionName, args_val);
+    if (config.debug) console.log(`FUNC_EVAL ARGS:`, functionName, args_val);
     const result = funcVar.data.eval(variables, ...args_val);
 
     if (isGenericType(result.type))
@@ -96,23 +90,23 @@ export const evaluate = (
     } else if (variables.has(expr)) {
       const data = variables.get(expr) as Data<any>;
       if (!matchTypes(expected_type, data.type))
-        throw new TypeMismatchError(expected_type, data.type);
+        throw new TypeMismatchError(expected_type, data.type, expr);
       if (isGenericType(data.type))
         throw new SyntaxError(expr, `Cannot return generic type`);
       return data;
     } else if (!isGenericType(expected_type)) {
-      if (debug) console.log(`CONSTRUCT: "${expr}" (${expected_type})`);
-      return construct(expected_type, expr, variables, debug);
+      if (config.debug) console.log(`CONSTRUCT: "${expr}" (${expected_type})`);
+      return construct(expected_type, expr, variables, config);
     } else {
       // special case -> string and number
       if (expr.startsWith('"') && expr.endsWith('"')) {
-        return construct("string", expr, variables, debug);
+        return construct("string", expr, variables, config);
       } else if (expr.startsWith("'") && expr.endsWith("'")) {
-        return construct("string", expr, variables, debug);
+        return construct("string", expr, variables, config);
       } else if (Number.isFinite(Number(expr))) {
-        return construct("number", expr, variables, debug);
+        return construct("number", expr, variables, config);
       } else if (expr.startsWith("[") && expr.endsWith("]")) {
-        return construct("List<T>", expr, variables, debug);
+        return construct("List<T>", expr, variables, config);
       }
       return {
         data: expr,

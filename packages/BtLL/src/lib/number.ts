@@ -1,7 +1,12 @@
 import { TypeCastError } from "../errors";
-import { Data, FunctionMapEntry, Type, Variables } from "../types";
+import { BtLLConfig, Data, FunctionMapEntry, Type, Variables } from "../types";
 
-export const constructor = (_: Type, v: string, __: Variables): Data<any> => {
+export const constructor = (
+  _: Type,
+  v: string,
+  __: Variables,
+  ___?: BtLLConfig
+): Data<any> => {
   if (isNaN(parseFloat(v))) throw new TypeCastError(v, "number");
   return { data: parseFloat(v), type: "number" };
 };

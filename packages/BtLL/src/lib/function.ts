@@ -2,6 +2,7 @@ import { SyntaxError, TypeMismatchError } from "../errors";
 import { parseLine } from "../helper";
 import { evaluate } from "../interpreter";
 import {
+  BtLLConfig,
   Data,
   MyFunction,
   StringToType,
@@ -14,28 +15,28 @@ import {
 export const runFunction = (
   code: string,
   variables: Map<string, Data<any>> = new Map(),
-  debug: boolean = false
+  config: BtLLConfig = {}
 ) => {
   const lines = code.split("\n");
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (line.trim() === "") continue;
     if (line.trim().startsWith("//")) continue;
-    if (debug) console.log("Evaluating line:", line);
+    if (config.debug) console.log("Evaluating line:", line);
     const [type, var_name, expr, newIndex] = parseLine(lines, i);
     i = newIndex;
     const return_type = StringToType(type);
     if (isGenericType(return_type))
       throw new SyntaxError(line, `Cannot return generic type`);
-    const expr_val = evaluate(expr, return_type, variables, debug);
-    if (debug)
+    const expr_val = evaluate(expr, return_type, variables, config);
+    if (config.debug)
       console.log(`EXPR VAL: ${line} ${expr_val.data} (${expr_val.type})`);
 
     if (matchTypes(expr_val.type, return_type)) {
       if (var_name === "return") return expr_val;
       variables.set(var_name, expr_val);
     } else {
-      throw new TypeMismatchError(return_type, expr_val.type);
+      throw new TypeMismatchError(return_type, expr_val.type, expr);
     }
   }
   return null;
@@ -45,7 +46,7 @@ export const constructor = (
   type: Type,
   v: string,
   _: Variables,
-  debug?: boolean
+  config?: BtLLConfig
 ): Data<MyFunction> => {
   // (arg1, arg2...) { \n code body \n }
 
@@ -73,7 +74,7 @@ export const constructor = (
         for (let i = 0; i < argNames.length; i++) {
           localVariables.set(argNames[i], args[i]);
         }
-        return runFunction(functionBody, localVariables, debug);
+        return runFunction(functionBody, localVariables, config);
       },
       args: argTypes,
       // genericArgs: () => []

@@ -1,10 +1,11 @@
 import { TypeCastError } from "../errors";
-import { Data, Type, Variables } from "../types";
+import { BtLLConfig, Data, FunctionMapEntry, Type, Variables } from "../types";
 
 export const constructor = (
   _: Type,
   v: string,
-  __: Variables
+  __: Variables,
+  ___?: BtLLConfig
 ): Data<string> => {
   const removedQuotes = v.substring(1, v.length - 1);
   if (
@@ -17,3 +18,18 @@ export const constructor = (
     type: "string",
   };
 };
+
+export const functions: FunctionMapEntry[] = [
+  [
+    "regex_match",
+    {
+      type: "Function<boolean>(string, string)",
+      data: {
+        eval: (_: Variables, str: Data<string>, regex: Data<string>) => {
+          return { data: str.data.match(regex.data) !== null, type: "boolean" };
+        },
+        args: ["string", "string"],
+      },
+    },
+  ],
+];

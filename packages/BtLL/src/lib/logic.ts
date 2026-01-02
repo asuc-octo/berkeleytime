@@ -1,10 +1,11 @@
 import { TypeCastError } from "../errors";
-import { Data, FunctionMapEntry, Type, Variables } from "../types";
+import { BtLLConfig, Data, FunctionMapEntry, Type, Variables } from "../types";
 
 export const constructor = (
   _: Type,
   v: string,
-  __: Variables
+  __: Variables,
+  ___?: BtLLConfig
 ): Data<boolean> => {
   if (v === "true") return { data: true, type: "boolean" };
   if (v === "false") return { data: false, type: "boolean" };

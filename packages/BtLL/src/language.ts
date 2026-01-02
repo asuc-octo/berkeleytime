@@ -1,5 +1,9 @@
 import { UnsupportedTypeError } from "./errors";
 import { functions as column_functions } from "./lib/column";
+import {
+  constructor as course_constructor,
+  functions as course_functions,
+} from "./lib/course";
 import { constructor as function_constructor } from "./lib/function";
 import {
   constructor as list_constructor,
@@ -14,9 +18,12 @@ import {
   functions as number_functions,
 } from "./lib/number";
 import { constructor as requirement_constructor } from "./lib/requirement";
-import { constructor as string_constructor } from "./lib/string";
 import {
-  BasicTypeList,
+  constructor as string_constructor,
+  functions as string_functions,
+} from "./lib/string";
+import {
+  BtLLConfig,
   Constructor,
   Data,
   MyFunction,
@@ -84,6 +91,8 @@ export const FUNCTION_MAP: Map<string, Data<MyFunction>> = new Map([
   ...list_functions,
   ...number_functions,
   ...column_functions,
+  ...string_functions,
+  ...course_functions,
   ["get_attr", get_attr_function],
   ["if_else", if_else_function],
   ["elseifs", elseifs_function],
@@ -96,23 +105,24 @@ const CONSTRUCTORS: Map<Type, Constructor> = new Map<Type, Constructor>([
   ["string", string_constructor],
   ["Requirement", requirement_constructor],
   ["Function", function_constructor],
+  ["Course", course_constructor],
 ]);
 
 export const construct = (
   t: Type,
   val: string,
   variables: Variables,
-  debug: boolean = false
+  config: BtLLConfig = {}
 ) => {
   if (getNestedType(t)) {
     const ct = getCollectionTypeToTypeName(t);
     if (CONSTRUCTORS.has(ct)) {
-      return (CONSTRUCTORS.get(ct) as Constructor)(t, val, variables, debug);
+      return (CONSTRUCTORS.get(ct) as Constructor)(t, val, variables, config);
     }
     throw new UnsupportedTypeError(t);
   }
   if (CONSTRUCTORS.has(t)) {
-    return (CONSTRUCTORS.get(t) as Constructor)(t, val, variables, debug);
+    return (CONSTRUCTORS.get(t) as Constructor)(t, val, variables, config);
   }
   throw new UnsupportedTypeError(t);
 };

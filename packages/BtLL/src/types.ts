@@ -112,11 +112,16 @@ export interface MyFunction {
   genericArgs?: (t: Type[]) => Type[];
 }
 
+export interface BtLLConfig {
+  debug?: boolean;
+  fetchCourse?: (subject: string, number: string) => Promise<any> | any;
+}
+
 export type Constructor = (
   T: Type,
   v: string,
   variables: Map<string, Data<any>>,
-  debug?: boolean
+  config?: BtLLConfig
 ) => Data<any>;
 
 export type FunctionMapEntry = [string, Data<MyFunction>];
