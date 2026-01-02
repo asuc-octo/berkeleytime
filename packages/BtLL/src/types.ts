@@ -62,11 +62,6 @@ export const getCollectionTypeToTypeName = (t: string): Type => {
 };
 
 export const StringToType = (t: string): Type => {
-  // this needs to protect against generic generics (eg T<G>)
-  const generic = getNestedType(t);
-  if (generic && isGenericType(generic)) {
-    throw new UnsupportedTypeError(t);
-  }
   return t;
 };
 
@@ -120,7 +115,8 @@ export interface MyFunction {
 export type Constructor = (
   T: Type,
   v: string,
-  variables: Map<string, Data<any>>
+  variables: Map<string, Data<any>>,
+  debug?: boolean
 ) => Data<any>;
 
 export type FunctionMapEntry = [string, Data<MyFunction>];

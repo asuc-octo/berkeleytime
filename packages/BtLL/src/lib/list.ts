@@ -17,20 +17,21 @@ import {
 export const constructor = (
   t: Type,
   v: string,
-  variables: Variables
+  variables: Variables,
+  debug: boolean = false
 ): Data<Array<any>> => {
   const nestedType = getNestedType(t);
   if (!nestedType) throw new UnsupportedTypeError(t);
   const removedBrackets = v.substring(1, v.length - 1);
   const elems = argSplit(removedBrackets);
   const data = elems.map((e: string) =>
-    evaluate(e.trim(), nestedType, variables, false)
+    evaluate(e.trim(), nestedType, variables, debug)
   );
   if (isGenericType(t)) {
     if (data.length == 0) throw new SyntaxError(`Empty list must have type`);
     if (!data.every((d) => d.type == data[0].type))
       throw new SyntaxError(
-        `All elements in list must be of the same type: ${v}`
+        `All elements in list must be of the same type: ${v}, ${data.map((d) => d.type).join(", ")}`
       );
     if (isGenericType(data[0].type))
       throw new SyntaxError(`List must have a specific type`);

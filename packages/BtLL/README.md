@@ -151,9 +151,6 @@ Function<boolean>() main () {
 
 The following features are planned for future releases:
 
-- **In-line Body Functions**: Support for defining anonymous functions directly within expressions
-- **If/Else Statements**: Conditional control flow with `if` and `else` blocks
-- **Multi-line Statements**: Support for statements that span multiple lines for better readability
 - **Verbosity Fixes**: The language is unnecessarily verbose in a handful of places
 - **Performance Improvements**: Decrease checks to optimize performance
 

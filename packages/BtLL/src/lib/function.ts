@@ -1,6 +1,15 @@
 import { SyntaxError, TypeMismatchError } from "../errors";
-import { bracketAwareSplit, evaluate } from "../interpreter";
-import { Data, StringToType, Type, isGenericType, matchTypes } from "../types";
+import { parseLine } from "../helper";
+import { evaluate } from "../interpreter";
+import {
+  Data,
+  MyFunction,
+  StringToType,
+  Type,
+  Variables,
+  isGenericType,
+  matchTypes,
+} from "../types";
 
 export const runFunction = (
   code: string,
@@ -8,13 +17,13 @@ export const runFunction = (
   debug: boolean = false
 ) => {
   const lines = code.split("\n");
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     if (line.trim() === "") continue;
     if (line.trim().startsWith("//")) continue;
     if (debug) console.log("Evaluating line:", line);
-    const [type, var_name, ...rest] = bracketAwareSplit(line.trim());
-    const expr = rest.join(" ").trim();
-
+    const [type, var_name, expr, newIndex] = parseLine(lines, i);
+    i = newIndex;
     const return_type = StringToType(type);
     if (isGenericType(return_type))
       throw new SyntaxError(line, `Cannot return generic type`);
@@ -32,12 +41,44 @@ export const runFunction = (
   return null;
 };
 
-// export const constructor = (_: Type, v: string): Data<Function> => {
-//   // (arg1, arg2...) { code body }
-//   const removedQuotes = v.substring(1, v.length - 1);
-//   if ((v.charAt(0) !== '"' || v.charAt(v.length - 1) !== '"') && (v.charAt(0) !== "'" || v.charAt(v.length - 1) !== "'")) throw new TypeCastError(v, "string");
-//   return {
-//     data: removedQuotes,
-//     type: "string"
-//   }
-// }
+export const constructor = (
+  type: Type,
+  v: string,
+  _: Variables,
+  debug?: boolean
+): Data<MyFunction> => {
+  // (arg1, arg2...) { \n code body \n }
+
+  const argTypes = type
+    .slice(type.indexOf("(") + 1, type.indexOf(")"))
+    .split(",")
+    .map((t) => StringToType(t.trim()));
+
+  const functionCode = v.split("\n");
+  const functionBody = functionCode
+    .slice(1, functionCode.length - 1)
+    .join("\n");
+  const openBracket = v.indexOf("(");
+  const closeBracket = v.indexOf(")");
+  const argNames = v
+    .slice(openBracket + 1, closeBracket)
+    .split(",")
+    .map((t) => t.trim());
+
+  const func: Data<MyFunction> = {
+    type: StringToType(type),
+    data: {
+      eval: (variables: Variables, ...args: Data<any>[]) => {
+        const localVariables = new Map<string, Data<any>>(variables);
+        for (let i = 0; i < argNames.length; i++) {
+          localVariables.set(argNames[i], args[i]);
+        }
+        return runFunction(functionBody, localVariables, debug);
+      },
+      args: argTypes,
+      // genericArgs: () => []
+    },
+  };
+
+  return func;
+};

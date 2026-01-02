@@ -17,7 +17,7 @@ const TESTS = [
       `;
 
       try {
-        const result = init(testCode, true);
+        const result = init(testCode, new Map(), true);
         if (result[0] !== false) return false;
         if (result[1] !== true) return false;
         if (result[2] !== true) return false;
@@ -42,7 +42,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, true) !== true) return false;
+        if (init(testCode, new Map(), true) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -63,7 +63,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, true) !== 9) return false;
+        if (init(testCode, new Map(), true) !== 9) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -92,7 +92,53 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, true) !== true) return false;
+        if (init(testCode, new Map(), true) !== true) return false;
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+  {
+    name: "inline function def test",
+    test: () => {
+      const testCode = `
+      Function<boolean>() main (){ 
+        List<number> list [1, 3, 2, 3, 4, 5, 3]
+        number res1 find(list, (n){
+          boolean return equal([n, 3])
+        })
+        boolean return equal([res1, 3])
+      }
+      `;
+      try {
+        if (init(testCode, new Map(), true) !== true) return false;
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+  {
+    name: "if else test",
+    test: () => {
+      const testCode = `
+      Function<boolean>() main (){ 
+        boolean x true
+        boolean y false
+        number result if_else(x, (){
+          number return add([1, 2])
+        }(), (){
+          number return add([3, 4])
+        }())
+        boolean result2 if_else(y, false, true)
+        boolean return and([equal([result, 3]), result2])
+      }
+      `;
+      try {
+        if (init(testCode, new Map(), true) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);

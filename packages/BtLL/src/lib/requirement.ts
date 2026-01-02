@@ -1,6 +1,4 @@
 // no constructor
-import { IPlan } from "@/lib/api";
-
 import { argSplit } from "../helper";
 import { evaluate } from "../interpreter";
 import { Data, MyFunction, Type, Variables } from "../types";
@@ -14,13 +12,14 @@ export type Requirement = {
 export const constructor = (
   _: Type,
   v: string,
-  variables: Variables
+  variables: Variables,
+  debug: boolean = false
 ): Data<Requirement> => {
   const [name, value] = argSplit(v.substring(1, v.length - 1));
   return {
     data: {
-      name: evaluate(name, "string", variables),
-      value: evaluate(value, "Function<boolean>()", variables),
+      name: evaluate(name, "string", variables, debug),
+      value: evaluate(value, "Function<boolean>()", variables, debug),
     },
     type: "Requirement",
   };

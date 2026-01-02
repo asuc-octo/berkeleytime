@@ -1,5 +1,6 @@
 import { UnsupportedTypeError } from "./errors";
 import { functions as column_functions } from "./lib/column";
+import { constructor as function_constructor } from "./lib/function";
 import {
   constructor as list_constructor,
   functions as list_functions,
@@ -40,12 +41,52 @@ const get_attr_function: Data<MyFunction> = {
   type: "Function<T>(G, string)",
 };
 
+const if_else_function: Data<MyFunction> = {
+  data: {
+    eval: (
+      _: Variables,
+      condition: Data<boolean>,
+      true_branch: Data<any>,
+      false_branch: Data<any>
+    ) => {
+      if (condition.data) return true_branch;
+      return false_branch;
+    },
+    args: ["boolean", "T", "T"],
+  },
+  type: "Function<T>(boolean, T, T)",
+};
+
+const elseifs_function: Data<MyFunction> = {
+  data: {
+    eval: (
+      _: Variables,
+      conditions: Data<Array<boolean>>,
+      branches: Data<Array<any>>
+    ) => {
+      if (conditions.data.length !== branches.data.length - 1)
+        throw new SyntaxError(
+          `There must be exactly one more branch than conditions: ${conditions.data.length} conditions and ${branches.data.length} branches`
+        );
+      for (let i = 0; i < conditions.data.length; i++) {
+        if (conditions.data[i]) return branches.data[i];
+      }
+
+      return branches.data[branches.data.length - 1];
+    },
+    args: ["List<boolean>", "List<T>"],
+  },
+  type: "Function<T>(boolean, T, T)",
+};
+
 export const FUNCTION_MAP: Map<string, Data<MyFunction>> = new Map([
   ...logic_functions,
   ...list_functions,
   ...number_functions,
   ...column_functions,
   ["get_attr", get_attr_function],
+  ["if_else", if_else_function],
+  ["elseifs", elseifs_function],
 ]);
 
 const CONSTRUCTORS: Map<Type, Constructor> = new Map<Type, Constructor>([
@@ -54,18 +95,24 @@ const CONSTRUCTORS: Map<Type, Constructor> = new Map<Type, Constructor>([
   ["number", number_constructor],
   ["string", string_constructor],
   ["Requirement", requirement_constructor],
+  ["Function", function_constructor],
 ]);
 
-export const construct = (t: Type, val: string, variables: Variables) => {
+export const construct = (
+  t: Type,
+  val: string,
+  variables: Variables,
+  debug: boolean = false
+) => {
   if (getNestedType(t)) {
     const ct = getCollectionTypeToTypeName(t);
     if (CONSTRUCTORS.has(ct)) {
-      return (CONSTRUCTORS.get(ct) as Constructor)(t, val, variables);
+      return (CONSTRUCTORS.get(ct) as Constructor)(t, val, variables, debug);
     }
     throw new UnsupportedTypeError(t);
   }
   if (CONSTRUCTORS.has(t)) {
-    return (CONSTRUCTORS.get(t) as Constructor)(t, val, variables);
+    return (CONSTRUCTORS.get(t) as Constructor)(t, val, variables, debug);
   }
   throw new UnsupportedTypeError(t);
 };
