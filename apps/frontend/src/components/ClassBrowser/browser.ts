@@ -103,6 +103,8 @@ export const getBreadthRequirements = (
     (attr) => attr.attribute?.code === "GE"
   );
 
+  console.log("geAttributes", geAttributes);
+
   const breadths = geAttributes
     .map((attr) => attr.value?.description ?? "")
     .filter(Boolean);

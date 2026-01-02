@@ -5,6 +5,7 @@ import { CourseModule } from "./generated-types/module-types";
 
 interface CourseRelationships {
   classes: null;
+  mostRecentClass: null;
   gradeDistribution: null;
   crossListing: string[];
   requiredCourses: string[];
@@ -31,6 +32,7 @@ export function formatCourse(course: ICourseItem) {
     finalExam: course.finalExam as CourseModule.CourseFinalExam,
 
     classes: null,
+    mostRecentClass: null,
     gradeDistribution: null,
     crossListing: course.crossListing ?? [],
     requiredCourses: course.preparation?.requiredCourses ?? [],

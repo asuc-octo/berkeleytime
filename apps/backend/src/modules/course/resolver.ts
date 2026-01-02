@@ -21,6 +21,8 @@ import {
 import { IntermediateCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
+const SEMESTER_ORDER = ["Winter", "Spring", "Summer", "Fall"] as const;
+
 const resolvers: CourseModule.Resolvers = {
   CourseIdentifier: new GraphQLScalarType({
     name: "CourseIdentifier",
@@ -77,6 +79,35 @@ const resolvers: CourseModule.Resolvers = {
       const classes = await getClassesByCourse(parent.courseId);
 
       return classes as unknown as CourseModule.Class[];
+    },
+
+    mostRecentClass: async (
+      parent: IntermediateCourse | CourseModule.Course
+    ) => {
+      if (parent.classes)
+        return parent.classes.toSorted((a, b) => {
+          if (a.year === b.year) {
+            return (
+              SEMESTER_ORDER.indexOf(a.semester) -
+              SEMESTER_ORDER.indexOf(b.semester)
+            );
+          }
+          return b.year - a.year;
+        })[0];
+
+      const classes = await getClassesByCourse(parent.courseId);
+
+      console.log(parent.courseId, parent.subject, parent.number, classes);
+
+      return classes.toSorted((a, b) => {
+        if (a.year === b.year) {
+          return (
+            SEMESTER_ORDER.indexOf(a.semester) -
+            SEMESTER_ORDER.indexOf(b.semester)
+          );
+        }
+        return b.year - a.year;
+      })[0] as unknown as CourseModule.Class;
     },
 
     crossListing: async (parent: IntermediateCourse | CourseModule.Course) => {
