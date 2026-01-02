@@ -7,8 +7,10 @@ export class TypeCastError extends Error {
 }
 
 export class TypeMismatchError extends Error {
-  constructor(expected: Type, actual: Type) {
-    super(`Expected type ${expected} but got type ${actual}`);
+  constructor(expected: Type, actual: Type, expr?: string) {
+    super(
+      `Expected type ${expected} but got type ${actual} ${expr ? `in expression ${expr}` : ""}`
+    );
   }
 }
 

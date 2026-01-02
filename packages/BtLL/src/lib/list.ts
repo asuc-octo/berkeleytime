@@ -4,6 +4,7 @@ import { evaluate } from "../interpreter";
 import {
   BasicType,
   BasicTypeList,
+  BtLLConfig,
   CollectionTypeList,
   Data,
   FunctionMapEntry,
@@ -18,14 +19,14 @@ export const constructor = (
   t: Type,
   v: string,
   variables: Variables,
-  debug: boolean = false
+  config: BtLLConfig = {}
 ): Data<Array<any>> => {
   const nestedType = getNestedType(t);
   if (!nestedType) throw new UnsupportedTypeError(t);
   const removedBrackets = v.substring(1, v.length - 1);
   const elems = argSplit(removedBrackets);
   const data = elems.map((e: string) =>
-    evaluate(e.trim(), nestedType, variables, debug)
+    evaluate(e.trim(), nestedType, variables, config)
   );
   if (isGenericType(t)) {
     if (data.length == 0) throw new SyntaxError(`Empty list must have type`);
