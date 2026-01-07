@@ -24,7 +24,6 @@ import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingsDocument,
   DeleteRatingsDocument,
-  GetClassDocument,
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
   GetUserRatingsDocument,
@@ -172,17 +171,6 @@ export default function Ratings() {
 
   const buildRefetchQueries = useCallback((rating: IUserRatingClass) => {
     return [
-      {
-        query: GetClassDocument,
-        variables: {
-          year: rating.year,
-          semester: rating.semester,
-          subject: rating.subject,
-          courseNumber: rating.courseNumber,
-          number: rating.classNumber,
-          sessionId: null,
-        },
-      },
       {
         query: GetCourseRatingsDocument,
         variables: {
