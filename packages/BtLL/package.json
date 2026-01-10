@@ -1,0 +1,13 @@
+{
+    "name": "@repo/BtLL",
+    "type": "module",
+    "exports": {
+      ".": "./src/index.ts"
+    },
+    "devDependencies": {
+      "@repo/typescript-config": "*",
+      "@types/node": "^24.7.0",
+      "typescript": "^5.9.3"
+    }
+  }
+  

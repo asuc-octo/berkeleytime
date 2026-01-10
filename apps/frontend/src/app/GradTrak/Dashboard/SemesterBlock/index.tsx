@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { useApolloClient } from "@apollo/client/react";
 import {
   Check,
   Edit,
@@ -18,7 +19,11 @@ import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
 import { ISelectedCourse } from "@/lib/api";
 import { ILabel, IPlanTerm } from "@/lib/api/plans";
-import { Status, Terms } from "@/lib/generated/graphql";
+import {
+  GetCourseRequirementsDocument,
+  Status,
+  Terms,
+} from "@/lib/generated/graphql";
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SelectedCourse } from "../index";
@@ -74,6 +79,8 @@ function SemesterBlock({
   handleRemoveTerm,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
+
+  const apolloClient = useApolloClient();
 
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
   const [classToEdit, setClassToEdit] = useState<ISelectedCourse | null>(null);
@@ -161,9 +168,12 @@ function SemesterBlock({
     const newTotalUnits = totalUnits - deletedClassUnits;
 
     const oldClasses = [...selectedClasses];
-    const newClasses = selectedClasses.filter(
-      (_, index) => index !== indexToDelete
-    );
+    const newClasses = selectedClasses
+      .filter((_, index) => index !== indexToDelete)
+      .map((cls) => ({
+        ...cls,
+        course: undefined,
+      }));
     setSelectedCourses(newClasses);
     try {
       await setCourses(semesterId, newClasses);
@@ -204,6 +214,17 @@ function SemesterBlock({
       );
       cls.courseUnits = data;
     }
+
+    const courseReqs =
+      "courseSubject" in cls && "courseNumber" in cls
+        ? await apolloClient.query({
+            query: GetCourseRequirementsDocument,
+            variables: {
+              number: cls.courseNumber,
+              subject: cls.courseSubject,
+            },
+          })
+        : undefined;
     // Ensure all required fields are present
     const courseToAdd: ISelectedCourse = {
       courseID: cls.courseID || "custom-" + cls.courseName,
@@ -215,14 +236,20 @@ function SemesterBlock({
       pnp: cls.pnp || false,
       transfer: cls.transfer || false,
       labels: cls.labels || [],
+      course: courseReqs?.data?.course || undefined,
     };
+
+    console.log(courseToAdd);
 
     const oldClasses = [...selectedClasses];
     const updatedClasses = [...selectedClasses, courseToAdd];
     setSelectedCourses(updatedClasses);
 
     try {
-      await setCourses(semesterId, updatedClasses);
+      await setCourses(
+        semesterId,
+        updatedClasses.map(({ course, ...cls }) => cls)
+      );
     } catch (error) {
       setSelectedCourses(oldClasses);
       console.error("Failed to save class:", error);
@@ -271,7 +298,10 @@ function SemesterBlock({
     );
     setSelectedCourses(newClasses);
     try {
-      await setCourses(semesterId, newClasses);
+      await setCourses(
+        semesterId,
+        newClasses.map(({ course, ...cls }) => cls)
+      );
     } catch (error) {
       setSelectedCourses(oldClasses);
       console.error("Failed to save class:", error);
@@ -411,9 +441,13 @@ function SemesterBlock({
       updateAllSemesters(updatedSemesters);
       try {
         for (const semesterId of semestersToUpdate) {
-          await setCourses(semesterId, updatedSemesters[semesterId], {
-            fetchPolicy: "no-cache",
-          });
+          await setCourses(
+            semesterId,
+            updatedSemesters[semesterId].map(({ course, ...cls }) => cls),
+            {
+              fetchPolicy: "no-cache",
+            }
+          );
         }
       } catch (error) {
         updateAllSemesters(oldSemesters);

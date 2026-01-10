@@ -18,6 +18,7 @@ export const courseTypeDef = gql`
 
     "Relationships"
     classes: [Class!]!
+    mostRecentClass: Class
     crossListing: [Course!]!
     requiredCourses: [Course!]!
     aggregatedRatings(metricNames: [MetricName!]): AggregatedRatings!
