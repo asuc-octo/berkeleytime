@@ -83,7 +83,11 @@ export default function CuratedClasses() {
                           </div>
                           <ClassCard
                             className={styles.class}
-                            class={curatedClass.class}
+                            class={{
+                              ...curatedClass.class,
+                              courseNumber: curatedClass.courseNumber,
+                              subject: curatedClass.subject,
+                            }}
                           />
                         </Flex>
                       </ClassDrawer>
