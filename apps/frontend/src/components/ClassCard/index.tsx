@@ -18,7 +18,6 @@ import { IClass, IClassCourse } from "@/lib/api";
 import { IEnrollmentSingular } from "@/lib/api/enrollment";
 import { Color, Semester } from "@/lib/generated/graphql";
 
-import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
 
 const formatSemester = (semester: Semester): string => {

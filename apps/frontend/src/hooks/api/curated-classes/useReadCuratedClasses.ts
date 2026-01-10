@@ -1,15 +1,16 @@
 import { useQuery } from "@apollo/client/react";
 
+import "@/lib/api/curated-classes";
 import {
-  READ_CURATED_CLASSES,
-  ReadCuratedClassesResponse,
-} from "@/lib/api/curated-classes";
+  GetCuratedClassesDocument,
+  GetCuratedClassesQuery,
+} from "@/lib/generated/graphql";
 
 export const useReadCuratedClasses = (
-  options?: Omit<useQuery.Options<ReadCuratedClassesResponse>, "variables">
+  options?: Omit<useQuery.Options<GetCuratedClassesQuery>, "variables">
 ) => {
-  const query = useQuery<ReadCuratedClassesResponse>(
-    READ_CURATED_CLASSES,
+  const query = useQuery<GetCuratedClassesQuery>(
+    GetCuratedClassesDocument,
     options
   );
 

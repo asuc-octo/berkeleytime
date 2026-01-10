@@ -4,55 +4,51 @@ import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  CREATE_CURATED_CLASS,
-  CreateCuratedClassResponse,
-  ICuratedClassInput,
-} from "@/lib/api";
+  CreateCuratedClassDocument,
+  CreateCuratedClassInput,
+} from "@/lib/generated/graphql";
 
 export const useCreateCuratedClass = () => {
-  const mutation = useMutation<CreateCuratedClassResponse>(
-    CREATE_CURATED_CLASS,
-    {
-      update(cache, { data }) {
-        const curatedClass = data?.createCuratedClass;
+  const mutation = useMutation(CreateCuratedClassDocument, {
+    update(cache, { data }) {
+      const curatedClass = data?.createCuratedClass;
 
-        if (!curatedClass) return;
+      if (!curatedClass) return;
 
-        cache.modify({
-          fields: {
-            curatedClasses: (existingCuratedClasses = []) => {
-              const reference = cache.writeFragment({
-                data: curatedClass,
-                fragment: gql`
-                  fragment CreatedCuratedClass on CuratedClass {
-                    _id
-                    name
-                    public
-                    createdBy
-                    year
-                    semester
-                    classes {
-                      class {
-                        subject
-                        courseNumber
-                        number
-                      }
-                      selectedSections
+      cache.modify({
+        fields: {
+          curatedClasses: (existingCuratedClasses = []) => {
+            const reference = cache.writeFragment({
+              data: curatedClass,
+              fragment: gql`
+                fragment CreatedCuratedClass on CuratedClass {
+                  _id
+                  name
+                  public
+                  createdBy
+                  year
+                  semester
+                  classes {
+                    class {
+                      subject
+                      courseNumber
+                      number
                     }
+                    selectedSections
                   }
-                `,
-              });
+                }
+              `,
+            });
 
-              return [...existingCuratedClasses, reference];
-            },
+            return [...existingCuratedClasses, reference];
           },
-        });
-      },
-    }
-  );
+        },
+      });
+    },
+  });
 
   const createCuratedClass = useCallback(
-    async (curatedClass: ICuratedClassInput) => {
+    async (curatedClass: CreateCuratedClassInput) => {
       const mutate = mutation[0];
 
       return await mutate({ variables: { curatedClass } });

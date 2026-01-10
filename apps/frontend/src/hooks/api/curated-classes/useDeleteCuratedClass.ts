@@ -4,37 +4,37 @@ import { Reference } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  CuratedClassIdentifier,
-  DELETE_CURATED_CLASS,
-  DeleteCuratedClassResponse,
-} from "@/lib/api";
+  DeleteCuratedClassDocument,
+  DeleteCuratedClassMutation,
+  DeleteCuratedClassMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useDeleteCuratedClass = () => {
-  const mutation = useMutation<DeleteCuratedClassResponse>(
-    DELETE_CURATED_CLASS,
-    {
-      update(cache, { data }) {
-        const id = data?.deleteCuratedClass;
+  const mutation = useMutation(DeleteCuratedClassDocument, {
+    update(cache, { data }) {
+      const id = data?.deleteCuratedClass;
 
-        if (!id) return;
+      if (!id) return;
 
-        cache.modify({
-          fields: {
-            curatedClasses: (existingCuratedClasses = [], { readField }) =>
-              existingCuratedClasses.filter(
-                (reference: Reference) => readField("_id", reference) !== id
-              ),
-          },
-        });
-      },
-    }
-  );
+      cache.modify({
+        fields: {
+          curatedClasses: (existingCuratedClasses = [], { readField }) =>
+            existingCuratedClasses.filter(
+              (reference: Reference) => readField("_id", reference) !== id
+            ),
+        },
+      });
+    },
+  });
 
   const deleteCuratedClass = useCallback(
     async (
-      id: CuratedClassIdentifier,
+      id: string,
       options?: Omit<
-        useMutation.Options<DeleteCuratedClassResponse>,
+        useMutation.Options<
+          DeleteCuratedClassMutation,
+          DeleteCuratedClassMutationVariables
+        >,
         "variables"
       >
     ) => {

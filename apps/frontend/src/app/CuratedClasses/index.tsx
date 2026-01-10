@@ -71,6 +71,7 @@ export default function CuratedClasses() {
                         courseNumber={curatedClass.courseNumber}
                         year={curatedClass.year}
                         semester={curatedClass.semester}
+                        sessionId={curatedClass.sessionId}
                       >
                         <Flex direction="column">
                           <div className={styles.cover}>

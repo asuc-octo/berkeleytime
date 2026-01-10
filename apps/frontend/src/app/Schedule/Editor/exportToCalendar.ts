@@ -22,6 +22,38 @@ const generateICS = (schedule: ISchedule) => {
     return days[dayIndex];
   };
 
+  const findFirstOccurrenceDate = (
+    startDate: Date,
+    activeDayIndices: number[]
+  ): Date => {
+    if (activeDayIndices.length === 0) return startDate;
+
+    const currentDayOfWeek = startDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    // Convert to Monday=0, Tuesday=1, ..., Sunday=6 format to match our days array
+    const normalizedCurrentDay =
+      currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1;
+
+    // Find the first active day that is >= current day
+    const nextActiveDay = activeDayIndices.find(
+      (dayIndex) => dayIndex >= normalizedCurrentDay
+    );
+
+    if (nextActiveDay !== undefined) {
+      // Move to the next active day in the current week
+      const daysToAdd = nextActiveDay - normalizedCurrentDay;
+      const resultDate = new Date(startDate);
+      resultDate.setDate(startDate.getDate() + daysToAdd);
+      return resultDate;
+    } else {
+      // No active day found in current week, move to first active day of next week
+      const firstActiveDay = Math.min(...activeDayIndices);
+      const daysToAdd = 7 - normalizedCurrentDay + firstActiveDay;
+      const resultDate = new Date(startDate);
+      resultDate.setDate(startDate.getDate() + daysToAdd);
+      return resultDate;
+    }
+  };
+
   const icsContent = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -65,21 +97,27 @@ const generateICS = (schedule: ISchedule) => {
       section.meetings.forEach((meeting) => {
         if (!meeting.days || !meeting.startTime || !meeting.endTime) return;
 
-        const activeDays = meeting.days
-          .map((active: boolean, index: number) =>
-            active ? getDayOfWeek(index) : null
-          )
-          .filter(Boolean);
+        const activeDayIndices = meeting.days
+          .map((active: boolean, index: number) => (active ? index : -1))
+          .filter((index) => index !== -1);
 
-        if (activeDays.length === 0) return;
+        if (activeDayIndices.length === 0) return;
+
+        const activeDays = activeDayIndices.map((index) => getDayOfWeek(index));
 
         // Compute start of event: max(section.startDate, schedule.term.startDate)
         const sectionStartDate = new Date(
           section.startDate || schedule.term?.startDate || new Date()
         );
         const termStartDate = new Date(schedule.term?.startDate || new Date());
-        const startDate = new Date(
+        const baseStartDate = new Date(
           Math.max(sectionStartDate.getTime(), termStartDate.getTime())
+        );
+
+        // Adjust to the first occurrence day
+        const startDate = findFirstOccurrenceDate(
+          baseStartDate,
+          activeDayIndices
         );
 
         // Compute end of event: min(section.endDate - 1 week, schedule.term.endDate)
@@ -125,15 +163,16 @@ const generateICS = (schedule: ISchedule) => {
     if (!event.days || !event.startTime || !event.endTime || event.hidden)
       return;
 
-    const activeDays = event.days
-      .map((active: boolean, index: number) =>
-        active ? getDayOfWeek(index) : null
-      )
-      .filter(Boolean);
+    const activeDayIndices = event.days
+      .map((active: boolean, index: number) => (active ? index : -1))
+      .filter((index) => index !== -1);
 
-    if (activeDays.length === 0) return;
+    if (activeDayIndices.length === 0) return;
 
-    const startDate = new Date(schedule.term?.startDate || new Date());
+    const activeDays = activeDayIndices.map((index) => getDayOfWeek(index));
+
+    const baseStartDate = new Date(schedule.term?.startDate || new Date());
+    const startDate = findFirstOccurrenceDate(baseStartDate, activeDayIndices);
     const endDate = new Date(schedule.term?.endDate || new Date());
 
     icsContent.push(

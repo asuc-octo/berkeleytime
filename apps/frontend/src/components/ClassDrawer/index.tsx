@@ -46,11 +46,7 @@ export default function ClassDrawer({
 }: ClassDrawerProps) {
   return (
     <Dialog.Root onOpenChange={onOpenChange} open={open}>
-      {children && open !== undefined ? (
-        <Dialog.Trigger asChild>{children}</Dialog.Trigger>
-      ) : (
-        children
-      )}
+      {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Drawer className={styles.drawer}>
