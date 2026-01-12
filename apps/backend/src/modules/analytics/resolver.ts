@@ -1,5 +1,6 @@
 import { GraphQLError } from "graphql";
 
+import { RequestContext } from "../../types/request-context";
 import { getCloudflareAnalyticsData } from "./controllers/cloudflare";
 import { getCollectionAnalyticsData } from "./controllers/collection";
 import { getGradTrakAnalyticsData } from "./controllers/plan";
@@ -35,7 +36,7 @@ const resolvers = {
     userCreationAnalyticsData: async (
       _: unknown,
       __: unknown,
-      context: any
+      context: RequestContext
     ) => {
       try {
         return await getUserCreationAnalyticsData(context);
@@ -53,7 +54,11 @@ const resolvers = {
     },
 
     // Scheduler analytics
-    schedulerAnalyticsData: async (_: unknown, __: unknown, context: any) => {
+    schedulerAnalyticsData: async (
+      _: unknown,
+      __: unknown,
+      context: RequestContext
+    ) => {
       try {
         return await getSchedulerAnalyticsData(context);
       } catch (error: unknown) {
@@ -70,7 +75,11 @@ const resolvers = {
     },
 
     // GradTrak analytics
-    gradTrakAnalyticsData: async (_: unknown, __: unknown, context: any) => {
+    gradTrakAnalyticsData: async (
+      _: unknown,
+      __: unknown,
+      context: RequestContext
+    ) => {
       try {
         return await getGradTrakAnalyticsData(context);
       } catch (error: unknown) {
@@ -87,7 +96,11 @@ const resolvers = {
     },
 
     // Rating analytics
-    ratingAnalyticsData: async (_: unknown, __: unknown, context: any) => {
+    ratingAnalyticsData: async (
+      _: unknown,
+      __: unknown,
+      context: RequestContext
+    ) => {
       try {
         return await getRatingAnalyticsData(context);
       } catch (error: unknown) {
@@ -106,7 +119,7 @@ const resolvers = {
     ratingMetricsAnalyticsData: async (
       _: unknown,
       __: unknown,
-      context: any
+      context: RequestContext
     ) => {
       try {
         return await getRatingMetricsAnalyticsData(context);
@@ -126,7 +139,7 @@ const resolvers = {
     optionalResponseAnalyticsData: async (
       _: unknown,
       __: unknown,
-      context: any
+      context: RequestContext
     ) => {
       try {
         return await getOptionalResponseAnalyticsData(context);
@@ -144,7 +157,11 @@ const resolvers = {
     },
 
     // Collection analytics
-    collectionAnalyticsData: async (_: unknown, __: unknown, context: any) => {
+    collectionAnalyticsData: async (
+      _: unknown,
+      __: unknown,
+      context: RequestContext
+    ) => {
       try {
         return await getCollectionAnalyticsData(context);
       } catch (error: unknown) {
@@ -164,7 +181,7 @@ const resolvers = {
     cloudflareAnalyticsData: async (
       _: unknown,
       { days, granularity }: { days: number; granularity?: string },
-      context: any
+      context: RequestContext
     ) => {
       try {
         const gran = granularity === "hour" ? "hour" : "day";

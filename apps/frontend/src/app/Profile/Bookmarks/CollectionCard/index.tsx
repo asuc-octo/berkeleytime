@@ -28,6 +28,7 @@ import {
 import { getLetterGradeFromGPA } from "@/lib/grades";
 import { CollectionPreviewClass } from "@/types/collection";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./CollectionCard.module.scss";
 
 interface CollectionCardProps {

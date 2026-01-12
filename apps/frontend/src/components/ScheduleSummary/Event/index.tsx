@@ -8,6 +8,7 @@ import { ScheduleEvent } from "@/app/Schedule/schedule";
 import { componentMap } from "@/lib/api";
 
 import { getY } from "..";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Event.module.scss";
 
 interface CompactEventProps {
@@ -39,6 +40,8 @@ export default function CompactEvent({
   setActiveEvent,
   ...props
 }: CompactEventProps & ScheduleEvent) {
+  // flipPopup is part of the interface but not used in this component
+  void flipPopup;
   // Scale factor: compact uses 10px/hour instead of 60px/hour
   const SCALE_FACTOR = 15 / 60;
 

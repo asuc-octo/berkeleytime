@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Tooltip } from "recharts";
 import type { TooltipProps } from "recharts";
 

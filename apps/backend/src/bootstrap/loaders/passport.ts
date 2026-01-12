@@ -129,7 +129,7 @@ export default async (app: Application, redis: RedisClientType) => {
   passport.serializeUser((user, done) => {
     done(null, user);
   });
-  passport.deserializeUser(async (user: any, done) => {
+  passport.deserializeUser(async (user: { _id: string } | undefined, done) => {
     if (user?._id) {
       await UserModel.updateOne({ _id: user._id }, { lastSeenAt: new Date() });
     }

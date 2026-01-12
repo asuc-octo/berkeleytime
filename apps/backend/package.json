@@ -7,7 +7,7 @@
     "build": "tsc --noEmit",
     "lint": "eslint src/",
     "generate": "node scripts/prepare-typedefs.js && graphql-codegen --config codegen.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --incremental false"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",

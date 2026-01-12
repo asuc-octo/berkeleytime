@@ -9,6 +9,7 @@ import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
 import useBrowser from "../useBrowser";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
 
 interface ListProps {

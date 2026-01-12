@@ -1,6 +1,6 @@
 import { createHash } from "crypto";
 import { GraphQLError } from "graphql";
-import { connection } from "mongoose";
+import { type ClientSession, connection } from "mongoose";
 
 import {
   AggregatedMetricsModel,
@@ -45,7 +45,7 @@ export interface RequestContext {
 }
 
 interface RatingData {
-  classId: any; // ObjectId
+  classId: unknown; // ObjectId
   courseId: string;
   year: number;
   semester: Semester;
@@ -96,11 +96,11 @@ const getCourseId = async (
 };
 
 export const numberScaleMetrics = Object.entries(METRIC_MAPPINGS)
-  .filter(([_, config]) => config.isRating)
+  .filter(([, config]) => config.isRating)
   .map(([metric]) => metric) as MetricName[];
 
 export const booleanScaleMetrics = Object.entries(METRIC_MAPPINGS)
-  .filter(([_, config]) => !config.isRating)
+  .filter(([, config]) => !config.isRating)
   .map(([metric]) => metric) as MetricName[];
 
 // const getSemestersByInstructor = async (
@@ -248,7 +248,7 @@ const deleteRatingOperations = async (
   courseNumber: string,
   classNumber: string,
   metricName: MetricName,
-  session: any
+  session: ClientSession
 ) => {
   const rating = await RatingModel.findOne({
     createdBy: context.user._id,
@@ -299,7 +299,7 @@ export const deleteRating = async (
   courseNumber: string,
   classNumber: string,
   metricName: MetricName,
-  existingSession?: any // for nested transactions only
+  existingSession?: ClientSession // for nested transactions only
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -581,7 +581,7 @@ export const getInstructorAggregatedRatings = async (
 
   // For each instructor, aggregate their ratings
   const instructorRatings = await Promise.all(
-    Array.from(instructorMap.entries()).map(async ([_key, instructorData]) => {
+    Array.from(instructorMap.values()).map(async (instructorData) => {
       const aggregated = await instructorRatingsAggregator(
         courseId,
         instructorData.classes
@@ -614,7 +614,7 @@ export const getInstructorAggregatedRatings = async (
 const createNewRating = async (
   context: RequestContext,
   ratingData: RatingData,
-  session: any
+  session: ClientSession
 ) => {
   const {
     classId,
@@ -657,7 +657,7 @@ const createNewRating = async (
 const handleExistingRating = async (
   existingRating: RatingType,
   newValue: number,
-  session: any
+  session: ClientSession
 ) => {
   const oldValue = existingRating.value;
   if (oldValue === newValue) return;
@@ -699,7 +699,7 @@ const handleExistingRating = async (
 };
 
 const handleCategoryCountChange = async (
-  classId: any, // ObjectId
+  classId: unknown, // ObjectId
   courseId: string,
   year: number,
   semester: Semester,
@@ -707,16 +707,16 @@ const handleCategoryCountChange = async (
   courseNumber: string,
   classNumber: string,
   metricName: MetricName,
-  categoryValue: Number,
-  isIncrement: Boolean, // false means is decrement
-  session?: any
+  categoryValue: number,
+  isIncrement: boolean, // false means is decrement
+  session?: ClientSession
 ) => {
   const delta = isIncrement ? 1 : -1;
   const metric = await AggregatedMetricsModel.findOne({
     classId,
     metricName,
     categoryValue,
-  }).session(session);
+  }).session(session ?? null);
   if (metric) {
     metric.categoryCount += delta;
     await metric.save({ session });
@@ -963,6 +963,9 @@ export const getAllRatings = async () => {
     classNumber: rating.classNumber,
     metricName: rating.metricName as MetricName,
     value: rating.value,
-    createdAt: (rating as any).createdAt.toISOString(),
+    createdAt:
+      "createdAt" in rating && rating.createdAt instanceof Date
+        ? rating.createdAt.toISOString()
+        : new Date().toISOString(),
   }));
 };

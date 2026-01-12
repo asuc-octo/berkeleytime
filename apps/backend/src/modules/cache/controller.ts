@@ -62,9 +62,12 @@ export async function warmCatalogCache(
     try {
       await redis.rename(stagingKey, productionKey);
       console.log(`[Cache] Successfully warmed cache for ${year} ${semester}`);
-    } catch (renameError: any) {
+    } catch (renameError: unknown) {
       // Handle case where staging key doesn't exist (shouldn't happen)
-      if (renameError.message?.includes("no such key")) {
+      if (
+        renameError instanceof Error &&
+        renameError.message?.includes("no such key")
+      ) {
         throw new Error(
           `Staging key ${stagingKey} not found after executeOperation. Cache may not have been written.`
         );

@@ -9,4 +9,3 @@ export const signIn = (redirectURI?: string) => {
 
   window.location.href = `${BASE}/api/login?redirect_uri=${redirectURI}`;
 };
-

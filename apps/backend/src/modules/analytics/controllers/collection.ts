@@ -40,7 +40,7 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
 
   collections.forEach((col) => {
     const userId = col.createdBy;
-    const createdAt = (col as any).createdAt as Date;
+    const createdAt = col.createdAt as Date;
 
     // Track custom (non-system) collections created after migration
     if (!col.isSystem && createdAt >= MIGRATION_CUTOFF) {
@@ -53,7 +53,7 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
       customCollectionDetails.push({
         userId,
         classCount: col.classes?.length || 0,
-        name: (col as any).name || "",
+        name: col.name || "",
         createdAt: createdAt.toISOString(),
       });
 
@@ -65,7 +65,7 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
     }
 
     const classes = col.classes || [];
-    classes.forEach((classEntry: any) => {
+    classes.forEach((classEntry) => {
       if (classEntry.addedAt) {
         const addedAt = new Date(classEntry.addedAt);
         // Only include post-migration class additions
@@ -139,7 +139,7 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
     // Track largest custom collection
     if (!col.isSystem && classCount > largestCustomCollectionSize) {
       largestCustomCollectionSize = classCount;
-      largestCustomCollectionName = (col as any).name || null;
+      largestCustomCollectionName = col.name || null;
     }
 
     // Count collections per user (custom only)
@@ -151,7 +151,7 @@ export const getCollectionAnalyticsData = async (context: RequestContext) => {
     }
 
     // Count bookmarks per course
-    (col.classes || []).forEach((classEntry: any) => {
+    (col.classes || []).forEach((classEntry) => {
       if (classEntry.subject && classEntry.courseNumber) {
         const courseKey = `${classEntry.subject} ${classEntry.courseNumber}`;
         courseBookmarkCounts.set(

@@ -17,10 +17,18 @@ const resolvers: CommonModule.Resolvers = {
   ISODate: new GraphQLScalarType({
     name: "ISODate",
     description: "ISODate custom scalar type",
-    parseValue: (value: any) => {
+    parseValue: (value: unknown) => {
+      if (typeof value !== "string") return null;
       return new Date(value);
     },
-    serialize: (value: any) => {
+    serialize: (value: unknown) => {
+      if (
+        typeof value !== "object" ||
+        value === null ||
+        !("toISOString" in value) ||
+        typeof value.toISOString !== "function"
+      )
+        return null;
       return value.toISOString();
     },
     parseLiteral: (ast) => {

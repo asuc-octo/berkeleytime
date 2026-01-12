@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { BASE } from "@/App";
+import { BASE } from "@/helper";
 
 export interface IUser {
   _id: string;

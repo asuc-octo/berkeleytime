@@ -2,7 +2,9 @@ import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import { createRoot } from "react-dom/client";
 
-import App, { BASE } from "./App";
+import App from "@/App";
+import { BASE } from "@/helper";
+
 import "./main.scss";
 
 const client = new ApolloClient({

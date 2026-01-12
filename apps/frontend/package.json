@@ -9,7 +9,7 @@
     "start": "serve -s dist -p 3000",
     "test": "vitest run",
     "generate": "graphql-codegen --config codegen.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --incremental false"
   },
   "dependencies": {
     "@apollo/client": "4.0.7",

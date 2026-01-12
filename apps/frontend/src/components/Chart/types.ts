@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ReactNode } from "react";
 
 // Chart configuration for a single data series
@@ -24,11 +25,8 @@ export interface ChartTooltipConfig {
   indicator?: "dot" | "line" | "square" | "circle";
 
   // Custom formatters
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   labelFormatter?: (label: any, payload: any[]) => ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   valueFormatter?: (value: any, name: string, payload: any) => ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   nameFormatter?: (name: string, payload: any) => ReactNode;
 
   // Layout

@@ -1,4 +1,5 @@
 import {
+  Semester,
   UpdateStaffInfoInput,
   UpsertSemesterRoleInput,
 } from "../../generated-types/graphql";
@@ -25,7 +26,7 @@ const resolvers = {
     staffBySemester: (
       _: unknown,
       { year, semester }: { year: number; semester: string }
-    ) => getStaffBySemester(year, semester as any),
+    ) => getStaffBySemester(year, semester as Semester),
 
     staffMember: (_: unknown, { id }: { id: string }) => getStaffMember(id),
 
@@ -70,18 +71,30 @@ const resolvers = {
   },
 
   StaffMember: {
-    id: (parent: any) => parent._id?.toString() ?? parent.id,
-    email: (parent: any) => getMemberEmail(parent.userId?.toString()),
-    roles: (parent: any) => getMemberRoles(parent._id?.toString() ?? parent.id),
-    addedByName: (parent: any) => getAddedByName(parent.addedBy?.toString()),
+    id: (parent: { _id?: { toString: () => string }; id?: string }) =>
+      parent._id?.toString() ?? parent.id,
+    email: (parent: { userId?: { toString: () => string } }) =>
+      getMemberEmail(parent.userId?.toString()),
+    roles: (parent: { _id?: { toString: () => string }; id?: string }) => {
+      const id = parent._id?.toString() ?? parent.id;
+      if (!id) throw new Error("Missing id");
+      return getMemberRoles(id);
+    },
+    addedByName: (parent: { addedBy?: { toString: () => string } }) =>
+      getAddedByName(parent.addedBy?.toString()),
   },
 
   SemesterRole: {
-    id: (parent: any) => parent._id?.toString() ?? parent.id,
-    member: (parent: any) =>
-      getRoleMember(
-        parent.memberId?._id?.toString() ?? parent.memberId?.toString()
-      ),
+    id: (parent: { _id?: { toString: () => string }; id?: string }) =>
+      parent._id?.toString() ?? parent.id,
+    member: (parent: {
+      memberId?: { _id?: { toString: () => string }; toString: () => string };
+    }) => {
+      const memberId =
+        parent.memberId?._id?.toString() ?? parent.memberId?.toString();
+      if (!memberId) throw new Error("Missing memberId");
+      return getRoleMember(memberId);
+    },
   },
 };
 

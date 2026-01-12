@@ -8,9 +8,9 @@ import Layout from "@/components/Layout";
 import styles from "./App.module.scss";
 import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
+import { signIn } from "./helper";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
-import { signIn } from "./helper";
 
 const router = createBrowserRouter([
   {

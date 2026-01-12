@@ -1,7 +1,8 @@
-import { ComponentPropsWithRef, Fragment, useMemo } from "react";
+import { ComponentPropsWithRef, useMemo } from "react";
 
 import classNames from "classnames";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Time.module.scss";
 
 const getTime = (start?: string | null, end?: string | null) => {
@@ -38,31 +39,6 @@ export default function Time({
   className,
   ...props
 }: Omit<ComponentPropsWithRef<"p">, keyof TimeProps> & TimeProps) {
-  // Calculate position from midnight (0:00) to midnight (24:00)
-  const bottom = useMemo(() => {
-    if (!endTime) return;
-
-    const [hours, minutes] = endTime.split(":").map((value) => parseInt(value));
-
-    // 240px total height (24 hours * 10px/hour), position from bottom
-    return 240 - (hours * 10 + minutes / 6);
-  }, [endTime]);
-
-  // TODO: Use getY with a multiple instead
-  const height = useMemo(() => {
-    if (!startTime || !endTime) return;
-
-    const [startHours, startMinutes] = startTime
-      .split(":")
-      .map((value) => parseInt(value));
-
-    const [endHours, endMinutes] = endTime
-      .split(":")
-      .map((value) => parseInt(value));
-
-    return (endHours - startHours) * 10 + (endMinutes - startMinutes) / 6;
-  }, [startTime, endTime]);
-
   const value = useMemo(() => {
     const time = getTime(startTime, endTime);
 

@@ -34,7 +34,6 @@ export async function getSchedulerAnalyticsData(
     totalClasses: schedule.classes?.length || 0,
     semester: schedule.semester,
     year: schedule.year,
-    createdAt:
-      (schedule as any).createdAt?.toISOString() || new Date().toISOString(),
+    createdAt: schedule.createdAt?.toISOString() || new Date().toISOString(),
   }));
 }
