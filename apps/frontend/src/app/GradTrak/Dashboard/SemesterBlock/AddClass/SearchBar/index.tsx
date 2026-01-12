@@ -52,7 +52,7 @@ function SearchBar({
           <div className={styles.suggestionPopover}>
             {
               <ul
-                className={`${styles.list} ${filteredClasses.length > 0 ? styles.hasItems : ""}`}
+                className={styles.list}
               >
                 {filteredClasses.map((cls, i) => (
                   <li

@@ -22,7 +22,7 @@ export interface Post {
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { data: allTerms, loading, error } = useReadTerms(); // tried to query from hooks but querying from 8081 instead of 8080
+  const { data: allTerms } = useReadTerms(); // tried to query from hooks but querying from 8081 instead of 8080
 
   // temp posts lists
   const [posts, setPosts] = useState<Post[]>([

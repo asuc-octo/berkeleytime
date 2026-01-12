@@ -517,7 +517,7 @@ export default function Dashboard() {
       if (gradTrak.majors) {
         gradTrak.majors.forEach((majorValue) => {
           const majorStr = String(majorValue);
-          if ((majorOptions as any).includes(majorStr)) {
+          if (majorOptions.includes(majorStr)) {
             majors.push({
               label: majorStr,
               value: majorStr,
@@ -530,7 +530,7 @@ export default function Dashboard() {
       if (gradTrak.minors) {
         gradTrak.minors.forEach((minorValue) => {
           const minorStr = String(minorValue);
-          if ((minorOptions as any).includes(minorStr)) {
+          if (minorOptions.includes(minorStr)) {
             minors.push({
               label: minorStr,
               value: minorStr,
@@ -886,7 +886,7 @@ export default function Dashboard() {
               </DropdownMenu.Content>
             </DropdownMenu.Root>
 
-            <div className={styles.dropdown}>
+            <div>
               <DropdownMenu.Root
                 open={sortMenuOpen}
                 onOpenChange={setSortMenuOpen}
@@ -1071,7 +1071,7 @@ export default function Dashboard() {
                 <Dialog.Body className={styles.editDialogBody}>
                   <form className={styles.editDialogForm}>
                     <div className={styles.editDialogGrid}>
-                      <div className={styles.degreeSection}>
+                      <div>
                         <label className={styles.degreeFieldLabel}>
                           Major(s)
                         </label>
@@ -1118,7 +1118,7 @@ export default function Dashboard() {
                         )}
                       </div>
 
-                      <div className={styles.degreeSection}>
+                      <div>
                         <label className={styles.degreeFieldLabel}>
                           Minor(s)
                         </label>

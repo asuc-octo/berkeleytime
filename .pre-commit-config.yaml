@@ -2,6 +2,13 @@ default_install_hook_types: [pre-push]
 repos:
   - repo: local
     hooks:
+      - id: type-check
+        name: type-check
+        entry: npm run type-check
+        language: system
+        stages: [pre-push]
+        fail_fast: true
+        pass_filenames: false
       - id: format
         name: format
         entry: npx prettier --write
@@ -9,6 +16,13 @@ repos:
         files: \.(ts|tsx)$
         stages: [pre-push]
         fail_fast: true
+      - id: lint
+        name: lint
+        entry: npm run lint
+        language: system
+        stages: [pre-push]
+        fail_fast: true
+        pass_filenames: false
       - id: build
         name: build
         entry: npm run build

@@ -8,7 +8,6 @@ import React, {
 } from "react";
 
 import { useApolloClient, useQuery } from "@apollo/client/react";
-import type { useApolloClient as UseApolloClientType } from "@apollo/client/react";
 import moment from "moment";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {

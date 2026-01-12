@@ -8,7 +8,8 @@
     "lint": "eslint src/",
     "start": "serve -s dist -p 3000",
     "test": "vitest run",
-    "generate": "graphql-codegen --config codegen.ts"
+    "generate": "graphql-codegen --config codegen.ts",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@apollo/client": "4.0.7",
