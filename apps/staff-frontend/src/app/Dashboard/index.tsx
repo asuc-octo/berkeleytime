@@ -25,8 +25,6 @@ import {
   Select,
 } from "@repo/theme";
 
-import { BASE } from "@/App";
-
 import { useAllPods, useCreatePod, useDeletePod } from "../../hooks/api/pod";
 import {
   useAllStaffMembers,
@@ -41,6 +39,7 @@ import { useReadUser } from "../../hooks/api/users";
 import { CreatePodInput, Semester } from "../../lib/api/pod";
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
+import { BASE } from "@/helper";
 
 interface UserSearchResult {
   _id: string;

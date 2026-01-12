@@ -48,11 +48,10 @@ const formatEnrollmentSingular = (
 
   const seatReservations = input.enrollmentStatus?.seatReservations ?? [];
   seatReservations.forEach((reservation) => {
-    if (reservation.requirementGroup?.description) {
-      requirementGroupStats && (requirementGroupStats.present += 1);
-    } else {
-      requirementGroupStats && (requirementGroupStats.missing += 1);
-    }
+    if (!requirementGroupStats) return;
+    if (reservation.requirementGroup?.description)
+      requirementGroupStats.present += 1;
+    else requirementGroupStats.missing += 1;
   });
 
   const output: IEnrollmentSingularItem = {
@@ -93,7 +92,7 @@ const formatEnrollmentSingular = (
         number: reservation.number ?? 0,
         requirementGroup: {
           code: reservation.requirementGroup?.code ?? "",
-          description: reservation.requirementGroup?.description!,
+          description: reservation.requirementGroup?.description ?? "",
         },
         fromDate: reservation.fromDate ?? "",
       })),
