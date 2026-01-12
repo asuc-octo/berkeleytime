@@ -7,7 +7,6 @@ import { IScheduleEvent } from "@/lib/api";
 import { ScheduleEvent, SectionColor } from "../../schedule";
 import Event from "./Event";
 import styles from "./Week.module.scss";
-
 import { getY } from "./helpers.ts";
 
 // You have to trust me on this math
