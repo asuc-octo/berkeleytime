@@ -174,9 +174,10 @@ const updateGradeDistributions = async (
 
         log.trace("Deleting grade distributions to be replaced...");
 
-        const { deletedCount } = await GradeDistributionModel.deleteMany({
-          termId: { $in: termsBatchIds },
-        });
+        const { deletedCount } = await GradeDistributionModel.deleteMany(
+          { termId: { $in: termsBatchIds } },
+          { session }
+        );
 
         log.trace(`Inserting batch ${i}`);
 
@@ -185,6 +186,7 @@ const updateGradeDistributions = async (
           {
             ordered: false,
             rawResult: true,
+            session,
           }
         );
 

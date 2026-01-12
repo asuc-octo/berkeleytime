@@ -60,15 +60,17 @@ const updateSections = async (config: Config, termSelector: TermSelector) => {
 
         log.trace("Deleting sections to be replaced...");
 
-        const { deletedCount } = await SectionModel.deleteMany({
-          termId: { $in: termsBatchIds },
-        });
+        const { deletedCount } = await SectionModel.deleteMany(
+          { termId: { $in: termsBatchIds } },
+          { session }
+        );
 
         log.trace(`Inserting batch ${i}`);
 
         const { insertedCount } = await SectionModel.insertMany(sections, {
           ordered: false,
           rawResult: true,
+          session,
         });
 
         // avoid replacing data if a non-negligible amount is deleted
