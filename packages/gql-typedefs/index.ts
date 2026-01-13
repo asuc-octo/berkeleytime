@@ -12,6 +12,7 @@ export * from "./grade-distribution";
 export * from "./plan";
 export * from "./pod";
 export * from "./rating";
+export * from "./route-redirect";
 export * from "./schedule";
 export * from "./term";
 export * from "./user";

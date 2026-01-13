@@ -13,6 +13,7 @@ import GradeDistribution from "./grade-distribution";
 import Plan from "./plan";
 import Pod from "./pod";
 import Rating from "./rating";
+import RouteRedirect from "./route-redirect";
 import Schedule from "./schedule";
 import Staff from "./staff";
 import Term from "./term";
@@ -35,6 +36,7 @@ const modules = [
   Enrollment,
   Plan,
   Rating,
+  RouteRedirect,
   Pod,
 ];
 
