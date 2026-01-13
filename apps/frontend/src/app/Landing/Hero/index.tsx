@@ -79,10 +79,11 @@ export default function Hero({ step, milliseconds }: HeroProps) {
           <div className={styles.clock}>
             <Clock height={24} width={24} />
             <p className={styles.heading}>
-              {new Date(milliseconds).toLocaleTimeString(undefined, {
+              {new Date(milliseconds).toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
                 second: "numeric",
+                timeZone: "America/Los_Angeles",
               })}
             </p>
             <p className={styles.description}>Berkeley time</p>

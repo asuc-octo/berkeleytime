@@ -65,9 +65,9 @@
     flex-shrink: 0;
     transition: width 0.3s ease;
     position: relative;
-    
+
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       right: 0;
       top: 0;
@@ -279,7 +279,6 @@
   }
 }
 
-
 .degree-chip {
   display: flex;
   display: flex;
@@ -297,27 +296,26 @@
   font-size: 14px;
   color: var(--heading-color);
   .remove-button {
-  .remove-button {
-    cursor: pointer;
-    cursor: pointer;
-    color: var(--paragraph-color);
-    font-size: 18px;
-    font-weight: bold;
-    line-height: 1;
-    opacity: 0.7;
-    padding: 0 4px;
-    transition: opacity 0.2s;
-    transition: color 0.2s;
-    &:hover {
-    &:hover {
-      opacity: 1;
-      color: var(--heading-color);
+    .remove-button {
+      cursor: pointer;
+      cursor: pointer;
+      color: var(--paragraph-color);
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1;
+      opacity: 0.7;
+      padding: 0 4px;
+      transition: opacity 0.2s;
+      transition: color 0.2s;
+      &:hover {
+        &:hover {
+          opacity: 1;
+          color: var(--heading-color);
+        }
+      }
     }
-    }
-  }
   }
 }
-
 
 .empty-state {
   color: var(--gray-500);
