@@ -13,7 +13,7 @@ export interface PodRequestContext {
 }
 
 // Helper to verify the current user is a staff member
-export const requireStaffMember = async (context: any) => {
+export const requireStaffMember = async (context: PodRequestContext) => {
   if (!context.user?._id) {
     throw new GraphQLError("Not authenticated", {
       extensions: { code: "UNAUTHENTICATED" },
@@ -47,7 +47,10 @@ export const getAllPods = async () => {
   return pods;
 };
 
-export const createPod = async (context: any, input: CreatePodInput) => {
+export const createPod = async (
+  context: PodRequestContext,
+  input: CreatePodInput
+) => {
   // Verify caller is a staff member
   await requireStaffMember(context);
 
@@ -60,7 +63,7 @@ export const createPod = async (context: any, input: CreatePodInput) => {
   return pod.toObject();
 };
 
-export const deletePod = async (context: any, podId: string) => {
+export const deletePod = async (context: PodRequestContext, podId: string) => {
   // Verify caller is a staff member
   await requireStaffMember(context);
 

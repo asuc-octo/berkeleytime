@@ -46,7 +46,6 @@ export default function Class({
           justify="between"
           align={settings.layout === "chart" ? "start" : "center"}
           width="100%"
-          className={styles.headerRow}
         >
           <div
             className={

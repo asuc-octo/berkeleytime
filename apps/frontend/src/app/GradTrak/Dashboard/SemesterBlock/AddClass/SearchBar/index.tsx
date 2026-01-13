@@ -51,9 +51,7 @@ function SearchBar({
         {searchTerm.trim().length > 0 && (
           <div className={styles.suggestionPopover}>
             {
-              <ul
-                className={`${styles.list} ${filteredClasses.length > 0 ? styles.hasItems : ""}`}
-              >
+              <ul className={styles.list}>
                 {filteredClasses.map((cls, i) => (
                   <li
                     key={i}

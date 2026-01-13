@@ -4,7 +4,8 @@
   "scripts": {
     "build": "tsc --noEmit",
     "main": "tsx src/main.ts",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "type-check": "tsc --noEmit --incremental false"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

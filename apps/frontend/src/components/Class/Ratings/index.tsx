@@ -105,7 +105,7 @@ export function RatingsContainer() {
 
   const userRatedClasses = useMemo(() => {
     const ratedClasses =
-      userRatingsData?.userRatings?.classes?.map((cls) => ({
+      userRatingsData?.classes?.map((cls) => ({
         subject: cls.subject,
         courseNumber: cls.courseNumber,
       })) ?? [];

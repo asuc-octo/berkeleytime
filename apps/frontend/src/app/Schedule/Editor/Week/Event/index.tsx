@@ -7,7 +7,7 @@ import { Card, Color } from "@repo/theme";
 import { componentMap } from "@/lib/api";
 
 import { ScheduleEvent } from "../../../schedule";
-import { getY } from "../index";
+import { getY } from "../helpers";
 import styles from "./Event.module.scss";
 
 interface EventProps {

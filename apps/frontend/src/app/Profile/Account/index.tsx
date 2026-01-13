@@ -5,6 +5,7 @@ import { Button } from "@repo/theme";
 import useUser from "@/hooks/useUser";
 import { signOut } from "@/lib/api";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import profileStyles from "../Profile.module.scss";
 import styles from "./Account.module.scss";
 

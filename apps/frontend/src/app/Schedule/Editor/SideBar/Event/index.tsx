@@ -57,8 +57,8 @@ export default function Event({
 
   // Color submenu
   const colorSubItems: MenuItem[] = acceptedColors.map((c) => ({
-    name: capitalizeColor(c as any),
-    icon: <ColorDot color={c as any} />,
+    name: capitalizeColor(c),
+    icon: <ColorDot color={c} />,
     onClick: () => onColorSelect(c),
   }));
 

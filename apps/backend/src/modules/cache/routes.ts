@@ -52,6 +52,7 @@ export default (
         const result = await warmCatalogCache(server, redis, year, semester);
 
         res.status(200).json(result);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error("[Cache API] Error:", error);
         res.status(500).json({
@@ -68,6 +69,7 @@ export default (
       try {
         const result = await flushViewCounts(redis);
         res.status(200).json(result);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error("[Cache API] Flush error:", error);
         res.status(500).json({

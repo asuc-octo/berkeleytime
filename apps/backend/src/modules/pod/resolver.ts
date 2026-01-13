@@ -1,4 +1,10 @@
-import { CreatePodInput, createPod, deletePod, getAllPods } from "./controller";
+import {
+  CreatePodInput,
+  PodRequestContext,
+  createPod,
+  deletePod,
+  getAllPods,
+} from "./controller";
 
 const resolvers = {
   Query: {
@@ -9,14 +15,18 @@ const resolvers = {
     createPod: (
       _: unknown,
       { input }: { input: CreatePodInput },
-      context: any
+      context: PodRequestContext
     ) => createPod(context, input),
-    deletePod: (_: unknown, { podId }: { podId: string }, context: any) =>
-      deletePod(context, podId),
+    deletePod: (
+      _: unknown,
+      { podId }: { podId: string },
+      context: PodRequestContext
+    ) => deletePod(context, podId),
   },
 
   Pod: {
-    id: (parent: any) => parent._id?.toString() ?? parent.id,
+    id: (parent: { _id?: { toString: () => string }; id?: string }) =>
+      parent._id?.toString() ?? parent.id,
   },
 };
 

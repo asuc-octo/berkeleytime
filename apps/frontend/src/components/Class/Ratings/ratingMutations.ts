@@ -1,8 +1,15 @@
+import { useMutation } from "@apollo/client/react";
 import { DocumentNode } from "graphql";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 
-import { Semester } from "@/lib/generated/graphql";
+import {
+  CreateRatingsMutation,
+  CreateRatingsMutationVariables,
+  DeleteRatingsMutation,
+  DeleteRatingsMutationVariables,
+  Semester,
+} from "@/lib/generated/graphql";
 
 import { MetricData } from "./metricsUtil";
 
@@ -19,16 +26,13 @@ type RefetchQuery = {
   variables?: Record<string, unknown>;
 };
 
-type MutationFn = (options: {
-  variables: Record<string, unknown>;
-  refetchQueries?: RefetchQuery[];
-  awaitRefetchQueries?: boolean;
-}) => Promise<unknown>;
-
 interface SubmitRatingOptions {
   metricValues: MetricData;
   termInfo: { semester: Semester; year: number };
-  createRatingsMutation: MutationFn;
+  createRatingsMutation: useMutation.MutationFunction<
+    CreateRatingsMutation,
+    CreateRatingsMutationVariables
+  >;
   classIdentifiers: ClassIdentifiers;
   refetchQueries?: RefetchQuery[];
 }
@@ -78,7 +82,10 @@ export async function submitRating({
 }
 
 interface DeleteRatingOptions {
-  deleteRatingsMutation: MutationFn;
+  deleteRatingsMutation: useMutation.MutationFunction<
+    DeleteRatingsMutation,
+    DeleteRatingsMutationVariables
+  >;
   classIdentifiers: ClassIdentifiers;
   refetchQueries?: RefetchQuery[];
 }

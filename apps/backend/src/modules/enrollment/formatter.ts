@@ -45,7 +45,7 @@ const normalizeEnrollmentSingular = (
     maxWaitlist: singular.maxWaitlist ?? 0,
     openReserved: singular.openReserved ?? 0,
     seatReservationCount: enrichedSeatReservationCount,
-  } as any as EnrollmentModule.EnrollmentSingular;
+  } as EnrollmentModule.EnrollmentSingular;
 
   return normalized;
 };

@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { MetricName } from "@repo/shared";
 
 import { MetricData } from "../metricsUtil";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
 
 interface BooleanInputProps {

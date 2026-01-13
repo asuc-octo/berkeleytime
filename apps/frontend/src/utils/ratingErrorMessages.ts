@@ -46,7 +46,7 @@ export function getRatingErrorMessage(error: unknown): string {
 
   // Handle errors with graphQLErrors property
   if (typeof error === "object" && error !== null && "graphQLErrors" in error) {
-    const graphQLErrors = (error as any).graphQLErrors;
+    const graphQLErrors = error.graphQLErrors;
     if (Array.isArray(graphQLErrors) && graphQLErrors.length > 0) {
       const firstError = graphQLErrors[0];
       const errorCode = firstError.extensions?.code as string | undefined;
@@ -76,7 +76,7 @@ export function getRatingErrorMessage(error: unknown): string {
     typeof error === "object" &&
     error !== null &&
     "networkError" in error &&
-    (error as any).networkError
+    error.networkError
   ) {
     return "Connection error. Please check your internet and try again.";
   }

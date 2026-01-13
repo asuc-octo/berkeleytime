@@ -74,12 +74,11 @@ export function UniqueVisitorsBlock() {
   // Fetch double the days to compare current period vs previous period
   const { data, loading, error } = useCloudflareAnalyticsData(days * 2);
 
-  const { chartData, totalVisitors, avgPerDay, percentChange } = useMemo(() => {
+  const { chartData, totalVisitors, percentChange } = useMemo(() => {
     if (!data || data.dataPoints.length === 0) {
       return {
         chartData: [] as ChartDataPoint[],
         totalVisitors: 0,
-        avgPerDay: 0,
         percentChange: 0,
       };
     }
@@ -268,12 +267,11 @@ export function TotalRequestsBlock() {
   // Fetch double the days to compare current period vs previous period
   const { data, loading, error } = useCloudflareAnalyticsData(days * 2);
 
-  const { chartData, totalRequests, avgPerDay, percentChange } = useMemo(() => {
+  const { chartData, totalRequests, percentChange } = useMemo(() => {
     if (!data || data.dataPoints.length === 0) {
       return {
         chartData: [] as ChartDataPoint[],
         totalRequests: 0,
-        avgPerDay: 0,
         percentChange: 0,
       };
     }

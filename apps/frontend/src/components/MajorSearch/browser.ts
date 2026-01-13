@@ -1,5 +1,6 @@
 import { FuzzySearch } from "@/utils/fuzzy-find";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const initialize = (list: any[], customOptions?: any) => {
   const defaultOptions = {
     includeScore: true,

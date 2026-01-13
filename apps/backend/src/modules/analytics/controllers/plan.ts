@@ -35,8 +35,7 @@ export async function getGradTrakAnalyticsData(
       colleges: plan.colleges || [],
       totalCourses,
       startYear,
-      createdAt:
-        (plan as any).createdAt?.toISOString() || new Date().toISOString(),
+      createdAt: plan.createdAt?.toISOString() || new Date().toISOString(),
     };
   });
 }

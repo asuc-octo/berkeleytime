@@ -5,7 +5,7 @@ import { ArrowRight } from "iconoir-react";
 
 import { Button } from "@repo/theme";
 
-import { signIn } from "@/lib/api";
+import { IUser, IUserRatings, signIn } from "@/lib/api";
 
 import { checkConstraint } from "../metricsUtil";
 import styles from "./RatingButton.module.scss";
@@ -17,9 +17,9 @@ export const RatingButton = memo(
     userRatingData,
     currentClass,
   }: {
-    user: any;
+    user: IUser;
     onOpenModal: (open: boolean) => void;
-    userRatingData?: any;
+    userRatingData?: IUserRatings;
     currentClass?: { subject: string; courseNumber: string } | null;
   }) => {
     if (user) {

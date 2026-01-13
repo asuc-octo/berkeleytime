@@ -4,6 +4,7 @@ import { Progress } from "radix-ui";
 
 import { Dialog } from "@repo/theme";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
 
 interface RatingModalLayoutProps {

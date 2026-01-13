@@ -17,6 +17,7 @@ import {
 import { CollectionColor } from "@/lib/generated/graphql";
 import { Collection, CollectionPreviewClass } from "@/types/collection";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "../Profile.module.scss";
 import { AddCollectionCard, CollectionCard } from "./CollectionCard";
 import deleteStyles from "./DeleteCollectionDialog.module.scss";

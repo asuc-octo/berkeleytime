@@ -31,6 +31,7 @@ import {
 } from "@/lib/generated/graphql";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import profileStyles from "../Profile.module.scss";
 import { AddRatingCard, RatingCard } from "./RatingCard";
 

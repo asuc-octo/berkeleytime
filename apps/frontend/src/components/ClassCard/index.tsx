@@ -103,6 +103,8 @@ export default function ClassCard({
   onUnlock = undefined,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
+  // bookmarked is part of the interface but not used in this component
+  void bookmarked;
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 

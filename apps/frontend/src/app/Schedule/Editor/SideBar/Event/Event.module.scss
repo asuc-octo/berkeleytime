@@ -44,19 +44,11 @@
     justify-content: space-between;
     transition: all 100ms ease-in-out;
 
-    &:hover .icon {
-      color: var(--heading-color);
-    }
-
     .row {
       display: flex;
       cursor: pointer;
       gap: 12px;
       align-items: flex-start;
-      .icon {
-        color: var(--paragraph-color);
-        flex-shrink: 0;
-      }
 
       .text {
         flex-grow: 1;

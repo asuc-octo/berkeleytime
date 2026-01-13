@@ -51,16 +51,16 @@ export function convertStringsToRequirementEnum(
 
   const stringToEnum = new Map<string, RequirementEnum>();
 
-  Object.entries(UniReqs).forEach(([key, _]) => {
+  Object.entries(UniReqs).forEach(([key]) => {
     stringToEnum.set(key, UniReqs[key as keyof typeof UniReqs]);
   });
-  Object.entries(LnSReqs).forEach(([key, _]) => {
+  Object.entries(LnSReqs).forEach(([key]) => {
     stringToEnum.set(key, LnSReqs[key as keyof typeof LnSReqs]);
   });
-  Object.entries(CoEReqs).forEach(([key, _]) => {
+  Object.entries(CoEReqs).forEach(([key]) => {
     stringToEnum.set(key, CoEReqs[key as keyof typeof CoEReqs]);
   });
-  Object.entries(HaasReqs).forEach(([key, _]) => {
+  Object.entries(HaasReqs).forEach(([key]) => {
     stringToEnum.set(key, HaasReqs[key as keyof typeof HaasReqs]);
   });
 

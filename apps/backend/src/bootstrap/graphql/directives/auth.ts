@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MapperKind, getDirective, mapSchema } from "@graphql-tools/utils";
 import { GraphQLSchema, defaultFieldResolver } from "graphql";
 

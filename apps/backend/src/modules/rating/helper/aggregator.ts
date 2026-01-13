@@ -7,8 +7,9 @@ import {
 } from "@repo/common";
 
 import { Semester } from "../../../generated-types/graphql";
+import { RequestContext } from "../../../types/request-context";
 
-export const ratingAggregator = async (filter: FilterQuery<any>) => {
+export const ratingAggregator = async (filter: FilterQuery<unknown>) => {
   return await AggregatedMetricsModel.aggregate([
     {
       $match: filter,
@@ -211,7 +212,8 @@ export const termsRatingsAggregator = async (
   ]);
 };
 
-export const userRatingsAggregator = async (context: any) => {
+export const userRatingsAggregator = async (context: RequestContext) => {
+  if (!context.user?._id) throw new Error("Unauthorized");
   return await RatingModel.aggregate([
     { $match: { createdBy: context.user._id } },
     {
@@ -265,18 +267,19 @@ export const userRatingsAggregator = async (context: any) => {
 };
 
 export const userClassRatingsAggregator = async (
-  context: any,
+  context: RequestContext,
   subject: string,
   courseNumber: string,
   semester: Semester,
   year: number,
   classNumber: string
 ) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user?._id) throw new Error("Unauthorized");
+  const userId = context.user._id;
   return await RatingModel.aggregate([
     {
       $match: {
-        createdBy: context.user._id,
+        createdBy: userId,
         subject: subject,
         courseNumber: courseNumber,
         semester: semester,

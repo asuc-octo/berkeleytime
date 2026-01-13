@@ -15,8 +15,7 @@ const resolvers: RatingModule.Resolvers = {
   Query: {
     aggregatedRatings: async (
       _,
-      { year, semester, subject, courseNumber, classNumber },
-      __
+      { year, semester, subject, courseNumber, classNumber }
     ) => {
       try {
         const aggregatedRatings = await getClassAggregatedRatings(

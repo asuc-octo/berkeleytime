@@ -481,7 +481,7 @@ function SemesterBlock({
             />
           </div>
           <Flex direction="row" gap="6px">
-            <div className={styles.dropdown}>
+            <div>
               <DropdownMenu.Root modal={false}>
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />
