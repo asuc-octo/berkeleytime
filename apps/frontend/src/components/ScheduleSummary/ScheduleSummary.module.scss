@@ -11,7 +11,7 @@
     min-height: 0;
     z-index: 1;
     overflow: auto;
-    border: .5px solid var(--border-color);
+    border: 0.5px solid var(--border-color);
     overflow: hidden;
 
     .week {
@@ -26,7 +26,7 @@
         min-height: 225px; // 15 hours * 20px
 
         &:not(:last-child) {
-          border-right: .5px solid var(--border-color);
+          border-right: 0.5px solid var(--border-color);
         }
 
         .hour {
@@ -37,11 +37,10 @@
           justify-content: center;
 
           &:not(:first-child) {
-            border-top: .5px solid var(--border-color);
+            border-top: 0.5px solid var(--border-color);
           }
         }
       }
     }
   }
 }
-
