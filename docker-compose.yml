@@ -59,7 +59,7 @@ services:
     networks:
       - bt
     ports:
-      - 27017:27017
+      - "${DEV_PORT_PREFIX:-30}08:27017"
     healthcheck:
       test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017',priority:1}]}) }" | mongosh --port 27017 --quiet
       interval: 5s
@@ -89,7 +89,7 @@ services:
   redis:
     image: redis:7.2.4
     ports:
-      - 6379:6379
+      - "${DEV_PORT_PREFIX:-30}04:6379"
     networks:
       - bt
     restart: always
@@ -99,7 +99,7 @@ services:
       dockerfile: ./apps/storybook/Dockerfile
       target: storybook-dev
     ports:
-      - 6006:6006
+      - "${DEV_PORT_PREFIX:-30}05:6006"
     networks:
       - bt
     restart: always
@@ -125,8 +125,8 @@ services:
     profiles:
       - dev
     ports:
-      - '9000:9000'
-      - '9090:9090'
+      - "${DEV_PORT_PREFIX:-30}06:9000"
+      - "${DEV_PORT_PREFIX:-30}07:9090"
     environment:
       MINIO_ROOT_USER: 'root'
       MINIO_ROOT_PASSWORD: 'password'
