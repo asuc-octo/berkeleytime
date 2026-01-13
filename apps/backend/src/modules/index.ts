@@ -1,6 +1,7 @@
 import { merge } from "lodash";
 
 import Analytics from "./analytics";
+import Banner from "./banner";
 import Catalog from "./catalog";
 import Class from "./class";
 import Collection from "./collection";
@@ -19,6 +20,7 @@ import User from "./user";
 
 const modules = [
   Analytics,
+  Banner,
   User,
   GradeDistribution,
   Catalog,

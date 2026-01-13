@@ -14,3 +14,4 @@ export * from "./enrollment-timeframe";
 export * from "./staff-member";
 export * from "./semester-role";
 export * from "./pod";
+export * from "./banner";

@@ -7,6 +7,7 @@ import Layout from "@/components/Layout";
 
 import styles from "./App.module.scss";
 import Analytics from "./app/Analytics";
+import Banners from "./app/Banners";
 import Dashboard from "./app/Dashboard";
 import { signIn } from "./helper";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "analytics",
         element: <Analytics />,
+      },
+      {
+        path: "banners",
+        element: <Banners />,
       },
     ],
   },

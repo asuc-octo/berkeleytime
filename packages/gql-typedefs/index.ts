@@ -1,4 +1,5 @@
 export * from "./analytics";
+export * from "./banner";
 export * from "./catalog";
 export * from "./class";
 export * from "./cloudflare";
