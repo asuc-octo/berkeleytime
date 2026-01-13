@@ -125,15 +125,17 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
         log.trace(`Deleting classes in batch ${i}...`);
 
-        const { deletedCount } = await ClassModel.deleteMany({
-          termId: { $in: termsBatchIds },
-        });
+        const { deletedCount } = await ClassModel.deleteMany(
+          { termId: { $in: termsBatchIds } },
+          { session }
+        );
 
         log.trace(`Inserting batch ${i}`);
 
         const { insertedCount } = await ClassModel.insertMany(classes, {
           ordered: false,
           rawResult: true,
+          session,
         });
 
         // avoid replacing data if a non-negligible amount is deleted
