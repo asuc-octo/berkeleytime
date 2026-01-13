@@ -80,9 +80,9 @@ services:
     networks:
       - bt
     ports:
-      - 3000:8080
-      - 3001:8081
-      - 3002:8082
+      - "${DEV_PORT_PREFIX:-30}00:8080"
+      - "${DEV_PORT_PREFIX:-30}01:8081"
+      - "${DEV_PORT_PREFIX:-30}02:8082"
     restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
@@ -112,7 +112,7 @@ services:
       dockerfile: ./apps/docs/Dockerfile
       target: docs-dev
     ports:
-      - 3003:3000
+      - "${DEV_PORT_PREFIX:-30}03:3000"
     networks:
       - bt
     restart: always
