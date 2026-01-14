@@ -29,14 +29,15 @@ Function<boolean>(Course) cs61a_finder (course){
 Function<boolean>() main (){
   List<Course> courses get_attr(this, "allCourses")
   List<Course> elw_matches filter(courses, elw_finder)
-  Requirement elw {"Entry Level Writing", greater_than(length(elw_matches), 0)}
+  NCoursesRequirement elw {elw_matches, 1, "Entry Level Writing"}
   List<Course> ah_matches filter(courses, ah_finder)
-  Requirement ah {"American History or American Institutions", greater_than(length(ah_matches), 0)}
+  NCoursesRequirement ah {ah_matches, 1, "American History or American Institutions"}
   List<Course> ac_matches filter(courses, ac_finder)
-  Requirement ac {"American Cultures", greater_than(length(ac_matches), 0)}
-  Requirement total_units {"Minimum Total Units", or([greater_than(get_attr(this, "units"), 120), equal([get_attr(this, "units"), 120])])}
+  NCoursesRequirement ac {ac_matches, 1, "American Cultures"}
+  number total_units get_attr(this, "units")
+  NumberRequirement total_units_req {total_units, 120, "Minimum Total Units"}
 
-  // Senior residence 
+  // Senior residence
   List<Column> columns get_attr(this, "columns")
   List<Column> only_spring_fall filter(columns, spring_fall_column)
   Column divider_column get_element(only_spring_fall, add([length(only_spring_fall), -3]))
@@ -44,9 +45,11 @@ Function<boolean>() main (){
   List<Column> pre_senior_columns slice(columns, 0, add([index, 1]))
   number pre_senior_units reduce(pre_senior_columns, add_units, 0)
   number senior_units reduce(slice(columns, add([index, 1]), length(columns)), add_units, 0)
-  Requirement senior_residence {"Senior Residence", and([greater_than(pre_senior_units, 17), equal([senior_units, 0])])}
+  NumberRequirement pre_senior_units_req {pre_senior_units, 90, "Minimum 17 units in pre-senior columns"}
+  NumberRequirement senior_units_req {senior_units, 24, "Minimum 24 units in senior columns"}
+  AndRequirement senior_residence {[pre_senior_units_req, senior_units_req], "Senior Residence"}
 
-  List<Requirement> return [elw, ah, ac, total_units, senior_residence]
+  List<Requirement> return [elw, ah, ac, total_units_req, senior_residence]
 }
 `;
 
@@ -58,7 +61,7 @@ Function<boolean>(Course) hss_finder (course){
   boolean historical_studies contains(breadth_requirements, "Historical Studies")
   boolean international_studies contains(breadth_requirements, "International Studies")
   boolean philosophy_and_values contains(breadth_requirements, "Philosophy & Values")
-  boolean social_and_behavioral_sciences contains(breadth_requirements, "Social and Behavioral Sciences")
+  boolean social_and_behavioral_sciences contains(breadth_requirements, "Social & Behavioral Sciences")
   boolean rca_requirement contains(breadth_requirements, "Reading and Composition A")
   boolean rcb_requirement contains(breadth_requirements, "Reading and Composition B")
   boolean return or([arts_and_lit, historical_studies, international_studies, philosophy_and_values, social_and_behavioral_sciences, rca_requirement, rcb_requirement])
@@ -70,7 +73,7 @@ Function<List<Requirement>>() main (){
 
   // 6 H/SS
   List<Course> hss_courses filter(courses, hss_finder)
-  Requirement hss {"Minimum 6 H/SS Courses", greater_than(length(hss_courses), 5)}
+  NCoursesRequirement hss {hss_courses, 6, "Minimum 6 H/SS Courses"}
 
   // 2 H/SS Upper div
   List<Course> hss_upper_div_courses filter(courses, (c) {
@@ -78,21 +81,21 @@ Function<List<Requirement>>() main (){
     boolean is_upper_div regex_match(get_attr(c, "number"), "\\d\\d\\d")
     boolean return and([is_hss_course, is_upper_div])
   })
-  Requirement hss_upper_div {"Minimum 2 H/SS Upper Div Courses", greater_than(length(hss_upper_div_courses), 1)}
+  NCoursesRequirement hss_upper_div {hss_upper_div_courses, 2, "Minimum 2 H/SS Upper Div Courses"}
 
   // R&C A
   List<Course> rca_courses filter(courses, (c) {
     List<string> breadth_requirements get_attr(c, "breadthRequirements")
     boolean return contains(breadth_requirements, "Reading and Composition A")
   })
-  Requirement rca {"Reading and Composition A", greater_than(length(rca_courses), 0)}
+  NCoursesRequirement rca {rca_courses, 1, "Reading and Composition A"}
 
   // R&C B
   List<Course> rcb_courses filter(courses, (c) {
     List<string> breadth_requirements get_attr(c, "breadthRequirements")
     boolean return contains(breadth_requirements, "Reading and Composition B")
   })
-  Requirement rcb {"Reading and Composition B", greater_than(length(rcb_courses), 0)}
+  NCoursesRequirement rcb {rcb_courses, 1, "Reading and Composition B"}
 
   List<Requirement> return [hss, hss_upper_div, rca, rcb]
 }
@@ -134,39 +137,6 @@ Function<boolean>(Course) eecs_upper_div_finder (course){
   boolean return or([is_eecs, is_eleng, is_compsci_194_valid, is_compsci_special, is_compsci_294_valid, is_eleng_229a, is_info_valid])
 }
 
-Function<boolean>(Course) design_finder (course){
-  string subject get_attr(course, "subject")
-  string number get_attr(course, "number")
-  
-  // ELENG C128, 130, 140, 143, 192
-  boolean is_eleng_c128 and([equal([subject, "ELENG"]), equal([number, "C128"])])
-  boolean is_eleng_130 and([equal([subject, "ELENG"]), equal([number, "130"])])
-  boolean is_eleng_140 and([equal([subject, "ELENG"]), equal([number, "140"])])
-  boolean is_eleng_143 and([equal([subject, "ELENG"]), equal([number, "143"])])
-  boolean is_eleng_192 and([equal([subject, "ELENG"]), equal([number, "192"])])
-  boolean is_eleng_design or([is_eleng_c128, is_eleng_130, is_eleng_140, is_eleng_143, is_eleng_192])
-  
-  // COMPSCI 160, 161, 162, 164, 169 (or 169A, 169L, W169A), 180, 182 (or L182, W182), 184, 186 (or W186), 194 (Section 26), 285
-  boolean is_compsci_160 and([equal([subject, "COMPSCI"]), equal([number, "160"])])
-  boolean is_compsci_161 and([equal([subject, "COMPSCI"]), equal([number, "161"])])
-  boolean is_compsci_162 and([equal([subject, "COMPSCI"]), equal([number, "162"])])
-  boolean is_compsci_164 and([equal([subject, "COMPSCI"]), equal([number, "164"])])
-  boolean is_compsci_169 and([equal([subject, "COMPSCI"]), or([equal([number, "169"]), equal([number, "169A"]), equal([number, "169L"]), equal([number, "W169A"])])])
-  boolean is_compsci_180 and([equal([subject, "COMPSCI"]), equal([number, "180"])])
-  boolean is_compsci_182 and([equal([subject, "COMPSCI"]), or([equal([number, "182"]), equal([number, "L182"]), equal([number, "W182"])])])
-  boolean is_compsci_184 and([equal([subject, "COMPSCI"]), equal([number, "184"])])
-  boolean is_compsci_186 and([equal([subject, "COMPSCI"]), or([equal([number, "186"]), equal([number, "W186"])])])
-  boolean is_compsci_285_design and([equal([subject, "COMPSCI"]), equal([number, "285"])])
-  boolean is_compsci_design or([is_compsci_160, is_compsci_161, is_compsci_162, is_compsci_164, is_compsci_169, is_compsci_180, is_compsci_182, is_compsci_184, is_compsci_186, is_compsci_285_design])
-  
-  // EECS C106A, C106B, 149 (151 handled separately with 151LA/151LB)
-  boolean is_eecs_c106a and([equal([subject, "EECS"]), equal([number, "C106A"])])
-  boolean is_eecs_c106b and([equal([subject, "EECS"]), equal([number, "C106B"])])
-  boolean is_eecs_149 and([equal([subject, "EECS"]), equal([number, "149"])])
-  boolean is_eecs_design or([is_eecs_c106a, is_eecs_c106b, is_eecs_149])
-  
-  boolean return or([is_eleng_design, is_compsci_design, is_eecs_design])
-}
 
 Function<boolean>(Course) eecs_lower_div_finder (course){
   string subject get_attr(course, "subject")
@@ -227,100 +197,126 @@ Function<boolean>(Course) natural_science_upper_div_finder (course){
 
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
-  
+
   // Lower Division Mathematics: MATH 51, 52, 53, 54, COMPSCI 70
-  List<Course> math_lower_div_req ["MATH 51", "MATH 52", "MATH 53", "MATH 54", "COMPSCI 70"]
-  boolean math_lower_div_matches all_common_courses(courses, math_lower_div_req)
-  Requirement math_lower_div {"Lower Division Mathematics", math_lower_div_matches}
-  
+  List<Course> math_lower_div_req [{"MATH 53"}, {"COMPSCI 70"}]
+  List<boolean> math_lower_div_status common_course_matches(math_lower_div_req, courses)
+  CourseListRequirement math_lower_div {math_lower_div_req, math_lower_div_status, "Lower Division Mathematics"}
+
   // Lower Division Physics: (PHYSICS 7A OR 5A) AND (PHYSICS 7B OR 5B) OR (PHYSICS 5A AND 5B AND 5BL)
-  List<Course> physics7 ["PHYSICS 7A", "PHYSICS 7B"]
-  List<Course> physics5 ["PHYSICS 5A", "PHYSICS 5B", "PHYSICS 5BL"]
-  boolean has_physics7 all_common_courses(courses, physics7)
-  boolean has_physics5 all_common_courses(courses, physics5)
-  boolean physics_met or([has_physics7, has_physics5])
-  Requirement physics_lower_div {"Lower Division Physics", physics_met}
-  
+  List<Course> physics7 [{"PHYSICS 7A"}, {"PHYSICS 7B"}]
+  List<Course> physics5 [{"PHYSICS 5A"}, {"PHYSICS 5B"}, {"PHYSICS 5BL"}]
+  List<boolean> physics7_status common_course_matches(physics7, courses)
+  List<boolean> physics5_status common_course_matches(physics5, courses)
+  CourseListRequirement physics7_req {physics7, physics7_status, "Physics 7A and 7B"}
+  CourseListRequirement physics5_req {physics5, physics5_status, "Physics 5A, 5B, and 5BL"}
+  OrRequirement physics_lower_div {[physics7_req, physics5_req], "Lower Division Physics"}
+
   // Lower Division Computer Science: COMPSCI 61A, (61B OR 61BL), 61C
-  List<Course> cs61b ["COMPSCI 61A", "COMPSCI 61B", "COMPSCI 61C"]
-  List<Course> cs61bl ["COMPSCI 61A", "COMPSCI 61BL", "COMPSCI 61C"]
-  boolean has_cs61 or([all_common_courses(courses, cs61b), all_common_courses(courses, cs61bl)])
-  Requirement cs_lower_div {"Lower Division Computer Science", has_cs61}
-  
+  List<Course> cs61b [{"COMPSCI 61A"}, {"COMPSCI 61B"}, {"COMPSCI 61C"}]
+  List<Course> cs61bl [{"COMPSCI 61A"}, {"COMPSCI 61BL"}, {"COMPSCI 61C"}]
+  List<boolean> cs61b_status common_course_matches(cs61b, courses)
+  List<boolean> cs61bl_status common_course_matches(cs61bl, courses)
+  CourseListRequirement cs61b_req {cs61b, cs61b_status, "COMPSCI 61A, 61B, 61C"}
+  CourseListRequirement cs61bl_req {cs61bl, cs61bl_status, "COMPSCI 61A, 61BL, 61C"}
+  OrRequirement cs_lower_div {[cs61b_req, cs61bl_req], "Lower Division Computer Science"}
+
   // Lower Division EECS: EECS 16A, 16B
-  List<Course> eecs16 ["EECS 16A", "EECS 16B"]
-  boolean has_eecs16 all_common_courses(courses, eecs16)
-  Requirement eecs_lower_div {"Lower Division EECS", has_eecs16}
-  
+  List<Course> eecs16 [{"EECS 16A"}, {"EECS 16B"}]
+  List<boolean> eecs16_status common_course_matches(eecs16, courses)
+  CourseListRequirement eecs_lower_div {eecs16, eecs16_status, "Lower Division EECS"}
+
   // Upper Division Technical Electives: 20 units from eligible courses
   List<Course> eecs_upper_div_matches filter(courses, eecs_upper_div_finder)
   number eecs_upper_div_units reduce(eecs_upper_div_matches, add_course_units, 0)
-  Requirement eecs_upper_div {"Upper Division Technical Electives", or([greater_than(eecs_upper_div_units, 20), equal([eecs_upper_div_units, 20])])}
-  
+  NumberRequirement eecs_upper_div {eecs_upper_div_units, 20, "Upper Division Technical Electives"}
+
   // Upper Division Design Requirement: At least one design course
-  List<Course> design_matches filter(courses, design_finder)
-  List<Course> eecs151_la_req ["EECS 151", "EECS 151LA"]
-  List<Course> eecs151_lb_req ["EECS 151", "EECS 151LB"]
-  boolean has_design greater_than(length(design_matches), 0)
-  boolean has_eecs151_la all_common_courses(courses, eecs151_la_req)
-  boolean has_eecs151_lb all_common_courses(courses, eecs151_lb_req)
-  boolean design_met or([has_design, has_eecs151_la, has_eecs151_lb])
-  Requirement design {"Upper Division Design Requirement", design_met}
+  List<Course> design_courses [{"ELENG C128"}, {"ELENG 130"}, {"ELENG 140"}, {"ELENG 143"}, {"ELENG 192"}, {"COMPSCI 160"}, {"COMPSCI 161"}, {"COMPSCI 162"}, {"COMPSCI 164"}, {"COMPSCI 169"}, {"COMPSCI 169A"}, {"COMPSCI 169L"}, {"COMPSCI W169A"}, {"COMPSCI 180"}, {"COMPSCI 182"}, {"COMPSCI L182"}, {"COMPSCI W182"}, {"COMPSCI 184"}, {"COMPSCI 186"}, {"COMPSCI W186"}, {"COMPSCI 285"}, {"EECS C106A"}, {"EECS C106B"}, {"EECS 149"}]
+  List<Course> design_matches filter(courses, (c) {
+    boolean return one_common_course([c], design_courses)
+  })
+  NCoursesRequirement design_ncourses {design_matches, 1, "Design Course"}
   
+  List<Course> eecs151_la_req [{"EECS 151"}, {"EECS 151LA"}]
+  List<Course> eecs151_lb_req [{"EECS 151"}, {"EECS 151LB"}]
+  List<boolean> eecs151_la_status common_course_matches(eecs151_la_req, courses)
+  List<boolean> eecs151_lb_status common_course_matches(eecs151_lb_req, courses)
+  CourseListRequirement eecs151_la_req_obj {eecs151_la_req, eecs151_la_status, "EECS 151 and 151LA"}
+  CourseListRequirement eecs151_lb_req_obj {eecs151_lb_req, eecs151_lb_status, "EECS 151 and 151LB"}
+  
+  OrRequirement design {[design_ncourses, eecs151_la_req_obj, eecs151_lb_req_obj], "Upper Division Design Requirement"}
+
   // Engineering Units: 40 units (EECS lower div except COMPSCI 70 + 20 units upper div)
   List<Course> eecs_lower_div_matches filter(courses, eecs_lower_div_finder)
   number eecs_lower_div_units reduce(eecs_lower_div_matches, add_course_units, 0)
   number total_engineering_units add([eecs_lower_div_units, eecs_upper_div_units])
-  Requirement engineering_units {"Engineering Units", or([greater_than(total_engineering_units, 40), equal([total_engineering_units, 40])])}
-  
+  NumberRequirement engineering_units {total_engineering_units, 40, "Engineering Units"}
+
   // Natural Science Elective: Various options with "must take both" requirements
-  List<Course> astron7a_req ["ASTRON 7A", "PHYSICS 7A", "PHYSICS 7B"]
-  List<Course> astron7b_req ["ASTRON 7B", "PHYSICS 7A", "PHYSICS 7B"]
-  List<Course> astron7ab_req ["ASTRON 7AB", "PHYSICS 7A", "PHYSICS 7B"]
-  boolean has_astron7a all_common_courses(courses, astron7a_req)
-  boolean has_astron7b all_common_courses(courses, astron7b_req)
-  boolean has_astron7ab all_common_courses(courses, astron7ab_req)
-  boolean astron_met or([has_astron7a, has_astron7b, has_astron7ab])
-  
-  List<Course> biology1a_req ["BIOLOGY 1A", "BIOLOGY 1AL"]
-  List<Course> biology1b_req ["BIOLOGY 1B"]
-  boolean has_biology1a all_common_courses(courses, biology1a_req)
-  boolean has_biology1b one_common_course(courses, biology1b_req)
-  boolean biology_met or([has_biology1a, has_biology1b])
-  
-  List<Course> chem1a_req ["CHEM 1A", "CHEM 1AL"]
-  List<Course> chem1b_req ["CHEM 1B"]
-  List<Course> chem3a_req ["CHEM 3A", "CHEM 3AL"]
-  List<Course> chem3b_req ["CHEM 3B", "CHEM 3BL"]
-  List<Course> chem4a_req ["CHEM 4A"]
-  List<Course> chem4b_req ["CHEM 4B"]
-  boolean has_chem1a all_common_courses(courses, chem1a_req)
-  boolean has_chem1b one_common_course(courses, chem1b_req)
-  boolean has_chem3a all_common_courses(courses, chem3a_req)
-  boolean has_chem3b all_common_courses(courses, chem3b_req)
-  boolean has_chem4a one_common_course(courses, chem4a_req)
-  boolean has_chem4b one_common_course(courses, chem4b_req)
-  boolean chem_met or([has_chem1a, has_chem1b, has_chem3a, has_chem3b, has_chem4a, has_chem4b])
-  
-  List<Course> mcellbi32_req ["MCELLBI 32", "MCELLBI 32L"]
-  boolean mcellbi32_32l_met all_common_courses(courses, mcellbi32_req)
-  
-  List<Course> physics7c_req ["PHYSICS 7C"]
-  List<Course> physics5c_req ["PHYSICS 5C", "PHYSICS 5CL"]
-  boolean has_physics7c one_common_course(courses, physics7c_req)
-  boolean has_physics5c all_common_courses(courses, physics5c_req)
-  boolean physics_met or([has_physics7c, has_physics5c])
-  
+  List<Course> astron7a_req [{"ASTRON 7A"}, {"PHYSICS 7A"}, {"PHYSICS 7B"}]
+  List<Course> astron7b_req [{"ASTRON 7B"}, {"PHYSICS 7A"}, {"PHYSICS 7B"}]
+  List<Course> astron7ab_req [{"ASTRON 7AB"}, {"PHYSICS 7A"}, {"PHYSICS 7B"}]
+  List<boolean> astron7a_status common_course_matches(astron7a_req, courses)
+  List<boolean> astron7b_status common_course_matches(astron7b_req, courses)
+  List<boolean> astron7ab_status common_course_matches(astron7ab_req, courses)
+  CourseListRequirement astron7a_req_obj {astron7a_req, astron7a_status, "ASTRON 7A and PHYSICS 7A, 7B"}
+  CourseListRequirement astron7b_req_obj {astron7b_req, astron7b_status, "ASTRON 7B and PHYSICS 7A, 7B"}
+  CourseListRequirement astron7ab_req_obj {astron7ab_req, astron7ab_status, "ASTRON 7AB and PHYSICS 7A, 7B"}
+  OrRequirement astron_req {[astron7a_req_obj, astron7b_req_obj, astron7ab_req_obj], "Astronomy Option"}
+
+  List<Course> biology1a_req [{"BIOLOGY 1A"}, {"BIOLOGY 1AL"}]
+  List<Course> biology1b_req [{"BIOLOGY 1B"}]
+  List<boolean> biology1a_status common_course_matches(biology1a_req, courses)
+  List<boolean> biology1b_status common_course_matches(biology1b_req, courses)
+  CourseListRequirement biology1a_req_obj {biology1a_req, biology1a_status, "BIOLOGY 1A and 1AL"}
+  CourseListRequirement biology1b_req_obj {biology1b_req, biology1b_status, "BIOLOGY 1B"}
+  OrRequirement biology_req {[biology1a_req_obj, biology1b_req_obj], "Biology Option"}
+
+  List<Course> chem1a_req [{"CHEM 1A"}, {"CHEM 1AL"}]
+  List<Course> chem1b_req [{"CHEM 1B"}]
+  List<Course> chem3a_req [{"CHEM 3A"}, {"CHEM 3AL"}]
+  List<Course> chem3b_req [{"CHEM 3B"}, {"CHEM 3BL"}]
+  List<Course> chem4a_req [{"CHEM 4A"}]
+  List<Course> chem4b_req [{"CHEM 4B"}]
+  List<boolean> chem1a_status common_course_matches(chem1a_req, courses)
+  List<boolean> chem1b_status common_course_matches(chem1b_req, courses)
+  List<boolean> chem3a_status common_course_matches(chem3a_req, courses)
+  List<boolean> chem3b_status common_course_matches(chem3b_req, courses)
+  List<boolean> chem4a_status common_course_matches(chem4a_req, courses)
+  List<boolean> chem4b_status common_course_matches(chem4b_req, courses)
+  CourseListRequirement chem1a_req_obj {chem1a_req, chem1a_status, "CHEM 1A and 1AL"}
+  CourseListRequirement chem1b_req_obj {chem1b_req, chem1b_status, "CHEM 1B"}
+  CourseListRequirement chem3a_req_obj {chem3a_req, chem3a_status, "CHEM 3A and 3AL"}
+  CourseListRequirement chem3b_req_obj {chem3b_req, chem3b_status, "CHEM 3B and 3BL"}
+  CourseListRequirement chem4a_req_obj {chem4a_req, chem4a_status, "CHEM 4A"}
+  CourseListRequirement chem4b_req_obj {chem4b_req, chem4b_status, "CHEM 4B"}
+  OrRequirement chem_req {[chem1a_req_obj, chem1b_req_obj, chem3a_req_obj, chem3b_req_obj, chem4a_req_obj, chem4b_req_obj], "Chemistry Option"}
+
+  List<Course> mcellbi32_req [{"MCELLBI 32"}, {"MCELLBI 32L"}]
+  List<boolean> mcellbi32_status common_course_matches(mcellbi32_req, courses)
+  CourseListRequirement mcellbi32_req_obj {mcellbi32_req, mcellbi32_status, "MCELLBI 32 and 32L"}
+
+  List<Course> physics7c_req [{"PHYSICS 7C"}]
+  List<Course> physics5c_req [{"PHYSICS 5C"}, {"PHYSICS 5CL"}]
+  List<boolean> physics7c_status common_course_matches(physics7c_req, courses)
+  List<boolean> physics5c_status common_course_matches(physics5c_req, courses)
+  CourseListRequirement physics7c_req_obj {physics7c_req, physics7c_status, "PHYSICS 7C"}
+  CourseListRequirement physics5c_req_obj {physics5c_req, physics5c_status, "PHYSICS 5C and 5CL"}
+  OrRequirement physics_req {[physics7c_req_obj, physics5c_req_obj], "Physics Option"}
+
   List<Course> natural_science_upper_div_matches filter(courses, natural_science_upper_div_finder)
-  boolean has_natural_science_upper_div greater_than(length(natural_science_upper_div_matches), 0)
-  
-  Requirement natural_science {"Natural Science Elective", or([astron_met, biology_met, chem_met, mcellbi32_32l_met, physics_met, has_natural_science_upper_div])}
-  
+  NCoursesRequirement natural_science_upper_div_req {natural_science_upper_div_matches, 1, "Upper Division Natural Science"}
+
+  OrRequirement natural_science {[astron_req, biology_req, chem_req, mcellbi32_req_obj, physics_req, natural_science_upper_div_req], "Natural Science Elective"}
+
   // Ethics Requirement: At least one from the list
-  List<Course> ethics_req ["BIOENG 100", "COMPSCI H195", "COMPSCI 195", "DATA C104", "ENERES C100", "ENERES W100", "ENGIN 125", "ENGIN 157AC", "ENGIN 185", "HISTORY C184D", "IAS 157AC", "INFO 88A", "ISF 100D", "ISF 100G", "MEDIAST 104D", "NWMEDIA 151AC", "PHILOS 121", "PUBPOL C184", "PUBPOL W184", "STS C104D", "UGBA 107"]
-  boolean ethics_met one_common_course(courses, ethics_req)
-  Requirement ethics {"Ethics Requirement", ethics_met}
-  
+  List<Course> ethics_courses filter(courses, (c) {
+    List<Course> ethics_req [{"BIOENG 100"}, {"COMPSCI H195"}, {"COMPSCI 195"}, {"DATA C104"}, {"ENERES C100"}, {"ENERES W100"}, {"ENGIN 125"}, {"ENGIN 157AC"}, {"ENGIN 185"}, {"HISTORY C184D"}, {"IAS 157AC"}, {"INFO 88A"}, {"ISF 100D"}, {"ISF 100G"}, {"MEDIAST 104D"}, {"NWMEDIA 151AC"}, {"PHILOS 121"}, {"PUBPOL C184"}, {"PUBPOL W184"}, {"STS C104D"}, {"UGBA 107"}]
+    boolean return one_common_course([c], ethics_req)
+  })
+  NCoursesRequirement ethics {ethics_courses, 1, "Ethics Requirement"}
+
   List<Requirement> return [math_lower_div, physics_lower_div, cs_lower_div, eecs_lower_div, eecs_upper_div, design, engineering_units, natural_science, ethics]
 }
 `;

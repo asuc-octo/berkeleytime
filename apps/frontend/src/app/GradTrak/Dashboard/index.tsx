@@ -40,11 +40,7 @@ import {
   useReadPlan,
   useReadUser,
 } from "@/hooks/api";
-import {
-  ILabel,
-  IPlanTerm,
-  ISelectedCourse,
-} from "@/lib/api";
+import { ILabel, IPlanTerm, ISelectedCourse } from "@/lib/api";
 import { convertStringsToRequirementEnum } from "@/lib/course";
 import {
   Colleges,
@@ -56,7 +52,6 @@ import {
   Status,
 } from "@/lib/generated/graphql";
 
-import BtLLGradTrakInterface from "../interface";
 import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
@@ -782,8 +777,6 @@ export default function Dashboard() {
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
 
-  BtLLGradTrakInterface(gradTrak, localPlanTerms);
-
   if (userLoading || gradTrakLoading || courseLoading) {
     return (
       <Boundary>
@@ -808,6 +801,8 @@ export default function Dashboard() {
           collegeReqsFulfilled={convertStringsToRequirementEnum(
             gradTrak?.collegeReqsSatisfied ? gradTrak?.collegeReqsSatisfied : []
           )}
+          plan={gradTrak}
+          planTerms={localPlanTerms}
         />
       </div>
 

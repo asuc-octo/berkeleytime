@@ -1,3 +1,2 @@
 export { init } from "./interpreter";
-export { columnAdapter } from "./lib/column";
-export { planAdapter } from "./lib/plan";
+export type { Data } from "./types";

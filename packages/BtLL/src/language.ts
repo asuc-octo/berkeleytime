@@ -17,7 +17,16 @@ import {
   constructor as number_constructor,
   functions as number_functions,
 } from "./lib/number";
-import { constructor as requirement_constructor } from "./lib/requirement";
+import {
+  andRequirementConstructor,
+  booleanRequirementConstructor,
+  courseListRequirementConstructor,
+  nCoursesRequirementConstructor,
+  numberRequirementConstructor,
+  orRequirementConstructor,
+  constructor as requirement_constructor,
+  functions as requirement_functions,
+} from "./lib/requirement";
 import {
   constructor as string_constructor,
   functions as string_functions,
@@ -93,6 +102,7 @@ export const FUNCTION_MAP: Map<string, Data<MyFunction>> = new Map([
   ...column_functions,
   ...string_functions,
   ...course_functions,
+  ...requirement_functions,
   ["get_attr", get_attr_function],
   ["if_else", if_else_function],
   ["elseifs", elseifs_function],
@@ -104,6 +114,12 @@ const CONSTRUCTORS: Map<Type, Constructor> = new Map<Type, Constructor>([
   ["number", number_constructor],
   ["string", string_constructor],
   ["Requirement", requirement_constructor],
+  ["BooleanRequirement", booleanRequirementConstructor],
+  ["NCoursesRequirement", nCoursesRequirementConstructor],
+  ["CourseListRequirement", courseListRequirementConstructor],
+  ["AndRequirement", andRequirementConstructor],
+  ["OrRequirement", orRequirementConstructor],
+  ["NumberRequirement", numberRequirementConstructor],
   ["Function", function_constructor],
   ["Course", course_constructor],
 ]);
