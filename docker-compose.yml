@@ -27,7 +27,7 @@ services:
     networks:
       - bt
     ports:
-      - 8000:8000
+      - "${DEV_PORT_PREFIX:-30}09:8000"
     restart: always
     volumes:
       - ./apps/semantic-search/app:/app/app
