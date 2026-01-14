@@ -1,4 +1,4 @@
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
 
 interface SemanticSearchResult {
   subject: string;

@@ -2,7 +2,7 @@ import { type Response, Router } from "express";
 import type { ParsedQs } from "qs";
 import { RequestInit, fetch } from "undici";
 
-import { config } from "../../config";
+import { config } from "../../../../../packages/common/src/utils/config";
 import { searchCourses } from "./controller";
 
 const router = Router();
