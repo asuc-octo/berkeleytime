@@ -1,13 +1,7 @@
 // no constructor
 import { argSplit } from "../helper";
 import { evaluate } from "../interpreter";
-import {
-  BtLLConfig,
-  Data,
-  FunctionMapEntry,
-  Type,
-  Variables,
-} from "../types";
+import { BtLLConfig, Data, FunctionMapEntry, Type, Variables } from "../types";
 
 export type Requirement = {
   result: Data<boolean>;
