@@ -17,12 +17,8 @@ import {
 import { Search, Trash } from "iconoir-react";
 
 import { useReadTerms } from "@/hooks/api";
-import {
-  GET_CATALOG,
-  GetCatalogResponse,
-  ICuratedClassInput,
-  Semester,
-} from "@/lib/api";
+import { GET_CATALOG, ICuratedClassInput, Semester } from "@/lib/api";
+import { GetCatalogResponse } from "@/lib/api/classes";
 
 interface CuratedClassEditorProps {
   value: Partial<ICuratedClassInput>;
@@ -39,13 +35,14 @@ export default function CuratedClassEditor({
 
   const { data: terms, loading: termsLoading } = useReadTerms();
 
-  const { data: classes, loading: classesLoading } = useQuery(GET_CATALOG, {
-    variables: {
-      semester: localValue.semester,
-      year: localValue.year,
-    },
-    skip: !(localValue.semester && localValue.year),
-  });
+  const { data: classes, loading: classesLoading } =
+    useQuery<GetCatalogResponse>(GET_CATALOG, {
+      variables: {
+        semester: localValue.semester,
+        year: localValue.year,
+      },
+      skip: !(localValue.semester && localValue.year),
+    });
 
   const handleChange = (updatedState: Partial<ICuratedClassInput>) => {
     const updatedValue = { ...localValue, ...updatedState };

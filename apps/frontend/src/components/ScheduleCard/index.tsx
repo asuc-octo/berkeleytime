@@ -10,6 +10,7 @@ import { useDeleteSchedule, useUpdateSchedule } from "@/hooks/api";
 import { IScheduleListSchedule } from "@/lib/api";
 
 import ScheduleSummary from "../ScheduleSummary";
+import { DeleteScheduleDialog } from "./DeleteScheduleDialog";
 
 interface ScheduleProps {
   _id: string;
@@ -24,10 +25,11 @@ export default function ScheduleCard({
   ...props
 }: ScheduleProps & Omit<ComponentPropsWithRef<"div">, keyof ScheduleProps>) {
   const navigate = useNavigate();
-  const [deleteSchedule] = useDeleteSchedule();
   const [updateSchedule] = useUpdateSchedule();
+  const [deleteSchedule] = useDeleteSchedule();
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [renameValue, setRenameValue] = useState(name);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleRename = () => {
     setIsRenameDialogOpen(true);
@@ -43,7 +45,12 @@ export default function ScheduleCard({
   };
 
   const handleDelete = () => {
-    deleteSchedule(_id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    await deleteSchedule(_id);
+    navigate("/schedules");
   };
 
   const menuItems: MenuItem[] = [
@@ -69,7 +76,8 @@ export default function ScheduleCard({
   };
 
   // Filter out props that might conflict with BubbleCard
-  const { color: _, ...bubbleCardProps } = props as any;
+  const { color, ...bubbleCardProps } = props as Record<string, unknown>;
+  void color; // color is filtered out but not used
 
   return (
     <>
@@ -123,6 +131,20 @@ export default function ScheduleCard({
           </Dialog.Card>
         </Dialog.Portal>
       </Dialog.Root>
+      <DeleteScheduleDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        title="Delete Schedule"
+        message={
+          <>
+            This schedule will be permanently deleted and <br />
+            cannot be recovered.
+          </>
+        }
+        onConfirm={handleDeleteConfirm}
+        confirmText="Yes, delete"
+        cancelText="No, keep my schedule"
+      />
     </>
   );
 }

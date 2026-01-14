@@ -7,8 +7,9 @@ import {
 } from "@repo/common";
 
 import { Semester } from "../../../generated-types/graphql";
+import { RequestContext } from "../../../types/request-context";
 
-export const ratingAggregator = async (filter: FilterQuery<any>) => {
+export const ratingAggregator = async (filter: FilterQuery<unknown>) => {
   return await AggregatedMetricsModel.aggregate([
     {
       $match: filter,
@@ -211,7 +212,8 @@ export const termsRatingsAggregator = async (
   ]);
 };
 
-export const userRatingsAggregator = async (context: any) => {
+export const userRatingsAggregator = async (context: RequestContext) => {
+  if (!context.user?._id) throw new Error("Unauthorized");
   return await RatingModel.aggregate([
     { $match: { createdBy: context.user._id } },
     {
@@ -265,18 +267,19 @@ export const userRatingsAggregator = async (context: any) => {
 };
 
 export const userClassRatingsAggregator = async (
-  context: any,
+  context: RequestContext,
   subject: string,
   courseNumber: string,
   semester: Semester,
   year: number,
   classNumber: string
 ) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user?._id) throw new Error("Unauthorized");
+  const userId = context.user._id;
   return await RatingModel.aggregate([
     {
       $match: {
-        createdBy: context.user._id,
+        createdBy: userId,
         subject: subject,
         courseNumber: courseNumber,
         semester: semester,
@@ -345,23 +348,18 @@ export const semestersByInstructorAggregator = async (
   ]);
 };
 
-export const courseRatingAggregator = async (
-  subject: string,
-  courseNumber: string
-) => {
+export const courseRatingAggregator = async (courseId: string) => {
   return await AggregatedMetricsModel.aggregate([
     {
       $match: {
-        subject,
-        courseNumber,
+        courseId,
         categoryCount: { $gt: 0 },
       },
     },
     {
       $group: {
         _id: {
-          subject: "$subject",
-          courseNumber: "$courseNumber",
+          courseId: "$courseId",
           metricName: "$metricName",
           categoryValue: "$categoryValue",
         },
@@ -371,8 +369,7 @@ export const courseRatingAggregator = async (
     {
       $group: {
         _id: {
-          subject: "$_id.subject",
-          courseNumber: "$_id.courseNumber",
+          courseId: "$_id.courseId",
           metricName: "$_id.metricName",
         },
         totalCount: { $sum: "$categoryCount" },
@@ -390,8 +387,7 @@ export const courseRatingAggregator = async (
     {
       $group: {
         _id: {
-          subject: "$_id.subject",
-          courseNumber: "$_id.courseNumber",
+          courseId: "$_id.courseId",
         },
         metrics: {
           $push: {
@@ -412,8 +408,7 @@ export const courseRatingAggregator = async (
     {
       $project: {
         _id: 0,
-        subject: "$_id.subject",
-        courseNumber: "$_id.courseNumber",
+        courseId: "$_id.courseId",
         semester: null,
         year: null,
         classNumber: null,
@@ -423,15 +418,11 @@ export const courseRatingAggregator = async (
   ]);
 };
 
-export const semestersWithRatingsAggregator = async (
-  subject: string,
-  courseNumber: string
-) => {
+export const semestersWithRatingsAggregator = async (courseId: string) => {
   return await AggregatedMetricsModel.aggregate([
     {
       $match: {
-        subject,
-        courseNumber,
+        courseId,
         categoryCount: { $gt: 0 },
       },
     },
@@ -466,14 +457,12 @@ export const semestersWithRatingsAggregator = async (
 };
 
 export const instructorRatingsAggregator = async (
-  subject: string,
-  courseNumber: string,
+  courseId: string,
   classes: { semester: Semester; year: number; classNumber: string }[]
 ) => {
   if (classes.length === 0) {
     return {
-      subject,
-      courseNumber,
+      courseId,
       metrics: [],
     };
   }
@@ -504,16 +493,14 @@ export const instructorRatingsAggregator = async (
   const result = await AggregatedMetricsModel.aggregate([
     {
       $match: {
-        subject,
-        courseNumber,
+        courseId,
         $or: orConditions,
       },
     },
     {
       $group: {
         _id: {
-          subject: "$subject",
-          courseNumber: "$courseNumber",
+          courseId: "$courseId",
           metricName: "$metricName",
           categoryValue: "$categoryValue",
         },
@@ -523,8 +510,7 @@ export const instructorRatingsAggregator = async (
     {
       $group: {
         _id: {
-          subject: "$_id.subject",
-          courseNumber: "$_id.courseNumber",
+          courseId: "$_id.courseId",
           metricName: "$_id.metricName",
         },
         totalCount: { $sum: "$categoryCount" },
@@ -542,8 +528,7 @@ export const instructorRatingsAggregator = async (
     {
       $group: {
         _id: {
-          subject: "$_id.subject",
-          courseNumber: "$_id.courseNumber",
+          courseId: "$_id.courseId",
         },
         metrics: {
           $push: {
@@ -564,8 +549,7 @@ export const instructorRatingsAggregator = async (
     {
       $project: {
         _id: 0,
-        subject: "$_id.subject",
-        courseNumber: "$_id.courseNumber",
+        courseId: "$_id.courseId",
         metrics: 1,
       },
     },
@@ -573,8 +557,7 @@ export const instructorRatingsAggregator = async (
 
   return (
     result[0] || {
-      subject,
-      courseNumber,
+      courseId,
       semester: null,
       year: null,
       classNumber: null,

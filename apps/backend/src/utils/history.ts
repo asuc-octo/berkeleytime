@@ -15,10 +15,10 @@ export function schemaToDiff<T extends KeyValueMap>(
   obj: T
 ): NestedObjectToList<T> {
   return Object.keys(obj).reduce((acc, key) => {
-    if (typeof obj[key] === "object") {
+    if (typeof obj[key] === "object" && obj[key] !== null) {
       return {
         ...acc,
-        [key]: schemaToDiff(obj[key]),
+        [key]: schemaToDiff(obj[key] as KeyValueMap),
       };
     }
     return {
@@ -29,7 +29,7 @@ export function schemaToDiff<T extends KeyValueMap>(
 }
 
 interface KeyValueMap {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 type NestedObjectToList<T> = {

@@ -1,21 +1,19 @@
 import { useQuery } from "@apollo/client/react";
 
 import {
-  GET_CLASS_DETAILS,
-  GET_CLASS_ENROLLMENT,
-  GET_CLASS_GRADES,
-  GET_CLASS_RATINGS,
-  GET_CLASS_SECTIONS,
-} from "@/lib/api/classes";
-import {
+  GetClassDetailsDocument,
   GetClassDetailsQuery,
   GetClassDetailsQueryVariables,
+  GetClassEnrollmentDocument,
   GetClassEnrollmentQuery,
   GetClassEnrollmentQueryVariables,
+  GetClassGradesDocument,
   GetClassGradesQuery,
   GetClassGradesQueryVariables,
+  GetClassRatingsDocument,
   GetClassRatingsQuery,
   GetClassRatingsQueryVariables,
+  GetClassSectionsDocument,
   GetClassSectionsQuery,
   GetClassSectionsQueryVariables,
   Semester,
@@ -24,6 +22,7 @@ import {
 export const useGetClass = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -32,11 +31,12 @@ export const useGetClass = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_DETAILS, {
+  const query = useQuery(GetClassDetailsDocument, {
     ...options,
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,
@@ -53,6 +53,7 @@ export const useGetClass = (
 export const useGetClassSections = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -61,11 +62,12 @@ export const useGetClassSections = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_SECTIONS, {
+  const query = useQuery(GetClassSectionsDocument, {
     ...options,
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,
@@ -81,6 +83,7 @@ export const useGetClassSections = (
 export const useGetClassGrades = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -89,11 +92,12 @@ export const useGetClassGrades = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_GRADES, {
+  const query = useQuery(GetClassGradesDocument, {
     ...options,
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,
@@ -109,6 +113,7 @@ export const useGetClassGrades = (
 export const useGetClassEnrollment = (
   year: number,
   semester: Semester,
+  sessionId: string,
   subject: string,
   courseNumber: string,
   number: string,
@@ -117,11 +122,12 @@ export const useGetClassEnrollment = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_ENROLLMENT, {
+  const query = useQuery(GetClassEnrollmentDocument, {
     ...options,
     variables: {
       year,
       semester,
+      sessionId,
       subject,
       courseNumber,
       number,
@@ -142,7 +148,7 @@ export const useGetClassRatings = (
     "variables"
   >
 ) => {
-  const query = useQuery(GET_CLASS_RATINGS, {
+  const query = useQuery(GetClassRatingsDocument, {
     ...options,
     variables: {
       subject,

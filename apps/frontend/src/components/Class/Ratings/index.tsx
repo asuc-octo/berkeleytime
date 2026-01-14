@@ -105,7 +105,7 @@ export function RatingsContainer() {
 
   const userRatedClasses = useMemo(() => {
     const ratedClasses =
-      userRatingsData?.userRatings?.classes?.map((cls) => ({
+      userRatingsData?.classes?.map((cls) => ({
         subject: cls.subject,
         courseNumber: cls.courseNumber,
       })) ?? [];
@@ -413,7 +413,7 @@ export function RatingsContainer() {
         </EmptyState>
       ) : (
         <div className={styles.root}>
-          <Container size="2">
+          <Container size="3">
             {userRatings ? (
               <UserRatingSummary
                 userRatings={userRatings}

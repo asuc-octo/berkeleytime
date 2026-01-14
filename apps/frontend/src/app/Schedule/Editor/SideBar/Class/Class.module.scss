@@ -12,6 +12,55 @@
     display: flex;
     color: var(--label-color);
 
+    .componentRow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 28px;
+
+      .component {
+        margin: 0;
+      }
+
+      .componentIcons {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        .iconButton {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          color: var(--text-color-secondary);
+          border-radius: 4px;
+          transition:
+            background-color 0.2s,
+            color 0.2s;
+
+          &:hover {
+            background-color: var(--hover-background);
+            color: var(--text-color);
+          }
+
+          &:active {
+            background-color: var(--active-background);
+          }
+
+          &.locked {
+            color: var(--accent-color);
+
+            &:hover {
+              color: var(--accent-color);
+            }
+          }
+        }
+      }
+    }
+
     .component {
       margin-left: 28px;
     }

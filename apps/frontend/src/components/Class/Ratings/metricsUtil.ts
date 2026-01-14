@@ -4,6 +4,8 @@ import {
   USER_MAX_ALL_RATINGS,
 } from "@repo/shared";
 
+import { IUserRatings } from "@/lib/api";
+
 export type MetricData = Record<MetricName, number | undefined>;
 
 export function getMetricTooltip(metricName: MetricName): string {
@@ -105,14 +107,14 @@ export function toMetricData(
 }
 
 export const checkConstraint = (
-  userRatingData: any,
+  userRatingData: IUserRatings | undefined,
   currentClass?: { subject: string; courseNumber: string } | null
 ): boolean => {
-  if (!userRatingData?.userRatings?.classes) {
+  if (!userRatingData?.classes) {
     return true; // If no data, user can still rate
   }
   // Filter out the current class from the count if it exists
-  const otherClasses = userRatingData.userRatings.classes.filter(
+  const otherClasses = userRatingData.classes.filter(
     (classData: { subject: string; courseNumber: string }) =>
       !(
         currentClass &&

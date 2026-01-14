@@ -5,6 +5,7 @@ import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
 import enrollmentTimeframePuller from "./pullers/enrollment-timeframe";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
+import migrationsPuller from "./pullers/migrations";
 import sectionsPuller from "./pullers/sections";
 import semanticSearchPuller from "./pullers/semantic-search";
 import termsPuller from "./pullers/terms";
@@ -32,6 +33,8 @@ const pullerMap: {
   "terms-all": termsPuller.allTerms,
   "terms-nearby": termsPuller.nearbyTerms,
   "semantic-search-refresh": semanticSearchPuller.refreshSemanticSearch,
+  "migrate-aggregated-metrics-classid":
+    migrationsPuller.backfillAggregatedMetricsClassId,
 } as const;
 
 const runPuller = async () => {

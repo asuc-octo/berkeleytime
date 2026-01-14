@@ -35,6 +35,11 @@ export const userSchema = new Schema(
       trim: true,
       required: false,
     },
+    lastSeenAt: {
+      type: Date,
+      required: true,
+      default: new Date(0), // Unix epoch (1970-01-01) indicates legacy user who hasn't visited since tracking started
+    },
   },
   {
     timestamps: {

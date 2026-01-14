@@ -12,25 +12,28 @@ import {
   Semester,
   UpdateScheduleInput,
 } from "../../generated-types/graphql";
+import { RequestContext } from "../../types/request-context";
 import { formatClass } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
 import { formatSchedule } from "./formatter";
 import { ScheduleModule } from "./generated-types/module-types";
 
-export const getSchedules = async (context: any) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+export const getSchedules = async (context: RequestContext) => {
+  if (!context.user?._id) throw new Error("Unauthorized");
+  const userId = context.user._id;
 
   const schedules = await ScheduleModel.find({
-    createdBy: context.user._id,
+    createdBy: userId,
   });
 
   return await Promise.all(schedules.map(formatSchedule));
 };
 
-export const getSchedule = async (context: any, id: string) => {
+export const getSchedule = async (context: RequestContext, id: string) => {
+  const userId = context.user?._id;
   const schedule = await ScheduleModel.findOne({
     _id: id,
-    $or: [{ public: true }, { createdBy: context.user._id }],
+    $or: [{ public: true }, ...(userId ? [{ createdBy: userId }] : [])],
   });
 
   if (!schedule) throw new Error("Not found");
@@ -38,10 +41,12 @@ export const getSchedule = async (context: any, id: string) => {
   return await formatSchedule(schedule);
 };
 
-export const deleteSchedule = async (context: any, id: string) => {
+export const deleteSchedule = async (context: RequestContext, id: string) => {
+  if (!context.user?._id) throw new Error("Unauthorized");
+  const userId = context.user._id;
   const schedule = await ScheduleModel.findOneAndDelete({
     _id: id,
-    createdBy: context.user._id,
+    createdBy: userId,
   });
 
   if (!schedule) throw new Error("Not found");
@@ -50,10 +55,11 @@ export const deleteSchedule = async (context: any, id: string) => {
 };
 
 export const createSchedule = async (
-  context: any,
+  context: RequestContext,
   input: CreateScheduleInput
 ) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user?._id) throw new Error("Unauthorized");
+  const userId = context.user._id;
 
   const term = await TermModel.findOne({
     name: `${input.year} ${input.semester}`,
@@ -65,18 +71,19 @@ export const createSchedule = async (
 
   const schedule = await ScheduleModel.create({
     ...input,
-    createdBy: context.user._id,
+    createdBy: userId,
   });
 
   return await formatSchedule(schedule);
 };
 
 export const updateSchedule = async (
-  context: any,
+  context: RequestContext,
   id: string,
   input: UpdateScheduleInput
 ) => {
-  if (!context.user._id) throw new Error("Unauthorized");
+  if (!context.user?._id) throw new Error("Unauthorized");
+  const userId = context.user._id;
 
   // Filter out duplicates
   if (input.classes) {
@@ -95,7 +102,7 @@ export const updateSchedule = async (
   }
 
   const schedule = await ScheduleModel.findOneAndUpdate(
-    { _id: id, createdBy: context.user._id },
+    { _id: id, createdBy: userId },
     input,
     { new: true }
   );
@@ -135,6 +142,10 @@ export const getClasses = async (
       class: formatClass(_class as IClassItem) as unknown as ClassModule.Class,
       selectedSections: sections as unknown as ClassModule.Section[],
       color: selectedClass.color,
+      hidden: selectedClass.hidden,
+      locked: selectedClass.locked,
+      blockedSections: selectedClass.blockedSections,
+      lockedComponents: selectedClass.lockedComponents,
     } as ScheduleModule.SelectedClass);
   }
 

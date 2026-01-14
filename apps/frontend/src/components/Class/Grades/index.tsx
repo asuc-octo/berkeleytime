@@ -53,11 +53,12 @@ function GradesSkeleton() {
 
 export default function Grades() {
   const {
-    class: { subject, courseNumber, number, semester, year },
+    class: { subject, courseNumber, number, semester, year, sessionId },
   } = useClass();
   const { data, loading } = useGetClassGrades(
     year,
     semester,
+    sessionId,
     subject,
     courseNumber,
     number
@@ -130,7 +131,7 @@ export default function Grades() {
       try {
         const url = new URL(window.location.origin);
         if (url.hostname === "localhost") {
-          url.port = "8080";
+          url.port = "3000";
         }
         url.pathname = "/grades";
         url.search = params.toString();
@@ -140,7 +141,7 @@ export default function Grades() {
       }
     }
 
-    return `http://localhost:8080/grades?${params.toString()}`;
+    return `http://localhost:3000/grades?${params.toString()}`;
   }, [subject, courseNumber]);
 
   const subtitle = useMemo(() => {

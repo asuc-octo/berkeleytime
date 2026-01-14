@@ -6,8 +6,9 @@ import { type Application, json } from "express";
 import helmet from "helmet";
 import { RedisClientType } from "redis";
 
-import { config } from "../../config";
 import semanticSearchRoutes from "../../modules/semantic-search/routes";
+import { config } from "../../../../../packages/common/src/utils/config";
+import staffRoutes from "../../modules/staff/routes";
 import passportLoader from "./passport";
 
 export default async (
@@ -26,9 +27,11 @@ export default async (
       // Allow requests from the local frontend (should be the only requirement)
       origin: [
         config.url,
-        "http://localhost:8080",
-        "http://localhost:8081",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
         "https://ag.berkeleytime.com",
+        "https://staff.berkeleytime.com",
       ],
       credentials: true,
     })
@@ -61,14 +64,19 @@ export default async (
 
   // load semantic search routes
   app.use("/semantic-search", semanticSearchRoutes);
+  // load staff routes
+  staffRoutes(app);
 
   app.use(
     config.graphqlPath,
     expressMiddleware(server, {
       context: async ({ req }) => ({
+        req,
+        redis,
         user: {
           ...req.user,
           isAuthenticated: req.isAuthenticated(),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           logout: (callback: (err: any) => void) => req.logout(callback),
         },
       }),

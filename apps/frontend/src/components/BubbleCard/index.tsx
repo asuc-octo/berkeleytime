@@ -1,18 +1,11 @@
 import { ReactNode } from "react";
 
-import { MoreHoriz, NavArrowRight } from "iconoir-react";
-
-import { DropdownMenu, IconButton } from "@repo/theme";
+import { ActionMenu, MenuItem } from "@/components/ActionMenu";
 
 import styles from "./BubbleCard.module.scss";
 
-export interface MenuItem {
-  name: string;
-  icon: ReactNode;
-  onClick?: () => void;
-  isDelete?: boolean;
-  subItems?: MenuItem[];
-}
+// Re-export MenuItem for backward compatibility
+export type { MenuItem };
 
 export interface BubbleCardProps {
   title: string | ReactNode;
@@ -45,7 +38,7 @@ export function BubbleCard({
   children,
   onClick,
   showCards = true,
-  isHovered: _isHovered,
+  isHovered,
   onMouseEnter: externalOnMouseEnter,
   onMouseLeave: externalOnMouseLeave,
   width,
@@ -53,6 +46,8 @@ export function BubbleCard({
   childrenBackgroundColor,
   childrenPadding = false,
 }: BubbleCardProps) {
+  // isHovered is part of the interface but not used in this component
+  void isHovered;
   const handleMouseEnter = () => {
     externalOnMouseEnter?.();
   };
@@ -75,44 +70,6 @@ export function BubbleCard({
   if (childrenBackgroundColor) {
     bubbleStyle.backgroundColor = childrenBackgroundColor;
   }
-
-  const renderMenuItem = (item: MenuItem, index: number) => {
-    if (item.subItems && item.subItems.length > 0) {
-      return (
-        <DropdownMenu.Sub key={index}>
-          <DropdownMenu.SubTrigger>
-            {item.icon} {item.name}
-            <NavArrowRight
-              width={14}
-              height={14}
-              style={{ marginLeft: "auto" }}
-            />
-          </DropdownMenu.SubTrigger>
-          <DropdownMenu.SubContent sideOffset={-2}>
-            {item.subItems.map((subItem, subIndex) => (
-              <DropdownMenu.Item
-                key={subIndex}
-                onSelect={subItem.onClick}
-                isDelete={subItem.isDelete}
-              >
-                {subItem.icon} {subItem.name}
-              </DropdownMenu.Item>
-            ))}
-          </DropdownMenu.SubContent>
-        </DropdownMenu.Sub>
-      );
-    }
-
-    return (
-      <DropdownMenu.Item
-        key={index}
-        onSelect={item.onClick}
-        isDelete={item.isDelete}
-      >
-        {item.icon} {item.name}
-      </DropdownMenu.Item>
-    );
-  };
 
   return (
     <div
@@ -139,20 +96,7 @@ export function BubbleCard({
           <p className={styles.title}>{title}</p>
           {description && <p className={styles.description}>{description}</p>}
         </div>
-        {menuItems.length > 0 && (
-          <div onClick={(e) => e.stopPropagation()}>
-            <DropdownMenu.Root modal={false}>
-              <DropdownMenu.Trigger asChild>
-                <IconButton className={styles.menuButton}>
-                  <MoreHoriz />
-                </IconButton>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content sideOffset={5} align="start">
-                {menuItems.map((item, index) => renderMenuItem(item, index))}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-          </div>
-        )}
+        <ActionMenu menuItems={menuItems} buttonClassName={styles.menuButton} />
       </div>
     </div>
   );

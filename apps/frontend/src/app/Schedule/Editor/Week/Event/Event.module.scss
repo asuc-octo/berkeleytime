@@ -1,0 +1,48 @@
+.root {
+  position: absolute;
+  z-index: 2;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: var(--gray-500);
+  font-size: var(--text-12);
+  opacity: 0.5;
+  overflow-y: hidden;
+
+  &.active {
+    opacity: 1;
+  }
+
+  .heading {
+    font-weight: var(--font-medium);
+    color: white;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .description {
+    margin-top: 2px;
+    color: rgb(255 255 255 / 75%);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 10px;
+  }
+}
+
+.popup {
+  position: absolute;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+  min-width: 200px;
+
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}

@@ -7,6 +7,7 @@ import { Semester } from "@/lib/generated/graphql";
 
 import { MetricData } from "../metricsUtil";
 import { AttendanceForm, RatingsForm } from "./FeedbackForm";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;

@@ -38,7 +38,7 @@ const resolvers: EnrollmentModule.Resolvers = {
     activeReservedMaxCount: (parent) => {
       const seatReservations = parent.seatReservationCount ?? [];
       return seatReservations.reduce((sum, reservation) => {
-        const isValid = (reservation as any).isValid ?? false;
+        const isValid = reservation.isValid ?? false;
         const maxEnroll = reservation.maxEnroll ?? 0;
         return sum + (isValid ? maxEnroll : 0);
       }, 0);

@@ -49,15 +49,6 @@
   }
 }
 
-.recentCourses {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.25rem 1rem 0.5rem;
-  overflow-x: auto;
-}
-
 .catalogList {
   display: flex;
   flex-direction: column;
@@ -103,6 +94,9 @@
   flex-direction: column;
 }
 
-.loading {
-  margin: 50px auto;
+.noResults {
+  padding: 1rem;
+  text-align: center;
+  color: var(--paragraph-color);
+  font-size: 0.875rem;
 }

@@ -19,15 +19,16 @@ import {
   MenuItem,
   springTransition,
 } from "@/components/BubbleCard";
+import { ColorDot } from "@/components/ColorDot";
 import {
   COLLECTION_COLORS,
   capitalizeColor,
   getColorCSSVar,
-  getColorStyle,
 } from "@/lib/colors";
 import { getLetterGradeFromGPA } from "@/lib/grades";
 import { CollectionPreviewClass } from "@/types/collection";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./CollectionCard.module.scss";
 
 interface CollectionCardProps {
@@ -154,12 +155,12 @@ export function CollectionCard({
   const colorSubItems: MenuItem[] = [
     {
       name: "No color",
-      icon: <span className={styles.colorDotOutline} />,
+      icon: <ColorDot color={null} />,
       onClick: () => onColorChange?.(null),
     },
     ...COLLECTION_COLORS.map((c) => ({
       name: capitalizeColor(c),
-      icon: <span className={styles.colorDot} style={getColorStyle(c)} />,
+      icon: <ColorDot color={c} />,
       onClick: () => onColorChange?.(c),
     })),
   ];

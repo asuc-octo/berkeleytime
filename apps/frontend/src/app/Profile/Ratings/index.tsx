@@ -24,7 +24,6 @@ import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingsDocument,
   DeleteRatingsDocument,
-  GetClassDocument,
   GetCourseRatingsDocument,
   GetSemestersWithRatingsDocument,
   GetUserRatingsDocument,
@@ -32,6 +31,7 @@ import {
 } from "@/lib/generated/graphql";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import profileStyles from "../Profile.module.scss";
 import { AddRatingCard, RatingCard } from "./RatingCard";
 
@@ -172,17 +172,6 @@ export default function Ratings() {
 
   const buildRefetchQueries = useCallback((rating: IUserRatingClass) => {
     return [
-      {
-        query: GetClassDocument,
-        variables: {
-          year: rating.year,
-          semester: rating.semester,
-          subject: rating.subject,
-          courseNumber: rating.courseNumber,
-          number: rating.classNumber,
-          sessionId: null,
-        },
-      },
       {
         query: GetCourseRatingsDocument,
         variables: {

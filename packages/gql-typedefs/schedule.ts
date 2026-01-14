@@ -30,6 +30,10 @@ export const scheduleTypeDef = gql`
     class: Class!
     selectedSections: [Section!]!
     color: Color
+    hidden: Boolean
+    locked: Boolean
+    blockedSections: [SectionIdentifier!]
+    lockedComponents: [Component!]
   }
 
   type Event {
@@ -41,6 +45,7 @@ export const scheduleTypeDef = gql`
     title: String!
     description: String
     color: Color
+    hidden: Boolean
   }
 
   type Schedule @cacheControl(maxAge: 1) {
@@ -56,6 +61,18 @@ export const scheduleTypeDef = gql`
     events: [Event!]!
   }
 
+  """
+  Scheduler analytics data point for staff dashboard
+  """
+  type SchedulerAnalyticsDataPoint @cacheControl(maxAge: 0) {
+    scheduleId: ID!
+    userEmail: String!
+    totalClasses: Int!
+    semester: String!
+    year: Int!
+    createdAt: String!
+  }
+
   type Query {
     schedules: [Schedule] @auth
     schedule(id: ID!): Schedule
@@ -69,6 +86,7 @@ export const scheduleTypeDef = gql`
     title: String!
     description: String
     color: Color
+    hidden: Boolean
   }
 
   input SelectedClassInput {
@@ -77,6 +95,10 @@ export const scheduleTypeDef = gql`
     number: ClassNumber!
     sectionIds: [SectionIdentifier!]!
     color: Color
+    hidden: Boolean
+    locked: Boolean
+    blockedSections: [SectionIdentifier!]
+    lockedComponents: [Component!]
   }
 
   input UpdateScheduleInput {

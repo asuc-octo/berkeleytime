@@ -1,4 +1,4 @@
-import { Component, Semester } from "./api";
+import { Component, Semester } from "./generated/graphql";
 
 interface ClassLinkable {
   year: number;

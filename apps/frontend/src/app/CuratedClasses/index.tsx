@@ -71,6 +71,7 @@ export default function CuratedClasses() {
                         courseNumber={curatedClass.courseNumber}
                         year={curatedClass.year}
                         semester={curatedClass.semester}
+                        sessionId={curatedClass.sessionId}
                       >
                         <Flex direction="column">
                           <div className={styles.cover}>
@@ -82,7 +83,11 @@ export default function CuratedClasses() {
                           </div>
                           <ClassCard
                             className={styles.class}
-                            class={curatedClass.class}
+                            class={{
+                              ...curatedClass.class,
+                              courseNumber: curatedClass.courseNumber,
+                              subject: curatedClass.subject,
+                            }}
                           />
                         </Flex>
                       </ClassDrawer>

@@ -1,0 +1,82 @@
+@use "@/mixins" as *;
+
+.root {
+  flex-shrink: 0;
+  min-height: 40px;
+  background-color: var(--backdrop-color);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--foreground-color);
+  position: relative;
+
+  .text {
+    color: var(--gray-700);
+    font-size: var(--text-12);
+    margin: 0;
+
+    @include dark-mode {
+      color: var(--gray-300);
+    }
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: rgb(56, 126, 236);
+    font-size: var(--text-12);
+    font-weight: 500;
+    transition: background-color 100ms ease-in-out;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: rgb(45, 110, 210);
+    }
+
+    span {
+      color: white;
+    }
+  }
+
+  .closeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 100ms ease-in-out;
+    flex-shrink: 0;
+    position: absolute;
+    right: 16px;
+
+    @include dark-mode {
+      color: var(--gray-300);
+    }
+
+    &:hover {
+      color: var(--gray-900);
+      background-color: var(--button-hover-color);
+
+      @include dark-mode {
+        color: var(--gray-100);
+      }
+    }
+  }
+}

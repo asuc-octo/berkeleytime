@@ -1,7 +1,7 @@
 import express, { json } from "express";
 import http from "http";
 
-import { Config } from "../config";
+import { Config } from "../../../../packages/common/src/utils/config";
 import cacheRoutes from "../modules/cache/routes";
 import loaders, { loadCacheWarmingDependencies } from "./loaders";
 
@@ -23,7 +23,7 @@ export default async (config: Config) => {
   );
 
   console.log(
-    `\tServer ready (in Host network) at:\thttp://localhost:8080${config.backendPath}`
+    `\tServer ready (in Host network) at:\thttp://localhost:3000${config.backendPath}`
   );
 };
 

@@ -202,6 +202,7 @@ export class FuzzySearch<T> {
     }));
   }
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   private getValueByPath(obj: any, path: string): any {
     const keys = path.split(".");
     let current = obj;

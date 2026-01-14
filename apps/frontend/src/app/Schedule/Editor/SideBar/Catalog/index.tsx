@@ -14,7 +14,8 @@ interface CatalogProps {
   onClassSelect: (
     subject: string,
     courseNumber: string,
-    number: string
+    number: string,
+    sessionId: string
   ) => void;
   children: ReactNode;
   semester: Semester;
@@ -42,9 +43,10 @@ export default function Catalog({
   const handleSelect = (
     subject: string,
     courseNumber: string,
-    number: string
+    number: string,
+    sessionId: string
   ) => {
-    onClassSelect(subject, courseNumber, number);
+    onClassSelect(subject, courseNumber, number, sessionId);
 
     setOpen(false);
 

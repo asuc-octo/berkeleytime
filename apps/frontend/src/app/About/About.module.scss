@@ -1,0 +1,367 @@
+.root {
+  padding: 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 64px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.aboutSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.aboutTitle {
+  font-size: 32px;
+  font-weight: var(--font-bold);
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.aboutDescription {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--paragraph-color);
+  max-width: 700px;
+  margin: 0;
+}
+
+.carouselContainer {
+  position: relative;
+  width: 100%;
+  margin-top: 16px;
+  overflow: visible;
+}
+
+.carousel {
+  display: flex;
+  overflow: visible;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.carouselTrack {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 900px) {
+    height: 300px;
+  }
+
+  @media (max-width: 600px) {
+    height: 200px;
+  }
+}
+
+.carouselImageWrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transition:
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.carouselImage {
+  width: 600px;
+  height: 400px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  display: block;
+  margin-left: -300px; // Half of width
+  margin-top: -200px; // Half of height
+
+  @media (max-width: 900px) {
+    width: 500px;
+    height: 300px;
+    margin-left: -250px;
+    margin-top: -150px;
+  }
+
+  @media (max-width: 600px) {
+    width: 300px;
+    height: 200px;
+    margin-left: -150px;
+    margin-top: -100px;
+  }
+}
+
+.carouselButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--backdrop-color);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+  color: var(--heading-color);
+  opacity: 1;
+  pointer-events: auto;
+
+  &:hover {
+    background: var(--foreground-color);
+    opacity: 1;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.carouselButtonLeft {
+  left: 16px;
+}
+
+.carouselButtonRight {
+  right: 16px;
+}
+
+.valuesSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+}
+
+.valueCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.valueIcon {
+  color: var(--blue-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.valueTitle {
+  font-size: 20px;
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.valueDescription {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--paragraph-color);
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.selectWrapper {
+  width: 180px;
+}
+
+// Reuse yearNavigation styles for teamNavigation (duplicated for CSS Modules compatibility)
+.teamNavigation {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  margin-bottom: 0; // Remove margin to fix spacing
+}
+
+.teamButton {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--label-color);
+  cursor: pointer;
+  padding: 4px 0;
+  position: relative;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--heading-color);
+  }
+
+  &.teamButtonActive {
+    color: var(--blue-500);
+    font-weight: 600;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -12px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--blue-500);
+    }
+  }
+}
+
+.title {
+  font-size: 24px;
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.ourTeamSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// Reuse alumniGrid styles for team grid (duplicated for CSS Modules compatibility)
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+  justify-items: start;
+  margin-top: 24px; // Add margin here instead of on navigation
+
+  // Set max-width for grid items to prevent stretching
+  > * {
+    max-width: 250px;
+    width: 100%;
+  }
+
+  // Responsive: reduce columns on smaller screens
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.alumniSection {
+  margin-top: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.alumniGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+  justify-items: start;
+
+  // Set max-width for grid items to prevent stretching
+  > * {
+    max-width: 250px;
+    width: 100%;
+  }
+
+  // Responsive: reduce columns on smaller screens
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.yearNavigation {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.yearButton {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--label-color);
+  cursor: pointer;
+  padding: 4px 0;
+  position: relative;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--heading-color);
+  }
+
+  &.yearButtonActive {
+    color: var(--blue-500);
+    font-weight: 600;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -12px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--blue-500);
+    }
+  }
+}

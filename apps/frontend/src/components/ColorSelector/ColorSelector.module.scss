@@ -2,39 +2,58 @@
   position: relative;
 }
 
-.colorSelect {
-  width: 35px;
+.colorSelectButton {
   display: flex;
-  justify-content: space-between;
-  cursor: pointer;
   align-items: center;
-  color: var(--heading-color);
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--background-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 150ms ease;
+  white-space: nowrap;
+  min-width: 120px;
+  width: 120px;
+  justify-content: flex-start;
 
-  .colorLabel {
-    width: 16px;
-    height: 16px;
-    border-radius: 16px;
-    border: 1px solid black;
+  &:hover {
+    border-color: var(--blue-500);
+  }
+
+  &:focus-visible {
+    border-color: var(--blue-500);
   }
 }
 
-.colorPicker {
-  display: flex;
-  gap: 8px;
-  padding: 8px;
-  background: var(--foreground-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.colorDropdown {
+  z-index: 9999;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 
-  .colorOption {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+  /* Ensure scroll events work properly */
+  overscroll-behavior: contain;
+}
 
-    &:hover {
-      transform: scale(1.1);
-    }
-  }
+.colorDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.colorDotOutline {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1.5px solid var(--paragraph-color);
+  box-sizing: border-box;
+  flex-shrink: 0;
 }

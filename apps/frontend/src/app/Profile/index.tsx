@@ -10,6 +10,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import UserContext from "@/contexts/UserContext";
 import { useReadUser } from "@/hooks/api";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Profile.module.scss";
 
 export default function Root() {

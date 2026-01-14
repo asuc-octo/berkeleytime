@@ -13,6 +13,7 @@ interface Props {
   number: string;
   semester: Semester;
   year: number;
+  sessionId: string;
   dialog?: boolean;
 }
 
@@ -39,16 +40,13 @@ export default function ClassDrawer({
   number,
   semester,
   year,
+  sessionId,
   open,
   onOpenChange,
 }: ClassDrawerProps) {
   return (
     <Dialog.Root onOpenChange={onOpenChange} open={open}>
-      {children && open !== undefined ? (
-        <Dialog.Trigger asChild>{children}</Dialog.Trigger>
-      ) : (
-        children
-      )}
+      {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
       <Dialog.Portal>
         <Dialog.Overlay />
         <Dialog.Drawer className={styles.drawer}>
@@ -58,6 +56,7 @@ export default function ClassDrawer({
             number={number}
             semester={semester}
             year={year}
+            sessionId={sessionId}
             dialog
           />
         </Dialog.Drawer>

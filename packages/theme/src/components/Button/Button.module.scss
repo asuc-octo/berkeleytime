@@ -66,6 +66,17 @@
       border-color: var(--blue-500);
     }
   }
+  &[data-variant="secondary"][data-delete] {
+    color: var(--red-500);
+
+    &:hover {
+      color: var(--red-600);
+    }
+
+    &:active {
+      color: var(--red-700);
+    }
+  }
   &[data-variant="secondary"][data-disabled] {
     opacity: 1;
     background-color: var(--button-hover-color);

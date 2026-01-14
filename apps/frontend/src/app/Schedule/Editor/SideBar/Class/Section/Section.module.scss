@@ -4,21 +4,46 @@
   gap: 12px;
   cursor: pointer;
 
-  &:hover .title {
+  &:hover:not(.blocked):not(.noHover) .title {
     color: var(--heading-color);
   }
 
-  &.active .title {
+  &.active:not(.blocked) .title {
     color: var(--heading-color);
   }
 
-  &.active .radioButton {
+  &.active:not(.blocked) .radioButton {
     border-color: var(--blue-500);
 
     &::after {
       opacity: 1;
       background-color: var(--blue-500);
     }
+  }
+
+  &.blocked {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
+
+    .radioButton {
+      opacity: 0.5;
+    }
+
+    .title,
+    .time {
+      opacity: 0.5;
+    }
+
+    .blockButton {
+      pointer-events: auto;
+      opacity: 1;
+      color: var(--paragraph-color);
+    }
+  }
+
+  &.noHover {
+    // Prevents hover effects when editing is disabled
   }
 
   .radioButton {
@@ -53,5 +78,30 @@
     color: var(--paragraph-color);
     font-weight: var(--font-medium);
     transition: all 100ms ease-in-out;
+  }
+
+  .blockButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-color-secondary);
+    border-radius: 4px;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: var(--hover-background);
+      color: var(--text-color);
+    }
+
+    &:active {
+      background-color: var(--active-background);
+    }
   }
 }

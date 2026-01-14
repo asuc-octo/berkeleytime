@@ -40,7 +40,7 @@ Open the docker desktop application, then run:
 docker compose up -d
 ```
 
-The Berkeleytime application should now be running locally at `http://localhost:8080`! Make sure that each page (catalog, grades, etc.) is working as expected.
+The Berkeleytime application should now be running locally at `http://localhost:3000`! Make sure that each page (catalog, grades, etc.) is working as expected.
 
 ## Common Commands
 
@@ -67,7 +67,7 @@ A seeded database is required for some pages on the frontend.
 docker compose up -d
 
 # Download the data
-curl -f -o "prod-backup.gz" "https://backups.stanfurdtime.com/daily/prod_backup-$(date -v -6H +%Y%m%d).gz"
+curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/daily/prod_backup-$(date -v -6H +%Y%m%d).gz"
 
 # Copy the data and restore
 docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz

@@ -1,4 +1,4 @@
-name: Deploy to Development
+name: "CD: Deploy to Development"
 run-name: "Deployed `${{ github.sha }}` for `${{ github.event.inputs.ttl }}` hours"
 
 concurrency:
@@ -20,7 +20,7 @@ on:
         default: false
 
 env:
-  HOSTS: "auth0.dev.stanfurdtime.com auth1.dev.stanfurdtime.com auth2.dev.stanfurdtime.com auth3.dev.stanfurdtime.com auth4.dev.stanfurdtime.com auth5.dev.stanfurdtime.com auth6.dev.stanfurdtime.com auth7.dev.stanfurdtime.com auth8.dev.stanfurdtime.com auth9.dev.stanfurdtime.com"
+  HOSTS: "auth0.dev.berkeleytime.com auth1.dev.berkeleytime.com auth2.dev.berkeleytime.com auth3.dev.berkeleytime.com auth4.dev.berkeleytime.com auth5.dev.berkeleytime.com auth6.dev.berkeleytime.com auth7.dev.berkeleytime.com auth8.dev.berkeleytime.com auth9.dev.berkeleytime.com"
 
 jobs:
   compute-sha:
@@ -61,7 +61,7 @@ jobs:
 
           echo "sha_short=${sha_short}" >> $GITHUB_OUTPUT
           if [ -z $auth_host ]; then
-            echo "host=$sha_short.dev.stanfurdtime.com" >> $GITHUB_OUTPUT
+            echo "host=$sha_short.dev.berkeleytime.com" >> $GITHUB_OUTPUT
           else
             echo "host=$auth_host" >> $GITHUB_OUTPUT
           fi

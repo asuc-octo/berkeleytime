@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
-import { GET_CLASS_RATINGS_DATA } from "@/lib/api";
 import {
+  GetClassRatingsDataDocument,
   GetClassRatingsDataQuery,
   GetClassRatingsDataQueryVariables,
 } from "@/lib/generated/graphql";
@@ -20,7 +20,7 @@ export const useGetClassRatingsData = ({
   const { data, loading, error, refetch } = useQuery<
     GetClassRatingsDataQuery,
     GetClassRatingsDataQueryVariables
-  >(GET_CLASS_RATINGS_DATA, {
+  >(GetClassRatingsDataDocument, {
     variables: {
       subject,
       courseNumber,
@@ -72,9 +72,7 @@ export const useGetClassRatingsData = ({
   }, [data?.course?.instructorAggregatedRatings]);
 
   return {
-    userRatingsData: data?.userRatings
-      ? { userRatings: data.userRatings }
-      : undefined,
+    userRatingsData: data?.userRatings ? data.userRatings : undefined,
     userRatings,
     aggregatedRatings: data?.course?.aggregatedRatings,
     instructorAggregatedRatings,

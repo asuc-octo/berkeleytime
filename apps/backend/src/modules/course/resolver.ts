@@ -15,6 +15,7 @@ import {
   getAssociatedCoursesBySubjectNumber,
   getClassesByCourse,
   getCourse,
+  getCourseById,
   getCourses,
 } from "./controller";
 import { IntermediateCourse } from "./formatter";
@@ -50,13 +51,19 @@ const resolvers: CourseModule.Resolvers = {
   }),
 
   Query: {
-    course: async (_, { subject, number }, _context, _info) => {
+    course: async (_, { subject, number }) => {
       const course = await getCourse(subject, number);
 
       return course as unknown as CourseModule.Course;
     },
 
-    courses: async (_, _arguments, _context, _info) => {
+    courseById: async (_, { courseId }) => {
+      const course = await getCourseById(courseId);
+
+      return course as unknown as CourseModule.Course;
+    },
+
+    courses: async () => {
       const courses = getCourses();
 
       return courses as unknown as CourseModule.Course[];

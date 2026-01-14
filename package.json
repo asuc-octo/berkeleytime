@@ -4,12 +4,13 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
     "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,scss}\"",
     "postinstall": "patch-package"
   },
   "engines": {
-    "node": ">=21.0.0",
+    "node": ">=22.12.0",
     "npm": ">=10.0.0"
   },
   "packageManager": "npm@11.6.1",

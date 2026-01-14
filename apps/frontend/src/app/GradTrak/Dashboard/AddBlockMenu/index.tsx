@@ -186,7 +186,7 @@ export default function AddBlockMenu({
               New custom block
             </div>
             <div className={styles.inputContainer}>
-              <div className={styles.container}>
+              <div>
                 <Input
                   type="text"
                   value={customName}

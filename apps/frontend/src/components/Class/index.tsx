@@ -33,12 +33,18 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useGetClassOverview } from "@/hooks/api";
+import { useGetCourseOverviewById } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
-import { IClassCourse, IClassDetails, signIn } from "@/lib/api";
+import {
+  IClassCourse,
+  IClassDetails,
+  TRACK_CLASS_VIEW,
+  signIn,
+} from "@/lib/api";
 import {
   CreateRatingsDocument,
+  GetCourseOverviewByIdQuery,
   GetUserRatingsDocument,
   Semester,
 } from "@/lib/generated/graphql";
@@ -52,6 +58,8 @@ import styles from "./Class.module.scss";
 import UserFeedbackModal from "./Ratings/UserFeedbackModal";
 import { MetricData } from "./Ratings/metricsUtil";
 import { type RatingsTabClasses, RatingsTabLink } from "./locks";
+
+const VIEW_TRACKING_DELAY_MS = 1000;
 
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
@@ -76,9 +84,10 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClassDetails;
-  course?: IClassCourse;
+  course?: GetCourseOverviewByIdQuery["courseById"];
   year?: never;
   semester?: never;
+  sessionId?: never;
   subject?: never;
   courseNumber?: never;
   number?: never;
@@ -89,6 +98,7 @@ interface UncontrolledProps {
   course?: never;
   year: number;
   semester: Semester;
+  sessionId: string;
   subject: string;
   courseNumber: string;
   number: string;
@@ -128,6 +138,7 @@ const getCurrentTab = (pathname: string): string => {
 export default function Class({
   year,
   semester,
+  sessionId,
   subject,
   courseNumber,
   number,
@@ -163,17 +174,10 @@ export default function Class({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
-  const { data: course } = useGetClassOverview(
-    providedClass?.subject ?? (subject as string),
-    providedClass?.courseNumber ?? (courseNumber as string),
-    {
-      skip: !!providedCourse,
-    }
-  );
-
   const { data } = useGetClass(
     year as number,
     semester as Semester,
+    sessionId as string,
     subject as string,
     courseNumber as string,
     number as string,
@@ -185,6 +189,11 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
+
+  // Use courseId from class data to fetch course info (handles cross-listed courses)
+  const { data: course } = useGetCourseOverviewById(_class?.courseId ?? "", {
+    skip: !!providedCourse || !_class?.courseId,
+  });
 
   const _course = useMemo(
     () => providedCourse ?? course,
@@ -251,25 +260,30 @@ export default function Class({
     });
   }, [_class]);
 
+  const [trackView] = useMutation(TRACK_CLASS_VIEW);
+
+  useEffect(() => {
+    if (!_class) return;
+
+    const timer = setTimeout(() => {
+      trackView({
+        variables: {
+          year: _class.year,
+          semester: _class.semester,
+          sessionId: _class.sessionId,
+          subject: _class.subject,
+          courseNumber: _class.courseNumber,
+          number: _class.number,
+        },
+      }).catch(() => {});
+    }, VIEW_TRACKING_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, [_class, trackView]);
+
   const ratingsCount = useMemo<number | false>(() => {
-    const aggregatedRatings = _course?.aggregatedRatings;
-    if (!aggregatedRatings) {
-      return false;
-    }
-
-    type Metric = NonNullable<
-      NonNullable<IClassCourse["aggregatedRatings"]>["metrics"]
-    >[number];
-    const metrics =
-      (aggregatedRatings.metrics ?? []).filter((metric): metric is Metric =>
-        Boolean(metric)
-      ) ?? [];
-    if (metrics.length === 0) {
-      return false;
-    }
-
-    const counts = metrics.map((metric) => metric.count);
-    return counts.length > 0 ? Math.max(...counts) : false;
+    const count = _course?.ratingsCount;
+    return count && count > 0 ? count : false;
   }, [_course]);
 
   const ratingsLockContext = useMemo(() => {

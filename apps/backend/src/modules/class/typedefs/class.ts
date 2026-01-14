@@ -7,7 +7,7 @@ export const classTypeDef = gql`
     class(
       year: Int!
       semester: Semester!
-      sessionId: SessionIdentifier
+      sessionId: SessionIdentifier!
       subject: String!
       courseNumber: CourseNumber!
       number: ClassNumber!
@@ -15,11 +15,22 @@ export const classTypeDef = gql`
     section(
       year: Int!
       semester: Semester!
-      sessionId: SessionIdentifier
+      sessionId: SessionIdentifier!
       subject: String!
       courseNumber: CourseNumber!
       number: SectionNumber!
     ): Section
+  }
+
+  type Mutation {
+    trackClassView(
+      year: Int!
+      semester: Semester!
+      sessionId: SessionIdentifier
+      subject: String!
+      courseNumber: CourseNumber!
+      number: ClassNumber!
+    ): Boolean!
   }
 
   type Class {
@@ -50,6 +61,7 @@ export const classTypeDef = gql`
     unitsMin: Float!
     requirementDesignation: SectionAttributeInfo
     anyPrintInScheduleOfClasses: Boolean
+    viewCount: Int!
   }
 
   enum ClassFinalExam {
@@ -218,10 +230,10 @@ export const classTypeDef = gql`
 
   type Meeting {
     days: [Boolean!]
-    startTime: String!
-    endTime: String!
-    startDate: String!
-    endDate: String!
+    startTime: String
+    endTime: String
+    startDate: String
+    endDate: String
     location: String
     instructors: [Instructor!]!
   }

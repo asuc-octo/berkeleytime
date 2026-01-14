@@ -11,8 +11,8 @@ import { CuratedClassesModule } from "./generated-types/module-types";
 
 const resolvers: CuratedClassesModule.Resolvers = {
   Query: {
-    curatedClasses: async (_, __, ___, info) => {
-      const curatedClasses = await getCuratedClasses(info);
+    curatedClasses: async () => {
+      const curatedClasses = await getCuratedClasses();
       return curatedClasses as unknown as CuratedClassesModule.CuratedClass[];
     },
     curatedClass: async (_, { id }, context) => {

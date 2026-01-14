@@ -67,6 +67,7 @@ export default function Enrollment() {
   const { data: enrollmentData, loading } = useGetClassEnrollment(
     _class.year,
     _class.semester,
+    _class.sessionId,
     _class.subject,
     _class.courseNumber,
     _class.number
@@ -169,7 +170,7 @@ export default function Enrollment() {
       try {
         const url = new URL(window.location.origin);
         if (url.hostname === "localhost") {
-          url.port = "8080";
+          url.port = "3000";
         }
         url.pathname = "/enrollment";
         url.search = params.toString();
@@ -179,7 +180,7 @@ export default function Enrollment() {
       }
     }
 
-    return `http://localhost:8080/enrollment?${params.toString()}`;
+    return `http://localhost:3000/enrollment?${params.toString()}`;
   }, [
     _class.subject,
     _class.courseNumber,

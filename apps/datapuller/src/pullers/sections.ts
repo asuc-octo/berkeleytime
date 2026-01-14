@@ -1,3 +1,5 @@
+import { connection } from "mongoose";
+
 import { SectionModel } from "@repo/common";
 
 import { getSections } from "../lib/sections";
@@ -31,51 +33,65 @@ const updateSections = async (config: Config, termSelector: TermSelector) => {
 
   let totalSections = 0;
   let totalInserted = 0;
+  let totalDeleted = 0;
+
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
     const termsBatchIds = termsBatch.map((term) => term.id);
+    const session = await connection.startSession();
+    try {
+      await session.withTransaction(async () => {
+        log.trace(
+          `Fetching sections for terms ${termsBatch.map((term) => term.name).toLocaleString()}...`
+        );
 
-    log.trace(
-      `Fetching sections for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
-    );
+        const sections = await getSections(
+          log,
+          CLASS_APP_ID,
+          CLASS_APP_KEY,
+          termsBatchIds
+        );
 
-    const sections = await getSections(
-      log,
-      CLASS_APP_ID,
-      CLASS_APP_KEY,
-      termsBatchIds
-    );
+        log.info(`Fetched ${sections.length.toLocaleString()} sections.`);
 
-    log.info(`Fetched ${sections.length.toLocaleString()} sections.`);
-    if (sections.length === 0) {
-      log.error(`No sections found, skipping update.`);
-      return;
-    }
-    totalSections += sections.length;
+        if (sections.length === 0) {
+          throw new Error(`No sections found, skipping update`);
+        }
 
-    log.trace("Deleting sections to be replaced...");
+        log.trace("Deleting sections to be replaced...");
 
-    const { deletedCount } = await SectionModel.deleteMany({
-      termId: { $in: termsBatchIds },
-    });
+        const { deletedCount } = await SectionModel.deleteMany(
+          { termId: { $in: termsBatchIds } },
+          { session }
+        );
 
-    log.info(`Deleted ${deletedCount.toLocaleString()} sections.`);
+        log.trace(`Inserting batch ${i}`);
 
-    // Insert sections in batches of 5000
-    const insertBatchSize = 5000;
-    for (let i = 0; i < sections.length; i += insertBatchSize) {
-      const batch = sections.slice(i, i + insertBatchSize);
+        const { insertedCount } = await SectionModel.insertMany(sections, {
+          ordered: false,
+          rawResult: true,
+          session,
+        });
 
-      log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
+        // avoid replacing data if a non-negligible amount is deleted
+        if (insertedCount / deletedCount <= 0.9) {
+          throw new Error(
+            `Deleted ${deletedCount} sections and inserted only ${insertedCount} in batch ${i}; aborting data insertion process`
+          );
+        }
 
-      const { insertedCount } = await SectionModel.insertMany(batch, {
-        ordered: false,
-        rawResult: true,
+        totalDeleted += deletedCount;
+        totalInserted += insertedCount;
+        totalSections += sections.length;
       });
-      totalInserted += insertedCount;
+    } catch (error: any) {
+      log.error(`Error inserting batch: ${error.message}`);
+    } finally {
+      await session.endSession();
     }
   }
 
+  log.info(`Deleted ${totalDeleted.toLocaleString()} total sections`);
   log.info(
     `Completed updating database with ${totalSections.toLocaleString()} sections, inserted ${totalInserted.toLocaleString()} documents.`
   );

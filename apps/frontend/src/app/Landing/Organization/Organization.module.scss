@@ -60,3 +60,70 @@ $breakpoint: 660px;
     max-width: 100%;
   }
 }
+
+.sponsorsSection {
+  padding: 60px 40px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.sponsorsContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.sponsorsTitle {
+  color: var(--heading-color);
+  font-size: 32px;
+  font-weight: var(--font-medium);
+  line-height: 1.25;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.sponsorsText {
+  font-size: var(--text-16);
+  color: var(--paragraph-color);
+  line-height: 1.5;
+  margin: 0 0 32px 0;
+  max-width: 400px;
+  text-align: center;
+}
+
+.sponsorsLogos {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+
+  @media (max-width: $breakpoint) {
+    gap: 32px;
+  }
+}
+
+.sponsorLink {
+  display: block;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.sponsorLogo {
+  max-width: 200px;
+  height: auto;
+  display: block;
+
+  @media (max-width: $breakpoint) {
+    max-width: 150px;
+  }
+}

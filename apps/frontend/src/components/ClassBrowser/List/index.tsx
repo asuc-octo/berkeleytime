@@ -9,10 +9,16 @@ import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
 import useBrowser from "../useBrowser";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
 
 interface ListProps {
-  onSelect: (subject: string, courseNumber: string, number: string) => void;
+  onSelect: (
+    subject: string,
+    courseNumber: string,
+    number: string,
+    sessionId: string
+  ) => void;
 }
 
 export default function List({ onSelect }: ListProps) {
@@ -83,7 +89,12 @@ export default function List({ onSelect }: ListProps) {
   const handleClassClick = (index: number) => {
     const selected = classes[index];
     if (!selected) return;
-    onSelect(selected.subject, selected.courseNumber, selected.number);
+    onSelect(
+      selected.subject,
+      selected.courseNumber,
+      selected.number,
+      selected.sessionId
+    );
   };
 
   const isLoading = loading && classes.length === 0;
@@ -113,7 +124,8 @@ export default function List({ onSelect }: ListProps) {
                     onSelect(
                       _class.subject,
                       _class.courseNumber,
-                      _class.number
+                      _class.number,
+                      _class.sessionId
                     );
                   }}
                 />

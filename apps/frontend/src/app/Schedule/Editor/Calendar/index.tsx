@@ -62,9 +62,9 @@ export default function Calendar({
           subject,
           number,
           active: currentSection?.section.sectionId === sectionId,
-          days: days ?? undefined,
-          startTime,
-          endTime,
+          days: days ? [days[6], ...days.slice(0, 6)] : undefined,
+          startTime: startTime ?? "",
+          endTime: endTime ?? "",
           color,
         });
       }
@@ -182,9 +182,12 @@ export default function Calendar({
           const previousWeekHadDayOne = previousWeek?.some(
             (day) => day.date.date() === 1
           );
-          const showMonthHeader = hasDayOne && !previousWeekHadDayOne;
+          const showMonthHeader =
+            (hasDayOne && !previousWeekHadDayOne) || index === 0;
           const firstDayOfMonth = showMonthHeader
-            ? days.find((day) => day.date.date() === 1)?.date
+            ? index === 0
+              ? first
+              : days.find((day) => day.date.date() === 1)?.date
             : null;
 
           return (
@@ -196,8 +199,8 @@ export default function Calendar({
               )}
               <Week
                 days={days}
-                finals={index === 18}
-                dead={index === 17}
+                finals={index === weeks.length - 1}
+                dead={index === weeks.length - 2}
                 first={first}
                 last={last}
               />

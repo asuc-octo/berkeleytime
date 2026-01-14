@@ -1,3 +1,5 @@
+import { connection } from "mongoose";
+
 import {
   CourseModel,
   GradeCounts,
@@ -14,7 +16,7 @@ import {
   getRecentPastTerms,
 } from "../shared/term-selectors";
 
-const TERMS_PER_API_BATCH = 100;
+const TERMS_PER_API_BATCH = 50;
 
 interface AggregatedCourseGradeSummary extends GradeCounts {
   _id: {
@@ -141,54 +143,74 @@ const updateGradeDistributions = async (
 
   let totalGradeDistributions = 0;
   let totalInserted = 0;
+  let totalDeleted = 0;
+
+  // Insert grade distributions in batches of 50 terms
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
     const termsBatchIds = termsBatch.map((term) => term.id);
+    const session = await connection.startSession();
+    try {
+      await session.withTransaction(async () => {
+        log.trace(
+          `Fetching grade distributions for terms ${termsBatch.map((term) => term.name).toLocaleString()}...`
+        );
 
-    log.trace(
-      `Fetching grade distributions for term ${termsBatch.map((term) => term.name).toLocaleString()}...`
-    );
+        const gradeDistributions = await getGradeDistributionDataByTerms(
+          DATABASE,
+          S3_OUTPUT,
+          REGION_NAME,
+          WORKGROUP,
+          termsBatchIds
+        );
 
-    const gradeDistributions = await getGradeDistributionDataByTerms(
-      DATABASE,
-      S3_OUTPUT,
-      REGION_NAME,
-      WORKGROUP,
-      termsBatchIds
-    );
+        log.info(
+          `Fetched ${gradeDistributions.length.toLocaleString()} grade distributions.`
+        );
 
-    log.info(
-      `Fetched ${gradeDistributions.length.toLocaleString()} grade distributions.`
-    );
-    if (gradeDistributions.length === 0) {
-      log.error("No grade distributions found, skipping update");
-      return;
-    }
+        if (gradeDistributions.length === 0) {
+          throw new Error(`No grade distributions found, skipping update`);
+        }
 
-    log.trace("Deleting grade distributions to be replaced...");
+        log.trace("Deleting grade distributions to be replaced...");
 
-    const { deletedCount } = await GradeDistributionModel.deleteMany({
-      termId: { $in: termsBatchIds },
-    });
+        const { deletedCount } = await GradeDistributionModel.deleteMany(
+          { termId: { $in: termsBatchIds } },
+          { session }
+        );
 
-    log.info(`Deleted ${deletedCount.toLocaleString()} grade distributions.`);
+        log.trace(`Inserting batch ${i}`);
 
-    // Insert grade distributions in batches of 5000
-    let totalInserted = 0;
-    const insertBatchSize = 5000;
-    for (let i = 0; i < gradeDistributions.length; i += insertBatchSize) {
-      const batch = gradeDistributions.slice(i, i + insertBatchSize);
+        const { insertedCount } = await GradeDistributionModel.insertMany(
+          gradeDistributions,
+          {
+            ordered: false,
+            rawResult: true,
+            session,
+          }
+        );
 
-      log.trace(`Inserting batch ${i / insertBatchSize + 1}`);
+        // avoid replacing data if a non-negligible amount is deleted
+        if (insertedCount / deletedCount <= 0.9) {
+          throw new Error(
+            `Deleted ${deletedCount} grade distributions and inserted only ${insertedCount} in batch ${i}; aborting data insertion process`
+          );
+        }
 
-      const { insertedCount } = await GradeDistributionModel.insertMany(batch, {
-        ordered: false,
-        rawResult: true,
+        totalDeleted += deletedCount;
+        totalInserted += insertedCount;
+        totalGradeDistributions += gradeDistributions.length;
       });
-      totalInserted += insertedCount;
+    } catch (error: any) {
+      log.error(`Error inserting batch: ${error.message}`);
+    } finally {
+      await session.endSession();
     }
   }
 
+  log.info(
+    `Deleted ${totalDeleted.toLocaleString()} total grade distributions`
+  );
   log.info(
     `Completed updating database with ${totalGradeDistributions.toLocaleString()} grade distributions, inserted ${totalInserted.toLocaleString()} documents.`
   );

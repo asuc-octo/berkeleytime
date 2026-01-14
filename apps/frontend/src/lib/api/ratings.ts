@@ -2,6 +2,7 @@ import { gql } from "@apollo/client";
 
 import {
   GetAggregatedRatingsQuery,
+  GetClassRatingsDataQuery,
   GetUserRatingsQuery,
 } from "../generated/graphql";
 
@@ -231,3 +232,5 @@ export const GET_CLASS_RATINGS_DATA = gql`
     }
   }
 `;
+
+export type IUserRatings = NonNullable<GetClassRatingsDataQuery["userRatings"]>;

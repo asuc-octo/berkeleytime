@@ -6,6 +6,7 @@ export const courseTypeDef = gql`
 
   type Query {
     course(subject: String!, number: CourseNumber!): Course
+    courseById(courseId: CourseIdentifier!): Course
     courses: [Course!]!
   }
 

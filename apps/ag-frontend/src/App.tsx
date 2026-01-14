@@ -48,8 +48,8 @@ const router = createBrowserRouter([
 const client = new ApolloClient({
   link: new HttpLink({
     uri: import.meta.env.DEV
-      ? "http://localhost:8080/api/graphql"
-      : "https://beta.berkeleytime.com/api/graphql",
+      ? "http://localhost:3000/api/graphql"
+      : "https://berkeleytime.com/api/graphql",
     credentials: "include",
   }),
   cache: new InMemoryCache(),

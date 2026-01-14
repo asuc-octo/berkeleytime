@@ -1,9 +1,10 @@
-import { ComponentPropsWithRef } from "react";
+import { ComponentPropsWithRef, ReactNode } from "react";
 
 import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
   InfoCircle,
+  Lock,
   Star,
   Trash,
 } from "iconoir-react";
@@ -17,7 +18,6 @@ import { IClass, IClassCourse } from "@/lib/api";
 import { IEnrollmentSingular } from "@/lib/api/enrollment";
 import { Color, Semester } from "@/lib/generated/graphql";
 
-import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
 
 const formatSemester = (semester: Semester): string => {
@@ -80,12 +80,12 @@ interface ClassProps {
   onExpandedChange?: (expanded: boolean) => void;
   onDelete?: () => void;
   leftBorderColor?: Color;
-  onColorSelect?: (c: Color) => void;
-  acceptedColors?: Color[];
   bookmarked?: boolean;
   bookmarkToggle?: () => void;
   active?: boolean;
   wrapDescription?: boolean;
+  customActionMenu?: ReactNode;
+  onUnlock?: () => void;
 }
 
 export default function ClassCard({
@@ -95,14 +95,16 @@ export default function ClassCard({
   onExpandedChange,
   onDelete,
   leftBorderColor = undefined,
-  onColorSelect = undefined,
-  acceptedColors = Object.values(Color),
   bookmarked = false,
   children,
   active = false,
   wrapDescription = false,
+  customActionMenu,
+  onUnlock = undefined,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
+  // bookmarked is part of the interface but not used in this component
+  void bookmarked;
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 
@@ -209,25 +211,36 @@ export default function ClassCard({
               }}
             />
           )}
-          {onColorSelect && leftBorderColor && (
-            <ColorSelector
-              selectedColor={leftBorderColor}
-              allowedColors={acceptedColors}
-              onColorSelect={onColorSelect}
-            />
-          )}
-          {onDelete && (
+          {onUnlock && (
             <Card.ActionIcon
               data-action-icon
-              isDelete
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                onDelete();
+                onUnlock();
               }}
             >
-              <Trash />
+              <Lock />
             </Card.ActionIcon>
+          )}
+          {customActionMenu ? (
+            customActionMenu
+          ) : (
+            <>
+              {onDelete && (
+                <Card.ActionIcon
+                  data-action-icon
+                  isDelete
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    onDelete();
+                  }}
+                >
+                  <Trash />
+                </Card.ActionIcon>
+              )}
+            </>
           )}
         </Card.Actions>
       </Card.ColumnHeader>

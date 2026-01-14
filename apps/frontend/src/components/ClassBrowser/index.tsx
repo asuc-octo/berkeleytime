@@ -45,7 +45,12 @@ const getEffectiveOrder = (
 };
 
 interface ClassBrowserProps {
-  onSelect: (subject: string, courseNumber: string, number: string) => void;
+  onSelect: (
+    subject: string,
+    courseNumber: string,
+    number: string,
+    sessionId: string
+  ) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
