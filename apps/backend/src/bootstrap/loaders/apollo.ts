@@ -8,6 +8,7 @@ import {
 } from "@apollo/utils.keyvaluecache";
 import { ApolloArmor } from "@escape.tech/graphql-armor";
 import { createHash } from "crypto";
+import { OperationDefinitionNode } from "graphql";
 import { RedisClientType } from "redis";
 import { gunzipSync, gzipSync } from "zlib";
 
@@ -21,9 +22,13 @@ import { buildSchema } from "../graphql/buildSchema";
  * @param operation - The parsed GraphQL operation from the request context
  * @returns The name of the first query field, or null if not found
  */
-function getOperationName(operation: any): string | null {
+function getOperationName(
+  operation: OperationDefinitionNode | undefined
+): string | null {
   const firstSelection = operation?.selectionSet?.selections?.[0];
-  return firstSelection?.name?.value || null;
+  if (firstSelection && "name" in firstSelection)
+    return firstSelection.name.value;
+  return null;
 }
 
 class RedisCache implements KeyValueCache {

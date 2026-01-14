@@ -11,32 +11,6 @@
   align-items: center;
   gap: 12px;
   margin-top: 12px;
-
-  .checkbox {
-    width: 16px;
-    height: 16px;
-    display: grid;
-    place-items: center;
-    border: 2px solid var(--label-color);
-    color: var(--heading-color);
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-
-    & + .text .value {
-      color: var(--label-color);
-    }
-
-    &[data-state="checked"] {
-      background-color: var(--blue-500);
-      border-color: var(--blue-500);
-      color: white;
-
-      & + .text .value {
-        color: var(--heading-color);
-      }
-    }
-  }
 }
 
 .primary {

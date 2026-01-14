@@ -123,42 +123,6 @@
   }
 }
 
-.toggle {
-  width: 44px;
-  height: 24px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-
-  &.toggleOff {
-    background: var(--border-color);
-  }
-
-  &.toggleOn {
-    background: var(--primary-color);
-  }
-}
-
-.toggleCircle {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: white;
-  position: absolute;
-  top: 2px;
-  transition: all 0.2s ease;
-
-  .toggleOff & {
-    left: 2px;
-  }
-
-  .toggleOn & {
-    left: 22px;
-  }
-}
-
 // Labels
 .labelsContainer {
   display: flex;

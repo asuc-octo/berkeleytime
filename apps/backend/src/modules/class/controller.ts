@@ -269,7 +269,7 @@ export const flushViewCounts = async (
     }
 
     return { flushed: result.modifiedCount, errors: 0 };
-  } catch (error) {
+  } catch {
     return { flushed: 0, errors: operations.length };
   }
 };

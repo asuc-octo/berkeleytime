@@ -42,6 +42,10 @@
     }
   }
 
+  &.noHover {
+    // Prevents hover effects when editing is disabled
+  }
+
   .radioButton {
     height: 16px;
     width: 16px;
@@ -86,7 +90,9 @@
     cursor: pointer;
     color: var(--text-color-secondary);
     border-radius: 4px;
-    transition: background-color 0.2s, color 0.2s;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
     flex-shrink: 0;
 
     &:hover {

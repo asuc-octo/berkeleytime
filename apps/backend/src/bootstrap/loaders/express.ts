@@ -73,6 +73,7 @@ export default async (
         user: {
           ...req.user,
           isAuthenticated: req.isAuthenticated(),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           logout: (callback: (err: any) => void) => req.logout(callback),
         },
       }),

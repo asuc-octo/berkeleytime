@@ -18,9 +18,7 @@ import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalytic
 import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
 import {
   type CourseOutput,
-  DARK_COLORS,
   type Input,
-  LIGHT_COLORS,
   getInputSearchParam,
 } from "@/components/CourseAnalytics/types";
 import CourseSelectionCard from "@/components/CourseSelectionCard";

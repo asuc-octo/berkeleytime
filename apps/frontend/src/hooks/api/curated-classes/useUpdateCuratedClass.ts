@@ -4,50 +4,50 @@ import { Reference } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  CuratedClassIdentifier,
-  ICuratedClassInput,
-  READ_CURATED_CLASS,
-  UPDATE_CURATED_CLASS,
-  UpdateCuratedClassResponse,
-} from "@/lib/api";
+  GetCuratedClassDocument,
+  UpdateCuratedClassDocument,
+  UpdateCuratedClassInput,
+  UpdateCuratedClassMutation,
+  UpdateCuratedClassMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useUpdateCuratedClass = () => {
-  const mutation = useMutation<UpdateCuratedClassResponse>(
-    UPDATE_CURATED_CLASS,
-    {
-      update(cache, { data }) {
-        const curatedClass = data?.updateCuratedClass;
+  const mutation = useMutation(UpdateCuratedClassDocument, {
+    update(cache, { data }) {
+      const curatedClass = data?.updateCuratedClass;
 
-        if (!curatedClass) return;
+      if (!curatedClass) return;
 
-        cache.writeQuery({
-          query: READ_CURATED_CLASS,
-          variables: { id: curatedClass._id },
-          data: {
-            curatedClass,
-          },
-        });
+      cache.writeQuery({
+        query: GetCuratedClassDocument,
+        variables: { id: curatedClass._id },
+        data: {
+          curatedClass,
+        },
+      });
 
-        cache.modify({
-          fields: {
-            curatedClasses: (existingCuratedClasses = [], { readField }) =>
-              existingCuratedClasses.map((reference: Reference) =>
-                readField("_id", reference) === curatedClass._id
-                  ? { ...reference, ...curatedClass }
-                  : reference
-              ),
-          },
-        });
-      },
-    }
-  );
+      cache.modify({
+        fields: {
+          curatedClasses: (existingCuratedClasses = [], { readField }) =>
+            existingCuratedClasses.map((reference: Reference) =>
+              readField("_id", reference) === curatedClass._id
+                ? { ...reference, ...curatedClass }
+                : reference
+            ),
+        },
+      });
+    },
+  });
 
   const updateCuratedClass = useCallback(
     async (
-      id: CuratedClassIdentifier,
-      curatedClass: Partial<ICuratedClassInput>,
+      id: string,
+      curatedClass: UpdateCuratedClassInput,
       options?: Omit<
-        useMutation.Options<UpdateCuratedClassResponse>,
+        useMutation.Options<
+          UpdateCuratedClassMutation,
+          UpdateCuratedClassMutationVariables
+        >,
         "variables"
       >
     ) => {

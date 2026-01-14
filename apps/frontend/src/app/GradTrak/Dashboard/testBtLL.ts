@@ -75,7 +75,7 @@ Function<List<Requirement>>() main (){
   // 2 H/SS Upper div
   List<Course> hss_upper_div_courses filter(courses, (c) {
     boolean is_hss_course hss_finder(c)
-    boolean is_upper_div regex_match(get_attr(c, "number"), "\d\d\d")
+    boolean is_upper_div regex_match(get_attr(c, "number"), "\\d\\d\\d")
     boolean return and([is_hss_course, is_upper_div])
   })
   Requirement hss_upper_div {"Minimum 2 H/SS Upper Div Courses", greater_than(length(hss_upper_div_courses), 1)}

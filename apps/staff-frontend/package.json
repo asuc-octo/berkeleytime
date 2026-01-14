@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint src/",
-    "start": "serve -s dist -p 3002"
+    "start": "serve -s dist -p 3002",
+    "type-check": "tsc --noEmit --incremental false"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",

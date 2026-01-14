@@ -20,6 +20,25 @@ export const backendConfig = [
 ];
 
 /** @type { import("eslint").Linter.Config[] } */
+export const datapullerConfig = [
+  { ignores: ["**/generated-types/**", "**/generated-typedefs/**"] },
+  js.configs.recommended,
+  ...ts.configs.recommended,
+  prettier,
+  {
+    files: ["**/*.ts"],
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
+    },
+  },
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+];
+
+/** @type { import("eslint").Linter.Config[] } */
 export const frontendConfig = [
   js.configs.recommended,
   ...ts.configs.recommended,

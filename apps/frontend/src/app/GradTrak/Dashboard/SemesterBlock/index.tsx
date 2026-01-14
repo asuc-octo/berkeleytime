@@ -248,7 +248,7 @@ function SemesterBlock({
     try {
       await setCourses(
         semesterId,
-        updatedClasses.map(({ course, ...cls }) => cls)
+        updatedClasses.map(({ course: _course, ...cls }) => cls)
       );
     } catch (error) {
       setSelectedCourses(oldClasses);
@@ -300,7 +300,7 @@ function SemesterBlock({
     try {
       await setCourses(
         semesterId,
-        newClasses.map(({ course, ...cls }) => cls)
+        newClasses.map(({ course: _course, ...cls }) => cls)
       );
     } catch (error) {
       setSelectedCourses(oldClasses);
@@ -443,7 +443,7 @@ function SemesterBlock({
         for (const semesterId of semestersToUpdate) {
           await setCourses(
             semesterId,
-            updatedSemesters[semesterId].map(({ course, ...cls }) => cls),
+            updatedSemesters[semesterId].map(({ course: _course, ...cls }) => cls),
             {
               fetchPolicy: "no-cache",
             }
@@ -515,7 +515,7 @@ function SemesterBlock({
             />
           </div>
           <Flex direction="row" gap="6px">
-            <div className={styles.dropdown}>
+            <div>
               <DropdownMenu.Root modal={false}>
                 <DropdownMenu.Trigger asChild>
                   <MoreHoriz className={styles.actionButton} />

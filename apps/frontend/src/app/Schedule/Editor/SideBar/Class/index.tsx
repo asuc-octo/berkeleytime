@@ -179,8 +179,8 @@ export default function Class({
 
   // Color submenu
   const colorSubItems: MenuItem[] = acceptedColors.map((c) => ({
-    name: capitalizeColor(c as any),
-    icon: <ColorDot color={c as any} />,
+    name: capitalizeColor(c),
+    icon: <ColorDot color={c} />,
     onClick: () =>
       onColorChange(_class.subject, _class.courseNumber, _class.number, c),
   }));

@@ -59,11 +59,6 @@ body {
       margin: 0;
       scrollbar-width: thin;
 
-      // &.has-items {
-      //   /* keep visual separation from footer when items exist */
-      //   /* no border-bottom here so footer border can be sticky */
-      // }
-
       &::-webkit-scrollbar-thumb {
         background-color: #8a8a8a; /* Light gray scrollbar handle */
       }

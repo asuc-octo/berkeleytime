@@ -34,7 +34,7 @@ export const getRatingAnalyticsData = async (context: RequestContext) => {
   );
 
   return ratings.map((rating) => ({
-    createdAt: (rating as any).createdAt.toISOString(),
+    createdAt: rating.createdAt.toISOString(),
     userEmail: userEmailMap.get(rating.createdBy.toString()) || "unknown",
     courseKey: `${rating.subject} ${rating.courseNumber}`,
   }));
@@ -59,7 +59,7 @@ export const getRatingMetricsAnalyticsData = async (
     .lean();
 
   return ratings.map((rating) => ({
-    createdAt: (rating as any).createdAt.toISOString(),
+    createdAt: rating.createdAt.toISOString(),
     metricName: rating.metricName as MetricName,
     value: rating.value,
     courseKey: `${rating.subject} ${rating.courseNumber}`,
@@ -94,7 +94,7 @@ export const getOptionalResponseAnalyticsData = async (
   allRatings.forEach((rating) => {
     const key = `${rating.createdBy}-${rating.subject}-${rating.courseNumber}-${rating.semester}-${rating.year}-${rating.classNumber}`;
     const existing = submissionMap.get(key);
-    const createdAt = (rating as any).createdAt as Date;
+    const createdAt = rating.createdAt as Date;
     const isOptional =
       rating.metricName === "Recording" || rating.metricName === "Attendance";
 

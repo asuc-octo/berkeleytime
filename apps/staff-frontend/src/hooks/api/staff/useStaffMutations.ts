@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { DocumentNode, useMutation } from "@apollo/client";
 
 import {
   ALL_STAFF_MEMBERS,
@@ -77,7 +77,10 @@ export const useUpdateStaffInfo = () => {
     input: UpdateStaffInfoInput,
     userId?: string
   ) => {
-    const refetchQueries: any[] = [ALL_STAFF_MEMBERS];
+    const refetchQueries: {
+      query: DocumentNode;
+      variables?: Record<string, string>;
+    }[] = [{ query: ALL_STAFF_MEMBERS }];
     if (userId) {
       refetchQueries.push({
         query: STAFF_MEMBER_BY_USER_ID,
@@ -126,7 +129,10 @@ export const useDeleteStaffMember = () => {
     useMutation<DeleteStaffMemberResponse>(DELETE_STAFF_MEMBER);
 
   const deleteStaffMember = async (memberId: string, userId?: string) => {
-    const refetchQueries: any[] = [ALL_STAFF_MEMBERS];
+    const refetchQueries: {
+      query: DocumentNode;
+      variables?: Record<string, string>;
+    }[] = [{ query: ALL_STAFF_MEMBERS }];
     if (userId) {
       refetchQueries.push({
         query: STAFF_MEMBER_BY_USER_ID,

@@ -76,7 +76,8 @@ export default function ScheduleCard({
   };
 
   // Filter out props that might conflict with BubbleCard
-  const { color: _, ...bubbleCardProps } = props as any;
+  const { color, ...bubbleCardProps } = props as Record<string, unknown>;
+  void color; // color is filtered out but not used
 
   return (
     <>

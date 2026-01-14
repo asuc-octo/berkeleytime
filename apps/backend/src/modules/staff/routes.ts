@@ -74,7 +74,7 @@ export default (app: Application): void => {
           fileName,
           url: `${config.s3.imagesAccessUrl}/${fileName}`, // You may want to construct a full URL here if needed
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("[Staff Upload API] Error:", error);
 
         // Handle multer errors
@@ -89,7 +89,12 @@ export default (app: Application): void => {
         }
 
         // Handle file size errors
-        if (error.code === "LIMIT_FILE_SIZE") {
+        if (
+          error &&
+          typeof error === "object" &&
+          "code" in error &&
+          error.code === "LIMIT_FILE_SIZE"
+        ) {
           res.status(400).json({
             error: "File too large. Maximum file size is 5MB",
           });
@@ -98,7 +103,7 @@ export default (app: Application): void => {
 
         res.status(500).json({
           error: "Failed to upload image",
-          message: error.message,
+          message: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }

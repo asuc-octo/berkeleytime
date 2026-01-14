@@ -53,19 +53,19 @@ const resolvers: CourseModule.Resolvers = {
   }),
 
   Query: {
-    course: async (_, { subject, number }, _context, _info) => {
+    course: async (_, { subject, number }) => {
       const course = await getCourse(subject, number);
 
       return course as unknown as CourseModule.Course;
     },
 
-    courseById: async (_, { courseId }, _context, _info) => {
+    courseById: async (_, { courseId }) => {
       const course = await getCourseById(courseId);
 
       return course as unknown as CourseModule.Course;
     },
 
-    courses: async (_, _arguments, _context, _info) => {
+    courses: async () => {
       const courses = getCourses();
 
       return courses as unknown as CourseModule.Course[];

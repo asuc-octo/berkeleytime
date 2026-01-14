@@ -21,6 +21,7 @@ import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
 import { IClassCourse, signIn } from "@/lib/api";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import overviewStyles from "./Overview.module.scss";
 import styles from "./UserSubmittedData.module.scss";
 

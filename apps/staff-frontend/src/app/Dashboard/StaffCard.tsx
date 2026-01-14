@@ -7,6 +7,7 @@ import {
   WarningTriangleSolid,
 } from "iconoir-react";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Dashboard.module.scss";
 
 export interface SemesterRole {

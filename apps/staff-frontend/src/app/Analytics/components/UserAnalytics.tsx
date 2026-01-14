@@ -279,9 +279,9 @@ export function UserGrowthBlock() {
 export function SignupHourHistogramBlock() {
   const { data: rawData, loading, error } = useUserCreationAnalyticsData();
 
-  const { hourlyData, peakHour, totalUsers } = useMemo(() => {
+  const { hourlyData, peakHour } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
-      return { hourlyData: [], peakHour: null, totalUsers: 0 };
+      return { hourlyData: [], peakHour: null };
     }
 
     const now = new Date();

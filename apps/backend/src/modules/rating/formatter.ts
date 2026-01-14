@@ -95,7 +95,15 @@ export const formatUserClassRatings = (ratings: UserClass): UserClass => {
   };
 };
 
-export const formatSemesterRatings = (semesters: any[]): SemesterRatings[] => {
+interface SemesterRatingInput {
+  year: number;
+  semester: string;
+  maxMetricCount?: number | null;
+}
+
+export const formatSemesterRatings = (
+  semesters: SemesterRatingInput[]
+): SemesterRatings[] => {
   return semesters.map((semester) => ({
     year: semester.year,
     semester: semester.semester as Semester,

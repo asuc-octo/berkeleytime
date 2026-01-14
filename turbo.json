@@ -21,7 +21,18 @@
         "*/**/generated/**"
       ]
     },
-    "lint": {},
+    "lint": {
+      "cache": false,
+      "dependsOn": [
+        "generate"
+      ]
+    },
+    "type-check": {
+      "cache": false,
+      "dependsOn": [
+        "generate"
+      ]
+    },
     "start": {
       "dependsOn": [
         "generate",

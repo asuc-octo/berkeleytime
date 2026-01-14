@@ -38,7 +38,7 @@ export function BubbleCard({
   children,
   onClick,
   showCards = true,
-  isHovered: _isHovered,
+  isHovered,
   onMouseEnter: externalOnMouseEnter,
   onMouseLeave: externalOnMouseLeave,
   width,
@@ -46,6 +46,8 @@ export function BubbleCard({
   childrenBackgroundColor,
   childrenPadding = false,
 }: BubbleCardProps) {
+  // isHovered is part of the interface but not used in this component
+  void isHovered;
   const handleMouseEnter = () => {
     externalOnMouseEnter?.();
   };

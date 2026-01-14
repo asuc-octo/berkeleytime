@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.turbo/
+*.log
+build/
+
+# Generated code (AI should use but not modify directly)
+**/generated-types/
+**/generated-typedefs/
+**/generated/
+
+# Database files
+/db/
+/data/
+*.dump
+*.gz
+*.sql
+mdb.archive
+
+# Environment and secrets
+.env
+.env.*
+*.cert
+*.key
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Large static/build artifacts
+storybook-static/
+*.tgz
+*.rdb
+prod-backup.gz
+stage_backup.gz
+
+# Lock files (very large, not useful for AI understanding)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# OS files
+*.DS_Store
+Thumbs.db
+
+# MongoDB data files (if any leak out)
+*.wt
+WiredTiger*
+
+# Helm chart packages
+*.tgz
+

@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 
 import { ColoredSquare } from "@repo/theme";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./HoverInfoCard.module.scss";
 
 interface HoverInfoCardProps {

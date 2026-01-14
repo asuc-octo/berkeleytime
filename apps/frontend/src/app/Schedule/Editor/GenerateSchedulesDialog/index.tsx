@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button, ColoredSquare, Dialog, Flex } from "@repo/theme";
-import { Color } from "@repo/theme";
 
 import ScheduleSummary from "@/components/ScheduleSummary";
 import { useUpdateSchedule } from "@/hooks/api";

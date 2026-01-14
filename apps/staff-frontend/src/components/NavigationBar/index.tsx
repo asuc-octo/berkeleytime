@@ -3,7 +3,8 @@ import { Link, NavLink } from "react-router-dom";
 
 import { Button, DropdownMenu, Flex, MenuItem } from "@repo/theme";
 
-import { BASE } from "../../App";
+import { BASE } from "@/helper";
+
 import { useReadUser } from "../../hooks/api/users";
 import { signOut } from "../../lib/api/users";
 import styles from "./NavigationBar.module.scss";
@@ -22,6 +23,12 @@ export default function NavigationBar() {
         </NavLink>
         <NavLink to="/analytics">
           {({ isActive }) => <MenuItem active={isActive}>Analytics</MenuItem>}
+        </NavLink>
+        <NavLink to="/banners">
+          {({ isActive }) => <MenuItem active={isActive}>Banners</MenuItem>}
+        </NavLink>
+        <NavLink to="/redirects">
+          {({ isActive }) => <MenuItem active={isActive}>Redirects</MenuItem>}
         </NavLink>
       </div>
       {user && (

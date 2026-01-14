@@ -7,14 +7,7 @@ import { IScheduleEvent } from "@/lib/api";
 import { ScheduleEvent, SectionColor } from "../../schedule";
 import Event from "./Event";
 import styles from "./Week.module.scss";
-
-// Local getY function that starts at midnight (12 AM) instead of 6 AM
-export const getY = (time: string) => {
-  const [hour, minute] = time.split(":");
-  const hourNum = parseInt(hour, 10);
-  const minuteNum = parseInt(minute, 10);
-  return hourNum * 60 + minuteNum;
-};
+import { getY } from "./helpers.ts";
 
 // You have to trust me on this math
 const adjustAttachedEvents = (

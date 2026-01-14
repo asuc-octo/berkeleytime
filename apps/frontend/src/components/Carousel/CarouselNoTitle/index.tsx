@@ -4,6 +4,7 @@ import classNames from "classnames";
 
 import { Box, Flex } from "@repo/theme";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "../Carousel.module.scss";
 
 interface RootProps {

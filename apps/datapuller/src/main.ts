@@ -5,6 +5,7 @@ import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
 import enrollmentTimeframePuller from "./pullers/enrollment-timeframe";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
+import migrationsPuller from "./pullers/migrations";
 import sectionsPuller from "./pullers/sections";
 import termsPuller from "./pullers/terms";
 import setup from "./shared";
@@ -30,6 +31,8 @@ const pullerMap: {
   "enrollment-timeframe": enrollmentTimeframePuller.syncEnrollmentTimeframe,
   "terms-all": termsPuller.allTerms,
   "terms-nearby": termsPuller.nearbyTerms,
+  "migrate-aggregated-metrics-classid":
+    migrationsPuller.backfillAggregatedMetricsClassId,
 } as const;
 
 const runPuller = async () => {

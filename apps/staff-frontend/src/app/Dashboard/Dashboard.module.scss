@@ -238,7 +238,6 @@
   margin-bottom: 12px;
 }
 
-
 .semesterRole {
   display: flex;
   align-items: center;
@@ -354,7 +353,9 @@
   font-size: 14px;
   color: var(--label-color);
   cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 
   &:hover {
     border-color: var(--label-color);
@@ -392,15 +393,6 @@
   font-size: 12px;
   color: var(--label-color);
   margin-top: 6px;
-}
-
-.checkboxField {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--paragraph-color);
 }
 
 .photoUploadRow {
@@ -453,7 +445,9 @@
   border-radius: 12px;
   cursor: pointer;
   overflow: hidden;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
 
   &:hover {
     border-color: var(--label-color);
@@ -536,7 +530,9 @@
   color: var(--label-color);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     background-color: var(--button-hover-color);

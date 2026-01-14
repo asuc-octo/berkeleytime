@@ -18,7 +18,6 @@ import { IClass, IClassCourse } from "@/lib/api";
 import { IEnrollmentSingular } from "@/lib/api/enrollment";
 import { Color, Semester } from "@/lib/generated/graphql";
 
-import ColorSelector from "../ColorSelector";
 import styles from "./ClassCard.module.scss";
 
 const formatSemester = (semester: Semester): string => {
@@ -104,6 +103,8 @@ export default function ClassCard({
   onUnlock = undefined,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
+  // bookmarked is part of the interface but not used in this component
+  void bookmarked;
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
 

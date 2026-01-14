@@ -25,7 +25,7 @@ import {
   Select,
 } from "@repo/theme";
 
-import { BASE } from "@/App";
+import { BASE } from "@/helper";
 
 import { useAllPods, useCreatePod, useDeletePod } from "../../hooks/api/pod";
 import {
@@ -39,6 +39,7 @@ import {
 } from "../../hooks/api/staff";
 import { useReadUser } from "../../hooks/api/users";
 import { CreatePodInput, Semester } from "../../lib/api/pod";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Dashboard.module.scss";
 import StaffCard, { SemesterRole, StaffMember } from "./StaffCard";
 

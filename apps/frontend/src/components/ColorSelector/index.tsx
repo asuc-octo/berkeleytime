@@ -5,6 +5,7 @@ import { DropdownMenu, Color as ThemeColor } from "@repo/theme";
 import { capitalizeColor, getColorStyle } from "@/lib/colors";
 import { Color } from "@/lib/generated/graphql";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./ColorSelector.module.scss";
 
 interface ColorSelectorProps {

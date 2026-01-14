@@ -1,5 +1,3 @@
-import { GraphQLResolveInfo } from "graphql";
-
 import {
   CourseModel,
   CuratedClassModel,
@@ -18,7 +16,7 @@ import { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { CuratedClassesModule } from "./generated-types/module-types";
 
-export const getCuratedClasses = async (_: GraphQLResolveInfo) => {
+export const getCuratedClasses = async () => {
   const curatedClasses = await CuratedClassModel.find().lean();
 
   const uniqueClasses = curatedClasses.reduce(

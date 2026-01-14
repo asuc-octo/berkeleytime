@@ -35,6 +35,7 @@ export default function CreateScheduleDialog({
 
   const [name, setName] = useState(defaultName);
   const [localTerm, setLocalTerm] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -84,16 +85,31 @@ export default function CreateScheduleDialog({
     [terms]
   );
 
-  const handleClick = async () => {
-    if (!term) return;
+  const selectedTerm = useMemo(() => {
+    if (!term) return null;
 
     const [semester, year] = term.split(" ");
 
-    const _term = terms?.find(
+    return terms?.find(
       (t) => t.semester === semester && t.year === Number(year)
     );
+  }, [term, terms]);
 
-    if (!_term) return;
+  const isSummerTerm = selectedTerm?.semester === Semester.Summer;
+
+  const sessionOptions = useMemo(() => {
+    if (!isSummerTerm || !selectedTerm?.sessions) return [];
+
+    return selectedTerm.sessions.map((session) => ({
+      value: session.id,
+      label: session.name,
+    }));
+  }, [isSummerTerm, selectedTerm]);
+
+  const handleClick = async () => {
+    if (!term || !selectedTerm) return;
+
+    const [semester, year] = term.split(" ");
 
     setLoading(true);
 
@@ -102,7 +118,10 @@ export default function CreateScheduleDialog({
       name: name,
       year: Number(year),
       semester: semester as Semester,
-      sessionId: _term.sessions?.[0]?.id ?? "",
+      sessionId:
+        isSummerTerm && sessionId
+          ? sessionId
+          : (selectedTerm.sessions?.[0]?.id ?? ""),
     });
 
     setLoading(false);
@@ -156,15 +175,38 @@ export default function CreateScheduleDialog({
                 placeholder="Select a semester"
                 disabled={loading || pending}
                 value={options?.find(({ value }) => value == term)?.value}
-                onChange={(value) =>
+                onChange={(value) => {
                   // @ts-expect-error - ReactSelect does not have a type for the value
-                  setLocalTerm(value)
-                }
+                  setLocalTerm(value);
+                  setSessionId(null);
+                }}
               />
             </Flex>
+            {isSummerTerm && (
+              <Flex direction="column" gap="2">
+                <Label>Session</Label>
+                <Select
+                  options={sessionOptions}
+                  placeholder="Select a session"
+                  disabled={loading || pending}
+                  value={
+                    sessionOptions?.find(({ value }) => value === sessionId)
+                      ?.value
+                  }
+                  onChange={(value) => setSessionId(value as string | null)}
+                />
+              </Flex>
+            )}
           </Dialog.Body>
           <Dialog.Footer>
-            <Button disabled={loading || pending} onClick={() => handleClick()}>
+            <Button
+              disabled={
+                loading ||
+                pending ||
+                (isSummerTerm && !sessionId && sessionOptions.length > 0)
+              }
+              onClick={() => handleClick()}
+            >
               Create
               <LoadingIndicator loading={loading}>
                 <ArrowRight />
