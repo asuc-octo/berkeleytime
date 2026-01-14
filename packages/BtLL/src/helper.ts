@@ -3,25 +3,37 @@ export const argSplit = (argString: string) => {
   const args: string[] = [];
   let lastComma = -1;
   let bracketCounter = 0;
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+
   for (let i = 0; i < argString.length; i++) {
-    if (
-      argString.charAt(i) === "(" ||
-      argString.charAt(i) === "[" ||
-      argString.charAt(i) === "{"
-    )
-      bracketCounter++;
-    if (
-      argString.charAt(i) === ")" ||
-      argString.charAt(i) === "]" ||
-      argString.charAt(i) === "}"
-    )
-      bracketCounter--;
-    if (argString.charAt(i) === "," && bracketCounter === 0) {
-      const arg = argString.substring(lastComma + 1, i).trim();
-      lastComma = i;
-      args.push(arg);
+    const ch = argString.charAt(i);
+
+    // Track single and double quotes separately so we don't split or
+    // count brackets inside quoted strings.
+    if (ch === "'" && !inDoubleQuote) {
+      inSingleQuote = !inSingleQuote;
+      continue;
+    }
+    if (ch === '"' && !inSingleQuote) {
+      inDoubleQuote = !inDoubleQuote;
+      continue;
+    }
+
+    const inQuote = inSingleQuote || inDoubleQuote;
+
+    if (!inQuote) {
+      if (ch === "(" || ch === "[" || ch === "{") bracketCounter++;
+      if (ch === ")" || ch === "]" || ch === "}") bracketCounter--;
+
+      if (ch === "," && bracketCounter === 0) {
+        const arg = argString.substring(lastComma + 1, i).trim();
+        lastComma = i;
+        args.push(arg);
+      }
     }
   }
+
   args.push(argString.substring(lastComma + 1).trim());
   return args;
 };

@@ -2,7 +2,16 @@ import { UnsupportedTypeError } from "./errors";
 import { definedFields as columnDefinedFields } from "./lib/column";
 import { definedFields as courseDefinedFields } from "./lib/course";
 import { definedFields as planDefinedFields } from "./lib/plan";
-import { definedFields as requirementDefinedFields } from "./lib/requirement";
+import {
+  andRequirementDefinedFields,
+  booleanRequirementDefinedFields,
+  courseListRequirementDefinedFields,
+  nCoursesRequirementDefinedFields,
+  numberRequirementDefinedFields,
+  orRequirementDefinedFields,
+  definedFields as requirementDefinedFields,
+  extendedByType as requirementExtendedByType,
+} from "./lib/requirement";
 
 export const BasicTypeList = [
   "raw",
@@ -23,6 +32,12 @@ export const ObjectTypeList = [
   "Course",
   "Label",
   "Requirement",
+  "BooleanRequirement",
+  "NCoursesRequirement",
+  "CourseListRequirement",
+  "AndRequirement",
+  "OrRequirement",
+  "NumberRequirement",
 ] as const;
 
 export type BasicType = (typeof BasicTypeList)[number];
@@ -39,7 +54,19 @@ typeAttributeMap.set("Plan", planDefinedFields);
 typeAttributeMap.set("Column", columnDefinedFields);
 typeAttributeMap.set("Requirement", requirementDefinedFields);
 typeAttributeMap.set("Course", courseDefinedFields);
+typeAttributeMap.set("BooleanRequirement", booleanRequirementDefinedFields);
+typeAttributeMap.set("NCoursesRequirement", nCoursesRequirementDefinedFields);
+typeAttributeMap.set(
+  "CourseListRequirement",
+  courseListRequirementDefinedFields
+);
+typeAttributeMap.set("AndRequirement", andRequirementDefinedFields);
+typeAttributeMap.set("OrRequirement", orRequirementDefinedFields);
+typeAttributeMap.set("NumberRequirement", numberRequirementDefinedFields);
 // typeAttributeMap.set("Label", Object.keys({} as Label));
+
+export const EXTENDED_BY_TYPE = new Map<Type, Type[]>();
+EXTENDED_BY_TYPE.set("Requirement", requirementExtendedByType);
 
 export const getNestedType = (t: string): Type | undefined => {
   const openBracket = t.indexOf("<");
@@ -93,11 +120,22 @@ export const isFunctionType = (t: string): boolean => {
 
 export const matchTypes = (t1: Type, t2: Type): boolean => {
   if (t1 === t2) return true;
-  const t1Generic = getNestedType(t1);
-  const t2Generic = getNestedType(t2);
-  if (t1Generic && t2Generic) return matchTypes(t1Generic, t2Generic);
-  if ((t1Generic && !t2Generic) || (!t1Generic && t2Generic)) return false;
-  if (isGenericType(t1) || isGenericType(t2)) return true;
+  const t1NestedType = getNestedType(t1);
+  const t2NestedType = getNestedType(t2);
+  const t1GenericType = isGenericType(t1);
+  const t2GenericType = isGenericType(t2);
+  if (t1NestedType && t2NestedType)
+    return matchTypes(t1NestedType, t2NestedType);
+  if ((t1NestedType && !t2NestedType) || (!t1NestedType && t2NestedType))
+    return (
+      (t1GenericType && !isNestedGenericType(t1)) ||
+      (t2GenericType && !isNestedGenericType(t2))
+    );
+  if (t1GenericType || t2GenericType) return true;
+  if (EXTENDED_BY_TYPE.has(t1))
+    return EXTENDED_BY_TYPE.get(t1)?.includes(t2) ?? false;
+  if (EXTENDED_BY_TYPE.has(t2))
+    return EXTENDED_BY_TYPE.get(t2)?.includes(t1) ?? false;
   return false;
 };
 

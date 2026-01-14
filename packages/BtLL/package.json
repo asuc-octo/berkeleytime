@@ -4,6 +4,9 @@
     "exports": {
       ".": "./src/index.ts"
     },
+    "scripts": {
+      "test": "npx tsx src/test.ts"
+    },
     "devDependencies": {
       "@repo/typescript-config": "*",
       "@types/node": "^24.7.0",

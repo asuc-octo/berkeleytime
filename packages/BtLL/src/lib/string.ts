@@ -32,4 +32,20 @@ export const functions: FunctionMapEntry[] = [
       },
     },
   ],
+  [
+    "console_log",
+    {
+      type: "Function<string>(T)",
+      data: {
+        eval: (_: Variables, str: Data<string>) => {
+          console.log(str.data);
+          return {
+            data: str.data.toString(),
+            type: "string",
+          };
+        },
+        args: ["T"],
+      },
+    },
+  ],
 ];

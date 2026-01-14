@@ -13,6 +13,7 @@ import {
   Variables,
   getNestedType,
   isGenericType,
+  matchTypes,
 } from "../types";
 
 export const constructor = (
@@ -30,7 +31,7 @@ export const constructor = (
   );
   if (isGenericType(t)) {
     if (data.length == 0) throw new SyntaxError(`Empty list must have type`);
-    if (!data.every((d) => d.type == data[0].type))
+    if (!data.every((d) => matchTypes(d.type, data[0].type)))
       throw new SyntaxError(
         `All elements in list must be of the same type: ${v}, ${data.map((d) => d.type).join(", ")}`
       );

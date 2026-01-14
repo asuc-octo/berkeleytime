@@ -20,8 +20,8 @@ export const runFunction = (
   const lines = code.split("\n");
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.trim() === "") continue;
-    if (line.trim().startsWith("//")) continue;
+    const trimmed = line.trim();
+    if (trimmed === "" || trimmed.startsWith("//")) continue;
     if (config.debug) console.log("Evaluating line:", line);
     const [type, var_name, expr, newIndex] = parseLine(lines, i);
     i = newIndex;

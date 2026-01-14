@@ -248,6 +248,7 @@ function SemesterBlock({
     try {
       await setCourses(
         semesterId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         updatedClasses.map(({ course: _course, ...cls }) => cls)
       );
     } catch (error) {
@@ -300,6 +301,7 @@ function SemesterBlock({
     try {
       await setCourses(
         semesterId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         newClasses.map(({ course: _course, ...cls }) => cls)
       );
     } catch (error) {
@@ -443,7 +445,10 @@ function SemesterBlock({
         for (const semesterId of semestersToUpdate) {
           await setCourses(
             semesterId,
-            updatedSemesters[semesterId].map(({ course: _course, ...cls }) => cls),
+            updatedSemesters[semesterId].map(
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              ({ course: _course, ...cls }) => cls
+            ),
             {
               fetchPolicy: "no-cache",
             }

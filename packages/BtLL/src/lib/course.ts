@@ -1,7 +1,5 @@
-import { ISelectedCourse } from "@/lib/api";
-import { GetCourseRequirementsQuery } from "@/lib/generated/graphql";
-
 import { argSplit } from "../helper";
+import { evaluate } from "../interpreter";
 import { BtLLConfig, Data, FunctionMapEntry, Variables } from "../types";
 
 export type Course = {
@@ -20,130 +18,27 @@ export const definedFields = [
   "breadthRequirements",
 ];
 
-export function courseAdapter(
-  course: ISelectedCourse & {
-    course?: NonNullable<GetCourseRequirementsQuery["course"]>;
-  }
-): Course {
-  return {
-    subject: {
-      data: course.courseName.split(" ")[0],
-      type: "string",
-    },
-    number: {
-      data: course.courseName.split(" ")[1],
-      type: "string",
-    },
-    units: {
-      data: course.courseUnits,
-      type: "number",
-    },
-    universityRequirement: {
-      data: course.course?.mostRecentClass?.requirementDesignation?.code ?? "",
-      type: "string",
-    },
-    breadthRequirements: {
-      data:
-        course.course?.mostRecentClass?.primarySection?.sectionAttributes
-          ?.filter((s) => s.attribute.code === "GE")
-          .map((sectionAttribute) => sectionAttribute.attribute.description)
-          .filter((s) => s !== null && s !== undefined) ?? [],
-      type: "List<string>",
-    },
-  };
-}
-
 export const constructor = (
   _: string,
   v: string,
-  __: Variables,
+  variables: Variables,
   config?: BtLLConfig
 ): Data<Course> => {
-  // Parse the course string (e.g., "COMPSCI 61A" or (subject, number) or (subject, number, shouldFetch))
+  // Parse the course string using curly brackets: {"subject", "number"}
   const parts = argSplit(v.substring(1, v.length - 1));
 
-  let subject: string;
-  let number: string;
-  let shouldFetch: boolean = true;
-
-  if (parts.length === 3) {
-    // Format: (subject, number, shouldFetch)
-    subject = parts[0].trim();
-    number = parts[1].trim();
-    const fetchFlag = parts[2].trim().toLowerCase();
-    shouldFetch = fetchFlag === "true" || fetchFlag === "1";
-  } else if (parts.length === 2) {
-    // Format: (subject, number)
-    subject = parts[0].trim();
-    number = parts[1].trim();
-  } else if (parts.length === 1) {
-    // Format: "COMPSCI 61A"
-    const courseParts = parts[0].trim().split(" ");
-    if (courseParts.length < 2) {
-      throw new Error(
-        `Invalid course format: ${v}. Expected format: "SUBJECT NUMBER" or (subject, number) or (subject, number, shouldFetch)`
-      );
-    }
-    subject = courseParts[0];
-    number = courseParts.slice(1).join(" ");
-  } else {
+  if (parts.length !== 1 && parts.length !== 2) {
     throw new Error(
-      `Invalid course format: ${v}. Expected format: "SUBJECT NUMBER" or (subject, number) or (subject, number, shouldFetch)`
+      `Invalid course format: ${v}. Expected format: {"subject", "number"}`
     );
   }
 
-  // If fetchCourse is provided and shouldFetch is true, use it to get course data
-  // Note: If fetchCourse is async, we can't await it here, so we'll create a minimal course
-  // In practice, fetchCourse should be called before construction or return synchronously
-  let courseData:
-    | (ISelectedCourse & {
-        course?: NonNullable<GetCourseRequirementsQuery["course"]>;
-      })
-    | null = null;
-
-  if (config?.fetchCourse && shouldFetch) {
-    try {
-      const fetched = config.fetchCourse(subject, number);
-      // Handle both sync and async results
-      if (fetched instanceof Promise) {
-        // If it's a promise, we can't wait for it synchronously
-        // Create a minimal course for now
-        if (config.debug) {
-          console.warn(
-            `fetchCourse returned a Promise for ${subject} ${number}, creating minimal course`
-          );
-        }
-      } else {
-        // Synchronous result
-        courseData = fetched;
-      }
-    } catch (error) {
-      // If fetch fails, we'll create a minimal course with just subject and number
-      if (config?.debug) {
-        console.warn(`Failed to fetch course ${subject} ${number}:`, error);
-      }
-    }
-  }
-
-  // If we have course data, use courseAdapter; otherwise create minimal course
-  if (courseData) {
-    const adapted = courseAdapter(courseData);
-    return {
-      data: adapted,
-      type: "Course",
-    };
-  } else {
-    // Create a minimal course with just subject and number
+  if (parts.length === 1) {
+    const name = evaluate(parts[0].trim(), "string", variables, config).data;
     return {
       data: {
-        subject: {
-          data: subject,
-          type: "string",
-        },
-        number: {
-          data: number,
-          type: "string",
-        },
+        subject: { data: name.split(" ")[0], type: "string" },
+        number: { data: name.split(" ")[1], type: "string" },
         units: {
           data: 0,
           type: "number",
@@ -160,6 +55,33 @@ export const constructor = (
       type: "Course",
     };
   }
+
+  const subject = parts[0].trim();
+  const number = parts[1].trim();
+
+  const subjectData = evaluate(subject, "string", variables, config);
+  const numberData = evaluate(number, "string", variables, config);
+
+  // Create a course with subject and number
+  return {
+    data: {
+      subject: subjectData,
+      number: numberData,
+      units: {
+        data: 0,
+        type: "number",
+      },
+      universityRequirement: {
+        data: "",
+        type: "string",
+      },
+      breadthRequirements: {
+        data: [],
+        type: "List<string>",
+      },
+    },
+    type: "Course",
+  };
 };
 
 // Helper function to check if two courses are equal (by subject and number)
@@ -211,6 +133,27 @@ export const functions: FunctionMapEntry[] = [
               list1.data.some((course1) => coursesEqual(course1, course2))
             ),
             type: "boolean",
+          };
+        },
+        args: ["List<Course>", "List<Course>"],
+      },
+    },
+  ],
+  [
+    "common_course_matches",
+    {
+      type: "Function<List<boolean>>(List<Course>, List<Course>)",
+      data: {
+        eval: (
+          _: Variables,
+          list1: Data<Array<Course>>,
+          list2: Data<Array<Course>>
+        ) => {
+          return {
+            data: list1.data.map((course1) =>
+              list2.data.some((course2) => coursesEqual(course1, course2))
+            ),
+            type: "List<boolean>",
           };
         },
         args: ["List<Course>", "List<Course>"],
