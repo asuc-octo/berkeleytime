@@ -2,10 +2,10 @@ import { Outlet } from "react-router";
 
 import { Flex } from "@repo/theme";
 
+import Banner from "@/components/Banner";
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 
-import Banner from "./Banner";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {

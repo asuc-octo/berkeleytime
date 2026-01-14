@@ -2,9 +2,9 @@ import { useState } from "react";
 
 import { ArrowUpRight, MessageText, Xmark } from "iconoir-react";
 
-import styles from "./Banner.module.scss";
+import styles from "./BetaBanner.module.scss";
 
-export default function Banner() {
+export default function BetaBanner() {
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) {

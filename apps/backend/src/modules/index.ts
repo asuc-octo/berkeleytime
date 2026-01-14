@@ -1,6 +1,7 @@
 import { merge } from "lodash";
 
 import Analytics from "./analytics";
+import Banner from "./banner";
 import Catalog from "./catalog";
 import Class from "./class";
 import Collection from "./collection";
@@ -12,6 +13,7 @@ import GradeDistribution from "./grade-distribution";
 import Plan from "./plan";
 import Pod from "./pod";
 import Rating from "./rating";
+import RouteRedirect from "./route-redirect";
 import Schedule from "./schedule";
 import Staff from "./staff";
 import Term from "./term";
@@ -19,6 +21,7 @@ import User from "./user";
 
 const modules = [
   Analytics,
+  Banner,
   User,
   GradeDistribution,
   Catalog,
@@ -33,6 +36,7 @@ const modules = [
   Enrollment,
   Plan,
   Rating,
+  RouteRedirect,
   Pod,
 ];
 

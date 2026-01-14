@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import SunCalc from "suncalc";
 
-import Banner from "@/components/Layout/Banner";
+import Banner from "@/components/Banner";
 import NavigationBar from "@/components/NavigationBar";
 
 import Features from "./Features";
