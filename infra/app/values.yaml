@@ -91,7 +91,3 @@ datapuller:
     enrollment-timeframe:
       schedule: "40 4 * * *"
       args: ["--puller=enrollment-timeframe"]
-
-    semantic-search-refresh:
-      schedule: "10 4 * * *"
-      args: ["--puller=semantic-search-refresh"]
