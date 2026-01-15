@@ -8,11 +8,7 @@ import {
   SelectedPlanRequirementType,
 } from "@repo/common";
 
-import {
-  Colleges,
-  Status,
-  Terms,
-} from "../../generated-types/graphql";
+import { Colleges, Status, Terms } from "../../generated-types/graphql";
 import { PlanModule } from "./generated-types/module-types";
 
 export function formatPlan(plan: PlanType): PlanModule.Plan {

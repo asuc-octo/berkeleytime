@@ -119,7 +119,10 @@ export default function EditPlanDialog({
         case Colleges.Edu:
           return { label: "Education", value: "Education" };
         case Colleges.Envdes:
-          return { label: "Environmental Design", value: "Environmental Design" };
+          return {
+            label: "Environmental Design",
+            value: "Environmental Design",
+          };
         case Colleges.Info:
           return { label: "Information", value: "Information" };
         case Colleges.Journ:
