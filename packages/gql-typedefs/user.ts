@@ -30,5 +30,6 @@ export const userTypeDef = gql`
 
   type Mutation {
     updateUser(user: UpdateUserInput!): User @auth
+    deleteAccount: Boolean @auth
   }
 `;
