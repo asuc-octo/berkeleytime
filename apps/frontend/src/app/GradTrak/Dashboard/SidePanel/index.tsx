@@ -7,7 +7,7 @@ import { RequirementEnum } from "@/lib/course";
 import { Colleges } from "@/lib/generated/graphql";
 import { GetCourseRequirementsQuery } from "@/lib/generated/graphql";
 
-import BtLLGradTrakInterface from "../../interface";
+import BtLLGradTrakInterface from "../../BtLLInterface";
 import styles from "./SidePanel.module.scss";
 
 // TODO(Daniel): Implement proper handling of reqs based on user's college...
@@ -29,8 +29,7 @@ interface SidePanelProps {
 }
 
 export default function SidePanel({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  colleges: _colleges,
+  colleges,
   majors,
   minors,
   totalUnits,
@@ -115,6 +114,13 @@ export default function SidePanel({
             check!
           </div>
         </div>
+        <div className={styles.disclaimer}>
+          <WarningCircle className={styles.icon} />
+          <div className={styles.text}>
+            Requirements may not be 100% accurate. Always verify with an
+            academic advisor.
+          </div>
+        </div>
       </div>
     </>
   );
@@ -125,7 +131,13 @@ export default function SidePanel({
       {!isCollapsed && (
         <>
           {UserInfo}
-          <BtLLGradTrakInterface plan={plan} planTerms={planTerms} />
+          <BtLLGradTrakInterface
+            plan={plan}
+            planTerms={planTerms}
+            majors={majors}
+            minors={minors}
+            colleges={colleges}
+          />
         </>
       )}
     </div>

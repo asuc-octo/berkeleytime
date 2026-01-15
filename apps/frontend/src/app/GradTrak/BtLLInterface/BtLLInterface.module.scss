@@ -26,12 +26,37 @@
         justify-content: center;
         align-items: center;
         flex-shrink: 0;
+
+        &.clickable {
+          cursor: pointer;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: var(--border-color);
+          }
+        }
       }
 
       .checkmarkIcon {
         width: 1.25rem;
         height: 1.25rem;
+        color: white;
+        display: none;
+      }
+
+      .checkmarkIconVisible {
+        display: block;
+      }
+
+      .checkmarkIconAutoCheckmark {
         color: var(--green-600);
+      }
+
+      .checkmarkIconHoverCheckmark {
+        color: white;
+        opacity: 0.3;
+        cursor: pointer;
       }
     }
 
@@ -78,18 +103,6 @@
       width: 100%;
       transition: all 0.2s ease;
 
-      &.fulfilled .checkmark-icon {
-        width: 1.25rem;
-        height: 1.25rem;
-        color: var(--green-600);
-      }
-
-      &.pending .checkmark-icon {
-        width: 1.25rem;
-        height: 1.25rem;
-        color: var(--amber-400);
-      }
-
       .element {
         display: flex;
         justify-content: space-between;
@@ -110,13 +123,42 @@
           }
         }
 
-        .checkmark-space {
+        .checkmarkSpace {
           width: 1.25rem;
           height: 1.25rem;
           display: flex;
           justify-content: center;
           align-items: center;
           flex-shrink: 0;
+
+          &.clickable {
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background-color: var(--border-color);
+            }
+          }
+        }
+
+        .checkmarkIcon {
+          width: 1.25rem;
+          height: 1.25rem;
+          visibility: hidden;
+        }
+
+        .visible {
+          visibility: visible;
+        }
+
+        .autoCheckmark {
+          color: var(--green-600);
+        }
+
+        .hoverCheckmark {
+          color: var(--heading-color);
+          opacity: 0.3;
         }
 
         .toggle {
@@ -191,6 +233,28 @@
       color: var(--paragraph-color);
       font-weight: 500;
       text-transform: uppercase;
+    }
+
+    .comingSoon {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+
+      .comingSoonText {
+        margin: 0;
+        font-size: 0.875em;
+        color: var(--paragraph-color);
+        font-style: italic;
+      }
+
+      .comingSoonSubtext {
+        margin: 0;
+        font-size: 0.75em;
+        color: var(--paragraph-color);
+        opacity: 0.7;
+      }
     }
   }
 }
