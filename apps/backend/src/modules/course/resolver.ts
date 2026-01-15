@@ -84,22 +84,10 @@ const resolvers: CourseModule.Resolvers = {
     mostRecentClass: async (
       parent: IntermediateCourse | CourseModule.Course
     ) => {
-      if (parent.classes)
-        return parent.classes.toSorted((a, b) => {
-          if (a.year === b.year) {
-            return (
-              SEMESTER_ORDER.indexOf(a.semester) -
-              SEMESTER_ORDER.indexOf(b.semester)
-            );
-          }
-          return b.year - a.year;
-        })[0];
 
-      const classes = await getClassesByCourse(parent.courseId);
-
-      console.log(parent.courseId, parent.subject, parent.number, classes);
-
-      return classes.toSorted((a, b) => {
+      const classes = (parent.classes) ? null : await getClassesByCourse(parent.courseId);
+      
+      return (parent.classes ?? classes)!.toSorted((a, b) => {
         if (a.year === b.year) {
           return (
             SEMESTER_ORDER.indexOf(a.semester) -

@@ -52,8 +52,6 @@ export const CREATE_NEW_PLAN = gql`
           courseName
           courseTitle
           courseUnits
-          uniReqs
-          collegeReqs
           pnp
           transfer
           labels {
@@ -72,8 +70,6 @@ export const CREATE_NEW_PLAN = gql`
         name
         color
       }
-      uniReqsSatisfied
-      collegeReqsSatisfied
     }
   }
 `;
@@ -92,8 +88,6 @@ export const READ_PLAN = gql`
           courseName
           courseTitle
           courseUnits
-          uniReqs
-          collegeReqs
           pnp
           transfer
           labels {
@@ -112,8 +106,6 @@ export const READ_PLAN = gql`
         name
         color
       }
-      uniReqsSatisfied
-      collegeReqsSatisfied
       selectedPlanRequirements {
         planRequirement {
           _id
@@ -141,8 +133,6 @@ export const READ_PLANS = gql`
 export const EDIT_PLAN = gql`
   mutation EditPlan($plan: PlanInput!) {
     editPlan(plan: $plan) {
-      uniReqsSatisfied
-      collegeReqsSatisfied
       majors
       minors
       labels {
@@ -195,8 +185,6 @@ export const EDIT_PLAN_TERM = gql`
         courseName
         courseTitle
         courseUnits
-        uniReqs
-        collegeReqs
         pnp
         transfer
         labels {

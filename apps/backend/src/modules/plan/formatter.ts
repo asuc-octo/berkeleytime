@@ -2,7 +2,6 @@ import { Types } from "mongoose";
 
 import {
   LabelType,
-  MajorReqType,
   PlanTermType,
   PlanType,
   SelectedCourseType,
@@ -10,11 +9,9 @@ import {
 } from "@repo/common";
 
 import {
-  CollegeReqs,
   Colleges,
   Status,
   Terms,
-  UniReqs,
 } from "../../generated-types/graphql";
 import { PlanModule } from "./generated-types/module-types";
 
@@ -26,12 +23,9 @@ export function formatPlan(plan: PlanType): PlanModule.Plan {
     majors: plan.majors,
     minors: plan.minors,
     colleges: plan.colleges.map((college) => college as Colleges),
-    majorReqs: plan.majorReqs.map(formatMajorReq),
     created: plan.createdAt.toISOString(),
     revised: plan.updatedAt.toISOString(),
     labels: plan.labels.map(formatLabel),
-    uniReqsSatisfied: plan.uniReqsSatisfied as UniReqs[],
-    collegeReqsSatisfied: plan.collegeReqsSatisfied as CollegeReqs[],
     selectedPlanRequirements: (plan.selectedPlanRequirements || []).map(
       formatSelectedPlanRequirement
     ),
@@ -61,26 +55,12 @@ export function formatPlanTerm(planTerm: PlanTermType): PlanModule.PlanTerm {
   };
 }
 
-export function formatMajorReq(majorReq: MajorReqType): PlanModule.MajorReq {
-  return {
-    name: majorReq.name,
-    major: majorReq.major,
-    numCoursesRequired: majorReq.numCoursesRequired,
-    satisfyingCourseIds: majorReq.satisfyingCourseIds
-      ? majorReq.satisfyingCourseIds
-      : [],
-    isMinor: majorReq.isMinor ? majorReq.isMinor : false,
-  };
-}
-
 function formatCourse(course: SelectedCourseType): PlanModule.SelectedCourse {
   return {
     courseID: course.courseID,
     courseName: course.courseName,
     courseTitle: course.courseTitle,
     courseUnits: course.courseUnits,
-    collegeReqs: course.collegeReqs as CollegeReqs[],
-    uniReqs: course.uniReqs as UniReqs[],
     labels: course.labels,
     pnp: course.pnp,
     transfer: course.transfer,

@@ -67,6 +67,31 @@ export default function EditPlanDialog({
           return Colleges.LnS;
         case "Engineering":
           return Colleges.CoE;
+        case "Chemistry":
+          return Colleges.Chem;
+        case "Computing, Data Science & Society":
+          return Colleges.Cdss;
+        case "Education":
+          return Colleges.Edu;
+        case "Environmental Design":
+          return Colleges.Envdes;
+        case "Information":
+          return Colleges.Info;
+        case "Journalism":
+          return Colleges.Journ;
+        case "Law":
+        case "School of Law":
+          return Colleges.Law;
+        case "Natural Resources":
+          return Colleges.Natres;
+        case "Optometry":
+          return Colleges.Optom;
+        case "Public Health":
+          return Colleges.Pubhealth;
+        case "Public Policy":
+          return Colleges.Pubpolicy;
+        case "Social Welfare":
+          return Colleges.Socwelf;
         default:
           return Colleges.Other;
       }
@@ -84,6 +109,33 @@ export default function EditPlanDialog({
           return { label: "Letters & Science", value: "Letters & Science" };
         case Colleges.CoE:
           return { label: "Engineering", value: "Engineering" };
+        case Colleges.Chem:
+          return { label: "Chemistry", value: "Chemistry" };
+        case Colleges.Cdss:
+          return {
+            label: "Computing, Data Science & Society",
+            value: "Computing, Data Science & Society",
+          };
+        case Colleges.Edu:
+          return { label: "Education", value: "Education" };
+        case Colleges.Envdes:
+          return { label: "Environmental Design", value: "Environmental Design" };
+        case Colleges.Info:
+          return { label: "Information", value: "Information" };
+        case Colleges.Journ:
+          return { label: "Journalism", value: "Journalism" };
+        case Colleges.Law:
+          return { label: "Law", value: "Law" };
+        case Colleges.Natres:
+          return { label: "Natural Resources", value: "Natural Resources" };
+        case Colleges.Optom:
+          return { label: "Optometry", value: "Optometry" };
+        case Colleges.Pubhealth:
+          return { label: "Public Health", value: "Public Health" };
+        case Colleges.Pubpolicy:
+          return { label: "Public Policy", value: "Public Policy" };
+        case Colleges.Socwelf:
+          return { label: "Social Welfare", value: "Social Welfare" };
         default:
           return { label: "Other", value: "Other" };
       }
@@ -320,7 +372,6 @@ export default function EditPlanDialog({
             <TabsContent value="major" className={styles.tabContent}>
               <form className={styles.editDialogForm}>
                 <div>
-                  <label className={styles.degreeFieldLabel}>Major(s)</label>
                   <Flex gap="8px" className={styles.degreeSearchRow}>
                     <div className={styles.degreeSearchWrapper}>
                       <MajorSearch
@@ -364,7 +415,6 @@ export default function EditPlanDialog({
             <TabsContent value="minor" className={styles.tabContent}>
               <form className={styles.editDialogForm}>
                 <div>
-                  <label className={styles.degreeFieldLabel}>Minor(s)</label>
                   <Flex gap="8px" className={styles.degreeSearchRow}>
                     <div className={styles.degreeSearchWrapper}>
                       <MajorSearch
@@ -408,7 +458,6 @@ export default function EditPlanDialog({
             <TabsContent value="college" className={styles.tabContent}>
               <form className={styles.editDialogForm}>
                 <div>
-                  <label className={styles.degreeFieldLabel}>College(s)</label>
                   <Flex gap="8px" className={styles.degreeSearchRow}>
                     <div className={styles.degreeSearchWrapper}>
                       <Select

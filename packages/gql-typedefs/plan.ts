@@ -10,14 +10,50 @@ export const planTypeDef = gql`
   }
 
   enum Colleges {
-    "College of Letters and Sciences"
+    "Letters & Science"
     LnS
 
-    "College of Engineering"
+    "Engineering"
     CoE
 
-    "Haas School of Business"
+    "Business"
     HAAS
+
+    "Chemistry"
+    CHEM
+
+    "Computing, Data Science & Society"
+    CDSS
+
+    "Education"
+    EDU
+
+    "Environmental Design"
+    ENVDES
+
+    "Information"
+    INFO
+
+    "Journalism"
+    JOURN
+
+    "Law"
+    LAW
+
+    "Natural Resources"
+    NATRES
+
+    "Optometry"
+    OPTOM
+
+    "Public Health"
+    PUBHEALTH
+
+    "Public Policy"
+    PUBPOLICY
+
+    "Social Welfare"
+    SOCWELF
 
     "Other"
     OTHER
@@ -28,73 +64,6 @@ export const planTypeDef = gql`
     InProgress
     Incomplete
     None
-  }
-
-  enum UniReqs {
-    AC
-    AH
-    AI
-    CW
-    QR
-    RCA
-    RCB
-  }
-  enum CollegeReqs {
-    "Arts and Literature"
-    LnS_AL
-
-    "Biological Sciences"
-    LnS_BS
-
-    "Historical Studies"
-    LnS_HS
-
-    "International Studies"
-    LnS_IS
-
-    "Philosophy and Values"
-    LnS_PV
-
-    "Physical Science"
-    LnS_PS
-
-    "Social and Behavioral Sciences"
-    LnS_SBS
-
-    "Humanities and Social Sciences"
-    CoE_HSS
-
-    "HAAS Arts and Literature"
-    HAAS_AL
-
-    "HAAS Biological Sciences"
-    HAAS_BS
-
-    "HAAS Historical Studies"
-    HAAS_HS
-
-    "HAAS International Studies"
-    HAAS_IS
-
-    "HAAS Philosophy and Values"
-    HAAS_PV
-
-    "HAAS Physical Science"
-    HAAS_PS
-
-    "HAAS Social and Behavioral Sciences"
-    HAAS_SBS
-  }
-
-  """
-  Not in use atm
-  """
-  type MajorReq @cacheControl(maxAge: 0) {
-    name: String!
-    major: String!
-    numCoursesRequired: Int!
-    satisfyingCourseIds: [String!]!
-    isMinor: Boolean!
   }
 
   type Label @cacheControl(maxAge: 0) {
@@ -135,18 +104,12 @@ export const planTypeDef = gql`
     _id: ID!
     userEmail: String!
     planTerms: [PlanTerm!]!
-    majorReqs: [MajorReq!]!
     majors: [String!]!
     minors: [String!]!
     created: String!
     revised: String!
     colleges: [Colleges!]!
     labels: [Label!]!
-    """
-    Requirements manually satisfied
-    """
-    uniReqsSatisfied: [UniReqs!]!
-    collegeReqsSatisfied: [CollegeReqs!]!
     """
     Selected plan requirements with met status tracking
     """
@@ -173,19 +136,9 @@ export const planTypeDef = gql`
     courseName: String!
     courseTitle: String!
     courseUnits: Int!
-    uniReqs: [UniReqs!]!
-    collegeReqs: [CollegeReqs!]!
     pnp: Boolean!
     transfer: Boolean!
     labels: [Label!]!
-  }
-
-  input MajorReqInput {
-    name: String!
-    major: String!
-    numCoursesRequired: Int!
-    satisfyingCourseIds: [String!]!
-    isMinor: Boolean!
   }
 
   input LabelInput {
@@ -198,8 +151,6 @@ export const planTypeDef = gql`
     courseName: String!
     courseTitle: String!
     courseUnits: Int!
-    uniReqs: [UniReqs!]!
-    collegeReqs: [CollegeReqs!]!
     pnp: Boolean!
     transfer: Boolean!
     labels: [LabelInput!]!
@@ -209,10 +160,7 @@ export const planTypeDef = gql`
     colleges: [Colleges!]
     majors: [String!]
     minors: [String!]
-    majorReqs: [MajorReqInput!]
     labels: [LabelInput!]
-    uniReqsSatisfied: [UniReqs!]
-    collegeReqsSatisfied: [CollegeReqs!]
     selectedPlanRequirements: [SelectedPlanRequirementInput!]
   }
 
@@ -305,9 +253,6 @@ export const planTypeDef = gql`
       minors: [String!]!
     ): Plan @auth
 
-    """
-    Edits Plan college and majorReqs
-    """
     editPlan(plan: PlanInput!): Plan @auth
 
     """

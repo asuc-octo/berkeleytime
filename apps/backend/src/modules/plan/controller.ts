@@ -3,7 +3,6 @@ import { Types } from "mongoose";
 
 import {
   LabelModel,
-  MajorReqModel,
   PlanModel,
   PlanRequirementModel,
   PlanTermModel,
@@ -248,11 +247,8 @@ export async function createPlan(
     planTerms: planTerms,
     majors: majors,
     minors: minors,
-    majorReqs: [],
     colleges: colleges,
     labels: [],
-    uniReqsSatisfied: [],
-    collegeReqsSatisfied: [],
   });
   return formatPlan(newPlan);
 }
@@ -277,19 +273,8 @@ export async function editPlan(
   if (plan.minors != null) {
     gt.minors = plan.minors;
   }
-  if (plan.majorReqs != null) {
-    gt.majorReqs = plan.majorReqs.map(
-      (majorReqInput) => new MajorReqModel(majorReqInput)
-    );
-  }
   if (plan.labels != null) {
     gt.labels = plan.labels.map((labelInput) => new LabelModel(labelInput));
-  }
-  if (plan.uniReqsSatisfied != null) {
-    gt.uniReqsSatisfied = plan.uniReqsSatisfied;
-  }
-  if (plan.collegeReqsSatisfied != null) {
-    gt.collegeReqsSatisfied = plan.collegeReqsSatisfied;
   }
 
   await gt.save();
