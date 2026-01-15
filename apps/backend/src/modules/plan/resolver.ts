@@ -4,6 +4,8 @@ import {
   PlanInput,
   PlanTermInput,
   SelectedCourseInput,
+  SelectedPlanRequirementInput,
+  UpdateManualOverrideInput,
 } from "../../generated-types/graphql";
 import {
   createPlan,
@@ -11,9 +13,15 @@ import {
   deletePlan,
   editPlan,
   editPlanTerm,
+  getCollegeRequirements,
   getPlanByUser,
+  getPlanRequirementById,
+  getPlanRequirementsByMajorsAndMinors,
+  getUcRequirements,
   removePlanTerm,
   setClasses,
+  updateManualOverride,
+  updateSelectedPlanRequirements,
 } from "./controller";
 import { PlanModule } from "./generated-types/module-types";
 
@@ -21,6 +29,34 @@ const resolvers: PlanModule.Resolvers = {
   Query: {
     planByUser(_parent, _args, context) {
       return getPlanByUser(context);
+    },
+    planRequirementsByMajorsAndMinors(
+      _parent,
+      args: { majors: string[]; minors: string[] }
+    ) {
+      return getPlanRequirementsByMajorsAndMinors(args.majors, args.minors);
+    },
+    ucRequirements() {
+      return getUcRequirements();
+    },
+    collegeRequirements(_parent, args: { college: string }) {
+      return getCollegeRequirements(args.college);
+    },
+  },
+  SelectedPlanRequirement: {
+    planRequirement: async (parent: PlanModule.SelectedPlanRequirement) => {
+      // The formatter adds planRequirementId to the object, but it's not in the GraphQL type
+      const planRequirementId = parent.planRequirementId;
+      if (!planRequirementId) {
+        throw new Error("planRequirementId not found");
+      }
+      const requirement = await getPlanRequirementById(planRequirementId);
+      if (!requirement) {
+        throw new Error(
+          `PlanRequirement with id ${planRequirementId} not found`
+        );
+      }
+      return requirement;
     },
   },
   Mutation: {
@@ -69,6 +105,23 @@ const resolvers: PlanModule.Resolvers = {
     },
     deletePlan(_parent, _args, context) {
       return deletePlan(context);
+    },
+    updateManualOverride(
+      _parent,
+      args: { input: UpdateManualOverrideInput },
+      context
+    ) {
+      return updateManualOverride(args.input, context);
+    },
+    updateSelectedPlanRequirements(
+      _parent,
+      args: { selectedPlanRequirements: SelectedPlanRequirementInput[] },
+      context
+    ) {
+      return updateSelectedPlanRequirements(
+        args.selectedPlanRequirements,
+        context
+      );
     },
   },
 };

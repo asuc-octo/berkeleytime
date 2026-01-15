@@ -6,6 +6,7 @@ import {
   PlanTermType,
   PlanType,
   SelectedCourseType,
+  SelectedPlanRequirementType,
 } from "@repo/common";
 
 import {
@@ -31,7 +32,19 @@ export function formatPlan(plan: PlanType): PlanModule.Plan {
     labels: plan.labels.map(formatLabel),
     uniReqsSatisfied: plan.uniReqsSatisfied as UniReqs[],
     collegeReqsSatisfied: plan.collegeReqsSatisfied as CollegeReqs[],
+    selectedPlanRequirements: (plan.selectedPlanRequirements || []).map(
+      formatSelectedPlanRequirement
+    ),
   };
+}
+
+function formatSelectedPlanRequirement(
+  spr: SelectedPlanRequirementType
+): PlanModule.SelectedPlanRequirement & { planRequirementId: string } {
+  return {
+    planRequirementId: spr.planRequirementId.toString(),
+    manualOverrides: spr.manualOverrides,
+  } as PlanModule.SelectedPlanRequirement & { planRequirementId: string };
 }
 
 export function formatPlanTerm(planTerm: PlanTermType): PlanModule.PlanTerm {

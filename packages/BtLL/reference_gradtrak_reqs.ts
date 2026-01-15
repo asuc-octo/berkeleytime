@@ -1,3 +1,14 @@
+/**
+ * Reference GradTrak Requirements
+ *
+ * This file contains example BtLL requirement code for different degree programs.
+ * These can be manually loaded into the database as PlanRequirement documents.
+ *
+ * To load into DB:
+ * 1. Create a PlanRequirement document with the code field set to one of these constants
+ * 2. Set appropriate fields: isUcReq, college, major, minor, isOfficial
+ */
+
 export const UC_REQ_BTLL = `
 Function<boolean>(Course) elw_finder (course){
   string university_requirement get_attr(course, "universityRequirement")
@@ -105,35 +116,35 @@ export const EECS_REQ_BTLL = `
 Function<boolean>(Course) eecs_upper_div_finder (course){
   string subject get_attr(course, "subject")
   string number get_attr(course, "number")
-  
+
   // EECS courses numbered 100-C191B
   boolean is_eecs and([equal([subject, "EECS"]), or([regex_match(number, "^1[0-8][0-9]"), regex_match(number, "^19[0-1]"), equal([number, "C191B"])])])
-  
+
   // ELENG courses numbered 100-194
   boolean is_eleng and([equal([subject, "ELENG"]), or([regex_match(number, "^1[0-8][0-9]"), regex_match(number, "^19[0-4]")])])
-  
+
   // COMPSCI courses numbered 100-194
   boolean is_compsci_194_valid and([equal([subject, "COMPSCI"]), or([regex_match(number, "^1[0-8][0-9]"), regex_match(number, "^19[0-4]")])])
-  
+
   // COMPSCI 270, C280, 285, 288
   boolean is_compsci_270 and([equal([subject, "COMPSCI"]), equal([number, "270"])])
   boolean is_compsci_c280 and([equal([subject, "COMPSCI"]), equal([number, "C280"])])
   boolean is_compsci_285 and([equal([subject, "COMPSCI"]), equal([number, "285"])])
   boolean is_compsci_288 and([equal([subject, "COMPSCI"]), equal([number, "288"])])
   boolean is_compsci_special or([is_compsci_270, is_compsci_c280, is_compsci_285, is_compsci_288])
-  
+
   // COMPSCI 294
   boolean is_compsci_294_valid and([equal([subject, "COMPSCI"]), equal([number, "294"])])
-  
+
   // ELENG 229A
   boolean is_eleng_229a and([equal([subject, "ELENG"]), equal([number, "229A"])])
-  
+
   // INFO 153A, 159, 213
   boolean is_info_153a and([equal([subject, "INFO"]), equal([number, "153A"])])
   boolean is_info_159 and([equal([subject, "INFO"]), equal([number, "159"])])
   boolean is_info_213 and([equal([subject, "INFO"]), equal([number, "213"])])
   boolean is_info_valid or([is_info_153a, is_info_159, is_info_213])
-  
+
   boolean return or([is_eecs, is_eleng, is_compsci_194_valid, is_compsci_special, is_compsci_294_valid, is_eleng_229a, is_info_valid])
 }
 
@@ -155,43 +166,43 @@ Function<boolean>(Course) natural_science_upper_div_finder (course){
   string subject get_attr(course, "subject")
   string number get_attr(course, "number")
   number units get_attr(course, "units")
-  
+
   // Must be 3 units or more and upper division (100+)
   boolean is_upper_div or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C[0-9]")])
   boolean has_enough_units or([greater_than(units, 3), equal([units, 3])])
   boolean is_valid_units and([is_upper_div, has_enough_units])
-  
+
   // ASTRON (all upper div)
   boolean is_astron and([equal([subject, "ASTRON"]), is_valid_units])
-  
+
   // CHEM, excluding 100, 149, 192
   boolean is_chem_100 and([equal([subject, "CHEM"]), equal([number, "100"])])
   boolean is_chem_149 and([equal([subject, "CHEM"]), equal([number, "149"])])
   boolean is_chem_192 and([equal([subject, "CHEM"]), equal([number, "192"])])
   boolean is_chem_excluded or([is_chem_100, is_chem_149, is_chem_192])
   boolean is_chem and([equal([subject, "CHEM"]), is_valid_units, not(is_chem_excluded)])
-  
+
   // EPS, excluding C100
   boolean is_eps_c100 and([equal([subject, "EPS"]), equal([number, "C100"])])
   boolean is_eps and([equal([subject, "EPS"]), is_valid_units, not(is_eps_c100)])
-  
+
   // INTEGBI, excluding 101, C105, 191
   boolean is_integbi_101 and([equal([subject, "INTEGBI"]), equal([number, "101"])])
   boolean is_integbi_c105 and([equal([subject, "INTEGBI"]), equal([number, "C105"])])
   boolean is_integbi_191 and([equal([subject, "INTEGBI"]), equal([number, "191"])])
   boolean is_integbi_excluded or([is_integbi_101, is_integbi_c105, is_integbi_191])
   boolean is_integbi and([equal([subject, "INTEGBI"]), is_valid_units, not(is_integbi_excluded)])
-  
+
   // MCELLBI (all upper div)
   boolean is_mcellbi and([equal([subject, "MCELLBI"]), is_valid_units])
-  
+
   // PHYSICS, excluding 100
   boolean is_physics_100 and([equal([subject, "PHYSICS"]), equal([number, "100"])])
   boolean is_physics and([equal([subject, "PHYSICS"]), is_valid_units, not(is_physics_100)])
-  
+
   // PLANTBI (all upper div)
   boolean is_plantbi and([equal([subject, "PLANTBI"]), is_valid_units])
-  
+
   boolean return or([is_astron, is_chem, is_eps, is_integbi, is_mcellbi, is_physics, is_plantbi])
 }
 
@@ -237,14 +248,14 @@ Function<List<Requirement>>() main (){
     boolean return one_common_course([c], design_courses)
   })
   NCoursesRequirement design_ncourses {design_matches, 1, "Design Course"}
-  
+
   List<Course> eecs151_la_req [{"EECS 151"}, {"EECS 151LA"}]
   List<Course> eecs151_lb_req [{"EECS 151"}, {"EECS 151LB"}]
   List<boolean> eecs151_la_status common_course_matches(eecs151_la_req, courses)
   List<boolean> eecs151_lb_status common_course_matches(eecs151_lb_req, courses)
   CourseListRequirement eecs151_la_req_obj {eecs151_la_req, eecs151_la_status, "EECS 151 and 151LA"}
   CourseListRequirement eecs151_lb_req_obj {eecs151_lb_req, eecs151_lb_status, "EECS 151 and 151LB"}
-  
+
   OrRequirement design {[design_ncourses, eecs151_la_req_obj, eecs151_lb_req_obj], "Upper Division Design Requirement"}
 
   // Engineering Units: 40 units (EECS lower div except COMPSCI 70 + 20 units upper div)

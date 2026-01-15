@@ -102,6 +102,35 @@ export const planTypeDef = gql`
     color: String!
   }
 
+  """
+  PlanRequirement: Stores BtLL code for evaluating requirements
+  """
+  type PlanRequirement @cacheControl(maxAge: 0) {
+    _id: ID!
+    code: String!
+    isUcReq: Boolean!
+    college: String
+    major: String
+    minor: String
+    createdBy: String!
+    isOfficial: Boolean!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  """
+  SelectedPlanRequirement: Links a PlanRequirement to a Plan with met status tracking
+  """
+  type SelectedPlanRequirement @cacheControl(maxAge: 0) {
+    planRequirementId: ID!
+    planRequirement: PlanRequirement!
+    """
+    Manual overrides: when user manually checks off a requirement.
+    null = use evaluated value, true = manually marked as met, false = manually marked as not met
+    """
+    manualOverrides: [Boolean]!
+  }
+
   type Plan @cacheControl(maxAge: 0) {
     _id: ID!
     userEmail: String!
@@ -118,6 +147,10 @@ export const planTypeDef = gql`
     """
     uniReqsSatisfied: [UniReqs!]!
     collegeReqsSatisfied: [CollegeReqs!]!
+    """
+    Selected plan requirements with met status tracking
+    """
+    selectedPlanRequirements: [SelectedPlanRequirement!]!
   }
 
   type PlanTerm @cacheControl(maxAge: 0) {
@@ -180,6 +213,7 @@ export const planTypeDef = gql`
     labels: [LabelInput!]
     uniReqsSatisfied: [UniReqs!]
     collegeReqsSatisfied: [CollegeReqs!]
+    selectedPlanRequirements: [SelectedPlanRequirementInput!]
   }
 
   input PlanTermInput {
@@ -202,6 +236,23 @@ export const planTypeDef = gql`
     pinned: Boolean
   }
 
+  input SelectedPlanRequirementInput {
+    planRequirementId: ID!
+    manualOverrides: [Boolean]!
+  }
+
+  input UpdateManualOverrideInput {
+    planRequirementId: ID!
+    """
+    Index of the requirement to update
+    """
+    requirementIndex: Int!
+    """
+    null to clear override, true/false to set manual override
+    """
+    manualOverride: Boolean
+  }
+
   """
   GradTrak analytics data point for treemap visualization
   """
@@ -221,6 +272,25 @@ export const planTypeDef = gql`
     Takes in user's email and returns their entire plan
     """
     planByUser: [Plan!]! @auth
+
+    """
+    Get PlanRequirements by majors and minors.
+    Returns all matching PlanRequirement documents for the given majors and minors.
+    """
+    planRequirementsByMajorsAndMinors(
+      majors: [String!]!
+      minors: [String!]!
+    ): [PlanRequirement!]!
+
+    """
+    Get UC requirements (isUcReq = true)
+    """
+    ucRequirements: [PlanRequirement!]!
+
+    """
+    Get college requirements by college name
+    """
+    collegeRequirements(college: String!): [PlanRequirement!]!
   }
 
   type Mutation {
@@ -267,5 +337,19 @@ export const planTypeDef = gql`
     Deletes plan, for testing purposes
     """
     deletePlan: String @auth
+
+    """
+    Update a manual override for a specific requirement in a SelectedPlanRequirement.
+    Used when user manually checks off a requirement.
+    """
+    updateManualOverride(input: UpdateManualOverrideInput!): Plan @auth
+
+    """
+    Update all selectedPlanRequirements for the user's plan.
+    Used when re-evaluating requirements or initializing them.
+    """
+    updateSelectedPlanRequirements(
+      selectedPlanRequirements: [SelectedPlanRequirementInput!]!
+    ): Plan @auth
   }
 `;

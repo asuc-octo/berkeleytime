@@ -5,8 +5,10 @@ import {
   LabelModel,
   MajorReqModel,
   PlanModel,
+  PlanRequirementModel,
   PlanTermModel,
   SelectedCourseModel,
+  SelectedPlanRequirementModel,
 } from "@repo/common";
 
 import {
@@ -14,9 +16,12 @@ import {
   EditPlanTermInput,
   Plan,
   PlanInput,
+  PlanRequirement,
   PlanTerm,
   PlanTermInput,
   SelectedCourseInput,
+  SelectedPlanRequirementInput,
+  UpdateManualOverrideInput,
 } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
 import { formatPlan, formatPlanTerm } from "./formatter";
@@ -296,4 +301,152 @@ export async function deletePlan(context: RequestContext): Promise<string> {
   const userEmail = context.user.email;
   await PlanModel.deleteOne({ userEmail });
   return userEmail;
+}
+
+// Get PlanRequirements by majors and minors
+export async function getPlanRequirementsByMajorsAndMinors(
+  majors: string[],
+  minors: string[]
+): Promise<PlanRequirement[]> {
+  const requirements = await PlanRequirementModel.find({
+    $or: [{ major: { $in: majors } }, { minor: { $in: minors } }],
+  });
+
+  return requirements.map((req) => ({
+    _id: (req._id as Types.ObjectId).toString(),
+    code: req.code,
+    isUcReq: req.isUcReq,
+    college: req.college || null,
+    major: req.major || null,
+    minor: req.minor || null,
+    createdBy: req.createdBy,
+    isOfficial: req.isOfficial,
+    createdAt: req.createdAt?.toISOString() || "",
+    updatedAt: req.updatedAt?.toISOString() || "",
+  }));
+}
+
+// Get UC requirements
+export async function getUcRequirements(): Promise<PlanRequirement[]> {
+  const requirements = await PlanRequirementModel.find({ isUcReq: true });
+
+  return requirements.map((req) => ({
+    _id: (req._id as Types.ObjectId).toString(),
+    code: req.code,
+    isUcReq: req.isUcReq,
+    college: req.college || null,
+    major: req.major || null,
+    minor: req.minor || null,
+    createdBy: req.createdBy,
+    isOfficial: req.isOfficial,
+    createdAt: req.createdAt?.toISOString() || "",
+    updatedAt: req.updatedAt?.toISOString() || "",
+  }));
+}
+
+// Get college requirements
+export async function getCollegeRequirements(
+  college: string
+): Promise<PlanRequirement[]> {
+  const requirements = await PlanRequirementModel.find({ college });
+
+  return requirements.map((req) => ({
+    _id: (req._id as Types.ObjectId).toString(),
+    code: req.code,
+    isUcReq: req.isUcReq,
+    college: req.college || null,
+    major: req.major || null,
+    minor: req.minor || null,
+    createdBy: req.createdBy,
+    isOfficial: req.isOfficial,
+    createdAt: req.createdAt?.toISOString() || "",
+    updatedAt: req.updatedAt?.toISOString() || "",
+  }));
+}
+
+// Get PlanRequirement by ID
+export async function getPlanRequirementById(
+  id: string
+): Promise<PlanRequirement | null> {
+  const requirement = await PlanRequirementModel.findById(id);
+  if (!requirement) {
+    return null;
+  }
+
+  return {
+    _id: (requirement._id as Types.ObjectId).toString(),
+    code: requirement.code,
+    isUcReq: requirement.isUcReq,
+    college: requirement.college || null,
+    major: requirement.major || null,
+    minor: requirement.minor || null,
+    createdBy: requirement.createdBy,
+    isOfficial: requirement.isOfficial,
+    createdAt: requirement.createdAt?.toISOString() || "",
+    updatedAt: requirement.updatedAt?.toISOString() || "",
+  };
+}
+
+// Update manual override for a specific requirement
+export async function updateManualOverride(
+  input: UpdateManualOverrideInput,
+  context: RequestContext
+): Promise<Plan> {
+  if (!context.user?.email) throw new Error("Unauthorized");
+  const userEmail = context.user.email;
+
+  const gt = await PlanModel.findOne({ userEmail });
+  if (!gt) {
+    throw new Error("No Plan found for this user");
+  }
+
+  // Find the selectedPlanRequirement
+  const sprIndex = gt.selectedPlanRequirements.findIndex(
+    (spr) => spr.planRequirementId.toString() === input.planRequirementId
+  );
+
+  if (sprIndex === -1) {
+    throw new Error("SelectedPlanRequirement not found in user's plan");
+  }
+
+  // Update the manual override at the specified index
+  const spr = gt.selectedPlanRequirements[sprIndex];
+  if (
+    input.requirementIndex < 0 ||
+    input.requirementIndex >= spr.manualOverrides.length
+  ) {
+    // Extend the array if needed
+    while (spr.manualOverrides.length <= input.requirementIndex) {
+      spr.manualOverrides.push(undefined);
+    }
+  }
+  spr.manualOverrides[input.requirementIndex] = input.manualOverride;
+
+  await gt.save();
+  return formatPlan(gt);
+}
+
+// Update all selectedPlanRequirements
+export async function updateSelectedPlanRequirements(
+  selectedPlanRequirements: SelectedPlanRequirementInput[],
+  context: RequestContext
+): Promise<Plan> {
+  if (!context.user?.email) throw new Error("Unauthorized");
+  const userEmail = context.user.email;
+
+  const gt = await PlanModel.findOne({ userEmail });
+  if (!gt) {
+    throw new Error("No Plan found for this user");
+  }
+
+  gt.selectedPlanRequirements = selectedPlanRequirements.map(
+    (spr) =>
+      new SelectedPlanRequirementModel({
+        planRequirementId: new Types.ObjectId(spr.planRequirementId),
+        manualOverrides: spr.manualOverrides,
+      })
+  );
+
+  await gt.save();
+  return formatPlan(gt);
 }
