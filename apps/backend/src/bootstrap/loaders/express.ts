@@ -6,6 +6,7 @@ import { type Application, json } from "express";
 import helmet from "helmet";
 import { RedisClientType } from "redis";
 
+import semanticSearchRoutes from "../../modules/semantic-search/routes";
 import { config } from "../../../../../packages/common/src/utils/config";
 import staffRoutes from "../../modules/staff/routes";
 import passportLoader from "./passport";
@@ -61,6 +62,8 @@ export default async (
   // load authentication
   passportLoader(app, redis);
 
+  // load semantic search routes
+  app.use("/semantic-search", semanticSearchRoutes);
   // load staff routes
   staffRoutes(app);
 

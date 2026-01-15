@@ -33,6 +33,18 @@ backend:
     repository: octoberkeleytime/bt-backend
     tag: prod
 
+semanticSearch:
+  replicas: 1
+  port: 8000
+  logLevel: INFO
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-semantic-search
+    tag: prod
+
+  storage: 5Gi
+
 datapuller:
   suspend: false
   image:
