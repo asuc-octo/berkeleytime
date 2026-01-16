@@ -43,6 +43,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          command_timeout: 15m
           script: |
             set -e  # Exit immediately if a command fails
 
@@ -96,8 +97,16 @@ jobs:
               exit 1
             fi
             kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-frontend
-            # Semantic-search has longer timeout due to model loading (non-blocking)
-            kubectl rollout status --timeout=600s deployment ${{ inputs.name }}-semantic-search 2>/dev/null || echo "Note: semantic-search may still be starting up"
+
+            # Semantic-search check (non-blocking, may take a while due to model loading)
+            echo "=== Checking semantic-search status ==="
+            if kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-semantic-search 2>/dev/null; then
+              echo "Semantic-search deployed successfully"
+            else
+              echo "Semantic-search still starting (this is normal - model loading takes time)"
+              kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} | grep semantic || true
+              kubectl -n bt logs -l app.kubernetes.io/name=${{ inputs.name }}-semantic-search --tail=30 2>/dev/null || true
+            fi
 
       - name: Output Summary
         run: |
