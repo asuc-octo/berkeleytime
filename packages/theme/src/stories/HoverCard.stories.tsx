@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { fn } from "storybook/test";
 
-import { Badge, Button, Color, HoverCard, ThemeProvider } from "@repo/theme";
+import { Button, HoverCard, ThemeProvider } from "@repo/theme";
 
 const meta: Meta<typeof HoverCard> = {
   title: "Theme/HoverCard",
