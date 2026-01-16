@@ -35,9 +35,8 @@ query Catalog($year: Int!, $semester: Semester!) {
 }
 """
 
-# BACKEND_URL from env is for external access (http://backend:8080)
-# But semantic-search needs internal Docker network access (port 5001)
-BACKEND_INTERNAL_URL = "http://backend:5001"
+# Backend URL for fetching course catalog (configurable for K8s vs Docker)
+BACKEND_INTERNAL_URL = os.getenv("BACKEND_URL", "http://backend:5001")
 DEFAULT_CATALOG_URL = f"{BACKEND_INTERNAL_URL}/api/graphql"
 
 # Semantic search embedding model options:

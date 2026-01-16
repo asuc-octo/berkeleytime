@@ -37,6 +37,8 @@ semanticSearch:
   replicas: 1
   port: 8000
   logLevel: INFO
+  defaultYear: 2026
+  defaultSemester: "Spring"
 
   image:
     registry: docker.io

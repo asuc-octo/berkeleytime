@@ -64,6 +64,7 @@ metadata:
 data:
   INDEX_STORAGE_DIR: "/app/indexes"
   SEMANTIC_SEARCH_LOG_LEVEL: {{ .Values.semanticSearch.logLevel | quote }}
+  BACKEND_URL: {{ printf "http://%s-svc:%d" (include "bt-app.backendName" .) (.Values.backend.port | int) | quote }}
   {{- if .Values.semanticSearch.defaultYear }}
   SEMANTIC_SEARCH_YEAR: {{ .Values.semanticSearch.defaultYear | quote }}
   {{- end }}
