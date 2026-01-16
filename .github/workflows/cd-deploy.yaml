@@ -85,8 +85,16 @@ jobs:
               kubectl rollout status --timeout=300s deployment bt-staff-frontend
             fi
 
-            # Check container status
-            kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-backend
+            # Check container status with debugging on failure
+            if ! kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-backend; then
+              echo "=== Backend deployment failed, collecting debug info ==="
+              kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} -o wide
+              echo "=== Pod descriptions ==="
+              kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }} | tail -200
+              echo "=== Pod logs ==="
+              kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }} --tail=100 --all-containers=true 2>/dev/null || true
+              exit 1
+            fi
             kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-frontend
             # Semantic-search has longer timeout due to model loading (non-blocking)
             kubectl rollout status --timeout=600s deployment ${{ inputs.name }}-semantic-search 2>/dev/null || echo "Note: semantic-search may still be starting up"
