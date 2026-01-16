@@ -31,7 +31,9 @@ spec:
               path: /healthz
               port: {{ .Values.backend.port }}
             initialDelaySeconds: 5
-            periodSeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
 
 ---
 

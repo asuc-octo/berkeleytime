@@ -27,12 +27,20 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "bt-app.semanticSearchName" . }}-env
+          startupProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.semanticSearch.port }}
+            failureThreshold: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /health
               port: {{ .Values.semanticSearch.port }}
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           volumeMounts:
             - name: indexes
               mountPath: /app/indexes

@@ -60,6 +60,7 @@ jobs:
             if [ $status = true ]; then
               kubectl rollout restart deployment ${{ inputs.name }}-backend
               kubectl rollout restart deployment ${{ inputs.name }}-frontend
+              kubectl rollout restart deployment ${{ inputs.name }}-semantic-search 2>/dev/null || true
             fi
 
             # Deploy staff dashboard if requested
@@ -87,6 +88,8 @@ jobs:
             # Check container status
             kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-backend
             kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-frontend
+            # Semantic-search has longer timeout due to model loading (non-blocking)
+            kubectl rollout status --timeout=600s deployment ${{ inputs.name }}-semantic-search 2>/dev/null || echo "Note: semantic-search may still be starting up"
 
       - name: Output Summary
         run: |
