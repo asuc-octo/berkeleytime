@@ -31,7 +31,7 @@ spec:
             httpGet:
               path: /health
               port: {{ .Values.semanticSearch.port }}
-            failureThreshold: 30
+            failureThreshold: 60
             periodSeconds: 10
           readinessProbe:
             httpGet:

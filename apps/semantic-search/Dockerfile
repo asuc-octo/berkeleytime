@@ -12,6 +12,9 @@ RUN apt-get update \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Pre-download the ML model during build (avoids slow download at startup)
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-base-en-v1.5')"
+
 COPY app ./app
 
 FROM semantic-search-base AS semantic-search-prod
