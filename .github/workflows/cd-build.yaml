@@ -33,8 +33,8 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.image == 'semantic-search' && './apps/semantic-search' || '.' }}
-          file: ./apps/${{ matrix.image }}/Dockerfile
+          context: "https://github.com/${{ github.repository }}.git#${{ github.sha }}${{ matrix.image == 'semantic-search' && ':apps/semantic-search' || '' }}"
+          file: ${{ matrix.image == 'semantic-search' && './Dockerfile' || format('./apps/{0}/Dockerfile', matrix.image) }}
           target: ${{ matrix.image }}-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}
           cache-from: |
