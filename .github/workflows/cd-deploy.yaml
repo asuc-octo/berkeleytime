@@ -109,10 +109,10 @@ jobs:
             fi
 
             echo "=== Semantic-search logs ==="
-            kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=${{ inputs.name }}-semantic-search --tail=100 2>/dev/null || echo "No logs available yet"
+            kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=semantic-search --tail=100 2>/dev/null || echo "No logs available yet"
 
             echo "=== Semantic-search pod describe ==="
-            kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=${{ inputs.name }}-semantic-search 2>/dev/null | tail -50 || true
+            kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=semantic-search 2>/dev/null | tail -50 || true
 
       - name: Output Summary
         run: |
