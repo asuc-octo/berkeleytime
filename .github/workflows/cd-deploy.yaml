@@ -100,13 +100,19 @@ jobs:
 
             # Semantic-search check (non-blocking, may take a while due to model loading)
             echo "=== Checking semantic-search status ==="
+            kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} | grep semantic || true
+
             if kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-semantic-search 2>/dev/null; then
               echo "Semantic-search deployed successfully"
             else
-              echo "Semantic-search still starting (this is normal - model loading takes time)"
-              kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} | grep semantic || true
-              kubectl -n bt logs -l app.kubernetes.io/name=${{ inputs.name }}-semantic-search --tail=30 2>/dev/null || true
+              echo "Semantic-search still starting or failed"
             fi
+
+            echo "=== Semantic-search logs ==="
+            kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=${{ inputs.name }}-semantic-search --tail=100 2>/dev/null || echo "No logs available yet"
+
+            echo "=== Semantic-search pod describe ==="
+            kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=${{ inputs.name }}-semantic-search 2>/dev/null | tail -50 || true
 
       - name: Output Summary
         run: |
