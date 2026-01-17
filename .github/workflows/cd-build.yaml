@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [backend, frontend, datapuller, ag-frontend, staff-frontend]
+        image: [backend, frontend, datapuller, semantic-search, ag-frontend, staff-frontend]
 
     steps:
       - name: Login to Docker Hub
