@@ -32,6 +32,10 @@ services:
     volumes:
       - ./apps/semantic-search/app:/app/app
       - ./data/semantic-search/indexes:/app/indexes
+    environment:
+      - SEMANTIC_SEARCH_YEAR=2026
+      - SEMANTIC_SEARCH_SEMESTER=Spring
+      - BACKEND_URL=http://backend:5001
   frontend:
     build:
       context: .

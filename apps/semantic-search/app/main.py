@@ -2,6 +2,7 @@ import logging
 import os
 import pickle
 import threading
+import time
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -325,17 +326,31 @@ class SemanticSearchEngine:
                 return cleaned
         return set(self.default_allowed_subjects) if self.default_allowed_subjects else None
 
-    def _fetch_courses(self, year: int, semester: str) -> List[Dict]:
-        resp = requests.post(
-            self.catalog_url,
-            json={"query": COURSE_QUERY, "variables": {"year": year, "semester": semester}},
-            timeout=60,
-        )
-        resp.raise_for_status()
-        payload = resp.json()
-        if "errors" in payload:
-            raise RuntimeError(f"Catalog query returned errors: {payload['errors']}")
-        return payload.get("data", {}).get("catalog") or []
+    def _fetch_courses(self, year: int, semester: str, max_retries: int = 5) -> List[Dict]:
+        """Fetch courses from backend with retry logic for K8s startup race conditions."""
+        last_error = None
+        for attempt in range(max_retries):
+            try:
+                resp = requests.post(
+                    self.catalog_url,
+                    json={"query": COURSE_QUERY, "variables": {"year": year, "semester": semester}},
+                    timeout=60,
+                )
+                resp.raise_for_status()
+                payload = resp.json()
+                if "errors" in payload:
+                    raise RuntimeError(f"Catalog query returned errors: {payload['errors']}")
+                return payload.get("data", {}).get("catalog") or []
+            except Exception as e:
+                last_error = e
+                if attempt < max_retries - 1:
+                    wait_time = 2 ** attempt  # exponential backoff: 1, 2, 4, 8, 16 seconds
+                    logger.warning(
+                        "Failed to fetch courses (attempt %d/%d): %s. Retrying in %ds...",
+                        attempt + 1, max_retries, e, wait_time
+                    )
+                    time.sleep(wait_time)
+        raise last_error
 
     @staticmethod
     def _build_course_text(course: Dict) -> str:
@@ -420,8 +435,10 @@ def build_index() -> None:
                 # Build fresh if not found on disk
                 engine.refresh(*DEFAULT_TERM)
         except Exception as exc:  # pragma: no cover - startup diagnostics
-            logger.exception("Failed to build semantic search index: %s", exc)
-            raise
+            # Don't crash on startup - just log warning and continue in "waiting" mode
+            # Index will be built on first search request or manual refresh
+            logger.warning("Failed to build semantic search index on startup: %s", exc)
+            logger.warning("Service will start in waiting mode - index will be built on first request")
     else:
         logger.info("No default term configured; waiting for first refresh/search request.")
 
