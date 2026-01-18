@@ -23,11 +23,22 @@
 
 - [Frontend](./core/frontend/README.md)
 
+- [Staff Dashboard](./core/staff-dashboard/README.md)
+
 - [Infrastructure](./core/infrastructure/README.md)
   - [Onboarding](./core/infrastructure/onboarding.md)
   - [CI/CD Workflow](./core/infrastructure/cicd-workflow.md)
   - [DNS & Certificates](./core/infrastructure/dns-certificates.md)
   - [Runbooks](./core/infrastructure/runbooks.md)
+
+- [Packages](./core/packages/README.md)
+  - [@repo/common](./core/packages/common.md)
+  - [@repo/theme](./core/packages/theme.md)
+  - [@repo/shared](./core/packages/shared.md)
+  - [@repo/gql-typedefs](./core/packages/gql-typedefs.md)
+  - [@repo/sis-api](./core/packages/sis-api.md)
+  - [@repo/eslint-config](./core/packages/eslint-config.md)
+  - [@repo/typescript-config](./core/packages/typescript-config.md)
 <!--
 ---
 
