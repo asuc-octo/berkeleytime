@@ -6,6 +6,7 @@ import { Semester } from "@/lib/generated/graphql";
 import {
   Breadth,
   Day,
+  EnrollmentFilter,
   GradingFilter,
   Level,
   SortBy,
@@ -36,7 +37,7 @@ export interface BrowserContextType {
   academicOrganization: string | null;
   online: boolean;
   sortBy: SortBy;
-  open: boolean;
+  enrollmentFilter: EnrollmentFilter;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
   aiSearchActive: boolean;
@@ -50,7 +51,7 @@ export interface BrowserContextType {
   updateAcademicOrganization: Dispatch<string | null>;
   updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
-  updateOpen: Dispatch<boolean>;
+  updateEnrollmentFilter: Dispatch<EnrollmentFilter>;
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
   setAiSearchActive: Dispatch<SetStateAction<boolean>>;
