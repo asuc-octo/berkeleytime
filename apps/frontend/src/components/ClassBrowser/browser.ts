@@ -1,3 +1,5 @@
+import { FuzzySearch } from "@repo/common";
+
 import {
   ICatalogClass,
   ISectionAttribute,
@@ -6,7 +8,6 @@ import {
 } from "@/lib/api";
 import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
 import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
-import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export enum SortBy {
   Relevance = "Relevance",

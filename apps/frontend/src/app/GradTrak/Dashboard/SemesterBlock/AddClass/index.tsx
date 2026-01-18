@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
+import { FuzzySearch } from "@repo/common";
+
 import { ILabel, ISelectedCourse } from "@/lib/api";
-import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SelectedCourse } from "../../index";
 import SearchBar from "./SearchBar";
