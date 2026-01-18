@@ -93,6 +93,7 @@ class SemanticSearchEngine:
         self.default_allowed_subjects = set(DEFAULT_ALLOWED_SUBJECTS) if DEFAULT_ALLOWED_SUBJECTS else None
         self._indices: Dict[str, TermIndex] = {}
         self._lock = threading.RLock()
+        self._building: Optional[str] = None  # Track what's currently being built
 
     def _get_index_path(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Path:
         """Get filesystem path for persisted index."""
@@ -173,6 +174,7 @@ class SemanticSearchEngine:
     ) -> TermIndex:
         term_semester = semester.strip()
         allowed = self._resolve_allowed_subjects(allowed_subjects)
+        build_key = f"{term_semester} {year}"
 
         logger.info(
             "Refreshing semantic search index for %s %s (subjects=%s)",
@@ -181,51 +183,56 @@ class SemanticSearchEngine:
             "all" if not allowed else ",".join(sorted(allowed)),
         )
 
-        raw_courses = self._fetch_courses(year, term_semester)
-        courses = self._deduplicate_courses(raw_courses)
-        if not courses:
-            raise RuntimeError("Catalog response did not contain any courses")
+        self._building = build_key
+        try:
+            raw_courses = self._fetch_courses(year, term_semester)
+            courses = self._deduplicate_courses(raw_courses)
+            if not courses:
+                raise RuntimeError("Catalog response did not contain any courses")
 
-        course_texts: List[str] = []
-        kept_idx: List[int] = []
+            course_texts: List[str] = []
+            kept_idx: List[int] = []
 
-        for i, course in enumerate(courses):
-            subj = (course.get("subject") or "").strip()
-            if allowed and subj and subj.upper() not in allowed:
-                continue
-            course_texts.append(self._build_course_text(course))
-            kept_idx.append(i)
+            for i, course in enumerate(courses):
+                subj = (course.get("subject") or "").strip()
+                if allowed and subj and subj.upper() not in allowed:
+                    continue
+                course_texts.append(self._build_course_text(course))
+                kept_idx.append(i)
 
-        if not course_texts:
-            logger.warning("Subject filter removed every course; rebuilding without filter")
-            course_texts = [self._build_course_text(course) for course in courses]
-            kept_idx = list(range(len(courses)))
+            if not course_texts:
+                logger.warning("Subject filter removed every course; rebuilding without filter")
+                course_texts = [self._build_course_text(course) for course in courses]
+                kept_idx = list(range(len(courses)))
 
-        embeddings = np.asarray(self.model.encode(course_texts, convert_to_numpy=True), dtype="float32")
-        faiss.normalize_L2(embeddings)
-        index = faiss.IndexFlatIP(embeddings.shape[1])
-        index.add(embeddings)
+            logger.info("Encoding %d courses (this may take a while on CPU)...", len(course_texts))
+            embeddings = np.asarray(self.model.encode(course_texts, convert_to_numpy=True), dtype="float32")
+            faiss.normalize_L2(embeddings)
+            index = faiss.IndexFlatIP(embeddings.shape[1])
+            index.add(embeddings)
 
-        entry = TermIndex(
-            index=index,
-            embeddings=embeddings,
-            courses=courses,
-            course_texts=course_texts,
-            kept_idx=kept_idx,
-            last_refreshed=datetime.utcnow(),
-            year=year,
-            semester=term_semester,
-            allowed_subjects=sorted(allowed) if allowed else None,
-        )
+            entry = TermIndex(
+                index=index,
+                embeddings=embeddings,
+                courses=courses,
+                course_texts=course_texts,
+                kept_idx=kept_idx,
+                last_refreshed=datetime.utcnow(),
+                year=year,
+                semester=term_semester,
+                allowed_subjects=sorted(allowed) if allowed else None,
+            )
 
-        with self._lock:
-            self._indices[self._key(entry.year, entry.semester, entry.allowed_subjects)] = entry
+            with self._lock:
+                self._indices[self._key(entry.year, entry.semester, entry.allowed_subjects)] = entry
 
-        # Save index to disk for persistence
-        self._save_index(entry)
+            # Save index to disk for persistence
+            self._save_index(entry)
 
-        logger.info("Semantic index ready with %d entries", len(course_texts))
-        return entry
+            logger.info("Semantic index ready with %d entries", len(course_texts))
+            return entry
+        finally:
+            self._building = None
 
     def search(
         self,
@@ -446,8 +453,16 @@ def build_index() -> None:
 @app.get("/health")
 def health():
     indexes = engine.describe_indices()
+    building = engine._building
+    if building:
+        status = "building"
+    elif indexes:
+        status = "ok"
+    else:
+        status = "waiting"
     return {
-        "status": "ok" if indexes else "waiting",
+        "status": status,
+        "building": building,
         "model": MODEL_NAME,
         "default_term": DEFAULT_TERM,
         "indexes": indexes,
