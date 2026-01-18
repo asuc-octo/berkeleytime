@@ -40,7 +40,6 @@ export interface BrowserContextType {
   enrollmentFilter: EnrollmentFilter;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
-  aiSearchActive: boolean;
   updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
@@ -54,9 +53,6 @@ export interface BrowserContextType {
   updateEnrollmentFilter: Dispatch<EnrollmentFilter>;
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
-  setAiSearchActive: Dispatch<SetStateAction<boolean>>;
-  handleSemanticSearch: () => Promise<void>;
-  semanticLoading: boolean;
   loading: boolean;
 }
 

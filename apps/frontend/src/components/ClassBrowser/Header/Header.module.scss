@@ -44,29 +44,6 @@
         color: var(--paragraph-color);
       }
     }
-
-    .sparksButton {
-      margin: 0 -8px 0 0;
-      padding: 0;
-
-      &.active {
-        color: var(--blue-500);
-        background-color: color-mix(in srgb, var(--blue-500) 10%, transparent);
-        border-radius: 4px;
-      }
-    }
-  }
-
-  .aiSearchButton {
-    width: 100%;
-    background-color: var(--blue-500);
-    color: white;
-    border: 1px solid var(--blue-500);
-
-    &:hover {
-      background-color: var(--blue-600);
-      border-color: var(--blue-600);
-    }
   }
 
   .filterButton {

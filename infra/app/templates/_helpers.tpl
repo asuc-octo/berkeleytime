@@ -35,11 +35,6 @@ app.kubernetes.io/name: cleanup
 {{ include "bt-app.labels" . }}
 {{- end -}}
 
-{{- define "bt-app.semanticSearchLabels" -}}
-app.kubernetes.io/name: semantic-search
-{{ include "bt-app.labels" . }}
-{{- end -}}
-
 {{- define "bt-app.backendName" -}}
 {{ .Release.Name }}-backend
 {{- end -}}
@@ -54,8 +49,4 @@ app.kubernetes.io/name: semantic-search
 
 {{- define "bt-app.datapullerName" -}}
 {{ .Release.Name }}-datapuller
-{{- end -}}
-
-{{- define "bt-app.semanticSearchName" -}}
-{{ .Release.Name }}-semantic-search
 {{- end -}}
