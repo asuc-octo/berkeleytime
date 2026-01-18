@@ -94,6 +94,8 @@ class SemanticSearchEngine:
         self._indices: Dict[str, TermIndex] = {}
         self._lock = threading.RLock()
         self._building: Optional[str] = None  # Track what's currently being built
+        self._last_error: Optional[str] = None  # Track last build error
+        self._build_thread: Optional[threading.Thread] = None  # Background build thread
 
     def _get_index_path(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Path:
         """Get filesystem path for persisted index."""
@@ -234,6 +236,48 @@ class SemanticSearchEngine:
         finally:
             self._building = None
 
+    def refresh_async(
+        self, year: int, semester: str, allowed_subjects: Optional[Iterable[str]] = None
+    ) -> Dict:
+        """Start index refresh in background thread. Returns immediately with status."""
+        term_semester = semester.strip()
+        build_key = f"{term_semester} {year}"
+
+        # Check if already building
+        if self._building:
+            return {
+                "status": "already_building",
+                "building": self._building,
+                "message": f"Already building index for {self._building}",
+            }
+
+        # Check if thread is still running
+        if self._build_thread and self._build_thread.is_alive():
+            return {
+                "status": "already_building",
+                "building": self._building,
+                "message": "A build is already in progress",
+            }
+
+        # Clear previous error
+        self._last_error = None
+
+        def build_in_background():
+            try:
+                self.refresh(year, term_semester, allowed_subjects)
+            except Exception as exc:
+                logger.exception("Background refresh failed: %s", exc)
+                self._last_error = str(exc)
+
+        self._build_thread = threading.Thread(target=build_in_background, daemon=True)
+        self._build_thread.start()
+
+        return {
+            "status": "building",
+            "building": build_key,
+            "message": f"Started building index for {build_key} in background",
+        }
+
     def search(
         self,
         query: str,
@@ -333,15 +377,20 @@ class SemanticSearchEngine:
                 return cleaned
         return set(self.default_allowed_subjects) if self.default_allowed_subjects else None
 
-    def _fetch_courses(self, year: int, semester: str, max_retries: int = 5) -> List[Dict]:
-        """Fetch courses from backend with retry logic for K8s startup race conditions."""
+    def _fetch_courses(self, year: int, semester: str, max_retries: int = 12) -> List[Dict]:
+        """Fetch courses from backend with retry logic for K8s startup race conditions.
+
+        Default 12 retries with exponential backoff (capped at 30s):
+        1, 2, 4, 8, 16, 30, 30, 30, 30, 30, 30, 30 = ~4 minutes of waits + request time
+        This should be enough for backend to start in K8s.
+        """
         last_error = None
         for attempt in range(max_retries):
             try:
                 resp = requests.post(
                     self.catalog_url,
                     json={"query": COURSE_QUERY, "variables": {"year": year, "semester": semester}},
-                    timeout=60,
+                    timeout=30,  # Reduced timeout per request, rely on retries instead
                 )
                 resp.raise_for_status()
                 payload = resp.json()
@@ -351,7 +400,7 @@ class SemanticSearchEngine:
             except Exception as e:
                 last_error = e
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt  # exponential backoff: 1, 2, 4, 8, 16 seconds
+                    wait_time = min(2 ** attempt, 30)  # exponential backoff capped at 30s
                     logger.warning(
                         "Failed to fetch courses (attempt %d/%d): %s. Retrying in %ds...",
                         attempt + 1, max_retries, e, wait_time
@@ -429,23 +478,19 @@ def resolve_term(year: Optional[int], semester: Optional[str]) -> Tuple[int, str
 @app.on_event("startup")
 def build_index() -> None:
     if DEFAULT_TERM:
-        try:
-            # Try loading from disk first
-            year, semester = DEFAULT_TERM
-            loaded = engine._load_index(year, semester, None)
-            if loaded:
-                key = engine._key(loaded.year, loaded.semester, loaded.allowed_subjects)
-                with engine._lock:
-                    engine._indices[key] = loaded
-                logger.info("Loaded default index from disk on startup")
-            else:
-                # Build fresh if not found on disk
-                engine.refresh(*DEFAULT_TERM)
-        except Exception as exc:  # pragma: no cover - startup diagnostics
-            # Don't crash on startup - just log warning and continue in "waiting" mode
-            # Index will be built on first search request or manual refresh
-            logger.warning("Failed to build semantic search index on startup: %s", exc)
-            logger.warning("Service will start in waiting mode - index will be built on first request")
+        # Try loading from disk first (fast, won't block)
+        year, semester = DEFAULT_TERM
+        loaded = engine._load_index(year, semester, None)
+        if loaded:
+            key = engine._key(loaded.year, loaded.semester, loaded.allowed_subjects)
+            with engine._lock:
+                engine._indices[key] = loaded
+            logger.info("Loaded default index from disk on startup")
+        else:
+            # Build fresh in background - don't block startup
+            # This allows health checks to pass while index builds
+            logger.info("Starting background index build for %s %s", semester, year)
+            engine.refresh_async(year, semester)
     else:
         logger.info("No default term configured; waiting for first refresh/search request.")
 
@@ -454,15 +499,19 @@ def build_index() -> None:
 def health():
     indexes = engine.describe_indices()
     building = engine._building
+    last_error = engine._last_error
     if building:
         status = "building"
     elif indexes:
         status = "ok"
+    elif last_error:
+        status = "error"
     else:
         status = "waiting"
     return {
         "status": status,
         "building": building,
+        "last_error": last_error,
         "model": MODEL_NAME,
         "default_term": DEFAULT_TERM,
         "indexes": indexes,
@@ -471,20 +520,17 @@ def health():
 
 @app.post("/refresh")
 def refresh_index(payload: RefreshRequest):
+    """
+    Start building index in background. Returns immediately.
+    Check /health endpoint for build status.
+    """
     try:
-        entry = engine.refresh(payload.year, payload.semester, payload.allowed_subjects)
-    except Exception as exc:
-        logger.exception("Refresh failed: %s", exc)
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        normalized_semester = normalize_semester(payload.semester)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
-    return {
-        "status": "refreshed",
-        "year": entry.year,
-        "semester": entry.semester,
-        "allowed_subjects": entry.allowed_subjects,
-        "size": len(entry.course_texts),
-        "last_refreshed": entry.last_refreshed.isoformat(),
-    }
+    result = engine.refresh_async(payload.year, normalized_semester, payload.allowed_subjects)
+    return result
 
 
 @app.get("/search")
