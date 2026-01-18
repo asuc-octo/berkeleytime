@@ -1,9 +1,6 @@
-import { useState } from "react";
-
 import { Meta, StoryObj } from "@storybook/react";
-import { fn } from "storybook/test";
 
-import { Button, LoadingIndicator, ThemeProvider } from "@repo/theme";
+import { LoadingIndicator } from "@repo/theme";
 
 const meta: Meta<typeof LoadingIndicator> = {
   title: "Theme/LoadingIndicator",
