@@ -4,6 +4,7 @@ import type { RedisClientType } from "redis";
 
 import {
   ClassModel,
+  ClassViewCountModel,
   IClassItem,
   ISectionItem,
   SectionModel,
@@ -218,7 +219,7 @@ export const getViewCount = async (
   const redisCount = await redis.get(counterKey);
   const pendingViews = redisCount ? parseInt(redisCount, 10) : 0;
 
-  const _class = await ClassModel.findOne({
+  const viewDoc = await ClassViewCountModel.findOne({
     year,
     semester,
     sessionId: sessionId || "1",
@@ -227,8 +228,7 @@ export const getViewCount = async (
     number,
   }).lean();
 
-  const mongoViews =
-    (_class as IClassItem & { viewCount?: number })?.viewCount ?? 0;
+  const mongoViews = viewDoc?.viewCount ?? 0;
 
   return pendingViews + mongoViews;
 };
@@ -262,6 +262,7 @@ export const flushViewCounts = async (
         number: string;
       };
       update: { $inc: { viewCount: number } };
+      upsert: boolean;
     };
   }> = [];
 
@@ -284,6 +285,7 @@ export const flushViewCounts = async (
       updateOne: {
         filter: { year, semester, sessionId, subject, courseNumber, number },
         update: { $inc: { viewCount: count } },
+        upsert: true,
       },
     });
   }
@@ -293,14 +295,16 @@ export const flushViewCounts = async (
   }
 
   try {
-    const result = await ClassModel.bulkWrite(operations, { ordered: false });
+    const result = await ClassViewCountModel.bulkWrite(operations, {
+      ordered: false,
+    });
 
     // Delete Redis keys only after successful Mongo write
     for (const key of keys) {
       await redis.del(key);
     }
 
-    return { flushed: result.modifiedCount, errors: 0 };
+    return { flushed: result.modifiedCount + result.upsertedCount, errors: 0 };
   } catch {
     return { flushed: 0, errors: operations.length };
   }
