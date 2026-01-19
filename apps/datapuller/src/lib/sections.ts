@@ -67,6 +67,10 @@ const formatSection = (input: ClassSection) => {
     addConsentRequired: input.addConsentRequired?.code,
     dropConsentRequired: input.dropConsentRequired?.code,
     primary: input.association?.primary,
+    associatedClass: input.association?.associatedClass,
+    associatedSectionIds: input.association?.primaryAssociatedSectionIds?.map(
+      (id) => id.toString()
+    ),
     type: input.type?.code,
     combinedSections: input.combination?.combinedSections,
     exams: input.exams?.map((exam) => ({

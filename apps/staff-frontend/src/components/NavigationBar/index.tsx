@@ -18,11 +18,11 @@ export default function NavigationBar() {
         Bt Staff
       </Link>
       <div className={styles.group}>
-        <NavLink to="/" end>
-          {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
-        </NavLink>
         <NavLink to="/analytics">
           {({ isActive }) => <MenuItem active={isActive}>Analytics</MenuItem>}
+        </NavLink>
+        <NavLink to="/" end>
+          {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
         </NavLink>
         <NavLink to="/banners">
           {({ isActive }) => <MenuItem active={isActive}>Banners</MenuItem>}

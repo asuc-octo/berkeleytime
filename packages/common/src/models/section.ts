@@ -22,6 +22,8 @@ export interface ISectionItem {
   addConsentRequired?: string;
   dropConsentRequired?: string;
   primary?: boolean;
+  associatedSectionIds?: string[];
+  associatedClass?: number;
   type?: string;
   combinedSections?: number[];
   exams?: {
@@ -76,6 +78,8 @@ const sectionSchema = new Schema<ISectionItem>({
   courseNumber: { type: String, required: true },
   number: { type: String, required: true },
   primary: { type: Boolean },
+  associatedSectionIds: { type: [String] },
+  associatedClass: { type: Number },
 
   // attributes
   year: { type: Number, required: true },

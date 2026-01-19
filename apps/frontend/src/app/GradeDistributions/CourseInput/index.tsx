@@ -348,8 +348,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       searchParams.append("input", getInputSearchParam(input));
       setSearchParams(searchParams);
 
-      // Reset selectors back to defaults after adding a course
-      setSelectedCourse(null);
+      // Reset selectors back to defaults after adding a course except selectedCourse
+      // setSelectedCourse(null);
       setSelectedInstructor(null);
       setSelectedSemester(null);
       setSelectedType(DEFAULT_BY_OPTION.value);
@@ -444,6 +444,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
               ) {
                 semesterSelectRef.current?.focus();
                 semesterSelectRef.current?.openMenu();
+              } else if (localSemesterOptions.length === 1) {
+                setSelectedSemester(localSemesterOptions[0].value);
               }
             }}
             variant="foreground"
@@ -468,6 +470,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
               ) {
                 instructorSelectRef.current?.focus();
                 instructorSelectRef.current?.openMenu();
+              } else if (localInstructorOptions.length === 1) {
+                setSelectedInstructor(localInstructorOptions[0].value);
               }
             }}
             variant="foreground"

@@ -32,7 +32,7 @@ const defaultUnits = [0, 0];
 
 export const getY = (time: string) => {
   const [hour, minute] = time.split(":");
-  return (parseInt(hour) - 6) * 60 + parseInt(minute);
+  return parseInt(hour) * 60 + parseInt(minute);
 };
 
 export const getUnits = (schedule?: ISchedule) => {
