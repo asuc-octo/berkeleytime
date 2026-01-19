@@ -355,9 +355,6 @@ export default function Filters() {
       const orgName = _class.course.academicOrganizationName;
       const nicknames = _class.course.departmentNicknames;
 
-      if (_class.subject === "ENVECON")
-        console.log(_class.subject, _class.courseNumber, org, orgName);
-
       if (!org || !orgName) return;
 
       const nicknameList =
