@@ -11,6 +11,7 @@ import {
 } from "../shared/term-selectors";
 
 const TERMS_PER_API_BATCH = 4;
+const INSERT_BATCH_SIZE = 5000;
 
 const updateSections = async (config: Config, termSelector: TermSelector) => {
   const {
@@ -67,11 +68,27 @@ const updateSections = async (config: Config, termSelector: TermSelector) => {
 
         log.trace(`Inserting batch ${i}`);
 
-        const { insertedCount } = await SectionModel.insertMany(sections, {
-          ordered: false,
-          rawResult: true,
-          session,
-        });
+        // Batch inserts to avoid transaction timeout/size limits
+        let insertedCount = 0;
+        for (
+          let insertBatchStart = 0;
+          insertBatchStart < sections.length;
+          insertBatchStart += INSERT_BATCH_SIZE
+        ) {
+          const insertBatch = sections.slice(
+            insertBatchStart,
+            insertBatchStart + INSERT_BATCH_SIZE
+          );
+          const batchResult = await SectionModel.insertMany(insertBatch, {
+            ordered: false,
+            rawResult: true,
+            session,
+          });
+          insertedCount += batchResult.insertedCount;
+          log.info(
+            `Inserted ${batchResult.insertedCount.toLocaleString()} sections in insert batch ${insertBatchStart / INSERT_BATCH_SIZE + 1}`
+          );
+        }
 
         // avoid replacing data if a non-negligible amount is deleted
         if (insertedCount / deletedCount <= 0.9) {
