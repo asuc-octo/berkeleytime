@@ -1,4 +1,14 @@
-# Deploying with CI/CD
+# Contributing
+
+Follow the steps in [Local Development](./local-development.md) to set up your environment and start working on your feature.
+
+Once you've completed your feature, push your changes with `git push` and make sure all the pre-push hooks pass. You should see all checks (type-check, format, lint, build) marked as "Passed" before proceeding.
+
+Next, create a Pull Request (PR). Make a [deployment to development](#deploying-with-cicd) and ping someone on the team (your pod lead or an experienced member) to review your PR. Send them both the link to your deployment and the link to your PR.
+
+Once they approve your PR, you should be good to merge. After merging, test your changes in staging once it is deployed (staging deploys automatically on pushes to `main`). Then run the [production workflow](#production).
+
+## Deploying with CI/CD
 
 The deployment process is different for [development](#development), [staging](#staging), and [production](#production) environments.
 - **Development**: Best for short-term deployments to simulate a production environment as closely as possible. Useful for deploying feature branches before merging into `main`.
@@ -7,7 +17,7 @@ The deployment process is different for [development](#development), [staging](#
 
 To learn more about how our CI/CD pipelines work, head to the [infra section's overview of CI/CD](../core/infrastructure/cicd-workflow.md).
 
-## Development
+### Development
 
 1. Go to the [actions page](https://github.com/asuc-octo/berkeleytime/actions).
     <details><summary>Image</summary>
@@ -74,10 +84,10 @@ To learn more about how our CI/CD pipelines work, head to the [infra section's o
 
     </details>
 
-## Staging
+### Staging
 
 The staging CI/CD pipeline is automatically run on every push to `main`. The staging website can be viewed at `staging.berkeleytime.com`.
 
-## Production
+### Production
 
 The production CI/CD pipeline is manually run with a process similar to the development pipeline. However, the production pipeline can only be run on `main`.

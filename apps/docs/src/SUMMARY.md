@@ -7,7 +7,7 @@
 # Getting Started
 
 - [Local Development](./getting-started/local-development.md)
-- [Deploying with CI/CD](./getting-started/deploying-with-cicd.md)
+- [Contributing](./getting-started/contributing.md)
 
 ---
 
