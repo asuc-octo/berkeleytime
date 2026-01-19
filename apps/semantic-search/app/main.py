@@ -18,6 +18,9 @@ from sentence_transformers import SentenceTransformer
 logger = logging.getLogger("semantic-search")
 logging.basicConfig(level=os.getenv("SEMANTIC_SEARCH_LOG_LEVEL", "INFO"))
 
+# Semester order for comparison
+SEMESTER_ORDER = {"Spring": 0, "Summer": 1, "Fall": 2, "Winter": 3}
+
 # Directory for persisting FAISS indices
 INDEX_STORAGE_DIR = Path(os.getenv("INDEX_STORAGE_DIR", "/app/indexes"))
 INDEX_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
@@ -93,9 +96,11 @@ class SemanticSearchEngine:
         self.default_allowed_subjects = set(DEFAULT_ALLOWED_SUBJECTS) if DEFAULT_ALLOWED_SUBJECTS else None
         self._indices: Dict[str, TermIndex] = {}
         self._lock = threading.RLock()
-        self._building: Optional[str] = None  # Track what's currently being built
-        self._last_error: Optional[str] = None  # Track last build error
-        self._build_thread: Optional[threading.Thread] = None  # Background build thread
+        self._building: Optional[str] = None
+        self._build_started: Optional[datetime] = None
+        self._last_error: Optional[str] = None
+        self._build_thread: Optional[threading.Thread] = None
+        self._build_queue: List[Tuple[int, str]] = []  # Queue of (year, semester) to build
 
     def _get_index_path(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Path:
         """Get filesystem path for persisted index."""
@@ -125,7 +130,7 @@ class SemanticSearchEngine:
             with open(index_path.with_suffix(".pkl"), "wb") as f:
                 pickle.dump(metadata, f)
 
-            logger.info("Saved index to %s", index_path)
+            logger.info("Saved to disk: %s", index_path.stem)
         except Exception as exc:
             logger.warning("Failed to save index to disk: %s", exc)
 
@@ -158,14 +163,7 @@ class SemanticSearchEngine:
                 allowed_subjects=metadata["allowed_subjects"],
             )
 
-            logger.info(
-                "Loaded index from disk for %s %s (subjects=%s, size=%d, last_refreshed=%s)",
-                entry.semester,
-                entry.year,
-                "all" if not entry.allowed_subjects else ",".join(sorted(entry.allowed_subjects)),
-                len(entry.course_texts),
-                entry.last_refreshed.isoformat(),
-            )
+            logger.info("Loaded from disk: %s %s (%d courses)", entry.semester, entry.year, len(entry.course_texts))
             return entry
         except Exception as exc:
             logger.warning("Failed to load index from disk: %s", exc)
@@ -178,14 +176,10 @@ class SemanticSearchEngine:
         allowed = self._resolve_allowed_subjects(allowed_subjects)
         build_key = f"{term_semester} {year}"
 
-        logger.info(
-            "Refreshing semantic search index for %s %s (subjects=%s)",
-            term_semester,
-            year,
-            "all" if not allowed else ",".join(sorted(allowed)),
-        )
+        logger.info("Building index for %s %s", term_semester, year)
 
         self._building = build_key
+        self._build_started = datetime.utcnow()
         try:
             raw_courses = self._fetch_courses(year, term_semester)
             courses = self._deduplicate_courses(raw_courses)
@@ -207,7 +201,7 @@ class SemanticSearchEngine:
                 course_texts = [self._build_course_text(course) for course in courses]
                 kept_idx = list(range(len(courses)))
 
-            logger.info("Encoding %d courses (this may take a while on CPU)...", len(course_texts))
+            logger.info("Encoding %d courses...", len(course_texts))
             embeddings = np.asarray(self.model.encode(course_texts, convert_to_numpy=True), dtype="float32")
             faiss.normalize_L2(embeddings)
             index = faiss.IndexFlatIP(embeddings.shape[1])
@@ -231,10 +225,11 @@ class SemanticSearchEngine:
             # Save index to disk for persistence
             self._save_index(entry)
 
-            logger.info("Semantic index ready with %d entries", len(course_texts))
+            logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(course_texts))
             return entry
         finally:
             self._building = None
+            self._build_started = None
 
     def refresh_async(
         self, year: int, semester: str, allowed_subjects: Optional[Iterable[str]] = None
@@ -400,11 +395,10 @@ class SemanticSearchEngine:
             except Exception as e:
                 last_error = e
                 if attempt < max_retries - 1:
-                    wait_time = min(2 ** attempt, 30)  # exponential backoff capped at 30s
-                    logger.warning(
-                        "Failed to fetch courses (attempt %d/%d): %s. Retrying in %ds...",
-                        attempt + 1, max_retries, e, wait_time
-                    )
+                    wait_time = min(2 ** attempt, 30)
+                    # Only log first attempt and every 4th retry to reduce noise
+                    if attempt == 0 or attempt % 4 == 0:
+                        logger.warning("Fetch failed (attempt %d/%d), retrying...", attempt + 1, max_retries)
                     time.sleep(wait_time)
         raise last_error
 
@@ -438,9 +432,105 @@ class SemanticSearchEngine:
                 continue
             seen.add(key)
             unique.append(course)
-        if dropped:
-            logger.info("Deduplicated catalog entries: removed %d duplicates", dropped)
         return unique
+
+    def fetch_available_terms(self) -> List[Tuple[int, str]]:
+        """Fetch list of unique available terms from backend."""
+        query = """
+        query {
+          terms {
+            year
+            semester
+          }
+        }
+        """
+        try:
+            resp = requests.post(
+                self.catalog_url,
+                json={"query": query},
+                timeout=30,
+            )
+            resp.raise_for_status()
+            payload = resp.json()
+            if "errors" in payload:
+                return []
+            terms_data = payload.get("data", {}).get("terms") or []
+            # Deduplicate terms
+            seen = set()
+            unique_terms = []
+            for t in terms_data:
+                if t.get("year") and t.get("semester"):
+                    key = (t["year"], t["semester"])
+                    if key not in seen:
+                        seen.add(key)
+                        unique_terms.append(key)
+            return unique_terms
+        except Exception:
+            return []
+
+    def build_startup_indexes(self) -> None:
+        """Load all available indexes from disk. Only build if not on disk."""
+        # Fetch available terms
+        available_terms = self.fetch_available_terms()
+        if not available_terms:
+            # Fallback to default term if can't fetch
+            if DEFAULT_TERM:
+                self._build_queue = [DEFAULT_TERM]
+            return
+
+        # Sort terms: newest first
+        available_terms.sort(key=lambda t: (t[0], SEMESTER_ORDER.get(t[1], 0)), reverse=True)
+
+        # Try to load ALL terms from disk first
+        terms_to_build = []
+        for year, semester in available_terms:
+            loaded = self._load_index(year, semester, None)
+            if loaded:
+                key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
+                with self._lock:
+                    self._indices[key] = loaded
+            else:
+                # Not on disk, queue for building
+                terms_to_build.append((year, semester))
+
+        # Queue terms that weren't found on disk
+        self._build_queue = terms_to_build
+        if terms_to_build:
+            logger.info("Need to build %d indexes: %s",
+                       len(terms_to_build),
+                       ", ".join(f"{s} {y}" for y, s in terms_to_build))
+
+    def process_build_queue(self) -> None:
+        """Process the build queue, building each term in sequence."""
+        while self._build_queue:
+            year, semester = self._build_queue.pop(0)
+            try:
+                # Check if already loaded
+                key = self._key(year, semester, None)
+                with self._lock:
+                    if key in self._indices:
+                        continue
+                self.refresh(year, semester)
+            except RuntimeError as exc:
+                # Skip terms with no courses (e.g., future semesters not yet available)
+                if "did not contain any courses" in str(exc):
+                    logger.info("Skipping %s %s (no courses)", semester, year)
+                else:
+                    self._last_error = f"{semester} {year}: {exc}"
+                    logger.error("Failed to build %s %s: %s", semester, year, exc)
+            except Exception as exc:
+                self._last_error = f"{semester} {year}: {exc}"
+                logger.error("Failed to build %s %s: %s", semester, year, exc)
+
+    def get_build_duration_seconds(self) -> Optional[float]:
+        """Get current build duration in seconds, or None if not building."""
+        if self._build_started:
+            return (datetime.utcnow() - self._build_started).total_seconds()
+        return None
+
+    def get_queue_status(self) -> List[str]:
+        """Get list of terms waiting to be built."""
+        return [f"{sem} {yr}" for yr, sem in self._build_queue]
 
 
 engine = SemanticSearchEngine()
@@ -477,43 +567,45 @@ def resolve_term(year: Optional[int], semester: Optional[str]) -> Tuple[int, str
 
 @app.on_event("startup")
 def build_index() -> None:
-    if DEFAULT_TERM:
-        # Try loading from disk first (fast, won't block)
-        year, semester = DEFAULT_TERM
-        loaded = engine._load_index(year, semester, None)
-        if loaded:
-            key = engine._key(loaded.year, loaded.semester, loaded.allowed_subjects)
-            with engine._lock:
-                engine._indices[key] = loaded
-            logger.info("Loaded default index from disk on startup")
-        else:
-            # Build fresh in background - don't block startup
-            # This allows health checks to pass while index builds
-            logger.info("Starting background index build for %s %s", semester, year)
-            engine.refresh_async(year, semester)
-    else:
-        logger.info("No default term configured; waiting for first refresh/search request.")
+    """Start background index building for all relevant terms."""
+    def startup_build():
+        try:
+            engine.build_startup_indexes()
+            engine.process_build_queue()
+        except Exception as exc:
+            engine._last_error = str(exc)
+            logger.error("Startup build failed: %s", exc)
+
+    thread = threading.Thread(target=startup_build, daemon=True)
+    thread.start()
+    logger.info("Started background index building")
 
 
 @app.get("/health")
 def health():
     indexes = engine.describe_indices()
     building = engine._building
+    build_duration = engine.get_build_duration_seconds()
+    queue = engine.get_queue_status()
     last_error = engine._last_error
+
     if building:
         status = "building"
+    elif queue:
+        status = "queued"
     elif indexes:
         status = "ok"
     elif last_error:
         status = "error"
     else:
         status = "waiting"
+
     return {
         "status": status,
         "building": building,
+        "build_duration_seconds": round(build_duration, 1) if build_duration else None,
+        "queue": queue,
         "last_error": last_error,
-        "model": MODEL_NAME,
-        "default_term": DEFAULT_TERM,
         "indexes": indexes,
     }
 

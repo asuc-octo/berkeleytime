@@ -257,9 +257,12 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
   // Process sequentially to avoid overwhelming the server
   await warmCatalogCacheForTerms(config, termsWithCatalogData);
 
-  // Refresh semantic search index for the terms that were just updated
-  const updatedTermNames = terms.map((term) => ({ name: term.name }));
-  await refreshSemanticSearchForTerms(config, updatedTermNames);
+  // Refresh semantic search index only for current/future terms
+  // Past terms don't change, so no need to rebuild their indexes
+  const nonPastTerms = terms
+    .filter((term) => term.temporalPosition !== "Past")
+    .map((term) => ({ name: term.name }));
+  await refreshSemanticSearchForTerms(config, nonPastTerms);
 };
 
 const activeTerms = async (config: Config) => {
