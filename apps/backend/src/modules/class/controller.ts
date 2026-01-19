@@ -42,14 +42,46 @@ export const getSecondarySections = async (
   courseNumber: string,
   number: string
 ) => {
+  const primarySection = await SectionModel.findOne({
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    number,
+    primary: true,
+  }).lean();
+
+  const sectionId = primarySection?.sectionId;
+
+  console.log(primarySection);
+
   const sections = await SectionModel.find({
     year,
     semester,
     sessionId,
     subject,
     courseNumber,
-    number: { $regex: `^(${number[number.length - 1]}|999)` },
+    associatedSectionIds: { $in: [sectionId] },
+    primary: false, // filter out lectures
   }).lean();
+
+  if (sections.length === 0) {
+    // For some reason, Physics 7B encodes relationships in the associatedClass field instead of the associatedSectionIds field
+    // Bio 1B and Chem 3A do it the other way around
+    const sections2 = await SectionModel.find({
+      year,
+      semester,
+      sessionId,
+      subject,
+      courseNumber,
+      associatedClass: parseInt(number),
+      primary: false, // filter out lectures
+    }).lean();
+    if (sections2.length > 0) {
+      sections.push(...sections2);
+    }
+  }
 
   return sections.map((section) => formatSection(section as ISectionItem));
 };

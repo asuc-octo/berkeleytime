@@ -431,15 +431,45 @@ export default function Enrollment() {
     // list (one for each selected class) of mappings from time (prettified string) to enrollment data
     const timeToEnrollmentMaps: Map<
       number,
-      { enrolledCount: number; waitlistedCount: number }
+      { enrolledCount: number | null; waitlistedCount: number | null }
     >[] = outputs.map((output) => {
+      // Calculate valid denominators for maxEnroll and maxWaitlist
+      const maxEnrollHistory = output.data.history.map((e) => e.maxEnroll ?? 0);
+      const maxWaitlistHistory = output.data.history.map(
+        (e) => e.maxWaitlist ?? 0
+      );
+
+      const maxEnrollMax = Math.max(...maxEnrollHistory);
+      const maxWaitlistMax = Math.max(...maxWaitlistHistory);
+      const lastMaxEnroll =
+        output.data.history[output.data.history.length - 1].maxEnroll ?? 0;
+      const lastMaxWaitlist =
+        output.data.history[output.data.history.length - 1].maxWaitlist ?? 0;
+
+      // Determine valid denominators:
+      // - If denominator was always zero, we'll set values to null (hide the line)
+      // - If denominator was non-zero but last is zero, use the max value from history
+      // - Otherwise, use the last value (or 1 as fallback)
+      const validMaxEnroll =
+        maxEnrollMax > 0
+          ? lastMaxEnroll > 0
+            ? lastMaxEnroll
+            : maxEnrollMax
+          : 0;
+      const validMaxWaitlist =
+        maxWaitlistMax > 0
+          ? lastMaxWaitlist > 0
+            ? lastMaxWaitlist
+            : maxWaitlistMax
+          : 0;
+
       // the first time data point, floored to the nearest minute
       const firstTime = moment(output.data.history[0].startTime).startOf(
         "minute"
       );
       const map = new Map<
         number,
-        { enrolledCount: number; waitlistedCount: number }
+        { enrolledCount: number | null; waitlistedCount: number | null }
       >();
       for (const enrollment of output.data.history) {
         const start = moment(enrollment.startTime).startOf("minute");
@@ -454,17 +484,17 @@ export default function Enrollment() {
           const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
           timeDeltas.add(timeDelta);
 
+          // If denominator was always zero, set to null (hide the line)
+          // Otherwise, calculate percentage using valid denominator
           map.set(timeDelta, {
             enrolledCount:
-              (enrollment.enrolledCount /
-                (output.data.history[output.data.history.length - 1]
-                  .maxEnroll ?? 1)) *
-              100,
+              validMaxEnroll > 0
+                ? (enrollment.enrolledCount / validMaxEnroll) * 100
+                : null,
             waitlistedCount:
-              (enrollment.waitlistedCount /
-                (output.data.history[output.data.history.length - 1]
-                  .maxWaitlist ?? 1)) *
-              100,
+              validMaxWaitlist > 0
+                ? (enrollment.waitlistedCount / validMaxWaitlist) * 100
+                : null,
           });
         }
       }

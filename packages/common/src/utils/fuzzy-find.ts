@@ -49,6 +49,12 @@ const fuzzyScore = (query: string, target: string): number => {
     // Skip spaces in target
     if (target[i] === " ") continue;
 
+    // Skip spaces in query
+    while (queryIndex < query.length && query[queryIndex] === " ") {
+      queryIndex++;
+    }
+    if (queryIndex >= query.length) break;
+
     if (target[i] === query[queryIndex]) {
       score += 1;
 

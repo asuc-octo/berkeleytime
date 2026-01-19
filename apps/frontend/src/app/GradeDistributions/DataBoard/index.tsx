@@ -7,7 +7,7 @@ import CourseSideMetrics, {
 import { useReadCourseGradeDist, useReadCourseTitle } from "@/hooks/api";
 import { IGradeDistribution } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
-import { GRADES } from "@/lib/grades";
+import { LETTER_GRADES } from "@/lib/grades";
 
 interface DataBoardProps {
   color: string;
@@ -70,21 +70,38 @@ export default function DataBoard({
       total: number;
     } = { lower: null, upper: null, count: null, total: 0 };
     if (!gradeDistribution || !hoveredLetter) return ret;
+
+    // Calculate total excluding P/NP grades
     ret.total =
-      gradeDistribution.distribution?.reduce((acc, g) => acc + g.count, 0) ?? 0;
-    GRADES.reduce((acc, grade) => {
-      if (grade === hoveredLetter)
-        ret.upper = addOrdinalSuffix(
-          (((ret.total - acc) * 100) / ret.total).toFixed(0)
-        );
+      gradeDistribution.distribution?.reduce((acc, g) => {
+        // Only count letter grades (A+ through F), exclude P and NP
+        if (
+          LETTER_GRADES.includes(g.letter as (typeof LETTER_GRADES)[number])
+        ) {
+          return acc + g.count;
+        }
+        return acc;
+      }, 0) ?? 0;
+
+    // Use only letter grades for percentile calculation
+    LETTER_GRADES.reduce((acc, grade) => {
+      if (grade === hoveredLetter) {
+        const upperValue =
+          ret.total > 0
+            ? (((ret.total - acc) * 100) / ret.total).toFixed(0)
+            : "0";
+        ret.upper = addOrdinalSuffix(upperValue);
+      }
       const count =
         gradeDistribution.distribution?.find((g) => g.letter === grade)
           ?.count ?? 0;
       acc += count;
       if (grade === hoveredLetter) {
-        ret.lower = addOrdinalSuffix(
-          (((ret.total - acc) * 100) / ret.total).toFixed(0)
-        );
+        const lowerValue =
+          ret.total > 0
+            ? (((ret.total - acc) * 100) / ret.total).toFixed(0)
+            : "0";
+        ret.lower = addOrdinalSuffix(lowerValue);
         ret.count = count;
       }
       return acc;
@@ -137,16 +154,38 @@ export default function DataBoard({
   ];
 
   if (hoveredLetter) {
-    metrics.push({
-      label: `${lowerPercentile} - ${upperPercentile} Percentile`,
-      value: (
-        <>
-          <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
-          {hoveredCount}/{gradeDistTotal},{" "}
-          {(((hoveredCount ?? 0) / gradeDistTotal) * 100).toFixed(1)}%)
-        </>
-      ),
-    });
+    // Only show percentile for letter grades (not P/NP)
+    if (
+      LETTER_GRADES.includes(hoveredLetter as (typeof LETTER_GRADES)[number])
+    ) {
+      metrics.push({
+        label: `${lowerPercentile} - ${upperPercentile} Percentile`,
+        value: (
+          <>
+            <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
+            {hoveredCount}/{gradeDistTotal},{" "}
+            {(((hoveredCount ?? 0) / gradeDistTotal) * 100).toFixed(1)}%)
+          </>
+        ),
+      });
+    } else {
+      // For P/NP grades, just show the count without percentile
+      const pnpCount =
+        gradeDistribution?.distribution?.find((g) => g.letter === hoveredLetter)
+          ?.count ?? 0;
+      const totalAll =
+        gradeDistribution?.distribution?.reduce((acc, g) => acc + g.count, 0) ??
+        0;
+      metrics.push({
+        label: hoveredLetter,
+        value: (
+          <>
+            <ColoredGrade style={GRADE_STYLE} grade={hoveredLetter} />(
+            {pnpCount}/{totalAll}, {((pnpCount / totalAll) * 100).toFixed(1)}%)
+          </>
+        ),
+      });
+    }
   }
 
   return (

@@ -37,6 +37,7 @@ const tests: string[][] = [
   ["16a", "EECS 16A"],
   ["math16a", "MATH 16A"],
   ["hist7a", "HISTORY 7A"],
+  ["bio 1b", "BIOLOGY 1B"], // spaces in query should be handled same as no spaces
 ];
 
 describe("fuzzyFind", () => {
