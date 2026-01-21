@@ -14,7 +14,7 @@
 
   .text {
     color: var(--gray-700);
-    font-size: var(--text-12);
+    font-size: 13px;
     margin: 0;
 
     @include dark-mode {

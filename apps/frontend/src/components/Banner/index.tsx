@@ -4,7 +4,9 @@ import { ArrowUpRight, Xmark } from "iconoir-react";
 
 import { useAllBanners } from "@/hooks/api/banner";
 import {
+  isBannerSessionDismissed,
   isBannerViewed,
+  markBannerAsSessionDismissed,
   markBannerAsViewed,
   syncViewedBanners,
 } from "@/lib/banner";
@@ -35,17 +37,25 @@ export default function Banner() {
     if (loading || !banners || banners.length === 0) return null;
 
     for (const banner of banners) {
-      // Skip if persistent (always show) or if already dismissed in this session
+      // Persistent banners always show and cannot be dismissed
       if (banner.persistent) {
         return banner;
       }
 
-      // Skip if dismissed in this session
+      // Skip if dismissed in this session (in-memory state)
       if (dismissedBanners.has(banner.id)) {
         continue;
       }
 
-      // Skip if viewed in localStorage
+      // Reappearing banners use sessionStorage (reappear on new tabs)
+      if (banner.reappearing) {
+        if (isBannerSessionDismissed(banner.id)) {
+          continue;
+        }
+        return banner;
+      }
+
+      // Regular banners use localStorage (permanently dismissed)
       if (isBannerViewed(banner.id)) {
         continue;
       }
@@ -60,11 +70,14 @@ export default function Banner() {
   const handleDismiss = () => {
     if (!activeBanner) return;
 
-    // Mark as dismissed in this session
+    // Mark as dismissed in this session (in-memory state)
     setDismissedBanners((prev) => new Set(prev).add(activeBanner.id));
 
-    // If not persistent, mark as viewed in localStorage
-    if (!activeBanner.persistent) {
+    // Reappearing banners use sessionStorage (reappear on new tabs)
+    if (activeBanner.reappearing) {
+      markBannerAsSessionDismissed(activeBanner.id);
+    } else if (!activeBanner.persistent) {
+      // Regular banners use localStorage (permanently dismissed)
       markBannerAsViewed(activeBanner.id);
     }
   };

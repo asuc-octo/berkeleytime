@@ -8,6 +8,7 @@ export const GET_ALL_BANNERS = gql`
       link
       linkText
       persistent
+      reappearing
       createdAt
       updatedAt
     }

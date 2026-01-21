@@ -56,6 +56,26 @@ docker compose down
 docker compose up --build -d
 ```
 
+## Ports
+`docker compose up` will automatically setup certain services on your localhost ports. By default, `DEV_PORT_PREFIX` is set to `30`, which means services will be available on ports starting with `30XX`. You can adjust this by setting the `DEV_PORT_PREFIX` environment variable if you need to run multiple instances of the repository in parallel (e.g., for git worktree setups).
+
+The following ports are used by default (`DEV_PORT_PREFIX=30`):
+
+- **3000**: Main frontend and backend API (via nginx)
+- **3001**: AG frontend (via nginx)
+- **3002**: Staff frontend (via nginx)
+- **3003**: Docs
+- **3004**: Redis
+- **3005**: Storybook
+- **3006**: MinIO API (requires `--profile dev`)
+- **3007**: MinIO Console (requires `--profile dev`)
+- **3008**: MongoDB
+
+To use a different port prefix, set the `DEV_PORT_PREFIX` environment variable before running `docker compose up`:
+```sh
+DEV_PORT_PREFIX=31 docker compose up -d
+```
+
 ## Seeding Local Database
 
 A seeded database is required for some pages on the frontend.

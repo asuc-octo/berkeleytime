@@ -1,9 +1,10 @@
 /**
- * Interface for managing viewed banners in localStorage.
+ * Interface for managing viewed banners in localStorage and sessionStorage.
  * Tracks which banners have been dismissed by the user.
  */
 
 const STORAGE_KEY = "viewed-banners";
+const SESSION_STORAGE_KEY = "session-dismissed-banners";
 
 /**
  * Get all viewed banner IDs from localStorage.
@@ -63,4 +64,37 @@ export const syncViewedBanners = (activeBannerIds: string[]): void => {
  */
 export const clearViewedBanners = (): void => {
   localStorage.removeItem(STORAGE_KEY);
+};
+
+/**
+ * Get all session-dismissed banner IDs from sessionStorage.
+ * Used for reappearing banners that should reappear on new tabs.
+ */
+export const getSessionDismissedBanners = (): string[] => {
+  try {
+    const item = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    if (!item) return [];
+    return JSON.parse(item) as string[];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Check if a banner has been dismissed in this session.
+ */
+export const isBannerSessionDismissed = (bannerId: string): boolean => {
+  const dismissed = getSessionDismissedBanners();
+  return dismissed.includes(bannerId);
+};
+
+/**
+ * Mark a banner as dismissed in this session (sessionStorage).
+ */
+export const markBannerAsSessionDismissed = (bannerId: string): void => {
+  const dismissed = getSessionDismissedBanners();
+  if (!dismissed.includes(bannerId)) {
+    dismissed.push(bannerId);
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(dismissed));
+  }
 };

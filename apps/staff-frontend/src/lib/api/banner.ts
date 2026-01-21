@@ -7,6 +7,7 @@ export interface Banner {
   link: string | null;
   linkText: string | null;
   persistent: boolean;
+  reappearing: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -20,6 +21,7 @@ export const ALL_BANNERS = gql`
       link
       linkText
       persistent
+      reappearing
       createdAt
       updatedAt
     }
@@ -32,6 +34,7 @@ export interface CreateBannerInput {
   link?: string | null;
   linkText?: string | null;
   persistent: boolean;
+  reappearing: boolean;
 }
 
 export interface UpdateBannerInput {
@@ -39,6 +42,7 @@ export interface UpdateBannerInput {
   link?: string | null;
   linkText?: string | null;
   persistent?: boolean | null;
+  reappearing?: boolean | null;
 }
 
 export const CREATE_BANNER = gql`
@@ -49,6 +53,7 @@ export const CREATE_BANNER = gql`
       link
       linkText
       persistent
+      reappearing
       createdAt
       updatedAt
     }
@@ -63,6 +68,7 @@ export const UPDATE_BANNER = gql`
       link
       linkText
       persistent
+      reappearing
       createdAt
       updatedAt
     }

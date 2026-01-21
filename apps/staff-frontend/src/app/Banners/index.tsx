@@ -22,6 +22,7 @@ interface BannerFormData {
   link: string;
   linkText: string;
   persistent: boolean;
+  reappearing: boolean;
 }
 
 const initialFormData: BannerFormData = {
@@ -29,6 +30,7 @@ const initialFormData: BannerFormData = {
   link: "",
   linkText: "",
   persistent: false,
+  reappearing: false,
 };
 
 export default function Banners() {
@@ -54,6 +56,7 @@ export default function Banners() {
       link: banner.link || "",
       linkText: banner.linkText || "",
       persistent: banner.persistent,
+      reappearing: banner.reappearing,
     });
     setIsModalOpen(true);
   };
@@ -76,6 +79,7 @@ export default function Banners() {
           link: formData.link.trim() || null,
           linkText: formData.linkText.trim() || null,
           persistent: formData.persistent,
+          reappearing: formData.reappearing,
         };
         await updateBanner(editingBanner.id, input);
       } else {
@@ -84,6 +88,7 @@ export default function Banners() {
           link: formData.link.trim() || null,
           linkText: formData.linkText.trim() || null,
           persistent: formData.persistent,
+          reappearing: formData.reappearing,
         };
         await createBanner(input);
       }
@@ -135,6 +140,9 @@ export default function Banners() {
                   />
                   {banner.persistent && (
                     <span className={styles.persistentBadge}>Persistent</span>
+                  )}
+                  {banner.reappearing && (
+                    <span className={styles.persistentBadge}>Reappearing</span>
                   )}
                 </div>
                 {banner.link && (
@@ -271,6 +279,26 @@ export default function Banners() {
                   Persistent banners always show and cannot be permanently
                   dismissed. Non-persistent banners are hidden after the user
                   dismisses them.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Checkbox
+                    checked={formData.reappearing}
+                    onCheckedChange={(checked) =>
+                      setFormData({
+                        ...formData,
+                        reappearing: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.checkboxLabel}>Reappearing</label>
+                </Flex>
+                <p className={styles.formHint}>
+                  Reappearing banners can be dismissed per tab, but will
+                  reappear when the user opens a new tab. Uses session storage
+                  instead of local storage.
                 </p>
               </div>
             </Flex>

@@ -38,6 +38,7 @@ export interface CreateBannerInput {
   link?: string | null;
   linkText?: string | null;
   persistent: boolean;
+  reappearing: boolean;
 }
 
 export interface UpdateBannerInput {
@@ -45,6 +46,7 @@ export interface UpdateBannerInput {
   link?: string | null;
   linkText?: string | null;
   persistent?: boolean | null;
+  reappearing?: boolean | null;
 }
 
 export const getAllBanners = async () => {
@@ -65,6 +67,7 @@ export const createBanner = async (
     link: input.link || undefined,
     linkText: input.linkText || undefined,
     persistent: input.persistent,
+    reappearing: input.reappearing,
   });
 
   return formatBanner(banner);
@@ -90,6 +93,9 @@ export const updateBanner = async (
   }
   if (input.persistent !== null && input.persistent !== undefined) {
     updateData.persistent = input.persistent;
+  }
+  if (input.reappearing !== null && input.reappearing !== undefined) {
+    updateData.reappearing = input.reappearing;
   }
 
   const banner = await BannerModel.findByIdAndUpdate(bannerId, updateData, {

@@ -10,6 +10,7 @@ export const bannerTypeDef = gql`
     link: String
     linkText: String
     persistent: Boolean!
+    reappearing: Boolean!
     createdAt: String!
     updatedAt: String!
   }
@@ -29,6 +30,7 @@ export const bannerTypeDef = gql`
     link: String
     linkText: String
     persistent: Boolean!
+    reappearing: Boolean!
   }
 
   """
@@ -39,6 +41,7 @@ export const bannerTypeDef = gql`
     link: String
     linkText: String
     persistent: Boolean
+    reappearing: Boolean
   }
 
   type Mutation {

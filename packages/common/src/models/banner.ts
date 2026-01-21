@@ -22,6 +22,11 @@ export const bannerSchema = new Schema(
       required: true,
       default: false,
     },
+    reappearing: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: {
