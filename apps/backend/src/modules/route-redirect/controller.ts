@@ -116,3 +116,19 @@ export const deleteRouteRedirect = async (
   const result = await RouteRedirectModel.findByIdAndDelete(redirectId);
   return result !== null;
 };
+
+export const incrementRouteRedirectClick = async (redirectId: string) => {
+  const redirect = await RouteRedirectModel.findByIdAndUpdate(
+    redirectId,
+    { $inc: { clickCount: 1 } },
+    { new: true }
+  );
+
+  if (!redirect) {
+    throw new GraphQLError("Route redirect not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return formatRouteRedirect(redirect);
+};

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ArrowUpRight, Xmark } from "iconoir-react";
 
-import { useAllBanners } from "@/hooks/api/banner";
+import { useAllBanners, useIncrementBannerClick } from "@/hooks/api/banner";
 import {
   isBannerSessionDismissed,
   isBannerViewed,
@@ -16,6 +16,7 @@ import BetaBanner from "./BetaBanner";
 
 export default function Banner() {
   const { data: banners, loading, error } = useAllBanners();
+  const { incrementClick } = useIncrementBannerClick();
   const [dismissedBanners, setDismissedBanners] = useState<Set<string>>(
     new Set()
   );
@@ -99,6 +100,7 @@ export default function Banner() {
             href={activeBanner.link}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => incrementClick(activeBanner.id)}
           >
             <span>{activeBanner.linkText ?? "Learn more"}</span>
             <ArrowUpRight height={12} width={12} />

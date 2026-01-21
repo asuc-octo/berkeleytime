@@ -5,6 +5,7 @@ export interface RouteRedirect {
   id: string;
   fromPath: string;
   toPath: string;
+  clickCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -16,6 +17,7 @@ export const ALL_ROUTE_REDIRECTS = gql`
       id
       fromPath
       toPath
+      clickCount
       createdAt
       updatedAt
     }

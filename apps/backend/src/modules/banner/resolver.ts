@@ -5,6 +5,7 @@ import {
   createBanner,
   deleteBanner,
   getAllBanners,
+  incrementBannerClick,
   updateBanner,
 } from "./controller";
 
@@ -29,6 +30,8 @@ const resolvers = {
       { bannerId }: { bannerId: string },
       context: BannerRequestContext
     ) => deleteBanner(context, bannerId),
+    incrementBannerClick: (_: unknown, { bannerId }: { bannerId: string }) =>
+      incrementBannerClick(bannerId),
   },
 
   Banner: {

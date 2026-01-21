@@ -128,7 +128,8 @@ export default function RouteRedirects() {
                   </div>
                 </div>
                 <div className={styles.redirectMeta}>
-                  Created:{" "}
+                  {redirect.clickCount} click
+                  {redirect.clickCount !== 1 ? "s" : ""} • Created:{" "}
                   {(() => {
                     if (!redirect.createdAt) return "Invalid Date";
                     const date = new Date(redirect.createdAt);

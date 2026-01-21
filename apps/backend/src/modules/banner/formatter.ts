@@ -9,6 +9,7 @@ export interface FormattedBanner {
   linkText?: string;
   persistent: boolean;
   reappearing: boolean;
+  clickCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,6 +22,7 @@ export const formatBanner = (banner: BannerType): FormattedBanner => {
     linkText: banner.linkText ?? undefined,
     persistent: banner.persistent,
     reappearing: banner.reappearing ?? false,
+    clickCount: banner.clickCount ?? 0,
     createdAt: banner.createdAt.toISOString(),
     updatedAt: banner.updatedAt.toISOString(),
   };

@@ -8,6 +8,7 @@ export interface Banner {
   linkText: string | null;
   persistent: boolean;
   reappearing: boolean;
+  clickCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -22,6 +23,7 @@ export const ALL_BANNERS = gql`
       linkText
       persistent
       reappearing
+      clickCount
       createdAt
       updatedAt
     }

@@ -11,6 +11,7 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean!
     reappearing: Boolean!
+    clickCount: Int!
     createdAt: String!
     updatedAt: String!
   }
@@ -59,5 +60,10 @@ export const bannerTypeDef = gql`
     Delete a banner by ID. Staff only.
     """
     deleteBanner(bannerId: ID!): Boolean! @auth
+
+    """
+    Increment the click count for a banner link. Public.
+    """
+    incrementBannerClick(bannerId: ID!): Banner!
   }
 `;

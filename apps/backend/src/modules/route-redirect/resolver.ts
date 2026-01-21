@@ -5,6 +5,7 @@ import {
   createRouteRedirect,
   deleteRouteRedirect,
   getAllRouteRedirects,
+  incrementRouteRedirectClick,
   updateRouteRedirect,
 } from "./controller";
 
@@ -32,6 +33,10 @@ const resolvers = {
       { redirectId }: { redirectId: string },
       context: RouteRedirectRequestContext
     ) => deleteRouteRedirect(context, redirectId),
+    incrementRouteRedirectClick: (
+      _: unknown,
+      { redirectId }: { redirectId: string }
+    ) => incrementRouteRedirectClick(redirectId),
   },
 
   RouteRedirect: {

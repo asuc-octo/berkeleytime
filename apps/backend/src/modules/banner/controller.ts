@@ -121,3 +121,19 @@ export const deleteBanner = async (
   const result = await BannerModel.findByIdAndDelete(bannerId);
   return result !== null;
 };
+
+export const incrementBannerClick = async (bannerId: string) => {
+  const banner = await BannerModel.findByIdAndUpdate(
+    bannerId,
+    { $inc: { clickCount: 1 } },
+    { new: true }
+  );
+
+  if (!banner) {
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return formatBanner(banner);
+};

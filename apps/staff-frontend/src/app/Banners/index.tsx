@@ -156,7 +156,8 @@ export default function Banners() {
                   </a>
                 )}
                 <div className={styles.bannerMeta}>
-                  Created:{" "}
+                  {banner.clickCount} click{banner.clickCount !== 1 ? "s" : ""}{" "}
+                  • Created:{" "}
                   {(() => {
                     if (!banner.createdAt) return "Invalid Date";
                     const date = new Date(banner.createdAt);
