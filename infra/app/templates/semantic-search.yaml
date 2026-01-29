@@ -46,8 +46,12 @@ spec:
               mountPath: /app/indexes
       volumes:
         - name: indexes
+          {{- if eq .Values.env "dev" }}
+          emptyDir: {}
+          {{- else }}
           persistentVolumeClaim:
             claimName: {{ include "bt-app.semanticSearchName" . }}-pvc
+          {{- end }}
 
 ---
 
@@ -87,6 +91,7 @@ spec:
       port: {{ .Values.semanticSearch.port }}
       targetPort: {{ .Values.semanticSearch.port }}
 
+{{- if ne .Values.env "dev" }}
 ---
 
 apiVersion: v1
@@ -104,3 +109,4 @@ spec:
   {{- if .Values.semanticSearch.storageClassName }}
   storageClassName: {{ .Values.semanticSearch.storageClassName }}
   {{- end }}
+{{- end }}
