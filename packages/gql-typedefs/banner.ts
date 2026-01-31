@@ -12,6 +12,9 @@ export const bannerTypeDef = gql`
     persistent: Boolean!
     reappearing: Boolean!
     clickCount: Int!
+    highMetrics: Boolean!
+    dismissCount: Int!
+    viewCount: Int!
     createdAt: String!
     updatedAt: String!
   }
@@ -32,6 +35,7 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean!
     reappearing: Boolean!
+    highMetrics: Boolean!
   }
 
   """
@@ -43,6 +47,7 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean
     reappearing: Boolean
+    highMetrics: Boolean
   }
 
   type Mutation {
@@ -65,5 +70,15 @@ export const bannerTypeDef = gql`
     Increment the click count for a banner link. Public.
     """
     incrementBannerClick(bannerId: ID!): Banner!
+
+    """
+    Increment the dismiss count for a banner. Public.
+    """
+    incrementBannerDismiss(bannerId: ID!): Banner!
+
+    """
+    Track a banner view. Public.
+    """
+    trackBannerView(bannerId: ID!): Boolean!
   }
 `;

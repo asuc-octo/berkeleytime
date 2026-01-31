@@ -75,6 +75,15 @@
   font-weight: 500;
 }
 
+.highMetricsBadge {
+  background-color: var(--blue-100);
+  color: var(--blue-700);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .bannerLink {
   color: var(--blue-500);
   font-size: 13px;

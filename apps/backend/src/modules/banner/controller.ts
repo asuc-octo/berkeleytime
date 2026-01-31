@@ -1,7 +1,11 @@
+import { createHash } from "crypto";
+import type { Request } from "express";
 import { GraphQLError } from "graphql";
+import type { RedisClientType } from "redis";
 
-import { BannerModel, StaffMemberModel } from "@repo/common";
+import { BannerModel, BannerViewCountModel, StaffMemberModel } from "@repo/common";
 
+import { getClientIP } from "../../utils/ip";
 import { formatBanner } from "./formatter";
 
 // Context interface for authenticated requests
@@ -39,6 +43,7 @@ export interface CreateBannerInput {
   linkText?: string | null;
   persistent: boolean;
   reappearing: boolean;
+  highMetrics: boolean;
 }
 
 export interface UpdateBannerInput {
@@ -47,12 +52,23 @@ export interface UpdateBannerInput {
   linkText?: string | null;
   persistent?: boolean | null;
   reappearing?: boolean | null;
+  highMetrics?: boolean | null;
 }
 
-export const getAllBanners = async () => {
+export const getAllBanners = async (redis: RedisClientType) => {
   const banners = await BannerModel.find().sort({ createdAt: -1 });
 
-  return banners.map(formatBanner);
+  // Get view counts for all banners
+  const bannersWithViews = await Promise.all(
+    banners.map(async (banner) => {
+      const viewCount = banner.highMetrics
+        ? await getBannerViewCount(banner._id.toString(), redis)
+        : 0;
+      return formatBanner(banner, viewCount);
+    })
+  );
+
+  return bannersWithViews;
 };
 
 export const createBanner = async (
@@ -68,9 +84,10 @@ export const createBanner = async (
     linkText: input.linkText || undefined,
     persistent: input.persistent,
     reappearing: input.reappearing,
+    highMetrics: input.highMetrics,
   });
 
-  return formatBanner(banner);
+  return formatBanner(banner, 0);
 };
 
 export const updateBanner = async (
@@ -97,6 +114,9 @@ export const updateBanner = async (
   if (input.reappearing !== null && input.reappearing !== undefined) {
     updateData.reappearing = input.reappearing;
   }
+  if (input.highMetrics !== null && input.highMetrics !== undefined) {
+    updateData.highMetrics = input.highMetrics;
+  }
 
   const banner = await BannerModel.findByIdAndUpdate(bannerId, updateData, {
     new: true,
@@ -108,7 +128,7 @@ export const updateBanner = async (
     });
   }
 
-  return formatBanner(banner);
+  return formatBanner(banner, 0);
 };
 
 export const deleteBanner = async (
@@ -135,5 +155,148 @@ export const incrementBannerClick = async (bannerId: string) => {
     });
   }
 
-  return formatBanner(banner);
+  return formatBanner(banner, 0);
+};
+
+export const incrementBannerDismiss = async (bannerId: string) => {
+  const banner = await BannerModel.findByIdAndUpdate(
+    bannerId,
+    { $inc: { dismissCount: 1 } },
+    { new: true }
+  );
+
+  if (!banner) {
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return formatBanner(banner, 0);
+};
+
+// View tracking constants
+const BANNER_VIEW_DEDUPE_TTL_SECONDS = 30 * 60;
+const BANNER_VIEW_RATE_LIMIT_TTL_SECONDS = 60 * 60;
+const BANNER_VIEW_RATE_LIMIT_MAX = 100;
+
+const getBannerViewCounterKey = (bannerId: string) =>
+  `banner-view-counter:${bannerId}`;
+
+export const trackBannerView = async (
+  bannerId: string,
+  req: Request,
+  redis: RedisClientType
+): Promise<{ success: boolean; rateLimited?: boolean }> => {
+  const clientIp = getClientIP(req);
+
+  const rateLimitKey = `banner-view-rate-limit:${clientIp}`;
+  const count = await redis.incr(rateLimitKey);
+  if (count === 1) {
+    await redis.expire(rateLimitKey, BANNER_VIEW_RATE_LIMIT_TTL_SECONDS);
+  }
+
+  if (count > BANNER_VIEW_RATE_LIMIT_MAX) {
+    return { success: false, rateLimited: true };
+  }
+
+  const userSessionId = req.sessionID || clientIp;
+  const userAgent = req.get("user-agent") || "unknown";
+
+  const fingerprint = createHash("sha256")
+    .update(`${userSessionId}:${userAgent}:${bannerId}`)
+    .digest("hex");
+
+  const dedupeKey = `banner-view-dedupe:${fingerprint}`;
+
+  const exists = await redis.exists(dedupeKey);
+  if (exists) {
+    return { success: true };
+  }
+
+  await redis.set(dedupeKey, "1", { EX: BANNER_VIEW_DEDUPE_TTL_SECONDS });
+
+  const counterKey = getBannerViewCounterKey(bannerId);
+  await redis.incr(counterKey);
+
+  return { success: true };
+};
+
+export const getBannerViewCount = async (
+  bannerId: string,
+  redis: RedisClientType
+): Promise<number> => {
+  const counterKey = getBannerViewCounterKey(bannerId);
+
+  const redisCount = await redis.get(counterKey);
+  const pendingViews = redisCount ? parseInt(redisCount, 10) : 0;
+
+  const viewDoc = await BannerViewCountModel.findOne({ bannerId }).lean();
+  const mongoViews = viewDoc?.viewCount ?? 0;
+
+  return pendingViews + mongoViews;
+};
+
+export const flushBannerViewCounts = async (
+  redis: RedisClientType
+): Promise<{ flushed: number; errors: number }> => {
+  const keys: string[] = [];
+  let cursor = "0";
+  do {
+    const result = await redis.scan(cursor, {
+      MATCH: "banner-view-counter:*",
+      COUNT: 100,
+    });
+    cursor = String(result.cursor);
+    keys.push(...result.keys);
+  } while (cursor !== "0");
+
+  if (keys.length === 0) {
+    return { flushed: 0, errors: 0 };
+  }
+
+  const operations: Array<{
+    updateOne: {
+      filter: { bannerId: string };
+      update: { $inc: { viewCount: number } };
+      upsert: boolean;
+    };
+  }> = [];
+
+  for (const key of keys) {
+    const value = await redis.get(key);
+    if (!value) continue;
+
+    const count = parseInt(value, 10);
+    if (isNaN(count) || count === 0) continue;
+
+    const bannerId = key.replace("banner-view-counter:", "");
+    if (!bannerId) continue;
+
+    operations.push({
+      updateOne: {
+        filter: { bannerId },
+        update: { $inc: { viewCount: count } },
+        upsert: true,
+      },
+    });
+  }
+
+  if (operations.length === 0) {
+    return { flushed: 0, errors: 0 };
+  }
+
+  try {
+    const result = await BannerViewCountModel.bulkWrite(operations, {
+      ordered: false,
+    });
+
+    // Delete Redis keys only after successful Mongo write
+    for (const key of keys) {
+      await redis.del(key);
+    }
+
+    return { flushed: result.modifiedCount + result.upsertedCount, errors: 0 };
+  } catch {
+    return { flushed: 0, errors: operations.length };
+  }
 };

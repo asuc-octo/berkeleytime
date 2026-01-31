@@ -1,6 +1,7 @@
 import { type Application, Router } from "express";
 
 import { config } from "../../../../../packages/common/src/utils/config";
+import { startBannerViewCountFlushJob } from "../../modules/banner/jobs/flush-view-counts";
 import { startViewCountFlushJob } from "../../modules/class/jobs/flush-view-counts";
 // loaders
 import apolloLoader from "./apollo";
@@ -29,6 +30,7 @@ export default async (root: Application): Promise<void> => {
 
   // start background jobs
   startViewCountFlushJob(apolloRedis);
+  startBannerViewCountFlushJob(apolloRedis);
 
   // append backend path to all routes
   root.use(config.backendPath, app);

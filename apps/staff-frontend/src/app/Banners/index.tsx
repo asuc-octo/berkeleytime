@@ -23,6 +23,7 @@ interface BannerFormData {
   linkText: string;
   persistent: boolean;
   reappearing: boolean;
+  highMetrics: boolean;
 }
 
 const initialFormData: BannerFormData = {
@@ -31,6 +32,7 @@ const initialFormData: BannerFormData = {
   linkText: "",
   persistent: false,
   reappearing: false,
+  highMetrics: false,
 };
 
 export default function Banners() {
@@ -57,6 +59,7 @@ export default function Banners() {
       linkText: banner.linkText || "",
       persistent: banner.persistent,
       reappearing: banner.reappearing,
+      highMetrics: banner.highMetrics,
     });
     setIsModalOpen(true);
   };
@@ -80,6 +83,7 @@ export default function Banners() {
           linkText: formData.linkText.trim() || null,
           persistent: formData.persistent,
           reappearing: formData.reappearing,
+          highMetrics: formData.highMetrics,
         };
         await updateBanner(editingBanner.id, input);
       } else {
@@ -89,6 +93,7 @@ export default function Banners() {
           linkText: formData.linkText.trim() || null,
           persistent: formData.persistent,
           reappearing: formData.reappearing,
+          highMetrics: formData.highMetrics,
         };
         await createBanner(input);
       }
@@ -144,6 +149,9 @@ export default function Banners() {
                   {banner.reappearing && (
                     <span className={styles.persistentBadge}>Reappearing</span>
                   )}
+                  {banner.highMetrics && (
+                    <span className={styles.highMetricsBadge}>High Metrics</span>
+                  )}
                 </div>
                 {banner.link && (
                   <a
@@ -156,7 +164,20 @@ export default function Banners() {
                   </a>
                 )}
                 <div className={styles.bannerMeta}>
-                  {banner.clickCount} click{banner.clickCount !== 1 ? "s" : ""}{" "}
+                  {banner.highMetrics ? (
+                    <span>
+                      {banner.viewCount} view{banner.viewCount !== 1 ? "s" : ""}{" "}
+                      • {banner.clickCount} click
+                      {banner.clickCount !== 1 ? "s" : ""} •{" "}
+                      {banner.dismissCount} dismissal
+                      {banner.dismissCount !== 1 ? "s" : ""}
+                    </span>
+                  ) : (
+                    <span>
+                      {banner.clickCount} click
+                      {banner.clickCount !== 1 ? "s" : ""}
+                    </span>
+                  )}{" "}
                   • Created:{" "}
                   {(() => {
                     if (!banner.createdAt) return "Invalid Date";
@@ -300,6 +321,26 @@ export default function Banners() {
                   Reappearing banners can be dismissed per tab, but will
                   reappear when the user opens a new tab. Uses session storage
                   instead of local storage.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Checkbox
+                    checked={formData.highMetrics}
+                    onCheckedChange={(checked) =>
+                      setFormData({
+                        ...formData,
+                        highMetrics: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.checkboxLabel}>High Metrics</label>
+                </Flex>
+                <p className={styles.formHint}>
+                  Enable detailed tracking for sponsor banners. Tracks views,
+                  dismissals, and uses redirect-based click tracking for 100%
+                  reliable click counts.
                 </p>
               </div>
             </Flex>

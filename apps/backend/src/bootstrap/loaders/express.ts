@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
+import bannerRoutes from "../../modules/banner/routes";
 import staffRoutes from "../../modules/staff/routes";
 import passportLoader from "./passport";
 
@@ -60,6 +61,9 @@ export default async (
 
   // load authentication
   passportLoader(app, redis);
+
+  // load banner routes (click tracking redirect)
+  bannerRoutes(app);
 
   // load staff routes
   staffRoutes(app);

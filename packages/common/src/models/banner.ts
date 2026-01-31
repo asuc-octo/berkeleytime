@@ -32,6 +32,16 @@ export const bannerSchema = new Schema(
       required: true,
       default: 0,
     },
+    highMetrics: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    dismissCount: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   {
     timestamps: {
