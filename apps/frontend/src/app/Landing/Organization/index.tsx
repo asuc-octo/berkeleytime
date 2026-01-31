@@ -64,29 +64,78 @@ export default function Organization() {
           </Accordion>
         </div>
       </Container>
-      <Container className={styles.sponsorsSection}>
-        <div className={styles.sponsorsContent}>
-          <h2 className={styles.sponsorsTitle}>Sponsors</h2>
-          <p className={styles.sponsorsText}>
-            Thank you to the folks that help the Berkeleytime team continue to
-            provide this service free-of-charge to students!
-          </p>
+      <Container className={styles.wrapper}>
+        <div className={styles.getInvolvedBox}>
+          <div className={styles.getInvolvedTitle}>
+            <h2 className={styles.heading}>Sponsors</h2>
+            <p className={styles.description}>
+              Thank you to the folks that help the Berkeleytime team continue to
+              provide this service free-of-charge to students!
+            </p>
+          </div>
           <div className={styles.sponsorsLogos}>
+            <a
+              href="https://mechanize.work/"
+              className={styles.sponsorLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div
+                style={{
+                  background: "#ffffff",
+                  padding: "0 12px",
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  height: "60px",
+                }}
+              >
+                <img
+                  src="/images/mechanize.png"
+                  alt="Mechanize"
+                  style={{ height: "45px", width: "auto", display: "block" }}
+                />
+                <span
+                  style={{ color: "#000", fontWeight: 500, fontSize: "18px" }}
+                >
+                  Mechanize, Inc.
+                </span>
+              </div>
+            </a>
             <a
               href="https://www.ocf.berkeley.edu/"
               className={styles.sponsorLink}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <img
-                src="/images/ocf.png"
-                alt="OCF"
-                className={styles.sponsorLogo}
-              />
+              <div
+                style={{
+                  background: "#ffffff",
+                  padding: "0 8px",
+                  borderRadius: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  height: "60px",
+                }}
+              >
+                <img
+                  src="/images/ocf.svg"
+                  alt="OCF"
+                  style={{ height: "45px", width: "auto", display: "block" }}
+                />
+              </div>
             </a>
-            <a href="https://asuc.org/" className={styles.sponsorLink}>
+            <a
+              href="https://asuc.org/"
+              className={styles.sponsorLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <img
                 src="/images/asuc.png"
                 alt="ASUC"
-                className={styles.sponsorLogo}
+                className={styles.asucLogo}
               />
             </a>
           </div>

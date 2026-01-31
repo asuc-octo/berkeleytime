@@ -58,6 +58,7 @@ $breakpoint: 660px;
 
   @media (max-width: $breakpoint) {
     max-width: 100%;
+    width: 100%;
   }
 }
 
@@ -99,12 +100,15 @@ $breakpoint: 660px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 48px;
+  gap: 24px;
   flex-wrap: wrap;
+  flex: 1;
+  max-width: 680px;
 
   @media (max-width: $breakpoint) {
-    gap: 32px;
+    max-width: 100%;
+    width: 100%;
+    gap: 16px;
   }
 }
 
@@ -118,12 +122,8 @@ $breakpoint: 660px;
   }
 }
 
-.sponsorLogo {
-  max-width: 200px;
-  height: auto;
+.asucLogo {
+  height: 60px;
+  width: auto;
   display: block;
-
-  @media (max-width: $breakpoint) {
-    max-width: 150px;
-  }
 }
