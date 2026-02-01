@@ -250,7 +250,10 @@ export const flushBannerViewCounts = async (
     keys.push(...result.keys);
   } while (cursor !== "0");
 
-  if (keys.length === 0) {
+  // Deduplicate keys - Redis SCAN may return duplicates during hash table resizing
+  const uniqueKeys = [...new Set(keys)];
+
+  if (uniqueKeys.length === 0) {
     return { flushed: 0, errors: 0 };
   }
 
@@ -262,7 +265,7 @@ export const flushBannerViewCounts = async (
     };
   }> = [];
 
-  for (const key of keys) {
+  for (const key of uniqueKeys) {
     const value = await redis.get(key);
     if (!value) continue;
 
@@ -291,7 +294,7 @@ export const flushBannerViewCounts = async (
     });
 
     // Delete Redis keys only after successful Mongo write
-    for (const key of keys) {
+    for (const key of uniqueKeys) {
       await redis.del(key);
     }
 

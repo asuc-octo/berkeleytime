@@ -5,7 +5,7 @@ import { BannerModel } from "@repo/common/models";
 export default (app: Application) => {
   // Redirect-based click tracking for highMetrics banners
   // This ensures 100% reliable click tracking even if user navigates away immediately
-  app.get("/api/banner/click/:bannerId", async (req: Request, res: Response) => {
+  app.get("/banner/click/:bannerId", async (req: Request, res: Response) => {
     const { bannerId } = req.params;
 
     try {
