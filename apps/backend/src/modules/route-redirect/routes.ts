@@ -1,8 +1,11 @@
 import type { Application, Request, Response } from "express";
+import type { RedisClientType } from "redis";
 
 import { RouteRedirectModel } from "@repo/common/models";
 
-export default (app: Application) => {
+import { trackIntensiveClick } from "../click-tracking/controller";
+
+export default (app: Application, redis?: RedisClientType) => {
   // Server-side redirect handler for snappy redirects
   // Catches /go/:path paths and redirects to the configured destination
   app.get("/go/:path", async (req: Request, res: Response) => {
@@ -19,6 +22,18 @@ export default (app: Application) => {
       if (!redirect || !redirect.toPath) {
         // No matching redirect found, send to home
         return res.redirect("/");
+      }
+
+      // Track click event if enabled and redis is available
+      if (redirect.clickEventLogging && redis) {
+        trackIntensiveClick(
+          redis,
+          req,
+          redirect._id.toString(),
+          "redirect"
+        ).catch((error) => {
+          console.error("Error tracking redirect click event:", error);
+        });
       }
 
       // Immediate redirect to destination

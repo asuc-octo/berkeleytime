@@ -10,9 +10,9 @@ export interface FormattedBanner {
   persistent: boolean;
   reappearing: boolean;
   clickCount: number;
-  highMetrics: boolean;
   dismissCount: number;
   viewCount: number;
+  clickEventLogging: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,9 +29,9 @@ export const formatBanner = (
     persistent: banner.persistent,
     reappearing: banner.reappearing ?? false,
     clickCount: banner.clickCount ?? 0,
-    highMetrics: banner.highMetrics ?? false,
     dismissCount: banner.dismissCount ?? 0,
     viewCount,
+    clickEventLogging: banner.clickEventLogging ?? false,
     createdAt: banner.createdAt.toISOString(),
     updatedAt: banner.updatedAt.toISOString(),
   };

@@ -12,9 +12,9 @@ export const bannerTypeDef = gql`
     persistent: Boolean!
     reappearing: Boolean!
     clickCount: Int!
-    highMetrics: Boolean!
     dismissCount: Int!
     viewCount: Int!
+    clickEventLogging: Boolean!
     createdAt: String!
     updatedAt: String!
   }
@@ -35,7 +35,7 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean!
     reappearing: Boolean!
-    highMetrics: Boolean!
+    clickEventLogging: Boolean
   }
 
   """
@@ -47,7 +47,7 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean
     reappearing: Boolean
-    highMetrics: Boolean
+    clickEventLogging: Boolean
   }
 
   type Mutation {

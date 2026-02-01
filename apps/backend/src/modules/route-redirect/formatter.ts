@@ -7,6 +7,7 @@ export interface FormattedRouteRedirect {
   fromPath: string;
   toPath: string;
   clickCount: number;
+  clickEventLogging: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,6 +20,7 @@ export const formatRouteRedirect = (
     fromPath: redirect.fromPath,
     toPath: redirect.toPath,
     clickCount: redirect.clickCount ?? 0,
+    clickEventLogging: redirect.clickEventLogging ?? false,
     createdAt: redirect.createdAt.toISOString(),
     updatedAt: redirect.updatedAt.toISOString(),
   };

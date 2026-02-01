@@ -10,7 +10,6 @@ export const GET_ALL_BANNERS = gql`
       persistent
       reappearing
       clickCount
-      highMetrics
       dismissCount
       viewCount
       createdAt

@@ -4,7 +4,6 @@ import { ArrowUpRight, Xmark } from "iconoir-react";
 
 import {
   useAllBanners,
-  useIncrementBannerClick,
   useIncrementBannerDismiss,
   useTrackBannerView,
 } from "@/hooks/api/banner";
@@ -21,7 +20,6 @@ import BetaBanner from "./BetaBanner";
 
 export default function Banner() {
   const { data: banners, loading, error } = useAllBanners();
-  const { incrementClick } = useIncrementBannerClick();
   const { incrementDismiss } = useIncrementBannerDismiss();
   const { trackView } = useTrackBannerView();
   const [dismissedBanners, setDismissedBanners] = useState<Set<string>>(
@@ -76,22 +74,20 @@ export default function Banner() {
     return null;
   }, [banners, loading, dismissedBanners]);
 
-  // Track view for highMetrics banners
+  // Track view for all banners (always on now)
   useEffect(() => {
-    if (!activeBanner?.highMetrics) return;
+    if (!activeBanner) return;
     if (trackedViewsRef.current.has(activeBanner.id)) return;
 
     trackedViewsRef.current.add(activeBanner.id);
     trackView(activeBanner.id);
-  }, [activeBanner?.id, activeBanner?.highMetrics, trackView]);
+  }, [activeBanner, trackView]);
 
   const handleDismiss = () => {
     if (!activeBanner) return;
 
-    // Track dismissal for highMetrics banners
-    if (activeBanner.highMetrics) {
-      incrementDismiss(activeBanner.id);
-    }
+    // Track dismissal (always on now)
+    incrementDismiss(activeBanner.id);
 
     // Mark as dismissed in this session (in-memory state)
     setDismissedBanners((prev) => new Set(prev).add(activeBanner.id));
@@ -109,18 +105,10 @@ export default function Banner() {
     return <BetaBanner />;
   }
 
-  // For highMetrics banners, use redirect-based tracking (100% reliable)
-  // For regular banners, use direct link with fire-and-forget mutation
-  const clickUrl = activeBanner.highMetrics
+  // Use redirect-based click tracking for reliable 100% tracking
+  const clickUrl = activeBanner.link
     ? `/api/banner/click/${activeBanner.id}`
-    : activeBanner.link;
-
-  const handleClick = () => {
-    // Only fire mutation for non-highMetrics banners (fire-and-forget)
-    if (!activeBanner.highMetrics) {
-      incrementClick(activeBanner.id);
-    }
-  };
+    : null;
 
   return (
     <div className={styles.root}>
@@ -136,7 +124,6 @@ export default function Banner() {
               href={clickUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={handleClick}
             >
               <span>{activeBanner.linkText ?? "Learn more"}</span>
               <ArrowUpRight height={12} width={12} />

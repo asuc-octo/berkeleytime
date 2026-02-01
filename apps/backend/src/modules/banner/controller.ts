@@ -47,7 +47,7 @@ export interface CreateBannerInput {
   linkText?: string | null;
   persistent: boolean;
   reappearing: boolean;
-  highMetrics: boolean;
+  clickEventLogging?: boolean | null;
 }
 
 export interface UpdateBannerInput {
@@ -56,18 +56,16 @@ export interface UpdateBannerInput {
   linkText?: string | null;
   persistent?: boolean | null;
   reappearing?: boolean | null;
-  highMetrics?: boolean | null;
+  clickEventLogging?: boolean | null;
 }
 
 export const getAllBanners = async (redis: RedisClientType) => {
   const banners = await BannerModel.find().sort({ createdAt: -1 });
 
-  // Get view counts for all banners
+  // Get view counts for all banners (always tracked now)
   const bannersWithViews = await Promise.all(
     banners.map(async (banner) => {
-      const viewCount = banner.highMetrics
-        ? await getBannerViewCount(banner._id.toString(), redis)
-        : 0;
+      const viewCount = await getBannerViewCount(banner._id.toString(), redis);
       return formatBanner(banner, viewCount);
     })
   );
@@ -88,7 +86,7 @@ export const createBanner = async (
     linkText: input.linkText || undefined,
     persistent: input.persistent,
     reappearing: input.reappearing,
-    highMetrics: input.highMetrics,
+    clickEventLogging: input.clickEventLogging ?? false,
   });
 
   return formatBanner(banner, 0);
@@ -118,8 +116,11 @@ export const updateBanner = async (
   if (input.reappearing !== null && input.reappearing !== undefined) {
     updateData.reappearing = input.reappearing;
   }
-  if (input.highMetrics !== null && input.highMetrics !== undefined) {
-    updateData.highMetrics = input.highMetrics;
+  if (
+    input.clickEventLogging !== null &&
+    input.clickEventLogging !== undefined
+  ) {
+    updateData.clickEventLogging = input.clickEventLogging;
   }
 
   const banner = await BannerModel.findByIdAndUpdate(bannerId, updateData, {

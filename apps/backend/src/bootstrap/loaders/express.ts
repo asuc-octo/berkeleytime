@@ -72,8 +72,8 @@ export default async (
 
   // load banner routes (click tracking redirect) - on root for direct access
   if (root) {
-    bannerRoutes(root);
-    routeRedirectRoutes(root);
+    bannerRoutes(root, redis);
+    routeRedirectRoutes(root, redis);
   }
 
   // load staff routes
