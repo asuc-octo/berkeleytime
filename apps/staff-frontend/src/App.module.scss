@@ -34,3 +34,15 @@
   font-size: 14px;
   margin: 0;
 }
+
+.returnLink {
+  color: var(--text-color);
+  font-size: 14px;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+}

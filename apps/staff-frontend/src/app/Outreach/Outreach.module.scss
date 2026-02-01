@@ -129,3 +129,14 @@
   color: var(--paragraph-color);
   margin: 0;
 }
+
+.copyRow {
+  display: flex;
+  align-items: center;
+}
+
+.redirectPath {
+  font-size: 14px;
+  color: var(--paragraph-color);
+  margin-right: 8px;
+}

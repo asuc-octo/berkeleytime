@@ -4,6 +4,8 @@ import { Copy, EditPencil, Plus, Trash } from "iconoir-react";
 
 import { Button, Dialog, Flex, Input, PillSwitcher, Switch } from "@repo/theme";
 
+import { BASE } from "@/helper";
+
 import {
   useAllBanners,
   useCreateBanner,
@@ -229,7 +231,7 @@ export default function Outreach() {
 
   const getRedirectUrl = (fromPath: string) => {
     const path = fromPath.startsWith("/") ? fromPath.slice(1) : fromPath;
-    return `${window.location.origin}/go/${path}`;
+    return `${BASE}/go/${path}`;
   };
 
   const handleCopyUrl = async (fromPath: string) => {
@@ -382,14 +384,19 @@ export default function Outreach() {
                       <span className={styles.badge}>Click Event Logging</span>
                     </div>
                   )}
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={() => handleCopyUrl(redirect.fromPath)}
-                  >
-                    <Copy width={14} height={14} />
-                    go{redirect.fromPath}
-                  </Button>
+                  <div className={styles.copyRow}>
+                    <span className={styles.redirectPath}>
+                      /go/{redirect.fromPath.replace(/^\//, "")}
+                    </span>
+                    <Button
+                      variant="secondary"
+                      size="small"
+                      onClick={() => handleCopyUrl(redirect.fromPath)}
+                    >
+                      <Copy width={14} height={14} />
+                      Copy link
+                    </Button>
+                  </div>
                   <a
                     href={redirect.toPath}
                     target="_blank"

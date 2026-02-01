@@ -9,7 +9,7 @@ import styles from "./App.module.scss";
 import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
 import Outreach from "./app/Outreach";
-import { signIn } from "./helper";
+import { BASE, signIn } from "./helper";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
 
@@ -98,6 +98,9 @@ export default function App() {
               This account is not registered as a staff member
             </p>
           )}
+          <a href={BASE} className={styles.returnLink}>
+            Return to Bt
+          </a>
         </div>
       </ThemeProvider>
     );
