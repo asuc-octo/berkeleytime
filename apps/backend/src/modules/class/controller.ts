@@ -8,6 +8,7 @@ import {
   IClassItem,
   ISectionItem,
   SectionModel,
+  AdTargetModel,
 } from "@repo/common/models";
 
 import { getClientIP } from "../../utils/ip";
@@ -319,4 +320,49 @@ export const flushViewCounts = async (
   } catch {
     return { flushed: 0, errors: operations.length };
   }
+};
+
+export const getHasAd = async (
+  subject: string,
+  courseNumber: string
+): Promise<boolean> => {
+  const adTargets = await AdTargetModel.find().lean();
+
+  if (!adTargets || adTargets.length === 0) return false;
+
+  const classId = `${subject} ${courseNumber}`;
+
+  const courseNumMatch = courseNumber.match(/^(\d+)/);
+  const courseNum = courseNumMatch ? parseInt(courseNumMatch[1], 10) : NaN;
+
+  for (const at of adTargets) {
+    const subjects = (at as any).subjects ?? [];
+    const minStr = (at as any).minCourseNumber;
+    const maxStr = (at as any).maxCourseNumber;
+    const specific = (at as any).specificClassIds ?? [];
+
+    // Specific class IDs take precedence
+    if (specific.includes(classId)) return true;
+
+    // If subjects specified and subject not included, skip
+    if (Array.isArray(subjects) && subjects.length > 0 && !subjects.includes(subject)) {
+      continue;
+    }
+
+    // If min/max specified, compare numeric prefix of course number
+    const min = typeof minStr === "string" && minStr ? parseInt(minStr, 10) : NaN;
+    const max = typeof maxStr === "string" && maxStr ? parseInt(maxStr, 10) : NaN;
+
+    if (!isNaN(min)) {
+      if (isNaN(courseNum) || courseNum < min) continue;
+    }
+    if (!isNaN(max)) {
+      if (isNaN(courseNum) || courseNum > max) continue;
+    }
+
+    // Passed all checks for this ad target
+    return true;
+  }
+
+  return false;
 };

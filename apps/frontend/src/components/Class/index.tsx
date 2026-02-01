@@ -195,6 +195,8 @@ export default function Class({
     skip: !!providedCourse || !_class?.courseId,
   });
 
+  console.log("hasAd value:", _class?.hasAd);
+
   const _course = useMemo(
     () => providedCourse ?? course,
     [course, providedCourse]

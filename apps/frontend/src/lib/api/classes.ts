@@ -244,6 +244,7 @@ export const GET_CLASS_DETAILS = gql`
       number
       unitsMax
       unitsMin
+      hasAd
       primarySection {
         sectionId
         component

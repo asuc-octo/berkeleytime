@@ -62,6 +62,7 @@ export const classTypeDef = gql`
     requirementDesignation: SectionAttributeInfo
     anyPrintInScheduleOfClasses: Boolean
     viewCount: Int!
+    hasAd: Boolean!
   }
 
   enum ClassFinalExam {

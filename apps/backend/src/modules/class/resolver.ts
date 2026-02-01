@@ -20,6 +20,7 @@ import {
   getSection,
   getViewCount,
   trackClassView,
+  getHasAd,
 } from "./controller";
 import {
   IntermediateClass,
@@ -287,6 +288,10 @@ const resolvers: ClassModule.Resolvers = {
         parent.number,
         context.redis
       );
+    },
+
+    hasAd: async (parent: IntermediateClass | ClassModule.Class) => {
+      return await getHasAd(parent.subject, parent.courseNumber);
     },
   },
 
