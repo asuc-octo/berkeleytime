@@ -5,14 +5,12 @@ import SunCalc from "suncalc";
 import Banner from "@/components/Banner";
 import NavigationBar from "@/components/NavigationBar";
 
-import Features from "./Features";
 import Hero from "./Hero";
 import daytime from "./Hero/daytime.svg";
 import night from "./Hero/night.svg";
 import sunrise_sunset from "./Hero/sunrise_sunset.svg";
 import styles from "./Landing.module.scss";
 import Organization from "./Organization";
-import Wave from "./Wave";
 
 // TODO: Tailwind color gradients
 const steps = {
@@ -77,10 +75,6 @@ const Home = () => {
         <NavigationBar />
       </div>
       <Hero step={step} milliseconds={milliseconds} />
-      <div className={styles.features}>
-        <Features />
-      </div>
-      <Wave className={styles.bottomWave} fill="var(--foreground-color)" />
       <Organization />
     </div>
   );

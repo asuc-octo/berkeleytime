@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import { Box, Button, Container } from "@repo/theme";
 
-import Wave from "../Wave";
 import styles from "./Hero.module.scss";
 
 interface HeroProps {
@@ -91,7 +90,6 @@ export default function Hero({ step, milliseconds }: HeroProps) {
           <img className={styles.campanile} src={step.image} />
         </Container>
       </Box>
-      <Wave className={styles.wave} />
     </div>
   );
 }

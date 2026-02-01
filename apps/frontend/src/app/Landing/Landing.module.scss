@@ -9,17 +9,3 @@
   top: 0;
   z-index: 1002;
 }
-
-.features {
-  position: relative;
-  z-index: 1;
-  background-color: var(--light-background-color);
-  margin-top: -2px;
-}
-
-.bottomWave {
-  display: block;
-  width: 100%;
-  height: clamp(100px, 20vw, 200px);
-  margin-bottom: -2px;
-}

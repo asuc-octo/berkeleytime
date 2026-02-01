@@ -10,16 +10,6 @@
     var(--landing-gradient-stop)
   );
 
-  .wave {
-    display: block;
-    width: 100%;
-    height: clamp(175px, 15vw, 350px);
-    margin-top: auto;
-    color: var(--light-background-color);
-    position: relative;
-    z-index: 3;
-  }
-
   .container {
     position: relative;
     z-index: 1;
