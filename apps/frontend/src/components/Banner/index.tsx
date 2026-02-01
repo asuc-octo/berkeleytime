@@ -107,7 +107,7 @@ export default function Banner() {
 
   // Use redirect-based click tracking for reliable 100% tracking
   const clickUrl = activeBanner.link
-    ? `/api/banner/click/${activeBanner.id}`
+    ? `/banner/click/${activeBanner.id}`
     : null;
 
   return (

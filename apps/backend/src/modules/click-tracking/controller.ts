@@ -125,8 +125,9 @@ export const flushClickEvents = async (
       // Bulk insert to MongoDB
       await ClickEventModel.insertMany(documents, { ordered: false });
 
-      // Delete the Redis list after successful insert
-      await redis.del(key);
+      // Remove only the processed events, preserving any new events added after lRange
+      // lTrim keeps elements from index `events.length` to the end (-1)
+      await redis.lTrim(key, events.length, -1);
 
       flushed += documents.length;
     } catch (error) {
